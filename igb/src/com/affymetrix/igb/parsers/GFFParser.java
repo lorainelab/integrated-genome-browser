@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -81,20 +81,14 @@ import com.affymetrix.igb.genometry.UcscGffSym;
  *</pre>
  */
 public class GFFParser implements AnnotationWriter  {
-  // boolean USE_GFF_SYM = true;
   boolean DEBUG_GROUPING = false;
   boolean USE_FILTER = true;
   boolean USE_GROUPING = true;
 
   boolean default_create_container_annot = false;
 
-  boolean gff_base1 = true;
+  boolean gff_base1 = true; 
 
-  // if in GFF 2.0 format, and if attribute field is present, then use first value in first
-  //    tag-value entry to group features
-  // NOT USING THIS YET
-  //  boolean GROUP_BY_FIRST_VALUE = false;
-  
   // should only be one tab between each field, but just in case,
   //    allowing for possible multi-tabs
   static final Pattern line_regex = Pattern.compile("\\t+");
@@ -127,8 +121,6 @@ public class GFFParser implements AnnotationWriter  {
   //  Hashtable fail_filter_hash = new Hashtable();
   Map fail_filter_hash = null;
   Map pass_filter_hash = null;
-
-  //  Hashtable group_hash = new Hashtable();
 
   /*
    *  tag to group features on
@@ -343,15 +335,12 @@ public class GFFParser implements AnnotationWriter  {
           //    USE_GROUPING = false, is to add GFF features directly to AnnotatedBioSeq
           boolean add_directly = true;
 
-          // need to add syms to group syms if possible
-          // then add group syms to AnnotatedBioSeq after entire parse is done???
+          // add syms to group syms if possible,
+          // then add group syms to AnnotatedBioSeq after entire parse is done.
           //     [otherwise may add a group sym to an AnnotatedBioSeq while the group
           //      is still growing (it bounds extending and children being added),
           //      which is okay, except if being incrementally loaded, in which case
-          //      group may get glyphified before it is complete, and right now there's
-          //      no notification mechanism so display can adjust for this...
-          //      Therefore, for now, if using grouping then nothing is added to
-          //      AnnotatedBioSeq until parsing and grouping is completed
+          //      group may get glyphified before it is complete]
 
           if (USE_GROUPING)  {
             if (group_id != null) {
@@ -362,12 +351,17 @@ public class GFFParser implements AnnotationWriter  {
                 if (use_first_one_as_group) {
                   // Take the first entry found with a given group_id and use it
                   // as the parent symmetry for all members of the group
+                  // (For example, a "transcript" line with transcript_id=3 might
+                  //  be followed by several "exon" lines with transcript_id=3.
+                  //  The "transcript" line should be used as the group symmetry in this case.)  
                   groupsym = sym;
                 } else {
                   // Make a brand-new symmetry to hold all syms with a given group_id
                   groupsym = new SingletonSymWithProps(sym.getStart(), sym.getEnd(), sym.getBioSeq());
                   groupsym.addChild(sym);
-                  //groupsym.setProperty("group", group_id); // probably not necessary, since "id" is set to group id below
+                  // Setting the "group" property might be needed if you plan to use the
+                  // outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
+                  groupsym.setProperty("group", group_id);
                   groupsym.setProperty("method", source);
                 }
                 group_count++;
@@ -448,7 +442,6 @@ public class GFFParser implements AnnotationWriter  {
             parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
             parent_sym.setProperty("method", meth);
             seq.addAnnotation(parent_sym);
-            //            seq2psym.put(seq, parent_sym);
             meth2csym.put(meth, parent_sym);
           }
           parent_sym.addChild(sym);

@@ -180,6 +180,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       //    till find interval with min > end of current pixel
       //      while ((min <= pixel_end_coord) && (interval_index <= draw_end_index))  {
       while ((interval_index <= draw_end_index) &&
+	     (interval_index < mins.length) &&
 	     (mins[interval_index] <= pixel_end_coord)) {
 	min = mins[interval_index];
 	max = maxs[interval_index];
@@ -238,8 +239,8 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     String msg =
       "Max coverage in view: " +
       nformat.format(max_coverage) + ", " +
-      nformat.format(max_covered) + ", " +
-      "Bases/Pixel: " + 
+      //      nformat.format(max_covered) + ", " +
+      "Bases/Pixel: " +
       nformat.format(coords_per_pixel);
 
     g.drawString(msg, 3, pixelbox.y + 10);

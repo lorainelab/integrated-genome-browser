@@ -22,6 +22,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.genometry.SeqSpanComparator;
+import com.affymetrix.igb.genometry.SeqSymSummarizer;
 
 /**
  *
@@ -70,13 +72,52 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
   public void setCoveredIntervals(java.util.List spans) {
-    int spancount = spans.size();
+    java.util.List spanlist = spans;
+    int spancount = spanlist.size();
     if (spancount > 0) {
+      // need to test to make sure projected and in ascending order --
+      //   if not, then perform projection and sort
+
+      // check for sorted and sort by min if needed
+      // NOT YET IMPLEMENTED
+      int prev_min = ((SeqSpan)spans.get(0)).getMin();
+      for (int i=1; i<spancount-1; i++) {
+	SeqSpan cspan = (SeqSpan)spans.get(i);
+	int cur_min = cspan.getMin();
+	if (cur_min < prev_min) {
+	  // need to sort
+	  System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
+	  SeqSpanComparator span_compare = new SeqSpanComparator();
+	  Collections.sort(spans, span_compare);
+	  // sorted, so don't have to keep checking, so break;
+	  break;
+	}
+	prev_min = cur_min;
+      }
+
+      // check for overlap and project (merge/union all spans together) if needed
+      prev_min = ((SeqSpan)spans.get(0)).getMin();
+      int prev_max = ((SeqSpan)spans.get(0)).getMax();
+      for (int i=1; i<spancount-1; i++) {
+	SeqSpan cspan = (SeqSpan)spans.get(i);
+	if (prev_max > cspan.getMin())  {
+	  // spans overlap, need to project (union all spans together)
+	  // set spanlist to union of spans...
+	  System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
+	  spanlist = SeqSymSummarizer.getMergedSpans(spans);
+	  break;
+	}
+	prev_max = cspan.getMax();
+      }
+
+      // projecting may have changed span count (shrunk span list)
+      spancount = spanlist.size();
+
       int[] newmins = new int[spancount];
       int[] newmaxs = new int[spancount];
-      BioSeq firstseq = ((SeqSpan)spans.get(0)).getBioSeq();
+      BioSeq firstseq = ((SeqSpan)spanlist.get(0)).getBioSeq();
       for (int i=0; i<spancount; i++) {
-	SeqSpan span = (SeqSpan)spans.get(i);
+	SeqSpan span = (SeqSpan)spanlist.get(i);
 	newmins[i] = span.getMin();
 	newmaxs[i] = span.getMax();
 	if (span.getBioSeq() != firstseq) {
@@ -90,20 +131,16 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   /**
    *  Each index i in min_array/max_array indicates a span from
    *     min_array[i] to max_array[i].
-   *  The arrays are assumed to be sorted in ascending order.
+   *  WARNING: the arrays are assumed to be sorted in ascending order
+   *      It is the responsibility of the caller to ensure array is in min ascending order
+   *      if there is a chance they are not, use setCoveredIntervals(spans) instead
+   *      which will sort if needed
    */
   public void setCoveredIntervals(int[] min_array, int[] max_array) {
     mins = min_array;
     maxs = max_array;
-    // need to test to make sure projected and in ascending order --
-    //   if not, then perform projection and sort
-    /*
-    int cnt = mins.length;
-    for (int i=0; i<cnt; i++) {
-      if (mins
-    }
-    */
   }
+
 
   public void setStyle(int style) {
     if (style != COVERAGE &&

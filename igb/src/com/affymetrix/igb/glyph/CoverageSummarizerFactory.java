@@ -39,14 +39,12 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
   int style = CoverageSummarizerGlyph.DEFAULT_STYLE;
 
   public CoverageSummarizerFactory() {
-    System.out.println("CoverageSummarizerFactory constructor called");
+    //    System.out.println("CoverageSummarizerFactory constructor called");
   }
 
   public void init(Map options) {
-    System.out.println("CoverageSummarizerFactory.init() called");
     glyph_color = (Color)options.get("color");
     if (glyph_color == null) { glyph_color = default_color; }
-    System.out.println("CoverageSummarizerFactory color set: " + glyph_color);
     if (options.get("height") != null) {
       try {
 	glyph_height = Integer.parseInt((String)options.get("height"));
@@ -56,16 +54,11 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
 	glyph_height = default_glyph_height;
       }
     }
-    System.out.println("coverage glyph height = " + glyph_height);
 
     String style_name = (String)options.get("style");
     if (style_name != null)  {
-      System.out.println("coverage glyph style = " + style_name);
       if (style_name.equalsIgnoreCase("coverage")) { style = CoverageSummarizerGlyph.COVERAGE; }
       if (style_name.equalsIgnoreCase("simple")) { style = CoverageSummarizerGlyph.SIMPLE; }
-    }
-    else {
-      System.out.println("coverage glyph style set to default");
     }
   }
 
@@ -73,7 +66,6 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
     System.out.println("CoverageSummarizerFactory.createGlyph() called");
     System.out.println("symmetry child count: " + sym.getChildCount());
     SeqSpan span = sym.getSpan(0);
-    System.out.println("symmetry span: " + SeqUtils.spanToString(span));
 
     //    AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);

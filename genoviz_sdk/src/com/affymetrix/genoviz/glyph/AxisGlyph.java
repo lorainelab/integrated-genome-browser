@@ -971,6 +971,10 @@ public class AxisGlyph extends Glyph {
     else  {
       remainder = theUnitsPerPixel;
 
+      // The COMMA format requires 25% more space to accomodate "," characters
+      // The ABBREV format is hard to predict, so give it extra space as well
+      if (labelFormat != FULL) { remainder *= 1.25; }
+
       while (remainder >= 10)  {
         remainder /= 10;
         increment *= 10;
@@ -986,9 +990,7 @@ public class AxisGlyph extends Glyph {
       }
       result = (increment * 200);
     }
-    // The COMMA format requires 25% more space to accomodate "," characters
-    // The ABBREV format is hard to predict, so give it extra space as well
-    if (labelFormat != FULL) { result *= 1.25; }
+    
     return result;
   }
 

@@ -300,9 +300,7 @@ public class GFFParser implements AnnotationWriter  {
           String score_str = fields[5];
           String strand_str = fields[6].intern();
           String frame_str = fields[7].intern();
-
-	  String group = null;
-	  if (fields.length >= 9)  { group = fields[8].intern(); }
+          // We deal with fields[8] later.  It has different meaning in GFF1 and GFF2
 
 	  float score = Float.NEGATIVE_INFINITY;
 	  if (! score_str.equals(".")) { score = Float.parseFloat(score_str); }

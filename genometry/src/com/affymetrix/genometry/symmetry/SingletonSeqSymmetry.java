@@ -24,7 +24,7 @@ import java.util.*;
 
 /**
  * A symmetry containing only a single span.
- * i.e. it has a "breadth" of one.
+ * In other words, it has a "breadth" of one.
  */
 public class SingletonSeqSymmetry extends SimpleMutableSeqSpan implements SeqSymmetry {
 
@@ -94,6 +94,7 @@ public class SingletonSeqSymmetry extends SimpleMutableSeqSpan implements SeqSym
       return null;
   }
 
+  /** Returns null. */
   public String getID() { return null; }
 
 }

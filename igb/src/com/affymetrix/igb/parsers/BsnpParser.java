@@ -86,7 +86,7 @@ import com.affymetrix.igb.genometry.*;
    *</pre>
    */
   public class BsnpParser {
-    static String text_infile = "c:/data/ucsc/hg17/snpMap_rs.txt";
+    static String text_infile = "c:/data/ucsc/hg17/snpMap_affy120k.txt";
     static String outfile = text_infile + ".bsnp";
     static String genome_version = "H_sapiens_May_2004";
 
@@ -223,7 +223,7 @@ import com.affymetrix.igb.genometry.*;
     return snp_syms;
   }
 
-  static boolean TEST_BINARY_PARSE = true;
+  static boolean TEST_BINARY_PARSE = false;
   public static void main(String[] args) {
     try {
       if (TEST_BINARY_PARSE) {

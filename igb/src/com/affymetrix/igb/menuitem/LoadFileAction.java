@@ -72,6 +72,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("bgn"));
       chooser.addChoosableFileFilter(new UniFileFilter("brs"));
       chooser.addChoosableFileFilter(new UniFileFilter("bsnp"));
+      chooser.addChoosableFileFilter(new UniFileFilter("brpt"));
       chooser.addChoosableFileFilter(new UniFileFilter("bnib"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
@@ -388,6 +389,18 @@ public class LoadFileAction {
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
 	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
 	  System.out.println("total snps loaded: " + alist.size());
+	}
+        aseq = input_seq;
+      }
+      else if (stream_name.endsWith(".brpt")) {
+	if (seqhash == null) {
+          IGB.errorPanel("ERROR", ".brpt files can only be loaded if a seq group is already selected");
+	}
+	else {
+	  BrptParser parser = new BrptParser();
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
+	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+	  System.out.println("total repeats loaded: " + alist.size());
 	}
         aseq = input_seq;
       }

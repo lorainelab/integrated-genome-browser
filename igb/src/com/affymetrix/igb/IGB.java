@@ -48,6 +48,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
   public static final boolean DEBUG_EVENTS = false;
+  public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean CURATION_ENABLED = true;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
@@ -535,8 +536,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
 
     MenuUtil.addToMenu(help_menu, about_item);
-    //MenuUtil.addToMenu(help_menu, gc_item);
-    //MenuUtil.addToMenu(help_menu, memory_item);
+    if (ADD_DIAGNOSTICS) {
+      MenuUtil.addToMenu(help_menu, gc_item);
+      MenuUtil.addToMenu(help_menu, memory_item);
+    }
 
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
@@ -596,7 +599,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //} catch (java.util.prefs.BackingStoreException bse) {
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
-
 
     if (plugin_list == null || plugin_list.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
@@ -1063,7 +1065,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
-    boolean USE_BOOKMARK_MANAGER = false;
+    boolean USE_BOOKMARK_MANAGER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
 
@@ -1098,10 +1100,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PluginInfo pi = new PluginInfo(BookmarkManagerView.class.getName(), "Bookmarks", true);
       plugin_list.add(pi);
     }
+
     if (USE_PIVOT_VIEW) {
       PluginInfo pi = new PluginInfo(ExperimentPivotView.class.getName(), "Pivot View", true);
       plugin_list.add(pi);
     }
+
     if (USE_ANNOT_BROWSER) {
       PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
       plugin_list.add(pi);

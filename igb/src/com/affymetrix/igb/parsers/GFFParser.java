@@ -521,10 +521,10 @@ public class GFFParser implements AnnotationWriter  {
   }
 
   static final Pattern directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)");
+  static final Pattern directive_hierarchy = Pattern.compile("##IGB-filter-hierarchy (.*)");
   static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
   static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
   static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
-  static final Pattern directive_hierarchy = Pattern.compile("##IGB-hierarchy (.*)");
   
   boolean use_hierarchy = false;
   Map hierarchy_levels = new HashMap(); // Map of String to Integer
@@ -577,7 +577,10 @@ public class GFFParser implements AnnotationWriter  {
     
     m = directive_hierarchy.matcher(line);
     if (m.matches()) {
-      resetFilters(); // using the hierarchy tag implies that you don't want to filter anything out
+      if (! use_hierarchy) {
+        // If this is the first time the tag is seen, reset the filters
+        resetFilters();
+      }
       String hierarchy_string = m.group(1).trim();
       
       // Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
@@ -591,13 +594,15 @@ public class GFFParser implements AnnotationWriter  {
         String feature_type = mm.group(2);
         Integer level = new Integer(level_string);
         hierarchy_levels.put(feature_type, level);
+        addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
+        
         System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
 
         String id_field = mm.group(4);
         if (id_field != null) {hierarchy_id_fields.put(feature_type, id_field);}
       }
       if (hierarchy_levels.isEmpty()) {
-        throw new IOException("The '##IGB-hierarchy' directive could not be parsed");
+        throw new IOException("The '##IGB-filter-hierarchy' directive could not be parsed");
       } else {
         use_hierarchy = true;
       }

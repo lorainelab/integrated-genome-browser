@@ -26,7 +26,7 @@ public class MutableSingletonSeqSymmetry
     implements MutableSeqSymmetry
 {
 
-  String id;
+  protected String id;
 
   public MutableSingletonSeqSymmetry(SeqSpan span) {
     super(span);
@@ -41,11 +41,19 @@ public class MutableSingletonSeqSymmetry
     this.id = id;
   }
 
+  /**
+   *  Constructor.
+   *  @param parent  This parameter is ignored.
+   */
   public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, BioSeq seq) {
     super(start, end, seq);
     // ignoring parent
   }
   
+  /**
+   *  Constructor.
+   *  @param parent  This parameter is ignored.
+   */
   public MutableSingletonSeqSymmetry(String id, SeqSymmetry parent, int start, int end, BioSeq seq) {
     this(parent, start, end, seq);
     this.id = id;

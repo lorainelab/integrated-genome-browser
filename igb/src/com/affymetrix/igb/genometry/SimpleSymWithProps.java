@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,6 +20,11 @@ import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 
 public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
   implements SymWithProps {
+
+  /** When this option is true, the convertToObject() method will automatically
+   *  be applied to property values in setProperty().
+   */
+  static boolean OPT_CONVERT_OBJECTS = false;
 
   Map props;
 
@@ -80,7 +85,11 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
     if (props == null) {
       props = new HashMap();
     }
-    props.put(name, val);
+    if (OPT_CONVERT_OBJECTS) {
+      props.put(name, convertToObject(val));
+    } else {
+      props.put(name, val);
+    }
     return true;
   }
 
@@ -106,6 +115,36 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
       String key = (String)iter.next();
       System.out.println(key + " --> " + props.get(key));
     }
+  }
+
+  /**
+   *  Converts some Strings to more memory-efficient objects.
+   *  This can be useful in reducing the amount of memory required to store
+   *  the properties mappings.
+   *  If the given value is not a String, it is left alone.
+   *  If it is a one-character string, it is converted to a Character.
+   *  If it is a String representing an Integer, then an Integer is returned.
+   */
+  static public Object convertToObject(Object val) {
+    Object result = val;
+    if (val instanceof String) {
+      String str = (String) val;
+      if ("".equals(str)) { 
+        result = ""; 
+      }
+      else if (str.length() == 1) {
+        return new Character(str.charAt(0));
+      }
+      else if (Character.isDigit(str.charAt(0))) {
+        Integer the_int = null;
+        try {
+          the_int =  new Integer(str);
+        }
+        catch (NumberFormatException e) { the_int = null; }
+        if (the_int != null) { result = the_int; }
+      }
+    }
+    return result;
   }
 
 }

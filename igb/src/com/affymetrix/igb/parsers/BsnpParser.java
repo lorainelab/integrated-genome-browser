@@ -96,27 +96,27 @@ import com.affymetrix.igb.genometry.*;
 
     public void outputBsnpFormat(java.util.List parents, DataOutputStream dos) {
     try	{
-    int pcount = parents.size();
-    dos.writeUTF(genome_version);
-    dos.writeInt(pcount);  // how many seqs there are
-    for (int i=0; i<pcount; i++) {
-      SeqSymmetry parent = (SeqSymmetry)parents.get(i);
-      BioSeq seq = parent.getSpanSeq(0);
-      String seqid = seq.getID();
-      int snp_count = parent.getChildCount();
-      dos.writeUTF(seqid);
-      dos.writeInt(snp_count);
-    }
-
-    for (int i=0; i<pcount; i++) {
-      SeqSymmetry parent = (SeqSymmetry)parents.get(i);
-      int snp_count = parent.getChildCount();
-      for (int k=0; k<snp_count; k++) {
-	EfficientSnpSym snp = (EfficientSnpSym)parent.getChild(k);
-	int base_coord = snp.getSpan(0).getMin();
-	dos.writeInt(base_coord);
+      int pcount = parents.size();
+      dos.writeUTF(genome_version);
+      dos.writeInt(pcount);  // how many seqs there are
+      for (int i=0; i<pcount; i++) {
+	SeqSymmetry parent = (SeqSymmetry)parents.get(i);
+	BioSeq seq = parent.getSpanSeq(0);
+	String seqid = seq.getID();
+	int snp_count = parent.getChildCount();
+	dos.writeUTF(seqid);
+	dos.writeInt(snp_count);
       }
-    }
+
+      for (int i=0; i<pcount; i++) {
+	SeqSymmetry parent = (SeqSymmetry)parents.get(i);
+	int snp_count = parent.getChildCount();
+	for (int k=0; k<snp_count; k++) {
+	  EfficientSnpSym snp = (EfficientSnpSym)parent.getChild(k);
+	  int base_coord = snp.getSpan(0).getMin();
+	  dos.writeInt(base_coord);
+	}
+      }
     }
     catch (Exception ex) {
       ex.printStackTrace();

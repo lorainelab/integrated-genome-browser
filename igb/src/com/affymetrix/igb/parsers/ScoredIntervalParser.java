@@ -61,7 +61,8 @@ import com.affymetrix.igb.util.FloatList;
  *  Parser _should_ be able to distinguish between these, based on combination of
  *     number of fields, and presence and position of strand field
  *
- *  SIN version 3 is not yet implemented -- needs pointer to a map of id-->annotation_sym
+ *  For use in IGB, SIN version 3 is dependent on prior loading of annotations with ids, and whether those 
+ *     ids have actually been added to IGB's standard id-->annotation_sym mapping
  *
  *  seqid is word string [a-zA-Z_0-9]+
  *  min_coord is int

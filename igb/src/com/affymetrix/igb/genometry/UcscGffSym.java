@@ -92,8 +92,10 @@ public class UcscGffSym extends SingletonSymWithProps {
     if (tprops == null) {
       tprops = new HashMap();
     }
-    tprops.put("id", getID());
-    tprops.put("seqname", getID());
+    if (getID() != null) {
+      tprops.put("id", getID());
+      tprops.put("seqname", getID());
+    }
     if (source != null) { tprops.put("source", source); }
     if (source != null) { tprops.put("method", source); }
     if (feature_type != null) { tprops.put("feature_type", feature_type); }
@@ -104,7 +106,8 @@ public class UcscGffSym extends SingletonSymWithProps {
     if (frame != UNKNOWN_FRAME) {
       tprops.put("frame", new Character(frame));
     }
-    tprops.put("group", group);
+    if (group != null) {tprops.put("group", group);}
+    
     return tprops;
   }
 }

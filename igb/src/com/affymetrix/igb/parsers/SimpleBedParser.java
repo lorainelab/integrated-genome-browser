@@ -1,0 +1,55 @@
+/**
+*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*    
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.  
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
+package com.affymetrix.igb.parsers;
+
+import java.io.*;
+import java.util.*;
+
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.util.SeqUtils;
+
+public class SimpleBedParser implements AnnotationWriter {
+  public String getMimeType() { return "text/plain"; }
+  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq, 
+				  String type, OutputStream outstream) {
+    boolean success = true;
+    int symcount = syms.size();
+    ArrayList spanlist = new ArrayList(symcount);  // initialize to number of top-level syms, won't be lower...
+    Iterator iterator = syms.iterator();
+    while (iterator.hasNext()) {
+      SeqSymmetry sym = (SeqSymmetry)iterator.next();
+      SeqUtils.collectLeafSpans(sym, seq, spanlist);
+    }
+
+    try {
+      Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+      int spancount = spanlist.size();
+      for (int i=0; i<spancount; i++) {
+	SeqSpan span = (SeqSpan)spanlist.get(i);
+	bw.write(span.getBioSeq().getID());
+	bw.write("\t");
+	bw.write(Integer.toString(span.getMin()));;
+	bw.write("\t");
+	bw.write(Integer.toString(span.getMax()));;
+	bw.write('\n');
+      }
+      bw.flush();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      success = false;
+    }
+    return success;
+  }
+}

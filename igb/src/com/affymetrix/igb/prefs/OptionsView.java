@@ -81,8 +81,10 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     if ( ! is_windows ) {
       misc_box.add(new JLabel("Browser command: "));
+      // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
+      // force the WebBrowserControl to issue a warning.
       misc_box.add(UnibrowPrefsUtil.createTextField(
-        UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, WebBrowserControl.DEFAULT_BROWSER_CMD));
+        UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, ""));
     }
 
     /*
@@ -166,6 +168,18 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
     sb.append("</p>\n");
     
+    sb.append("<p>\n");
+    sb.append("<h2>Browser Command</h2>\n");
+    sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
+    sb.append("Depending on your configuration, you may use something like ");
+    sb.append("'firefox' or 'netscape', but you may need a full path like '/usr/bin/firefox'.  ");
+    sb.append("<br><br>The command must accept the web address as a single argument on the command line.  ");
+    sb.append("If you need to do something more sophisticated, you may define your own command script ");
+    sb.append("for example '/home/user/openBrowser.sh'.  ");
+    sb.append("<br><br><b>Macintosh X</b>: Set the command  to 'open' to use your default browser.  ");
+    sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
     return sb.toString();
   }
   

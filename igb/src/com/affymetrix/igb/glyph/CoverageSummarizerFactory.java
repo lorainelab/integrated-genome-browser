@@ -38,9 +38,7 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
    */
   int style = CoverageSummarizerGlyph.DEFAULT_STYLE;
 
-  public CoverageSummarizerFactory() {
-    //    System.out.println("CoverageSummarizerFactory constructor called");
-  }
+  public CoverageSummarizerFactory() { }
 
   public void init(Map options) {
     glyph_color = (Color)options.get("color");
@@ -63,15 +61,13 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
-    System.out.println("CoverageSummarizerFactory.createGlyph() called");
-    System.out.println("symmetry child count: " + sym.getChildCount());
     SeqSpan span = sym.getSpan(0);
 
     //    AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);
 
     if (meth != null) {
-      System.out.println("in CoverageSummarizerFactory, annot type = " + meth);
+      //      System.out.println("in CoverageSummarizerFactory, annot type = " + meth);
       TierGlyph[] tiers = gviewer.getTiers(meth,
 					   false, // next_to_axis = false
 					   true, // use_fast_packer = true

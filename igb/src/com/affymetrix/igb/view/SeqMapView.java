@@ -1088,7 +1088,6 @@ public class SeqMapView extends JPanel
    */
   public SeqSymmetry transformForViewSeq(SeqSymmetry insym) {
     SeqSymmetry result_sym = insym;
-
     if (getAnnotatedSeq() != getViewSeq()) {
       MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
       SeqUtils.transformSymmetry(tempsym, getTransformPath());
@@ -1234,7 +1233,11 @@ public class SeqMapView extends JPanel
 	Vector glyphs = map.getItemsByCoord(cbox);
 	map.select(glyphs);
 	setSelectedRegion(null);
+        if (show_edge_matches) {
+          doEdgeMatching(map.getSelected(), false);
+        }
 	map.updateWidget();
+        
         postSelections();
       }
       else if (pbox.width >= 2 && pbox.height >=2) {
@@ -1821,9 +1824,7 @@ public class SeqMapView extends JPanel
   }
 
 
-  public void doEdgeMatching(Vector query_glyphs, boolean update_map) {
-    Color edge_match_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);
-    Color edge_match_fuzzy_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
+  public void doEdgeMatching(java.util.List query_glyphs, boolean update_map) {
 
     if (match_glyphs != null && match_glyphs.size() > 0) {
       map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
@@ -1831,36 +1832,46 @@ public class SeqMapView extends JPanel
 
     int qcount = query_glyphs.size();
     int match_query_count = query_glyphs.size();
-    for (int i=0; i<qcount; i++) {
+    for (int i=0; i<qcount && match_query_count <= max_for_matching; i++) {
       match_query_count += ((GlyphI)query_glyphs.get(i)).getChildCount();
-      if (match_query_count > max_for_matching) {
-	break;
-      }
     }
+
     if (match_query_count <= max_for_matching) {
       match_glyphs = new Vector();
       Vector target_glyphs = new Vector();
       target_glyphs.add(map.getScene().getGlyph());
       double fuzz = getEdgeMatcher().getFuzziness();
       if (fuzz==0.0) {
-	 getEdgeMatcher().setColor(edge_match_color);
+        Color edge_match_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_COLOR, default_edge_match_color);
+	getEdgeMatcher().setColor(edge_match_color);
       } else {
+        Color edge_match_fuzzy_color = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_EDGE_MATCH_FUZZY_COLOR, default_edge_match_fuzzy_color);
 	getEdgeMatcher().setColor(edge_match_fuzzy_color);
       }
       getEdgeMatcher().matchEdges(map, query_glyphs, target_glyphs, match_glyphs);
     }
     else {
-      System.out.println("not doing edge matching, too many query glyphs for matching");
+      System.out.println("Skipping edge matching; too many items selected.");
     }
+
     if (update_map)  { map.updateWidget(); }
   }
 
   public boolean getEdgeMatching() { return show_edge_matches; }
-  public void setEdgeMatching(boolean b) { show_edge_matches = b; }
+  public void setEdgeMatching(boolean b) { 
+    show_edge_matches = b;
+    if (show_edge_matches) {
+      doEdgeMatching(map.getSelected(), true); 
+    } else {
+      doEdgeMatching(new Vector(0), true); 
+    }
+  }
 
   public void adjustEdgeMatching(int bases) {
     getEdgeMatcher().setFuzziness(bases);
-    if (show_edge_matches)  { doEdgeMatching(map.getSelected(), true); }
+    if (show_edge_matches)  {
+      doEdgeMatching(map.getSelected(), true);
+    }
   }
 
   public SeqSpan getVisibleSpan() {
@@ -1999,12 +2010,14 @@ public class SeqMapView extends JPanel
           IGB.errorPanel("Nothing selected");
         } else {
           GlyphI pglyph = last_selected_glyph.getParent();
-          if (! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
+          if ( pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
             map.deselect(last_selected_glyph);
             map.select(pglyph);
             last_selected_glyph = pglyph;
             Vector selected_glyphs = map.getSelected();
-            if (show_edge_matches)  { doEdgeMatching(selected_glyphs, false); }
+            if (show_edge_matches)  { 
+              doEdgeMatching(selected_glyphs, false); 
+            }
             map.updateWidget();
             //          showProps(selected);
             postSelections();
@@ -2227,10 +2240,8 @@ public class SeqMapView extends JPanel
           }
 
           // not doing edge match if selection is a GraphGlyph...
-          if (show_edge_matches && (! (topgl instanceof GraphGlyph)))  {
-            Vector query_glyphs = new Vector();
-            query_glyphs.add(topgl);
-            doEdgeMatching(query_glyphs, false);
+          if (show_edge_matches /* && (! (topgl instanceof GraphGlyph)) */)  {
+            doEdgeMatching(map.getSelected(), false);
           }
         }
 
@@ -2256,8 +2267,6 @@ public class SeqMapView extends JPanel
       return (nevt.isControlDown() || nevt.isMetaDown() ||
 	   ((nevt.getModifiers() & InputEvent.BUTTON3_MASK) != 0 ));
     }
-
-
   }  // END private class SeqMapViewMouseListener
 
 

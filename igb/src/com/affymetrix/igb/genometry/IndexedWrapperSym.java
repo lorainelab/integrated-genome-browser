@@ -1,3 +1,15 @@
+/**
+*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb.genometry;
 
 import java.util.*;
@@ -5,8 +17,8 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 
 /**
- *  IndexedWrapperSym wraps an existing SymWithProps and adds the notion of a ScoredContainerSym 
- *     parent and an index into that parent 
+ *  IndexedWrapperSym wraps an existing SymWithProps and adds the notion of a ScoredContainerSym
+ *     parent and an index into that parent
  *    (usually the index such that parent.getChild(index) == parent)
  */
 public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
@@ -20,12 +32,12 @@ public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
 
   public SeqSymmetry getWrappedSym() { return wrapped_sym; }
 
-  /*  
+  /*
    *  IndexedSym implementation
    */
 
   /**
-   *  note that setParent() of IndexedWrapperSym does _not_ set a parent sym for the 
+   *  note that setParent() of IndexedWrapperSym does _not_ set a parent sym for the
    *    wrapped_sym, therefore it is possible for the IndexedWrapperSym to have a different
    *    parent than the wrapped symmetry (if the wrapped symmetry has a parent at all)
    */
@@ -42,10 +54,10 @@ public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
     return index_in_parent;
   }
 
-  /* 
-   * SeqSymmetry implementation -- pass-through methods to wrapped symmetry 
+  /*
+   * SeqSymmetry implementation -- pass-through methods to wrapped symmetry
    */
- 
+
   public String getID() {
     return wrapped_sym.getID();
   }
@@ -79,32 +91,32 @@ public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
    */
 
   /** currently not including index as a property */
-  public Map getProperties() { 
+  public Map getProperties() {
     if (wrapped_sym instanceof SymWithProps) {
-      return ((SymWithProps)wrapped_sym).getProperties(); 
+      return ((SymWithProps)wrapped_sym).getProperties();
     }
     else { return null; }
   }
 
   /** currently not including index as a property */
-  public Map cloneProperties() { 
+  public Map cloneProperties() {
     if (wrapped_sym instanceof SymWithProps) {
-      return ((SymWithProps)wrapped_sym).getProperties(); 
+      return ((SymWithProps)wrapped_sym).getProperties();
     }
     else { return null; }
   }
 
   /** currently not including index as a property */
-  public Object getProperty(String key) { 
+  public Object getProperty(String key) {
     if (wrapped_sym instanceof SymWithProps) {
-      return ((SymWithProps)wrapped_sym).getProperty(key); 
+      return ((SymWithProps)wrapped_sym).getProperty(key);
     }
     else { return null; }
   }
-  
-  public boolean setProperty(String key, Object val) { 
+
+  public boolean setProperty(String key, Object val) {
     if (wrapped_sym instanceof SymWithProps) {
-      return ((SymWithProps)wrapped_sym).setProperty(key, val); 
+      return ((SymWithProps)wrapped_sym).setProperty(key, val);
     }
     else { return false; }
   }

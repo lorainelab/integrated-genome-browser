@@ -109,8 +109,8 @@ public class TierLabelManager
     changeExpandMaxAllMI = new JMenuItem("Adjust Max Expand All");
     collapseMI = new JMenuItem("Collapse");
     hideMI = new JMenuItem("Hide");
-    sym_summarizeMI = new JMenuItem("Make Density Landscape");
-    sym_coverageMI = new JMenuItem("Make Coverage Track");
+    sym_summarizeMI = new JMenuItem("Make Annotation Depth Track");
+    sym_coverageMI = new JMenuItem("Make Annotation Coverage Track");
     glyph_summarizeMI = new JMenuItem("Glyph Summarize");
     saveBedMI = new JMenuItem("Save tier as BED file");
     intersectMI = new JMenuItem("Intersect Selected");
@@ -900,7 +900,7 @@ public class TierLabelManager
     collectSyms(atier, syms);
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq);
-    gsym.setGraphName(atier.getLabel() + " sum");
+    gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);

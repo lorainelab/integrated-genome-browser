@@ -125,12 +125,18 @@
 
 
   <!-- Configure the probe set display -->
-  <annotation_style annot_type_regex=".*link.*psl" factory="com.affymetrix.unibrow.glyph.ProbeSetDisplayGlyphFactory"
+  <annotation_style annot_type_regex=".*link.*psl" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
-  <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.unibrow.glyph.ProbeSetDisplayGlyphFactory"
+  <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
   <annotation_url annot_type_regex=".* netaffx consensus"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$" />
+
+  <annotation_style annot_type_ends_with="_tf"
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
+     height="100"
+     style="coverage" 
+     red="250" green="200" blue="0" />
   <!-- End of probe set display section -->
 
 </prefs>

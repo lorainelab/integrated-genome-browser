@@ -233,12 +233,12 @@ public class ExperimentPivotView extends JComponent
     //axis_tier.addChild(axis);
     //map.addHeaderTier(axis_tier);
 
-    ScoredContainerSym parent = null;  // holds IndexedSingletonSyms
+    ScoredContainerSym parent = null;  // holds IndexedSyms
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)theSyms.get(i);
-      if (sym instanceof IndexedSingletonSym) {
-        IndexedSingletonSym isym = (IndexedSingletonSym)sym;
-        numscores = isym.getScoreCount();
+      if (sym instanceof IndexedSym) {
+        IndexedSym isym = (IndexedSym)sym;
+        numscores = isym.getParent().getScoreCount();
         parent = isym.getParent();
         if (numscores < 0) { numscores = 0; }
         break;
@@ -331,14 +331,14 @@ public class ExperimentPivotView extends JComponent
 
   public GraphGlyph addGraph(SeqSymmetry sym, TierGlyph mtg) {
     GraphGlyph gl = null;
-    if (sym instanceof IndexedSingletonSym) {
-      IndexedSingletonSym isym = (IndexedSingletonSym)sym;
+    if (sym instanceof IndexedSym) {
+      IndexedSym isym = (IndexedSym)sym;
 
       AffyTieredMap extramap = map.getExtraMap();
       TierGlyph egl = (TierGlyph)extramap.getItem(mtg);
       egl.setFillColor(mtg.getFillColor());
 
-      float[] ifloats = isym.getScores();
+      float[] ifloats = isym.getParent().getChildScores(isym);
       int point_count = ifloats.length;
       int[] xcoords = new int[point_count+1];
       float[] ycoords = new float[point_count+1];
@@ -532,12 +532,12 @@ public class ExperimentPivotView extends JComponent
 
     for (int i=0; i<acount; i++) {
       SeqSymmetry sym = testseq.getAnnotation(i);
-      { // Put IndexedSingletonSyms in the sym list instead of the ones from testseq:
+      { // Put IndexedSyms in the sym list instead of the ones from testseq:
         SimpleSymWithProps psym = (SimpleSymWithProps) sym;
         int spansIncluded = sym.getSpanCount();
         if ( 0 < spansIncluded ) {
           SeqSpan span = sym.getSpan( spansIncluded - 1 );
-          IndexedSingletonSym isym = new IndexedSingletonSym( span.getStart(), span.getEnd(), span.getBioSeq() );
+          IndexedSym isym = new IndexedSingletonSym( span.getStart(), span.getEnd(), span.getBioSeq() );
           bucket.addChild( isym );
           sym = isym; // Use this new sym instead.
         }

@@ -111,7 +111,17 @@
    red="150" green="150" blue="255" />
   <annotation_url annot_type_regex=".* netaffx consensus"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$" />
+  <!-- End of probe set display section -->
 
+  <annotation_style annot_type="Probesets" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="255" blue="150" 
+  /> 
+  <annotation_style annot_type="PSRs" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="220" blue="255" 
+  /> 
+  
 <annotation_style annot_type_starts_with="coverage: " 
      factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
      height="100"
@@ -123,7 +133,6 @@
      height="100"
      style="coverage" 
      red="250" green="200" blue="0" />
-  <!-- End of probe set display section -->
 
 </prefs>
 

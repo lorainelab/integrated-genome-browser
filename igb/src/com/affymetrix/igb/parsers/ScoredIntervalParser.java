@@ -183,9 +183,9 @@ public class ScoredIntervalParser {
 	      //    on the other hand, not sure how much it matters...
 	      //    for now, since most syms to match up with will come from via parsing of GFF files,
 	      //       probably ok
+	      annot_id = original_sym.getID();
 	      SeqSpan span = original_sym.getSpan(0);
 	      seqid = span.getBioSeq().getID();
-	      //  don't really need to set min/max/strand if sin3, but leaving in for now
 	      min = span.getMin();
 	      max = span.getMax();
 	      if (! span.isForward()) { strand = "-"; }
@@ -226,7 +226,12 @@ public class ScoredIntervalParser {
 	  if (sin2) { ((IndexedSingletonSym)child).setID(annot_id); }
 	}
 	else {  // sin3
-	  child = new IndexedWrapperSym(original_sym);
+	  // encountered visualization and selection problems using IndexedWrapperSym,
+	  //   so for now making new sym, but using original_syms bounds and id
+	  //	  child = new IndexedWrapperSym(original_sym);
+	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
+	  else { child = new IndexedSingletonSym(min, max, aseq); }
+	  ((IndexedSingletonSym)child).setID(annot_id);
 	}
 	// ScoredContainerSym.addChild() handles setting of child index and parent fields
 	container.addChild(child);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -27,6 +27,8 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -171,6 +173,16 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
 
     report("post state setting", state, graph_glyph);
+    
+    boolean apply_visible_range_filter = UnibrowPrefsUtil.getTopNode().getBoolean(
+      GraphGlyphUtils.PREF_APPLY_PERCENTAGE_FILTER, GraphGlyphUtils.default_apply_percentage_filter);
+    if ( apply_visible_range_filter ) {
+      float[] percentiles = GraphSymUtils.calcPercents2Scores(graf.getGraphYCoords(), 10.0f);
+      // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
+      // and percentiles.length = 1001 in this case.
+      graph_glyph.setVisibleMinY(percentiles[100]); // 10th percentile 
+      graph_glyph.setVisibleMaxY(percentiles[900]); // 90th percentile
+    }
 
     if (graph_seq != aseq) {
       System.out.println("################## ERROR, graph_seq != aseq #################");
@@ -191,7 +203,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       report("pre coord setting ", state, graph_glyph);
       graph_glyph.setCoords(cbox.x, state.getGraphYPos(), cbox.width, state.getGraphHeight());
       report("post coord setting", state, graph_glyph);
-      map.setDataModel(graph_glyph, graf);
+      map.setDataModel(graph_glyph, graf); // side-effect of graph_glyph.setInfo(graf)
       graph_glyph.setFasterDraw(true);
       graph_glyph.setCalcCache(true);
 

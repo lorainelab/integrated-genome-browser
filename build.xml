@@ -57,10 +57,18 @@ Make sure that the 'lib' directory exists and includes
 
     To use this ant build script:
     
-    1. Obtain copies of the following jar files:
-       xerces.jar  (or xml-apis.jar and xercesImpl.jar)
-       javax.servlet.jar
-       org.mortbay.jetty-jdk1.2.jar
+    1. Obtain .jar files for:
+
+       Jetty servlet container, version 4.1 or higher
+       http://www.jettyserver.org/jetty/
+    
+       javax.servlet.jar (if not included by default in your
+       Java installation.)
+
+       Note: IGB requires Xerces code, which ant uses.  When you
+       run IGB on its own, you'll need to include the Xerces .jar
+       file(s) in the java classpath.  Xerces project url is:
+       http://xml.apache.org/xerces-j
        
     2. Place copies of those jar files in some directory.
     

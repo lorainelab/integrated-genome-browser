@@ -62,8 +62,7 @@ Make sure that the 'lib' directory exists and includes
        Jetty servlet container, version 4.1 or higher
        http://www.jettyserver.org/jetty/
     
-       javax.servlet.jar (if not included by default in your
-       Java installation.)
+       javax.servlet.jar 
 
        Note: IGB requires Xerces code, which ant uses.  When you
        run IGB on its own, you'll need to include the Xerces .jar

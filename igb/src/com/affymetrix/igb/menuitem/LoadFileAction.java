@@ -252,6 +252,7 @@ public class LoadFileAction {
         Map id2sym_hash = IGB.getSymHash();
 //        parser.parse(str, stream_name, seqhash);
         parser.parse(str, stream_name, seqhash, id2sym_hash);
+        IGB.symHashChanged(parser);
         aseq = input_seq;
         parser = null;
       }
@@ -356,6 +357,7 @@ public class LoadFileAction {
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 	  //        Map id2sym_hash = Unibrow.getSymHash();
 	  //        gene_reader.readBinaryTest(str, annot_type, seqhash, id2sym_hash, -1);
+          //        IGB.symHashChanged(gene_reader);
 	  gene_reader.parse(str, annot_type, seqhash, -1);
 	}
 	aseq = input_seq;
@@ -369,7 +371,7 @@ public class LoadFileAction {
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
           Map id2sym_hash = IGB.getSymHash();
 	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
-	  IGB.symHashChanged();
+	  IGB.symHashChanged(refseq_reader);
 	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
 	  System.out.println("total refseq annotations loaded: " + alist.size());
 	}
@@ -386,9 +388,10 @@ public class LoadFileAction {
 	}
 	else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");
-          parser.parse(str, seqhash);
+          parser.parse(str, seqhash, IGB.getSymHash(), false);
           aseq = input_seq;
 	}
+        IGB.symHashChanged(parser);
         parser = null;
       }
       else if (stream_name.endsWith(".fa") || stream_name.endsWith(".fasta")) {

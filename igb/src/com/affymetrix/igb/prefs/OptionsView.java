@@ -26,6 +26,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
+import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 
@@ -108,7 +109,18 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     edge_match_box.add(edge_match_color);
     JButton fuzzy_edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching color: "));
-    edge_match_box.add(fuzzy_edge_match_color);
+    edge_match_box.add(fuzzy_edge_match_color);    
+    
+    JPanel orf_box = new JPanel();
+    orf_box.setLayout(new GridLayout(2,2));
+    orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
+
+    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_STOP_CODON_COLOR, OrfAnalyzer2.default_stop_codon_color);
+    orf_box.add(new JLabel("Stop Codon: "));
+    orf_box.add(stop_codon_color);
+    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer2.default_dynamic_orf_color);
+    orf_box.add(new JLabel("Dynamic ORF: "));
+    orf_box.add(dynamic_orf_color);
 
     JPanel axis_box = new JPanel();
     axis_box.setLayout(new GridLayout(3,2));
@@ -130,6 +142,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     
     main_box.add(axis_box);
     main_box.add(edge_match_box);
+    main_box.add(orf_box);
     main_box.add(misc_box);    
         
     validate();

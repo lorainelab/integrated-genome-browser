@@ -106,8 +106,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem rev_comp_item;
   JMenuItem shrink_wrap_item;
   JMenuItem adjust_edgematch_item;
-  JMenuItem toggle_hairline_label_item;
-  JMenuItem toggle_edge_matching_item;
+  JCheckBoxMenuItem toggle_hairline_label_item;
+  JCheckBoxMenuItem toggle_edge_matching_item;
   JMenuItem autoscroll_item;
   JMenuItem bgcolor_item;
 
@@ -504,8 +504,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
     shrink_wrap_item = new JMenuItem("Toggle Shrink Wrapping", KeyEvent.VK_S);
 
-    toggle_hairline_label_item = new JMenuItem("Toggle Hairline Label", KeyEvent.VK_H);
-    toggle_edge_matching_item = new JMenuItem("Toggle Edge Matching", KeyEvent.VK_M);
+    toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
+    toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
+    toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
+    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
+    toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
+    toggle_edge_matching_item.setState(map_view.getEdgeMatching());
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
 
@@ -748,6 +752,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_edge_matching_item) {
       map_view.setEdgeMatching(! map_view.getEdgeMatching());
+      toggle_edge_matching_item.setState(map_view.getEdgeMatching());
       //adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
     }
     else if (src == adjust_edgematch_item) {
@@ -771,6 +776,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_hairline_label_item) {
       map_view.toggleHairlineLabel();
+      toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
     } else if (src == move_tab_to_window_item) {
       openTabInNewWindow(tab_pane);
     }

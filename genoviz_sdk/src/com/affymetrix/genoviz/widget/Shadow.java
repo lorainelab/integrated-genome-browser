@@ -40,7 +40,8 @@ import java.awt.Graphics;
 public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
   private final TransientGlyph tg = new TransientGlyph();
-  private final GlyphI vGlyph = new FillRectGlyph();
+  private final FillRectGlyph vGlyph = new FillRectGlyph();
+
   private NeoMap map;
   private final double topMargin = 0.0;  // margins between viewable area and the shadow
   private final double bottomMargin = 0.0;
@@ -111,7 +112,6 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.tg.setCoords( sbox.x, sbox.y, sbox.width, sbox.height );
     this.map.getScene().addGlyph( this.tg );
 
-
     // Set up a visible glyph.
     double ourX, ourY, ourWidth, ourHeight;
     int[] offset = map.getVisibleOffset();
@@ -149,6 +149,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.map.addItem( this.tg, vGlyph );
     this.tg.setSelectable(false);
     this.setSelectable(false);
+    this.vGlyph.setHitable(false);
+    this.label.setHitable(false);
+    this.extraRect.setHitable(false);
     setLabeled(false);
     if (map.getView() != null) {
       map.getView().addPreDrawViewListener(this);
@@ -369,11 +372,13 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
   /**
    * Allow or disallow selecting the shadow.
+   * (This has a side-effect of also making the shadow "hitable" or not.)
    *
    * @param selectable whether to allow selection
    */
   public final void setSelectable(boolean selectable) {
     this.vGlyph.setSelectable(selectable);
+    this.vGlyph.setHitable(selectable);
   }
 
   /**
@@ -400,5 +405,4 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
       map = null;
     }
   }
-
 }

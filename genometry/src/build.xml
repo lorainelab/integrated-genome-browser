@@ -1,0 +1,53 @@
+<!--
+
+  build file to allow ant (http://jakarta.apache.org/ant/) to be used
+  to build ronin/genometry.
+
+-->
+
+
+<project name="genometry" default="jar" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="src"     value="." />
+  <property name="jars"    value="../../lib" />
+  <property name="dest"    value="build" />
+  <property name="package" value="com/affymetrix/genometry" />
+  <property name="neoroot" value="../../../neo"/>
+
+  <!-- Prepares the build directory -->
+  <target name="prepare">
+    <mkdir dir="${dest}" />
+    <mkdir dir="${jars}" />
+  </target>
+
+  <target name="copy-src-jars">
+    <copy file="${neoroot}/ngsdk/lib/ngsdk.jar" todir="${jars}"/>
+  </target> 
+
+  <!-- This is the core of the driver. It is common for all three versions -->
+  <target name="compile" depends="prepare, copy-src-jars" >
+    <javac srcdir="${src}" destdir="${dest}" classpath="${jars}/ngsdk.jar">
+      <include name="${package}/**" />
+    </javac>
+    <copy todir="${dest}" overwrite="true" filtering="on">
+      <fileset dir="${src}">
+        <include name="**/*.properties" />
+        <exclude name="${dest}/**" />
+      </fileset>
+    </copy>
+  </target>
+
+
+  <!-- This builds the jar file containing the driver -->
+  <target name="jar" depends="compile">
+    <jar jarfile="${jars}/genometry.jar"
+         basedir="${dest}"
+	 includes="${package}/**">
+      <fileset dir=".." includes="dtd/**"/>
+    </jar>
+
+  </target>
+
+</project>
+

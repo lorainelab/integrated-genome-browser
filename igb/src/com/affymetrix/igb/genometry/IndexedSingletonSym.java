@@ -79,6 +79,7 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements Indexed
     }
   }
 
+  /*
   public float[] getScores(java.util.List scorelist) {
     return this.getParent().getChildScores(this, scorelist);
   }
@@ -88,6 +89,6 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements Indexed
   }
 
   public int getScoreCount() { return this.getParent().getScoreCount(); }
-  
+  */  
 
 }

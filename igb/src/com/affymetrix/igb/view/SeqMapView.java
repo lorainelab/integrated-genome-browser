@@ -1946,13 +1946,17 @@ public class SeqMapView extends JPanel
   /** Toggles the hairline between labeled/unlabled and returns true
    *  if it ends-up labeled.
    */
-  public final boolean toggleHairlineLabel() {
+  public boolean toggleHairlineLabel() {
     hairline_is_labeled = ! hairline_is_labeled;
     if (hairline != null) {
       Shadow s = hairline.getShadow();
       s.setLabeled(hairline_is_labeled);
       map.updateWidget();
     }
+    return hairline_is_labeled;
+  }
+  
+  public boolean isHairlineLabeled() {
     return hairline_is_labeled;
   }
 

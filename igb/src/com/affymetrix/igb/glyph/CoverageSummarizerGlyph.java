@@ -42,6 +42,8 @@ import com.affymetrix.genometry.*;
 public class CoverageSummarizerGlyph extends SolidGlyph {
   public static int COVERAGE = 2;
   public static int SIMPLE = 3;
+  public static int SMOOTHED_COVERAGE = 4;
+  //  public static int ENHANCED_SMOOTHED_COVERAGE = 5;
   public static int DEFAULT_STYLE = COVERAGE;
 
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
@@ -50,9 +52,20 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   int[] mins = null;
   int[] maxs = null;
   double[] yval_for_xpixel = null;
+  double[] smoothed_yval = null;
   Point2D curr_coord = new Point2D(0,0);
   Point curr_pixel = new Point(0,0);
   int glyph_style = DEFAULT_STYLE;
+
+  /**
+   *  starting to factor in a smoothing based on values of adjacent pixels
+   */
+  boolean do_smoothing = true;
+  // currently a fixed smoothing factor over three pixels, left/4 + center/2 + right/4
+  //     except for center = 0, then keep at 0
+  // int smoothing_factor = 1;  // how many pixels to left and right to factor in smoothing
+
+
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
@@ -117,6 +130,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     //    be reused and be the length of the component with greatest width...
     if ((yval_for_xpixel == null) || (yval_for_xpixel.length < view_pixel_width)) {
       yval_for_xpixel = new double[view_pixel_width];
+      smoothed_yval = new double[view_pixel_width];
     }
 
     // figure out how many bases per pixel
@@ -203,14 +217,53 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       yval_for_xpixel[i] = coverage;
     }
 
+
     int yzero = pixelbox.y + pixelbox.height;
     int ymax = pixelbox.y + 2;
     g.setColor(Color.gray);
     g.drawLine(pixelbox.x, yzero, pixelbox.x + pixelbox.width,  yzero);
 
+    double coverage = 0;
+
     if (max_coverage != 0) {
+
+      double yvals[] = null;
+      if (do_smoothing) {
+	int max_smooth_index = view_pixel_width-1;
+	double max_smoothed = 0;
+	double min_smoothed = 1;
+
+	for (int pindex = 1 ; pindex < max_smooth_index; pindex++) {
+	  double curr_yval = yval_for_xpixel[pindex];
+	  if (curr_yval == 0) {
+	    smoothed_yval[pindex] = 0;   // any pixel with 0 coverage remains 0 rather than smoothed
+	    min_smoothed = 0;
+	    continue;
+	  }
+	  else {
+	    double prev_yval = yval_for_xpixel[pindex-1];
+	    double next_yval = yval_for_xpixel[pindex+1];
+	    double new_yval = (0.25 * prev_yval) + (0.5 * curr_yval) + (0.25 * next_yval);
+	    smoothed_yval[pindex] = new_yval;
+	    max_smoothed = (new_yval > max_smoothed ? new_yval : max_smoothed);  // equivalent to Math.max(c, mc)...
+	    min_smoothed = (new_yval < min_smoothed ? new_yval : min_smoothed);  // equivalent to Math.min(c, mc)...
+	  }
+	}
+
+	// still need to recalc first pixel and last pixel?? -- NOT YET IMPLEMENTED
+
+	yvals = smoothed_yval;
+	coverage = max_smoothed;
+      }
+      else {
+	yvals = yval_for_xpixel;
+	coverage = max_coverage;
+      }
+
+
       // now calculate scaling to fit in max coverage...
-      double yscale = coordbox.height / max_coverage;
+      //      double yscale = coordbox.height / max_coverage;
+      double yscale = coordbox.height / coverage;
       double yoffset = coordbox.y + coordbox.height;
       double xoffset = coords_per_pixel / 2.0;
 
@@ -218,7 +271,8 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       double prev_yval = -1;
       for (int pindex =0 ; pindex < view_pixel_width; pindex++) {
 	curr_coord.x = (pindex * coords_per_pixel) + xoffset;
-	double curr_yval = yval_for_xpixel[pindex];
+	//	double curr_yval = yval_for_xpixel[pindex];
+	double curr_yval = yvals[pindex];
 	if (curr_yval != 0) {
 	  curr_coord.y = yoffset - (curr_yval * yscale);
 	  view.transformToPixels(curr_coord, curr_pixel);
@@ -233,12 +287,12 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     }
 
     // drawing outline around bounding box
-    g.setColor(Color.blue);
+    g.setColor(Color.lightGray);
     g.setFont(default_font);
     //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
     String msg =
       "Max coverage in view: " +
-      nformat.format(max_coverage) + ", " +
+      nformat.format(coverage) + ", " +
       //      nformat.format(max_covered) + ", " +
       "Bases/Pixel: " +
       nformat.format(coords_per_pixel);

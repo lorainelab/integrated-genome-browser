@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -66,14 +66,10 @@ public class LoadFileAction {
       chooser.setMultiSelectionEnabled(true);
       chooser.addChoosableFileFilter(new UniFileFilter("sin"));
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bpr"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bps"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bgn"));
-      chooser.addChoosableFileFilter(new UniFileFilter("brs"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bsnp"));
-      chooser.addChoosableFileFilter(new UniFileFilter("brpt"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bnib"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+        new String[] {"bpr", "bps", "bgn", "brs", "bsnp", "brpt", "bnib"},
+        "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
         "GFF Files"));
@@ -144,8 +140,11 @@ public class LoadFileAction {
         File cfil = fils[i];
         String file_name = cfil.toString();
         if (file_name.indexOf("http:") > -1) {  // direct input of http...
-
-          String url_name = file_name.substring(file_name.indexOf("http:"));
+          // This method of inputing a URL is not the best way to go, but it sometimes works...
+          // On Linux, and maybe in general, if the user types "http://www.google.com",
+          // it will come out as "/home/user/http:/www.google.com", so we have to
+          // trim off the beginning stuff AND add back the double slash "//" after http.
+          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
           System.out.println("detected url input: " + url_name);
           loadFromUrl(gviewer, url_name, aseq);
         }

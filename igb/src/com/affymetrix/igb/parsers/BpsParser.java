@@ -52,8 +52,6 @@ public class BpsParser implements AnnotationWriter  {
 
   // .bps is for "binary PSL format"
   static String default_annot_type = "spliced_EST";
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/all_pseudoobscura_nets.psl";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/pseudo_synteny_net.bps";
 
   /*
    *  new alternative
@@ -122,14 +120,19 @@ public class BpsParser implements AnnotationWriter  {
       }
       else {
 	if (args.length == 2) {
-	  text_file = args[0];
-	  bin_file = args[1];
+	  String text_file = args[0];
+	  String bin_file = args[1];
+	  convertPslToBps(text_file, bin_file);
 	}
-	convertPslToBps(text_file, bin_file);
+	else {
+	  System.out.println("Usage:  java ... BpsParser <text infile> <binary outfile>");
+	  System.exit(1);
+	}
       }
     }
     if (read_from_bps) {
       Map chrom_hash = new HashMap();
+      String bin_file = args[0];
       java.util.List syms = parse(bin_file, default_annot_type, chrom_hash);
       int symcount = syms.size();
       System.out.println("total sym count: " + symcount);

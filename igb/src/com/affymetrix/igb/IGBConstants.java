@@ -19,5 +19,5 @@ package com.affymetrix.igb;
  */
 public abstract class IGBConstants {
   public static final String APP_NAME = "Integrated Genome Browser";
-  public static final String IGB_VERSION = "3.23";
+  public static final String IGB_VERSION = "3.24";
 }

@@ -326,9 +326,10 @@ public class LoadFileAction {
           IGB.errorPanel("ERROR", ".bps files can only be loaded if a seq group is already selected");
 	}
 	else {
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
 	  DataInputStream dis = new DataInputStream(str);
 	  BpsParser psl_reader = new BpsParser();
-	  psl_reader.parse(dis, stream_name, seqhash);
+	  psl_reader.parse(dis, annot_type, seqhash);
 	  psl_reader = null;
 	}
 	aseq = input_seq;

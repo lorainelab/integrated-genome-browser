@@ -190,7 +190,7 @@ public class UcscGffSym extends SingletonSymWithProps {
     if (is_gff1) {
       if (group != null) {tprops.put("group", group);}
     } else {
-      GFFParser.processAttributes(tprops, group);
+      if (group != null) GFFParser.processAttributes(tprops, group);
     }
     
     return tprops;

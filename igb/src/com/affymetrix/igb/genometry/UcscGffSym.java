@@ -21,7 +21,6 @@ import com.affymetrix.genometry.*;
  *  See http://genome.ucsc.edu/goldenPath/help/customTrack.html#GTF
  */
 public class UcscGffSym extends SingletonSymWithProps { 
-  final static boolean GFF_BASE1 = true;
 
   public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
   public static final char UNKNOWN_FRAME = '.';
@@ -40,15 +39,18 @@ public class UcscGffSym extends SingletonSymWithProps {
    * those errors and will also convert from interbase-0 to base-1 coordinates.
    * @param a  The coordinate in column 4 of the GFF file.
    * @param b  The coordinate in column 5 of the GFF file.
+   * @param convert_base Whether to convert from base-1 to interbase-0 
+   *   numbering; this IS necessary with typical GFF files.
    */
   public UcscGffSym(BioSeq seq, String source, String feature_type, int a, int b, 
-                    float score, char strand, char frame, String group_field) {
+                    float score, char strand, char frame, String group_field, 
+                    boolean convert_base) {
     super(0, 0, seq);
 
     // GFF spec says coord_A <= coord_B, but this is not always obeyed
     int max = Math.max(a, b);
     int min = Math.min(a, b);
-    if (GFF_BASE1) { // convert from base-1 numbering to interbase-0 numbering
+    if (convert_base) { // convert from base-1 numbering to interbase-0 numbering
       min--;
     }
     
@@ -133,7 +135,6 @@ public class UcscGffSym extends SingletonSymWithProps {
 
     return super.setProperty(name, val);
   }
-           
 
   public Map getProperties() {
     return cloneProperties();

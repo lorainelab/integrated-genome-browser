@@ -61,15 +61,14 @@ public class GraphSymUtils {
 
   /**
    *  Reads a graph.
-   *  ReadGraphs will accept .bar, .mbar, or .bgr input.
+   *  ReadGraphs will accept .bar, .mbar, .bgr, or .sgr input.
    */
   public static java.util.List readGraphs(InputStream istr, String stream_name, Map seqs) throws IOException  {
     List grafs = null;
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
-    String sname = stripped_name.toString();
-    if (sname.endsWith(".bar") || sname.endsWith(".mbar") ||
-        sname.endsWith(".BAR") || sname.endsWith(".Bar")) {
+    String sname = stripped_name.toString().toLowerCase();
+    if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
       grafs = readMbarFormat(newstr, seqs, stream_name);
     }
     else if (sname.endsWith(".bgr")) {
@@ -79,20 +78,13 @@ public class GraphSymUtils {
         grafs.add(gsym);
       }
     }
-    else if (sname.endsWith(".sgr") || sname.endsWith(".SGR") || sname.endsWith(".Sgr")) {
+    else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();
       grafs = sgr_parser.parse(istr, seqs, false, stream_name);
     }
     //    if ((grafs != null) && Unibrow.ANNOTATE_GRAPHS) {
-    if (grafs != null)  {
-      for (int i=0; i<grafs.size(); i++) {
-        GraphSym gsym = (GraphSym)grafs.get(i);
-        BioSeq gseq = gsym.getGraphSeq();
-        if (gseq instanceof MutableAnnotatedBioSeq) {
-          ((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
-        }
-      }
-    }
+    addGraphsToSeqs(grafs);
+    // }
     //    newstr.close();
     //    istr.close();
     return grafs;
@@ -116,14 +108,15 @@ public class GraphSymUtils {
     //    istr = Streamer.unzipStream(orig_str, stream_name, stripped_name);
     istr = Streamer.unzipStream(orig_str, original_stream_name, stripped_name);
     String stream_name = stripped_name.toString();
+    String stream_name_lc = stream_name.toLowerCase();
     if (graph_name == null) { graph_name = stream_name; }
 
-    if (stream_name.endsWith(".bgr") || stream_name.endsWith(".bpr")) {
+    if (stream_name_lc.endsWith(".bgr") || stream_name_lc.endsWith(".bpr")) {
       graf = readBgrFormat(istr, seq);
     }
-    else if (stream_name.endsWith(".gr")) { graf = readGrFormat(istr, seq, stream_name); }
-    else if (stream_name.endsWith(".sbar")) { graf = readSbarFormat(istr, seq); }
-    else if (stream_name.endsWith(".bar") || stream_name.endsWith(".mbar")) {
+    else if (stream_name_lc.endsWith(".gr")) { graf = readGrFormat(istr, seq, stream_name); }
+    else if (stream_name_lc.endsWith(".sbar")) { graf = readSbarFormat(istr, seq); }
+    else if (stream_name_lc.endsWith(".bar") || stream_name_lc.endsWith(".mbar")) {
       Map seqs = new HashMap();
       if (seq != null) {
         seqs.put(seq.getID(), seq);
@@ -152,7 +145,7 @@ public class GraphSymUtils {
     }
     return graf;
   }
-
+  
   static void addGraphsToSeqs(List grafs) {
     if (grafs != null)  {
       for (int i=0; i<grafs.size(); i++) {

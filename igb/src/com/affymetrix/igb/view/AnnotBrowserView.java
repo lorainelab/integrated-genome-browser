@@ -73,6 +73,7 @@ implements ListSelectionListener, SymMapChangeListener  {
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
+    IGB.addSymMapChangeListener(this);
   }
 
   protected Object[][] buildRows(Map props) {
@@ -148,6 +149,7 @@ implements ListSelectionListener, SymMapChangeListener  {
 
   public void destroy() {
     removeAll();
+    IGB.removeSymMapChangeListener(this);
     if (lsm != null) {lsm.removeListSelectionListener(this);}
   }
 }

@@ -46,14 +46,29 @@ import com.affymetrix.igb.util.FloatList;
  *     from the same assembly
  *
  *  DATA SECTION
+ *  SIN format version 1 (".sin")
  *  tab-delimited lines with 4 required columns, any additional columns are scores:
  *  seqid    min_coord    max_coord    strand    [score]*
+ *
+ *  SIN format version 2 (".sin2")
+ *  tab-delimited lines with 5 required columns, any additional columns are scores:
+ *  annot_id    seqid    min_coord    max_coord    strand    [score]*
+ *
+ *  SIN format version 3 (".sin3")
+ *  tab-delimited lines with 1 required column, any additional columns are scores:
+ *  annot_id  [score]*
+ *
+ *  Parser _should_ be able to distinguish between these, based on combination of 
+ *     number of fields, and presence and position of strand field
+ *  
+ *  SIN version 3 is not yet implemented -- needs pointer to a map of id-->annotation_sym
  *
  *  seqid is word string [a-zA-Z_0-9]+
  *  min_coord is int
  *  max_coord is int
  *  strand can be '+', '-', or '.' for "unknown"
  *  score is float
+ *  annot_id is word string [a-zA-Z_0-9]+
  *
  *  all lines must have same number of columns
  *
@@ -72,6 +87,7 @@ public class ScoredIntervalParser {
 
   static Pattern line_regex  = Pattern.compile("\t");
   static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
+  static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
   public void parse(InputStream istr, String stream_name, Map seqhash) {
     try {
@@ -103,17 +119,53 @@ public class ScoredIntervalParser {
 
       int line_count = 0;
       int score_count = 0;
+
+      Matcher strand_matcher = strand_regex.matcher("");
+      boolean sin1 = false;
+      boolean sin2 = false;
+      boolean sin3 = false;
       while (line != null) {
 	// skip comment lines (any lines that start with "#")
 	if (line.startsWith("#")) { line = br.readLine(); continue; }
 
 	String[] fields = line_regex.split(line);
-	String seqid = fields[0];
-	int min = Integer.parseInt(fields[1]);
-	int max = Integer.parseInt(fields[2]);
-	String strand = fields[3];
+	int fieldcount = fields.length;
+
+	String annot_id = null;
+	String seqid;
+	int min;
+	int max;
+	String strand = null;
+	int score_offset;
+
+	sin1 = strand_matcher.reset(fields[3]).matches();  // sin1 format if 4rth field is strand: [+-.]
+	if (sin1) {
+	  score_offset = 4;
+	  annot_id = null;
+	  seqid = fields[0];
+	  min = Integer.parseInt(fields[1]);
+	  max = Integer.parseInt(fields[2]);
+	  strand = fields[3];
+	}
+        else {
+	  sin2 = strand_matcher.reset(fields[4]).matches();   // sin2 format if 5th field is strand: [+-.]
+	  if (sin2) {
+	    score_offset = 5;
+	    annot_id = fields[0];
+	    seqid = fields[1];
+	    min = Integer.parseInt(fields[2]);
+	    max = Integer.parseInt(fields[3]);
+	    strand = fields[4];
+	  }
+	  else { 
+	    sin3 = true;
+	    score_offset = 1;
+	    break;  // sin3 format not yet implemented
+	  }
+	}
 	if (score_names == null) {
-	  score_count = fields.length - 4;
+	  //	  score_count = fields.length - 4;
+	  score_count = fields.length - score_offset;
 	  score_names = initScoreNames(score_count, index2id);
 	}
         ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
@@ -134,9 +186,10 @@ public class ScoredIntervalParser {
 	  seq2container.put(seqid, container);
 	}
 
-	SeqSymmetry child;
+	IndexedSingletonSym child;
 	if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 	else { child = new IndexedSingletonSym(min, max, aseq); }
+	if (sin2) { child.setID(annot_id); }
 	// ScoredContainerSym.addChild() handles setting of child index and parent fields
 	container.addChild(child);
 
@@ -149,8 +202,10 @@ public class ScoredIntervalParser {
 	  seq2arrays.put(seqid, score_arrays);
 	  arrays2container.put(score_arrays, container);
 	}
-	for (int field_index = 4; field_index < fields.length; field_index++) {
-	  FloatList flist = (FloatList)score_arrays.get(field_index-4);
+	//	for (int field_index = 4; field_index < fields.length; field_index++) {
+	for (int field_index = score_offset; field_index < fields.length; field_index++) {
+	  //	  FloatList flist = (FloatList)score_arrays.get(field_index-4);
+	  FloatList flist = (FloatList)score_arrays.get(field_index - score_offset);
 	  float score = Float.parseFloat(fields[field_index]);
 	  flist.add(score);
 	}

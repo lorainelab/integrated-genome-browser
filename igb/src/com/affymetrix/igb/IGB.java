@@ -45,7 +45,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
   public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.20";
+  public static String IGB_VERSION = "3.21";
 
   public static final boolean DEBUG_EVENTS = false;
   public static boolean CURATION_ENABLED = true;

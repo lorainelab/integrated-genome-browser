@@ -146,7 +146,7 @@ public class GFFParser implements AnnotationWriter  {
   public GFFParser(boolean coords_are_base1) {
     GFF_BASE1 = coords_are_base1;
   }
-    
+  
   /**
    *  Adds a filter to the fail_filter_hash.
    *  Like {@link #addFeatureFilter(String, boolean)} with pass_filter=false.
@@ -207,6 +207,20 @@ public class GFFParser implements AnnotationWriter  {
     }
   }
 
+  /**
+   *  Removes all filtering.  Removes all "pass" filters and all "reject" filters.
+   *  Has no effect on any grouping tag set with {@link #setGroupTag(String)}.
+   */
+  public void resetFilters() {
+    pass_filter_hash = null;
+    fail_filter_hash = null;
+  }
+
+  /**
+   *  Sets which tag to use to create groups.  Most commonly, this will
+   *  be set to "transcript_id" to group all entries from the same transcript.
+   *  Can be set to null if no grouping is desired.
+   */
   public void setGroupTag(String tag) {
     group_tag = tag;
   }
@@ -265,6 +279,7 @@ public class GFFParser implements AnnotationWriter  {
       while ((br.ready())) {
 	String line = br.readLine();
 	if (line == null) { continue; }
+        if (line.startsWith("##")) { processDirective(line); continue; }
 	if (line.startsWith("#")) { continue; }
 	String fields[] = line_regex.split(line);
 
@@ -502,6 +517,45 @@ public class GFFParser implements AnnotationWriter  {
     }
   }
 
+  static final Matcher directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)").matcher("");
+  static final Matcher directive_group_by = Pattern.compile("##IGB-group-by (.*)").matcher("");
+  
+  /**
+   *  Process directive lines in the input, which are lines beginning with "##".
+   *  Directives that are not understood are treated as comments.
+   *  Directives that are understood include "##IGB-filter-include x y z",
+   *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x".
+   */
+  void processDirective(String line) {
+    if (directive_filter.reset(line).matches()) {
+      resetFilters();
+      String[] feature_types = directive_filter.group(2).split(" ");
+      for (int i=0;i<feature_types.length; i++) {
+        String feature_type = feature_types[i].trim();
+        if (feature_type.length() > 0) {
+          addFeatureFilter(feature_type, "include ".equals(directive_filter.group(1)));
+        }
+      }
+      directive_filter.reset(""); // allow garbage collection of input string
+      return;
+    }
+
+    if (directive_group_by.reset(line).matches()) {
+      String group = directive_group_by.group(1).trim();
+      if (group.length() > 0) {
+        setGroupTag(group);
+      } else {
+        setGroupTag(null);
+      }
+      directive_group_by.reset(""); // allow garbage collection of input string
+      return;
+    }
+    
+    // Issue warnings about directives that aren't understood only for "##IGB-" directives.
+    if (line.startsWith("##IGB")) {
+      System.out.println("WARNING: GFF/GTF processing directive not understood: '"+line+"'");
+    }
+  }
 
 
   /**
@@ -562,18 +616,37 @@ public class GFFParser implements AnnotationWriter  {
     return sym.getProperties();
   }
 
+  /**
+   *  Sets the parser to some standard settings that filter-out "intron" and
+   *  "transcript" lines, among other things, and groups by "transcript_id".
+   */
+  public void addStandardFilters() {
+    addFeatureFilter("intron");
+    addFeatureFilter("splice3");
+    addFeatureFilter("splice5");
+    addFeatureFilter("prim_trans");
+    addFeatureFilter("gene");
+
+    addFeatureFilter("transcript");
+    addFeatureFilter("cluster");
+    addFeatureFilter("psr");
+    addFeatureFilter("link");
+
+    setGroupTag("transcript_id");
+  }
 
   public static void main(String[] args) {
     GFFParser test = new GFFParser();
     String file_name = null;
     if (args.length >= 1)  {
       file_name = args[0];
+    } else {
+      System.out.println("Usage:  java GFFParser <filename>");
+      System.exit(0);
     }
 
-    System.out.println("filtering introns");
-    test.addFeatureFilter("intron");
-    test.addFeatureFilter("splice5");
-    test.addFeatureFilter("splice3");
+    test.addStandardFilters();
+
     Memer mem = new Memer();
     mem.printMemory();
     java.util.List annots = null;
@@ -591,6 +664,16 @@ public class GFFParser implements AnnotationWriter  {
     System.gc();
     try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
     mem.printMemory();
+    
+    if (annots.size() < 10) {
+      Iterator iter = annots.iterator();
+      while (iter.hasNext()) {
+        System.out.println("------------------------------");
+        SymWithProps sym = (SymWithProps) iter.next();
+        SeqUtils.printSymmetry(sym, "  ", true);
+      }
+      System.out.println("------------------------------");
+    }
   }
 
   /**

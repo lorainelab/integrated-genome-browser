@@ -376,20 +376,9 @@ public class LoadFileAction {
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format
         GFFParser parser = new GFFParser();
-        // this feature filtering and group tags are all specific to the way Affy uses GTF files!
-        parser.addFeatureFilter("intron");
-        parser.addFeatureFilter("splice3");
-        parser.addFeatureFilter("splice5");
-        parser.addFeatureFilter("prim_trans");
-        parser.addFeatureFilter("gene");
 
-        parser.addFeatureFilter("transcript");
-        parser.addFeatureFilter("cluster");
-        parser.addFeatureFilter("psr");
-        parser.addFeatureFilter("link");
-
-        parser.setGroupTag("transcript_id");
-	if (seqhash == null) {
+        parser.addStandardFilters();
+        if (seqhash == null) {
 	  System.out.println("in GFFParser, annotating just input seq");
 	  aseq = parser.parse(str, input_seq);
 	}

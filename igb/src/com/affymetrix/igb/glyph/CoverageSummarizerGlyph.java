@@ -214,13 +214,14 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       double xoffset = coords_per_pixel / 2.0;
 
       g.setColor(this.getColor());
+      double prev_yval = -1;
       for (int pindex =0 ; pindex < view_pixel_width; pindex++) {
 	curr_coord.x = (pindex * coords_per_pixel) + xoffset;
 	double curr_yval = yval_for_xpixel[pindex];
 	if (curr_yval != 0) {
 	  curr_coord.y = yoffset - (curr_yval * yscale);
 	  view.transformToPixels(curr_coord, curr_pixel);
-	  if (glyph_style == SIMPLE) {
+	  if (glyph_style == SIMPLE || coords_per_pixel <= 10) {
 	    g.drawLine(pindex, yzero, pindex, ymax);
 	  }
 	  else {
@@ -235,8 +236,10 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     g.setFont(default_font);
     //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
     String msg =
+      "Max coverage in view: " +
       nformat.format(max_coverage) + ", " +
       nformat.format(max_covered) + ", " +
+      "Bases/Pixel: " + 
       nformat.format(coords_per_pixel);
 
     g.drawString(msg, 3, pixelbox.y + 10);

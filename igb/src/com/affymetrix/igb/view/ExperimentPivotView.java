@@ -21,6 +21,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 
@@ -206,7 +207,7 @@ public class ExperimentPivotView extends JComponent
   }
 
   private void resetThisWidget( java.util.List theSyms ) {
-
+    Memer mem = new Memer();
     if (this.currentSeq == null) {
       System.err.println("ERROR: ExperimentPivotView.resetThisWidget() called, "  +
 			 "but no current annotated seq: " + this.currentSeq );
@@ -244,6 +245,8 @@ public class ExperimentPivotView extends JComponent
         break;
       }
     }
+
+
     //AffyTieredMap extramap = map.getExtraMap();
     //extramap.setMapRange(0, (numscores * score_spacing));
     map.setExtraMapRange(0, (numscores * score_spacing));
@@ -254,6 +257,7 @@ public class ExperimentPivotView extends JComponent
     headerTier.addChild( extra_labels );
     map.addNorthEastTier( headerTier );
     String[] scoreNames = new String[numscores];
+
     if (parent != null) {
       for (int i=0; i<numscores; i++) {
         scoreNames[i] = parent.getScoreName(i);
@@ -268,6 +272,8 @@ public class ExperimentPivotView extends JComponent
     overall_score_max = Float.NEGATIVE_INFINITY;
     double xmin = Double.POSITIVE_INFINITY;
     double xmax = Double.NEGATIVE_INFINITY;
+
+    //    mem.printMemory();
     for (int i=0; i<symcount; i++) {
       TierGlyph mtg = new TierGlyph();
       mtg.setFillColor(tcolors[i % tcolors.length]);
@@ -289,6 +295,8 @@ public class ExperimentPivotView extends JComponent
         overall_score_max = Math.max(overall_score_max, gr.getGraphMaxY());
       }
     }
+    //    mem.printMemory();
+    //    System.err.println(" ");
 
     setExperimentScaling(experiment_scaling, false);
     setExperimentStyle(experiment_style, false);

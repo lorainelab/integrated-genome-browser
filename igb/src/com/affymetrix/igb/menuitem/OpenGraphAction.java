@@ -196,6 +196,7 @@ public class OpenGraphAction extends AbstractAction {
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
       chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
       chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bgr", "bpr"}));
+      chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {

@@ -49,9 +49,11 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   private boolean labeled=false;  // should we draw a label?
   private boolean labelForReverse = false;
   private long residueCount;
-  private static final java.text.DecimalFormat dform = new java.text.DecimalFormat("#.##");
+  private static final java.text.DecimalFormat dform = new java.text.DecimalFormat("#,###.##");
   private final Rectangle2D px = new Rectangle2D();  // used for coordinate conversions
   private final Rectangle tx = new Rectangle(); // used for label text width and height
+  private int current_range_st = 0;
+  private int current_range_en = 0;
 
   /**
    * When labeled=true, access the label's Glyph through this variable
@@ -152,6 +154,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.vGlyph.setHitable(false);
     this.label.setHitable(false);
     this.extraRect.setHitable(false);
+    this.extraRect.setSelectable(false);
     setLabeled(false);
     if (map.getView() != null) {
       map.getView().addPreDrawViewListener(this);
@@ -179,6 +182,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
        label.setShowBackground(true);
        label.setPlacement(StringGlyph.CENTER);
        label.setSelectable(false);
+       
+       this.setRange(current_range_st, current_range_en);
 
        map.addItem( this.tg, extraRect);
        map.addItem( this.tg, label);
@@ -260,7 +265,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           // The extraRect should be offset by (width*0.5, px.height*0.5) from the label
           extraRect.setCoords(x, offset[1] - px.height*1.5, 1, px.height);
           label.setCoords(x+width*0.5, offset[1] - px.height*1.0, 0,0);
-          }
+        }
         break;
       case NeoMapI.VERTICAL:
         y = st;
@@ -271,7 +276,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           // The extraRect should be offset by (px.width*0.5,height*0.5) from the label
           extraRect.setCoords(offset[1] - px.width*1.25,y, px.width, 1);
           label.setCoords(offset[1] - px.width*0.75,y+0.5*height, 0,0);
-          }
+        }
         break;
       default:
         throw new IllegalStateException( "The orientation must be HORIZONTAL or VERTICAL." );
@@ -285,7 +290,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
       this.vGlyph.setCoords(x,y,width,height);
 
     }
-
+    
+    current_range_st = st;
+    current_range_en = en;
   }
 
   /**

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -268,7 +268,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     pglyph.setCoords(pspan.getMin(), parent_y, pspan.getLength(), parent_height);
     //System.out.println("PARENT: "+pglyph.getCoordBox().y+", "+pglyph.getCoordBox().height);
     pglyph.setColor(consensus_color);
-    map.setDataModel(pglyph, transformed_consensus_sym);
+    map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
     int childCount = transformed_consensus_sym.getChildCount();
         
@@ -281,7 +281,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);
       cglyph.setColor(consensus_color);
       pglyph.addChild(cglyph);
-      map.setDataModel(cglyph, child);
+      map.setDataModelFromOriginalSym(cglyph, child);
     }
 
     // Add the pglyph to the tier before drawing probesets because probesets
@@ -397,7 +397,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     polyA_glyph_rect.setCoords(span.getMin(), y, span.getLength(), height);
     //polyA_glyph_rect.setAboveAxis(span.isForward());
     consensus_glyph.addChild(polyA_glyph_rect);
-    gviewer.getSeqMap().setDataModel(polyA_glyph_rect, poly_A_sym);
+    gviewer.getSeqMap().setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
   }  
   
   /**
@@ -444,7 +444,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       probeset_glyph.setColor(probeset_color);
 
       parent_glyph.addChild(probeset_glyph);
-      gviewer.getSeqMap().setDataModel(probeset_glyph, probeset_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
       addProbesToProbeset(probeset_glyph, transformed_probeset_sym,
         probe_y, probe_height, probeset_color);
     } else {
@@ -487,7 +487,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
           GlyphI outline = new EfficientOutlineContGlyph();
           outline.setForegroundColor(probeset_color);
-          gviewer.getSeqMap().setDataModel(outline, probeset_sym);
+          gviewer.getSeqMap().setDataModelFromOriginalSym(outline, probeset_sym);
           outline.setCoords(span.getMin(), child_y, span.getLength(), child_height);
           addProbesToProbeset(outline, transformed_probeset_sym, child_y, child_height, probeset_color);
 
@@ -508,7 +508,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       } else {
         tiers[1].addChild(another_probeset_glyph);        
       }
-      gviewer.getSeqMap().setDataModel(another_probeset_glyph, probeset_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(another_probeset_glyph, probeset_sym);
     }
   
   void addProbesToProbeset(GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym, 
@@ -519,7 +519,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       GlyphI probe_glyph = drawProbeGlyph(probe_sym, probe_y, probe_height, probeset_color);
       if (probe_glyph == null) continue;
       probeset_glyph.addChild(probe_glyph);
-      gviewer.getSeqMap().setDataModel(probe_glyph, probe_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(probe_glyph, probe_sym);
     }
   }
   
@@ -543,7 +543,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
         GlyphI probe_part_glyph = drawProbeSegmentGlyph(probe_part_span, probe_y, probe_height, c);
         probe_glyph.addChild(probe_part_glyph);
-        gviewer.getSeqMap().setDataModel(probe_part_glyph, probe_part_sym);
+        gviewer.getSeqMap().setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
       }
     } else {
       probe_glyph = drawProbeSegmentGlyph(probe_sym.getSpan(gviewer.getViewSeq()), probe_y, probe_height, c);

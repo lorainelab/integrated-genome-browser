@@ -877,9 +877,37 @@ public class GraphSymUtils {
     return tvpairs;
   }
 
+  /**
+   *  Calculate percentile rankings of graph values.
+   *  In the resulting array, the value of scores[i] represents
+   *  the value at percentile (100 * i)/(scores.length - 1).
+   */
+  public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
+    float abs_max_percent = 100.0f;
+    float percents_per_bin = 1.0f / bins_per_percent;
 
+    int num_scores = scores.length;
+    float[] ordered_scores = new float[num_scores];
+    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
+    Arrays.sort(ordered_scores);
 
-  public static void main(String[] args) {
+    int num_percents = (int)(abs_max_percent * bins_per_percent + 1);
+    float[] percent2score = new float[num_percents];
+
+    float scores_per_percent = ordered_scores.length / 100.0f;
+    for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_bin) {
+      int score_index = (int)(percent * scores_per_percent);
+      if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
+      //      System.out.println("percent: " + percent + ", score_index: " + score_index
+      //			 + ", percent_index: " + (percent * bins_per_percent));
+      percent2score[(int)Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
+    }
+    // just making sure max 100% is really 100%...
+    percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
+    return percent2score;
+  }
+  
+  public static void main2(String[] args) {
     try {
       String infile = args[0];
       String outfile = args[1];

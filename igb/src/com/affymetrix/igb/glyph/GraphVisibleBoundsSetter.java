@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener  {
@@ -84,12 +85,11 @@ public class GraphVisibleBoundsSetter extends JPanel
   Map info2pscores = new HashMap();
   java.util.List graphs = new ArrayList();
 
-  /**
+  /*
    *  Now trying to map slider values to percentages, such that each slider
    *  unit = 0.1 percent (or in other words slider units per percent = 10)
    */
-  float sliders_per_percent = 10.0f;
-  float percents_per_slider = 1.0f / sliders_per_percent;
+  static float sliders_per_percent = 10.0f;
   float abs_min_percent = 0.0f;
   float abs_max_percent = 100.0f;
   float prev_min_per = 0;
@@ -324,8 +324,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	if (info == null) { System.err.println("Graph has no info! " + gl); }
 	float[] p2score = (float[])info2pscores.get(info);
 	if (p2score == null) {
-	  p2score = calcPercents2Scores(gl);
-	  info2pscores.put(info, p2score);
+          p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
 	}
 	float vismin_val = gl.getVisibleMinY();
 	float vismax_val = gl.getVisibleMaxY();
@@ -365,31 +364,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
   }
 
-  protected float[] calcPercents2Scores(GraphGlyph sgg) {
-    // System.out.println("calculating percentages for graph: " + sgg);
-    float[] scores = sgg.getYCoords();
-    int num_scores = scores.length;
-    //    int num_percents = max_percent - min_percent + 1;
-    int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
-    //    System.out.println("num_percents: " + num_percents);
-    float[] ordered_scores = new float[num_scores];
-    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
-    //    System.out.println("score array copied");
-    Arrays.sort(ordered_scores);
-    //    System.out.println("scores sorted");
-    float[] percent2score = new float[num_percents];
-
-    float scores_per_percent = ordered_scores.length / 100.0f;
-    for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_slider) {
-      int score_index = (int)(percent * scores_per_percent);
-      if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-      //      System.out.println("percent: " + percent + ", score_index: " + score_index
-      //			 + ", percent_index: " + (percent * sliders_per_percent));
-      percent2score[(int)Math.round(percent * sliders_per_percent)] = ordered_scores[score_index];
-    }
-    // just making sure max 100% is really 100%...
-    percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
-    return percent2score;
+  protected static float[] calcPercents2Scores(GraphGlyph sgg) {
+    return com.affymetrix.igb.util.GraphSymUtils.calcPercents2Scores(sgg.getYCoords(), sliders_per_percent);
   }
 
   /*

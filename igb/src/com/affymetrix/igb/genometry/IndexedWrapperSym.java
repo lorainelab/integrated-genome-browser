@@ -90,7 +90,7 @@ public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
    * Propertied implementation -- pass-through methods to wrapped symmetry
    */
 
-  /** currently not including index as a property */
+  /** Returns a Map of the properties, but currently not including index as a property. */
   public Map getProperties() {
     if (wrapped_sym instanceof SymWithProps) {
       return ((SymWithProps)wrapped_sym).getProperties();
@@ -98,10 +98,10 @@ public class IndexedWrapperSym implements IndexedSym, SymWithProps  {
     else { return null; }
   }
 
-  /** currently not including index as a property */
+  /** Returns a clone of the properties, but currently not including index as a property. */
   public Map cloneProperties() {
     if (wrapped_sym instanceof SymWithProps) {
-      return ((SymWithProps)wrapped_sym).getProperties();
+      return ((SymWithProps)wrapped_sym).cloneProperties();
     }
     else { return null; }
   }

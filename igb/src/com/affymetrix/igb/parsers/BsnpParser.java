@@ -23,6 +23,9 @@ import com.affymetrix.igb.genometry.*;
 
 /**
  *
+ *  A class for parsing bsnp files.
+ *
+ *  <pre>
    *  Currently the type field is ignored (type info is not included in the output .bsnp file),
    *    because for all the snp files looked at so far from UCSC, the type for all entries has been "SNP"
    *
@@ -79,7 +82,8 @@ import com.affymetrix.igb.genometry.*;
    *        base_position
    *     }
    *  }
-   *
+   *  
+   *</pre>
    */
   public class BsnpParser {
     static String text_infile = "c:/data/ucsc/hg17/snpMap_rs.txt";

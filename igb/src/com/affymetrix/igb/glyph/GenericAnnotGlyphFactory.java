@@ -208,7 +208,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       //      pglyph.setColor(glyph_col);
       pglyph.setColor(parent_color);
       if (SET_PARENT_INFO) {
-        setDataModel(map,  pglyph, sym);
+        map.setDataModelFromOriginalSym(pglyph, sym);
       }
 
       SeqSpan cdsSpan = null;
@@ -266,7 +266,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               cds_glyph.setColor(child_color);
               pglyph.addChild(cds_glyph);
               if (SET_CHILD_INFO) {
-                setDataModel(map,  cds_glyph, cds_sym_3);
+                map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
               }
 
               } catch (Exception e) {
@@ -278,7 +278,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           cglyph.setColor(child_color);
           pglyph.addChild(cglyph);
           if (SET_CHILD_INFO) {
-            setDataModel(map,  cglyph, child);
+            map.setDataModelFromOriginalSym(cglyph, child);
           }
         }
       }
@@ -305,23 +305,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       //      pglyph.setColor(glyph_col);
       pglyph.setColor(parent_color);
       if (SET_PARENT_INFO) {
-        setDataModel(map,  pglyph, sym);
+        map.setDataModelFromOriginalSym(pglyph, sym);
       }
     }
 
     if (forward)  { forward_tier.addChild(pglyph); }
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
-  }
-
-  /** Sets the data model based on the original symmetry for derived graphs. */
-  public static void setDataModel(AffyTieredMap map, GlyphI g, SeqSymmetry sym) {
-    if (sym instanceof DerivedSeqSymmetry)  {
-      map.setDataModel(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
-    }
-    else {
-      map.setDataModel(g, sym);
-    }
-  }
-  
+  }  
 }

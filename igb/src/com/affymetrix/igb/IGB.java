@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -44,8 +44,8 @@ import com.affymetrix.igb.util.ErrorHandler;
  */
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
-  public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.22";
+  public static String APP_NAME = IGBConstants.APP_NAME;
+  public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
   public static final boolean DEBUG_EVENTS = false;
   public static boolean CURATION_ENABLED = true;
@@ -53,14 +53,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
-
-  /** Preference for whether a control server should be started.
-   *  A control server allows IGB to be controled by http requests from other
-   *  applications.  If the control server is turned off, bookmarks used inside
-   *  the program will still work, but calls from external applications will not.
-   */
-  public static final String PREF_USE_CONTROL_SERVER = "Use control server";
-  public static boolean default_use_control_server = true;
 
   public static Color default_bg_col = Color.black;
   public static Color default_label_col = Color.white;
@@ -70,7 +62,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  private static HashMap id2sym_hash = new HashMap();
+  private static Map id2sym_hash = new HashMap();
   private static Vector sym_map_change_listeners = new Vector(1);
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
@@ -163,7 +155,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     singleton_igb = new IGB();
     singleton_igb.init();
-
+    
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     String url = get_arg("-href", args);
@@ -305,16 +297,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   /**
-   *  map of tags (usually names or ids) to SeqSymmetries for currently
-   *  loaded genome and/or chromosome
+   *  Map of tags (usually names or ids) to SeqSymmetries for currently
+   *  loaded genome and/or chromosome.
    */
-  public static final HashMap getSymHash() {
+  public static final Map getSymHash() {
     return id2sym_hash;
   }
 
   public static void clearSymHash() {
     id2sym_hash.clear();
-    symHashChanged(IGB.class); // IGB.class is the most obvious source for the event
+    symHashChanged(IGB.class); // IGB.class is the most obvious event source
   }
 
   public static SingletonGenometryModel getGenometryModel() {
@@ -430,10 +422,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    // Commenting-out the ability to turn the control server off.
-    //if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
-      startControlServer();
-    //}
+    startControlServer();
 
     frm = new JFrame(APP_NAME);
 

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -37,7 +37,7 @@ import com.affymetrix.igb.util.FloatList;
  *  Currently the only tags used by the parser are of the form "score$i"
  *     For each score column in the data section at index $i, if there is a
  *       header with tag of "score$i", then the id of that set of scores will be set
- *       to the corresponding value.  If no score tag exists for a given column i, then 
+ *       to the corresponding value.  If no score tag exists for a given column i, then
  *       by default it is assigned an id of "score$i"
  *  Also, it is recommended that a tagval pair with tag = "genome_version" be included
  *     to indicate which genome assembly the sequence coordinates are based on
@@ -58,9 +58,9 @@ import com.affymetrix.igb.util.FloatList;
  *  tab-delimited lines with 1 required column, any additional columns are scores:
  *  annot_id  [score]*
  *
- *  Parser _should_ be able to distinguish between these, based on combination of 
+ *  Parser _should_ be able to distinguish between these, based on combination of
  *     number of fields, and presence and position of strand field
- *  
+ *
  *  SIN version 3 is not yet implemented -- needs pointer to a map of id-->annotation_sym
  *
  *  seqid is word string [a-zA-Z_0-9]+
@@ -90,6 +90,10 @@ public class ScoredIntervalParser {
   static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
   public void parse(InputStream istr, String stream_name, Map seqhash) {
+    parse(istr, stream_name, seqhash, null);
+  }
+
+   public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) {
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
@@ -119,14 +123,18 @@ public class ScoredIntervalParser {
 
       int line_count = 0;
       int score_count = 0;
+      int hit_count = 0;
+      int miss_count = 0;
 
       Matcher strand_matcher = strand_regex.matcher("");
       boolean sin1 = false;
       boolean sin2 = false;
       boolean sin3 = false;
-      while (line != null) {
+      //      while (line != null) {
+      while ((line = br.readLine()) != null) {
 	// skip comment lines (any lines that start with "#")
-	if (line.startsWith("#")) { line = br.readLine(); continue; }
+	//	if (line.startsWith("#")) { line = br.readLine(); continue; }
+	if (line.startsWith("#")) { continue; }
 
 	String[] fields = line_regex.split(line);
 	int fieldcount = fields.length;
@@ -157,10 +165,31 @@ public class ScoredIntervalParser {
 	    max = Integer.parseInt(fields[3]);
 	    strand = fields[4];
 	  }
-	  else { 
+	  else {
 	    sin3 = true;
 	    score_offset = 1;
-	    break;  // sin3 format not yet implemented
+	    //	    break;  // sin3 format not yet implemented
+	    annot_id = fields[0];
+	    // need to match up to pre-existing annotation in id2sym_hash
+	    SeqSymmetry original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
+	    if (original_sym == null) {
+	      // no sym matching id found in id2sym_hash -- filter out
+	      miss_count++;
+	      continue;
+	    }
+	    else {
+	      // making a big assumption here, that first SeqSpan in sym is seqid to use...
+	      //    on the other hand, not sure how much it matters...
+	      //    for now, since most syms to match up with will come from via parsing of GFF files,
+	      //       probably ok
+	      SeqSpan span = original_sym.getSpan(0);
+	      seqid = span.getBioSeq().getID();
+	      min = span.getMin();
+	      max = span.getMax();
+	      if (! span.isForward()) { strand = "-"; }
+	      else { strand = "+"; }
+	      hit_count++;
+	    }
 	  }
 	}
 	if (score_names == null) {
@@ -171,6 +200,7 @@ public class ScoredIntervalParser {
         ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
         MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
         if (aseq == null) {
+	  System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
           aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
           seqhash.put(seqid, aseq);
         }
@@ -210,10 +240,13 @@ public class ScoredIntervalParser {
 	  flist.add(score);
 	}
 	line_count++;
-	line = br.readLine();
+	//	line = br.readLine();
       }
 
       System.out.println("data lines in .sin file: " + line_count);
+      System.out.println("sin3 hit count: " + hit_count);
+      System.out.println("sin3 miss count: " + miss_count);
+
       Iterator iter = arrays2container.entrySet().iterator();
       while (iter.hasNext()) {
 	Map.Entry entry = (Map.Entry)iter.next();
@@ -229,6 +262,7 @@ public class ScoredIntervalParser {
 	aseq.addAnnotation(container);
 	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
       }
+
 
     }
     catch (Exception ex) { ex.printStackTrace(); }

@@ -558,10 +558,10 @@ public class GFFParser implements AnnotationWriter  {
     }
   }
 
-  static final Matcher directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)").matcher("");
-  static final Matcher directive_group_by = Pattern.compile("##IGB-group-by (.*)").matcher("");
-  static final Matcher directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)").matcher("");
-  static final Matcher directive_index_field = Pattern.compile("##IGB-group-id-field (.*)").matcher("");
+  static final Pattern directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)");
+  static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
+  static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
+  static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
   
   /**
    *  Process directive lines in the input, which are lines beginning with "##".
@@ -570,46 +570,42 @@ public class GFFParser implements AnnotationWriter  {
    *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x".
    */
   void processDirective(String line) {
-    if (directive_filter.reset(line).matches()) {
+    Matcher m = directive_filter.matcher(line);
+    if (m.matches()) {
       resetFilters();
-      String[] feature_types = directive_filter.group(2).split(" ");
+      String[] feature_types = m.group(2).split(" ");
       for (int i=0;i<feature_types.length; i++) {
         String feature_type = feature_types[i].trim();
         if (feature_type.length() > 0) {
-          addFeatureFilter(feature_type, "include ".equals(directive_filter.group(1)));
+          addFeatureFilter(feature_type, "include ".equals(m.group(1)));
         }
       }
-      directive_filter.reset(""); // allow garbage collection of input string
       return;
     }
-    directive_filter.reset(""); // allow garbage collection of input string
 
-    if (directive_group_by.reset(line).matches()) {
-      String group = directive_group_by.group(1).trim();
+    m = directive_group_by.matcher(line);
+    if (m.matches()) {
+      String group = m.group(1).trim();
       if (group.length() > 0) {
         setGroupTag(group);
       } else {
         setGroupTag(null);
       }
-      directive_group_by.reset(""); // allow garbage collection of input string
       return;
     }
-    directive_group_by.reset(""); // allow garbage collection of input string
     
-    if (directive_group_from_first.reset(line).matches()) {
-      String true_false = directive_group_from_first.group(1).trim();
+    m = directive_group_from_first.matcher(line);
+    if (m.matches()) {
+      String true_false = m.group(1).trim();
       use_first_one_as_group = "true".equals(true_false);
-      directive_group_from_first.reset(""); // allow garbage collection of input string
       return;
     }
-    directive_group_from_first.reset(""); // allow garbage collection of input string
     
-    if (directive_index_field.reset(line).matches()) {
-      group_id_field_name = directive_index_field.group(1).trim();
-      directive_index_field.reset(""); // allow garbage collection of input string
+    m = directive_index_field.matcher(line);
+    if (m.matches()) {
+      group_id_field_name = m.group(1).trim();
       return;
     }
-    directive_index_field.reset(""); // allow garbage collection of input string
     
     // Issue warnings about directives that aren't understood only for "##IGB-" directives.
     if (line.startsWith("##IGB")) {
@@ -708,7 +704,7 @@ public class GFFParser implements AnnotationWriter  {
     test.addStandardFilters();
 
     Memer mem = new Memer();
-    mem.printMemory();
+    System.out.println(mem.toString());
     java.util.List annots = null;
     try {
       File fl = new File(file_name);
@@ -719,18 +715,20 @@ public class GFFParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
-    System.out.println("annots: " + annots.size());
-    mem.printMemory();
-    System.gc();
-    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
-    mem.printMemory();
     
-    for (int i=0; i < 5 && i < annots.size() ; i++) {
-      System.out.println("\nSymmetry #"+ i +" ------------------------------");
+    int annots_to_write = 0;
+    for (int i=0; i < annots_to_write && i < annots.size() ; i++) {
+      System.out.println("\nSymmetry #"+ (i+1) +" ------------------------------");
       SymWithProps sym = (SymWithProps) annots.get(i);
       SeqUtils.printSymmetry(sym, "  ", true);      
     }
     System.out.println("------------------------------");
+
+    System.out.println("\nannots: " + annots.size());
+    System.out.println(mem.toString());
+    System.gc();
+    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
+    System.out.println(mem.toString());
   }
 
   /**
@@ -834,5 +832,4 @@ public class GFFParser implements AnnotationWriter  {
    *    to an output stream as "GFF" format.
    **/
   public String getMimeType() { return "text/plain"; }
-
 }

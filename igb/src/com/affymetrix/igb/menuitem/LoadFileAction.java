@@ -71,6 +71,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter("bgn"));
       chooser.addChoosableFileFilter(new UniFileFilter("brs"));
+      chooser.addChoosableFileFilter(new UniFileFilter("bsnp"));
       chooser.addChoosableFileFilter(new UniFileFilter("bnib"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
@@ -375,6 +376,18 @@ public class LoadFileAction {
 	  IGB.symHashChanged(refseq_reader);
 	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
 	  System.out.println("total refseq annotations loaded: " + alist.size());
+	}
+        aseq = input_seq;
+      }
+      else if (stream_name.endsWith(".bsnp")) {
+	if (seqhash == null) {
+          IGB.errorPanel("ERROR", ".bsnp files can only be loaded if a seq group is already selected");
+	}
+	else {
+	  BsnpParser parser = new BsnpParser();
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
+	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+	  System.out.println("total snps loaded: " + alist.size());
 	}
         aseq = input_seq;
       }

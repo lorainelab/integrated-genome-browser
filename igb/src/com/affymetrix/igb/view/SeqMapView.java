@@ -1020,7 +1020,8 @@ public class SeqMapView extends JPanel
 
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
-    MapViewGlyphFactoryI factory = null;;
+    MapViewGlyphFactoryI factory = null;
+        
     if (annotSym instanceof GraphSym) {
       factory =	(MapViewGlyphFactoryI)graf2factory.get(annotSym);
       if (factory == null) {
@@ -2014,6 +2015,12 @@ public class SeqMapView extends JPanel
             map.deselect(last_selected_glyph);
             map.select(pglyph);
             last_selected_glyph = pglyph;
+            if (last_selected_glyph.getInfo() instanceof SeqSymmetry) {
+              last_selected_sym = (SeqSymmetry)last_selected_glyph.getInfo();
+            }
+            else {
+              last_selected_sym = null;
+            }
             Vector selected_glyphs = map.getSelected();
             if (show_edge_matches)  { 
               doEdgeMatching(selected_glyphs, false); 

@@ -315,7 +315,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   /** Sets the data model based on the original symmetry for derived graphs. */
-  public void setDataModel(AffyTieredMap map, GlyphI g, SeqSymmetry sym) {
+  public static void setDataModel(AffyTieredMap map, GlyphI g, SeqSymmetry sym) {
     if (sym instanceof DerivedSeqSymmetry)  {
       map.setDataModel(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
     }

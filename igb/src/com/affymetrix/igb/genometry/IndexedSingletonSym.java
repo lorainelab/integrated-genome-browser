@@ -23,7 +23,7 @@ import com.affymetrix.genometry.symmetry.*;
  *  All requests for properties or scores return those of the parent, and
  *  will throw exceptions if the parent is null.
  */
-public class IndexedSingletonSym extends SingletonSeqSymmetry implements SymWithProps {
+public class IndexedSingletonSym extends SingletonSeqSymmetry implements IndexedSym, SymWithProps {
   int index_in_parent = -1;
   ScoredContainerSym parent = null;
   String id = null;

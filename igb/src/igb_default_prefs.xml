@@ -68,8 +68,6 @@
   <annotation_style annot_type="mRNA_exon" red="0" green="255" blue="100" /> blueish-green
   <annotation_style annot_type="genepred" red="200" green="100" blue="100" /> ???
   <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="stop_codon" red="200" green="100" blue="150" /> reddish gray
-  <annotation_style annot_type="dynamic_orf" red="100" green="200" blue="100" /> greenish lightgray
   <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
 
 <annotation_style annot_type="repeats" glyph_depth="1"

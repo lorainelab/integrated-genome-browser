@@ -116,7 +116,7 @@ public class LoadFileAction {
       chooser.merge_button.setEnabled(false);
     }
     else {
-      // default to "merge" if already have a selected seq group to merge with, 
+      // default to "merge" if already have a selected seq group to merge with,
       //    because non-merging is an uncommon choice
       chooser.merge_button.setSelected(true);
       chooser.merge_button.setEnabled(true);
@@ -249,15 +249,17 @@ public class LoadFileAction {
       }
       else if (stream_name.endsWith(".sin")) {
         ScoredIntervalParser parser = new ScoredIntervalParser();
-        parser.parse(str, stream_name, seqhash);
+        Map id2sym_hash = IGB.getSymHash();
+//        parser.parse(str, stream_name, seqhash);
+        parser.parse(str, stream_name, seqhash, id2sym_hash);
         aseq = input_seq;
         parser = null;
       }
       else if (stream_name.endsWith(".psl") || stream_name.endsWith( ".psl3")) {
         PSLParser parser = new PSLParser();
         parser.enableSharedQueryTarget(true);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq, stream_name); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq, stream_name);
 	}
 	else {
           int psl_option = -1;
@@ -335,8 +337,8 @@ public class LoadFileAction {
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         //        BedParser parser = new BedParser(gviewer.getColorHash());
         BedParser parser = new BedParser(gviewer);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq);
 	}
 	else {
           //          parser.parse(str, seqhash, true);
@@ -365,7 +367,7 @@ public class LoadFileAction {
 	else {
 	  BrsParser refseq_reader = new BrsParser();
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-	  Map id2sym_hash = IGB.getSymHash();
+          Map id2sym_hash = IGB.getSymHash();
 	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
 	  IGB.symHashChanged();
 	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
@@ -423,7 +425,7 @@ public class LoadFileAction {
       if (seqhash == null) {
 	if (aseq != null) {
 	  AnnotatedSeqGroup new_group= gmodel.addSeqGroup("Unknown Group " + unknown_group_count);
-	  unknown_group_count++;	  
+	  unknown_group_count++;
 	  new_group.addSeq(aseq);
 	  gmodel.setSelectedSeqGroup(new_group);
 	  gmodel.setSelectedSeq(aseq);

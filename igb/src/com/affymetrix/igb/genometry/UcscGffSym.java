@@ -15,6 +15,8 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.parsers.GFFParser;
+import java.util.regex.*;
 
 /**
  *  A sym to efficiently store GFF 1.0 annotations. 
@@ -25,11 +27,15 @@ public class UcscGffSym extends SingletonSymWithProps {
   public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
   public static final char UNKNOWN_FRAME = '.';
   
+  // This is identical to the pattern in the GFFParser class
+  public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
+  
   String source;
   String feature_type;
   float score;
   char frame;
   String group;
+  boolean is_gff1;
 
   /**
    * Constructor.
@@ -64,28 +70,56 @@ public class UcscGffSym extends SingletonSymWithProps {
     this.feature_type = feature_type;
     this.score = score;
     this.frame = frame;
-    this.group = group_field;
+    if (group_field==null || group_field.startsWith("#")) {
+      this.group = null;
+      this.is_gff1 = true;
+    } else {
+      Matcher gff1_matcher = gff1_regex.matcher(group_field);
+      if (gff1_matcher.matches()) {
+        this.group = new String(gff1_matcher.group(1)); // creating a new String can save Memory
+        this.is_gff1 = true;
+      } else {
+        this.group = group_field;
+        this.is_gff1 = false;
+      }
+    }
   }
 
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }
   public float getScore()  { return score; }
   public char getFrame()  { return frame; }
-  public String getGroup()  { return group; }
+
+  /** Returns null for GFF2 or the group field for GFF1. */
+  public String getGroup()  { 
+    if (is_gff1) return group;
+    else return null;
+  }
   
+  public boolean isGFF1() {
+    return is_gff1;
+  }
 
   public Object getProperty(String name) {
     if (name.equals("source") || name.equals("method")) { return source; }
     else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
-    else if (name.equals("group")) { return group; }
+    else if (name.equals("group")) { return getGroup(); }
     else if (name.equals("seqname") || name.equals("id")) { return getID(); }
-    else return super.getProperty(name);
+    else if (is_gff1) {
+      return super.getProperty(name);
+    } else {
+      // for GFF2, parse the attributes field and return the property found in that
+      Map m = cloneProperties();
+      return m.get(name);
+    }
   }
-
+  
   /** 
-   *  Overriden such that certain properties will be stored more efficiently. 
+   *  Overriden such that certain properties will be stored more efficiently.
+   *  Setting certain properties this way is not supported:
+   *  these include "group", "score" and "frame".
    */
   public boolean setProperty(String name, Object val) {
     if (name.equals("id") || name.equals("seqname")) {
@@ -119,14 +153,8 @@ public class UcscGffSym extends SingletonSymWithProps {
       }
     }
     else if (name.equals("group")) {
-      if (val instanceof String) {
-        group = (String) val;
-        return true;
-      }
-      else {
-        //group = null;
-        return false;
-      }
+      // Not supported
+      throw new IllegalArgumentException("Currently can't modify 'group' via setProperty");
     }
     else if (name.equals("score") || name.equals("frame")) {
       // May need to handle these later, but it is unlikely to be an issue
@@ -159,8 +187,13 @@ public class UcscGffSym extends SingletonSymWithProps {
     if (frame != UNKNOWN_FRAME) {
       tprops.put("frame", new Character(frame));
     }
-    if (group != null) {tprops.put("group", group);}
+    if (is_gff1) {
+      if (group != null) {tprops.put("group", group);}
+    } else {
+      GFFParser.processAttributes(tprops, group);
+    }
     
     return tprops;
   }
+  
 }

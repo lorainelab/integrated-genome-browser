@@ -6,3 +6,10 @@ docs
 javadocs
 genoviz_genometry_igb.jar
 igb_public_complete.jar
+doc
+documentation
+build.xml
+genoviz_jpx_copy
+genoviz_jpx_local_copy
+igbKeystore
+igb_complete.jar

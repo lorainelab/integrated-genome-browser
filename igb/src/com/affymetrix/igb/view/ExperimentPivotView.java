@@ -374,7 +374,7 @@ public class ExperimentPivotView extends JComponent
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);
       parent.addChild(gl);
     }
-    else {
+    else if (span != null)  {
       gl = new EfficientLineContGlyph();
       gl.setColor(Color.yellow);
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);

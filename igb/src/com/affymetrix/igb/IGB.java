@@ -430,9 +430,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
+    // Commenting-out the ability to turn the control server off.
+    //if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
       startControlServer();
-    }
+    //}
 
     frm = new JFrame(APP_NAME);
 

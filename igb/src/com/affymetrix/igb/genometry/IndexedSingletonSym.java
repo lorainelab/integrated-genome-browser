@@ -26,6 +26,7 @@ import com.affymetrix.genometry.symmetry.*;
 public class IndexedSingletonSym extends SingletonSeqSymmetry implements SymWithProps {
   int index_in_parent = -1;
   ScoredContainerSym parent = null;
+  String id = null;
 
   /** Constructor. Be sure to also call {@link #setParent} and {@link #setIndex}.
    */
@@ -37,17 +38,45 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements SymWith
   public void setIndex(int index) { index_in_parent = index; }
   public ScoredContainerSym getParent() { return parent; }
   public int getIndex() { return index_in_parent; }
+  public void setID(String symid) { id = symid; }
+  public String getID() { return id; }
 
-  public Map getProperties() { return parent.getProperties(); }
-  public Map cloneProperties() { return parent.cloneProperties(); }
-  public Object getProperty(String key) { return parent.getProperty(key); }
+  public Map getProperties() { 
+    Map props;
+    if (id != null) {
+      props = cloneProperties();
+    }
+    else {
+      props = parent.getProperties(); 
+    }
+    return props;
+  }
+
+  public Map cloneProperties() {
+    Map props = parent.cloneProperties();
+    if (id != null) {
+      props.put("id", id);
+    }
+    return props;
+  }
+
+  public Object getProperty(String key) { 
+    if (key.equals("id")) { return id; }
+    else { return parent.getProperty(key); }
+  }
 
   /** IndexedSingletonSym does not support setting properties, so this will
    *  return false.
    */
   public boolean setProperty(String key, Object val) { 
-    System.err.println("IndexedSingletonSym does not support setting properties"); 
-    return false;
+    if (key.equals("id")) { 
+      setID((String)val); 
+      return true;
+    }
+    else  {
+      System.err.println("IndexedSingletonSym does not support setting properties, except for id"); 
+      return false;
+    }
   }
 
   public float[] getScores(java.util.List scorelist) {

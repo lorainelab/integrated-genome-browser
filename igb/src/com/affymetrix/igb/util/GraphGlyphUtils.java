@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -53,6 +53,12 @@ public class GraphGlyphUtils {
   public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
   public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
   public static final String PREF_FLOATING_PIXEL_HEIGHT = "default floating graph pixel height";
+
+  /** Pref for whether newly-constructed graph glyphs should only show a 
+   *  limited range of values.
+   */
+  public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
+  public static final boolean default_apply_percentage_filter = true;
 
   /** Whether to use a TransformTierGlyph to maintain a fixed pixel height for attached graphs. */
   static final boolean use_fixed_pixel_height = false;

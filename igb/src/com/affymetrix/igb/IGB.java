@@ -784,7 +784,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
     about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
-    about_text.append("Copyright 2001-2004 Affymetrix Inc." + "\n");
+    about_text.append("Copyright 2001-2005 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");

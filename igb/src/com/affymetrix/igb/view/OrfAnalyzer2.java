@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -207,6 +207,13 @@ public class OrfAnalyzer2 extends JComponent
 
     Color pointcol = (Color)method2color.get("stop_codon");
     Color linkcol = (Color)method2color.get("dynamic_orf");
+    if (pointcol == null) {
+      pointcol = new Color(200,150,150);
+    }
+    if (linkcol == null) {
+      linkcol = new Color(100,200,100);
+    }
+    
     IntList[] frame_lists = new IntList[6];
     for (int i=0; i<6; i++) {
       // estimating number of stop codons, then padding by 20%

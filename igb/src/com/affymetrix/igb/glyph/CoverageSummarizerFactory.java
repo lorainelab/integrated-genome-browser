@@ -87,6 +87,7 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
 					   default_tier_color);  // bg_color
       TierGlyph ftier = tiers[0];
       TierGlyph rtier = tiers[1];
+      AffyTieredMap map = gviewer.getSeqMap();
 
       BioSeq annotseq = gviewer.getAnnotatedSeq();
       BioSeq coordseq = gviewer.getViewSeq();
@@ -107,6 +108,16 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
       cov.setStyle(style);
       cov.setCoords(0, 0, coordseq.getLength(), glyph_height);
       ftier.addChild(cov);
+
+      // make sure set data model to the original sym (if transform was nneded then tsym will 
+      //    probably be a DerivedSeqSymmetry with a reference to the original sym
+      if (tsym instanceof DerivedSeqSymmetry)  {
+	map.setDataModel(cov, ((DerivedSeqSymmetry)tsym).getOriginalSymmetry());
+      }
+      else {
+	map.setDataModel(cov, tsym);
+      }
+      
     }
   }
 

@@ -64,6 +64,7 @@ import com.affymetrix.igb.util.CharIterator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import java.util.regex.*;
 
 public class SeqMapView extends JPanel
@@ -305,18 +306,25 @@ public class SeqMapView extends JPanel
     this.add("Center", map);
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);
-
-    // This is an attempt at making the changes in preferences for axis colors
-    // take effect immediately.  It isn't ready for prime-time, though.
-    /*
+    
+    // This preference change listener can reset some things, like whether
+    // the axis uses comma format or not, in response to changes in the stored
+    // preferences.  Changes to axis, and other tier, colors are not so simple,
+    // in part because of the need to coordinate with the label glyphs.
     
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(new PreferenceChangeListener() {
-
+      
       public void preferenceChange(PreferenceChangeEvent pce) {
         if (getAxisTier() == null) { return; }
+        
+        if (! pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
+          return;
+        }
+
         TransformTierGlyph axis_tier = getAxisTier();
         Vector children = axis_tier.getChildren();
 
+        /*  Reseting axis tier color isn't ready for prime time yet.
         if (pce.getKey().equals(PREF_AXIS_BACKGROUND)) {
           Color c = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
           axis_tier.setBackgroundColor(c);
@@ -335,8 +343,9 @@ public class SeqMapView extends JPanel
           map.updateWidget();
           //System.out.println("Setting axis color: "+c);
         }
+        */
         
-        else if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
+        if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
           String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, default_axis_label_format);
           AxisGlyph ag = null;
           for (int i=0; i<children.size(); i++) {
@@ -350,14 +359,17 @@ public class SeqMapView extends JPanel
             }
           }
           map.updateWidget();
-          //System.out.println("Setting axis label format: "+axis_format + ": ag is null? "+ (ag==null));
         }
+        
+        else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
+          if (show_edge_matches)  {
+            doEdgeMatching(map.getSelected(), true);
+          }
+        }        
       }
     });
-     */
-
   }
-
+  
   public void setFrame(JFrame frm) {
     this.frm = frm;
   }

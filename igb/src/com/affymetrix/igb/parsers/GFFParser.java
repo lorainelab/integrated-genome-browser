@@ -253,28 +253,23 @@ public class GFFParser implements AnnotationWriter  {
     return parse(istr, seqhash, (Map) null, default_create_container_annot);
   }
   
-  /**
-   *  Note that currently, create_container_annot flag is only applied if
-   *  USE_GROUPING is also true.
-   **/
   public List parse(InputStream istr, Map seqhash, Map id2sym_hash, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
-    //    MutableAnnotatedBioSeq seq = aseq;
+
     int line_count = 0;
     int sym_count = 0;
     int group_count = 0;
-    /*
-     *  seq2meths is hash for making container syms (if create_container_annot == true)
-     *  each entry in hash is: BioSeq ==> meth2psym hash
-     *     Each meth2csym is hash where each entry is "method/source" ==> container_sym
-     *  so two-step process to find container sym for a particular meth on a particular seq:
-     *    Map meth2csym = (Map)seq2meths.get(seq);
-     *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
-     */
-    Map seq2meths = new HashMap();
+
+    Map seq2meths = new HashMap(); // see getContainer()
     Map group_hash = new HashMap();
     java.util.List results = new ArrayList();
+
+    // By default, no hierarchical grouping; turned on with a directive
+    use_hierarchy = false;
+    hierarchy_levels.clear(); // clear until an ##IGB-hierarchy directive is found
+    int current_h_level = 0;
+    UcscGffSym[] hier_parents = null;
 
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     try {
@@ -318,32 +313,60 @@ public class GFFParser implements AnnotationWriter  {
           
           UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b, 
               score, strand_str.charAt(0), frame_str.charAt(0), last_field, gff_base1);
-           
-          String group_id = null;
-          if (USE_GROUPING) {
+
+          int max = sym.getMax();
+          if (max > seq.getLength()) { seq.setLength(max); }
+
+          // add syms to a results List during parsing,
+          // then add group syms to AnnotatedBioSeq after entire parse is done.
+          
+          if (use_hierarchy) {
+            if (hier_parents == null) {
+              hier_parents = new UcscGffSym[hierarchy_levels.size()];
+            }
+
+            Integer new_h_level_int = (Integer) hierarchy_levels.get(feature_type);
+            if (new_h_level_int == null) {
+              throw new RuntimeException("Hierarchy exception: unknown feature type: " + feature_type);
+            }
+
+            int new_h_level = new_h_level_int.intValue();
+            if (new_h_level - current_h_level > 1) {
+              throw new RuntimeException("Hierarchy exception: skipped a level: "+current_h_level+" -> "+new_h_level + ":\n" 
+               + line+"\n");
+            }
+            String id_field = (String) hierarchy_id_fields.get(feature_type);
+            if (id_field != null) {
+              String group_id = determineGroupId(sym, id_field);
+              if (group_id != null) {sym.setProperty("id", group_id);}
+            }
+            
+            hier_parents[new_h_level] = sym; // It is a potential parent of the lower-level sym
+            if (new_h_level == 0) {
+              results.add(sym);
+            }
+            else {
+              UcscGffSym the_parent = hier_parents[new_h_level - 1];
+              if (the_parent == null) {
+                throw new RuntimeException("Hierarchy exception: no parent");
+              }
+              the_parent.addChild(sym);
+            }
+            current_h_level = new_h_level;
+          }
+          else if (USE_GROUPING)  {
+            String group_id = null;
+
             if (sym.isGFF1()) {
               group_id = sym.getGroup();
             } else if (group_tag != null) {
               group_id = determineGroupId(sym, group_tag);
             }
-          }
 
-          int max = sym.getMax();
-          if (max > seq.getLength()) { seq.setLength(max); }
-
-          // default if there is no grouping info or if grouping fails for some reason, or if
-          //    USE_GROUPING = false, is to add GFF features directly to AnnotatedBioSeq
-          boolean add_directly = true;
-
-          // add syms to group syms if possible,
-          // then add group syms to AnnotatedBioSeq after entire parse is done.
-          //     [otherwise may add a group sym to an AnnotatedBioSeq while the group
-          //      is still growing (it bounds extending and children being added),
-          //      which is okay, except if being incrementally loaded, in which case
-          //      group may get glyphified before it is complete]
-
-          if (USE_GROUPING)  {
-            if (group_id != null) {
+            if (group_id == null) {
+              results.add(sym); // just add it directly
+            }
+            else {
               if (DEBUG_GROUPING)  { System.out.println(group_id); }
               SingletonSymWithProps groupsym = (SingletonSymWithProps) group_hash.get(group_id);
 
@@ -385,12 +408,10 @@ public class GFFParser implements AnnotationWriter  {
               } else {
                 groupsym.addChild(sym);
               }
-              add_directly = false;
             }
           }  // END if (USE_GROUPING)
-          if (add_directly) {
-            // if not grouping (or grouping failed), then add feature directly to AnnotatedBioSeq
-            seq.addAnnotation(sym);
+          else {
+            // if not grouping, then simply add feature directly to results List
             results.add(sym);
           }
           sym_count++;
@@ -402,24 +423,17 @@ public class GFFParser implements AnnotationWriter  {
     } finally {
       br.close();
     }
+    hierarchy_levels.clear();
 
-    if (USE_GROUPING) {
-      Iterator groups = group_hash.values().iterator();
-      while (groups.hasNext()) {
-        SymWithProps sym = (SymWithProps)groups.next();
-        String meth = (String)sym.getProperty("method");
+
+    { // Loop through the results List and add all Sym's to the BioSeq
+      Iterator iter = results.iterator();
+      while (iter.hasNext()) {
+        SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
         
-        SeqSymmetry first_child = sym.getChild(0);
-        MutableAnnotatedBioSeq seq = null;
-        if (first_child != null) {
-          seq = (MutableAnnotatedBioSeq) first_child.getSpan(0).getBioSeq();
-        } else {
-          // first_child could be null if  use_first_one_as_group=true and the
-          // group contains only one member.
-          seq = (MutableAnnotatedBioSeq) sym.getSpan(0).getBioSeq();
-        }
+        MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) sym.getBioSeq();
         
-        if (first_child != null) {
+        if (USE_GROUPING && sym.getChildCount() > 0) {
           // stretch sym to bounds of all children
           SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
           // SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
@@ -429,21 +443,9 @@ public class GFFParser implements AnnotationWriter  {
           resortChildren((MutableSeqSymmetry) sym, seq);
         }
 
-        if (DEBUG_GROUPING)  { SeqUtils.printSymmetry(sym); }
         if (create_container_annot) {
-          Map meth2csym = (Map)seq2meths.get(seq);
-          if (meth2csym == null) {
-            meth2csym = new HashMap();
-            seq2meths.put(seq, meth2csym);
-          }
-          SimpleSymWithProps parent_sym = (SimpleSymWithProps)meth2csym.get(meth);
-          if (parent_sym == null) {
-            parent_sym = new SimpleSymWithProps();
-            parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-            parent_sym.setProperty("method", meth);
-            seq.addAnnotation(parent_sym);
-            meth2csym.put(meth, parent_sym);
-          }
+          String meth = (String)sym.getProperty("method");
+          SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth);
           parent_sym.addChild(sym);
         }
         else {
@@ -452,8 +454,6 @@ public class GFFParser implements AnnotationWriter  {
       }
     }
     
-    group_hash.clear(); // to help reclaim memory
-    
     System.out.println("line count: " + line_count);
     System.out.println("sym count: " + sym_count);
     System.out.println("group count: " + group_count);
@@ -461,6 +461,33 @@ public class GFFParser implements AnnotationWriter  {
     //    System.out.println("seq length: " + seq.getLength());
     //    System.out.println("annot count: " + seq.getAnnotationCount());
     return results;
+  }
+
+    /**
+     *  Retrieves (and/or creates) a container symmetry based on the BioSeq
+     *    and the method.
+     *  When a new container is created, it is also added to the BioSeq.
+     *  Each entry in seq2meths maps a BioSeq to a Map called "meth2csym".
+     *  Each meth2csym is hash where each entry maps a "method/source" to a container Symmetry.
+     *  It is a two-step process to find container sym for a particular meth on a particular seq:
+     *    Map meth2csym = (Map)seq2meths.get(seq);
+     *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
+     */
+  static SimpleSymWithProps getContainer(Map seq2meths, MutableAnnotatedBioSeq seq, String meth) {
+    Map meth2csym = (Map)seq2meths.get(seq);
+    if (meth2csym == null) {
+      meth2csym = new HashMap();
+      seq2meths.put(seq, meth2csym);
+    }
+    SimpleSymWithProps parent_sym = (SimpleSymWithProps)meth2csym.get(meth);
+    if (parent_sym == null) {
+      parent_sym = new SimpleSymWithProps();
+      parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+      parent_sym.setProperty("method", meth);
+      seq.addAnnotation(parent_sym);
+      meth2csym.put(meth, parent_sym);
+    }
+    return parent_sym;
   }
 
   /**
@@ -497,14 +524,20 @@ public class GFFParser implements AnnotationWriter  {
   static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
   static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
   static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
+  static final Pattern directive_hierarchy = Pattern.compile("##IGB-hierarchy (.*)");
+  
+  boolean use_hierarchy = false;
+  Map hierarchy_levels = new HashMap(); // Map of String to Integer
+  Map hierarchy_id_fields = new HashMap(); // Map of String to String
   
   /**
    *  Process directive lines in the input, which are lines beginning with "##".
    *  Directives that are not understood are treated as comments.
    *  Directives that are understood include "##IGB-filter-include x y z",
-   *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x".
+   *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x",
+   *  and "##IGB-hierarchy 3 exon <exon_id>".
    */
-  void processDirective(String line) {
+  void processDirective(String line) throws IOException {
     Matcher m = directive_filter.matcher(line);
     if (m.matches()) {
       resetFilters();
@@ -541,6 +574,36 @@ public class GFFParser implements AnnotationWriter  {
       group_id_field_name = m.group(1).trim();
       return;
     }
+    
+    m = directive_hierarchy.matcher(line);
+    if (m.matches()) {
+      resetFilters(); // using the hierarchy tag implies that you don't want to filter anything out
+      String hierarchy_string = m.group(1).trim();
+      
+      // Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
+      // The ID field is optional.
+      // Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>      
+      Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
+
+      Matcher mm = p.matcher(hierarchy_string);
+      while (mm.find()) {
+        String level_string = mm.group(1);
+        String feature_type = mm.group(2);
+        Integer level = new Integer(level_string);
+        hierarchy_levels.put(feature_type, level);
+        System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
+
+        String id_field = mm.group(4);
+        if (id_field != null) {hierarchy_id_fields.put(feature_type, id_field);}
+      }
+      if (hierarchy_levels.isEmpty()) {
+        throw new IOException("The '##IGB-hierarchy' directive could not be parsed");
+      } else {
+        use_hierarchy = true;
+      }
+      return;
+    }
+    
     
     // Issue warnings about directives that aren't understood only for "##IGB-" directives.
     if (line.startsWith("##IGB")) {

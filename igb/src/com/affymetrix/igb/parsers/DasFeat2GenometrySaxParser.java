@@ -572,15 +572,17 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       //   integer...,  but watch out for the case where an integer is split near a '0' !
       if (prev_chars && (cached_int != Integer.MIN_VALUE)) {
         int temp_int = parseInt(ch, start, length);
-        int x = Integer.toString(temp_int).length();
-        if (ch[start] == '0') { 
-          // if the second half of the integer starts with one or more '0', take that into account
-          for (int q=0; q<length && ch[start + q]=='0' ; q++) {
-            x++;
-          }
+        
+        int x = 0; // x is the number of digits in the string used to make temp_int
+        while (x <= length && ch[start+x] >= 0x0030 && ch[start+x] <= 0x0039) {
+          x++;
         }
         int scale = (int)Math.pow(10, x);
         cached_int = (cached_int * scale) + temp_int;
+        
+        // Note: If the xml file doesn't include any extraneous white space, then
+        // it will always be true that x == length, but counting the characters
+        // is more generally safe.
       }
       else {
         cached_int = parseInt(ch, start, length);

@@ -33,7 +33,6 @@ import com.affymetrix.igb.parsers.AnnotationWriter;
  *  Just like refFlat table format, except no geneName field (just name field).
  */
 public class BgnParser implements AnnotationWriter  {
-  boolean use_lift_file = false;
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
 
@@ -49,10 +48,6 @@ public class BgnParser implements AnnotationWriter  {
   // mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
   //   that all random, etc. bits are at bottom
 
-  static String chrom_file = user_dir + "/moredata/Drosophila_Jan_2003/mod_chromInfo.txt";
-  static String lift_file = user_dir + "/moredata/Drosophila_Jan_2003/liftAll.lft";
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
 
   // .bin1:
   //         name UTF8
@@ -263,8 +258,9 @@ public class BgnParser implements AnnotationWriter  {
     }
   }
 
-  public void readTextTest(String file_name, Map seq_hash) {
-    System.out.println("loading file: " + file_name);
+  //  public void readTextTest(String file_name, Map seq_hash) {
+  public void convertTextToBinary(String text_file, String bin_file, Map seq_hash) {
+    System.out.println("loading file: " + text_file);
     int count = 0;
     long flength = 0;
     //    int bread = 0;
@@ -278,7 +274,7 @@ public class BgnParser implements AnnotationWriter  {
     Timer tim = new Timer();
     tim.start();
     try {
-      File fil = new File(file_name);
+      File fil = new File(text_file);
       flength = fil.length();
       FileInputStream fis = new FileInputStream(fil);
       BufferedInputStream bis = new BufferedInputStream(fis);
@@ -382,13 +378,24 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("spliced transcripts > 65000: " + big_spliced);
   }
 
+
+  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
+  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
+
   /** For testing. */
   public static void main(String[] args) {
-    if (args.length == 1) {
+    String text_file = null;
+    String bin_file = null;
+    if (args.length == 2) {
       text_file = args[0];
+      bin_file = args[1];
+    } else {
+      System.out.println("Usage:  java ... BgnParser <text infile> <binary outfile>");
+      System.exit(1);
     }
     BgnParser test = new BgnParser();
-    test.readTextTest(text_file, null);
+    //    test.readTextTest(text_file, null);
+    test.convertTextToBinary(text_file, bin_file, null);
   }
 
 

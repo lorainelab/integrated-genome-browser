@@ -178,7 +178,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     boolean forward = pspan.isForward();
     GlyphI pglyph = null;
-    int pheight = 25;
+
+    // Note: Setting parent height (pheight) larger than the child height (cheight)
+    // allows the user to select both the parent and the child as separate entities
+    // in order to look at the properties associated with them.  Otherwise, the method
+    // EfficientGlyph.pickTraversal() will only allow one to be chosen.
+    double pheight = 25.0001;
+
     boolean use_label = (label_field != null && (insym instanceof SymWithProps));
 
     if (SeqUtils.getDepth(sym) >= 2) {

@@ -134,6 +134,9 @@ public class GFFParser implements AnnotationWriter  {
    */
   String group_tag = null;
 
+  // When grouping, do you want to use the first item encountered as the parent of the group?
+  boolean use_first_one_as_group = false;
+  
   public GFFParser() {
     this(true);
   }
@@ -250,7 +253,7 @@ public class GFFParser implements AnnotationWriter  {
   public List parse(InputStream istr, Map seqhash) throws IOException {
     return parse(istr, seqhash, false);
   }
-
+  
   /**
    *  Note that currently, create_container_annot flag is only applied if
    *  USE_GROUPING is also true.
@@ -387,38 +390,46 @@ public class GFFParser implements AnnotationWriter  {
 		//    first one as String value
 		if (value != null) {
 		  if (value instanceof String) {
-		    group_id = (String)value;
+		    group_id = ((String)value).toLowerCase();
 		  }
 		  else if (value instanceof List) {  // such as a Vector
 		    List valist = (List)value;
 		    if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
-		      group_id = (String)valist.get(0);
+		      group_id = ((String)valist.get(0)).toLowerCase();
 		    }
 		  }
 		}
 	      }
 	    }
 	    // if all of the above has assigned a group_id, then do grouping
-	    if (group_id != null) {
-	      if (DEBUG_GROUPING)  { System.out.println(group_id); }
-	      SimpleSymWithProps groupsym = (SimpleSymWithProps)group_hash.get(group_id);
-	      //		System.out.println(groupsym);
-	      if (groupsym == null) {
-		// make a new groupsym
-		groupsym = new SimpleSymWithProps();
-		group_count++;
-		groupsym.setProperty("group", group_id);
-		groupsym.setProperty("method", source);
-		//		System.out.println("group id: " + group_id);
-		groupsym.setProperty("id", group_id);
-		group_hash.put(group_id, groupsym);
-		results.add(groupsym);
-	      }
-	      groupsym.addChild(sym);
-	      add_directly = false;
-	    }
-	  }  // END if (USE_GROUPING)
-	  if (add_directly) {
+            if (group_id != null) {
+              if (DEBUG_GROUPING)  { System.out.println(group_id); }
+              SymWithProps groupsym = (SymWithProps)group_hash.get(group_id);
+              //		System.out.println(groupsym);
+              if (groupsym == null) {
+                if (use_first_one_as_group) {
+                  // Take the first entry found with a given group_id and use it
+                  // as the parent symmetry for all members of the group
+                  groupsym = sym;
+                } else {
+                  // Make a brand-new symmetry to hold all syms with a given group_id
+                  groupsym = new SimpleSymWithProps();
+                  ((MutableSeqSymmetry) groupsym).addChild(sym);
+                }
+                group_count++;
+                groupsym.setProperty("group", group_id);
+                groupsym.setProperty("method", source);
+                //		System.out.println("group id: " + group_id);
+                groupsym.setProperty("id", group_id);
+                group_hash.put(group_id, groupsym);
+                results.add(groupsym);
+              } else {
+                ((MutableSeqSymmetry) groupsym).addChild(sym);
+              }
+              add_directly = false;
+            }
+          }  // END if (USE_GROUPING)
+          if (add_directly) {
 	    // if not grouping (or grouping failed), then add feature directly to AnnotatedBioSeq
 	    seq.addAnnotation(sym);
 	    results.add(sym);
@@ -439,18 +450,30 @@ public class GFFParser implements AnnotationWriter  {
       while (groups.hasNext()) {
 	SimpleSymWithProps sym = (SimpleSymWithProps)groups.next();
 	String meth = (String)sym.getProperty("method");
-	MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)sym.getChild(0).getSpan(0).getBioSeq();
-	// stretch sym to bounds of all children
-	SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
-	// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
-	sym.addSpan(pspan);
+        
+        SeqSymmetry first_child = sym.getChild(0);
+        MutableAnnotatedBioSeq seq = null;
+        if (first_child != null) {
+          seq = (MutableAnnotatedBioSeq) first_child.getSpan(0).getBioSeq();
+        } else {
+          // first_child could be null if  use_first_one_as_group=true and the
+          // group contains only one member.
+          seq = (MutableAnnotatedBioSeq) sym.getSpan(0).getBioSeq();
+        }
+        
+        if (first_child != null) {
+          // stretch sym to bounds of all children
+          SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
+          // SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
+          sym.addSpan(pspan);
 
-	// making sure children are in ascending order of start if forward strand,
-	//    descending order of start if reverse strand
-	if (seq == null || sym == null) {
-	  System.out.println("++++++++++++ warning, sym or seq is nul ++++++++++++");
-	}
-	resortChildren(sym, seq);
+          // making sure children are in ascending order of start if forward strand,
+          //    descending order of start if reverse strand
+          if (seq == null || sym == null) {
+            System.out.println("++++++++++++ warning, sym or seq is nul ++++++++++++");
+          }
+          resortChildren(sym, seq);
+        }
 
 	if (DEBUG_GROUPING)  { SeqUtils.printSymmetry(sym); }
 	if (create_container_annot) {
@@ -517,6 +540,7 @@ public class GFFParser implements AnnotationWriter  {
 
   static final Matcher directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)").matcher("");
   static final Matcher directive_group_by = Pattern.compile("##IGB-group-by (.*)").matcher("");
+  static final Matcher directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)").matcher("");
   
   /**
    *  Process directive lines in the input, which are lines beginning with "##".
@@ -537,6 +561,7 @@ public class GFFParser implements AnnotationWriter  {
       directive_filter.reset(""); // allow garbage collection of input string
       return;
     }
+    directive_filter.reset(""); // allow garbage collection of input string
 
     if (directive_group_by.reset(line).matches()) {
       String group = directive_group_by.group(1).trim();
@@ -548,6 +573,15 @@ public class GFFParser implements AnnotationWriter  {
       directive_group_by.reset(""); // allow garbage collection of input string
       return;
     }
+    directive_group_by.reset(""); // allow garbage collection of input string
+    
+    if (directive_group_from_first.reset(line).matches()) {
+      String true_false = directive_group_from_first.group(1).trim();
+      use_first_one_as_group = "true".equals(true_false);
+      directive_group_from_first.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_group_from_first.reset(""); // allow garbage collection of input string
     
     // Issue warnings about directives that aren't understood only for "##IGB-" directives.
     if (line.startsWith("##IGB")) {
@@ -663,15 +697,12 @@ public class GFFParser implements AnnotationWriter  {
     try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
     mem.printMemory();
     
-    if (annots.size() < 10) {
-      Iterator iter = annots.iterator();
-      while (iter.hasNext()) {
-        System.out.println("------------------------------");
-        SymWithProps sym = (SymWithProps) iter.next();
-        SeqUtils.printSymmetry(sym, "  ", true);
-      }
-      System.out.println("------------------------------");
+    for (int i=0; i < 5 && i < annots.size() ; i++) {
+      System.out.println("\nSymmetry #"+ i +" ------------------------------");
+      SymWithProps sym = (SymWithProps) annots.get(i);
+      SeqUtils.printSymmetry(sym, "  ", true);      
     }
+    System.out.println("------------------------------");
   }
 
   /**

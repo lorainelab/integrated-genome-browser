@@ -145,6 +145,7 @@ public class ScoredIntervalParser {
 	int max;
 	String strand = null;
 	int score_offset;
+	SeqSymmetry original_sym = null;  // only used for sin3 format
 
 	sin1 = strand_matcher.reset(fields[3]).matches();  // sin1 format if 4rth field is strand: [+-.]
 	if (sin1) {
@@ -171,7 +172,7 @@ public class ScoredIntervalParser {
 	    //	    break;  // sin3 format not yet implemented
 	    annot_id = fields[0];
 	    // need to match up to pre-existing annotation in id2sym_hash
-	    SeqSymmetry original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
+	    original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
 	    if (original_sym == null) {
 	      // no sym matching id found in id2sym_hash -- filter out
 	      miss_count++;
@@ -184,6 +185,7 @@ public class ScoredIntervalParser {
 	      //       probably ok
 	      SeqSpan span = original_sym.getSpan(0);
 	      seqid = span.getBioSeq().getID();
+	      //  don't really need to set min/max/strand if sin3, but leaving in for now
 	      min = span.getMin();
 	      max = span.getMax();
 	      if (! span.isForward()) { strand = "-"; }
@@ -197,6 +199,7 @@ public class ScoredIntervalParser {
 	  score_count = fields.length - score_offset;
 	  score_names = initScoreNames(score_count, index2id);
 	}
+
         ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
         MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
         if (aseq == null) {
@@ -216,10 +219,15 @@ public class ScoredIntervalParser {
 	  seq2container.put(seqid, container);
 	}
 
-	IndexedSingletonSym child;
-	if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
-	else { child = new IndexedSingletonSym(min, max, aseq); }
-	if (sin2) { child.setID(annot_id); }
+	IndexedSym child;
+	if (sin1 || sin2) {
+	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
+	  else { child = new IndexedSingletonSym(min, max, aseq); }
+	  if (sin2) { ((IndexedSingletonSym)child).setID(annot_id); }
+	}
+	else {  // sin3
+	  child = new IndexedWrapperSym(original_sym);
+	}
 	// ScoredContainerSym.addChild() handles setting of child index and parent fields
 	container.addChild(child);
 

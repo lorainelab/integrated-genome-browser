@@ -1034,17 +1034,20 @@ public class SeqMapView extends JPanel
         factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
         if (factory == null) {
           Iterator iter = regex2factory.entrySet().iterator();
-          while (iter.hasNext()) {
+          while (iter.hasNext() && factory==null) {
             Map.Entry hentry = (Map.Entry)iter.next();
             Pattern regex = (Pattern)hentry.getKey();
-            // if (regex.matcher(meth).matches()) {
             if (regex.matcher(meth).find()) {
               factory = (MapViewGlyphFactoryI) hentry.getValue();
+              // Put (a clone of?) the factory in meth2factory to speed things up next time through.
+              // (A clone would let us later modify the color, etc. of that copy)
+              meth2factory.put(meth, factory);
             }
           }
         }
         if (factory == null) {
           factory = default_glyph_factory;
+          // Again, a clone might be better.
           meth2factory.put(meth, default_glyph_factory);
         }
       }

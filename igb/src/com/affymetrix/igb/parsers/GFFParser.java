@@ -85,6 +85,7 @@ public class GFFParser implements AnnotationWriter  {
   boolean USE_GROUPING = true;
   boolean SET_LEAF_PROPS = true;
   //  boolean split_groups_across_seqs = true;
+  boolean default_create_container_annot = false;
 
   boolean GFF_BASE1 = true;
 
@@ -133,6 +134,7 @@ public class GFFParser implements AnnotationWriter  {
    *  tag to group features on
    */
   String group_tag = null;
+  String group_id_field_name = null;
 
   // When grouping, do you want to use the first item encountered as the parent of the group?
   boolean use_first_one_as_group = false;
@@ -235,11 +237,16 @@ public class GFFParser implements AnnotationWriter  {
 
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
   throws IOException {
+    return parse(istr, aseq, (Map) null);
+  }
+  
+  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, Map id2sym_hash)
+  throws IOException {
     Map seqhash = new HashMap();
     if (aseq != null) {
       seqhash.put(aseq.getID(), aseq);
     }
-    parse(istr, seqhash);
+    parse(istr, seqhash, id2sym_hash, default_create_container_annot);
     if (aseq == null) {
       Iterator iter = seqhash.values().iterator();
       if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
@@ -251,14 +258,14 @@ public class GFFParser implements AnnotationWriter  {
   }
 
   public List parse(InputStream istr, Map seqhash) throws IOException {
-    return parse(istr, seqhash, false);
+    return parse(istr, seqhash, (Map) null, default_create_container_annot);
   }
   
   /**
    *  Note that currently, create_container_annot flag is only applied if
    *  USE_GROUPING is also true.
    **/
-  public List parse(InputStream istr, Map seqhash, boolean create_container_annot)
+  public List parse(InputStream istr, Map seqhash, Map id2sym_hash, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
     //    MutableAnnotatedBioSeq seq = aseq;
@@ -419,8 +426,21 @@ public class GFFParser implements AnnotationWriter  {
                 group_count++;
                 groupsym.setProperty("group", group_id);
                 groupsym.setProperty("method", source);
-                //		System.out.println("group id: " + group_id);
-                groupsym.setProperty("id", group_id);
+
+                // If one field, like "probeset_id" was chosen as the group_id_field_name,
+                // then make the contents of that field be the "id" of the group symmetry
+                // and also index it in the IGB id-to-symmetry hash
+                Object index_id = null;
+                if (group_id_field_name != null) {
+                  index_id = sym.getProperty(group_id_field_name);
+                }
+                if (index_id != null) {
+                  groupsym.setProperty("id", index_id);
+                  if (id2sym_hash != null) { id2sym_hash.put(index_id, groupsym); }
+                } else {
+                  groupsym.setProperty("id", group_id);
+                }
+
                 group_hash.put(group_id, groupsym);
                 results.add(groupsym);
               } else {
@@ -498,7 +518,7 @@ public class GFFParser implements AnnotationWriter  {
 	}
       }
     }
-
+    
     System.out.println("line count: " + line_count);
     System.out.println("sym count: " + sym_count);
     System.out.println("group count: " + group_count);
@@ -541,6 +561,7 @@ public class GFFParser implements AnnotationWriter  {
   static final Matcher directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)").matcher("");
   static final Matcher directive_group_by = Pattern.compile("##IGB-group-by (.*)").matcher("");
   static final Matcher directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)").matcher("");
+  static final Matcher directive_index_field = Pattern.compile("##IGB-group-id-field (.*)").matcher("");
   
   /**
    *  Process directive lines in the input, which are lines beginning with "##".
@@ -582,6 +603,13 @@ public class GFFParser implements AnnotationWriter  {
       return;
     }
     directive_group_from_first.reset(""); // allow garbage collection of input string
+    
+    if (directive_index_field.reset(line).matches()) {
+      group_id_field_name = directive_index_field.group(1).trim();
+      directive_index_field.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_index_field.reset(""); // allow garbage collection of input string
     
     // Issue warnings about directives that aren't understood only for "##IGB-" directives.
     if (line.startsWith("##IGB")) {

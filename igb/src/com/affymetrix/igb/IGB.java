@@ -505,8 +505,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     shrink_wrap_item = new JMenuItem("Toggle Shrink Wrapping", KeyEvent.VK_S);
 
     toggle_hairline_label_item = new JMenuItem("Toggle Hairline Label", KeyEvent.VK_H);
-    toggle_edge_matching_item = new JMenuItem("Toggle Edge Matching");
-    autoscroll_item = new JMenuItem("AutoScroll");
+    toggle_edge_matching_item = new JMenuItem("Toggle Edge Matching", KeyEvent.VK_M);
+    autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
 
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
@@ -748,9 +748,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_edge_matching_item) {
       map_view.setEdgeMatching(! map_view.getEdgeMatching());
+      //adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
     }
     else if (src == adjust_edgematch_item) {
-      System.out.println("trying to adjust edge-matching fuzziness");
       EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
     }
     // rev comp not working

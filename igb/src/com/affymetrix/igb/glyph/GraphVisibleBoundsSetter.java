@@ -325,6 +325,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	float[] p2score = (float[])info2pscores.get(info);
 	if (p2score == null) {
           p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
+          info2pscores.put(info, p2score);
 	}
 	float vismin_val = gl.getVisibleMinY();
 	float vismax_val = gl.getVisibleMaxY();

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -133,11 +133,10 @@ public class GlyphEdgeMatcher  {
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
           start_match_count++;
-          SolidGlyph mglyph = new FillRectGlyph();
+          EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
-
           map.addItem(target.getParent(), mglyph);
           match_glyphs.add(mglyph);
         }
@@ -146,7 +145,7 @@ public class GlyphEdgeMatcher  {
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
           end_match_count++;
-          SolidGlyph mglyph = new FillRectGlyph();
+          EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);

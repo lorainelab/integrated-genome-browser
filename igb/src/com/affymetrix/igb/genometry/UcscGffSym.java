@@ -38,16 +38,16 @@ public class UcscGffSym extends SingletonSymWithProps {
    * In principle, the first coordinate is supposed to be less than the second one,
    * but in practice this isn't always followed, so this constructor will correct
    * those errors and will also convert from interbase-0 to base-1 coordinates.
-   * @param coord_A  The coordinate in column 4 of the GFF file.
-   * @param coord_B  The coordinate in column 5 of the GFF file.
+   * @param a  The coordinate in column 4 of the GFF file.
+   * @param b  The coordinate in column 5 of the GFF file.
    */
-  public UcscGffSym(BioSeq seq, String source, int coord_A, int coord_B, 
+  public UcscGffSym(BioSeq seq, String source, String feature_type, int a, int b, 
                     float score, char strand, char frame, String group_field) {
     super(0, 0, seq);
 
     // GFF spec says coord_A <= coord_B, but this is not always obeyed
-    int max = Math.max(coord_A, coord_B);
-    int min = Math.min(coord_A, coord_B);
+    int max = Math.max(a, b);
+    int min = Math.min(a, b);
     if (GFF_BASE1) { // convert from base-1 numbering to interbase-0 numbering
       min--;
     }
@@ -74,14 +74,66 @@ public class UcscGffSym extends SingletonSymWithProps {
 
   public Object getProperty(String name) {
     if (name.equals("source") || name.equals("method")) { return source; }
-    else if (name.equals("feature_type")) { return feature_type; }
-    else if (name.equals("type")) { return feature_type; }
+    else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
     else if (name.equals("group")) { return group; }
-    else if (name.equals("seqname")) { return getID(); }
+    else if (name.equals("seqname") || name.equals("id")) { return getID(); }
     else return super.getProperty(name);
   }
+
+  /** 
+   *  Overriden such that certain properties will be stored more efficiently. 
+   */
+  public boolean setProperty(String name, Object val) {
+    if (name.equals("id") || name.equals("seqname")) {
+      if (val instanceof String) {
+        id = (String) val;
+        return true;
+      }
+      else {
+        //id = null;
+        return false;
+      }
+    }
+    if (name.equals("feature_type") || name.equals("type")) {
+      if (val instanceof String) {
+        feature_type = (String) val;
+        return true;
+      }
+      else {
+        //feature_type = null;
+        return false;
+      }
+    }
+    if (name.equals("source") || name.equals("method")) {
+      if (val instanceof String) {
+        source = (String) val;
+        return true;
+      }
+      else {
+        //source = null; 
+        return false;
+      }
+    }
+    else if (name.equals("group")) {
+      if (val instanceof String) {
+        group = (String) val;
+        return true;
+      }
+      else {
+        //group = null;
+        return false;
+      }
+    }
+    else if (name.equals("score") || name.equals("frame")) {
+      // May need to handle these later, but it is unlikely to be an issue
+      throw new IllegalArgumentException("Currently can't modify 'score' or 'frame' via setProperty");
+    }
+
+    return super.setProperty(name, val);
+  }
+           
 
   public Map getProperties() {
     return cloneProperties();

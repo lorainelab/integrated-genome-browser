@@ -193,13 +193,17 @@ public class GFFParser implements AnnotationWriter  {
    *                if false then remove from fail_filter_hash
    */
   public void removeFeatureFilter(String feature_type, boolean pass_filter) {
-    if (pass_filter && (pass_filter_hash != null)) {
-      pass_filter_hash.remove(feature_type);
-      if (pass_filter_hash.size() == 0) { pass_filter_hash = null; }
+    if (pass_filter) {
+      if (pass_filter_hash != null) {
+        pass_filter_hash.remove(feature_type);
+        if (pass_filter_hash.size() == 0) { pass_filter_hash = null; }
+      }
     }
-    else if (fail_filter_hash != null) {
-      fail_filter_hash.remove(feature_type);
-      if (fail_filter_hash.size() == 0) { fail_filter_hash = null; }
+    else {
+      if (fail_filter_hash != null) {
+        fail_filter_hash.remove(feature_type);
+        if (fail_filter_hash.size() == 0) { fail_filter_hash = null; }
+      }
     }
   }
 

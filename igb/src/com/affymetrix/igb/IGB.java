@@ -45,7 +45,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
   public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.21";
+  public static String IGB_VERSION = "3.22";
 
   public static final boolean DEBUG_EVENTS = false;
   public static boolean CURATION_ENABLED = true;
@@ -314,14 +314,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public static void clearSymHash() {
     id2sym_hash.clear();
-    symHashChanged(IGB.class); // IGB.class is the most obvious source for the event 
+    symHashChanged(IGB.class); // IGB.class is the most obvious source for the event
   }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
   }
 
-  /** Call this method if you alter the Map returned by {@link #getSymHash}. 
+  /** Call this method if you alter the Map returned by {@link #getSymHash}.
    *  @param source  The source responsible for the change, used in constructing
    *    the {@link SymMapChangeEvent}.
    */
@@ -336,15 +336,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static java.util.List getSymMapChangeListeners() {
     return sym_map_change_listeners;
   }
-  
+
   public static void addSymMapChangeListener(SymMapChangeListener l) {
     sym_map_change_listeners.add(l);
   }
-  
+
   public static void removeSymMapChangeListener(SymMapChangeListener l) {
     sym_map_change_listeners.remove(l);
   }
-  
+
   /**
    *  Returns IGB prefs hash
    *  If prefs haven't been loaded yet, will force loading of prefs
@@ -647,7 +647,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
 
     Object plugin = pi.instantiatePlugin(class_name);
-    
+
     if (plugin == null) {
       ErrorHandler.errorPanel("Bad Plugin",
         "Could not create plugin '"+pi.getPluginName()+"'.",

@@ -569,10 +569,16 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     if (current_elem == START || current_elem == END)  {  // parse out integer
       // if no previously collected characters, go ahead and parse as an integer
       //   -- if for some reason more characters are needed, keep adding to already created
-      //   integer...
+      //   integer...,  but watch out for the case where an integer is split near a '0' !
       if (prev_chars && (cached_int != Integer.MIN_VALUE)) {
 	int temp_int = parseInt(ch, start, length);
 	int x = Integer.toString(temp_int).length();
+        if (ch[start] == '0') { 
+          // if the second half of the integer starts with one or more '0', take that into account
+          for (int q=0; q<length && ch[start + q]=='0' ; q++) {
+            x++;
+          }
+        }
 	int scale = (int)Math.pow(10, x);
 	cached_int = (cached_int * scale) + temp_int;
       }

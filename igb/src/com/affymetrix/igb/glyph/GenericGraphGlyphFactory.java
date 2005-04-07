@@ -180,8 +180,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       float[] percentiles = GraphSymUtils.calcPercents2Scores(graf.getGraphYCoords(), 10.0f);
       // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
       // and percentiles.length = 1001 in this case.
-      graph_glyph.setVisibleMinY(percentiles[100]); // 10th percentile 
-      graph_glyph.setVisibleMaxY(percentiles[900]); // 90th percentile
+      graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile 
+      graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
     }
 
     if (graph_seq != aseq) {

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,21 +21,14 @@ import java.net.*;
 import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
-import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
-import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
@@ -164,7 +157,7 @@ public class OpenGraphAction extends AbstractAction {
       String name = furl.getPath();
       fis = furl.openStream();
 
-      String stripped_name = Streamer.stripEndings(name);
+      String stripped_name = Streamer.stripEndings(name).toLowerCase();
 
       if (stripped_name.endsWith(".bar") ||
 	  stripped_name.endsWith(".mbar") ||

@@ -532,11 +532,19 @@ public class GraphGlyph extends Glyph {
       view.transformToCoords(label_pix_box, label_coord_box);
       top_ycoord_inset = label_coord_box.height;
     }
+    /*
+    else {  // GAH 3-21-2005
+      label_pix_box.height = 4;
+      view.transformToCoords(label_pix_box, label_coord_box);
+      top_ycoord_inset = label_coord_box.height;
+    }
+    */
     return top_ycoord_inset;
   }
 
   protected double getLowerYCoordInset(ViewI view) {
-    return 0;
+    //    return 0;
+    return 5;  // GAH 3-21-2005
   }
 
   //  public double getInternalYScale(ViewI view) {

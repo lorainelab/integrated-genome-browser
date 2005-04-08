@@ -83,6 +83,12 @@ public class GraphSymUtils {
       grafs = sgr_parser.parse(istr, seqs, false, stream_name);
     }
     //    if ((grafs != null) && Unibrow.ANNOTATE_GRAPHS) {
+    if (grafs != null)  {
+      for (int i=0; i<grafs.size(); i++) {
+        GraphSym gsym = (GraphSym)grafs.get(i);
+        gsym.setProperty("source_url", stream_name);
+      }
+    }
     addGraphsToSeqs(grafs);
     // }
     //    newstr.close();

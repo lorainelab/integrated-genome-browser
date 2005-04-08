@@ -98,7 +98,6 @@ public class TierLabelManager
     gviewer = view;
   }
 
-
   public TierLabelManager(AffyLabelledTierMap map) {
     tiermap = map;
     popup = new JPopupMenu();
@@ -220,6 +219,23 @@ public class TierLabelManager
   }
 
   private static final String SELECT_SINGLE_TIER = "Must select a single tier";
+
+  public java.util.List getSelectedTiers() {
+    java.util.List selected_labels = labelmap.getSelected();
+    int sel_count = selected_labels.size();
+    java.util.List selected_tiers = new ArrayList();
+
+    for (int i=0; i<sel_count; i++) {
+      // TierGlyph should be data model for tier label, access via lable.getInfo()
+      //      if (selected.get(i) instanceof TierLabelGlyph) {
+      // currently assuming all selected glyphs in label map are TierLabelGlyphs
+      TierLabelGlyph tlg = (TierLabelGlyph)selected_labels.get(i);
+      TierGlyph tier = (TierGlyph)tlg.getInfo();
+      selected_tiers.add(tier);
+      //      }
+    }
+    return selected_tiers;
+  }
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();

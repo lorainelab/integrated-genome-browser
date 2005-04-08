@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -36,6 +36,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of
@@ -43,7 +44,7 @@ import com.affymetrix.igb.view.SeqMapView;
  */
 public abstract class BookmarkController {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  private final static boolean DEBUG= true;
+  private final static boolean DEBUG= false;
 
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
    *  it will be opened in the viewer using
@@ -120,6 +121,10 @@ public abstract class BookmarkController {
           continue;
         }
 
+        String graph_name = UnibrowControlServlet.getStringParameter(map, "graph_name_" + i);
+	if (DEBUG) {
+	  System.out.println("loading from bookmark, graph name: " + graph_name + ", url: " + graph_path);
+	}
         String graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i);
         String graph_height = UnibrowControlServlet.getStringParameter(map, "graphyheight" + i);
         // graph_col is String rep of RGB integer
@@ -138,7 +143,6 @@ public abstract class BookmarkController {
         //        int graph_min = (graph_visible_min == null) ?
         //        String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style" + i);
 
-        URL graphurl = new URL(graph_path);
         double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
         double yheight = (graph_height == null)  ? default_yheight : Double.parseDouble(graph_height);
         Color col = default_col;
@@ -184,12 +188,19 @@ public abstract class BookmarkController {
                               score_thresh+", "+maxgap_thresh+", "+ show_thresh);
         }
 
-        istr = graphurl.openStream();
+        if (IGB.CACHE_GRAPHS)  {
+          istr = LocalUrlCacher.getInputStream(graph_path);
+        }
+        else {
+          URL graphurl = new URL(graph_path);
+          istr = graphurl.openStream();
+        }
         GraphSym graf = GraphSymUtils.readGraph(istr, graph_path, gmodel.getSelectedSeq());
         istr.close();
         //        displayGraph(graf, col, ypos, 60, true);
         //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),
         //                                     col, ypos, yheight, use_floating_graphs
+        graf.setGraphName(graph_name);
         GenericGraphGlyphFactory.displayGraph(graf, gviewer,
                                               col, ypos, yheight,
                                               use_floating_graphs, show_label, show_axis,
@@ -242,6 +253,10 @@ public abstract class BookmarkController {
         if (is_floating) { mark_sym.setProperty("graphfloat" + i, "true"); }
         else  {mark_sym.setProperty("graphfloat" + i, "false"); }
 
+	if (DEBUG) {
+	  System.out.println("setting bookmark prop graph_name_" + i + ": " + graf.getGraphName());
+	}
+        mark_sym.setProperty("graph_name_" + i, graf.getGraphName());
         mark_sym.setProperty("graph_show_label_" + i, (gr.getShowLabel()?"true":"false"));
         mark_sym.setProperty("graph_show_axis_" + i, (gr.getShowAxis()?"true":"false"));
         mark_sym.setProperty("graph_minvis_" + i, Double.toString(gr.getVisibleMinY()));

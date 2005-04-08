@@ -60,17 +60,15 @@ import com.affymetrix.igb.genometry.*;
  *
  */
   public class BrptParser {
-    static String text_infile = "c:/data/ucsc/hg17/repeats/rmsk_all.txt";
-    static String outfile = text_infile + ".brpt";
-    static String genome_version = "H_sapiens_May_2004";
-
+    //    static String default_text_infile = "c:/data/ucsc/hg17/repeats/rmsk_all.txt";
+    //    static String genome_version = "H_sapiens_Apr_2003";
 
     //  static Pattern line_regex = Pattern.compile("\t");
     static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
     Map source_hash = new HashMap();
     Map type_hash = new HashMap();
 
-    public void outputBrptFormat(java.util.List parents, DataOutputStream dos) {
+    public void outputBrptFormat(java.util.List parents, String genome_version, DataOutputStream dos) {
     try	{
       int pcount = parents.size();
       dos.writeUTF(genome_version);
@@ -215,25 +213,44 @@ import com.affymetrix.igb.genometry.*;
   public static void main(String[] args) {
     try {
       if (TEST_BINARY_PARSE) {
-	System.out.println("parsing in rpt data from .brpt file: " + outfile);
+	String binfile = args[0];
+	System.out.println("parsing in rpt data from .brpt file: " + binfile);
 	BrptParser tester = new BrptParser();
-	File ifil = new File(outfile);
+	File ifil = new File(binfile);
 	InputStream istr = new FileInputStream(ifil);
 	tester.parse(istr, "rpt", new HashMap(), true);
 	System.out.println("finished parsing in rpt data from .brpt file");
       }
       else {
-	BrptParser tester = new BrptParser();
-	File ifil = new File(text_infile);
-	BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-	System.out.println("reading in text data from: " + text_infile);
-	java.util.List parent_syms = tester.readTextFormat(br);
-	File ofil = new File(outfile);
-	DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
-	System.out.println("outputing binary data to: " + outfile);
-	tester.outputBrptFormat(parent_syms, dos);
-	dos.close();
-	System.out.println("finished converting text data to binary .brpt format");
+	if (args.length >= 2) {
+	  String genome_version = args[0];
+	  String text_infile = args[1];
+	  String bin_outfile;
+	  if (args.length >= 3) {
+	    bin_outfile = args[2];
+	  }
+	  else if (text_infile.endsWith(".txt")) {
+	    bin_outfile = text_infile.substring(0, text_infile.length()-4)+ ".brpt";
+	  }
+	  else {
+	    bin_outfile = text_infile + ".brpt";
+	  }
+	  BrptParser tester = new BrptParser();
+	  File ifil = new File(text_infile);
+	  BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
+	  System.out.println("reading in text data from: " + text_infile);
+	  java.util.List parent_syms = tester.readTextFormat(br);
+	  File ofil = new File(bin_outfile);
+	  DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
+	  System.out.println("outputing binary data to: " + bin_outfile);
+	  tester.outputBrptFormat(parent_syms, genome_version, dos);
+	  dos.close();
+	  System.out.println("finished converting text data to binary .brpt format");
+	}
+	else {
+	  System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");
+	  System.exit(1);
+	}
       }
     }
     catch (Exception ex) {

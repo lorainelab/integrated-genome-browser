@@ -32,6 +32,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class OpenGraphAction extends AbstractAction {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -155,7 +156,14 @@ public class OpenGraphAction extends AbstractAction {
     InputStream fis = null;
     try {
       String name = furl.getPath();
-      fis = furl.openStream();
+      if (IGB.CACHE_GRAPHS)  {
+        String graph_url = furl.toExternalForm();
+        System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
+        fis = LocalUrlCacher.getInputStream(graph_url);
+      }
+      else {
+        fis = furl.openStream();
+      }
 
       String stripped_name = Streamer.stripEndings(name).toLowerCase();
 
@@ -211,8 +219,6 @@ public class OpenGraphAction extends AbstractAction {
   }
 
 }
-
-
 
 
 

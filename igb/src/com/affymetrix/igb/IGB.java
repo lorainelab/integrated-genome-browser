@@ -47,6 +47,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String APP_NAME = IGBConstants.APP_NAME;
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean CURATION_ENABLED = true;
@@ -165,7 +166,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     singleton_igb = new IGB();
     singleton_igb.init();
-    
+
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     String url = get_arg("-href", args);

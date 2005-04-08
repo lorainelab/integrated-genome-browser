@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -31,10 +31,10 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 
 /**
- *  A panel that shows the preferences for particular special URLs and file locations. 
+ *  A panel that shows the preferences for particular special URLs and file locations.
  */
 public class OptionsView extends JPanel implements IPrefEditorComponent  {
-    
+
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
 
   public OptionsView() {
@@ -45,7 +45,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JPanel main_box = new JPanel();
     main_box.setLayout(new BoxLayout(main_box,BoxLayout.Y_AXIS));
     main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
-    
+
     //main_box.add(Box.createVerticalGlue());
 
     JScrollPane scroll_pane = new JScrollPane(main_box);
@@ -57,8 +57,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     //main_box.add(edit_panel1);
     //main_box.add(Box.createVerticalStrut(5));
-    
-    
+
+
     JPanel misc_box = new JPanel();
     boolean is_windows =  WebBrowserControl.isWindowsPlatform();
     if (is_windows) {
@@ -68,16 +68,16 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     }
     //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
     misc_box.setBorder(new javax.swing.border.EtchedBorder());
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(), 
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
       UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(), 
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-    
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(), 
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
 
-    //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(), 
+    //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
     if ( ! is_windows ) {
@@ -99,7 +99,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     colors_box.add(fg_color);
     colors_box.add(bg_color);
      */
-    
+
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
@@ -109,8 +109,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     edge_match_box.add(edge_match_color);
     JButton fuzzy_edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching color: "));
-    edge_match_box.add(fuzzy_edge_match_color);    
-    
+    edge_match_box.add(fuzzy_edge_match_color);
+
     JPanel orf_box = new JPanel();
     orf_box.setLayout(new GridLayout(2,2));
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
@@ -136,15 +136,17 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     axis_box.add(new JLabel("Number format: "));
     String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;
-    String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL, SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA};
+    String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
+                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA};
+                                             //     SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
-    
+
     main_box.add(axis_box);
     main_box.add(edge_match_box);
     main_box.add(orf_box);
-    main_box.add(misc_box);    
-        
+    main_box.add(misc_box);
+
     validate();
   }
 
@@ -155,12 +157,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {
     OptionsView p = new OptionsView();
-   
+
     JDialog d = new JDialog();
     d.setTitle(p.getName());
     d.getContentPane().add(p);
     d.pack();
-    
+
     d.setVisible(true);
     d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     d.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -170,7 +172,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     }
     );
   }
-  
+
   public String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
 
@@ -180,7 +182,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("In some cases, the changes will take effect immediately.  ");
     sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Browser Command</h2>\n");
     sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
@@ -195,20 +197,20 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("</p>\n");
     return sb.toString();
   }
-  
+
   public Icon getIcon() {
     return null;
   }
-  
+
   public String getToolTip() {
     return "Edit Miscelaneous Options";
   }
-  
+
   public String getInfoURL() {
     return null;
-  }   
-  
+  }
+
   public void refresh() {
   }
-  
+
 }

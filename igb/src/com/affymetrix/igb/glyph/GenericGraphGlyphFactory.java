@@ -316,7 +316,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setShowAxis(show_axis);
     gstate.setVisibleMinY(minvis);
     gstate.setVisibleMaxY(maxvis);
-    gstate.setScoreThreshold(score_thresh);
+    gstate.setMinScoreThreshold(score_thresh);
     gstate.setMinRunThreshold(minrun_thresh);
     gstate.setMaxGapThreshold(maxgap_thresh);
     gstate.setShowThreshold(show_thresh);

@@ -103,7 +103,7 @@ public class GraphAdjusterView extends JComponent
 
   java.util.List grafs = new ArrayList();
   java.util.List glyphs = new ArrayList();
-  
+
   static {
     string2style = new HashMap();
     string2style.put(MINMAXAVG, new Integer(SmartGraphGlyph.MINMAXAVG));
@@ -147,7 +147,7 @@ public class GraphAdjusterView extends JComponent
     max_gap_thresher = new MaxGapThresholder(nwidg);
     min_run_thresher = new MinRunThresholder(nwidg);
 
-    score_thresh_adjuster.setBorder(new TitledBorder("Min Score"));
+    score_thresh_adjuster.setBorder(new TitledBorder("Score"));
     vis_bounds_adjuster.setBorder(new TitledBorder("Visible Bounds"));
 
     JPanel thresh_toggle_pan = new JPanel();
@@ -687,7 +687,7 @@ public class GraphAdjusterView extends JComponent
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
     //    String meth = "graph pickle " + pickle_count;
     String meth =
-      "thresh, min_score=" + nformat.format(sgg.getScoreThreshold()) +
+      "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
       ", max_gap=" + (int)sgg.getMaxGapThreshold() +
       ", min_run=" + (int)sgg.getMinRunThreshold() +
       ", graph: " + sgg.getLabel();
@@ -741,7 +741,7 @@ public class GraphAdjusterView extends JComponent
     cpane.add("Center", tester);
     frm.pack();
     frm.show();
-    
+
     frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 

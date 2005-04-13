@@ -261,7 +261,7 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_show_axis_" + i, (gr.getShowAxis()?"true":"false"));
         mark_sym.setProperty("graph_minvis_" + i, Double.toString(gr.getVisibleMinY()));
         mark_sym.setProperty("graph_maxvis_" + i, Double.toString(gr.getVisibleMaxY()));
-        mark_sym.setProperty("graph_score_thresh_" + i, Double.toString(gr.getScoreThreshold()));
+        mark_sym.setProperty("graph_score_thresh_" + i, Double.toString(gr.getMinScoreThreshold()));
         mark_sym.setProperty("graph_maxgap_thresh_" + i, Integer.toString((int)gr.getMaxGapThreshold()));
         mark_sym.setProperty("graph_minrun_thresh_" + i, Integer.toString((int)gr.getMinRunThreshold()));
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));

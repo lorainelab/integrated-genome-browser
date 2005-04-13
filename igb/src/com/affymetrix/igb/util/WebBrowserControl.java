@@ -58,7 +58,7 @@ public class WebBrowserControl {
     Thread t = new Thread() {
       public void run() {
         try {
-          System.out.println("Opening URL in browser: " + url);
+          System.err.println("Opening URL in browser: " + url);
           displayURL(url);
         } catch (final Exception e) {
           SwingUtilities.invokeLater(new Runnable() {
@@ -82,65 +82,81 @@ public class WebBrowserControl {
    * "file://").
    */
   public static void displayURL(String url) {
-    boolean windows = isWindowsPlatform();
+    int platform = getPlatformCode();
     String cmd = null;
+    Process p = null;
     try {
-      if (windows) {
+      switch (platform) {
+      case 1:
         cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
-        Process p = Runtime.getRuntime().exec(cmd);
-      }
-      else {
-        try {
-          String unix_path = getUnixPath();
-          int exitCode = -1;
-          if (isNetscapeOrMozilla(unix_path)) {
+        p = Runtime.getRuntime().exec(cmd);
+        break;
+      case 2:
+        cmd = "open " + url;
+        p = Runtime.getRuntime().exec(cmd);
+        break;
+      case 3:
+        String unix_path = getUnixPath();
+        int exitCode = -1;
+        if (isNetscapeOrMozilla(unix_path)) {
             // Under Unix, Netscape or Mozilla or Firefox has to be running for the
             // "-remote" flag to work.  So, we try sending the command and
             // check for an exit value.  If the exit command is 0,
             // it worked, otherwise we need to start the browser.
             // (Firefox 1.0 and up doesn't require the "remote" flag)
             cmd = unix_path + " -remote openURL(" + url + ")";
-            //System.out.println("cmd: "+cmd);
-            Process p = Runtime.getRuntime().exec(cmd);
-
+            p = Runtime.getRuntime().exec(cmd);
             // wait for exit code -- if it's 0, command worked,
             // otherwise we need to start the browser.
             exitCode = p.waitFor();
-          }
-          if (exitCode != 0) {
-            // Command failed, start up the browser
-            cmd = unix_path + " "  + url;
-            //System.out.println("cmd: "+cmd);
-            Process p = Runtime.getRuntime().exec(cmd);
-          }
         }
-        catch(InterruptedException x) {
-          ErrorHandler.errorPanel("Error invoking browser, command:\n" 
-            + cmd + "\n\n" + x.toString() +
-          "\n\nYou may need to reset the browser command in the preferences panel "+
-          "at File->Preferences->Other\n");
+        if (exitCode != 0) {
+          // Command failed, start up the browser
+          cmd = unix_path + " "  + url;
+          p = Runtime.getRuntime().exec(cmd);
         }
       }
+    } 
+    catch(InterruptedException x) {
+      ErrorHandler.errorPanel("Error invoking browser, command:\n" 
+                              + cmd + "\n\n" + x.toString() +
+                              "\n\nYou may need to reset the browser command in the preferences panel "+
+                              "at File->Preferences->Other\n");
     }
     catch(IOException x) {
       // couldn't exec browser
       IGB.errorPanel("Could not invoke browser, command:\n" 
-        + cmd + "\n\n" + x.toString() +
-        "\n\nYou may need to reset the browser command in the preferences panel "+
-        "at File->Preferences->Other\n");
+                     + cmd + "\n\n" + x.toString() +
+                     "\n\nYou may need to reset the browser command in the preferences panel "+
+                     "at File->Preferences->Other\n");
     }
   }
 
   /**
-   * Try to determine whether this application is running under Windows
+   * Try to identify the operating system by examining the 
    * by examing the "os.name" property.
    *
-   * @return true if this application is running under a Windows OS
+   * @return 1 if this application is running under a Windows OS
+   * @return 2 if this application is running under Mac OS
+   * @return 3 if this application is running under non of the above
    */
-  public static boolean isWindowsPlatform()
-  {
+  public static int getPlatformCode() {
     String os = System.getProperty("os.name");
-    return ( os != null && os.startsWith(WIN_ID));
+    System.err.println("Platform os.name property is: " + os);
+    int to_return = -1;
+    if (os == null) {
+      to_return = 0; // is this even possible?
+    }
+    else if (os.startsWith(WIN_ID)) {
+      to_return = 1;
+    }
+    else if (os.startsWith(MAC_ID)) {
+      to_return = 2;
+    }
+    else {
+      to_return = 3;
+    }
+    return to_return;
   }
 
   private static boolean isNetscapeOrMozilla(String path) {
@@ -195,7 +211,9 @@ public class WebBrowserControl {
     WebBrowserControl.displayURL("http://www.affymetrix.com");
   }
 
-  // Used to identify the windows platform.
+  // Used to identify the Mac OS X platform.
+  private static final String MAC_ID = "Mac OS X";
+
   private static final String WIN_ID = "Windows";
   // The default system browser under windows.
   private static final String WIN_PATH = "rundll32";

@@ -99,7 +99,10 @@
                             substituted with the item ID when forming links.
   -->
   <annotation_url annot_type_regex="RefSeq"
-    url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=$$" />
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$" />
+
+  <annotation_url annot_type_regex="TAIR" url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$" />
+
   <annotation_url annot_type_regex="EnsGene"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$" />
 

@@ -25,6 +25,8 @@
 <annotation_style annot_type="RefSeq" label_field="gene_name" red="0" green="255" blue="0" />
 <annotation_style annot_type="refseq" label_field="gene_name" red="0" green="255" blue="0" />
 
+<annotation_style annot_type="TAIR" label_field="gene_name" red="0" green="255" blue="0" />
+
 
 <annotation_style annot_type="genscan" red="200" green="0" blue="100" />
 <annotation_style annot_type="geneid" red="200" green="50" blue="50" />

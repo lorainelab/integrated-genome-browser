@@ -136,28 +136,41 @@ public class WebBrowserControl {
    * Try to identify the operating system by examining the 
    * by examing the "os.name" property.
    *
-   * @return 1 if this application is running under a Windows OS
-   * @return 2 if this application is running under Mac OS
-   * @return 3 if this application is running under non of the above
+   * @return WINDOWS if this application is running under a Windows OS
+   * @return MAC if this application is running under Mac OS
+   * @return UNIX if this application is running under none of the above
    */
   public static int getPlatformCode() {
     String os = System.getProperty("os.name");
     System.err.println("Platform os.name property is: " + os);
     int to_return = -1;
     if (os == null) {
-      to_return = 0; // is this even possible?
+      to_return = UNKNOWN_PLATFORM; // is this even possible?
     }
     else if (os.startsWith(WIN_ID)) {
-      to_return = 1;
+      to_return = WINDOWS;
     }
     else if (os.startsWith(MAC_ID)) {
-      to_return = 2;
+      to_return = MAC;
     }
     else {
-      to_return = 3;
+      to_return = UNIX;
     }
     return to_return;
   }
+
+  /**
+   * Try to determine whether this application is running under Windows
+   * by examing the "os.name" property.
+   *
+   * @return true if this application is running under a Windows OS
+   */
+  public static boolean isWindowsPlatform()
+  {
+    int result = getPlatformCode();
+    return result == WINDOWS;
+  }
+
 
   private static boolean isNetscapeOrMozilla(String path) {
     return (path != null && 
@@ -210,6 +223,13 @@ public class WebBrowserControl {
   public static void main(String[] args) {
     WebBrowserControl.displayURL("http://www.affymetrix.com");
   }
+
+  // used to encode platform identity
+  private static final int UNKNOWN_PLATFORM = 0;
+  private static final int WINDOWS = 1;
+  private static final int MAC = 2;
+  private static final int UNIX = 3;
+
 
   // Used to identify the Mac OS X platform.
   private static final String MAC_ID = "Mac OS X";

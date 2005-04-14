@@ -168,6 +168,43 @@ Make sure that the 'lib' directory exists and includes
 
   </target>
 
+  <!-- =================================================================== -->
+  <!-- Creates an executable, giganto-.jar file                            -->
+  <!-- =================================================================== -->
+  <!-- All jar files in the "lib" directory will be used during compilation. -->
+  <path id="project.class.path">
+    <fileset dir="${lib.dir}" id="extLibs">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="exe" depends="compile" 
+          description="generate executable .jar file" >
+    <!-- Put everything in ${build} into .jar file -->
+      <jar jarfile="igb_exe.jar" update="false">
+      <manifest>
+        <attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
+      </manifest>
+      <fileset dir="${classes.dir}">
+       <exclude name="test/affymetrix/**"/>
+       <exclude name="com/affymetrix/igb/test/**"/>
+       <exclude name="**/*.java"/>
+       <exclude name="**/package.html"/>
+       <exclude name="**/.*"/>
+      </fileset>
+      <fileset dir="${genometry.src.dir}">
+       <exclude name="**/*.java"/>
+       <exclude name="**/package.html"/>
+       <exclude name="**/.*"/>
+      </fileset>
+      <fileset dir="${genoviz.src.dir}">
+       <exclude name="**/*.java"/>
+       <exclude name="**/package.html"/>
+       <exclude name="**/.*"/>
+      </fileset>
+      <zipgroupfileset refid="extLibs"/>
+    </jar>
+  </target>
 
   <!-- =================================================================== -->
   <!-- Clean restores distribution to original state                       -->
@@ -203,6 +240,7 @@ Make sure that the 'lib' directory exists and includes
       </classpath>
     </java>
   </target>
+
 
   <target name="docs" depends="init-igb" description="Builds javadocs">
     <mkdir dir="${api-docs.dir}"/>

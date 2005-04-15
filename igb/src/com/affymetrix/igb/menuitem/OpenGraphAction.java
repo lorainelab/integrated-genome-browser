@@ -165,20 +165,11 @@ public class OpenGraphAction extends AbstractAction {
         fis = furl.openStream();
       }
 
-      String stripped_name = Streamer.stripEndings(name).toLowerCase();
-
-      if (stripped_name.endsWith(".bar") ||
-	  stripped_name.endsWith(".mbar") ||
-	  stripped_name.endsWith(".sgr")) {
+      if (GraphSymUtils.isAGraphFilename(name)) {
         java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seqhash);
-        for (int k=0; k<multigraphs.size(); k++) {
-          GraphSym graf = (GraphSym)multigraphs.get(k);
-          graphs.addElement(graf);
-        }
-      }
-      else {
-        GraphSym graf = GraphSymUtils.readGraph(fis, furl.toExternalForm(), aseq);
-        graphs.addElement(graf);
+        graphs.addAll(multigraphs);
+      } else {
+        throw new IOException("Filename does not match any known type of graph:\n" + name);
       }
     } finally {
       if (fis != null) try { fis.close(); } catch (IOException ioe) {}
@@ -196,7 +187,7 @@ public class OpenGraphAction extends AbstractAction {
       chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
       chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bgr", "bpr"}));
+      chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
       chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();

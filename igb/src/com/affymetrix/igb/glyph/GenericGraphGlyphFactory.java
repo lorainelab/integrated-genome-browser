@@ -185,6 +185,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     if (graph_seq != aseq) {
+      //TODO: suppress this message.
+      // This can occur when loading multi-sequence graph file (like sgr) from a bookmark,
+      // in which case it is not an error and this message really shouldn't be printed.
       System.out.println("################## ERROR, graph_seq != aseq #################");
       return null;
     }

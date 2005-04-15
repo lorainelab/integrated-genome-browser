@@ -68,7 +68,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"bpr", "bps", "bgn", "brs", "bsnp", "brpt", "bnib"},
+        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib"},
         "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
@@ -82,6 +82,9 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"das", "dasxml"},
         "DAS Files"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+        new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
+        "Graph Files"));
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
@@ -127,7 +130,6 @@ public class LoadFileAction {
       File[] fils = chooser.getSelectedFiles();
 
       if (chooser.merge_button.isSelected()) {
-	//        aseq = (MutableAnnotatedBioSeq) gviewer.getAnnotatedSeq();
 	aseq = gmodel.getSelectedSeq();
       }
       else {
@@ -155,10 +157,10 @@ public class LoadFileAction {
       if (aseq == null) {
         IGB.errorPanel("No data loaded!");
       }
+      gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
     return aseq;
   }
-
 
   public MutableAnnotatedBioSeq load(File annotfile) {
     return load(gviewer, annotfile, null);
@@ -172,7 +174,21 @@ public class LoadFileAction {
       //fistr = new FileInputStream(annotfile);
       StringBuffer sb = new StringBuffer();
       fistr = Streamer.getInputStream(annotfile,  sb);
-      aseq = load(gviewer, fistr, sb.toString(), input_seq, file_length);
+      String stripped_name = sb.toString();
+      if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+        AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+        if (seq_group == null) {
+          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph");        
+        } else {
+          Map seqs = seq_group.getSeqs();
+//          GraphSymUtils.readGraphs(fistr, annotfile.getAbsolutePath(), seqs, input_seq);
+          URL url = annotfile.toURI().toURL();
+          OpenGraphAction.loadGraphFile(url, seqs, input_seq);
+        }
+      }
+      else {
+        aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
+      }
     }
     catch (Exception ex) {
       IGB.errorPanel("Error loading file", ex);
@@ -312,11 +328,6 @@ public class LoadFileAction {
 	}
         parser = null;
       }
-      else if (stream_name.endsWith(".bpr")) {  // tentative binary probe format
-        ProbeSetParser parser = new ProbeSetParser();
-        aseq = parser.parse(str, input_seq);
-        parser = null;
-      }
       else if (stream_name.endsWith(".bps")) {
         // bps parsing requires a Map of sequences (seqid ==> BioSeq) rather than a single BioSeq
 	//	if (seqhash == null) {
@@ -450,6 +461,7 @@ public class LoadFileAction {
           IGB.errorPanel("MERGE ABORTED", "Input sequence not the correct type for a bnib file");
         }
       }
+
       System.gc();
       if (seqhash == null) {
 	if (aseq != null) {

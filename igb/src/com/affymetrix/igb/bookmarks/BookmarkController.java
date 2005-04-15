@@ -195,18 +195,25 @@ public abstract class BookmarkController {
           URL graphurl = new URL(graph_path);
           istr = graphurl.openStream();
         }
-        GraphSym graf = GraphSymUtils.readGraph(istr, graph_path, gmodel.getSelectedSeq());
+        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup().getSeqs(), gmodel.getSelectedSeq());
         istr.close();
         //        displayGraph(graf, col, ypos, 60, true);
         //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),
         //                                     col, ypos, yheight, use_floating_graphs
-        graf.setGraphName(graph_name);
-        GenericGraphGlyphFactory.displayGraph(graf, gviewer,
-                                              col, ypos, yheight,
-                                              use_floating_graphs, show_label, show_axis,
-                                              (float)minvis, (float)maxvis,
-                                              (float)score_thresh, minrun_thresh, maxgap_thresh, show_thresh
-                                              );
+
+        if (grafs != null) {
+          Iterator graf_iter = grafs.iterator();
+          while (graf_iter.hasNext()) {
+            GraphSym graf = (GraphSym) graf_iter.next();
+            graf.setGraphName(graph_name);
+            GenericGraphGlyphFactory.displayGraph(graf, gviewer,
+                                                col, ypos, yheight,
+                                                use_floating_graphs, show_label, show_axis,
+                                                (float)minvis, (float)maxvis,
+                                                (float)score_thresh, minrun_thresh, maxgap_thresh, show_thresh
+                                                );
+          }
+        }
       }
     }
     catch (Exception ex) {

@@ -254,7 +254,7 @@ public class LoadFileAction {
         parser = null;
       }
       else if (stream_name.endsWith(".das") || stream_name.endsWith(".dasxml")) {
-        DasFeat2GenometrySaxParser parser = new DasFeat2GenometrySaxParser();
+        Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
       }

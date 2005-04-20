@@ -21,8 +21,10 @@ import org.w3c.dom.*;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 
-public class Das2ServerInfo {
+public class Das2ServerInfo  {
   static boolean REPORT_SOURCES = true;
+  static boolean DO_FILE_TEST = false;
+  static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
 
   String root_url;
   String das_version;
@@ -60,7 +62,7 @@ public class Das2ServerInfo {
     return das_version;
   }
 
-  public Map getDataSources() {
+  public Map getSources() {
     if (!initialized) { initialize(); }
     return sources;
   }
@@ -86,7 +88,13 @@ public class Das2ServerInfo {
       //      System.out.println("in DasUtils.findDasSource()");
       //      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
       System.out.println("Das Request: " + root_url);
-      URL das_request = new URL(root_url);
+      URL das_request;
+      if (DO_FILE_TEST)  {
+	das_request = new URL(test_file);
+      }
+      else {
+	das_request = new URL(root_url);
+      }
       URLConnection request_con = das_request.openConnection();
       String das_version = request_con.getHeaderField("X-DAS-Version");
       String das_status = request_con.getHeaderField("X-DAS-Status");
@@ -144,7 +152,7 @@ public class Das2ServerInfo {
     System.out.println("  root URL: " + test.getRootUrl());
     System.out.println("  DAS version: " + test.getDasVersion());
 
-    Iterator sources = test.getDataSources().values().iterator();
+    Iterator sources = test.getSources().values().iterator();
     System.out.println("  data sources: ");
     while (sources.hasNext()) {
       Das2Source source = (Das2Source)sources.next();
@@ -156,6 +164,7 @@ public class Das2ServerInfo {
       while (versions.hasNext()) {
 	Das2VersionedSource version = (Das2VersionedSource)versions.next();
 	System.out.println("          version id = " + version.getID());
+	System.out.println("AnnotatedSeqGroup: " + version.getGenome().getID());
 	Map regions = version.getRegions();
 	Iterator riter = regions.values().iterator();
 	while (riter.hasNext()) {

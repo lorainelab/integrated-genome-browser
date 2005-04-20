@@ -27,11 +27,13 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;
 
-/** 
+/**
  *
  *  started with com.affymetrix.igb.das.DasSource and modified
- */ 
-public class Das2VersionedSource {
+ */
+public class Das2VersionedSource  {
+  static boolean DO_FILE_TEST = false;
+  static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -44,21 +46,20 @@ public class Das2VersionedSource {
   Map capabilities;
   Map namespaces;
   Map regions = new LinkedHashMap();
-  //  Map types;
   Map properties;
   java.util.List assembly;
 
   AnnotatedSeqGroup genome = null;
-  //  Map types = new LinkedHashMap();
+  Map types = new LinkedHashMap();
   boolean regions_initialized = false;
-  //   boolean types_initialized = false;
+  boolean types_initialized = false;
 
   public Das2VersionedSource(Das2Source das_source, String version_id, boolean init) {
     id = version_id;
     source = das_source;
     if (init) {
       initRegions();
-      // initTypes();
+      initTypes();
     }
   }
 
@@ -67,7 +68,16 @@ public class Das2VersionedSource {
   public String getInfoUrl() { return info_url; }
   public Date getCreationDate() { return creation_date; }
   public Date getLastModifiedDate() { return modified_date; }
-  public Das2Source getDas2Source() { return source; }
+  public Das2Source getSource() { return source; }
+
+  /** NOT YET IMPLEMENTED */
+  public List getAssembly()   { return assembly; }
+  /** NOT YET IMPLEMENTED */
+  public Map getProperties()  { return properties; }
+  /** NOT YET IMPLEMENTED */
+  public Map getNamespaces()  { return namespaces; }
+  /** NOT YET IMPLEMENTED */
+  public Map getCapabilities()  { return capabilities; }
 
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
@@ -81,6 +91,8 @@ public class Das2VersionedSource {
   void setInfoUrl(String url) { this.info_url = url; }
 
 
+
+
   public Map getRegions() {
     if (! regions_initialized)  {
       initRegions();
@@ -92,23 +104,28 @@ public class Das2VersionedSource {
     regions.put(region.getID(), region);
   }
 
-  /*
   public Map getTypes() {
     if (! types_initialized) {
       initTypes();
     }
     return types;
   }
-  void addType(DasType type) {
+
+  void addType(Das2Type type) {
     types.put(type.getID(), type);
   }
-  */
 
 
   /** Get regions from das server. */
   protected void initRegions() {
-    String region_request = getDas2Source().getDas2ServerInfo().getRootUrl() + "/" +
-      this.getID() + "/region";
+    String region_request;
+    if (DO_FILE_TEST)  {
+      region_request = test_file;
+    }
+    else {
+      region_request = getSource().getServerInfo().getRootUrl() + "/" +
+          this.getID() + "/region";
+    }
     try {
       System.out.println("Das Region Request: " + region_request);
       Document doc = DasLoader.getDocument(region_request);
@@ -149,9 +166,10 @@ public class Das2VersionedSource {
   }
 
   // get annotation types from das server
-  /*
   protected void initTypes() {
-    String types_request = getDas2ServerInfo().getRootUrl() + "/" + getID() + "/types";
+    String types_request = getSource().getServerInfo().getRootUrl() +
+        "/" + this.getID() + "/type";
+    //    String types_request = "file:/C:/data/das2_responses/alan_server/types_short.xml";
     try {
       System.out.println("Das Types Request: " + types_request);
       Document doc = DasLoader.getDocument(types_request);
@@ -161,15 +179,13 @@ public class Das2VersionedSource {
       for (int i=0; i< typelist.getLength(); i++)  {
 	Element typenode = (Element)typelist.item(i);
         String typeid = typenode.getAttribute("id");
-	String method = typenode.getAttribute("method");
-	String category = typenode.getAttribute("category");
-
-	String countstr = null;
-	Text count_text = (Text)typenode.getFirstChild();
-	if (count_text != null) { countstr = count_text.getData(); }
-
+	//	String method = typenode.getAttribute("method");
+	//	String category = typenode.getAttribute("category");
+	//	String countstr = null;
+	//	Text count_text = (Text)typenode.getFirstChild();
+	//	if (count_text != null) { countstr = count_text.getData(); }
 	//	System.out.println("type id: " + typeid);
-	DasType type = new DasType(this, typeid);
+	Das2Type type = new Das2Type(typeid, this);
 	this.addType(type);
       }
     }
@@ -179,5 +195,5 @@ public class Das2VersionedSource {
     //TODO should types_initialized be true after an exception?
     types_initialized = true;
   }
-  */
+
 }

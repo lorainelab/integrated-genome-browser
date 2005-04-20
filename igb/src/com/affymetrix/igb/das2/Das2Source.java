@@ -39,6 +39,7 @@ public class Das2Source {
   String info_url;
   String taxon;
   Map versions = new LinkedHashMap();
+  Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;
   AnnotatedSeqGroup genome = null;
@@ -60,7 +61,10 @@ public class Das2Source {
   public String getInfoUrl() { return info_url; }
   public String getTaxon() { return taxon; }
 
-  public Das2ServerInfo getDas2ServerInfo() { return server; }
+  public Das2ServerInfo getServerInfo() { return server; }
+
+  /** NOT YET IMPLEMENTED */
+  public Das2VersionedSource getLatestVersion()  { return latest_version; }
 
   /**
    *  Equivalent to {@link SingletonGenometryModel#addSeqGroup(String)} with the
@@ -89,117 +93,5 @@ public class Das2Source {
     versions.put(version.getID(), version);
   }
 
-  /*
-  public Map getEntryPoints() {
-    if (! entries_initialized)  {
-      initEntryPoints();
-    }
-    return entry_points;
-  }
-  public Map getTypes() {
-    if (! types_initialized) {
-      initTypes();
-    }
-    return types;
-  }
-  void addEntryPoint(DasEntryPoint entry_point) {
-    entry_points.put(entry_point.getID(), entry_point);
-  }
-  void addType(DasType type) {
-    types.put(type.getID(), type);
-  }
-  */
 
-
-  /** Get entry points from das server. */
-  /*
-  protected void initEntryPoints() {
-    String entry_request = getDas2ServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
-    try {
-      System.out.println("Das Entry Request: " + entry_request);
-      Document doc = DasLoader.getDocument(entry_request);
-      Element top_element = doc.getDocumentElement();
-      NodeList segments = doc.getElementsByTagName("SEGMENT");
-      System.out.println("segments: " + segments.getLength());
-      for (int i=0; i< segments.getLength(); i++)  {
-	Element seg = (Element)segments.item(i);
-        String segid = seg.getAttribute("id");
-	String startstr = seg.getAttribute("start");
-	String stopstr = seg.getAttribute("stop");
-	String sizestr = seg.getAttribute("size");  // can optionally use "size" instead of "start" and "stop"
-	String seqtype = seg.getAttribute("type");  // optional
-	String orient = seg.getAttribute("orientation");  // optional if using "size" attribute
-	String subpart_str = seg.getAttribute("subparts");
-
-	String description = null;
-        Text desctext = (Text)seg.getFirstChild();
-	if (desctext != null) { description = desctext.getData(); }
-	//	System.out.println("segment id: " + segid);
-	int start = 1;
-	int stop = 1;
-	boolean forward = true;
-	if (orient != null) {
-	  forward = (! orient.equals("-"));  // anything other than "-" is considered forward
-	}
-	if (startstr != null && stopstr != null) {
-	  start = Integer.parseInt(startstr);
-	  stop = Integer.parseInt(stopstr);
-	}
-	else if (sizestr != null) {
-	  stop = Integer.parseInt(sizestr);
-	}
-	boolean has_subparts = false;
-	if (subpart_str != null) {
-	  has_subparts = (subpart_str.equalsIgnoreCase("yes") || subpart_str.equalsIgnoreCase("true"));
-	}
-	//	DasEntryPoint entry_point =
-	//	  new DasEntryPoint(this, segid, seqtype, desc, has_subparts, start, stop, forward);
-	DasEntryPoint entry_point = new DasEntryPoint(this, segid);
-	entry_point.setSeqType(seqtype);
-	entry_point.setDescription(description);
-	entry_point.setInterval(start, stop, forward);
-	entry_point.setSubParts(has_subparts);
-	this.addEntryPoint(entry_point);
-      }
-    }
-    catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS entry points for\n"+entry_request, ex);
-    }
-    //TODO should entries_initialized be true if an exception occured?
-    entries_initialized = true;
-  }
-  */
-
-  // get annotation types from das server
-  /*
-  protected void initTypes() {
-    String types_request = getDas2ServerInfo().getRootUrl() + "/" + getID() + "/types";
-    try {
-      System.out.println("Das Types Request: " + types_request);
-      Document doc = DasLoader.getDocument(types_request);
-      Element top_element = doc.getDocumentElement();
-      NodeList typelist = doc.getElementsByTagName("TYPE");
-      System.out.println("types: " + typelist.getLength());
-      for (int i=0; i< typelist.getLength(); i++)  {
-	Element typenode = (Element)typelist.item(i);
-        String typeid = typenode.getAttribute("id");
-	String method = typenode.getAttribute("method");
-	String category = typenode.getAttribute("category");
-
-	String countstr = null;
-	Text count_text = (Text)typenode.getFirstChild();
-	if (count_text != null) { countstr = count_text.getData(); }
-
-	//	System.out.println("type id: " + typeid);
-	DasType type = new DasType(this, typeid);
-	this.addType(type);
-      }
-    }
-    catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types for\n"+types_request, ex);
-    }
-    //TODO should types_initialized be true after an exception?
-    types_initialized = true;
-  }
-  */
 }

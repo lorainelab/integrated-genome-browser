@@ -19,23 +19,31 @@ import java.util.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.IGB;
-import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.swing.threads.SwingWorker;
 
+import com.affymetrix.igb.util.GenometryViewer;  // temporary visualization till hooked into IGB
+
 public class Das2LoadView extends JComponent
-  implements ItemListener, SeqSelectionListener, GroupSelectionListener  {
+  implements ItemListener, ActionListener, SeqSelectionListener, GroupSelectionListener  {
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
+  GenometryViewer viewer = null;
   JComboBox das_serverCB;
   JComboBox das_sourceCB;
   JComboBox das_versionCB;
   JComboBox das_regionCB;
+  JTextField minTF;
+  JTextField maxTF;
+  JButton load_featuresB;
   JPanel types_panel;
   Map das_servers;
+  LinkedHashMap checkbox2type;
 
   Das2LoadView myself = null;
   Das2ServerInfo current_server;
@@ -61,10 +69,14 @@ public class Das2LoadView extends JComponent
     das_sourceCB = new JComboBox();
     das_versionCB = new JComboBox();
     das_regionCB = new JComboBox();
+    minTF = new JTextField(10);
+    maxTF = new JTextField(10);
+    load_featuresB = new JButton("Load Features");
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
     JScrollPane scrollpane = new JScrollPane(types_panel);
 
+    checkbox2type = new LinkedHashMap();
     das_serverCB.addItem(server_filler);
 
     das_servers = Das2Discovery.getDas2Servers();
@@ -76,7 +88,7 @@ public class Das2LoadView extends JComponent
 
     this.setLayout(new BorderLayout());
     JPanel panA = new JPanel();
-    panA.setLayout(new GridLayout(4, 2));
+    panA.setLayout(new GridLayout(6, 2));
 
     panA.add(new JLabel("DAS2 Server: "));
     panA.add(das_serverCB);
@@ -86,14 +98,20 @@ public class Das2LoadView extends JComponent
     panA.add(das_versionCB);
     panA.add(new JLabel("DAS2 Region: "));
     panA.add(das_regionCB);
+    panA.add(new JLabel("min base: "));
+    panA.add(minTF);
+    panA.add(new JLabel("max base: "));
+    panA.add(maxTF);
 
     this.add("North", panA);
     this.add("Center", scrollpane);
+    this.add("South", load_featuresB);
 
     das_serverCB.addItemListener(this);
     das_sourceCB.addItemListener(this);
     das_versionCB.addItemListener(this);
     das_regionCB.addItemListener(this);
+    load_featuresB.addActionListener(this);
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
@@ -149,7 +167,17 @@ public class Das2LoadView extends JComponent
       String region_name = (String)evt.getItem();
       if (region_name != region_filler) {
 	System.out.println("region seq: " + region_name);
+	Map regions = current_version.getRegions();
+	current_region = (Das2Region)regions.get(region_name);
       }
+    }
+  }
+
+  public void actionPerformed(ActionEvent evt) {
+    Object src = evt.getSource();
+    if (src == load_featuresB) {
+      System.out.println("Das2LoadView received ActionEvent on load features button");
+      loadFeatures();
     }
   }
 
@@ -157,6 +185,7 @@ public class Das2LoadView extends JComponent
     das_versionCB.removeItemListener(this);
     das_versionCB.removeAllItems();
     das_regionCB.removeAllItems();
+    checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
     types_panel.repaint();
@@ -196,6 +225,7 @@ public class Das2LoadView extends JComponent
     das_sourceCB.removeItemListener(this);
     das_sourceCB.removeAllItems();
     das_regionCB.removeAllItems();
+    checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
     types_panel.repaint();
@@ -240,8 +270,10 @@ public class Das2LoadView extends JComponent
     das_sourceCB.setEnabled(false);
     das_versionCB.setEnabled(false);
     das_regionCB.setEnabled(false);
+    load_featuresB.setEnabled(false);
 
     das_regionCB.removeAllItems();
+    checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
     types_panel.repaint();
@@ -268,13 +300,16 @@ public class Das2LoadView extends JComponent
 	  final Map types = current_version.getTypes();
 	  SwingUtilities.invokeLater(new Runnable() {
 	      public void run()  {
-		types_panel.removeAll();
+		// types_panel.removeAll();  // already done at start of setRegionsAndTypes();
+		// checkbox2type.clear(); // already done at start of setRegionsAndTypes();
 		Iterator iter = types.values().iterator();
 		while (iter.hasNext()) {
 		  Das2Type dtype = (Das2Type)iter.next();
 		  String typeid = dtype.getID();
+		  //		  String typesource = dtype.getDerivation();
 		  JCheckBox box = new JCheckBox(typeid);
 		  types_panel.add(box);
+		  checkbox2type.put(box, dtype);
 		}
 		types_panel.validate();
 		types_panel.repaint();
@@ -284,6 +319,7 @@ public class Das2LoadView extends JComponent
 		das_serverCB.setEnabled(true);
 		das_sourceCB.setEnabled(true);
 		das_versionCB.setEnabled(true);
+		load_featuresB.setEnabled(true);
 	      }
 	    } );
 	}
@@ -291,6 +327,56 @@ public class Das2LoadView extends JComponent
     Thread runthread = new Thread(runner);
     runthread.start();
   }
+
+  public void loadFeatures() {
+    MutableAnnotatedBioSeq aseq = current_region.getAnnotatedSeq();
+    String minstr = minTF.getText();
+    String maxstr = maxTF.getText();
+    int min = 0;
+    int max = 0;
+    try { min = Integer.parseInt(minstr); }
+    catch(Exception ex) {
+      ex.printStackTrace();
+      minTF.setText("");
+      return;
+    }
+    try {
+      max = Integer.parseInt(maxstr);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      maxTF.setText("");
+      return;
+    }
+
+    SeqSpan overlap = new SimpleSeqSpan(min, max, aseq);
+    System.out.println("region = " + current_region.getID() + ", seq = " + aseq.getID() +
+		       ", min = " + min + ", max = " + max);
+    int selected_type_count = 0;
+    Iterator iter = checkbox2type.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry keyval = (Map.Entry)iter.next();
+      JCheckBox box = (JCheckBox)keyval.getKey();
+      Das2Type dtype = (Das2Type)keyval.getValue();
+      boolean selected = box.isSelected();
+      if (selected) {
+	selected_type_count++;
+	String typeid = dtype.getID();
+	System.out.println("selected type: " + typeid);
+	Das2FeatureRequestSym request_sym =
+	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	current_region.getFeatures(request_sym);
+	aseq.addAnnotation(request_sym);
+      }
+    }
+    if (selected_type_count > 0) {
+      if (viewer == null) {
+	viewer = GenometryViewer.displaySeq(aseq, false);
+      }
+      viewer.setAnnotatedSeq(aseq);
+    }
+  }
+
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (IGB.DEBUG_EVENTS)  {
@@ -305,7 +391,6 @@ public class Das2LoadView extends JComponent
     if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup group = (AnnotatedSeqGroup)groups.get(0);
     }
-
   }
 
   public static void main(String[] args) {
@@ -314,11 +399,11 @@ public class Das2LoadView extends JComponent
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", testview);
-    //    frm.setSize(new Dimension(600, 400));
+    frm.setSize(new Dimension(400, 400));
     frm.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
-    frm.pack();
+    //    frm.pack();
     frm.show();
   }
 }

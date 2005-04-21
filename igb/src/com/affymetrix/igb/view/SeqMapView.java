@@ -69,7 +69,8 @@ import java.util.regex.*;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource, NeoRubberBandListener,
-	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener
+	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener, 
+	     ActionListener 
 {
 
   static boolean DIAGNOSTICS = false;
@@ -126,7 +127,7 @@ public class SeqMapView extends JPanel
    */
   boolean NEO_XZOOMER = false;
   boolean NEO_YZOOMER = false;
-  String XZOOMER_LOCATION = "South";
+  String XZOOMER_LOCATION = "North";
   boolean INTERNAL_XSCROLLER = true;
   boolean INTERNAL_YSCROLLER = true;
   boolean LABEL_TIERMAP = true;
@@ -212,6 +213,9 @@ public class SeqMapView extends JPanel
   JPopupMenu sym_popup;
   JMenu sym_menu;
   JLabel sym_info;
+
+  JTextField bases_per_pixelTF = new JTextField(10);
+  JTextField bases_in_viewTF = new JTextField(10);
 
   // A fake menu item, prevents null pointer exceptions in actionPerformed()
   // for menu items whose real definitions are commented-out in the code
@@ -301,7 +305,30 @@ public class SeqMapView extends JPanel
 
     setupPopups();
     this.setLayout(new BorderLayout());
-    this.add(XZOOMER_LOCATION, (Component)xzoomer);
+
+    Box xzoombox = Box.createHorizontalBox();
+    xzoombox.add(new JLabel("bases per pixel:"));
+    bases_per_pixelTF.setMaximumSize(new Dimension(10, 20));
+    bases_per_pixelTF.addActionListener(this);
+    xzoombox.add(bases_per_pixelTF);
+    xzoombox.add(new JLabel("bases in view:"));
+    bases_in_viewTF.setMaximumSize(new Dimension(10, 20));
+    bases_in_viewTF.addActionListener(this);
+    map.addViewBoxListener(new NeoViewBoxListener() {
+	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
+	  Rectangle2D vbox = evt.getCoordBox();
+	  int bases_in_view = (int)vbox.width;
+	  bases_in_viewTF.setText(Integer.toString(bases_in_view));
+	  int pixel_width = map.getView().getPixelBox().width;
+	  int bases_per_pixel = bases_in_view / pixel_width;
+	  bases_per_pixelTF.setText(Integer.toString(bases_per_pixel));
+	}
+      } );
+    xzoombox.add(bases_in_viewTF);
+    xzoombox.add((Component)xzoomer);
+//    this.add(XZOOMER_LOCATION, (Component)xzoomer);
+    this.add(XZOOMER_LOCATION, xzoombox);
+
     this.add("East", (Component)yzoomer);
     this.add("Center", map);
     LinkControl link_control = new LinkControl();
@@ -2472,6 +2499,25 @@ public class SeqMapView extends JPanel
 			 "not the sequence it is currently viewing");
     }
   }
+
+  public void actionPerformed(ActionEvent evt)  {
+    Object src = evt.getSource();
+    if (src == bases_per_pixelTF)  {
+      try {
+	float bases_per_pixel = Float.parseFloat(bases_per_pixelTF.getText());
+	float pixels_per_base = 1.0f/bases_per_pixel;
+	map.zoom(NeoWidgetI.X, pixels_per_base);
+	map.updateWidget();
+      }
+      catch (Exception ex) {
+	bases_per_pixelTF.setText("");
+      }
+    }
+    else if (src == bases_in_viewTF)  {
+
+    }
+  }
+
 
 }
 

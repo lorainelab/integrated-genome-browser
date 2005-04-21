@@ -147,12 +147,12 @@ public class Das2VersionedSource  {
 	  start = Integer.parseInt(startstr);
 	  end = Integer.parseInt(endstr);
 	}
-
-	System.out.println("  region id = " + region_id +
+	/*
+         System.out.println("  region id = " + region_id +
 			   ", start = " + start + ", end = " + end +
 			   ", name = " + region_name +
 			   ", info url = " + region_info_url);
-
+        */
 	Das2Region region = new Das2Region(this, region_id);
 	region.setInterval(start, end, true);
 	this.addRegion(region);

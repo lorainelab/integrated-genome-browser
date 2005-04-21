@@ -493,7 +493,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     // print  <LOC .../> line
     pw.print("     <LOC pos=\"");
-    String position = getPositionString(span, true);
+    String position = getPositionString(span, true, true);
     pw.print(position);
     pw.print("\" />");
     pw.println();
@@ -609,24 +609,28 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
   /**
-   *   if add_header, then prepends "region/" to String, otherwise leaves it off
+   *   if include_header, then prepends "region/" to String, otherwise leaves it off
+   *   if include_strand, then appends strand info to end of String (":1") or (":-1")
    *
-   *   Need to enhance this to deal with synonyms, so if seq id is different than 
-   *     corresponding region id, use region id instead.  To do this, probably 
-   *     need to add an Das2VersionedSource argument (Das2Region would work also, 
+   *   Need to enhance this to deal with synonyms, so if seq id is different than
+   *     corresponding region id, use region id instead.  To do this, probably
+   *     need to add an Das2VersionedSource argument (Das2Region would work also,
    *     but probably better to have this method figure out region based on versioned source
    */
-  public static String getPositionString(SeqSpan span, boolean add_header) {
+  public static String getPositionString(SeqSpan span,
+					 boolean include_header, boolean include_strand) {
     if (span == null) { return null; }
     StringBuffer buf = new StringBuffer(100);
-    if (add_header)  { buf.append("region/"); }
+    if (include_header)  { buf.append("region/"); }
     buf.append(span.getBioSeq().getID());
     buf.append("/");
     buf.append(Integer.toString(span.getMin()));
     buf.append(":");
     buf.append(Integer.toString(span.getMax()));
-    if (span.isForward()) { buf.append(":1"); }
-    else { buf.append(":-1"); }
+    if (include_strand) {
+      if (span.isForward()) { buf.append(":1"); }
+      else { buf.append(":-1"); }
+    }
     return buf.toString();
   }
 

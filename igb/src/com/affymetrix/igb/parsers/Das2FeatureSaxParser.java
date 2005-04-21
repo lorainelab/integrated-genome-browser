@@ -493,7 +493,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     // print  <LOC .../> line
     pw.print("     <LOC pos=\"");
-    String position = getPositionString(span);
+    String position = getPositionString(span, true);
     pw.print(position);
     pw.print("\" />");
     pw.println();
@@ -580,6 +580,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *   but _not_ the case where there is no seqid, or no min, or no max
    */
   public static SeqSpan getPositionSpan(String position, AnnotatedSeqGroup group) {
+    if (position == null) { return null; }
     String[] fields = range_splitter.split(position);
     String seqid = fields[fields.length-2];
     String remainder = fields[fields.length-1];
@@ -607,9 +608,18 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
 
-  public static String getPositionString(SeqSpan span) {
+  /**
+   *   if add_header, then prepends "region/" to String, otherwise leaves it off
+   *
+   *   Need to enhance this to deal with synonyms, so if seq id is different than 
+   *     corresponding region id, use region id instead.  To do this, probably 
+   *     need to add an Das2VersionedSource argument (Das2Region would work also, 
+   *     but probably better to have this method figure out region based on versioned source
+   */
+  public static String getPositionString(SeqSpan span, boolean add_header) {
+    if (span == null) { return null; }
     StringBuffer buf = new StringBuffer(100);
-    buf.append("region/");
+    if (add_header)  { buf.append("region/"); }
     buf.append(span.getBioSeq().getID());
     buf.append("/");
     buf.append(Integer.toString(span.getMin()));
@@ -629,7 +639,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       //      String test_file_name = "c:/data/das2_responses/alan_server/old_feature_chrM_1_1000.xml";
       File test_file = new File(test_file_name);
       FileInputStream fistr = new FileInputStream(test_file);
-      List annots = test.parse(new InputSource(fistr), "test_group");
+      BufferedInputStream bis = new BufferedInputStream(fistr);
+      List annots = test.parse(new InputSource(bis), "test_group");
+      bis.close();
       System.out.println("annot count: " + annots.size());
       SeqSymmetry first_annot = (SeqSymmetry)annots.get(0);
       //      SeqUtils.printSymmetry(first_annot);

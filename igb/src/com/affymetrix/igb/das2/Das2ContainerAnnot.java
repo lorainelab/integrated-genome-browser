@@ -15,6 +15,14 @@ package com.affymetrix.igb.das2;
 
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
 
+/**
+ *  NOT YET USED
+ *  Since SmartAnnotBioSeq handles constructing top-level TypeContainerAnnot
+ *    that Das2FeatureRequestSyms are children of, not clear how to swap in 
+ *    Das2ContainerAnnot for the TypeContainerAnnot, or what benefits it would 
+ *    really give, since Das2Type and Das2Region info are already fields in 
+ *    Das2FeatureRequestSyms
+ */
 public class Das2ContainerAnnot extends TypeContainerAnnot {
   /**
    *  there is also a type field and getType() method inherited from TypeContainerAnnot

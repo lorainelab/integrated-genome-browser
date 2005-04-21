@@ -111,14 +111,14 @@ public class Das2Region {
     boolean success = false;
 
     SeqSpan overlap_span = request_sym.getOverlapSpan();
-    String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false);
+    String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
     SeqSpan inside_span = request_sym.getInsideSpan();
-    String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false);
+    String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
     System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
 
     String version_url =
       getVersionedSource().getSource().getServerInfo().getRootUrl() + "/" +
-      getVersionedSource().getSource().getID() + "/" +
+      //      getVersionedSource().getSource().getID() + "/" +
       getVersionedSource().getID();
     System.out.println("version url: " + version_url);
 

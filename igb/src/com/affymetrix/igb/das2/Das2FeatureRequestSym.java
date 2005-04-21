@@ -36,12 +36,35 @@ import com.affymetrix.igb.genometry.*;
  */
 //public class Das2FeatureRequestSym   {extends Das2ContainerAnnot {
 // public class Das2FeatureRequestSym extends TypeContainerAnnot {
-public class Das2FeatureRequestSym extends SimpleSymWithProps  {  // or should extend TypeContainerAnnot?
+public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
 
+  boolean initialized = false;
   SeqSpan overlap_span;
   SeqSpan inside_span;
   // SeqSpan encompass_span;  // not needed, this is actually standard span of a single-span symmetry
-  Das2ContainerAnnot parent_container;
+
+  Das2Region das2_region;
+  Das2Type das2_type;
+  // not sure how to make sure that parent is a Das2ContainerAnnot, since auto-containment in SmartAnnotBioSeq
+  //     uses TypeContainerAnnot instead.  So for now make parent the TypeContainerAnnot
+  //  Das2ContainerAnnot parent_container;
+  TypeContainerAnnot parent_container;
+
+  /*
+    actually should be able to populate with fewer args to constructor
+    given Das2Type and Das2Region, should be able to figure out TypeContainerAnnot?
+  */
+  //  public Das2FeatureRequestSym(Das2Type type, Das2Region region, TypeContainerAnnot container, SeqSpan overlap, SeqSpan inside) {
+  /*  for now trying to do without container info in constructor */
+  public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
+    das2_type = type;
+    das2_region = region;
+    //    parent_container = container;
+    overlap_span = overlap;
+    inside_span = inside;
+  }
+
+  public String getType() { return das2_type.getID(); }
 
   /**
    *  Returns the overlap span, the span specified in the original DAS query
@@ -63,12 +86,45 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps  {  // or should e
    */
   public SeqSpan getEncompassSpan() { return getSpan(0); }
 
-  public Das2ContainerAnnot getParentContainer() { return parent_container; }
+  //  public Das2ContainerAnnot getParentContainer() { return parent_container; }
+  //  public Das2Region getRegion() { return parent_container.getRegion(); }
+  //  public Das2Type getDas2Type() { return parent_container.getDas2Type(); }
 
-  public Das2Region getRegion() { return parent_container.getRegion(); }
+  public TypeContainerAnnot getParentContainer() { return parent_container; }
+  public Das2Region getRegion() { return das2_region; }
+  public Das2Type getDas2Type() { return das2_type; }
 
-  public Das2Type getDas2Type() { return parent_container.getDas2Type(); }
+  public boolean isInitialized() { return initialized; }
 
+  // for now just consider overlap_span to be the actual span...
+  public SeqSpan getSpan(int index) {
+    if (index == 0) { return overlap_span; }
+    else { return null; }
+  }
 
+  public int getSpanCount() { return 1; }
+
+  /**  override getChildCount() to initialize (populate via DAS2 feature query) if not yet initialized? */
+  /*
+  public int getChildCount() {
+    if (! initialized) { init(); }
+    return super.getChildCount();
+  }
+  */
+
+  /**  override getChildren() to initialize (populate via DAS2 feature query) if not yet initialized? */
+  /*
+  public SeqSymmetry getChild(int index) {
+    if (! initialized) { init(); }
+    return super.getChild(index);
+  }
+  */
+
+  /*
+  public void init() {
+    // initialize via call to Das2Region.getFeatures(this)?
+    intialized = true;
+  }
+  */
 
 }

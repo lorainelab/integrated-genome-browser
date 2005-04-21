@@ -1,6 +1,6 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*      
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
@@ -22,8 +22,8 @@ public class Das2Discovery {
   static boolean servers_initialized = false;
 
   static {
-    name2url.put("DAS2 local genometry server", "http://localhost:9092/das2/genome");
-    name2url.put("DAS2 on das.affymetrix", "http://das.ev.affymetrix.com/das/genome");
+    name2url.put("das.biopackages.net", "http://das.biopackages.net/das/genome");
+    name2url.put("das.ev.affymetrix.com", "http://das.ev.affymetrix.com/das/genome");
   }
 
   /**

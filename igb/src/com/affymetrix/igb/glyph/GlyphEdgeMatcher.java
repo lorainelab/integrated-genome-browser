@@ -119,7 +119,7 @@ public class GlyphEdgeMatcher  {
       }
     }
     
-    else if ( target.isHitable() && query.isHitable()) {
+    else if ( target.isHitable() && query.isHitable() && target.getParent() != null) {
       // terminal case, neither query nor target have children
       // see if they intersect, if so, see if edges match
       // glyph1.start == glyph2.end is _not_considered a match
@@ -137,6 +137,7 @@ public class GlyphEdgeMatcher  {
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
+          //map.addItem(mglyph);
           map.addItem(target.getParent(), mglyph);
           match_glyphs.add(mglyph);
         }
@@ -149,6 +150,7 @@ public class GlyphEdgeMatcher  {
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
+          //map.addItem(mglyph);
           map.addItem(target.getParent(), mglyph);
           match_glyphs.add(mglyph);
         }

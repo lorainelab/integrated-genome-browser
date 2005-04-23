@@ -137,8 +137,10 @@ public class GlyphEdgeMatcher  {
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
-          //map.addItem(mglyph);
-          map.addItem(target.getParent(), mglyph);
+          // Can add to map directly, or as child of target or of target.getParent()
+          // There are advantages to each.  See note below.
+          map.addItem(mglyph);
+          //map.addItem(target.getParent(), mglyph);
           match_glyphs.add(mglyph);
         }
       }
@@ -150,13 +152,29 @@ public class GlyphEdgeMatcher  {
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
-          //map.addItem(mglyph);
-          map.addItem(target.getParent(), mglyph);
+          map.addItem(mglyph);
+          //map.addItem(target.getParent(), mglyph);
           match_glyphs.add(mglyph);
         }
       }
       if (qstart == tend) { } // does this count? not for now...
       if (qend == tstart) { } // does this count? not for now...
+      
+      // NOTE:
+      // Can add match glyphs directly to map or as child of target.getParent().
+      // 
+      // If added to target, or target's parent:
+      //   1) That parent may decide not to show the match glyphs when zoomed-out:
+      //   this speeds things up, but probably you DO want to see the match glyphs
+      //   at all zoom levels.
+      //   2) It may be possible to speed-up looking for matches.   (But this speed-up
+      //   is probably minimal because we can easily reject matching the match
+      //   glyphs because they return false for isHittable.
+      //
+      // If added directly to map, the main benefit is that you can always see
+      //   the matching glyphs at any zoom level.  For me right now, that is
+      //   desirable.
+      
     }
   }
 

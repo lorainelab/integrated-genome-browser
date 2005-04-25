@@ -24,6 +24,8 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genometry.*;
 
 /**
+ *
+ *
  *  Intended for dynamically summarizing coverage of a collection of spans.
  *  Show graph based on xcoords/pixel of current view, with a point per pixel,
  *  and the yval of the point represents the fraction of the xcoords interval spanned by the pixel
@@ -38,16 +40,19 @@ import com.affymetrix.genometry.*;
  *    fraction coverage count
  */
 public class CoverageSummarizerGlyph extends SolidGlyph {
+  public static int COVERAGE = 2;
+  public static int SIMPLE = 3;
+  public static int DEFAULT_STYLE = COVERAGE;
+
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
 
   int[] mins = null;
   int[] maxs = null;
   double[] yval_for_xpixel = null;
-
   Point2D curr_coord = new Point2D(0,0);
   Point curr_pixel = new Point(0,0);
-
+  int glyph_style = DEFAULT_STYLE;
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
@@ -86,6 +91,18 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     }
     */
   }
+
+  public void setStyle(int style) {
+    if (style != COVERAGE &&
+	style != SIMPLE) {
+      System.err.println("Eror in CoverageSummarizerGlyph.setStyle(), style not recognized: " + style);
+    }
+    else {
+      glyph_style = style;
+    }
+  }
+
+  public int getStyle() { return glyph_style; }
 
   public void draw(ViewI view) {
     if (mins == null || maxs == null)  { return; }
@@ -163,6 +180,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       //    till find interval with min > end of current pixel
       //      while ((min <= pixel_end_coord) && (interval_index <= draw_end_index))  {
       while ((interval_index <= draw_end_index) &&
+	     (interval_index < mins.length) &&
 	     (mins[interval_index] <= pixel_end_coord)) {
 	min = mins[interval_index];
 	max = maxs[interval_index];
@@ -185,24 +203,31 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       yval_for_xpixel[i] = coverage;
     }
 
+    int yzero = pixelbox.y + pixelbox.height;
+    int ymax = pixelbox.y + 2;
+    g.setColor(Color.gray);
+    g.drawLine(pixelbox.x, yzero, pixelbox.x + pixelbox.width,  yzero);
+
     if (max_coverage != 0) {
       // now calculate scaling to fit in max coverage...
       double yscale = coordbox.height / max_coverage;
       double yoffset = coordbox.y + coordbox.height;
       double xoffset = coords_per_pixel / 2.0;
-      int yzero = pixelbox.y + pixelbox.height;
 
-      g.setColor(Color.gray);
-      g.drawLine(pixelbox.x, yzero, pixelbox.x + pixelbox.width,  yzero);
-
-      g.setColor(Color.red);
+      g.setColor(this.getColor());
+      double prev_yval = -1;
       for (int pindex =0 ; pindex < view_pixel_width; pindex++) {
 	curr_coord.x = (pindex * coords_per_pixel) + xoffset;
 	double curr_yval = yval_for_xpixel[pindex];
 	if (curr_yval != 0) {
 	  curr_coord.y = yoffset - (curr_yval * yscale);
 	  view.transformToPixels(curr_coord, curr_pixel);
-	  g.drawLine(pindex, yzero, pindex, curr_pixel.y);
+	  if (glyph_style == SIMPLE || coords_per_pixel <= 10) {
+	    g.drawLine(pindex, yzero, pindex, ymax);
+	  }
+	  else {
+	    g.drawLine(pindex, yzero, pindex, curr_pixel.y);
+	  }
 	}
       }
     }
@@ -212,8 +237,10 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     g.setFont(default_font);
     //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
     String msg =
+      "Max coverage in view: " +
       nformat.format(max_coverage) + ", " +
-      nformat.format(max_covered) + ", " +
+      //      nformat.format(max_covered) + ", " +
+      "Bases/Pixel: " +
       nformat.format(coords_per_pixel);
 
     g.drawString(msg, 3, pixelbox.y + 10);

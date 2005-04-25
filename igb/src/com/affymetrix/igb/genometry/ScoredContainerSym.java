@@ -18,7 +18,7 @@ import com.affymetrix.genometry.*;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
- *  {@link IndexedSingletonSym}.
+ *  {@link IndexedSym}.
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
   Map name2scores = new HashMap();
@@ -45,7 +45,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     return (String)scorenames.get(index);
   }
 
-  public float[] getChildScores(IndexedSingletonSym child, java.util.List scorelist) {
+  public float[] getChildScores(IndexedSym child, java.util.List scorelist) {
     float[] result = null;
     if (child.getParent() == this) {
       int score_index = child.getIndex();  // position in each score array for score for this child
@@ -59,23 +59,23 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     return result;
   }
 
-  public float[] getChildScores(IndexedSingletonSym child) {
+  public float[] getChildScores(IndexedSym child) {
     return getChildScores(child, scorevals);
   }
 
   /**
-   *  Can only accept children that are instances of IndexedSingletonSym.
+   *  Can only accept children that are instances of IndexedSym.
    */
   public void addChild(SeqSymmetry sym) {
-    if (sym instanceof IndexedSingletonSym) {
-      IndexedSingletonSym isym = (IndexedSingletonSym)sym;
+    if (sym instanceof IndexedSym) {
+      IndexedSym isym = (IndexedSym)sym;
       int current_index = this.getChildCount();
       isym.setIndex(current_index);
       isym.setParent(this);
       super.addChild(isym);
     }
     else {
-      System.err.println("ERROR: cannot add a child to ScoredContainerSym unless it is an IndexedSingletonSym");
+      System.err.println("ERROR: cannot add a child to ScoredContainerSym unless it is an IndexedSym");
     }
   }
 

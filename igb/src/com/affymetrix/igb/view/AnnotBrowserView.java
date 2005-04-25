@@ -23,6 +23,8 @@ import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.event.SymMapChangeEvent;
+import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 
@@ -32,7 +34,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
-implements ListSelectionListener  {
+implements ListSelectionListener, SymMapChangeListener  {
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"ID", "Start", "End", "Sequence"};
@@ -71,6 +73,7 @@ implements ListSelectionListener  {
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
+    IGB.addSymMapChangeListener(this);
   }
 
   protected Object[][] buildRows(Map props) {
@@ -97,15 +100,22 @@ implements ListSelectionListener  {
   }
 
   /** Re-populates the table with the given Map, which should contain
-   *  SeqSymmetry values.  Normally, this would be called using
-   *  the Map from {@link IGB#getSymHash()}, which happens
-   *  automatically if you call {@link IGB#symHashChanged()}.
+   *  SeqSymmetry values.
+   *  @param props  A Map of String's to SeqSymmetry's.
    */
   public void showSymHash(Map props) {
     Object[][] rows = buildRows(props);
     model.setDataVector(rows, col_headings);
   }
 
+  /** Causes a call to {@link #showSymHash(Map)}.
+   *  Normally, this occurs as a result of a call to
+   *  {@link IGB#symHashChanged()}.
+   */
+  public void symMapModified(SymMapChangeEvent evt) {
+    showSymHash(evt.getMap());
+  }
+  
   /** This is called when the user selects a row of the table;
    *  It calls {@link #findSym(SeqSymmetry)}.
    */
@@ -139,6 +149,7 @@ implements ListSelectionListener  {
 
   public void destroy() {
     removeAll();
+    IGB.removeSymMapChangeListener(this);
     if (lsm != null) {lsm.removeListSelectionListener(this);}
   }
 }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -60,9 +60,10 @@ public class ExperimentPivotView extends JComponent
   AnnotatedBioSeq currentSeq;  // current annotated seq
   java.util.List experiment_graphs = new ArrayList();
   //  int experiment_style = GraphGlyph.LINE_GRAPH;
-  int experiment_style = GraphGlyph.STAIRSTEP_GRAPH;
+  //  int experiment_style = GraphGlyph.STAIRSTEP_GRAPH;
+  int experiment_style = GraphGlyph.HEAT_MAP;
   String experiment_scaling = TOTAL_MIN_MAX;
-  //  int experiment_style = GraphGlyph.HEAT_MAP;
+
   JMenuItem linegraphMI;
   JMenuItem bargraphMI;
   JMenuItem heatmapMI;
@@ -81,9 +82,9 @@ public class ExperimentPivotView extends JComponent
 
   public ExperimentPivotView() {
     super();
+    styleCB.addItem(HEATMAP);
     styleCB.addItem(STAIRSTEP);
     styleCB.addItem(LINE);
-    styleCB.addItem(HEATMAP);
     JPanel style_pan = new JPanel();
     style_pan.setLayout(new GridLayout(1, 2));
     style_pan.add(new JLabel("Graph Style: ", JLabel.RIGHT));
@@ -91,7 +92,7 @@ public class ExperimentPivotView extends JComponent
 
     scaleCB.addItem(TOTAL_MIN_MAX);
     scaleCB.addItem(ROW_MIN_MAX);
-    scaleCB.addItem(COLUMN_MIN_MAX);
+//    scaleCB.addItem(COLUMN_MIN_MAX);    NOT YET IMPLEMENTED
     JPanel scale_pan = new JPanel();
     scale_pan.setLayout(new GridLayout(1, 2));
     scale_pan.add(new JLabel("Graph Scaling: ", JLabel.RIGHT));
@@ -232,12 +233,12 @@ public class ExperimentPivotView extends JComponent
     //axis_tier.addChild(axis);
     //map.addHeaderTier(axis_tier);
 
-    ScoredContainerSym parent = null;  // holds IndexedSingletonSyms
+    ScoredContainerSym parent = null;  // holds IndexedSyms
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)theSyms.get(i);
-      if (sym instanceof IndexedSingletonSym) {
-        IndexedSingletonSym isym = (IndexedSingletonSym)sym;
-        numscores = isym.getScoreCount();
+      if (sym instanceof IndexedSym) {
+        IndexedSym isym = (IndexedSym)sym;
+        numscores = isym.getParent().getScoreCount();
         parent = isym.getParent();
         if (numscores < 0) { numscores = 0; }
         break;
@@ -320,7 +321,7 @@ public class ExperimentPivotView extends JComponent
 	gr.setVisibleMaxY(gr.getGraphMaxY());
       }
       else if (scaling == COLUMN_MIN_MAX) {
-
+        // NOT YET IMPLEMENTED
       }
     }
     if (update_widget) {
@@ -330,14 +331,14 @@ public class ExperimentPivotView extends JComponent
 
   public GraphGlyph addGraph(SeqSymmetry sym, TierGlyph mtg) {
     GraphGlyph gl = null;
-    if (sym instanceof IndexedSingletonSym) {
-      IndexedSingletonSym isym = (IndexedSingletonSym)sym;
+    if (sym instanceof IndexedSym) {
+      IndexedSym isym = (IndexedSym)sym;
 
       AffyTieredMap extramap = map.getExtraMap();
       TierGlyph egl = (TierGlyph)extramap.getItem(mtg);
       egl.setFillColor(mtg.getFillColor());
 
-      float[] ifloats = isym.getScores();
+      float[] ifloats = isym.getParent().getChildScores(isym);
       int point_count = ifloats.length;
       int[] xcoords = new int[point_count+1];
       float[] ycoords = new float[point_count+1];
@@ -373,7 +374,7 @@ public class ExperimentPivotView extends JComponent
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);
       parent.addChild(gl);
     }
-    else {
+    else if (span != null)  {
       gl = new EfficientLineContGlyph();
       gl.setColor(Color.yellow);
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);
@@ -466,11 +467,13 @@ public class ExperimentPivotView extends JComponent
       if ( it2.hasNext() ) {
         Object o2 = it2.next();
         TierGlyph t2 = ( TierGlyph ) o2;
-        com.affymetrix.genoviz.bioviews.GlyphI g2 = t2.getChild( 0 );
-        if ( null != g2 ) {
-          float[] f = (float[]) g2.getInfo();
-          for ( int j = 0; j < f.length; j++ ) {
-            data[i][j+3] = new Float( f[j] );
+        if ((t2 != null) && (t2.getChildCount() > 0))  {
+          com.affymetrix.genoviz.bioviews.GlyphI g2 = t2.getChild(0);
+          if ( (null != g2) && (g2.getInfo() instanceof float[])) {
+            float[] f = (float[]) g2.getInfo();
+            for (int j = 0; j < f.length; j++) {
+              data[i][j + 3] = new Float(f[j]);
+            }
           }
         }
       }
@@ -529,12 +532,12 @@ public class ExperimentPivotView extends JComponent
 
     for (int i=0; i<acount; i++) {
       SeqSymmetry sym = testseq.getAnnotation(i);
-      { // Put IndexedSingletonSyms in the sym list instead of the ones from testseq:
+      { // Put IndexedSyms in the sym list instead of the ones from testseq:
         SimpleSymWithProps psym = (SimpleSymWithProps) sym;
         int spansIncluded = sym.getSpanCount();
         if ( 0 < spansIncluded ) {
           SeqSpan span = sym.getSpan( spansIncluded - 1 );
-          IndexedSingletonSym isym = new IndexedSingletonSym( span.getStart(), span.getEnd(), span.getBioSeq() );
+          IndexedSym isym = new IndexedSingletonSym( span.getStart(), span.getEnd(), span.getBioSeq() );
           bucket.addChild( isym );
           sym = isym; // Use this new sym instead.
         }

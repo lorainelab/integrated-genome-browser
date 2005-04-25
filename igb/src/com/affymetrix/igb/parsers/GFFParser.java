@@ -85,6 +85,7 @@ public class GFFParser implements AnnotationWriter  {
   boolean USE_GROUPING = true;
   boolean SET_LEAF_PROPS = true;
   //  boolean split_groups_across_seqs = true;
+  boolean default_create_container_annot = false;
 
   boolean GFF_BASE1 = true;
 
@@ -133,7 +134,11 @@ public class GFFParser implements AnnotationWriter  {
    *  tag to group features on
    */
   String group_tag = null;
+  String group_id_field_name = null;
 
+  // When grouping, do you want to use the first item encountered as the parent of the group?
+  boolean use_first_one_as_group = false;
+  
   public GFFParser() {
     this(true);
   }
@@ -146,7 +151,7 @@ public class GFFParser implements AnnotationWriter  {
   public GFFParser(boolean coords_are_base1) {
     GFF_BASE1 = coords_are_base1;
   }
-    
+  
   /**
    *  Adds a filter to the fail_filter_hash.
    *  Like {@link #addFeatureFilter(String, boolean)} with pass_filter=false.
@@ -193,16 +198,34 @@ public class GFFParser implements AnnotationWriter  {
    *                if false then remove from fail_filter_hash
    */
   public void removeFeatureFilter(String feature_type, boolean pass_filter) {
-    if (pass_filter && (pass_filter_hash != null)) {
-      pass_filter_hash.remove(feature_type);
-      if (pass_filter_hash.size() == 0) { pass_filter_hash = null; }
+    if (pass_filter) {
+      if (pass_filter_hash != null) {
+        pass_filter_hash.remove(feature_type);
+        if (pass_filter_hash.size() == 0) { pass_filter_hash = null; }
+      }
     }
-    else if (fail_filter_hash != null) {
-      fail_filter_hash.remove(feature_type);
-      if (fail_filter_hash.size() == 0) { fail_filter_hash = null; }
+    else {
+      if (fail_filter_hash != null) {
+        fail_filter_hash.remove(feature_type);
+        if (fail_filter_hash.size() == 0) { fail_filter_hash = null; }
+      }
     }
   }
 
+  /**
+   *  Removes all filtering.  Removes all "pass" filters and all "reject" filters.
+   *  Has no effect on any grouping tag set with {@link #setGroupTag(String)}.
+   */
+  public void resetFilters() {
+    pass_filter_hash = null;
+    fail_filter_hash = null;
+  }
+
+  /**
+   *  Sets which tag to use to create groups.  Most commonly, this will
+   *  be set to "transcript_id" to group all entries from the same transcript.
+   *  Can be set to null if no grouping is desired.
+   */
   public void setGroupTag(String tag) {
     group_tag = tag;
   }
@@ -214,11 +237,16 @@ public class GFFParser implements AnnotationWriter  {
 
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
   throws IOException {
+    return parse(istr, aseq, (Map) null);
+  }
+  
+  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, Map id2sym_hash)
+  throws IOException {
     Map seqhash = new HashMap();
     if (aseq != null) {
       seqhash.put(aseq.getID(), aseq);
     }
-    parse(istr, seqhash);
+    parse(istr, seqhash, id2sym_hash, default_create_container_annot);
     if (aseq == null) {
       Iterator iter = seqhash.values().iterator();
       if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
@@ -230,14 +258,14 @@ public class GFFParser implements AnnotationWriter  {
   }
 
   public List parse(InputStream istr, Map seqhash) throws IOException {
-    return parse(istr, seqhash, false);
+    return parse(istr, seqhash, (Map) null, default_create_container_annot);
   }
-
+  
   /**
    *  Note that currently, create_container_annot flag is only applied if
    *  USE_GROUPING is also true.
    **/
-  public List parse(InputStream istr, Map seqhash, boolean create_container_annot)
+  public List parse(InputStream istr, Map seqhash, Map id2sym_hash, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
     //    MutableAnnotatedBioSeq seq = aseq;
@@ -261,6 +289,7 @@ public class GFFParser implements AnnotationWriter  {
       while ((br.ready())) {
 	String line = br.readLine();
 	if (line == null) { continue; }
+        if (line.startsWith("##")) { processDirective(line); continue; }
 	if (line.startsWith("#")) { continue; }
 	String fields[] = line_regex.split(line);
 
@@ -281,9 +310,7 @@ public class GFFParser implements AnnotationWriter  {
           String score_str = fields[5];
           String strand_str = fields[6].intern();
           String frame_str = fields[7].intern();
-
-	  String group = null;
-	  if (fields.length >= 9)  { group = fields[8].intern(); }
+          // We deal with fields[8] later.  It has different meaning in GFF1 and GFF2
 
 	  float score = Float.NEGATIVE_INFINITY;
 	  if (! score_str.equals(".")) { score = Float.parseFloat(score_str); }
@@ -370,38 +397,59 @@ public class GFFParser implements AnnotationWriter  {
 		//    first one as String value
 		if (value != null) {
 		  if (value instanceof String) {
-		    group_id = (String)value;
+		    group_id = ((String)value).toLowerCase();
 		  }
 		  else if (value instanceof List) {  // such as a Vector
 		    List valist = (List)value;
 		    if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
-		      group_id = (String)valist.get(0);
+		      group_id = ((String)valist.get(0)).toLowerCase();
 		    }
 		  }
 		}
 	      }
 	    }
 	    // if all of the above has assigned a group_id, then do grouping
-	    if (group_id != null) {
-	      if (DEBUG_GROUPING)  { System.out.println(group_id); }
-	      SimpleSymWithProps groupsym = (SimpleSymWithProps)group_hash.get(group_id);
-	      //		System.out.println(groupsym);
-	      if (groupsym == null) {
-		// make a new groupsym
-		groupsym = new SimpleSymWithProps();
-		group_count++;
-		groupsym.setProperty("group", group_id);
-		groupsym.setProperty("method", source);
-		//		System.out.println("group id: " + group_id);
-		groupsym.setProperty("id", group_id);
-		group_hash.put(group_id, groupsym);
-		results.add(groupsym);
-	      }
-	      groupsym.addChild(sym);
-	      add_directly = false;
-	    }
-	  }  // END if (USE_GROUPING)
-	  if (add_directly) {
+            if (group_id != null) {
+              if (DEBUG_GROUPING)  { System.out.println(group_id); }
+              SymWithProps groupsym = (SymWithProps)group_hash.get(group_id);
+              //		System.out.println(groupsym);
+              if (groupsym == null) {
+                if (use_first_one_as_group) {
+                  // Take the first entry found with a given group_id and use it
+                  // as the parent symmetry for all members of the group
+                  groupsym = sym;
+                } else {
+                  // Make a brand-new symmetry to hold all syms with a given group_id
+                  groupsym = new SimpleSymWithProps();
+                  ((MutableSeqSymmetry) groupsym).addChild(sym);
+                }
+                group_count++;
+                groupsym.setProperty("group", group_id);
+                groupsym.setProperty("method", source);
+
+                // If one field, like "probeset_id" was chosen as the group_id_field_name,
+                // then make the contents of that field be the "id" of the group symmetry
+                // and also index it in the IGB id-to-symmetry hash
+                Object index_id = null;
+                if (group_id_field_name != null) {
+                  index_id = sym.getProperty(group_id_field_name);
+                }
+                if (index_id != null) {
+                  groupsym.setProperty("id", index_id);
+                  if (id2sym_hash != null) { id2sym_hash.put(index_id, groupsym); }
+                } else {
+                  groupsym.setProperty("id", group_id);
+                }
+
+                group_hash.put(group_id, groupsym);
+                results.add(groupsym);
+              } else {
+                ((MutableSeqSymmetry) groupsym).addChild(sym);
+              }
+              add_directly = false;
+            }
+          }  // END if (USE_GROUPING)
+          if (add_directly) {
 	    // if not grouping (or grouping failed), then add feature directly to AnnotatedBioSeq
 	    seq.addAnnotation(sym);
 	    results.add(sym);
@@ -422,18 +470,30 @@ public class GFFParser implements AnnotationWriter  {
       while (groups.hasNext()) {
 	SimpleSymWithProps sym = (SimpleSymWithProps)groups.next();
 	String meth = (String)sym.getProperty("method");
-	MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)sym.getChild(0).getSpan(0).getBioSeq();
-	// stretch sym to bounds of all children
-	SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
-	// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
-	sym.addSpan(pspan);
+        
+        SeqSymmetry first_child = sym.getChild(0);
+        MutableAnnotatedBioSeq seq = null;
+        if (first_child != null) {
+          seq = (MutableAnnotatedBioSeq) first_child.getSpan(0).getBioSeq();
+        } else {
+          // first_child could be null if  use_first_one_as_group=true and the
+          // group contains only one member.
+          seq = (MutableAnnotatedBioSeq) sym.getSpan(0).getBioSeq();
+        }
+        
+        if (first_child != null) {
+          // stretch sym to bounds of all children
+          SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
+          // SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
+          sym.addSpan(pspan);
 
-	// making sure children are in ascending order of start if forward strand,
-	//    descending order of start if reverse strand
-	if (seq == null || sym == null) {
-	  System.out.println("++++++++++++ warning, sym or seq is nul ++++++++++++");
-	}
-	resortChildren(sym, seq);
+          // making sure children are in ascending order of start if forward strand,
+          //    descending order of start if reverse strand
+          if (seq == null || sym == null) {
+            System.out.println("++++++++++++ warning, sym or seq is nul ++++++++++++");
+          }
+          resortChildren(sym, seq);
+        }
 
 	if (DEBUG_GROUPING)  { SeqUtils.printSymmetry(sym); }
 	if (create_container_annot) {
@@ -458,7 +518,7 @@ public class GFFParser implements AnnotationWriter  {
 	}
       }
     }
-
+    
     System.out.println("line count: " + line_count);
     System.out.println("sym count: " + sym_count);
     System.out.println("group count: " + group_count);
@@ -498,6 +558,64 @@ public class GFFParser implements AnnotationWriter  {
     }
   }
 
+  static final Matcher directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)").matcher("");
+  static final Matcher directive_group_by = Pattern.compile("##IGB-group-by (.*)").matcher("");
+  static final Matcher directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)").matcher("");
+  static final Matcher directive_index_field = Pattern.compile("##IGB-group-id-field (.*)").matcher("");
+  
+  /**
+   *  Process directive lines in the input, which are lines beginning with "##".
+   *  Directives that are not understood are treated as comments.
+   *  Directives that are understood include "##IGB-filter-include x y z",
+   *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x".
+   */
+  void processDirective(String line) {
+    if (directive_filter.reset(line).matches()) {
+      resetFilters();
+      String[] feature_types = directive_filter.group(2).split(" ");
+      for (int i=0;i<feature_types.length; i++) {
+        String feature_type = feature_types[i].trim();
+        if (feature_type.length() > 0) {
+          addFeatureFilter(feature_type, "include ".equals(directive_filter.group(1)));
+        }
+      }
+      directive_filter.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_filter.reset(""); // allow garbage collection of input string
+
+    if (directive_group_by.reset(line).matches()) {
+      String group = directive_group_by.group(1).trim();
+      if (group.length() > 0) {
+        setGroupTag(group);
+      } else {
+        setGroupTag(null);
+      }
+      directive_group_by.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_group_by.reset(""); // allow garbage collection of input string
+    
+    if (directive_group_from_first.reset(line).matches()) {
+      String true_false = directive_group_from_first.group(1).trim();
+      use_first_one_as_group = "true".equals(true_false);
+      directive_group_from_first.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_group_from_first.reset(""); // allow garbage collection of input string
+    
+    if (directive_index_field.reset(line).matches()) {
+      group_id_field_name = directive_index_field.group(1).trim();
+      directive_index_field.reset(""); // allow garbage collection of input string
+      return;
+    }
+    directive_index_field.reset(""); // allow garbage collection of input string
+    
+    // Issue warnings about directives that aren't understood only for "##IGB-" directives.
+    if (line.startsWith("##IGB")) {
+      System.out.println("WARNING: GFF/GTF processing directive not understood: '"+line+"'");
+    }
+  }
 
 
   /**
@@ -558,18 +676,37 @@ public class GFFParser implements AnnotationWriter  {
     return sym.getProperties();
   }
 
+  /**
+   *  Sets the parser to some standard settings that filter-out "intron" and
+   *  "transcript" lines, among other things, and groups by "transcript_id".
+   */
+  public void addStandardFilters() {
+    addFeatureFilter("intron");
+    addFeatureFilter("splice3");
+    addFeatureFilter("splice5");
+    addFeatureFilter("prim_trans");
+    addFeatureFilter("gene");
+
+    addFeatureFilter("transcript");
+    addFeatureFilter("cluster");
+    addFeatureFilter("psr");
+    addFeatureFilter("link");
+
+    setGroupTag("transcript_id");
+  }
 
   public static void main(String[] args) {
     GFFParser test = new GFFParser();
     String file_name = null;
     if (args.length >= 1)  {
       file_name = args[0];
+    } else {
+      System.out.println("Usage:  java GFFParser <filename>");
+      System.exit(0);
     }
 
-    System.out.println("filtering introns");
-    test.addFeatureFilter("intron");
-    test.addFeatureFilter("splice5");
-    test.addFeatureFilter("splice3");
+    test.addStandardFilters();
+
     Memer mem = new Memer();
     mem.printMemory();
     java.util.List annots = null;
@@ -587,6 +724,13 @@ public class GFFParser implements AnnotationWriter  {
     System.gc();
     try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
     mem.printMemory();
+    
+    for (int i=0; i < 5 && i < annots.size() ; i++) {
+      System.out.println("\nSymmetry #"+ i +" ------------------------------");
+      SymWithProps sym = (SymWithProps) annots.get(i);
+      SeqUtils.printSymmetry(sym, "  ", true);      
+    }
+    System.out.println("------------------------------");
   }
 
   /**

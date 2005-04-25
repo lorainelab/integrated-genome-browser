@@ -170,6 +170,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
       this.extramap.setScroller( X, mp.getPanner( X ) );
+      this.extramap.setZoomer(X, mp.getZoomer(X));
       this.northEastMap.setScroller( X, mp.getPanner( X ) );
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }

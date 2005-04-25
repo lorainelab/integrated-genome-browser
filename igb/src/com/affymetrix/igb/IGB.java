@@ -28,6 +28,7 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
@@ -44,7 +45,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
   public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.18";
+  public static String IGB_VERSION = "3.22";
 
   public static final boolean DEBUG_EVENTS = false;
   public static boolean CURATION_ENABLED = true;
@@ -70,6 +71,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
   private static HashMap id2sym_hash = new HashMap();
+  private static Vector sym_map_change_listeners = new Vector(1);
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -120,7 +122,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   SeqMapView map_view;
   //QuickLoaderView quickload_view;
-  AnnotBrowserView glyph_browser_view;
 
   CurationControl curation_control;
   AlignControl align_control;
@@ -313,18 +314,35 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public static void clearSymHash() {
     id2sym_hash.clear();
+    symHashChanged(IGB.class); // IGB.class is the most obvious source for the event
   }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
   }
 
-  /** Call this method if you alter the Map returned by {@link #getSymHash}. */
-  public static final void symHashChanged() {
-    AnnotBrowserView gbv = getSingletonIGB().glyph_browser_view;
-    if (gbv != null) {
-      gbv.showSymHash(getSymHash());
+  /** Call this method if you alter the Map returned by {@link #getSymHash}.
+   *  @param source  The source responsible for the change, used in constructing
+   *    the {@link SymMapChangeEvent}.
+   */
+  public static void symHashChanged(Object source) {
+    java.util.List list = getSymMapChangeListeners();
+    for (int i=0; i<list.size(); i++) {
+      SymMapChangeListener l = (SymMapChangeListener) list.get(i);
+      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
     }
+  }
+
+  public static java.util.List getSymMapChangeListeners() {
+    return sym_map_change_listeners;
+  }
+
+  public static void addSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.add(l);
+  }
+
+  public static void removeSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.remove(l);
   }
 
   /**
@@ -412,9 +430,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
+    // Commenting-out the ability to turn the control server off.
+    //if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
       startControlServer();
-    }
+    //}
 
     frm = new JFrame(APP_NAME);
 

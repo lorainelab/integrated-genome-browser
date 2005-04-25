@@ -116,7 +116,7 @@ public class LoadFileAction {
       chooser.merge_button.setEnabled(false);
     }
     else {
-      // default to "merge" if already have a selected seq group to merge with, 
+      // default to "merge" if already have a selected seq group to merge with,
       //    because non-merging is an uncommon choice
       chooser.merge_button.setSelected(true);
       chooser.merge_button.setEnabled(true);
@@ -249,15 +249,18 @@ public class LoadFileAction {
       }
       else if (stream_name.endsWith(".sin")) {
         ScoredIntervalParser parser = new ScoredIntervalParser();
-        parser.parse(str, stream_name, seqhash);
+        Map id2sym_hash = IGB.getSymHash();
+//        parser.parse(str, stream_name, seqhash);
+        parser.parse(str, stream_name, seqhash, id2sym_hash);
+        IGB.symHashChanged(parser);
         aseq = input_seq;
         parser = null;
       }
       else if (stream_name.endsWith(".psl") || stream_name.endsWith( ".psl3")) {
         PSLParser parser = new PSLParser();
         parser.enableSharedQueryTarget(true);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq, stream_name); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq, stream_name);
 	}
 	else {
           int psl_option = -1;
@@ -335,8 +338,8 @@ public class LoadFileAction {
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         //        BedParser parser = new BedParser(gviewer.getColorHash());
         BedParser parser = new BedParser(gviewer);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq);
 	}
 	else {
           //          parser.parse(str, seqhash, true);
@@ -354,6 +357,7 @@ public class LoadFileAction {
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 	  //        Map id2sym_hash = Unibrow.getSymHash();
 	  //        gene_reader.readBinaryTest(str, annot_type, seqhash, id2sym_hash, -1);
+          //        IGB.symHashChanged(gene_reader);
 	  gene_reader.parse(str, annot_type, seqhash, -1);
 	}
 	aseq = input_seq;
@@ -365,9 +369,9 @@ public class LoadFileAction {
 	else {
 	  BrsParser refseq_reader = new BrsParser();
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-	  Map id2sym_hash = IGB.getSymHash();
+          Map id2sym_hash = IGB.getSymHash();
 	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
-	  IGB.symHashChanged();
+	  IGB.symHashChanged(refseq_reader);
 	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
 	  System.out.println("total refseq annotations loaded: " + alist.size());
 	}
@@ -376,28 +380,18 @@ public class LoadFileAction {
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format
         GFFParser parser = new GFFParser();
-        // this feature filtering and group tags are all specific to the way Affy uses GTF files!
-        parser.addFeatureFilter("intron");
-        parser.addFeatureFilter("splice3");
-        parser.addFeatureFilter("splice5");
-        parser.addFeatureFilter("prim_trans");
-        parser.addFeatureFilter("gene");
 
-        parser.addFeatureFilter("transcript");
-        parser.addFeatureFilter("cluster");
-        parser.addFeatureFilter("psr");
-        parser.addFeatureFilter("link");
-
-        parser.setGroupTag("transcript_id");
-	if (seqhash == null) {
+        parser.addStandardFilters();
+        if (seqhash == null) {
 	  System.out.println("in GFFParser, annotating just input seq");
 	  aseq = parser.parse(str, input_seq);
 	}
 	else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");
-          parser.parse(str, seqhash);
+          parser.parse(str, seqhash, IGB.getSymHash(), false);
           aseq = input_seq;
 	}
+        IGB.symHashChanged(parser);
         parser = null;
       }
       else if (stream_name.endsWith(".fa") || stream_name.endsWith(".fasta")) {
@@ -434,7 +428,7 @@ public class LoadFileAction {
       if (seqhash == null) {
 	if (aseq != null) {
 	  AnnotatedSeqGroup new_group= gmodel.addSeqGroup("Unknown Group " + unknown_group_count);
-	  unknown_group_count++;	  
+	  unknown_group_count++;
 	  new_group.addSeq(aseq);
 	  gmodel.setSelectedSeqGroup(new_group);
 	  gmodel.setSelectedSeq(aseq);

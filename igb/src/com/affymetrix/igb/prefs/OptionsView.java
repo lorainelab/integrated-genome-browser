@@ -74,8 +74,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(), 
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use control server", UnibrowPrefsUtil.getTopNode(), 
-      IGB.PREF_USE_CONTROL_SERVER, IGB.default_use_control_server));
+    //misc_box.add(UnibrowPrefsUtil.createCheckBox("Use control server", UnibrowPrefsUtil.getTopNode(), 
+    //  IGB.PREF_USE_CONTROL_SERVER, IGB.default_use_control_server));
 
     misc_box.add(new JLabel("Browser command: "));
     misc_box.add(UnibrowPrefsUtil.createTextField(

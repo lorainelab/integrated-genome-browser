@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -28,6 +28,7 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
@@ -43,23 +44,16 @@ import com.affymetrix.igb.util.ErrorHandler;
  */
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
-  public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.18";
+  public static String APP_NAME = IGBConstants.APP_NAME;
+  public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
   public static final boolean DEBUG_EVENTS = false;
+  public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean CURATION_ENABLED = true;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
-
-  /** Preference for whether a control server should be started.
-   *  A control server allows IGB to be controled by http requests from other
-   *  applications.  If the control server is turned off, bookmarks used inside
-   *  the program will still work, but calls from external applications will not.
-   */
-  public static final String PREF_USE_CONTROL_SERVER = "Use control server";
-  public static boolean default_use_control_server = true;
 
   public static Color default_bg_col = Color.black;
   public static Color default_label_col = Color.white;
@@ -69,7 +63,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  private static HashMap id2sym_hash = new HashMap();
+  private static Map id2sym_hash = new HashMap();
+  private static Vector sym_map_change_listeners = new Vector(1);
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -120,7 +115,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   SeqMapView map_view;
   //QuickLoaderView quickload_view;
-  AnnotBrowserView glyph_browser_view;
 
   CurationControl curation_control;
   AlignControl align_control;
@@ -162,7 +156,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     singleton_igb = new IGB();
     singleton_igb.init();
-
+    
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     String url = get_arg("-href", args);
@@ -304,27 +298,44 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   /**
-   *  map of tags (usually names or ids) to SeqSymmetries for currently
-   *  loaded genome and/or chromosome
+   *  Map of tags (usually names or ids) to SeqSymmetries for currently
+   *  loaded genome and/or chromosome.
    */
-  public static final HashMap getSymHash() {
+  public static final Map getSymHash() {
     return id2sym_hash;
   }
 
   public static void clearSymHash() {
     id2sym_hash.clear();
+    symHashChanged(IGB.class); // IGB.class is the most obvious event source
   }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
   }
 
-  /** Call this method if you alter the Map returned by {@link #getSymHash}. */
-  public static final void symHashChanged() {
-    AnnotBrowserView gbv = getSingletonIGB().glyph_browser_view;
-    if (gbv != null) {
-      gbv.showSymHash(getSymHash());
+  /** Call this method if you alter the Map returned by {@link #getSymHash}.
+   *  @param source  The source responsible for the change, used in constructing
+   *    the {@link SymMapChangeEvent}.
+   */
+  public static void symHashChanged(Object source) {
+    java.util.List list = getSymMapChangeListeners();
+    for (int i=0; i<list.size(); i++) {
+      SymMapChangeListener l = (SymMapChangeListener) list.get(i);
+      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
     }
+  }
+
+  public static java.util.List getSymMapChangeListeners() {
+    return sym_map_change_listeners;
+  }
+
+  public static void addSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.add(l);
+  }
+
+  public static void removeSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.remove(l);
   }
 
   /**
@@ -412,9 +423,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
-      startControlServer();
-    }
+    startControlServer();
 
     frm = new JFrame(APP_NAME);
 
@@ -527,8 +536,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
 
     MenuUtil.addToMenu(help_menu, about_item);
-    //MenuUtil.addToMenu(help_menu, gc_item);
-    //MenuUtil.addToMenu(help_menu, memory_item);
+    if (ADD_DIAGNOSTICS) {
+      MenuUtil.addToMenu(help_menu, gc_item);
+      MenuUtil.addToMenu(help_menu, memory_item);
+    }
 
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
@@ -588,7 +599,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //} catch (java.util.prefs.BackingStoreException bse) {
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
-
 
     if (plugin_list == null || plugin_list.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
@@ -776,7 +786,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
     about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
-    about_text.append("Copyright 2001-2004 Affymetrix Inc." + "\n");
+    about_text.append("Copyright 2001-2005 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");
@@ -1055,7 +1065,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
-    boolean USE_BOOKMARK_MANAGER = false;
+    boolean USE_BOOKMARK_MANAGER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
 
@@ -1090,10 +1100,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PluginInfo pi = new PluginInfo(BookmarkManagerView.class.getName(), "Bookmarks", true);
       plugin_list.add(pi);
     }
+
     if (USE_PIVOT_VIEW) {
       PluginInfo pi = new PluginInfo(ExperimentPivotView.class.getName(), "Pivot View", true);
       plugin_list.add(pi);
     }
+
     if (USE_ANNOT_BROWSER) {
       PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
       plugin_list.add(pi);

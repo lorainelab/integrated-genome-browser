@@ -253,7 +253,7 @@ public class GraphAdjusterView extends JComponent
     JPanel defpan4 = new JPanel(new GridLayout(1, 2));
     defpan4.add(new JLabel("If tiered, coord height: "));
     JTextField def_coord_heightTF = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Double.toString(GraphGlyphUtils.default_coord_height), Double.class);
+      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
     defpan4.add(def_coord_heightTF);
 
     JPanel defpan5 = new JPanel(new GridLayout(1, 2));

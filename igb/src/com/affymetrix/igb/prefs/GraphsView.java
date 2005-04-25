@@ -66,7 +66,7 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
 
     JLabel graph_height_label2 = new JLabel("Tiered graph default coord height: ");
     JTextField graph_height_field2 = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Double.toString(GraphGlyphUtils.default_coord_height), Double.class);
+      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
     Box height_box2 = new Box(BoxLayout.Y_AXIS);
     height_box2.add(graph_height_label2);
     height_box2.add(Box.createHorizontalStrut(5));

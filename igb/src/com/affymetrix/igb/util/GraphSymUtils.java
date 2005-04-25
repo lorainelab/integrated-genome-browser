@@ -68,7 +68,8 @@ public class GraphSymUtils {
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
     String sname = stripped_name.toString();
-    if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
+    if (sname.endsWith(".bar") || sname.endsWith(".mbar") ||
+        sname.endsWith(".BAR") || sname.endsWith(".Bar")) {
       grafs = readMbarFormat(newstr, seqs, stream_name);
     }
     else if (sname.endsWith(".bgr")) {
@@ -78,7 +79,7 @@ public class GraphSymUtils {
         grafs.add(gsym);
       }
     }
-    else if (sname.endsWith(".sgr")) {
+    else if (sname.endsWith(".sgr") || sname.endsWith(".SGR") || sname.endsWith(".Sgr")) {
       SgrParser sgr_parser = new SgrParser();
       grafs = sgr_parser.parse(istr, seqs, false, stream_name);
     }
@@ -331,7 +332,7 @@ public class GraphSymUtils {
 
         MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq)iter.next();
         if (lookup.isSynonym(testseq.getID(), seqname)) {
-	  // GAH 1-23-2005 
+	  // GAH 1-23-2005
 	  // need to ensure that if bar2 format, the seq group is also a synonym!
 	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned)) ||
 	      (lookup.isSynonym(((Versioned)testseq).getVersion(), seqversion)) ) {

@@ -63,7 +63,9 @@ public class WebBrowserControl {
         } catch (final Exception e) {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              ErrorHandler.errorPanel("Error while opening URL in external browser.", e);
+              ErrorHandler.errorPanel("Error while opening URL in external browser." +
+              "\n\nYou may need to reset the browser command in the preferences panel " +
+              "at File->Preferences->Other\n", e);
             }
           });
         }
@@ -89,13 +91,15 @@ public class WebBrowserControl {
       }
       else {
         try {
+          String unix_path = getUnixPath();
           int exitCode = -1;
-          if (isNetscapeOrMozilla(getUnixPath())) {
+          if (isNetscapeOrMozilla(unix_path)) {
             // Under Unix, Netscape or Mozilla or Firefox has to be running for the
             // "-remote" flag to work.  So, we try sending the command and
             // check for an exit value.  If the exit command is 0,
             // it worked, otherwise we need to start the browser.
-            cmd = getUnixPath() + " -remote openURL(" + url + ")";
+            // (Firefox 1.0 and up doesn't require the "remote" flag)
+            cmd = unix_path + " -remote openURL(" + url + ")";
             //System.out.println("cmd: "+cmd);
             Process p = Runtime.getRuntime().exec(cmd);
 
@@ -105,21 +109,25 @@ public class WebBrowserControl {
           }
           if (exitCode != 0) {
             // Command failed, start up the browser
-            cmd = getUnixPath() + " "  + url;
+            cmd = unix_path + " "  + url;
             //System.out.println("cmd: "+cmd);
             Process p = Runtime.getRuntime().exec(cmd);
           }
         }
         catch(InterruptedException x) {
           ErrorHandler.errorPanel("Error invoking browser, command:\n" 
-            + cmd + "\n\n" + x.toString());
+            + cmd + "\n\n" + x.toString() +
+          "\n\nYou may need to reset the browser command in the preferences panel "+
+          "at File->Preferences->Other\n");
         }
       }
     }
     catch(IOException x) {
       // couldn't exec browser
       IGB.errorPanel("Could not invoke browser, command:\n" 
-        + cmd + "\n\n" + x.toString());
+        + cmd + "\n\n" + x.toString() +
+        "\n\nYou may need to reset the browser command in the preferences panel "+
+        "at File->Preferences->Other\n");
     }
   }
 
@@ -163,7 +171,21 @@ public class WebBrowserControl {
    *  other special flags for their browser.
    */
   public static String getUnixPath() {
-    return UnibrowPrefsUtil.getTopNode().get(PREF_BROWSER_CMD, DEFAULT_BROWSER_CMD);
+    // The first time we ask for PREF_BROWSER_CMD is just to see if it is set or not
+    String command = UnibrowPrefsUtil.getTopNode().get(PREF_BROWSER_CMD, "").trim();
+    if ("".equals(command)) {
+      ErrorHandler.errorPanel("Browser Command Undefined",
+        "You have not set the Unix command for opening your web browser.\n\n" +
+        "Please set the value of 'browser command' in the Preferences panel at "+
+        "File->Preferences->Other\n\n" +
+        "You must use a command that takes a single URL as an argument, "+
+        "such as '/usr/bin/firefox' or '/usr/bin/konqueror'\n" +
+        "\nThe program will attempt to use '"+DEFAULT_BROWSER_CMD+"', but this " +
+        "may not work on your system.\n"
+      );
+      command = DEFAULT_BROWSER_CMD;
+    }
+    return command;
   }
 
   /**

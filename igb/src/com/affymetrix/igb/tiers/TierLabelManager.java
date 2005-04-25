@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -109,8 +109,8 @@ public class TierLabelManager
     changeExpandMaxAllMI = new JMenuItem("Adjust Max Expand All");
     collapseMI = new JMenuItem("Collapse");
     hideMI = new JMenuItem("Hide");
-    sym_summarizeMI = new JMenuItem("Make Density Landscape");
-    sym_coverageMI = new JMenuItem("Make Coverage Track");
+    sym_summarizeMI = new JMenuItem("Make Annotation Depth Track");
+    sym_coverageMI = new JMenuItem("Make Annotation Coverage Track");
     glyph_summarizeMI = new JMenuItem("Glyph Summarize");
     saveBedMI = new JMenuItem("Save tier as BED file");
     intersectMI = new JMenuItem("Intersect Selected");
@@ -166,8 +166,10 @@ public class TierLabelManager
     default_menu_list.add(new JSeparator());
     default_menu_list.add(saveBedMI);
     default_menu_list.add(new JSeparator());
+    // default_menu_list.add(glyph_summarizeMI); }  // deprecated
     default_menu_list.add(sym_summarizeMI);
     if (INCLUDE_COVERAGE_ITEM)  { default_menu_list.add(sym_coverageMI); }
+
 
     default_menu_list.add(combineMenu);
     combineMenu.add(unionMI);
@@ -871,39 +873,20 @@ public class TierLabelManager
     }
   }
 
-
   public void addSymCoverageTier(TierGlyph atier) {
-    System.out.println("trying to make coverage glyph for syms in tier");
-    // not sure best way to collect syms from tier, but for now,
-    //   just recursively descend through child glyphs of the tier, and if
-    //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
-    //   (don't descend into childA's children)
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List syms = new ArrayList();
+    int child_count = atier.getChildCount();
+    java.util.List syms = new ArrayList(child_count);
     collectSyms(atier, syms);
-    int symcount = syms.size();
-    System.out.println("sym count = " + symcount);
-    java.util.List leaf_spans = new ArrayList(symcount);
-    for (int i=0; i<symcount; i++) {
-      SeqSymmetry sym = (SeqSymmetry)syms.get(i);
-      SeqUtils.collectLeafSpans(sym, aseq, leaf_spans);
-    }
-    System.out.println("leaf span count = " + leaf_spans.size());
-    CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
-    cov.setCoveredIntervals(leaf_spans);
-    cov.setColor(Color.red);
-    cov.setCoords(0, 0, aseq.getLength(), 50);
 
-    TierGlyph covtier = new TierGlyph();
-    covtier.setLabel(atier.getLabel() + " coverage");
-    //    covtier.setFixedPixelHeight(true);
-    //    covtier.setFixedPixHeight(25);
-    covtier.setCoords(0, 0, aseq.getLength(), 50);
-    covtier.setFillColor(Color.black);
-    covtier.addChild(cov);
-    tiermap.addTier(covtier, true);  // put forward tier above axis
-    adjustMap();
+    SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
+    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    wrapperSym.setProperty("method", ("coverage: " + atier.getLabel()));
+    wrapperSym.addChild(union_sym);
+    aseq.addAnnotation(wrapperSym);
+    gviewer.setAnnotatedSeq(aseq, true, true);
   }
+
 
   public void addSymSummaryTier(TierGlyph atier) {
     if (DEBUG) {
@@ -917,7 +900,7 @@ public class TierLabelManager
     collectSyms(atier, syms);
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq);
-    gsym.setGraphName(atier.getLabel() + " sum");
+    gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
@@ -928,6 +911,7 @@ public class TierLabelManager
     // System.out.println("datamodel: " + gsym);
   }
 
+  /** Deprecated */
   public void addGlyphSummaryTier(TierGlyph atier) {
     // find index of atier, to put summary tier right below atier in tier ordering
 
@@ -1080,9 +1064,9 @@ public class TierLabelManager
       }
       if ( isOurPopupTrigger(evt)  ) {
         // Note: Checking for popup trigger inside mouseClicked() does not
-        // work on the Macintosh.  Checking it here in mousePressed() seems to 
+        // work on the Macintosh.  Checking it here in mousePressed() seems to
         // work on all of Mac/Windows/Linux.
-        if (! selected.isEmpty()) { 
+        if (! selected.isEmpty()) {
           current_label = (GlyphI) selected.lastElement();
           setCurrentTier((TierGlyph)current_label.getInfo());
         } else {

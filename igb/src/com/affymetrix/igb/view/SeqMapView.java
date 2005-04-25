@@ -2197,12 +2197,14 @@ public class SeqMapView extends JPanel
             x_coord = cbox.x + cbox.width/2;
           }
 
-          if ((pbox.width <= 2) && (topgl.getChildCount() == 0)) {
+          if ((pbox.width <= 2) && (topgl.getChildCount() == 0) && (topgl.getParent() != null) ) {
+            // Watch for null parents: 
+            // The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
             cbox = topgl.getParent().getCoordBox();
             map.getView().transformToPixels(cbox, pbox);
             if (pbox.width <= 10) {
               topgl = topgl.getParent();
-              if (pbox.width <= 2) {
+              if (pbox.width <= 2) { // Note: this pbox has new values than those tested above
                 // if the selection is very small, move the x_coord to the center
                 // of the selection so we can zoom-in on it.
                 x_coord = cbox.x + cbox.width/2;
@@ -2319,7 +2321,7 @@ public class SeqMapView extends JPanel
         if (tier_label_col == null) { tier_label_col = default_annot_color; }
         Color tier_back_col = (Color)method2color.get(meth+"_background");
         if (tier_back_col == null) {
-                tier_back_col = (Color)method2color.get("background");
+          tier_back_col = (Color)method2color.get("background");
         }
         if (tier_back_col == null) { tier_back_col = default_bg; }
 

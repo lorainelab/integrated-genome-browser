@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -41,7 +41,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final int default_maxgap_thresh = 100;
 
   static final boolean default_show_thresh = false;
-    
+
   static final Color default_tier_color = Color.black;
 
   static Map seq2yloc = new HashMap();
@@ -89,21 +89,21 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
       state.setFloatGraph(use_floating_graphs);
 
-    // for now, state's graph height is in coords if graph is attached, and in 
+    // for now, state's graph height is in coords if graph is attached, and in
     //    pixels if graph is floating
     boolean height_set = false;
     if (state.getFloatGraph()) {
       int pix_height = GraphGlyphUtils.getGraphPrefsNode().getInt(
-        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);     
+        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);
       state.setGraphHeight(pix_height);
     }
     else {
       double coord_height = GraphGlyphUtils.getGraphPrefsNode().getDouble(
-        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);     
+        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
       state.setGraphHeight(coord_height);
     }
-    System.out.println("setting graph state, float = " + state.getFloatGraph() + 
-                       ", height = " + state.getGraphHeight());
+    // System.out.println("setting graph state, float = " + state.getFloatGraph() +
+    //                   ", height = " + state.getGraphHeight());
 
   if (state.getFloatGraph()) {
       if (current_yloc > (mapbox.y + mapbox.height - state.getGraphHeight())) {
@@ -207,10 +207,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	//	System.out.println("*** in GenericGrphaGlyphFactory.displayGraph() ***");
 	TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
 	boolean new_tier = (tglyph == null);
-	if (new_tier) { 
+	if (new_tier) {
 	  //	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
-	  if (use_fixed_pixel_height)  { 
-	    TransformTierGlyph tempgl = new TransformTierGlyph(); 
+	  if (use_fixed_pixel_height)  {
+	    TransformTierGlyph tempgl = new TransformTierGlyph();
 	    tempgl.setFixedPixelHeight(true);
 	    tempgl.setFixedPixHeight(60);
 	    tglyph = tempgl;

@@ -72,7 +72,7 @@ public class QuickLoaderView extends JComponent
   static Map cache_name2usage;
   static Map cache_usage2name;
   static Map usage2str;
-  
+
   static {
     String norm = "Normal Usage";
     String ignore = "Ignore Cache";
@@ -140,10 +140,10 @@ public class QuickLoaderView extends JComponent
   // genome2types is map of genome version id to list of JCheckBoxes for available annotation types
   Map genome2cbs = new HashMap();
   Map default_types = new HashMap();
-  
+
   /** Returns a QuickLoad URL, as set in the preferences, but guaranteed to end with "/". */
   public static String getQuickLoadUrl() {
-      String quick_load_url = UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);    
+      String quick_load_url = UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
       if (quick_load_url.indexOf(DEFUNCT_SERVER) >= 0) {
         System.out.println("");
         System.out.println("WARNING:");
@@ -158,15 +158,15 @@ public class QuickLoaderView extends JComponent
       }
     return quick_load_url;
   }
-  
+
   protected void setQuickLoadURL(String url) {
-    System.out.println("Setting QuickLoad location: " + http_root);
     this.http_root = url;
-    
+    System.out.println("Setting QuickLoad location: " + http_root);
+
     genome_selector.setSelectedItem(SELECT_A_GENOME);
     genome_selector.removeItemListener(this);
     genome_selector.removeAllItems();
-    
+
     genome_selector.addItem(SELECT_A_GENOME);
 
     java.util.List genome_list = loadGenomeNames();
@@ -183,7 +183,7 @@ public class QuickLoaderView extends JComponent
     this.processDasServersList();
     //TODO: should process synonym list now as well
   }
-  
+
   public QuickLoaderView() {
     //gviewer = IGB.getSingletonIGB().getMapView(); // now this gets set when IGB calls putPluginProperty()
 
@@ -239,7 +239,7 @@ public class QuickLoaderView extends JComponent
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
-    
+
     this.processDasServersList();
   }
 
@@ -256,7 +256,7 @@ public class QuickLoaderView extends JComponent
       +server_loc_list+"'\n"+ex.toString(), gviewer);
     }
   }
-  
+
   /**
    *  Also adds genomes loaded as AnnotatedSeqGroups to the
    *    SingletonGenometryModel.
@@ -739,9 +739,9 @@ public class QuickLoaderView extends JComponent
     }
   }
 
-  JButton reset_das_dna_serverB = new JButton("Reset");      
-  JButton reset_quickload_urlB = new JButton("Reset");      
-  
+  JButton reset_das_dna_serverB = new JButton("Reset");
+  JButton reset_quickload_urlB = new JButton("Reset");
+
   public void initOptionsDialog() {
     //    System.out.println("showing quickload options");
     if (optionsP == null) {
@@ -756,7 +756,7 @@ public class QuickLoaderView extends JComponent
       reset_quickload_urlB.addActionListener(this);
       optionsP.add(url_box);
       optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-      
+
       Box server_box = new Box(BoxLayout.X_AXIS);
       server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
       JTextField das_dna_server_TF = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
@@ -765,12 +765,12 @@ public class QuickLoaderView extends JComponent
       reset_das_dna_serverB.addActionListener(this);
       optionsP.add(server_box);
       optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-      
+
       JPanel cache_options_box = new JPanel();
       cache_options_box.setBorder(new javax.swing.border.TitledBorder(""));
       cache_options_box.setLayout(new GridLayout(4, 1));
       optionsP.add(cache_options_box);
-      
+
       cache_annotsCB = new JCheckBox("Cache Annotations", cache_annots);
       cache_residuesCB = new JCheckBox("Cache DNA Residues", cache_residues);
       clear_cacheB = new JButton("Clear Cache");
@@ -803,28 +803,28 @@ public class QuickLoaderView extends JComponent
     qlv.showOptions();
     System.exit(0);
   }
-  
+
   public void showOptions() {
     //TODO: before showing the options dialog, need to reset its GUI to actual current values
     JOptionPane.showMessageDialog(this, optionsP, "Quickload Options", JOptionPane.PLAIN_MESSAGE);
-    
+
     //TODO: Give the user a "Cancel" options as well as "OK"
     //int option = JOptionPane.showConfirmDialog(this, optionsP, "Quickload Options", JOptionPane.OK_CANCEL_OPTION);
     //if (option == JOptionPane.OK_OPTION) {
         String usage_str = (String)cache_usage_selector.getSelectedItem();
 	int usage = ((Integer)cache_usage_options.get(usage_str)).intValue();
         setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-        
+
         // Note that the preferred DAS_DNA_SERVER_URL gets set immediately when the JTextBox is changed
         // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
         //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
-        
+
         setQuickLoadURL(UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL));
         setQuickLoadURL(getQuickLoadUrl());
-        
+
     //}
   }
-    
+
   /**
    *  Load sequence residues for a span along a sequence.
    *  Access residues via DAS reference server
@@ -957,17 +957,17 @@ public class QuickLoaderView extends JComponent
       gviewer = (SeqMapView) value;
     }
   }
-  
+
   public Object getPluginProperty(Object key) {
     if (IPlugin.TEXT_KEY_SEQ_MAP_VIEW.equals(key)) {
       return gviewer;
     }
     else return null;
   }
-  
+
   public void destroy() {
     gviewer = null;
   }
-  
+
 }
 

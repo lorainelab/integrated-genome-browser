@@ -26,6 +26,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
+import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 
@@ -45,7 +46,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     main_box.setLayout(new BoxLayout(main_box,BoxLayout.Y_AXIS));
     main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
     
-    main_box.add(Box.createVerticalGlue());
+    //main_box.add(Box.createVerticalGlue());
 
     JScrollPane scroll_pane = new JScrollPane(main_box);
     this.add(scroll_pane, BorderLayout.CENTER);
@@ -59,11 +60,16 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     
     
     JPanel misc_box = new JPanel();
-    misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
+    boolean is_windows =  WebBrowserControl.isWindowsPlatform();
+    if (is_windows) {
+      misc_box.setLayout(new GridLayout(3,1));
+    } else {
+      misc_box.setLayout(new GridLayout(5,1));
+    }
+    //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
     misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(), 
       UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
-    main_box.add(misc_box);
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(), 
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
@@ -74,13 +80,13 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(), 
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use control server", UnibrowPrefsUtil.getTopNode(), 
-      IGB.PREF_USE_CONTROL_SERVER, IGB.default_use_control_server));
-
-    misc_box.add(new JLabel("Browser command: "));
-    misc_box.add(UnibrowPrefsUtil.createTextField(
-      UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, WebBrowserControl.DEFAULT_BROWSER_CMD));
-
+    if ( ! is_windows ) {
+      misc_box.add(new JLabel("Browser command: "));
+      // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
+      // force the WebBrowserControl to issue a warning.
+      misc_box.add(UnibrowPrefsUtil.createTextField(
+        UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, ""));
+    }
 
     /*
     JPanel colors_box = new JPanel();
@@ -97,14 +103,24 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
-    main_box.add(edge_match_box);
 
     JButton edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color);
     edge_match_box.add(new JLabel("Standard color: "));
     edge_match_box.add(edge_match_color);
     JButton fuzzy_edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching color: "));
-    edge_match_box.add(fuzzy_edge_match_color);
+    edge_match_box.add(fuzzy_edge_match_color);    
+    
+    JPanel orf_box = new JPanel();
+    orf_box.setLayout(new GridLayout(2,2));
+    orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
+
+    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_STOP_CODON_COLOR, OrfAnalyzer2.default_stop_codon_color);
+    orf_box.add(new JLabel("Stop Codon: "));
+    orf_box.add(stop_codon_color);
+    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer2.default_dynamic_orf_color);
+    orf_box.add(new JLabel("Dynamic ORF: "));
+    orf_box.add(dynamic_orf_color);
 
     JPanel axis_box = new JPanel();
     axis_box.setLayout(new GridLayout(3,2));
@@ -123,10 +139,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL, SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
+    
     main_box.add(axis_box);
-    
-    
-    
+    main_box.add(edge_match_box);
+    main_box.add(orf_box);
+    main_box.add(misc_box);    
+        
     validate();
   }
 
@@ -163,6 +181,18 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
     sb.append("</p>\n");
     
+    sb.append("<p>\n");
+    sb.append("<h2>Browser Command</h2>\n");
+    sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
+    sb.append("Depending on your configuration, you may use something like ");
+    sb.append("'firefox' or 'netscape', but you may need a full path like '/usr/bin/firefox'.  ");
+    sb.append("<br><br>The command must accept the web address as a single argument on the command line.  ");
+    sb.append("If you need to do something more sophisticated, you may define your own command script ");
+    sb.append("for example '/home/user/openBrowser.sh'.  ");
+    sb.append("<br><br><b>Macintosh X</b>: Set the command  to 'open' to use your default browser.  ");
+    sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
     return sb.toString();
   }
   

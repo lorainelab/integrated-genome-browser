@@ -290,6 +290,13 @@ public class LoadFileAction {
           // "query" or "target" or "other"
           if (stream_name.endsWith(".link.psl")) {
             psl_option = 1; // "target"
+            if (seqhash != null) {
+              // Make a copy of the seqhash, because we do NOT want all the temporary
+              // sequences found in the link.psl file to be added to the real seqmap.
+              Map seqhash_copy = new HashMap();
+              seqhash_copy.putAll(seqhash);
+              seqhash = seqhash_copy;
+            }
           } else {
             if (stream_name.endsWith(".psl3")) {
               options = new Object[] { "Query", "Target", "Other"};

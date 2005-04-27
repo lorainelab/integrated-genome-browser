@@ -22,8 +22,8 @@ package com.affymetrix.genometry;
  */
 public interface BioSeq {
   public String getID();
-  public int getMin();
-  public int getMax();
+  // public int getMin();
+  //  public int getMax();
   public int getLength();
   public String getResidues();
   public String getResidues(int start, int end);

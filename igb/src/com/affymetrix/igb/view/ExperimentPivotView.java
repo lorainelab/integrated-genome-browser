@@ -49,6 +49,7 @@ public class ExperimentPivotView extends JComponent
   static String COLUMN_MIN_MAX = "Column Min/Max";
   static Map string2style;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static Color[] BLUE_YELLOW_HEATMAP;
 
   int numscores = 0;
   int score_spacing = 10;
@@ -78,6 +79,21 @@ public class ExperimentPivotView extends JComponent
     string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
     string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
     string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
+
+    int bins = 256;
+    BLUE_YELLOW_HEATMAP = new Color[bins];
+    int red = 0;
+    int green = 0;
+    int blue = 255;
+    for (int i=0; i<bins; i++) {
+      Color col = new Color(red, green, blue);
+      BLUE_YELLOW_HEATMAP[i] = col;
+      blue--;
+      red++;
+      green++;
+      //      if (i % 2 == 0) { red++; }
+      //      else { green++; }
+    }
   }
 
 
@@ -357,6 +373,7 @@ public class ExperimentPivotView extends JComponent
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
       gl = new GraphGlyph();
+      gl.initHeatMap(BLUE_YELLOW_HEATMAP);
       gl.setGraphStyle(experiment_style);
       gl.setShowHandle(false);
       gl.setShowBounds(false);

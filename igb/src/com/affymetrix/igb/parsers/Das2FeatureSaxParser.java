@@ -639,8 +639,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     boolean test_result_list = true;
     Das2FeatureSaxParser test = new Das2FeatureSaxParser();
     try {
-      String test_file_name = "c:/data/das2_responses/genometry_server/features2.xml";
-      //      String test_file_name = "c:/data/das2_responses/alan_server/old_feature_chrM_1_1000.xml";
+      String test_file_name = "c:/data/das2_responses/spec_examples/feature.xml";
+      //      String test_file_name = "c:/data/das2_responses/biopackages_server/feature_4.xml";
+      //      String test_file_name = "c:/data/das2_responses/biopackages_server/feature-3.xml";
+      //String test_file_name = "c:/data/das2_responses/biopackages_server/feature-2.xml";
+      //String test_file_name = "c:/data/das2_responses/biopackages_server/feature.xml";
+      //      String test_file_name = "c:/data/das2_responses/genometry_server/features2.xml";
+      //String test_file_name = "c:/data/das2_responses/das_ev_server/old_feature_chrM_1_1000.xml";
       File test_file = new File(test_file_name);
       FileInputStream fistr = new FileInputStream(test_file);
       BufferedInputStream bis = new BufferedInputStream(fistr);

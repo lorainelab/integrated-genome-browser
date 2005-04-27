@@ -36,6 +36,7 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     doc_href = feat_doc_href;
   }
 
+  /** implementing TypedSym interface */
   public String getType() { return type; }
 
 }

@@ -69,8 +69,8 @@ import java.util.regex.*;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource, NeoRubberBandListener,
-	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener, 
-	     ActionListener 
+	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener,
+	     ActionListener
 {
 
   static boolean DIAGNOSTICS = false;
@@ -166,19 +166,19 @@ public class SeqMapView extends JPanel
   //static Color almost_black = new Color(20, 20, 20);
 
   public static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
-  
+
   /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
   public static final String VALUE_AXIS_LABEL_FORMAT_COMMA = "COMMA";
   /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
   public static final String VALUE_AXIS_LABEL_FORMAT_FULL = "FULL";
-  
+
   public static final String PREF_AXIS_COLOR = "Axis color";
   public static final String PREF_AXIS_BACKGROUND = "Axis background";
   public static final String PREF_DEFAULT_ANNOT_COLOR = "Default annotation color";
   public static final String PREF_DEFAULT_BACKGROUND_COLOR = "Default background color";
   public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
   public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
-  
+
   public static final Color default_axis_color = Color.BLACK;
   public static final Color default_axis_background = Color.WHITE;
   public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;
@@ -188,8 +188,8 @@ public class SeqMapView extends JPanel
   public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 
   Color default_annot_color = default_default_annot_color;
-  
-  
+
+
   /** hash of method names to forward tiers */
   Map method2ftier = new HashMap();
   /** hash of method names to reverse tiers */
@@ -333,17 +333,17 @@ public class SeqMapView extends JPanel
     this.add("Center", map);
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);
-    
+
     // This preference change listener can reset some things, like whether
     // the axis uses comma format or not, in response to changes in the stored
     // preferences.  Changes to axis, and other tier, colors are not so simple,
     // in part because of the need to coordinate with the label glyphs.
-    
+
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(new PreferenceChangeListener() {
-      
+
       public void preferenceChange(PreferenceChangeEvent pce) {
         if (getAxisTier() == null) { return; }
-        
+
         if (! pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
           return;
         }
@@ -371,7 +371,7 @@ public class SeqMapView extends JPanel
           //System.out.println("Setting axis color: "+c);
         }
         */
-        
+
         if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
           String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, default_axis_label_format);
           AxisGlyph ag = null;
@@ -387,16 +387,16 @@ public class SeqMapView extends JPanel
           }
           map.updateWidget();
         }
-        
+
         else if (pce.getKey().equals(PREF_EDGE_MATCH_COLOR) || pce.getKey().equals(PREF_EDGE_MATCH_FUZZY_COLOR)) {
           if (show_edge_matches)  {
             doEdgeMatching(map.getSelected(), true);
           }
-        }        
+        }
       }
     });
   }
-  
+
   public void setFrame(JFrame frm) {
     this.frm = frm;
   }
@@ -473,7 +473,7 @@ public class SeqMapView extends JPanel
 
     Color axis_bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
     Color axis_fg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
-    
+
     String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
 
     axis.setBackgroundColor(axis_bg);
@@ -502,7 +502,8 @@ public class SeqMapView extends JPanel
     seq_glyph.setShowBackground(false);
     seq_glyph.setHitable(false);
     seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-    seq_glyph.setCoords(viewseq.getMin(), 0, viewseq.getLength(), 10);
+//    seq_glyph.setCoords(viewseq.getMin(), 0, viewseq.getLength(), 10);
+    seq_glyph.setCoords(0, 0, viewseq.getLength(), 10);
     axis_tier.addChild(seq_glyph);
 
       // need to change this to get residues from viewseq! (to take account of reverse complement,
@@ -709,7 +710,8 @@ public class SeqMapView extends JPanel
     //   but reset coord_shift to false...
     if (coord_shift) {
       // map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
-      map.setMapRange(viewseq.getMin(), viewseq.getMax());
+      //      map.setMapRange(viewseq.getMin(), viewseq.getMax());
+      map.setMapRange(0, viewseq.getLength());
       coord_shift = false;
     }
     else {
@@ -1060,7 +1062,7 @@ public class SeqMapView extends JPanel
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
-        
+
     if (annotSym instanceof GraphSym) {
       factory =	(MapViewGlyphFactoryI)graf2factory.get(annotSym);
       if (factory == null) {
@@ -1277,7 +1279,7 @@ public class SeqMapView extends JPanel
           doEdgeMatching(map.getSelected(), false);
         }
 	map.updateWidget();
-        
+
         postSelections();
       }
       else if (pbox.width >= 2 && pbox.height >=2) {
@@ -1481,10 +1483,10 @@ public class SeqMapView extends JPanel
 
     slice_symmetry = sym;
     viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
-    int slice_offset = 0;
     // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
     //    mapped to viewseq
     int prev_max = 0;
+    int slice_offset = 0;
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = sym.getChild(i);
       SeqSpan exact_span = child.getSpan(aseq);
@@ -1775,8 +1777,8 @@ public class SeqMapView extends JPanel
 
 
   public void unclamp() {
-    System.out.println("unclamping, xmin = " + viewseq.getMin() + ", xmax = " + viewseq.getMax());
-    map.setMapRange(viewseq.getMin(), viewseq.getMax());
+    System.out.println("unclamping, xmin = " + 0 + ", xmax = " + viewseq.getLength());
+    map.setMapRange(0, viewseq.getLength());
     map.stretchToFit(false, false);
     map.updateWidget();
   }
@@ -1898,12 +1900,12 @@ public class SeqMapView extends JPanel
   }
 
   public boolean getEdgeMatching() { return show_edge_matches; }
-  public void setEdgeMatching(boolean b) { 
+  public void setEdgeMatching(boolean b) {
     show_edge_matches = b;
     if (show_edge_matches) {
-      doEdgeMatching(map.getSelected(), true); 
+      doEdgeMatching(map.getSelected(), true);
     } else {
-      doEdgeMatching(new Vector(0), true); 
+      doEdgeMatching(new Vector(0), true);
     }
   }
 
@@ -1994,7 +1996,7 @@ public class SeqMapView extends JPanel
     }
     return hairline_is_labeled;
   }
-  
+
   public boolean isHairlineLabeled() {
     return hairline_is_labeled;
   }
@@ -2065,8 +2067,8 @@ public class SeqMapView extends JPanel
               last_selected_sym = null;
             }
             Vector selected_glyphs = map.getSelected();
-            if (show_edge_matches)  { 
-              doEdgeMatching(selected_glyphs, false); 
+            if (show_edge_matches)  {
+              doEdgeMatching(selected_glyphs, false);
             }
             map.updateWidget();
             //          showProps(selected);
@@ -2264,7 +2266,7 @@ public class SeqMapView extends JPanel
           }
 
           if ((pbox.width <= 2) && (topgl.getChildCount() == 0) && (topgl.getParent() != null) ) {
-            // Watch for null parents: 
+            // Watch for null parents:
             // The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
             cbox = topgl.getParent().getCoordBox();
             map.getView().transformToPixels(cbox, pbox);
@@ -2350,7 +2352,7 @@ public class SeqMapView extends JPanel
       }
     }
   }
-  
+
   /**
    *  Returns a forward and reverse tier for the given method, creating them if they don't
    *  already exist.

@@ -15,6 +15,8 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
@@ -82,23 +84,22 @@ import com.affymetrix.igb.genometry.*;
    *        base_position
    *     }
    *  }
-   *  
+   *
    *</pre>
    */
-  public class BsnpParser {
-    static String text_infile = "c:/data/ucsc/hg17/snpMap_affy120k.txt";
-    static String outfile = text_infile + ".bsnp";
-    static String genome_version = "H_sapiens_May_2004";
+public class BsnpParser {
+  //  static String default_text_infile = "c:/data/ucsc/hg15/";
+  //  static String genome_version = "H_sapiens_Apr_2003";
 
-    //    source enum('BAC_OVERLAP','MIXED','RANDOM','OTHER','Affy10K','Affy120K','unknown') NOT NULL default 'unknown',
-    //  type enum('SNP','INDEL','SEGMENTAL','unknown') NOT NULL default 'unknown',
+  //  source enum('BAC_OVERLAP','MIXED','RANDOM','OTHER','Affy10K','Affy120K','unknown') NOT NULL default 'unknown',
+  //  type enum('SNP','INDEL','SEGMENTAL','unknown') NOT NULL default 'unknown',
 
-    //  static Pattern line_regex = Pattern.compile("\t");
-    static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-    Map source_hash = new HashMap();
-    Map type_hash = new HashMap();
+  //  static Pattern line_regex = Pattern.compile("\t");
+  static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
+  Map source_hash = new HashMap();
+  Map type_hash = new HashMap();
 
-    public void outputBsnpFormat(java.util.List parents, DataOutputStream dos) {
+  public void outputBsnpFormat(java.util.List parents, String genome_version, DataOutputStream dos) {
     try	{
       int pcount = parents.size();
       dos.writeUTF(genome_version);
@@ -171,81 +172,116 @@ import com.affymetrix.igb.genometry.*;
 
   public List parse(InputStream istr, String annot_type, Map seq_hash, boolean annot_seq) {
     System.out.println("parsing bsnp file");
+    Timer tim = new Timer();
+    tim.start();
     java.util.List snp_syms = null;
     try {
-    BufferedInputStream bis;
-    if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
-    else { bis = new BufferedInputStream(istr); }
-    DataInputStream dis = new DataInputStream(bis);
-    String genome_version = dis.readUTF();
-    int seq_count = dis.readInt();
-    int[] snp_counts = new int[seq_count];
-    String[] seqids = new String[seq_count];
-    MutableAnnotatedBioSeq[] seqs = new MutableAnnotatedBioSeq[seq_count];
-    System.out.println("genome version: " + genome_version);
-    System.out.println("seqs: " + seq_count);
-    int total_snp_count = 0;
-    for (int i=0; i<seq_count; i++) {
-      String seqid = dis.readUTF();
-      seqids[i] = seqid;
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq_hash.get(seqid);
-      seqs[i] = aseq;   // will be null if no seq with given seqid in seqhash,
-      snp_counts[i] = dis.readInt();
-      total_snp_count += snp_counts[i];
-    }
-    System.out.println("total snps: " + total_snp_count);
-    snp_syms = new ArrayList(total_snp_count);
-    for (int i=0; i<seq_count; i++) {
-      MutableAnnotatedBioSeq aseq = seqs[i];
-      /*
-      if (aseq == null) {
-	System.out.println("No seq matching seqid: " + seqids[i] + " found, aborting BsnpParser parsing!");
-	break;
+      BufferedInputStream bis;
+      if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
+      else { bis = new BufferedInputStream(istr); }
+      DataInputStream dis = new DataInputStream(bis);
+      String genome_version = dis.readUTF();
+      int seq_count = dis.readInt();
+      int[] snp_counts = new int[seq_count];
+      String[] seqids = new String[seq_count];
+      MutableAnnotatedBioSeq[] seqs = new MutableAnnotatedBioSeq[seq_count];
+      System.out.println("genome version: " + genome_version);
+      System.out.println("seqs: " + seq_count);
+      int total_snp_count = 0;
+      for (int i=0; i<seq_count; i++) {
+	String seqid = dis.readUTF();
+	seqids[i] = seqid;
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq_hash.get(seqid);
+	seqs[i] = aseq;   // will be null if no seq with given seqid in seqhash,
+	snp_counts[i] = dis.readInt();
+	total_snp_count += snp_counts[i];
       }
-      */
-      int snp_count = snp_counts[i];
-      System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
-      SimpleSymWithProps psym = new SimpleSymWithProps();
-      psym.setProperty("type", annot_type);
-      psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq));
-      if (annot_seq && (aseq != null))  {
-	aseq.addAnnotation(psym);
+      System.out.println("total snps: " + total_snp_count);
+      snp_syms = new ArrayList(total_snp_count);
+      EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
+      // Object[] all_coord_arrays = new Object[seq_count];
+      for (int i=0; i<seq_count; i++) {
+	MutableAnnotatedBioSeq aseq = seqs[i];
+	/*
+	  if (aseq == null) {
+	  System.out.println("No seq matching seqid: " + seqids[i] + " found, aborting BsnpParser parsing!");
+	  break;
+	  }
+	*/
+	int snp_count = snp_counts[i];
+	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
+	SimpleSymWithProps psym = new SimpleSymWithProps();
+	psym.setProperty("type", annot_type);
+	psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq));
+	if (annot_seq && (aseq != null))  {
+	  aseq.addAnnotation(psym);
+	}
+        int[] coords = new int[snp_count];
+        // all_coord_arrays[i] = coords;
+	for (int k=0; k<snp_count; k++) {
+          int base_coord = dis.readInt();
+          // int base_coord = 2;
+          EfficientSnpSym snp = new EfficientSnpSym(psym, base_coord);
+          // EfficientSnpSym snp = dummy_snp;
+          // coords[k] = base_coord;
+          psym.addChild(snp);
+          snp_syms.add(snp);
+	}
       }
-      for (int k=0; k<snp_count; k++) {
-	int base_coord = dis.readInt();
-	EfficientSnpSym snp = new EfficientSnpSym(psym, base_coord);
-	psym.addChild(snp);
-	snp_syms.add(snp);
-      }
-    }
     }
     catch (Exception ex) { ex.printStackTrace(); }
+    tim.print();
     return snp_syms;
   }
 
-  static boolean TEST_BINARY_PARSE = false;
+
+
+  static boolean TEST_BINARY_PARSE = true;
+
   public static void main(String[] args) {
     try {
       if (TEST_BINARY_PARSE) {
-	System.out.println("parsing in snp data from .bsnp file: " + outfile);
+	String binfile = args[0];
+	System.out.println("parsing in snp data from .bsnp file: " + binfile);
 	BsnpParser tester = new BsnpParser();
-	File ifil = new File(outfile);
+	File ifil = new File(binfile);
 	InputStream istr = new FileInputStream(ifil);
 	tester.parse(istr, "snp", new HashMap(), true);
 	System.out.println("finished parsing in snp data from .bsnp file");
+	istr.close();
       }
       else {
-	BsnpParser tester = new BsnpParser();
-	File ifil = new File(text_infile);
-	BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-	System.out.println("reading in text data from: " + text_infile);
-	java.util.List parent_syms = tester.readTextFormat(br);
-	File ofil = new File(outfile);
-	DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
-	System.out.println("outputing binary data to: " + outfile);
-	tester.outputBsnpFormat(parent_syms, dos);
-	dos.close();
-	System.out.println("finished converting text data to binary .bsnp format");
+	if (args.length >= 2) {
+	  String genome_version = args[0];
+	  String text_infile = args[1];
+	  String bin_outfile;
+
+	  if (args.length >= 3) {
+	    bin_outfile = args[2];
+	  }
+	  else if (text_infile.endsWith(".txt")) {
+	    bin_outfile = text_infile.substring(0, text_infile.length()-4)+ ".bsnp";
+	  }
+	  else {
+	    bin_outfile = text_infile + ".bsnp";
+	  }
+	  BsnpParser tester = new BsnpParser();
+	  File ifil = new File(text_infile);
+	  BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
+	  System.out.println("reading in text data from: " + text_infile);
+	  java.util.List parent_syms = tester.readTextFormat(br);
+	  br.close();
+	  File ofil = new File(bin_outfile);
+	  DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
+	  System.out.println("outputing binary data to: " + bin_outfile);
+	  tester.outputBsnpFormat(parent_syms, genome_version, dos);
+	  dos.close();
+	  System.out.println("finished converting text data to binary .bsnp format");
+	}
+	else {
+	  System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");
+	  System.exit(1);
+	}
       }
     }
     catch (Exception ex) {

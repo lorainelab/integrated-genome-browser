@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -60,11 +60,11 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
 
     JPanel misc_box = new JPanel();
-    boolean is_windows =  WebBrowserControl.isWindowsPlatform();
-    if (is_windows) {
-      misc_box.setLayout(new GridLayout(3,1));
-    } else {
+    boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
+    if (is_unix) {
       misc_box.setLayout(new GridLayout(5,1));
+    } else {
+      misc_box.setLayout(new GridLayout(3,1));
     }
     //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
     misc_box.setBorder(new javax.swing.border.EtchedBorder());
@@ -80,7 +80,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
-    if ( ! is_windows ) {
+    if ( is_unix ) {
       misc_box.add(new JLabel("Browser command: "));
       // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
       // force the WebBrowserControl to issue a warning.
@@ -179,19 +179,19 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
     sb.append("This panel allows you to change a variety of miscelaneous settings.  ");
-    sb.append("In some cases, the changes will take effect immediately.  ");
-    sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
+    sb.append("Some changes will take effect immediately;  ");
+    sb.append("others take effect only after a re-start.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Browser Command</h2>\n");
+    sb.append("<h2>Browser Command (Unix Only)</h2>\n");
     sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
     sb.append("Depending on your configuration, you may use something like ");
     sb.append("'firefox' or 'netscape', but you may need a full path like '/usr/bin/firefox'.  ");
     sb.append("<br><br>The command must accept the web address as a single argument on the command line.  ");
     sb.append("If you need to do something more sophisticated, you may define your own command script ");
     sb.append("for example '/home/user/openBrowser.sh'.  ");
-    sb.append("<br><br><b>Macintosh X</b>: Set the command  to 'open' to use your default browser.  ");
+    sb.append("<br><br><b>Macintosh OS X</b>: This option is hidden and the 'open' command is used to open your default browser.  ");
     sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
     sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");

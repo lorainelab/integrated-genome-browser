@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -134,7 +134,7 @@ public class WebBrowserControl {
 
   /**
    * Try to identify the operating system by examining the 
-   * by examing the "os.name" property.
+   * by examining the "os.name" property.
    *
    * @return WINDOWS if this application is running under a Windows OS
    * @return MAC if this application is running under Mac OS
@@ -158,19 +158,6 @@ public class WebBrowserControl {
     }
     return to_return;
   }
-
-  /**
-   * Try to determine whether this application is running under Windows
-   * by examing the "os.name" property.
-   *
-   * @return true if this application is running under a Windows OS
-   */
-  public static boolean isWindowsPlatform()
-  {
-    int result = getPlatformCode();
-    return result == WINDOWS;
-  }
-
 
   private static boolean isNetscapeOrMozilla(String path) {
     return (path != null && 
@@ -225,10 +212,10 @@ public class WebBrowserControl {
   }
 
   // used to encode platform identity
-  private static final int UNKNOWN_PLATFORM = 0;
-  private static final int WINDOWS = 1;
-  private static final int MAC = 2;
-  private static final int UNIX = 3;
+  public static final int UNKNOWN_PLATFORM = 0;
+  public static final int WINDOWS = 1;
+  public static final int MAC = 2;
+  public static final int UNIX = 3;
 
 
   // Used to identify the Mac OS X platform.

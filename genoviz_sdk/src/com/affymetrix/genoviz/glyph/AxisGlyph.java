@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -55,7 +55,7 @@ public class AxisGlyph extends Glyph {
   protected double label_scale = 1;
 
   protected Vector selected_regions;
-  
+
   // default to true for backward compatability
   protected boolean hitable = true;
 
@@ -941,6 +941,13 @@ public class AxisGlyph extends Glyph {
         return comma_format.format(int_label);
       } else if (COMMA == this.labelFormat) {
         return comma_format.format(int_label);
+      }
+      else if (this.labelFormat == FULL)  {
+        String str = Integer.toString(int_label);
+        if (str.endsWith("000")) {
+          str = str.substring(0, str.length()-3) + "kb";
+        }
+        return str;
       }
       return String.valueOf(int_label);
     }

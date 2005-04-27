@@ -27,6 +27,7 @@ import com.affymetrix.igb.event.SymMapChangeEvent;
 import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
@@ -110,7 +111,7 @@ implements ListSelectionListener, SymMapChangeListener  {
 
   /** Causes a call to {@link #showSymHash(Map)}.
    *  Normally, this occurs as a result of a call to
-   *  {@link IGB#symHashChanged()}.
+   *  {@link IGB#symHashChanged(Object)}.
    */
   public void symMapModified(SymMapChangeEvent evt) {
     showSymHash(evt.getMap());
@@ -126,7 +127,7 @@ implements ListSelectionListener, SymMapChangeListener  {
       if (srow >= 0) {
         String id = (String) table.getModel().getValueAt(srow, 0);
         SeqSymmetry sym = (SeqSymmetry)IGB.getSymHash().get(id);
-	findSym(sym);
+        findSym(sym);
       }
     }
   }
@@ -137,11 +138,11 @@ implements ListSelectionListener, SymMapChangeListener  {
       SingletonGenometryModel gmodel = IGB.getGenometryModel();
       MutableAnnotatedBioSeq seq = gmodel.getSelectedSeqGroup().getSeq(hitsym);
       if (seq != null) {
-	ArrayList symlist = new ArrayList();
-	symlist.add(hitsym);
-	gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
-	gmodel.setSelectedSymmetries(symlist, this);
-	found = true;
+        ArrayList symlist = new ArrayList();
+        symlist.add(hitsym);
+        gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
+        gmodel.setSelectedSymmetries(symlist, this);
+        found = true;
       }
     }
     return found;

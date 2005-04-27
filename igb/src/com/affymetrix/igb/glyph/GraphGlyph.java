@@ -502,7 +502,13 @@ public class GraphGlyph extends Glyph {
   }
 
   public void initHeatMap(Color[] colors) {
-    heatmap_colors = colors;
+    if (colors == null) {
+      System.out.println("GraphGlyph.initHeatMap called with a null color gradient, ignoring");
+    }
+    else {
+      heatmap_colors = colors;
+      heatmap_bins = heatmap_colors.length;
+    }
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {

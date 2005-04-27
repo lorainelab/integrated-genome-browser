@@ -171,6 +171,8 @@ public class SeqMapView extends JPanel
   public static final String VALUE_AXIS_LABEL_FORMAT_COMMA = "COMMA";
   /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
   public static final String VALUE_AXIS_LABEL_FORMAT_FULL = "FULL";
+  /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
+  public static final String VALUE_AXIS_LABEL_FORMAT_ABBREV = "ABBREV";
 
   public static final String PREF_AXIS_COLOR = "Axis color";
   public static final String PREF_AXIS_BACKGROUND = "Axis background";
@@ -381,8 +383,10 @@ public class SeqMapView extends JPanel
           if (ag != null) {
             if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
               ag.setLabelFormat(AxisGlyph.COMMA);
-            } else {
+            } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
               ag.setLabelFormat(AxisGlyph.FULL);
+            } else {
+              ag.setLabelFormat(AxisGlyph.ABBREV);
             }
           }
           map.updateWidget();
@@ -483,8 +487,10 @@ public class SeqMapView extends JPanel
     axis_tier.setForegroundColor(axis_fg);
     if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
       axis.setLabelFormat(AxisGlyph.COMMA);
-    } else {
+    } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
       axis.setLabelFormat(AxisGlyph.FULL);
+    } else {
+      axis.setLabelFormat(AxisGlyph.ABBREV);
     }
 
     axis_tier.addChild(axis);

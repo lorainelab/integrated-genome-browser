@@ -137,8 +137,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     axis_box.add(new JLabel("Number format: "));
     String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;
     String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
-                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA};
-                                             //     SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
+                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA,
+                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
 

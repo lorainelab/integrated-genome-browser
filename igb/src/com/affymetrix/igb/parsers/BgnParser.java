@@ -67,18 +67,12 @@ public class BgnParser implements AnnotationWriter  {
 
   ArrayList chromosomes = new ArrayList();
 
-  public List parse(String file_name, String annot_type, Map seq_hash) {
+  public List parse(String file_name, String annot_type, Map seq_hash) throws IOException {
     System.out.println("loading file: " + file_name);
-    List result = null;
-    try {
-      File fil = new File(file_name);
-      long blength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_hash, blength);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    File fil = new File(file_name);
+    long blength = fil.length();
+    FileInputStream fis = new FileInputStream(fil);
+    List result = parse(fis, annot_type, seq_hash, blength);
     return result;
   }
 
@@ -86,7 +80,7 @@ public class BgnParser implements AnnotationWriter  {
    *  @param blength  Byte Buffer Length.
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
-  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) {
+  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) throws IOException {
     return parse(istr, annot_type, seq_hash, null, blength);
   }
 
@@ -95,7 +89,7 @@ public class BgnParser implements AnnotationWriter  {
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
   public List parse(InputStream istr, String annot_type,
-			    Map seq_hash, Map id2sym_hash, long blength) {
+			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
     Timer tim = new Timer();
     tim.start();
 
@@ -149,10 +143,6 @@ public class BgnParser implements AnnotationWriter  {
 	  //
 	  String name = dis.readUTF();
 	  String chrom_name = dis.readUTF();
-	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
-	  if (chromseq == null) {
-	    System.out.println("chromseq is null!!! chrom_name = " + chrom_name);
-	  }
 	  String strand = dis.readUTF();
 	  boolean forward = (strand.equals("+") || (strand.equals("++")));
 	  int tmin = dis.readInt();
@@ -170,6 +160,14 @@ public class BgnParser implements AnnotationWriter  {
 	  for (int i=0; i<ecount; i++) {
 	    emaxs[i] = dis.readInt();
 	  }
+	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
+          if (chromseq == null) {
+            // A null chromseq would cause a Null Pointer Exception below, so let's
+            // throw an IOException which will be easier to deal with.
+            throw new IOException("File refers to unknown sequence '"+ chrom_name +"'");
+
+            //TODO: It might be nice to let this parser add new sequences to the AnnotatedSeqGroup
+          }
 	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
 	  if (parent_sym == null) {
 	    parent_sym = new SimpleSymWithProps();
@@ -200,9 +198,18 @@ public class BgnParser implements AnnotationWriter  {
     catch (EOFException ex) {
       // System.out.println("end of file reached, file successfully loaded");
     }
-    catch (IOException ex) {
-      ex.printStackTrace();
-      System.err.println("problem with loading file");
+    catch (IOException ioe) {
+      throw ioe;
+    }
+    catch (Exception ex) {
+      String message = "Problem processing BGN file";
+      String m1 = ex.getMessage();
+      if (m1 != null && m1.length() > 0) {
+        message += ": "+m1;
+      }
+      IOException ioe = new IOException(message);
+      ioe.initCause(ex);
+      throw ioe;
     }
 
     for (int i=0; i<annots.size(); i++) {

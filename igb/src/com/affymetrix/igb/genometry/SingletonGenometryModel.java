@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -27,7 +27,9 @@ public class SingletonGenometryModel {
   static public boolean DEBUG = false;
   static SingletonGenometryModel smodel = new SingletonGenometryModel();
 
-  Map seq_groups = new HashMap();
+  Map seq_groups = new LinkedHashMap(); 
+  // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
+  
   List seq_selection_listeners = new ArrayList();
   List group_selection_listeners = new ArrayList();
   List sym_selection_listeners = new ArrayList();
@@ -91,7 +93,7 @@ public class SingletonGenometryModel {
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSeqGroup() called, ");
-      System.out.println("    group = " + group);
+      System.out.println("    group = " + (group == null ? null : group.getID()));
     }
 
     selected_group = group;
@@ -129,7 +131,7 @@ public class SingletonGenometryModel {
   public void setSelectedSeq(MutableAnnotatedBioSeq seq, Object src) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSeq() called, ");
-      System.out.println("    seq = " + seq);
+      System.out.println("    seq = " + (seq == null ? null : seq.getID()));
     }
 
     selected_seq = seq;

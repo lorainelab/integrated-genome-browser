@@ -154,9 +154,7 @@ public class LoadFileAction {
           aseq = load(gviewer, cfil, aseq);
         }
       }
-      if (aseq == null) {
-        IGB.errorPanel("No data loaded!");
-      }
+
       gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
     return aseq;
@@ -247,8 +245,8 @@ public class LoadFileAction {
       if (grp != null)  {
         seqhash = grp.getSeqs();
       }
+
       if (stream_name.endsWith(".axml")) {
-        // assume it's AXML format
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
@@ -356,13 +354,11 @@ public class LoadFileAction {
       else if (stream_name.endsWith(".bed")) {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
-        //        BedParser parser = new BedParser(gviewer.getColorHash());
         BedParser parser = new BedParser(gviewer);
 	if (seqhash == null) {
 	  aseq = parser.parse(str, input_seq);
 	}
 	else {
-          //          parser.parse(str, seqhash, true);
           parser.parse(str, seqhash, true, annot_type);
           aseq = input_seq;
 	}
@@ -375,9 +371,6 @@ public class LoadFileAction {
 	else {
 	  BgnParser gene_reader = new BgnParser();
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-	  //        Map id2sym_hash = Unibrow.getSymHash();
-	  //        gene_reader.readBinaryTest(str, annot_type, seqhash, id2sym_hash, -1);
-          //        IGB.symHashChanged(gene_reader);
 	  gene_reader.parse(str, annot_type, seqhash, -1);
 	}
 	aseq = input_seq;
@@ -392,7 +385,6 @@ public class LoadFileAction {
           Map id2sym_hash = IGB.getSymHash();
 	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
 	  IGB.symHashChanged(refseq_reader);
-	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
 	  System.out.println("total refseq annotations loaded: " + alist.size());
 	}
         aseq = input_seq;
@@ -457,15 +449,10 @@ public class LoadFileAction {
       }
       else if (stream_name.endsWith(".bnib")) {
         if (input_seq == null || input_seq instanceof NibbleBioSeq) {
-          if (input_seq != null) {
-            aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
-          }
-          else {
-            aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
-          }
+          aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
         }
         else {
-          IGB.errorPanel("MERGE ABORTED", "Input sequence not the correct type for a bnib file");
+          IGB.errorPanel("ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file");
         }
       }
 

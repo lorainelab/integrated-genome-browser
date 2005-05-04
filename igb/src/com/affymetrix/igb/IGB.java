@@ -81,7 +81,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
   LoadFileAction open_file_action;
-  OpenGraphAction open_graph_action;
   DasFeaturesAction2 load_das_action;
 
   JMenuItem gc_item;
@@ -92,7 +91,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem clear_graphs_item;
 
   JMenuItem open_file_item;
-  JMenuItem open_graph_item;
   JMenuItem load_das_item;
   JMenuItem print_item;
   JMenuItem print_frame_item;
@@ -484,12 +482,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
 
     open_file_action = new LoadFileAction(map_view, load_directory);
-    open_graph_action = new OpenGraphAction(map_view, load_directory);
     load_das_action = new DasFeaturesAction2(map_view);
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
-    open_graph_item = new JMenuItem("Add Graph", KeyEvent.VK_G);
     load_das_item = new JMenuItem("Load DAS Features", KeyEvent.VK_D);
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
@@ -518,7 +514,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     preferences_item.addActionListener(this);
 
     MenuUtil.addToMenu(file_menu, open_file_item);
-    MenuUtil.addToMenu(file_menu, open_graph_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
     MenuUtil.addToMenu(file_menu, clear_item);
     MenuUtil.addToMenu(file_menu, clear_graphs_item);
@@ -561,7 +556,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     clear_item.addActionListener(this);
     clear_graphs_item.addActionListener(this);
     open_file_item.addActionListener(this);
-    open_graph_item.addActionListener(this);
     load_das_item.addActionListener(this);
     print_item.addActionListener(this);
     print_frame_item.addActionListener(this);
@@ -701,10 +695,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
-    if (src == open_graph_item) {
-      open_graph_action.actionPerformed(evt);
-    }
-    else if (src == open_file_item) {
+    if (src == open_file_item) {
       open_file_action.actionPerformed(evt);
     }
     else if (src == load_das_item) {

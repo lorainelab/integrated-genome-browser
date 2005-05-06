@@ -103,7 +103,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem clamp_view_item;
   JMenuItem unclamp_item;
   JMenuItem rev_comp_item;
-  JMenuItem shrink_wrap_item;
+  JCheckBoxMenuItem shrink_wrap_item;
   JMenuItem adjust_edgematch_item;
   JCheckBoxMenuItem toggle_hairline_label_item;
   JCheckBoxMenuItem toggle_edge_matching_item;
@@ -499,7 +499,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
     unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
     rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
-    shrink_wrap_item = new JMenuItem("Toggle Shrink Wrapping", KeyEvent.VK_S);
+    shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
+    shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
+    shrink_wrap_item.setState(map_view.getShrinkWrap());
 
     toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
     toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
@@ -757,6 +759,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else if (src == shrink_wrap_item) {
       System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
       map_view.setShrinkWrap(! map_view.getShrinkWrap());
+      shrink_wrap_item.setState(map_view.getShrinkWrap());
     }
     else if (src == clamp_view_item) {
       System.out.println("trying to clamp to view");

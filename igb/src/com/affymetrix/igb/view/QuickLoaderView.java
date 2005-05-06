@@ -158,10 +158,36 @@ public class QuickLoaderView extends JComponent
     return quick_load_url;
   }
 
+  void clearGenometryModel() {
+    // Re-initialize the genometry model
+    SingletonGenometryModel model = SingletonGenometryModel.getGenometryModel();
+    model.setSelectedSeq(null);
+    model.setSelectedSeqGroup(null);
+    Vector seq_groups = new Vector(model.getSeqGroups().values());
+    Iterator iter = seq_groups.iterator();
+    while (iter.hasNext()) {
+      model.removeSeqGroup((AnnotatedSeqGroup) iter.next());
+    }  
+  }
+  
+  void clearGUI() {
+    // reinitialize the GUI
+    genome2cbs.clear();
+    seqtable.setModel(new DefaultTableModel());
+    checklist.removeAll();
+    checklist.repaint();
+  }
+  
   protected void setQuickLoadURL(String url) {
-    this.http_root = url;
-    System.out.println("Setting QuickLoad location: " + http_root);
 
+    if (! url.equals(this.http_root)) {
+      clearGenometryModel();
+      clearGUI();
+    }
+
+    this.http_root = url;
+    System.out.println("Setting QuickLoad URL: " + http_root);
+    
     java.util.List genome_list = loadGenomeNames();
     refreshGenomeSelector();
 
@@ -177,7 +203,6 @@ public class QuickLoaderView extends JComponent
     cache_annots = UnibrowPrefsUtil.getBooleanParam("quickload_cache_annots", CACHE_ANNOTS_DEFAULT);
 
     genome_selector = new JComboBox();
-    setQuickLoadURL(getQuickLoadUrl());
 
     initOptionsDialog();
 
@@ -225,7 +250,7 @@ public class QuickLoaderView extends JComponent
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
 
-    this.processDasServersList();
+    setQuickLoadURL(getQuickLoadUrl());
   }
 
   /** Adds the DAS servers from the file on the quickload server to the
@@ -833,9 +858,7 @@ public class QuickLoaderView extends JComponent
         // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
         //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
 
-        setQuickLoadURL(UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL));
         setQuickLoadURL(getQuickLoadUrl());
-
     //}
   }
 
@@ -940,9 +963,8 @@ public class QuickLoaderView extends JComponent
 	istr.close();
       }
       catch(Exception ex) {
-	ex.printStackTrace();
 	ErrorHandler.errorPanel("Error", "cannot access sequence for seq = " + seq_name +
-			   ", version = " + current_genome_name, gviewer);
+			   ", version = " + current_genome_name, gviewer, ex);
       }
       gviewer.setAnnotatedSeq(current_seq, true, true);
     }

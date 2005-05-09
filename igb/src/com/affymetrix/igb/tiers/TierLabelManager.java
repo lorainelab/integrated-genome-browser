@@ -459,7 +459,7 @@ public class TierLabelManager
       newmax = Integer.parseInt(input);
     }
     catch (NumberFormatException ex) {
-      IGB.errorPanel("Couldn't parse new tier max", ex);
+      IGB.errorPanel("Couldn't parse new tier max '"+input+"'");
       return;
     }
     java.util.List tiervec = tiermap.getAllTiers();
@@ -481,7 +481,7 @@ public class TierLabelManager
   }
 
   public void changeExpandMax(TierGlyph atier) {
-    System.out.println("called TierLabelManager.changeExpandMax()");
+    if (DEBUG) {System.out.println("called TierLabelManager.changeExpandMax()");}
     PackerI packer = atier.getExpandedPacker();
     if (packer instanceof FasterExpandPacker) {
       FasterExpandPacker fpacker = (FasterExpandPacker)packer;
@@ -499,7 +499,7 @@ public class TierLabelManager
 	newmax = Integer.parseInt((String) input);
       }
       catch (NumberFormatException ex) {
-	IGB.errorPanel("Problem parsing new tier max", ex);
+	IGB.errorPanel("Problem parsing new tier max '"+input+"'");
 	return;
       }
       fpacker.setMaxSlots(newmax);

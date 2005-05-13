@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import java.util.*;
 
 /**
- *  A new implementation of graphs for NeoMaps.
+ *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
@@ -37,6 +37,8 @@ public class GraphGlyph extends Glyph {
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
+  static int default_heatmap_bins = 256;
+  static Color[] default_heatmap_colors;  // default is black to white grayscale gradient
 
   public static int LINE_GRAPH = 1;
   public static int BAR_GRAPH = 2;
@@ -83,6 +85,13 @@ public class GraphGlyph extends Glyph {
 
   GraphState state = new GraphState();
   LinearTransform scratch_trans = new LinearTransform();
+
+  static {
+    default_heatmap_colors = new Color[default_heatmap_bins];
+    for (int i=0; i<default_heatmap_bins; i++) {
+      default_heatmap_colors[i] = new Color(i, i, i);
+    }
+  }
 
   public void setGraphState(GraphState gs) {
     state = gs;
@@ -166,11 +175,11 @@ public class GraphGlyph extends Glyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
-      
+
       if (draw_end_index >= xcoords.length) {
         // There may be a better way to included this check in earlier logic,
         // but this check is definitely needed at some point.
-        draw_end_index = xcoords.length - 1; 
+        draw_end_index = xcoords.length - 1;
       }
 
       float ytemp;
@@ -481,7 +490,7 @@ public class GraphGlyph extends Glyph {
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
     if (type == HEAT_MAP && heatmap_colors == null) {
-      initHeatMap();
+      initHeatMap(default_heatmap_colors);
     }
   }
   public int getGraphStyle() { return state.getGraphStyle(); }
@@ -494,12 +503,13 @@ public class GraphGlyph extends Glyph {
     else { return xcoords.length; }
   }
 
-  public void initHeatMap() {
+  /*  public void initHeatMap() {
     heatmap_colors = new Color[heatmap_bins];
     for (int i=0; i<heatmap_bins; i++) {
       heatmap_colors[i] = new Color(i, 0, i);
     }
   }
+  */
 
   public void initHeatMap(Color[] colors) {
     if (colors == null) {

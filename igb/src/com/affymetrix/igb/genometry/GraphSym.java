@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,7 +21,7 @@ import com.affymetrix.igb.util.FloatList;
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public class GraphSym extends SimpleSymWithProps {
+public class GraphSym extends SimpleSymWithProps implements Cloneable {
   int xcoords[];
   float ycoords[];
   BioSeq graph_original_seq;
@@ -29,6 +29,12 @@ public class GraphSym extends SimpleSymWithProps {
 
   List thresh_names = null;
   FloatList thresh_vals = null;
+
+  public Object clone() throws CloneNotSupportedException {
+    GraphSym newsym = (GraphSym)super.clone();
+    newsym.setGraphName(this.getGraphName() + ":clone");
+    return newsym;
+  }
 
   public GraphSym(int[] x, float[] y, String name, BioSeq seq) {
     super();

@@ -44,18 +44,26 @@ public class ExperimentPivotView extends JComponent
   static String LINE = "Line";
   static String STAIRSTEP = "Bar";  // really stairstep for now...
   static String HEATMAP = "Heat Map";
+  static String HEATMAP1 = "Violet Heat Map";
+  static String HEATMAP2 = "Blue/Yellow Heat Map";
+  static String HEATMAP3 = "Red/Green Heat Map";
+  static String HEATMAP4 = "Blue/Yellow Heat Map2";
   static String TOTAL_MIN_MAX = "Total Min/Max";
   static String ROW_MIN_MAX = "Row Min/Max";
   static String COLUMN_MIN_MAX = "Column Min/Max";
   static Map string2style;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static Color[] BLUE_YELLOW_HEATMAP;
+  static Color[] BLUE_YELLOW_HEATMAP_2;
+  static Color[] RED_GREEN_HEATMAP;
+  static Color[] VIOLET_HEATMAP;
 
   int numscores = 0;
   int score_spacing = 10;
   int graph_xoffset = 2;
   float overall_score_min = Float.POSITIVE_INFINITY;
   float overall_score_max = Float.NEGATIVE_INFINITY;
+  Color[] current_heatmap = VIOLET_HEATMAP;
 
   AffyTieredMultiMap map;
   TierLabelManager tier_manager;
@@ -66,25 +74,19 @@ public class ExperimentPivotView extends JComponent
   int experiment_style = GraphGlyph.HEAT_MAP;
   String experiment_scaling = TOTAL_MIN_MAX;
 
-  JMenuItem linegraphMI;
-  JMenuItem bargraphMI;
-  JMenuItem heatmapMI;
   JComboBox styleCB = new JComboBox();
   JComboBox scaleCB = new JComboBox();
 
   Color[] tcolors = { (new Color(0, 0, 0)), new Color(20, 20, 20) };
 
   static {
-    string2style = new HashMap();
-    string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
-    string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
-    string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
-
+    int red, green, blue;
     int bins = 256;
+
     BLUE_YELLOW_HEATMAP = new Color[bins];
-    int red = 0;
-    int green = 0;
-    int blue = 255;
+    red = 0;
+    green = 0;
+    blue = 255;
     for (int i=0; i<bins; i++) {
       Color col = new Color(red, green, blue);
       BLUE_YELLOW_HEATMAP[i] = col;
@@ -94,12 +96,61 @@ public class ExperimentPivotView extends JComponent
       //      if (i % 2 == 0) { red++; }
       //      else { green++; }
     }
+
+    BLUE_YELLOW_HEATMAP_2 = new Color[bins];
+    red = 0;
+    green = 0;
+    blue = 128;
+    for (int i=0; i<bins; i++) {
+      Color col = new Color(red, green, blue);
+      BLUE_YELLOW_HEATMAP_2[i] = col;
+      if (i % 2 == 0)  { blue--; }
+      red++;
+      green++;
+      //      if (i % 2 == 0) { red++; }
+      //      else { green++; }
+    }
+
+    VIOLET_HEATMAP = new Color[bins];
+    red = 0;
+    green = 0;
+    blue = 0;
+    for (int i=0; i<bins; i++) {
+      Color col = new Color(red, green, blue);
+      VIOLET_HEATMAP[i] = col;
+      blue++;
+      red++;
+    }
+
+    RED_GREEN_HEATMAP = new Color[bins];
+    red = 255;
+    green = 0;
+    blue = 0;
+    for (int i=0; i<bins; i++) {
+      Color col = new Color(red, green, blue);
+      RED_GREEN_HEATMAP[i] = col;
+      red--;
+      green++;
+    }
+
+    string2style = new HashMap();
+    string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
+    string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
+    //    string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
+    string2style.put(HEATMAP1, VIOLET_HEATMAP);
+    string2style.put(HEATMAP2, BLUE_YELLOW_HEATMAP);
+    string2style.put(HEATMAP4, BLUE_YELLOW_HEATMAP_2);
+    string2style.put(HEATMAP3, RED_GREEN_HEATMAP);
   }
 
 
   public ExperimentPivotView() {
     super();
-    styleCB.addItem(HEATMAP);
+    //    styleCB.addItem(HEATMAP);
+    styleCB.addItem(HEATMAP1);
+    styleCB.addItem(HEATMAP2);
+    styleCB.addItem(HEATMAP4);
+    styleCB.addItem(HEATMAP3);
     styleCB.addItem(STAIRSTEP);
     styleCB.addItem(LINE);
     JPanel style_pan = new JPanel();
@@ -353,6 +404,18 @@ public class ExperimentPivotView extends JComponent
     }
   }
 
+  public void setHeatMapColors(Color[] colors, boolean update_widget) {
+    int graph_count = experiment_graphs.size();
+    for (int i=0; i<graph_count; i++) {
+      GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
+      gr.initHeatMap(colors);
+    }
+    current_heatmap = colors;
+    if (update_widget) {
+      map.updateWidget();
+    }
+  }
+
   public GraphGlyph addGraph(SeqSymmetry sym, TierGlyph mtg) {
     GraphGlyph gl = null;
     if (sym instanceof IndexedSym) {
@@ -373,7 +436,7 @@ public class ExperimentPivotView extends JComponent
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
       gl = new GraphGlyph();
-      gl.initHeatMap(BLUE_YELLOW_HEATMAP);
+      gl.initHeatMap(current_heatmap);
       gl.setGraphStyle(experiment_style);
       gl.setShowHandle(false);
       gl.setShowBounds(false);
@@ -414,23 +477,19 @@ public class ExperimentPivotView extends JComponent
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
-    if (src == linegraphMI) {
-      System.out.println("setting experiment style to line graphs");
-      setExperimentStyle(GraphGlyph.LINE_GRAPH);
-    }
-    else if (src == bargraphMI) {
-      System.out.println("setting experiment style to bar graphs (really stairstep graphs)");
-      setExperimentStyle(GraphGlyph.STAIRSTEP_GRAPH);
-    }
-    else if (src == heatmapMI) {
-      System.out.println("setting experiment style to heatmaps");
-      setExperimentStyle(GraphGlyph.HEAT_MAP);
-    }
-    else if (src == styleCB) {
+    if (src == styleCB) {
       String selection = (String)((JComboBox)styleCB).getSelectedItem();
       if (selection != BLANK) {
-	int style = ((Integer)string2style.get(selection)).intValue();
-	setExperimentStyle(style);
+	Object obj = string2style.get(selection);
+	if (obj instanceof Integer) {
+	  int style = ((Integer)string2style.get(selection)).intValue();
+	  setExperimentStyle(style);
+	}
+	else if (obj instanceof Color[]) {
+	  Color[] colors = (Color[])obj;
+	  setHeatMapColors(colors, false);
+	  setExperimentStyle(GraphGlyph.HEAT_MAP);
+	}
       }
     }
     else if (src == scaleCB) {
@@ -512,7 +571,8 @@ public class ExperimentPivotView extends JComponent
    *  main for testing
    */
   public static void main(String[] args) throws Exception {
-    String testgff = System.getProperty("user.dir") + "/exptest.gff";
+    //    String testgff = System.getProperty("user.dir") + "/exptest.gff";
+    String testgff = "c:/data/igb_testdata/exptest.gff";
     MutableAnnotatedBioSeq testseq = null;
     FileInputStream fis = new FileInputStream(new File(testgff));
     GFFParser parser = new GFFParser();
@@ -521,26 +581,17 @@ public class ExperimentPivotView extends JComponent
     JFrame frm = new JFrame( "ExperimentPivotView Test" );
     frm.setDefaultCloseOperation( frm.EXIT_ON_CLOSE );
 
+    /*
     JMenuBar mbar = new JMenuBar();
     frm.setJMenuBar(mbar);
-
     JMenu view_menu = new JMenu("View");
     mbar.add(view_menu);
+    */
 
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     ExperimentPivotView epview = new ExperimentPivotView();
     cpane.add("Center", epview);
-
-    epview.linegraphMI = new JMenuItem("Line Graphs");
-    epview.bargraphMI = new JMenuItem("Bar Graphs");
-    epview.heatmapMI = new JMenuItem("Heat Map");
-    view_menu.add(epview.linegraphMI);
-    view_menu.add(epview.bargraphMI);
-    view_menu.add(epview.heatmapMI);
-    epview.linegraphMI.addActionListener(epview);
-    epview.bargraphMI.addActionListener(epview);
-    epview.heatmapMI.addActionListener(epview);
 
     frm.setSize(600, 400);
     frm.show();

@@ -104,8 +104,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
         GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
       state.setGraphHeight(coord_height);
     }
-    // System.out.println("setting graph state, float = " + state.getFloatGraph() +
-    //                   ", height = " + state.getGraphHeight());
 
   if (state.getFloatGraph()) {
       if (current_yloc > (mapbox.y + mapbox.height - state.getGraphHeight())) {

@@ -605,7 +605,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     double min_run_threshold = getMinRunThreshold();
     double span_start_shift = getThreshStartShift();
     double span_end_shift = getThreshEndShift();
-    
+
     Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
@@ -641,7 +641,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
     }
 
-    // if neither min or max score thresholds have been set, assume that only using 
+    // if neither min or max score thresholds have been set, assume that only using
     //     min score threshold and set so it is in the middle of visible score range
     if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
       setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
@@ -653,7 +653,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     //   optionally confine drag of glyph so that it can't go outside it's parent's borders...
     else {
       // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
-      //   otherwise it could conflict with reported threshold settings in GraphAdjusterView 
+      //   otherwise it could conflict with reported threshold settings in GraphAdjusterView
       //   instead, later in method setting thresh glyph visibility to false if outside visible score range
       //      if (min_score_threshold < getVisibleMinY()) { setScoreThreshold(getVisibleMinY()); }
       //      else if (min_score_threshold > getVisibleMaxY()) { setScoreThreshold(getVisibleMaxY()); }
@@ -671,7 +671,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       System.out.println("in SmartGraphGlyph.drawThresholdedRegions(), problem with setting up threshold line!");
       thresh_score = (getVisibleMinY() + (getVisibleMaxY()/2));
     }
-    if (thresh_score < getVisibleMinY()  || 
+    if (thresh_score < getVisibleMinY()  ||
 	thresh_score > getVisibleMaxY() ) {
       thresh_glyph.setVisibility(false);
     }
@@ -982,6 +982,7 @@ class GraphCache2 {
 
   public GraphCache2(int bases_per_entry, int[] xcoords, float[] ycoords) {
     int count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+    if (count_guess < 1)  { count_guess = 1; }
     IntList xmin_list = new IntList(count_guess);
     IntList xmax_list = new IntList(count_guess);
     FloatList ymin_list = new FloatList(count_guess);
@@ -1001,24 +1002,32 @@ class GraphCache2 {
       // really don't need entry_xmax assignment here, always gets assigned in loop
       //   (even if only one point in this cache entry), but setting for clarification...
       int entry_xmax = entry_xmin;
+      if ( (cur_index < xcoords.length) && 
+	      (xcoords[cur_index] <= entry_xlimit) ) {
+	while ( (cur_index < xcoords.length) && 
+		(xcoords[cur_index] <= entry_xlimit) ) {
+	  float yval = ycoords[cur_index];
+	  entry_xmax = xcoords[cur_index];
+	  valmin = Math.min(valmin, yval);
+	  valmax = Math.max(valmax, yval);
+	  valavg += yval;
+	  entry_points++;
+	  cur_index++;
+	}
+	valavg = valavg / (float)entry_points;
 
-      while ((cur_index < xcoords.length) && (xcoords[cur_index] <= entry_xlimit)) {
-	float yval = ycoords[cur_index];
-	entry_xmax = xcoords[cur_index];
-	valmin = Math.min(valmin, yval);
-	valmax = Math.max(valmax, yval);
-	valavg += yval;
-	entry_points++;
+	xmin_list.add(entry_xmin);
+	xmax_list.add(entry_xmax);
+	num_points_list.add(entry_points);
+	ymin_list.add(valmin);
+	ymax_list.add(valmax);
+	yavg_list.add(valavg);
+      }
+      else { 
+	// shouldn't hit this branch unless somethings gone wrong.
+	// for now just increment cur_index to avoid infinite loop...
 	cur_index++;
       }
-      valavg = valavg / (float)entry_points;
-
-      xmin_list.add(entry_xmin);
-      xmax_list.add(entry_xmax);
-      num_points_list.add(entry_points);
-      ymin_list.add(valmin);
-      ymax_list.add(valmax);
-      yavg_list.add(valavg);
     }
 
     xmin = xmin_list.copyToArray();

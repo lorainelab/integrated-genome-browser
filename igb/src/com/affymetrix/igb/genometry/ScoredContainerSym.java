@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,6 +18,7 @@ import com.affymetrix.genometry.*;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
+ *  Assumes that ScoredContainerSym has only one SeqSpan
  *  {@link IndexedSym}.
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
@@ -25,6 +26,10 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   java.util.List scorevals = new ArrayList();
   java.util.List scorenames = new ArrayList();
 
+  /**
+   *  assumes all child syms have already been added, and span has already been set
+   *  assumes that length of scores float array equals number of children
+   */
   public void addScores(String name, float[] scores) {
     name2scores.put(name, scores);
     scorevals.add(scores);
@@ -32,7 +37,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   }
 
   public int getScoreCount() { return scorevals.size(); }
-  
+
   public float[] getScores(String name) {
     return (float[])name2scores.get(name);
   }
@@ -77,6 +82,45 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     else {
       System.err.println("ERROR: cannot add a child to ScoredContainerSym unless it is an IndexedSym");
     }
+  }
+
+  /**
+   *  assumes all child syms have already been added, and span has already been set
+   *
+   *  Resultant graph sym has two data points for each child sym,
+   *     first  with x = min of child's span, y = score at child's index in "name" float array
+   *     second with x = max of child's span, y = 0
+   */
+  public GraphSym makeGraphSym(String name)  {
+    float[] scores = getScores(name);
+    SeqSpan pspan = this.getSpan(0);
+    if (scores == null) {
+      System.err.println("ScoreContainerSym.makeGraphSym() called, but no scores found for: " + name);
+      return null;
+    }
+    if (pspan == null) {
+      System.err.println("ScoreContainerSym.makeGraphSym() called, but has no span yet");
+      return null;
+    }
+    BioSeq aseq = pspan.getBioSeq();
+    int score_count = scores.length;
+    int[] xcoords = new int[2 * score_count];
+    float[] ycoords = new float[2 * score_count];
+    for (int i=0; i<score_count; i++) {
+      IndexedSym isym = (IndexedSym)this.getChild(i);
+      if (isym.getIndex() != i) {
+	System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
+			   "child.getIndex() not same as child's index in parent child list: " +
+			   isym.getIndex() + ", " + i);
+      }
+      SeqSpan cspan = isym.getSpan(aseq);
+      xcoords[i*2] = cspan.getMin();
+      ycoords[i*2] = scores[i];
+      xcoords[(i*2)+1] = cspan.getMax();
+      ycoords[(i*2)+1] = 0;
+    }
+    GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
+    return gsym;
   }
 
 }

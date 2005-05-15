@@ -24,6 +24,7 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
  *  parses ".sin" file format into genometry model of ScoredContainerSyms
@@ -61,7 +62,7 @@ import com.affymetrix.igb.util.FloatList;
  *  Parser _should_ be able to distinguish between these, based on combination of
  *     number of fields, and presence and position of strand field
  *
- *  For use in IGB, SIN version 3 is dependent on prior loading of annotations with ids, and whether those 
+ *  For use in IGB, SIN version 3 is dependent on prior loading of annotations with ids, and whether those
  *     ids have actually been added to IGB's standard id-->annotation_sym mapping
  *
  *  seqid is word string [a-zA-Z_0-9]+
@@ -90,11 +91,21 @@ public class ScoredIntervalParser {
   static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
   static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
+  static public String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
+  static public boolean default_attach_graphs = true;
+  /**
+   *  if attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
+   *      each array of scores is converted to a GraphSym and also added as annotation to seq
+   */
+  boolean attach_graphs = default_attach_graphs;
+
+
   public void parse(InputStream istr, String stream_name, Map seqhash) {
     parse(istr, stream_name, seqhash, null);
   }
 
-   public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) {
+  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) {
+    attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
@@ -157,7 +168,7 @@ public class ScoredIntervalParser {
 	  max = Integer.parseInt(fields[2]);
 	  strand = fields[3];
 	}
-        else {
+	else {
 	  sin2 = strand_matcher.reset(fields[4]).matches();   // sin2 format if 5th field is strand: [+-.]
 	  if (sin2) {
 	    score_offset = 5;
@@ -201,22 +212,22 @@ public class ScoredIntervalParser {
 	  score_names = initScoreNames(score_count, index2id);
 	}
 
-        ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
-        MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-        if (aseq == null) {
+	ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
+	if (aseq == null) {
 	  System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
-          aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
-          seqhash.put(seqid, aseq);
-        }
-        if (container == null) {
-          container = new ScoredContainerSym();
-          container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-          Iterator iter = props.entrySet().iterator();
-          while (iter.hasNext())  {
-            Map.Entry entry = (Map.Entry)iter.next();
-            container.setProperty((String)entry.getKey(), entry.getValue());
-          }
-          container.setProperty("method", stream_name);
+	  aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
+	  seqhash.put(seqid, aseq);
+	}
+	if (container == null) {
+	  container = new ScoredContainerSym();
+	  container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	  Iterator iter = props.entrySet().iterator();
+	  while (iter.hasNext())  {
+	    Map.Entry entry = (Map.Entry)iter.next();
+	    container.setProperty((String)entry.getKey(), entry.getValue());
+	  }
+	  container.setProperty("method", stream_name);
 	  seq2container.put(seqid, container);
 	}
 
@@ -266,7 +277,7 @@ public class ScoredIntervalParser {
 	Map.Entry entry = (Map.Entry)iter.next();
 	ArrayList score_arrays = (ArrayList)entry.getKey();
 	ScoredContainerSym container = (ScoredContainerSym)entry.getValue();
-        MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
 	for (int i=0; i<score_count; i++) {
 	  String score_name = (String)score_names.get(i);
 	  FloatList flist = (FloatList)score_arrays.get(i);
@@ -274,6 +285,15 @@ public class ScoredIntervalParser {
 	  container.addScores(score_name, scores);
 	}
 	aseq.addAnnotation(container);
+	if (attach_graphs) {
+	  // make a GraphSym for each scores column, and add as an annotation to aseq
+	  for (int i=0; i<score_count; i++) {
+	    String score_name = container.getScoreName(i);
+	    GraphSym gsym = container.makeGraphSym(score_name);
+	    aseq.addAnnotation(gsym);
+	  }
+	  // System.out.println("finished attaching graphs");
+	}
 	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
       }
 

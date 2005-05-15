@@ -29,6 +29,7 @@ import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
+import com.affymetrix.igb.parsers.ScoredIntervalParser;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -73,6 +74,11 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored intervals",
+						 UnibrowPrefsUtil.getTopNode(),
+						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+						 ScoredIntervalParser.default_attach_graphs));
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));

@@ -47,15 +47,15 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
  *     from the same assembly
  *
  *  DATA SECTION
- *  SIN format version 1 (".sin")
+ *  SIN format version 1
  *  tab-delimited lines with 4 required columns, any additional columns are scores:
  *  seqid    min_coord    max_coord    strand    [score]*
  *
- *  SIN format version 2 (".sin2")
+ *  SIN format version 2
  *  tab-delimited lines with 5 required columns, any additional columns are scores:
  *  annot_id    seqid    min_coord    max_coord    strand    [score]*
  *
- *  SIN format version 3 (".sin3")
+ *  SIN format version 3
  *  tab-delimited lines with 1 required column, any additional columns are scores:
  *  annot_id  [score]*
  *
@@ -159,7 +159,7 @@ public class ScoredIntervalParser {
 	int score_offset;
 	SeqSymmetry original_sym = null;  // only used for sin3 format
 
-	sin1 = strand_matcher.reset(fields[3]).matches();  // sin1 format if 4rth field is strand: [+-.]
+	sin1 = (fields.length > 3) && strand_matcher.reset(fields[3]).matches();  // sin1 format if 4rth field is strand: [+-.]
 	if (sin1) {
 	  score_offset = 4;
 	  annot_id = null;
@@ -169,7 +169,7 @@ public class ScoredIntervalParser {
 	  strand = fields[3];
 	}
 	else {
-	  sin2 = strand_matcher.reset(fields[4]).matches();   // sin2 format if 5th field is strand: [+-.]
+	  sin2 = (fields.length > 4) && strand_matcher.reset(fields[4]).matches();   // sin2 format if 5th field is strand: [+-.]
 	  if (sin2) {
 	    score_offset = 5;
 	    annot_id = fields[0];

@@ -142,7 +142,6 @@ public class WebBrowserControl {
    */
   public static int getPlatformCode() {
     String os = System.getProperty("os.name");
-    System.err.println("Platform os.name property is: " + os);
     int to_return = -1;
     if (os == null) {
       to_return = UNKNOWN_PLATFORM; // is this even possible?

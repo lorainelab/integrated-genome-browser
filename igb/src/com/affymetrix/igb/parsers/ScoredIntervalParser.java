@@ -27,10 +27,10 @@ import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
- *  parses ".sin" file format into genometry model of ScoredContainerSyms
+ *  Parses "sin" file format into genometry model of ScoredContainerSyms
  *     with IndexedSingletonSym children.
  *<pre>
- *  Description of .sin format:
+ *  Description of ".sin" format:
  *  HEADER SECTION
  *  .sin files have an optional header section at the beginning,
  *     which is just a list of tag-value pairs, one per line, in the form:
@@ -91,11 +91,12 @@ public class ScoredIntervalParser {
   static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
   static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
-  static public String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
-  static public boolean default_attach_graphs = true;
+  static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
+  static public final boolean default_attach_graphs = true;
+
   /**
-   *  if attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
-   *      each array of scores is converted to a GraphSym and also added as annotation to seq
+   *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
+   *      each array of scores is converted to a GraphSym and also added as annotation to seq.
    */
   boolean attach_graphs = default_attach_graphs;
 
@@ -117,7 +118,7 @@ public class ScoredIntervalParser {
       List score_names = null;
       Map props = new HashMap();
 
-      // assuming first line is header
+      // parse header lines (which must begin with "#")
       while (((line = br.readLine())!= null) && (line.startsWith("#"))) {
 	Matcher match = tagval_regex.matcher(line);
 	if (match.matches()) {
@@ -145,7 +146,6 @@ public class ScoredIntervalParser {
       //      while (line != null) {
       while ((line = br.readLine()) != null) {
 	// skip comment lines (any lines that start with "#")
-	//	if (line.startsWith("#")) { line = br.readLine(); continue; }
 	if (line.startsWith("#")) { continue; }
 
 	String[] fields = line_regex.split(line);
@@ -181,7 +181,6 @@ public class ScoredIntervalParser {
 	  else {
 	    sin3 = true;
 	    score_offset = 1;
-	    //	    break;  // sin3 format not yet implemented
 	    annot_id = fields[0];
 	    // need to match up to pre-existing annotation in id2sym_hash
 	    original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
@@ -257,15 +256,12 @@ public class ScoredIntervalParser {
 	  seq2arrays.put(seqid, score_arrays);
 	  arrays2container.put(score_arrays, container);
 	}
-	//	for (int field_index = 4; field_index < fields.length; field_index++) {
 	for (int field_index = score_offset; field_index < fields.length; field_index++) {
-	  //	  FloatList flist = (FloatList)score_arrays.get(field_index-4);
 	  FloatList flist = (FloatList)score_arrays.get(field_index - score_offset);
 	  float score = Float.parseFloat(fields[field_index]);
 	  flist.add(score);
 	}
 	line_count++;
-	//	line = br.readLine();
       }
 
       System.out.println("data lines in .sin file: " + line_count);

@@ -16,14 +16,16 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
 
 /**
- *   EfficientProbesetSymA is an efficient representation of probesets that meet the following criteria:
+ *   EfficientProbesetSymA is an efficient representation of probesets that meet
+ *   certain criteria.
+ *   <pre>
  *       a) all probes are same length
  *       b) all probes align to a contiguous genome interval (no split probes)
  *       c) probeset ids can be represented numerically
  *       d) all probes within a probeset are on same strand
  *       e) probeset must have at least one probe
+ *   </pre>
  *
- *   String id is just integer id converted to String representation
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
 public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
@@ -33,14 +35,22 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
   int nid;
   int[] child_mins;
 
-  //  public EfficientSnpSym(SeqSymmetry sym_parent, int coord, int nid) {
+  /**
+   * Constructor.
+   * @param cmins an array of the minima of the probe positions, this should
+   *   be sorted in ascending order
+   * @param probe_length  the length of each probe
+   * @param forward  true for forward strand
+   * @param nid  an integer to be used as the ID
+   * @param seq  the BioSeq
+   */
   public EfficientProbesetSymA(int[] cmins, int probe_length, boolean forward, int nid, BioSeq seq) {
     this.child_mins = cmins;
     this.probe_length = probe_length;
     this.forward = forward;
     this.nid = nid;
     this.seq = seq;
-    // if cmins are not already sorted in ascending order, sort them
+    //TODO: if cmins are not already sorted in ascending order, sort them
   }
 
   /* SeqSymmetry implementation */
@@ -82,6 +92,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
   }
 
   public int getChildCount() { return child_mins.length; }
+
   public SeqSymmetry getChild(int index) {
     if (index >= getChildCount()) { return null; }
     else  {
@@ -98,37 +109,34 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
     }
   }
 
+  /** The integer id converted to String representation. */
   public String getID() {
     return Integer.toString(nid);
   }
 
   /* SeqSpan implementation */
 
-  /**
-   *  assumes child_mins has been sorted in ascending order
-   */
   public int getStart() {
+    // assumes child_mins has been sorted in ascending order
     if (forward)  { return child_mins[0]; }
-    else { return (child_mins[child_mins.length-1] + 25); }
+    else { return (child_mins[child_mins.length-1] + probe_length); }
   }
 
-  /**
-   *  assumes child_mins has been sorted in ascending order
-   */
   public int getEnd() {
-    if (forward) { return (child_mins[child_mins.length-1] + 25); }
+    // assumes child_mins has been sorted in ascending order
+    if (forward) { return (child_mins[child_mins.length-1] + probe_length); }
     else { return child_mins[0]; }
   }
 
-  /**
-   *  assumes child_mins has been sorted in ascending order
-   */
-  public int getMin() { return child_mins[0]; }
+  public int getMin() { 
+    // assumes child_mins has been sorted in ascending order
+    return child_mins[0]; 
+  }
 
-  /**
-   *  assumes child_mins has been sorted in ascending order
-   */
-  public int getMax() { return (child_mins[child_mins.length-1] + 25); }
+  public int getMax() { 
+    // assumes child_mins has been sorted in ascending order
+    return (child_mins[child_mins.length-1] + probe_length); 
+  }
 
   public int getLength() { return (getMax() - getMin()); }
   public boolean isForward() { return forward; }

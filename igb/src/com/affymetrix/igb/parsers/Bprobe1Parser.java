@@ -1,3 +1,15 @@
+/**
+*   Copyright (c) 2005 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -13,7 +25,8 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 /**
  *
  *  A highly optimized binary format for probesets that meet certain criteria, originally intended for
- *      use with all-exon arrays
+ *      use with all-exon arrays.
+ *<pre>
  *  Preserving just the probe locations, the grouping of probes into probesets, and
  *  the probeset ids, and making some assumptions that I'm pretty sure the exon probes meet:
  *    a) all probes are same length
@@ -49,7 +62,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *             number of probes & strand (byte, 0 to 127 probes, sign indicates strand)
  *             for each probe
  *                 min genome position (int, zero interbase)
- *
+ *</pre>
  */
 public class Bprobe1Parser {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -162,6 +175,7 @@ public class Bprobe1Parser {
   }
 
   /**
+   *  Converts a "GFF" file into a "bp1" file.
    *  Assumes
    *     All annotations in GFF file are genome-based probes (contiguous intervals on genome)
    *     25-mer probes (for now)
@@ -246,7 +260,9 @@ public class Bprobe1Parser {
   }
 
   /**
-   *  takes as input a gff file of genome-based probesets that meet the criteria:
+   *  Reads a GFF file and writes a "bp1" (binary bprobe1 format) file.
+   *<pre>
+   *  The input gff file of genome-based probesets must meet these criteria:
    *    a) all probes are same length
    *    b) all probes align to a contiguous genome interval (no split probes)
    *    c) probeset ids can be represented numerically
@@ -258,6 +274,7 @@ public class Bprobe1Parser {
    *  first arg is gff input file name
    *  second arg is bprobe output file name
    *  if no second arg, output is written to standard out??
+   *</pre>
    */
   public static void main(String[] args) {
     //    String in_file = "c:/data/more_wta_data/HuEx-1_0-st-Probes.head.gff";

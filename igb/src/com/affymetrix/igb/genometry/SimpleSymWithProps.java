@@ -28,6 +28,15 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
   Map props;
 
+  public SimpleSymWithProps() {
+    super();
+  }
+
+  public SimpleSymWithProps(int estimated_child_count) {
+    this();
+    children = new Vector(estimated_child_count);
+  }
+
   /** Returns the properties map, or null. */
   public Map getProperties() {
     return props;

@@ -68,7 +68,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib"},
+        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1"},
         "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
@@ -176,7 +176,7 @@ public class LoadFileAction {
       if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
-          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph");        
+          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph");
         } else {
           Map seqs = seq_group.getSeqs();
 //          GraphSymUtils.readGraphs(fistr, annotfile.getAbsolutePath(), seqs, input_seq);
@@ -412,6 +412,12 @@ public class LoadFileAction {
 	  System.out.println("total repeats loaded: " + alist.size());
 	}
         aseq = input_seq;
+      }
+      else if (stream_name.endsWith(".bp1")) {
+	Bprobe1Parser parser = new Bprobe1Parser();
+	String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
+	parser.parse(str, gmodel.getSelectedSeqGroup(), true, annot_type);
+	aseq = input_seq;
       }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format

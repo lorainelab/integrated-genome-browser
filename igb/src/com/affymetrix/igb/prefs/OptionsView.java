@@ -63,10 +63,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JPanel misc_box = new JPanel();
     boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
     if (is_unix) {
-      misc_box.setLayout(new GridLayout(5,1));
+      misc_box.setLayout(new GridLayout(6,1));
     } else {
-      misc_box.setLayout(new GridLayout(3,1));
+      misc_box.setLayout(new GridLayout(4,1));
     }
+    // The BoxLayout would seem to make sense for misc_box, but it oddly causes
+    // side-effects in the *other* boxes on this panel.
     //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
     misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
@@ -185,10 +187,38 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
     sb.append("This panel allows you to change a variety of miscelaneous settings.  ");
-    sb.append("Some changes will take effect immediately;  ");
+    sb.append("Most changes here will take effect immediately;  ");
     sb.append("others take effect only after a re-start.  ");
     sb.append("</p>\n");
 
+    sb.append("<p>\n");
+    sb.append("<h2>Ask before exiting</h2>\n");
+    sb.append("Whether to show a confirmation dialog before closing the program. ");
+    sb.append("This can help you avoid accidentally losing your work.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>Keep hairline in view</h2>\n");
+    sb.append("Whether to automtatically prevent the hairline from moving ");
+    sb.append("outside the view as you scroll.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Make graphs from scored intervals</h2>\n");
+    sb.append("Whether to automatically create graphs from data in ");
+    sb.append("scored interval ('.sin') files.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Show DAS query genometry</h2>\n");
+    sb.append("Intended for advanced users, for debugging of DAS servers.  ");
+    sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
+    sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
     sb.append("<p>\n");
     sb.append("<h2>Browser Command (Unix Only)</h2>\n");
     sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");

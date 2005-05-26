@@ -29,6 +29,12 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
 
   List thresh_names = null;
   FloatList thresh_vals = null;
+  
+  /** Property name that can be used to set/get the desired initial graph style.
+   *  The property value should be an Integer where the int value can
+   *  be used in GraphState.setGraphStyle().
+   */
+  public static final String PROP_INITIAL_GRAPH_STYLE = "Initial Graph Style";
 
   public Object clone() throws CloneNotSupportedException {
     GraphSym newsym = (GraphSym)super.clone();

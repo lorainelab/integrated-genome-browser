@@ -164,6 +164,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (no_prev_glyph) {
       graph_glyph = new SmartGraphGlyph();
       graph_glyph.setLabel(graf.getGraphName());
+      setStateFromProps(graf, state);
     }
 
     report("pre state setting ", state, graph_glyph);
@@ -321,6 +322,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setMinRunThreshold(minrun_thresh);
     gstate.setMaxGapThreshold(maxgap_thresh);
     gstate.setShowThreshold(show_thresh);
+    
+    //TODO: Should this stuff about is_trans_frag be moved to setStateFromProps()
+    // so that it can be used from all the displayGraph() methods ?
     boolean is_trans_frag = ((graf.getProperty("parameter_set_name") != null) &&
 			     (((String)graf.getProperty("parameter_set_name")).indexOf("TransFrag") > -1) ) ;
     if (is_trans_frag) {
@@ -336,12 +340,37 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       gstate.setThreshStartShift(12);
       gstate.setThreshEndShift(13);
     }
+    
+    setStateFromProps(graf, gstate);
+    
     Map gfactories = smv.getGraphFactoryHash();
     GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
     //		gfactories.put(fgraf, gstate);
     gfactories.put(graf, gfac);
     GraphGlyph graph_glyph = GenericGraphGlyphFactory.displayGraph(graf, smv, gstate, true);
     return graph_glyph;
+  }
+  
+  /**
+   *  Sets some properties of the given GraphState based on properties in
+   *  the given GraphSym's property map.
+   *  Currently, sets only the graph "style" based on the value of the property
+   *    GraphSym.PROP_INITIAL_GRAPH_STYLE.
+   */
+  static void setStateFromProps(GraphSym graf, GraphState state) {
+    Integer requested_graph_style = (Integer) graf.getProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE);
+    if (requested_graph_style != null) {
+      System.out.println("\n\nSetting the graph style on "+ graf.getGraphName() + " to: " + requested_graph_style.intValue());
+      state.setGraphStyle(requested_graph_style.intValue());
+
+      // Now set the requested graph style to null so that the user can later
+      // change the style in the GUI, if desired
+      graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
+    }
+    else {
+      System.out.println("\n\nNOT Setting the graph style on "+ graf.getGraphName());
+    }
+    SeqUtils.printSymmetry(graf, "++", true);
   }
 
 }

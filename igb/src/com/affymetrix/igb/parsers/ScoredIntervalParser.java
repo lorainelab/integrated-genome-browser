@@ -22,6 +22,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -286,7 +287,12 @@ public class ScoredIntervalParser {
 	  for (int i=0; i<score_count; i++) {
 	    String score_name = container.getScoreName(i);
 	    GraphSym gsym = container.makeGraphSym(score_name);
-	    aseq.addAnnotation(gsym);
+
+            // Give a hint for display.
+            // See GenericGraphGlyphFactory.setStateFromProps()
+            gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+
+            aseq.addAnnotation(gsym);
 	  }
 	  // System.out.println("finished attaching graphs");
 	}

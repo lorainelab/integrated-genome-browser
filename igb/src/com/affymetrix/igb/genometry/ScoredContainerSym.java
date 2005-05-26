@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,8 +18,8 @@ import com.affymetrix.genometry.*;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
+ *  {@link com.affymetrix.igb.genometry.IndexedSym}.
  *  Assumes that ScoredContainerSym has only one SeqSpan
- *  {@link IndexedSym}.
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
   Map name2scores = new HashMap();
@@ -27,8 +27,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   java.util.List scorenames = new ArrayList();
 
   /**
-   *  assumes all child syms have already been added, and span has already been set
-   *  assumes that length of scores float array equals number of children
+   *  Adds scores.
+   *  Assumes all child syms have already been added, and span has already been set.
+   *  @param scores  a float array with the same length as the number of children.
    */
   public void addScores(String name, float[] scores) {
     name2scores.put(name, scores);
@@ -85,11 +86,14 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   }
 
   /**
-   *  assumes all child syms have already been added, and span has already been set
-   *
+   *  Creates a GraphSym.
+   *  Assumes all child syms have already been added, and span has already been set.
+   *<pre>
    *  Resultant graph sym has two data points for each child sym,
    *     first  with x = min of child's span, y = score at child's index in "name" float array
    *     second with x = max of child's span, y = 0
+   *</pre>
+   * @return a GraphSym or null if there was an error condition
    */
   public GraphSym makeGraphSym(String name)  {
     float[] scores = getScores(name);

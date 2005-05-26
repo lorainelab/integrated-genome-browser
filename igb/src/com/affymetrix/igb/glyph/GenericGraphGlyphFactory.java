@@ -360,17 +360,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static void setStateFromProps(GraphSym graf, GraphState state) {
     Integer requested_graph_style = (Integer) graf.getProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE);
     if (requested_graph_style != null) {
-      System.out.println("\n\nSetting the graph style on "+ graf.getGraphName() + " to: " + requested_graph_style.intValue());
       state.setGraphStyle(requested_graph_style.intValue());
 
       // Now set the requested graph style to null so that the user can later
       // change the style in the GUI, if desired
       graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
     }
-    else {
-      System.out.println("\n\nNOT Setting the graph style on "+ graf.getGraphName());
-    }
-    SeqUtils.printSymmetry(graf, "++", true);
   }
 
 }

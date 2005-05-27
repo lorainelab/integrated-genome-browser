@@ -116,7 +116,23 @@
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$" />
   <!-- End of probe set display section -->
 
-  <annotation_style annot_type="Probesets" 
+  <!-- Configure the HuEx-1_0-st chip -->
+  <annotation_style annot_type_regex="HuEx-1_0-st.*Probes" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="255" blue="200" 
+  /> 
+  <annotation_style annot_type_regex="HuEx-1_0-st.*Transcripts" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="100" green="255" blue="100" 
+  /> 
+  <!-- For future use
+  <annotation_url annot_type_regex="HuEx-1_0-st.*Probes" 
+    url=""
+  /> 
+  -->
+  <!-- End of HuEx-1_0-st chip section -->
+
+    <annotation_style annot_type="Probesets" 
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
     red="150" green="255" blue="150" 
   /> 

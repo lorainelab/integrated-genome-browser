@@ -273,20 +273,41 @@ public class Bprobe1Parser {
    *  writes as output a file in bprobe1 format
    *  first arg is gff input file name
    *  second arg is bprobe output file name
+   *  third arg is genomeid
+   *  fourth arg is annot type name
+   *  fifth arg is optional, and is genome versionid
    *  if no second arg, output is written to standard out??
    *</pre>
    */
   public static void main(String[] args) {
-    //    String in_file = "c:/data/more_wta_data/HuEx-1_0-st-Probes.head.gff";
-    //    String out_file = "c:/data/more_wta_data/bprobe_test1.bp1";
-    String in_file = "c:/data/more_wta_data/chr22-probes.gff";
-    String out_file = "c:/data/more_wta_data/chr22_probes.bp1";
-    String genomeid= "H_sapiens_Jul_2003";
+    String in_file = "";
+    String out_file = "";
+    String genomeid= "";
     String versionid = "";
-    String annot_type = "HeEx-1_0-st-Probes";
+    String annot_type = "";
 
+    if (args.length == 4 || args.length == 5) {
+      in_file = args[0];
+      out_file = args[1];
+      annot_type = args[2];
+      genomeid = args[3];
+      if (args.length == 5) { versionid = args[4]; }
+    } else {
+      System.out.println("Usage:  java ... Bprobe1Parser <GFF infile> <BP1 outfile> <annot type> <genomeid> [<version>]");
+      System.out.println("Example:  java ... Bprobe1Parser foo.gff foo.bp1 HuEx-1_0-st-Probes H_sapiens_Jul_2003");
+      System.exit(1);
+    }
+
+    
+    System.out.println("Creating a '.bp1' format file: ");
+    System.out.println("Input '"+in_file+"'");
+    System.out.println("Output '"+out_file+"'");
     convertGff(in_file, out_file, genomeid, versionid, annot_type);
-
+    System.out.println("DONE!  Finished converting GFF file to BP1 file.");
+    System.out.println("");
+    
+    /*
+    // After creating the file, parses it (for testing)
     try  {
       BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(out_file)));
       AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
@@ -296,12 +317,14 @@ public class Bprobe1Parser {
     catch (Exception ex)  {
       ex.printStackTrace();
     }
+    */
 
   }
 
+  /*
   public void makeBprobe1(String gff_input_file, String bprobe_output_file) {
 
   }
-
+  */
 
 }

@@ -15,6 +15,8 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.util.IntList;
+import com.affymetrix.igb.util.FloatList;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -125,6 +127,63 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
     return gsym;
+  }
+
+  /**
+   *  make a GraphSym, but only with scores for scored intervals in the specified orientation
+   *    if (orientation == true), then forward strand intervals
+   *    if (orientation == false), then reverse strand intervals
+   */
+  public GraphSym makeGraphSym(String name, boolean orientation)  {
+    float[] scores = getScores(name);
+    SeqSpan pspan = this.getSpan(0);
+    if (scores == null) {
+      System.err.println("ScoreContainerSym.makeGraphSym() called, but no scores found for: " + name);
+      return null;
+    }
+    if (pspan == null) {
+      System.err.println("ScoreContainerSym.makeGraphSym() called, but has no span yet");
+      return null;
+    }
+    BioSeq aseq = pspan.getBioSeq();
+    int score_count = scores.length;
+    //    int[] xcoords = new int[2 * score_count];
+    //    float[] ycoords = new float[2 * score_count];
+    IntList xlist = new IntList(score_count);
+    FloatList ylist = new FloatList(score_count);
+    int correct_strand_count = 0;
+    for (int i=0; i<score_count; i++) {
+      IndexedSym isym = (IndexedSym)this.getChild(i);
+      if (isym.getIndex() != i) {
+	System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
+			   "child.getIndex() not same as child's index in parent child list: " +
+			   isym.getIndex() + ", " + i);
+      }
+      SeqSpan cspan = isym.getSpan(aseq);
+      if (cspan.isForward() == orientation) {
+	xlist.add(cspan.getMin());
+	xlist.add(cspan.getMax());
+	ylist.add(scores[i]);
+	ylist.add(0);
+	/*
+	xcoords[i*2] = cspan.getMin();
+	ycoords[i*2] = scores[i];
+	xcoords[(i*2)+1] = cspan.getMax();
+	ycoords[(i*2)+1] = 0;
+	*/
+	correct_strand_count++;
+      }
+    }
+    int[] xcoords = xlist.copyToArray();
+    float[] ycoords = ylist.copyToArray();
+    if (xcoords.length <= 0) {
+      return null;
+    }
+    else {
+      String name_with_strand = name + (orientation ? " (+)" : " (-)" );
+      GraphSym gsym = new GraphSym(xcoords, ycoords, name_with_strand, aseq);
+      return gsym;
+    }
   }
 
 }

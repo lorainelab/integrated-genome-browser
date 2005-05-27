@@ -38,7 +38,9 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
   /**
    * Constructor.
    * @param cmins an array of the minima of the probe positions, this should
-   *   be sorted in ascending order
+   *   be sorted in ascending order (but will be automatically sorted by this
+   *   routine if this is not the case.  This means that the ordering
+   *   of the elements in the array you pass in may be altered as a side-effect.)
    * @param probe_length  the length of each probe
    * @param forward  true for forward strand
    * @param nid  an integer to be used as the ID
@@ -50,7 +52,8 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
     this.forward = forward;
     this.nid = nid;
     this.seq = seq;
-    //TODO: if cmins are not already sorted in ascending order, sort them
+
+    java.util.Arrays.sort(this.child_mins);
   }
 
   /* SeqSymmetry implementation */
@@ -147,6 +150,5 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
   public double getMaxDouble() { return (double)getMax(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
-
 
 }

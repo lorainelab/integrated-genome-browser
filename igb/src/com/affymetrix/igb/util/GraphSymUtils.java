@@ -50,12 +50,12 @@ public class GraphSymUtils {
   { "BYTE8_FLOAT", "BYTE4_FLOAT",
     "BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
     "BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
-    
+
 
   /** Detects whether the given filename ends with a recognized ending for
    *  a graph filetype. Compression endings like gz and zip are removed
    *  before testing the name.
-   */  
+   */
   public static boolean isAGraphFilename(String name) {
     String lc = Streamer.stripEndings(name).toLowerCase();
     return (
@@ -67,7 +67,7 @@ public class GraphSymUtils {
       lc.endsWith(".sgr")
       );
   }
-  
+
   /**
    *  Reads one or more graphs from an input stream.
    *  Equivalent to a call to the other readGraphs() method using seq = null.
@@ -78,7 +78,7 @@ public class GraphSymUtils {
 
   /**
    *  Reads one or more graphs from an input stream.
-   *  Some graph file formats can contain only one graph, others contain 
+   *  Some graph file formats can contain only one graph, others contain
    *  more than one.  For consistency, always returns a List (possibly empty).
    *  Will accept "bar", "mbar", "bgr", "gr", "sbar", or "sgr".
    *  Loaded graphs will be attached to their respective BioSeq's, if they
@@ -92,7 +92,7 @@ public class GraphSymUtils {
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
     String sname = stripped_name.toString().toLowerCase();
-    
+
     if (seq == null) {
       seq = SingletonGenometryModel.getGenometryModel().getSelectedSeq();
     }
@@ -150,7 +150,7 @@ public class GraphSymUtils {
     }
     return graf;
   }
-  
+
   /*
   public static GraphSym readGraph(InputStream istr, String original_stream_name, String graph_name, BioSeq seq)
       throws IOException  {
@@ -456,7 +456,7 @@ public class GraphSymUtils {
         }
       }
       else if (vals_per_point == 3) {
-        System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
+        // System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
         if (val_types[0] == BYTE4_SIGNED_INT &&
             val_types[1] == BYTE4_FLOAT &&
             val_types[2] == BYTE4_FLOAT) {
@@ -982,7 +982,7 @@ public class GraphSymUtils {
     percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
     return percent2score;
   }
-  
+
   public static void main2(String[] args) {
     try {
       String infile = args[0];

@@ -14,6 +14,7 @@ package com.affymetrix.igb.genometry;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
+import java.util.*;
 
 /**
  *   EfficientProbesetSymA is an efficient representation of probesets that meet
@@ -28,7 +29,7 @@ import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
+public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps {
   BioSeq seq;
   int probe_length;
   boolean forward;
@@ -150,5 +151,35 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan {
   public double getMaxDouble() { return (double)getMax(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
-
+  
+  /** 
+   *  WARNING: The implementation of the Propertied (SymWithProps) interface in this class
+   *  is incomplete and is very likely to change or be removed in future implementations.
+   *  Returns a new Map instance with only two values:
+   *  "method" maps to "HuEx-1_0-st-Probes"; and "id" maps to the value of getID().
+   */
+  public Map getProperties() {
+    HashMap properties = new HashMap(1);
+    properties.put("method", "HuEx-1_0-st-Probes");
+    properties.put("id", "" + this.getID());
+    return properties;
+  }
+  
+  /** Has no effect, and returns false. */
+  public boolean setProperty(String key, Object val) {
+    return false;
+  }
+  
+  /** See getProperties(). */
+  public Object getProperty(String key) {
+    if ("method".equals(key)) return "HuEx-1_0-st-Probes";
+    else if ("id".equals(key)) return this.getID();
+    else return null;
+  }
+  
+  /** Returns a clone of the Map from getProperties(). */
+  public Map cloneProperties() {
+    return getProperties();
+  }
+  
 }

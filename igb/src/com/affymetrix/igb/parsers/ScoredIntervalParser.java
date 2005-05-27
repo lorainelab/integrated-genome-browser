@@ -94,6 +94,9 @@ public class ScoredIntervalParser {
 
   static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
   static public final boolean default_attach_graphs = true;
+  // if attaching graphs to seq, then if separate by strand make a separate graph sym 
+  //     for + and - strand, otherwise put both strands in same graph
+  static public final boolean separate_by_strand = false;  
 
   /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
@@ -286,13 +289,29 @@ public class ScoredIntervalParser {
 	  // make a GraphSym for each scores column, and add as an annotation to aseq
 	  for (int i=0; i<score_count; i++) {
 	    String score_name = container.getScoreName(i);
-	    GraphSym gsym = container.makeGraphSym(score_name);
-
-            // Give a hint for display.
-            // See GenericGraphGlyphFactory.setStateFromProps()
-            gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
-
-            aseq.addAnnotation(gsym);
+	    if (separate_by_strand)  {
+	      GraphSym forward_gsym = container.makeGraphSym(score_name, true);
+	      GraphSym reverse_gsym = container.makeGraphSym(score_name, false);
+	      if (forward_gsym != null) {
+		// Give a hint for display.
+		// See GenericGraphGlyphFactory.setStateFromProps()
+		forward_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+		aseq.addAnnotation(forward_gsym);
+	      }
+	      if (reverse_gsym != null) {
+		// Give a hint for display.
+		// See GenericGraphGlyphFactory.setStateFromProps()
+		reverse_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+		aseq.addAnnotation(reverse_gsym);
+	      }
+	    }
+	    else {
+	      GraphSym gsym = container.makeGraphSym(score_name);
+	      if (gsym != null) {
+		gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+		aseq.addAnnotation(gsym);
+	      }
+	    }
 	  }
 	  // System.out.println("finished attaching graphs");
 	}

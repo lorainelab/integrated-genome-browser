@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,6 +30,7 @@ import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
  *  Variation on orf analysis panel.  OrfAnalyzer2 differs from OrfAnalyzer in that
@@ -40,10 +41,14 @@ import com.affymetrix.genometry.seq.CompositeNegSeq;
 public class OrfAnalyzer2 extends JComponent
     implements ChangeListener, ActionListener  {
 
+  public static final String PREF_STOP_CODON_COLOR = "stop codon";
+  public static final String PREF_DYNAMIC_ORF_COLOR = "dynamic orf";
+  public static final Color default_stop_codon_color = new Color(200,150,150);
+  public static final Color default_dynamic_orf_color = new Color(100,200,100);
+
   // GAH 8-23-2004
   // As IGB is currently configured, smv should be set to the internal SeqMapView of the AltSpliceView...
   SeqMapView smv;
-  //  AltSpliceView sliceview;
   JSlider orf_thresh_slider;
   JCheckBox showCB;
   //  JTextField orf_threshTF;
@@ -122,7 +127,6 @@ public class OrfAnalyzer2 extends JComponent
     Object src = evt.getSource();
     if (src == showCB) {
       show_orfs = ((JCheckBox)src).isSelected();
-      //      System.out.println("got action, show results = " + show_orfs);
       if (show_orfs)  {
         redoOrfs();
       }
@@ -135,7 +139,6 @@ public class OrfAnalyzer2 extends JComponent
   }
 
 
-  //   void sequenceChanged(AnnotatedBioSeq newseq) {
   public void redoOrfs()  {
     if (smv == null) { return; }
     BioSeq vseq = smv.getViewSeq();
@@ -177,6 +180,8 @@ public class OrfAnalyzer2 extends JComponent
     orf_holders = new Vector();
     if (vseq==null || ! (vseq.isComplete())) {
       IGB.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
+      show_orfs = false;
+      showCB.setSelected(false);      
       return;
     }
 
@@ -188,7 +193,6 @@ public class OrfAnalyzer2 extends JComponent
     }
     else {
       residues = vseq.getResidues();
-      //      System.out.println("got residues: " + residues.length());
     }
 
     fortier = new TransformTierGlyph();
@@ -205,8 +209,9 @@ public class OrfAnalyzer2 extends JComponent
     revtier.setFillColor(Color.darkGray);
     map.addTier(revtier, false);  // put reverse tier below axis
 
-    Color pointcol = (Color)method2color.get("stop_codon");
-    Color linkcol = (Color)method2color.get("dynamic_orf");
+    Color pointcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);
+    Color linkcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DYNAMIC_ORF_COLOR, default_dynamic_orf_color);
+    
     IntList[] frame_lists = new IntList[6];
     for (int i=0; i<6; i++) {
       // estimating number of stop codons, then padding by 20%
@@ -253,41 +258,40 @@ public class OrfAnalyzer2 extends JComponent
     }
 
     for (int frame=0; frame<6; frame++) {
-      //    for (int frame=0; frame<1; frame++) {
       boolean forward = frame <= 2;
       IntList xpos_vec = frame_lists[frame];
       //      IntList xpos_vec = frame_lists[0];
       int[] xpos = xpos_vec.copyToArray();
-      //      System.out.println("xpos length: " + xpos.length);
       // must sort positions!  because positions were added to IntList for each type of
       //   stop codon before other types, positions in IntList will _not_ be in
       //   ascending order (though for a particular type, e.g. "TAA", they will be)
       Arrays.sort(xpos);
 
-      //      System.out.println("for codons in frame " + frame + ", count = " + xpos.length);
       GlyphI point_template = new FillRectGlyph();
-      //      GlyphI point_template = new OutlineRectGlyph();
       point_template.setColor(pointcol);
       point_template.setCoords(residue_offset, 0, vseq.getLength(), 10);
+
       GlyphI link_template = new FillRectGlyph();
       link_template.setColor(linkcol);
       link_template.setCoords(0, 0, 0, 4);  // only height is retained
-      //      FlyweightPointGlyph fw = new FlyweightPointGlyph(point_template, xpos, 3);
-      //      FlyPointLinkerGlyph fw = new FlyPointLinkerGlyph(point_template, link_template, xpos, 3);
-      FlyPointLinkerGlyph fw = new FlyPointLinkerGlyph(point_template, link_template, xpos, 3,
-						       span_start, span_end);
-      fw.setMinThreshold(current_orf_thresh);
-      orf_holders.add(fw);
-      if (forward) {
-	fortier.addChild(fw);
+
+      TierGlyph tier = forward ? fortier : revtier;
+      GlyphI orf_glyph = null;
+      if (xpos.length > 0) {
+        FlyPointLinkerGlyph fw = new FlyPointLinkerGlyph(point_template, link_template, xpos, 3,
+                                                         span_start, span_end);
+        orf_glyph = fw;
+        fw.setMinThreshold(current_orf_thresh);
+        orf_holders.add(fw);
+      } else {
+        orf_glyph = new FillRectGlyph();
+        orf_glyph.setColor(tier.getFillColor());
       }
-      else {
-	revtier.addChild(fw);
-      }
+      // Make orf_glyph as long as vseq; otherwise, two or more could pack into one line
+      orf_glyph.setCoords(residue_offset, 0, vseq.getLength(), point_template.getCoordBox().height);
+      tier.addChild(orf_glyph);
     }
     adjustMap();
-    //    map.repack();
-    //    map.updateWidget();
   }
 
 
@@ -309,11 +313,4 @@ public class OrfAnalyzer2 extends JComponent
     tiermap.stretchToFit(false, true);
     tiermap.updateWidget();
   }
-
-
-
-
-
-
-
 }

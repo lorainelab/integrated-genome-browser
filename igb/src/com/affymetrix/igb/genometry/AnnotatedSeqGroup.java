@@ -93,7 +93,12 @@ public class AnnotatedSeqGroup {
       return (lookup.isSynonym(id, synonym));
     }
   }
-
+  
+  public MutableAnnotatedBioSeq addSeq(String seqid, int length) {
+    MutableAnnotatedBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+    this.addSeq(aseq);
+    return aseq;
+  }
 
   public void addSeq(MutableAnnotatedBioSeq seq) {
     id2seq.put(seq.getID(), seq);

@@ -1,6 +1,7 @@
 <prefs>
 
 <tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/>
+<tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 
 <boolean tag="USE_QUICK_LOADER" val="true" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
@@ -8,41 +9,24 @@
 <boolean tag="USE_PATTERN_SEARCHER" val="true" />
 <boolean tag="USE_ANNOT_BROWSER" val="true" />
 <boolean tag="USE_BOOKMARK_MANAGER" val="true" />
-<boolean tag="USE_PIVOT_VIEW" val="false" />
+<boolean tag="USE_PIVOT_VIEW" val="true" />
 <boolean tag="USE_RESTRICTION_MAPPER" val="false" />
 
-  <background red="0" green="0" blue="0" />  black
+<background red="0" green="0" blue="0" />  black
 
-  <spliced_est red="0" green="255" blue="255" /> bright blueish-green?
-  <primer  red="255" green="0" blue="255" /> bright purple?
-  <curation red="255" green="150" blue="255" /> 
-  <est     red="84" green="168" blue="132" /> greenish
-  <EST     red="84" green="168" blue="132" /> greenish
-  <mRNA    red="255" green="255" blue="0" /> greenish
-  <cmrna   red="255" green="255" blue="100" /> greenish
-  <rsmrna  red="0" green="255" blue="100" /> blueish-green
-  <RefSeq  red="0" green="255" blue="100" /> blueish-green
-  <Sanger  red="0" green="255" blue="0" /> green
-  <repeats red="150" green="150" blue="200" /> blueish gray
-  <default red="192" green="192" blue="114" /> darkish yellow
-  <cosmod red="192" green="100" blue="100" /> darkish yellow
-  <contig red="200" green="200" blue="0" /> lighter yellow
-  <mRNA_exon red="0" green="255" blue="100" /> blueish-green
-  <genepred red="200" green="100" blue="100" /> ???
-  <EnsGene red="200" green="100" blue="100" />  Ensembl Annotated Genes
-  <genscan_exon red="200" green="100" blue="100" /> ???
-  <stop_codon red="200" green="150" blue="150" /> reddish gray
-  <dynamic_orf red="100" green="200" blue="100" /> greenish lightgray
-
-  <curation_background red="128" green="128" blue="128" />
+<curation_background red="128" green="128" blue="128" />
 
 <annotation_style annot_type="ENCODE regions" label_field="name" glyph_depth="1" red="255" green="255" blue="0" />
 <annotation_style annot_type="contig" glyph_depth="1" red="0" green="0" blue="255" />
 <annotation_style annot_type="Contig" glyph_depth="1" red="0" green="0" blue="255" />
-<annotation_style annot_type="knownGene" label_field="gene_name" red="0" green="200" blue="150" /> 
-<annotation_style annot_type="EnsGene" red="200" green="100" blue="100" /> 
-<annotation_style annot_type="ensGene" red="200" green="100" blue="100" /> 
-<annotation_style annot_type="refseq" label_field="gene_name" red="0" green="255" blue="0" /> 
+<annotation_style annot_type="knownGene" label_field="gene_name" red="0" green="200" blue="150" />
+<annotation_style annot_type="EnsGene" red="200" green="100" blue="100" />
+<annotation_style annot_type="ensGene" red="200" green="100" blue="100" />
+<annotation_style annot_type="RefSeq" label_field="gene_name" red="0" green="255" blue="0" />
+<annotation_style annot_type="refseq" label_field="gene_name" red="0" green="255" blue="0" />
+
+<annotation_style annot_type="TAIR" label_field="gene_name" red="0" green="150" blue="0" />
+
 
 <annotation_style annot_type="genscan" red="200" green="0" blue="100" />
 <annotation_style annot_type="geneid" red="200" green="50" blue="50" />
@@ -51,15 +35,15 @@
 <annotation_style annot_type="mgcGenes" red="150" green="75" blue="75" />
 <annotation_style annot_type="acembly" red="150" green="150" blue="0" />
 
-<annotation_style annot_type_starts_with="mrna" 
-                  label_field="query seq" red="255" green="255" blue="0" /> yellow 
-<annotation_style annot_type="mRNA" 
+<annotation_style annot_type_starts_with="mrna"
+                  label_field="query seq" red="255" green="255" blue="0" /> yellow
+<annotation_style annot_type="mRNA"
                   label_field="query seq" red="255" green="255" blue="0" /> yellow
 
-<annotation_style annot_type="intronEst" red="0" green="150" blue="150" /> blueish-green?   
-  <annotation_style annot_type="Affy_u133_targets" 
+<annotation_style annot_type="intronEst" red="0" green="150" blue="150" /> blueish-green?
+  <annotation_style annot_type="Affy_u133_targets"
                     label_field="id" red="200" green="150" blue="150" /> reddish gray
-  <annotation_style annot_type="affy_u133_targets.bps" 
+  <annotation_style annot_type="affy_u133_targets.bps"
                     label_field="id" red="200" green="150" blue="150" /> reddish gray
   <annotation_style annot_type="Affy_u133_probes" red="255" green="150" blue="150" /> brighter reddish gray
   <annotation_style annot_type="blastzBestMm3" red="150" green="150" blue="150" /> medium gray
@@ -86,52 +70,88 @@
   <annotation_style annot_type="mRNA_exon" red="0" green="255" blue="100" /> blueish-green
   <annotation_style annot_type="genepred" red="200" green="100" blue="100" /> ???
   <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="stop_codon" red="200" green="100" blue="150" /> reddish gray
-  <annotation_style annot_type="dynamic_orf" red="100" green="200" blue="100" /> greenish lightgray
   <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="curation_background" red="128" green="128" blue="128" />
-  <annotation_style annot_type="axis_background" red="255" green="255" blue="255" />  white
-  <annotation_style annot_type="axis" red="0" green="0" blue="0" /> black
 
-<annotation_style annot_type="repeats" glyph_depth="1" 
-                  red="150" green="150" blue="200" /> 
+<annotation_style annot_type="repeats" glyph_depth="1"
+                  red="150" green="150" blue="200" />
 
 <annotation_style annot_type_ends_with="\.sin" glyph_depth="1" red="255" green="255" blue="0" />
 
 <!-- <annotation_style annot_type_starts_with="threshold" glyph_depth="1" red="200" green="100" blue="100" /> -->
-<annotation_style annot_type_starts_with="intersect" glyph_depth="1" 
+<annotation_style annot_type_starts_with="intersect" glyph_depth="1"
                   red="0" green="255" blue="255" />
-<annotation_style annot_type_starts_with="union" glyph_depth="1" 
+<annotation_style annot_type_starts_with="union" glyph_depth="1"
                   red="255" green="0" blue="255" />
-<annotation_style annot_type_starts_with="A not B" glyph_depth="1" 
+<annotation_style annot_type_starts_with="A not B" glyph_depth="1"
                   red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="B not A" glyph_depth="1" 
+<annotation_style annot_type_starts_with="B not A" glyph_depth="1"
                   red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="not" glyph_depth="1" 
+<annotation_style annot_type_starts_with="not" glyph_depth="1"
                   red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="xor" glyph_depth="1" 
+<annotation_style annot_type_starts_with="xor" glyph_depth="1"
                   red="255" green="255" blue="0" />
+
 
   <!-- <annotation_url> associates a "method" type regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression
-         url:               a url.  Every instance of "$$" (if any) will be 
+         url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->
-  <annotation_url annot_type_regex="RefSeq" 
-    url="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=nucleotide&amp;cmd=search&amp;term=$$" />
-  <annotation_url annot_type_regex="EnsGene" 
+  <annotation_url annot_type_regex="RefSeq"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$" />
+
+  <annotation_url annot_type_regex="TAIR" url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$" />
+
+  <annotation_url annot_type_regex="EnsGene"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$" />
 
-                      
+
   <!-- Configure the probe set display -->
-  <annotation_style annot_type_regex=".*link.*psl" factory="com.affymetrix.unibrow.glyph.ProbeSetDisplayGlyphFactory" 
+  <annotation_style annot_type_regex=".*link.*psl" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
-  <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.unibrow.glyph.ProbeSetDisplayGlyphFactory" 
+  <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
   <annotation_url annot_type_regex=".* netaffx consensus"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$" />
   <!-- End of probe set display section -->
+
+  <!-- Configure the HuEx-1_0-st chip -->
+  <annotation_style annot_type_regex="HuEx-1_0-st.*Probes" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="255" blue="200" 
+  /> 
+  <annotation_style annot_type_regex="HuEx-1_0-st.*Transcripts" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="100" green="255" blue="100" 
+  /> 
+  <!-- For future use
+  <annotation_url annot_type_regex="HuEx-1_0-st.*Probes" 
+    url=""
+  /> 
+  -->
+  <!-- End of HuEx-1_0-st chip section -->
+
+    <annotation_style annot_type="Probesets" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="255" blue="150" 
+  /> 
+  <annotation_style annot_type="PSRs" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+    red="150" green="220" blue="255" 
+  /> 
+  
+<annotation_style annot_type_starts_with="coverage: " 
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
+     height="100"
+     style="coverage" 
+     red="250" green="200" blue="0" />
+
+  <annotation_style annot_type_ends_with="_tf"
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
+     height="100"
+     style="coverage" 
+     red="250" green="200" blue="0" />
 
 </prefs>
 

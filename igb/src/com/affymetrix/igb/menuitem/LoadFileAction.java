@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -66,12 +66,10 @@ public class LoadFileAction {
       chooser.setMultiSelectionEnabled(true);
       chooser.addChoosableFileFilter(new UniFileFilter("sin"));
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bpr"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bps"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bgn"));
-      chooser.addChoosableFileFilter(new UniFileFilter("brs"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bnib"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1"},
+        "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf"},
         "GFF Files"));
@@ -84,6 +82,9 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"das", "dasxml"},
         "DAS Files"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+        new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
+        "Graph Files"));
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
@@ -116,7 +117,7 @@ public class LoadFileAction {
       chooser.merge_button.setEnabled(false);
     }
     else {
-      // default to "merge" if already have a selected seq group to merge with, 
+      // default to "merge" if already have a selected seq group to merge with,
       //    because non-merging is an uncommon choice
       chooser.merge_button.setSelected(true);
       chooser.merge_button.setEnabled(true);
@@ -129,7 +130,6 @@ public class LoadFileAction {
       File[] fils = chooser.getSelectedFiles();
 
       if (chooser.merge_button.isSelected()) {
-	//        aseq = (MutableAnnotatedBioSeq) gviewer.getAnnotatedSeq();
 	aseq = gmodel.getSelectedSeq();
       }
       else {
@@ -142,8 +142,11 @@ public class LoadFileAction {
         File cfil = fils[i];
         String file_name = cfil.toString();
         if (file_name.indexOf("http:") > -1) {  // direct input of http...
-
-          String url_name = file_name.substring(file_name.indexOf("http:"));
+          // This method of inputing a URL is not the best way to go, but it sometimes works...
+          // On Linux, and maybe in general, if the user types "http://www.google.com",
+          // it will come out as "/home/user/http:/www.google.com", so we have to
+          // trim off the beginning stuff AND add back the double slash "//" after http.
+          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
           System.out.println("detected url input: " + url_name);
           loadFromUrl(gviewer, url_name, aseq);
         }
@@ -151,13 +154,11 @@ public class LoadFileAction {
           aseq = load(gviewer, cfil, aseq);
         }
       }
-      if (aseq == null) {
-        IGB.errorPanel("No data loaded!");
-      }
+
+      gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
     return aseq;
   }
-
 
   public MutableAnnotatedBioSeq load(File annotfile) {
     return load(gviewer, annotfile, null);
@@ -171,7 +172,21 @@ public class LoadFileAction {
       //fistr = new FileInputStream(annotfile);
       StringBuffer sb = new StringBuffer();
       fistr = Streamer.getInputStream(annotfile,  sb);
-      aseq = load(gviewer, fistr, sb.toString(), input_seq, file_length);
+      String stripped_name = sb.toString();
+      if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+        AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+        if (seq_group == null) {
+          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph");
+        } else {
+          Map seqs = seq_group.getSeqs();
+//          GraphSymUtils.readGraphs(fistr, annotfile.getAbsolutePath(), seqs, input_seq);
+          URL url = annotfile.toURI().toURL();
+          OpenGraphAction.loadGraphFile(url, seqs, input_seq);
+        }
+      }
+      else {
+        aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
+      }
     }
     catch (Exception ex) {
       IGB.errorPanel("Error loading file", ex);
@@ -230,14 +245,14 @@ public class LoadFileAction {
       if (grp != null)  {
         seqhash = grp.getSeqs();
       }
+
       if (stream_name.endsWith(".axml")) {
-        // assume it's AXML format
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
       }
       else if (stream_name.endsWith(".das") || stream_name.endsWith(".dasxml")) {
-        DasFeat2GenometrySaxParser parser = new DasFeat2GenometrySaxParser();
+        Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
       }
@@ -249,15 +264,18 @@ public class LoadFileAction {
       }
       else if (stream_name.endsWith(".sin")) {
         ScoredIntervalParser parser = new ScoredIntervalParser();
-        parser.parse(str, stream_name, seqhash);
+        Map id2sym_hash = IGB.getSymHash();
+//        parser.parse(str, stream_name, seqhash);
+        parser.parse(str, stream_name, seqhash, id2sym_hash);
+        IGB.symHashChanged(parser);
         aseq = input_seq;
         parser = null;
       }
       else if (stream_name.endsWith(".psl") || stream_name.endsWith( ".psl3")) {
         PSLParser parser = new PSLParser();
         parser.enableSharedQueryTarget(true);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq, stream_name); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq, stream_name);
 	}
 	else {
           int psl_option = -1;
@@ -270,6 +288,13 @@ public class LoadFileAction {
           // "query" or "target" or "other"
           if (stream_name.endsWith(".link.psl")) {
             psl_option = 1; // "target"
+            if (seqhash != null) {
+              // Make a copy of the seqhash, because we do NOT want all the temporary
+              // sequences found in the link.psl file to be added to the real seqmap.
+              Map seqhash_copy = new HashMap();
+              seqhash_copy.putAll(seqhash);
+              seqhash = seqhash_copy;
+            }
           } else {
             if (stream_name.endsWith(".psl3")) {
               options = new Object[] { "Query", "Target", "Other"};
@@ -308,11 +333,6 @@ public class LoadFileAction {
 	}
         parser = null;
       }
-      else if (stream_name.endsWith(".bpr")) {  // tentative binary probe format
-        ProbeSetParser parser = new ProbeSetParser();
-        aseq = parser.parse(str, input_seq);
-        parser = null;
-      }
       else if (stream_name.endsWith(".bps")) {
         // bps parsing requires a Map of sequences (seqid ==> BioSeq) rather than a single BioSeq
 	//	if (seqhash == null) {
@@ -323,9 +343,10 @@ public class LoadFileAction {
           IGB.errorPanel("ERROR", ".bps files can only be loaded if a seq group is already selected");
 	}
 	else {
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
 	  DataInputStream dis = new DataInputStream(str);
 	  BpsParser psl_reader = new BpsParser();
-	  psl_reader.parse(dis, stream_name, seqhash);
+	  psl_reader.parse(dis, annot_type, seqhash);
 	  psl_reader = null;
 	}
 	aseq = input_seq;
@@ -333,13 +354,11 @@ public class LoadFileAction {
       else if (stream_name.endsWith(".bed")) {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
-        //        BedParser parser = new BedParser(gviewer.getColorHash());
         BedParser parser = new BedParser(gviewer);
-	if (seqhash == null) { 
-	  aseq = parser.parse(str, input_seq); 
+	if (seqhash == null) {
+	  aseq = parser.parse(str, input_seq);
 	}
 	else {
-          //          parser.parse(str, seqhash, true);
           parser.parse(str, seqhash, true, annot_type);
           aseq = input_seq;
 	}
@@ -352,8 +371,6 @@ public class LoadFileAction {
 	else {
 	  BgnParser gene_reader = new BgnParser();
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-	  //        Map id2sym_hash = Unibrow.getSymHash();
-	  //        gene_reader.readBinaryTest(str, annot_type, seqhash, id2sym_hash, -1);
 	  gene_reader.parse(str, annot_type, seqhash, -1);
 	}
 	aseq = input_seq;
@@ -365,39 +382,58 @@ public class LoadFileAction {
 	else {
 	  BrsParser refseq_reader = new BrsParser();
 	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-	  Map id2sym_hash = IGB.getSymHash();
+          Map id2sym_hash = IGB.getSymHash();
 	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
-	  IGB.symHashChanged();
-	  //        java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, -1);
+	  IGB.symHashChanged(refseq_reader);
 	  System.out.println("total refseq annotations loaded: " + alist.size());
 	}
         aseq = input_seq;
       }
+      else if (stream_name.endsWith(".bsnp")) {
+	if (seqhash == null) {
+          IGB.errorPanel("ERROR", ".bsnp files can only be loaded if a seq group is already selected");
+	}
+	else {
+	  BsnpParser parser = new BsnpParser();
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
+	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+	  System.out.println("total snps loaded: " + alist.size());
+	}
+        aseq = input_seq;
+      }
+      else if (stream_name.endsWith(".brpt")) {
+	if (seqhash == null) {
+          IGB.errorPanel("ERROR", ".brpt files can only be loaded if a seq group is already selected");
+	}
+	else {
+	  BrptParser parser = new BrptParser();
+	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
+	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+	  System.out.println("total repeats loaded: " + alist.size());
+	}
+        aseq = input_seq;
+      }
+      else if (stream_name.endsWith(".bp1")) {
+	Bprobe1Parser parser = new Bprobe1Parser();
+	String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
+	parser.parse(str, gmodel.getSelectedSeqGroup(), true, annot_type);
+	aseq = input_seq;
+      }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format
         GFFParser parser = new GFFParser();
-        // this feature filtering and group tags are all specific to the way Affy uses GTF files!
-        parser.addFeatureFilter("intron");
-        parser.addFeatureFilter("splice3");
-        parser.addFeatureFilter("splice5");
-        parser.addFeatureFilter("prim_trans");
-        parser.addFeatureFilter("gene");
 
-        parser.addFeatureFilter("transcript");
-        parser.addFeatureFilter("cluster");
-        parser.addFeatureFilter("psr");
-        parser.addFeatureFilter("link");
-
-        parser.setGroupTag("transcript_id");
-	if (seqhash == null) {
+        parser.addStandardFilters();
+        if (seqhash == null) {
 	  System.out.println("in GFFParser, annotating just input seq");
 	  aseq = parser.parse(str, input_seq);
 	}
 	else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");
-          parser.parse(str, seqhash);
+          parser.parse(str, seqhash, IGB.getSymHash(), false);
           aseq = input_seq;
 	}
+        IGB.symHashChanged(parser);
         parser = null;
       }
       else if (stream_name.endsWith(".fa") || stream_name.endsWith(".fasta")) {
@@ -419,22 +455,18 @@ public class LoadFileAction {
       }
       else if (stream_name.endsWith(".bnib")) {
         if (input_seq == null || input_seq instanceof NibbleBioSeq) {
-          if (input_seq != null) {
-            aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
-          }
-          else {
-            aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
-          }
+          aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
         }
         else {
-          IGB.errorPanel("MERGE ABORTED", "Input sequence not the correct type for a bnib file");
+          IGB.errorPanel("ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file");
         }
       }
+
       System.gc();
       if (seqhash == null) {
 	if (aseq != null) {
 	  AnnotatedSeqGroup new_group= gmodel.addSeqGroup("Unknown Group " + unknown_group_count);
-	  unknown_group_count++;	  
+	  unknown_group_count++;
 	  new_group.addSeq(aseq);
 	  gmodel.setSelectedSeqGroup(new_group);
 	  gmodel.setSelectedSeq(aseq);

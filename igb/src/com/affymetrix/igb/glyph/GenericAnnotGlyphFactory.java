@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -178,7 +178,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     boolean forward = pspan.isForward();
     GlyphI pglyph = null;
-    int pheight = 25;
+
+    // Note: Setting parent height (pheight) larger than the child height (cheight)
+    // allows the user to select both the parent and the child as separate entities
+    // in order to look at the properties associated with them.  Otherwise, the method
+    // EfficientGlyph.pickTraversal() will only allow one to be chosen.
+    double pheight = 25.0001;
+
     boolean use_label = (label_field != null && (insym instanceof SymWithProps));
 
     if (SeqUtils.getDepth(sym) >= 2) {
@@ -202,12 +208,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       //      pglyph.setColor(glyph_col);
       pglyph.setColor(parent_color);
       if (SET_PARENT_INFO) {
-        if (sym instanceof DerivedSeqSymmetry)  {
-          map.setDataModel(pglyph, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
-        }
-        else {
-          map.setDataModel(pglyph, sym);
-        }
+        map.setDataModelFromOriginalSym(pglyph, sym);
       }
 
       SeqSpan cdsSpan = null;
@@ -264,17 +265,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), 25);
               cds_glyph.setColor(child_color);
               pglyph.addChild(cds_glyph);
-
               if (SET_CHILD_INFO) {
-                //MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
-                //tempsym.addSpan(new SimpleMutableSeqSpan(cds_span));
-
-                if (cds_sym_3 instanceof DerivedSeqSymmetry)  {
-                  map.setDataModel(cds_glyph, ((DerivedSeqSymmetry) cds_sym_3).getOriginalSymmetry());
-                }
-                else {
-                  map.setDataModel(cds_glyph, cds_sym_3);
-                }
+                map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
               }
 
               } catch (Exception e) {
@@ -286,12 +278,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           cglyph.setColor(child_color);
           pglyph.addChild(cglyph);
           if (SET_CHILD_INFO) {
-            if (child instanceof DerivedSeqSymmetry)  {
-              map.setDataModel(cglyph, ((DerivedSeqSymmetry)child).getOriginalSymmetry());
-            }
-            else {
-              map.setDataModel(cglyph, child);
-            }
+            map.setDataModelFromOriginalSym(cglyph, child);
           }
         }
       }
@@ -318,18 +305,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       //      pglyph.setColor(glyph_col);
       pglyph.setColor(parent_color);
       if (SET_PARENT_INFO) {
-        if (sym instanceof DerivedSeqSymmetry)  {
-          map.setDataModel(pglyph, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
-        }
-        else {
-          map.setDataModel(pglyph, sym);
-        }
+        map.setDataModelFromOriginalSym(pglyph, sym);
       }
     }
 
     if (forward)  { forward_tier.addChild(pglyph); }
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
-  }
-
+  }  
 }

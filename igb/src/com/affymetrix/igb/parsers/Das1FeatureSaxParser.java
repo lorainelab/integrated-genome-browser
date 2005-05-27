@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -63,7 +63,7 @@ for more than one per feature)
  *</pre>
 */
 
-public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandler
+public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     implements AnnotationWriter  {
   static final int UNKNOWN = 0;
   static final int FORWARD = 1;
@@ -141,19 +141,19 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
    */
   List result_syms = null;
 
-  public DasFeat2GenometrySaxParser() {
+  public Das1FeatureSaxParser() {
     //    filter_hash.put("estOrientInfo", "estOrientInfo");
   }
 
-  public DasFeat2GenometrySaxParser(boolean make_container_syms) {
+  public Das1FeatureSaxParser(boolean make_container_syms) {
     this();
     MAKE_TYPE_CONTAINER_SYM = make_container_syms;
   }
 
-  /**
-   *  @param filter_out_by_id   if true then try to prevent duplicate annotations by using
-   *      the Unibrow.getSymHash() global symmetry hash -- if symmetry already
-   *      in symhash has same id (key to symhash) then don't add new annotation
+  /**  Sets whether or not to try to prevent duplicate annotations by using
+   *      the Unibrow.getSymHash() global symmetry hash.  If symmetry already
+   *      in symhash has same id (key to symhash) then don't add new annotation.
+   *  @param filter_out_by_id
    */
   public void setFilterOutById(boolean filter_out_by_id) {
     FILTER_OUT_BY_ID = filter_out_by_id;
@@ -293,32 +293,32 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       // if no sequence passed in (to merge), or if id doesn't match, go ahead and make new seq here
       //      if (aseq == null || aseq.getID() == null || (! aseq.getID().equals(seqid))) {
       if (seqhash != null) {
-	if (seqhash.get(seqid) != null) {
-	  aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	}
-	else {
-	  Iterator iter = seqhash.values().iterator();
-	  while (iter.hasNext()) {
-	    MutableAnnotatedBioSeq checkseq = (MutableAnnotatedBioSeq)iter.next();
-	    //	    System.out.println("checking for id match:  seqid = " + seqid +
-	    //			       ", seq from hash id = " + checkseq.getID());
-	    if (lookup.isSynonym(seqid, checkseq.getID())) {
-	      aseq = (MutableAnnotatedBioSeq)checkseq;
-	      break;
-	    }
-	  }
-	}
+        if (seqhash.get(seqid) != null) {
+          aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
+        }
+        else {
+          Iterator iter = seqhash.values().iterator();
+          while (iter.hasNext()) {
+            MutableAnnotatedBioSeq checkseq = (MutableAnnotatedBioSeq)iter.next();
+            //            System.out.println("checking for id match:  seqid = " + seqid +
+            //                               ", seq from hash id = " + checkseq.getID());
+            if (lookup.isSynonym(seqid, checkseq.getID())) {
+              aseq = (MutableAnnotatedBioSeq)checkseq;
+              break;
+            }
+          }
+        }
       }
       if (aseq == null) {
-	System.out.println("making new annotated sequence: " + seqid + ", length = " + seqlength);
-	aseq = new SimpleAnnotatedBioSeq(seqid, seqlength);
+        System.out.println("making new annotated sequence: " + seqid + ", length = " + seqlength);
+        aseq = new SimpleAnnotatedBioSeq(seqid, seqlength);
       }
       // otherwise, try and merge?
       // should really make sure it's also the same server, mapmaster, data-source...
       else {  // same seqid as previous
-	// just keep same aseq
-	//	System.out.println("trying to merge with prior sequence, " +
-	//			   "not all equality checks are in place yet...");
+        // just keep same aseq
+        //        System.out.println("trying to merge with prior sequence, " +
+        //                           "not all equality checks are in place yet...");
       }
     }
   }
@@ -340,11 +340,11 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     }
     else if (iname == LINK) {
       if (featlink_names.size() < featlink_urls.size()) {
-	String url_as_name = (String)featlink_urls.get(featlink_names.size());
-      	featlink_names.add(url_as_name);
+        String url_as_name = (String)featlink_urls.get(featlink_names.size());
+              featlink_names.add(url_as_name);
       }
       //      while (featlink_names.size() < featlink_urls.size()) {
-      //	featlink_names.add("");
+      //        featlink_names.add("");
       //      }
     }
     current_elem = (String)elemstack.pop();
@@ -378,22 +378,22 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
      */
     if (featgroup != null)  {
       filter =
-	(
-	 ((feattype != null) && (filter_hash.get(feattype) != null)) ||
-	 (FILTER_OUT_BY_ID && (grouphash.get(featgroup) == null) && (global_symhash.get(featgroup) != null))
-	 );
+        (
+         ((feattype != null) && (filter_hash.get(feattype) != null)) ||
+         (FILTER_OUT_BY_ID && (grouphash.get(featgroup) == null) && (global_symhash.get(featgroup) != null))
+         );
     }
     else {
       filter =
-	(
-	 ((feattype != null) && (filter_hash.get(feattype) != null)) ||
-	 (FILTER_OUT_BY_ID && (global_symhash.get(featid) != null))
-	 );
+        (
+         ((feattype != null) && (filter_hash.get(feattype) != null)) ||
+         (FILTER_OUT_BY_ID && (global_symhash.get(featid) != null))
+         );
     }
 
     if (filter) {
       //      System.err.println("filtering out, already have a symmetry with same id: " +
-      //			 " featgroup = " + featgroup + ", featid = " + featid);
+      //                         " featgroup = " + featgroup + ", featid = " + featid);
       //      filter_count++;
     }
     else {  // not filtered out
@@ -412,140 +412,140 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       if (max > aseq.getLength()) { aseq.setLength(max); }
 
       if (featstrand == FORWARD || featstrand == UNKNOWN) {
-	//	span.set(min, max, aseq);
-	//      current_sym = new MutableSingletonSeqSymmetry(min, max, aseq);
-	// GAH 5-21-2003 -- switching to using SingletonSymWithProps to allow
-	//    for possibility of attaching note tag/val properties to leaf annotations
-	current_sym = new SingletonSymWithProps(min, max, aseq);
+        //        span.set(min, max, aseq);
+        //      current_sym = new MutableSingletonSeqSymmetry(min, max, aseq);
+        // GAH 5-21-2003 -- switching to using SingletonSymWithProps to allow
+        //    for possibility of attaching note tag/val properties to leaf annotations
+        current_sym = new SingletonSymWithProps(min, max, aseq);
       }
       else {  // featstrand == MINUS
-	//	span.set(max, min, aseq);
-	//      current_sym = new MutableSingletonSeqSymmetry(max, min, aseq);
-	current_sym = new SingletonSymWithProps(max, min, aseq);
-	//	System.out.println("reversed:" + featcount);
-	//	SeqUtils.printSymmetry(current_sym); }
-	//	if (featcount <= 10)  { SeqUtils.printSymmetry(current_sym); }
+        //        span.set(max, min, aseq);
+        //      current_sym = new MutableSingletonSeqSymmetry(max, min, aseq);
+        current_sym = new SingletonSymWithProps(max, min, aseq);
+        //        System.out.println("reversed:" + featcount);
+        //        SeqUtils.printSymmetry(current_sym); }
+        //        if (featcount <= 10)  { SeqUtils.printSymmetry(current_sym); }
       }
       //    MutableSingletonSeqSymmetry parent_sym = null;
       SingletonSymWithProps parent_sym = null;
       //    SymWithProps grandparent_sym = null;
       SimpleSymWithProps grandparent_sym = null;
       if (feattype != null && MAKE_TYPE_CONTAINER_SYM) {
-	grandparent_sym = (SimpleSymWithProps)typehash.get(feattype);
-	if (grandparent_sym == null) {
-	  //	grandparent_sym =
-	  //	  new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
-	  grandparent_sym = new SimpleSymWithProps();
-	  MutableSeqSpan gpspan = new SimpleMutableSeqSpan(current_sym.getStart(),
-							   current_sym.getEnd(), aseq);
-	  grandparent_sym.setProperty("method", feattype);
-	  grandparent_sym.addSpan(gpspan);
-	  typehash.put(feattype, grandparent_sym);
-	  aseq.addAnnotation(grandparent_sym);
-	}
-	else {
-	  MutableSeqSpan gpspan = (MutableSeqSpan)grandparent_sym.getSpan(aseq);
-	  SeqUtils.encompass(gpspan, (SeqSpan)current_sym, unionSpan);
-	  gpspan.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
-	}
+        grandparent_sym = (SimpleSymWithProps)typehash.get(feattype);
+        if (grandparent_sym == null) {
+          //        grandparent_sym =
+          //          new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
+          grandparent_sym = new SimpleSymWithProps();
+          MutableSeqSpan gpspan = new SimpleMutableSeqSpan(current_sym.getStart(),
+                                                           current_sym.getEnd(), aseq);
+          grandparent_sym.setProperty("method", feattype);
+          grandparent_sym.addSpan(gpspan);
+          typehash.put(feattype, grandparent_sym);
+          aseq.addAnnotation(grandparent_sym);
+        }
+        else {
+          MutableSeqSpan gpspan = (MutableSeqSpan)grandparent_sym.getSpan(aseq);
+          SeqUtils.encompass(gpspan, (SeqSpan)current_sym, unionSpan);
+          gpspan.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
+        }
       }
       if (featgroup != null) {  // if there is a group id, add annotation to parent annotation
-	//      parent_sym = (MutableSingletonSeqSymmetry)grouphash.get(featgroup);
-	parent_sym = (SingletonSymWithProps)grouphash.get(featgroup);
-	if (parent_sym == null) {
-	  groupcount++;
-	  //	parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
-	  parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
-	  parent_sym.setProperty("id", featgroup);
-	  if (feattype != null)  { parent_sym.setProperty("method", feattype); }
-	  grouphash.put(featgroup, parent_sym);
-	  global_symhash.put(featgroup, parent_sym);
-	  if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null))  { grandparent_sym.addChild(parent_sym); }
-	  else { aseq.addAnnotation(parent_sym); }
-	  result_syms.add(parent_sym);
-	}
-	else {
-	  SeqUtils.encompass((SeqSpan)parent_sym, (SeqSpan)current_sym, unionSpan);
-	  parent_sym.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
-	}
-	parent_sym.addChild(current_sym);
-	if (feat_notes != null) {
-	  Iterator iter = feat_notes.keySet().iterator();
-	  while (iter.hasNext()) {
-	    String key = (String)iter.next();
-	    String val = (String)feat_notes.get(key);
-	    //	  System.out.println("key = " + key + ", val = " + val);
-	    // for now, adding notes to parent instead of child...
-	    current_sym.setProperty(key, val);
-	  }
-	}
-	if (group_notes != null) {
-	  Iterator iter = group_notes.keySet().iterator();
-	  while (iter.hasNext()) {
-	    String key = (String)iter.next();
-	    String val = (String)group_notes.get(key);
-	    //	  System.out.println("key = " + key + ", val = " + val);
-	    // for now, adding notes to parent instead of child...
-	    parent_sym.setProperty(key, val);
-	  }
-	}
-	/*
-	if (featlink != null) {
-	  //	System.out.println("setting link: " + featlink);
-	  parent_sym.setProperty("link", featlink);
-	}
-	*/
-	if (featlink_urls.size() > 0)  {
-	  Object prev_links = parent_sym.getProperty("link");
-	  Map links_hash = null;
-	  String prev_link = null;
+        //      parent_sym = (MutableSingletonSeqSymmetry)grouphash.get(featgroup);
+        parent_sym = (SingletonSymWithProps)grouphash.get(featgroup);
+        if (parent_sym == null) {
+          groupcount++;
+          //        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
+          parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
+          parent_sym.setProperty("id", featgroup);
+          if (feattype != null)  { parent_sym.setProperty("method", feattype); }
+          grouphash.put(featgroup, parent_sym);
+          global_symhash.put(featgroup, parent_sym);
+          if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null))  { grandparent_sym.addChild(parent_sym); }
+          else { aseq.addAnnotation(parent_sym); }
+          result_syms.add(parent_sym);
+        }
+        else {
+          SeqUtils.encompass((SeqSpan)parent_sym, (SeqSpan)current_sym, unionSpan);
+          parent_sym.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
+        }
+        parent_sym.addChild(current_sym);
+        if (feat_notes != null) {
+          Iterator iter = feat_notes.keySet().iterator();
+          while (iter.hasNext()) {
+            String key = (String)iter.next();
+            String val = (String)feat_notes.get(key);
+            //          System.out.println("key = " + key + ", val = " + val);
+            // for now, adding notes to parent instead of child...
+            current_sym.setProperty(key, val);
+          }
+        }
+        if (group_notes != null) {
+          Iterator iter = group_notes.keySet().iterator();
+          while (iter.hasNext()) {
+            String key = (String)iter.next();
+            String val = (String)group_notes.get(key);
+            //          System.out.println("key = " + key + ", val = " + val);
+            // for now, adding notes to parent instead of child...
+            parent_sym.setProperty(key, val);
+          }
+        }
+        /*
+        if (featlink != null) {
+          //        System.out.println("setting link: " + featlink);
+          parent_sym.setProperty("link", featlink);
+        }
+        */
+        if (featlink_urls.size() > 0)  {
+          Object prev_links = parent_sym.getProperty("link");
+          Map links_hash = null;
+          String prev_link = null;
 
-	  if (prev_links instanceof String) {
-	    prev_link = (String)prev_links;
-	  }
-	  else if (prev_links instanceof Map) {
-	    links_hash = (Map)prev_links;
-	  }
-	  int linkcount = featlink_urls.size();
-	  if (linkcount == 1 &&
-	      ((prev_links == null) ||
-	        ((prev_link != null) && prev_link.equals((String)featlink_urls.get(0))) )  )  {
-	    parent_sym.setProperty("link", featlink_urls.get(0));
-	    parent_sym.setProperty("link_name", featlink_urls.get(0));
-	  }
-	  else {
-	    if (links_hash == null) {
-	      links_hash = new HashMap();
-	      parent_sym.setProperty("link", links_hash);
-	      if (prev_link != null) {
-		//		links_list.add(prev_link);
-		links_hash.put(prev_link, prev_link);
-	      }
-	    }
-	    for (int i=0; i<linkcount; i++) {
-	      String linkurl = (String)featlink_urls.get(i);
-	      //	      links_list.add(linkurl);
-	      String linkname = (String)featlink_names.get(i);
-	      links_hash.put(linkname, linkurl);
-	    }
-	  }
-	}
+          if (prev_links instanceof String) {
+            prev_link = (String)prev_links;
+          }
+          else if (prev_links instanceof Map) {
+            links_hash = (Map)prev_links;
+          }
+          int linkcount = featlink_urls.size();
+          if (linkcount == 1 &&
+              ((prev_links == null) ||
+                ((prev_link != null) && prev_link.equals((String)featlink_urls.get(0))) )  )  {
+            parent_sym.setProperty("link", featlink_urls.get(0));
+            parent_sym.setProperty("link_name", featlink_urls.get(0));
+          }
+          else {
+            if (links_hash == null) {
+              links_hash = new HashMap();
+              parent_sym.setProperty("link", links_hash);
+              if (prev_link != null) {
+                //                links_list.add(prev_link);
+                links_hash.put(prev_link, prev_link);
+              }
+            }
+            for (int i=0; i<linkcount; i++) {
+              String linkurl = (String)featlink_urls.get(i);
+              //              links_list.add(linkurl);
+              String linkname = (String)featlink_names.get(i);
+              links_hash.put(linkname, linkurl);
+            }
+          }
+        }
       }
       else {  // if no group id, add annotation directly to AnnotatedBioSeq
-	global_symhash.put(featid, current_sym);
-	//	if (featlink != null) { current_sym.setProperty("link", featlink); }
-	if (featlink_urls.size() > 0)  {
-	  int linkcount = featlink_urls.size();
-	  for (int i=0; i<linkcount; i++) {
-	    String linkurl = (String)featlink_urls.get(i);
-	    parent_sym.setProperty("link", linkurl);
-	  }
-	}
-	if (featid != null) { current_sym.setProperty("id", featid); }
-	if (feattype != null) { current_sym.setProperty("method", feattype); }
-	if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) { grandparent_sym.addChild(current_sym); }
-	else { aseq.addAnnotation(current_sym); }
-	result_syms.add(current_sym);
+        global_symhash.put(featid, current_sym);
+        //        if (featlink != null) { current_sym.setProperty("link", featlink); }
+        if (featlink_urls.size() > 0)  {
+          int linkcount = featlink_urls.size();
+          for (int i=0; i<linkcount; i++) {
+            String linkurl = (String)featlink_urls.get(i);
+            parent_sym.setProperty("link", linkurl);
+          }
+        }
+        if (featid != null) { current_sym.setProperty("id", featid); }
+        if (feattype != null) { current_sym.setProperty("method", feattype); }
+        if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) { grandparent_sym.addChild(current_sym); }
+        else { aseq.addAnnotation(current_sym); }
+        result_syms.add(current_sym);
       }
     }
 
@@ -569,29 +569,35 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     if (current_elem == START || current_elem == END)  {  // parse out integer
       // if no previously collected characters, go ahead and parse as an integer
       //   -- if for some reason more characters are needed, keep adding to already created
-      //   integer...
+      //   integer...,  but watch out for the case where an integer is split near a '0' !
       if (prev_chars && (cached_int != Integer.MIN_VALUE)) {
-	int temp_int = parseInt(ch, start, length);
-	int x = Integer.toString(temp_int).length();
-	int scale = (int)Math.pow(10, x);
-	cached_int = (cached_int * scale) + temp_int;
+        int temp_int = parseInt(ch, start, length);
+
+        int x = 0; // x is the number of digits in the string used to make temp_int
+        while (x <= length && ch[start+x] >= 0x0030 && ch[start+x] <= 0x0039) {
+          x++;
+        }
+        int scale = (int)Math.pow(10, x);
+        cached_int = (cached_int * scale) + temp_int;
+
+        // Note: If the xml file doesn't include any extraneous white space, then
+        // it will always be true that x == length, but counting the characters
+        // is more generally safe.
       }
       else {
-	cached_int = parseInt(ch, start, length);
+        cached_int = parseInt(ch, start, length);
       }
-      //      if (current_elem == START) { featstart = cached_int; }
       if (current_elem == START) {
-	featstart = cached_int;
-	// adjusting from "start at 1, base coords" to "start at 0, between coords" numbering
-	featstart--;
+        featstart = cached_int;
+        // adjusting from "start at 1, base coords" to "start at 0, between coords" numbering
+        featstart--;
       }
       else if (current_elem == END) { featend = cached_int; }
-      //      System.out.println("cached_int = " + cached_int);
     }
     else if (current_elem == ORIENTATION) {
       for (int i=start; i<start+length; i++) {
-	if (ch[i] == '+') { featstrand = FORWARD; break; }
-	else if (ch[i] == '-') { featstrand = REVERSE; break; }
+        if (ch[i] == '+') { featstrand = FORWARD; break; }
+        else if (ch[i] == '-') { featstrand = REVERSE; break; }
       }
     }
     else if (current_elem == LINK) {
@@ -602,22 +608,22 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       String note_text = new String(ch, start, length);
       int split_pos = note_text.indexOf("=");
       if (split_pos > 0 && (split_pos < (note_text.length()-1))){
-	// assuming parsing out a tag-value pair...
-	String tag = note_text.substring(0, note_text.indexOf("="));
-	String val = note_text.substring(note_text.indexOf("=")+1);
-	if ((val != null) &&
-	    (val.charAt(0) == '\"') &&
-	    (val.charAt(val.length()-1) == '\"') ) {
-	  val = val.substring(1, val.length()-1);
-	}
-	if (within_group_element) {
-	  if (group_notes == null) { group_notes = new HashMap(); }
-	  group_notes.put(tag, val);
-	}
-	else {
-	  if (feat_notes == null) { feat_notes = new HashMap(); }
-	  feat_notes.put(tag, val);
-	}
+        // assuming parsing out a tag-value pair...
+        String tag = note_text.substring(0, note_text.indexOf("="));
+        String val = note_text.substring(note_text.indexOf("=")+1);
+        if ((val != null) &&
+            (val.charAt(0) == '\"') &&
+            (val.charAt(val.length()-1) == '\"') ) {
+          val = val.substring(1, val.length()-1);
+        }
+        if (within_group_element) {
+          if (group_notes == null) { group_notes = new HashMap(); }
+          group_notes.put(tag, val);
+        }
+        else {
+          if (feat_notes == null) { feat_notes = new HashMap(); }
+          feat_notes.put(tag, val);
+        }
       }
     }
     prev_chars = true;
@@ -625,7 +631,7 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
 
   public static void main(String[] args) {
     boolean test_result_list = false;
-    DasFeat2GenometrySaxParser test = new DasFeat2GenometrySaxParser();
+    Das1FeatureSaxParser test = new Das1FeatureSaxParser();
     try {
       String user_dir = System.getProperty("user.dir");
       //      String test_file_name = user_dir + "/testdata/das/dastesting2.xml";
@@ -633,17 +639,17 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       File test_file = new File(test_file_name);
       FileInputStream fistr = new FileInputStream(test_file);
       if (test_result_list) {
-	InputSource isrc = new InputSource(fistr);
-	HashMap result_seqs = new LinkedHashMap();
-	List results = test.parseWithResultList(isrc, result_seqs);
-	System.out.println("result annotation count: " + results.size());
-	System.out.println("first annotation:");
-	SeqUtils.printSymmetry((SeqSymmetry)results.get(1));
+        InputSource isrc = new InputSource(fistr);
+        HashMap result_seqs = new LinkedHashMap();
+        List results = test.parseWithResultList(isrc, result_seqs);
+        System.out.println("result annotation count: " + results.size());
+        System.out.println("first annotation:");
+        SeqUtils.printSymmetry((SeqSymmetry)results.get(1));
       }
       else {
-	MutableAnnotatedBioSeq seq = test.parse(fistr);
-	GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
-	viewer.setAnnotatedSeq(seq);
+        MutableAnnotatedBioSeq seq = test.parse(fistr);
+        GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
+        viewer.setAnnotatedSeq(seq);
       }
     }
     catch (Exception ex) {
@@ -675,29 +681,29 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       negative = true;
       i++;
       while (i <= max) {
-	curch = chars[i];
-	// may want to eliminate this check if can assume that there is no whitespace...
-	if (curch >= 0x0030 && curch <= 0x0039) {
-	  digit = curch - 0x0030;
-	  //	  digit = Character.digit(curch, 10);
-	  result *= radix;
-	  result -= digit;
-	}
-	i++;
+        curch = chars[i];
+        // may want to eliminate this check if can assume that there is no whitespace...
+        if (curch >= 0x0030 && curch <= 0x0039) {
+          digit = curch - 0x0030;
+          //          digit = Character.digit(curch, 10);
+          result *= radix;
+          result -= digit;
+        }
+        i++;
       }
     }
 
     else {
       while (i <= max) {
-	curch = chars[i];
-	// may want to eliminate this check if can assume that there is no whitespace...
-	if (curch >= 0x0030 && curch <= 0x0039) {
-	  digit = curch - 0x0030;
-	  //	  digit = Character.digit(curch, 10);
-	  result *= radix;
-	  result += digit;
-	}
-	i++;
+        curch = chars[i];
+        // may want to eliminate this check if can assume that there is no whitespace...
+        if (curch >= 0x0030 && curch <= 0x0039) {
+          digit = curch - 0x0030;
+          //          digit = Character.digit(curch, 10);
+          result *= radix;
+          result += digit;
+        }
+        i++;
       }
     }
 
@@ -717,7 +723,7 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     pw.println("<DASGFF>");
     pw.println("<GFF version=\"1.0\" href=\"dummy href\">");
     pw.println("<SEGMENT id=\"" + seq_id + "\" start=\"" + start + "\"" +
-	     " stop=\"" + stop + "\" version=\"" + version + "\" >");
+             " stop=\"" + stop + "\" version=\"" + version + "\" >");
   }
 
   public static void writeDasFeatFooter(PrintWriter pw) {
@@ -730,10 +736,10 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     if (feat_type == null && annot instanceof SymWithProps) {
       feat_type = (String)((SymWithProps)annot).getProperty("method");
       if (feat_type == null) {
-	feat_type = (String)((SymWithProps)annot).getProperty("meth");
+        feat_type = (String)((SymWithProps)annot).getProperty("meth");
       }
       if (feat_type == null) {
-	feat_type = (String)((SymWithProps)annot).getProperty("type");
+        feat_type = (String)((SymWithProps)annot).getProperty("type");
       }
     }
     String group_id = "unknown";
@@ -769,18 +775,18 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
       if (annot.getSpan(aseq).isForward()) { orient = "+"; }
       else { orient = "-"; }
       for (int i=0; i<child_count; i++) {
-	SeqSymmetry csym = annot.getChild(i);
-	SeqSpan cspan = csym.getSpan(aseq);
-	String child_id = group_id + "." + i;
-	pw.println("  <FEATURE id=\"" + child_id + "\" >");
-	pw.println("      <TYPE id=\"" + feat_type + "\" />");
-	pw.println("      <METHOD id=\"unknown\" />");
-	pw.println("      <START>" + (cspan.getMin() +1) + "</START>");  // +1 to compensate for DAS
-	pw.println("      <END>" + cspan.getMax() + "</END>");
-	pw.println("      <ORIENTATION>" + orient + "</ORIENTATION>");
-	pw.println("      <PHASE>-</PHASE>");
-	pw.println("      <GROUP id=\"" + group_id + "\" />");
-	pw.println("  </FEATURE>");
+        SeqSymmetry csym = annot.getChild(i);
+        SeqSpan cspan = csym.getSpan(aseq);
+        String child_id = group_id + "." + i;
+        pw.println("  <FEATURE id=\"" + child_id + "\" >");
+        pw.println("      <TYPE id=\"" + feat_type + "\" />");
+        pw.println("      <METHOD id=\"unknown\" />");
+        pw.println("      <START>" + (cspan.getMin() +1) + "</START>");  // +1 to compensate for DAS
+        pw.println("      <END>" + cspan.getMax() + "</END>");
+        pw.println("      <ORIENTATION>" + orient + "</ORIENTATION>");
+        pw.println("      <PHASE>-</PHASE>");
+        pw.println("      <GROUP id=\"" + group_id + "\" />");
+        pw.println("  </FEATURE>");
       }
     }
 
@@ -801,7 +807,7 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
    *    to an output stream as "DASGFF" XML format
    */
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     boolean success = true;
     // for now, assume bounds of query are min/max of syms...
     // for rightnow, assume bounds of query are bounds of seq
@@ -810,14 +816,14 @@ public class DasFeat2GenometrySaxParser extends org.xml.sax.helpers.DefaultHandl
     SeqSpan qspan = new SimpleSeqSpan(min, max, seq);
     try {
       PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
-      DasFeat2GenometrySaxParser.writeDasFeatHeader(qspan, pw);
+      Das1FeatureSaxParser.writeDasFeatHeader(qspan, pw);
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {
-	SeqSymmetry annot = (SeqSymmetry)iterator.next();
-	DasFeat2GenometrySaxParser.writeDasFeature(annot, seq, type, pw);
+        SeqSymmetry annot = (SeqSymmetry)iterator.next();
+        Das1FeatureSaxParser.writeDasFeature(annot, seq, type, pw);
       }
       //      System.out.println("annot returned: " + annot_count);
-      DasFeat2GenometrySaxParser.writeDasFeatFooter(pw);
+      Das1FeatureSaxParser.writeDasFeatFooter(pw);
       pw.flush();
     }
     catch (Exception ex) {

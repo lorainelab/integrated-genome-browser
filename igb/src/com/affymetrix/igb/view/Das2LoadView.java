@@ -32,8 +32,7 @@ public class Das2LoadView extends JComponent
   implements ItemListener, ActionListener, SeqSelectionListener, GroupSelectionListener  {
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
-
-  GenometryViewer viewer = null;
+  SeqMapView gviewer = null;
   JComboBox das_serverCB;
   JComboBox das_sourceCB;
   JComboBox das_versionCB;
@@ -65,6 +64,8 @@ public class Das2LoadView extends JComponent
    */
   public Das2LoadView() {
     myself = this;
+    gviewer = IGB.getSingletonIGB().getMapView();
+
     das_serverCB = new JComboBox();
     das_sourceCB = new JComboBox();
     das_versionCB = new JComboBox();
@@ -370,10 +371,9 @@ public class Das2LoadView extends JComponent
       }
     }
     if (selected_type_count > 0) {
-      if (viewer == null) {
-	viewer = GenometryViewer.displaySeq(aseq, false);
+      if (gviewer != null) {
+	gviewer.setAnnotatedSeq(aseq, true, true);
       }
-      viewer.setAnnotatedSeq(aseq);
     }
   }
 
@@ -386,13 +386,16 @@ public class Das2LoadView extends JComponent
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  { System.out.println("Das2LoadView received GroupSelectionEvent: " + evt); }
+    if (IGB.DEBUG_EVENTS)  { 
+      System.out.println("Das2LoadView received GroupSelectionEvent: " + evt); 
+    }
     java.util.List groups = evt.getSelectedGroups();
     if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup group = (AnnotatedSeqGroup)groups.get(0);
     }
   }
 
+  /*
   public static void main(String[] args) {
     Das2LoadView testview = new Das2LoadView();
     JFrame frm = new JFrame();
@@ -406,4 +409,5 @@ public class Das2LoadView extends JComponent
     //    frm.pack();
     frm.show();
   }
+  */
 }

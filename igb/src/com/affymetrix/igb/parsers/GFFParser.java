@@ -401,6 +401,7 @@ public class GFFParser implements AnnotationWriter  {
                   if (id2sym_hash != null) { id2sym_hash.put(index_id, groupsym); }
                 } else {
                   groupsym.setProperty("id", group_id);
+                  if (id2sym_hash != null) { id2sym_hash.put(group_id, groupsym); }
                 }
 
                 group_hash.put(group_id, groupsym);

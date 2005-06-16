@@ -343,7 +343,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	//	parent2parts.remove(featsym);
       }
     }
-
+      
     // if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
     if (feat_parent_id == null) {
       for (int i=0; i<loc_count; i++) {

@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.table.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
@@ -31,8 +32,15 @@ import com.affymetrix.igb.util.GenometryViewer;  // temporary visualization till
 public class Das2LoadView extends JComponent
   implements ItemListener, ActionListener, SeqSelectionListener, GroupSelectionListener  {
 
+  static String[] type_columns = { "ID", "ontology", "derivation", "status" };
+  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(type_columns, new ArrayList());
+
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
+
+  boolean USE_SIMPLE_VIEW = false;
   SeqMapView gviewer = null;
+  GenometryViewer simple_viewer = null;
+
   JComboBox das_serverCB;
   JComboBox das_sourceCB;
   JComboBox das_versionCB;
@@ -41,6 +49,8 @@ public class Das2LoadView extends JComponent
   JTextField maxTF;
   JButton load_featuresB;
   JPanel types_panel;
+  JTable types_table;
+  JScrollPane table_scroller;
   Map das_servers;
   LinkedHashMap checkbox2type;
 
@@ -55,6 +65,11 @@ public class Das2LoadView extends JComponent
   String version_filler = "Choose a DAS2 version";
   String region_filler = "Choose a DAS2 seq";
 
+
+  public Das2LoadView() {
+    this(false);
+  }
+
   /**
    *  choices for DAS2 annot loading range:
    *    whole genome
@@ -62,9 +77,12 @@ public class Das2LoadView extends JComponent
    *    specified range on current chromosome
    *    gviewer's view bounds on current chromosome
    */
-  public Das2LoadView() {
+  public Das2LoadView(boolean simple_view) {
     myself = this;
-    gviewer = IGB.getSingletonIGB().getMapView();
+    USE_SIMPLE_VIEW = simple_view;
+    if (!USE_SIMPLE_VIEW) {
+      gviewer = IGB.getSingletonIGB().getMapView();
+    }
 
     das_serverCB = new JComboBox();
     das_sourceCB = new JComboBox();
@@ -76,6 +94,10 @@ public class Das2LoadView extends JComponent
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
     JScrollPane scrollpane = new JScrollPane(types_panel);
+
+    types_table = new JTable();
+    types_table.setModel(empty_table_model);
+    table_scroller = new JScrollPane(types_table);
 
     checkbox2type = new LinkedHashMap();
     das_serverCB.addItem(server_filler);
@@ -104,8 +126,12 @@ public class Das2LoadView extends JComponent
     panA.add(new JLabel("max base: "));
     panA.add(maxTF);
 
+    JPanel middle_panel = new JPanel(new GridLayout(2, 1));
+    middle_panel.add(scrollpane);
+    middle_panel.add(table_scroller);
+
     this.add("North", panA);
-    this.add("Center", scrollpane);
+    this.add("Center", middle_panel);
     this.add("South", load_featuresB);
 
     das_serverCB.addItemListener(this);
@@ -191,6 +217,10 @@ public class Das2LoadView extends JComponent
     types_panel.validate();
     types_panel.repaint();
 
+    types_table.setModel(empty_table_model);
+    types_table.validate();
+    types_table.repaint();
+
     das_serverCB.setEnabled(false);
     das_sourceCB.setEnabled(false);
     das_versionCB.setEnabled(false);
@@ -225,11 +255,16 @@ public class Das2LoadView extends JComponent
   public void setSources() {
     das_sourceCB.removeItemListener(this);
     das_sourceCB.removeAllItems();
+    das_versionCB.removeAllItems();
     das_regionCB.removeAllItems();
     checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
     types_panel.repaint();
+
+    types_table.setModel(empty_table_model);
+    types_table.validate();
+    types_table.repaint();
 
     //    types_panel.setEnabled(false);
     das_serverCB.setEnabled(false);
@@ -279,6 +314,10 @@ public class Das2LoadView extends JComponent
     types_panel.validate();
     types_panel.repaint();
 
+    types_table.setModel(empty_table_model);
+    types_table.validate();
+    types_table.repaint();
+
     // alternative would be to use a QueuedExecutor (from ~.concurrent package)
     //    and two runnables, one for entries and one for types...
     Runnable runner = new Runnable() {
@@ -303,9 +342,12 @@ public class Das2LoadView extends JComponent
 	      public void run()  {
 		// types_panel.removeAll();  // already done at start of setRegionsAndTypes();
 		// checkbox2type.clear(); // already done at start of setRegionsAndTypes();
+                java.util.List type_states = new ArrayList();
 		Iterator iter = types.values().iterator();
 		while (iter.hasNext()) {
 		  Das2Type dtype = (Das2Type)iter.next();
+		  Das2TypeState tstate = new Das2TypeState(dtype, Das2TypeState.OFF);
+		  type_states.add(tstate);
 		  String typeid = dtype.getID();
 		  //		  String typesource = dtype.getDerivation();
 		  JCheckBox box = new JCheckBox(typeid);
@@ -314,6 +356,11 @@ public class Das2LoadView extends JComponent
 		}
 		types_panel.validate();
 		types_panel.repaint();
+
+		Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_columns, type_states);
+		types_table.setModel(new_table_model);
+		types_table.validate();
+		types_table.repaint();
 		//		this.setEnabled(true);
 		//		setEnabled(true);
 		types_panel.setEnabled(true);
@@ -330,7 +377,8 @@ public class Das2LoadView extends JComponent
   }
 
   public void loadFeatures() {
-    MutableAnnotatedBioSeq aseq = current_region.getAnnotatedSeq();
+
+    final MutableAnnotatedBioSeq aseq = current_region.getAnnotatedSeq();
     String minstr = minTF.getText();
     String maxstr = maxTF.getText();
     int min = 0;
@@ -350,34 +398,63 @@ public class Das2LoadView extends JComponent
       return;
     }
 
-    SeqSpan overlap = new SimpleSeqSpan(min, max, aseq);
+    final SeqSpan overlap = new SimpleSeqSpan(min, max, aseq);
     System.out.println("region = " + current_region.getID() + ", seq = " + aseq.getID() +
 		       ", min = " + min + ", max = " + max);
-    int selected_type_count = 0;
-    Iterator iter = checkbox2type.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry keyval = (Map.Entry)iter.next();
-      JCheckBox box = (JCheckBox)keyval.getKey();
-      Das2Type dtype = (Das2Type)keyval.getValue();
-      boolean selected = box.isSelected();
-      if (selected) {
-	selected_type_count++;
-	String typeid = dtype.getID();
-	System.out.println("selected type: " + typeid);
-	Das2FeatureRequestSym request_sym =
-	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	current_region.getFeatures(request_sym);
-	aseq.addAnnotation(request_sym);
-      }
-    }
-    if (selected_type_count > 0) {
-      if (gviewer != null) {
-	gviewer.setAnnotatedSeq(aseq, true, true);
-      }
-    }
+    // could probably add finer resolution of threading here,
+    //  so every request (one per type) launches on its own thread
+    //  But for now putting them all on same (non-event) thread controlled by SwingWorker
+    final SwingWorker worker = new SwingWorker() {
+	int selected_type_count = 0;
+	public Object construct() {
+	  Iterator iter = checkbox2type.entrySet().iterator();
+	  while (iter.hasNext()) {
+	    Map.Entry keyval = (Map.Entry)iter.next();
+	    JCheckBox box = (JCheckBox)keyval.getKey();
+	    Das2Type dtype = (Das2Type)keyval.getValue();
+	    boolean selected = box.isSelected();
+	    if (selected) {
+	      selected_type_count++;
+	      String typeid = dtype.getID();
+	      System.out.println("selected type: " + typeid);
+	      Das2FeatureRequestSym request_sym =
+		new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	      current_region.getFeatures(request_sym);
+	      // probably want to synchronize on aseq, since don't want to add annotations to aseq
+	      // on one thread when might be rendering based on aseq in event thread...
+	      aseq.addAnnotation(request_sym);
+	    }
+	  }
+	  return null;
+	}
+
+	public void finished() {
+	  if (selected_type_count > 0) {
+	    if (USE_SIMPLE_VIEW) {
+	      if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(aseq, false); }
+	      simple_viewer.setAnnotatedSeq(aseq);
+	    }
+	    else if (gviewer != null) {
+	      gviewer.setAnnotatedSeq(aseq, true, true);
+	    }
+	  }
+	}
+
+      };
+
+    worker.start();
   }
 
-
+  /**
+   *  When selected sequence changed, want to go through all previously visited 
+   *     DAS/2 versioned sources that share the seq's AnnotatedSeqGroup, 
+   *     For each (similar_versioned_source)
+   *         for each type
+   *            if (Das2TypeState set to AUTO_PER_SEQUENCE loading) && ( !state.fullyLoaded(seq) )
+   *                 Do full feature load for seq
+   *  For now assume that if a type's load state is not AUTO_PER_SEQUENCE, then no auto-loading, only 
+   *    manual loading, which is handled in another method...
+   */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (IGB.DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
@@ -385,9 +462,16 @@ public class Das2LoadView extends JComponent
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
   }
 
+  /**
+   *  When selected group changed, want to go through all previously visited 
+   *     DAS/2 servers (starting with the current one), and try and find 
+   *     a versioned source that shared the selected AnnotatedSeqGroup
+   *  If found, take first found and set versioned source, source, and server accordingly
+   *  If not found, blank out versioned source and source, and switch server to "Choose a server"
+   */
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  { 
-      System.out.println("Das2LoadView received GroupSelectionEvent: " + evt); 
+    if (IGB.DEBUG_EVENTS)  {
+      System.out.println("Das2LoadView received GroupSelectionEvent: " + evt);
     }
     java.util.List groups = evt.getSelectedGroups();
     if (groups != null && groups.size() > 0) {
@@ -395,9 +479,8 @@ public class Das2LoadView extends JComponent
     }
   }
 
-  /*
   public static void main(String[] args) {
-    Das2LoadView testview = new Das2LoadView();
+    Das2LoadView testview = new Das2LoadView(true);
     JFrame frm = new JFrame();
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
@@ -406,8 +489,117 @@ public class Das2LoadView extends JComponent
     frm.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
-    //    frm.pack();
     frm.show();
   }
-  */
+
+}
+
+/**
+ *  relates a Das2Type to it's status in IGB
+ *    (whether it's load strategy is set to full sequence or visible range,
+ *      possibly other details)
+ */
+class Das2TypeState {
+  static String[] LOAD_STRINGS = new String[3];
+  static int OFF = 0;
+  static int WHOLE_SEQUENCE = 1;
+  static int VISIBLE_RANGE = 2;
+  static {
+    LOAD_STRINGS[OFF] = "Off";
+    LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
+    LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
+  }
+
+  int load_strategy;
+  Das2Type type;
+
+  public Das2TypeState(Das2Type type, int load_strategy) {
+    this.load_strategy = load_strategy;
+    this.type = type;
+  }
+  public void setLoadStrategy(int strategy) { load_strategy = strategy; }
+  public int getLoadStrategy() { return load_strategy; }
+  public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
+  public Das2Type getDas2Type() { return type; }
+}
+
+
+class Das2TypesTableModel extends AbstractTableModel   {
+  static int model_count = 0;
+
+  int model_num;
+  String[] column_names;
+  java.util.List type_states;
+
+  public Das2TypesTableModel(String[] columns, java.util.List states) {
+    model_num = model_count;
+    model_count++;
+
+    column_names = columns;
+    type_states = states;
+    int col_count = column_names.length;
+    int row_count = states.size();;
+  }
+
+    public int getColumnCount() {
+      return column_names.length;
+    }
+
+    public int getRowCount() {
+      return type_states.size();
+    }
+
+    public String getColumnName(int col) {
+      return column_names[col];
+    }
+
+    public Object getValueAt(int row, int col) {
+      Das2TypeState state = (Das2TypeState)type_states.get(row);
+      Das2Type type = state.getDas2Type();
+      switch(col) {
+      case 0:
+	return (type.getID() + " " + model_num);
+      case 1:
+	return (type.getOntology() + " " + model_num);
+      case 2:
+	return (type.getDerivation() + " " + model_num);
+      case 3:
+	return state.getLoadString();
+      default:
+	return " ";
+      }	
+    }
+
+    /*
+    public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+    }
+    */
+
+    /*
+     * Don't need to implement this method unless your table's
+     * editable.
+     */
+    /*
+    public boolean isCellEditable(int row, int col) {
+        //Note that the data/cell address is constant,
+        //no matter where the cell appears onscreen.
+        if (col < 2) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    */
+
+    /*
+     * Don't need to implement this method unless your table's
+     * data can change.
+     */
+    /*
+    public void setValueAt(Object value, int row, int col) {
+        data[row][col] = value;
+        fireTableCellUpdated(row, col);
+    }
+    */
 }

@@ -47,7 +47,6 @@ public class SimpleDas2Client extends JComponent
   String version_filler = "Choose a DAS2 version";
   String region_filler = "Choose a DAS2 seq";
 
-
   public SimpleDas2Client() {
     das_serverCB = new JComboBox();
     das_sourceCB = new JComboBox();

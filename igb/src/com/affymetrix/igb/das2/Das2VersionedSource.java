@@ -167,6 +167,7 @@ public class Das2VersionedSource  {
 
   // get annotation types from das server
   protected void initTypes() {
+    // how should xml:base be handled?
     String types_request = getSource().getServerInfo().getRootUrl() +
         "/" + this.getID() + "/type";
     //    String types_request = "file:/C:/data/das2_responses/alan_server/types_short.xml";
@@ -179,13 +180,18 @@ public class Das2VersionedSource  {
       for (int i=0; i< typelist.getLength(); i++)  {
 	Element typenode = (Element)typelist.item(i);
         String typeid = typenode.getAttribute("id");
+	// temporary workaround for getting type ending, rather thatn full URI
+	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }
+	String ontid = typenode.getAttribute("ontology");
+	String type_source = typenode.getAttribute("source");
+	String href = typenode.getAttribute("doc_href");
 	//	String method = typenode.getAttribute("method");
 	//	String category = typenode.getAttribute("category");
 	//	String countstr = null;
 	//	Text count_text = (Text)typenode.getFirstChild();
 	//	if (count_text != null) { countstr = count_text.getData(); }
 	//	System.out.println("type id: " + typeid);
-	Das2Type type = new Das2Type(typeid, this);
+	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href);
 	this.addType(type);
       }
     }

@@ -30,7 +30,8 @@ import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.GenometryViewer;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
-  implements ItemListener, ActionListener, ComponentListener,
+  implements ItemListener, ActionListener,
+             // ComponentListener,  turned off pending change mechanism for now
 	     SeqSelectionListener, GroupSelectionListener  {
 
   static String[] type_columns = { "ID", "ontology", "derivation", "status" };
@@ -68,8 +69,9 @@ public class Das2LoadView extends JComponent
   String version_filler = "Choose a DAS2 version";
   String region_filler = "Choose a DAS2 seq";
 
-  boolean pending_group_change = false;
-  boolean pending_seq_change = false;
+  // turned off pending change mechanism for now
+  //  boolean pending_group_change = false;
+  //  boolean pending_seq_change = false;
 
   public Das2LoadView() {
     this(false);
@@ -145,7 +147,7 @@ public class Das2LoadView extends JComponent
     das_regionCB.addItemListener(this);
     load_featuresB.addActionListener(this);
 
-    this.addComponentListener(this);
+    //    this.addComponentListener(this);  turned off pending change mechanism for now
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
   }
@@ -462,35 +464,22 @@ public class Das2LoadView extends JComponent
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  {
-      System.out.println("Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+    if (IGB.DEBUG_EVENTS) {
+      System.out.println(
+          "Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
-      if (this.isShowing()) {
-	handleSeqChange();
-	pending_seq_change = false;
-      }
-      else {
-	pending_seq_change = true;
+      if (current_version != null) {
+	current_region = current_version.getRegion(current_seq);
+        //      System.out.println("current region: " + region.getID());
+        das_regionCB.removeItemListener(this);
+        das_regionCB.setSelectedItem(current_region.getID());
+        das_regionCB.addItemListener(this);
       }
     }
   }
-
-  public void handleSeqChange() {
-    //    System.out.println("in Das2LoadView.handleSeqChange()");
-    if (current_version != null) {
-      Das2Region region = current_version.getRegion(current_seq);
-      //      System.out.println("current region: " + region.getID());
-      das_regionCB.removeItemListener(this);
-      das_regionCB.setSelectedItem(region.getID());
-      das_regionCB.addItemListener(this);
-    }
-  }
-
-
-
 
   /**
    *  When selected group changed, want to go through all previously visited
@@ -500,34 +489,38 @@ public class Das2LoadView extends JComponent
    *  If not found, blank out versioned source and source, and switch server to "Choose a server"
    */
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  {
+    //    if (IGB.DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received GroupSelectionEvent: " + evt);
-    }
-    java.util.List groups = evt.getSelectedGroups();
-    if (groups != null && groups.size() > 0) {
+      //    }
+    java.util.List groups = evt.getSelectedGroups();    if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup newgroup = (AnnotatedSeqGroup)groups.get(0);
       if (current_group != newgroup) {
-	current_group = newgroup;
-	if (this.isShowing()) {
-	  handleGroupChange();
-	  pending_group_change = false;
-	}
-	else {
-	  pending_group_change = true;
-	}
+        current_group = newgroup;
+        if (current_server != null)  {
+          current_version = current_server.getVersionedSource(current_group);
+	  current_source = current_version.getSource();
+	  System.out.println("   new das source: " + current_source.getID() +
+			      ",  new das version: " + current_version.getID());
+	  //	  das_sourceCB.removeItemListener(this);
+	  das_sourceCB.setSelectedItem(current_source.getID());
+	  das_versionCB.setSelectedItem(current_version.getID());
+	  //	  das_sourceCB.addItemListener(this);
+        }
       }
     }
   }
 
-  public void handleGroupChange() {
-    System.out.println("in Das2LoadView.handleGroupChange()");
-  }
+/** ComponentListener implementation, to allow putting off changes
+ *     triggered by changing seq or seq group unless and until Das2LoadView is actually visible
+ *
+ *  turned this off, because really want Das2LoadView to respond regardless of whether it's
+ *     visible or not.  May want to revisit at some point, because GUI itself doesn't need
+ *     to respond if not visible, rather the auto-loading part needs to respond
 
   public void componentResized(ComponentEvent e) { }
   public void componentMoved(ComponentEvent e) { }
   public void componentHidden(ComponentEvent e) { }
-  /** ComponentListener implementation, to allow putting off changes 
-      triggered by changing seq or seq group unless and until Das2LoadView is actually visible */
+
   public void componentShown(ComponentEvent e) {
     System.out.println("Das2LoadView was just made visible");
     if (pending_group_change) {
@@ -539,7 +532,7 @@ public class Das2LoadView extends JComponent
       pending_seq_change = false;
     }
   }
-
+*/
 
   public static void main(String[] args) {
     Das2LoadView testview = new Das2LoadView(true);

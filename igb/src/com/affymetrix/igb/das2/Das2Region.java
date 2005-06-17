@@ -47,8 +47,7 @@ public class Das2Region {
   public String getName() { return name; }
   public String getInfoUrl() { return info_url; }
   public Das2VersionedSource getVersionedSource() { return versioned_source; }
-  //  public String getSeqType() { return seqtype; }
-  //  public boolean hasSubParts() { return has_subparts; }
+
   protected void setInterval(int start, int end, boolean forward_orient) {
     this.start = start;  // should already be in 0-interbase coords
     this.end = end;
@@ -74,7 +73,7 @@ public class Das2Region {
   protected void initRegion() {
     AnnotatedSeqGroup genome = versioned_source.getGenome();
 
-    // a)  see if id of Das2Region hashes directly to an already seen annotated seq in genome
+    // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
     aseq = genome.getSeq(region_id);
 
     // b) if can't find a previously seen genome for this DasSource, then

@@ -94,9 +94,9 @@ public class ScoredIntervalParser {
 
   static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
   static public final boolean default_attach_graphs = true;
-  // if attaching graphs to seq, then if separate by strand make a separate graph sym 
+  // if attaching graphs to seq, then if separate by strand make a separate graph sym
   //     for + and - strand, otherwise put both strands in same graph
-  static public final boolean separate_by_strand = false;  
+  static public final boolean separate_by_strand = false;
 
   /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
@@ -115,20 +115,31 @@ public class ScoredIntervalParser {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
 
-      Map seq2container = new LinkedHashMap();
-      Map seq2arrays = new LinkedHashMap();
-      Map arrays2container = new LinkedHashMap();
+      //      Map seq2container = new LinkedHashMap();
+      Map seq2sinentries = new LinkedHashMap();
+      //      Map seq2arrays = new LinkedHashMap();
+      //      Map arrays2container = new LinkedHashMap();
       Map index2id = new HashMap();
       List score_names = null;
       Map props = new HashMap();
 
       // parse header lines (which must begin with "#")
-      while (((line = br.readLine())!= null) && (line.startsWith("#"))) {
+      while (((line = br.readLine())!= null) &&
+	     (line.startsWith("#") ||
+	      line.startsWith(" ") ||
+	      line.startsWith("\t") )  ) {
+
+	// skipping starting lines that begin with space or tab, this can happen if outputting
+	//    file via GCOS
+	if (line.startsWith(" ")  || line.startsWith("\t")) {
+	  System.out.println("skipping line starting with whitespace: " + line);
+	  continue;
+	}
 	Matcher match = tagval_regex.matcher(line);
 	if (match.matches()) {
 	  String tag = match.group(1);
 	  String val = match.group(2);
-	  if (tag.startsWith("score")) {
+	  if (tag.startsWith("score@")) {
 	    int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
 	    index2id.put(new Integer(score_index), val);
 	  }
@@ -147,8 +158,10 @@ public class ScoredIntervalParser {
       boolean sin1 = false;
       boolean sin2 = false;
       boolean sin3 = false;
+      java.util.List isyms = new ArrayList();
       //      while (line != null) {
       while ((line = br.readLine()) != null) {
+	isyms.clear();
 	// skip comment lines (any lines that start with "#")
 	if (line.startsWith("#")) { continue; }
 
@@ -161,167 +174,231 @@ public class ScoredIntervalParser {
 	int max;
 	String strand = null;
 	int score_offset;
-	SeqSymmetry original_sym = null;  // only used for sin3 format
 
-	sin1 = (fields.length > 3) && strand_matcher.reset(fields[3]).matches();  // sin1 format if 4rth field is strand: [+-.]
-	if (sin1) {
+	// sin1 format if 4rth field is strand: [+-.]
+	if ((fields.length > 3) && strand_matcher.reset(fields[3]).matches())  {
+	  sin1 = true; sin2 = false; sin3 = false;
 	  score_offset = 4;
 	  annot_id = null;
 	  seqid = fields[0];
 	  min = Integer.parseInt(fields[1]);
 	  max = Integer.parseInt(fields[2]);
 	  strand = fields[3];
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
+	  if (aseq == null) { makeNewSeq(seqid, seqhash); }
+	  IndexedSingletonSym child;
+	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
+	  else { child = new IndexedSingletonSym(min, max, aseq); }
+	  isyms.add(child);
 	}
-	else {
-	  sin2 = (fields.length > 4) && strand_matcher.reset(fields[4]).matches();   // sin2 format if 5th field is strand: [+-.]
-	  if (sin2) {
-	    score_offset = 5;
-	    annot_id = fields[0];
-	    seqid = fields[1];
-	    min = Integer.parseInt(fields[2]);
-	    max = Integer.parseInt(fields[3]);
-	    strand = fields[4];
-	  }
-	  else {
-	    sin3 = true;
-	    score_offset = 1;
-	    annot_id = fields[0];
-	    // need to match up to pre-existing annotation in id2sym_hash
-	    original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
+	// sin2 format if 5th field is strand: [+-.]
+	else if ((fields.length > 4) && strand_matcher.reset(fields[4]).matches())  {
+	  sin2 = true; sin1 = false; sin3 = false;
+	  score_offset = 5;
+	  annot_id = fields[0];
+	  seqid = fields[1];
+	  min = Integer.parseInt(fields[2]);
+	  max = Integer.parseInt(fields[3]);
+	  strand = fields[4];
+
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
+	  if (aseq == null) { makeNewSeq(seqid, seqhash); }
+	  IndexedSingletonSym child;
+	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
+	  else { child = new IndexedSingletonSym(min, max, aseq); }
+	  child.setID(annot_id);
+	  isyms.add(child);
+	}
+	else { // not sin1 or sin2, must be sin3
+	  sin3 = true; sin1 = false; sin2 = false;
+	  score_offset = 1;
+	  annot_id = fields[0];
+	  // need to match up to pre-existing annotation in id2sym_hash
+	  SeqSymmetry original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
+	  if (original_sym == null) {
+	    // if no sym with exact id found, then try "extended id", because may be
+	    //     a case where sym id had to be "extended" to uniquify it
+	    //     for instance, when the same probeset maps to multiple locations
+	    //     extended ids are just the original id with ".$" appended, where $ is
+	    //     a number, and if id with $ exists, then there must also be ids with all
+	    //     positive integers < $ as well.
+	    original_sym = (SeqSymmetry)id2sym_hash.get(annot_id + ".0");
+	    // if found matching sym based on extended id, then need to keep incrementing and
+	    //    looking for more syms with extended ids
 	    if (original_sym == null) {
-	      // no sym matching id found in id2sym_hash -- filter out
 	      miss_count++;
 	      continue;
 	    }
 	    else {
-	      // making a big assumption here, that first SeqSpan in sym is seqid to use...
-	      //    on the other hand, not sure how much it matters...
-	      //    for now, since most syms to match up with will come from via parsing of GFF files,
-	      //       probably ok
-	      annot_id = original_sym.getID();
-	      SeqSpan span = original_sym.getSpan(0);
-	      seqid = span.getBioSeq().getID();
-	      min = span.getMin();
-	      max = span.getMax();
-	      if (! span.isForward()) { strand = "-"; }
-	      else { strand = "+"; }
-	      hit_count++;
+	      isyms.add(original_sym);
+	      int ext = 1;
+	      while (true) {
+		SeqSymmetry osym = (SeqSymmetry)id2sym_hash.get(annot_id + "." + ext);
+		if (osym == null) { break; }
+		else {
+		  isyms.add(osym);
+		}
+		ext++;
+	      }
 	    }
+
+	    // no sym matching id found in id2sym_hash -- filtering out
+	    miss_count++;
+	    continue;
 	  }
-	}
+	  else {
+	    // making a big assumption here, that first SeqSpan in sym is seqid to use...
+	    //    on the other hand, not sure how much it matters...
+	    //    for now, since most syms to match up with will come from via parsing of GFF files,
+	    //       probably ok
+	    SeqSpan span = original_sym.getSpan(0);
+	    IndexedSingletonSym child = new IndexedSingletonSym(span.getStart(), span.getEnd(), span.getBioSeq());
+	    child.setID(original_sym.getID());
+	    isyms.add(child);
+	    hit_count++;
+	  }
+	}   // end sin3 conditional
+
 	if (score_names == null) {
 	  //	  score_count = fields.length - 4;
 	  score_count = fields.length - score_offset;
 	  score_names = initScoreNames(score_count, index2id);
 	}
 
-	ScoredContainerSym container = (ScoredContainerSym)seq2container.get(seqid);
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	if (aseq == null) {
-	  System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
-	  aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
-	  seqhash.put(seqid, aseq);
-	}
-	if (container == null) {
-	  container = new ScoredContainerSym();
-	  container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-	  Iterator iter = props.entrySet().iterator();
-	  while (iter.hasNext())  {
-	    Map.Entry entry = (Map.Entry)iter.next();
-	    container.setProperty((String)entry.getKey(), entry.getValue());
-	  }
-	  container.setProperty("method", stream_name);
-	  seq2container.put(seqid, container);
-	}
-
-	IndexedSym child;
-	if (sin1 || sin2) {
-	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
-	  else { child = new IndexedSingletonSym(min, max, aseq); }
-	  if (sin2) { ((IndexedSingletonSym)child).setID(annot_id); }
-	}
-	else {  // sin3
-	  // encountered visualization and selection problems using IndexedWrapperSym,
-	  //   so for now making new sym, but using original_syms bounds and id
-	  //	  child = new IndexedWrapperSym(original_sym);
-	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
-	  else { child = new IndexedSingletonSym(min, max, aseq); }
-	  ((IndexedSingletonSym)child).setID(annot_id);
-	}
-	// ScoredContainerSym.addChild() handles setting of child index and parent fields
-	container.addChild(child);
-
-	List score_arrays = (List)seq2arrays.get(seqid);
-	if (score_arrays == null) {
-	  score_arrays = new ArrayList();
-	  for (int i=0; i<score_names.size(); i++) {
-	    score_arrays.add(new FloatList());  // adding empty FloatLists for each column
-	  }
-	  seq2arrays.put(seqid, score_arrays);
-	  arrays2container.put(score_arrays, container);
-	}
-	for (int field_index = score_offset; field_index < fields.length; field_index++) {
-	  FloatList flist = (FloatList)score_arrays.get(field_index - score_offset);
+	score_count = fields.length - score_offset;
+	float[] entry_floats = new float[score_count];
+	int findex = 0;
+	for (int field_index = score_count; field_index<fields.length; field_index++) {
 	  float score = Float.parseFloat(fields[field_index]);
-	  flist.add(score);
+	  entry_floats[findex] = score;
+	  findex++;
 	}
+
+	// usually there will be only one IndexedSingletonSym in isyms list, 
+	//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
+	//    so cycle through all isyms
+	int icount = isyms.size();
+	for (int i=0; i<icount; i++) {
+	  IndexedSingletonSym child = (IndexedSingletonSym)isyms.get(i);
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)child.getSpan(0).getBioSeq();
+	  java.util.List sin_entries = (java.util.List)seq2sinentries.get(aseq);
+	  if (sin_entries == null) {
+	    sin_entries = new ArrayList();
+	    //	  seq2sinentries.put(seqid, sin_entries);
+	    seq2sinentries.put(aseq, sin_entries);
+	  }
+	  SinEntry sentry = new SinEntry(child, entry_floats);
+	  sin_entries.add(sentry);
+	}
+
 	line_count++;
+      }  // end br.readLine() loop
+
+      // now for each sequence seen, sort the SinEntry list by span min/max
+      SinEntryComparator comp = new SinEntryComparator();
+      Iterator ents  = seq2sinentries.entrySet().iterator();
+      while (ents.hasNext()) {
+	Map.Entry ent = (Map.Entry)ents.next();
+	BioSeq aseq = (BioSeq)ent.getKey();
+	//	java.util.List entry_list = (java.util.List)entrylists.next();
+	java.util.List entry_list = (java.util.List)ent.getValue();
+
+	System.out.println("hmm, seq = " + aseq.getID() + ", entry count = " + entry_list.size());
+	Collections.sort(entry_list, comp);
+      }
+
+      System.out.println("number of scores per line: " + score_count);
+      // now make the container syms
+      Iterator seqs = seq2sinentries.keySet().iterator();
+      while (seqs.hasNext()) {
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqs.next();
+	ScoredContainerSym container = new ScoredContainerSym();
+	container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	Iterator iter = props.entrySet().iterator();
+	while (iter.hasNext())  {
+	  Map.Entry entry = (Map.Entry)iter.next();
+	  container.setProperty((String)entry.getKey(), entry.getValue());
+	}
+	container.setProperty("method", stream_name);
+	//	seq2container.put(seqid, container);
+	java.util.List entry_list = (java.util.List)seq2sinentries.get(aseq);
+	int entry_count = entry_list.size();
+	System.out.println("entry list count: " + entry_count);
+	for (int k=0; k<entry_count; k++) {
+	  SinEntry sentry = (SinEntry)entry_list.get(k);
+	  container.addChild(sentry.sym);
+	}
+	System.out.println("container child count: " + container.getChildCount());
+
+	// Object[] scores = new Object[score_count];
+	for (int i=0; i<score_count; i++) {
+	  String score_name = (String)score_names.get(i);
+	  float[] score_column = new float[entry_count];
+	  for (int k=0; k<entry_count; k++) {
+	    SinEntry sentry = (SinEntry)entry_list.get(k);
+	    score_column[k] = sentry.scores[i];
+	  }
+	  container.addScores(score_name, score_column);
+	}
+
+	aseq.addAnnotation(container);
+	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
+	if (attach_graphs) {
+	  attachGraphs(container);
+	}
       }
 
       System.out.println("data lines in .sin file: " + line_count);
       System.out.println("sin3 hit count: " + hit_count);
       System.out.println("sin3 miss count: " + miss_count);
-
-      Iterator iter = arrays2container.entrySet().iterator();
-      while (iter.hasNext()) {
-	Map.Entry entry = (Map.Entry)iter.next();
-	ArrayList score_arrays = (ArrayList)entry.getKey();
-	ScoredContainerSym container = (ScoredContainerSym)entry.getValue();
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
-	for (int i=0; i<score_count; i++) {
-	  String score_name = (String)score_names.get(i);
-	  FloatList flist = (FloatList)score_arrays.get(i);
-	  float[] scores = flist.copyToArray();
-	  container.addScores(score_name, scores);
-	}
-	aseq.addAnnotation(container);
-	if (attach_graphs) {
-	  // make a GraphSym for each scores column, and add as an annotation to aseq
-	  for (int i=0; i<score_count; i++) {
-	    String score_name = container.getScoreName(i);
-	    if (separate_by_strand)  {
-	      GraphSym forward_gsym = container.makeGraphSym(score_name, true);
-	      GraphSym reverse_gsym = container.makeGraphSym(score_name, false);
-	      if (forward_gsym != null) {
-		// Give a hint for display.
-		// See GenericGraphGlyphFactory.setStateFromProps()
-		forward_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
-		aseq.addAnnotation(forward_gsym);
-	      }
-	      if (reverse_gsym != null) {
-		// Give a hint for display.
-		// See GenericGraphGlyphFactory.setStateFromProps()
-		reverse_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
-		aseq.addAnnotation(reverse_gsym);
-	      }
-	    }
-	    else {
-	      GraphSym gsym = container.makeGraphSym(score_name);
-	      if (gsym != null) {
-		gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
-		aseq.addAnnotation(gsym);
-	      }
-	    }
-	  }
-	  // System.out.println("finished attaching graphs");
-	}
-	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
-      }
-
-
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }
+
+
+  protected MutableAnnotatedBioSeq makeNewSeq(String seqid, Map seqhash) {
+    System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
+    MutableAnnotatedBioSeq aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
+    seqhash.put(seqid, aseq);
+    return aseq;
+  }
+
+
+  /**
+   *  make a GraphSym for each scores column, and add as an annotation to aseq
+   */
+  protected void attachGraphs(ScoredContainerSym container) {
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
+    int score_count = container.getScoreCount();
+    for (int i=0; i<score_count; i++) {
+      String score_name = container.getScoreName(i);
+      if (separate_by_strand)  {
+	GraphSym forward_gsym = container.makeGraphSym(score_name, true);
+	GraphSym reverse_gsym = container.makeGraphSym(score_name, false);
+	if (forward_gsym != null) {
+	  // Give a hint for display.
+	  // See GenericGraphGlyphFactory.setStateFromProps()
+	  forward_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+	  aseq.addAnnotation(forward_gsym);
+	}
+	if (reverse_gsym != null) {
+	  // Give a hint for display.
+	  // See GenericGraphGlyphFactory.setStateFromProps()
+	  reverse_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+	  aseq.addAnnotation(reverse_gsym);
+	}
+      }
+      else {
+	GraphSym gsym = container.makeGraphSym(score_name);
+	if (gsym != null) {
+	  gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+	  aseq.addAnnotation(gsym);
+	}
+      }
+    }
+    System.out.println("finished attaching graphs");
+  }
+
 
   protected List initScoreNames(int score_count, Map index2id) {
     List names = new ArrayList();;
@@ -346,6 +423,31 @@ public class ScoredIntervalParser {
     }
     catch (Exception ex) { ex.printStackTrace(); }
     System.out.println("done testing ScoredMapParser");
+  }
+
+  /** for sorting of sin lines */
+  class SinEntry {
+    SeqSymmetry sym;
+    float[] scores;
+    public SinEntry(SeqSymmetry sym, float[] scores) {
+      this.sym = sym;
+      this.scores = scores;
+    }
+  }
+
+  /** for sorting of sin lines */
+  class SinEntryComparator implements Comparator  {
+    public int compare(Object objA, Object objB) {
+      SeqSpan symA = ((SinEntry)objA).sym.getSpan(0);
+      SeqSpan symB = ((SinEntry)objB).sym.getSpan(0);
+      if (symA.getMin() < symB.getMin()) { return -1; }
+      else if (symA.getMin() > symB.getMin()) { return 1; }
+      else {  // mins are equal, try maxes
+	if (symA.getMax() < symB.getMax()) { return -1; }
+	else if (symA.getMax() > symB.getMax()) { return 1; }
+	else { return 0; }  // mins are equal and maxes are equal, so consider them equal
+      }
+    }
   }
 
 }

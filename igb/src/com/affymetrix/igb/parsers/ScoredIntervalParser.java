@@ -152,6 +152,8 @@ public class ScoredIntervalParser {
       int line_count = 0;
       int score_count = 0;
       int hit_count = 0;
+      int mod_hit_count = 0;
+      int total_mod_hit_count = 0;
       int miss_count = 0;
 
       Matcher strand_matcher = strand_regex.matcher("");
@@ -222,29 +224,27 @@ public class ScoredIntervalParser {
 	    //     extended ids are just the original id with ".$" appended, where $ is
 	    //     a number, and if id with $ exists, then there must also be ids with all
 	    //     positive integers < $ as well.
-	    original_sym = (SeqSymmetry)id2sym_hash.get(annot_id + ".0");
+	    SeqSymmetry mod_sym = (SeqSymmetry)id2sym_hash.get(annot_id + ".0");
 	    // if found matching sym based on extended id, then need to keep incrementing and
 	    //    looking for more syms with extended ids
-	    if (original_sym == null) {
+	    if (mod_sym == null) {
+	      // no sym matching id found in id2sym_hash -- filtering out
 	      miss_count++;
 	      continue;
 	    }
 	    else {
-	      isyms.add(original_sym);
-	      int ext = 1;
-	      while (true) {
-		SeqSymmetry osym = (SeqSymmetry)id2sym_hash.get(annot_id + "." + ext);
-		if (osym == null) { break; }
-		else {
-		  isyms.add(osym);
-		}
+	      mod_hit_count++;
+	      int ext = 0;
+	      while (mod_sym != null) {
+		SeqSpan span = mod_sym.getSpan(0);
+		IndexedSingletonSym child = new IndexedSingletonSym(span.getStart(), span.getEnd(), span.getBioSeq());
+		child.setID(mod_sym.getID());
+		isyms.add(child);
+		total_mod_hit_count++;
 		ext++;
+		mod_sym = (SeqSymmetry)id2sym_hash.get(annot_id + "." + ext);
 	      }
 	    }
-
-	    // no sym matching id found in id2sym_hash -- filtering out
-	    miss_count++;
-	    continue;
 	  }
 	  else {
 	    // making a big assumption here, that first SeqSpan in sym is seqid to use...
@@ -349,8 +349,13 @@ public class ScoredIntervalParser {
       }
 
       System.out.println("data lines in .sin file: " + line_count);
-      System.out.println("sin3 hit count: " + hit_count);
-      System.out.println("sin3 miss count: " + miss_count);
+      if ((hit_count + miss_count) > 0)  {
+	System.out.println("sin3 miss count: " + miss_count);
+	System.out.println("sin3 exact id hit count: " + hit_count); 
+      }
+      if (mod_hit_count > 0)  {System.out.println("sin3 extended id hit count: " + mod_hit_count); }
+      if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + mod_hit_count); }
+
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }

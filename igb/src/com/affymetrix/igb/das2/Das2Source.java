@@ -43,17 +43,14 @@ public class Das2Source {
 
   Das2ServerInfo server;
   AnnotatedSeqGroup genome = null;
-  //  Map entry_points = new LinkedHashMap();
-  //  Map types = new LinkedHashMap();
-  boolean versions_initialized = false;
+  //  boolean versions_initialized = false;
 
   public Das2Source(Das2ServerInfo source_server, String source_id, boolean init) {
     id = source_id;
     server = source_server;
-    if (init) {
-      // initEntryPoints();
-      // initTypes();
-    }
+    //    if (init) {
+    // initVersions();
+    //    }
   }
 
   public String getID() { return id; }
@@ -83,9 +80,9 @@ public class Das2Source {
   void setTaxon(String taxon)  { this.taxon = taxon; }
 
   public Map getVersions() {
-    if (! versions_initialized) {
-      // initVersions();
-    }
+    //    if (! versions_initialized) {
+    // initVersions();
+    //    }
     return versions;
   }
 

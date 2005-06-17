@@ -24,12 +24,14 @@ public class Das2Type {
   Map props;
   Map formats;
 
-  public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href) {
+  public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href, Map formats, Map props) {
     this.versioned_source = version;
     this.id = id;
     this.ontology = ontology;
     this.derivation = derivation;
     this.info_url = href;
+    this.formats = formats;
+    this.props = props;
   }
 
   public Das2VersionedSource getVersionedSource() { return versioned_source; }

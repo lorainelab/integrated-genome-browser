@@ -30,12 +30,11 @@ import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.GenometryViewer;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
-  implements ItemListener, ActionListener, SeqSelectionListener, GroupSelectionListener  {
+  implements ItemListener, ActionListener, ComponentListener,
+	     SeqSelectionListener, GroupSelectionListener  {
 
   static String[] type_columns = { "ID", "ontology", "derivation", "status" };
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(type_columns, new ArrayList());
-
-  SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
   boolean USE_SIMPLE_VIEW = false;
   SeqMapView gviewer = null;
@@ -60,11 +59,17 @@ public class Das2LoadView extends JComponent
   Das2VersionedSource current_version;
   Das2Region current_region;
 
+  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  AnnotatedSeqGroup current_group = null;
+  AnnotatedBioSeq current_seq = null;
+
   String server_filler = "Choose a DAS2 server";
   String source_filler = "Choose a DAS2 source";
   String version_filler = "Choose a DAS2 version";
   String region_filler = "Choose a DAS2 seq";
 
+  boolean pending_group_change = false;
+  boolean pending_seq_change = false;
 
   public Das2LoadView() {
     this(false);
@@ -140,6 +145,7 @@ public class Das2LoadView extends JComponent
     das_regionCB.addItemListener(this);
     load_featuresB.addActionListener(this);
 
+    this.addComponentListener(this);
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
   }
@@ -446,13 +452,13 @@ public class Das2LoadView extends JComponent
   }
 
   /**
-   *  When selected sequence changed, want to go through all previously visited 
-   *     DAS/2 versioned sources that share the seq's AnnotatedSeqGroup, 
+   *  When selected sequence changed, want to go through all previously visited
+   *     DAS/2 versioned sources that share the seq's AnnotatedSeqGroup,
    *     For each (similar_versioned_source)
    *         for each type
    *            if (Das2TypeState set to AUTO_PER_SEQUENCE loading) && ( !state.fullyLoaded(seq) )
    *                 Do full feature load for seq
-   *  For now assume that if a type's load state is not AUTO_PER_SEQUENCE, then no auto-loading, only 
+   *  For now assume that if a type's load state is not AUTO_PER_SEQUENCE, then no auto-loading, only
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -460,11 +466,35 @@ public class Das2LoadView extends JComponent
       System.out.println("Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
+    if (current_seq != newseq) {
+      current_seq = newseq;
+      if (this.isShowing()) {
+	handleSeqChange();
+	pending_seq_change = false;
+      }
+      else {
+	pending_seq_change = true;
+      }
+    }
   }
 
+  public void handleSeqChange() {
+    //    System.out.println("in Das2LoadView.handleSeqChange()");
+    if (current_version != null) {
+      Das2Region region = current_version.getRegion(current_seq);
+      //      System.out.println("current region: " + region.getID());
+      das_regionCB.removeItemListener(this);
+      das_regionCB.setSelectedItem(region.getID());
+      das_regionCB.addItemListener(this);
+    }
+  }
+
+
+
+
   /**
-   *  When selected group changed, want to go through all previously visited 
-   *     DAS/2 servers (starting with the current one), and try and find 
+   *  When selected group changed, want to go through all previously visited
+   *     DAS/2 servers (starting with the current one), and try and find
    *     a versioned source that shared the selected AnnotatedSeqGroup
    *  If found, take first found and set versioned source, source, and server accordingly
    *  If not found, blank out versioned source and source, and switch server to "Choose a server"
@@ -475,9 +505,41 @@ public class Das2LoadView extends JComponent
     }
     java.util.List groups = evt.getSelectedGroups();
     if (groups != null && groups.size() > 0) {
-      AnnotatedSeqGroup group = (AnnotatedSeqGroup)groups.get(0);
+      AnnotatedSeqGroup newgroup = (AnnotatedSeqGroup)groups.get(0);
+      if (current_group != newgroup) {
+	current_group = newgroup;
+	if (this.isShowing()) {
+	  handleGroupChange();
+	  pending_group_change = false;
+	}
+	else {
+	  pending_group_change = true;
+	}
+      }
     }
   }
+
+  public void handleGroupChange() {
+    System.out.println("in Das2LoadView.handleGroupChange()");
+  }
+
+  public void componentResized(ComponentEvent e) { }
+  public void componentMoved(ComponentEvent e) { }
+  public void componentHidden(ComponentEvent e) { }
+  /** ComponentListener implementation, to allow putting off changes 
+      triggered by changing seq or seq group unless and until Das2LoadView is actually visible */
+  public void componentShown(ComponentEvent e) {
+    System.out.println("Das2LoadView was just made visible");
+    if (pending_group_change) {
+      handleGroupChange();
+      pending_group_change = false;
+    }
+    if (pending_seq_change)  {
+      handleSeqChange();
+      pending_seq_change = false;
+    }
+  }
+
 
   public static void main(String[] args) {
     Das2LoadView testview = new Das2LoadView(true);
@@ -567,7 +629,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
 	return state.getLoadString();
       default:
 	return " ";
-      }	
+      }
     }
 
     /*

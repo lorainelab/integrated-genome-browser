@@ -20,6 +20,7 @@ import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 public class Das2ServerInfo  {
   static boolean REPORT_SOURCES = true;
@@ -73,6 +74,30 @@ public class Das2ServerInfo  {
 
   protected void addDataSource(Das2Source ds) {
     sources.put(ds.getID(), ds);
+  }
+
+  /**
+   *  assumes there is only one versioned source for each AnnotatedSeqGroup
+   *    may want to change this to return a list of versioned sources instead
+   **/
+  public Das2VersionedSource getVersionedSource(AnnotatedSeqGroup group) {
+    // should probably make a vsource2seqgroup hash,
+    //   but for now can just iterate through sources and versions
+    Das2VersionedSource result = null;
+    Iterator siter = getSources().values().iterator();
+    while (siter.hasNext()) {
+      Das2Source source = (Das2Source)siter.next();
+      Iterator viter = source.getVersions().values().iterator();
+      while (viter.hasNext()) {
+	Das2VersionedSource version = (Das2VersionedSource)viter.next();
+	AnnotatedSeqGroup version_group = version.getGenome();
+	if (version_group == group) {
+	  result = version;
+	  break;
+	}
+      }
+    }
+    return result;
   }
 
 //  public String getDescription() { return description; }

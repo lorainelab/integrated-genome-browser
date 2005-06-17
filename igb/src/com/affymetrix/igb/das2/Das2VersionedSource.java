@@ -82,7 +82,7 @@ public class Das2VersionedSource  {
 
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
-      genome = gmodel.addSeqGroup(id);
+      genome = gmodel.addSeqGroup(id);  // gets existing seq group if possible, otherwise adds new one
     }
     return genome;
   }
@@ -101,6 +101,7 @@ public class Das2VersionedSource  {
 
   /**
    *  assumes there is only one region for each seq
+   *    may want to change this to return a list of regions instead
    **/
   public Das2Region getRegion(BioSeq seq) {
     // should probably make a region2seq hash, but for now can just iterate through regions
@@ -108,8 +109,8 @@ public class Das2VersionedSource  {
     Iterator iter = getRegions().values().iterator();
     while (iter.hasNext()) {
       Das2Region region = (Das2Region)iter.next();
-      BioSeq regionseq = region.getAnnotatedSeq();
-      if (regionseq == seq) {
+      BioSeq region_seq = region.getAnnotatedSeq();
+      if (region_seq == seq) {
 	result = region;
 	break;
       }

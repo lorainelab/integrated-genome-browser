@@ -73,6 +73,7 @@ public class BgnParser implements AnnotationWriter  {
     long blength = fil.length();
     FileInputStream fis = new FileInputStream(fil);
     List result = parse(fis, annot_type, seq_hash, blength);
+    fis.close();
     return result;
   }
 

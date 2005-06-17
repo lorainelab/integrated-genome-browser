@@ -19,6 +19,7 @@ import java.util.*;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.DasUtils;
 import com.affymetrix.igb.util.SynonymLookup;
@@ -91,13 +92,29 @@ public class Das2VersionedSource  {
   void setInfoUrl(String url) { this.info_url = url; }
 
 
-
-
   public Map getRegions() {
     if (! regions_initialized)  {
       initRegions();
     }
     return regions;
+  }
+
+  /**
+   *  assumes there is only one region for each seq
+   **/
+  public Das2Region getRegion(BioSeq seq) {
+    // should probably make a region2seq hash, but for now can just iterate through regions
+    Das2Region result = null;
+    Iterator iter = getRegions().values().iterator();
+    while (iter.hasNext()) {
+      Das2Region region = (Das2Region)iter.next();
+      BioSeq regionseq = region.getAnnotatedSeq();
+      if (regionseq == seq) {
+	result = region;
+	break;
+      }
+    }
+    return result;
   }
 
   void addRegion(Das2Region region) {
@@ -185,13 +202,28 @@ public class Das2VersionedSource  {
 	String ontid = typenode.getAttribute("ontology");
 	String type_source = typenode.getAttribute("source");
 	String href = typenode.getAttribute("doc_href");
-	//	String method = typenode.getAttribute("method");
-	//	String category = typenode.getAttribute("category");
-	//	String countstr = null;
-	//	Text count_text = (Text)typenode.getFirstChild();
-	//	if (count_text != null) { countstr = count_text.getData(); }
-	//	System.out.println("type id: " + typeid);
-	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href);
+	NodeList flist = typenode.getElementsByTagName("FORMAT");
+	LinkedHashMap formats = new LinkedHashMap();
+	HashMap props = new HashMap();
+	for (int k=0; k<flist.getLength(); k++) {
+	  Element fnode = (Element)flist.item(k);
+	  String formatid = fnode.getAttribute("id");
+	  String mimetype = fnode.getAttribute("mimetype");
+	  if (mimetype == null || mimetype.equals("")) { mimetype = "unknown"; }
+	  System.out.println("alternative format for annot type " + typeid + 
+			     ": format = " + formatid + ", mimetype = " + mimetype);
+	  formats.put(formatid, mimetype);
+	}
+
+	NodeList plist = typenode.getElementsByTagName("PROP");
+	for (int k=0; k<plist.getLength(); k++) {
+	  Element pnode = (Element)plist.item(k);
+	  String key = pnode.getAttribute("key");
+	  String val = pnode.getAttribute("value");
+	  props.put(key, val);
+	}
+
+	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
 	this.addType(type);
       }
     }

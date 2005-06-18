@@ -96,7 +96,7 @@ public class ScoredIntervalParser {
   static public final boolean default_attach_graphs = true;
   // if attaching graphs to seq, then if separate by strand make a separate graph sym
   //     for + and - strand, otherwise put both strands in same graph
-  static public final boolean separate_by_strand = false;
+  static public final boolean separate_by_strand = true;
 
   /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
@@ -160,6 +160,7 @@ public class ScoredIntervalParser {
       boolean sin1 = false;
       boolean sin2 = false;
       boolean sin3 = false;
+      boolean all_sin3 = true;
       java.util.List isyms = new ArrayList();
       //      while (line != null) {
       while ((line = br.readLine()) != null) {
@@ -179,7 +180,7 @@ public class ScoredIntervalParser {
 
 	// sin1 format if 4rth field is strand: [+-.]
 	if ((fields.length > 3) && strand_matcher.reset(fields[3]).matches())  {
-	  sin1 = true; sin2 = false; sin3 = false;
+	  sin1 = true; sin2 = false; sin3 = false; all_sin3 = false;
 	  score_offset = 4;
 	  annot_id = null;
 	  seqid = fields[0];
@@ -195,7 +196,7 @@ public class ScoredIntervalParser {
 	}
 	// sin2 format if 5th field is strand: [+-.]
 	else if ((fields.length > 4) && strand_matcher.reset(fields[4]).matches())  {
-	  sin2 = true; sin1 = false; sin3 = false;
+	  sin2 = true; sin1 = false; sin3 = false; all_sin3 = false;
 	  score_offset = 5;
 	  annot_id = fields[0];
 	  seqid = fields[1];
@@ -303,7 +304,7 @@ public class ScoredIntervalParser {
 	//	java.util.List entry_list = (java.util.List)entrylists.next();
 	java.util.List entry_list = (java.util.List)ent.getValue();
 
-	System.out.println("hmm, seq = " + aseq.getID() + ", entry count = " + entry_list.size());
+	//	System.out.println("hmm, seq = " + aseq.getID() + ", entry count = " + entry_list.size());
 	Collections.sort(entry_list, comp);
       }
 
@@ -340,8 +341,13 @@ public class ScoredIntervalParser {
 	  }
 	  container.addScores(score_name, score_column);
 	}
-
+	
+	// if not sin3, then add container as annotation to seq
+	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
+	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
+	//	if (! all_sin3) {
 	aseq.addAnnotation(container);
+	//	}
 	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
 	if (attach_graphs) {
 	  attachGraphs(container);

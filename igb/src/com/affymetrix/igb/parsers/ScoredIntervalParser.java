@@ -129,8 +129,8 @@ public class ScoredIntervalParser {
 	      line.startsWith(" ") ||
 	      line.startsWith("\t") )  ) {
 
-	// skipping starting lines that begin with space or tab, this can happen if outputting
-	//    file via GCOS
+	// skipping starting lines that begin with space or tab, since
+        // files output from GCOS begin with a header line that starts with a tab.
 	if (line.startsWith(" ")  || line.startsWith("\t")) {
 	  System.out.println("skipping line starting with whitespace: " + line);
 	  continue;
@@ -139,7 +139,7 @@ public class ScoredIntervalParser {
 	if (match.matches()) {
 	  String tag = match.group(1);
 	  String val = match.group(2);
-	  if (tag.startsWith("score@")) {
+	  if (tag.startsWith("score")) {
 	    int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
 	    index2id.put(new Integer(score_index), val);
 	  }
@@ -263,7 +263,7 @@ public class ScoredIntervalParser {
 	if (score_names == null) {
 	  //	  score_count = fields.length - 4;
 	  score_count = fields.length - score_offset;
-	  score_names = initScoreNames(score_count, index2id);
+	  score_names = initScoreNames(score_count, index2id, stream_name);
 	}
 
 	score_count = fields.length - score_offset;
@@ -411,12 +411,15 @@ public class ScoredIntervalParser {
   }
 
 
-  protected List initScoreNames(int score_count, Map index2id) {
-    List names = new ArrayList();;
+  protected List initScoreNames(int score_count, Map index2id, String stream_name) {
+    List names = new ArrayList();
     for (int i=0; i<score_count; i++) {
       Integer index = new Integer(i);
       String id = (String)index2id.get(index);
-      if (id == null) {  id = "score" + i; }
+      if (id == null) {
+        if (stream_name == null) {  id = "score" + i;  }
+        else { id = stream_name + ": score" + i; }
+      }
       names.add(id);
     }
     return names;

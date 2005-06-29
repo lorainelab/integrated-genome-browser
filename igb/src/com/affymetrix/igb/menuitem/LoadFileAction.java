@@ -433,8 +433,16 @@ public class LoadFileAction {
 
         parser.addStandardFilters();
         if (seqhash == null) {
-	  System.out.println("in GFFParser, annotating just input seq");
-	  aseq = parser.parse(str, input_seq);
+          String new_name = QuickLoaderView.UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
+          AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
+          unknown_group_count++;
+          if (input_seq != null) {
+            new_group.addSeq(input_seq);
+          }
+	  parser.parse(str, new_group.getSeqs(), IGB.getSymHash(), false);
+          gmodel.setSelectedSeqGroup(new_group); // needs to come after parsing for QuickLoad panel to find all the sequences
+          aseq = input_seq;
+          gmodel.setSelectedSeq(input_seq);
 	}
 	else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");

@@ -445,11 +445,13 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
     }
     else  { // not using graph cache...
-    //    if (true)  {
-      // switched over to using binary search to find end points --
+      // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
       int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
+      
+      // The +1 on draw_end_index might be an error, but it gets corrected below
       int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
+
       if (draw_beg_index < 0) {
 	// want draw_beg_index to be index of max xcoord <= view_start
 	//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
@@ -464,6 +466,12 @@ public class SmartGraphGlyph extends GraphGlyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
+      
+      // draw_end_index is sometimes too large (by 1)
+      if (draw_end_index >= xcoords.length) {
+        draw_end_index = xcoords.length - 1; 
+      }
+
       //      System.out.println("start index = " + draw_beg_index + ", val = " + xcoords[draw_beg_index]);
       //      System.out.println("end index = " + draw_end_index + ", val = " + xcoords[draw_end_index]);
       coord.x = xcoords[draw_beg_index];

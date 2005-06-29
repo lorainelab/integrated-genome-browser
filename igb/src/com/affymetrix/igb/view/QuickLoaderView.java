@@ -60,6 +60,11 @@ public class QuickLoaderView extends JComponent
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
 
+  /** When unknown or artificial seq groups get created to hold the contents
+   *  of a file, prefix the group name with this String.
+   */
+  public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
+  
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String SELECT_A_GENOME = "Select a genome to load";
   static int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
@@ -477,6 +482,11 @@ public class QuickLoaderView extends JComponent
     java.util.List defaults_to_load = new ArrayList();
     boolean prev_loaded = (checkboxes != null);
 
+    //TODO: This clearing of sym hash causes problems if you go back and
+    // revisit a previously-loaded genome (because the annotations will still be there,
+    // but will not be in the sym hash anymore.)  This also happens when
+    // loading a file with "merge" un-checked, which causes the creation of a
+    // new "genome".
     IGB.clearSymHash();
 
     if (! prev_loaded) {

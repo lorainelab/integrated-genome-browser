@@ -128,13 +128,14 @@ public class LoadFileAction {
     if (option == JFileChooser.APPROVE_OPTION) {
       load_dir_tracker.setFile(chooser.getCurrentDirectory());
       File[] fils = chooser.getSelectedFiles();
+      AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
 
       if (chooser.merge_button.isSelected()) {
 	aseq = gmodel.getSelectedSeq();
       }
       else {
 	gmodel.setSelectedSeq(null);
-	gmodel.setSelectedSeqGroup(null);
+        gmodel.setSelectedSeqGroup(null);
 	aseq = null;
       }
 
@@ -155,6 +156,12 @@ public class LoadFileAction {
         }
       }
 
+      if (gmodel.getSelectedSeqGroup() == null) {
+        // This primarily can happen if the merge button is not selected
+        // and the loading of the file fails or fails to create a seq group.
+        gmodel.setSelectedSeqGroup(previous_seq_group);
+      }
+      
       gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
     return aseq;
@@ -176,7 +183,8 @@ public class LoadFileAction {
       if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
-          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph");
+          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph.  " +
+            "Graph data must be merged with already loaded genomic data.");
         } else {
           Map seqs = seq_group.getSeqs();
 //          GraphSymUtils.readGraphs(fistr, annotfile.getAbsolutePath(), seqs, input_seq);
@@ -465,7 +473,8 @@ public class LoadFileAction {
       System.gc();
       if (seqhash == null) {
 	if (aseq != null) {
-	  AnnotatedSeqGroup new_group= gmodel.addSeqGroup("Unknown Group " + unknown_group_count);
+          String new_name = QuickLoaderView.UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
+          AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
 	  unknown_group_count++;
 	  new_group.addSeq(aseq);
 	  gmodel.setSelectedSeqGroup(new_group);

@@ -65,6 +65,8 @@ public class LoadFileAction {
       chooser = new MergeOptionFileChooser();
       chooser.setMultiSelectionEnabled(true);
       chooser.addChoosableFileFilter(new UniFileFilter("sin"));
+      chooser.addChoosableFileFilter(new UniFileFilter("egr"));
+      chooser.addChoosableFileFilter(new UniFileFilter("txt"));
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
@@ -270,7 +272,10 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (stream_name.endsWith(".sin")) {
+      else if (stream_name.endsWith(".sin") ||
+	       stream_name.endsWith(".egr") ||
+	       stream_name.endsWith(".txt")
+	       ) {
         ScoredIntervalParser parser = new ScoredIntervalParser();
         Map id2sym_hash = IGB.getSymHash();
 //        parser.parse(str, stream_name, seqhash);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -28,6 +28,7 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
@@ -43,23 +44,17 @@ import com.affymetrix.igb.util.ErrorHandler;
  */
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
-  public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.18";
+  public static String APP_NAME = IGBConstants.APP_NAME;
+  public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
+  public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean CURATION_ENABLED = true;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
-
-  /** Preference for whether a control server should be started.
-   *  A control server allows IGB to be controled by http requests from other
-   *  applications.  If the control server is turned off, bookmarks used inside
-   *  the program will still work, but calls from external applications will not.
-   */
-  public static final String PREF_USE_CONTROL_SERVER = "Use control server";
-  public static boolean default_use_control_server = true;
 
   public static Color default_bg_col = Color.black;
   public static Color default_label_col = Color.white;
@@ -69,7 +64,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  private static HashMap id2sym_hash = new HashMap();
+  private static Map id2sym_hash = new HashMap();
+  private static Vector sym_map_change_listeners = new Vector(1);
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -85,7 +81,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
   LoadFileAction open_file_action;
-  OpenGraphAction open_graph_action;
   DasFeaturesAction2 load_das_action;
 
   JMenuItem gc_item;
@@ -96,7 +91,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem clear_graphs_item;
 
   JMenuItem open_file_item;
-  JMenuItem open_graph_item;
   JMenuItem load_das_item;
   JMenuItem print_item;
   JMenuItem print_frame_item;
@@ -109,10 +103,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem clamp_view_item;
   JMenuItem unclamp_item;
   JMenuItem rev_comp_item;
-  JMenuItem shrink_wrap_item;
+  JCheckBoxMenuItem shrink_wrap_item;
   JMenuItem adjust_edgematch_item;
-  JMenuItem toggle_hairline_label_item;
-  JMenuItem toggle_edge_matching_item;
+  JCheckBoxMenuItem toggle_hairline_label_item;
+  JCheckBoxMenuItem toggle_edge_matching_item;
   JMenuItem autoscroll_item;
   JMenuItem bgcolor_item;
 
@@ -120,7 +114,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   SeqMapView map_view;
   //QuickLoaderView quickload_view;
-  AnnotBrowserView glyph_browser_view;
 
   CurationControl curation_control;
   AlignControl align_control;
@@ -147,6 +140,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    */
   public static void main(String[] args) {
    try {
+    
+    try {
+      // It this is Windows, then use the Windows look and feel.
+      LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
+      UIManager.setLookAndFeel(look_and_feel);
+    } catch (UnsupportedLookAndFeelException ulfe) {
+      // Windows look and feel is not supported on Linux.  That is ok.
+    }
+     
     main_args = args;
     getIGBPrefs(); // force loading of prefs
 
@@ -304,27 +306,44 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   /**
-   *  map of tags (usually names or ids) to SeqSymmetries for currently
-   *  loaded genome and/or chromosome
+   *  Map of tags (usually names or ids) to SeqSymmetries for currently
+   *  loaded genome and/or chromosome.
    */
-  public static final HashMap getSymHash() {
+  public static final Map getSymHash() {
     return id2sym_hash;
   }
 
   public static void clearSymHash() {
     id2sym_hash.clear();
+    symHashChanged(IGB.class); // IGB.class is the most obvious event source
   }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
   }
 
-  /** Call this method if you alter the Map returned by {@link #getSymHash}. */
-  public static final void symHashChanged() {
-    AnnotBrowserView gbv = getSingletonIGB().glyph_browser_view;
-    if (gbv != null) {
-      gbv.showSymHash(getSymHash());
+  /** Call this method if you alter the Map returned by {@link #getSymHash}.
+   *  @param source  The source responsible for the change, used in constructing
+   *    the {@link SymMapChangeEvent}.
+   */
+  public static void symHashChanged(Object source) {
+    java.util.List list = getSymMapChangeListeners();
+    for (int i=0; i<list.size(); i++) {
+      SymMapChangeListener l = (SymMapChangeListener) list.get(i);
+      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
     }
+  }
+
+  public static java.util.List getSymMapChangeListeners() {
+    return sym_map_change_listeners;
+  }
+
+  public static void addSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.add(l);
+  }
+
+  public static void removeSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.remove(l);
   }
 
   /**
@@ -412,9 +431,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
-      startControlServer();
-    }
+    startControlServer();
 
     frm = new JFrame(APP_NAME);
 
@@ -465,12 +482,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
 
     open_file_action = new LoadFileAction(map_view, load_directory);
-    open_graph_action = new OpenGraphAction(map_view, load_directory);
     load_das_action = new DasFeaturesAction2(map_view);
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
-    open_graph_item = new JMenuItem("Add Graph", KeyEvent.VK_G);
     load_das_item = new JMenuItem("Load DAS Features", KeyEvent.VK_D);
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
@@ -484,18 +499,23 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
     unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
     rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
-    shrink_wrap_item = new JMenuItem("Toggle Shrink Wrapping", KeyEvent.VK_S);
+    shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
+    shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
+    shrink_wrap_item.setState(map_view.getShrinkWrap());
 
-    toggle_hairline_label_item = new JMenuItem("Toggle Hairline Label", KeyEvent.VK_H);
-    toggle_edge_matching_item = new JMenuItem("Toggle Edge Matching");
-    autoscroll_item = new JMenuItem("AutoScroll");
+    toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
+    toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
+    toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
+    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
+    toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
+    toggle_edge_matching_item.setState(map_view.getEdgeMatching());
+    autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
 
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.addActionListener(this);
 
     MenuUtil.addToMenu(file_menu, open_file_item);
-    MenuUtil.addToMenu(file_menu, open_graph_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
     MenuUtil.addToMenu(file_menu, clear_item);
     MenuUtil.addToMenu(file_menu, clear_graphs_item);
@@ -527,8 +547,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
 
     MenuUtil.addToMenu(help_menu, about_item);
-    //MenuUtil.addToMenu(help_menu, gc_item);
-    //MenuUtil.addToMenu(help_menu, memory_item);
+    if (ADD_DIAGNOSTICS) {
+      MenuUtil.addToMenu(help_menu, gc_item);
+      MenuUtil.addToMenu(help_menu, memory_item);
+    }
 
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
@@ -536,7 +558,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     clear_item.addActionListener(this);
     clear_graphs_item.addActionListener(this);
     open_file_item.addActionListener(this);
-    open_graph_item.addActionListener(this);
     load_das_item.addActionListener(this);
     print_item.addActionListener(this);
     print_frame_item.addActionListener(this);
@@ -588,7 +609,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //} catch (java.util.prefs.BackingStoreException bse) {
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
-
 
     if (plugin_list == null || plugin_list.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
@@ -677,10 +697,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
-    if (src == open_graph_item) {
-      open_graph_action.actionPerformed(evt);
-    }
-    else if (src == open_file_item) {
+    if (src == open_file_item) {
       open_file_action.actionPerformed(evt);
     }
     else if (src == load_das_item) {
@@ -729,9 +746,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_edge_matching_item) {
       map_view.setEdgeMatching(! map_view.getEdgeMatching());
+      toggle_edge_matching_item.setState(map_view.getEdgeMatching());
+      //adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
     }
     else if (src == adjust_edgematch_item) {
-      System.out.println("trying to adjust edge-matching fuzziness");
       EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
     }
     // rev comp not working
@@ -741,6 +759,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else if (src == shrink_wrap_item) {
       System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
       map_view.setShrinkWrap(! map_view.getShrinkWrap());
+      shrink_wrap_item.setState(map_view.getShrinkWrap());
     }
     else if (src == clamp_view_item) {
       System.out.println("trying to clamp to view");
@@ -752,6 +771,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_hairline_label_item) {
       map_view.toggleHairlineLabel();
+      toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
     } else if (src == move_tab_to_window_item) {
       openTabInNewWindow(tab_pane);
     }
@@ -776,7 +796,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
     about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
-    about_text.append("Copyright 2001-2004 Affymetrix Inc." + "\n");
+    about_text.append("Copyright 2001-2005 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");
@@ -1055,7 +1075,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
-    boolean USE_BOOKMARK_MANAGER = false;
+    boolean USE_BOOKMARK_MANAGER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
 
@@ -1090,10 +1110,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PluginInfo pi = new PluginInfo(BookmarkManagerView.class.getName(), "Bookmarks", true);
       plugin_list.add(pi);
     }
+
     if (USE_PIVOT_VIEW) {
       PluginInfo pi = new PluginInfo(ExperimentPivotView.class.getName(), "Pivot View", true);
       plugin_list.add(pi);
     }
+
     if (USE_ANNOT_BROWSER) {
       PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
       plugin_list.add(pi);

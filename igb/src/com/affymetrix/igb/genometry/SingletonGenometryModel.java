@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,7 +27,9 @@ public class SingletonGenometryModel {
   static public boolean DEBUG = false;
   static SingletonGenometryModel smodel = new SingletonGenometryModel();
 
-  Map seq_groups = new HashMap();
+  Map seq_groups = new LinkedHashMap();
+  // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
+
   List seq_selection_listeners = new ArrayList();
   List group_selection_listeners = new ArrayList();
   List sym_selection_listeners = new ArrayList();
@@ -66,12 +68,17 @@ public class SingletonGenometryModel {
    *  @return a non-null AnnotatedSeqGroup
    */
   public AnnotatedSeqGroup addSeqGroup(String group_id) {
+    //    System.out.println("SingletonGenometryModel.addSeqGroup() called, id = " + group_id);
     // if AnnotatedSeqGroup with same or synonymous id already exists, then return it
     AnnotatedSeqGroup group = getSeqGroup(group_id);
     // otherwise create a new AnnotatedSeqGroup
     if (group == null) {
+      //      System.out.println("  adding new seq group: " + group_id);
       group = new AnnotatedSeqGroup(group_id);
       seq_groups.put(group.getID(), group);
+    }
+    else {
+      //      System.out.println("  already have seq group: " + group_id + ", actual id = " + group.getID());
     }
     return group;
   }
@@ -91,7 +98,7 @@ public class SingletonGenometryModel {
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSeqGroup() called, ");
-      System.out.println("    group = " + group);
+      System.out.println("    group = " + (group == null ? null : group.getID()));
     }
 
     selected_group = group;
@@ -129,7 +136,7 @@ public class SingletonGenometryModel {
   public void setSelectedSeq(MutableAnnotatedBioSeq seq, Object src) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSeq() called, ");
-      System.out.println("    seq = " + seq);
+      System.out.println("    seq = " + (seq == null ? null : seq.getID()));
     }
 
     selected_seq = seq;

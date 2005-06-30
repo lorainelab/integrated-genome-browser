@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -54,6 +54,12 @@ public class GraphGlyphUtils {
   public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
   public static final String PREF_FLOATING_PIXEL_HEIGHT = "default floating graph pixel height";
 
+  /** Pref for whether newly-constructed graph glyphs should only show a 
+   *  limited range of values.
+   */
+  public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
+  public static final boolean default_apply_percentage_filter = true;
+
   /** Whether to use a TransformTierGlyph to maintain a fixed pixel height for attached graphs. */
   static final boolean use_fixed_pixel_height = false;
 
@@ -61,7 +67,13 @@ public class GraphGlyphUtils {
   public static final String default_attach_mode = USE_CURRENT_HEIGHT;  // default mode if not specified in prefs
 
   public static final int default_pix_height = 60;
-  public static final double default_coord_height = 100;
+  
+  /** Default value for height of attached (non-floating) graphs.  Although
+   *  the height will ultimately have to be expressed as a double rather than
+   *  an integer, there is no good reason to bother the users with that detail,
+   *  so the default should be treated as an integer.
+   */
+  public static final int default_coord_height = 100;
   public static final boolean default_use_floating_graphs = false;
 
   public static final Color[] default_graph_colors = 
@@ -115,7 +127,7 @@ public class GraphGlyphUtils {
       //    but setting height will matter
       double yheight = coordbox.height;
       if (use_fixed_coord_height) {
-        yheight = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, default_coord_height);
+        yheight = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, (double) default_coord_height);
       }
 
       gl.setCoords(tempbox.x, coordbox.y, tempbox.width, yheight);

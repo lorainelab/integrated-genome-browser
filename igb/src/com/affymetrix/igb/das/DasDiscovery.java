@@ -131,18 +131,19 @@ public class DasDiscovery {
       // before adding the new one.
       das_servers = getDasServers(); 
     }
-    
     if (url == null || name == null) {
       throw new IllegalArgumentException();
     }
     Preferences p = getNodeForURL(url, true);
-    if (p.get(KEY_NAME, null) == null) {
-      // if this server is already known by a different name, don't re-name it
+    String preferred_name = p.get(KEY_NAME, null);
+    if (preferred_name == null) {
+      // Store the name for this DAS URL only if it doesn't already have a name
       p.put(KEY_NAME, name);
+      preferred_name = name;
     }
     if (p.getBoolean(KEY_ENABLED, true)) {
-      DasServerInfo server = new DasServerInfo(url, name, false);
-      das_servers.put(name, server);
+      DasServerInfo server = new DasServerInfo(url, preferred_name, false);
+      das_servers.put(preferred_name, server);
     }
   }
   

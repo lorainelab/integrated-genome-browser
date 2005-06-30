@@ -63,8 +63,8 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
    *  (or else change constructors to specifically take length as an argument)
    */
   public int getLength() { return length; }
-  public int getMin() { return 0; }
-  public int getMax() { return getLength(); }
+  //  public int getMin() { return 0; }
+  //  public int getMax() { return getLength(); }
 
   public String getResidues() { 
     // may want to do a caching strategy at some point, in case there are repeated 

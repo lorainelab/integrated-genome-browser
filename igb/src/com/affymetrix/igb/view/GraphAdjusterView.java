@@ -82,6 +82,7 @@ public class GraphAdjusterView extends JComponent
   JButton boundsB = new JButton("Toggle Bounds");
   JRadioButton floatB = new JRadioButton("Floating");
   JRadioButton attachB = new JRadioButton("Tiered");
+  JButton cloneB = new JButton("Clone Graphs");
   JButton deleteB = new JButton("Delete Graph");
   JButton saveB = new JButton("Save Graph");
   JButton selectAllB = new JButton("Select All Graphs");
@@ -103,7 +104,7 @@ public class GraphAdjusterView extends JComponent
 
   java.util.List grafs = new ArrayList();
   java.util.List glyphs = new ArrayList();
-  
+
   static {
     string2style = new HashMap();
     string2style.put(MINMAXAVG, new Integer(SmartGraphGlyph.MINMAXAVG));
@@ -147,7 +148,7 @@ public class GraphAdjusterView extends JComponent
     max_gap_thresher = new MaxGapThresholder(nwidg);
     min_run_thresher = new MinRunThresholder(nwidg);
 
-    score_thresh_adjuster.setBorder(new TitledBorder("Min Score"));
+    score_thresh_adjuster.setBorder(new TitledBorder("Score"));
     vis_bounds_adjuster.setBorder(new TitledBorder("Visible Bounds"));
 
     JPanel thresh_toggle_pan = new JPanel();
@@ -216,6 +217,11 @@ public class GraphAdjusterView extends JComponent
     save_deleteP.add(saveB);
     save_deleteP.add(deleteB);
 
+    JPanel colorP = new JPanel();
+    colorP.setLayout(new BoxLayout(colorP, BoxLayout.X_AXIS));
+    colorP.add(cloneB);
+    colorP.add(colorB);
+
     JPanel defaults_pan = new JPanel();
     JPanel options_pan = new JPanel();
 
@@ -224,7 +230,7 @@ public class GraphAdjusterView extends JComponent
     options_pan.add(selectAllB);
     options_pan.add(placementP);
     options_pan.add(decorP);
-    options_pan.add(colorB);
+    options_pan.add(colorP);
     options_pan.add(style_pan);
     options_pan.add(save_deleteP);
 
@@ -253,7 +259,7 @@ public class GraphAdjusterView extends JComponent
     JPanel defpan4 = new JPanel(new GridLayout(1, 2));
     defpan4.add(new JLabel("If tiered, coord height: "));
     JTextField def_coord_heightTF = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Double.toString(GraphGlyphUtils.default_coord_height), Double.class);
+      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
     defpan4.add(def_coord_heightTF);
 
     JPanel defpan5 = new JPanel(new GridLayout(1, 2));
@@ -297,6 +303,7 @@ public class GraphAdjusterView extends JComponent
     yaxisCB.addActionListener(this);
     boundsCB.addActionListener(this);
     handleCB.addActionListener(this);
+    cloneB.addActionListener(this);
     colorB.addActionListener(this);
     styleCB.addActionListener(this);
     threshCB.addActionListener(this);
@@ -514,6 +521,9 @@ public class GraphAdjusterView extends JComponent
     else if (src == deleteB) {
       deleteGraphs();
     }
+    else if (src == cloneB) {
+      cloneGraphs();
+    }
     else if (src == shift_startTF) {
       try {
 	int start_shift = Integer.parseInt(shift_startTF.getText());
@@ -566,6 +576,36 @@ public class GraphAdjusterView extends JComponent
     if (newgraf_count > 0)  {
       gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
     }
+  }
+
+  public void cloneGraphs() {
+    System.out.println("cloning graphs");
+    int gcount = grafs.size();
+    try  {
+      for (int i=0; i<gcount; i++) {
+        GraphSym oldsym = (GraphSym)grafs.get(i);
+        GraphSym newsym = (GraphSym)oldsym.clone();
+        AnnotatedBioSeq aseq = (AnnotatedBioSeq)newsym.getGraphSeq();
+        if (aseq instanceof MutableAnnotatedBioSeq) {
+          MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
+          mut.addAnnotation(newsym);
+        }
+      }
+    }
+    catch (Exception ex)  {
+      ex.printStackTrace();
+    }
+    updateViewer();
+    //    nwidg.updateWidget();
+  }
+
+  protected void updateViewer()  {
+    final SeqMapView current_viewer = gviewer;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        current_viewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+      }
+    });
   }
 
   public void deleteGraphs() {
@@ -687,7 +727,7 @@ public class GraphAdjusterView extends JComponent
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
     //    String meth = "graph pickle " + pickle_count;
     String meth =
-      "thresh, min_score=" + nformat.format(sgg.getScoreThreshold()) +
+      "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
       ", max_gap=" + (int)sgg.getMaxGapThreshold() +
       ", min_run=" + (int)sgg.getMinRunThreshold() +
       ", graph: " + sgg.getLabel();
@@ -741,7 +781,7 @@ public class GraphAdjusterView extends JComponent
     cpane.add("Center", tester);
     frm.pack();
     frm.show();
-    
+
     frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 

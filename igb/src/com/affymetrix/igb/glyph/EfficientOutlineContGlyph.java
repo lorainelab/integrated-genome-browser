@@ -28,6 +28,7 @@ import java.awt.*;
 public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
   static boolean optimize_child_draw = true;
   static boolean DEBUG_OPTIMIZED_FILL = false;
+  boolean move_children = true;
   Color fill_color = null;
 
   public void drawTraversal(ViewI view)  {
@@ -98,11 +99,13 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
    *  Overriden to force children to center on line
    */
   public void addChild(GlyphI glyph) {
-    // child.cbox.y is modified, but not child.cbox.height)
-    // center the children of the LineContainerGlyph on the line
-    Rectangle2D cbox = glyph.getCoordBox();
-    double ycenter = this.y + this.height/2;
-    cbox.y = ycenter - cbox.height/2;
+    if (isMoveChildren()) {
+      // center the child vertically in the parent
+      // child.cbox.y is modified, but not child.cbox.height)
+      Rectangle2D cbox = glyph.getCoordBox();
+      double ycenter = this.y + this.height/2;
+      cbox.y = ycenter - cbox.height/2;
+    }
     super.addChild(glyph);
   }
 
@@ -124,4 +127,18 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
     return this.fill_color;
   }
 
+  /**
+   * If true, {@link #addChild(GlyphI)} will automatically center the child vertically.
+   * Default is true.
+   */
+  public boolean isMoveChildren() {
+    return this.move_children;
+  }  
+
+  /**
+   * Set whether {@link #addChild(GlyphI)} will automatically center the child vertically.
+   */
+  public void setMoveChildren(boolean move_children) {
+    this.move_children = move_children;
+  }
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -25,7 +25,6 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   public static final int DRAW_SELF_FIRST = 0;
   public static final int DRAW_CHILDREN_FIRST = 1;
   
-  private static final boolean DEBUG_SELECTION = false;
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
 
@@ -39,7 +38,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   protected Scene scene;
 
   protected GlyphI parent;
-  protected Vector children;  // want to move towards using List instead of Vector , will require fixing lots of other code though
+  protected Vector children;  // want to move towards using List instead of Vector, will require fixing lots of other code though
 
   protected Color color = Color.black;    
   protected boolean isVisible;
@@ -192,6 +191,10 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       }
       if (hit(pickRect, view))  {
         if (!pickVector.contains(this)) {
+          // Note that Vector.contains() performs a test using "equals()".
+          // EfficientGlyph extends Rectangle2D which tests equality based
+          // on coordinates.  This means that you can't "select" both a parent glyph
+          // and a child glyph that have identical coordinates.
           pickVector.add(this);
         }
         if (debug)   {
@@ -199,10 +202,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
         }
       }
       if (children != null)  {
-        GlyphI child;
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          child = (GlyphI)children.get( i );
+          GlyphI child = (GlyphI) children.get( i );
           child.pickTraversal( pickRect, pickVector, view );
         }
       }
@@ -365,7 +367,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
 
 
   /**
-   * replaces the coord box.
+   * Replaces the coord box.
    * Note that this does not make the assurances of setCoords().
    * @see #setCoords
    */
@@ -556,7 +558,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     return true;
   }
 
-  /** Fixes a bug that can happen with AWT when drawing very large rectangles. */
+  /** Fixes a bug that can happen with AWT when drawing very large rectangles, by
+   *  trimming the pixelbox of a large rectangle to the region that intersects the view.
+   */
   public static final Rectangle fixAWTBigRectBug(ViewI view, Rectangle pixelbox) {
     if (FIX_AWT_BIG_RECT_BUG) {
       if (pixelbox.width >= 1024) {

@@ -76,6 +76,8 @@
                   red="150" green="150" blue="200" />
 
 <annotation_style annot_type_ends_with="\.sin" glyph_depth="1" red="255" green="255" blue="0" />
+<annotation_style annot_type_ends_with="\.egr" glyph_depth="1" red="255" green="255" blue="0" />
+<annotation_style annot_type_ends_with="\.txt" glyph_depth="1" red="255" green="255" blue="0" />
 
 <!-- <annotation_style annot_type_starts_with="threshold" glyph_depth="1" red="200" green="100" blue="100" /> -->
 <annotation_style annot_type_starts_with="intersect" glyph_depth="1"
@@ -147,11 +149,23 @@
      style="coverage" 
      red="250" green="200" blue="0" />
 
-  <annotation_style annot_type_ends_with="_tf"
+<annotation_style annot_type_ends_with="_tf"
      factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
      height="100"
      style="coverage" 
      red="250" green="200" blue="0" />
+
+<annotation_style annot_type_starts_with="snpMap_"
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory"
+     height="200"
+     style="coverage"
+     red="255" green="0" blue="255" />
+
+<annotation_style annot_type_starts_with="RepeatMasker_"
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory"
+     height="200"
+     style="coverage"
+     red="0" green="200" blue="200" />
 
 </prefs>
 

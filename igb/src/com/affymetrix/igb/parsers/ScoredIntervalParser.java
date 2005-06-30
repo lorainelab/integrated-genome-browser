@@ -105,14 +105,17 @@ public class ScoredIntervalParser {
   boolean attach_graphs = default_attach_graphs;
 
 
-  public void parse(InputStream istr, String stream_name, Map seqhash) {
+  public void parse(InputStream istr, String stream_name, Map seqhash) 
+  throws IOException {
     parse(istr, stream_name, seqhash, null);
   }
 
-  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) {
+  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) 
+  throws IOException {
     attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
+    BufferedReader br= null;
     try {
-      BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+      br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
 
       //      Map seq2container = new LinkedHashMap();
@@ -363,7 +366,14 @@ public class ScoredIntervalParser {
       if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + mod_hit_count); }
 
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    catch (Exception ex) {
+      IOException ioe = new IOException("Error while reading '.sin' file from: '"+stream_name+"'");
+      ioe.initCause(ex);
+      throw ioe;
+    }
+    finally {      
+      if (br != null) try { br.close(); } catch (Exception e) {}
+    }
   }
 
 

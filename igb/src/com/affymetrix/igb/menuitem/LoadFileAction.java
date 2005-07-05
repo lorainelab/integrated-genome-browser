@@ -133,12 +133,12 @@ public class LoadFileAction {
       AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
 
       if (chooser.merge_button.isSelected()) {
-	aseq = gmodel.getSelectedSeq();
+        aseq = gmodel.getSelectedSeq();
       }
       else {
-	gmodel.setSelectedSeq(null);
+        gmodel.setSelectedSeq(null);
         gmodel.setSelectedSeqGroup(null);
-	aseq = null;
+        aseq = null;
       }
 
       for (int i=0; i<fils.length; i++) {
@@ -273,24 +273,29 @@ public class LoadFileAction {
         parser = null;
       }
       else if (stream_name.endsWith(".sin") ||
-	       stream_name.endsWith(".egr") ||
-	       stream_name.endsWith(".txt")
-	       ) {
-        ScoredIntervalParser parser = new ScoredIntervalParser();
-        Map id2sym_hash = IGB.getSymHash();
-//        parser.parse(str, stream_name, seqhash);
-        parser.parse(str, stream_name, seqhash, id2sym_hash);
-        IGB.symHashChanged(parser);
-        aseq = input_seq;
-        parser = null;
+               stream_name.endsWith(".egr") ||
+               stream_name.endsWith(".txt")
+               ) {
+        if (seqhash == null) {
+          // It would be possible to allow "sin" files to be read when seqhash is null
+          // by using the same technique used below for GFF files
+          IGB.errorPanel("ERROR", "Scored interval files can only be loaded if a seq group is already selected");
+        } else {
+          ScoredIntervalParser parser = new ScoredIntervalParser();
+          Map id2sym_hash = IGB.getSymHash();
+          parser.parse(str, stream_name, seqhash, id2sym_hash);
+          IGB.symHashChanged(parser);
+          aseq = input_seq;
+          parser = null;
+        }
       }
       else if (stream_name.endsWith(".psl") || stream_name.endsWith( ".psl3")) {
         PSLParser parser = new PSLParser();
         parser.enableSharedQueryTarget(true);
-	if (seqhash == null) {
-	  aseq = parser.parse(str, input_seq, stream_name);
-	}
-	else {
+        if (seqhash == null) {
+          aseq = parser.parse(str, input_seq, stream_name);
+        }
+        else {
           int psl_option = -1;
           Object[] options;
 
@@ -343,94 +348,94 @@ public class LoadFileAction {
             parser.parse(str, stream_name, null, null, seqhash, false, false, true);
           }
           aseq = input_seq;
-	}
+        }
         parser = null;
       }
       else if (stream_name.endsWith(".bps")) {
         // bps parsing requires a Map of sequences (seqid ==> BioSeq) rather than a single BioSeq
-	//	if (seqhash == null) {
-	//	  seqhash = new HashMap();
-	//	  seqhash.put(input_seq.getID(), input_seq);
-	//	}
-	if (seqhash == null) {
+        //        if (seqhash == null) {
+        //          seqhash = new HashMap();
+        //          seqhash.put(input_seq.getID(), input_seq);
+        //        }
+        if (seqhash == null) {
           IGB.errorPanel("ERROR", ".bps files can only be loaded if a seq group is already selected");
-	}
-	else {
-	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
-	  DataInputStream dis = new DataInputStream(str);
-	  BpsParser psl_reader = new BpsParser();
-	  psl_reader.parse(dis, annot_type, seqhash);
-	  psl_reader = null;
-	}
-	aseq = input_seq;
+        }
+        else {
+          String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
+          DataInputStream dis = new DataInputStream(str);
+          BpsParser psl_reader = new BpsParser();
+          psl_reader.parse(dis, annot_type, seqhash);
+          psl_reader = null;
+        }
+        aseq = input_seq;
       }
       else if (stream_name.endsWith(".bed")) {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         BedParser parser = new BedParser(gviewer);
-	if (seqhash == null) {
-	  aseq = parser.parse(str, input_seq);
-	}
-	else {
+        if (seqhash == null) {
+          aseq = parser.parse(str, input_seq);
+        }
+        else {
           parser.parse(str, seqhash, true, annot_type);
           aseq = input_seq;
-	}
+        }
         parser = null;
       }
       else if (stream_name.endsWith(".bgn")) {
-	if (seqhash == null) {
+        if (seqhash == null) {
           IGB.errorPanel("ERROR", ".bgn files can only be loaded if a seq group is already selected");
-	}
-	else {
-	  BgnParser gene_reader = new BgnParser();
-	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-	  gene_reader.parse(str, annot_type, seqhash, -1);
-	}
-	aseq = input_seq;
+        }
+        else {
+          BgnParser gene_reader = new BgnParser();
+          String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
+          gene_reader.parse(str, annot_type, seqhash, -1);
+        }
+        aseq = input_seq;
       }
       else if (stream_name.endsWith(".brs")) {
-	if (seqhash == null) {
+        if (seqhash == null) {
           IGB.errorPanel("ERROR", ".brs files can only be loaded if a seq group is already selected");
-	}
-	else {
-	  BrsParser refseq_reader = new BrsParser();
-	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
+        }
+        else {
+          BrsParser refseq_reader = new BrsParser();
+          String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
           Map id2sym_hash = IGB.getSymHash();
-	  java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
-	  IGB.symHashChanged(refseq_reader);
-	  System.out.println("total refseq annotations loaded: " + alist.size());
-	}
+          java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
+          IGB.symHashChanged(refseq_reader);
+          System.out.println("total refseq annotations loaded: " + alist.size());
+        }
         aseq = input_seq;
       }
       else if (stream_name.endsWith(".bsnp")) {
-	if (seqhash == null) {
+        if (seqhash == null) {
           IGB.errorPanel("ERROR", ".bsnp files can only be loaded if a seq group is already selected");
-	}
-	else {
-	  BsnpParser parser = new BsnpParser();
-	  String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
-	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
-	  System.out.println("total snps loaded: " + alist.size());
-	}
+        }
+        else {
+          BsnpParser parser = new BsnpParser();
+          String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
+          java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+          System.out.println("total snps loaded: " + alist.size());
+        }
         aseq = input_seq;
       }
       else if (stream_name.endsWith(".brpt")) {
-	if (seqhash == null) {
+        if (seqhash == null) {
           IGB.errorPanel("ERROR", ".brpt files can only be loaded if a seq group is already selected");
-	}
-	else {
-	  BrptParser parser = new BrptParser();
-	  String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
-	  java.util.List alist = parser.parse(str, annot_type, seqhash, true);
-	  System.out.println("total repeats loaded: " + alist.size());
-	}
+        }
+        else {
+          BrptParser parser = new BrptParser();
+          String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
+          java.util.List alist = parser.parse(str, annot_type, seqhash, true);
+          System.out.println("total repeats loaded: " + alist.size());
+        }
         aseq = input_seq;
       }
       else if (stream_name.endsWith(".bp1")) {
-	Bprobe1Parser parser = new Bprobe1Parser();
-	String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
-	parser.parse(str, gmodel.getSelectedSeqGroup(), true, annot_type);
-	aseq = input_seq;
+        Bprobe1Parser parser = new Bprobe1Parser();
+        String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
+        parser.parse(str, gmodel.getSelectedSeqGroup(), true, annot_type);
+        aseq = input_seq;
       }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format
@@ -444,16 +449,16 @@ public class LoadFileAction {
           if (input_seq != null) {
             new_group.addSeq(input_seq);
           }
-	  parser.parse(str, new_group.getSeqs(), IGB.getSymHash(), false);
+          parser.parse(str, new_group.getSeqs(), IGB.getSymHash(), false);
           gmodel.setSelectedSeqGroup(new_group); // needs to come after parsing for QuickLoad panel to find all the sequences
           aseq = input_seq;
           gmodel.setSelectedSeq(input_seq);
-	}
-	else {
+        }
+        else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");
           parser.parse(str, seqhash, IGB.getSymHash(), false);
           aseq = input_seq;
-	}
+        }
         IGB.symHashChanged(parser);
         parser = null;
       }
@@ -485,14 +490,14 @@ public class LoadFileAction {
 
       System.gc();
       if (seqhash == null) {
-	if (aseq != null) {
+        if (aseq != null) {
           String new_name = QuickLoaderView.UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
           AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
-	  unknown_group_count++;
-	  new_group.addSeq(aseq);
-	  gmodel.setSelectedSeqGroup(new_group);
-	  gmodel.setSelectedSeq(aseq);
-	}
+          unknown_group_count++;
+          new_group.addSeq(aseq);
+          gmodel.setSelectedSeqGroup(new_group);
+          gmodel.setSelectedSeq(aseq);
+        }
       }
     }
     catch (Exception ex) {

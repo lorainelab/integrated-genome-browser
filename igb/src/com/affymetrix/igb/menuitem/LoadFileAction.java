@@ -64,9 +64,6 @@ public class LoadFileAction {
     if (chooser == null) {
       chooser = new MergeOptionFileChooser();
       chooser.setMultiSelectionEnabled(true);
-      chooser.addChoosableFileFilter(new UniFileFilter("sin"));
-      chooser.addChoosableFileFilter(new UniFileFilter("egr"));
-      chooser.addChoosableFileFilter(new UniFileFilter("txt"));
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
@@ -87,6 +84,9 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
         "Graph Files"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+        new String[] {"sin", "egr", "txt"},
+        "Scored Interval Files"));
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();

@@ -272,7 +272,7 @@ public class ScoredIntervalParser {
 	score_count = fields.length - score_offset;
 	float[] entry_floats = new float[score_count];
 	int findex = 0;
-	for (int field_index = score_count; field_index<fields.length; field_index++) {
+	for (int field_index = score_offset; field_index<fields.length; field_index++) {
 	  float score = Float.parseFloat(fields[field_index]);
 	  entry_floats[findex] = score;
 	  findex++;

@@ -158,15 +158,17 @@ public class ScoredIntervalParser {
       int mod_hit_count = 0;
       int total_mod_hit_count = 0;
       int miss_count = 0;
-
+      
       Matcher strand_matcher = strand_regex.matcher("");
       boolean sin1 = false;
       boolean sin2 = false;
       boolean sin3 = false;
       boolean all_sin3 = true;
       java.util.List isyms = new ArrayList();
-      //      while (line != null) {
-      while ((line = br.readLine()) != null) {
+      
+      // There should already be a non-header line in the 'line' variable.
+      // Continue reading lines until there are no more lines.
+      for ( ; line != null ; line = br.readLine()) {
 	isyms.clear();
 	// skip comment lines (any lines that start with "#")
 	if (line.startsWith("#")) { continue; }
@@ -191,7 +193,7 @@ public class ScoredIntervalParser {
 	  max = Integer.parseInt(fields[2]);
 	  strand = fields[3];
 	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	  if (aseq == null) { makeNewSeq(seqid, seqhash); }
+	  if (aseq == null) { aseq = makeNewSeq(seqid, seqhash); }
 	  IndexedSingletonSym child;
 	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 	  else { child = new IndexedSingletonSym(min, max, aseq); }
@@ -208,7 +210,7 @@ public class ScoredIntervalParser {
 	  strand = fields[4];
 
 	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	  if (aseq == null) { makeNewSeq(seqid, seqhash); }
+	  if (aseq == null) { aseq = makeNewSeq(seqid, seqhash); }
 	  IndexedSingletonSym child;
 	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 	  else { child = new IndexedSingletonSym(min, max, aseq); }
@@ -306,9 +308,9 @@ public class ScoredIntervalParser {
 	BioSeq aseq = (BioSeq)ent.getKey();
 	//	java.util.List entry_list = (java.util.List)entrylists.next();
 	java.util.List entry_list = (java.util.List)ent.getValue();
-
+        
 	//	System.out.println("hmm, seq = " + aseq.getID() + ", entry count = " + entry_list.size());
-	Collections.sort(entry_list, comp);
+	Collections.sort(entry_list, comp);        
       }
 
       System.out.println("number of scores per line: " + score_count);
@@ -344,7 +346,7 @@ public class ScoredIntervalParser {
 	  }
 	  container.addScores(score_name, score_column);
 	}
-	
+	        
 	// if not sin3, then add container as annotation to seq
 	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
 	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
@@ -449,7 +451,7 @@ public class ScoredIntervalParser {
     System.out.println("done testing ScoredMapParser");
   }
 
-  /** for sorting of sin lines */
+  /** For sorting of sin lines. */
   class SinEntry {
     SeqSymmetry sym;
     float[] scores;
@@ -459,7 +461,7 @@ public class ScoredIntervalParser {
     }
   }
 
-  /** for sorting of sin lines */
+  /** For sorting of sin lines. */
   class SinEntryComparator implements Comparator  {
     public int compare(Object objA, Object objB) {
       SeqSpan symA = ((SinEntry)objA).sym.getSpan(0);

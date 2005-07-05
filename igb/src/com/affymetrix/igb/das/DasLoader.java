@@ -31,7 +31,7 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 
 import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.DasFeat2GenometrySaxParser;
+import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
 import com.affymetrix.igb.parsers.PSLParser;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;

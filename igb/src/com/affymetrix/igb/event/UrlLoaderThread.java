@@ -26,7 +26,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.DasFeat2GenometrySaxParser;
+import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
 import com.affymetrix.igb.parsers.PSLParser;
 
 public class UrlLoaderThread extends Thread {
@@ -308,7 +308,7 @@ public class UrlLoaderThread extends Thread {
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
-      DasFeat2GenometrySaxParser das_parser = new DasFeat2GenometrySaxParser();
+      Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
       new_seq = das_parser.parse(result_stream, current_seq);
     } catch (org.xml.sax.SAXException se) {
       throw new IOException("\n" + se.toString());

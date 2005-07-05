@@ -24,6 +24,7 @@ import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.Versioned;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.parsers.SgrParser;
@@ -34,17 +35,8 @@ public class GraphSymUtils {
   static Comparator pointcomp = new Point2DComparator(true, true);
   static boolean DEBUG_READ = false;
   static boolean DEBUG_DATA = false;
-  /* proposed field types are:
-     0 = double
-     1 = float
-     2 = 4-byte signed int
-     3 = 2-byte signed int
-     4 = 1-byte signed int
-     5 = 4-byte unsigned int
-     6 = 2-byte unsigned int
-     7 = 1-byte unsigned int
-  */
 
+  /** 8-byte floating-point.  Names of the other data-type constants can be interpreted similarly. */
   public static int BYTE8_FLOAT = 0;
   public static int BYTE4_FLOAT = 1;
   public static int BYTE4_SIGNED_INT = 2;
@@ -59,54 +51,112 @@ public class GraphSymUtils {
     "BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
     "BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
 
-  /**
-   *  Reads a graph.
-   *  ReadGraphs will accept .bar, .mbar, or .bgr input.
+
+  /** Detects whether the given filename ends with a recognized ending for
+   *  a graph filetype. Compression endings like gz and zip are removed
+   *  before testing the name.
    */
-  public static java.util.List readGraphs(InputStream istr, String stream_name, Map seqs) throws IOException  {
+  public static boolean isAGraphFilename(String name) {
+    String lc = Streamer.stripEndings(name).toLowerCase();
+    return (
+      lc.endsWith(".gr") ||
+      lc.endsWith(".bgr") ||
+      lc.endsWith(".bar") ||
+      lc.endsWith(".mbar") ||
+      lc.endsWith(".sbar") ||
+      lc.endsWith(".sgr")
+      );
+  }
+
+  /**
+   *  Reads one or more graphs from an input stream.
+   *  Equivalent to a call to the other readGraphs() method using seq = null.
+   */
+  public static List readGraphs(InputStream istr, String stream_name, Map seqs) throws IOException  {
+    return readGraphs(istr, stream_name, seqs, (MutableAnnotatedBioSeq) null);
+  }
+
+  /**
+   *  Reads one or more graphs from an input stream.
+   *  Some graph file formats can contain only one graph, others contain
+   *  more than one.  For consistency, always returns a List (possibly empty).
+   *  Will accept "bar", "mbar", "bgr", "gr", "sbar", or "sgr".
+   *  Loaded graphs will be attached to their respective BioSeq's, if they
+   *  are instances of MutableAnnotatedBioSeq.
+   *  @param seq  Ignored in most cases.  But for "gr" and "sbar" files that
+   *   do not specify a BioSeq, use this parameter to specify it.  If null
+   *   then SingletonGenometryModel.getSelectedSeq() will be used.
+   */
+  public static List readGraphs(InputStream istr, String stream_name, Map seqs, BioSeq seq) throws IOException  {
     List grafs = null;
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
-    String sname = stripped_name.toString();
+    String sname = stripped_name.toString().toLowerCase();
+
+    if (seq == null) {
+      seq = SingletonGenometryModel.getGenometryModel().getSelectedSeq();
+    }
+
     if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
       grafs = readMbarFormat(newstr, seqs, stream_name);
     }
-    else if (sname.endsWith(".bgr")) {
-      GraphSym gsym = readBgrFormat(newstr, seqs);
-      if (gsym != null) {
-        grafs = new ArrayList();
-        grafs.add(gsym);
+    else if (sname.endsWith(".gr")) {
+      if (seq == null) {
+        throw new IOException("Must select a sequence before loading a graph of type 'gr'");
       }
+      grafs = wrapInList(readGrFormat(newstr, seq, stream_name));
+    }
+    else if (sname.endsWith(".sbar")) {
+      if (seq == null) {
+        throw new IOException("Must select a sequence before loading a graph of type 'sbar'");
+      }
+      grafs = wrapInList(readSbarFormat(newstr, seq));
+    }
+    else if (sname.endsWith(".bgr")) {
+      grafs = wrapInList(readBgrFormat(newstr, seqs));
     }
     else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();
-      grafs = sgr_parser.parse(istr, seqs, false, stream_name);
+      grafs = sgr_parser.parse(newstr, seqs, false, stream_name);
+    } else {
+      throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
     }
-    //    if ((grafs != null) && Unibrow.ANNOTATE_GRAPHS) {
-    if (grafs != null)  {
-      for (int i=0; i<grafs.size(); i++) {
-        GraphSym gsym = (GraphSym)grafs.get(i);
-        BioSeq gseq = gsym.getGraphSeq();
-        if (gseq instanceof MutableAnnotatedBioSeq) {
-          ((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
-        }
-      }
+
+    processGraphSyms(grafs, stream_name, stream_name);
+
+    if (grafs == null) {
+      grafs = Collections.EMPTY_LIST;
     }
-    //    newstr.close();
-    //    istr.close();
     return grafs;
   }
 
-  public static GraphSym readGraph(InputStream istr, String stream_name, BioSeq seq)
-    throws IOException {
-    return readGraph(istr, stream_name, null, seq);
+  /** This is a wrapper around readGraphs() for the case where you expect to
+   *  have a single GraphSym returned.  This will return only the first graph
+   *  from the list returned by readGraphs(), or null.
+   */
+  public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
+    //TODO: Maybe this should throw an exception if the file contains more than one graph?
+    Map seqs = new HashMap();
+    if (seq != null) {
+      seqs.put(seq.getID(), seq);
+    }
+    List grafs = readGraphs(istr, stream_name, seqs, seq);
+    GraphSym graf = null;
+    if (grafs.size() > 0) {
+      graf = (GraphSym) grafs.get(0);
+      if (graph_name != null) {
+        graf.setGraphName(graph_name);
+      }
+    }
+    return graf;
   }
 
+  /*
   public static GraphSym readGraph(InputStream istr, String original_stream_name, String graph_name, BioSeq seq)
       throws IOException  {
     // resolve which format based on suffix in "name" of InputStream
     //  (which usually means the file name or URL)
-    //  ".bgr" or ".bpr" ==> readBgrFormat()
+    //  ".bgr" ==> readBgrFormat()
     //  ".gr" ==> readGrFormat()
     //  ".bar" ==> readBarFormat()
     GraphSym graf = null;
@@ -115,14 +165,15 @@ public class GraphSymUtils {
     //    istr = Streamer.unzipStream(orig_str, stream_name, stripped_name);
     istr = Streamer.unzipStream(orig_str, original_stream_name, stripped_name);
     String stream_name = stripped_name.toString();
+    String stream_name_lc = stream_name.toLowerCase();
     if (graph_name == null) { graph_name = stream_name; }
 
-    if (stream_name.endsWith(".bgr") || stream_name.endsWith(".bpr")) {
+    if (stream_name_lc.endsWith(".bgr")) {
       graf = readBgrFormat(istr, seq);
     }
-    else if (stream_name.endsWith(".gr")) { graf = readGrFormat(istr, seq, stream_name); }
-    else if (stream_name.endsWith(".sbar")) { graf = readSbarFormat(istr, seq); }
-    else if (stream_name.endsWith(".bar") || stream_name.endsWith(".mbar")) {
+    else if (stream_name_lc.endsWith(".gr")) { graf = readGrFormat(istr, seq, stream_name); }
+    else if (stream_name_lc.endsWith(".sbar")) { graf = readSbarFormat(istr, seq); }
+    else if (stream_name_lc.endsWith(".bar") || stream_name_lc.endsWith(".mbar")) {
       Map seqs = new HashMap();
       if (seq != null) {
         seqs.put(seq.getID(), seq);
@@ -140,7 +191,6 @@ public class GraphSymUtils {
     }
     if (graf != null)  {
       graf.setProperty("source_url", original_stream_name);
-      graf.setProperty("graph_name", graph_name);
       graf.setGraphName(graph_name);
     }
     if ((graf.getGraphName() != null) && (graf.getGraphName().indexOf("TransFrag") >= 0)) {
@@ -151,14 +201,41 @@ public class GraphSymUtils {
     }
     return graf;
   }
+  */
 
-  static void addGraphsToSeqs(List grafs) {
+  static List wrapInList(GraphSym gsym) {
+    List grafs = null;
+    if (gsym != null) {
+      grafs = new ArrayList();
+      grafs.add(gsym);
+    }
+    return grafs;
+  }
+
+  /*
+   *  Does some post-load processing of Graph Syms.
+   *  For each GraphSym in the list,
+   *  Adds it as an annotation of the BioSeq it refers to.
+   *  Sets the "source_url" to the given stream name.
+   *  Calls setGraphName() with the given name;
+   *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
+   *  @param grafs  a List, empty or null is OK.
+   */
+  static void processGraphSyms(List grafs, String original_stream_name, String graph_name) {
     if (grafs != null)  {
       for (int i=0; i<grafs.size(); i++) {
         GraphSym gsym = (GraphSym)grafs.get(i);
         BioSeq gseq = gsym.getGraphSeq();
         if (gseq instanceof MutableAnnotatedBioSeq) {
           ((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
+        }
+
+        if (gsym != null)  {
+          gsym.setProperty("source_url", original_stream_name);
+          gsym.setGraphName(graph_name);
+        }
+        if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
+          gsym = GraphSymUtils.convertTransFragGraph(gsym);
         }
       }
     }
@@ -328,10 +405,9 @@ public class GraphSymUtils {
 
       while (iter.hasNext()) {
 	// testing both seq id and version id (if version id is available)
-
-        MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq)iter.next();
+        MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
         if (lookup.isSynonym(testseq.getID(), seqname)) {
-	  // GAH 1-23-2005 
+	  // GAH 1-23-2005
 	  // need to ensure that if bar2 format, the seq group is also a synonym!
 	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned)) ||
 	      (lookup.isSynonym(((Versioned)testseq).getVersion(), seqversion)) ) {
@@ -370,7 +446,6 @@ public class GraphSymUtils {
           GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);
-          graf.setProperty("graph_name", graph_name);
 	  copyProps(graf, seq_tagvals);
 	  //	  graf.setProperty("method", graph_name);
           //          System.out.println("done reading graph data: " + graf);
@@ -381,7 +456,7 @@ public class GraphSymUtils {
         }
       }
       else if (vals_per_point == 3) {
-        System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
+        // System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
         if (val_types[0] == BYTE4_SIGNED_INT &&
             val_types[1] == BYTE4_FLOAT &&
             val_types[2] == BYTE4_FLOAT) {
@@ -414,8 +489,10 @@ public class GraphSymUtils {
 	  //          pm_graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(pm_graf, file_tagvals);
 	  copyProps(mm_graf, file_tagvals);
-          pm_graf.setProperty("graph_name", pm_name);
-          mm_graf.setProperty("graph_name", mm_name);
+          pm_graf.setGraphName(pm_name);
+          mm_graf.setGraphName(mm_name);
+          //pm_graf.setProperty("graph_name", pm_name);
+          //mm_graf.setProperty("graph_name", mm_name);
 	  copyProps(pm_graf, seq_tagvals);
 	  copyProps(mm_graf, seq_tagvals);
           System.out.println("done reading graph data: ");
@@ -876,9 +953,37 @@ public class GraphSymUtils {
     return tvpairs;
   }
 
+  /**
+   *  Calculate percentile rankings of graph values.
+   *  In the resulting array, the value of scores[i] represents
+   *  the value at percentile (100 * i)/(scores.length - 1).
+   */
+  public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
+    float abs_max_percent = 100.0f;
+    float percents_per_bin = 1.0f / bins_per_percent;
 
+    int num_scores = scores.length;
+    float[] ordered_scores = new float[num_scores];
+    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
+    Arrays.sort(ordered_scores);
 
-  public static void main(String[] args) {
+    int num_percents = (int)(abs_max_percent * bins_per_percent + 1);
+    float[] percent2score = new float[num_percents];
+
+    float scores_per_percent = ordered_scores.length / 100.0f;
+    for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_bin) {
+      int score_index = (int)(percent * scores_per_percent);
+      if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
+      //      System.out.println("percent: " + percent + ", score_index: " + score_index
+      //			 + ", percent_index: " + (percent * bins_per_percent));
+      percent2score[(int)Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
+    }
+    // just making sure max 100% is really 100%...
+    percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
+    return percent2score;
+  }
+
+  public static void main2(String[] args) {
     try {
       String infile = args[0];
       String outfile = args[1];

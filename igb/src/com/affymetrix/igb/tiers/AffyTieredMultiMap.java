@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -30,17 +30,18 @@ import com.affymetrix.genoviz.awt.AdjustableJSlider;
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
 public class AffyTieredMultiMap extends AffyLabelledTierMap {
-  
+
   /* The extra map is where the rotated view appears on the right. */
   AffyTieredMap extramap;
+  AffyTieredMap northEastMap;
+  AffyTieredMap northMap;
+  AffyTieredMap northWestMap = null;
+
   JPanel nwpan, nepan, wpan, cpan, epan;
   java.util.List extra_glyphs = new ArrayList();
   double extramap_inset = 5;
-  
+
   private SixWaySplitPane windowPane;
-  private AffyTieredMap northEastMap;
-  AffyTieredMap northMap;
-  AffyTieredMap northWestMap = null;
   class Shim extends JComponent implements Cloneable {
     private Dimension prefSize = new Dimension( 16, 16 ); // Same as NeoScrollbar.
     private Dimension minSize = new Dimension( 1, 1 );
@@ -170,6 +171,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
       this.extramap.setScroller( X, mp.getPanner( X ) );
+      this.extramap.setZoomer(X, mp.getZoomer(X));
       this.northEastMap.setScroller( X, mp.getPanner( X ) );
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }
@@ -216,7 +218,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
       throw new IllegalArgumentException( "Only support X with EAST and Y with NORTH." );
     }
   }
-  
+
   /**
    * add a zoomer component to a section
    * The axis is inferred from the orientation of the zoomer.
@@ -241,15 +243,11 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
    * and so label manipulations in packTiers() ends up bringing them back?
    */
     super.clearWidget();
-    if ( null != this.northMap ) {
-      this.northMap.clearWidget();
-    }
-    if ( null != this.northEastMap ) {
-      this.northEastMap.clearWidget();
-    }
-    if ( null != this.extramap ) {
-      this.extramap.clearWidget();
-    }
+    if (extramap != null) { extramap.clearWidget(); }
+    if (northMap != null) { northMap.clearWidget(); }
+    if (northEastMap != null) { northEastMap.clearWidget(); }
+    if (northWestMap != null)  { northWestMap.clearWidget(); }
+    if (labelmap != null)  { labelmap.clearWidget(); } // or is this handled in the superclass?
     extra_glyphs = new ArrayList();
   }
 
@@ -463,7 +461,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public AxisGlyph addAxis( int theOffset ) {
     return this.northMap.addAxis( 100 );
   }
-  
+
   public void setMapRange( int theStart, int theEnd ) {
     super.setMapRange( theStart, theEnd );
     if ( null != this.northMap ) {
@@ -485,7 +483,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
   private VerticalTierComparator extraMapSorter = new VerticalTierComparator();
 
-  
+
   /**
    *  main for testing AffyTieredMultiMap
    */
@@ -521,7 +519,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     map.addScroller( HORIZONTAL, EAST );
     //map.addScroller( VERTICAL, NORTH );
-    
+
     map.repack();
 
     JFrame frm = new JFrame("AffyTieredMultiMap.main() test");

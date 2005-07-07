@@ -356,6 +356,7 @@ public class GraphSymUtils {
       byte[] barray = new byte[namelength];
       dis.readFully(barray);
       String seqname = new String(barray);
+      if (DEBUG_READ)  { System.out.println("seq: " + seqname); }
 
       String groupname = null;
       if (bar2) {
@@ -363,11 +364,14 @@ public class GraphSymUtils {
 	barray = new byte[grouplength];
 	dis.readFully(barray);
 	groupname = new String(barray);
+	if (DEBUG_READ)  { System.out.println("group length: " + grouplength + ", group: " + groupname); }
       }
 
       int verslength = dis.readInt();
       barray = new byte[verslength];
+      dis.readFully(barray);
       String seqversion = new String(barray);
+      if (DEBUG_READ) { System.out.println("version length: " + verslength + ", version: " + seqversion); }
 
       // hack to extract seq version and seq name from seqname field for bar files that were made
       //   with the version and name concatenated (with ";" separator) into the seqname field
@@ -375,12 +379,13 @@ public class GraphSymUtils {
       if (sc_pos >= 0) {
         seqversion = seqname.substring(0, sc_pos);
 	seqname = seqname.substring(sc_pos+1);
-	//	System.out.println("seqname = " + seqname + ", seqversion = " + seqversion);
+	if (DEBUG_READ)  { System.out.println("seqname = " + seqname + ", seqversion = " + seqversion); }
       }
 
       HashMap seq_tagvals = null;
       if (bar2) {
 	int tagval_count = dis.readInt();
+	if (DEBUG_READ)  { System.out.println("tagval count: " + tagval_count); }
 	if (tagval_count > 0) { seq_tagvals = new HashMap(); }
 	for (int m=0; m<tagval_count; m++) {
 	  int tlength = dis.readInt();
@@ -409,14 +414,31 @@ public class GraphSymUtils {
         if (lookup.isSynonym(testseq.getID(), seqname)) {
 	  // GAH 1-23-2005
 	  // need to ensure that if bar2 format, the seq group is also a synonym!
-	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned)) ||
-	      (lookup.isSynonym(((Versioned)testseq).getVersion(), seqversion)) ) {
+	  // GAH 7-7-2005
+	  //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
+	  //      groupname
+	  //      seqversion
+	  //      groupname + ":" + seqversion
+	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned))) {
 	    seq = testseq;
 	    break;
+	  }
+	  else {  
+	    String test_version = ((Versioned)testseq).getVersion();
+	    if ((lookup.isSynonym(test_version, seqversion)) || 
+		(lookup.isSynonym(test_version, groupname)) || 
+		(lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
+	      if (DEBUG_READ) { System.out.println("found synonymn"); }
+	      seq = testseq;
+	      break;
+	    }
 	  }
         }
       }
       if (seq == null) {
+	if (bar2 && groupname != null) {
+	  seqversion = groupname + ":" + seqversion;
+	}
         System.out.println("seq not found, creating new seq:  name = " + seqname +
 			   ", version = " + seqversion);
         seq = new NibbleBioSeq(seqname, seqversion, 500000000);
@@ -461,7 +483,7 @@ public class GraphSymUtils {
             val_types[1] == BYTE4_FLOAT &&
             val_types[2] == BYTE4_FLOAT) {
           if (graphs == null) { graphs = new ArrayList(); }
-          System.out.println("reading graph data: " + k);
+          if (DEBUG_READ)  { System.out.println("reading graph data: " + k); }
           int xcoords[] = new int[total_points];
           float ycoords[] = new float[total_points];
           float zcoords[] = new float[total_points];

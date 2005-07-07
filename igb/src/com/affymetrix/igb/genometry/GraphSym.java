@@ -36,6 +36,11 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
    */
   public static final String PROP_INITIAL_GRAPH_STYLE = "Initial Graph Style";
 
+  /** Property name that can be used to set/get the strand this graph corresponds to.
+   *  The property value should be a Character, equal to '+', '-' or '.'.
+   */
+  public static final String PROP_GRAPH_STRAND = "Graph Strand";
+
   public Object clone() throws CloneNotSupportedException {
     GraphSym newsym = (GraphSym)super.clone();
     newsym.setGraphName(this.getGraphName() + ":clone");

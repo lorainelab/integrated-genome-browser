@@ -15,6 +15,7 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 
@@ -95,6 +96,12 @@ public class ScoredContainerSym extends SimpleSymWithProps {
    *     first  with x = min of child's span, y = score at child's index in "name" float array
    *     second with x = max of child's span, y = 0
    *</pre>
+   *
+   *  The returned GraphSym will have some properties set by default:
+   *  <ol>
+   *  <li>GraphSym.PROP_INITIAL_GRAPH_STYLE will be Integer(GraphGlyph.STAIRSTEP_GRAPH)
+   *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Character.
+   *  </ol>
    * @return a GraphSym or null if there was an error condition
    */
   public GraphSym makeGraphSym(String name)  {
@@ -126,13 +133,15 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       ycoords[(i*2)+1] = 0;
     }
     GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
+    gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+    gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character('.'));
     return gsym;
   }
 
   /**
-   *  make a GraphSym, but only with scores for scored intervals in the specified orientation
-   *    if (orientation == true), then forward strand intervals
-   *    if (orientation == false), then reverse strand intervals
+   *  Make a GraphSym, but only with scores for scored intervals in the specified orientation.
+   *  @param orientation  true for forward strand intervals.
+   *  @see makeGraphSym(String)
    */
   public GraphSym makeGraphSym(String name, boolean orientation)  {
     float[] scores = getScores(name);
@@ -147,8 +156,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     BioSeq aseq = pspan.getBioSeq();
     int score_count = scores.length;
-    //    int[] xcoords = new int[2 * score_count];
-    //    float[] ycoords = new float[2 * score_count];
+
     IntList xlist = new IntList(score_count);
     FloatList ylist = new FloatList(score_count);
     int correct_strand_count = 0;
@@ -165,12 +173,6 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	xlist.add(cspan.getMax());
 	ylist.add(scores[i]);
 	ylist.add(0);
-	/*
-	xcoords[i*2] = cspan.getMin();
-	ycoords[i*2] = scores[i];
-	xcoords[(i*2)+1] = cspan.getMax();
-	ycoords[(i*2)+1] = 0;
-	*/
 	correct_strand_count++;
       }
     }
@@ -182,6 +184,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     else {
       String name_with_strand = name + (orientation ? " (+)" : " (-)" );
       GraphSym gsym = new GraphSym(xcoords, ycoords, name_with_strand, aseq);
+      gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+      gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character(orientation ? '+' : '-'));
       return gsym;
     }
   }

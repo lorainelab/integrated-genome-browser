@@ -338,10 +338,7 @@ public class GraphSymUtils {
     int[] val_types = new int[vals_per_point];
     for (int i=0; i<vals_per_point; i++) {
       val_types[i] = dis.readInt();
-      if (DEBUG_READ)  {
-        System.out.println("val type for column " + i + ": " +
-                           valstrings[val_types[i]]);
-      }
+      if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
     }
     int tvcount = dis.readInt();
     if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
@@ -439,8 +436,7 @@ public class GraphSymUtils {
 	if (bar2 && groupname != null) {
 	  seqversion = groupname + ":" + seqversion;
 	}
-        System.out.println("seq not found, creating new seq:  name = " + seqname +
-			   ", version = " + seqversion);
+        System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
         seq = new NibbleBioSeq(seqname, seqversion, 500000000);
       }
       //      System.out.println("seq: " + seq);
@@ -454,14 +450,21 @@ public class GraphSymUtils {
           //          System.out.println("reading graph data: " + k);
           int xcoords[] = new int[total_points];
           float ycoords[] = new float[total_points];
+	  float prev_max_xcoord = -1;
+	  boolean sort_reported = false;
           for (int i= 0; i<total_points; i++) {
             //            xcoords[i] = (double)dis.readInt();
             //            ycoords[i] = (double)dis.readFloat();
             int col0 = dis.readInt();
             float col1 = dis.readFloat();
+	    if (col0 < prev_max_xcoord && (! sort_reported)) {
+	      if (DEBUG_READ) { System.out.println("WARNING!! not sorted by ascending xcoord"); }
+	      sort_reported = true;
+	    }
+	    prev_max_xcoord = col0;
             xcoords[i] = col0;
-            ycoords[i] = (float)col1;
-            if (DEBUG_DATA && i < 100) {
+            ycoords[i] = col1;
+            if ((DEBUG_DATA) && (i<100)) {
               System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
             }
           }
@@ -497,9 +500,7 @@ public class GraphSymUtils {
             ycoords[i] = col1;
             zcoords[i] = col2;
             if (DEBUG_DATA && i < 100) {
-              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 +
-                                 "\t" + col2);
-            }
+              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2); }
           }
           String pm_name = graph_name + " : pm";
           String mm_name = graph_name + " : mm";
@@ -520,6 +521,8 @@ public class GraphSymUtils {
           System.out.println("done reading graph data: ");
           System.out.println("pmgraf, yval = column1: " + pm_graf);
           System.out.println("mmgraf, yval = column2: " + mm_graf);
+	  pm_graf.setProperty("probetype", "PM (perfect match)");
+	  mm_graf.setProperty("probetype", "MM (mismatch)");
           graphs.add(pm_graf);
           graphs.add(mm_graf);
         }

@@ -351,7 +351,7 @@ public class ScoredIntervalParser {
 	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
 	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
 	//	if (! all_sin3) {
-	aseq.addAnnotation(container);
+  	aseq.addAnnotation(container);
 	//	}
 	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
 	if (attach_graphs) {
@@ -388,7 +388,7 @@ public class ScoredIntervalParser {
 
 
   /**
-   *  make a GraphSym for each scores column, and add as an annotation to aseq
+   *  Make a GraphSym for each scores column, and add as an annotation to aseq.
    */
   protected void attachGraphs(ScoredContainerSym container) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
@@ -399,27 +399,19 @@ public class ScoredIntervalParser {
 	GraphSym forward_gsym = container.makeGraphSym(score_name, true);
 	GraphSym reverse_gsym = container.makeGraphSym(score_name, false);
 	if (forward_gsym != null) {
-	  // Give a hint for display.
-	  // See GenericGraphGlyphFactory.setStateFromProps()
-	  forward_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
 	  aseq.addAnnotation(forward_gsym);
 	}
 	if (reverse_gsym != null) {
-	  // Give a hint for display.
-	  // See GenericGraphGlyphFactory.setStateFromProps()
-	  reverse_gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
 	  aseq.addAnnotation(reverse_gsym);
 	}
       }
       else {
 	GraphSym gsym = container.makeGraphSym(score_name);
 	if (gsym != null) {
-	  gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
 	  aseq.addAnnotation(gsym);
 	}
       }
     }
-    System.out.println("finished attaching graphs");
   }
 
 
@@ -430,7 +422,13 @@ public class ScoredIntervalParser {
       String id = (String)index2id.get(index);
       if (id == null) {
         if (stream_name == null) {  id = "score" + i;  }
-        else { id = stream_name + ": score" + i; }
+        else {
+          if (score_count > 1) {
+            id = stream_name + ": score" + i; 
+          } else {
+            id = stream_name; 
+          }
+        }
       }
       names.add(id);
     }

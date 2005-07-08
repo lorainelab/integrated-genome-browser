@@ -18,6 +18,9 @@ package com.affymetrix.igb;
  *  Some global constants.
  */
 public abstract class IGBConstants {
-  public static final String APP_NAME = "Integrated Genome Browser";
-  public static final String IGB_VERSION = "3.56";
+  // These variables would make sense as final variables, but then we have
+  // to re-compile all the referring classes everytime we re-compile this class.
+  
+  public static String APP_NAME = "Integrated Genome Browser";
+  public static String IGB_VERSION = "3.56";
 }

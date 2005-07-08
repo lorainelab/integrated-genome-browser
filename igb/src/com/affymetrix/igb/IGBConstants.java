@@ -20,7 +20,7 @@ package com.affymetrix.igb;
 public abstract class IGBConstants {
   // These variables would make sense as final variables, but then we have
   // to re-compile all the referring classes everytime we re-compile this class.
-  
+
   public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.56";
+  public static String IGB_VERSION = "3.58";
 }

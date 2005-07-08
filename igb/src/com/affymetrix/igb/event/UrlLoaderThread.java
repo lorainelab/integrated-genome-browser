@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -70,7 +70,7 @@ public class UrlLoaderThread extends Thread {
     ThreadProgressMonitor monitor = null;
     MutableAnnotatedBioSeq seq = null;
     try {
-      // should really move to using gmodel's currently selected  _group_ of sequences rather than 
+      // should really move to using gmodel's currently selected  _group_ of sequences rather than
       //    a single sequence...
       seq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
       if (seq == null) {
@@ -134,13 +134,13 @@ public class UrlLoaderThread extends Thread {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (e instanceof UnknownHostException) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host",
             "Unknown host: "+e.getMessage(), null);
         } else if (e instanceof FileNotFoundException) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "File not found", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "File not found",
             "File missing or not readable:\n "+e.getMessage(), null);
         } else {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             "Exception in UrlLoaderThread", e);
         }
       }
@@ -234,7 +234,7 @@ public class UrlLoaderThread extends Thread {
     if (content_length == 0) { // Note: length == -1 means "length unknown"
       throw new IOException("URL returned no data.");
     }
-    
+
     if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
     if (content_type == null || content_type.startsWith("content/unknown") || content_type.startsWith("application/zip")
       || content_type.startsWith("application/octet-stream"))
@@ -252,11 +252,14 @@ public class UrlLoaderThread extends Thread {
     }
     else if (content_type.startsWith("binary/bps")) {
       result_seq = parseBinaryBps(feat_request_con, current_seq, type);
-    } else if (content_type.startsWith("text/plain") || content_type.startsWith("text/html")) {
+    } else if (content_type.startsWith("text/plain") ||
+               content_type.startsWith("text/html") ||
+               content_type.startsWith("text/xml")
+        ) {
       // Note that some http servers will return "text/html" even when that is untrue.
       // we could try testing whether the filename extension is a recognized extension, like ".psl"
       // and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-      
+
       result_seq = parseDasGff(feat_request_con, current_seq);
     } else if (content_type.startsWith("text/psl")) {
       result_seq = parsePSL(gviewer, feat_request_con, current_seq, type);
@@ -348,5 +351,5 @@ public class UrlLoaderThread extends Thread {
     }
     return current_seq;
   }
-  
+
 }

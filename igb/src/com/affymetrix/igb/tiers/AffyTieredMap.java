@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,6 +21,9 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.Timer;
+
+import com.affymetrix.genometry.*;
+
 
 import java.util.*;
 
@@ -451,6 +454,18 @@ public class AffyTieredMap extends NeoMap {
     ComponentPagePrinter cpp = new ComponentPagePrinter(this);
     cpp.print();
     cpp = null; // for garbage collection
+  }
+
+  /** Sets the data model to the given SeqSymmetry, unless it is a 
+   *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used. 
+   */
+  public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
+    if (sym instanceof DerivedSeqSymmetry)  {
+      super.setDataModel(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
+    }
+    else {
+      super.setDataModel(g, sym);
+    }
   }
 
     // if fixed tiers, then pack first

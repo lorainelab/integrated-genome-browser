@@ -23,7 +23,7 @@ import java.util.*;
  *  Started with ExcelAdapter code at 
  *
  *     http://www.javaworld.com/javaworld/javatips/jw-javatip77.html
- *     Copyright © 2003 JavaWorld.com, an IDG company 
+ *     Copyright (c) 2003 JavaWorld.com, an IDG company 
  *
  *  From documentation of ExcelAdapter:
  *     ExcelAdapter enables Copy-Paste Clipboard functionality on JTables.

@@ -419,7 +419,7 @@ public class GraphSelectionManager
 	if (current_graph instanceof SmartGraphGlyph) {
 	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
 	  sgg.setShowThreshold(true);
-	  sgg.setScoreThreshold(val);
+	  sgg.setMinScoreThreshold(val);
 	}
       }
       current_source.updateWidget();
@@ -680,7 +680,7 @@ public class GraphSelectionManager
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
     //    String meth = "graph pickle " + pickle_count;
     String meth =
-      "threshold, s:" + nformat.format(sgg.getScoreThreshold()) +
+      "threshold, s:" + nformat.format(sgg.getMinScoreThreshold()) +
       ", d:" + (int)sgg.getMaxGapThreshold();
     pickle_count++;
     psym.setProperty("method", meth);
@@ -938,7 +938,7 @@ public class GraphSelectionManager
 	SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
 	Rectangle2D tbox = threshgl.getCoordBox();
 	float new_threshold = graphgl.getGraphValue(view, tbox.y);
-	graphgl.setScoreThreshold(new_threshold);
+	graphgl.setMinScoreThreshold(new_threshold);
       }
     }
     else if (id == evt.DRAG_ENDED) {

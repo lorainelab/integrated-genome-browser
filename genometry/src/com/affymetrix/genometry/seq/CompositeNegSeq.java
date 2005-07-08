@@ -86,7 +86,6 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     String res = new String(char_array);
     return res;
   }
-
   
 
 }

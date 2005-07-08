@@ -33,7 +33,6 @@ import com.affymetrix.igb.parsers.AnnotationWriter;
  *  Just like refFlat table format, except no geneName field (just name field).
  */
 public class BgnParser implements AnnotationWriter  {
-  boolean use_lift_file = false;
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
 
@@ -49,10 +48,6 @@ public class BgnParser implements AnnotationWriter  {
   // mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
   //   that all random, etc. bits are at bottom
 
-  static String chrom_file = user_dir + "/moredata/Drosophila_Jan_2003/mod_chromInfo.txt";
-  static String lift_file = user_dir + "/moredata/Drosophila_Jan_2003/liftAll.lft";
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
 
   // .bin1:
   //         name UTF8
@@ -72,18 +67,13 @@ public class BgnParser implements AnnotationWriter  {
 
   ArrayList chromosomes = new ArrayList();
 
-  public List parse(String file_name, String annot_type, Map seq_hash) {
+  public List parse(String file_name, String annot_type, Map seq_hash) throws IOException {
     System.out.println("loading file: " + file_name);
-    List result = null;
-    try {
-      File fil = new File(file_name);
-      long blength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_hash, blength);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    File fil = new File(file_name);
+    long blength = fil.length();
+    FileInputStream fis = new FileInputStream(fil);
+    List result = parse(fis, annot_type, seq_hash, blength);
+    fis.close();
     return result;
   }
 
@@ -91,7 +81,7 @@ public class BgnParser implements AnnotationWriter  {
    *  @param blength  Byte Buffer Length.
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
-  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) {
+  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) throws IOException {
     return parse(istr, annot_type, seq_hash, null, blength);
   }
 
@@ -100,7 +90,7 @@ public class BgnParser implements AnnotationWriter  {
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
   public List parse(InputStream istr, String annot_type,
-			    Map seq_hash, Map id2sym_hash, long blength) {
+			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
     Timer tim = new Timer();
     tim.start();
 
@@ -154,10 +144,6 @@ public class BgnParser implements AnnotationWriter  {
 	  //
 	  String name = dis.readUTF();
 	  String chrom_name = dis.readUTF();
-	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
-	  if (chromseq == null) {
-	    System.out.println("chromseq is null!!! chrom_name = " + chrom_name);
-	  }
 	  String strand = dis.readUTF();
 	  boolean forward = (strand.equals("+") || (strand.equals("++")));
 	  int tmin = dis.readInt();
@@ -175,6 +161,14 @@ public class BgnParser implements AnnotationWriter  {
 	  for (int i=0; i<ecount; i++) {
 	    emaxs[i] = dis.readInt();
 	  }
+	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
+          if (chromseq == null) {
+            // A null chromseq would cause a Null Pointer Exception below, so let's
+            // throw an IOException which will be easier to deal with.
+            throw new IOException("File refers to unknown sequence '"+ chrom_name +"'");
+
+            //TODO: It might be nice to let this parser add new sequences to the AnnotatedSeqGroup
+          }
 	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
 	  if (parent_sym == null) {
 	    parent_sym = new SimpleSymWithProps();
@@ -205,9 +199,18 @@ public class BgnParser implements AnnotationWriter  {
     catch (EOFException ex) {
       // System.out.println("end of file reached, file successfully loaded");
     }
-    catch (IOException ex) {
-      ex.printStackTrace();
-      System.err.println("problem with loading file");
+    catch (IOException ioe) {
+      throw ioe;
+    }
+    catch (Exception ex) {
+      String message = "Problem processing BGN file";
+      String m1 = ex.getMessage();
+      if (m1 != null && m1.length() > 0) {
+        message += ": "+m1;
+      }
+      IOException ioe = new IOException(message);
+      ioe.initCause(ex);
+      throw ioe;
     }
 
     for (int i=0; i<annots.size(); i++) {
@@ -263,8 +266,9 @@ public class BgnParser implements AnnotationWriter  {
     }
   }
 
-  public void readTextTest(String file_name, Map seq_hash) {
-    System.out.println("loading file: " + file_name);
+  //  public void readTextTest(String file_name, Map seq_hash) {
+  public void convertTextToBinary(String text_file, String bin_file, Map seq_hash) {
+    System.out.println("loading file: " + text_file);
     int count = 0;
     long flength = 0;
     //    int bread = 0;
@@ -278,7 +282,7 @@ public class BgnParser implements AnnotationWriter  {
     Timer tim = new Timer();
     tim.start();
     try {
-      File fil = new File(file_name);
+      File fil = new File(text_file);
       flength = fil.length();
       FileInputStream fis = new FileInputStream(fil);
       BufferedInputStream bis = new BufferedInputStream(fis);
@@ -382,13 +386,24 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("spliced transcripts > 65000: " + big_spliced);
   }
 
+
+  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
+  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
+
   /** For testing. */
   public static void main(String[] args) {
-    if (args.length == 1) {
+    String text_file = null;
+    String bin_file = null;
+    if (args.length == 2) {
       text_file = args[0];
+      bin_file = args[1];
+    } else {
+      System.out.println("Usage:  java ... BgnParser <text infile> <binary outfile>");
+      System.exit(1);
     }
     BgnParser test = new BgnParser();
-    test.readTextTest(text_file, null);
+    //    test.readTextTest(text_file, null);
+    test.convertTextToBinary(text_file, bin_file, null);
   }
 
 

@@ -97,7 +97,7 @@ public class SgrParser {
       int prevx = Integer.MIN_VALUE;
       for (int i=0; i<xcount; i++) {
 	int x = xlist.get(i);
-	if (x < prevx) { 
+	if (x < prevx) {
 	  sorted = false;
 	  break;
 	}
@@ -111,7 +111,7 @@ public class SgrParser {
 
 
   protected static void pointSort(String seqid, Map xhash, Map yhash) {
-    System.out.println("points aren't sorted for seq = " + seqid + ", sorting now");
+    // System.out.println("points aren't sorted for seq = " + seqid + ", sorting now");
     IntList xlist = (IntList)xhash.get(seqid);
     FloatList ylist = (FloatList)yhash.get(seqid);
     int graph_length = xlist.size();
@@ -133,7 +133,7 @@ public class SgrParser {
     xhash.put(seqid, new_xlist);
     yhash.put(seqid, new_ylist);
   }
-    
+
 
   public static void main(String[] args) {
     String test_file = System.getProperty("user.dir") + "/testdata/graph/test1.sgr";

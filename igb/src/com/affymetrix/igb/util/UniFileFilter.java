@@ -33,7 +33,7 @@ public class UniFileFilter extends FileFilter {
   private boolean useExtensionsInDescription = true;
   
   public UniFileFilter() {
-    this.filters = new HashSet();
+    this.filters = new LinkedHashSet();
   }
   
   public UniFileFilter(String extension) {
@@ -143,7 +143,7 @@ public class UniFileFilter extends FileFilter {
   
   public void addExtension(String extension) {
     if(filters == null) {
-      filters = new HashSet(5);
+      filters = new LinkedHashSet(5);
     }
     filters.add(extension.toLowerCase());
     fullDescription = null;

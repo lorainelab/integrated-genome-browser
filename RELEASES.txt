@@ -1,0 +1,18 @@
+Integrated Genome Browser - Versions
+-------------------------------------------------------------------
+
+
+IGB-3.22
+  + Version 3.22 is the initial release of the Integrated Genome Browser 
+    via SourceForge.
+  + The SorceForge release includes code for the GenoViz SDK, Genometry, 
+    and the Integraged Genome Browser (IGB).
+  + Earlier versions of the Integrated Genome Browser, including the code
+    from Genometry, had been released by Affymetrix, Inc.
+    http://www.affymetrix.com/support/developer/tools/affytools.affx
+  + Earlier versions of the GenoViz SDK had been released under the name
+    "Neomorphic Genome Software Development Kit" (NGSDK) by Neomorphic, Inc.,
+    and later as part of the source code for IGB, released by Affymetrix, Inc.
+  + Further development will occur through SourceForge.
+
+

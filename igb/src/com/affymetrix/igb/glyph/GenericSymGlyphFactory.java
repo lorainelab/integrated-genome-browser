@@ -70,7 +70,8 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
 
     if (meth != null) {
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, true, Color.WHITE, default_tier_color);
-      glyphifySymmetry(sym, tiers[0], 0, glyph_height);
+      int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
+      glyphifySymmetry(sym, tiers[tier_index], 0, glyph_height);
     }
     else {  // keep recursing down into child syms if parent sym has no "method" property
       System.out.println("Ackk, no method for symmetry");

@@ -114,6 +114,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
   private void clearAll() {
     NeoMap map = gviewer.getSeqMap();
+    coordsearchTF.setText("");
     idsearchTF.setText("");
     entryTF.setText("");
     regexTF.setText("");

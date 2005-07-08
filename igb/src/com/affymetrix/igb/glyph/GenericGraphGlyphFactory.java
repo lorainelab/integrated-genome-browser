@@ -114,6 +114,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       seq2yloc.put(seq, new Double(current_yloc));
     }
     Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
+    
     state.setColor(col);
     // GAH 8-18-2004 don't have a standard way of figuring out which graphs are probe-based
     //   (in which case need 12/13 thresholded region start/end shift), and which ones aren't.  Since for
@@ -242,7 +243,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	// GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
 	//   or the TieredLabelMap won't get assigned labels correctly
 	if (new_tier) {
-	  map.addTier(tglyph, true);
+          boolean upper_strand = true;
+          Object str = graf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+          if ((str instanceof Character) && ((Character) str).charValue()=='-') {
+            upper_strand = false;
+          }
+	  map.addTier(tglyph, upper_strand);
 	  smv.getGraphStateTierHash().put(state, tglyph);
 	}
 	tglyph.pack(map.getView());

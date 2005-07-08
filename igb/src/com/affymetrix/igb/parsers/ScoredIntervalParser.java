@@ -99,6 +99,14 @@ public class ScoredIntervalParser {
   static public final boolean separate_by_strand = true;
 
   /**
+   *  Boolean preference for whether container glyphs should always be added.
+   *  If false, will construct the container glyphs only if there is MORE than
+   *  one score field in the file.
+   */
+  static public final String PREF_ALWAYS_ADD_CONTAINER_GLYPHS = "Always add container glyphs";
+  static public final boolean default_always_add_container_glyphs = false;
+  
+  /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
    *      each array of scores is converted to a GraphSym and also added as annotation to seq.
    */
@@ -347,12 +355,16 @@ public class ScoredIntervalParser {
 	  container.addScores(score_name, score_column);
 	}
 	        
-	// if not sin3, then add container as annotation to seq
+        boolean always_add_container_glyphs = UnibrowPrefsUtil.getBooleanParam(PREF_ALWAYS_ADD_CONTAINER_GLYPHS, default_always_add_container_glyphs);
+        
+        // if not sin3, then add container as annotation to seq
 	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
 	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
+        if (always_add_container_glyphs || score_count > 1) {
 	//	if (! all_sin3) {
   	aseq.addAnnotation(container);
 	//	}
+        }
 	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
 	if (attach_graphs) {
 	  attachGraphs(container);

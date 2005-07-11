@@ -26,6 +26,7 @@ import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscGeneSym;
 import com.affymetrix.igb.genometry.SeqSpanComparator;
+import com.affymetrix.igb.genometry.SupportsCdsSpan;
 import com.affymetrix.igb.parsers.LiftParser;
 import com.affymetrix.igb.parsers.AnnotationWriter;
 
@@ -226,12 +227,32 @@ public class BgnParser implements AnnotationWriter  {
     return results;
   }
 
-
-  public void outputBgnFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
+  /**
+   *  Writes a single SeqSymmetry to the output stream in BGN format.
+   *  If the SeqSymmetry implements SupportsCdsSpan, then the CDS
+   *  span information will be written.  If not, then the BGN format is
+   *  probably not the best format to use, but since that can still be useful,
+   *  this routine will treat the entire span as the CDS.
+   */
+  public void outputBgnFormat(SeqSymmetry gsym, DataOutputStream dos) throws IOException {
     SeqSpan tspan = gsym.getSpan(0);
-    SeqSpan cspan = gsym.getCdsSpan();
+    SeqSpan cspan;
+    String name;
+    if (gsym instanceof UcscGeneSym) {
+      UcscGeneSym ugs = (UcscGeneSym) gsym;
+      cspan = ugs.getCdsSpan();
+      name = ugs.getName();
+    } 
+    else if (gsym instanceof SupportsCdsSpan) {
+      cspan = ((SupportsCdsSpan) gsym).getCdsSpan();
+      name = gsym.getID();
+    }
+    else {
+      cspan = tspan;
+      name = gsym.getID();
+    }
     BioSeq seq = tspan.getBioSeq();
-    dos.writeUTF(gsym.getName());
+    dos.writeUTF(name);
     dos.writeUTF(seq.getID());
     if (tspan.isForward()) { dos.writeUTF("+"); }
     else { dos.writeUTF("-"); }
@@ -251,18 +272,22 @@ public class BgnParser implements AnnotationWriter  {
     }
   }
 
-  public void writeBinary(String file_name, List annots) {
+  /**
+   *  Writes a list of annotations to a file in BGN format.
+   *  @param annots  a List of SeqSymmetry objects, preferably implementing SupportsCdsSpan
+   */
+  public void writeBinary(String file_name, List annots) throws IOException {
+    DataOutputStream dos = null;
     try {
-      DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
+      dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
       int acount = annots.size();
       for (int i=0; i<acount; i++) {
-	UcscGeneSym gsym = (UcscGeneSym)annots.get(i);
+	SeqSymmetry gsym = (SeqSymmetry) annots.get(i);
 	outputBgnFormat(gsym, dos);
       }
-      dos.close();
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      try {dos.close();} catch (Exception e) {}
     }
   }
 

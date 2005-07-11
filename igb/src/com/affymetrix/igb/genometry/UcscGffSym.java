@@ -27,8 +27,29 @@ public class UcscGffSym extends SingletonSymWithProps {
   public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
   public static final char UNKNOWN_FRAME = '.';
   
-  // This is identical to the pattern in the GFFParser class
-  public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
+  /** 
+   *  A pattern used to test whether this is GFF1 or GFF2.
+   *  If the pattern matches, then Matcher.group(1) will contain the GFF1 ID.
+   *  <p>
+   *  The pattern that matches a single string of non-whitespace characters,
+   *  either (1) all by themselves, or (2) follwed by any amount of whitespace 
+   *  and a "#" and any other text.  Case (2) allows for comments.
+   *  </p>
+   *
+   *<pre>
+   *  Examples: 
+   *    "AFX382 # here is a comment"  matches.
+   *    "AFX382" matches
+   *    "group_id "foo" ; transcript_id "bar""  does NOT match
+   *    Gotchas: 
+   *      "AFX382# this is a comment" matches, and the ID does not include the "#" character
+   *      "AFX382#" matches, and the ID does include the "#" character
+   *</pre>
+   */
+  public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\s*#.*)");
+  
+  // old, wrong pattern, required a tab before the comment
+  //public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
   
   String source;
   String feature_type;
@@ -84,7 +105,7 @@ public class UcscGffSym extends SingletonSymWithProps {
       }
     }
   }
-
+  
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }
   public float getScore()  { return score; }

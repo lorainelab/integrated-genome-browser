@@ -22,5 +22,6 @@ public abstract class IGBConstants {
   // to re-compile all the referring classes everytime we re-compile this class.
 
   public static String APP_NAME = "Integrated Genome Browser";
+  public static String APP_SHORT_NAME = "IGB";
   public static String IGB_VERSION = "3.58";
 }

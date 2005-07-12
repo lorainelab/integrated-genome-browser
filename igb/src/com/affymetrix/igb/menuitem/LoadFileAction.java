@@ -53,9 +53,10 @@ public class LoadFileAction {
 
   public void actionPerformed(ActionEvent e) {
     AnnotatedBioSeq aseq = loadFile();
-    if (aseq != null) {
-      gviewer.setAnnotatedSeq(aseq, true, true);
-    }
+    //if (aseq != null) {
+      // This is redundant: was done in loadFile();
+      //gviewer.setAnnotatedSeq(aseq, true, true);
+    //}
   }
 
   static MergeOptionFileChooser chooser = null;
@@ -85,7 +86,7 @@ public class LoadFileAction {
         new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
         "Graph Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"sin", "egr", "txt"},
+        new String[] {"sin", "egr", "egr.txt"},
         "Scored Interval Files"));
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();

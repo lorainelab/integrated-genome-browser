@@ -35,6 +35,29 @@ import com.affymetrix.igb.view.SeqMapView;
  */
 public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
+/*
+Algorithm for drawing probe-set-display data.
+
+Find the annotations on the chromosome.
+Recurse through each annotation down to depth=2
+  Each of these is a consensus symmetry "CSym"
+Transform each CSym into "View" coordinates: "CSym_x_view"
+Each CSym points to a Consensus Seq: "CSeq"
+Recurse through the annotations of CSeq down to depth=2
+  Each of these is a probe set: "PS"
+Transform each PS by the CSym giving "PS_x_Csym" with depth=3
+Transform again for the view "(PS_x_Csym)_x_View" with depth unknown
+
+In (PS_x_Csym)_x_View, the overal depth is unknown, but you do know
+that the top level is probeset, then probe, then pieces of probes (if split
+across introns)
+
+If you try to skip a step and transform PS by Csym_x_View
+giving PS_x_(CSym_x_View), you cannot predict at what depth to find
+the probeset, probe and pieces of probes
+*/  
+  
+  
   /** Any method name (track-line name) ending with this is taken as a poly_a_site. */
   public static final String POLY_A_SITE_METHOD = "netaffx poly_a_sites";
   /** Any method name (track-line name) ending with this is taken as a poly_a_stack. */

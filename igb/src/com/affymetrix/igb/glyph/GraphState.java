@@ -123,13 +123,8 @@ public class GraphState {
   public final boolean getShowBounds() { return show_bounds; }
   public final boolean getShowLabel() { return show_label; }
 
-  /**
-   *  deprecated
-   *  use getMinScoreThreshold() instead
-   */
   public float getMinScoreThreshold() { return min_score_threshold; }
   public float getMaxScoreThreshold() { return max_score_threshold; }
-
 
   public int getMaxGapThreshold() { return max_gap_threshold; }
   public int getMinRunThreshold() { return min_run_threshold; }

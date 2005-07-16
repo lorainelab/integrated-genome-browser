@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -38,15 +38,16 @@ import com.affymetrix.igb.parsers.AnnotationWriter;
  * java -classpath igb.jar:genoviz.jar:genometry.jar com.affymetrix.igb.parsers.BrsParser
  * reflat_input_file brs_output_file.brs
  *
- * This class can handle both "refFlat.txt" and "refGene.txt", 
- * but "refFlat.txt" is preferred. 
+ * This class can handle both "refFlat.txt" and "refGene.txt",
+ * but "refFlat.txt" is preferred.
  * (refFlat contains gene names, while refGene does not.)
  */
 public class BrsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".brs");
+    // pref_list.add(".brs");
+    pref_list.add("brs");
   }
 
   boolean use_byte_buffer = true;

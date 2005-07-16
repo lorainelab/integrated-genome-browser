@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -39,7 +39,8 @@ public class BgnParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".bgn");
+    //    pref_list.add(".bgn");
+    pref_list.add("bgn");
   }
 
   static String default_annot_type = "genepred";
@@ -92,6 +93,11 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
 			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
+    return parse(istr, annot_type, seq_hash, null, blength, true);
+  }
+
+  public List parse(InputStream istr, String annot_type,
+			    Map seq_hash, Map id2sym_hash, long blength, boolean annotate_seq) throws IOException {
     Timer tim = new Timer();
     tim.start();
 
@@ -170,26 +176,30 @@ public class BgnParser implements AnnotationWriter  {
 
             //TODO: It might be nice to let this parser add new sequences to the AnnotatedSeqGroup
           }
-	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-	  if (parent_sym == null) {
-	    parent_sym = new SimpleSymWithProps();
-	    parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-	    parent_sym.setProperty("method", annot_type);
-	    //	    System.out.println("adding preferred_formats, " + chromseq.getID());
-	    parent_sym.setProperty("preferred_formats", pref_list);
-	    //	    parent_sym.setProperty("format", ".bgn");
-	    //	    chromseq.addAnnotation(parent_sym);
-	    annots.add(parent_sym);
-	    chrom2sym.put(chrom_name, parent_sym);
-	  }
+
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
 					    tmin, tmax, cmin, cmax, emins, emaxs);
 	  //	  name_hash.put(name, null);
 	  if (id2sym_hash != null) {
 	    id2sym_hash.put(name, sym);
 	  }
-	  parent_sym.addChild(sym);
 	  results.add(sym);
+
+	  if (annotate_seq)  {
+	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+	    if (parent_sym == null) {
+	      parent_sym = new SimpleSymWithProps();
+	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+	      parent_sym.setProperty("method", annot_type);
+	      //	    System.out.println("adding preferred_formats, " + chromseq.getID());
+	      parent_sym.setProperty("preferred_formats", pref_list);
+	      //	    parent_sym.setProperty("format", ".bgn");
+	      //	    chromseq.addAnnotation(parent_sym);
+	      annots.add(parent_sym);
+	      chrom2sym.put(chrom_name, parent_sym);
+	    }
+	    parent_sym.addChild(sym);
+	  }
 	  total_exon_count += ecount;
 	  count++;
 	}
@@ -214,12 +224,14 @@ public class BgnParser implements AnnotationWriter  {
       throw ioe;
     }
 
-    for (int i=0; i<annots.size(); i++) {
-      SeqSymmetry annot = (SeqSymmetry)annots.get(i);
-      MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
-      chromseq.addAnnotation(annot);
+    if (annotate_seq) {
+      for (int i=0; i<annots.size(); i++) {
+	SeqSymmetry annot = (SeqSymmetry)annots.get(i);
+	MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+	chromseq.addAnnotation(annot);
+      }
     }
-    System.out.println("load time: " + tim.read()/1000f);
+    System.out.println("bgn file load time: " + tim.read()/1000f);
     System.out.println("transcript count = " + count);
     System.out.println("exon count = " + total_exon_count);
     System.out.println("average exons / transcript = " +

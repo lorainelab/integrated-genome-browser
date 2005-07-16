@@ -36,8 +36,10 @@ public class BpsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".bps");
-    pref_list.add(".psl");
+    //    pref_list.add(".bps");
+    //    pref_list.add(".psl");
+    pref_list.add("bps");
+    pref_list.add("psl");
   }
 
   static boolean main_batch_mode = false; // main() should run in batch mode (processing PSL files in psl_input_dir)

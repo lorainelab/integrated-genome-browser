@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -37,12 +37,16 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
   static java.util.List psl_pref_list = new ArrayList();
   static java.util.List psl3_pref_list = new ArrayList();
   static {
-    psl_pref_list.add(".bps");
-    psl_pref_list.add(".psl");
-
-    psl3_pref_list.add(".psl3");
-    psl3_pref_list.add(".bps");
-    psl3_pref_list.add(".psl");
+    //    psl_pref_list.add(".bps");
+    //    psl_pref_list.add(".psl");
+    //    psl3_pref_list.add(".psl3");
+    //    psl3_pref_list.add(".bps");
+    //    psl3_pref_list.add(".psl");
+    psl_pref_list.add("bps");
+    psl_pref_list.add("psl");
+    psl3_pref_list.add("psl3");
+    psl3_pref_list.add("bps");
+    psl3_pref_list.add("psl");
   }
 
   boolean LOOK_FOR_TARGETS_IN_QUERYHASH = false;
@@ -172,9 +176,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       while ((line = br.readLine()) != null) {
 	line_count++;
         // Ignore psl header lines
-	if (line.trim().equals("") || line.startsWith("#") || 
-            line.startsWith("match\t") || line.startsWith("-------")) { 
-          continue; 
+	if (line.trim().equals("") || line.startsWith("#") ||
+            line.startsWith("match\t") || line.startsWith("-------")) {
+          continue;
         }
 	else if (line.startsWith("track")) {
 	  setTrackProperties(line);

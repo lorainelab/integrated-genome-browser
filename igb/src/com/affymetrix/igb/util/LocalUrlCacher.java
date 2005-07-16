@@ -57,6 +57,7 @@ public class LocalUrlCacher {
     URLConnection conn = null;
     long remote_timestamp = 0;
     int content_length = 0;
+    String content_type = null;
     boolean url_reachable = false;
     // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
     if (cache_option != ONLY_CACHE) {
@@ -64,10 +65,12 @@ public class LocalUrlCacher {
 	URL theurl = new URL(url);
 	conn = theurl.openConnection();
 	remote_timestamp = conn.getLastModified();
+	content_type = conn.getContentType();
 	content_length = conn.getContentLength();
 	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
 	//	System.out.println("url last modified: " + remote_date);
 	//	System.out.println("content length: " + content_length);
+	//	System.out.println("CONTENT_TYPE: " + content_type);
 	url_reachable = true;
       }
       catch (Exception ex) {

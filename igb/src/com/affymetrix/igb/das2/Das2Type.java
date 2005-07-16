@@ -22,7 +22,7 @@ public class Das2Type {
   String derivation;  // in DAS2 XML, this is source attribute
   String info_url;
   Map props;
-  Map formats;
+  Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings 
 
   public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href, Map formats, Map props) {
     this.versioned_source = version;

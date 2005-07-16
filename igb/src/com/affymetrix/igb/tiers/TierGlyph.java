@@ -27,6 +27,13 @@ import com.affymetrix.genoviz.util.Timer;
  *  states as indicated below.
  *  In a AffyTieredMap, TierGlyphs pack relative to each other but not to other glyphs added
  *  directly to the map.
+ *
+ *  Added ability to have "middleground" glyphs, which are generally not considered children of  
+ *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they 
+ *    are not considered children in pickTraversal() method.  
+ *  Only way to add middleground glyphs is via addMiddleGlyph() method, 
+ *    only way to remove them is via removeAllChildren() method, 
+ *    no external access to them
  */
 public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
@@ -36,6 +43,11 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   static Comparator child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+  /** glyphs to be drawn in the "middleground" -- 
+   *    in front of the solid background, but behind the child glyphs
+   *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts 
+   */
+  java.util.List middle_glyphs = new ArrayList();
 
   public static final int HIDDEN = 100;
   public static final int COLLAPSED = 101;
@@ -86,6 +98,10 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     setState(EXPANDED);
     setSpacer(spacer);
     setHitable(false);
+  }
+
+  public void addMiddleGlyph(GlyphI gl) {
+    middle_glyphs.add(gl);
   }
 
   public void initForSearching() {
@@ -251,6 +267,11 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     }
   }
 
+  /**
+   *  Modifying draw method to allow background shading by a collection of non-child
+   *    "middleground" glyphs.  These are rendered after the solid background but before 
+   *    all of the children (which could be considered the "foreground");
+   */
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
@@ -265,24 +286,50 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
       g.fillRect(pixelbox.x, pixelbox.y,
 		 pixelbox.width, pixelbox.height);
     }
+
+    // cycle through "middleground" glyphs, 
+    //   make sure their coord box y and height are set to same as TierGlyph, 
+    //   then call mglyph.draw(view)
+    int mcount = middle_glyphs.size();
+    for (int i=0; i<mcount; i++) {
+      GlyphI mglyph = (GlyphI)middle_glyphs.get(i);
+      Rectangle2D mbox = mglyph.getCoordBox();
+      mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
+      mglyph.drawTraversal(view);
+    }
     if (outline_color != null) {
       g.setColor(outline_color);
       g.drawRect(pixelbox.x, pixelbox.y,
 		 pixelbox.width-1, pixelbox.height);
     }
-    // not messing with clipbox until need too
+    // not messing with clipbox until need to
     //        g.setClip ( oldClipbox );
+
     super.draw(view);
   }
 
-  /** Remove all children of the glyph */
-  public void removeChildren () {
+  /** Remove all children of the glyph 
+   *  GAH removed this method, should be able to call removeAllChildren() (inherited from Glyph/GlyphI)
+   */
+  public void removeAllChildren() {
+    super.removeAllChildren();
+    // also remove all middleground glyphs 
+    // this is currently the only place where middleground glyphs are treated as if they were children 
+    //   maybe should rename this method clear() or something like that...
+    // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by 
+    //     clearing middle_glyphs
+    middle_glyphs.clear();
+  }
+  
+  /*
+  public void removeChildren() {
     Vector kids = this.getChildren();
     if (kids != null) {
       for (int i=0; i < kids.size(); i++)
         this.removeChild((GlyphI)kids.elementAt(i));
     }
   }
+  */    
 
   public void setState(int newstate) {
     // terminate any pingponging if state is already same

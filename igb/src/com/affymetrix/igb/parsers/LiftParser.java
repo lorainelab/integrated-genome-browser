@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -105,7 +105,10 @@ public class LiftParser {
 	String tempname = fields[COMBO_NAME];
 	String splitname[] = re_name.split(tempname);
 	String contig_name = splitname[CONTIG_NAME_SUBFIELD];
-	MutableAnnotatedBioSeq contig = new SimpleAnnotatedBioSeq(contig_name, match_length);
+	// experimenting with constructing virtual sequences by using chromosomes as contigs
+	MutableAnnotatedBioSeq contig = seq_group.getSeq(contig_name);
+	if (contig == null)  { contig = (MutableAnnotatedBioSeq)temp_seqhash.get(contig_name); }
+	if (contig == null)  { contig = new SimpleAnnotatedBioSeq(contig_name, match_length); }
 
 	contig_count++;
 	MutableAnnotatedBioSeq chrom = (MutableAnnotatedBioSeq)seq_group.getSeq(chrom_name);

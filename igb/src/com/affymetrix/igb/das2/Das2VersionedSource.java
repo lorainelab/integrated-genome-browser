@@ -211,9 +211,9 @@ public class Das2VersionedSource  {
 	  String formatid = fnode.getAttribute("id");
 	  String mimetype = fnode.getAttribute("mimetype");
 	  if (mimetype == null || mimetype.equals("")) { mimetype = "unknown"; }
-	  System.out.println("alternative format for annot type " + typeid + 
-			     ": format = " + formatid + ", mimetype = " + mimetype);
-	  formats.put(formatid, mimetype);
+          //	  System.out.println("alternative format for annot type " + typeid +
+          //": format = " + formatid + ", mimetype = " + mimetype);
+          formats.put(formatid, mimetype);
 	}
 
 	NodeList plist = typenode.getElementsByTagName("PROP");

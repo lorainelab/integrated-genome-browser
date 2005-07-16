@@ -37,6 +37,7 @@ public class Das2LoadView extends JComponent
   static String[] type_columns = { "ID", "ontology", "derivation", "status" };
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(type_columns, new ArrayList());
 
+  boolean THREAD_FEATURE_REQUESTS = false;
   boolean USE_SIMPLE_VIEW = false;
   SeqMapView gviewer = null;
   GenometryViewer simple_viewer = null;
@@ -44,14 +45,15 @@ public class Das2LoadView extends JComponent
   JComboBox das_serverCB;
   JComboBox das_sourceCB;
   JComboBox das_versionCB;
-  JComboBox das_regionCB;
-  JTextField minTF;
-  JTextField maxTF;
+  //  JComboBox das_regionCB;
+  //  JTextField minTF;
+  //  JTextField maxTF;
   JButton load_featuresB;
   JPanel types_panel;
   JTable types_table;
   JScrollPane table_scroller;
   Map das_servers;
+  Map version2typestates = new HashMap();
   LinkedHashMap checkbox2type;
 
   Das2LoadView myself = null;
@@ -94,9 +96,9 @@ public class Das2LoadView extends JComponent
     das_serverCB = new JComboBox();
     das_sourceCB = new JComboBox();
     das_versionCB = new JComboBox();
-    das_regionCB = new JComboBox();
-    minTF = new JTextField(10);
-    maxTF = new JTextField(10);
+    //    das_regionCB = new JComboBox();
+    //    minTF = new JTextField(10);
+    //    maxTF = new JTextField(10);
     load_featuresB = new JButton("Load Features");
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
@@ -118,7 +120,7 @@ public class Das2LoadView extends JComponent
 
     this.setLayout(new BorderLayout());
     JPanel panA = new JPanel();
-    panA.setLayout(new GridLayout(6, 2));
+    panA.setLayout(new GridLayout(3, 2));
 
     panA.add(new JLabel("DAS2 Server: "));
     panA.add(das_serverCB);
@@ -126,12 +128,12 @@ public class Das2LoadView extends JComponent
     panA.add(das_sourceCB);
     panA.add(new JLabel("DAS2 Version: "));
     panA.add(das_versionCB);
-    panA.add(new JLabel("DAS2 Region: "));
-    panA.add(das_regionCB);
-    panA.add(new JLabel("min base: "));
-    panA.add(minTF);
-    panA.add(new JLabel("max base: "));
-    panA.add(maxTF);
+    //    panA.add(new JLabel("DAS2 Region: "));
+    //    panA.add(das_regionCB);
+    //    panA.add(new JLabel("min base: "));
+    //    panA.add(minTF);
+    //    panA.add(new JLabel("max base: "));
+    //    panA.add(maxTF);
 
     JPanel middle_panel = new JPanel(new GridLayout(2, 1));
     middle_panel.add(scrollpane);
@@ -144,7 +146,7 @@ public class Das2LoadView extends JComponent
     das_serverCB.addItemListener(this);
     das_sourceCB.addItemListener(this);
     das_versionCB.addItemListener(this);
-    das_regionCB.addItemListener(this);
+    //    das_regionCB.addItemListener(this);
     load_featuresB.addActionListener(this);
 
     //    this.addComponentListener(this);  turned off pending change mechanism for now
@@ -160,7 +162,10 @@ public class Das2LoadView extends JComponent
     if ((src == das_serverCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       System.out.println("Das2LoadView received SELECTED ItemEvent on server combobox");
       String server_name = (String)evt.getItem();
-      if (server_name != server_filler) {
+      if (server_name == server_filler) {
+	// clear source and version choice boxes, and types panel
+      }
+      else {
 	System.out.println("DAS server selected: " + server_name);
 	current_server = (Das2ServerInfo)das_servers.get(server_name);
 	System.out.println(current_server);
@@ -172,7 +177,10 @@ public class Das2LoadView extends JComponent
     else if ((src == das_sourceCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       System.out.println("Das2LoadView received SELECTED ItemEvent on source combobox");
       String source_name = (String)evt.getItem();
-      if (source_name != source_filler) {
+      if (source_name == source_filler) {
+	// clear version choice box and types panel
+      }
+      else  {
 	System.out.println("source name: " + source_name);
 	Map sources = current_server.getSources();
 	current_source = (Das2Source)sources.get(source_name);
@@ -186,6 +194,9 @@ public class Das2LoadView extends JComponent
     else if ((src == das_versionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       System.out.println("Das2LoadView received SELECTED ItemEvent on version combobox");
       String version_name = (String)evt.getItem();
+      if (version_name == version_filler) {
+	// clear types panel
+      }
       if (version_name != version_filler) {
 	System.out.println("version name: " + version_name);
 	Map versions = current_source.getVersions();
@@ -197,6 +208,7 @@ public class Das2LoadView extends JComponent
     }
 
     // selection of DAS region point
+    /*
     else if ((src == das_regionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       System.out.println("Das2LoadView received SELECTED ItemEvent on region combobox");
       String region_name = (String)evt.getItem();
@@ -206,20 +218,21 @@ public class Das2LoadView extends JComponent
 	current_region = (Das2Region)regions.get(region_name);
       }
     }
+    */
   }
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == load_featuresB) {
       System.out.println("Das2LoadView received ActionEvent on load features button");
-      loadFeatures();
+      loadFeaturesInView();
     }
   }
 
   public void setVersions() {
     das_versionCB.removeItemListener(this);
     das_versionCB.removeAllItems();
-    das_regionCB.removeAllItems();
+    //    das_regionCB.removeAllItems();
     checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
@@ -232,39 +245,32 @@ public class Das2LoadView extends JComponent
     das_serverCB.setEnabled(false);
     das_sourceCB.setEnabled(false);
     das_versionCB.setEnabled(false);
-    das_regionCB.setEnabled(false);
+    //    das_regionCB.setEnabled(false);
 
-    final SwingWorker worker = new SwingWorker() {
-	Map versions = null;
-	public Object construct() {
-	  versions = current_source.getVersions();
-	  return null;  // or could have it return types, shouldn't matter...
-	}
-	public void finished() {
-	  das_versionCB.addItem(version_filler);
-	  Iterator iter = versions.values().iterator();
-	  while (iter.hasNext()) {
-	    Das2VersionedSource version = (Das2VersionedSource)iter.next();
-	    das_versionCB.addItem(version.getID());
-	  }
+    // don't need to put getVersions() call on separate thread, since a source's versions
+    //    will have already been initialized in a previous server.getSources() call
+    Map versions = current_source.getVersions();
+    das_versionCB.addItem(version_filler);
+    Iterator iter = versions.values().iterator();
+    while (iter.hasNext()) {
+      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+      das_versionCB.addItem(version.getID());
+    }
 
-	  das_versionCB.addItemListener(myself);
-	  das_serverCB.setEnabled(true);
-	  das_sourceCB.setEnabled(true);
-	  das_versionCB.setEnabled(true);
-	  das_regionCB.setEnabled(true);
-
-	}
-      };
-    worker.start();
+    das_versionCB.addItemListener(this);
+    das_serverCB.setEnabled(true);
+    das_sourceCB.setEnabled(true);
+    das_versionCB.setEnabled(true);
+    //	  das_regionCB.setEnabled(true);
 
   }
 
   public void setSources() {
     das_sourceCB.removeItemListener(this);
+    das_versionCB.removeItemListener(this);
     das_sourceCB.removeAllItems();
     das_versionCB.removeAllItems();
-    das_regionCB.removeAllItems();
+    //    das_regionCB.removeAllItems();
     checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
@@ -278,12 +284,24 @@ public class Das2LoadView extends JComponent
     das_serverCB.setEnabled(false);
     das_sourceCB.setEnabled(false);
     das_versionCB.setEnabled(false);
-    das_regionCB.setEnabled(false);
+    //    das_regionCB.setEnabled(false);
 
     final SwingWorker worker = new SwingWorker() {
 	Map sources = null;
 	public Object construct() {
 	  sources = current_server.getSources();
+	  if (current_group == null) {
+	    current_version = null;
+	  }
+	  else {
+	    current_version = current_server.getVersionedSource(current_group);
+	  }
+	  if (current_version == null)  {
+	    current_source = null;
+	  }
+	  else {
+	    current_source = current_version.getSource();
+	  }
 	  return null;  // or could have it return types, shouldn't matter...
 	}
 	public void finished() {
@@ -294,14 +312,29 @@ public class Das2LoadView extends JComponent
 	    //      das_sourceCB.addItem(source.getName() + "(" + source.getID() + ")");
 	    das_sourceCB.addItem(source.getID());
 	  }
-
+	  if (current_source != null) {
+	    das_sourceCB.setSelectedItem(current_source.getID());
+	    das_versionCB.addItem(version_filler);
+	    Iterator versions = current_source.getVersions().values().iterator();
+	    while (versions.hasNext()) {
+	      Das2VersionedSource version = (Das2VersionedSource)versions.next();
+	      das_versionCB.addItem(version.getID());
+	    }
+	  }
+	  if (current_version != null) {
+	    das_versionCB.setSelectedItem(current_version.getID());
+	  }
 	  //	  das_sourceCB.addItemListener(listener);
 	  das_sourceCB.addItemListener(myself);
+	  das_versionCB.addItemListener(myself);
 	  das_serverCB.setEnabled(true);
 	  das_sourceCB.setEnabled(true);
 	  das_versionCB.setEnabled(true);
-	  das_regionCB.setEnabled(true);
-
+	  //	  das_regionCB.setEnabled(true);
+	  
+	  if (current_version != null) {
+	    setRegionsAndTypes();
+	  }
 	}
       };
     worker.start();
@@ -313,10 +346,10 @@ public class Das2LoadView extends JComponent
     das_serverCB.setEnabled(false);
     das_sourceCB.setEnabled(false);
     das_versionCB.setEnabled(false);
-    das_regionCB.setEnabled(false);
+    //    das_regionCB.setEnabled(false);
     load_featuresB.setEnabled(false);
 
-    das_regionCB.removeAllItems();
+    //    das_regionCB.removeAllItems();
     checkbox2type.clear();
     types_panel.removeAll();
     types_panel.validate();
@@ -325,132 +358,174 @@ public class Das2LoadView extends JComponent
     types_table.setModel(empty_table_model);
     types_table.validate();
     types_table.repaint();
-
+    
     // alternative would be to use a QueuedExecutor (from ~.concurrent package)
     //    and two runnables, one for entries and one for types...
-    Runnable runner = new Runnable() {
-	public void run() {
-	  final Map seqs = current_version.getRegions();
-
-	  SwingUtilities.invokeLater(new Runnable() {
-	      public void run() {
-		das_regionCB.addItem(region_filler);
-		Iterator iter = seqs.values().iterator();
-		while (iter.hasNext()) {
-		  Das2Region region = (Das2Region)iter.next();
-		  das_regionCB.addItem(region.getID());
-		}
-		//		das_regionCB.addItemListener(myself);
-		das_regionCB.setEnabled(true);
-	      }
-	    } );
-
-	  final Map types = current_version.getTypes();
-	  SwingUtilities.invokeLater(new Runnable() {
-	      public void run()  {
-		// types_panel.removeAll();  // already done at start of setRegionsAndTypes();
-		// checkbox2type.clear(); // already done at start of setRegionsAndTypes();
-                java.util.List type_states = new ArrayList();
-		Iterator iter = types.values().iterator();
-		while (iter.hasNext()) {
-		  Das2Type dtype = (Das2Type)iter.next();
-		  Das2TypeState tstate = new Das2TypeState(dtype, Das2TypeState.OFF);
-		  type_states.add(tstate);
-		  String typeid = dtype.getID();
-		  //		  String typesource = dtype.getDerivation();
-		  JCheckBox box = new JCheckBox(typeid);
-		  types_panel.add(box);
-		  checkbox2type.put(box, dtype);
-		}
-		types_panel.validate();
-		types_panel.repaint();
-
-		Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_columns, type_states);
-		types_table.setModel(new_table_model);
-		types_table.validate();
-		types_table.repaint();
-		//		this.setEnabled(true);
-		//		setEnabled(true);
-		types_panel.setEnabled(true);
-		das_serverCB.setEnabled(true);
-		das_sourceCB.setEnabled(true);
-		das_versionCB.setEnabled(true);
-		load_featuresB.setEnabled(true);
-	      }
-	    } );
+    final SwingWorker worker = new SwingWorker() {
+	Map seqs = null;
+	Map types = null; 
+	public Object construct() {
+	  seqs = current_version.getRegions();
+	  types = current_version.getTypes();
+	  return null;
+	}
+	public void finished() {
+	  java.util.List type_states = new ArrayList();
+	  Iterator iter = types.values().iterator();
+	  while (iter.hasNext()) {
+	    Das2Type dtype = (Das2Type)iter.next();
+	    Das2TypeState tstate = new Das2TypeState(dtype, Das2TypeState.OFF);
+	    type_states.add(tstate);
+	    String typeid = dtype.getID();
+	    //		  String typesource = dtype.getDerivation();
+	    JCheckBox box = new JCheckBox(typeid);
+	    types_panel.add(box);
+	    checkbox2type.put(box, dtype);
+	  }
+	  types_panel.validate();
+	  types_panel.repaint();
+	  version2typestates.put(current_version, type_states);
+	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_columns, type_states);
+	  types_table.setModel(new_table_model);
+	  types_table.validate();
+	  types_table.repaint();
+	  //		this.setEnabled(true);
+	  //		setEnabled(true);
+	  types_panel.setEnabled(true);
+	  das_serverCB.setEnabled(true);
+	  das_sourceCB.setEnabled(true);
+	  das_versionCB.setEnabled(true);
+	  load_featuresB.setEnabled(true);
 	}
       };
-    Thread runthread = new Thread(runner);
-    runthread.start();
+    worker.start();
   }
 
-  public void loadFeatures() {
+  public void loadFeaturesInView() {
 
-    final MutableAnnotatedBioSeq aseq = current_region.getAnnotatedSeq();
-    String minstr = minTF.getText();
-    String maxstr = maxTF.getText();
-    int min = 0;
-    int max = 0;
-    try { min = Integer.parseInt(minstr); }
-    catch(Exception ex) {
-      ex.printStackTrace();
-      minTF.setText("");
-      return;
-    }
-    try {
-      max = Integer.parseInt(maxstr);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-      maxTF.setText("");
-      return;
+    MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
+    final SeqSpan overlap = gviewer.getVisibleSpan();
+    final MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)overlap.getBioSeq();
+    //    MutableAnnotatedBioSeq current_seq = current_region.getAnnotatedSeq();
+    if (current_version != null) {
+      if (current_seq != null) {
+	current_region = current_version.getRegion(current_seq);
+      }
+      else {
+	current_region = current_version.getRegion(visible_seq);
+      }
     }
 
-    final SeqSpan overlap = new SimpleSeqSpan(min, max, aseq);
-    System.out.println("region = " + current_region.getID() + ", seq = " + aseq.getID() +
-		       ", min = " + min + ", max = " + max);
+    if (visible_seq != selected_seq) { System.out.println("WARNING, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!"); }
+    //    if (visible_seq != current_seq) { System.out.println("WARNING, VISIBLE SPAN DOES NOT MATCH CURRENT REGION!!!"); }
+
+    //    System.out.println("region = " + current_region.getID() + ", seq = " + visible_seq.getID() +
+    System.out.println("seq = " + visible_seq.getID() +
+		       ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
+
+    // instead of iterating through checkboxes, go through Das2TypeStates
+    //    if off, ignore
+    //    if range-in-view && !fully_loaded, do range in view annotation request
+    //    if per-seq && !fully_loaded, do full seq annotation request
+
     // could probably add finer resolution of threading here,
     //  so every request (one per type) launches on its own thread
     //  But for now putting them all on same (non-event) thread controlled by SwingWorker
-    final SwingWorker worker = new SwingWorker() {
-	int selected_type_count = 0;
-	public Object construct() {
-	  Iterator iter = checkbox2type.entrySet().iterator();
-	  while (iter.hasNext()) {
-	    Map.Entry keyval = (Map.Entry)iter.next();
-	    JCheckBox box = (JCheckBox)keyval.getKey();
-	    Das2Type dtype = (Das2Type)keyval.getValue();
-	    boolean selected = box.isSelected();
-	    if (selected) {
-	      selected_type_count++;
-	      String typeid = dtype.getID();
-	      System.out.println("selected type: " + typeid);
-	      Das2FeatureRequestSym request_sym =
-		new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	      current_region.getFeatures(request_sym);
-	      // probably want to synchronize on aseq, since don't want to add annotations to aseq
-	      // on one thread when might be rendering based on aseq in event thread...
-	      aseq.addAnnotation(request_sym);
+    if (THREAD_FEATURE_REQUESTS) {
+      final SwingWorker worker = new SwingWorker() {
+	  int selected_type_count = 0;
+	  public Object construct() {
+	    Iterator iter = checkbox2type.entrySet().iterator();
+	    while (iter.hasNext()) {
+	      Map.Entry keyval = (Map.Entry)iter.next();
+	      JCheckBox box = (JCheckBox)keyval.getKey();
+	      Das2Type dtype = (Das2Type)keyval.getValue();
+	      boolean selected = box.isSelected();
+	      if (selected) {
+		selected_type_count++;
+		String typeid = dtype.getID();
+		System.out.println("selected type: " + typeid);
+		Das2FeatureRequestSym request_sym =
+		  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+		Iterator formats = request_sym.getDas2Type().getFormats().keySet().iterator();
+		while (formats.hasNext()) {
+		  String format = (String)formats.next();
+		  String mime_type = (String)request_sym.getDas2Type().getFormats().get(format);
+		  System.out.println("   format = " + format + ", mime_type = " + mime_type);
+		}
+		// load optmizer is responsible for adding any request syms as annotations to the annotated seqs?
+		java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
+		//		current_region.getFeatures(request_sym);
+		// probably want to synchronize on aseq, since don't want to add annotations to aseq
+		// on one thread when might be rendering based on aseq in event thread...
+		//
+		// or maybe should make addAnnotation() a synchronized method
+		//		synchronized (visible_seq) {
+		//		  visible_seq.addAnnotation(request_sym);
+		//		}
+	      }
+	    }
+	    return null;
+	  }
+
+	  public void finished() {
+	    if (selected_type_count > 0) {
+	      if (USE_SIMPLE_VIEW) {
+		if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(visible_seq, false); }
+		simple_viewer.setAnnotatedSeq(visible_seq);
+	      }
+	      else if (gviewer != null) {
+		gviewer.setAnnotatedSeq(visible_seq, true, true);
+	      }
 	    }
 	  }
-	  return null;
-	}
+	};
+      worker.start();
+    }
 
-	public void finished() {
-	  if (selected_type_count > 0) {
-	    if (USE_SIMPLE_VIEW) {
-	      if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(aseq, false); }
-	      simple_viewer.setAnnotatedSeq(aseq);
-	    }
-	    else if (gviewer != null) {
-	      gviewer.setAnnotatedSeq(aseq, true, true);
-	    }
+    else {  // non-threaded feature request
+      int selected_type_count = 0;
+      Iterator iter = checkbox2type.entrySet().iterator();
+      while (iter.hasNext()) {
+	Map.Entry keyval = (Map.Entry)iter.next();
+	JCheckBox box = (JCheckBox)keyval.getKey();
+	Das2Type dtype = (Das2Type)keyval.getValue();
+	boolean selected = box.isSelected();
+	if (selected) {
+	  selected_type_count++;
+	  String typeid = dtype.getID();
+	  System.out.println("selected type: " + typeid);
+	  Das2FeatureRequestSym request_sym =
+	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	  Iterator formats = request_sym.getDas2Type().getFormats().keySet().iterator();
+	  while (formats.hasNext()) {
+	    String format = (String)formats.next();
+	    String mime_type = (String)request_sym.getDas2Type().getFormats().get(format);
+	    System.out.println("   format = " + format + ", mime_type = " + mime_type);
 	  }
+	  java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
+	  //	  current_region.getFeatures(request_sym);
+	  // probably want to synchronize on aseq, since don't want to add annotations to aseq
+	  // on one thread when might be rendering based on aseq in event thread...
+	  //
+	  // or maybe should make addAnnotation() a synchronized method
+	  //	  synchronized (visible_seq) {
+	  //	    visible_seq.addAnnotation(request_sym);
+	  //	  }
 	}
+      }
+	
+      if (selected_type_count > 0) {
+	if (USE_SIMPLE_VIEW) {
+	  if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(visible_seq, false); }
+	  simple_viewer.setAnnotatedSeq(visible_seq);
+	}
+	else if (gviewer != null) {
+	  gviewer.setAnnotatedSeq(visible_seq, true, true);
+	}
+      }
+    }  // end non-threaded feature request
 
-      };
-
-    worker.start();
   }
 
   /**
@@ -474,9 +549,9 @@ public class Das2LoadView extends JComponent
       if (current_version != null) {
 	current_region = current_version.getRegion(current_seq);
         //      System.out.println("current region: " + region.getID());
-        das_regionCB.removeItemListener(this);
-        das_regionCB.setSelectedItem(current_region.getID());
-        das_regionCB.addItemListener(this);
+	//        das_regionCB.removeItemListener(this);
+	//        das_regionCB.setSelectedItem(current_region.getID());
+	//        das_regionCB.addItemListener(this);
       }
     }
   }
@@ -484,9 +559,11 @@ public class Das2LoadView extends JComponent
   /**
    *  When selected group changed, want to go through all previously visited
    *     DAS/2 servers (starting with the current one), and try and find
-   *     a versioned source that shared the selected AnnotatedSeqGroup
+   *     a versioned source that shares the selected AnnotatedSeqGroup
    *  If found, take first found and set versioned source, source, and server accordingly
    *  If not found, blank out versioned source and source, and switch server to "Choose a server"
+   *
+   *  For now, just looking at current server
    */
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    if (IGB.DEBUG_EVENTS)  {
@@ -498,13 +575,21 @@ public class Das2LoadView extends JComponent
         current_group = newgroup;
         if (current_server != null)  {
           current_version = current_server.getVersionedSource(current_group);
-	  current_source = current_version.getSource();
-	  System.out.println("   new das source: " + current_source.getID() +
-			      ",  new das version: " + current_version.getID());
-	  //	  das_sourceCB.removeItemListener(this);
-	  das_sourceCB.setSelectedItem(current_source.getID());
-	  das_versionCB.setSelectedItem(current_version.getID());
-	  //	  das_sourceCB.addItemListener(this);
+	  if (current_version == null) {
+	    // reset
+	    das_serverCB.setSelectedItem(server_filler);
+	    //	    das_sourceCB.setSelectedItem(source_filler);
+	    //	    das_versionCB.setSelectedItem(version_filler);
+	  }
+	  else {
+	    current_source = current_version.getSource();
+	    System.out.println("   new das source: " + current_source.getID() +
+			       ",  new das version: " + current_version.getID());
+	    //	  das_sourceCB.removeItemListener(this);
+	    das_sourceCB.setSelectedItem(current_source.getID());
+	    das_versionCB.setSelectedItem(current_version.getID());
+	    //	  das_sourceCB.addItemListener(this);
+	  }
         }
       }
     }
@@ -547,6 +632,36 @@ public class Das2LoadView extends JComponent
     frm.show();
   }
 
+  /**  feature loading without SwingWorker
+    Iterator iter = checkbox2type.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry keyval = (Map.Entry)iter.next();
+      JCheckBox box = (JCheckBox)keyval.getKey();
+      Das2Type dtype = (Das2Type)keyval.getValue();
+      boolean selected = box.isSelected();
+      if (selected) {
+	String typeid = dtype.getID();
+	System.out.println("selected type: " + typeid);
+	Das2FeatureRequestSym request_sym =
+	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	Iterator formats = request_sym.getDas2Type().getFormats().keySet().iterator();
+	while (formats.hasNext()) {
+	  String format = (String)formats.next();
+	  String mime_type = (String)request_sym.getDas2Type().getFormats().get(format);
+	  System.out.println("   format = " + format + ", mime_type = " + mime_type);
+	}
+	System.out.println("hello");
+
+	current_region.getFeatures(request_sym);
+	System.out.println("after");
+	synchronized (visible_seq) {
+	  visible_seq.addAnnotation(request_sym);
+	}
+	System.out.println("after2");
+      }
+    }
+    gviewer.setAnnotatedSeq(visible_seq, true, true);
+  */
 }
 
 /**

@@ -107,58 +107,66 @@ public class Das2Region {
    *
    */
   public boolean getFeatures(Das2FeatureRequestSym request_sym) {
-    boolean success = false;
+    System.out.println("hi");
+    boolean success = true;
+      SeqSpan overlap_span = request_sym.getOverlapSpan();
+      String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
+      SeqSpan inside_span = request_sym.getInsideSpan();
+      String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
+      System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
+      Das2Type type = request_sym.getDas2Type();
+      String format = FormatPriorities.getFormat(type);
 
-    SeqSpan overlap_span = request_sym.getOverlapSpan();
-    String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
-    SeqSpan inside_span = request_sym.getInsideSpan();
-    String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
-    System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
+      String version_url =
+	getVersionedSource().getSource().getServerInfo().getRootUrl() + "/" +
+	//      getVersionedSource().getSource().getID() + "/" +
+	getVersionedSource().getID();
+      System.out.println("   version url: " + version_url);
+      System.out.println("   preferred format: " + format);
 
-    String version_url =
-      getVersionedSource().getSource().getServerInfo().getRootUrl() + "/" +
-      //      getVersionedSource().getSource().getID() + "/" +
-      getVersionedSource().getID();
-    System.out.println("version url: " + version_url);
+      StringBuffer buf = new StringBuffer(200);
 
-    StringBuffer buf = new StringBuffer(200);
-    buf.append(version_url);
-    buf.append("/feature?");
-    buf.append("overlaps=");
-    buf.append(overlap_filter);
-    buf.append(";");
-    if (inside_filter != null) {
-      buf.append("inside=");
-      buf.append(inside_filter);
+      buf.append(version_url);
+      buf.append("/feature?");
+      buf.append("overlaps=");
+      buf.append(overlap_filter);
       buf.append(";");
-    }
-    buf.append("type=");
-    buf.append(request_sym.getDas2Type().getID());
-
-    String feature_query = buf.toString();
-    System.out.println("feature query:  " + feature_query);
-
-    // need to move actual parsing out of here and into something more generalized
-    //     also need to figure out where to interject a Das2QueryOptimizer...
-    try {
-      Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-      URL query_url = new URL(feature_query);
-      URLConnection query_con = query_url.openConnection();
-      BufferedInputStream bis = new BufferedInputStream(query_con.getInputStream());
-      List feats = parser.parse(new InputSource(bis), getVersionedSource().getGenome(), false);
-      int feat_count = feats.size();
-      System.out.println("parsed query results, annot count = " + feat_count);
-      for (int i=0; i<feat_count; i++) {
-	SeqSymmetry feat = (SeqSymmetry)feats.get(i);
-	//	SeqUtils.printSymmetry(feat);
-	request_sym.addChild(feat);
+      if (inside_filter != null) {
+	buf.append("inside=");
+	buf.append(inside_filter);
+	buf.append(";");
       }
-      success = true;
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
+      buf.append("type=");
+      buf.append(type.getID());
 
+      String feature_query = buf.toString();
+      System.out.println("feature query:  " + feature_query);
+
+      // need to move actual parsing out of here and into something more generalized
+      //     also need to figure out where to interject a Das2QueryOptimizer...
+      //      Das2ClientParserController.parseFromUrl(feature_query);
+      try {
+	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+	URL query_url = new URL(feature_query);
+	URLConnection query_con = query_url.openConnection();
+	InputStream istr = query_con.getInputStream();
+	BufferedInputStream bis = new BufferedInputStream(istr);
+	List feats = parser.parse(new InputSource(bis), getVersionedSource().getGenome(), false);
+	int feat_count = feats.size();
+	System.out.println("parsed query results, annot count = " + feat_count);
+	for (int k=0; k<feat_count; k++) {
+	  SeqSymmetry feat = (SeqSymmetry)feats.get(k);
+	  //	SeqUtils.printSymmetry(feat);
+	  request_sym.addChild(feat);
+	}
+	success = true;
+	bis.close();
+	istr.close();
+      }
+      catch (Exception ex) {
+	ex.printStackTrace();
+	success = false;
+      }
     return success;
   }
 

@@ -19,6 +19,10 @@ import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
+import java.util.regex.*;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -31,6 +35,7 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
+
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
@@ -38,7 +43,6 @@ import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.genometry.Versioned;
-
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.*;
@@ -52,6 +56,7 @@ import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SeqSymStartComparator;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
+import com.affymetrix.igb.genometry.TypeContainerAnnot;
 import com.affymetrix.igb.event.SeqSelectionListener;
 import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SeqModifiedListener;
@@ -59,13 +64,9 @@ import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-
 import com.affymetrix.igb.util.CharIterator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
-import java.util.regex.*;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource, NeoRubberBandListener,
@@ -1068,7 +1069,7 @@ public class SeqMapView extends JPanel
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
-
+    String meth = null;
     if (annotSym instanceof GraphSym) {
       factory =	(MapViewGlyphFactoryI)graf2factory.get(annotSym);
       if (factory == null) {
@@ -1077,7 +1078,7 @@ public class SeqMapView extends JPanel
       }
     }
     else {
-      String meth = determineMethod(annotSym);
+      meth = determineMethod(annotSym);
       if (meth != null) {
         factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
         if (factory == null) {
@@ -1102,6 +1103,32 @@ public class SeqMapView extends JPanel
     }
     if (factory == null) { factory = default_glyph_factory; }
     factory.createGlyph(annotSym, this);
+
+    if ((meth != null) && (annotSym instanceof TypeContainerAnnot)) {
+      int child_count = annotSym.getChildCount();
+      for (int i=0; i<child_count; i++) {
+	SeqSymmetry csym = annotSym.getChild(i);
+	if (csym instanceof Das2FeatureRequestSym) {
+	  Das2FeatureRequestSym dsym = (Das2FeatureRequestSym)csym;
+	  SeqSpan ospan = dsym.getOverlapSpan();
+	  // System.out.println("DAS FEATURE SYM: " + SeqUtils.spanToString(csym.getSpan(0)));
+	  TierGlyph fortier = (TierGlyph)getForwardTierHash().get(meth);
+	  if (fortier != null) {
+	    GlyphI mglyph = new EfficientFillRectGlyph();
+	    mglyph.setColor(Color.lightGray);
+	    mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
+	    fortier.addMiddleGlyph(mglyph);
+	  }
+	  TierGlyph revtier = (TierGlyph)getReverseTierHash().get(meth);
+	  if (revtier != null) {
+	    GlyphI mglyph = new EfficientFillRectGlyph();
+	    mglyph.setColor(Color.lightGray);
+	    mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
+	    revtier.addMiddleGlyph(mglyph);
+	  }
+	}
+      }
+    }
   }
 
 
@@ -1922,6 +1949,9 @@ public class SeqMapView extends JPanel
     }
   }
 
+  /**
+   *  return a SeqSpan representing the visible bounds of the view seq
+   */
   public SeqSpan getVisibleSpan() {
     Rectangle2D vbox = map.getView().getCoordBox();
     SeqSpan vspan = new SimpleSeqSpan((int)vbox.x,

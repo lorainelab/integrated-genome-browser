@@ -87,8 +87,8 @@ public class Das2Region {
 
     if (forward) {  segment_span = new SimpleSeqSpan(start, end, aseq);  }
     else {  segment_span = new SimpleSeqSpan(end, start, aseq); }
-    System.out.println("in initRegion() method, start = " + start + ", end = " + end);
-    System.out.println("    seq = " + aseq.getID() + ", genome = " + genome.getID());
+    //    System.out.println("in initRegion() method, start = " + start + ", end = " + end);
+    //    System.out.println("    seq = " + aseq.getID() + ", genome = " + genome.getID());
 
   }
 

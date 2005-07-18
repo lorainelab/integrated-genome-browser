@@ -51,6 +51,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String PART = "PART";
   static final String PROP = "PROP";
   static final String ALIGN = "ALIGN";
+  static final String PARENT = "PARENT";
 
   /**
    *  attributes possible in DAS2 feature respons
@@ -58,7 +59,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String ID = "id";   // in <FEATURE>, <PART>
   static final String TYPE = "type";  // in <FEATURE>
   static final String NAME = "name";  // in <FEATURE>
-  static final String PARENT = "parent";  // in <FEATURE>
+  // parent has moved from attribute of FEATURE to subelement of FEATURE
+  //  static final String PARENT = "parent";  // in <FEATURE>
   static final String CREATED = "created";  // in <FEATURE>
   static final String MODIFIED = "modified";  // in <FEATURE>
   static final String DOC_HREF = "doc_href";  // in <FEATURE>
@@ -223,7 +225,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       feat_id = atts.getValue("id");
       feat_type = atts.getValue("type");
       feat_name = atts.getValue("name");
-      feat_parent_id = atts.getValue("parent");
+      // feat_parent_id has moved to <PARENT> element
+      //      feat_parent_id = atts.getValue("parent");
       feat_created = atts.getValue("created");
       feat_modified = atts.getValue("modified");
       feat_doc_href = atts.getValue("doc_href");
@@ -235,6 +238,12 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       feat_locs.add(span);
     }
     else if (current_elem == XID) {
+    }
+    else if (current_elem == PARENT) {
+      if (feat_parent_id == null) { feat_parent_id = atts.getValue("id"); }
+      else {
+	System.out.println("WARNING:  multiple parents for feature, just using first one");
+      }
     }
     else if (current_elem == PART) {
       String part_id = atts.getValue("id");
@@ -343,7 +352,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	//	parent2parts.remove(featsym);
       }
     }
-      
+
     // if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
     if (feat_parent_id == null) {
       for (int i=0; i<loc_count; i++) {
@@ -367,6 +376,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       if (parent != null) {
 	// add child to parent parts map
 	LinkedHashMap parent_parts = (LinkedHashMap)parent2parts.get(parent);
+        if (parent_parts == null)  {
+          System.out.println("WARNING: no parent_parts found for parent, id=" + feat_parent_id);
+        }
 	parent_parts.put(feat_id, featsym);
 	if (childrenReady(parent)) {
 	  addChildren(parent);
@@ -483,11 +495,14 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     pw.print("\" type=\"");
     pw.print(feat_type);
     pw.print("\" ");
+    /*   parent has moved from being an attribute to being an element (zero or more)
+	 writeDasFeature() currently does not handle multiple parents, only zero or one
     if (parent_id != null) {
       pw.print("parent=\"");
       pw.print(parent_id);
       pw.print("\" ");
     }
+    */
     pw.print(">");
     pw.println();
 
@@ -498,13 +513,22 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     pw.print("\" />");
     pw.println();
 
+    //  parent has moved from being an attribute to being an element (zero or more)
+    //    writeDasFeature() currently does not handle multiple parents, only zero or one
+    if (parent_id != null) {
+      pw.print("     <PARENT id=\"");
+      pw.print(parent_id);
+      pw.print("\" />");
+      pw.println();
+    }
+
     // print  <PART .../> line for each child
     int child_count = annot.getChildCount();
     if (child_count > 0) {
       for (int i=0; i<child_count; i++) {
 	SeqSymmetry child = annot.getChild(i);
 	String child_id = getChildID(child, feat_id, i);
-	pw.print("    <PART id=\"");
+	pw.print("     <PART id=\"");
 	pw.print(child_id);
 	pw.print("\" />");
 	pw.println();

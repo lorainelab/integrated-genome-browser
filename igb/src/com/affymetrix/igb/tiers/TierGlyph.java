@@ -28,11 +28,11 @@ import com.affymetrix.genoviz.util.Timer;
  *  In a AffyTieredMap, TierGlyphs pack relative to each other but not to other glyphs added
  *  directly to the map.
  *
- *  Added ability to have "middleground" glyphs, which are generally not considered children of  
- *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they 
- *    are not considered children in pickTraversal() method.  
- *  Only way to add middleground glyphs is via addMiddleGlyph() method, 
- *    only way to remove them is via removeAllChildren() method, 
+ *  Added ability to have "middleground" glyphs, which are generally not considered children of
+ *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
+ *    are not considered children in pickTraversal() method.
+ *  Only way to add middleground glyphs is via addMiddleGlyph() method,
+ *    only way to remove them is via removeAllChildren() method,
  *    no external access to them
  */
 public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
@@ -43,9 +43,9 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   static Comparator child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
-  /** glyphs to be drawn in the "middleground" -- 
+  /** glyphs to be drawn in the "middleground" --
    *    in front of the solid background, but behind the child glyphs
-   *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts 
+   *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
    */
   java.util.List middle_glyphs = new ArrayList();
 
@@ -62,6 +62,13 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   // for now ignoring background color, foreground color
   //   inherited from Glyph (as a style)
   protected Color fill_color = null;
+  /*
+   * other_fill_color is derived from fill_color whenever setFillColor() is called
+   * if there are any "middle" glyphs, then background is drawn with other_fill_color and 
+   *    middle glyphs are drawn with fill_color
+   * if no "middle" glyphs, then background is drawn with fill_color
+   */
+  protected Color other_fill_color = null;
   protected Color outline_color = null;
   protected boolean hideable = true;
   protected String label = null;
@@ -269,7 +276,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
   /**
    *  Modifying draw method to allow background shading by a collection of non-child
-   *    "middleground" glyphs.  These are rendered after the solid background but before 
+   *    "middleground" glyphs.  These are rendered after the solid background but before
    *    all of the children (which could be considered the "foreground");
    */
   public void draw(ViewI view) {
@@ -281,20 +288,30 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     Rectangle vbox = view.getPixelBox();
     pixelbox = GeometryUtils.intersection(vbox, pixelbox, pixelbox);
 
-    if (fill_color != null) {
-      g.setColor(fill_color);
-      g.fillRect(pixelbox.x, pixelbox.y,
-		 pixelbox.width, pixelbox.height);
+    if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
+      if (fill_color != null) {
+	g.setColor(fill_color);      
+	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+      }
+    }
+    else {  
+      // there are middle glyphs, so use other_fill_color to fill entire tier, 
+      //   and fill_color to color middle glyphs
+      if (other_fill_color != null) {
+	g.setColor(other_fill_color);      
+	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+      }
     }
 
-    // cycle through "middleground" glyphs, 
-    //   make sure their coord box y and height are set to same as TierGlyph, 
+    // cycle through "middleground" glyphs,
+    //   make sure their coord box y and height are set to same as TierGlyph,
     //   then call mglyph.draw(view)
     int mcount = middle_glyphs.size();
     for (int i=0; i<mcount; i++) {
       GlyphI mglyph = (GlyphI)middle_glyphs.get(i);
       Rectangle2D mbox = mglyph.getCoordBox();
       mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
+      mglyph.setColor(fill_color);
       mglyph.drawTraversal(view);
     }
     if (outline_color != null) {
@@ -308,20 +325,21 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     super.draw(view);
   }
 
-  /** Remove all children of the glyph 
-   *  GAH removed this method, should be able to call removeAllChildren() (inherited from Glyph/GlyphI)
+  /**
+   *  Remove all children of the glyph
+   *
    */
   public void removeAllChildren() {
     super.removeAllChildren();
-    // also remove all middleground glyphs 
-    // this is currently the only place where middleground glyphs are treated as if they were children 
+    // also remove all middleground glyphs
+    // this is currently the only place where middleground glyphs are treated as if they were children
     //   maybe should rename this method clear() or something like that...
-    // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by 
+    // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by
     //     clearing middle_glyphs
     middle_glyphs.clear();
   }
-  
-  /*
+
+  /* GAH removed this method, should be able to call removeAllChildren() (inherited from Glyph/GlyphI)
   public void removeChildren() {
     Vector kids = this.getChildren();
     if (kids != null) {
@@ -329,7 +347,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
         this.removeChild((GlyphI)kids.elementAt(i));
     }
   }
-  */    
+  */
 
   public void setState(int newstate) {
     // terminate any pingponging if state is already same
@@ -429,17 +447,25 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return outline_color;
   }
 
+
   /** Sets the color used to fill the tier background, or null if no color
-   *  @param col  A color, or null if no outline is desired.
+   *  @param col  A color, or null if no background color is desired.
    */
   public void setFillColor(Color col) {
     fill_color = col;
+    // for now, assume "middleground" color is based on fill color
+    int intensity = col.getRed() + col.getGreen() + col.getBlue();
+    if (intensity == 0) { other_fill_color = Color.darkGray; }
+    else if (intensity > (255+127)) { other_fill_color = col.darker(); }
+    else { other_fill_color = col.brighter(); }
+    //    other_fill_color = Color.lightGray;
+    //    other_fill_color = fill_color.brighter().brighter().brighter();
   }
 
-  /** Returns the color used to draw the tier outline, or null
-      if there is no outline. */
+  /** Returns the color used to draw the tier background, or null
+      if there is no background. */
   public Color getFillColor() {
-    return fill_color;
+    return fill_color; 
   }
 
   /** Set whether or not the tier wants to allow itself to be hidden;

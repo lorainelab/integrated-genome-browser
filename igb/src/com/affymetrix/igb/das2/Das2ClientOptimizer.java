@@ -35,6 +35,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
+  static boolean OPTIMIZE_FORMAT = false;
 
   static String default_format = "das2feature";
   // input is List of Das2FeatureRequestSyms
@@ -209,7 +210,10 @@ public class Das2ClientOptimizer {
     String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
     System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
-    String format = FormatPriorities.getFormat(type);
+    String format = null;
+    if (OPTIMIZE_FORMAT)  {
+      format = FormatPriorities.getFormat(type);
+    }
 
     Das2Region region = request_sym.getRegion();
     Das2VersionedSource versioned_source = region.getVersionedSource();
@@ -235,7 +239,7 @@ public class Das2ClientOptimizer {
     }
     buf.append("type=");
     buf.append(type.getID());
-    if (format != null) {
+    if (OPTIMIZE_FORMAT && format != null) {
       buf.append(";");
       buf.append("format=");
       buf.append(format);
@@ -256,8 +260,20 @@ public class Das2ClientOptimizer {
       HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
       int response_code = query_con.getResponseCode();
       String response_message = query_con.getResponseMessage();
+      System.out.println("http response code: " + response_code + ", " + response_message);
+
+      //      Map headers = query_con.getHeaderFields();
+      int hindex = 0;
+      while (true) {
+	String val = query_con.getHeaderField(hindex);
+	String key = query_con.getHeaderFieldKey(hindex);
+	if (val == null && key == null) { break; }
+	System.out.println("header:   key = " + key + ", val = " + val);
+	hindex++;
+      }
+
       if (response_code != 200) {
-	System.out.println("WARNING, HTTP response code not 200/OK: " + 
+	System.out.println("WARNING, HTTP response code not 200/OK: " +
 			   response_code + ", " + response_message);
       }
       if (response_code >= 400 && response_code < 600) {
@@ -307,9 +323,9 @@ public class Das2ClientOptimizer {
 
 
 	if (feats == null || feats.size() == 0) {
-	  // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to 
+	  // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
 	  //    populate with empty sym child/grandchild
-	  // better way might be to have request sym's span on aseq be dependent on children, so 
+	  // better way might be to have request sym's span on aseq be dependent on children, so
 	  //    if no children then no span on aseq (though still an overlap_span and inside_span)
 	  /*
 	  SimpleSymWithProps child = new SimpleSymWithProps();

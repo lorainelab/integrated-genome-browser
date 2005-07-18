@@ -1104,31 +1104,38 @@ public class SeqMapView extends JPanel
     if (factory == null) { factory = default_glyph_factory; }
     factory.createGlyph(annotSym, this);
 
-    if ((meth != null) && (annotSym instanceof TypeContainerAnnot)) {
+    /**
+     *  doing "middleground" shading for tracks loaded via DAS/2
+     */
+    if ((meth != null) && 
+	(annotSym instanceof TypeContainerAnnot) &&
+	(annotSym.getChildCount() > 0)  && 
+	(annotSym.getChild(0) instanceof Das2FeatureRequestSym) ) {
       int child_count = annotSym.getChildCount();
+      TierGlyph fortier = (TierGlyph)getForwardTierHash().get(meth);
+      TierGlyph revtier = (TierGlyph)getReverseTierHash().get(meth);
       for (int i=0; i<child_count; i++) {
 	SeqSymmetry csym = annotSym.getChild(i);
 	if (csym instanceof Das2FeatureRequestSym) {
 	  Das2FeatureRequestSym dsym = (Das2FeatureRequestSym)csym;
 	  SeqSpan ospan = dsym.getOverlapSpan();
 	  // System.out.println("DAS FEATURE SYM: " + SeqUtils.spanToString(csym.getSpan(0)));
-	  TierGlyph fortier = (TierGlyph)getForwardTierHash().get(meth);
 	  if (fortier != null) {
 	    GlyphI mglyph = new EfficientFillRectGlyph();
-	    mglyph.setColor(Color.lightGray);
+	    //	    mglyph.setColor(Color.lightGray);  this is done in TierGlyph for now...
 	    mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 	    fortier.addMiddleGlyph(mglyph);
 	  }
-	  TierGlyph revtier = (TierGlyph)getReverseTierHash().get(meth);
 	  if (revtier != null) {
 	    GlyphI mglyph = new EfficientFillRectGlyph();
-	    mglyph.setColor(Color.lightGray);
+	    //	    mglyph.setColor(Color.lightGray);  this is done in TierGlyph for now...
 	    mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 	    revtier.addMiddleGlyph(mglyph);
 	  }
 	}
       }
     }
+
   }
 
 

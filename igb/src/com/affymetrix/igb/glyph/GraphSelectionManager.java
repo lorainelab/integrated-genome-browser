@@ -729,8 +729,6 @@ public class GraphSelectionManager
 	current_graph = (GraphGlyph)graphlist.get(0);
 	if (num_selected_graphs > 1) {
 	  second_current_graph = (GraphGlyph)graphlist.get(1);
-	  System.out.println("graphA: " + second_current_graph.getLabel());
-	  System.out.println("graphB: " + current_graph.getLabel());
 	}
 
 	toggle_floating.setEnabled(num_selected_graphs == 1);

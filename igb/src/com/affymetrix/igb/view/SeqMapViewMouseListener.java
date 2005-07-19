@@ -280,14 +280,14 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
           int seq_select_end = (int)Math.round(cbox.x + cbox.width);
 
           SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.aseq);
-          smv.setSelectedRegion(new_region);
+          smv.setSelectedRegion(new_region, true);
           smv.last_selected_sym = new_region;
           smv.last_selected_glyph = smv.seq_glyph;
           //	map.updateWidget();
         }
         else {
           // This is optional: clear selected region if drag is very small distance
-          smv.setSelectedRegion(null);
+          smv.setSelectedRegion(null, true);
         }
 
       } else {

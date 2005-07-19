@@ -266,7 +266,7 @@ public class UnibrowControlServlet extends HttpServlet {
 	      gviewer.zoomTo(view_span);
 	      if (selstart >= 0 && selend >= 0) {
 		SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-		gviewer.setSelectedRegion(regionsym);
+		gviewer.setSelectedRegion(regionsym, true);
 	      }
 	      if (graph_files != null) {
 		URL[] graph_urls = new URL[graph_files.length];

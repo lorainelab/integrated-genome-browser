@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -69,7 +69,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
 public class SeqMapView extends JPanel
-  implements AnnotatedSeqViewer, SymSelectionSource, NeoRubberBandListener,
+  implements AnnotatedSeqViewer, SymSelectionSource,
 	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener,
 	     ActionListener
 {
@@ -139,12 +139,6 @@ public class SeqMapView extends JPanel
   UnibrowHairline hairline = null;
 
   AnnotatedBioSeq aseq;
-
-  /**
-   *  Whether rubber banding is started with shift key down.
-   */
-  boolean rubbershift = false;
-
 
   /**
    *  a virtual sequence that maps the AnnotatedBioSeq aseq to the map coordinates.
@@ -238,7 +232,7 @@ public class SeqMapView extends JPanel
   JMenuItem renumberMI = empty_menu_item;
 
   private final ActionListener action_listener;
-  private final MouseListener mouse_listener;
+  private final SeqMapViewMouseListener mouse_listener;
 
   CharSeqGlyph seq_glyph = null;
 
@@ -270,7 +264,7 @@ public class SeqMapView extends JPanel
     edge_matcher = GlyphEdgeMatcher.getSingleton();
 
     action_listener = new SeqMapViewActionListener();
-    mouse_listener = new SeqMapViewMouseListener();
+    mouse_listener = new SeqMapViewMouseListener(this);
 
     //    map.setScrollingOptimized(true);
     map.getNeoCanvas().setDoubleBuffered(false);
@@ -300,7 +294,7 @@ public class SeqMapView extends JPanel
     map.addMouseListener(mouse_listener);
     SmartRubberBand srb = new SmartRubberBand(map);
     map.setRubberBand(srb);
-    map.addRubberBandListener(this);
+    map.addRubberBandListener(mouse_listener);
     srb.setColor(new Color(100, 100, 255));
 
     GraphSelectionManager graph_manager = new GraphSelectionManager(this);
@@ -1257,7 +1251,7 @@ public class SeqMapView extends JPanel
 
   protected void clearSelection() {
     map.clearSelected();
-    seq_selected_sym = null;  // symmetry representing selected region of sequence
+    setSelectedRegion(null, false);
     last_selected_glyph = null;
     last_selected_sym = null;
     //  match_glyphs
@@ -1293,52 +1287,8 @@ public class SeqMapView extends JPanel
     gmodel.setSelectedSymmetries(selected_syms, this);
   }
 
-  public void rubberBandChanged(NeoRubberBandEvent evt) {
-    /*
-     * Because using SmartRubberBand, rubber banding will only happen
-     *   (and NeoRubberBandEvents will only be received) when the orginal mouse press to
-     *    start the rubber band doesn't land on a hitable glyph
-     */
-    if (evt.getID() == NeoRubberBandEvent.BAND_START) {
-      if (evt.isShiftDown()) {
-	rubbershift = true;
-      }
-    }
-    if (evt.getID() == NeoRubberBandEvent.BAND_END) {
-      Rectangle2D cbox = new Rectangle2D();
-      Rectangle pbox = evt.getPixelBox();
-      map.getView().transformToCoords(pbox, cbox);
-      int seq_select_start = (int)Math.round(cbox.x);
-      int seq_select_end = (int)Math.round(cbox.x + cbox.width);
-
-      if (rubbershift) {
-	Vector glyphs = map.getItemsByCoord(cbox);
-	map.select(glyphs);
-	setSelectedRegion(null);
-        if (show_edge_matches) {
-          doEdgeMatching(map.getSelected(), false);
-        }
-	map.updateWidget();
-
-        postSelections();
-      }
-      else if (pbox.width >= 2 && pbox.height >=2) {
-	clearSelection();
-	SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, aseq);
-	setSelectedRegion(new_region);
-	last_selected_sym = new_region;
-	last_selected_glyph = seq_glyph;
-	//	map.updateWidget();
-      }
-      // should probably be viewseq...
-      //      seq_selected_sym = new SingletonSeqSymmetry(seq_select_start, seq_select_end, aseq);
-      rubbershift = false;
-    }
-  }
-
-
   // assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
-  public void setSelectedRegion(SeqSymmetry region_sym) {
+  public void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
     if (seq_selected_sym != null) {
       selected_syms.remove(seq_selected_sym);
     }
@@ -1352,7 +1302,9 @@ public class SeqMapView extends JPanel
 	seq_glyph.select(seq_region.getMin(), seq_region.getMax());
 	selected_syms.add(seq_selected_sym);
       }
-      map.updateWidget();
+      if (update_widget) {
+        map.updateWidget();
+      }
     }
   }
 
@@ -1628,12 +1580,17 @@ public class SeqMapView extends JPanel
     if (map_auto_scroller == null) {
       //      toggleAutoScroll(
       JPanel pan = new JPanel();
+
+      int bases_in_view = (int) map.getView().getCoordBox().width;
+      int pixel_width = map.getView().getPixelBox().width;
+      as_bases_per_pix = bases_in_view / pixel_width;
+      
       final JTextField bases_per_pixTF = new JTextField("" + as_bases_per_pix);
       final JTextField pix_to_scrollTF = new JTextField("" + as_pix_to_scroll);
       final JTextField time_intervalTF = new JTextField("" + as_time_interval);
       float bases_per_minute = (float)
 	// 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	(as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+	(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
       float minutes_per_seq = viewseq.getLength() / bases_per_minute;
       final JLabel bases_per_minuteL = new JLabel("" + (bases_per_minute/1000000));
       final JLabel minutes_per_seqL = new JLabel("" + (minutes_per_seq));
@@ -1656,7 +1613,8 @@ public class SeqMapView extends JPanel
 	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
 	    float bases_per_minute = (float)
 	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+            System.out.println("Bases per minute: " + bases_per_minute);
 	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
 	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
 	    minutes_per_seqL.setText("" + (minutes_per_seq));
@@ -1669,7 +1627,7 @@ public class SeqMapView extends JPanel
 	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
 	    float bases_per_minute = (float)
 	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
 	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
 	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
 	    minutes_per_seqL.setText("" + (minutes_per_seq));
@@ -1682,7 +1640,7 @@ public class SeqMapView extends JPanel
 	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
 	    float bases_per_minute = (float)
 	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
 	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
 	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
 	    minutes_per_seqL.setText("" + (minutes_per_seq));
@@ -2179,190 +2137,72 @@ public class SeqMapView extends JPanel
     }
   }
 
-  private class SeqMapViewMouseListener implements MouseListener {
-
-    private final int xoffset_pop = 10;
-    private final int yoffset_pop = 0;
-
-    public void mouseEntered(MouseEvent evt) { }
-    public void mouseExited(MouseEvent evt) { }
-    public void mousePressed(MouseEvent evt) { }
-    public void mouseClicked(MouseEvent evt) {
-      if ((evt instanceof NeoMouseEvent) && (map_auto_scroller != null)) { toggleAutoScroll(); }
+  // sets the text on the sym_info JLabel to the id of the selection
+  // Compare the code here with SymTableView.selectionChanged()
+  // The logic about finding the ID from instances of DerivedSeqSymmetry
+  // should be similar in both places, or else users could get confused.
+  private void setPopupMenuTitle(JLabel sym_info, Vector selected_glyphs) {
+    String id = null;
+    if (selected_glyphs.isEmpty()) {
+      id = "No selection";
     }
-
-    // sets the text on the sym_info JLabel to the id of the selection
-    // Compare the code here with SymTableView.selectionChanged()
-    // The logic about finding the ID from instances of DerivedSeqSymmetry
-    // should be similar in both places, or else users could get confused.
-    private void setPopupMenuTitle(JLabel sym_info, Vector selected_glyphs) {
-      String id = null;
-      if (selected_glyphs.isEmpty()) {
-        id = "No selection";
-      }
-      else {
-        if (selected_glyphs.size() == 1) {
-          GlyphI topgl = (GlyphI)selected_glyphs.elementAt(selected_glyphs.size() - 1);
-          Object info = topgl.getInfo();
-          SeqSymmetry sym = null;
-          if (info instanceof SeqSymmetry) {
-            sym = (SeqSymmetry) info;
-          }
-          if (sym instanceof SymWithProps) {
-            id = (String) ((SymWithProps) sym).getProperty("id");
-          }
-          if (id == null && sym instanceof DerivedSeqSymmetry) {
-            SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-            if (original instanceof Propertied) {
-              id = (String) ((Propertied) original).getProperty("id");
-            }
-          }
-          if (id == null) {id = "Unknown Selection";}
-        } else {
-          id = ("Multiple Selections");
+    else {
+      if (selected_glyphs.size() == 1) {
+        GlyphI topgl = (GlyphI)selected_glyphs.elementAt(selected_glyphs.size() - 1);
+        Object info = topgl.getInfo();
+        SeqSymmetry sym = null;
+        if (info instanceof SeqSymmetry) {
+          sym = (SeqSymmetry) info;
         }
-      }
-      if (id == null) { id = ""; }
-      sym_info.setText(id);
-    }
-
-    private void showPopup(NeoMouseEvent nevt) {
-      Vector selected_glyphs = map.getSelected();
-      sym_popup.removeAll();
-      setPopupMenuTitle(sym_info, selected_glyphs);
-      sym_popup.add(sym_info);
-      sym_popup.add(printMI);
-      if (! selected_glyphs.isEmpty()) {
-        sym_popup.add(zoomtoMI);
-      }
-      if (selected_syms.size() > 0) {
-	sym_popup.add(selectParentMI);
-	sym_popup.add(printSymmetryMI);
-      }
-
-      for (int i=0; i<popup_listeners.size(); i++) {
-	ContextualPopupListener listener = (ContextualPopupListener)popup_listeners.get(i);
-	listener.popupNotify(sym_popup, selected_syms);
-      }
-      if (sym_popup.getComponentCount() > 0) {
-	sym_popup.show(map, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+        if (sym instanceof SymWithProps) {
+          id = (String) ((SymWithProps) sym).getProperty("id");
+        }
+        if (id == null && sym instanceof DerivedSeqSymmetry) {
+          SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
+          if (original instanceof Propertied) {
+            id = (String) ((Propertied) original).getProperty("id");
+          }
+        }
+        if (id == null) {id = "Unknown Selection";}
+      } else {
+        id = ("Multiple Selections");
       }
     }
+    if (id == null) { id = ""; }
+    sym_info.setText(id);
+  }
 
-    public void mouseReleased(MouseEvent evt) {
-      if (! (evt instanceof NeoMouseEvent)) { return; }
-      Object src = evt.getSource();
-      int mods = evt.getModifiers();
-      NeoMouseEvent nevt = (NeoMouseEvent)evt;
+  private final int xoffset_pop = 10;
+  private final int yoffset_pop = 0;
 
-      // select with any mouse button
-      // used to only use button1:  ((mods & InputEvent.BUTTON1_MASK) != 0)
-     if (1==1) {
-        double x_coord = nevt.getCoordX();
-        double y_coord = nevt.getCoordY();
-        Vector selected_glyphs = nevt.getItems();
-        GlyphI topgl = null;
-        if (!selected_glyphs.isEmpty()) {
-          topgl = (GlyphI) selected_glyphs.lastElement();
-        }
+  void showPopup(NeoMouseEvent nevt) {
+    sym_popup.setVisible(false); // in case already showing
 
-        // Normally, clicking will clear previons selections before selecting new things.
-        // but we preserve the current selections if:
-        //  1. shift or alt key is pressed, or
-        //  2. the pop-up key is being pressed
-        //     2a. on top of nothing
-        //     2b. on top of something previously selected
-        boolean preserve_selections = false;
-        if (nevt.isAltDown() || nevt.isShiftDown()) {
-          preserve_selections = true;
-        }
-        else if (isOurPopupTrigger(nevt)) {
-          if (topgl==null) {
-            preserve_selections = true;
-          } else if (map.getSelected().contains(topgl) ||
-                     map.getSelected().contains(topgl.getParent())) {
-            preserve_selections = true;
-          }
-        }
-        if ( ! preserve_selections) {
-          map.clearSelected();
-          last_selected_glyph = null;
-          last_selected_sym = null;
-        }
-        // must remove match glyphs before call not nevt.getItems(), or may end
-        //   up matching previous match glyphs (which then seem to get stuck on map...)
-        map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
-
-        if (!selected_glyphs.isEmpty()) {
-          // trying to do smarter selection of parent (for example, transcript)
-          //     versus child (for example, exon)
-          // calculate pixel width of topgl, if <= 2, and it has no children,
-          //   and parent glyphs has pixel width <= 10, then select parent instead of child..
-          Rectangle pbox = new Rectangle();
-          Rectangle2D cbox = topgl.getCoordBox();
-          map.getView().transformToPixels(cbox, pbox);
-
-          if (pbox.width <= 2) {
-            // if the selection is very small, move the x_coord to the center
-            // of the selection so we can zoom-in on it.
-            x_coord = cbox.x + cbox.width/2;
-          }
-
-          if ((pbox.width <= 2) && (topgl.getChildCount() == 0) && (topgl.getParent() != null) ) {
-            // Watch for null parents:
-            // The reified Glyphs of the FlyweightPointGlyph made by OrfAnalyzer2 can have no parent
-            cbox = topgl.getParent().getCoordBox();
-            map.getView().transformToPixels(cbox, pbox);
-            if (pbox.width <= 10) {
-              topgl = topgl.getParent();
-              if (pbox.width <= 2) { // Note: this pbox has new values than those tested above
-                // if the selection is very small, move the x_coord to the center
-                // of the selection so we can zoom-in on it.
-                x_coord = cbox.x + cbox.width/2;
-              }
-            }
-          }
-
-          map.select(topgl);
-	  // removed toFrontOfSiblings() calls in order to preserve child ordering
-          // map.toFrontOfSiblings(topgl);
-          last_selected_glyph = topgl;
-          if (last_selected_glyph.getInfo() instanceof SeqSymmetry) {
-            last_selected_sym = (SeqSymmetry)last_selected_glyph.getInfo();
-          }
-          else {
-            last_selected_sym = null;
-          }
-
-          // not doing edge match if selection is a GraphGlyph...
-          if (show_edge_matches /* && (! (topgl instanceof GraphGlyph)) */)  {
-            doEdgeMatching(map.getSelected(), false);
-          }
-        }
-
-        setZoomSpotX(x_coord);
-        setZoomSpotY(y_coord);
-        map.updateWidget();
-
-        postSelections();
-      }
-
-      if ((isOurPopupTrigger(nevt)) &&
-	  ( ! (last_selected_glyph instanceof GraphGlyph)) )   {
-        showPopup(nevt);
-      }
+    Vector selected_glyphs = map.getSelected();
+    sym_popup.removeAll();
+    setPopupMenuTitle(sym_info, selected_glyphs);
+    sym_popup.add(sym_info);
+    sym_popup.add(printMI);
+    if (! selected_glyphs.isEmpty()) {
+      sym_popup.add(zoomtoMI);
+    }
+    if (selected_syms.size() > 0) {
+      sym_popup.add(selectParentMI);
+      sym_popup.add(printSymmetryMI);
     }
 
-    /** Checks whether the mouse event is something that we consider to be
-     *  a pop-up trigger.  (This has nothing to do with MouseEvent.isPopupTrigger()).
-     *  GAH 8-6-2003 -- added checks for isMetaDown() and isControlDown() to try and
-     *  catch right-click simulation for one-button mouse operation on Mas OSX
-     */
-    boolean isOurPopupTrigger(NeoMouseEvent nevt) {
-      return (nevt.isControlDown() || nevt.isMetaDown() ||
-	   ((nevt.getModifiers() & InputEvent.BUTTON3_MASK) != 0 ));
+    for (int i=0; i<popup_listeners.size(); i++) {
+      ContextualPopupListener listener = (ContextualPopupListener)popup_listeners.get(i);
+      listener.popupNotify(sym_popup, selected_syms);
     }
-  }  // END private class SeqMapViewMouseListener
+    if (sym_popup.getComponentCount() > 0) {
+      sym_popup.show(map, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+    }
+  }
+
+//  private class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
+   
+//  }  // END private class SeqMapViewMouseListener
 
 
   public void addPopupListener(ContextualPopupListener listener) {

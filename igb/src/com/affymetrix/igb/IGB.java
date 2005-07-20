@@ -86,6 +86,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem gc_item;
   JMenuItem memory_item;
   JMenuItem about_item;
+  JMenuItem console_item;
 
   JMenuItem clear_item;
   JMenuItem clear_graphs_item;
@@ -140,6 +141,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    */
   public static void main(String[] args) {
    try {
+     
+    // Initialize the ConsoleView right off, so that ALL output will
+    // be captured there.
+    ConsoleView.init();
+    
+    System.out.println("Starting \"" + IGBConstants.APP_NAME + "\"");
+    System.out.println("Version: " + IGBConstants.IGB_VERSION);
+    System.out.println();
     
     try {
       // It this is Windows, then use the Windows look and feel.
@@ -178,7 +187,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       } catch (MalformedURLException mue) {
         mue.printStackTrace(System.err);
       }
-    }
+    }    
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
@@ -545,8 +554,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
+    console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
 
     MenuUtil.addToMenu(help_menu, about_item);
+    MenuUtil.addToMenu(help_menu, console_item);
     if (ADD_DIAGNOSTICS) {
       MenuUtil.addToMenu(help_menu, gc_item);
       MenuUtil.addToMenu(help_menu, memory_item);
@@ -555,6 +566,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
     about_item.addActionListener(this);
+    console_item.addActionListener(this);
     clear_item.addActionListener(this);
     clear_graphs_item.addActionListener(this);
     open_file_item.addActionListener(this);
@@ -783,6 +795,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == about_item) {
       showAboutDialog();
+    }
+    else if (src == console_item) {
+      ConsoleView.showConsole();
     } else if (src == preferences_item) {
       PreferencesPanel pv = PreferencesPanel.getSingleton();
       JFrame f = pv.getFrame();
@@ -816,7 +831,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     String data_dir = UnibrowPrefsUtil.getAppDataDirectory();
     if (data_dir != null) {
-      about_text.append("\nApplication data stored in: \n  "+ data_dir +"\n");
+      File data_dir_f = new File(data_dir);
+      about_text.append("\nApplication data stored in: \n  "+ 
+        data_dir_f.getAbsolutePath() +"\n");
     }
 
     message_pane.add(new JScrollPane(about_text));
@@ -847,11 +864,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     buttonP.add(jettyB);
     message_pane.add(buttonP);
 
-    JOptionPane.showMessageDialog(frm,
-				 message_pane,
-				 ("About " + APP_NAME),
-				 JOptionPane.INFORMATION_MESSAGE,
-				 null);
+    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE, 
+     JOptionPane.DEFAULT_OPTION);
+    final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
+    //dialog.setResizable(true);
+    dialog.show();
   }
 
 

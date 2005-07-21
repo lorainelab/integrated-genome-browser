@@ -326,9 +326,14 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public void addFeature() {
+    // checking to make sure feature with same id doesn't already exist
+    //   (ids _should_ be unique, but want to make sure)
+    if (id2sym.get(feat_id) != null) {
+      System.out.println("WARNING, duplicate feature id: " + feat_id);
+      return;
+    }
     SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
 					      feat_created, feat_modified, feat_doc_href);
-
     // add featsym to id2sym hash
     id2sym.put(feat_id, featsym);
     parent2parts.put(featsym, feat_parts);
@@ -379,13 +384,16 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         if (parent_parts == null)  {
           System.out.println("WARNING: no parent_parts found for parent, id=" + feat_parent_id);
         }
-	parent_parts.put(feat_id, featsym);
-	if (childrenReady(parent)) {
-	  addChildren(parent);
-	  //	  parent2parts.remove(parent_sym);
+	else  {
+	  parent_parts.put(feat_id, featsym);
+	  if (childrenReady(parent)) {
+	    addChildren(parent);
+	    //	  parent2parts.remove(parent_sym);
+	  }
 	}
       }
     }
+
   }
 
 

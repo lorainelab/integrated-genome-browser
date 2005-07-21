@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -20,7 +20,8 @@ import java.text.DateFormat;
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
-  
+  static boolean DEBUG_CONNECTION = false;
+
   public static int IGNORE_CACHE = 100;
   public static int ONLY_CACHE = 101;
   public static int NORMAL_CACHE = 102;
@@ -34,7 +35,7 @@ public class LocalUrlCacher {
   }
 
 
-  public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)  
+  public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
     File fil = new File(cache_root);
     if (! fil.exists()) {
@@ -45,7 +46,7 @@ public class LocalUrlCacher {
 
     // if not in cache, then return input stream from http connection
     // if in cache, then check timestamping
-    // Should probably do this via a "just headers" http call, but for now doing standard GET and 
+    // Should probably do this via a "just headers" http call, but for now doing standard GET and
     //    just reading headers
     InputStream result_stream = null;
 
@@ -53,7 +54,7 @@ public class LocalUrlCacher {
     String cache_file_name = cache_root + "/" + encoded_url;
     File cache_file = new File(cache_file_name);
     boolean cached = cache_file.exists();
-    
+
     URLConnection conn = null;
     long remote_timestamp = 0;
     int content_length = 0;
@@ -64,6 +65,9 @@ public class LocalUrlCacher {
       try {
 	URL theurl = new URL(url);
 	conn = theurl.openConnection();
+	if (DEBUG_CONNECTION) {
+	  reportHeaders(conn);
+	}
 	remote_timestamp = conn.getLastModified();
 	content_type = conn.getContentType();
 	content_length = conn.getContentLength();
@@ -126,7 +130,7 @@ public class LocalUrlCacher {
    *  Forces flushing of entire cache.
    *  Simply removes all cached files.
    */
-  public static void clearCache() {  
+  public static void clearCache() {
     File cache_dir = new File(cache_root);
     if (cache_dir.exists()) {
       File[] fils =  cache_dir.listFiles();
@@ -137,10 +141,27 @@ public class LocalUrlCacher {
       }
     }
   }
-  
+
   /** Returns the location of the root directory of the cache. */
   public static String getCacheRoot() {
     return cache_root;
+  }
+
+  public static void reportHeaders(URLConnection query_con) {
+    try {
+      System.out.println("URL: " + query_con.getURL().toString());
+      int hindex = 0;
+      while (true) {
+	String val = query_con.getHeaderField(hindex);
+	String key = query_con.getHeaderFieldKey(hindex);
+	if (val == null && key == null) {
+	  break;
+	}
+	System.out.println("   header:   key = " + key + ", val = " + val);
+	hindex++;
+      }
+    }
+    catch (Exception ex)  { ex.printStackTrace(); }
   }
 
 }

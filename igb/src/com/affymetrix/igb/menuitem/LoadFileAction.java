@@ -22,11 +22,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.zip.GZIPInputStream;
+import org.xml.sax.InputSource;
 
 import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.*;
 import com.affymetrix.igb.genometry.*;
@@ -80,7 +82,7 @@ public class LoadFileAction {
         new String[] {"psl", "psl3"},
         "PSL Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"das", "dasxml"},
+        new String[] {"das", "dasxml", "das2xml"},
         "DAS Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
@@ -164,7 +166,7 @@ public class LoadFileAction {
         // and the loading of the file fails or fails to create a seq group.
         gmodel.setSelectedSeqGroup(previous_seq_group);
       }
-      
+
       gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
     return aseq;
@@ -266,6 +268,17 @@ public class LoadFileAction {
         Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
+      }
+      else if (stream_name.endsWith(".das2xml")) {
+	System.out.println("in LoadFileAction.load(), parsing with Das2FeatureSaxParser");
+	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+	java.util.List results = parser.parse(new InputSource(str), gmodel.getSelectedSeqGroup(), true);
+	System.out.println("result count: " + results.size());
+	for (int i=0; i<results.size(); i++) {
+	  SeqSymmetry sym = (SeqSymmetry)results.get(i);
+	  //	  SeqUtils.printSymmetry(sym);
+	}
+	aseq = input_seq;
       }
       else if (stream_name.endsWith(".map"))  {
         ScoredMapParser parser = new ScoredMapParser();

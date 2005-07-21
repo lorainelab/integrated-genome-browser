@@ -35,9 +35,18 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
-  static boolean OPTIMIZE_FORMAT = false;
+  static boolean DEBUG_HEADERS = false;
+  static boolean OPTIMIZE_FORMAT = true;
+  static boolean SHOW_DAS_QUERY_GENOMETRY = false;
 
   static String default_format = "das2feature";
+
+  static {
+    SHOW_DAS_QUERY_GENOMETRY = 
+      UnibrowPrefsUtil.getTopNode().getBoolean(DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY,
+					       DasFeaturesAction2.default_show_das_query_genometry);
+  }
+
   // input is List of Das2FeatureRequestSyms
   // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input List,
   //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/SmartAnnotBioSeq
@@ -62,11 +71,6 @@ public class Das2ClientOptimizer {
     int omin = overlap_span.getMin();
     int omax = overlap_span.getMax();
     SeqSymmetry split_query = null;
-
-
-    boolean SHOW_DAS_QUERY_GENOMETRY = true;
-      //      UnibrowPrefsUtil.getTopNode().getBoolean(DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY,
-      //					       DasFeaturesAction2.default_show_das_query_genometry);
 
     if (! (seq instanceof SmartAnnotBioSeq)) {
       System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is NOT a SmartAnnotBioSeq!");
@@ -178,6 +182,10 @@ public class Das2ClientOptimizer {
       Das2FeatureRequestSym request = (Das2FeatureRequestSym)output_requests.get(i);
       boolean success = optimizedLoadFeatures(request);
       if (success) {
+	// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
+	// on one thread when might be rendering based on aseq in event thread...
+	//
+	// or maybe should make addAnnotation() a synchronized method
 	request.getRegion().getAnnotatedSeq().addAnnotation(request);
       }
     }
@@ -260,16 +268,18 @@ public class Das2ClientOptimizer {
       HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
       int response_code = query_con.getResponseCode();
       String response_message = query_con.getResponseMessage();
-      System.out.println("http response code: " + response_code + ", " + response_message);
+      //      System.out.println("http response code: " + response_code + ", " + response_message);
 
       //      Map headers = query_con.getHeaderFields();
-      int hindex = 0;
-      while (true) {
-	String val = query_con.getHeaderField(hindex);
-	String key = query_con.getHeaderFieldKey(hindex);
-	if (val == null && key == null) { break; }
-	System.out.println("header:   key = " + key + ", val = " + val);
-	hindex++;
+      if (DEBUG_HEADERS) {
+	int hindex = 0;
+	while (true) {
+	  String val = query_con.getHeaderField(hindex);
+	  String key = query_con.getHeaderFieldKey(hindex);
+	  if (val == null && key == null) { break; }
+	  System.out.println("header:   key = " + key + ", val = " + val);
+	  hindex++;
+	}
       }
 
       if (response_code != 200) {

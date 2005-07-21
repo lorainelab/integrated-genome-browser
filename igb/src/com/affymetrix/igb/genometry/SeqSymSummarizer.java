@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -181,7 +181,7 @@ public class SeqSymSummarizer {
    */
   public static java.util.List getMergedSpans(java.util.List spans) {
     GraphSym landscape = getSpanSummary(spans, true);
-    java.util.List merged_spans = projectLandscapeSpans(landscape); 
+    java.util.List merged_spans = projectLandscapeSpans(landscape);
     return merged_spans;
   }
 
@@ -439,6 +439,8 @@ public class SeqSymSummarizer {
    */
   public static SeqSymmetry getExclusive(java.util.List symsA, java.util.List symsB, BioSeq seq) {
     SeqSymmetry xorSym = getXor(symsA, symsB, seq);
+    //  if no spans for xor, then won't be any for one-sided xor either, so return null;
+    if (xorSym == null)  { return null; }
     java.util.List xorList = new ArrayList();
     xorList.add(xorSym);
     SeqSymmetry a_not_b = getIntersection(symsA, xorList, seq);

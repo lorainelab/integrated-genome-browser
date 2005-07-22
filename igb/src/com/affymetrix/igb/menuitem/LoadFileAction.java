@@ -185,6 +185,7 @@ public class LoadFileAction {
       StringBuffer sb = new StringBuffer();
       fistr = Streamer.getInputStream(annotfile,  sb);
       String stripped_name = sb.toString();
+
       if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
@@ -245,6 +246,7 @@ public class LoadFileAction {
       StringBuffer stripped_name = new StringBuffer();
       str = Streamer.unzipStream(instr, stream_name, stripped_name);
       stream_name = stripped_name.toString();
+      String lcname = stream_name.toLowerCase();
 
       if (str instanceof BufferedInputStream)  {
         str = (BufferedInputStream) str;
@@ -252,24 +254,24 @@ public class LoadFileAction {
       else {
         str = new BufferedInputStream(str);
       }
-
+      
       Map seqhash = null;
       AnnotatedSeqGroup grp = gmodel.getSelectedSeqGroup();
       if (grp != null)  {
         seqhash = grp.getSeqs();
       }
 
-      if (stream_name.endsWith(".axml")) {
+      if (lcname.endsWith(".axml")) {
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
       }
-      else if (stream_name.endsWith(".das") || stream_name.endsWith(".dasxml")) {
+      else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
         Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
         aseq = parser.parse(str, input_seq);
         parser = null;
       }
-      else if (stream_name.endsWith(".das2xml")) {
+      else if (lcname.endsWith(".das2xml")) {
 	System.out.println("in LoadFileAction.load(), parsing with Das2FeatureSaxParser");
 	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 	java.util.List results = parser.parse(new InputSource(str), gmodel.getSelectedSeqGroup(), true);
@@ -280,15 +282,15 @@ public class LoadFileAction {
 	}
 	aseq = input_seq;
       }
-      else if (stream_name.endsWith(".map"))  {
+      else if (lcname.endsWith(".map"))  {
         ScoredMapParser parser = new ScoredMapParser();
         parser.parse(str, stream_name, input_seq);
         aseq = input_seq;
         parser = null;
       }
-      else if (stream_name.endsWith(".sin") ||
-               stream_name.endsWith(".egr") ||
-               stream_name.endsWith(".txt")
+      else if (lcname.endsWith(".sin") ||
+               lcname.endsWith(".egr") ||
+               lcname.endsWith(".txt")
                ) {
         if (seqhash == null) {
           // It would be possible to allow "sin" files to be read when seqhash is null
@@ -303,7 +305,7 @@ public class LoadFileAction {
           parser = null;
         }
       }
-      else if (stream_name.endsWith(".psl") || stream_name.endsWith( ".psl3")) {
+      else if (lcname.endsWith(".psl") || lcname.endsWith( ".psl3")) {
         PSLParser parser = new PSLParser();
         parser.enableSharedQueryTarget(true);
         if (seqhash == null) {
@@ -318,7 +320,7 @@ public class LoadFileAction {
           // psl_option = 1 "target".
           // Otherwise, the user has to tell us wether to annotate the
           // "query" or "target" or "other"
-          if (stream_name.endsWith(".link.psl")) {
+          if (lcname.endsWith(".link.psl")) {
             psl_option = 1; // "target"
             if (seqhash != null) {
               // Make a copy of the seqhash, because we do NOT want all the temporary
@@ -328,7 +330,7 @@ public class LoadFileAction {
               seqhash = seqhash_copy;
             }
           } else {
-            if (stream_name.endsWith(".psl3")) {
+            if (lcname.endsWith(".psl3")) {
               options = new Object[] { "Query", "Target", "Other"};
             }
             else {
@@ -365,7 +367,7 @@ public class LoadFileAction {
         }
         parser = null;
       }
-      else if (stream_name.endsWith(".bps")) {
+      else if (lcname.endsWith(".bps")) {
         // bps parsing requires a Map of sequences (seqid ==> BioSeq) rather than a single BioSeq
         //        if (seqhash == null) {
         //          seqhash = new HashMap();
@@ -383,7 +385,7 @@ public class LoadFileAction {
         }
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".bed")) {
+      else if (lcname.endsWith(".bed")) {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         BedParser parser = new BedParser(gviewer);
@@ -396,7 +398,7 @@ public class LoadFileAction {
         }
         parser = null;
       }
-      else if (stream_name.endsWith(".bgn")) {
+      else if (lcname.endsWith(".bgn")) {
         if (seqhash == null) {
           IGB.errorPanel("ERROR", ".bgn files can only be loaded if a seq group is already selected");
         }
@@ -407,7 +409,7 @@ public class LoadFileAction {
         }
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".brs")) {
+      else if (lcname.endsWith(".brs")) {
         if (seqhash == null) {
           IGB.errorPanel("ERROR", ".brs files can only be loaded if a seq group is already selected");
         }
@@ -421,7 +423,7 @@ public class LoadFileAction {
         }
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".bsnp")) {
+      else if (lcname.endsWith(".bsnp")) {
         if (seqhash == null) {
           IGB.errorPanel("ERROR", ".bsnp files can only be loaded if a seq group is already selected");
         }
@@ -433,7 +435,7 @@ public class LoadFileAction {
         }
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".brpt")) {
+      else if (lcname.endsWith(".brpt")) {
         if (seqhash == null) {
           IGB.errorPanel("ERROR", ".brpt files can only be loaded if a seq group is already selected");
         }
@@ -445,13 +447,13 @@ public class LoadFileAction {
         }
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".bp1")) {
+      else if (lcname.endsWith(".bp1")) {
         Bprobe1Parser parser = new Bprobe1Parser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
         parser.parse(str, gmodel.getSelectedSeqGroup(), true, annot_type);
         aseq = input_seq;
       }
-      else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
+      else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
         // assume it's GFF1, GFF2, or GTF format
         GFFParser parser = new GFFParser();
 
@@ -476,7 +478,7 @@ public class LoadFileAction {
         IGB.symHashChanged(parser);
         parser = null;
       }
-      else if (stream_name.endsWith(".fa") || stream_name.endsWith(".fasta")) {
+      else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {
         FastaParser parser = new FastaParser();
         if (input_seq != null) {
           aseq = parser.parse(str, input_seq, input_seq.getLength());
@@ -493,7 +495,7 @@ public class LoadFileAction {
         }
         parser = null;
       }
-      else if (stream_name.endsWith(".bnib")) {
+      else if (lcname.endsWith(".bnib")) {
         if (input_seq == null || input_seq instanceof NibbleBioSeq) {
           aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
         }

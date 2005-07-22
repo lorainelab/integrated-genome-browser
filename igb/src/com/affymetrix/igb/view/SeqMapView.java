@@ -435,11 +435,17 @@ public class SeqMapView extends JPanel
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
 
+  /** Associates a String with a GenericAnnotGlyphFactory with a
+   *  given color.  The method name is case-sensitive. 
+   */
   public void addTierInfo(String method, Color col) {
     addTierInfo(method, col, 2); // default depth = 2
   }
 
-  /** Associates a lower-case, trimmed version of the String with a color. */
+  /** Associates a String with a GenericAnnotGlyphFactory with the 
+   *  given depth and color.
+   *  The method name is case-sensitive.
+   */
   public void addTierInfo(String method, Color col, int depth) {
     //    method2color.put(method.trim().toLowerCase(), col);
     System.out.println("Add tier info: "+method);
@@ -450,7 +456,6 @@ public class SeqMapView extends JPanel
     factory_prefs.put("glyph_depth", Integer.toString(depth));
     factory.init(factory_prefs);
     meth2factory.put(method, factory);
-    System.out.println("new factory: " + meth2factory.get(method));
   }
 
   public void setColorHash(Map hash) {
@@ -1076,17 +1081,22 @@ public class SeqMapView extends JPanel
       if (meth != null) {
         factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
         if (factory == null) {
-          Iterator iter = regex2factory.entrySet().iterator();
-          while (iter.hasNext() && factory==null) {
-            Map.Entry hentry = (Map.Entry)iter.next();
-            Pattern regex = (Pattern)hentry.getKey();
+          Vector keyset = new Vector(regex2factory.keySet());
+          
+          // Look for a matching pattern, going backwards, so that the
+          // patterns from the last preferences read take precedence over the
+          // first ones read (such as the default prefs).  Within a single
+          // file, the last matching pattern will trump any earlier ones.
+          for (int j=keyset.size()-1 ; j >= 0 && factory == null; j--) {
+            java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
             if (regex.matcher(meth).find()) {
-              factory = (MapViewGlyphFactoryI) hentry.getValue();
+              factory = (MapViewGlyphFactoryI) regex2factory.get(regex);
               // Put (a clone of?) the factory in meth2factory to speed things up next time through.
               // (A clone would let us later modify the color, etc. of that copy)
               meth2factory.put(meth, factory);
             }
           }
+          
         }
         if (factory == null) {
           factory = default_glyph_factory;

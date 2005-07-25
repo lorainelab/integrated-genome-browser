@@ -120,6 +120,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   AlignControl align_control;
 
   java.util.List plugin_list;
+  
+  
+  // USE_STATUS_BAR can be set to false in public releases until we have
+  // started putting enough useful information in the status bar.
+  final static boolean USE_STATUS_BAR = true;
+  StatusBar status_bar;
 
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
@@ -634,12 +640,26 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     tab_pane.setMinimumSize(new Dimension(0,0));
+    
+    status_bar = new StatusBar();
+    status_bar.setStatus(IGBConstants.APP_NAME);
+    if (USE_STATUS_BAR) {
+      cpane.add(status_bar, BorderLayout.SOUTH);
+    }
 
     frm.addWindowListener( new WindowAdapter() {
 	public void windowClosing(WindowEvent evt) {exit();}
       });
     frm.show();
 
+  }
+  
+  /** Sets the text in the status bar.
+   *  Will also echo a copy of the string to System.out.
+   */
+  public void setStatus(String s) {
+    status_bar.setStatus(s);
+    if (s != null) {System.out.println(s);}
   }
 
   /**

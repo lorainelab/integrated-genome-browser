@@ -16,6 +16,7 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
@@ -27,8 +28,9 @@ import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.swing.threads.SwingWorker;
-
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.GenometryViewer;
+
 import javax.swing.event.*;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
@@ -36,9 +38,7 @@ public class Das2LoadView extends JComponent
              // ComponentListener,  turned off pending change mechanism for now
 	     SeqSelectionListener, GroupSelectionListener  {
 
-  static String[] type_columns = { "type ID", "ontology", "source", "loading" };
-  static int LOAD_STRATEGY_COLUMN = 3;
-  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(type_columns, new ArrayList());
+  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
 
   boolean THREAD_FEATURE_REQUESTS = true;
   boolean USE_SIMPLE_VIEW = false;
@@ -91,15 +91,18 @@ public class Das2LoadView extends JComponent
     if (!USE_SIMPLE_VIEW) {
       gviewer = IGB.getSingletonIGB().getMapView();
     }
+
+
+    das_serverCB = new JComboBox();
+    das_sourceCB = new JComboBox();
+    das_versionCB = new JComboBox();
+    load_featuresB = new JButton("Load Features");
+
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
     for (int i=0; i<load_states.length; i++) {
       typestateCB.addItem(load_states[i]);
     }
-    das_serverCB = new JComboBox();
-    das_sourceCB = new JComboBox();
-    das_versionCB = new JComboBox();
-    load_featuresB = new JButton("Load Features");
 
     types_table = new JTable();
     types_table.setModel(empty_table_model);
@@ -346,18 +349,30 @@ public class Das2LoadView extends JComponent
 	  return null;
 	}
 	public void finished() {
-	  java.util.List type_states = new ArrayList();
-	  Iterator iter = types.values().iterator();
-	  while (iter.hasNext()) {
-	    Das2Type dtype = (Das2Type)iter.next();
-	    Das2TypeState tstate = new Das2TypeState(dtype, Das2TypeState.OFF);
-	    type_states.add(tstate);
+	  /**
+	   *  assumes that the types available for a given versioned source do not change
+	   *    during the session
+	   */
+	  java.util.List type_states = 	(java.util.List)version2typestates.get(current_version);
+	  if (type_states == null) {
+	    type_states = new ArrayList();
+	    Iterator iter = types.values().iterator();
+	    while (iter.hasNext()) {
+	      // need a map of Das2Type to Das2TypeState that persists for entire session,
+	      //    and reuse Das2TypeStates when possible (because no guarantee that
+	      //    Das2TypeState backing store has been updated during session
+	      Das2Type dtype = (Das2Type)iter.next();
+	      Das2TypeState tstate = new Das2TypeState(dtype);
+	      type_states.add(tstate);
+	    }
+	    version2typestates.put(current_version, type_states);
 	  }
-	  version2typestates.put(current_version, type_states);
-	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_columns, type_states);
+	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_states);
 	  types_table.setModel(new_table_model);
 	  new_table_model.addTableModelListener(myself);
-	  initLoadStrategyColumn(types_table, types_table.getColumnModel().getColumn(3));
+	  TableColumn col = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
+	  col.setCellEditor(new DefaultCellEditor(typestateCB));
+
 	  types_table.validate();
 	  types_table.repaint();
 	  das_serverCB.setEnabled(true);
@@ -370,7 +385,6 @@ public class Das2LoadView extends JComponent
   }
 
   public void loadFeaturesInView() {
-
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     final SeqSpan overlap = gviewer.getVisibleSpan();
     final MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)overlap.getBioSeq();
@@ -388,10 +402,11 @@ public class Das2LoadView extends JComponent
     System.out.println("seq = " + visible_seq.getID() +
 		       ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
 
-    // instead of iterating through checkboxes, go through Das2TypeStates
+    // iterate through Das2TypeStates
     //    if off, ignore
-    //    if range-in-view && !fully_loaded, do range in view annotation request
-    //    if per-seq && !fully_loaded, do full seq annotation request
+    //    if load_in_visible_range, do range in view annotation request
+    //    if per-seq, do full seq annotation request
+    // maybe add a fully_loaded flag so know which ones to skip because they're done?
 
     // could probably add finer resolution of threading here,
     //  so every request (one per type) launches on its own thread
@@ -515,7 +530,8 @@ public class Das2LoadView extends JComponent
     //    if (IGB.DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received GroupSelectionEvent: " + evt);
       //    }
-    java.util.List groups = evt.getSelectedGroups();    if (groups != null && groups.size() > 0) {
+    java.util.List groups = evt.getSelectedGroups();    
+    if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup newgroup = (AnnotatedSeqGroup)groups.get(0);
       if (current_group != newgroup) {
         current_group = newgroup;
@@ -524,8 +540,9 @@ public class Das2LoadView extends JComponent
 	  if (current_version == null) {
 	    // reset
 	    das_serverCB.setSelectedItem(server_filler);
-	    //	    das_sourceCB.setSelectedItem(source_filler);
-	    //	    das_versionCB.setSelectedItem(version_filler);
+	    das_sourceCB.setSelectedItem(source_filler);
+	    das_versionCB.setSelectedItem(version_filler);
+	    // need to reset table also...
 	  }
 	  else {
 	    current_source = current_version.getSource();
@@ -541,9 +558,6 @@ public class Das2LoadView extends JComponent
     }
   }
 
-  public void initLoadStrategyColumn(JTable table, TableColumn column) {
-    column.setCellEditor(new DefaultCellEditor(typestateCB));
-  }
 
   public void tableChanged(TableModelEvent evt) {
     System.out.println("Das2LoadView received table model changed event: " + evt);
@@ -554,7 +568,7 @@ public class Das2LoadView extends JComponent
     int col = evt.getColumn();
     int firstrow = evt.getFirstRow();
     int lastrow = evt.getLastRow();
-    if (col == LOAD_STRATEGY_COLUMN) {
+    if (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) {
       Object val = types_table.getValueAt(firstrow, col);
       System.out.println("value of changed table cell: " + val);
     }
@@ -606,34 +620,62 @@ public class Das2LoadView extends JComponent
  */
 class Das2TypeState {
   //  static String[] LOAD_STRINGS = new String[3];
-  static String[] LOAD_STRINGS = new String[2];
+  static String[] LOAD_STRINGS = new String[3];
   static int OFF = 0;
-  static int VISIBLE_RANGE = 1;
-  static int WHOLE_SEQUENCE = 2;
+  static int VISIBLE_RANGE = 1;   // MANUAL_VISIBLE_RANGE
+  static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
+  static int default_load_strategy = OFF;
+
+  /**
+   *  Want to retrieve type state from Preferences if possible
+   *    node: ~/das2/server.root.url/typestate
+   *    key: [typeid+"_loadstate"]  value: [load_state]     (load state is an integer??)
+   */
+
+  static Preferences root_node = UnibrowPrefsUtil.getTopNode();
+  static Preferences das2_node = root_node.node("das2");
 
   static {
     LOAD_STRINGS[OFF] = "Off";
     LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
-    //    LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
+    LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
 
   int load_strategy;
   Das2Type type;
+  Preferences lnode;
 
-  public Das2TypeState(Das2Type type, int load_strategy) {
-    this.load_strategy = load_strategy;
-    this.type = type;
+  public Das2TypeState(Das2Type dtype) {
+    this.type = dtype;
+    Das2VersionedSource version = type.getVersionedSource();
+    Das2Source source = version.getSource();
+    Das2ServerInfo server = source.getServerInfo();
+    String server_root_url = server.getRootUrl();
+    if (server_root_url.startsWith("http://")) { server_root_url = server_root_url.substring(7); }
+    if (server_root_url.indexOf("//") > -1) {
+      System.out.println("need to replace all double slashes in path!");
+    }
+    String subnode = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
+    System.out.println("subnode = " + subnode);
+    System.out.println("    length: " + subnode.length());
+    lnode = das2_node.node(subnode);
+    load_strategy = lnode.getInt(type.getID(), default_load_strategy);
   }
+
   public void setLoadStrategy(String strat) {
     for (int i=0; i<LOAD_STRINGS.length; i++) {
       if (strat.equals(LOAD_STRINGS[i])) {
-	load_strategy = i;
+	setLoadStrategy(i);
 	break;
       }
     }
   }
 
-  public void setLoadStrategy(int strategy) { load_strategy = strategy; }
+  public void setLoadStrategy(int strategy) {
+    load_strategy = strategy;
+    lnode.putInt(type.getID(), strategy);
+  }
+
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
   public Das2Type getDas2Type() { return type; }
@@ -641,79 +683,94 @@ class Das2TypeState {
 
 
 class Das2TypesTableModel extends AbstractTableModel   {
+  //  static String[] type_columns = { "type ID", "load", "ontology", "source", "load strategy" };
+  static String[] column_names = { "type ID", "ontology", "source", "load strategy" };
+  static int ID_COLUMN = 0;
+  static int ONTOLOGY_COLUMN = 1;
+  static int SOURCE_COLUMN = 2;
+  static int LOAD_STRATEGY_COLUMN = 3;
+  //  static int LOAD_BOOLEAN_COLUMN = 1;
+
   static int model_count = 0;
 
   int model_num;
-  String[] column_names;
   java.util.List type_states;
 
-  public Das2TypesTableModel(String[] columns, java.util.List states) {
+  public Das2TypesTableModel(java.util.List states) {
     model_num = model_count;
     model_count++;
-
-    column_names = columns;
     type_states = states;
     int col_count = column_names.length;
-    int row_count = states.size();;
+    int row_count = states.size();
   }
 
-    public int getColumnCount() {
-      return column_names.length;
-    }
+  public int getColumnCount() {
+    return column_names.length;
+  }
 
-    public int getRowCount() {
-      return type_states.size();
-    }
+  public int getRowCount() {
+    return type_states.size();
+  }
 
-    public String getColumnName(int col) {
-      return column_names[col];
-    }
+  public String getColumnName(int col) {
+    return column_names[col];
+  }
 
-    public Object getValueAt(int row, int col) {
-      Das2TypeState state = (Das2TypeState)type_states.get(row);
-      Das2Type type = state.getDas2Type();
-      switch(col) {
-      case 0:
-	return (type.getID());
-      case 1:
-	return (type.getOntology());
-      case 2:
-	return (type.getDerivation());
-      case 3:
-	return state.getLoadString();
-      default:
-	return " ";
-      }
+  public Object getValueAt(int row, int col) {
+    Das2TypeState state = (Das2TypeState)type_states.get(row);
+    Das2Type type = state.getDas2Type();
+    if (col == ID_COLUMN) {
+      return type.getID();
     }
+    else if (col == ONTOLOGY_COLUMN) {
+      return type.getOntology();
+    }
+    else if (col == SOURCE_COLUMN) {
+      return type.getDerivation();
+    }
+    else if (col == LOAD_STRATEGY_COLUMN) {
+      return state.getLoadString();
+    }
+    //      else if (col == LOAD_BOOLEAN_COLUMN) {
+    //	return ((state.getLoadStrategy() == Das2TypeState.OFF) ? Boolean.FALSE : Boolean.TRUE);
+    //      }
+    return null;
+  }
 
+  public Class getColumnClass(int c) {
+    return getValueAt(0, c).getClass();
+  }
+
+  /*
+   * Don't need to implement this method unless your table's
+   * editable.
+   */
+  public boolean isCellEditable(int row, int col) {
+    //      if (col == Das2LoadView.LOAD_STRATEGY_COLUMN ||
+    //	  col == Das2LoadView.LOAD_BOOLEAN_COLUMN) { return true; }
+    if (col == LOAD_STRATEGY_COLUMN) { return true; }
+    else { return false; }
+  }
+
+  /*
+   * Don't need to implement this method unless your table's
+   * data can change.
+   */
+  public void setValueAt(Object value, int row, int col) {
+    //      System.out.println("Das2TypesTableModel.setValueAt() called, row = " + row +
+    //			 ", col = " + col + "val = " + value.toString());
+    Das2TypeState state = (Das2TypeState)type_states.get(row);
+    if (col == LOAD_STRATEGY_COLUMN)  {
+      state.setLoadStrategy(value.toString());
+    }
     /*
-    public Class getColumnClass(int c) {
-        return getValueAt(0, c).getClass();
-    }
+      else if (col == Das2LoadView.LOAD_BOOLEAN_COLUMN) {
+      Boolean bool = (Boolean)value;
+      if (bool == Boolean.TRUE) {  state.setLoadStrategy(Das2TypeState.VISIBLE_RANGE); }
+      else { state.setLoadStrategy(Das2TypeState.OFF); }
+      }
     */
-
-    /*
-     * Don't need to implement this method unless your table's
-     * editable.
-     */
-    public boolean isCellEditable(int row, int col) {
-      if (col == Das2LoadView.LOAD_STRATEGY_COLUMN) { return true; }
-      else { return false; }
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * data can change.
-     */
-    public void setValueAt(Object value, int row, int col) {
-      //      System.out.println("Das2TypesTableModel.setValueAt() called, row = " + row +
-      //			 ", col = " + col + "val = " + value.toString());
-      //        data[row][col] = value;
-      if (col == Das2LoadView.LOAD_STRATEGY_COLUMN) {
-	Das2TypeState state = (Das2TypeState)type_states.get(row);
-	state.setLoadStrategy(value.toString());
-      }
-      fireTableCellUpdated(row, col);
-    }
+    fireTableCellUpdated(row, col);
+  }
 }
 

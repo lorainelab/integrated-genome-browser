@@ -42,7 +42,7 @@ public class Das2ClientOptimizer {
   static String default_format = "das2feature";
 
   static {
-    SHOW_DAS_QUERY_GENOMETRY = 
+    SHOW_DAS_QUERY_GENOMETRY =
       UnibrowPrefsUtil.getTopNode().getBoolean(DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY,
 					       DasFeaturesAction2.default_show_das_query_genometry);
   }
@@ -134,20 +134,6 @@ public class Das2ClientOptimizer {
 
 	  int split_count = split_query.getChildCount();
 	  if (split_count == 0) { System.out.println("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN"); }
-	  /*
-	  if (split_count == 0 || split_count == 1) {
-	    SimpleSymWithProps within_swp = new SimpleSymWithProps();
-	    within_swp.addSpan(new SimpleSeqSpan(first_within_min, last_within_max, aseq));
-	    within_swp.addChild(new SingletonSeqSymmetry(first_within_min,
-							 first_within_min, aseq));
-	    if (split_count == 0) { within_swp.addChild(split_query); }
-	    else { within_swp.addChild(split_query.getChild(0)); }
-	    within_swp.addChild(new SingletonSeqSymmetry(last_within_max,
-							 last_within_max, aseq));
-	    within_swp.setProperty("method", ("das_within_query:" + long_type));
-	    if (SHOW_DAS_QUERY_GENOMETRY) { aseq.addAnnotation(within_swp); }
-	  }
-	  */
 	  else {
 	    int cur_within_min;
 	    int cur_within_max;
@@ -163,15 +149,17 @@ public class Das2ClientOptimizer {
 	      Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
 	      output_requests.add(new_request);
 
-	      SimpleSymWithProps within_swp = new SimpleSymWithProps();
-	      within_swp.addSpan(new SimpleSeqSpan(cur_within_min, cur_within_max, aseq));
-	      within_swp.addChild(new SingletonSeqSymmetry(cur_within_min,
-							   cur_within_min, aseq));
-	      within_swp.addChild(csym);
-	      within_swp.addChild(new SingletonSeqSymmetry(cur_within_max,
-							   cur_within_max, aseq));
-	      within_swp.setProperty("method", ("das_within_query:" + typeid));
-	      if (SHOW_DAS_QUERY_GENOMETRY) { aseq.addAnnotation(within_swp); }
+	      if (SHOW_DAS_QUERY_GENOMETRY) {
+		SimpleSymWithProps within_swp = new SimpleSymWithProps();
+		within_swp.addSpan(new SimpleSeqSpan(cur_within_min, cur_within_max, aseq));
+		within_swp.addChild(new SingletonSeqSymmetry(cur_within_min,
+							     cur_within_min, aseq));
+		within_swp.addChild(csym);
+		within_swp.addChild(new SingletonSeqSymmetry(cur_within_max,
+							     cur_within_max, aseq));
+		within_swp.setProperty("method", ("das_within_query:" + typeid));
+		aseq.addAnnotation(within_swp);
+	      }
 	    }
 	  }
 	}
@@ -185,8 +173,9 @@ public class Das2ClientOptimizer {
 	// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
 	// on one thread when might be rendering based on aseq in event thread...
 	//
-	// or maybe should make addAnnotation() a synchronized method
-	request.getRegion().getAnnotatedSeq().addAnnotation(request);
+	// or maybe should just make addAnnotation() a synchronized method
+	MutableAnnotatedBioSeq aseq = request.getRegion().getAnnotatedSeq();
+	synchronized (aseq)  { aseq.addAnnotation(request); }
       }
     }
 

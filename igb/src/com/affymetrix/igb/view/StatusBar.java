@@ -4,14 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 public class StatusBar extends JPanel {
   
   JLabel status_ta;
   JLabel memory_ta;
   
-  NumberFormat num_format;
+  DecimalFormat num_format;
   
   /** Delay in milliseconds between updates of the status (such as memory usage).  */
   static int timer_delay_ms = 5000;
@@ -21,7 +21,10 @@ public class StatusBar extends JPanel {
     memory_ta = new JLabel("");
     status_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
     memory_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
-    num_format = NumberFormat.getIntegerInstance();
+    //num_format = NumberFormat.getIntegerInstance();
+    num_format = new DecimalFormat();
+    num_format.setMaximumFractionDigits(1);
+    num_format.setMinimumFractionDigits(1);
     
     BorderLayout bl = new BorderLayout();
     setLayout(bl);
@@ -57,7 +60,7 @@ public class StatusBar extends JPanel {
   public void updateMemory() {
     Runtime rt = Runtime.getRuntime();
     long memory  = rt.totalMemory() - rt.freeMemory();
-    memory /= (1024 * 1024); // to get in MB
-    memory_ta.setText(num_format.format(memory) + " MB");
+    double mb = 1.0 * memory / (1024 * 1024);
+    memory_ta.setText(num_format.format(mb) + " MB");
   }
 }

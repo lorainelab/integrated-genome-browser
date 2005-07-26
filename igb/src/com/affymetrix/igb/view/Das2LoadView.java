@@ -190,6 +190,7 @@ public class Das2LoadView extends JComponent
       String version_name = (String)evt.getItem();
       if (version_name == version_filler) {
 	// clear types panel
+
       }
       if (version_name != version_filler) {
 	System.out.println("version name: " + version_name);
@@ -197,7 +198,10 @@ public class Das2LoadView extends JComponent
 	current_version = (Das2VersionedSource)versions.get(version_name);
 	System.out.println(current_version);
 	System.out.println("  version id: " + current_version.getGenome().getID());
+
 	setRegionsAndTypes();
+	gmodel.setSelectedSeqGroup(current_version.getGenome());
+
       }
     }
 
@@ -542,10 +546,16 @@ public class Das2LoadView extends JComponent
 	    das_serverCB.setSelectedItem(server_filler);
 	    das_sourceCB.setSelectedItem(source_filler);
 	    das_versionCB.setSelectedItem(version_filler);
+	    current_server = null;
+	    current_source = null;
 	    // need to reset table also...
+	    types_table.setModel(empty_table_model);
+	    types_table.validate();
+	    types_table.repaint();
 	  }
 	  else {
 	    current_source = current_version.getSource();
+	    current_server = current_source.getServerInfo();
 	    System.out.println("   new das source: " + current_source.getID() +
 			       ",  new das version: " + current_version.getID());
 	    //	  das_sourceCB.removeItemListener(this);

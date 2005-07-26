@@ -26,6 +26,7 @@ public class AnnotatedSeqGroup {
   String description;
 
   Map id2seq = new LinkedHashMap();
+  ArrayList seqlist = new ArrayList();
 
   public AnnotatedSeqGroup(String gid) {
     id = gid;
@@ -34,6 +35,13 @@ public class AnnotatedSeqGroup {
   public String getID() { return id; }
 
   public Map getSeqs() { return id2seq; }
+
+  public MutableAnnotatedBioSeq getSeq(int index) {
+    if (index < seqlist.size()) { 
+      return (MutableAnnotatedBioSeq)seqlist.get(index); 
+    }
+    else { return null; }
+  }
 
   public MutableAnnotatedBioSeq getSeq(String synonym) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)id2seq.get(synonym);
@@ -102,6 +110,7 @@ public class AnnotatedSeqGroup {
 
   public void addSeq(MutableAnnotatedBioSeq seq) {
     id2seq.put(seq.getID(), seq);
+    seqlist.add(seq);
     if (seq instanceof SmartAnnotBioSeq) {
       ((SmartAnnotBioSeq)seq).setSeqGroup(this);
     }

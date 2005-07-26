@@ -112,7 +112,7 @@ public class SingletonGenometryModel {
     }
   }
 
-  public void addGroupSelectionListener(SeqSelectionListener listener) {
+  public void addGroupSelectionListener(GroupSelectionListener listener) {
     group_selection_listeners.add(listener);
   }
 

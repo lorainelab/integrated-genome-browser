@@ -566,7 +566,7 @@ public class SeqMapView extends JPanel
   public void clear() {
     map.clearWidget();
     aseq = null;
-    last_selected_sym = null;
+    clearSelection();
     method2rtier = new HashMap();
     method2ftier = new HashMap();
     gstate2tier = new HashMap();
@@ -629,9 +629,9 @@ public class SeqMapView extends JPanel
    *               need to "genometrize" them
    *            currently sequence is not properly displayed when reverse complementing
    *
-   *   preserve_selection -- if true, then try and keep same selection
-   *   preserve_view -- if true, then try and keep same scroll and zoom / scale and offset...
    *</pre>
+   *   @param preserve_selection  if true, then try and keep same selection
+   *   @param preserve_view  if true, then try and keep same scroll and zoom / scale and offset...
    */
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
     RepaintManager rm = RepaintManager.currentManager(this);
@@ -709,6 +709,7 @@ public class SeqMapView extends JPanel
 
     annot_tiernum = 0;
     map.clearWidget();
+    map.clearSelected(); // may already be done by map.clearWidget()
 
     aseq = seq;
 
@@ -772,9 +773,11 @@ public class SeqMapView extends JPanel
 
     map.repack();
 
-    if (same_seq) {
+    if (same_seq && preserve_selection) {
       // reselect glyph(s) based on selected sym(s);
       if (last_selected_sym != null) {
+        // If we are doing this for last_selected_sym, why not for all selected syms?
+        
 	GlyphI gl = (GlyphI)map.getItem(last_selected_sym);
 	if (gl != null) {
 	  map.select(gl);
@@ -787,10 +790,11 @@ public class SeqMapView extends JPanel
 	  Rectangle2D cbox = gl.getCoordBox();
 	  map.setZoomBehavior(map.X, map.CONSTRAIN_COORD, (cbox.x + (cbox.width/2.0)));
 	  map.setZoomBehavior(map.Y, map.CONSTRAIN_COORD, (cbox.y + (cbox.height/2.0)));
+          last_selected_glyph = gl;
 	}
       }
     }
-
+    
     if (SHRINK_WRAP_MAP_BOUNDS) {
       /*
        *  Shrink wrapping is a little more complicated than one might expect, but it

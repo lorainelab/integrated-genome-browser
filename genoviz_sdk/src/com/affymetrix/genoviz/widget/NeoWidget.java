@@ -852,6 +852,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     selected.removeElement(g);
   }
 
+  public void clearWidget() {
+    super.clearWidget();
+  }
 
   /**
    * Scale constraints are currently only considered during

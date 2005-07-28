@@ -75,9 +75,8 @@
 <annotation_style annot_type="repeats" glyph_depth="1"
                   red="150" green="150" blue="200" />
 
-<annotation_style annot_type_ends_with="\.sin" glyph_depth="1" red="255" green="255" blue="0" />
-<annotation_style annot_type_ends_with="\.egr" glyph_depth="1" red="255" green="255" blue="0" />
-<annotation_style annot_type_ends_with="\.txt" glyph_depth="1" red="255" green="255" blue="0" />
+<!-- Case-insensitive matching of filename extensions: ".sin" ".egr" or ".egr.txt" -->
+<annotation_style annot_type_ends_with="(?i)\.sin|\.egr|\.egr\.txt" glyph_depth="1" red="255" green="255" blue="0" />
 
 <!-- <annotation_style annot_type_starts_with="threshold" glyph_depth="1" red="200" green="100" blue="100" /> -->
 <annotation_style annot_type_starts_with="intersect" glyph_depth="1"
@@ -110,7 +109,8 @@
 
 
   <!-- Configure the probe set display -->
-  <annotation_style annot_type_regex=".*link.*psl" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
+  <!-- Case-insensitive match of the ending ".link.psl" -->
+  <annotation_style annot_type_regex="(?i).*\.link\.psl" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
   <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory"
    red="150" green="150" blue="255" />
@@ -134,7 +134,7 @@
   -->
   <!-- End of HuEx-1_0-st chip section -->
 
-    <annotation_style annot_type="Probesets" 
+  <annotation_style annot_type="Probesets" 
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
     red="150" green="255" blue="150" 
   /> 

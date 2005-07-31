@@ -28,8 +28,8 @@ public class DataLoadView extends JComponent  {
     this.setLayout(new BorderLayout());
     JTabbedPane tpane = new JTabbedPane();
     this.add("Center", tpane);
+    //    tpane.addTab("QuickLoad", quick_view);
     tpane.addTab("DAS/2", das2_view);
-    tpane.addTab("QuickLoad", quick_view);
     tpane.addTab("DAS/1", das1_view);
     this.add("West", group_view);
   }
@@ -37,7 +37,9 @@ public class DataLoadView extends JComponent  {
 }
 
 class SeqGroupView extends JComponent
-    implements GroupSelectionListener, ListSelectionListener  {
+  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+
+  static boolean DEBUG_EVENTS = true;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   JTable seqtable;
   AnnotatedBioSeq selected_seq = null;
@@ -54,24 +56,57 @@ class SeqGroupView extends JComponent
     this.add("North", genomeL);
     this.setBorder(new TitledBorder("Current Genome"));
     gmodel.addGroupSelectionListener(this);
+    gmodel.addSeqSelectionListener(this);
     lsm = seqtable.getSelectionModel();
     lsm.addListSelectionListener(this);
   }
 
+
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    if (this.DEBUG_EVENTS)  { 
+      System.out.println("SeqGroupView received groupSelectionChanged() event"); 
+      System.out.println("  group: " + group.getID());
+      System.out.println("  seq count: " + group.getSeqs().size());
+    }
+
     genomeL.setText(group.getID());
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
+
     selected_seq = null;
     seqtable.setModel(mod);
     seqtable.validate();
     seqtable.repaint();
   }
 
+  public void seqSelectionChanged(SeqSelectionEvent evt) {
+    if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
+    synchronized (seqtable) {  // or should synchronize on lsm?
+      // could also get selected seq from SeqSelectionEvent, but should be the same
+      if (selected_seq != gmodel.getSelectedSeq()) {
+	lsm.removeListSelectionListener(this);
+	selected_seq = gmodel.getSelectedSeq();
+	if (selected_seq == null) { seqtable.clearSelection(); }
+	else  {
+	  for (int i=0; i<seqtable.getRowCount(); i++) {
+	    // should be able to use == here instead of equals(), because table's model really returns seq.getID()
+	    if (selected_seq.getID() ==  seqtable.getValueAt(i, 0)) {
+	      //	    lsm.setSelectionInterval(i, i); // equivalent to seqtable.setRowSelectionInterval()?
+	      seqtable.setRowSelectionInterval(i, i);
+	      break;
+	    }
+	  }
+	}
+	lsm.addListSelectionListener(this);
+      }
+    }
+  }
+
   public void valueChanged(ListSelectionEvent evt) {
     Object src = evt.getSource();
     if ((src == lsm) && (! evt.getValueIsAdjusting())) { // ignore extra messages
+      if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received valueChanged() ListSelectionEvent"); }
       int srow = seqtable.getSelectedRow();
       if (srow >= 0)  {
         String seq_name = (String) seqtable.getModel().getValueAt(srow, 0);

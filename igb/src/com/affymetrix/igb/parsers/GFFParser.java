@@ -270,12 +270,12 @@ public class GFFParser implements AnnotationWriter  {
     hierarchy_levels.clear(); // clear until an ##IGB-hierarchy directive is found
     int current_h_level = 0;
     UcscGffSym[] hier_parents = null;
-
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+    String line = null;
+
     try {
       Thread thread = Thread.currentThread();
-      while (br.ready() && ! thread.isInterrupted()) {
-        String line = br.readLine();
+      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) ) {
         if (line == null) { continue; }
         if (line.startsWith("##")) { processDirective(line); continue; }
         if (line.startsWith("#")) { continue; }

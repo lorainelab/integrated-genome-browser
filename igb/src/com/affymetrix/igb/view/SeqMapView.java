@@ -436,13 +436,13 @@ public class SeqMapView extends JPanel
   public Map getGraphFactoryHash() { return graf2factory; }
 
   /** Associates a String with a GenericAnnotGlyphFactory with a
-   *  given color.  The method name is case-sensitive. 
+   *  given color.  The method name is case-sensitive.
    */
   public void addTierInfo(String method, Color col) {
     addTierInfo(method, col, 2); // default depth = 2
   }
 
-  /** Associates a String with a GenericAnnotGlyphFactory with the 
+  /** Associates a String with a GenericAnnotGlyphFactory with the
    *  given depth and color.
    *  The method name is case-sensitive.
    */
@@ -1086,7 +1086,7 @@ public class SeqMapView extends JPanel
         factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
         if (factory == null) {
           Vector keyset = new Vector(regex2factory.keySet());
-          
+
           // Look for a matching pattern, going backwards, so that the
           // patterns from the last preferences read take precedence over the
           // first ones read (such as the default prefs).  Within a single
@@ -1100,7 +1100,7 @@ public class SeqMapView extends JPanel
               meth2factory.put(meth, factory);
             }
           }
-          
+
         }
         if (factory == null) {
           factory = default_glyph_factory;
@@ -1115,9 +1115,9 @@ public class SeqMapView extends JPanel
     /**
      *  doing "middleground" shading for tracks loaded via DAS/2
      */
-    if ((meth != null) && 
+    if ((meth != null) &&
 	(annotSym instanceof TypeContainerAnnot) &&
-	(annotSym.getChildCount() > 0)  && 
+	(annotSym.getChildCount() > 0)  &&
 	(annotSym.getChild(0) instanceof Das2FeatureRequestSym) ) {
       int child_count = annotSym.getChildCount();
       TierGlyph fortier = (TierGlyph)getForwardTierHash().get(meth);
@@ -1598,7 +1598,7 @@ public class SeqMapView extends JPanel
       int bases_in_view = (int) map.getView().getCoordBox().width;
       int pixel_width = map.getView().getPixelBox().width;
       as_bases_per_pix = bases_in_view / pixel_width;
-      
+
       final JTextField bases_per_pixTF = new JTextField("" + as_bases_per_pix);
       final JTextField pix_to_scrollTF = new JTextField("" + as_pix_to_scroll);
       final JTextField time_intervalTF = new JTextField("" + as_time_interval);
@@ -2215,7 +2215,7 @@ public class SeqMapView extends JPanel
   }
 
 //  private class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
-   
+
 //  }  // END private class SeqMapViewMouseListener
 
 
@@ -2346,11 +2346,11 @@ public class SeqMapView extends JPanel
     if (! glist.isEmpty())  {
       group = (AnnotatedSeqGroup)glist.get(0);
       if (IGB.DEBUG_EVENTS)  {
-        System.out.println("QuickLoaderView received seqGroupSelected() call: " + group.getID() + ",  " + group);
+        System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
       }
     }
     else {
-      if (IGB.DEBUG_EVENTS)  { System.out.println("QuickLoaderView received seqGroupSelected() call, but group = null"); }
+      if (IGB.DEBUG_EVENTS)  { System.out.println("SeqMapView received seqGroupSelected() call, but group = null"); }
     }
 
     if ((aseq != null) && (aseq instanceof SmartAnnotBioSeq) &&

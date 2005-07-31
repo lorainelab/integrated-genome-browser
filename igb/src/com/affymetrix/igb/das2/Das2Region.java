@@ -37,9 +37,23 @@ public class Das2Region {
   MutableAnnotatedBioSeq aseq;
   Das2VersionedSource versioned_source;
 
-  public Das2Region(Das2VersionedSource source, String id) {
+  public Das2Region(Das2VersionedSource source, String id, int start, int end, boolean forward_orient) {
     region_id = id;
     versioned_source = source;
+    AnnotatedSeqGroup genome = versioned_source.getGenome();
+    // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
+    aseq = genome.getSeq(region_id);
+    // b) if can't find a previously seen genome for this DasSource, then
+    //     create a new genome entry
+    if (aseq == null) {
+      aseq = new SmartAnnotBioSeq(region_id, genome.getID(), end);  // therefore end must be populated first!
+      genome.addSeq(aseq);
+    }
+    this.start = start;  // should already be in 0-interbase coords
+    this.end = end;
+    this.forward = forward_orient;
+    if (forward) {  segment_span = new SimpleSeqSpan(start, end, aseq);  }
+    else {  segment_span = new SimpleSeqSpan(end, start, aseq); }
   }
 
 
@@ -48,49 +62,15 @@ public class Das2Region {
   public String getInfoUrl() { return info_url; }
   public Das2VersionedSource getVersionedSource() { return versioned_source; }
 
-  protected void setInterval(int start, int end, boolean forward_orient) {
-    this.start = start;  // should already be in 0-interbase coords
-    this.end = end;
-    this.forward = forward_orient;
-  }
-
   public SeqSpan getSegment() {
-    if (segment_span == null) {
-      initRegion();
-    }
     return segment_span;
   }
 
   /** or should this return a SmartAnnotbioSeq??? */
   public MutableAnnotatedBioSeq getAnnotatedSeq() {
-    if (aseq == null) {
-      initRegion();
-    }
     return aseq;
   }
 
-
-  protected void initRegion() {
-    AnnotatedSeqGroup genome = versioned_source.getGenome();
-
-    // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
-    aseq = genome.getSeq(region_id);
-
-    // b) if can't find a previously seen genome for this DasSource, then
-    //     create a new genome entry
-    if (aseq == null) {
-      aseq = new SmartAnnotBioSeq(region_id, genome.getID(), end);  // therefore end must be populated first!
-      genome.addSeq(aseq);
-    }
-
-    // System.out.println(aseq);
-
-    if (forward) {  segment_span = new SimpleSeqSpan(start, end, aseq);  }
-    else {  segment_span = new SimpleSeqSpan(end, start, aseq); }
-    //    System.out.println("in initRegion() method, start = " + start + ", end = " + end);
-    //    System.out.println("    seq = " + aseq.getID() + ", genome = " + genome.getID());
-
-  }
 
   /**
    *  Takes an uninitialized Das2FeatureRequestSym as an argument,

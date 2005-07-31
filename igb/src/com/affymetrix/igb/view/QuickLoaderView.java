@@ -63,8 +63,7 @@ public class QuickLoaderView extends JComponent
   /** When unknown or artificial seq groups get created to hold the contents
    *  of a file, prefix the group name with this String.
    */
-  public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
-  
+
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String SELECT_A_GENOME = "Select a genome to load";
   static int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
@@ -116,7 +115,7 @@ public class QuickLoaderView extends JComponent
   static final String DEFUNCT_SERVER = "205.217.46.81";
   static final String DEFAULT_DAS_DNA_SERVER = "http://genome.cse.ucsc.edu/cgi-bin/das";
   String http_root = null;
-  
+
   JButton residuesB;
   JButton partial_residuesB;
   JTable seqtable;
@@ -172,9 +171,9 @@ public class QuickLoaderView extends JComponent
     Iterator iter = seq_groups.iterator();
     while (iter.hasNext()) {
       model.removeSeqGroup((AnnotatedSeqGroup) iter.next());
-    }  
+    }
   }
-  
+
   void clearGUI() {
     // reinitialize the GUI
     genome2cbs.clear();
@@ -182,7 +181,7 @@ public class QuickLoaderView extends JComponent
     checklist.removeAll();
     checklist.repaint();
   }
-  
+
   protected void setQuickLoadURL(String url) {
 
     if (! url.equals(this.http_root)) {
@@ -192,7 +191,7 @@ public class QuickLoaderView extends JComponent
 
     this.http_root = url;
     System.out.println("Setting QuickLoad URL: " + http_root);
-    
+
     java.util.List genome_list = loadGenomeNames();
     refreshGenomeSelector();
 
@@ -271,10 +270,10 @@ public class QuickLoaderView extends JComponent
       +server_loc_list+"'\n"+ex.toString(), gviewer);
     }
   }
-  
+
   void refreshGenomeSelector() {
     name2group.clear();
-    
+
     genome_selector.setSelectedItem(SELECT_A_GENOME);
     genome_selector.removeItemListener(this);
     genome_selector.removeAllItems();
@@ -294,8 +293,8 @@ public class QuickLoaderView extends JComponent
     genome_selector.addItemListener(this);
     genome_selector.setSelectedItem(SELECT_A_GENOME);
   }
-  
-  
+
+
   /**
    *  Also adds genomes loaded as AnnotatedSeqGroups to the
    *    SingletonGenometryModel.
@@ -400,7 +399,7 @@ public class QuickLoaderView extends JComponent
     // refresh the genome list, mainly because LoadFileAction, or something else,
     // may have added new genomes, such as "Unknown Genome 1"
     refreshGenomeSelector();
-    
+
     if (! group.isSynonymous(current_genome_name)) {
       String name = group.getID();
       if (name == null || ! name2group.containsValue(group))  {
@@ -748,7 +747,7 @@ public class QuickLoaderView extends JComponent
    */
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
-    
+
     if (src == clear_cacheB) {
       System.out.println("clearing local cache");
       LocalUrlCacher.clearCache();

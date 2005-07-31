@@ -43,6 +43,7 @@ public class LoadFileAction {
   SeqMapView gviewer;
   FileTracker load_dir_tracker;
   static int unknown_group_count = 1;
+  public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
   /**
    *  Constructor.
@@ -254,7 +255,7 @@ public class LoadFileAction {
       else {
         str = new BufferedInputStream(str);
       }
-      
+
       Map seqhash = null;
       AnnotatedSeqGroup grp = gmodel.getSelectedSeqGroup();
       if (grp != null)  {
@@ -459,7 +460,7 @@ public class LoadFileAction {
 
         parser.addStandardFilters();
         if (seqhash == null) {
-          String new_name = QuickLoaderView.UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
+          String new_name = UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
           AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
           unknown_group_count++;
           if (input_seq != null) {
@@ -507,7 +508,7 @@ public class LoadFileAction {
       System.gc();
       if (seqhash == null) {
         if (aseq != null) {
-          String new_name = QuickLoaderView.UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
+          String new_name = UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
           AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
           unknown_group_count++;
           new_group.addSeq(aseq);

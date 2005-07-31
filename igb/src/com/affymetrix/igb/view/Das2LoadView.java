@@ -200,7 +200,7 @@ public class Das2LoadView extends JComponent
 	System.out.println("  version id: " + current_version.getGenome().getID());
 
 	setRegionsAndTypes();
-	gmodel.setSelectedSeqGroup(current_version.getGenome());
+	//	gmodel.setSelectedSeqGroup(current_version.getGenome());
 
       }
     }
@@ -383,6 +383,9 @@ public class Das2LoadView extends JComponent
 	  das_sourceCB.setEnabled(true);
 	  das_versionCB.setEnabled(true);
 	  load_featuresB.setEnabled(true);
+	  // need to do this here within finished(), otherwise may get threading issues where 
+	  //    GroupSelectionEvents are being generated before group gets populated with seqs
+	  gmodel.setSelectedSeqGroup(current_version.getGenome());
 	}
       };
     worker.start();

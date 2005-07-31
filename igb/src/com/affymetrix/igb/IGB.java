@@ -47,6 +47,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String APP_NAME = IGBConstants.APP_NAME;
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean USE_QUICKLOAD = true;
   public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
@@ -120,8 +121,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   AlignControl align_control;
 
   java.util.List plugin_list;
-  
-  
+
+
   // USE_STATUS_BAR can be set to false in public releases until we have
   // started putting enough useful information in the status bar.
   final static boolean USE_STATUS_BAR = true;
@@ -147,15 +148,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    */
   public static void main(String[] args) {
    try {
-     
+
     // Initialize the ConsoleView right off, so that ALL output will
     // be captured there.
     ConsoleView.init();
-    
+
     System.out.println("Starting \"" + IGBConstants.APP_NAME + "\"");
     System.out.println("Version: " + IGBConstants.IGB_VERSION);
     System.out.println();
-    
+
     try {
       // It this is Windows, then use the Windows look and feel.
       LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
@@ -163,7 +164,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     } catch (UnsupportedLookAndFeelException ulfe) {
       // Windows look and feel is not supported on Linux.  That is ok.
     }
-     
+
     main_args = args;
     getIGBPrefs(); // force loading of prefs
 
@@ -193,7 +194,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       } catch (MalformedURLException mue) {
         mue.printStackTrace(System.err);
       }
-    }    
+    }
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
@@ -614,8 +615,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     cpane.add("Center", splitpane);
 
     ArrayList plugin_list = new ArrayList(16);
-    PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
-    plugin_list.add(quickload);
+    if (USE_QUICKLOAD) {
+      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
+      plugin_list.add(quickload);
+    }
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
     plugin_list.add(selection_info);
@@ -640,7 +643,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     tab_pane.setMinimumSize(new Dimension(0,0));
-    
+
     status_bar = new StatusBar();
     status_bar.setStatus(IGBConstants.APP_NAME);
     if (USE_STATUS_BAR) {
@@ -653,7 +656,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     frm.show();
 
   }
-  
+
   /** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.
    */
@@ -852,7 +855,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     String data_dir = UnibrowPrefsUtil.getAppDataDirectory();
     if (data_dir != null) {
       File data_dir_f = new File(data_dir);
-      about_text.append("\nApplication data stored in: \n  "+ 
+      about_text.append("\nApplication data stored in: \n  "+
         data_dir_f.getAbsolutePath() +"\n");
     }
 
@@ -884,7 +887,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     buttonP.add(jettyB);
     message_pane.add(buttonP);
 
-    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE, 
+    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
      JOptionPane.DEFAULT_OPTION);
     final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
     //dialog.setResizable(true);

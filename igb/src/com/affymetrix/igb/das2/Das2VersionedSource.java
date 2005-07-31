@@ -171,8 +171,8 @@ public class Das2VersionedSource  {
 			   ", name = " + region_name +
 			   ", info url = " + region_info_url);
         */
-	Das2Region region = new Das2Region(this, region_id);
-	region.setInterval(start, end, true);
+	Das2Region region = new Das2Region(this, region_id, start, end, true);
+	//	region.setInterval(start, end, true);
 	this.addRegion(region);
       }
     }

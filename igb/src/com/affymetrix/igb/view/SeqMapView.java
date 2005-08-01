@@ -2186,7 +2186,19 @@ public class SeqMapView extends JPanel
             id = (String) ((Propertied) original).getProperty("id");
           }
         }
-        if (id == null) {id = "Unknown Selection";}
+        if (id == null) {
+          // If ID of item is null, check recursively for parent ID, or parent of that...
+          GlyphI pglyph = topgl.getParent();
+          if (pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
+            Vector v = new Vector(1);
+            v.add(pglyph);
+            // Add one ">" symbol for each level of getParent()
+            id = "> "+getSelectionTitle(v);
+          }
+          else {
+            id = "Unknown Selection";
+          }
+        }
       } else {
         id = "Multiple Selections";
       }

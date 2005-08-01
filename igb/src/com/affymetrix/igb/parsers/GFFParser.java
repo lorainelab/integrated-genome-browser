@@ -127,6 +127,19 @@ public class GFFParser implements AnnotationWriter  {
    */
   String group_tag = null;
   String group_id_field_name = null;
+  
+  /** Whether to convert group_id field value to lower case. 
+   *  Beginning with source forge version 1.5 of this file, we started always
+   *  doing this, but the reason has been forgotten.  Unless we can remember
+   *  why case-insensitivity (i.e. forcing lower case) is needed, let's set
+   *  this to false.  We could allow a new flag in the GFF header to toggle
+   *  this on or off.
+   *  <p>
+   *  SourceForge issue ID: 
+   *  <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1143530&group_id=129420&atid=714744">1143530</a>
+   *  </p>
+   */
+  boolean GROUP_ID_TO_LOWER_CASE = false;
 
   // When grouping, do you want to use the first item encountered as the parent of the group?
   boolean use_first_one_as_group = false;
@@ -699,7 +712,8 @@ public class GFFParser implements AnnotationWriter  {
       Object value = sym.getProperty(group_tag);
       if (value != null) {
         if (value instanceof String) {
-          group_id = ((String)value).toLowerCase();
+          group_id = (String) value;
+          if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
         }
         else if (value instanceof Number) {
           group_id = "" + value;
@@ -711,7 +725,8 @@ public class GFFParser implements AnnotationWriter  {
           // If there are multiple values for the group_tag, then take first one as String value
           List valist = (List)value;
           if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
-            group_id = ((String)valist.get(0)).toLowerCase();
+            group_id = (String) valist.get(0);
+            if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
           }
         }
       }

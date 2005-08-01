@@ -48,7 +48,8 @@ public class StatusBar extends JPanel {
    */
   public void setStatus(String s) {
     if (s == null) { s = ""; }
-    status_ta.setText(s);
+    
+    updateSafely(status_ta, s);
     updateMemory();
   }
   
@@ -61,6 +62,25 @@ public class StatusBar extends JPanel {
     Runtime rt = Runtime.getRuntime();
     long memory  = rt.totalMemory() - rt.freeMemory();
     double mb = 1.0 * memory / (1024 * 1024);
-    memory_ta.setText(num_format.format(mb) + " MB");
+    String text = num_format.format(mb) + " MB";
+    updateSafely(memory_ta, text);    
   }
+  
+  /**
+   *  Update a JLabel in a way that is safe from either the GUI thread or
+   *  any other thread.
+   */
+  void updateSafely(final JLabel label, final String text) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      label.setText(text);
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            label.setText(text);
+          }
+        }
+      );
+    }
+  }
+  
 }

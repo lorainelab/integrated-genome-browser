@@ -1969,6 +1969,8 @@ public class SeqMapView extends JPanel
     // ignore self-generated xym selection -- already handled internally
     if (src == this) {
       if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from itself: " + src_id);}
+      String title = getSelectionTitle(map.getSelected());
+      IGB.getSingletonIGB().setStatus(title, false);
     }
     // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
     else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView))  {
@@ -2153,18 +2155,23 @@ public class SeqMapView extends JPanel
     }
   }
 
-  // sets the text on the sym_info JLabel to the id of the selection
+  // sets the text on the JLabel based on the current selection
+  private void setPopupMenuTitle(JLabel label, Vector selected_glyphs) {
+    String title = getSelectionTitle(selected_glyphs);
+    label.setText(title);
+  }
+
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
   // should be similar in both places, or else users could get confused.
-  private void setPopupMenuTitle(JLabel sym_info, Vector selected_glyphs) {
+  private String getSelectionTitle(Vector selected_glyphs) {
     String id = null;
     if (selected_glyphs.isEmpty()) {
       id = "No selection";
     }
     else {
       if (selected_glyphs.size() == 1) {
-        GlyphI topgl = (GlyphI)selected_glyphs.elementAt(selected_glyphs.size() - 1);
+        GlyphI topgl = (GlyphI) selected_glyphs.elementAt(0);
         Object info = topgl.getInfo();
         SeqSymmetry sym = null;
         if (info instanceof SeqSymmetry) {
@@ -2181,12 +2188,13 @@ public class SeqMapView extends JPanel
         }
         if (id == null) {id = "Unknown Selection";}
       } else {
-        id = ("Multiple Selections");
+        id = "Multiple Selections";
       }
     }
     if (id == null) { id = ""; }
-    sym_info.setText(id);
+    return id;
   }
+
 
   private final int xoffset_pop = 10;
   private final int yoffset_pop = 0;

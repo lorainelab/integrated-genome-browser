@@ -299,6 +299,7 @@ public class SeqMapView extends JPanel
 
     GraphSelectionManager graph_manager = new GraphSelectionManager(this);
     map.addMouseListener(graph_manager);
+    this.addPopupListener(graph_manager);
 
     setupPopups();
     this.setLayout(new BorderLayout());
@@ -2045,7 +2046,6 @@ public class SeqMapView extends JPanel
     return mi;
   }
 
-
   private class SeqMapViewActionListener implements ActionListener {
 
     public SeqMapViewActionListener() {
@@ -2060,23 +2060,25 @@ public class SeqMapView extends JPanel
         zoomToSelections();
       }
       else if (command.equals(zoomclampMI.getText())) {
-        if (last_selected_glyph == null) {
+        Vector selected_glyphs = map.getSelected();
+        if (selected_glyphs.isEmpty()) {
           IGB.errorPanel("Nothing selected");
         } else {
-          clampToGlyph(last_selected_glyph);
+          clampToGlyph((GlyphI) selected_glyphs.lastElement());
         }
       }
       else if (command.equals(selectParentMI.getText())) {
-        if (last_selected_glyph == null) {
+        if (map.getSelected().isEmpty()) {
           IGB.errorPanel("Nothing selected");
         } else {
-          GlyphI pglyph = last_selected_glyph.getParent();
+          GlyphI child = (GlyphI) map.getSelected().lastElement();
+          GlyphI pglyph = child.getParent();
           if ( pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-            map.deselect(last_selected_glyph);
+            map.deselect(child);
             map.select(pglyph);
             last_selected_glyph = pglyph;
-            if (last_selected_glyph.getInfo() instanceof SeqSymmetry) {
-              last_selected_sym = (SeqSymmetry)last_selected_glyph.getInfo();
+            if (pglyph.getInfo() instanceof SeqSymmetry) {
+              last_selected_sym = (SeqSymmetry) pglyph.getInfo();
             }
             else {
               last_selected_sym = null;
@@ -2191,9 +2193,10 @@ public class SeqMapView extends JPanel
 
   void showPopup(NeoMouseEvent nevt) {
     sym_popup.setVisible(false); // in case already showing
+    sym_popup.removeAll();
 
     Vector selected_glyphs = map.getSelected();
-    sym_popup.removeAll();
+    
     setPopupMenuTitle(sym_info, selected_glyphs);
     sym_popup.add(sym_info);
     sym_popup.add(printMI);
@@ -2212,11 +2215,9 @@ public class SeqMapView extends JPanel
     if (sym_popup.getComponentCount() > 0) {
       sym_popup.show(map, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
     }
+    // For garbage collection, it would be nice to add a listener that
+    // could call sym_popup.removeAll() when the popup is removed from view.
   }
-
-//  private class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
-
-//  }  // END private class SeqMapViewMouseListener
 
 
   public void addPopupListener(ContextualPopupListener listener) {

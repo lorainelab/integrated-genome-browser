@@ -662,10 +662,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  It is safe to call this method even if the status bar is not being displayed.
    */
   public void setStatus(String s) {
+    setStatus(s, true);
+  }
+
+  /** Sets the text in the status bar.
+   *  Will optionally echo a copy of the string to System.out.
+   *  It is safe to call this method even if the status bar is not being displayed.
+   *  @param print  Whether to echo a copy to System.out.
+   */
+  public void setStatus(String s, boolean echo) {
     if (USE_STATUS_BAR && status_bar != null) {
       status_bar.setStatus(s);
     }
-    if (s != null) {System.out.println(s);}
+    if (echo && s != null) {System.out.println(s);}
   }
 
   /**

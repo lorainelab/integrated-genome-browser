@@ -78,22 +78,34 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   public void mouseClicked(MouseEvent evt) { }
 
   public void mousePressed(MouseEvent evt) {
+    // turn OFF autoscrol in mousePressed()
     if (smv.map_auto_scroller != null) {
-      smv.toggleAutoScroll(); // turn OFF autoscroll
+      smv.toggleAutoScroll();
     }
 
+    // process selections in mousePressed() or mouseReleased()
     if (SELECT_ON_MOUSE_PRESSED) processSelections(evt);
   }
 
   public void mouseReleased(MouseEvent evt) {
 
+    // process selections in mousePressed() or mouseReleased()
     if (! SELECT_ON_MOUSE_PRESSED) processSelections(evt);
 
     //  do popup in mouseReleased() so it doesn't interfere with rubber band
-    if ((isOurPopupTrigger(evt)) &&
-    ( ! (smv.last_selected_glyph instanceof GraphGlyph)) )   {
+    if (isOurPopupTrigger(evt)) {
       smv.showPopup((NeoMouseEvent) evt);
     }
+    
+    // if the GraphSelectionManager is also trying to control popup menus,
+    // then there needs to be code here to prevent both this and that from
+    // trying to do a popup at the same time.  But it is tricky.  So for
+    // now we let ONLY this class trigger the pop-up.
+    
+//    if ((isOurPopupTrigger(evt)) &&
+//    ( ! (smv.last_selected_glyph instanceof GraphGlyph)) )   {
+//      smv.showPopup((NeoMouseEvent) evt);
+//    }
   }
 
   void processSelections(MouseEvent evt) {
@@ -144,8 +156,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       else {
         map.select(topgl);
         smv.last_selected_glyph = topgl;
-        if (smv.last_selected_glyph.getInfo() instanceof SeqSymmetry) {
-          smv.last_selected_sym = (SeqSymmetry)smv.last_selected_glyph.getInfo();
+        if (topgl.getInfo() instanceof SeqSymmetry) {
+          smv.last_selected_sym = (SeqSymmetry) topgl.getInfo();
         }
         else {
           smv.last_selected_sym = null;

@@ -33,14 +33,16 @@ import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileChooser;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.ContextualPopupListener;
 
 public class GraphSelectionManager
-  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener  {
+  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
+  ContextualPopupListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   /**
@@ -382,7 +384,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createDiffGraph(second_current_graph, current_graph, Color.yellow);
+          createDiffGraph(current_graph, second_current_graph, Color.yellow);
         }
       }
       else if (src == sum_graphs) {
@@ -390,7 +392,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createSumGraph(second_current_graph, current_graph, Color.yellow);
+          createSumGraph(current_graph, second_current_graph, Color.yellow);
         }
       }
       else if (src == ratio_graphs) {
@@ -398,7 +400,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createRatioGraph(second_current_graph, current_graph, Color.red);
+          createRatioGraph(current_graph, second_current_graph, Color.red);
         }
       }
       else if (src == product_graphs) {
@@ -406,7 +408,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createProductGraph(second_current_graph, current_graph, Color.red);
+          createProductGraph(current_graph, second_current_graph, Color.red);
         }
       }
       else if (src == save_graph) {
@@ -697,7 +699,16 @@ public class GraphSelectionManager
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
+  /**
+   *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
+   *  that could cause conflicts with the other pop-up menu which is opened
+   *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
+   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List)}
+   *  provided by the interface ContextualPopupListener to add to the pop-up 
+   *  menu which the SeqMapView itself constructs.
+   */
   public void mouseClicked(MouseEvent evt) {
+    /*
     int mods = evt.getModifiers();
 
     //TODO: Proper thing here is to check isPopupTrigger() in *both* mousePressed() and mouseReleased(),
@@ -708,6 +719,7 @@ public class GraphSelectionManager
 	 ((mods & InputEvent.BUTTON3_MASK) != 0 )) ) {
            showPopup(evt, current_source.getSelected());
     }
+    */
   }
 
   void showPopup(MouseEvent evt, Vector selected) {
@@ -728,7 +740,8 @@ public class GraphSelectionManager
       if (num_selected_graphs > 0) {
 	current_graph = (GraphGlyph)graphlist.get(0);
 	if (num_selected_graphs > 1) {
-	  second_current_graph = (GraphGlyph)graphlist.get(1);
+	  current_graph = (GraphGlyph)graphlist.get(1);
+	  second_current_graph = (GraphGlyph)graphlist.get(0);
 	}
 
 	toggle_floating.setEnabled(num_selected_graphs == 1);
@@ -956,6 +969,44 @@ public class GraphSelectionManager
       result = result.substring(0, max_label_length);
     }
     return result;
+  }
+  
+  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms) {
+    Vector selected_graph_glyphs = new Vector(0);
+    current_graph = null;
+    second_current_graph = null;
+    
+    // convert the selected syms to a list of selected graph glyphs
+    Iterator iter = selected_syms.iterator();
+    while (iter.hasNext()) {
+      SeqSymmetry sym = (SeqSymmetry) iter.next();
+      GlyphI g = gviewer.getSeqMap().getItem(sym);
+      if (g instanceof GraphGlyph) {
+        selected_graph_glyphs.add(g);
+      }
+    }
+    
+    JMenu combine = new JMenu("Combine Graphs");
+    if (selected_graph_glyphs.size() >= 2) {
+      current_graph = (GraphGlyph) selected_graph_glyphs.get(0);
+      second_current_graph = (GraphGlyph) selected_graph_glyphs.get(1);
+      
+      combine.setEnabled(true);
+      JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
+      JLabel graph_info_B = new JLabel("B: "+getGraphLabel(second_current_graph));
+
+      combine.add(graph_info_A);
+      combine.add(graph_info_B);
+      combine.add(new JSeparator());
+      combine.add(sum_graphs);
+      combine.add(diff_graphs);
+      combine.add(product_graphs);
+      combine.add(ratio_graphs);
+    } else {
+      combine.setEnabled(false);
+    }
+
+    the_popup.add(combine);
   }
 }
 

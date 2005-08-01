@@ -58,7 +58,8 @@ public class WebBrowserControl {
     Thread t = new Thread() {
       public void run() {
         try {
-          System.err.println("Opening URL in browser: " + url);
+          IGB.getSingletonIGB().setStatus("Opening URL in browser: " + url);
+          //System.err.println("Opening URL in browser: " + url);
           displayURL(url);
         } catch (final Exception e) {
           SwingUtilities.invokeLater(new Runnable() {

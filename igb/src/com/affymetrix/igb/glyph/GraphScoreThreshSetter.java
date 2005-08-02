@@ -23,6 +23,7 @@ import java.util.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphScoreThreshSetter extends JPanel
   implements ChangeListener, ActionListener  {
@@ -283,7 +284,7 @@ public class GraphScoreThreshSetter extends JPanel
     }
     else if (src == score_perT) {
       try {
-	float minper = Float.parseFloat(score_perT.getText());
+        float minper = GraphAdjusterView.parsePercent(score_perT.getText());
 	if (minper < abs_min_per) { minper = abs_min_per; }
 	else if (minper > abs_max_per) { minper = abs_max_per; }
 	setScoreMinPercent(minper); // also sets prev_min_per

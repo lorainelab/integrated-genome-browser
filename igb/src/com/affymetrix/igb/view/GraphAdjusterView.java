@@ -797,6 +797,16 @@ public class GraphAdjusterView extends JComponent
       symSelectionChanged(newevt);
     }
   }
+  
+  /** Parse a String floating-point number that may optionally end with a "%" symbol. */
+  public static float parsePercent(String text) throws NumberFormatException {
+    if (text.endsWith("%")) { 
+      text = text.substring(0, text.length()-1);
+    }
+
+    float f = Float.parseFloat(text);
+    return f;
+  }
 }
 
 

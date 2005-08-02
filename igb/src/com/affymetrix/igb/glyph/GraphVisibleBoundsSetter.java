@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener  {
@@ -485,7 +486,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == min_perT)  {
       try {
-	float min_per = Float.parseFloat(min_perT.getText());
+	float min_per = GraphAdjusterView.parsePercent(min_perT.getText());
 	if (min_per < 0)  { min_per = 0; }
 	else if (min_per > prev_max_per) { min_per = prev_max_per - per_offset; }
 	setVisibleMinPercent(min_per);  // resets min_perT text also
@@ -497,7 +498,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == max_perT) {
       try {
-	float max_per = Float.parseFloat(max_perT.getText());
+        float max_per = GraphAdjusterView.parsePercent(max_perT.getText());
 	if (max_per < prev_min_per) { max_per = prev_min_per + per_offset; }
 	else if (max_per > 100) { max_per = 100; }
 	setVisibleMaxPercent(max_per);  // resets max_perT text also
@@ -512,7 +513,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
 
   }
-
 
   public void setVisibleMinValue(float val) {
     int gcount = graphs.size();

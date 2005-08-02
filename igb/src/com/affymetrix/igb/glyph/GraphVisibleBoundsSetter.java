@@ -687,7 +687,14 @@ public class GraphVisibleBoundsSetter extends JPanel
   public float getValueForPercent(GraphGlyph gl, float percent) {
     Object info = gl.getInfo();
     float[] percent2score = (float[])info2pscores.get(info);
-    float value = percent2score[(int)Math.round(percent * sliders_per_percent)];
+    int index = (int)Math.round(percent * sliders_per_percent);
+    
+    // I have actually seen a case where index was calculated as -1, 
+    // and an exception was thrown. That is why I added this check. (Ed)
+    if (index < 0) {index = 0;}
+    else if (index >= percent2score.length) { index = percent2score.length - 1; }
+    
+    float value = percent2score[index];
     return value;
   }
 

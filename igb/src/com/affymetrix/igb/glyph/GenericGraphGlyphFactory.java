@@ -180,8 +180,15 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       float[] percentiles = GraphSymUtils.calcPercents2Scores(graf.getGraphYCoords(), 10.0f);
       // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
       // and percentiles.length = 1001 in this case.
-      graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile 
-      graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
+      
+      // If the graph data consists mostly of a single value (such as zero) with
+      // a small number of extreme outliers, then it is possible for
+      // percentiles[10] == percentiles[990].  It is a bad idea to set the
+      // visible max and min to the same value, so check for that.
+      if (percentiles[10] != percentiles[990]) {
+        graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile 
+        graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
+      }
     }
 
     if (graph_seq != aseq) {

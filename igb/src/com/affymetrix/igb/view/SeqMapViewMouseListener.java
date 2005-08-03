@@ -165,7 +165,10 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       }
     }
 
-    if (smv.show_edge_matches)  {
+    boolean nothing_changed = (preserve_selections && (topgl == null));
+    boolean selections_changed = ! nothing_changed;
+        
+    if (smv.show_edge_matches && selections_changed)  {
       smv.doEdgeMatching(map.getSelected(), false);
     }
     smv.setZoomSpotX(zoom_point.getX());
@@ -173,7 +176,9 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     map.updateWidget(); 
 
-    smv.postSelections();      
+    if (selections_changed) {
+      smv.postSelections();
+    }
   }
 
   /**
@@ -284,6 +289,10 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
         (axis_tier != null) &&
         axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
 
+      // setZoomSpot is best if done before updateWidget
+      smv.setZoomSpotX(cbox.x + cbox.width);
+      smv.setZoomSpotY(cbox.y + cbox.height);
+
       if (started_in_axis_tier) {
         // started in axis tier: user is trying to select sequence residues
 
@@ -307,8 +316,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
         doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
       }
-      smv.setZoomSpotX(cbox.x + cbox.width);
-      smv.setZoomSpotY(cbox.y + cbox.height);
 
       rubber_band_start = null; // for garbage collection
     }
@@ -322,20 +329,31 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   void doTheSelection(Vector glyphs, MouseEvent evt) {
 
+    boolean something_changed = true;
+
     if (isToggleSelectionEvent(evt)) {
+      if (glyphs.isEmpty()) {
+        something_changed = false;
+      }
       toggleSelections(map, glyphs);
     } else if (isAddToSelectionEvent(evt)) {
+      if (glyphs.isEmpty()) {
+        something_changed = false;
+      }
       map.select(glyphs);
     } else {
+      something_changed = true;
       smv.clearSelection();
       map.select(glyphs);
     }
-    if (smv.show_edge_matches) {
+    if (smv.show_edge_matches && something_changed) {
       smv.doEdgeMatching(map.getSelected(), false);
     }
     map.updateWidget();
 
-    smv.postSelections();
+    if (something_changed) {
+      smv.postSelections();
+    }
   }
 
   void toggleSelections(NeoMap map, Collection glyphs) {

@@ -547,6 +547,7 @@ public class SeqMapView extends JPanel
 
 	    cgl.setCoords(childspan.getMin(), 0,
 			  childspan.getMax()-childspan.getMin(), 10);
+            cgl.setInfo(childcomp);
 	    seq_glyph.addChild(cgl);
 	  }
 	}
@@ -1284,7 +1285,16 @@ public class SeqMapView extends JPanel
 	GlyphI gl = (GlyphI)glyphs.get(i);
 	if (gl.getInfo() instanceof SeqSymmetry) {
 	  syms.add(gl.getInfo());
-	}
+	} else {
+          /*
+          // Create a fake symmetry for things that don't have any glyph info.
+          // This allows the genomic coordinates of the selected item to be visible in the SymTableView,
+          // and allows slicing to be done based on the item.
+          Rectangle2D cb = gl.getCoordBox();
+          SeqSymmetry fake_sym = new SingletonSeqSymmetry((int) cb.x, (int) (cb.x + cb.width-1), aseq);
+          syms.add(fake_sym);
+          */
+        }
       }
     }
     return syms;
@@ -2048,12 +2058,54 @@ public class SeqMapView extends JPanel
     return mi;
   }
 
+  /** For each current selection, deselect it and select its parent instead. 
+   *  @param top_level if true, will select only top-level parents
+   */
+  void selectParents(boolean top_level) {
+    // copy selections to a new list before starting, because list of selections will be modified
+    java.util.List all_selections = new ArrayList(map.getSelected());
+    Iterator iter = all_selections.iterator();
+    while (iter.hasNext()) {
+
+      GlyphI child = (GlyphI) iter.next();
+      GlyphI pglyph = child.getParent();
+      // the test for isHitable will automatically exclude seq_glyph
+      if ( pglyph != null && pglyph.isHitable() && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
+        if (top_level) {
+          GlyphI t = pglyph;
+          while (t != null && t.isHitable() && ! (t instanceof TierGlyph) && ! ( t instanceof RootGlyph)) {
+            pglyph = t;
+            t = t.getParent();
+          }
+        }
+        map.deselect(child);
+        map.select(pglyph);
+      }
+    }
+
+    last_selected_glyph = null;
+    last_selected_sym = null;
+    if (! map.getSelected().isEmpty()) {
+      last_selected_glyph = (GlyphI) map.getSelected().lastElement();
+      if (last_selected_glyph.getInfo() instanceof SeqSymmetry) {
+        last_selected_sym = (SeqSymmetry) last_selected_glyph.getInfo();
+      }
+    }
+
+    Vector selected_glyphs = map.getSelected();
+    if (show_edge_matches)  {
+      doEdgeMatching(selected_glyphs, false);
+    }
+    map.updateWidget();
+    postSelections();
+  }
+
   private class SeqMapViewActionListener implements ActionListener {
 
     public SeqMapViewActionListener() {
       //super(true);
     }
-
+    
     public void actionPerformed(ActionEvent evt) {
       String command = evt.getActionCommand();
       //System.out.println("SeqMapView received action event "+command);
@@ -2072,27 +2124,12 @@ public class SeqMapView extends JPanel
       else if (command.equals(selectParentMI.getText())) {
         if (map.getSelected().isEmpty()) {
           IGB.errorPanel("Nothing selected");
+        } else if (map.getSelected().size() == 1) {
+          // one selection: select its parent, not recursively
+          selectParents(false);
         } else {
-          GlyphI child = (GlyphI) map.getSelected().lastElement();
-          GlyphI pglyph = child.getParent();
-          if ( pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-            map.deselect(child);
-            map.select(pglyph);
-            last_selected_glyph = pglyph;
-            if (pglyph.getInfo() instanceof SeqSymmetry) {
-              last_selected_sym = (SeqSymmetry) pglyph.getInfo();
-            }
-            else {
-              last_selected_sym = null;
-            }
-            Vector selected_glyphs = map.getSelected();
-            if (show_edge_matches)  {
-              doEdgeMatching(selected_glyphs, false);
-            }
-            map.updateWidget();
-            //          showProps(selected);
-            postSelections();
-          }
+          // multiple selections: select parents recursively
+          selectParents(true);
         }
       }
       else if (command.equals(printSymmetryMI.getText())) {

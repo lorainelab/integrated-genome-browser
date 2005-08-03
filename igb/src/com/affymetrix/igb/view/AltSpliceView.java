@@ -107,7 +107,9 @@ public class AltSpliceView extends JComponent
    *  This method is notified when selected symmetries change.
    *  It usually triggers a re-computation of the sliced symmetries to draw.
    *  If no selected syms, then don't change.
-   *  If all selected syms are graphs, don't change (because graphs currently span entire sequence).
+   *  Any Graphs in the selected symmetries will be ignored
+   *  (because graphs currently span entire sequence and slicing on them can
+   *  use too much memory).
    */
   public void symSelectionChanged(SymSelectionEvent evt) {
     if (IGB.DEBUG_EVENTS)  { System.out.println("AltSpliceView received selection changed event"); }
@@ -118,16 +120,10 @@ public class AltSpliceView extends JComponent
       // catching spliced_view as source of event because currently sym selection events actually originating
       //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
       last_selected_syms = evt.getSelectedSyms();
+      last_selected_syms = removeGraphs(last_selected_syms);
       int symcount = last_selected_syms.size();
       if (symcount > 0) {
-	boolean all_graphs = true;
-	for (int i=0; i<symcount; i++) {
-	  if (! (last_selected_syms.get(i) instanceof GraphSym)) {
-	    all_graphs = false;
-	    break;
-	  }
-	}
-	if (! all_graphs) {
+	{
 	  if (! this.isShowing()) {
 	    pending_selection_change = true;
 	  }
@@ -216,6 +212,19 @@ public class AltSpliceView extends JComponent
     }
   }
 
+  // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
+  java.util.List removeGraphs(java.util.List syms) {
+    int symcount = syms.size();
+    Vector v = new Vector(syms.size());
+    for (int i=0; i<symcount; i++) {
+      Object sym = syms.get(i);
+      if (! (sym instanceof GraphSym)) {
+        v.add(sym);
+      }
+    }
+    return v;
+  }
+  
   public static void main(String[] args) {
     // testing AltSpliceView as standalone
     JFrame frm = new JFrame("AltSpliceView test");

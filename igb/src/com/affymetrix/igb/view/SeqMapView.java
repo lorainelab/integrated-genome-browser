@@ -241,7 +241,6 @@ public class SeqMapView extends JPanel
   SeqSymmetry last_selected_sym = null;
   Vector match_glyphs = new Vector();
   Vector selection_listeners = new Vector();
-  java.util.List selected_syms = new Vector();
   TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
@@ -670,7 +669,6 @@ public class SeqMapView extends JPanel
     HashMap temp_g2tier = new HashMap();
     ArrayList temp_tiers = null;
     int axis_index = 0;
-    selected_syms = new Vector();
     last_selected_glyph = null;
     match_glyphs = new Vector();
     //    last_selected_sym = null;
@@ -1218,8 +1216,16 @@ public class SeqMapView extends JPanel
     }
   }
 
+  /**
+   *  Determines which SeqSymmetry's are selected by looking at which Glyph's
+   *  are currently selected.  The list will not include the selected sequence
+   *  region, if any.  Use getSelectedRegion() for that.
+   *  @return a List of SeqSymmetry objects, possibly empty.
+   */
   public java.util.List getSelectedSyms() {
-    return selected_syms;
+    Vector glyphs = map.getSelected();
+    java.util.List syms = glyphsToSyms(glyphs);
+    return syms;
   }
 
   public void select(java.util.List sym_list) {
@@ -1231,7 +1237,7 @@ public class SeqMapView extends JPanel
     if (! add_to_previous)  {
       clearSelection();
     }
-    selected_syms = sym_list;
+    
     int symcount = sym_list.size();
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)sym_list.get(i);
@@ -1271,7 +1277,6 @@ public class SeqMapView extends JPanel
     last_selected_glyph = null;
     last_selected_sym = null;
     //  match_glyphs
-    selected_syms = new ArrayList();
   }
 
   /**
@@ -1307,25 +1312,22 @@ public class SeqMapView extends JPanel
    */
   void postSelections() {
     Vector selected_glyphs = map.getSelected();
-    selected_syms = glyphsToSyms(selected_glyphs);
-    //    postSelection(selected_syms);
+    java.util.List selected_syms = glyphsToSyms(selected_glyphs);
+    // Note that seq_selected_sym (the selected residues) is not included in selected_syms
+    
     gmodel.setSelectedSymmetries(selected_syms, this);
   }
 
   // assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
   public void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
-    if (seq_selected_sym != null) {
-      selected_syms.remove(seq_selected_sym);
-    }
     seq_selected_sym = region_sym;
     if (SUBSELECT_SEQUENCE && seq_glyph != null) {
       if (region_sym == null) {
 	seq_glyph.setSelected(false);
       }
       else {
-	SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
-	seq_glyph.select(seq_region.getMin(), seq_region.getMax());
-	selected_syms.add(seq_selected_sym);
+        SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
+        seq_glyph.select(seq_region.getMin(), seq_region.getMax());
       }
       if (update_widget) {
         map.updateWidget();
@@ -1333,6 +1335,10 @@ public class SeqMapView extends JPanel
     }
   }
 
+  /** Returns the region of sequence residues that is selected, or null. 
+   *  Note that this SeqSymmetry is not included in the return value of
+   *  getSelectedSymmetries().
+   */
   public SeqSymmetry getSelectedRegion() {
     return seq_selected_sym;
   }
@@ -1446,11 +1452,11 @@ public class SeqMapView extends JPanel
   }
 
   public void sliceBySelection()  {
-    sliceAndDice(selected_syms);
+    sliceAndDice(getSelectedSyms());
   }
 
   public void testUnion() {
-    testUnion(selected_syms);
+    testUnion(getSelectedSyms());
   }
 
   public void testUnion(java.util.List syms) {
@@ -2260,6 +2266,7 @@ public class SeqMapView extends JPanel
     if (! selected_glyphs.isEmpty()) {
       sym_popup.add(zoomtoMI);
     }
+    java.util.List selected_syms = getSelectedSyms();
     if (selected_syms.size() > 0) {
       sym_popup.add(selectParentMI);
       sym_popup.add(printSymmetryMI);

@@ -75,7 +75,9 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   public void mouseExited(MouseEvent evt) { }
 
-  public void mouseClicked(MouseEvent evt) { }
+  public void mouseClicked(MouseEvent evt) { 
+    // reset rubber_band_start here?
+  }
 
   public void mousePressed(MouseEvent evt) {
     // turn OFF autoscrol in mousePressed()
@@ -284,16 +286,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       Rectangle pbox = evt.getPixelBox();
       map.getView().transformToCoords(pbox, cbox);
 
-      TierGlyph axis_tier = smv.getAxisTier();
-      boolean started_in_axis_tier = (rubber_band_start != null ) &&
-        (axis_tier != null) &&
-        axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
-
       // setZoomSpot is best if done before updateWidget
       smv.setZoomSpotX(cbox.x + cbox.width);
       smv.setZoomSpotY(cbox.y + cbox.height);
 
-      if (started_in_axis_tier) {
+      if (startedInAxisTier()) {
         // started in axis tier: user is trying to select sequence residues
 
         if (pbox.width >= 2 && pbox.height >=2) {
@@ -321,6 +318,15 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
   }
 
+  // did the most recent drag start in the axis tier?
+  boolean startedInAxisTier() {
+    TierGlyph axis_tier = smv.getAxisTier();
+    boolean started_in_axis_tier = (rubber_band_start != null ) &&
+      (axis_tier != null) &&
+      axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
+    return started_in_axis_tier;
+  }
+  
   void doTheSelection(GlyphI glyph, MouseEvent evt) {
     Vector v = new Vector(1);
     v.add(glyph);
@@ -351,6 +357,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
     map.updateWidget();
 
+    // need to set last_selected_sym here (if we keep that variable)
+    
     if (something_changed) {
       smv.postSelections();
     }

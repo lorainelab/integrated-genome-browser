@@ -152,18 +152,18 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (topgl != null) {
       if (isToggleSelectionEvent(nevt) && map.getSelected().contains(topgl)) {
         map.deselect(topgl);
-        smv.last_selected_glyph = null;
-        smv.last_selected_sym = null;
+        //smv.last_selected_glyph = null;
+        //smv.last_selected_sym = null;
       }
       else {
         map.select(topgl);
-        smv.last_selected_glyph = topgl;
-        if (topgl.getInfo() instanceof SeqSymmetry) {
-          smv.last_selected_sym = (SeqSymmetry) topgl.getInfo();
-        }
-        else {
-          smv.last_selected_sym = null;
-        }
+        //smv.last_selected_glyph = topgl;
+        //if (topgl.getInfo() instanceof SeqSymmetry) {
+        //  smv.last_selected_sym = (SeqSymmetry) topgl.getInfo();
+        //}
+        //else {
+        //  smv.last_selected_sym = null;
+        //}
       }
     }
 
@@ -299,8 +299,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
           SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.aseq);
           smv.setSelectedRegion(new_region, true);
-          smv.last_selected_sym = new_region;
-          smv.last_selected_glyph = smv.seq_glyph;
+          //smv.last_selected_sym = new_region;
+          //smv.last_selected_glyph = smv.seq_glyph;
           //	map.updateWidget();
         }
         else {

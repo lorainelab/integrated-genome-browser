@@ -237,8 +237,6 @@ public class SeqMapView extends JPanel
   CharSeqGlyph seq_glyph = null;
 
   SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-  //GlyphI last_selected_glyph = null;
-  //SeqSymmetry last_selected_sym = null;
   Vector match_glyphs = new Vector();
   Vector selection_listeners = new Vector();
   TierLabelManager tier_manager;
@@ -571,6 +569,7 @@ public class SeqMapView extends JPanel
     method2rtier = new HashMap();
     method2ftier = new HashMap();
     gstate2tier = new HashMap();
+    match_glyphs = new Vector();
     map.updateWidget();
     GenericGraphGlyphFactory.clear();
   }
@@ -669,9 +668,7 @@ public class SeqMapView extends JPanel
     HashMap temp_g2tier = new HashMap();
     ArrayList temp_tiers = null;
     int axis_index = 0;
-    //last_selected_glyph = null;
     match_glyphs = new Vector();
-    //    last_selected_sym = null;
     java.util.List old_selections = Collections.EMPTY_LIST;
     double old_zoom_spot_x = map.getZoomCoord(map.X);
     double old_zoom_spot_y = map.getZoomCoord(map.Y);
@@ -711,7 +708,6 @@ public class SeqMapView extends JPanel
       }
     }
     else {   // not same seq
-      //last_selected_sym = null;
       method2rtier = new HashMap();
       method2ftier = new HashMap();
       gstate2tier = new HashMap();
@@ -794,7 +790,6 @@ public class SeqMapView extends JPanel
 	GlyphI gl = (GlyphI)map.getItem(old_selected_sym);
 	if (gl != null) {
 	  map.select(gl);
-          //last_selected_glyph = gl;
 	}
       }
       setZoomSpotX(old_zoom_spot_x);
@@ -1224,18 +1219,6 @@ public class SeqMapView extends JPanel
     }
   }
 
-  /**
-   *  Determines which SeqSymmetry's are selected by looking at which Glyph's
-   *  are currently selected.  The list will not include the selected sequence
-   *  region, if any.  Use getSelectedRegion() for that.
-   *  @return a List of SeqSymmetry objects, possibly empty.
-   */
-  public java.util.List getSelectedSyms() {
-    Vector glyphs = map.getSelected();
-    java.util.List syms = glyphsToSyms(glyphs);
-    return syms;
-  }
-
   public void select(java.util.List sym_list) {
     select(sym_list, false, false, true);
   }
@@ -1282,9 +1265,7 @@ public class SeqMapView extends JPanel
   protected void clearSelection() {
     map.clearSelected();
     setSelectedRegion(null, false);
-    //last_selected_glyph = null;
-    //last_selected_sym = null;
-    //  match_glyphs
+    //  clear match_glyphs?
   }
 
   protected SeqSymmetry glyphToSym(GlyphI gl) {
@@ -1308,7 +1289,7 @@ public class SeqMapView extends JPanel
    *  glyphs represent.
    */
   protected java.util.List glyphsToSyms(java.util.List glyphs) {
-    java.util.List syms = new ArrayList();
+    java.util.List syms = new ArrayList(glyphs.size());
     if (glyphs.size() > 0)  {
       for (int i=0; i<glyphs.size(); i++) {
         SeqSymmetry sym = glyphToSym((GlyphI) glyphs.get(i));
@@ -1476,6 +1457,18 @@ public class SeqMapView extends JPanel
   }
   
   /**
+   *  Determines which SeqSymmetry's are selected by looking at which Glyph's
+   *  are currently selected.  The list will not include the selected sequence
+   *  region, if any.  Use getSelectedRegion() for that.
+   *  @return a List of SeqSymmetry objects, possibly empty.
+   */
+  public java.util.List getSelectedSyms() {
+    Vector glyphs = map.getSelected();
+    java.util.List syms = glyphsToSyms(glyphs);
+    return syms;
+  }
+
+  /**
    *  Returns a selected symmetry, based on getSelectedGlyph().
    *  It is probably better to use getSelectedSyms() in most cases.
    *  @return a SeqSymmetry or null
@@ -1487,7 +1480,6 @@ public class SeqMapView extends JPanel
     } else {
       return glyphToSym((GlyphI) glyphs.lastElement());
     }
-    // return last_selected_sym;
   }
 
 
@@ -2140,17 +2132,6 @@ public class SeqMapView extends JPanel
       }
     }
 
-    /*
-    last_selected_glyph = null;
-    last_selected_sym = null;
-    if (! map.getSelected().isEmpty()) {
-      last_selected_glyph = (GlyphI) map.getSelected().lastElement();
-      if (last_selected_glyph.getInfo() instanceof SeqSymmetry) {
-        last_selected_sym = (SeqSymmetry) last_selected_glyph.getInfo();
-      }
-    }
-     */
-
     Vector selected_glyphs = map.getSelected();
     if (show_edge_matches)  {
       doEdgeMatching(selected_glyphs, false);
@@ -2193,7 +2174,7 @@ public class SeqMapView extends JPanel
       }
       else if (command.equals(printSymmetryMI.getText())) {
         SeqSymmetry sym = getSelectedSymmetry();
-        // Why not print ALL selections?
+        //TODO: Why not print ALL selections?
         if (sym == null) {
           IGB.errorPanel("No symmetry selected");
         } else {

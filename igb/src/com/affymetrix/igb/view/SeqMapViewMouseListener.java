@@ -103,11 +103,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     // then there needs to be code here to prevent both this and that from
     // trying to do a popup at the same time.  But it is tricky.  So for
     // now we let ONLY this class trigger the pop-up.
-    
-//    if ((isOurPopupTrigger(evt)) &&
-//    ( ! (smv.last_selected_glyph instanceof GraphGlyph)) )   {
-//      smv.showPopup((NeoMouseEvent) evt);
-//    }
   }
 
   void processSelections(MouseEvent evt) {
@@ -152,18 +147,9 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (topgl != null) {
       if (isToggleSelectionEvent(nevt) && map.getSelected().contains(topgl)) {
         map.deselect(topgl);
-        //smv.last_selected_glyph = null;
-        //smv.last_selected_sym = null;
       }
       else {
         map.select(topgl);
-        //smv.last_selected_glyph = topgl;
-        //if (topgl.getInfo() instanceof SeqSymmetry) {
-        //  smv.last_selected_sym = (SeqSymmetry) topgl.getInfo();
-        //}
-        //else {
-        //  smv.last_selected_sym = null;
-        //}
       }
     }
 
@@ -299,9 +285,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
           SeqSymmetry new_region = new SingletonSeqSymmetry(seq_select_start, seq_select_end, smv.aseq);
           smv.setSelectedRegion(new_region, true);
-          //smv.last_selected_sym = new_region;
-          //smv.last_selected_glyph = smv.seq_glyph;
-          //	map.updateWidget();
         }
         else {
           // This is optional: clear selected region if drag is very small distance
@@ -327,12 +310,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     return started_in_axis_tier;
   }
   
-  void doTheSelection(GlyphI glyph, MouseEvent evt) {
-    Vector v = new Vector(1);
-    v.add(glyph);
-    doTheSelection(v, evt);
-  }
-
   void doTheSelection(Vector glyphs, MouseEvent evt) {
 
     boolean something_changed = true;
@@ -356,8 +333,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       smv.doEdgeMatching(map.getSelected(), false);
     }
     map.updateWidget();
-
-    // need to set last_selected_sym here (if we keep that variable)
     
     if (something_changed) {
       smv.postSelections();

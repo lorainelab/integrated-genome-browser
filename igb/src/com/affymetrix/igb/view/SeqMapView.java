@@ -237,8 +237,8 @@ public class SeqMapView extends JPanel
   CharSeqGlyph seq_glyph = null;
 
   SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-  GlyphI last_selected_glyph = null;
-  SeqSymmetry last_selected_sym = null;
+  //GlyphI last_selected_glyph = null;
+  //SeqSymmetry last_selected_sym = null;
   Vector match_glyphs = new Vector();
   Vector selection_listeners = new Vector();
   TierLabelManager tier_manager;
@@ -669,14 +669,25 @@ public class SeqMapView extends JPanel
     HashMap temp_g2tier = new HashMap();
     ArrayList temp_tiers = null;
     int axis_index = 0;
-    last_selected_glyph = null;
+    //last_selected_glyph = null;
     match_glyphs = new Vector();
     //    last_selected_sym = null;
+    java.util.List old_selections = Collections.EMPTY_LIST;
+    double old_zoom_spot_x = map.getZoomCoord(map.X);
+    double old_zoom_spot_y = map.getZoomCoord(map.Y);
+
     if (same_seq) {
       // special casing for when setAnnotatedSeq() is really being called
       // to relayout same seq, for instance when merging annotation results for
       // the "same" sequence from different sources -- may want to avoid massive repacking???
-
+      
+      // Gather information about what is currently selected, so can restore it later
+      if (preserve_selection) {
+        old_selections = getSelectedSyms();
+      } else {
+        old_selections = Collections.EMPTY_LIST;
+      }
+        
       // stash annotation tiers for proper state restoration after resetting for same seq
       //    (but presumably added / deleted / modified annotations...)
 
@@ -698,10 +709,9 @@ public class SeqMapView extends JPanel
 	  map.removeTier(tg);
 	}
       }
-
     }
     else {   // not same seq
-      last_selected_sym = null;
+      //last_selected_sym = null;
       method2rtier = new HashMap();
       method2ftier = new HashMap();
       gstate2tier = new HashMap();
@@ -775,24 +785,22 @@ public class SeqMapView extends JPanel
 
     if (same_seq && preserve_selection) {
       // reselect glyph(s) based on selected sym(s);
-      if (last_selected_sym != null) {
-        // If we are doing this for last_selected_sym, why not for all selected syms?
+      // Unfortunately, some previously selected syms will not be directly
+      // associatable with new glyphs, so not all selections can be preserved
+      Iterator iter = old_selections.iterator();
+      while (iter.hasNext()) {
+        SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
         
-	GlyphI gl = (GlyphI)map.getItem(last_selected_sym);
+	GlyphI gl = (GlyphI)map.getItem(old_selected_sym);
 	if (gl != null) {
 	  map.select(gl);
-	  // redoing edge matching if needed
-	  if (show_edge_matches && (! (gl instanceof GraphGlyph)))  {
-	    Vector query_glyphs = new Vector();
-	    query_glyphs.add(gl);
-	    doEdgeMatching(query_glyphs, false);
-	  }
-	  Rectangle2D cbox = gl.getCoordBox();
-	  map.setZoomBehavior(map.X, map.CONSTRAIN_COORD, (cbox.x + (cbox.width/2.0)));
-	  map.setZoomBehavior(map.Y, map.CONSTRAIN_COORD, (cbox.y + (cbox.height/2.0)));
-          last_selected_glyph = gl;
+          //last_selected_glyph = gl;
 	}
       }
+      setZoomSpotX(old_zoom_spot_x);
+      setZoomSpotY(old_zoom_spot_y);
+      
+      doEdgeMatching(map.getSelected(), false);
     }
     
     if (SHRINK_WRAP_MAP_BOUNDS) {
@@ -1274,11 +1282,27 @@ public class SeqMapView extends JPanel
   protected void clearSelection() {
     map.clearSelected();
     setSelectedRegion(null, false);
-    last_selected_glyph = null;
-    last_selected_sym = null;
+    //last_selected_glyph = null;
+    //last_selected_sym = null;
     //  match_glyphs
   }
 
+  protected SeqSymmetry glyphToSym(GlyphI gl) {
+    if (gl.getInfo() instanceof SeqSymmetry) {
+      return (SeqSymmetry) gl.getInfo();
+    } else {
+      return null;
+      /*
+      // Create a fake symmetry for things that don't have any glyph info.
+      // This allows the genomic coordinates of the selected item to be visible in the SymTableView,
+      // and allows slicing to be done based on the item.
+      Rectangle2D cb = gl.getCoordBox();
+      SeqSymmetry fake_sym = new SingletonSeqSymmetry((int) cb.x, (int) (cb.x + cb.width-1), aseq);
+      return fake_sym;
+      */
+    }
+  }
+  
   /**
    * Given a list of glyphs, returns a list of syms that those
    *  glyphs represent.
@@ -1287,19 +1311,8 @@ public class SeqMapView extends JPanel
     java.util.List syms = new ArrayList();
     if (glyphs.size() > 0)  {
       for (int i=0; i<glyphs.size(); i++) {
-	GlyphI gl = (GlyphI)glyphs.get(i);
-	if (gl.getInfo() instanceof SeqSymmetry) {
-	  syms.add(gl.getInfo());
-	} else {
-          /*
-          // Create a fake symmetry for things that don't have any glyph info.
-          // This allows the genomic coordinates of the selected item to be visible in the SymTableView,
-          // and allows slicing to be done based on the item.
-          Rectangle2D cb = gl.getCoordBox();
-          SeqSymmetry fake_sym = new SingletonSeqSymmetry((int) cb.x, (int) (cb.x + cb.width-1), aseq);
-          syms.add(fake_sym);
-          */
-        }
+        SeqSymmetry sym = glyphToSym((GlyphI) glyphs.get(i));
+        if (sym != null) syms.add(sym);
       }
     }
     return syms;
@@ -1328,6 +1341,7 @@ public class SeqMapView extends JPanel
       else {
         SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
         seq_glyph.select(seq_region.getMin(), seq_region.getMax());
+        IGB.getSingletonIGB().setStatus(SeqUtils.spanToString(seq_region), false);
       }
       if (update_widget) {
         map.updateWidget();
@@ -1337,7 +1351,7 @@ public class SeqMapView extends JPanel
 
   /** Returns the region of sequence residues that is selected, or null. 
    *  Note that this SeqSymmetry is not included in the return value of
-   *  getSelectedSymmetries().
+   *  getSelectedSyms().
    */
   public SeqSymmetry getSelectedRegion() {
     return seq_selected_sym;
@@ -1352,16 +1366,28 @@ public class SeqMapView extends JPanel
     boolean success = false;
     SeqSymmetry residues_sym = null;
     Clipboard clipboard = this.getToolkit().getSystemClipboard();
-
-    if (last_selected_sym != null) { residues_sym = last_selected_sym; }
-    else if (seq_selected_sym != null)  { residues_sym = seq_selected_sym; }
-
+    String from = "";
+    
+    if (seq_selected_sym != null) {
+      residues_sym = getSelectedRegion();
+      from = " from selected region";
+    }
+    else {
+      java.util.List syms = getSelectedSyms();
+      if (syms.size() == 1) {
+        residues_sym = (SeqSymmetry) syms.get(0); 
+        from = " from selected item";
+      }
+    }
+    
     if (residues_sym == null) {
-      IGB.errorPanel("No selected region, can't copy to clipboard");
+      IGB.errorPanel("Can't copy to clipboard",
+      "No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
     }
     else  {
       SeqSpan span = residues_sym.getSpan(aseq);
       if (aseq == null) {
+        // This is a fishy test.  How could aseq possibly be null?
 	IGB.errorPanel("Don't have residues, can't copy to clipboard");
       }
       else { // 2
@@ -1415,10 +1441,14 @@ public class SeqMapView extends JPanel
 	    String hackstr = new String(hackbuf);
 	    StringSelection data = new StringSelection(hackstr);
 	    clipboard.setContents(data, null);
+            String message = "Copied "+hackstr.length()+" residues" + from + " to clipboard";
+            IGB.getSingletonIGB().setStatus(message);
 	    success = true;
 	  }
 	  else {
-	    IGB.errorPanel("Don't have all the needed residues, can't copy to clipboard");
+	    IGB.errorPanel("Missing Sequence Residues", 
+            "Don't have all the needed residues, can't copy to clipboard.\n" +
+            "Please load sequence residues for this region.");
 	  }
 	}
       }
@@ -1433,10 +1463,31 @@ public class SeqMapView extends JPanel
     }
     return success;
   }
-
-
+ 
+  /**
+   *  Returns the most recently selected glyph.
+   */
+  GlyphI getSelectedGlyph() {
+    if (map.getSelected().isEmpty()) {
+      return null;
+    } else {
+      return (GlyphI) map.getSelected().lastElement();
+    }
+  }
+  
+  /**
+   *  Returns a selected symmetry, based on getSelectedGlyph().
+   *  It is probably better to use getSelectedSyms() in most cases.
+   *  @return a SeqSymmetry or null
+   */
   public SeqSymmetry getSelectedSymmetry() {
-    return last_selected_sym;
+    Vector glyphs = map.getSelected();
+    if (glyphs.isEmpty()) {
+      return null;
+    } else {
+      return glyphToSym((GlyphI) glyphs.lastElement());
+    }
+    // return last_selected_sym;
   }
 
 
@@ -2089,6 +2140,7 @@ public class SeqMapView extends JPanel
       }
     }
 
+    /*
     last_selected_glyph = null;
     last_selected_sym = null;
     if (! map.getSelected().isEmpty()) {
@@ -2097,6 +2149,7 @@ public class SeqMapView extends JPanel
         last_selected_sym = (SeqSymmetry) last_selected_glyph.getInfo();
       }
     }
+     */
 
     Vector selected_glyphs = map.getSelected();
     if (show_edge_matches)  {
@@ -2139,10 +2192,12 @@ public class SeqMapView extends JPanel
         }
       }
       else if (command.equals(printSymmetryMI.getText())) {
-        if (last_selected_sym == null) {
+        SeqSymmetry sym = getSelectedSymmetry();
+        // Why not print ALL selections?
+        if (sym == null) {
           IGB.errorPanel("No symmetry selected");
         } else {
-          SeqUtils.printSymmetry(last_selected_sym);
+          SeqUtils.printSymmetry(sym);
         }
       }
       else if (command.equals(slicendiceMI)) {

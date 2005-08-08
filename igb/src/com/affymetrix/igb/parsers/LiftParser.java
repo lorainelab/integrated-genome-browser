@@ -111,7 +111,7 @@ public class LiftParser {
 	if (contig == null)  { contig = new SimpleAnnotatedBioSeq(contig_name, match_length); }
 
 	contig_count++;
-	MutableAnnotatedBioSeq chrom = (MutableAnnotatedBioSeq)seq_group.getSeq(chrom_name);
+	MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
 	if (chrom == null) { chrom = (MutableAnnotatedBioSeq)temp_seqhash.get(chrom_name); }
 	if (chrom == null) {
 	  chrom_count++;
@@ -123,20 +123,27 @@ public class LiftParser {
 	  if (chrom instanceof Versioned) {
 	    ((Versioned)chrom).setVersion(genome_version);
 	  }
+	  /*
 	  SymWithProps comp = new SimpleSymWithProps();
 	  comp.setProperty("method", "contigs");
 	  if (chrom instanceof CompositeBioSeq) {
 	    ((CompositeBioSeq)chrom).setComposition(comp);
 	  }
-
-	  if (annotate_seq)  {
-	    chrom.addAnnotation(comp);
-	  }
+	  if (annotate_seq)  { chrom.addAnnotation(comp); }
+	  */
 	  seqlist.add(chrom);  // adding to seqlist for sorting
 	  temp_seqhash.put(chrom_name, chrom);
 	}
 	if (chrom instanceof CompositeBioSeq) {
 	  MutableSeqSymmetry comp = (MutableSeqSymmetry)(((CompositeBioSeq)chrom).getComposition());
+          if (comp == null)  {
+	    comp = new SimpleSymWithProps();
+	    ((SimpleSymWithProps)comp).setProperty("method", "contigs");
+            ((CompositeBioSeq)chrom).setComposition(comp);
+	    if (annotate_seq)  {
+	      chrom.addAnnotation(comp);
+	    }
+          }
 	  SimpleSymWithProps csym = new SimpleSymWithProps();
 	  csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
 	  csym.addSpan(new SimpleSeqSpan(0, match_length, contig));

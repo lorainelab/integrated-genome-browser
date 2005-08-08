@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.das2;
 
+import java.util.*;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.TypedSym;
 
@@ -38,5 +39,36 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
 
   /** implementing TypedSym interface */
   public String getType() { return type; }
+  public String getID() { return id; }
+  public String getName() { return name; }
+
+  public Object getProperty(String prop) {
+    if (prop.equals("id")) { return id; }
+    else if (prop.equals("name")) { return name; }
+    else if (prop.equals("type")) { return type; }
+    else { return super.getProperty(prop); }
+  }
+
+  public boolean setProperty(String tag, Object val) {
+    if (tag == null)  { return false; }
+    if (props == null) {
+      props = new LinkedHashMap();
+      props.put("id", id);
+      props.put("name", name);
+      props.put("type", type);
+    }
+    return super.setProperty(tag, val);
+  }
+
+  public Map getProperties() {
+    Map temp_props = props;
+    if (temp_props == null) {
+      temp_props = new LinkedHashMap();
+      temp_props.put("id", id);
+      temp_props.put("name", name);
+      temp_props.put("type", type);
+    }
+    return temp_props;
+  }
 
 }

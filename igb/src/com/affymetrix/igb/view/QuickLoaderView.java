@@ -659,7 +659,8 @@ public class QuickLoaderView extends JComponent
 		} );
 	    }
 	    catch (Exception ex) {
-	      System.out.println("coulnd't find requested file: " + url_path);
+	      System.out.println("problem loading requested url: " + url_path);
+	      ex.printStackTrace();
 	    }
 	    monitor.closeDialogEventually();
 	    monitor = null;

@@ -26,7 +26,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    */
   static boolean OPT_CONVERT_OBJECTS = false;
 
-  Map props;
+  protected Map props;
 
   public SimpleSymWithProps() {
     super();

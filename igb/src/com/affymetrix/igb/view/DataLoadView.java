@@ -28,7 +28,7 @@ public class DataLoadView extends JComponent  {
     this.setLayout(new BorderLayout());
     JTabbedPane tpane = new JTabbedPane();
     this.add("Center", tpane);
-    //    tpane.addTab("QuickLoad", quick_view);
+    tpane.addTab("QuickLoad", quick_view);
     tpane.addTab("DAS/2", das2_view);
     tpane.addTab("DAS/1", das1_view);
     this.add("West", group_view);
@@ -39,7 +39,7 @@ public class DataLoadView extends JComponent  {
 class SeqGroupView extends JComponent
   implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 
-  static boolean DEBUG_EVENTS = true;
+  static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   JTable seqtable;
   AnnotatedBioSeq selected_seq = null;

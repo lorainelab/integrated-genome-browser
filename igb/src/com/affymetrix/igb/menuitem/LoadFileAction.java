@@ -45,6 +45,7 @@ public class LoadFileAction {
   static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
+
   /**
    *  Constructor.
    *  @param ft  a FileTracker used to keep track of directory to load from
@@ -503,6 +504,9 @@ public class LoadFileAction {
         else {
           IGB.errorPanel("ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file");
         }
+      }
+      else {
+	IGB.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + stream_name);
       }
 
       System.gc();

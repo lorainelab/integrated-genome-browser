@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -37,8 +37,8 @@ public class AnnotatedSeqGroup {
   public Map getSeqs() { return id2seq; }
 
   public MutableAnnotatedBioSeq getSeq(int index) {
-    if (index < seqlist.size()) { 
-      return (MutableAnnotatedBioSeq)seqlist.get(index); 
+    if (index < seqlist.size()) {
+      return (MutableAnnotatedBioSeq)seqlist.get(index);
     }
     else { return null; }
   }
@@ -101,7 +101,7 @@ public class AnnotatedSeqGroup {
       return (lookup.isSynonym(id, synonym));
     }
   }
-  
+
   public MutableAnnotatedBioSeq addSeq(String seqid, int length) {
     MutableAnnotatedBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
     this.addSeq(aseq);
@@ -109,10 +109,17 @@ public class AnnotatedSeqGroup {
   }
 
   public void addSeq(MutableAnnotatedBioSeq seq) {
-    id2seq.put(seq.getID(), seq);
-    seqlist.add(seq);
-    if (seq instanceof SmartAnnotBioSeq) {
-      ((SmartAnnotBioSeq)seq).setSeqGroup(this);
+    MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
+    if (oldseq == null) {
+      id2seq.put(seq.getID(), seq);
+      seqlist.add(seq);
+      if (seq instanceof SmartAnnotBioSeq) {
+	((SmartAnnotBioSeq)seq).setSeqGroup(this);
+      }
+    }
+    else {
+      throw new RuntimeException("ERROR! tried to add seq: " + seq.getID() + " to AnnotatedSeqGroup: " +
+				 this.getID() + ", but seq with same id is already in group");
     }
   }
 

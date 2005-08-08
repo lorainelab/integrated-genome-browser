@@ -39,6 +39,7 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener  {
 
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
+  static boolean DEBUG_EVENTS = false;
 
   boolean THREAD_FEATURE_REQUESTS = true;
   boolean USE_SIMPLE_VIEW = false;
@@ -385,6 +386,7 @@ public class Das2LoadView extends JComponent
 	  load_featuresB.setEnabled(true);
 	  // need to do this here within finished(), otherwise may get threading issues where 
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
+	  gmodel.setSelectedSeq(null);
 	  gmodel.setSelectedSeqGroup(current_version.getGenome());
 	}
       };
@@ -511,7 +513,7 @@ public class Das2LoadView extends JComponent
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS) {
+    if (DEBUG_EVENTS) {
       System.out.println(
           "Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
@@ -534,9 +536,9 @@ public class Das2LoadView extends JComponent
    *  For now, just looking at current server
    */
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    //    if (IGB.DEBUG_EVENTS)  {
+    if (DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received GroupSelectionEvent: " + evt);
-      //    }
+    }
     java.util.List groups = evt.getSelectedGroups();    
     if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup newgroup = (AnnotatedSeqGroup)groups.get(0);
@@ -573,7 +575,9 @@ public class Das2LoadView extends JComponent
 
 
   public void tableChanged(TableModelEvent evt) {
-    System.out.println("Das2LoadView received table model changed event: " + evt);
+    if (DEBUG_EVENTS)  {
+      System.out.println("Das2LoadView received table model changed event: " + evt);
+    }
    //  JTable tab = (JTable)evt.getSource();
    // if (tab != types_table) {
    //   System.out.println("   table event received, but not on types table???");

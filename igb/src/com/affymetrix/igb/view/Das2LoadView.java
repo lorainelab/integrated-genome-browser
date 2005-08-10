@@ -573,7 +573,9 @@ public class Das2LoadView extends JComponent
     int firstrow = evt.getFirstRow();
     int lastrow = evt.getLastRow();
     if (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) {
-      Object val = types_table.getValueAt(firstrow, col);
+      // All attributes of TableModelEvent are in the TableModel coordinates, not
+      // necessarily the same as the JTable coordinates, so use getModel()
+      Object val = types_table.getModel().getValueAt(firstrow, col); 
       System.out.println("value of changed table cell: " + val);
     }
   }

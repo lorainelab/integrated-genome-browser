@@ -381,18 +381,8 @@ public class GraphSymUtils {
 
       HashMap seq_tagvals = null;
       if (bar2) {
-	int tagval_count = dis.readInt();
-	if (DEBUG_READ)  { System.out.println("tagval count: " + tagval_count); }
-	if (tagval_count > 0) { seq_tagvals = new HashMap(); }
-	for (int m=0; m<tagval_count; m++) {
-	  int tlength = dis.readInt();
-	  barray = new byte[tlength];
-	  String tag = new String(barray);
-	  int vlength = dis.readInt();
-	  barray = new byte[vlength];
-	  String val = new String(barray);
-	  seq_tagvals.put(tag, val);
-	}
+	int seq_tagval_count = dis.readInt();
+	seq_tagvals = readTagValPairs(dis, seq_tagval_count);
       }
 
       int total_points = dis.readInt();
@@ -471,7 +461,7 @@ public class GraphSymUtils {
           GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);
-	  copyProps(graf, seq_tagvals);
+	  if (bar2)  { copyProps(graf, seq_tagvals); }
 	  //	  graf.setProperty("method", graph_name);
           //          System.out.println("done reading graph data: " + graf);
           graphs.add(graf);
@@ -516,8 +506,10 @@ public class GraphSymUtils {
           mm_graf.setGraphName(mm_name);
           //pm_graf.setProperty("graph_name", pm_name);
           //mm_graf.setProperty("graph_name", mm_name);
-	  copyProps(pm_graf, seq_tagvals);
-	  copyProps(mm_graf, seq_tagvals);
+	  if (bar2)  {
+	    copyProps(pm_graf, seq_tagvals);
+	    copyProps(mm_graf, seq_tagvals);
+	  }
           System.out.println("done reading graph data: ");
           System.out.println("pmgraf, yval = column1: " + pm_graf);
           System.out.println("mmgraf, yval = column2: " + mm_graf);
@@ -960,6 +952,7 @@ public class GraphSymUtils {
 
   public static HashMap readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
     HashMap tvpairs = new HashMap(pair_count);
+    if (DEBUG_READ) { System.out.println("seq tagval count: " + pair_count); }
     for (int i=0; i<pair_count; i++) {
       int taglength = dis.readInt();
       byte[] barray = new byte[taglength];
@@ -973,7 +966,7 @@ public class GraphSymUtils {
       String val = new String(barray);
       //      String val = (new String(barray)).intern();
       tvpairs.put(tag, val);
-      if (DEBUG_READ)  { System.out.println("tag = " + tag + ", val = " + val); }
+      if (DEBUG_READ)  { System.out.println("    tag = " + tag + ", val = " + val); }
     }
     return tvpairs;
   }

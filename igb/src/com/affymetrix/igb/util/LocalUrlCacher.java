@@ -72,9 +72,6 @@ public class LocalUrlCacher {
 	content_type = conn.getContentType();
 	content_length = conn.getContentLength();
 	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
-	//	System.out.println("url last modified: " + remote_date);
-	//	System.out.println("content length: " + content_length);
-	//	System.out.println("CONTENT_TYPE: " + content_type);
 	url_reachable = true;
       }
       catch (Exception ex) {

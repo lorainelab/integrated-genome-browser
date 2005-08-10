@@ -410,19 +410,15 @@ public class QuickLoaderView extends JComponent
         //    prevent event bounce...
         String current_item = (String) genome_selector.getSelectedItem();
         if (!group.isSynonymous(current_item)) {
-          System.out.println("calling genome_selector.setSelected() item");
+	  //          System.out.println("calling genome_selector.setSelected() item");
           genome_selector.removeItemListener(this);
           genome_selector.setSelectedItem(name);
           genome_selector.addItemListener(this);
-          System.out.println("done calling genome_selector.setSelected() item");
+	  //          System.out.println("done calling genome_selector.setSelected() item");
         }
         current_item = (String) genome_selector.getSelectedItem();
-        System.out.println("name: " + current_item + ", index: " +
-                           genome_selector.getSelectedIndex());
-        //      System.out.println(genome_selector);
-        //      int count = genome_selector.getItemCount();
-        //      for (int i=0; i<count; i++)  { System.out.println(genome_selector.getItemAt(i)); }
-
+	//        System.out.println("name: " + current_item + ", index: " +
+	//                           genome_selector.getSelectedIndex());
         loadGenome(current_item);
       }
     }

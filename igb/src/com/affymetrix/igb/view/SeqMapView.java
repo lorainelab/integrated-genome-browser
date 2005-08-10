@@ -2265,6 +2265,14 @@ public class SeqMapView extends JPanel
             id = (String) ((Propertied) original).getProperty("id");
           }
         }
+        if (id == null && topgl instanceof GraphGlyph) {
+          GraphGlyph gg = (GraphGlyph) topgl;
+          if (gg.getLabel() != null) {
+            id = "Graph: "+ gg.getLabel();
+          } else {
+            id = "Graph Selected";
+          }
+        }
         if (id == null) {
           // If ID of item is null, check recursively for parent ID, or parent of that...
           GlyphI pglyph = topgl.getParent();
@@ -2279,7 +2287,7 @@ public class SeqMapView extends JPanel
           }
         }
       } else {
-        id = "Multiple Selections";
+        id = "" + selected_glyphs.size() + " Selections";
       }
     }
     if (id == null) { id = ""; }

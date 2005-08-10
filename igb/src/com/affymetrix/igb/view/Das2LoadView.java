@@ -434,15 +434,8 @@ public class Das2LoadView extends JComponent
 		System.out.println("type to load for visible range: " + dtype.getID());
 		Das2FeatureRequestSym request_sym =
 		  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-		Iterator formats = request_sym.getDas2Type().getFormats().keySet().iterator();
-		while (formats.hasNext()) {
-		  String format = (String)formats.next();
-		  String mime_type = (String)request_sym.getDas2Type().getFormats().get(format);
-		  System.out.println("   format = " + format + ", mime_type = " + mime_type);
-		}
 		java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
 		selected_type_count++;
-		//	  current_region.getFeatures(request_sym);
 		//   adding request_sym to annotated seq is now handled by Das2ClientOptimizer
 		//	  synchronized (visible_seq) { visible_seq.addAnnotation(request_sym); }
 	      }
@@ -475,15 +468,8 @@ public class Das2LoadView extends JComponent
 	  System.out.println("type to load for visible range: " + dtype.getID());
 	  Das2FeatureRequestSym request_sym =
 	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	  Iterator formats = request_sym.getDas2Type().getFormats().keySet().iterator();
-	  while (formats.hasNext()) {
-	    String format = (String)formats.next();
-	    String mime_type = (String)request_sym.getDas2Type().getFormats().get(format);
-	    System.out.println("   format = " + format + ", mime_type = " + mime_type);
-	  }
 	  java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
 	  selected_type_count++;
-	  //	  current_region.getFeatures(request_sym);
 	  //   adding request_sym to annotated seq is now handled by Das2ClientOptimizer
 	  //	  synchronized (visible_seq) { visible_seq.addAnnotation(request_sym); }
 	}
@@ -522,6 +508,7 @@ public class Das2LoadView extends JComponent
       current_seq = newseq;
       if (current_version != null) {
 	current_region = current_version.getRegion(current_seq);
+	
       }
     }
   }

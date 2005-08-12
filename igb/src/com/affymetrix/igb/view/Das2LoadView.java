@@ -586,21 +586,30 @@ public class Das2LoadView extends JComponent
     if (DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received table model changed event: " + evt);
     }
-   //  JTable tab = (JTable)evt.getSource();
-   // if (tab != types_table) {
-   //   System.out.println("   table event received, but not on types table???");
-   // }
     Das2TypesTableModel type_model = (Das2TypesTableModel)evt.getSource();
     int col = evt.getColumn();
     int firstrow = evt.getFirstRow();
     int lastrow = evt.getLastRow();
-    Das2TypeState  state = type_model.getTypeState(firstrow);
+    Das2TypeState  tstate = type_model.getTypeState(firstrow);
 
-    if (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) {
+    if ((col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) && (current_seq != null)) {
       // All attributes of TableModelEvent are in the TableModel coordinates, not
-      // necessarily the same as the JTable coordinates, so use getModel()
-      Object val = types_table.getModel().getValueAt(firstrow, col);
-      System.out.println("value of changed table cell: " + val);
+      // necessarily the same as the JTable coordinates, so use the model
+      //      Object val = type_model.getValueAt(firstrow, col);
+      //      System.out.println("value of changed table cell: " + val);
+
+      SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
+      current_region = current_version.getRegion(current_seq);
+
+      Das2Type dtype = tstate.getDas2Type();
+      if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+	System.out.println("type to load for entire sequence range: " + dtype.getID());
+	Das2FeatureRequestSym request_sym =
+	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	ArrayList requests = new ArrayList();
+	requests.add(request_sym);
+	processFeatureRequests(requests, true);
+      }
     }
   }
 

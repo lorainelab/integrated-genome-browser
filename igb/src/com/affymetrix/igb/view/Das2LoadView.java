@@ -384,7 +384,7 @@ public class Das2LoadView extends JComponent
 	  das_sourceCB.setEnabled(true);
 	  das_versionCB.setEnabled(true);
 	  load_featuresB.setEnabled(true);
-	  // need to do this here within finished(), otherwise may get threading issues where 
+	  // need to do this here within finished(), otherwise may get threading issues where
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
 	  gmodel.setSelectedSeq(null);
 	  gmodel.setSelectedSeqGroup(current_version.getGenome());
@@ -407,85 +407,88 @@ public class Das2LoadView extends JComponent
       }
     }
 
-    if (visible_seq != selected_seq) { System.out.println("WARNING, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!"); }
+    if (visible_seq != selected_seq) {
+      System.out.println("ERROR, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!");
+      return;
+    }
     System.out.println("seq = " + visible_seq.getID() +
 		       ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
 
     // iterate through Das2TypeStates
     //    if off, ignore
     //    if load_in_visible_range, do range in view annotation request
-    //    if per-seq, do full seq annotation request
+    //    if per-seq, then should already be loaded?
     // maybe add a fully_loaded flag so know which ones to skip because they're done?
 
-    // could probably add finer resolution of threading here,
-    //  so every request (one per type) launches on its own thread
-    //  But for now putting them all on same (non-event) thread controlled by SwingWorker
-    if (THREAD_FEATURE_REQUESTS) {
-      final SwingWorker worker = new SwingWorker() {
-	  int selected_type_count = 0;
-	  public Object construct() {
+    java.util.List type_states = (java.util.List)version2typestates.get(current_version);
+    Iterator titer = type_states.iterator();
+    ArrayList requests = new ArrayList();
+    while (titer.hasNext()) {
+      Das2TypeState tstate = (Das2TypeState)titer.next();
+      Das2Type dtype = tstate.getDas2Type();
+      if (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
+	System.out.println("type to load for visible range: " + dtype.getID());
+	Das2FeatureRequestSym request_sym =
+	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	requests.add(request_sym);
+      }
+    }
+    if (requests.size() > 0) {
+      processFeatureRequests(requests, true);
+    }
+  }
 
-	    java.util.List type_states = (java.util.List)version2typestates.get(current_version);
-	    Iterator titer = type_states.iterator();
-	    while (titer.hasNext()) {
-	      Das2TypeState tstate = (Das2TypeState)titer.next();
-	      Das2Type dtype = tstate.getDas2Type();
-	      if (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
-		System.out.println("type to load for visible range: " + dtype.getID());
-		Das2FeatureRequestSym request_sym =
-		  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-		java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
-		selected_type_count++;
-		//   adding request_sym to annotated seq is now handled by Das2ClientOptimizer
-		//	  synchronized (visible_seq) { visible_seq.addAnnotation(request_sym); }
-	      }
-	    }
-	    return null;
+
+  /**
+   *  Takes a list of Das2FeatureRequestSyms, and pushes them through the Das2ClientOptimizer to
+   *     make DAS/2 feature requests and load annotations from the response documents
+   *  Uses SwingWorker to run requests on a separate thread
+   *  If update_display, then updates IGB's main view after annotations are loaded (on GUI thread)
+   *
+   *  could probably add finer resolution of threading here,
+   *  so every request (one per type) launches on its own thread
+   *  But for now putting them all on same (non-event) thread controlled by SwingWorker
+   */
+  public void processFeatureRequests(java.util.List requests, final boolean update_display) {
+    final java.util.List request_syms = requests;
+    if ((request_syms == null) || (request_syms.size() == 0)) { return; }
+    SwingWorker worker = new SwingWorker() {
+	public Object construct() {
+	  for (int i=0; i<request_syms.size(); i++) {
+	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
+	    Das2ClientOptimizer.loadFeatures(request_sym);
 	  }
-	  public void finished() {
-	    if (selected_type_count > 0) {
-	      if (USE_SIMPLE_VIEW) {
-		if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(visible_seq, false); }
-		simple_viewer.setAnnotatedSeq(visible_seq);
-	      }
-	      else if (gviewer != null) {
-		gviewer.setAnnotatedSeq(visible_seq, true, true);
-	      }
+	  return null;
+	}
+	public void finished() {
+	  if (update_display) {
+	    if (USE_SIMPLE_VIEW) {
+	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(0);
+	      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)request_sym.getOverlapSpan().getBioSeq();
+	      if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(aseq, false); }
+	      simple_viewer.setAnnotatedSeq(aseq);
+	    }
+	    else if (gviewer != null) {
+	      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+	      gviewer.setAnnotatedSeq(aseq, true, true);
 	    }
 	  }
-	};
+	}
+      };
+
+    if (THREAD_FEATURE_REQUESTS) {
       worker.start();
     }
-
-    else {  // non-threaded feature request
-      int selected_type_count = 0;
-      java.util.List type_states = (java.util.List)version2typestates.get(current_version);
-      Iterator titer = type_states.iterator();
-      while (titer.hasNext()) {
-	Das2TypeState tstate = (Das2TypeState)titer.next();
-	Das2Type dtype = tstate.getDas2Type();
-	if (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
-	  System.out.println("type to load for visible range: " + dtype.getID());
-	  Das2FeatureRequestSym request_sym =
-	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	  java.util.List optimized_requests = Das2ClientOptimizer.loadFeatures(request_sym);
-	  selected_type_count++;
-	  //   adding request_sym to annotated seq is now handled by Das2ClientOptimizer
-	  //	  synchronized (visible_seq) { visible_seq.addAnnotation(request_sym); }
-	}
+    else {
+      // if not threaded, then want to execute code in above subclass of SwingWorker, but within this thread
+      //   so just ignore the thread features of SwingWorker and call construct() and finished() directly to
+      //   to execute in this thread
+      try {
+	worker.construct();
+	worker.finished();
       }
-
-      if (selected_type_count > 0) {
-	if (USE_SIMPLE_VIEW) {
-	  if (simple_viewer == null) { simple_viewer = GenometryViewer.displaySeq(visible_seq, false); }
-	  simple_viewer.setAnnotatedSeq(visible_seq);
-	}
-	else if (gviewer != null) {
-	  gviewer.setAnnotatedSeq(visible_seq, true, true);
-	}
-      }
-    }  // end non-threaded feature request
-
+      catch (Exception ex) { ex.printStackTrace(); }
+    }
   }
 
   /**
@@ -500,15 +503,32 @@ public class Das2LoadView extends JComponent
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (DEBUG_EVENTS) {
-      System.out.println(
-          "Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+      System.out.println("Das2LoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
+      if (current_seq == null)  { return; }
       if (current_version != null) {
+	SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
 	current_region = current_version.getRegion(current_seq);
-	
+	java.util.List type_states = (java.util.List)version2typestates.get(current_version);
+	Iterator titer = type_states.iterator();
+	ArrayList requests = new ArrayList();
+	while (titer.hasNext()) {
+	  Das2TypeState tstate = (Das2TypeState)titer.next();
+	  Das2Type dtype = tstate.getDas2Type();
+	  if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+	    System.out.println("type to load for entire sequence range: " + dtype.getID());
+	    Das2FeatureRequestSym request_sym =
+	      new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	    requests.add(request_sym);
+	  }
+	}
+
+	if (requests.size() > 0) {
+	  processFeatureRequests(requests, true);
+	}
       }
     }
   }
@@ -526,7 +546,7 @@ public class Das2LoadView extends JComponent
     if (DEBUG_EVENTS)  {
       System.out.println("Das2LoadView received GroupSelectionEvent: " + evt);
     }
-    java.util.List groups = evt.getSelectedGroups();    
+    java.util.List groups = evt.getSelectedGroups();
     if (groups != null && groups.size() > 0) {
       AnnotatedSeqGroup newgroup = (AnnotatedSeqGroup)groups.get(0);
       if (current_group != newgroup) {
@@ -569,13 +589,16 @@ public class Das2LoadView extends JComponent
    // if (tab != types_table) {
    //   System.out.println("   table event received, but not on types table???");
    // }
+    Das2TypesTableModel type_model = (Das2TypesTableModel)evt.getSource();
     int col = evt.getColumn();
     int firstrow = evt.getFirstRow();
     int lastrow = evt.getLastRow();
+    Das2TypeState  state = type_model.getTypeState(firstrow);
+
     if (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) {
       // All attributes of TableModelEvent are in the TableModel coordinates, not
       // necessarily the same as the JTable coordinates, so use getModel()
-      Object val = types_table.getModel().getValueAt(firstrow, col); 
+      Object val = types_table.getModel().getValueAt(firstrow, col);
       System.out.println("value of changed table cell: " + val);
     }
   }
@@ -710,6 +733,10 @@ class Das2TypesTableModel extends AbstractTableModel   {
     int row_count = states.size();
   }
 
+  public Das2TypeState getTypeState(int row) {
+    return (Das2TypeState)type_states.get(row);
+  }
+
   public int getColumnCount() {
     return column_names.length;
   }
@@ -723,7 +750,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
   }
 
   public Object getValueAt(int row, int col) {
-    Das2TypeState state = (Das2TypeState)type_states.get(row);
+    Das2TypeState state = getTypeState(row);
     Das2Type type = state.getDas2Type();
     if (col == ID_COLUMN) {
       return type.getID();
@@ -779,4 +806,3 @@ class Das2TypesTableModel extends AbstractTableModel   {
     fireTableCellUpdated(row, col);
   }
 }
-

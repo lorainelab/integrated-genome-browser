@@ -167,8 +167,10 @@ public class LiftParser {
     while (iter.hasNext()) {
       CompositeBioSeq chrom = (CompositeBioSeq)iter.next();
       MutableSeqSymmetry comp = (MutableSeqSymmetry)chrom.getComposition();
-      SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
-      comp.addSpan(chromspan);
+      if (comp != null) {
+	SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
+	comp.addSpan(chromspan);
+      }
     }
     System.out.println("chroms loaded, load time = " + tim.read()/1000f);
     System.out.println("contig count: " + contig_count);

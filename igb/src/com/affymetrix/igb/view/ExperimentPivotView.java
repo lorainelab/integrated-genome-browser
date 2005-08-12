@@ -455,6 +455,7 @@ public class ExperimentPivotView extends JComponent
   public GlyphI addAnnotGlyph(SeqSymmetry sym, BioSeq theSeq, GlyphI parent)  {
     int child_count = sym.getChildCount();
     SeqSpan span = sym.getSpan(theSeq);
+    if (span == null)  { return null; }
     GlyphI gl = null;
     if (child_count <= 0) {
       gl = new FillRectGlyph();

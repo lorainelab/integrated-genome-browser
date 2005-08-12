@@ -297,7 +297,8 @@ public class LoadFileAction {
         if (seqhash == null) {
           // It would be possible to allow "sin" files to be read when seqhash is null
           // by using the same technique used below for GFF files
-          IGB.errorPanel("ERROR", "Scored interval files can only be loaded if a seq group is already selected");
+          IGB.errorPanel("ERROR", "Scored interval files can only be loaded if a genome is already loaded.\n"+
+          "Please load a genome before opening this file '" + stream_name + "'.");
         } else {
           ScoredIntervalParser parser = new ScoredIntervalParser();
           Map id2sym_hash = IGB.getSymHash();

@@ -95,7 +95,7 @@ public class Das2ClientOptimizer {
 	  }
 	}
 
-	SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_overlaps, aseq);
+ 	SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_overlaps, aseq);
 	ArrayList qnewlist = new ArrayList();
 	qnewlist.add(overlap_sym);
 	ArrayList qoldlist = new ArrayList();
@@ -158,7 +158,7 @@ public class Das2ClientOptimizer {
 		within_swp.addChild(new SingletonSeqSymmetry(cur_within_max,
 							     cur_within_max, aseq));
 		within_swp.setProperty("method", ("das_within_query:" + typeid));
-		aseq.addAnnotation(within_swp);
+		synchronized (aseq)  { aseq.addAnnotation(within_swp); }
 	      }
 	    }
 	  }
@@ -184,12 +184,12 @@ public class Das2ClientOptimizer {
       query_sym.setProperty("method", ("das_raw_query: " + typeid));
       //      query_sym.addSpan(overlap_span);
       SeqUtils.copyToMutable(overlap_sym, query_sym);
-      seq.addAnnotation(query_sym);
+      synchronized (seq)  { seq.addAnnotation(query_sym); }
       if (split_query == null) { split_query = query_sym; }
       SimpleSymWithProps split_sym = new SimpleSymWithProps();
       SeqUtils.copyToMutable(split_query, split_sym);
       split_sym.setProperty("method", ("das_optimized_query:" + typeid));
-      seq.addAnnotation(split_sym);
+      synchronized (seq)  { seq.addAnnotation(split_sym); }
     }
 
     return output_requests;
@@ -313,6 +313,12 @@ public class Das2ClientOptimizer {
 	  DataInputStream dis = new DataInputStream(bis);
 	  feats = parser.parse(dis, type.getID(), null, seq_group.getSeqs(), false, false);
 	}
+        else if (content_subtype.equals("brs"))  {
+          System.out.println("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
+          BrsParser parser = new BrsParser();
+          DataInputStream dis = new DataInputStream(bis);
+          feats = parser.parse(dis, type.getID(), seq_group.getSeqs());
+        }
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  success = false;

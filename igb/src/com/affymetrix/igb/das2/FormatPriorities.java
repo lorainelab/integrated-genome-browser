@@ -19,7 +19,7 @@ public class FormatPriorities {
    *  Different format types, prioritized
    */
   static String[] ordered_formats = {
-    //    "brs",
+    "brs",
     "bgn",
     "bps",
     "bed",

@@ -79,7 +79,7 @@ public class Das2LoadView extends JComponent
     this(false);
   }
 
-  /**
+  /*
    *  choices for DAS2 annot loading range:
    *    whole genome
    *    whole chromosome
@@ -354,7 +354,7 @@ public class Das2LoadView extends JComponent
 	  return null;
 	}
 	public void finished() {
-	  /**
+	  /*
 	   *  assumes that the types available for a given versioned source do not change
 	   *    during the session
 	   */
@@ -441,7 +441,7 @@ public class Das2LoadView extends JComponent
 
   /**
    *  Takes a list of Das2FeatureRequestSyms, and pushes them through the Das2ClientOptimizer to
-   *     make DAS/2 feature requests and load annotations from the response documents
+   *     make DAS/2 feature requests and load annotations from the response documents.
    *  Uses SwingWorker to run requests on a separate thread
    *  If update_display, then updates IGB's main view after annotations are loaded (on GUI thread)
    *
@@ -492,7 +492,8 @@ public class Das2LoadView extends JComponent
   }
 
   /**
-   *  When selected sequence changed, want to go through all previously visited
+   *  Called when selected sequence is changed.
+   *  Want to go through all previously visited
    *     DAS/2 versioned sources that share the seq's AnnotatedSeqGroup,
    *     For each (similar_versioned_source)
    *         for each type
@@ -536,7 +537,7 @@ public class Das2LoadView extends JComponent
   /**
    *  When selected group changed, want to go through all previously visited
    *     DAS/2 servers (starting with the current one), and try and find
-   *     a versioned source that shares the selected AnnotatedSeqGroup
+   *     a versioned source that shares the selected AnnotatedSeqGroup.
    *  If found, take first found and set versioned source, source, and server accordingly
    *  If not found, blank out versioned source and source, and switch server to "Choose a server"
    *
@@ -603,7 +604,7 @@ public class Das2LoadView extends JComponent
     }
   }
 
-/** ComponentListener implementation, to allow putting off changes
+/* ComponentListener implementation, to allow putting off changes
  *     triggered by changing seq or seq group unless and until Das2LoadView is actually visible
  *
  *  turned this off, because really want Das2LoadView to respond regardless of whether it's
@@ -643,9 +644,9 @@ public class Das2LoadView extends JComponent
 }
 
 /**
- *  relates a Das2Type to it's status in IGB
- *    (whether it's load strategy is set to full sequence or visible range,
- *      possibly other details)
+ *  Relates a Das2Type to it's status in IGB.
+ *  For example, whether it's load strategy is set to "full sequence" 
+ *  or "visible range", and possibly other details.
  */
 class Das2TypeState {
   //  static String[] LOAD_STRINGS = new String[3];
@@ -655,7 +656,7 @@ class Das2TypeState {
   static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
   static int default_load_strategy = OFF;
 
-  /**
+  /*
    *  Want to retrieve type state from Preferences if possible
    *    node: ~/das2/server.root.url/typestate
    *    key: [typeid+"_loadstate"]  value: [load_state]     (load state is an integer??)
@@ -774,10 +775,6 @@ class Das2TypesTableModel extends AbstractTableModel   {
     return getValueAt(0, c).getClass();
   }
 
-  /*
-   * Don't need to implement this method unless your table's
-   * editable.
-   */
   public boolean isCellEditable(int row, int col) {
     //      if (col == Das2LoadView.LOAD_STRATEGY_COLUMN ||
     //	  col == Das2LoadView.LOAD_BOOLEAN_COLUMN) { return true; }
@@ -785,10 +782,6 @@ class Das2TypesTableModel extends AbstractTableModel   {
     else { return false; }
   }
 
-  /*
-   * Don't need to implement this method unless your table's
-   * data can change.
-   */
   public void setValueAt(Object value, int row, int col) {
     //      System.out.println("Das2TypesTableModel.setValueAt() called, row = " + row +
     //			 ", col = " + col + "val = " + value.toString());

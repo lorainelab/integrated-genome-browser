@@ -40,6 +40,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     implements AnnotationWriter  {
 
   static boolean DEBUG = false;
+  static boolean REPORT_RESULTS = false;
 
   /**
    *  elements possible in DAS2 feature response
@@ -189,8 +190,15 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     catch (Exception ex) {
       ex.printStackTrace();
     }
+    System.out.println("finished parsing das2xml feature doc, number of top-level features: " + result_syms.size());
+    if (REPORT_RESULTS) {
+      for (int i=0; i<result_syms.size(); i++) {
+	SeqUtils.printSymmetry((SeqSymmetry)result_syms.get(i));
+      }
+    }
     //    return aseq;
     return result_syms;
+
     //    clearAll();
   }
 
@@ -205,7 +213,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  implementing sax content handler interface
    */
   public void endDocument() {
-    System.out.println("Das2FeaturesSaxParser.endDocument() called");
+    //    System.out.println("Das2FeaturesSaxParser.endDocument() called");
   }
 
   /**

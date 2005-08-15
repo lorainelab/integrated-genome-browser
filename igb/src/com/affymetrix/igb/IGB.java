@@ -781,7 +781,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       exit();
     }
     else if (src == res2clip_item) {
-      System.out.println("trying to copy last rubberbanded region to clipboard");
       map_view.copySelectedResidues();
     }
     else if (src == view_ucsc_item) {

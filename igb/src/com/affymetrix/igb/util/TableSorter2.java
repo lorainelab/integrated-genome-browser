@@ -61,6 +61,10 @@ import javax.swing.table.*;
  * This is a long overdue rewrite of a class of the same name that
  * first appeared in the swing table demos in 1997.
  *
+ *<p>
+ *Udated by Ed Erwin, Aug 2005, to make string sorting be case-insensitive.
+ *</p>
+ *
  * @author Philip Milne
  * @author Brendon McLean
  * @author Dan van Enckevort
@@ -84,7 +88,10 @@ public class TableSorter2 extends AbstractTableModel {
   };
   public static final Comparator LEXICAL_COMPARATOR = new Comparator() {
     public int compare(Object o1, Object o2) {
-      return o1.toString().compareTo(o2.toString());
+      // Original version was case sensitive:
+      //return o1.toString().compareTo(o2.toString());
+
+      return o1.toString().compareToIgnoreCase(o2.toString());
     }
   };
   

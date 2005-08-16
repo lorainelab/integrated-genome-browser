@@ -343,8 +343,6 @@ public class Das2LoadView extends JComponent
     types_table.validate();
     types_table.repaint();
 
-    // alternative would be to use a QueuedExecutor (from ~.concurrent package)
-    //    and two runnables, one for entries and one for types...
     final SwingWorker worker = new SwingWorker() {
 	Map seqs = null;
 	Map types = null;
@@ -365,7 +363,7 @@ public class Das2LoadView extends JComponent
 	    while (iter.hasNext()) {
 	      // need a map of Das2Type to Das2TypeState that persists for entire session,
 	      //    and reuse Das2TypeStates when possible (because no guarantee that
-	      //    Das2TypeState backing store has been updated during session
+	      //    Das2TypeState backing store has been updated during session)
 	      Das2Type dtype = (Das2Type)iter.next();
 	      Das2TypeState tstate = new Das2TypeState(dtype);
 	      type_states.add(tstate);

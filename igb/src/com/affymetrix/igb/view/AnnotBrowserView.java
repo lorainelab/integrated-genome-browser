@@ -25,7 +25,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.SymMapChangeEvent;
 import com.affymetrix.igb.event.SymMapChangeListener;
-import com.affymetrix.igb.util.TableSorter;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -63,8 +63,9 @@ implements ListSelectionListener, SymMapChangeListener  {
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    TableSorter sort_model = new TableSorter(model);
-    sort_model.addMouseListenerToHeaderInTable(table);
+    TableSorter2 sort_model = new TableSorter2(model);
+    //sort_model.addMouseListenerToHeaderInTable(table); // for TableSorter version 1
+    sort_model.setTableHeader(table.getTableHeader()); // for TableSorter2
 
     table.setModel(sort_model);
     table.setRowSelectionAllowed(true);

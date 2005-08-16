@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,6 +23,8 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscBedSym;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
@@ -81,7 +83,8 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
   static final boolean DEBUG = false;
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
   static Pattern comma_regex = Pattern.compile(",");
-  static Pattern tagval_regex = Pattern.compile("=");;
+  static Pattern tagval_regex = Pattern.compile("=");
+  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   protected Map name_counts = new HashMap();
   java.util.List symlist = new ArrayList();
@@ -164,6 +167,19 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
   //    callbacks to annotationParsed()
   public java.util.List parse(InputStream istr, Map seqhash, boolean annot_seq,
   			      String stream_name, boolean create_container)
+        throws IOException {
+    AnnotatedSeqGroup group = new AnnotatedSeqGroup("unknown");
+    Iterator iter = seqhash.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry ent = (Map.Entry)iter.next();
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getValue();
+      group.addSeq(aseq);
+    }
+    return parse(istr, group, annot_seq, stream_name, create_container);
+  }
+
+  public java.util.List parse(InputStream istr, AnnotatedSeqGroup group, boolean annot_seq,
+			      String stream_name, boolean create_container)
     throws IOException {
     System.out.println("BED parser called, annotate seq: " + annotate_seq +
 		       ", create_container_annot: " + create_container_annot);
@@ -194,14 +210,25 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     }
     DataInputStream dis = new DataInputStream(bis);
     addParserListener(this);
-    parseWithEvents(dis, seqhash, default_type);
+    parseWithEvents(dis, group, default_type);
     removeParserListener(this);
     System.out.println("BED annot count: " + symlist.size());
     return symlist;
   }
 
-
   public void parseWithEvents(DataInputStream dis, Map seqhash, String default_type)
+        throws IOException {
+    AnnotatedSeqGroup group = new AnnotatedSeqGroup("unknown");
+    Iterator iter = seqhash.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry ent = (Map.Entry)iter.next();
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getValue();
+      group.addSeq(aseq);
+    }
+    parseWithEvents(dis, group, default_type);
+  }
+
+  public void parseWithEvents(DataInputStream dis, AnnotatedSeqGroup seq_group, String default_type)
      throws IOException  {
     System.out.println("called BedParser.parseWithEvents()");
     String line;
@@ -247,10 +274,37 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	  int findex = 0;
 	  if (includes_bin_field) { findex++; }
 	  seq_name = fields[findex++]; // seq id field
-	  MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqhash.get(seq_name);
+	  //	  MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqhash.get(seq_name);
+	  MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+	  if ((seq == null) && (seq_name.indexOf(";") > -1)) {
+	    // if no seq found, try and split up seq_name by ";", in case it is in format
+	    //    "seqid;genome_version"
+	    String seqid = seq_name.substring(0, seq_name.indexOf(";"));
+	    String version = seq_name.substring(seq_name.indexOf(";")+1);
+	    //	    System.out.println("    seq = " + seqid + ", version = " + version);
+	    if ((gmodel.getSeqGroup(version) == seq_group) ||
+		seq_group.getID().equals(version)) {
+	      // for format [chrom_name];[genome_version]
+	      seq = seq_group.getSeq(seqid);
+	      if (seq != null) { seq_name = seqid; }
+	    }
+	    // try flipping seqid and version around
+	    else if ((gmodel.getSeqGroup(seqid) == seq_group) ||
+		seq_group.getID().equals(seqid)) {
+	      // for format [genome_version];[chrom_name]
+	      String temp = seqid;
+	      seqid = version;
+	      version = temp;
+	      seq = seq_group.getSeq(seqid);
+	      if (seq != null) { seq_name = seqid; }
+	    }
+	  }
+
 	  if (seq == null) {
-	    seq = new SimpleAnnotatedBioSeq(seq_name, 0);
-	    seqhash.put(seq_name, seq);
+	    System.out.println("seq not recognized, creating new seq: " + seq_name);
+	    //	    seq = new SimpleAnnotatedBioSeq(seq_name, 0);
+	    //	    seqhash.put(seq_name, seq);
+	    seq = seq_group.addSeq(seq_name, 0);
 	  }
 	  int beg = Integer.parseInt(fields[findex++]);  // start field
 	  int end = Integer.parseInt(fields[findex++]);  // stop field
@@ -288,8 +342,8 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	    /*
 	     * if no child blocks, make a single child block the same size as the parent
 	     * Very Inefficient, ideally wouldn't do this
-	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to 
-	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children), 
+	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
+	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
 	     *     then factory will create a line container glyph to draw line connecting all the bed annots
 	     */
 	    blockMins = new int[1];

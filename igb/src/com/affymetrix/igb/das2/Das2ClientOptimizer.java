@@ -10,6 +10,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
 
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;  // just need for diagnostics
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -35,7 +36,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
-  static boolean DEBUG_HEADERS = false;
+  static boolean DEBUG_HEADERS = true;
   static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
 
@@ -213,6 +214,7 @@ public class Das2ClientOptimizer {
     }
 
     Das2Region region = request_sym.getRegion();
+    MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
     Das2VersionedSource versioned_source = region.getVersionedSource();
     AnnotatedSeqGroup seq_group = versioned_source.getGenome();
     Das2Source source = versioned_source.getSource();
@@ -251,51 +253,65 @@ public class Das2ClientOptimizer {
      *  Need to look at content-type of server response
      */
     try {
-      URL query_url = new URL(feature_query);
-      System.out.println("    opening connection");
-      // casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
-      HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
-      int response_code = query_con.getResponseCode();
-      String response_message = query_con.getResponseMessage();
-      //      System.out.println("http response code: " + response_code + ", " + response_message);
-
-      //      Map headers = query_con.getHeaderFields();
-      if (DEBUG_HEADERS) {
-	int hindex = 0;
-	while (true) {
-	  String val = query_con.getHeaderField(hindex);
-	  String key = query_con.getHeaderFieldKey(hindex);
-	  if (val == null && key == null) { break; }
-	  System.out.println("header:   key = " + key + ", val = " + val);
-	  hindex++;
-	}
-      }
-
-      if (response_code != 200) {
-	System.out.println("WARNING, HTTP response code not 200/OK: " +
-			   response_code + ", " + response_message);
-      }
-      if (response_code >= 400 && response_code < 600) {
-	System.out.println("Server returned error code, aborting response parsing!");
-	success = false;
+      BufferedInputStream bis = null;
+      String content_subtype = null;
+      // if overlap_span is entire length of sequence, then check for caching
+      if ((overlap_span.getMin() == 0) && (overlap_span.getMax() == aseq.getLength())) {
+	//	LocalUrlCacher.getInputStream(feature_query, cache_usage, cache_annots);
+	InputStream istr = LocalUrlCacher.getInputStream(feature_query);
+        bis = new BufferedInputStream(istr);
+	// for now, assume that when caching, content type returned is same as content type requested
+	content_subtype = format;
       }
       else {
-	System.out.println("    getting content type");
-	String content_type = query_con.getContentType();
-	System.out.println("    getting input stream");
-	InputStream istr = query_con.getInputStream();
-	BufferedInputStream bis = new BufferedInputStream(istr);
-	String content_subtype = content_type.substring(content_type.indexOf("/")+1);
-	System.out.println("content subtype: " + content_subtype);
-	java.util.List feats = null;
-	if (content_type.equals("unknown") ||
-	    content_subtype.equals("unknown") ||
-	    content_subtype.equals("xml") ||
-	    content_subtype.equals("plain") ) {
-	  // if content type is not descriptive enough, go by what was requested
-	  content_subtype = format;
-	}
+	URL query_url = new URL(feature_query);
+	System.out.println("    opening connection");
+	// casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
+	HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
+	int response_code = query_con.getResponseCode();
+	String response_message = query_con.getResponseMessage();
+	//      System.out.println("http response code: " + response_code + ", " + response_message);
 
+	//      Map headers = query_con.getHeaderFields();
+	if (DEBUG_HEADERS) {
+	  int hindex = 0;
+	  while (true) {
+	    String val = query_con.getHeaderField(hindex);
+	    String key = query_con.getHeaderFieldKey(hindex);
+	    if (val == null && key == null) { break; }
+	    System.out.println("header:   key = " + key + ", val = " + val);
+	    hindex++;
+	  }
+	}
+	if (response_code != 200) {
+	  System.out.println("WARNING, HTTP response code not 200/OK: " +
+			     response_code + ", " + response_message);
+	}
+	if (response_code >= 400 && response_code < 600) {
+	  System.out.println("Server returned error code, aborting response parsing!");
+	  success = false;
+	}
+	else {
+	  System.out.println("    getting content type");
+	  String content_type = query_con.getContentType();
+	  System.out.println("    getting input stream");
+	  InputStream istr = query_con.getInputStream();
+	  bis = new BufferedInputStream(istr);
+	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
+	  System.out.println("content subtype: " + content_subtype);
+	  if (content_type == null || 
+	      content_subtype == null ||
+	      content_type.equals("unknown") ||
+	      content_subtype.equals("unknown") ||
+	      content_subtype.equals("xml") ||
+	      content_subtype.equals("plain") ) {
+	    // if content type is not descriptive enough, go by what was requested
+	    content_subtype = format;
+	  }
+	}
+      }
+      if (success) { 
+	java.util.List feats = null;
 	if (content_subtype.equals("das2feature") ||
 	    content_subtype.startsWith("x-das-feature")) {
 	  System.out.println("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
@@ -323,9 +339,6 @@ public class Das2ClientOptimizer {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  success = false;
 	}
-	bis.close();
-	istr.close();
-
 
 	if (feats == null || feats.size() == 0) {
 	  // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
@@ -347,8 +360,9 @@ public class Das2ClientOptimizer {
 	    request_sym.addChild(feat);
 	  }
 	}
-      }
-    }
+      }  // end if (success) conditional
+      if (bis != null)  { bis.close(); }
+    }  
     catch (Exception ex) {
       ex.printStackTrace();
       success = false;

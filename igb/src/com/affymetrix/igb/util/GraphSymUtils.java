@@ -387,7 +387,8 @@ public class GraphSymUtils {
 
       int total_points = dis.readInt();
       total_total_points += total_points;
-      System.out.println("seq " + k + ": name = " + seqname + ", version = " + seqversion +
+      System.out.println("seq " + k + ": name = " + seqname + ", version = " + seqversion + 
+			 ", group = " + groupname + 
 			 ", data points = " + total_points);
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;

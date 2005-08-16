@@ -258,9 +258,9 @@ public class LoadFileAction {
       }
 
       Map seqhash = null;
-      AnnotatedSeqGroup grp = gmodel.getSelectedSeqGroup();
-      if (grp != null)  {
-        seqhash = grp.getSeqs();
+      AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
+      if (selected_group != null)  {
+        seqhash = selected_group.getSeqs();
       }
 
       if (lcname.endsWith(".axml")) {
@@ -276,7 +276,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".das2xml")) {
 	System.out.println("in LoadFileAction.load(), parsing with Das2FeatureSaxParser");
 	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-	java.util.List results = parser.parse(new InputSource(str), gmodel.getSelectedSeqGroup(), true);
+	java.util.List results = parser.parse(new InputSource(str), selected_group, true);
 	System.out.println("result count: " + results.size());
 	for (int i=0; i<results.size(); i++) {
 	  SeqSymmetry sym = (SeqSymmetry)results.get(i);
@@ -392,11 +392,14 @@ public class LoadFileAction {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         BedParser parser = new BedParser(gviewer);
-        if (seqhash == null) {
+	//        if (seqhash == null) {
+        if (selected_group == null) {
           aseq = parser.parse(str, input_seq);
         }
         else {
-          parser.parse(str, seqhash, true, annot_type);
+	  //          parser.parse(str, seqhash, true, annot_type);
+	  // really need to switch create_container (last argument) to true soon!
+          parser.parse(str, selected_group, true, annot_type, false);
           aseq = input_seq;
         }
         parser = null;

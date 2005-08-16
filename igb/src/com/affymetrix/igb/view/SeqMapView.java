@@ -528,6 +528,7 @@ public class SeqMapView extends JPanel
 	if (compsym != null) {
 	  int compcount = compsym.getChildCount();
 	  for (int i=0; i<compcount; i++) {
+            // Make glyphs for contigs
 	    SeqSymmetry childcomp = compsym.getChild(i);
 	    SeqSpan childspan = childcomp.getSpan(viewseq);
 	    SeqSpan ospan = SeqUtils.getOtherSpan(childcomp, childspan);
@@ -541,10 +542,17 @@ public class SeqMapView extends JPanel
 	      cgl = new OutlineRectGlyph();
 	      cgl.setColor(Color.lightGray);
 	    }
-
 	    cgl.setCoords(childspan.getMin(), 0,
 			  childspan.getMax()-childspan.getMin(), 10);
+            // calling cgl.setInfo() 
+            //   allows info to be seen in selection table
+            //   allows easily selecting sequence for contig
+            //   allows slicing on contig
+            //   Slicing may require lots of memory, so this may be a bad idea.
             cgl.setInfo(childcomp);
+            
+            // also note that "Load residues in view" produces additional
+            // contig-like glyphs that can partially hide these glyphs.
 	    seq_glyph.addChild(cgl);
 	  }
 	}
@@ -2115,18 +2123,9 @@ public class SeqMapView extends JPanel
     java.util.List all_selections = new ArrayList(map.getSelected());
     Iterator iter = all_selections.iterator();
     while (iter.hasNext()) {
-
       GlyphI child = (GlyphI) iter.next();
-      GlyphI pglyph = child.getParent();
-      // the test for isHitable will automatically exclude seq_glyph
-      if ( pglyph != null && pglyph.isHitable() && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-        if (top_level) {
-          GlyphI t = pglyph;
-          while (t != null && t.isHitable() && ! (t instanceof TierGlyph) && ! ( t instanceof RootGlyph)) {
-            pglyph = t;
-            t = t.getParent();
-          }
-        }
+      GlyphI pglyph = getParent(child, top_level);
+      if ( pglyph != child) {
         map.deselect(child);
         map.select(pglyph);
       }
@@ -2140,6 +2139,30 @@ public class SeqMapView extends JPanel
     postSelections();
   }
 
+  /** Get the parent, or top-level parent, of a glyph, with certain restictions. 
+   *  Will not return a TierGlyph or RootGlyph or a glyph that isn't hitable, but
+   *  will return the original GlyphI instead.
+   *  @param top_level if true, will recurse up to the top-level parent, with
+   *  certain restrictions: recursion will stop before reaching a TierGlyph
+   *  or RootGlyph or a glyph that isn't hitable.
+   */
+  public GlyphI getParent(GlyphI g, boolean top_level) {
+    GlyphI result = g;
+    GlyphI pglyph = g.getParent();
+    // the test for isHitable will automatically exclude seq_glyph
+    if ( pglyph != null && pglyph.isHitable() && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
+      if (top_level) {
+        GlyphI t = pglyph;
+        while (t != null && t.isHitable() && ! (t instanceof TierGlyph) && ! ( t instanceof RootGlyph)) {
+          pglyph = t;
+          t = t.getParent();
+        }
+      }
+      result = pglyph;
+    }
+    return result;
+  }
+  
   private class SeqMapViewActionListener implements ActionListener {
 
     public SeqMapViewActionListener() {

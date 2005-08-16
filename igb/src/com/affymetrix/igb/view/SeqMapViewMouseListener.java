@@ -106,7 +106,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
 
   void processSelections(MouseEvent evt) {
-
+    
     if (! (evt instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
@@ -116,6 +116,15 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (! nevt.getItems().isEmpty()) {
       topgl = (GlyphI) nevt.getItems().lastElement();
       topgl = zoomCorrectedGlyphChoice(topgl, zoom_point);
+    }
+
+    // If drag began in the axis tier, then do NOT do normal selection stuff, 
+    // because we are selecting sequence instead.
+    // (This only really matters when SELECT_ON_MOUSE_PRESSED is false.
+    //  If SELECT_ON_MOUSE_PRESSED is true, topgl will already be null
+    //  because a drag can only start when you begin the drag on blank space.)
+    if (startedInAxisTier()) {
+      topgl = null;
     }
 
     // Normally, clicking will clear previons selections before selecting new things.
@@ -310,10 +319,45 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     return started_in_axis_tier;
   }
   
+  boolean isInAxisTier(GlyphI g) {
+    TierGlyph axis_tier = smv.getAxisTier();
+    if (axis_tier == null) return false;
+    
+    GlyphI p = g;
+    while ( p != null) {
+      if (p == axis_tier) return true;
+      p = p.getParent();
+    }
+    return false;
+  }
+  
   void doTheSelection(Vector glyphs, MouseEvent evt) {
 
     boolean something_changed = true;
 
+    // Remove any children of the axis tier (like contigs) from the selections.
+    // Selecting contigs is something you usually do not want to do.  It is
+    // much more likely that if someone dragged across the axis, they want to
+    // select glyphs in tiers above and below but not IN the axis.
+    ListIterator li = glyphs.listIterator();
+    while (li.hasNext()) {
+      GlyphI g = (GlyphI) li.next();
+      if (isInAxisTier(g)) {
+        li.remove();
+      }
+    }
+    
+    // Now correct for the fact that we might be zoomed way-out.  In that case
+    // select only the parent glyphs (RNA's), not all the little children (Exons).
+    Point2D.Double zoom_point = new Point2D.Double(0,0); // dummy variable, value not used
+    Vector corrected = new Vector(glyphs.size());
+    for (int i=0; i<glyphs.size(); i++) {
+      GlyphI g = (GlyphI) glyphs.get(i);
+      GlyphI zc = zoomCorrectedGlyphChoice(g, zoom_point);
+      if (! corrected.contains(zc)) {corrected.add(zc);}
+    }
+    glyphs = corrected;
+    
     if (isToggleSelectionEvent(evt)) {
       if (glyphs.isEmpty()) {
         something_changed = false;

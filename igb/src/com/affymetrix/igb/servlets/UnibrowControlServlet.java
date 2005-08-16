@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -26,7 +26,6 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.QuickLoaderView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
@@ -124,7 +123,7 @@ public class UnibrowControlServlet extends HttpServlet {
 
     boolean ok = goToBookmark(uni, seqid, version, start_param, end_param, select_start_param, select_end_param, graph_files);
     if (!ok) { return; /* user cancelled the change of genome, or something like that */}
-    
+
     if (has_graph_source_urls) {
       com.affymetrix.igb.bookmarks.BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
     }
@@ -204,7 +203,7 @@ public class UnibrowControlServlet extends HttpServlet {
       IGB.errorPanel("Sequence id not specified in bookmark.");
       return false; // cancel
     }
-                             
+
     // no longer special-casing for version = "unknown"...
     final SeqMapView gviewer = uni.getMapView();
     final SingletonGenometryModel gmodel = IGB.getGenometryModel();
@@ -233,7 +232,7 @@ public class UnibrowControlServlet extends HttpServlet {
     // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
     //     gviewer is registered as a SeqSelectionListener on gmodel
 
-    // hopefully setting gmodel's selected seq group above triggered population of seqs 
+    // hopefully setting gmodel's selected seq group above triggered population of seqs
     //   for group if not already populated
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     final MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
@@ -249,7 +248,7 @@ public class UnibrowControlServlet extends HttpServlet {
       if (book_seq != selected_seq)  {
         gmodel.setSelectedSeq(book_seq);
       }
-      
+
       final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
       final double middle = (start + end)/2.0;
 //      System.out.println("graph files: " + graph_files);
@@ -266,7 +265,7 @@ public class UnibrowControlServlet extends HttpServlet {
 	      gviewer.zoomTo(view_span);
 	      if (selstart >= 0 && selend >= 0) {
 		SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-		gviewer.setSelectedRegion(regionsym);
+		gviewer.setSelectedRegion(regionsym, true);
 	      }
 	      if (graph_files != null) {
 		URL[] graph_urls = new URL[graph_files.length];

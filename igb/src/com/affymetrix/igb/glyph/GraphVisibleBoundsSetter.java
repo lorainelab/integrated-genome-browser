@@ -24,6 +24,8 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener  {
@@ -84,12 +86,11 @@ public class GraphVisibleBoundsSetter extends JPanel
   Map info2pscores = new HashMap();
   java.util.List graphs = new ArrayList();
 
-  /**
+  /*
    *  Now trying to map slider values to percentages, such that each slider
    *  unit = 0.1 percent (or in other words slider units per percent = 10)
    */
-  float sliders_per_percent = 10.0f;
-  float percents_per_slider = 1.0f / sliders_per_percent;
+  static float sliders_per_percent = 10.0f;
   float abs_min_percent = 0.0f;
   float abs_max_percent = 100.0f;
   float prev_min_per = 0;
@@ -324,8 +325,8 @@ public class GraphVisibleBoundsSetter extends JPanel
 	if (info == null) { System.err.println("Graph has no info! " + gl); }
 	float[] p2score = (float[])info2pscores.get(info);
 	if (p2score == null) {
-	  p2score = calcPercents2Scores(gl);
-	  info2pscores.put(info, p2score);
+          p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
+          info2pscores.put(info, p2score);
 	}
 	float vismin_val = gl.getVisibleMinY();
 	float vismax_val = gl.getVisibleMaxY();
@@ -365,31 +366,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
   }
 
-  protected float[] calcPercents2Scores(GraphGlyph sgg) {
-    // System.out.println("calculating percentages for graph: " + sgg);
-    float[] scores = sgg.getYCoords();
-    int num_scores = scores.length;
-    //    int num_percents = max_percent - min_percent + 1;
-    int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
-    //    System.out.println("num_percents: " + num_percents);
-    float[] ordered_scores = new float[num_scores];
-    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
-    //    System.out.println("score array copied");
-    Arrays.sort(ordered_scores);
-    //    System.out.println("scores sorted");
-    float[] percent2score = new float[num_percents];
-
-    float scores_per_percent = ordered_scores.length / 100.0f;
-    for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_slider) {
-      int score_index = (int)(percent * scores_per_percent);
-      if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-      //      System.out.println("percent: " + percent + ", score_index: " + score_index
-      //			 + ", percent_index: " + (percent * sliders_per_percent));
-      percent2score[(int)Math.round(percent * sliders_per_percent)] = ordered_scores[score_index];
-    }
-    // just making sure max 100% is really 100%...
-    percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
-    return percent2score;
+  protected static float[] calcPercents2Scores(GraphGlyph sgg) {
+    return com.affymetrix.igb.util.GraphSymUtils.calcPercents2Scores(sgg.getYCoords(), sliders_per_percent);
   }
 
   /*
@@ -508,7 +486,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == min_perT)  {
       try {
-	float min_per = Float.parseFloat(min_perT.getText());
+	float min_per = GraphAdjusterView.parsePercent(min_perT.getText());
 	if (min_per < 0)  { min_per = 0; }
 	else if (min_per > prev_max_per) { min_per = prev_max_per - per_offset; }
 	setVisibleMinPercent(min_per);  // resets min_perT text also
@@ -520,7 +498,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == max_perT) {
       try {
-	float max_per = Float.parseFloat(max_perT.getText());
+        float max_per = GraphAdjusterView.parsePercent(max_perT.getText());
 	if (max_per < prev_min_per) { max_per = prev_min_per + per_offset; }
 	else if (max_per > 100) { max_per = 100; }
 	setVisibleMaxPercent(max_per);  // resets max_perT text also
@@ -535,7 +513,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
 
   }
-
 
   public void setVisibleMinValue(float val) {
     int gcount = graphs.size();
@@ -710,7 +687,14 @@ public class GraphVisibleBoundsSetter extends JPanel
   public float getValueForPercent(GraphGlyph gl, float percent) {
     Object info = gl.getInfo();
     float[] percent2score = (float[])info2pscores.get(info);
-    float value = percent2score[(int)Math.round(percent * sliders_per_percent)];
+    int index = (int)Math.round(percent * sliders_per_percent);
+    
+    // I have actually seen a case where index was calculated as -1, 
+    // and an exception was thrown. That is why I added this check. (Ed)
+    if (index < 0) {index = 0;}
+    else if (index >= percent2score.length) { index = percent2score.length - 1; }
+    
+    float value = percent2score[index];
     return value;
   }
 

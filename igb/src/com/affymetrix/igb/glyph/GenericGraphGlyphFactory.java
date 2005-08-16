@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,6 +27,8 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -41,7 +43,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final int default_maxgap_thresh = 100;
 
   static final boolean default_show_thresh = false;
-    
+
   static final Color default_tier_color = Color.black;
 
   static Map seq2yloc = new HashMap();
@@ -89,21 +91,19 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
       state.setFloatGraph(use_floating_graphs);
 
-    // for now, state's graph height is in coords if graph is attached, and in 
+    // for now, state's graph height is in coords if graph is attached, and in
     //    pixels if graph is floating
     boolean height_set = false;
     if (state.getFloatGraph()) {
       int pix_height = GraphGlyphUtils.getGraphPrefsNode().getInt(
-        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);     
+        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);
       state.setGraphHeight(pix_height);
     }
     else {
       double coord_height = GraphGlyphUtils.getGraphPrefsNode().getDouble(
-        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);     
+        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
       state.setGraphHeight(coord_height);
     }
-    System.out.println("setting graph state, float = " + state.getFloatGraph() + 
-                       ", height = " + state.getGraphHeight());
 
   if (state.getFloatGraph()) {
       if (current_yloc > (mapbox.y + mapbox.height - state.getGraphHeight())) {
@@ -114,6 +114,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       seq2yloc.put(seq, new Double(current_yloc));
     }
     Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
+    
     state.setColor(col);
     // GAH 8-18-2004 don't have a standard way of figuring out which graphs are probe-based
     //   (in which case need 12/13 thresholded region start/end shift), and which ones aren't.  Since for
@@ -164,6 +165,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (no_prev_glyph) {
       graph_glyph = new SmartGraphGlyph();
       graph_glyph.setLabel(graf.getGraphName());
+      setStateFromProps(graf, state);
     }
 
     report("pre state setting ", state, graph_glyph);
@@ -171,8 +173,28 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
 
     report("post state setting", state, graph_glyph);
+    
+    boolean apply_visible_range_filter = UnibrowPrefsUtil.getTopNode().getBoolean(
+      GraphGlyphUtils.PREF_APPLY_PERCENTAGE_FILTER, GraphGlyphUtils.default_apply_percentage_filter);
+    if ( apply_visible_range_filter ) {
+      float[] percentiles = GraphSymUtils.calcPercents2Scores(graf.getGraphYCoords(), 10.0f);
+      // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
+      // and percentiles.length = 1001 in this case.
+      
+      // If the graph data consists mostly of a single value (such as zero) with
+      // a small number of extreme outliers, then it is possible for
+      // percentiles[10] == percentiles[990].  It is a bad idea to set the
+      // visible max and min to the same value, so check for that.
+      if (percentiles[10] != percentiles[990]) {
+        graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile 
+        graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
+      }
+    }
 
     if (graph_seq != aseq) {
+      //TODO: suppress this message.
+      // This can occur when loading multi-sequence graph file (like sgr) from a bookmark,
+      // in which case it is not an error and this message really shouldn't be printed.
       System.out.println("################## ERROR, graph_seq != aseq #################");
       return null;
     }
@@ -191,7 +213,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       report("pre coord setting ", state, graph_glyph);
       graph_glyph.setCoords(cbox.x, state.getGraphYPos(), cbox.width, state.getGraphHeight());
       report("post coord setting", state, graph_glyph);
-      map.setDataModel(graph_glyph, graf);
+      map.setDataModel(graph_glyph, graf); // side-effect of graph_glyph.setInfo(graf)
       graph_glyph.setFasterDraw(true);
       graph_glyph.setCalcCache(true);
 
@@ -207,10 +229,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	//	System.out.println("*** in GenericGrphaGlyphFactory.displayGraph() ***");
 	TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
 	boolean new_tier = (tglyph == null);
-	if (new_tier) { 
+	if (new_tier) {
 	  //	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
-	  if (use_fixed_pixel_height)  { 
-	    TransformTierGlyph tempgl = new TransformTierGlyph(); 
+	  if (use_fixed_pixel_height)  {
+	    TransformTierGlyph tempgl = new TransformTierGlyph();
 	    tempgl.setFixedPixelHeight(true);
 	    tempgl.setFixedPixHeight(60);
 	    tglyph = tempgl;
@@ -228,7 +250,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	// GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
 	//   or the TieredLabelMap won't get assigned labels correctly
 	if (new_tier) {
-	  map.addTier(tglyph, true);
+          boolean upper_strand = true;
+          Object str = graf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+          if ((str instanceof Character) && ((Character) str).charValue()=='-') {
+            upper_strand = false;
+          }
+	  map.addTier(tglyph, upper_strand);
 	  smv.getGraphStateTierHash().put(state, tglyph);
 	}
 	tglyph.pack(map.getView());
@@ -304,10 +331,13 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setShowAxis(show_axis);
     gstate.setVisibleMinY(minvis);
     gstate.setVisibleMaxY(maxvis);
-    gstate.setScoreThreshold(score_thresh);
+    gstate.setMinScoreThreshold(score_thresh);
     gstate.setMinRunThreshold(minrun_thresh);
     gstate.setMaxGapThreshold(maxgap_thresh);
     gstate.setShowThreshold(show_thresh);
+    
+    //TODO: Should this stuff about is_trans_frag be moved to setStateFromProps()
+    // so that it can be used from all the displayGraph() methods ?
     boolean is_trans_frag = ((graf.getProperty("parameter_set_name") != null) &&
 			     (((String)graf.getProperty("parameter_set_name")).indexOf("TransFrag") > -1) ) ;
     if (is_trans_frag) {
@@ -323,12 +353,32 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       gstate.setThreshStartShift(12);
       gstate.setThreshEndShift(13);
     }
+    
+    setStateFromProps(graf, gstate);
+    
     Map gfactories = smv.getGraphFactoryHash();
     GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
     //		gfactories.put(fgraf, gstate);
     gfactories.put(graf, gfac);
     GraphGlyph graph_glyph = GenericGraphGlyphFactory.displayGraph(graf, smv, gstate, true);
     return graph_glyph;
+  }
+  
+  /**
+   *  Sets some properties of the given GraphState based on properties in
+   *  the given GraphSym's property map.
+   *  Currently, sets only the graph "style" based on the value of the property
+   *    GraphSym.PROP_INITIAL_GRAPH_STYLE.
+   */
+  static void setStateFromProps(GraphSym graf, GraphState state) {
+    Integer requested_graph_style = (Integer) graf.getProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE);
+    if (requested_graph_style != null) {
+      state.setGraphStyle(requested_graph_style.intValue());
+
+      // Now set the requested graph style to null so that the user can later
+      // change the style in the GUI, if desired
+      graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
+    }
   }
 
 }

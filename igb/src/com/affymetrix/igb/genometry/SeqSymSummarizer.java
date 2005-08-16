@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -175,6 +175,55 @@ public class SeqSymSummarizer {
     return gsym;
   }
 
+
+  /**
+   *  Assumes all spans refer to same BioSeq
+   */
+  public static java.util.List getMergedSpans(java.util.List spans) {
+    GraphSym landscape = getSpanSummary(spans, true);
+    java.util.List merged_spans = projectLandscapeSpans(landscape);
+    return merged_spans;
+  }
+
+  public static java.util.List projectLandscapeSpans(GraphSym landscape) {
+    java.util.List spanlist = new ArrayList();
+    BioSeq seq = landscape.getGraphSeq();
+    int xcoords[] = landscape.getGraphXCoords();
+    float ycoords[] = landscape.getGraphYCoords();
+    int num_points = xcoords.length;
+
+    int current_region_start = 0;
+    int current_region_end = 0;
+    boolean in_region = false;
+    for (int i=0; i<num_points; i++) {
+      int xpos = xcoords[i];
+      float ypos = ycoords[i];
+      if (in_region) {
+	if (ypos <= 0) { // reached end of region, make SeqSpan
+	  in_region = false;
+	  current_region_end = xpos;
+	  SeqSpan newspan = new SimpleSeqSpan(current_region_start, current_region_end, seq);
+	  spanlist.add(newspan);
+	}
+	else {  // still in region, do nothing
+	}
+      }
+      else {  // not already in_region
+	if (ypos > 0) {
+	  in_region = true;
+	  current_region_start = xpos;
+	}
+	else {  // still not in region, so do nothing
+	}
+      }
+    }
+    if (in_region) {  // last point was still in_region, so make a span to end?
+      // pretty sure this won't happen, based on how getSymmetrySummary()/getSpanSummary() work
+      System.err.println("still in a covered region at end of projectLandscapeSpans() loop!");
+    }
+    return spanlist;
+  }
+
   public static SymWithProps projectLandscape(GraphSym landscape) {
     BioSeq seq = landscape.getGraphSeq();
     SimpleSymWithProps psym = new SimpleSymWithProps();
@@ -210,7 +259,7 @@ public class SeqSymSummarizer {
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
       // pretty sure this won't happen, based on how getSymmetrySummary()/getSpanSummary() work
-      System.err.println("still in a covered region at end of getUnion() loop!");
+      System.err.println("still in a covered region at end of projectLandscape() loop!");
     }
 
     if (psym.getChildCount() <= 0) {
@@ -239,6 +288,8 @@ public class SeqSymSummarizer {
     SeqSymmetry union = projectLandscape(landscape);
     return union;
   }
+
+
 
   /**
    *  redoing SeqSymmetry intersection (to eventually replace SeqUtils.intersection() method(s))
@@ -388,6 +439,8 @@ public class SeqSymSummarizer {
    */
   public static SeqSymmetry getExclusive(java.util.List symsA, java.util.List symsB, BioSeq seq) {
     SeqSymmetry xorSym = getXor(symsA, symsB, seq);
+    //  if no spans for xor, then won't be any for one-sided xor either, so return null;
+    if (xorSym == null)  { return null; }
     java.util.List xorList = new ArrayList();
     xorList.add(xorSym);
     SeqSymmetry a_not_b = getIntersection(symsA, xorList, seq);

@@ -85,6 +85,11 @@ public abstract class ErrorHandler {
       if (print_stack_traces) {e.printStackTrace(System.err);}
       String error_message = e.toString();
       message = message + "\n" + error_message;
+      Throwable cause = e.getCause();
+      while (cause != null) {
+        message += "\n\nCaused by:\n" + cause.toString();
+        cause = cause.getCause();
+      }
     }
 
     System.err.flush();

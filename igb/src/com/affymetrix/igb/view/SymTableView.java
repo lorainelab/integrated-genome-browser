@@ -63,6 +63,10 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       if (props == null) {
 	// make an empty hashtable if sym has no properties...
 	props = new Hashtable();
+	String symid = sym.getID();
+	if (symid != null) {
+	  props.put("id", sym.getID());
+	}
       }
       BioSeq seq = null;
       if (src instanceof SeqMapView) {

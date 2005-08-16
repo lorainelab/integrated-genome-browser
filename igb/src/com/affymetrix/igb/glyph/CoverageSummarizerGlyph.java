@@ -22,8 +22,12 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.genometry.SeqSpanComparator;
+import com.affymetrix.igb.genometry.SeqSymSummarizer;
 
 /**
+ *
+ *
  *  Intended for dynamically summarizing coverage of a collection of spans.
  *  Show graph based on xcoords/pixel of current view, with a point per pixel,
  *  and the yval of the point represents the fraction of the xcoords interval spanned by the pixel
@@ -38,27 +42,82 @@ import com.affymetrix.genometry.*;
  *    fraction coverage count
  */
 public class CoverageSummarizerGlyph extends SolidGlyph {
+  public static int COVERAGE = 2;
+  public static int SIMPLE = 3;
+  public static int SMOOTHED_COVERAGE = 4;
+  //  public static int ENHANCED_SMOOTHED_COVERAGE = 5;
+  public static int DEFAULT_STYLE = COVERAGE;
+
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
 
   int[] mins = null;
   int[] maxs = null;
   double[] yval_for_xpixel = null;
-
+  double[] smoothed_yval = null;
   Point2D curr_coord = new Point2D(0,0);
   Point curr_pixel = new Point(0,0);
+  int glyph_style = DEFAULT_STYLE;
+
+  /**
+   *  starting to factor in a smoothing based on values of adjacent pixels
+   */
+  boolean do_smoothing = true;
+  // currently a fixed smoothing factor over three pixels, left/4 + center/2 + right/4
+  //     except for center = 0, then keep at 0
+  // int smoothing_factor = 1;  // how many pixels to left and right to factor in smoothing
+
 
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
   public void setCoveredIntervals(java.util.List spans) {
-    int spancount = spans.size();
+    java.util.List spanlist = spans;
+    int spancount = spanlist.size();
     if (spancount > 0) {
+      // need to test to make sure projected and in ascending order --
+      //   if not, then perform projection and sort
+
+      // check for sorted and sort by min if needed
+      // NOT YET IMPLEMENTED
+      int prev_min = ((SeqSpan)spans.get(0)).getMin();
+      for (int i=1; i<spancount-1; i++) {
+	SeqSpan cspan = (SeqSpan)spans.get(i);
+	int cur_min = cspan.getMin();
+	if (cur_min < prev_min) {
+	  // need to sort
+	  System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
+	  SeqSpanComparator span_compare = new SeqSpanComparator();
+	  Collections.sort(spans, span_compare);
+	  // sorted, so don't have to keep checking, so break;
+	  break;
+	}
+	prev_min = cur_min;
+      }
+
+      // check for overlap and project (merge/union all spans together) if needed
+      prev_min = ((SeqSpan)spans.get(0)).getMin();
+      int prev_max = ((SeqSpan)spans.get(0)).getMax();
+      for (int i=1; i<spancount-1; i++) {
+	SeqSpan cspan = (SeqSpan)spans.get(i);
+	if (prev_max > cspan.getMin())  {
+	  // spans overlap, need to project (union all spans together)
+	  // set spanlist to union of spans...
+	  System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
+	  spanlist = SeqSymSummarizer.getMergedSpans(spans);
+	  break;
+	}
+	prev_max = cspan.getMax();
+      }
+
+      // projecting may have changed span count (shrunk span list)
+      spancount = spanlist.size();
+
       int[] newmins = new int[spancount];
       int[] newmaxs = new int[spancount];
-      BioSeq firstseq = ((SeqSpan)spans.get(0)).getBioSeq();
+      BioSeq firstseq = ((SeqSpan)spanlist.get(0)).getBioSeq();
       for (int i=0; i<spancount; i++) {
-	SeqSpan span = (SeqSpan)spans.get(i);
+	SeqSpan span = (SeqSpan)spanlist.get(i);
 	newmins[i] = span.getMin();
 	newmaxs[i] = span.getMax();
 	if (span.getBioSeq() != firstseq) {
@@ -72,20 +131,28 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   /**
    *  Each index i in min_array/max_array indicates a span from
    *     min_array[i] to max_array[i].
-   *  The arrays are assumed to be sorted in ascending order.
+   *  WARNING: the arrays are assumed to be sorted in ascending order
+   *      It is the responsibility of the caller to ensure array is in min ascending order
+   *      if there is a chance they are not, use setCoveredIntervals(spans) instead
+   *      which will sort if needed
    */
   public void setCoveredIntervals(int[] min_array, int[] max_array) {
     mins = min_array;
     maxs = max_array;
-    // need to test to make sure projected and in ascending order --
-    //   if not, then perform projection and sort
-    /*
-    int cnt = mins.length;
-    for (int i=0; i<cnt; i++) {
-      if (mins
-    }
-    */
   }
+
+
+  public void setStyle(int style) {
+    if (style != COVERAGE &&
+	style != SIMPLE) {
+      System.err.println("Eror in CoverageSummarizerGlyph.setStyle(), style not recognized: " + style);
+    }
+    else {
+      glyph_style = style;
+    }
+  }
+
+  public int getStyle() { return glyph_style; }
 
   public void draw(ViewI view) {
     if (mins == null || maxs == null)  { return; }
@@ -100,6 +167,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
     //    be reused and be the length of the component with greatest width...
     if ((yval_for_xpixel == null) || (yval_for_xpixel.length < view_pixel_width)) {
       yval_for_xpixel = new double[view_pixel_width];
+      smoothed_yval = new double[view_pixel_width];
     }
 
     // figure out how many bases per pixel
@@ -163,6 +231,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       //    till find interval with min > end of current pixel
       //      while ((min <= pixel_end_coord) && (interval_index <= draw_end_index))  {
       while ((interval_index <= draw_end_index) &&
+	     (interval_index < mins.length) &&
 	     (mins[interval_index] <= pixel_end_coord)) {
 	min = mins[interval_index];
 	max = maxs[interval_index];
@@ -185,35 +254,84 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       yval_for_xpixel[i] = coverage;
     }
 
+
+    int yzero = pixelbox.y + pixelbox.height;
+    int ymax = pixelbox.y + 2;
+    g.setColor(Color.gray);
+    g.drawLine(pixelbox.x, yzero, pixelbox.x + pixelbox.width,  yzero);
+
+    double coverage = 0;
+
     if (max_coverage != 0) {
+
+      double yvals[] = null;
+      if (do_smoothing) {
+	int max_smooth_index = view_pixel_width-1;
+	double max_smoothed = 0;
+	double min_smoothed = 1;
+
+	for (int pindex = 1 ; pindex < max_smooth_index; pindex++) {
+	  double curr_yval = yval_for_xpixel[pindex];
+	  if (curr_yval == 0) {
+	    smoothed_yval[pindex] = 0;   // any pixel with 0 coverage remains 0 rather than smoothed
+	    min_smoothed = 0;
+	    continue;
+	  }
+	  else {
+	    double prev_yval = yval_for_xpixel[pindex-1];
+	    double next_yval = yval_for_xpixel[pindex+1];
+	    double new_yval = (0.25 * prev_yval) + (0.5 * curr_yval) + (0.25 * next_yval);
+	    smoothed_yval[pindex] = new_yval;
+	    max_smoothed = (new_yval > max_smoothed ? new_yval : max_smoothed);  // equivalent to Math.max(c, mc)...
+	    min_smoothed = (new_yval < min_smoothed ? new_yval : min_smoothed);  // equivalent to Math.min(c, mc)...
+	  }
+	}
+
+	// still need to recalc first pixel and last pixel?? -- NOT YET IMPLEMENTED
+
+	yvals = smoothed_yval;
+	coverage = max_smoothed;
+      }
+      else {
+	yvals = yval_for_xpixel;
+	coverage = max_coverage;
+      }
+
+
       // now calculate scaling to fit in max coverage...
-      double yscale = coordbox.height / max_coverage;
+      //      double yscale = coordbox.height / max_coverage;
+      double yscale = coordbox.height / coverage;
       double yoffset = coordbox.y + coordbox.height;
       double xoffset = coords_per_pixel / 2.0;
-      int yzero = pixelbox.y + pixelbox.height;
 
-      g.setColor(Color.gray);
-      g.drawLine(pixelbox.x, yzero, pixelbox.x + pixelbox.width,  yzero);
-
-      g.setColor(Color.red);
+      g.setColor(this.getColor());
+      double prev_yval = -1;
       for (int pindex =0 ; pindex < view_pixel_width; pindex++) {
 	curr_coord.x = (pindex * coords_per_pixel) + xoffset;
-	double curr_yval = yval_for_xpixel[pindex];
+	//	double curr_yval = yval_for_xpixel[pindex];
+	double curr_yval = yvals[pindex];
 	if (curr_yval != 0) {
 	  curr_coord.y = yoffset - (curr_yval * yscale);
 	  view.transformToPixels(curr_coord, curr_pixel);
-	  g.drawLine(pindex, yzero, pindex, curr_pixel.y);
+	  if (glyph_style == SIMPLE || coords_per_pixel <= 10) {
+	    g.drawLine(pindex, yzero, pindex, ymax);
+	  }
+	  else {
+	    g.drawLine(pindex, yzero, pindex, curr_pixel.y);
+	  }
 	}
       }
     }
 
     // drawing outline around bounding box
-    g.setColor(Color.blue);
+    g.setColor(Color.lightGray);
     g.setFont(default_font);
     //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
     String msg =
-      nformat.format(max_coverage) + ", " +
-      nformat.format(max_covered) + ", " +
+      "Max coverage in view: " +
+      nformat.format(coverage) + ", " +
+      //      nformat.format(max_covered) + ", " +
+      "Bases/Pixel: " +
       nformat.format(coords_per_pixel);
 
     g.drawString(msg, 3, pixelbox.y + 10);

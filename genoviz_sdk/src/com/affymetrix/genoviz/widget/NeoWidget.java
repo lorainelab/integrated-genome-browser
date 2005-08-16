@@ -852,6 +852,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     selected.removeElement(g);
   }
 
+  public void clearWidget() {
+    super.clearWidget();
+  }
 
   /**
    * Scale constraints are currently only considered during
@@ -874,6 +877,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
   public int getZoomBehavior(int axisid) {
     return zoom_behavior[axisid];
+  }
+  
+  public double getZoomCoord(int axisid) {
+    return zoom_coord[axisid];
   }
 
   public void setZoomBehavior(int axisid, int constraint, double coord) {

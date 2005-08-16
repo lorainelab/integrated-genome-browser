@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Font;
+import java.util.prefs.*;
 
 public class UnibrowHairline {
 
@@ -46,6 +47,8 @@ public class UnibrowHairline {
   private double focus = 1;
 
   private boolean keep_hairline_in_view = true;
+  
+  PreferenceChangeListener pcl;
 
   public UnibrowHairline(NeoMap the_map) {
     if (the_map == null) throw new IllegalArgumentException();
@@ -85,6 +88,19 @@ public class UnibrowHairline {
     //map.addMouseListener( mouse_listener );
     //visible_range.addListener( hairline );
     map.getView().addPreDrawViewListener(pre_draw_listener);
+    
+    pcl = new PreferenceChangeListener() {
+      public void preferenceChange(PreferenceChangeEvent pce) {
+        if (! pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
+          return;
+        }
+        if (pce.getKey().equals(PREF_KEEP_HAIRLINE_IN_VIEW)) {
+          setKeepHairlineInView(UnibrowPrefsUtil.getBooleanParam(PREF_KEEP_HAIRLINE_IN_VIEW, default_keep_hairline_in_view));
+        }
+      }
+    };
+
+    UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pcl);
   }
 
   /** Sets the flag determining whether the hairline is constrained
@@ -136,5 +152,7 @@ public class UnibrowHairline {
     //mouse_listener = null;
     hairline = null;
     map = null;
+    if (pcl != null) {UnibrowPrefsUtil.getTopNode().removePreferenceChangeListener(pcl);}
+    pcl = null;
   }
 }

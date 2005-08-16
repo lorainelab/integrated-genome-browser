@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -40,7 +40,8 @@ import java.awt.Graphics;
 public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
   private final TransientGlyph tg = new TransientGlyph();
-  private final GlyphI vGlyph = new FillRectGlyph();
+  private final FillRectGlyph vGlyph = new FillRectGlyph();
+
   private NeoMap map;
   private final double topMargin = 0.0;  // margins between viewable area and the shadow
   private final double bottomMargin = 0.0;
@@ -48,9 +49,11 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   private boolean labeled=false;  // should we draw a label?
   private boolean labelForReverse = false;
   private long residueCount;
-  private static final java.text.DecimalFormat dform = new java.text.DecimalFormat("#.##");
+  private static final java.text.DecimalFormat dform = new java.text.DecimalFormat("#,###.##");
   private final Rectangle2D px = new Rectangle2D();  // used for coordinate conversions
   private final Rectangle tx = new Rectangle(); // used for label text width and height
+  private int current_range_st = 0;
+  private int current_range_en = 0;
 
   /**
    * When labeled=true, access the label's Glyph through this variable
@@ -98,6 +101,10 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#VERTICAL
    */
   public Shadow( NeoMap destination, int theOrientation, Color theColor ) {
+    resetShadow(destination, theOrientation, theColor);
+  }
+
+  public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
     Debug.test( this.topMargin + this.bottomMargin < 1.0, "Margins too large." );
 
     this.map = destination;
@@ -106,7 +113,6 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     Rectangle2D sbox = this.map.getScene().getCoordBox();
     this.tg.setCoords( sbox.x, sbox.y, sbox.width, sbox.height );
     this.map.getScene().addGlyph( this.tg );
-
 
     // Set up a visible glyph.
     double ourX, ourY, ourWidth, ourHeight;
@@ -145,6 +151,10 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.map.addItem( this.tg, vGlyph );
     this.tg.setSelectable(false);
     this.setSelectable(false);
+    this.vGlyph.setHitable(false);
+    this.label.setHitable(false);
+    this.extraRect.setHitable(false);
+    this.extraRect.setSelectable(false);
     setLabeled(false);
     if (map.getView() != null) {
       map.getView().addPreDrawViewListener(this);
@@ -172,6 +182,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
        label.setShowBackground(true);
        label.setPlacement(StringGlyph.CENTER);
        label.setSelectable(false);
+       
+       this.setRange(current_range_st, current_range_en);
 
        map.addItem( this.tg, extraRect);
        map.addItem( this.tg, label);
@@ -253,7 +265,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           // The extraRect should be offset by (width*0.5, px.height*0.5) from the label
           extraRect.setCoords(x, offset[1] - px.height*1.5, 1, px.height);
           label.setCoords(x+width*0.5, offset[1] - px.height*1.0, 0,0);
-          }
+        }
         break;
       case NeoMapI.VERTICAL:
         y = st;
@@ -264,7 +276,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           // The extraRect should be offset by (px.width*0.5,height*0.5) from the label
           extraRect.setCoords(offset[1] - px.width*1.25,y, px.width, 1);
           label.setCoords(offset[1] - px.width*0.75,y+0.5*height, 0,0);
-          }
+        }
         break;
       default:
         throw new IllegalStateException( "The orientation must be HORIZONTAL or VERTICAL." );
@@ -278,7 +290,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
       this.vGlyph.setCoords(x,y,width,height);
 
     }
-
+    
+    current_range_st = st;
+    current_range_en = en;
   }
 
   /**
@@ -365,11 +379,13 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
   /**
    * Allow or disallow selecting the shadow.
+   * (This has a side-effect of also making the shadow "hitable" or not.)
    *
    * @param selectable whether to allow selection
    */
   public final void setSelectable(boolean selectable) {
     this.vGlyph.setSelectable(selectable);
+    this.vGlyph.setHitable(selectable);
   }
 
   /**
@@ -396,5 +412,4 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
       map = null;
     }
   }
-
 }

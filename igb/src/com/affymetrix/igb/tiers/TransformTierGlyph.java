@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,21 +22,24 @@ import com.affymetrix.genoviz.glyph.*;
 
 /**
  *  TransformTierGlyph.
- *  only use transform for operations on children. 
- *    coordinates of the tier itself are maintained in coordinate system 
+ *  only use transform for operations on children.
+ *    coordinates of the tier itself are maintained in coordinate system
  *    of the incoming view...
- *  
- *  currently assuming no modifications to tier_transform, etc. are made between 
+ *
+ *  currently assuming no modifications to tier_transform, etc. are made between
  *     call to modifyView(view) and call to restoreView(view);
- * 
+ *
+ *  Note that if the tier has any "middleground" glyphs, 
+ *     these are _not_ considered children, so transform does not apply to them
+ *
  */
 public class TransformTierGlyph extends TierGlyph {
   boolean DEBUG_PICK_TRAVERSAL = false;
 
   /*
-   *  if fixed_pixel_height == true, 
-   *    then adjust transform during pack, etc. to keep tier 
-   *    same height in pixels 
+   *  if fixed_pixel_height == true,
+   *    then adjust transform during pack, etc. to keep tier
+   *    same height in pixels
    *  (assumes tier only appears in one map / scene)
    */
   boolean fixed_pixel_height = false;
@@ -55,6 +58,10 @@ public class TransformTierGlyph extends TierGlyph {
   // for caching in pickTraversal(pixbox, picks, view) method
   Rectangle2D pix_rect = new Rectangle2D();
 
+  public TransformTierGlyph()  {
+    super();
+  }
+
   public void setTransform(LinearTransform trans) {
     tier_transform = trans;
   }
@@ -70,9 +77,9 @@ public class TransformTierGlyph extends TierGlyph {
     incoming_view_coordbox = view.getCoordBox();
 
     // figure out draw transform by combining tier transform with view transform
-    // should allow for arbitrarily deep nesting of transforms too, since cumulative 
+    // should allow for arbitrarily deep nesting of transforms too, since cumulative
     //     transform is set to be view transform, and view transform is restored after draw...
-    
+
     // should just copy values instead of creating new object every time,
     //    but for now just creating new object for convenience
     //    modified_view_transform = new LinearTransform(incoming_view_transform);
@@ -83,19 +90,19 @@ public class TransformTierGlyph extends TierGlyph {
     //    view.setTransform(modified_view_transform);
     //    view.setTransform(tier_transform);
 
-    // should switch soon to doing this completely through 
+    // should switch soon to doing this completely through
     //    LinearTransform calls, and eliminate new AffineTransform creation...
     AffineTransform trans2D = new AffineTransform();
     trans2D.translate(0.0, incoming_view_transform.getOffsetY());
     trans2D.scale(1.0, incoming_view_transform.getScaleY());
 
     //    trans2D.translate(1.0, this.getCoordBox().y);
-    //    System.out.println("tier transform: offset = " + tier_transform.getOffsetY() + 
+    //    System.out.println("tier transform: offset = " + tier_transform.getOffsetY() +
     //    		       ", scale = " + tier_transform.getScaleY());
 
     trans2D.translate(1.0, tier_transform.getOffsetY());
     trans2D.scale(1.0, tier_transform.getScaleY());
-    
+
     modified_view_transform = new LinearTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
     modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
@@ -103,7 +110,7 @@ public class TransformTierGlyph extends TierGlyph {
     modified_view_transform.setOffsetY((double)trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
-    // need to set view coordbox based on nested transformation 
+    // need to set view coordbox based on nested transformation
     //   (for methods like withinView(), etc.)
     view.transformToCoords(view.getPixelBox(), modified_view_coordbox);
     view.setCoordBox(modified_view_coordbox);
@@ -118,8 +125,8 @@ public class TransformTierGlyph extends TierGlyph {
   }
 
   public void fitToPixelHeight(ViewI view) {
-    // use view transform to determine how much "more" scaling must be 
-    //       done within tier to keep its 
+    // use view transform to determine how much "more" scaling must be
+    //       done within tier to keep its
     LinearTransform view_transform = (LinearTransform)view.getTransform();
     double yscale = 0.0d;
     if ( 0.0d != coordbox.height ) {
@@ -131,7 +138,7 @@ public class TransformTierGlyph extends TierGlyph {
     tier_transform.setScaleY(tier_transform.getScaleY() * yscale );
     //    tier_transform.setOffsetY(tier_transform.getOffsetY() * yscale);
     /*
-    tier_transform.setOffsetY(tier_transform.getOffsetY() 
+    tier_transform.setOffsetY(tier_transform.getOffsetY()
 			      - (tier_transform.getOffsetY() * yscale) );
     */
 
@@ -143,7 +150,7 @@ public class TransformTierGlyph extends TierGlyph {
   // need to redo pickTraversal, etc. to take account of transform also...
   //
   public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
-                            ViewI view)  {  
+                            ViewI view)  {
 
     // copied form first part of Glyph.pickTraversal()
     if (isVisible && intersects(pickRect, view))  {
@@ -154,7 +161,7 @@ public class TransformTierGlyph extends TierGlyph {
       }
 
       if (children != null)  {
-	// modify pickRect on the way in 
+	// modify pickRect on the way in
 	//   (transform from view coords to local (tier) coords)
 	//    [ an inverse transform? ]
 	tier_transform.inverseTransform(pickRect, internal_pickRect);

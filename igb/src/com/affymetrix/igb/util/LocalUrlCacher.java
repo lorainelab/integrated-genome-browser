@@ -21,6 +21,7 @@ import java.text.DateFormat;
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
   static boolean DEBUG_CONNECTION = false;
+  static boolean CACHE_FILE_URLS = false;
 
   public static int IGNORE_CACHE = 100;
   public static int ONLY_CACHE = 101;
@@ -37,6 +38,20 @@ public class LocalUrlCacher {
 
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
+
+    // if url is a file url, and not caching files, then just directly return stream
+    if ((! CACHE_FILE_URLS) && (url.startsWith("file:"))) {
+      InputStream fstr = null;
+      try {
+	URL furl = new URL(url);
+	fstr = furl.openConnection().getInputStream();
+        System.out.println("URL is file url, so not caching: " + furl);
+      }
+      catch (Exception ex) {
+	System.out.println("File for URL not found: " + url);
+      }
+      return fstr;
+    }
     File fil = new File(cache_root);
     if (! fil.exists()) {
       System.out.println("creating new cache directory: " + fil.getAbsolutePath());
@@ -54,12 +69,13 @@ public class LocalUrlCacher {
     String cache_file_name = cache_root + "/" + encoded_url;
     File cache_file = new File(cache_file_name);
     boolean cached = cache_file.exists();
-
     URLConnection conn = null;
+
     long remote_timestamp = 0;
-    int content_length = 0;
+    int content_length = -1;
     String content_type = null;
     boolean url_reachable = false;
+    boolean has_timestamp = false;
     // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
     if (cache_option != ONLY_CACHE) {
       try {
@@ -69,9 +85,10 @@ public class LocalUrlCacher {
 	  reportHeaders(conn);
 	}
 	remote_timestamp = conn.getLastModified();
+	has_timestamp = (remote_timestamp > 0);
 	content_type = conn.getContentType();
 	content_length = conn.getContentLength();
-	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
+	//	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
 	url_reachable = true;
       }
       catch (Exception ex) {
@@ -84,7 +101,8 @@ public class LocalUrlCacher {
       long local_timestamp = cache_file.lastModified();
       String local_date = DateFormat.getDateTimeInstance().format(new Date(local_timestamp)); ;
       //      System.out.println("cached file last modified: " + local_date);
-      if ((! url_reachable) || (remote_timestamp < local_timestamp)) {
+      if ((! url_reachable) ||
+	  (has_timestamp && (remote_timestamp < local_timestamp)) ) {
 	System.out.println("cache exists and is more recent, using cache: " + cache_file);
 	result_stream = new FileInputStream(cache_file);
       }
@@ -97,15 +115,58 @@ public class LocalUrlCacher {
       // no cache hit, or stale, or cache_option set to IGNORE_CACHE...
       InputStream connstr = conn.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(connstr);
-      byte[] content = new byte[content_length];
-      //      int bytes_read = bis.read(content, 0, content_length);
-      int total_bytes_read = 0;
-      while (total_bytes_read < content_length) {
-	int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
-	total_bytes_read += bytes_read;
+      byte[] content = null;
+      if (content_length >= 0) {       // if content_length header was set, can load based on length
+	content = new byte[content_length];
+	//      int bytes_read = bis.read(content, 0, content_length);
+	int total_bytes_read = 0;
+	while (total_bytes_read < content_length) {
+	  int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
+	  total_bytes_read += bytes_read;
+	}
+	if (total_bytes_read != content_length) {
+	  System.out.println("%%%% problem: bytes read != content length %%%%");
+	}
       }
-      if (total_bytes_read != content_length) {
-	System.out.println("%%%% problem: bytes read != content length %%%%");
+      else {
+	if (DEBUG_CONNECTION) { System.out.println("No content length header, so doing piecewise loading"); }
+	// if no content_length header, then need to load a chunk at a time
+	//   till find end, then piece back together into content byte array
+	ArrayList chunks = new ArrayList(100);
+	IntList byte_counts = new IntList(100);
+	int chunk_count = 0;
+	int chunk_size = 256 * 256;  // reading in 64KB chunks
+	int total_byte_count = 0;
+	int bytes_read = 0;
+	while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
+	  byte[] chunk = new byte[chunk_size];
+	  bytes_read = bis.read(chunk, 0, chunk_size);
+	  if (DEBUG_CONNECTION) {
+	    System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);	    
+	  }
+	  if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
+	    total_byte_count += bytes_read; 
+	    chunks.add(chunk);
+	    byte_counts.add(bytes_read);
+	  }
+	  chunk_count++;
+	}
+	if (DEBUG_CONNECTION) {
+	  System.out.println("total bytes: " + total_byte_count + 
+			     ", total chunks with > 0 bytes: " + chunks.size());
+	}
+
+	content_length = total_byte_count;
+	content = new byte[content_length];
+	total_byte_count = 0;
+	for (int i=0; i<chunks.size(); i++) {
+	  byte[] chunk = (byte[])chunks.get(i);
+	  int byte_count = byte_counts.get(i);
+	  if (byte_count > 0) {
+	    System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
+	    total_byte_count += byte_count;
+	  }
+	}
       }
       bis.close();
       connstr.close();

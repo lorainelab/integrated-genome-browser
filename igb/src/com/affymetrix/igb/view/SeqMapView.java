@@ -549,7 +549,7 @@ public class SeqMapView extends JPanel
             //   allows easily selecting sequence for contig
             //   allows slicing on contig
             //   Slicing may require lots of memory, so this may be a bad idea.
-            cgl.setInfo(childcomp);
+            //cgl.setInfo(childcomp);
             
             // also note that "Load residues in view" produces additional
             // contig-like glyphs that can partially hide these glyphs.

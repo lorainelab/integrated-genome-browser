@@ -49,7 +49,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   SeqMapView gviewer;
   Color parent_color = default_annot_color;
   Color child_color = default_annot_color;
-  String annot_type = null;
   String label_field = null;
   int glyph_depth = 2;  // default is depth = 2 (only show leaf nodes and parents of leaf nodes)
 
@@ -73,8 +72,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void init(Map options) {
-    //    System.out.println("called AbstractAnnotGlyphFactory.init()");
-    annot_type = (String)options.get("annot_type");
     parent_color = (Color)options.get("parent_color");
     child_color = (Color)options.get("child_color");
     if (parent_color == null) { parent_color = (Color)options.get("color"); }

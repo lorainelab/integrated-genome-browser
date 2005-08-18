@@ -2,9 +2,6 @@ Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
 
-Coming to next version:
-  
-
 IGB-3.62
   + Overhaul of the selection mechanism: 
   ++ dragging selects multiple items; 

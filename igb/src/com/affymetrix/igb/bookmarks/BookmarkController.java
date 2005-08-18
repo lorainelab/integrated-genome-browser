@@ -55,8 +55,13 @@ public abstract class BookmarkController {
   public static void viewBookmark(IGB uni, Bookmark bm) {
     if (bm.isUnibrowControl()) {
       if (DEBUG) System.out.println("****** Viewing internal control bookmark: "+bm.getURL().toExternalForm());
-      Map props = bm.parseParameters(bm.getURL());
-      UnibrowControlServlet.goToBookmark(uni, props);
+      try {
+        Map props = bm.parseParameters(bm.getURL());
+        UnibrowControlServlet.goToBookmark(uni, props);
+      } catch (Exception e) {
+        String message = e.getClass().getName() + ": " + e.getMessage();
+        ErrorHandler.errorPanel("Error opening bookmark.\n" + message);
+      }
     } else {
       if (DEBUG) System.out.println("****** Viewing external bookmark: "+bm.getURL().toExternalForm());
       WebBrowserControl.displayURLEventually(bm.getURL().toExternalForm());

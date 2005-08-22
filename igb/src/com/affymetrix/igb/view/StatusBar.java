@@ -10,6 +10,8 @@ public class StatusBar extends JPanel {
   
   JLabel status_ta;
   JLabel memory_ta;
+
+  JPopupMenu popup_menu = new JPopupMenu();
   
   DecimalFormat num_format;
   
@@ -31,6 +33,24 @@ public class StatusBar extends JPanel {
     
     this.add(status_ta, BorderLayout.CENTER);
     this.add(memory_ta, BorderLayout.EAST);
+
+    JMenuItem gc_MI = new JMenuItem("Run Garbage Collection");
+    popup_menu.add(gc_MI);
+    
+    gc_MI.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        System.gc();
+      }
+    });
+    
+    memory_ta.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent evt) {
+        if (evt.isPopupTrigger()) { popup_menu.show(memory_ta, evt.getX(), evt.getY()); }
+      }
+      public void mouseReleased(MouseEvent evt) {
+        if (evt.isPopupTrigger()) { popup_menu.show(memory_ta, evt.getX(), evt.getY()); }
+      }
+    });
         
     ActionListener al = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -41,7 +61,7 @@ public class StatusBar extends JPanel {
     timer.setInitialDelay(0);
     timer.start();
   }
-  
+    
   /** Sets the String in the status bar.
    *  HTML can be used if prefixed with "<html>".
    *  @param s  a String, null is ok; null will erase the status String.
@@ -61,8 +81,18 @@ public class StatusBar extends JPanel {
   public void updateMemory() {
     Runtime rt = Runtime.getRuntime();
     long memory  = rt.totalMemory() - rt.freeMemory();
+    
     double mb = 1.0 * memory / (1024 * 1024);
     String text = num_format.format(mb) + " MB";
+
+    double percentage = 100.0d * memory / rt.maxMemory();    
+    text += "; "+num_format.format(percentage) + "%";
+    
+    /*
+    if (percentage > 90.0d) {
+       text = "<html><font color=\"red\">" + text + "</font></html>";
+    }
+    */
     updateSafely(memory_ta, text);    
   }
   
@@ -82,5 +112,4 @@ public class StatusBar extends JPanel {
       );
     }
   }
-  
 }

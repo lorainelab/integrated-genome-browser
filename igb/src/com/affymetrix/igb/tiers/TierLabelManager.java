@@ -197,11 +197,11 @@ public class TierLabelManager
   /**
    *  Returns the List of menu items that populate the popup menu when
    *  the tier is right-clicked.  Internally, TierLabelManager uses this
-   *  List to build the popup on-the-fly based on the tier that is clicked
+   *  List to build the popup on-the-fly based on the tier that is clicked.
    *
    *  This can be used by other code to modify a specific tier's popup
    *    (for example change the "axis coordinate" tier's popup by removing
-   *    the  collapse and expand menu items)
+   *    the  collapse and expand menu items).
    *
    *  In general, the list returned will be modifiable.  But, the one returned
    *  by getMenuList(null) will be a default list which is not modifiable.
@@ -321,12 +321,20 @@ public class TierLabelManager
     int selcount = selected.size();
     if (selcount > 0) {
       Color col = JColorChooser.showDialog(((SeqMapView)gviewer).getFrame(),
-					   "Grid Color Chooser", null);
+					   "Color Chooser", null);
       if (col != null) {
 	for (int i=0; i<selcount; i++) {
 	  TierLabelGlyph tlg = (TierLabelGlyph)selected.get(i);
 	  TierGlyph tier = (TierGlyph)tlg.getInfo();
-	  colorChildren(tier, col);
+          // color children recursively colors the glyphs in the tier
+          colorChildren(tier, col);
+          
+          // Setting the foreground color of the TierGlyph influences 
+          // the color of the outline of the TierLabelGlyph
+          tier.setForegroundColor(col); 
+
+          // But you have to explicitly set the color of the label text
+          tlg.setForegroundColor(col);          
 	}
 	tiermap.updateWidget();
       }
@@ -356,14 +364,6 @@ public class TierLabelManager
       labels.add(tierlabel);
     }
     return labels;
-  }
-
-  public void selectAllAnnotationTiers() {
-
-  }
-
-  public void selectAllGraphTiers() {
-
   }
 
   public void selectAllTiers()  {
@@ -892,8 +892,14 @@ public class TierLabelManager
   public void addSymCoverageTier(TierGlyph atier) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
+    
     java.util.List syms = new ArrayList(child_count);
     collectSyms(atier, syms);
+    if (child_count == 0 || syms.size() == 0) {
+      IGB.errorPanel("Empty Tier",
+        "The selected tier is empty.  Can not make a coverage tier for an empty tier.");
+      return;
+    }
 
     SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
@@ -914,6 +920,12 @@ public class TierLabelManager
     //   (don't descend into childA's children)
     java.util.List syms = new ArrayList();
     collectSyms(atier, syms);
+    if (syms.size() == 0) {
+      IGB.errorPanel("Nothing to Summarize",
+        "The selected tier is empty. It contains nothing to summarize");
+      return;
+    }
+    
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq);
     gsym.setGraphName("depth: " + atier.getLabel());

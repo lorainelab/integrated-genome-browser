@@ -28,12 +28,6 @@ import com.affymetrix.genoviz.util.Timer;
  *  In a AffyTieredMap, TierGlyphs pack relative to each other but not to other glyphs added
  *  directly to the map.
  *
- *  Added ability to have "middleground" glyphs, which are generally not considered children of
- *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
- *    are not considered children in pickTraversal() method.
- *  Only way to add middleground glyphs is via addMiddleGlyph() method,
- *    only way to remove them is via removeAllChildren() method,
- *    no external access to them
  */
 public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
@@ -62,8 +56,9 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   // for now ignoring background color, foreground color
   //   inherited from Glyph (as a style)
   protected Color fill_color = null;
+
   /*
-   * other_fill_color is derived from fill_color whenever setFillColor() is called
+   * other_fill_color is derived from fill_color whenever setFillColor() is called.
    * if there are any "middle" glyphs, then background is drawn with other_fill_color and 
    *    middle glyphs are drawn with fill_color
    * if no "middle" glyphs, then background is drawn with fill_color
@@ -107,6 +102,15 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     setHitable(false);
   }
 
+/**
+ *  Adds "middleground" glyphs, which are drawn in front of the background but 
+ *    behind all "real" child glyphs.
+ *  These are generally not considered children of
+ *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
+ *    are not considered children in pickTraversal() method.
+ *  The only way to remove these is via removeAllChildren() method,
+ *    there is currently no external access to them.
+ */
   public void addMiddleGlyph(GlyphI gl) {
     middle_glyphs.add(gl);
   }
@@ -275,9 +279,9 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   }
 
   /**
-   *  Modifying draw method to allow background shading by a collection of non-child
+   *  Overriden to allow background shading by a collection of non-child
    *    "middleground" glyphs.  These are rendered after the solid background but before
-   *    all of the children (which could be considered the "foreground");
+   *    all of the children (which could be considered the "foreground").
    */
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
@@ -326,8 +330,8 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   }
 
   /**
-   *  Remove all children of the glyph
-   *
+   *  Remove all children of the glyph, including those added with 
+   *  addMiddleGlyph(GlyphI).
    */
   public void removeAllChildren() {
     super.removeAllChildren();
@@ -335,19 +339,11 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     // this is currently the only place where middleground glyphs are treated as if they were children
     //   maybe should rename this method clear() or something like that...
     // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by
-    //     clearing middle_glyphs
+    //     clearing middle_glyphs.  These glyphs never have setScene() called on them,
+    //     so it is not necessary to call setScene(null) on them.
     middle_glyphs.clear();
   }
 
-  /* GAH removed this method, should be able to call removeAllChildren() (inherited from Glyph/GlyphI)
-  public void removeChildren() {
-    Vector kids = this.getChildren();
-    if (kids != null) {
-      for (int i=0; i < kids.size(); i++)
-        this.removeChild((GlyphI)kids.elementAt(i));
-    }
-  }
-  */
 
   public void setState(int newstate) {
     // terminate any pingponging if state is already same
@@ -453,13 +449,16 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
    */
   public void setFillColor(Color col) {
     fill_color = col;
-    // for now, assume "middleground" color is based on fill color
-    int intensity = col.getRed() + col.getGreen() + col.getBlue();
-    if (intensity == 0) { other_fill_color = Color.darkGray; }
-    else if (intensity > (255+127)) { other_fill_color = col.darker(); }
-    else { other_fill_color = col.brighter(); }
-    //    other_fill_color = Color.lightGray;
-    //    other_fill_color = fill_color.brighter().brighter().brighter();
+    
+    // Now set the "middleground" color based on the fill color
+    if (col == null) {
+      other_fill_color = Color.DARK_GRAY;
+    } else {
+      int intensity = col.getRed() + col.getGreen() + col.getBlue();
+      if (intensity == 0) { other_fill_color = Color.darkGray; }
+      else if (intensity > (255+127)) { other_fill_color = col.darker(); }
+      else { other_fill_color = col.brighter(); }
+    }
   }
 
   /** Returns the color used to draw the tier background, or null

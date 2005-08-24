@@ -184,9 +184,10 @@ public class OpenGraphAction extends AbstractAction {
       chooser = new JFileChooser();
       chooser.setMultiSelectionEnabled(true);
       // set directory later // chooser.setCurrentDirectory(new File((String) System.getProperties().get("user.dir")));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
+            chooser.addChoosableFileFilter(new UniFileFilter("bar"));
+//      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
-      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
+//      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
       chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
       chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();

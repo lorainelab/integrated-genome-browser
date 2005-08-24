@@ -693,8 +693,8 @@ class Das2TypeState {
       System.out.println("need to replace all double slashes in path!");
     }
     String subnode = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
-    System.out.println("subnode = " + subnode);
-    System.out.println("    length: " + subnode.length());
+    //    System.out.println("subnode = " + subnode);
+    //    System.out.println("    length: " + subnode.length());
     lnode = das2_node.node(subnode);
     load_strategy = lnode.getInt(type.getID(), default_load_strategy);
   }

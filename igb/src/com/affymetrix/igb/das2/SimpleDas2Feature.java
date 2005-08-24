@@ -27,7 +27,7 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
   String doc_href;
 
   public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
-			   String feat_created, String feat_modified, String feat_doc_href) {
+			   String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
     id = feat_id;
     type = feat_type;
     name = feat_name;
@@ -35,6 +35,7 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     created = feat_created;
     modified = feat_modified;
     doc_href = feat_doc_href;
+    setProperties(feat_props);   // feat_props should be null if no feature XML had no <PROP> elements
   }
 
   /** implementing TypedSym interface */
@@ -46,29 +47,29 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     if (prop.equals("id")) { return id; }
     else if (prop.equals("name")) { return name; }
     else if (prop.equals("type")) { return type; }
+    else if (prop.equals("link")) { return doc_href; }
     else { return super.getProperty(prop); }
   }
 
   public boolean setProperty(String tag, Object val) {
     if (tag == null)  { return false; }
-    if (props == null) {
-      props = new LinkedHashMap();
-      props.put("id", id);
-      props.put("name", name);
-      props.put("type", type);
-    }
     return super.setProperty(tag, val);
   }
 
-  public Map getProperties() {
-    Map temp_props = props;
-    if (temp_props == null) {
-      temp_props = new LinkedHashMap();
-      temp_props.put("id", id);
-      temp_props.put("name", name);
-      temp_props.put("type", type);
+  public Map cloneProperties() {
+    Map cprops = super.cloneProperties();
+    if (cprops == null) {
+      cprops = new LinkedHashMap();
     }
-    return temp_props;
+    cprops.put("id", id);
+    cprops.put("name", name);
+    cprops.put("type", type);
+    if (doc_href != null) { cprops.put("link", doc_href); }
+    return cprops;
+  }
+
+  public Map getProperties() {
+    return cloneProperties();
   }
 
 }

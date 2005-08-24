@@ -102,7 +102,7 @@ public class LocalUrlCacher {
       String local_date = DateFormat.getDateTimeInstance().format(new Date(local_timestamp)); ;
       //      System.out.println("cached file last modified: " + local_date);
       if ((! url_reachable) ||
-	  (has_timestamp && (remote_timestamp < local_timestamp)) ) {
+	  (has_timestamp && (remote_timestamp <= local_timestamp)) ) {
 	System.out.println("cache exists and is more recent, using cache: " + cache_file);
 	result_stream = new FileInputStream(cache_file);
       }

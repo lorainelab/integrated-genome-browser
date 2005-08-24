@@ -47,7 +47,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String APP_NAME = IGBConstants.APP_NAME;
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
-  public static boolean USE_QUICKLOAD = true;
+  public static boolean USE_QUICKLOAD = false;
+  public static boolean USE_DATALOAD = true;
   public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
@@ -618,6 +619,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (USE_QUICKLOAD) {
       PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
       plugin_list.add(quickload);
+    }
+    if (USE_DATALOAD)  {
+      PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
+      plugin_list.add(dataload);
     }
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);

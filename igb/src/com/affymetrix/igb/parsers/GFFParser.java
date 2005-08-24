@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -87,7 +87,7 @@ public class GFFParser implements AnnotationWriter  {
 
   boolean default_create_container_annot = false;
 
-  boolean gff_base1 = true; 
+  boolean gff_base1 = true;
 
   // should only be one tab between each field, but just in case,
   //    allowing for possible multi-tabs
@@ -127,15 +127,15 @@ public class GFFParser implements AnnotationWriter  {
    */
   String group_tag = null;
   String group_id_field_name = null;
-  
-  /** Whether to convert group_id field value to lower case. 
+
+  /** Whether to convert group_id field value to lower case.
    *  Beginning with source forge version 1.5 of this file, we started always
    *  doing this, but the reason has been forgotten.  Unless we can remember
    *  why case-insensitivity (i.e. forcing lower case) is needed, let's set
    *  this to false.  We could allow a new flag in the GFF header to toggle
    *  this on or off.
    *  <p>
-   *  SourceForge issue ID: 
+   *  SourceForge issue ID:
    *  <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=1143530&group_id=129420&atid=714744">1143530</a>
    *  </p>
    */
@@ -143,20 +143,20 @@ public class GFFParser implements AnnotationWriter  {
 
   // When grouping, do you want to use the first item encountered as the parent of the group?
   boolean use_first_one_as_group = false;
-  
+
   public GFFParser() {
     this(true);
   }
 
   /**
    * Constructor.
-   * @param coords_are_base1  whether it is necessary to convert from base-1 
+   * @param coords_are_base1  whether it is necessary to convert from base-1
    *     numbering to interbase-0 numbering, to agree with genometry.
    */
   public GFFParser(boolean coords_are_base1) {
     gff_base1 = coords_are_base1;
   }
-  
+
   /**
    *  Adds a filter to the fail_filter_hash.
    *  Like {@link #addFeatureFilter(String, boolean)} with pass_filter=false.
@@ -244,7 +244,7 @@ public class GFFParser implements AnnotationWriter  {
   throws IOException {
     return parse(istr, aseq, (Map) null);
   }
-  
+
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, Map id2sym_hash)
   throws IOException {
     Map seqhash = new HashMap();
@@ -265,7 +265,7 @@ public class GFFParser implements AnnotationWriter  {
   public List parse(InputStream istr, Map seqhash) throws IOException {
     return parse(istr, seqhash, (Map) null, default_create_container_annot);
   }
-  
+
   public List parse(InputStream istr, Map seqhash, Map id2sym_hash, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
@@ -323,8 +323,8 @@ public class GFFParser implements AnnotationWriter  {
             seq = new SimpleAnnotatedBioSeq(seq_name, 0);
             seqhash.put(seq_name, seq);
           }
-          
-          UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b, 
+
+          UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
               score, strand_str.charAt(0), frame_str.charAt(0), last_field, gff_base1);
 
           int max = sym.getMax();
@@ -332,7 +332,7 @@ public class GFFParser implements AnnotationWriter  {
 
           // add syms to a results List during parsing,
           // then add group syms to AnnotatedBioSeq after entire parse is done.
-          
+
           if (use_hierarchy) {
             if (hier_parents == null) {
               hier_parents = new UcscGffSym[hierarchy_levels.size()];
@@ -345,7 +345,7 @@ public class GFFParser implements AnnotationWriter  {
 
             int new_h_level = new_h_level_int.intValue();
             if (new_h_level - current_h_level > 1) {
-              throw new RuntimeException("Hierarchy exception: skipped a level: "+current_h_level+" -> "+new_h_level + ":\n" 
+              throw new RuntimeException("Hierarchy exception: skipped a level: "+current_h_level+" -> "+new_h_level + ":\n"
                + line+"\n");
             }
             String id_field = (String) hierarchy_id_fields.get(feature_type);
@@ -353,7 +353,7 @@ public class GFFParser implements AnnotationWriter  {
               String group_id = determineGroupId(sym, id_field);
               if (group_id != null) {sym.setProperty("id", group_id);}
             }
-            
+
             hier_parents[new_h_level] = sym; // It is a potential parent of the lower-level sym
             if (new_h_level == 0) {
               results.add(sym);
@@ -389,7 +389,7 @@ public class GFFParser implements AnnotationWriter  {
                   // as the parent symmetry for all members of the group
                   // (For example, a "transcript" line with transcript_id=3 might
                   //  be followed by several "exon" lines with transcript_id=3.
-                  //  The "transcript" line should be used as the group symmetry in this case.)  
+                  //  The "transcript" line should be used as the group symmetry in this case.)
                   groupsym = sym;
                 } else {
                   // Make a brand-new symmetry to hold all syms with a given group_id
@@ -444,9 +444,9 @@ public class GFFParser implements AnnotationWriter  {
       Iterator iter = results.iterator();
       while (iter.hasNext()) {
         SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
-        
+
         MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) sym.getBioSeq();
-        
+
         if (USE_GROUPING && sym.getChildCount() > 0) {
           // stretch sym to bounds of all children
           SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
@@ -467,7 +467,7 @@ public class GFFParser implements AnnotationWriter  {
         }
       }
     }
-    
+
     System.out.println("line count: " + line_count);
     System.out.println("sym count: " + sym_count);
     System.out.println("group count: " + group_count);
@@ -539,11 +539,11 @@ public class GFFParser implements AnnotationWriter  {
   static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
   static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
   static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
-  
+
   boolean use_hierarchy = false;
   Map hierarchy_levels = new HashMap(); // Map of String to Integer
   Map hierarchy_id_fields = new HashMap(); // Map of String to String
-  
+
   /**
    *  Process directive lines in the input, which are lines beginning with "##".
    *  Directives that are not understood are treated as comments.
@@ -575,20 +575,20 @@ public class GFFParser implements AnnotationWriter  {
       }
       return;
     }
-    
+
     m = directive_group_from_first.matcher(line);
     if (m.matches()) {
       String true_false = m.group(1).trim();
       use_first_one_as_group = "true".equals(true_false);
       return;
     }
-    
+
     m = directive_index_field.matcher(line);
     if (m.matches()) {
       group_id_field_name = m.group(1).trim();
       return;
     }
-    
+
     m = directive_hierarchy.matcher(line);
     if (m.matches()) {
       if (! use_hierarchy) {
@@ -596,10 +596,10 @@ public class GFFParser implements AnnotationWriter  {
         resetFilters();
       }
       String hierarchy_string = m.group(1).trim();
-      
+
       // Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
       // The ID field is optional.
-      // Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>      
+      // Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>
       Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
 
       Matcher mm = p.matcher(hierarchy_string);
@@ -609,7 +609,7 @@ public class GFFParser implements AnnotationWriter  {
         Integer level = new Integer(level_string);
         hierarchy_levels.put(feature_type, level);
         addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
-        
+
         System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
 
         String id_field = mm.group(4);
@@ -622,8 +622,8 @@ public class GFFParser implements AnnotationWriter  {
       }
       return;
     }
-    
-    
+
+
     // Issue warnings about directives that aren't understood only for "##IGB-" directives.
     if (line.startsWith("##IGB")) {
       System.out.println("WARNING: GFF/GTF processing directive not understood: '"+line+"'");
@@ -647,7 +647,7 @@ public class GFFParser implements AnnotationWriter  {
       Matcher tag_matcher = tag_regex.matcher(att);
       if (tag_matcher.find()) {
         String tag = tag_matcher.group(1);
-        
+
         int index = tag_matcher.end(1);
         Matcher value_matcher = value_regex.matcher(att);
         boolean matches = value_matcher.find(index);
@@ -733,7 +733,7 @@ public class GFFParser implements AnnotationWriter  {
     }
     return group_id;
   }
-    
+
   public static void main(String[] args) {
     GFFParser test = new GFFParser();
     String file_name = null;
@@ -758,12 +758,12 @@ public class GFFParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
-    
+
     int annots_to_write = 1;
     for (int i=0; i < annots_to_write && i < annots.size() ; i++) {
       System.out.println("\nSymmetry #"+ (i+1) +" ------------------------------");
       SymWithProps sym = (SymWithProps) annots.get(i);
-      SeqUtils.printSymmetry(sym, "  ", true);      
+      SeqUtils.printSymmetry(sym, "  ", true);
     }
     System.out.println("------------------------------");
 

@@ -87,7 +87,7 @@ public class LoadFileAction {
         new String[] {"das", "dasxml", "das2xml"},
         "DAS Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"gr", "bgr", "sgr", "bar", "mbar", "sbar"},
+        new String[] {"gr", "bgr", "sgr", "bar"},
         "Graph Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"sin", "egr", "egr.txt"},

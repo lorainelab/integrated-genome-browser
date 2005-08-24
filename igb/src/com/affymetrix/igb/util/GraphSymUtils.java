@@ -28,6 +28,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.Versioned;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.parsers.SgrParser;
+import com.affymetrix.igb.parsers.BarParser;
 
 
 public class GraphSymUtils {
@@ -62,8 +63,6 @@ public class GraphSymUtils {
       lc.endsWith(".gr") ||
       lc.endsWith(".bgr") ||
       lc.endsWith(".bar") ||
-      lc.endsWith(".mbar") ||
-      lc.endsWith(".sbar") ||
       lc.endsWith(".sgr")
       );
   }
@@ -80,10 +79,10 @@ public class GraphSymUtils {
    *  Reads one or more graphs from an input stream.
    *  Some graph file formats can contain only one graph, others contain
    *  more than one.  For consistency, always returns a List (possibly empty).
-   *  Will accept "bar", "mbar", "bgr", "gr", "sbar", or "sgr".
+   *  Will accept "bar", "bgr", "gr", or "sgr".
    *  Loaded graphs will be attached to their respective BioSeq's, if they
    *  are instances of MutableAnnotatedBioSeq.
-   *  @param seq  Ignored in most cases.  But for "gr" and "sbar" files that
+   *  @param seq  Ignored in most cases.  But for "gr" files that
    *   do not specify a BioSeq, use this parameter to specify it.  If null
    *   then SingletonGenometryModel.getSelectedSeq() will be used.
    */
@@ -96,9 +95,10 @@ public class GraphSymUtils {
     if (seq == null) {
       seq = SingletonGenometryModel.getGenometryModel().getSelectedSeq();
     }
-
-    if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
-      grafs = readMbarFormat(newstr, seqs, stream_name);
+    //    if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
+    if (sname.endsWith(".bar"))  {
+      //      grafs = readMbarFormat(newstr, seqs, stream_name);
+      grafs = BarParser.parse(newstr, seqs, stream_name);
     }
     else if (sname.endsWith(".gr")) {
       if (seq == null) {
@@ -106,12 +106,14 @@ public class GraphSymUtils {
       }
       grafs = wrapInList(readGrFormat(newstr, seq, stream_name));
     }
+    /*
     else if (sname.endsWith(".sbar")) {
       if (seq == null) {
         throw new IOException("Must select a sequence before loading a graph of type 'sbar'");
       }
       grafs = wrapInList(readSbarFormat(newstr, seq));
     }
+    */
     else if (sname.endsWith(".bgr")) {
       grafs = wrapInList(readBgrFormat(newstr, seqs));
     }
@@ -151,57 +153,6 @@ public class GraphSymUtils {
     return graf;
   }
 
-  /*
-  public static GraphSym readGraph(InputStream istr, String original_stream_name, String graph_name, BioSeq seq)
-      throws IOException  {
-    // resolve which format based on suffix in "name" of InputStream
-    //  (which usually means the file name or URL)
-    //  ".bgr" ==> readBgrFormat()
-    //  ".gr" ==> readGrFormat()
-    //  ".bar" ==> readBarFormat()
-    GraphSym graf = null;
-    StringBuffer stripped_name = new StringBuffer();
-    InputStream orig_str = istr;
-    //    istr = Streamer.unzipStream(orig_str, stream_name, stripped_name);
-    istr = Streamer.unzipStream(orig_str, original_stream_name, stripped_name);
-    String stream_name = stripped_name.toString();
-    String stream_name_lc = stream_name.toLowerCase();
-    if (graph_name == null) { graph_name = stream_name; }
-
-    if (stream_name_lc.endsWith(".bgr")) {
-      graf = readBgrFormat(istr, seq);
-    }
-    else if (stream_name_lc.endsWith(".gr")) { graf = readGrFormat(istr, seq, stream_name); }
-    else if (stream_name_lc.endsWith(".sbar")) { graf = readSbarFormat(istr, seq); }
-    else if (stream_name_lc.endsWith(".bar") || stream_name_lc.endsWith(".mbar")) {
-      Map seqs = new HashMap();
-      if (seq != null) {
-        seqs.put(seq.getID(), seq);
-      }
-      List grafs = readMbarFormat(istr, seqs, stream_name);
-      if (grafs.size() > 0) {
-        graf = (GraphSym)grafs.get(0);
-      }
-    }
-    else {
-      System.out.println("suffix not recognized: " + stream_name);
-      System.out.println("attempting to load as text graph (.gr) format");
-      //      graf = readGrFormat(istr, seq, null);
-      graf = readGrFormat(istr, seq, stream_name);
-    }
-    if (graf != null)  {
-      graf.setProperty("source_url", original_stream_name);
-      graf.setGraphName(graph_name);
-    }
-    if ((graf.getGraphName() != null) && (graf.getGraphName().indexOf("TransFrag") >= 0)) {
-      graf = GraphSymUtils.convertTransFragGraph(graf);
-    }
-    if (seq instanceof MutableAnnotatedBioSeq) {
-      ((MutableAnnotatedBioSeq)seq).addAnnotation(graf);
-    }
-    return graf;
-  }
-  */
 
   static List wrapInList(GraphSym gsym) {
     List grafs = null;
@@ -242,379 +193,6 @@ public class GraphSymUtils {
   }
 
 
-  /**
-   * Writes sbar format.
-   * <pre>
-     Basic BAR (binary array) format:
-
-     #bytes                type        content
-     HEADER SECTION:
-     8                char        "barr\r\n\032\n"
-     4                float        version (1.0)
-     4                int        #rows in data section (nrow)
-     4                int        #columns in data section (ncol)
-     4xncol                int        field types (see below for possible values)
-     4                int        #tag-value pairs (ntag)
-     4                int        tag len
-     4xtaglen        char        tag string
-     4                int        value len
-     4xvaluelen        char        value string
-   * </pre>
-  */
-  public static boolean writeSbarFormat(GraphSym graf, OutputStream ostr) throws IOException {
-    boolean success = false;
-    BufferedOutputStream bos = new BufferedOutputStream(ostr);
-    DataOutputStream dos = new DataOutputStream(bos);
-    int[] xcoords = graf.getGraphXCoords();
-    float[] ycoords = graf.getGraphYCoords();
-    int total_points = xcoords.length;
-
-    // WRITING HEADER
-    dos.writeBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
-    dos.writeFloat(1.0f);       // int  #rows in data section (nrow)
-    dos.writeInt(total_points); // int  #columns in data section (ncol)
-    dos.writeInt(2); // int  #columns in data section (ncol)
-    dos.writeInt(2); // int  first column type ==> type 2 ==> 4-byte signed int
-    dos.writeInt(1); // int  second column type==> type1 ==> 4-byte float
-
-    Map props = graf.getProperties();
-    int propcount = 0;
-    if (props != null) { propcount = props.size(); }
-    int tvcount = propcount + 2;
-    dos.writeInt(tvcount); // int  #tag-value pairs (ntag)
-
-    writeTagVal(dos, "graph_name", graf.getGraphName());
-    writeTagVal(dos, "seq_name", graf.getGraphSeq().getID());
-
-    if (props != null)  {
-      Iterator propit = props.entrySet().iterator();
-      while (propit.hasNext()) {
-        Map.Entry keyval = (Map.Entry)propit.next();
-        Object key = keyval.getKey();
-        Object val = keyval.getValue();
-        // doing toString() just in case properties contains non-String objects
-        writeTagVal(dos, key.toString(), val.toString());
-      }
-    }
-
-    // WRITING DATA
-    for (int i=0; i<total_points; i++) {
-      dos.writeInt((int)xcoords[i]);
-      dos.writeFloat((float)ycoords[i]);
-    }
-
-    // WRITING FOOTER
-    dos.writeBytes("END\n");
-    dos.close();
-    success = true;
-    System.out.println("wrote .bar file to stream");
-    return success;
-  }
-
-  public static List readMbarFormat(InputStream istr, Map seqs, String stream_name)
-    throws IOException {
-    List graphs = null;
-    BufferedInputStream bis = new BufferedInputStream(istr);
-    DataInputStream dis = new DataInputStream(bis);
-    String graph_name = "unknown";
-    boolean bar2 = false;
-    if (stream_name != null) { graph_name = stream_name; }
-    // READING HEADER
-    //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
-    byte[] headbytes = new byte[8];
-    //    byte[] headbytes = new byte[10];
-    dis.readFully(headbytes);
-    String headstr = new String(headbytes);
-    float version = dis.readFloat();       // int  #rows in data section (nrow)
-    if (version >= 2.0f) { bar2 = true; }  // setting boolean bar2 for bar version2-specific conditionals
-    int total_seqs = dis.readInt();
-    int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
-    if (DEBUG_READ) {
-      System.out.println("header: " + headstr);
-      System.out.println("version: " + version);
-      System.out.println("total seqs: " + total_seqs);
-      System.out.println("vals per point: " + vals_per_point);
-    }
-    int[] val_types = new int[vals_per_point];
-    for (int i=0; i<vals_per_point; i++) {
-      val_types[i] = dis.readInt();
-      if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
-    }
-    int tvcount = dis.readInt();
-    if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
-    HashMap file_tagvals = readTagValPairs(dis, tvcount);
-    if (file_tagvals.get("file_type") != null) {
-      graph_name += ":" + (String)file_tagvals.get("file_type");
-    }
-    int total_total_points = 0;
-    for (int k=0; k<total_seqs; k++) {
-      int namelength = dis.readInt();
-      //      String
-      byte[] barray = new byte[namelength];
-      dis.readFully(barray);
-      String seqname = new String(barray);
-      if (DEBUG_READ)  { System.out.println("seq: " + seqname); }
-
-      String groupname = null;
-      if (bar2) {
-	int grouplength = dis.readInt();
-	barray = new byte[grouplength];
-	dis.readFully(barray);
-	groupname = new String(barray);
-	if (DEBUG_READ)  { System.out.println("group length: " + grouplength + ", group: " + groupname); }
-      }
-
-      int verslength = dis.readInt();
-      barray = new byte[verslength];
-      dis.readFully(barray);
-      String seqversion = new String(barray);
-      if (DEBUG_READ) { System.out.println("version length: " + verslength + ", version: " + seqversion); }
-
-      // hack to extract seq version and seq name from seqname field for bar files that were made
-      //   with the version and name concatenated (with ";" separator) into the seqname field
-      int sc_pos = seqname.lastIndexOf(";");
-      if (sc_pos >= 0) {
-        seqversion = seqname.substring(0, sc_pos);
-	seqname = seqname.substring(sc_pos+1);
-	if (DEBUG_READ)  { System.out.println("seqname = " + seqname + ", seqversion = " + seqversion); }
-      }
-
-      HashMap seq_tagvals = null;
-      if (bar2) {
-	int seq_tagval_count = dis.readInt();
-	seq_tagvals = readTagValPairs(dis, seq_tagval_count);
-      }
-
-      int total_points = dis.readInt();
-      total_total_points += total_points;
-      System.out.println("seq " + k + ": name = " + seqname + ", version = " + seqversion + 
-			 ", group = " + groupname + 
-			 ", data points = " + total_points);
-      //      System.out.println("total data points for graph " + k + ": " + total_points);
-      MutableAnnotatedBioSeq seq = null;
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      Iterator iter = seqs.values().iterator();
-      // can't just hash, because _could_ be a synonym instead of an exact match
-
-      while (iter.hasNext()) {
-	// testing both seq id and version id (if version id is available)
-        MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
-        if (lookup.isSynonym(testseq.getID(), seqname)) {
-	  // GAH 1-23-2005
-	  // need to ensure that if bar2 format, the seq group is also a synonym!
-	  // GAH 7-7-2005
-	  //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
-	  //      groupname
-	  //      seqversion
-	  //      groupname + ":" + seqversion
-	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned))) {
-	    seq = testseq;
-	    break;
-	  }
-	  else {  
-	    String test_version = ((Versioned)testseq).getVersion();
-	    if ((lookup.isSynonym(test_version, seqversion)) || 
-		(lookup.isSynonym(test_version, groupname)) || 
-		(lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
-	      if (DEBUG_READ) { System.out.println("found synonymn"); }
-	      seq = testseq;
-	      break;
-	    }
-	  }
-        }
-      }
-      if (seq == null) {
-	if (bar2 && groupname != null) {
-	  seqversion = groupname + ":" + seqversion;
-	}
-        System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
-        seq = new NibbleBioSeq(seqname, seqversion, 500000000);
-      }
-      //      System.out.println("seq: " + seq);
-      if (vals_per_point == 1) {
-        System.err.println("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
-      }
-      else if (vals_per_point == 2) {
-        if (val_types[0] == BYTE4_SIGNED_INT &&
-            val_types[1] == BYTE4_FLOAT) {
-          if (graphs == null) { graphs = new ArrayList(); }
-          //          System.out.println("reading graph data: " + k);
-          int xcoords[] = new int[total_points];
-          float ycoords[] = new float[total_points];
-	  float prev_max_xcoord = -1;
-	  boolean sort_reported = false;
-          for (int i= 0; i<total_points; i++) {
-            //            xcoords[i] = (double)dis.readInt();
-            //            ycoords[i] = (double)dis.readFloat();
-            int col0 = dis.readInt();
-            float col1 = dis.readFloat();
-	    if (col0 < prev_max_xcoord && (! sort_reported)) {
-	      if (DEBUG_READ) { System.out.println("WARNING!! not sorted by ascending xcoord"); }
-	      sort_reported = true;
-	    }
-	    prev_max_xcoord = col0;
-            xcoords[i] = col0;
-            ycoords[i] = col1;
-            if ((DEBUG_DATA) && (i<100)) {
-              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
-            }
-          }
-          GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
-	  //          graf.setProperties(new HashMap(file_tagvals));
-	  copyProps(graf, file_tagvals);
-	  if (bar2)  { copyProps(graf, seq_tagvals); }
-	  //	  graf.setProperty("method", graph_name);
-          //          System.out.println("done reading graph data: " + graf);
-          graphs.add(graf);
-        }
-        else {
-          System.err.println("currently, first val must be int4, second must be float4");
-        }
-      }
-      else if (vals_per_point == 3) {
-        // System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
-        if (val_types[0] == BYTE4_SIGNED_INT &&
-            val_types[1] == BYTE4_FLOAT &&
-            val_types[2] == BYTE4_FLOAT) {
-          if (graphs == null) { graphs = new ArrayList(); }
-          if (DEBUG_READ)  { System.out.println("reading graph data: " + k); }
-          int xcoords[] = new int[total_points];
-          float ycoords[] = new float[total_points];
-          float zcoords[] = new float[total_points];
-          for (int i = 0; i<total_points; i++) {
-            //            xcoords[i] = (double)dis.readInt();
-            //            ycoords[i] = (double)dis.readFloat();
-            int col0 = dis.readInt();
-            float col1 = dis.readFloat();
-            float col2 = dis.readFloat();
-            xcoords[i] = col0;
-            ycoords[i] = col1;
-            zcoords[i] = col2;
-            if (DEBUG_DATA && i < 100) {
-              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2); }
-          }
-          String pm_name = graph_name + " : pm";
-          String mm_name = graph_name + " : mm";
-          GraphSym pm_graf =
-            new GraphSym(xcoords, ycoords, graph_name + " : pm", seq);
-          GraphSym mm_graf =
-            new GraphSym(xcoords, zcoords, graph_name + " : mm", seq);
-	  //          mm_graf.setProperties(new HashMap(file_tagvals));
-	  //          pm_graf.setProperties(new HashMap(file_tagvals));
-	  copyProps(pm_graf, file_tagvals);
-	  copyProps(mm_graf, file_tagvals);
-          pm_graf.setGraphName(pm_name);
-          mm_graf.setGraphName(mm_name);
-          //pm_graf.setProperty("graph_name", pm_name);
-          //mm_graf.setProperty("graph_name", mm_name);
-	  if (bar2)  {
-	    copyProps(pm_graf, seq_tagvals);
-	    copyProps(mm_graf, seq_tagvals);
-	  }
-          System.out.println("done reading graph data: ");
-          System.out.println("pmgraf, yval = column1: " + pm_graf);
-          System.out.println("mmgraf, yval = column2: " + mm_graf);
-	  pm_graf.setProperty("probetype", "PM (perfect match)");
-	  mm_graf.setProperty("probetype", "MM (mismatch)");
-          graphs.add(pm_graf);
-          graphs.add(mm_graf);
-        }
-        else {
-          System.err.println("currently, first val must be int4, second must be float4");
-        }
-      }
-    }
-    System.out.println("total data points in bar file: " + total_total_points);
-
-    return graphs;
-  }
-
-  public static GraphSym readSbarFormat(InputStream istr, BioSeq aseq) throws IOException {
-    BufferedInputStream bis = new BufferedInputStream(istr);
-    DataInputStream dis = new DataInputStream(bis);
-    // READING HEADER
-    //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
-    byte[] headbytes = new byte[8];
-    dis.readFully(headbytes);
-    String headstr = new String(headbytes);
-
-    float version = dis.readFloat();       // int  #rows in data section (nrow)
-    int total_points = dis.readInt(); // int  #columns in data section (ncol)
-    int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
-    int[] val_types = new int[vals_per_point];
-    for (int i=0; i<vals_per_point; i++) {
-      val_types[i] = dis.readInt();
-    }
-    if (vals_per_point < 2 ||
-        val_types[0] != BYTE4_SIGNED_INT ||
-        val_types[1] != BYTE4_FLOAT) {
-      System.err.println("Can't parse: GraphSymUtils readSbarFormat() currently requires that data " +
-                         " be in format 4BYTE_SIGNED_INT 4BYTE_FLOAT");
-      return null;
-    }
-
-    int tvcount = dis.readInt();
-    if (DEBUG_READ) {
-      System.out.println("header top string: " + headstr);
-      System.out.println("version: " + version);
-      System.out.println("total points: " + total_points);
-      System.out.println("vals_per_point: " + vals_per_point);
-      System.out.println("tag-value count: " + tvcount);
-
-    }
-    HashMap tagvals = readTagValPairs(dis, tvcount);
-
-    int[] xcoords = new int[total_points];
-    float[] ycoords = new float[total_points];
-
-    if (val_types[0] == BYTE4_SIGNED_INT &&
-        val_types[1] == BYTE4_FLOAT) {
-      for (int i= 0; i<total_points; i++) {
-        xcoords[i] = dis.readInt();
-        ycoords[i] = dis.readFloat();
-        //        if (DEBUG_READ && i<10) {
-        //          System.out.println("pos = " + xcoords[i] + ", score = " + ycoords[i]);
-        //        }
-      }
-    }
-
-    else {
-      for (int i= 0; i<total_points; i++) {
-        if (val_types[0] == BYTE4_SIGNED_INT) { xcoords[i] = dis.readInt(); }
-        else if (val_types[0] == BYTE4_FLOAT) { xcoords[i] = (int)dis.readFloat(); }
-        else if (val_types[0] == BYTE8_FLOAT) { xcoords[i] = (int)dis.readDouble(); }
-        else { System.err.println(" x format unrecognized!"); }
-        if (val_types[1] == BYTE4_SIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
-        else if (val_types[1] == BYTE4_FLOAT) { ycoords[i] = dis.readFloat(); }
-        else if (val_types[1] == BYTE8_FLOAT) { ycoords[i] = (float)dis.readDouble(); }
-        else if (val_types[1] == BYTE1_SIGNED_INT) { ycoords[i] = (float)dis.readByte(); }
-        else if (val_types[1] == BYTE1_UNSIGNED_INT) { ycoords[i] = (float)dis.readUnsignedByte(); }
-        else if (val_types[1] == BYTE2_SIGNED_INT) { ycoords[i] = (float)dis.readShort(); }
-        else if (val_types[1] == BYTE2_UNSIGNED_INT) { ycoords[i] = (float)dis.readUnsignedShort(); }
-        else if (val_types[1] == BYTE4_SIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
-        else if (val_types[1] == BYTE4_UNSIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
-        else { System.err.println(" x format unrecognized!"); }
-        if (DEBUG_READ && i<10) {
-          System.out.println("pos = " + xcoords[i] + ", score = " + ycoords[i]);
-        }
-      }
-    }
-    GraphSym graf = new GraphSym(xcoords, ycoords, (String)tagvals.get("graph_name"), aseq);
-    graf.setProperties(tagvals);
-    dis.close();
-    return graf;
-  }
-
-  public static void copyProps(GraphSym graf, Map tagvals) {
-    if (tagvals == null) { return; }
-    Iterator iter = tagvals.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry tagval = (Map.Entry)iter.next();
-      String tag = (String)tagval.getKey();
-      String val = (String)tagval.getValue();
-      graf.setProperty(tag, val);
-    }
-  }
 
   /**
    * Writes bgr format.
@@ -1096,3 +674,383 @@ public class GraphSymUtils {
 
   }
 }
+
+  /**
+   * Writes sbar format.
+   * <pre>
+     Basic BAR (binary array) format:
+
+     #bytes                type        content
+     HEADER SECTION:
+     8                char        "barr\r\n\032\n"
+     4                float        version (1.0)
+     4                int        #rows in data section (nrow)
+     4                int        #columns in data section (ncol)
+     4xncol                int        field types (see below for possible values)
+     4                int        #tag-value pairs (ntag)
+     4                int        tag len
+     4xtaglen        char        tag string
+     4                int        value len
+     4xvaluelen        char        value string
+   * </pre>
+  */
+  /*
+  public static boolean writeSbarFormat(GraphSym graf, OutputStream ostr) throws IOException {
+    boolean success = false;
+    BufferedOutputStream bos = new BufferedOutputStream(ostr);
+    DataOutputStream dos = new DataOutputStream(bos);
+    int[] xcoords = graf.getGraphXCoords();
+    float[] ycoords = graf.getGraphYCoords();
+    int total_points = xcoords.length;
+
+    // WRITING HEADER
+    dos.writeBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+    dos.writeFloat(1.0f);       // int  #rows in data section (nrow)
+    dos.writeInt(total_points); // int  #columns in data section (ncol)
+    dos.writeInt(2); // int  #columns in data section (ncol)
+    dos.writeInt(2); // int  first column type ==> type 2 ==> 4-byte signed int
+    dos.writeInt(1); // int  second column type==> type1 ==> 4-byte float
+
+    Map props = graf.getProperties();
+    int propcount = 0;
+    if (props != null) { propcount = props.size(); }
+    int tvcount = propcount + 2;
+    dos.writeInt(tvcount); // int  #tag-value pairs (ntag)
+
+    writeTagVal(dos, "graph_name", graf.getGraphName());
+    writeTagVal(dos, "seq_name", graf.getGraphSeq().getID());
+
+    if (props != null)  {
+      Iterator propit = props.entrySet().iterator();
+      while (propit.hasNext()) {
+        Map.Entry keyval = (Map.Entry)propit.next();
+        Object key = keyval.getKey();
+        Object val = keyval.getValue();
+        // doing toString() just in case properties contains non-String objects
+        writeTagVal(dos, key.toString(), val.toString());
+      }
+    }
+
+    // WRITING DATA
+    for (int i=0; i<total_points; i++) {
+      dos.writeInt((int)xcoords[i]);
+      dos.writeFloat((float)ycoords[i]);
+    }
+
+    // WRITING FOOTER
+    dos.writeBytes("END\n");
+    dos.close();
+    success = true;
+    System.out.println("wrote .bar file to stream");
+    return success;
+  }
+  */
+
+  /*
+  public static List readMbarFormat(InputStream istr, Map seqs, String stream_name)
+    throws IOException {
+    List graphs = null;
+    BufferedInputStream bis = new BufferedInputStream(istr);
+    DataInputStream dis = new DataInputStream(bis);
+    String graph_name = "unknown";
+    boolean bar2 = false;
+    if (stream_name != null) { graph_name = stream_name; }
+    // READING HEADER
+    //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+    byte[] headbytes = new byte[8];
+    //    byte[] headbytes = new byte[10];
+    dis.readFully(headbytes);
+    String headstr = new String(headbytes);
+    float version = dis.readFloat();       // int  #rows in data section (nrow)
+    if (version >= 2.0f) { bar2 = true; }  // setting boolean bar2 for bar version2-specific conditionals
+    int total_seqs = dis.readInt();
+    int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
+    if (DEBUG_READ) {
+      System.out.println("header: " + headstr);
+      System.out.println("version: " + version);
+      System.out.println("total seqs: " + total_seqs);
+      System.out.println("vals per point: " + vals_per_point);
+    }
+    int[] val_types = new int[vals_per_point];
+    for (int i=0; i<vals_per_point; i++) {
+      val_types[i] = dis.readInt();
+      if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
+    }
+    int tvcount = dis.readInt();
+    if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
+    HashMap file_tagvals = readTagValPairs(dis, tvcount);
+    if (file_tagvals.get("file_type") != null) {
+      graph_name += ":" + (String)file_tagvals.get("file_type");
+    }
+    int total_total_points = 0;
+    for (int k=0; k<total_seqs; k++) {
+      int namelength = dis.readInt();
+      //      String
+      byte[] barray = new byte[namelength];
+      dis.readFully(barray);
+      String seqname = new String(barray);
+      if (DEBUG_READ)  { System.out.println("seq: " + seqname); }
+
+      String groupname = null;
+      if (bar2) {
+	int grouplength = dis.readInt();
+	barray = new byte[grouplength];
+	dis.readFully(barray);
+	groupname = new String(barray);
+	if (DEBUG_READ)  { System.out.println("group length: " + grouplength + ", group: " + groupname); }
+      }
+
+      int verslength = dis.readInt();
+      barray = new byte[verslength];
+      dis.readFully(barray);
+      String seqversion = new String(barray);
+      if (DEBUG_READ) { System.out.println("version length: " + verslength + ", version: " + seqversion); }
+
+      // hack to extract seq version and seq name from seqname field for bar files that were made
+      //   with the version and name concatenated (with ";" separator) into the seqname field
+      int sc_pos = seqname.lastIndexOf(";");
+      if (sc_pos >= 0) {
+        seqversion = seqname.substring(0, sc_pos);
+	seqname = seqname.substring(sc_pos+1);
+	if (DEBUG_READ)  { System.out.println("seqname = " + seqname + ", seqversion = " + seqversion); }
+      }
+
+      HashMap seq_tagvals = null;
+      if (bar2) {
+	int seq_tagval_count = dis.readInt();
+	seq_tagvals = readTagValPairs(dis, seq_tagval_count);
+      }
+
+      int total_points = dis.readInt();
+      total_total_points += total_points;
+      System.out.println("seq " + k + ": name = " + seqname + ", version = " + seqversion +
+			 ", group = " + groupname +
+			 ", data points = " + total_points);
+      //      System.out.println("total data points for graph " + k + ": " + total_points);
+      MutableAnnotatedBioSeq seq = null;
+      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+      Iterator iter = seqs.values().iterator();
+      // can't just hash, because _could_ be a synonym instead of an exact match
+
+      while (iter.hasNext()) {
+	// testing both seq id and version id (if version id is available)
+        MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
+        if (lookup.isSynonym(testseq.getID(), seqname)) {
+	  // GAH 1-23-2005
+	  // need to ensure that if bar2 format, the seq group is also a synonym!
+	  // GAH 7-7-2005
+	  //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
+	  //      groupname
+	  //      seqversion
+	  //      groupname + ":" + seqversion
+	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned))) {
+	    seq = testseq;
+	    break;
+	  }
+	  else {
+	    String test_version = ((Versioned)testseq).getVersion();
+	    if ((lookup.isSynonym(test_version, seqversion)) ||
+		(lookup.isSynonym(test_version, groupname)) ||
+		(lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
+	      if (DEBUG_READ) { System.out.println("found synonymn"); }
+	      seq = testseq;
+	      break;
+	    }
+	  }
+        }
+      }
+      if (seq == null) {
+	if (bar2 && groupname != null) {
+	  seqversion = groupname + ":" + seqversion;
+	}
+        System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
+        seq = new NibbleBioSeq(seqname, seqversion, 500000000);
+      }
+      //      System.out.println("seq: " + seq);
+      if (vals_per_point == 1) {
+        System.err.println("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
+      }
+      else if (vals_per_point == 2) {
+        if (val_types[0] == BYTE4_SIGNED_INT &&
+            val_types[1] == BYTE4_FLOAT) {
+          if (graphs == null) { graphs = new ArrayList(); }
+          //          System.out.println("reading graph data: " + k);
+          int xcoords[] = new int[total_points];
+          float ycoords[] = new float[total_points];
+	  float prev_max_xcoord = -1;
+	  boolean sort_reported = false;
+          for (int i= 0; i<total_points; i++) {
+            //            xcoords[i] = (double)dis.readInt();
+            //            ycoords[i] = (double)dis.readFloat();
+            int col0 = dis.readInt();
+            float col1 = dis.readFloat();
+	    if (col0 < prev_max_xcoord && (! sort_reported)) {
+	      if (DEBUG_READ) { System.out.println("WARNING!! not sorted by ascending xcoord"); }
+	      sort_reported = true;
+	    }
+	    prev_max_xcoord = col0;
+            xcoords[i] = col0;
+            ycoords[i] = col1;
+            if ((DEBUG_DATA) && (i<100)) {
+              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
+            }
+          }
+          GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
+	  //          graf.setProperties(new HashMap(file_tagvals));
+	  copyProps(graf, file_tagvals);
+	  if (bar2)  { copyProps(graf, seq_tagvals); }
+	  //	  graf.setProperty("method", graph_name);
+          //          System.out.println("done reading graph data: " + graf);
+          graphs.add(graf);
+        }
+        else {
+          System.err.println("currently, first val must be int4, second must be float4");
+        }
+      }
+      else if (vals_per_point == 3) {
+        // System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
+        if (val_types[0] == BYTE4_SIGNED_INT &&
+            val_types[1] == BYTE4_FLOAT &&
+            val_types[2] == BYTE4_FLOAT) {
+          if (graphs == null) { graphs = new ArrayList(); }
+          if (DEBUG_READ)  { System.out.println("reading graph data: " + k); }
+          int xcoords[] = new int[total_points];
+          float ycoords[] = new float[total_points];
+          float zcoords[] = new float[total_points];
+          for (int i = 0; i<total_points; i++) {
+            //            xcoords[i] = (double)dis.readInt();
+            //            ycoords[i] = (double)dis.readFloat();
+            int col0 = dis.readInt();
+            float col1 = dis.readFloat();
+            float col2 = dis.readFloat();
+            xcoords[i] = col0;
+            ycoords[i] = col1;
+            zcoords[i] = col2;
+            if (DEBUG_DATA && i < 100) {
+              System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2); }
+          }
+          String pm_name = graph_name + " : pm";
+          String mm_name = graph_name + " : mm";
+          GraphSym pm_graf =
+            new GraphSym(xcoords, ycoords, graph_name + " : pm", seq);
+          GraphSym mm_graf =
+            new GraphSym(xcoords, zcoords, graph_name + " : mm", seq);
+	  //          mm_graf.setProperties(new HashMap(file_tagvals));
+	  //          pm_graf.setProperties(new HashMap(file_tagvals));
+	  copyProps(pm_graf, file_tagvals);
+	  copyProps(mm_graf, file_tagvals);
+          pm_graf.setGraphName(pm_name);
+          mm_graf.setGraphName(mm_name);
+          //pm_graf.setProperty("graph_name", pm_name);
+          //mm_graf.setProperty("graph_name", mm_name);
+	  if (bar2)  {
+	    copyProps(pm_graf, seq_tagvals);
+	    copyProps(mm_graf, seq_tagvals);
+	  }
+          System.out.println("done reading graph data: ");
+          System.out.println("pmgraf, yval = column1: " + pm_graf);
+          System.out.println("mmgraf, yval = column2: " + mm_graf);
+	  pm_graf.setProperty("probetype", "PM (perfect match)");
+	  mm_graf.setProperty("probetype", "MM (mismatch)");
+          graphs.add(pm_graf);
+          graphs.add(mm_graf);
+        }
+        else {
+          System.err.println("currently, first val must be int4, second must be float4");
+        }
+      }
+    }
+    System.out.println("total data points in bar file: " + total_total_points);
+
+    return graphs;
+  }
+  */
+
+  /*
+  public static GraphSym readSbarFormat(InputStream istr, BioSeq aseq) throws IOException {
+    BufferedInputStream bis = new BufferedInputStream(istr);
+    DataInputStream dis = new DataInputStream(bis);
+    // READING HEADER
+    //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+    byte[] headbytes = new byte[8];
+    dis.readFully(headbytes);
+    String headstr = new String(headbytes);
+
+    float version = dis.readFloat();       // int  #rows in data section (nrow)
+    int total_points = dis.readInt(); // int  #columns in data section (ncol)
+    int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
+    int[] val_types = new int[vals_per_point];
+    for (int i=0; i<vals_per_point; i++) {
+      val_types[i] = dis.readInt();
+    }
+    if (vals_per_point < 2 ||
+        val_types[0] != BYTE4_SIGNED_INT ||
+        val_types[1] != BYTE4_FLOAT) {
+      System.err.println("Can't parse: GraphSymUtils readSbarFormat() currently requires that data " +
+                         " be in format 4BYTE_SIGNED_INT 4BYTE_FLOAT");
+      return null;
+    }
+
+    int tvcount = dis.readInt();
+    if (DEBUG_READ) {
+      System.out.println("header top string: " + headstr);
+      System.out.println("version: " + version);
+      System.out.println("total points: " + total_points);
+      System.out.println("vals_per_point: " + vals_per_point);
+      System.out.println("tag-value count: " + tvcount);
+
+    }
+    HashMap tagvals = readTagValPairs(dis, tvcount);
+
+    int[] xcoords = new int[total_points];
+    float[] ycoords = new float[total_points];
+
+    if (val_types[0] == BYTE4_SIGNED_INT &&
+        val_types[1] == BYTE4_FLOAT) {
+      for (int i= 0; i<total_points; i++) {
+        xcoords[i] = dis.readInt();
+        ycoords[i] = dis.readFloat();
+        //        if (DEBUG_READ && i<10) {
+        //          System.out.println("pos = " + xcoords[i] + ", score = " + ycoords[i]);
+        //        }
+      }
+    }
+
+    else {
+      for (int i= 0; i<total_points; i++) {
+        if (val_types[0] == BYTE4_SIGNED_INT) { xcoords[i] = dis.readInt(); }
+        else if (val_types[0] == BYTE4_FLOAT) { xcoords[i] = (int)dis.readFloat(); }
+        else if (val_types[0] == BYTE8_FLOAT) { xcoords[i] = (int)dis.readDouble(); }
+        else { System.err.println(" x format unrecognized!"); }
+        if (val_types[1] == BYTE4_SIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
+        else if (val_types[1] == BYTE4_FLOAT) { ycoords[i] = dis.readFloat(); }
+        else if (val_types[1] == BYTE8_FLOAT) { ycoords[i] = (float)dis.readDouble(); }
+        else if (val_types[1] == BYTE1_SIGNED_INT) { ycoords[i] = (float)dis.readByte(); }
+        else if (val_types[1] == BYTE1_UNSIGNED_INT) { ycoords[i] = (float)dis.readUnsignedByte(); }
+        else if (val_types[1] == BYTE2_SIGNED_INT) { ycoords[i] = (float)dis.readShort(); }
+        else if (val_types[1] == BYTE2_UNSIGNED_INT) { ycoords[i] = (float)dis.readUnsignedShort(); }
+        else if (val_types[1] == BYTE4_SIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
+        else if (val_types[1] == BYTE4_UNSIGNED_INT) { ycoords[i] = (float)dis.readInt(); }
+        else { System.err.println(" x format unrecognized!"); }
+        if (DEBUG_READ && i<10) {
+          System.out.println("pos = " + xcoords[i] + ", score = " + ycoords[i]);
+        }
+      }
+    }
+    GraphSym graf = new GraphSym(xcoords, ycoords, (String)tagvals.get("graph_name"), aseq);
+    graf.setProperties(tagvals);
+    dis.close();
+    return graf;
+  }
+
+  public static void copyProps(GraphSym graf, Map tagvals) {
+    if (tagvals == null) { return; }
+    Iterator iter = tagvals.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry tagval = (Map.Entry)iter.next();
+      String tag = (String)tagval.getKey();
+      String val = (String)tagval.getValue();
+      graf.setProperty(tag, val);
+    }
+  }
+  */

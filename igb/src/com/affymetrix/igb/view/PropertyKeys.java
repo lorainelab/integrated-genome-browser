@@ -76,7 +76,9 @@ public class PropertyKeys {
 	      val = props[j].get(name);
 	    }
             val = (val == null ? "ND" : val);
-            name_value[j+1] = val.toString();
+	    // if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.] 
+	    //   string representation
+            name_value[j+1] = val.toString();  
           }
           rows_thus_far.put(name,name_value);
         }

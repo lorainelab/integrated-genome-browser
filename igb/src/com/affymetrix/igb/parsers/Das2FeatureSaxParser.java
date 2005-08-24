@@ -92,6 +92,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   String current_elem = null;  // current element
   StringBuffer current_chars = null;
   Stack elemstack = new Stack();
+  String xml_base = null;
 
   String feat_id = null;
   String feat_type = null;
@@ -100,6 +101,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   String feat_created = null;
   String feat_modified = null;
   String feat_doc_href = null;
+  String feat_prop_content = "";
+  String feat_prop_ptype = null;
 
   /**  list of SeqSpans specifying feature locations */
   List feat_locs = new ArrayList();
@@ -110,8 +113,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *      child feature object (if child feature already parsed)
    */
   Map feat_parts = new LinkedHashMap();
-  List feat_props = new ArrayList();
   List feat_aligns = new ArrayList();
+  Map feat_props = null;
 
   /**
    *  lists for builtin feature properties
@@ -141,6 +144,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  need mapping of parent id to child count for efficiently figuring out when
    *    symmetry is fully populated with children
    */
+
+  public void setXmlBase(String base) { xml_base = base; }
 
   public List parse(InputSource isrc, String seqgroup_name)  throws IOException, SAXException {
     return parse(isrc, seqgroup_name, true);
@@ -269,6 +274,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
     else if (current_elem == PROP) {
+      feat_prop_ptype = atts.getValue("ptype");
     }
     else if (current_elem == ALIGN) {
     }
@@ -296,15 +302,17 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     feat_xids.clear();
     // making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
     feat_parts = new LinkedHashMap();
-    feat_props.clear();
     feat_aligns.clear();
 
     feat_notes.clear();
     feat_aliass.clear();
     feat_phases.clear();
     feat_scores.clear();
-
+    feat_props = null;
+    feat_prop_content = "";
+    feat_prop_ptype = null;
   }
+
 
   /**
    *  implementing sax content handler interface
@@ -318,7 +326,25 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       clearFeature();
     }
     else if (name == PROP) {
-
+      if (feat_props == null) { feat_props = new HashMap(); }
+      // need to process <PROP> elements after element is ended, because value may be in CDATA?
+      // need to account for possibility that there are multiple property values of same ptype
+      //    for such cases, make object that feat_prop_ptype maps to a List of the prop vals
+      Object prev = feat_props.get(feat_prop_ptype);
+      if (prev == null) {
+	feat_props.put(feat_prop_ptype, feat_prop_content);
+      }
+      else if (prev instanceof List) {
+	((List)prev).add(feat_prop_content);
+      }
+      else {
+	List multivals = new ArrayList();
+	multivals.add(prev);
+	multivals.add(feat_prop_content);
+	feat_props.put(feat_prop_ptype, feat_prop_content);
+      }
+      feat_prop_ptype = null;
+      feat_prop_content = "";
     }
 
     //    prev_chars = false;
@@ -330,7 +356,10 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  implementing sax handler interface
    */
   public void characters(char[] ch, int start, int length) {
-
+    if (current_elem == PROP) {
+      // need to collect characters for property CDATA
+      feat_prop_content += new String(ch, start, length);
+    }
   }
 
   public void addFeature() {
@@ -341,7 +370,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       return;
     }
     SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
-					      feat_created, feat_modified, feat_doc_href);
+					      feat_created, feat_modified, feat_doc_href, feat_props);
     // add featsym to id2sym hash
     id2sym.put(feat_id, featsym);
     parent2parts.put(featsym, feat_parts);
@@ -458,6 +487,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 
       // may need to extract seqid, seq version, genome for properly setting xml:base...
+      // for now only way to specify xml:base is to explicitly set via this.setXmlBase()
       String seq_id = seq.getID();
       String seq_version = null;
       if (seq instanceof Versioned) {
@@ -469,7 +499,10 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       pw.println("<FEATURELIST  ");
       pw.println("   xmlns=\"http://www.biodas.org/ns/das/2.00\" ");
       pw.println("   xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      pw.println("   xml:base=\"http:...\"> ");
+      //      pw.println("   xml:base=\"http:...\"> ");
+      if (xml_base != null) {  
+	pw.println("   xml:base=\"" + xml_base + "\" >");
+      }
 
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {

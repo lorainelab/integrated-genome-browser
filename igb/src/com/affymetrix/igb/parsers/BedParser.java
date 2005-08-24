@@ -345,6 +345,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
 	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
 	     *     then factory will create a line container glyph to draw line connecting all the bed annots
+	     * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
 	     */
 	    blockMins = new int[1];
 	    blockMins[0] = min;

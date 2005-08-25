@@ -1123,9 +1123,7 @@ public class SeqMapView extends JPanel
     if (factory == null) { factory = default_glyph_factory; }
     factory.createGlyph(annotSym, this);
 
-    /**
-     *  doing "middleground" shading for tracks loaded via DAS/2
-     */
+    // do "middleground" shading for tracks loaded via DAS/2
     if ((meth != null) &&
 	(annotSym instanceof TypeContainerAnnot) &&
 	(annotSym.getChildCount() > 0)  &&
@@ -1608,6 +1606,7 @@ public class SeqMapView extends JPanel
   }
 
 
+  /** Currently has no effect: the grid is not currently available. */
   public void setGridColor() {
     if (grid_glyph != null) {
       Color col = JColorChooser.showDialog(frm,
@@ -1620,6 +1619,7 @@ public class SeqMapView extends JPanel
     }
   }
 
+  /** Currently has no effect: the grid is not currently available. */
   public void setGridSpacing() {
     if (grid_glyph != null) {
       String str = JOptionPane.showInputDialog(frm,
@@ -1636,6 +1636,7 @@ public class SeqMapView extends JPanel
     }
   }
 
+  /** Currently has no effect: the grid is not currently available. */
   public void toggleGrid() {
     if (grid_glyph != null) {
       boolean grid_on =  grid_glyph.isVisible();

@@ -522,8 +522,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
     toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
+    boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, false);
+    if (map_view.isHairlineLabeled() != use_hairline_label) {
+      map_view.toggleHairlineLabel();
+    }
     toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
-    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
+    
+    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");    
     toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
     toggle_edge_matching_item.setState(map_view.getEdgeMatching());
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
@@ -822,7 +827,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_hairline_label_item) {
       map_view.toggleHairlineLabel();
-      toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
+      boolean b = map_view.isHairlineLabeled();
+      toggle_hairline_label_item.setState(b);
+      UnibrowPrefsUtil.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
     } else if (src == move_tab_to_window_item) {
       openTabInNewWindow(tab_pane);
     }

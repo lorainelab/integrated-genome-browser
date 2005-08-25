@@ -176,6 +176,9 @@ public class SeqMapView extends JPanel
   public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
   public static final String PREF_EDGE_MATCH_FUZZY_COLOR = "Edge match fuzzy color";
 
+  /** Name of a boolean preference for whether the hairline lable should be on. */
+  public static final String PREF_HAIRLINE_LABELED = "Hairline Label On";
+
   public static final Color default_axis_color = Color.BLACK;
   public static final Color default_axis_background = Color.WHITE;
   public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;

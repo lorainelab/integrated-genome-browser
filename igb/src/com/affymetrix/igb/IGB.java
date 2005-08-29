@@ -651,6 +651,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
 
+    // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
+    // pop-up menu (or any other mouse listener) on the tab handles.
+    // (A pop-up with "Open tab in a new window" would be nice.)
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
     tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     tab_pane.setMinimumSize(new Dimension(0,0));
 

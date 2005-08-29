@@ -51,7 +51,6 @@ public class OrfAnalyzer2 extends JComponent
   SeqMapView smv;
   JSlider orf_thresh_slider;
   JCheckBox showCB;
-  //  JTextField orf_threshTF;
   JLabel orf_threshL;
   JLabel orfL;
   TransformTierGlyph fortier;
@@ -118,7 +117,6 @@ public class OrfAnalyzer2 extends JComponent
       }
       AffyTieredMap map = smv.getSeqMap();
       map.updateWidget();
-      //      orf_threshTF.setText(current_orf_thresh);
       orf_threshL.setText(Integer.toString(current_orf_thresh));
     }
   }
@@ -170,13 +168,12 @@ public class OrfAnalyzer2 extends JComponent
 
     //    int reside_offset = span_start;
     int residue_offset = 0;
-    //    AnnotatedBioSeq aseq = smv.getSeq();
+
     if (vseq instanceof CompositeNegSeq) {
       residue_offset = ((CompositeNegSeq)vseq).getMin();
     }
 
     AffyTieredMap map = smv.getSeqMap();
-    Map method2color = smv.getColorHash();
     orf_holders = new Vector();
     if (vseq==null || ! (vseq.isComplete())) {
       IGB.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
@@ -215,7 +212,6 @@ public class OrfAnalyzer2 extends JComponent
     IntList[] frame_lists = new IntList[6];
     for (int i=0; i<6; i++) {
       // estimating number of stop codons, then padding by 20%
-      //      frame_lists[i] = new IntList((int)((vseq.getLength()/64)/1.2));
       frame_lists[i] = new IntList((int)((span_length/64)/1.2));
     }
 
@@ -237,7 +233,6 @@ public class OrfAnalyzer2 extends JComponent
       else { res_index = residues.indexOf(codon, res_index); }
       // need to factor in possible offset of residues string from start of
       //    sequence (for example, when sequence is a CompNegSeq)
-      //      while (res_index >=0) {
       while (res_index >= 0  && (seq_index < span_end)) {
 	int frame;
 	// need to factor in possible offset of residues string from start of
@@ -260,7 +255,6 @@ public class OrfAnalyzer2 extends JComponent
     for (int frame=0; frame<6; frame++) {
       boolean forward = frame <= 2;
       IntList xpos_vec = frame_lists[frame];
-      //      IntList xpos_vec = frame_lists[0];
       int[] xpos = xpos_vec.copyToArray();
       // must sort positions!  because positions were added to IntList for each type of
       //   stop codon before other types, positions in IntList will _not_ be in

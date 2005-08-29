@@ -185,23 +185,9 @@ Make sure that the 'lib' directory exists and includes
       <manifest>
         <attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
       </manifest>
-      <fileset dir="${classes.dir}">
-       <exclude name="test/affymetrix/**"/>
-       <exclude name="com/affymetrix/igb/test/**"/>
-       <exclude name="**/*.java"/>
-       <exclude name="**/package.html"/>
-       <exclude name="**/.*"/>
-      </fileset>
-      <fileset dir="${genometry.src.dir}">
-       <exclude name="**/*.java"/>
-       <exclude name="**/package.html"/>
-       <exclude name="**/.*"/>
-      </fileset>
-      <fileset dir="${genoviz.src.dir}">
-       <exclude name="**/*.java"/>
-       <exclude name="**/package.html"/>
-       <exclude name="**/.*"/>
-      </fileset>
+      <zipfileset src="${igb.jar}"/>
+      <zipfileset src="genometry/genometry.jar"/>
+      <zipfileset src="genoviz_sdk/genoviz.jar"/>
       <zipgroupfileset refid="extLibs"/>
     </jar>
   </target>

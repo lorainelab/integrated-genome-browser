@@ -257,6 +257,7 @@ public class SeqMapView extends JPanel
     else {
       map = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
     }
+
     Color bg = default_default_background_color;
     //Color bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DEFAULT_BACKGROUND_COLOR, default_default_background_color);
     map.setMapColor(bg);
@@ -429,10 +430,13 @@ public class SeqMapView extends JPanel
 
   public JPopupMenu getSelectionPopup() { return sym_popup; }
 
+  /** Gets the Map used for tier <b>background</b> colors. */
   public Map getColorHash() { return method2color; }
-  public Map getFactoryHash() { return meth2factory; }
-  public Map getForwardTierHash() { return method2ftier; }
-  public Map getReverseTierHash() { return method2rtier; }
+  Map getFactoryHash() { return meth2factory; }
+  Map getForwardTierHash() { return method2ftier; }
+  Map getReverseTierHash() { return method2rtier; }
+  
+  /** A Map of GraphState to TierGlyph */
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
 
@@ -459,6 +463,7 @@ public class SeqMapView extends JPanel
     meth2factory.put(method, factory);
   }
 
+  /** Sets the Map used for tier <b>background</b> colors. */
   public void setColorHash(Map hash) {
     method2color = hash;
   }
@@ -467,7 +472,7 @@ public class SeqMapView extends JPanel
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 
   /** Set up a tier with fixed pixel height and place axis in it. */
-  public TransformTierGlyph addAxisTier(int tier_index) {
+  TransformTierGlyph addAxisTier(int tier_index) {
     axis_tier = new TransformTierGlyph();
     axis_tier.setLabel("Coordinates");
     axis_tier.setFixedPixelHeight(true);
@@ -903,7 +908,7 @@ public class SeqMapView extends JPanel
     return layers;
   }
 
-  public void removeEmptyTiers() {
+  void removeEmptyTiers() {
     // synchronizing on method2ftier to ensure (hopefully) that entries Set of Map.Entries
     //   will not change out from under the iterator
     ArrayList keys_to_remove = new ArrayList();
@@ -1013,7 +1018,7 @@ public class SeqMapView extends JPanel
     }
   }
 
-  public void addAnnotationTiers() {
+  void addAnnotationTiers() {
     int annotCount = aseq.getAnnotationCount();
     for (int i=0; i<annotCount; i++) {
       SeqSymmetry annotSym = aseq.getAnnotation(i);
@@ -1598,16 +1603,6 @@ public class SeqMapView extends JPanel
     slicing_in_effect = true;
     setAnnotatedSeq(aseq);
   }
-
-  public void setBackgroundColor() {
-      Color col = JColorChooser.showDialog(frm,
-					   "Background Color Chooser", map.getMapColor());
-      if (col != null) {
-	map.setMapColor(col);
-	map.updateWidget();
-      }
-  }
-
 
   /** Currently has no effect: the grid is not currently available. */
   public void setGridColor() {

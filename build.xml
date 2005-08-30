@@ -178,7 +178,7 @@ Make sure that the 'lib' directory exists and includes
     </fileset>
   </path>
 
-  <target name="exe" depends="compile" 
+  <target name="exe" depends="jar" 
           description="generate executable .jar file" >
     <!-- Put everything in ${build} into .jar file -->
       <jar jarfile="igb_exe.jar" update="false">

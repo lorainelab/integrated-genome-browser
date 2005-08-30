@@ -128,11 +128,23 @@ Note that the following commands make use of the preferences
 file in igb_src/igb_prefs.xml.  If you have your own 
 preferences file(s), edit the commands below.
 
-Running from the command line:
-java -mx256m -classpath lib/xercesImpl.jar:lib/xml-apis.jar:lib/servlet.jar:lib/jetty.jar:igb.jar com.affymetrix.unibrow.IGB -prefs igb_src/igb_prefs.xml
+Running from the command line. Sample command:
+
+java -Xmx512m -classpath lib/xercesImpl.jar:lib/xml-apis.jar:lib/servlet.jar:lib/jetty.jar:genometry/genometry.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb_src/igb_prefs.xml
+
+This sample command assumes that:
+
+1) the genoviz.jar and genometry.jar are located in the genoviz_sdk
+   and genometry subdirectories, respectively, relative to the
+   top-level IGB release directory (this happens automatically
+   when building via the ant 'jar' task),
+2) all third-party required jars are in a subdirectory called 'lib'
+   relative to the top-level IGB release directory, and
+3) it is executed in the top-level IGB release directory.
 
 
 Running with ant:
+
 Use the ant task 'run' to run the program from within ant.
 You must let ant know the location of the external
 resources.  For example, if the files are located in

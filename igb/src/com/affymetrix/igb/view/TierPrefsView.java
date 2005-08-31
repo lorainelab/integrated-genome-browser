@@ -141,12 +141,12 @@ public class TierPrefsView extends JPanel implements ListSelectionListener  {
         case COL_SHOW:  
           return state.getShow();
         case COL_TIER_NAME: 
-          return state.getTierName();
+          return state.getUniqueName();
         case COL_ORDER: 
           return String.valueOf(state.getSortOrder());
         case COL_MAX_DEPTH: 
           int md = state.getMaxDepth();
-          if (md == 0) { return "0 (Unlimited)"; }
+          if (md == 0) { return "none"; }
           else { return String.valueOf(state.getMaxDepth()); }
         default:
           return null;

@@ -28,6 +28,8 @@ public class TierPreferenceState {
   static final String PREF_MAX_DEPTH = "Max Depth";
   static final String PREF_SORT_ORDER = "Sort Order";
   static final String PREF_COLOR = "Color";
+  static final String PREF_BACKGROUND = "Background";
+  static final String PREF_HUMAN_NAME = "Human Name";
 
   static final boolean default_show = true;
   static final boolean default_separate = true;
@@ -35,6 +37,7 @@ public class TierPreferenceState {
   static final int default_max_depth = 0;
   static final int default_sort_order = 100;
   static final Color default_color = Color.GREEN;
+  static final Color default_background = Color.BLACK;
 
   public static final int MAX_SORT_ORDER = 1000;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
@@ -45,17 +48,26 @@ public class TierPreferenceState {
   int max_depth;
   int sort_order;
   Color color;
+  Color background;
   
-  String tier_name;
+  String unique_name;
+  String human_name;
+  
   Preferences node;
 
   /** Creates a new TierPreferenceState associated with the tier_name.
    *  Tier name preferences are stored in a case-insensitive way.
    */
-  public TierPreferenceState(String tier_name) {
-    this.tier_name = tier_name;
+  public TierPreferenceState(String unique_name) {
+    if (unique_name.length() > Preferences.MAX_NAME_LENGTH) {
+      unique_name = unique_name.substring(0,Preferences.MAX_NAME_LENGTH);
+      System.out.println("!!!  Preferences node name trimmed to '"+unique_name+"'");
+    }
+
+    this.human_name = unique_name; // this is the default human name, and is not lower case
+    this.unique_name = unique_name.toLowerCase();
     
-    this.node = tiers_root_node.node(this.tier_name.toLowerCase());
+    this.node = tiers_root_node.node(this.unique_name);
 
     separate = node.getBoolean(PREF_SEPARATE, default_separate);
     show = node.getBoolean(PREF_SHOW, default_show);
@@ -63,6 +75,12 @@ public class TierPreferenceState {
     max_depth = node.getInt(PREF_MAX_DEPTH, default_max_depth);
     sort_order = node.getInt(PREF_SORT_ORDER, default_sort_order);
     color = UnibrowPrefsUtil.getColor(node, PREF_COLOR, default_color);
+    human_name = node.get(PREF_HUMAN_NAME, this.human_name);
+  }
+    
+  Preferences getNode() {
+    return this.node;
+    // return tiers_root_node.node(this.unique_name);
   }
   
 //  static TierPreferenceState default_tier_preference_state = null;
@@ -79,8 +97,20 @@ public class TierPreferenceState {
 //    return default_tier_preference_state;
 //  }
   
-  public String getTierName() {
-    return tier_name;
+  public String getUniqueName() {
+    return unique_name;
+  }
+
+  /** Gets a name that may be shorter and more user-friendly than the unique name.
+   *  The human-readable name may contain upper- and lower-case characters.
+   *  The default is equivalent to the unique name.
+   */
+  public String getHumanName() {
+    return this.human_name;
+  }
+  
+  public void setHumanName(String human_name) {
+    this.human_name = human_name;
   }
   
   /** Whether the tier is shown or hidden. */
@@ -90,7 +120,7 @@ public class TierPreferenceState {
   
   public void setShow(boolean b) {
     this.show = b;
-    node.putBoolean(PREF_SHOW, b);
+    getNode().putBoolean(PREF_SHOW, b);
   }
   
   
@@ -101,7 +131,7 @@ public class TierPreferenceState {
   
   public void setSeparate(boolean b) {
     this.separate = b;
-    node.putBoolean(PREF_SEPARATE, b);
+    getNode().putBoolean(PREF_SEPARATE, b);
   }
   
   /** Whether tier is collapsed. */
@@ -111,7 +141,7 @@ public class TierPreferenceState {
   
   public void setCollapsed(boolean b) {
     this.collapsed = b;
-    node.putBoolean(PREF_COLLAPSED, b);
+    getNode().putBoolean(PREF_COLLAPSED, b);
   }
   
   /** Maximum number of rows of annotations for this tier. */
@@ -128,7 +158,7 @@ public class TierPreferenceState {
     if (max < 0) { max = 0; }
     if (max > MAX_MAX_DEPTH) { max = MAX_MAX_DEPTH; }
     this.max_depth = max;
-    node.putInt(PREF_MAX_DEPTH, max);
+    getNode().putInt(PREF_MAX_DEPTH, max);
   }
   
   /** Order for sorting tiers; lower numbers are closer to the axis. */
@@ -145,7 +175,7 @@ public class TierPreferenceState {
     if (order < 0) { order = 0; }
     if (order > MAX_SORT_ORDER) { order = MAX_SORT_ORDER; }
     this.sort_order = order;
-    node.putInt(PREF_SORT_ORDER, order);
+    getNode().putInt(PREF_SORT_ORDER, order);
   }
   
   /** The color of annotations in the tier. */
@@ -155,6 +185,20 @@ public class TierPreferenceState {
 
   public void setColor(Color c) {
     this.color = c;
-    UnibrowPrefsUtil.putColor(node, PREF_COLOR, c);
+    UnibrowPrefsUtil.putColor(getNode(), PREF_COLOR, c);
   }
+  
+  // I'm unclear on whether I want to allow modification of individual tier backgrounds.
+  // Definitely there needs to be a global background color and an axis background color.
+  // If individual backgrounds are allowed, I might throw in a boolean to quickly turn them all off.
+  
+//  /** The color of the tier Background. */
+//  public Color getBackground() {
+//    return background;
+//  }
+//
+//  public void setBackground(Color c) {
+//    this.background = c;
+//    UnibrowPrefsUtil.putColor(getNode(), PREF_BACKGROUND, c);
+//  }
 }

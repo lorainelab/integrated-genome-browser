@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,7 +24,6 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.*;
 
 public class AltSpliceView extends JComponent
@@ -34,7 +33,6 @@ public class AltSpliceView extends JComponent
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   boolean CONTROLS_ON_SIDE = false;
   SeqMapView original_view;
-  //  AffyLabelledTierMap map;
   SeqMapView spliced_view;
   OrfAnalyzer2 orf_analyzer;
   JTextField buffer_sizeTF;
@@ -141,7 +139,6 @@ public class AltSpliceView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-//  public void sequenceChanged(AnnotatedBioSeq newseq) {
     if (IGB.DEBUG_EVENTS)  {
       System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
@@ -225,26 +222,10 @@ public class AltSpliceView extends JComponent
     return v;
   }
   
-  public static void main(String[] args) {
-    // testing AltSpliceView as standalone
-    JFrame frm = new JFrame("AltSpliceView test");
-    AltSpliceView view = new AltSpliceView();
-    Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
-    cpane.add("Center", view);
-    frm.setSize(600, 400);
-    frm.show();
-    frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { System.exit(0); }
-    });
-  }
-
   // ComponentListener implementation
   public void componentResized(ComponentEvent e) { }
   public void componentMoved(ComponentEvent e) { }
   public void componentShown(ComponentEvent e) {
-    //    System.out.println("AltSpliceView was just made visible");
-    //    System.out.println("AltSpliceView.isShowing(): " + this.isShowing());
     if (pending_sequence_change && slice_by_selection_on) {
       spliced_view.setAnnotatedSeq(last_seq_changed);
       pending_sequence_change = false;
@@ -260,8 +241,6 @@ public class AltSpliceView extends JComponent
     }
   }
   public void componentHidden(ComponentEvent e) {
-    //    System.out.println("AltSpliceView was just hidden");
-    //    System.out.println("AltSpliceView.isShowing(): " + this.isShowing());
   }
 
   public void actionPerformed(ActionEvent evt) {
@@ -285,7 +264,6 @@ public class AltSpliceView extends JComponent
       else {
 	setSliceBySelection(false);
       }
-      //System.out.println("toggled selection tracking: " + getSliceBySelection());
     }
   }
 

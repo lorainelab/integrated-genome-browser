@@ -20,6 +20,7 @@ import java.util.*;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.genometry.GraphSym;
@@ -29,7 +30,8 @@ import com.affymetrix.igb.genometry.Versioned;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.parsers.SgrParser;
 import com.affymetrix.igb.parsers.BarParser;
-
+import com.affymetrix.igb.parsers.GrParser;
+import com.affymetrix.igb.parsers.BgrParser;
 
 public class GraphSymUtils {
 
@@ -51,6 +53,86 @@ public class GraphSymUtils {
   { "BYTE8_FLOAT", "BYTE4_FLOAT",
     "BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
     "BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
+
+  /**
+   *  Transforms a GraphSym based on a SeqSymmetry.
+   *  This is _not_ a general algorithm for transforming GraphSyms with an arbitrary mapping sym --
+   *    it is simpler, and assumes that the mapping symmetry is of depth=2 (or possibly 1?) and
+   *    breadth = 2, and that they're "regular" (parent sym and each child sym have seqspans pointing
+   *    to same two BioSeqs
+   */
+  public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym) {
+    BioSeq fromseq = original_graf.getGraphSeq();
+    SeqSpan fromspan = mapsym.getSpan(fromseq);
+    GraphSym new_graf = null;
+    if (fromseq != null && fromspan != null) {
+      BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
+      SeqSpan tospan = mapsym.getSpan(toseq);
+      if (toseq != null && fromseq != null) {
+	int[] xcoords = original_graf.getGraphXCoords();
+	float[] ycoords = original_graf.getGraphYCoords();
+	if (xcoords != null && ycoords != null) {
+	  double graf_base_length = xcoords[xcoords.length-1] - xcoords[0];
+	  // calculating graf length from xcoords, since graf's span
+	  //    is (usually) incorrectly set to start = 0, end = seq.getLength();
+	  double points_per_base = (double)xcoords.length / (double)graf_base_length;
+	  int initcap = (int)(points_per_base * toseq.getLength() * 1.5);
+	  //    System.out.println("initial capacity for new_xcoords DoubleList: " + initcap);
+	  IntList new_xcoords = new IntList(initcap);
+	  FloatList new_ycoords = new FloatList(initcap);
+	  List leaf_syms = SeqUtils.getLeafSyms(mapsym);
+	  for (int i=0; i<leaf_syms.size(); i++) {
+	    SeqSymmetry leafsym = (SeqSymmetry)leaf_syms.get(i);
+	    SeqSpan fspan = leafsym.getSpan(fromseq);
+	    SeqSpan tspan = leafsym.getSpan(toseq);
+	    if (fspan == null || tspan == null) { continue; }
+	    boolean opposite_spans = fspan.isForward() ^ tspan.isForward();
+	    int ostart = fspan.getStart();
+	    int oend = fspan.getEnd();
+	    int tstart = tspan.getStart();
+	    int tend = tspan.getEnd();
+	    double scale = tspan.getLengthDouble() / fspan.getLengthDouble();
+	    if (opposite_spans) { scale = -scale; }
+	    double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
+	    int kmax = xcoords.length;
+	    // should really use a binary search here to speed things up...
+	    // but right now just doing a brute force scan for each leaf span to map to toseq
+	    //    any graph points that overlap fspan in fromseq
+	    // assumes graph is sorted
+	    int start_index = Arrays.binarySearch(xcoords, ostart);
+	    if (start_index < 0)  { start_index = -start_index -1; }
+	    else {
+	      // start_index > 0, so found exact match, but possible it's part of group of exact matches,
+	      //    so move to left until find a non-match
+	      while ((start_index > 0) && (xcoords[start_index-1] == xcoords[start_index]))  { start_index--; }
+	    }
+	    if (start_index < 0) { start_index = 0; } // making sure previous conditional didn't result in index < 0
+	    for (int k=start_index; k<kmax; k++) {
+	      int old_xcoord = xcoords[k];
+	      if (old_xcoord >= oend) { break; }
+	      int new_xcoord = (int)((scale * old_xcoord) + offset);
+	      new_xcoords.add(new_xcoord);
+	      new_ycoords.add(ycoords[k]);
+	    }
+	    /* replaced with binary search
+	    for (int k=0; k<kmax; k++) {
+	      double old_xcoord = xcoords[k];
+	      if (old_xcoord >= ostart && old_xcoord <= oend) {
+		int new_xcoord = (int)((scale * old_xcoord) + offset);
+		new_xcoords.add(new_xcoord);
+		new_ycoords.add(ycoords[k]);
+	      }
+	    }
+	    */
+	  }
+	  new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+				  original_graf.getGraphName(), toseq);
+	}
+      }
+    }
+    return new_graf;
+  }
+
 
 
   /** Detects whether the given filename ends with a recognized ending for
@@ -104,7 +186,7 @@ public class GraphSymUtils {
       if (seq == null) {
         throw new IOException("Must select a sequence before loading a graph of type 'gr'");
       }
-      grafs = wrapInList(readGrFormat(newstr, seq, stream_name));
+      grafs = wrapInList(GrParser.parse(newstr, seq, stream_name));
     }
     /*
     else if (sname.endsWith(".sbar")) {
@@ -115,7 +197,7 @@ public class GraphSymUtils {
     }
     */
     else if (sname.endsWith(".bgr")) {
-      grafs = wrapInList(readBgrFormat(newstr, seqs));
+      grafs = wrapInList(BgrParser.parse(newstr, seqs));
     }
     else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();
@@ -194,278 +276,6 @@ public class GraphSymUtils {
 
 
 
-  /**
-   * Writes bgr format.
-   *<pre>
-   *.bgr format:
-   *  Old Header:
-   *    UTF-8 encoded seq name
-   *    UTF-8 encoded seq version
-   *    4-byte int for total number of data points
-   *  New Header:
-   *    UTF-8 encoded:
-   *       seq_name
-   *       release_name (seq version)
-   *       analysis_group_name
-   *       map_analysis_group_name
-   *       method_name
-   *       parameter_set_name
-   *       value_type_name
-   *       control_group_name
-   *    4-byte int for total number of data points
-   *  Then for each data point:
-   *    4-byte int for base position
-   *    4-byte float for value
-   * </pre>
-   */
-  public static boolean writeBgrFormat(GraphSym graf, OutputStream ostr)
-    throws IOException  {
-    System.out.println("writing graph: " + graf);
-    BufferedOutputStream bos = new BufferedOutputStream(ostr);
-    DataOutputStream dos = new DataOutputStream(bos);
-    int[] xcoords = graf.getGraphXCoords();
-    float[] ycoords = graf.getGraphYCoords();
-    int total_points = xcoords.length;
-    Map headers = graf.getProperties();
-
-    if (headers == null) {  // then write eight null entries in a row
-      for (int i=0; i<8; i++) { dos.writeUTF("null"); }
-    }
-    else {
-      if (headers.get("seq_name") == null) { dos.writeUTF("null"); }
-      else { dos.writeUTF((String)headers.get("seq_name")); }
-      if (headers.get("release_name") == null)  {dos.writeUTF("null"); }
-      else  { dos.writeUTF((String)headers.get("release_name")); }
-      if (headers.get("analysis_group_name") == null)  { dos.writeUTF("null");}
-      else  { dos.writeUTF((String)headers.get("analysis_group_name")); }
-      if (headers.get("map_analysis_group_name") == null)  { dos.writeUTF("null"); }
-      else  { dos.writeUTF((String)headers.get("map_analysis_group_name")); }
-      if (headers.get("method_name") == null)  { dos.writeUTF("null");}
-      else  { dos.writeUTF((String)headers.get("method_name")); }
-      if (headers.get("parameter_set_name") == null)  { dos.writeUTF("null");}
-      else  dos.writeUTF((String)headers.get("parameter_set_name"));
-      if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
-      else  { dos.writeUTF((String)headers.get("value_type_name")); }
-      if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }
-      else { dos.writeUTF((String)headers.get("control_group_name")); }
-    }
-    dos.writeInt(total_points);
-    for (int i=0; i<total_points; i++) {
-      dos.writeInt((int)xcoords[i]);
-      dos.writeFloat((float)ycoords[i]);
-    }
-    //      dos.flush();
-    dos.close();
-    return true;
-  }
-
-
-  public static GraphSym readBgrFormat(InputStream istr, BioSeq aseq) throws IOException {
-    Map seqhash = new HashMap();
-    seqhash.put(aseq.getID(), aseq);
-    return readBgrFormat(istr, seqhash);
-  }
-
-  public static GraphSym readBgrFormat(InputStream istr, Map seqhash)
-    throws IOException  {
-    com.affymetrix.genoviz.util.Timer tim = new Timer();
-    tim.start();
-    int count = 0;
-    BufferedInputStream bis = new BufferedInputStream(istr);
-    DataInputStream dis = new DataInputStream(bis);
-    HashMap props = new HashMap();
-    String seq_name = dis.readUTF();
-    String release_name = dis.readUTF();
-    String analysis_group_name = dis.readUTF();
-    System.out.println(seq_name + ", " + release_name + ", " + analysis_group_name);
-    String map_analysis_group_name = dis.readUTF();
-    String method_name = dis.readUTF();
-    String parameter_set_name = dis.readUTF();
-    String value_type_name = dis.readUTF();
-    String control_group_name = dis.readUTF();
-    props.put("seq_name", seq_name);
-    props.put("release_name", release_name);
-    props.put("analysis_group_name", analysis_group_name);
-    props.put("map_analysis_group_name", map_analysis_group_name);
-    props.put("method_name", method_name);
-    props.put("parameter_set_name", parameter_set_name);
-    props.put("value_type_name", value_type_name);
-    props.put("control_group_name", control_group_name);
-
-    int total_points = dis.readInt();
-    System.out.println("loading graph from binary file, name = " + seq_name +
-                       ", release = " + release_name +
-                       ", total_points = " + total_points);
-    int[] xcoords = new int[total_points];
-    float[] ycoords = new float[total_points];
-    for (int i=0; i<total_points; i++) {
-      xcoords[i] = dis.readInt();
-      ycoords[i] = dis.readFloat();
-      count++;
-    }
-    // can't just hash, because _could_ be a synonym instead of an exact match
-    //    BioSeq seq = (BioSeq)seqhash.get(seq_name);
-    MutableAnnotatedBioSeq seq = null;
-    SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-    Iterator iter = seqhash.values().iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq)iter.next();
-      if (lookup.isSynonym(testseq.getID(), seq_name)) {
-        seq = testseq;
-        break;
-      }
-    }
-    if (seq == null) {
-      System.out.println("seq not found, creating new seq");
-      seq = new NibbleBioSeq(seq_name, release_name, 500000000);
-    }
-    //    if (seq == null) { seq = new SimpleBioSeq(seq_name, 500000000); }
-    /*
-     BioSeq seq = null;
-     if (aseq == null) {
-      seq = new SimpleBioSeq(seq_name, 500000000);
-    }
-    else { seq = aseq; }
-    */
-    String graph_name =
-      analysis_group_name + ", " +
-      value_type_name + ", " +
-      parameter_set_name;
-
-    // need to replace seq_name with name of graph (some combo of group name and conditions...)
-    GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
-    graf.setProperties(props);
-    double load_time = tim.read()/1000f;
-    System.out.println("loaded graf, total points = " + count);
-    System.out.println("time to load graf from binary: " + load_time);
-    return graf;
-  }
-
-  public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
-    int xpos[] = graf.getGraphXCoords();
-    float ypos[] = graf.getGraphYCoords();
-    BufferedOutputStream bos = new BufferedOutputStream(ostr);
-    DataOutputStream dos = new DataOutputStream(bos);
-    for (int i=0; i<xpos.length; i++) {
-      dos.writeBytes("" + (int)xpos[i] + "\t" + ypos[i] + "\n");
-    }
-    dos.flush();
-    dos.close();
-    return true;
-  }
-
-  public static GraphSym readGrFormat(InputStream istr, BioSeq aseq, String name)
-    throws IOException {
-    GraphSym graf = null;
-    String line = null;
-    String headerstr = null;
-    boolean hasHeader = false;
-    int count = 0;
-
-    IntList xlist = new IntList();
-    FloatList ylist = new FloatList();
-
-    InputStreamReader isr = new InputStreamReader(istr);
-    BufferedReader br = new BufferedReader(isr);
-    // check first line, may be a header for column labels...
-    line = br.readLine();
-    if (line == null) {
-      System.out.println("can't find any data in file!");
-      return null;
-    }
-
-    try {
-      int firstx;
-      float firsty;
-      if (line.indexOf(' ') > 0) {
-        firstx = Integer.parseInt(line.substring(0, line.indexOf(' ')));
-        firsty = Float.parseFloat(line.substring(line.indexOf(' ') + 1));
-      }
-      else if (line.indexOf('\t') > 0) {
-        firstx = Integer.parseInt(line.substring(0, line.indexOf('\t')));
-        firsty = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
-      }
-      else {
-        System.out.println("format not recognized");
-        return null;
-      }
-      xlist.add(firstx);
-      ylist.add(firsty);
-      count++;  // first line parses as numbers, so is not a header, increment count
-    }
-    catch (Exception ex) {
-        // if first line does not parse as numbers, must be a header...
-        // set header flag, don't count as a line...
-        headerstr = line;
-        System.out.println("Found header on graph file: " + line);
-        hasHeader = true;
-    }
-    int x = 0;
-    float y = 0;
-//    double xprev = Double.NEGATIVE_INFINITY;
-    int xprev = Integer.MIN_VALUE;
-    boolean sorted = true;
-    while ((line = br.readLine()) != null) {
-      if (line.indexOf(' ') > 0) {
-        x = Integer.parseInt(line.substring(0, line.indexOf(' ')));
-        y = Float.parseFloat(line.substring(line.indexOf(' ') + 1));
-      }
-      else if (line.indexOf('\t') > 0) {
-        x = Integer.parseInt(line.substring(0, line.indexOf('\t')));
-        y = Float.parseFloat(line.substring(line.indexOf('\t') + 1));
-      }
-      xlist.add(x);
-      ylist.add(y);
-      count++;
-      // checking on whether graph is sorted...
-      if (xprev > x) { sorted = false; }
-      xprev = x;
-    }
-    if (name == null && hasHeader) {
-      name = headerstr;
-    }
-    int graph_length = xlist.size();
-    int xcoords[] = null;
-    float ycoords[] = null;
-    /*
-     *  check for sorting???
-     */
-    if (! sorted) {
-      // make a List of double points
-      // sort using a Point.x comparator
-      // build array of x and y
-      System.err.println("input graph not sorted, sorting by base coord");
-      List points = new ArrayList(graph_length);
-      for (int i=0; i<graph_length; i++) {
-        x = xlist.get(i);
-        y = ylist.get(i);
-        Point2D pnt = new Point2D((double)x, (double)y);
-        points.add(pnt);
-      }
-      Collections.sort(points, pointcomp);
-      xcoords = new int[graph_length];
-      ycoords = new float[graph_length];
-      for (int i=0; i<graph_length; i++) {
-        Point2D pnt = (Point2D)points.get(i);
-        xcoords[i] = (int)pnt.x;
-        ycoords[i] = (float)pnt.y;
-      }
-    }
-    else {
-      xcoords = xlist.copyToArray();
-      xlist = null;
-      System.gc();
-      ycoords = ylist.copyToArray();
-      ylist = null;
-      System.gc();
-    }
-    //    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
-    graf = new GraphSym(xcoords, ycoords, name, aseq);
-    System.out.println("loaded graph data, total points = " + count);
-    return graf;
-  }
-
-
   public static GraphSym revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
     int xpos[] = gsym.getGraphXCoords();
     float ypos[] = gsym.getGraphYCoords();
@@ -493,8 +303,8 @@ public class GraphSymUtils {
     try {
       if (file_name.endsWith(".bgr") || file_name.endsWith(".gr")) {
         bos = new BufferedOutputStream(new FileOutputStream(file_name));
-        if (file_name.endsWith(".bgr")) { result =  writeBgrFormat(gsym, bos); }
-        else if (file_name.endsWith(".gr")) { result = writeGrFormat(gsym, bos); }
+        if (file_name.endsWith(".bgr")) { result =  BgrParser.writeBgrFormat(gsym, bos); }
+        else if (file_name.endsWith(".gr")) { result = GrParser.writeGrFormat(gsym, bos); }
         //    else if (filename.endsWith(".sbar")){ result = writeSbarFormat(gsym, bos); }
       }
       else {
@@ -508,18 +318,6 @@ public class GraphSymUtils {
     return result;
   }
 
-  /** Passing over to {@link #readGrFormat} */
-  public static GraphSym loadGraph(File data_file, BioSeq aseq) {
-    GraphSym gsym = null;
-    try {
-      FileInputStream fis = new FileInputStream(data_file);
-      gsym = readGrFormat(fis, aseq, null);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return gsym;
-  }
 
   public static void writeTagVal(DataOutputStream dos, String tag, String val)
     throws IOException  {
@@ -554,16 +352,41 @@ public class GraphSymUtils {
    *  Calculate percentile rankings of graph values.
    *  In the resulting array, the value of scores[i] represents
    *  the value at percentile (100 * i)/(scores.length - 1).
+   *
+   *  This is an expensive calc, due to sort of copy of scores array
+   *    Plan to change this to a sampling strategy if scores.length greater than some cutoff (maybe 100,000 ?)
    */
   public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
+    Timer tim = new Timer();
+    boolean USE_SAMPLING = true;
+    int max_sample_size = 100000;
     float abs_max_percent = 100.0f;
     float percents_per_bin = 1.0f / bins_per_percent;
 
     int num_scores = scores.length;
-    float[] ordered_scores = new float[num_scores];
-    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
+    float[] ordered_scores;
+    // sorting a large array is an expensive operation timewise, so if scores array is
+    //   larger than a certain size, do approximate ranking instead by sampling the scores array
+    //   and ranking over smaple
+    //
+    // in performance comparisons of System.arraycopy() vs. piecewise loop,
+    //     piecewise takes about twice as long for copying same number of elements,
+    //     but this 2x performance hit should be overwhelmed by time taken for larger array sort
+    tim.start();
+    if (USE_SAMPLING && (num_scores > (2 * max_sample_size)) ) {
+      int sample_step = num_scores / max_sample_size;
+      int sample_index = 0;
+      ordered_scores = new float[max_sample_size];
+      for (int i=0; i<max_sample_size; i++) {
+	ordered_scores[i] = scores[sample_index];
+	sample_index += sample_step;
+      }
+    }
+    else {
+      ordered_scores = new float[num_scores];
+      System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
+    }
     Arrays.sort(ordered_scores);
-
     int num_percents = (int)(abs_max_percent * bins_per_percent + 1);
     float[] percent2score = new float[num_percents];
 
@@ -577,35 +400,11 @@ public class GraphSymUtils {
     }
     // just making sure max 100% is really 100%...
     percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
+    long t = tim.read();
+    System.out.println("time taken for GraphSymUtils.calcPercents2Scores(): " + (t/1000f));
     return percent2score;
   }
 
-  public static void main2(String[] args) {
-    try {
-      String infile = args[0];
-      String outfile = args[1];
-      String name = "SK_CHIP76_signal";
-      String seq_name = "chr21";
-      String version = "Human_Apr_2003";
-      BioSeq seq = new SimpleBioSeq(seq_name, 50000000);
-
-      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(infile)));
-      GraphSym gsym = readGrFormat(bis, seq, name);
-      bis.close();
-
-      gsym.setProperty("seq_name", seq_name);
-      gsym.setProperty("release_name", version);
-      gsym.setProperty("analysis_group_name", "SK");
-      gsym.setProperty("value_type_name", "signal");
-
-      BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(outfile)));
-      writeBgrFormat(gsym, bos);
-      bos.close();
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
 
   public static GraphSym convertTransFragGraph(GraphSym trans_frag_graph) {
     //    System.out.println("$$$ GraphSymUtils.convertTransFragGraph() called $$$");
@@ -674,6 +473,21 @@ public class GraphSymUtils {
 
   }
 }
+
+  /** Passing over to {@link #readGrFormat} */
+  /*
+ public static GraphSym loadGraph(File data_file, BioSeq aseq) {
+    GraphSym gsym = null;
+    try {
+      FileInputStream fis = new FileInputStream(data_file);
+      gsym = GrParser.parse(fis, aseq, null);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return gsym;
+  }
+  */
 
   /**
    * Writes sbar format.

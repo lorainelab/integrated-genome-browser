@@ -114,7 +114,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       seq2yloc.put(seq, new Double(current_yloc));
     }
     Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
-    
+
     state.setColor(col);
     // GAH 8-18-2004 don't have a standard way of figuring out which graphs are probe-based
     //   (in which case need 12/13 thresholded region start/end shift), and which ones aren't.  Since for
@@ -159,120 +159,131 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     BioSeq graph_seq = graf.getGraphSeq();
     AffyTieredMap map = smv.getSeqMap();
 
-    SmartGraphGlyph graph_glyph = null;
-    boolean no_prev_glyph = (graph_glyph == null);
-
-    if (no_prev_glyph) {
-      graph_glyph = new SmartGraphGlyph();
-      graph_glyph.setLabel(graf.getGraphName());
-      setStateFromProps(graf, state);
-    }
-
-    report("pre state setting ", state, graph_glyph);
-    graph_glyph.setGraphState(state);
-    graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
-
-    report("post state setting", state, graph_glyph);
-    
-    boolean apply_visible_range_filter = UnibrowPrefsUtil.getTopNode().getBoolean(
-      GraphGlyphUtils.PREF_APPLY_PERCENTAGE_FILTER, GraphGlyphUtils.default_apply_percentage_filter);
-    if ( apply_visible_range_filter ) {
-      float[] percentiles = GraphSymUtils.calcPercents2Scores(graf.getGraphYCoords(), 10.0f);
-      // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
-      // and percentiles.length = 1001 in this case.
-      
-      // If the graph data consists mostly of a single value (such as zero) with
-      // a small number of extreme outliers, then it is possible for
-      // percentiles[10] == percentiles[990].  It is a bad idea to set the
-      // visible max and min to the same value, so check for that.
-      if (percentiles[10] != percentiles[990]) {
-        graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile 
-        graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
-      }
-    }
-
     if (graph_seq != aseq) {
-      //TODO: suppress this message.
-      // This can occur when loading multi-sequence graph file (like sgr) from a bookmark,
-      // in which case it is not an error and this message really shouldn't be printed.
       System.out.println("################## ERROR, graph_seq != aseq #################");
+      // may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
       return null;
     }
 
+    GraphSym newgraf = graf;
     if (graph_seq != vseq) {
-      SeqSymmetry tempsym = smv.transformForViewSeq(graf);
-      report("pre transform ", state, graph_glyph);
-      GraphSym2Glyph.modifyGraphGlyph(graf, tempsym, vseq, graph_glyph);
-      report("post transform", state, graph_glyph);
+      SeqSymmetry mapping_sym = smv.transformForViewSeq(graf);
+      newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
+      SeqSpan span_on_vseq = mapping_sym.getSpan(vseq);
+      //      Rectangle2D gbox = graph_glyph.getCoordBox();
+      //      graph_glyph.setCoords(span_on_vseq.getMin(), gbox.y, span_on_vseq.getLength(), gbox.height);
     }
-    boolean found_seq = true;
 
-    if (found_seq) {
-      Rectangle2D cbox = map.getCoordBounds();
-      //      graph_glyph.setCoords(cbox.x, graph_yloc, cbox.width, graph_height);
-      report("pre coord setting ", state, graph_glyph);
-      graph_glyph.setCoords(cbox.x, state.getGraphYPos(), cbox.width, state.getGraphHeight());
-      report("post coord setting", state, graph_glyph);
-      map.setDataModel(graph_glyph, graf); // side-effect of graph_glyph.setInfo(graf)
-      graph_glyph.setFasterDraw(true);
-      graph_glyph.setCalcCache(true);
-
-      report("post coord setting", state, graph_glyph);
-      if (state.getFloatGraph()) {
-	PixelFloaterGlyph floater = new PixelFloaterGlyph();
-	map.addItem(floater);
-	floater.addChild(graph_glyph);
-	floater.setCoords(cbox.x, 0, cbox.width, 0);
-	GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
-      }
-      else {
-	//	System.out.println("*** in GenericGrphaGlyphFactory.displayGraph() ***");
-	TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
-	boolean new_tier = (tglyph == null);
-	if (new_tier) {
-	  //	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
-	  if (use_fixed_pixel_height)  {
-	    TransformTierGlyph tempgl = new TransformTierGlyph();
-	    tempgl.setFixedPixelHeight(true);
-	    tempgl.setFixedPixHeight(60);
-	    tglyph = tempgl;
-	  }
-	  else { tglyph = new TierGlyph(); }
+    setStateFromProps(graf, state);   // set some GraphState properties based on GraphSym
+    SmartGraphGlyph graph_glyph;
+    // want to check for CompositeGraphSym, and make CompositeGraphGlyph instead??
+    /*
+    if (graf instanceof CompositeGraphSym) {
+    CompositeGraphSym comp = (CompositeGraphSym)graf;
+      graph_glyph = new CompositeGraphGlyph(state);
+      // don't want to assume there's only two levels, so collect leafs
+      java.util.List leaves = SeqUtils.getLeafSyms(comp);
+      int lcount = leaves.size();
+      for (int i=0; i<lcount; i++) {
+	SeqSymmetry child = (SeqSymmetry)leaves.get(i);
+	//  not sure why leaf of CompositeGraphSym would be anything other than GraphSym, but just in case...
+	if (child instanceof GraphSym) {
+	  GraphSym gsym = (GraphSym)child;
+	  SmartGraphGlyph cglyph = new SmartGraphGlyph(gsym.getGraphXCoords(), gsym.getGraphYCoords(), state);
+	  graph_glyph.addChild(cglyph);
 	}
-
-	Map method2color = smv.getColorHash();
-	Color tier_back_col = (Color)method2color.get("background");
-	if (tier_back_col == null) { tier_back_col = default_tier_color; }
-	tglyph.setFillColor(tier_back_col);
-	tglyph.setForegroundColor(state.getColor());
-	tglyph.addChild(graph_glyph);
-	tglyph.setLabel(graf.getGraphName());
-	// GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
-	//   or the TieredLabelMap won't get assigned labels correctly
-	if (new_tier) {
-          boolean upper_strand = true;
-          Object str = graf.getProperty(GraphSym.PROP_GRAPH_STRAND);
-          if ((str instanceof Character) && ((Character) str).charValue()=='-') {
-            upper_strand = false;
-          }
-	  map.addTier(tglyph, upper_strand);
-	  smv.getGraphStateTierHash().put(state, tglyph);
-	}
-	tglyph.pack(map.getView());
-	if (update_map) {
-	  map.packTiers(false, true, false);
-	  map.stretchToFit(false, false);
-	}
-      }
-      report("post packing      ", state, graph_glyph);
-      if (update_map) {
-	map.updateWidget();
       }
     }
     else {
-      graph_glyph = null;
-      System.out.println("couldn't find seq in current view for graph, " +
-			 "seq in view = " + aseq.getID() + ", graph seq = " + graph_seq.getID());
+      graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
+    }
+    */
+
+    graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
+    graph_glyph.setLabel(graf.getGraphName());
+    //    graph_glyph.setGraphState(state);
+    //    graph_glyph.setPointCoords(newgraf.getGraphXCoords(), newgraf.getGraphYCoords());
+
+    // moved percentile binning to after transform mapping (use newgraf instead of graf),
+    //    since coords to bin may be much smaller if newgraf is set of slices of original graf
+    boolean apply_visible_range_filter =
+      UnibrowPrefsUtil.getTopNode().getBoolean(GraphGlyphUtils.PREF_APPLY_PERCENTAGE_FILTER,
+					       GraphGlyphUtils.default_apply_percentage_filter);
+    /*
+    if ( apply_visible_range_filter ) {
+      // calling calcPercents2Scores() here means that this expensive operation will often
+      //    be called twice per graph score array, since it is also called on selected graphs in GraphAdjusterView
+      //    need to figure out a way to cache percentiles result so don't have to redo
+      float[] percentiles = GraphSymUtils.calcPercents2Scores(newgraf.getGraphYCoords(), 10.0f);
+      // percentile 'p' is at index i = p * (percentiles.length - 1) / 100
+      // and percentiles.length = 1001 in this case.
+
+      // If the graph data consists mostly of a single value (such as zero) with
+      // a small number of outliers, then it is possible for
+      // percentiles[10] == percentiles[990].  It is a bad idea to set the
+      // visible max and min to the same value, so check for that.
+      if (percentiles[10] != percentiles[990]) {
+        graph_glyph.setVisibleMinY(percentiles[10]); // 1st percentile
+        graph_glyph.setVisibleMaxY(percentiles[990]); // 99th percentile
+      }
+    }
+    */
+    Rectangle2D cbox = map.getCoordBounds();
+    graph_glyph.setCoords(cbox.x, state.getGraphYPos(), cbox.width, state.getGraphHeight());
+    map.setDataModel(graph_glyph, graf); // side-effect of graph_glyph.setInfo(graf)
+
+    // graph_glyph.setFasterDraw(true);
+    // graph_glyph.setCalcCache(true);
+
+    if (state.getFloatGraph()) {
+      PixelFloaterGlyph floater = new PixelFloaterGlyph();
+      map.addItem(floater);
+      floater.addChild(graph_glyph);
+      floater.setCoords(cbox.x, 0, cbox.width, 0);
+      GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
+    }
+    else {
+      //	System.out.println("*** in GenericGrphaGlyphFactory.displayGraph() ***");
+      TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
+      boolean new_tier = (tglyph == null);
+      if (new_tier) {
+	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
+	if (use_fixed_pixel_height)  {
+	  TransformTierGlyph tempgl = new TransformTierGlyph();
+	  tempgl.setFixedPixelHeight(true);
+	  tempgl.setFixedPixHeight(60);
+	  tglyph = tempgl;
+	}
+	else { tglyph = new TierGlyph(); }
+      }
+
+      Map method2color = smv.getColorHash();
+      Color tier_back_col = (Color)method2color.get("background");
+      if (tier_back_col == null) { tier_back_col = default_tier_color; }
+      tglyph.setFillColor(tier_back_col);
+      tglyph.setForegroundColor(state.getColor());
+      tglyph.addChild(graph_glyph);
+      tglyph.setLabel(graf.getGraphName());
+      // GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
+      //   or the TieredLabelMap won't get assigned labels correctly
+      if (new_tier) {
+	boolean upper_strand = true;
+	Object str = graf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+	if ((str instanceof Character) && ((Character) str).charValue()=='-') {
+	  upper_strand = false;
+	}
+	map.addTier(tglyph, upper_strand);
+	smv.getGraphStateTierHash().put(state, tglyph);
+      }
+      tglyph.pack(map.getView());
+      if (update_map) {
+	map.packTiers(false, true, false);
+	map.stretchToFit(false, false);
+      }
+    }
+    report("post packing      ", state, graph_glyph);
+    if (update_map) {
+      map.updateWidget();
     }
     return graph_glyph;
   }
@@ -335,7 +346,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setMinRunThreshold(minrun_thresh);
     gstate.setMaxGapThreshold(maxgap_thresh);
     gstate.setShowThreshold(show_thresh);
-    
+
     //TODO: Should this stuff about is_trans_frag be moved to setStateFromProps()
     // so that it can be used from all the displayGraph() methods ?
     boolean is_trans_frag = ((graf.getProperty("parameter_set_name") != null) &&
@@ -353,9 +364,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       gstate.setThreshStartShift(12);
       gstate.setThreshEndShift(13);
     }
-    
+
     setStateFromProps(graf, gstate);
-    
+
     Map gfactories = smv.getGraphFactoryHash();
     GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
     //		gfactories.put(fgraf, gstate);
@@ -363,7 +374,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     GraphGlyph graph_glyph = GenericGraphGlyphFactory.displayGraph(graf, smv, gstate, true);
     return graph_glyph;
   }
-  
+
   /**
    *  Sets some properties of the given GraphState based on properties in
    *  the given GraphSym's property map.

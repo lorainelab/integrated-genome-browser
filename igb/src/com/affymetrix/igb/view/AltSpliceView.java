@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -196,7 +196,7 @@ public class AltSpliceView extends JComponent
 	   *  So for now, transfrag graphs and other graphs that use SPAN_GRAPH style
 	   *    will be switched over to MINMAXAVG style for the sliced view, which ends up
 	   *    showing a bar at the start and end of each span instead of filling across the span.
-	   *    Hopefullly will fix soon with some modifications to GraphGlyph and GraphSym2Glyph.
+	   *    Hopefullly will fix soon with some modifications to GraphGlyph and transformGraphSym
 	   */
 	  if (new_state.getGraphStyle() == SmartGraphGlyph.SPAN_GRAPH) {
 	    new_state.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
@@ -221,7 +221,7 @@ public class AltSpliceView extends JComponent
     }
     return v;
   }
-  
+
   // ComponentListener implementation
   public void componentResized(ComponentEvent e) { }
   public void componentMoved(ComponentEvent e) { }

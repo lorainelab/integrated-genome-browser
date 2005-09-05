@@ -5,11 +5,14 @@ import java.util.*;
 
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.seq.SimpleBioSeq;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.SynonymLookup;
 
 public class BarParser {
-  static boolean DEBUG_READ = true;
+  static boolean DEBUG_READ = false;
+  static boolean DEBUG_SLICE = false;
   static boolean DEBUG_DATA = false;
   static boolean DEBUG_INDEXER = false;
 
@@ -49,9 +52,17 @@ public class BarParser {
   /**
    *
    */
-  public static List getSlice(String file_name, String seq_name, int min_base, int max_base) {
+  //  public static GraphSym getSlice(String file_name, String seq_name, int min_base, int max_base) {
+  public static GraphSym getSlice(String file_name, SeqSpan span) {
+    Timer tim = new Timer();
+    tim.start();
     boolean USE_RANDOM_ACCESS = false;
-    System.out.println("trying to get slice, min = " + min_base + ", max = " + max_base);
+    GraphSym graf = null;
+    BioSeq aseq = span.getBioSeq();
+    String seq_name = aseq.getID();
+    int min_base = span.getMin();
+    int max_base = span.getMax();
+    if (DEBUG_SLICE)  { System.out.println("trying to get slice, min = " + min_base + ", max = " + max_base); }
     // first check and see if the file is already indexed
     //  if not already indexed, index it (unless it's too small?)
     //
@@ -60,7 +71,16 @@ public class BarParser {
     //     across bar files that have the exact same base coords
     int[] chunk_mins = (int[])coordset2seqs.get(file_name);
     if (chunk_mins == null) {
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      Map seqs = null;
+      if ((group != null) && (group.getSeqs() != null)) {
+        seqs = group.getSeqs();
+      }
+      else { seqs = new HashMap(); }
+      buildIndex(file_name, file_name, seqs);
       // index??
+      chunk_mins = (int[])coordset2seqs.get(file_name);
     }
     int min_index = 0;
     int max_index = 0;
@@ -72,12 +92,12 @@ public class BarParser {
 	min_index = (-min_index -1) - 1;
 	if (min_index < 0) { min_index = 0; }
       }
-      System.out.println("min_index = " + min_index + ", base_pos = " + chunk_mins[min_index]);
-      if (min_index > 0) { 
-	System.out.println("  prev index, base_pos = " + chunk_mins[min_index - 1]);
-      }
-      if (min_index < (chunk_mins.length-1))  {
-        System.out.println("  next index, base_pos = " + chunk_mins[min_index + 1]);
+      if (DEBUG_SLICE)  {
+	System.out.println("min_index = " + min_index + ", base_pos = " + chunk_mins[min_index]);
+	if (min_index > 0) {
+	  System.out.println("  prev index, base_pos = " + chunk_mins[min_index - 1]); }
+	if (min_index < (chunk_mins.length-1))  {
+	  System.out.println("  next index, base_pos = " + chunk_mins[min_index + 1]);	}
       }
 
       if (max_index < 0) {
@@ -88,22 +108,22 @@ public class BarParser {
 	//	else if (max_index >= chunk_mins.length) { max_index = chunk_mins.length - 1; }
       }
 
-      System.out.println("max_index = " + max_index + ", base_pos = " + chunk_mins[max_index]);
-      if (max_index > 0) { 
-	System.out.println("  prev index, base_pos = " + chunk_mins[max_index - 1]);
-      }
-      if (max_index < (chunk_mins.length-1))  {
-        System.out.println("  next index, base_pos = " + chunk_mins[max_index + 1]);
+      if (DEBUG_SLICE) {
+	System.out.println("max_index = " + max_index + ", base_pos = " + chunk_mins[max_index]);
+	if (max_index > 0) {
+	  System.out.println("  prev index, base_pos = " + chunk_mins[max_index - 1]); }
+	if (max_index < (chunk_mins.length-1))  {
+	  System.out.println("  next index, base_pos = " + chunk_mins[max_index + 1]); }
       }
     }
     //    int points_to_skip = min_index * points_per_index;
-    //    int start_point 
-    //    int point_count = 
+    //    int start_point
+    //    int point_count =
     Map seqs = new HashMap();
     try {
       DataInput dis = null;
       if (USE_RANDOM_ACCESS) {
-	
+
       }
       else {
 	FileInputStream fis = new FileInputStream(new File(file_name));
@@ -117,28 +137,69 @@ public class BarParser {
       int bytes_to_skip = points_to_skip * bytes_per_point;
       int points_to_read = (max_index - min_index) * points_per_index;
       int bytes_to_read = points_to_read * bytes_per_point;
-      System.out.println("bytes to skip: " + bytes_to_skip);
-      System.out.println("bytes to read: " + bytes_to_read);
+      if (DEBUG_SLICE)  {
+	System.out.println("bytes to skip: " + bytes_to_skip);
+	System.out.println("bytes to read: " + bytes_to_read);
+      }
       while (bytes_to_skip > 0)  {
 	int skipped = dis.skipBytes(bytes_to_skip);
-	if (DEBUG_READ)  { System.out.println("   skipped: " + skipped); }
+	if (DEBUG_SLICE)  { System.out.println("   skipped: " + skipped); }
 	if (skipped < 0) {
-	  if (DEBUG_READ)  {System.out.println("end of file reached"); }
+	  if (DEBUG_SLICE)  {System.out.println("end of file reached"); }
 	  break;
 	} // EOF reached
 	bytes_to_skip -= skipped;
       }
       byte[] buf = new byte[bytes_to_read];
       dis.readFully(buf);
+      if (dis instanceof InputStream)  { ((InputStream)dis).close(); }
 
       DataInputStream bufstr = new DataInputStream(new ByteArrayInputStream(buf));
-      int start_base_pos = bufstr.readInt();
+      int[] xcoord = new int[points_to_read];
+      float[] ycoord = new float[points_to_read];
+
+      int start_index = 0;
+      int max_end_index = points_to_read - 1;
+      int end_index = max_end_index;
+
+      for (int i=0; i<points_to_read; i++) {
+	xcoord[i] = bufstr.readInt();
+	ycoord[i] = bufstr.readFloat();
+	if ((start_index == 0) && (xcoord[i] >= min_base)) {
+	  start_index = i;
+	}
+	if ((end_index == max_end_index) && (xcoord[i] > max_base)) {
+	  end_index = i-1;
+	}
+      }
+      int graph_point_count = end_index - start_index + 1;
       //      System.out.println("skipped to start base index, base coord = " + start_base_pos);
-      System.out.println("start of byte array, base coord = " + start_base_pos);
-      
+      if (DEBUG_SLICE) {
+	System.out.println("start of byte array, base coord = " + xcoord[0]);
+	System.out.println("coords returned: count = " + graph_point_count + ", first = " + xcoord[start_index] + ", last = " + xcoord[end_index]);
+      }
+      int[] graph_xcoords = new int[graph_point_count];
+      float[] graph_ycoords = new float[graph_point_count];
+      System.arraycopy(xcoord, start_index, graph_xcoords, 0, graph_point_count);
+      System.arraycopy(ycoord, start_index, graph_ycoords, 0, graph_point_count);
+
+      // making GraphSym because bar writer takes GraphSym list as argument
+      //      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      //      BioSeq gseq = gmodel.getSelectedSeq();
+      //      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
+      //      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
+      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
+      graf.removeSpan(graf.getSpan(aseq));
+      graf.addSpan(span);
+      long t1 = tim.read();
+      System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1/1000f));
+      if (DEBUG_SLICE)  { System.out.println("made graph for slice: " + graf); }
+
+      // now output bar file slice??
+
     }
     catch (Exception ex)  { ex.printStackTrace(); }
-    return null;
+    return graf;
   }
 
   public static void main(String[] args) {
@@ -149,12 +210,19 @@ public class BarParser {
     //    testFullRead(test_file);
     Map seqs = new HashMap();
     buildIndex(test_file, test_file, seqs);
+    BioSeq testseq = new SimpleBioSeq("test", 150200300);
     //    getSlice(test_file, "temp", 0, 2000000);
-    getSlice(test_file, "temp", 67000000, 69000000);
-    //    getSlice(test_file, "temp", 158000000, 158400000);
-    //    getSlice(test_file, "temp", 157999267, 158400000);
-    //    getSlice(test_file, "temp", 158400000, 159000000);
-    //    getSlice(test_file, "temp", 158500000, 159000000);
+    getSlice(test_file, new SimpleSeqSpan(67000000, 68000000, testseq));
+    getSlice(test_file, new SimpleSeqSpan(67000000, 68000000, testseq));  // 1 MB
+    getSlice(test_file, new SimpleSeqSpan(62000000, 65000000, testseq));  // 3 MB
+    getSlice(test_file, new SimpleSeqSpan(51000000, 56000000, testseq));  // 5 MB
+    getSlice(test_file, new SimpleSeqSpan(120300400, 130400500, testseq)); // 10 MB
+    getSlice(test_file, new SimpleSeqSpan(100300400, 110400500, testseq)); // 20 MB
+    getSlice(test_file, new SimpleSeqSpan(20300400, 60400500, testseq));   // 40 MB
+    //    getSlice(test_file, new SimpleSeqSpan(158000000, 158400000, testseq));
+    //    getSlice(test_file, new SimpleSeqSpan(157999267, 158400000, testseq));
+    //    getSlice(test_file, new SimpleSeqSpan(158400000, 159000000, testseq));
+    //    getSlice(test_file, new SimpleSeqSpan(158500000, 159000000, testseq));
   }
 
   public static void testFullRead(String test_file) {
@@ -266,11 +334,152 @@ public class BarParser {
     catch (Exception ex) { ex.printStackTrace(); }
     long index_time = tim.read();
     System.out.println("time to index: " + index_time/1000f);
+    System.out.println(" ");
   }
+
+  /**
+   * Writes sbar format.
+   * <pre>
+     Basic BAR (binary array) format:
+
+     #bytes                type        content
+     BAR FILE HEADER:
+     8                char        "barr\r\n\032\n"
+     4                float        version (2.0)
+
+     4                int        #rows in data section (nrow)
+     4                int        #columns in data section (ncol)
+     4xncol                int        field types (see below for possible values)
+     4                int        #tag-value pairs (ntag)
+     4                int        tag len
+     4xtaglen        char        tag string
+     4                int        value len
+     4xvaluelen        char        value string
+   * </pre>
+
+
+   1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
+   2	Float	4	The file version number.  Valid versions are 1.0 and 2.0
+   3	Integer	4	The number of sequences stored in the file. Referred to as NSEQ.
+   4	Integer	4	The number of columns per data point. Referred to as NCOL.
+   5	Integer	4*NCOL	The field types, one per column of data. The possible values are:
+                         0 - Double
+                         1 - Float
+                         2 - 4 byte signed integer
+                         3 - 2 byte signed integer
+			 4 - 1 byte signed integer
+			 5 - 4 byte unsigned integer
+			 6 - 2 byte unsigned integer
+			 7 - 1 byte unsigned integer
+   6	Integer	4	Numbern of tag/value pairs.
+   7	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.
+   8	Char	TAGNAMELEN	The name of the tag.
+   9	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.
+   10	Char	TAGVALLEN	The value of the tag/value pair.
+
+
+   BAR SEQ/DATA SECTION HEADER
+
+11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
+12	Char	SEQNAMELEN	The sequence name.
+13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
+14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
+15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
+16	Char	SEQVERLEN	The sequence version.
+17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
+18	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.  Used only in version 2.0 or greater.
+19	Char	TAGNAMELEN	The name of the tag.  Used only in version 2.0 or greater.
+20	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.  Used only in version 2.0 or greater.
+21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
+22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
+23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
+  */
+  public static boolean outputBarFormat(GraphSym graf, OutputStream ostr) throws IOException {
+    boolean success = false;
+    BufferedOutputStream bos = new BufferedOutputStream(ostr);
+    DataOutputStream dos = new DataOutputStream(bos);
+    int[] xcoords = graf.getGraphXCoords();
+    float[] ycoords = graf.getGraphYCoords();
+    int total_points = xcoords.length;
+
+    // WRITING BAR FILE HEADER
+    dos.writeBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+    dos.writeFloat(2.0f);       // version of bar format = 2.0
+    dos.writeInt(1);  // number of seq data sections in file -- if single graph, then 1
+    dos.writeInt(2);  // number of columns (dimensions) per data point
+    dos.writeInt(2);  // int  first column/dimension type ==> type 2 ==> 4-byte signed int
+    dos.writeInt(1);  // int  second column/dimension type ==> type1 ==> 4-byte float
+
+    Map props = graf.getProperties();
+    // add all graf props as tag/value pairs,
+    //    plus genome, version, ???
+    // for now, no tag/val pairs
+    dos.writeInt(0);      // for now, no file header tag/val pairs
+    // DONE WRITING BAR FILE HEADER
+
+    // WRITING SEQ SECTION HEADER
+    BioSeq seq = graf.getGraphSeq();
+    String seq_name = seq.getID();
+    dos.writeInt(seq_name.length());
+    dos.writeBytes(seq_name);
+
+    // write empty group?
+    dos.writeInt(0);  // for now no group
+    // write verion/group info in version field?
+    dos.writeInt(0);  // for now no version
+
+    dos.writeInt(0);  // for now, no seq header tag/val pairs
+    /*
+    Map props = graf.getProperties();
+    int propcount = 0;
+    if (props != null) { propcount = props.size(); }
+    int tvcount = propcount + 2;
+    dos.writeInt(tvcount); // int  #tag-value pairs (ntag)
+    writeTagVal(dos, "graph_name", graf.getGraphName());
+    writeTagVal(dos, "seq_name", graf.getGraphSeq().getID());
+    if (props != null)  {
+      Iterator propit = props.entrySet().iterator();
+      while (propit.hasNext()) {
+        Map.Entry keyval = (Map.Entry)propit.next();
+        Object key = keyval.getKey();
+        Object val = keyval.getValue();
+        // doing toString() just in case properties contains non-String objects
+        writeTagVal(dos, key.toString(), val.toString());
+      }
+    }
+    */
+
+    // WRITING DATA
+    for (int i=0; i<total_points; i++) {
+      dos.writeInt((int)xcoords[i]);
+      dos.writeFloat((float)ycoords[i]);
+    }
+
+    // DONE WRITING SEQ SECTION HEADER
+
+
+    // WRITING FOOTER
+    dos.close();
+    success = true;
+    System.out.println("wrote .bar file to stream");
+    return success;
+  }
+
+
+  /**
+   *  Implementing AnnotationWriter interface to write out graph annotations
+   *    to an output stream as "bar" format.
+   **/
+  /*
+  public boolean writeAnnotations(java.util.Collection graphs, BioSeq seq,
+				  String type, OutputStream outstream) {
+  */
 
   public static List parse(InputStream istr, Map seqs, String stream_name)
     throws IOException {
 
+    Timer tim = new Timer();
+    tim.start();
     BufferedInputStream bis = new BufferedInputStream(istr);
     DataInputStream dis = new DataInputStream(bis);
     BarFileHeader bar_header = parseBarHeader(dis);
@@ -334,7 +543,7 @@ public class BarParser {
         }
       }
       else if (vals_per_point == 3) {
-        // System.err.println("PARSING FOR BAR FILES WITH 3 VALUES PER POINT NOT YET IMPLEMENTED");
+        // if three values per point, assuming #1 is int base coord, #2 is Pm score, #3 is Mm score
         if (val_types[0] == BYTE4_SIGNED_INT &&
             val_types[1] == BYTE4_FLOAT &&
             val_types[2] == BYTE4_FLOAT) {
@@ -358,17 +567,13 @@ public class BarParser {
           String pm_name = graph_name + " : pm";
           String mm_name = graph_name + " : mm";
           GraphSym pm_graf =
-            new GraphSym(xcoords, ycoords, graph_name + " : pm", seq);
+            new GraphSym(xcoords, ycoords, pm_name, seq);
           GraphSym mm_graf =
-            new GraphSym(xcoords, zcoords, graph_name + " : mm", seq);
+            new GraphSym(xcoords, zcoords, mm_name, seq);
 	  //          mm_graf.setProperties(new HashMap(file_tagvals));
 	  //          pm_graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(pm_graf, file_tagvals);
 	  copyProps(mm_graf, file_tagvals);
-          pm_graf.setGraphName(pm_name);
-          mm_graf.setGraphName(mm_name);
-          //pm_graf.setProperty("graph_name", pm_name);
-          //mm_graf.setProperty("graph_name", mm_name);
 	  if (bar2)  {
 	    copyProps(pm_graf, seq_tagvals);
 	    copyProps(mm_graf, seq_tagvals);
@@ -386,9 +591,19 @@ public class BarParser {
         }
       }
     }
+    long t1 = tim.read();
+    System.out.println("bar load time: " + t1/1000f);
     System.out.println("total data points in bar file: " + total_total_points);
 
     return graphs;
+  }
+
+  public static void writeTagVal(DataOutput dos, String tag, String val)
+    throws IOException  {
+    dos.writeInt(tag.length());
+    dos.writeBytes(tag);
+    dos.writeInt(val.length());
+    dos.writeBytes(val);
   }
 
   public static HashMap readTagValPairs(DataInput dis, int pair_count) throws IOException  {
@@ -518,7 +733,9 @@ public class BarParser {
 	  //      groupname
 	  //      seqversion
 	  //      groupname + ":" + seqversion
-	  if (seqversion == null || seqversion.equals("") || (! (testseq instanceof Versioned))) {
+	  if ((seqversion == null && groupname == null) ||
+	      (((seqversion == null)  || seqversion.equals("")) && ((groupname == null) || groupname.equals("")) ) ||
+	      (! (testseq instanceof Versioned))) {
 	    seq = testseq;
 	    break;
 	  }
@@ -538,7 +755,7 @@ public class BarParser {
 	if (bar2 && groupname != null) {
 	  seqversion = groupname + ":" + seqversion;
 	}
-        System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
+	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
         seq = new NibbleBioSeq(seqname, seqversion, 500000000);
       }
       //      System.out.println("seq: " + seq);

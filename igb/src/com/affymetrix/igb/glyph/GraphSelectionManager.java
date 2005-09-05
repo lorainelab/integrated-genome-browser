@@ -55,7 +55,7 @@ public class GraphSelectionManager
 
   boolean ALLOW_THRESHOLD_DRAG = false;
   //  ArrayList stored_threshMI = new ArrayList();
-  Map threshMI_2_thresh = new HashMap();
+  //  Map threshMI_2_thresh = new HashMap();
   final static boolean DEBUG = false;
 
   boolean DRAG_IN_FRONT = true;
@@ -326,12 +326,14 @@ public class GraphSelectionManager
 	  pickleThreshold(sgg);
 	}
       }
-      else if (src == faster_draw_toggle) {
+     /*
+       else if (src == faster_draw_toggle) {
 	if (current_graph instanceof SmartGraphGlyph) {
 	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
 	  sgg.setFasterDraw(! sgg.getFasterDraw());
 	}
       }
+      */
       else if (src == change_color) {
         Color col = JColorChooser.showDialog(frm,
           "Graph Color Chooser", current_graph.getColor());
@@ -414,6 +416,7 @@ public class GraphSelectionManager
       else if (src == save_graph) {
 	saveGraph(current_graph);
       }
+      /*
       else if ((src instanceof JMenuItem) && (threshMI_2_thresh.get(src) != null)) {
 	JMenuItem item = (JMenuItem)src;
         float val = ((Float)threshMI_2_thresh.get(item)).floatValue();
@@ -424,6 +427,7 @@ public class GraphSelectionManager
 	  sgg.setMinScoreThreshold(val);
 	}
       }
+      */
       current_source.updateWidget();
     }
     graphlist.clear(); // for garbage collection, etc.
@@ -704,7 +708,7 @@ public class GraphSelectionManager
    *  that could cause conflicts with the other pop-up menu which is opened
    *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
    *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List)}
-   *  provided by the interface ContextualPopupListener to add to the pop-up 
+   *  provided by the interface ContextualPopupListener to add to the pop-up
    *  menu which the SeqMapView itself constructs.
    */
   public void mouseClicked(MouseEvent evt) {
@@ -787,7 +791,8 @@ public class GraphSelectionManager
 	  toggle_floating.setText("Attach graph");
 	}
 	// remove previous stored threshold menu selections
-	Iterator iter = threshMI_2_thresh.keySet().iterator();
+	/*
+        Iterator iter = threshMI_2_thresh.keySet().iterator();
 	while (iter.hasNext()) {
 	  JMenuItem item = (JMenuItem)iter.next();
 	  thresh.remove(item);
@@ -805,6 +810,7 @@ public class GraphSelectionManager
 	    threshMI_2_thresh.put(item, new Float(val));
 	  }
 	}
+       */
         popup.show((Component) evt.getSource(),
           evt.getX()+xoffset_pop,
           evt.getY()+yoffset_pop);
@@ -970,12 +976,12 @@ public class GraphSelectionManager
     }
     return result;
   }
-  
+
   public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms) {
     Vector selected_graph_glyphs = new Vector(0);
     current_graph = null;
     second_current_graph = null;
-    
+
     // convert the selected syms to a list of selected graph glyphs
     Iterator iter = selected_syms.iterator();
     while (iter.hasNext()) {
@@ -985,12 +991,12 @@ public class GraphSelectionManager
         selected_graph_glyphs.add(g);
       }
     }
-    
+
     JMenu combine = new JMenu("Combine Graphs");
     if (selected_graph_glyphs.size() >= 2) {
       current_graph = (GraphGlyph) selected_graph_glyphs.get(0);
       second_current_graph = (GraphGlyph) selected_graph_glyphs.get(1);
-      
+
       combine.setEnabled(true);
       JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
       JLabel graph_info_B = new JLabel("B: "+getGraphLabel(second_current_graph));

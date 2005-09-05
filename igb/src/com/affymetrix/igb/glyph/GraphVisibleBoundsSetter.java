@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -277,7 +277,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       sliders_per_val = (total_val_sliders) / (max_of_maxes - min_of_mins);
       vals_per_slider = 1.0f / sliders_per_val;
 
-      
+
       if (min_of_vismins == max_of_vismins) {
 	min_valT.setText(val_format.format(min_of_vismins));
       }
@@ -688,12 +688,12 @@ public class GraphVisibleBoundsSetter extends JPanel
     Object info = gl.getInfo();
     float[] percent2score = (float[])info2pscores.get(info);
     int index = (int)Math.round(percent * sliders_per_percent);
-    
-    // I have actually seen a case where index was calculated as -1, 
+
+    // I have actually seen a case where index was calculated as -1,
     // and an exception was thrown. That is why I added this check. (Ed)
     if (index < 0) {index = 0;}
     else if (index >= percent2score.length) { index = percent2score.length - 1; }
-    
+
     float value = percent2score[index];
     return value;
   }

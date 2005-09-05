@@ -70,8 +70,8 @@ public class GraphGlyph extends Glyph {
    *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
    *     be modified (except for resetting the points by calling setPointCoords() again)
    */
-  float point_max_ycoord;
-  float point_min_ycoord;
+  float point_max_ycoord = Float.NEGATIVE_INFINITY;
+  float point_min_ycoord = Float.POSITIVE_INFINITY;
 
   // assumes sorted points, each x corresponding to y
   int xcoords[];
@@ -83,7 +83,7 @@ public class GraphGlyph extends Glyph {
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 
-  GraphState state = new GraphState();
+  GraphState state;
   LinearTransform scratch_trans = new LinearTransform();
 
   static {
@@ -93,14 +93,53 @@ public class GraphGlyph extends Glyph {
     }
   }
 
-  public void setGraphState(GraphState gs) {
-    state = gs;
+  public GraphGlyph(int[] xcoords, float[] ycoords)  {
+    this(xcoords, ycoords, null);
+  }
+
+  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    super();
+    state = gstate;
+    if (state == null) { state = new GraphState(); }
     setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
-    //    System.out.println("graph state: " + state);
     setColor(state.getColor());
     setGraphStyle(state.getGraphStyle());
-    setShowLabel(state.getShowLabel());
+
+    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    this.xcoords = xcoords;
+    this.ycoords = ycoords;
+    point_min_ycoord = Float.POSITIVE_INFINITY;
+    point_max_ycoord = Float.NEGATIVE_INFINITY;
+    for (int i=0; i<ycoords.length; i++) {
+      if (ycoords[i] < point_min_ycoord) { point_min_ycoord = ycoords[i]; }
+      if (ycoords[i] > point_max_ycoord) { point_max_ycoord = ycoords[i]; }
+    }
+    if (point_max_ycoord == point_min_ycoord) {
+      point_min_ycoord = point_max_ycoord - 1;
+    }
+    //    System.out.println("min: " + min_ycoord + ", max: " + getVisibleMaxY());
+    //    auto_adjust_visible = false;
+    checkVisibleBoundsY();
   }
+
+  protected void checkVisibleBoundsY() {
+    if (getVisibleMinY() == Float.POSITIVE_INFINITY ||
+	getVisibleMinY() == Float.NEGATIVE_INFINITY ||
+	getVisibleMaxY() == Float.POSITIVE_INFINITY ||
+	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
+      setVisibleMaxY(point_max_ycoord);
+      setVisibleMinY(point_min_ycoord);
+    }    
+  }
+
+  /*
+ public void setGraphState(GraphState gs) {
+    state = gs;
+    setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
+    setColor(state.getColor());
+    setGraphStyle(state.getGraphStyle());
+  }
+  */
 
   public GraphState getGraphState() { return state; }
 
@@ -402,6 +441,7 @@ public class GraphGlyph extends Glyph {
    *  This will replace any previous setting of maxy and miny!
    *
    */
+  /*
   public void setPointCoords(int xcoords[], float ycoords[]) {
     this.xcoords = xcoords;
     this.ycoords = ycoords;
@@ -424,6 +464,7 @@ public class GraphGlyph extends Glyph {
       setVisibleMinY(point_min_ycoord);
     }
   }
+  */
 
   /**
    *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.

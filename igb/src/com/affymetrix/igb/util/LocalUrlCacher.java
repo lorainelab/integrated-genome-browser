@@ -80,7 +80,12 @@ public class LocalUrlCacher {
     if (cache_option != ONLY_CACHE) {
       try {
 	URL theurl = new URL(url);
-	conn = theurl.openConnection();
+	conn = theurl.openConnection();  
+	// adding a conn.connect() call here to force throwing of error here if can't open connection
+	//    because some method calls on URLConnection like those below don't always throw errors 
+	//    when connection can't be opened -- which woule end up allowing url_reachable to be set to true 
+	///   even when there's no connection
+	conn.connect(); 
 	if (DEBUG_CONNECTION) {
 	  reportHeaders(conn);
 	}
@@ -100,7 +105,6 @@ public class LocalUrlCacher {
     if (cached && (cache_option != IGNORE_CACHE)) {
       long local_timestamp = cache_file.lastModified();
       String local_date = DateFormat.getDateTimeInstance().format(new Date(local_timestamp)); ;
-      //      System.out.println("cached file last modified: " + local_date);
       if ((! url_reachable) ||
 	  (has_timestamp && (remote_timestamp <= local_timestamp)) ) {
 	System.out.println("cache exists and is more recent, using cache: " + cache_file);

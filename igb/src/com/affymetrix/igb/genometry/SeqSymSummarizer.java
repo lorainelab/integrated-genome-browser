@@ -224,6 +224,7 @@ public class SeqSymSummarizer {
     return spanlist;
   }
 
+
   public static SymWithProps projectLandscape(GraphSym landscape) {
     BioSeq seq = landscape.getGraphSeq();
     SimpleSymWithProps psym = new SimpleSymWithProps();
@@ -279,6 +280,8 @@ public class SeqSymSummarizer {
    *  redoing SeqSymmetry union (to eventually replace SeqUtils.union() method(s))
    *  with a more efficient version.  Really just leveraging off getSymmetrySummary()/getSpanSummary(),
    *  then flattening resulting GraphSym into separate SeqSpans for each region with depth > 0
+   *
+   *  This will merge not only overlapping syms but also abutting syms (where symA.getMax() == symB.getMin())
    */
   public static SeqSymmetry getUnion(java.util.List syms, BioSeq seq)  {
     //    MutableSeqSymmetry psym = new SimpleSymWithProps();

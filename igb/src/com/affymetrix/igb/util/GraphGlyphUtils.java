@@ -38,7 +38,7 @@ public class GraphGlyphUtils {
    */
 
   public static boolean DEBUG = false;
-  
+
   /** Name of a preference for deciding what height to give a graph when converting
    *  it from a floating graph to an attached graph.
    */
@@ -54,7 +54,7 @@ public class GraphGlyphUtils {
   public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
   public static final String PREF_FLOATING_PIXEL_HEIGHT = "default floating graph pixel height";
 
-  /** Pref for whether newly-constructed graph glyphs should only show a 
+  /** Pref for whether newly-constructed graph glyphs should only show a
    *  limited range of values.
    */
   public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
@@ -67,7 +67,7 @@ public class GraphGlyphUtils {
   public static final String default_attach_mode = USE_CURRENT_HEIGHT;  // default mode if not specified in prefs
 
   public static final int default_pix_height = 60;
-  
+
   /** Default value for height of attached (non-floating) graphs.  Although
    *  the height will ultimately have to be expressed as a double rather than
    *  an integer, there is no good reason to bother the users with that detail,
@@ -76,7 +76,7 @@ public class GraphGlyphUtils {
   public static final int default_coord_height = 100;
   public static final boolean default_use_floating_graphs = false;
 
-  public static final Color[] default_graph_colors = 
+  public static final Color[] default_graph_colors =
     new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
 
   /** The names of preferences for storing default graph colors can be
@@ -103,7 +103,7 @@ public class GraphGlyphUtils {
     String attach2float_mode = getGraphPrefsNode().get(PREF_ATTACH_HEIGHT_MODE, default_attach_mode);
 
     boolean use_fixed_coord_height = attach2float_mode.equals(USE_DEFAULT_HEIGHT);
-    
+
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     GlyphI parentgl = gl.getParent();
     GraphSym graf = (GraphSym)gl.getInfo();
@@ -295,15 +295,15 @@ public class GraphGlyphUtils {
 
     for (int i=0; i<grafs.size(); i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph();
-      graph_glyph.setFasterDraw(true);
-      graph_glyph.setCalcCache(true);
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setFasterDraw(true);
+      // graph_glyph.setCalcCache(true);
       graph_glyph.setSelectable(false);
       graph_glyph.setLabel(graf.getGraphName());
       graph_glyph.setXPixelOffset(i);
 
       BioSeq graph_seq = graf.getGraphSeq();
-      graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
 
       System.out.println("graf name: " + graf.getGraphName());
       graph_glyph.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
@@ -337,7 +337,7 @@ public class GraphGlyphUtils {
   public static Preferences getGraphPrefsNode() {
     return UnibrowPrefsUtil.getTopNode().node("graphs");
   }
-  
+
   public static Color getDefaultGraphColor(int i) {
     int index = (i % default_graph_colors.length);
     String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;

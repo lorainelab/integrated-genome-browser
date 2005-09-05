@@ -72,13 +72,15 @@ public class SmartGraphGlyph extends GraphGlyph {
   Color lighter;
   Color darker;
   Color thresh_color;
-  ThreshGlyph thresh_glyph;
+
+  // still need to make thresh_glyph draw as a fixed-pixel (1 or 2) line instead of as a variable-pixel fillRect...
+  ThreshGlyph thresh_glyph = new ThreshGlyph();
 
   // eventually want hierarchy of graph compression caches at multiple compression levels...
   //  GraphCache[] caches;
   //  GraphCache graph_cache;
   //  GraphCache2 graph_cache;
-  ArrayList caches;  // the hiearchy of graph caches (well really just one for now...)
+  ArrayList caches = new ArrayList();  // the hiearchy of graph caches (well really just one for now...)
   int compression_level = 100;  // average # of points per entry in flat graph compression cache
 
   /*
@@ -112,22 +114,47 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph() {
-    super();
-    setDrawOrder(Glyph.DRAW_SELF_FIRST);
-    thresh_glyph = new ThreshGlyph();
-    thresh_glyph.setVisibility(getShowThreshold());
-
-    thresh_glyph.setSelectable(false);
-    this.addChild(thresh_glyph);
-    caches = new ArrayList();
+  public SmartGraphGlyph(int[] xcoords, float[] ycoords)  {
+    this(xcoords, ycoords, null);
   }
 
+  public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    super(xcoords, ycoords, gstate);
+    setDrawOrder(Glyph.DRAW_SELF_FIRST);
+
+    //    thresh_glyph = new ThreshGlyph();
+    thresh_glyph.setVisibility(getShowThreshold());
+    thresh_glyph.setSelectable(false);
+    if (thresh_color != null)  { thresh_glyph.setColor(thresh_color); }
+    this.addChild(thresh_glyph);
+
+    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    caches.clear();
+    if (CALC_GRAPH_CACHE) {
+      double graph_coord_length = xcoords[xcoords.length-1] - xcoords[0];
+      double avg_bases_per_point = graph_coord_length / ((double)xcoords.length);
+      int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
+
+      GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ycoords);
+      caches.add(graph_cache);
+    }
+    //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
+    //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
+    //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    //    }
+    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
+      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    }
+    resetThreshLabel();
+  }
+
+  /*
   public void setGraphState(GraphState state) {
     super.setGraphState(state);
     //   setMinScoreThreshold(state.getMinScoreThreshold());  // to trigger setting of threshold glyph's label
     resetThreshLabel();
   }
+  */
 
   public void draw(ViewI view) {
     if (NEWDEBUG) {
@@ -144,8 +171,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	thresh_glyph = new ThreshGlyph();
 	//	thresh_glyph.setVisibility(getShowThreshold());
 	thresh_glyph.setSelectable(false);
-	this.addChild(thresh_glyph);
+	thresh_glyph.setColor(thresh_color);
       }
+      this.addChild(thresh_glyph);
       /*
       double thresh_ycoord;
       if (getMinScoreThreshold() != Float.NEGATIVE_INFINITY) {
@@ -448,7 +476,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
       int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
-      
+
       // The +1 on draw_end_index might be an error, but it gets corrected below
       int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
 
@@ -466,10 +494,10 @@ public class SmartGraphGlyph extends GraphGlyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
-      
+
       // draw_end_index is sometimes too large (by 1)
       if (draw_end_index >= xcoords.length) {
-        draw_end_index = xcoords.length - 1; 
+        draw_end_index = xcoords.length - 1;
       }
 
       //      System.out.println("start index = " + draw_beg_index + ", val = " + xcoords[draw_beg_index]);
@@ -871,7 +899,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     lighter = col.brighter();
     darker = col.darker();
     thresh_color = darker.darker();
-    thresh_glyph.setColor(thresh_color);
+    if (thresh_glyph != null)  { thresh_glyph.setColor(thresh_color); }
   }
 
   public void setShowThreshold(boolean show) {
@@ -882,8 +910,8 @@ public class SmartGraphGlyph extends GraphGlyph {
   public boolean getShowThreshold() { return state.getShowThreshold(); }
 
   public void resetThreshLabel() {
-    float min_thresh = state.getMinScoreThreshold();
-    float max_thresh = state.getMaxScoreThreshold();
+    float min_thresh = getMinScoreThreshold();
+    float max_thresh = getMaxScoreThreshold();
     if (min_thresh != Float.NEGATIVE_INFINITY &&
 	max_thresh != Float.POSITIVE_INFINITY) {
       thresh_glyph.setLabel(nformat.format(min_thresh) + " -- " + nformat.format(max_thresh));
@@ -932,6 +960,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   public double getThreshEndShift() { return state.getThreshEndShift(); }
 
 
+  /*
   public void setPointCoords(int xcoords[], float ycoords[]) {
     if (xcoords.length <= 0 || ycoords.length <= 0) {
       return;
@@ -954,11 +983,12 @@ public class SmartGraphGlyph extends GraphGlyph {
       setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
     }
   }
+  */
 
-  public void setFasterDraw(boolean b) { USE_GRAPH_CACHE = b; }
-  public boolean getFasterDraw() { return USE_GRAPH_CACHE; }
-  public void setCalcCache(boolean b) { CALC_GRAPH_CACHE = b; }
-  public boolean getCalcCache() { return CALC_GRAPH_CACHE; }
+ //  public void setFasterDraw(boolean b) { USE_GRAPH_CACHE = b; }
+  // public boolean getFasterDraw() { return USE_GRAPH_CACHE; }
+  // public void setCalcCache(boolean b) { CALC_GRAPH_CACHE = b; }
+  // public boolean getCalcCache() { return CALC_GRAPH_CACHE; }
 
   /**
    *  Same as GraphGlyph.getInternalLinearTransform(), except
@@ -1010,9 +1040,9 @@ class GraphCache2 {
       // really don't need entry_xmax assignment here, always gets assigned in loop
       //   (even if only one point in this cache entry), but setting for clarification...
       int entry_xmax = entry_xmin;
-      if ( (cur_index < xcoords.length) && 
+      if ( (cur_index < xcoords.length) &&
 	      (xcoords[cur_index] <= entry_xlimit) ) {
-	while ( (cur_index < xcoords.length) && 
+	while ( (cur_index < xcoords.length) &&
 		(xcoords[cur_index] <= entry_xlimit) ) {
 	  float yval = ycoords[cur_index];
 	  entry_xmax = xcoords[cur_index];
@@ -1031,7 +1061,7 @@ class GraphCache2 {
 	ymax_list.add(valmax);
 	yavg_list.add(valavg);
       }
-      else { 
+      else {
 	// shouldn't hit this branch unless somethings gone wrong.
 	// for now just increment cur_index to avoid infinite loop...
 	cur_index++;

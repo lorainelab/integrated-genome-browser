@@ -74,6 +74,7 @@ public class Bprobe1Parser {
     Map tagvals = new LinkedHashMap();
     Map seq2syms = new LinkedHashMap();
     Map seq2lengths = new LinkedHashMap();
+    DataInputStream dis = null;
     try  {
       if (istr instanceof BufferedInputStream) {
         bis = (BufferedInputStream) istr;
@@ -81,7 +82,7 @@ public class Bprobe1Parser {
       else {
         bis = new BufferedInputStream(istr);
       }
-      DataInputStream dis = new DataInputStream(bis);
+      dis = new DataInputStream(bis);
       String format = dis.readUTF();
       int format_version = dis.readInt();
       String seq_group_name = dis.readUTF(); // genome name
@@ -152,6 +153,10 @@ public class Bprobe1Parser {
           int b = (int) dis.readByte();
           int probe_count = Math.abs(b);
           boolean forward = (b >= 0);
+          if (probe_count == 0) {
+            // EfficientProbesetSymA does not allow probe sets with 0 probes
+            throw new IOException("Probe_count is zero for '"+probeset_id+"'");
+          }
 	  int[] cmins = new int[probe_count];
           for (int k = 0; k < probe_count; k++) {
             int min = dis.readInt();
@@ -165,11 +170,14 @@ public class Bprobe1Parser {
 	}
       }
       System.out.println("finished parsing bp1 file");
-      dis.close();
     }
 
     catch (Exception ex)  {
       ex.printStackTrace();
+    }
+
+    finally {
+      if (dis != null) try { dis.close(); } catch (Exception e) {}
     }
     return seqs;
   }

@@ -173,7 +173,7 @@ public class GraphGlyph extends Glyph {
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
-    if (getShowGraph())  {
+    if (getShowGraph() && xcoords != null && ycoords != null)  {
       int beg_index = 0;
       int end_index = xcoords.length-1;
 

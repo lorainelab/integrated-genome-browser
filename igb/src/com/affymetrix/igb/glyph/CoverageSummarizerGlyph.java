@@ -58,6 +58,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   Point2D curr_coord = new Point2D(0,0);
   Point curr_pixel = new Point(0,0);
   int glyph_style = DEFAULT_STYLE;
+  float avg_coverage;
 
   /**
    *  starting to factor in a smoothing based on values of adjacent pixels
@@ -139,6 +140,15 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   public void setCoveredIntervals(int[] min_array, int[] max_array) {
     mins = min_array;
     maxs = max_array;
+    // calculate average coverage:
+    int total_bases = max_array[max_array.length-1] - min_array[0];
+    int icount = min_array.length;
+    int bases_covered = 0;
+    for (int i=0; i<icount; i++) {
+      bases_covered += (max_array[i] - min_array[i]);
+    }
+    avg_coverage = (float)bases_covered / (float)total_bases;
+    //    System.out.println("average coverage: " + avg_coverage);
   }
 
 
@@ -323,18 +333,14 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
       }
     }
 
-    // drawing outline around bounding box
-    g.setColor(Color.lightGray);
-    g.setFont(default_font);
-    //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
-    String msg =
-      "Max coverage in view: " +
-      nformat.format(coverage) + ", " +
-      //      nformat.format(max_covered) + ", " +
-      "Bases/Pixel: " +
-      nformat.format(coords_per_pixel);
-
-    g.drawString(msg, 3, pixelbox.y + 10);
+    if (avg_coverage > 0.001) {
+      // drawing outline around bounding box
+      g.setColor(Color.lightGray);
+      g.setFont(default_font);
+      //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
+      String msg = "Max coverage in view: " + nformat.format(coverage);
+      g.drawString(msg, 3, pixelbox.y + 10);
+    }
   }
 
 

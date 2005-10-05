@@ -238,6 +238,9 @@ public abstract class BookmarkController {
     }
     int max = graphs.size();
 
+    // Holds a list of labels of graphs for which no url could be found.
+    Set unfound_labels = new LinkedHashSet();
+    
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
     int i = -1;
@@ -249,11 +252,12 @@ public abstract class BookmarkController {
       }
       String source_url = (String)graf.getProperty("source_url");
       if (source_url == null)  {
-        IGB.errorPanel("WARNING: cannot bookmark graph\n"
-                           +gr.getLabel()+"\nNo source URL available for bookmarking");
+        String label = gr.getLabel();
+        if (label != null && label.length() > 0) {
+          unfound_labels.add(gr.getLabel());
+        }
       }
       else {
-        if (source_url == null) { source_url = "UNKNOWN"; }
         i++;
         Rectangle2D gbox = gr.getCoordBox();
         Color col = gr.getBackgroundColor();
@@ -281,6 +285,12 @@ public abstract class BookmarkController {
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
       }
     }
+    if (! unfound_labels.isEmpty()) {
+       ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
+         "Warning: could not bookmark some graphs.\n" +
+         "No source URL was available for: " + unfound_labels.toString());
+    }
+
   }
 
   /**
@@ -323,7 +333,6 @@ public abstract class BookmarkController {
 
   /** Returns a hexidecimal representation of the color with
    *  "0x" plus exactly 6 digits.  Example  Color.BLUE -> "0x0000FF".
-   *  (PS: The zero-padding is implemented inefficiently.)
    */
   static String sixDigitHex(Color c) {
     int i = c.getRGB() & 0xFFFFFF;

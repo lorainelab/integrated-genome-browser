@@ -42,16 +42,6 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   double extramap_inset = 5;
 
   private SixWaySplitPane windowPane;
-  class Shim extends JComponent implements Cloneable {
-    private Dimension prefSize = new Dimension( 16, 16 ); // Same as NeoScrollbar.
-    private Dimension minSize = new Dimension( 1, 1 );
-    public Dimension getPreferredSize() {
-      return this.prefSize;
-    }
-    public Dimension getMinimumSize() {
-      return this.minSize;
-    }
-  }
 
   /**
    * Construct a map with default scroll bars.
@@ -70,8 +60,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
 
   /**
-   *  overriding initComponenetLayout from NeoMap
-   *    (called in NeoMap constructor...)
+   *  Overriding method from NeoMap. Called in NeoMap constructor.
    */
   public void initComponentLayout() {
 
@@ -107,23 +96,18 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     this.epan.setPreferredSize( new Dimension( 100, 200 ) );
 
     if ( this.hscroll_show && this.scroller[X] instanceof NeoScrollbar )  {
-      //this.wpan.add( new Shim(), BorderLayout.SOUTH );
       this.wpan.add( new MotionPanel( this.scroller[X].getOrientation(), -1 ), BorderLayout.SOUTH );
-      //this.cpan.add( (NeoScrollbar) scroller[X], BorderLayout.SOUTH );
       MotionPanel mp = new MotionPanel( this.scroller[X].getOrientation(), X, X );
       setZoomer( X, mp.getZoomer( X ) );
       this.cpan.add( mp, BorderLayout.SOUTH );
       this.scroller[X] = mp.getPanner( X );
-      //this.epan.add( new Shim(), BorderLayout.SOUTH );
       this.epan.add( new MotionPanel( this.scroller[X].getOrientation(), -1, -1 ), BorderLayout.SOUTH );
     }
     if ( this.vscroll_show && this.scroller[Y] instanceof NeoScrollbar )  {
-      //this.epan.add( (NeoScrollbar) scroller[Y], BorderLayout.EAST );
       MotionPanel mp = new MotionPanel( this.scroller[Y].getOrientation(), Y );
       setZoomer( Y, mp.getZoomer( Y ) );
       this.epan.add( mp, BorderLayout.EAST );
       this.scroller[Y] = mp.getPanner( Y );
-      //this.nepan.add( new Shim(), BorderLayout.EAST );
       this.nepan.add( new MotionPanel( this.scroller[Y].getOrientation(), -1 ), BorderLayout.EAST );
     }
 
@@ -135,6 +119,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     //this.windowPane.addNorthWest( northWestMap );
     this.windowPane.addNorthWest( nwpan );
     this.windowPane.addNorthEast( this.nepan );
+    this.windowPane.setDividerLocations(50, 50, 100);
 
     this.setLayout(new BorderLayout());
     add( this.windowPane, BorderLayout.CENTER );
@@ -159,14 +144,6 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
    */
   public void addScroller( int theOrientation, int theSection ) {
     if ( HORIZONTAL == theOrientation && EAST == theSection ) {
-      int count = this.epan.getComponentCount();
-      for ( int i = 0; i < count; i++ ) {
-        Component c = this.epan.getComponent( i );
-        if ( c instanceof Shim ) {
-          this.epan.remove( i );
-          break;
-        }
-      }
       MotionPanel mp = new MotionPanel( theOrientation, X );
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
@@ -176,14 +153,6 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }
     else if ( VERTICAL == theOrientation && NORTH == theSection ) {
-      int count = this.nepan.getComponentCount();
-      for ( int i = 0; i < count; i++ ) {
-        Component c = this.nepan.getComponent( i );
-        if ( c instanceof Shim ) {
-          this.nepan.remove( i );
-          break;
-        }
-      }
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.VERTICAL );
       this.nepan.add( sb, BorderLayout.EAST );
       if ( null != this.northWestMap ) this.northWestMap.setScroller( Y, sb );
@@ -196,7 +165,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
 
   /**
-   * add a zoomer to a section.
+   * Add a zoomer to a section.
    * So far,
    * the only valid combinations are <code>X</code> with <code>EAST</code>
    * and <code>Y</code> with <code>NORTH</code>.
@@ -220,7 +189,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
 
   /**
-   * add a zoomer component to a section
+   * Add a zoomer component to a section.
    * The axis is inferred from the orientation of the zoomer.
    * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
    * @param theControl for zooming
@@ -300,26 +269,6 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
    */
   public void setNorthMap( AffyTieredMap theNewMap ) {
     this.northMap = theNewMap;
-  }
-
-  /**
-   * @param theAxisTier (for what is this needed?)
-   */
-  public TierGlyph getExtraAxis( TierGlyph theAxisTier ) {
-    TierGlyph answer = (TierGlyph) this.northEastMap.getItem( theAxisTier );
-    if ( null == answer ) {
-      answer = new TierGlyph();
-      // Make the glyph fill the map (for now).
-      int[] range = this.northEastMap.getMapRange();
-      int[] offset = this.northEastMap.getMapOffset();
-      answer.setCoords( range[0], offset[0], range[1], offset[1] );
-      answer.setCoords( range[0], -100, range[1], 101 );
-      answer.setFillColor( Color.blue );
-    }
-    else {
-      System.out.println( "got extra axis: " + answer );
-    }
-    return answer;
   }
 
 
@@ -455,10 +404,10 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
   /**
    * Put the axis on the north map.
-   * Maybe we shouldn't do this.
-   * Perhaps we need an addHeaderAxis() method instead. -- without offset?
    */
   public AxisGlyph addAxis( int theOffset ) {
+   // Maybe we shouldn't do this.
+   // Perhaps we need an addHeaderAxis() method instead. -- without offset?
     return this.northMap.addAxis( 100 );
   }
 
@@ -485,7 +434,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
 
   /**
-   *  main for testing AffyTieredMultiMap
+   *  Main for testing.
    */
   public static void main(String[] args) {
     AffyTieredMultiMap map = new AffyTieredMultiMap();

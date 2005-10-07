@@ -1019,7 +1019,10 @@ class GraphCache2 {
   public int[] num_points;
 
   public GraphCache2(int bases_per_entry, int[] xcoords, float[] ycoords) {
-    int count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+    int count_guess = 1;
+    if (bases_per_entry != 0) {
+      count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+    }
     if (count_guess < 1)  { count_guess = 1; }
     IntList xmin_list = new IntList(count_guess);
     IntList xmax_list = new IntList(count_guess);

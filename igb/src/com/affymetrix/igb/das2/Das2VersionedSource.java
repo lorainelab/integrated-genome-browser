@@ -52,15 +52,22 @@ public class Das2VersionedSource  {
 
   AnnotatedSeqGroup genome = null;
   Map types = new LinkedHashMap();
+  Map assays = new LinkedHashMap();
+  Map materials = new LinkedHashMap();
+  Map results = new LinkedHashMap();
   boolean regions_initialized = false;
   boolean types_initialized = false;
-
+  boolean assays_initialized = false;
+  boolean materials_initialized = false;
+  boolean results_initialized = false;
+  String types_filter = null;
+  
   public Das2VersionedSource(Das2Source das_source, String version_id, boolean init) {
     id = version_id;
     source = das_source;
     if (init) {
       initRegions();
-      initTypes();
+      initTypes(null);
     }
   }
 
@@ -118,19 +125,75 @@ public class Das2VersionedSource  {
     return result;
   }
 
-  void addRegion(Das2Region region) {
+  public void addRegion(Das2Region region) {
     regions.put(region.getID(), region);
   }
 
   public Map getTypes() {
-    if (! types_initialized) {
-      initTypes();
+    if (! types_initialized || types_filter != null) {
+      initTypes(null);
+    }
+    return types;
+  }
+  
+  public Map getTypes(String filter) {
+     if (! types_initialized || !filter.equals(types_filter)) {
+       initTypes(filter);
     }
     return types;
   }
 
-  void addType(Das2Type type) {
+  public Map getAssays() {
+      if(! assays_initialized) {
+          initAssays();
+      }
+      return(assays);
+  }
+  
+  public Map getResults() {
+      if(! results_initialized) {
+          initResults();
+      }
+      return(results);
+  }
+  
+  public Map getMaterials() {
+      if(! materials_initialized) {
+          initMaterials();
+      }
+      return(materials);
+  }
+
+  public void clearTypes() {
+      this.types = new LinkedHashMap();
+  }
+  
+  public void clearAssays() {
+      this.assays = new LinkedHashMap();
+  }
+  
+  public void clearResults() {
+      this.results = new LinkedHashMap();
+  }
+  
+  public void clearMaterials() {
+      this.materials = new LinkedHashMap();
+  }  
+  
+  public void addType(Das2Type type) {
     types.put(type.getID(), type);
+  }
+
+  public void addAssay(Das2Assay assay) {
+      assays.put(assay.getID(), assay);
+  }
+  
+  public void addResult(Das2Result result) {
+      results.put(result.getID(), result);
+  }  
+  
+  public void addMaterial(Das2Material material) {
+      materials.put(material.getID(), material);
   }
 
 
@@ -183,11 +246,137 @@ public class Das2VersionedSource  {
     regions_initialized = true;
   }
 
+  protected void initMaterials() {
+    this.clearMaterials();
+    String materials_request = getSource().getServerInfo().getRootUrl() +
+      "/" + this.getID() + "/material";
+    try {
+      System.out.println("Das Materials Request: " + materials_request);
+      Document doc = DasLoader.getDocument(materials_request);
+      Element top_element = doc.getDocumentElement();
+      NodeList materialList = doc.getElementsByTagName("BioSource");
+      System.out.println("materials: " + materialList.getLength());
+      for (int i=0; i< materialList.getLength(); i++)  {
+	Element materialnode = (Element)materialList.item(i);
+        String materialid = materialnode.getAttribute("identifier");
+        String name = materialnode.getAttribute("name");
+        
+        // types
+	NodeList tlist = materialnode.getElementsByTagName("DatabaseEntry");
+	HashMap types = new HashMap();
+	for (int k=0; k<tlist.getLength(); k++) {
+	  Element inode = (Element)tlist.item(k);
+	  String uri = inode.getAttribute("URI");
+          types.put(uri.substring(8), uri);
+        }
+
+        // contacts
+        HashMap contacts = new HashMap();
+	NodeList clist = materialnode.getElementsByTagName("Organization_ref");
+	for (int k=0; k<clist.getLength(); k++) {
+	  Element pnode = (Element)clist.item(k);
+	  String id = pnode.getAttribute("identifier");
+	  contacts.put(id.substring(11), id);
+	}
+        
+	this.addMaterial(new Das2Material(this, materialid, name, types, contacts));
+      }
+    } catch (Exception ex) {
+      ErrorHandler.errorPanel("Error initializing DAS materials for\n"+materials_request, ex);
+    }
+    //TODO should types_initialized be true after an exception?
+    materials_initialized = true;
+  }  
+
+  protected void initResults() {
+    this.clearResults();
+    String results_request = getSource().getServerInfo().getRootUrl() +
+      "/" + this.getID() + "/result";
+    try {
+      System.out.println("Das Results Request: " + results_request);
+      Document doc = DasLoader.getDocument(results_request);
+      Element top_element = doc.getDocumentElement();
+      NodeList resultlist = doc.getElementsByTagName("RESULT");
+      System.out.println("results: " + resultlist.getLength());
+      for (int i=0; i< resultlist.getLength(); i++)  {
+	Element resultnode = (Element)resultlist.item(i);
+        String resultid = resultnode.getAttribute("id");
+        String assayId = resultnode.getAttribute("assay");
+        assayId = assayId.substring(9);
+        String imageId = resultnode.getAttribute("image");
+        imageId = imageId.substring(9);
+        String protocolId = resultnode.getAttribute("protocol");
+        protocolId = protocolId.substring(12);
+        
+	this.addResult(new Das2Result(this, resultid, assayId, imageId, protocolId));
+      }
+    } catch (Exception ex) {
+      ErrorHandler.errorPanel("Error initializing DAS types for\n"+results_request, ex);
+    }
+    //TODO should types_initialized be true after an exception?
+    results_initialized = true;
+  }  
+  
+  protected void initAssays() {
+    this.clearAssays();
+    String assays_request = getSource().getServerInfo().getRootUrl() +
+      "/" + this.getID() + "/assay";
+    try {
+      System.out.println("Das Assays Request: " + assays_request);
+      Document doc = DasLoader.getDocument(assays_request);
+      Element top_element = doc.getDocumentElement();
+      NodeList assaylist = doc.getElementsByTagName("PhysicalBioAssay");
+      System.out.println("assays: " + assaylist.getLength());
+      for (int i=0; i< assaylist.getLength(); i++)  {
+	Element assaynode = (Element)assaylist.item(i);
+        String assayid = assaynode.getAttribute("identifier");
+
+        // images
+	NodeList ilist = assaynode.getElementsByTagName("Image");
+	HashMap images = new HashMap();
+	for (int k=0; k<ilist.getLength(); k++) {
+	  Element inode = (Element)ilist.item(k);
+	  String uri = inode.getAttribute("URI");
+          images.put(uri.substring(9), uri);
+	}
+
+        // biomaterials
+        HashMap biomat = new HashMap();
+	NodeList bmlist = assaynode.getElementsByTagName("BioMaterial_ref");
+	for (int k=0; k<bmlist.getLength(); k++) {
+	  Element pnode = (Element)bmlist.item(k);
+	  String id = pnode.getAttribute("identifier");
+	  biomat.put(id.substring(12), id);
+	}
+        
+        // array platform
+        HashMap platform = new HashMap();
+        NodeList plist = assaynode.getElementsByTagName("Array_ref");
+        for (int l=0; l<plist.getLength(); l++) {
+           Element pnode = (Element)plist.item(l);
+           String id = pnode.getAttribute("identifier");
+           platform.put(id.substring(12), id);
+        }
+        
+	this.addAssay(new Das2Assay(this, assayid, images, biomat, platform));
+      }
+    } catch (Exception ex) {
+      ErrorHandler.errorPanel("Error initializing DAS types for\n"+assays_request, ex);
+    }
+    //TODO should types_initialized be true after an exception?
+    assays_initialized = true;
+  }
+
   // get annotation types from das server
-  protected void initTypes() {
+  protected void initTypes(String filter) {
+    this.types_filter = filter;
+    this.clearTypes();
     // how should xml:base be handled?
     String types_request = getSource().getServerInfo().getRootUrl() +
         "/" + this.getID() + "/type";
+    if (filter != null) {
+      types_request = types_request+"?ontology="+filter;
+    } 
     //    String types_request = "file:/C:/data/das2_responses/alan_server/types_short.xml";
     try {
       System.out.println("Das Types Request: " + types_request);
@@ -224,7 +413,17 @@ public class Das2VersionedSource  {
 	  props.put(key, val);
 	}
 
-	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
+        HashMap parents = new HashMap();
+        NodeList parentsList = typenode.getElementsByTagName("PARENT");
+        for (int l=0; l<parentsList.getLength(); l++) {
+           Element pnode = (Element)parentsList.item(l);
+           String key = pnode.getAttribute("id");
+           String val = pnode.getAttribute("id");
+           parents.put(key, val);
+        }
+
+
+	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, parents);
 	this.addType(type);
       }
     }

@@ -33,6 +33,7 @@ public class Das2ServerInfo  {
   Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   boolean initialized = false;
 
+    
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
@@ -76,6 +77,10 @@ public class Das2ServerInfo  {
     sources.put(ds.getID(), ds);
   }
 
+
+    
+
+  
   /**
    *  assumes there is only one versioned source for each AnnotatedSeqGroup
    *    may want to change this to return a list of versioned sources instead
@@ -136,6 +141,7 @@ public class Das2ServerInfo  {
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
         String source_id = source.getAttribute("id");
+        
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxon");
@@ -171,6 +177,11 @@ public class Das2ServerInfo  {
   public static void main(String[] args) {
     // String test_url = "file:/C:/data/das2_responses/alan_server/sources.xml";
     String test_url = "http://das.ev.affymetrix.com/das/genome";
+    
+    // DEBUG: The first is a squid proxy that greatly increases response time
+    // email me if you want access <boconnor@ucla.edu>
+    //String test_url = "http://radius.genomics.ctrl.ucla.edu/das/genome";
+    //String test_url = "http://das.biopackages.net/das/genome";
 
     Das2ServerInfo test = new Das2ServerInfo(test_url, "name unknown", true);
     System.out.println("***** DAS Server Info *****");

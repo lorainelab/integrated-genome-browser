@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -68,6 +68,11 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   //     except for center = 0, then keep at 0
   // int smoothing_factor = 1;  // how many pixels to left and right to factor in smoothing
 
+  
+  public CoverageSummarizerGlyph() {
+    super();
+    setHitable(false);
+  }
 
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq

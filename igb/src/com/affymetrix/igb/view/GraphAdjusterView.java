@@ -50,7 +50,7 @@ public class GraphAdjusterView extends JComponent
   static String STAIRSTEP = "StairStep";
   static String INTERVAL = "Interval";
   static String HIDE = "Hide";
-  //  static String HEATMAP = "Heat Map";
+  static String HEATMAP = "Heat Map";
 
   static Map string2style;
   static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
@@ -113,7 +113,7 @@ public class GraphAdjusterView extends JComponent
     string2style.put(DOT, new Integer(SmartGraphGlyph.DOT_GRAPH));
     string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
     string2style.put(INTERVAL, new Integer(SmartGraphGlyph.SPAN_GRAPH));
-    //    string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
+    string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
 
     name2transform = new LinkedHashMap();
     name2transform.put(LOG_10, new LogTransform(10));
@@ -193,6 +193,7 @@ public class GraphAdjusterView extends JComponent
     styleCB.addItem(BAR);
     styleCB.addItem(DOT);
     styleCB.addItem(STAIRSTEP);
+    styleCB.addItem(HEATMAP);
     // styleCB.addItem(INTERVAL);
 
     JPanel decorP = new JPanel();

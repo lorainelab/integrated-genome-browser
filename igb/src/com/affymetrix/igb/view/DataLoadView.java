@@ -18,6 +18,7 @@ public class DataLoadView extends JComponent  {
   DasLoadView das1_view;
   QuickLoadView2 quick_view;
   SeqGroupView group_view;
+  DataSourcesTreeView tree_view;
 
   public DataLoadView() {
     das2_view = new Das2LoadView();

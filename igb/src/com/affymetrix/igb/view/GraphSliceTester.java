@@ -70,7 +70,7 @@ public class GraphSliceTester extends JComponent
     if (any_new_points)  {
       long t1 = tim.read();
       System.out.println("points added via graph slices: " + points_added +
-			 ",  time to add: " + (t1/1000f));
+			 ",  time to add: " + (t1/1000f) + " kpoints/second = " + (int)(points_added / t1));
       //      System.out.println("in GraphSliceTester, refreshing SeqMapView");
       gviewer.setAnnotatedSeq(visible_seq, true, true);
     }

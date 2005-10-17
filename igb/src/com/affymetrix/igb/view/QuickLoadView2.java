@@ -141,6 +141,7 @@ public class QuickLoadView2 extends JComponent
 	while (iter.hasNext()) {
 	  Map.Entry ent = (Map.Entry)iter.next();
 	  String filename = (String)ent.getKey();
+//          if (filename == null || filename.equals(""))  { continue; }
 	  Boolean boo = (Boolean)ent.getValue();
 	  String annot_name = filename.substring(0, filename.indexOf("."));
 	  JCheckBox cb = new JCheckBox(annot_name);

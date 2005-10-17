@@ -67,6 +67,7 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.CharIterator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import java.text.*;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -186,6 +187,8 @@ public class SeqMapView extends JPanel
   public static final Color default_default_background_color = Color.BLACK;
   public static final Color default_edge_match_color = Color.WHITE;
   public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
+
+  static NumberFormat nformat = new DecimalFormat();
 
   Color default_annot_color = default_default_annot_color;
 
@@ -316,11 +319,15 @@ public class SeqMapView extends JPanel
     map.addViewBoxListener(new NeoViewBoxListener() {
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 	  Rectangle2D vbox = evt.getCoordBox();
-	  int bases_in_view = (int)vbox.width;
-	  bases_in_viewTF.setText(Integer.toString(bases_in_view));
+	  //	  int bases_in_view = (int)vbox.width;
+	  //	  bases_in_viewTF.setText(Integer.toString(bases_in_view));
+	  double bases_in_view = vbox.width;
+	  bases_in_viewTF.setText(nformat.format(bases_in_view));
 	  int pixel_width = map.getView().getPixelBox().width;
-	  int bases_per_pixel = bases_in_view / pixel_width;
-	  bases_per_pixelTF.setText(Integer.toString(bases_per_pixel));
+	  //	  int bases_per_pixel = bases_in_view / pixel_width;
+	  //	  bases_per_pixelTF.setText(Integer.toString(bases_per_pixel));
+	  double bases_per_pixel = (double)bases_in_view / (double)pixel_width;
+	  bases_per_pixelTF.setText(nformat.format(bases_per_pixel));
 	}
       } );
     xzoombox.add(bases_in_viewTF);
@@ -435,7 +442,7 @@ public class SeqMapView extends JPanel
   Map getFactoryHash() { return meth2factory; }
   Map getForwardTierHash() { return method2ftier; }
   Map getReverseTierHash() { return method2rtier; }
-  
+
   /** A Map of GraphState to TierGlyph */
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
@@ -552,13 +559,13 @@ public class SeqMapView extends JPanel
 	    }
 	    cgl.setCoords(childspan.getMin(), 0,
 			  childspan.getMax()-childspan.getMin(), 10);
-            // calling cgl.setInfo() 
+            // calling cgl.setInfo()
             //   allows info to be seen in selection table
             //   allows easily selecting sequence for contig
             //   allows slicing on contig
             //   Slicing may require lots of memory, so this may be a bad idea.
             //cgl.setInfo(childcomp);
-            
+
             // also note that "Load residues in view" produces additional
             // contig-like glyphs that can partially hide these glyphs.
 	    seq_glyph.addChild(cgl);
@@ -693,14 +700,14 @@ public class SeqMapView extends JPanel
       // special casing for when setAnnotatedSeq() is really being called
       // to relayout same seq, for instance when merging annotation results for
       // the "same" sequence from different sources -- may want to avoid massive repacking???
-      
+
       // Gather information about what is currently selected, so can restore it later
       if (preserve_selection) {
         old_selections = getSelectedSyms();
       } else {
         old_selections = Collections.EMPTY_LIST;
       }
-        
+
       // stash annotation tiers for proper state restoration after resetting for same seq
       //    (but presumably added / deleted / modified annotations...)
 
@@ -802,7 +809,7 @@ public class SeqMapView extends JPanel
       Iterator iter = old_selections.iterator();
       while (iter.hasNext()) {
         SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
-        
+
 	GlyphI gl = (GlyphI)map.getItem(old_selected_sym);
 	if (gl != null) {
 	  map.select(gl);
@@ -810,10 +817,10 @@ public class SeqMapView extends JPanel
       }
       setZoomSpotX(old_zoom_spot_x);
       setZoomSpotY(old_zoom_spot_y);
-      
+
       doEdgeMatching(map.getSelected(), false);
     }
-    
+
     if (SHRINK_WRAP_MAP_BOUNDS) {
       /*
        *  Shrink wrapping is a little more complicated than one might expect, but it
@@ -1242,7 +1249,7 @@ public class SeqMapView extends JPanel
     if (! add_to_previous)  {
       clearSelection();
     }
-    
+
     int symcount = sym_list.size();
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)sym_list.get(i);
@@ -1297,7 +1304,7 @@ public class SeqMapView extends JPanel
       */
     }
   }
-  
+
   /**
    * Given a list of glyphs, returns a list of syms that those
    *  glyphs represent.
@@ -1322,7 +1329,7 @@ public class SeqMapView extends JPanel
     Vector selected_glyphs = map.getSelected();
     java.util.List selected_syms = glyphsToSyms(selected_glyphs);
     // Note that seq_selected_sym (the selected residues) is not included in selected_syms
-    
+
     gmodel.setSelectedSymmetries(selected_syms, this);
   }
 
@@ -1344,7 +1351,7 @@ public class SeqMapView extends JPanel
     }
   }
 
-  /** Returns the region of sequence residues that is selected, or null. 
+  /** Returns the region of sequence residues that is selected, or null.
    *  Note that this SeqSymmetry is not included in the return value of
    *  getSelectedSyms().
    */
@@ -1362,7 +1369,7 @@ public class SeqMapView extends JPanel
     SeqSymmetry residues_sym = null;
     Clipboard clipboard = this.getToolkit().getSystemClipboard();
     String from = "";
-    
+
     if (seq_selected_sym != null) {
       residues_sym = getSelectedRegion();
       from = " from selected region";
@@ -1370,11 +1377,11 @@ public class SeqMapView extends JPanel
     else {
       java.util.List syms = getSelectedSyms();
       if (syms.size() == 1) {
-        residues_sym = (SeqSymmetry) syms.get(0); 
+        residues_sym = (SeqSymmetry) syms.get(0);
         from = " from selected item";
       }
     }
-    
+
     if (residues_sym == null) {
       IGB.errorPanel("Can't copy to clipboard",
       "No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
@@ -1441,7 +1448,7 @@ public class SeqMapView extends JPanel
 	    success = true;
 	  }
 	  else {
-	    IGB.errorPanel("Missing Sequence Residues", 
+	    IGB.errorPanel("Missing Sequence Residues",
             "Don't have all the needed residues, can't copy to clipboard.\n" +
             "Please load sequence residues for this region.");
 	  }
@@ -1458,7 +1465,7 @@ public class SeqMapView extends JPanel
     }
     return success;
   }
- 
+
   /**
    *  Returns the most recently selected glyph.
    */
@@ -1469,7 +1476,7 @@ public class SeqMapView extends JPanel
       return (GlyphI) map.getSelected().lastElement();
     }
   }
-  
+
   /**
    *  Determines which SeqSymmetry's are selected by looking at which Glyph's
    *  are currently selected.  The list will not include the selected sequence
@@ -2114,7 +2121,7 @@ public class SeqMapView extends JPanel
     return mi;
   }
 
-  /** For each current selection, deselect it and select its parent instead. 
+  /** For each current selection, deselect it and select its parent instead.
    *  @param top_level if true, will select only top-level parents
    */
   void selectParents(boolean top_level) {
@@ -2138,7 +2145,7 @@ public class SeqMapView extends JPanel
     postSelections();
   }
 
-  /** Get the parent, or top-level parent, of a glyph, with certain restictions. 
+  /** Get the parent, or top-level parent, of a glyph, with certain restictions.
    *  Will not return a TierGlyph or RootGlyph or a glyph that isn't hitable, but
    *  will return the original GlyphI instead.
    *  @param top_level if true, will recurse up to the top-level parent, with
@@ -2161,13 +2168,13 @@ public class SeqMapView extends JPanel
     }
     return result;
   }
-  
+
   private class SeqMapViewActionListener implements ActionListener {
 
     public SeqMapViewActionListener() {
       //super(true);
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
       String command = evt.getActionCommand();
       //System.out.println("SeqMapView received action event "+command);
@@ -2325,7 +2332,7 @@ public class SeqMapView extends JPanel
     sym_popup.removeAll();
 
     Vector selected_glyphs = map.getSelected();
-    
+
     setPopupMenuTitle(sym_info, selected_glyphs);
     sym_popup.add(sym_info);
     sym_popup.add(printMI);

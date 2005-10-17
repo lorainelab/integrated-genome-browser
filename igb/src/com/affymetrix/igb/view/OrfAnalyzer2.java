@@ -274,14 +274,19 @@ public class OrfAnalyzer2 extends JComponent
       if (xpos.length > 0) {
         FlyPointLinkerGlyph fw = new FlyPointLinkerGlyph(point_template, link_template, xpos, 3,
                                                          span_start, span_end);
+        fw.setHitable(false);
         orf_glyph = fw;
         fw.setMinThreshold(current_orf_thresh);
         orf_holders.add(fw);
       } else {
-        orf_glyph = new FillRectGlyph();
+        orf_glyph = new FillRectGlyph() {
+          public boolean isHitable() { return false; }
+        };
         orf_glyph.setColor(tier.getFillColor());
       }
-      // Make orf_glyph as long as vseq; otherwise, two or more could pack into one line
+      // Make orf_glyph as long as vseq; otherwise, two or more could pack into one line.
+      // The underlying symmetry may be shorter, so "zoom to selected" won't work.
+      // But the glyph not hittable (for other reasons), so this isn't an issue.
       orf_glyph.setCoords(residue_offset, 0, vseq.getLength(), point_template.getCoordBox().height);
       tier.addChild(orf_glyph);
     }

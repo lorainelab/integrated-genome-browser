@@ -113,20 +113,86 @@ public class BsnpParser {
 	dos.writeInt(snp_count);
       }
 
+      int total_snp_count = 0;
       for (int i=0; i<pcount; i++) {
 	SeqSymmetry parent = (SeqSymmetry)parents.get(i);
+	BioSeq seq = parent.getSpanSeq(0);
 	int snp_count = parent.getChildCount();
+	ArrayList snps = new ArrayList(snp_count);
 	for (int k=0; k<snp_count; k++) {
-	  EfficientSnpSym snp = (EfficientSnpSym)parent.getChild(k);
+	  // need to make sure SNPs are written out in sorted order!
+	  snps.add(parent.getChild(k));
+	}
+	Collections.sort(snps, new SeqSymMinComparator(seq, true));
+	for (int k=0; k<snp_count; k++) {
+	  EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
 	  int base_coord = snp.getSpan(0).getMin();
 	  dos.writeInt(base_coord);
+	  total_snp_count++;
 	}
       }
+      System.out.println("total snps output to bsnp file: " + total_snp_count);
     }
     catch (Exception ex) {
       ex.printStackTrace();
     }
   }
+
+  /**
+   *  Assumes specific GFF variant used to represent SNPs on Affy genotyping chips:
+         #seqname	enzyme	probeset_id	start	end	score	strand	frame
+	 chr1	XbaI	SNP_A-1507333	219135381	219135381	.	+	.
+   *  
+   */
+  public java.util.List readGffFormat(InputStream istr) {
+    List results = new ArrayList();
+    try {
+      Map seqhash = new HashMap();
+      GFFParser gff_parser = new GFFParser();
+      gff_parser.parse(istr, seqhash, null, true);
+      Iterator iter = seqhash.values().iterator();
+      int problem_count = 0;
+      while (iter.hasNext()) {
+	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+	int acount = aseq.getAnnotationCount();
+	String seqid = aseq.getID();
+	System.out.println("seq = " + seqid + ", annots = " + acount);
+	// for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
+	// therefore just taking first annotation
+	// need to debug this eventually...
+	if (acount >= 1) { 
+	  MutableSeqSymmetry new_psym = new SimpleSymWithProps();
+	  MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+	  new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+	  for (int k=0; k<acount; k++) {
+	    SeqSymmetry psym = aseq.getAnnotation(k);
+	    int child_count = psym.getChildCount();
+	    System.out.println("    child annots: " + child_count);
+
+	    for (int i=0; i<child_count; i++) {
+	      UcscGffSym csym = (UcscGffSym)psym.getChild(i);
+	      int coord = csym.getSpan(0).getMin();
+	      //	    String snp_name = csym.getID();
+	      String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
+	      //	    System.out.println("coord = " + coord + ", id = " + snp_name);
+	      // now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
+	      //	      int snpid = ...
+	      //	      EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord, snpid);
+	      EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord);
+	      new_psym.addChild(snp_sym);
+	    }
+	  }
+	  results.add(new_psym);
+	}
+      }
+      System.out.println("problems: " + problem_count);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return results;
+  }
+
 
   public java.util.List readTextFormat(BufferedReader br) {
     int snp_count = 0;
@@ -196,7 +262,6 @@ public class BsnpParser {
 	snp_counts[i] = dis.readInt();
 	total_snp_count += snp_counts[i];
       }
-      System.out.println("total snps: " + total_snp_count);
       snp_syms = new ArrayList(total_snp_count);
       EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
       // Object[] all_coord_arrays = new Object[seq_count];
@@ -209,10 +274,11 @@ public class BsnpParser {
 	  }
 	*/
 	int snp_count = snp_counts[i];
-	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
+	//	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
 	SimpleSymWithProps psym = new SimpleSymWithProps();
 	psym.setProperty("type", annot_type);
-	psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq));
+	if (aseq != null) { psym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq)); }
+	else { psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq)); }
 	if (annot_seq && (aseq != null))  {
 	  aseq.addAnnotation(psym);
 	}
@@ -228,6 +294,7 @@ public class BsnpParser {
           snp_syms.add(snp);
 	}
       }
+      //      System.out.println("total snps: " + total_snp_count);
     }
     catch (Exception ex) { ex.printStackTrace(); }
     tim.print();
@@ -236,7 +303,7 @@ public class BsnpParser {
 
 
 
-  static boolean TEST_BINARY_PARSE = true;
+  static boolean TEST_BINARY_PARSE = false;
 
   public static void main(String[] args) {
     try {
@@ -259,7 +326,8 @@ public class BsnpParser {
 	  if (args.length >= 3) {
 	    bin_outfile = args[2];
 	  }
-	  else if (text_infile.endsWith(".txt")) {
+	  else if (text_infile.endsWith(".txt") ||
+		   text_infile.endsWith(".gff") )  {
 	    bin_outfile = text_infile.substring(0, text_infile.length()-4)+ ".bsnp";
 	  }
 	  else {
@@ -267,10 +335,20 @@ public class BsnpParser {
 	  }
 	  BsnpParser tester = new BsnpParser();
 	  File ifil = new File(text_infile);
-	  BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-	  System.out.println("reading in text data from: " + text_infile);
-	  java.util.List parent_syms = tester.readTextFormat(br);
-	  br.close();
+          java.util.List parent_syms = null;
+	  if (text_infile.endsWith(".txt")) {
+	    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
+	    System.out.println("reading in text data from: " + text_infile);
+	    parent_syms = tester.readTextFormat(br);
+	    br.close();
+	  }
+	  else if (text_infile.endsWith(".gff")) {
+	    InputStream istr = new FileInputStream(ifil);
+	    System.out.println("reading in gff data from: " + text_infile);
+	    parent_syms = tester.readGffFormat(istr);
+	    istr.close();
+	  }
+
 	  File ofil = new File(bin_outfile);
 	  DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
 	  System.out.println("outputing binary data to: " + bin_outfile);

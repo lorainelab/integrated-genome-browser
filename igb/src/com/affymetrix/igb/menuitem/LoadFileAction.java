@@ -437,7 +437,7 @@ public class LoadFileAction {
           BsnpParser parser = new BsnpParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
           java.util.List alist = parser.parse(str, annot_type, seqhash, true);
-          System.out.println("total snps loaded: " + alist.size());
+	  System.out.println("total snps loaded: " + alist.size());
         }
         aseq = input_seq;
       }

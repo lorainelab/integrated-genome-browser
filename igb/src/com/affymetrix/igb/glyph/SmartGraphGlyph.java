@@ -194,7 +194,8 @@ public class SmartGraphGlyph extends GraphGlyph {
 	graph_style == BAR_GRAPH ||
 	graph_style == DOT_GRAPH ||
 	graph_style == STAIRSTEP_GRAPH ||
-	graph_style == SPAN_GRAPH) {
+	graph_style == SPAN_GRAPH || 
+	graph_style == HEAT_MAP) {
       super.draw(view);
     }
     else if (graph_style == MINMAXAVG) {

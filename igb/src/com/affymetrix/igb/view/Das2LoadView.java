@@ -20,6 +20,8 @@ import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import javax.swing.tree.*;
+import javax.swing.event.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
@@ -34,9 +36,12 @@ import com.affymetrix.igb.util.GenometryViewer;
 import javax.swing.event.*;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
-  implements ItemListener, ActionListener, TableModelListener,
+  implements ActionListener, TableModelListener,
+	     // ItemListener, 
              // ComponentListener,  turned off pending change mechanism for now
-	     SeqSelectionListener, GroupSelectionListener  {
+	     //  TreeExpansionListener  {  // TreeWillExpandListener  {
+	     SeqSelectionListener, GroupSelectionListener,
+             TreeSelectionListener {
 
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
   static boolean DEBUG_EVENTS = false;
@@ -47,15 +52,11 @@ public class Das2LoadView extends JComponent
   GenometryViewer simple_viewer = null;
 
   JComboBox typestateCB;
-  JComboBox das_serverCB;
-  JComboBox das_sourceCB;
-  JComboBox das_versionCB;
   JButton load_featuresB;
   JTable types_table;
   JScrollPane table_scroller;
   Map das_servers;
   Map version2typestates = new LinkedHashMap();
-  LinkedHashMap checkbox2type;
 
   Das2LoadView myself = null;
   Das2ServerInfo current_server;
@@ -67,13 +68,7 @@ public class Das2LoadView extends JComponent
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
 
-  String server_filler = "Choose a DAS2 server";
-  String source_filler = "Choose a DAS2 source";
-  String version_filler = "Choose a DAS2 version";
-
-  // turned off pending change mechanism for now
-  //  boolean pending_group_change = false;
-  //  boolean pending_seq_change = false;
+  JTree tree;
 
   public Das2LoadView() {
     this(false);
@@ -93,12 +88,18 @@ public class Das2LoadView extends JComponent
       gviewer = IGB.getSingletonIGB().getMapView();
     }
 
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
+    das_servers = Das2Discovery.getDas2Servers();
+    Iterator iter = das_servers.values().iterator();
+    while (iter.hasNext()) {
+      Das2ServerInfo server = (Das2ServerInfo)iter.next();
+      String server_name = server.getName();
+      Das2ServerTreeNode snode = new Das2ServerTreeNode(server);
+      top.add(snode);
+    }
+    tree = new JTree(top);
 
-    das_serverCB = new JComboBox();
-    das_sourceCB = new JComboBox();
-    das_versionCB = new JComboBox();
     load_featuresB = new JButton("Load Features");
-
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
     for (int i=0; i<load_states.length; i++) {
@@ -109,115 +110,43 @@ public class Das2LoadView extends JComponent
     types_table.setModel(empty_table_model);
     table_scroller = new JScrollPane(types_table);
 
-    checkbox2type = new LinkedHashMap();
-    das_serverCB.addItem(server_filler);
-
-    das_servers = Das2Discovery.getDas2Servers();
-    Iterator iter = das_servers.keySet().iterator();
-    while (iter.hasNext()) {
-      String server_name = (String)iter.next();
-      das_serverCB.addItem(server_name);
-    }
-
     this.setLayout(new BorderLayout());
-    JPanel panA = new JPanel();
-    panA.setLayout(new GridLayout(3, 2));
+    this.add("West", new JScrollPane(tree));
 
-    panA.add(new JLabel("DAS2 Server: "));
-    panA.add(das_serverCB);
-    panA.add(new JLabel("DAS2 Source: " ));
-    panA.add(das_sourceCB);
-    panA.add(new JLabel("DAS2 Version: "));
-    panA.add(das_versionCB);
+    JPanel types_panel = new JPanel(new BorderLayout());
+    types_panel.setBorder(new TitledBorder("Available Annotation Types"));
+    types_panel.add("Center", table_scroller);
+    types_panel.add("South", load_featuresB);
 
-    JPanel middle_panel = new JPanel(new BorderLayout());
-    middle_panel.setBorder(new TitledBorder("Available Annotation Types"));
-    middle_panel.add("Center", table_scroller);
 
-    this.add("North", panA);
-    this.add("Center", middle_panel);
-    this.add("South", load_featuresB);
+    JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    splitpane.setOneTouchExpandable(true);
+    //    splitpane.setDividerSize(8);
+    //    splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
+    splitpane.setLeftComponent(new JScrollPane(tree));
+    splitpane.setRightComponent(types_panel);
+    this.add("Center", splitpane);
 
-    das_serverCB.addItemListener(this);
-    das_sourceCB.addItemListener(this);
-    das_versionCB.addItemListener(this);
-    //    das_regionCB.addItemListener(this);
     load_featuresB.addActionListener(this);
-
     //    this.addComponentListener(this);  turned off pending change mechanism for now
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
+
+    tree.getSelectionModel().setSelectionMode
+      (TreeSelectionModel.SINGLE_TREE_SELECTION);
+    tree.addTreeSelectionListener(this);
   }
 
-  public void itemStateChanged(ItemEvent evt) {
-    //    System.out.println("Das2LoadView received ItemEvent: " + evt);
-    Object src = evt.getSource();
 
-    // selection of DAS server
-    if ((src == das_serverCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-      System.out.println("Das2LoadView received SELECTED ItemEvent on server combobox");
-      String server_name = (String)evt.getItem();
-      if (server_name == server_filler) {
-	// clear source and version choice boxes, and types panel
-      }
-      else {
-	System.out.println("DAS server selected: " + server_name);
-	current_server = (Das2ServerInfo)das_servers.get(server_name);
-	System.out.println(current_server);
-	setSources();
-      }
+  public void valueChanged(TreeSelectionEvent evt) {
+    Object node = tree.getLastSelectedPathComponent();
+    if (node == null) return;
+    if (node instanceof Das2VersionTreeNode) {
+      current_version = ((Das2VersionTreeNode)node).getVersionedSource();
+      System.out.println(current_version);
+      System.out.println("  version id: " + current_version.getGenome().getID());
+      setRegionsAndTypes();
     }
-
-    // selection of DAS source
-    else if ((src == das_sourceCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-      System.out.println("Das2LoadView received SELECTED ItemEvent on source combobox");
-      String source_name = (String)evt.getItem();
-      if (source_name == source_filler) {
-	// clear version choice box and types panel
-      }
-      else  {
-	System.out.println("source name: " + source_name);
-	Map sources = current_server.getSources();
-	current_source = (Das2Source)sources.get(source_name);
-	System.out.println(current_source);
-	//	System.out.println("  genome id: " + current_source.getGenome().getID());
-	//	setRegionsAndTypes();
-	setVersions();
-      }
-    }
-
-    else if ((src == das_versionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-      System.out.println("Das2LoadView received SELECTED ItemEvent on version combobox");
-      String version_name = (String)evt.getItem();
-      if (version_name == version_filler) {
-	// clear types panel
-
-      }
-      if (version_name != version_filler) {
-	System.out.println("version name: " + version_name);
-	Map versions = current_source.getVersions();
-	current_version = (Das2VersionedSource)versions.get(version_name);
-	System.out.println(current_version);
-	System.out.println("  version id: " + current_version.getGenome().getID());
-
-	setRegionsAndTypes();
-	//	gmodel.setSelectedSeqGroup(current_version.getGenome());
-
-      }
-    }
-
-    // selection of DAS region point
-    /*
-    else if ((src == das_regionCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-      System.out.println("Das2LoadView received SELECTED ItemEvent on region combobox");
-      String region_name = (String)evt.getItem();
-      if (region_name != region_filler) {
-	System.out.println("region seq: " + region_name);
-	Map regions = current_version.getRegions();
-	current_region = (Das2Region)regions.get(region_name);
-      }
-    }
-    */
   }
 
   public void actionPerformed(ActionEvent evt) {
@@ -228,117 +157,9 @@ public class Das2LoadView extends JComponent
     }
   }
 
-  public void setVersions() {
-    das_versionCB.removeItemListener(this);
-    das_versionCB.removeAllItems();
-    //    das_regionCB.removeAllItems();
-    checkbox2type.clear();
-
-    types_table.setModel(empty_table_model);
-    types_table.validate();
-    types_table.repaint();
-
-    das_serverCB.setEnabled(false);
-    das_sourceCB.setEnabled(false);
-    das_versionCB.setEnabled(false);
-    //    das_regionCB.setEnabled(false);
-
-    // don't need to put getVersions() call on separate thread, since a source's versions
-    //    will have already been initialized in a previous server.getSources() call
-    Map versions = current_source.getVersions();
-    das_versionCB.addItem(version_filler);
-    Iterator iter = versions.values().iterator();
-    while (iter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)iter.next();
-      das_versionCB.addItem(version.getID());
-    }
-
-    das_versionCB.addItemListener(this);
-    das_serverCB.setEnabled(true);
-    das_sourceCB.setEnabled(true);
-    das_versionCB.setEnabled(true);
-    //	  das_regionCB.setEnabled(true);
-
-  }
-
-  public void setSources() {
-    das_sourceCB.removeItemListener(this);
-    das_versionCB.removeItemListener(this);
-    das_sourceCB.removeAllItems();
-    das_versionCB.removeAllItems();
-    checkbox2type.clear();
-
-    types_table.setModel(empty_table_model);
-    types_table.validate();
-    types_table.repaint();
-
-    das_serverCB.setEnabled(false);
-    das_sourceCB.setEnabled(false);
-    das_versionCB.setEnabled(false);
-
-    final SwingWorker worker = new SwingWorker() {
-	Map sources = null;
-	public Object construct() {
-	  sources = current_server.getSources();
-	  if (current_group == null) {
-	    current_version = null;
-	  }
-	  else {
-	    current_version = current_server.getVersionedSource(current_group);
-	  }
-	  if (current_version == null)  {
-	    current_source = null;
-	  }
-	  else {
-	    current_source = current_version.getSource();
-	  }
-	  return null;  // or could have it return types, shouldn't matter...
-	}
-	public void finished() {
-	  das_sourceCB.addItem(source_filler);
-	  Iterator iter = sources.values().iterator();
-	  while (iter.hasNext()) {
-	    Das2Source source = (Das2Source)iter.next();
-	    //      das_sourceCB.addItem(source.getName() + "(" + source.getID() + ")");
-	    das_sourceCB.addItem(source.getID());
-	  }
-	  if (current_source != null) {
-	    das_sourceCB.setSelectedItem(current_source.getID());
-	    das_versionCB.addItem(version_filler);
-	    Iterator versions = current_source.getVersions().values().iterator();
-	    while (versions.hasNext()) {
-	      Das2VersionedSource version = (Das2VersionedSource)versions.next();
-	      das_versionCB.addItem(version.getID());
-	    }
-	  }
-	  if (current_version != null) {
-	    das_versionCB.setSelectedItem(current_version.getID());
-	  }
-	  //	  das_sourceCB.addItemListener(listener);
-	  das_sourceCB.addItemListener(myself);
-	  das_versionCB.addItemListener(myself);
-	  das_serverCB.setEnabled(true);
-	  das_sourceCB.setEnabled(true);
-	  das_versionCB.setEnabled(true);
-	  //	  das_regionCB.setEnabled(true);
-
-	  if (current_version != null) {
-	    setRegionsAndTypes();
-	  }
-	}
-      };
-    worker.start();
-  }
-
 
   public void setRegionsAndTypes() {
-    das_serverCB.setEnabled(false);
-    das_sourceCB.setEnabled(false);
-    das_versionCB.setEnabled(false);
     load_featuresB.setEnabled(false);
-
-    checkbox2type.clear();
-
     types_table.setModel(empty_table_model);
     types_table.validate();
     types_table.repaint();
@@ -378,9 +199,6 @@ public class Das2LoadView extends JComponent
 
 	  types_table.validate();
 	  types_table.repaint();
-	  das_serverCB.setEnabled(true);
-	  das_sourceCB.setEnabled(true);
-	  das_versionCB.setEnabled(true);
 	  load_featuresB.setEnabled(true);
 	  // need to do this here within finished(), otherwise may get threading issues where
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
@@ -554,9 +372,6 @@ public class Das2LoadView extends JComponent
           current_version = current_server.getVersionedSource(current_group);
 	  if (current_version == null) {
 	    // reset
-	    das_serverCB.setSelectedItem(server_filler);
-	    das_sourceCB.setSelectedItem(source_filler);
-	    das_versionCB.setSelectedItem(version_filler);
 	    current_server = null;
 	    current_source = null;
 	    // need to reset table also...
@@ -569,10 +384,6 @@ public class Das2LoadView extends JComponent
 	    current_server = current_source.getServerInfo();
 	    System.out.println("   new das source: " + current_source.getID() +
 			       ",  new das version: " + current_version.getID());
-	    //	  das_sourceCB.removeItemListener(this);
-	    das_sourceCB.setSelectedItem(current_source.getID());
-	    das_versionCB.setSelectedItem(current_version.getID());
-	    //	  das_sourceCB.addItemListener(this);
 	  }
         }
       }
@@ -611,29 +422,6 @@ public class Das2LoadView extends JComponent
     }
   }
 
-/* ComponentListener implementation, to allow putting off changes
- *     triggered by changing seq or seq group unless and until Das2LoadView is actually visible
- *
- *  turned this off, because really want Das2LoadView to respond regardless of whether it's
- *     visible or not.  May want to revisit at some point, because GUI itself doesn't need
- *     to respond if not visible, rather the auto-loading part needs to respond
-
-  public void componentResized(ComponentEvent e) { }
-  public void componentMoved(ComponentEvent e) { }
-  public void componentHidden(ComponentEvent e) { }
-
-  public void componentShown(ComponentEvent e) {
-    System.out.println("Das2LoadView was just made visible");
-    if (pending_group_change) {
-      handleGroupChange();
-      pending_group_change = false;
-    }
-    if (pending_seq_change)  {
-      handleSeqChange();
-      pending_seq_change = false;
-    }
-  }
-*/
 
   public static void main(String[] args) {
     Das2LoadView testview = new Das2LoadView(true);
@@ -652,7 +440,7 @@ public class Das2LoadView extends JComponent
 
 /**
  *  Relates a Das2Type to it's status in IGB.
- *  For example, whether it's load strategy is set to "full sequence" 
+ *  For example, whether it's load strategy is set to "full sequence"
  *  or "visible range", and possibly other details.
  */
 class Das2TypeState {
@@ -806,3 +594,111 @@ class Das2TypesTableModel extends AbstractTableModel   {
     fireTableCellUpdated(row, col);
   }
 }
+
+
+/**
+ *  TreeNode wrapper around a Das2ServerInfo object
+ */
+class Das2ServerTreeNode extends DataSourcesAbstractNode {
+  Das2ServerInfo server;
+  // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
+  Vector child_nodes = null;
+
+  public Das2ServerTreeNode(Das2ServerInfo server) {
+    this.server = server;
+  }
+
+  public int getChildCount() {
+    if (child_nodes == null) { populate(); }
+    return child_nodes.size();
+  }
+
+  public TreeNode getChildAt(int childIndex) {
+    if (child_nodes == null) { populate(); }
+    return (TreeNode)child_nodes.get(childIndex);
+  }
+
+  public Enumeration children() {
+    if (child_nodes == null) { populate(); }
+    return child_nodes.elements();
+  }
+
+  /**
+   *  first time children are accessed, this will trigger dynamic access to DAS2 server..
+   */
+  protected void populate() {
+    if (child_nodes == null) {
+      Map sources = server.getSources();
+      child_nodes = new Vector(sources.size());
+      Iterator iter = sources.values().iterator();
+      while (iter.hasNext()) {
+	Das2Source source = (Das2Source)iter.next();
+	Das2SourceTreeNode child = new Das2SourceTreeNode(source);
+	child_nodes.add(child);
+      }
+    }
+  }
+
+  public boolean getAllowsChildren() { return true; }
+  public boolean isLeaf() { return false; }
+  public String toString() { return server.getName(); }
+  /** NOT YET IMPLEMENTED */
+  public int getIndex(TreeNode node) {
+    System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
+    return -1;
+  }
+}
+
+/**
+ *  TreeNode wrapper around a Das2Source object
+ */
+class Das2SourceTreeNode extends DataSourcesAbstractNode {
+  Das2Source source;
+  Vector version_nodes;
+
+  public Das2SourceTreeNode(Das2Source source) {
+    this.source = source;
+    Map versions = source.getVersions();
+    version_nodes = new Vector(versions.size());
+    Iterator iter = versions.values().iterator();
+    while (iter.hasNext()) {
+      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+      Das2VersionTreeNode child = new Das2VersionTreeNode(version);
+      version_nodes.add(child);
+    }
+  }
+  public Das2Source getSource() { return source; }
+  public int getChildCount() { return version_nodes.size(); }
+  public TreeNode getChildAt(int childIndex) { return (TreeNode)version_nodes.get(childIndex); }
+  public Enumeration children() { return version_nodes.elements(); }
+  public boolean getAllowsChildren() { return true; }
+  public boolean isLeaf() { return false; }
+  public String toString() { return source.getID(); }
+  /** NOT YET IMPLEMENTED */
+  public int getIndex(TreeNode node) {
+    System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
+    return -1;
+  }
+
+}
+
+/**
+ * May don't really need Das2VersionTreeNode, since Das2VersionedSource could itself serve as a leaf
+ *    (since no requirement for TreeNodes?)
+ */
+class Das2VersionTreeNode extends DataSourcesAbstractNode {
+  Das2VersionedSource version;
+
+  public Das2VersionTreeNode(Das2VersionedSource version) { this.version = version; }
+  public Das2VersionedSource getVersionedSource() { return version; }
+  public String toString() { return version.getID(); }
+  public boolean getAllowsChildren() { return false; }
+  public boolean isLeaf() { return true; }
+  // Das2VersionTreeNode cannot have children, so some TreeNode methods are just stubs
+  public int getChildCount() { return 0; }
+  public TreeNode getChildAt(int childIndex) { return null; }
+  public Enumeration children() { return null; }
+  public int getIndex(TreeNode node) { return -1; }
+}
+
+

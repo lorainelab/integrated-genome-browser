@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
+import javax.swing.tree.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.event.*;
@@ -18,7 +19,6 @@ public class DataLoadView extends JComponent  {
   DasLoadView das1_view;
   QuickLoadView2 quick_view;
   SeqGroupView group_view;
-  DataSourcesTreeView tree_view;
 
   public DataLoadView() {
     das2_view = new Das2LoadView();
@@ -66,8 +66,8 @@ class SeqGroupView extends JComponent
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    if (this.DEBUG_EVENTS)  { 
-      System.out.println("SeqGroupView received groupSelectionChanged() event"); 
+    if (this.DEBUG_EVENTS)  {
+      System.out.println("SeqGroupView received groupSelectionChanged() event");
       System.out.println("  group: " + group.getID());
       System.out.println("  seq count: " + group.getSeqs().size());
     }
@@ -148,4 +148,23 @@ class SeqGroupTableModel extends AbstractTableModel  {
   }
 
 
+}
+
+
+/**
+ *   Stubs out MutableTreeNode methods that aren't used for Das2*Node objects
+ */
+abstract class DataSourcesAbstractNode implements MutableTreeNode {
+  TreeNode parent;
+  public void insert(MutableTreeNode child, int index)  {}
+  public void remove(int index) {}
+  public void remove(MutableTreeNode node) {}
+  public void removeFromParent() {}
+  public void setParent(MutableTreeNode newParent) {
+    this.parent = parent;
+  }
+  public TreeNode getParent() {
+    return parent;
+  }
+  public void setUserObject(Object object) {}
 }

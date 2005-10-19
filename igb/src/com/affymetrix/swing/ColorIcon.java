@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -38,6 +38,10 @@ public class ColorIcon implements Icon {
     the_color = c;
   }
   
+  public Color getColor() {
+    return the_color;
+  }
+  
   public void setSize(int size) {
     if (the_size < 5) {
       the_size = 5;
@@ -56,9 +60,21 @@ public class ColorIcon implements Icon {
   }
 
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    g.setColor(Color.black);
+    g.setColor(c.getForeground());
     g.fillRect(x, y, getIconWidth(), getIconHeight());
-    g.setColor(the_color);
-    g.fillRect(x+1, y+1, getIconWidth()-2, getIconHeight()-2);
+    
+    // if the_color is null, draw an "X" in the square
+    if (the_color == null) {
+      g.setColor(c.getBackground());
+      g.fillRect(x+1, y+1, getIconWidth()-2, getIconHeight()-2);
+      g.setColor(c.getForeground());
+      g.drawLine(x, y, x+getIconWidth()-1, y+getIconHeight()-1);
+      g.drawLine(x+getIconWidth()-1, y, x, y+getIconHeight()-1);
+    }
+    // Otherwise, fill the square with color
+    else {
+      g.setColor(the_color);
+      g.fillRect(x+1, y+1, getIconWidth()-2, getIconHeight()-2);
+    }
   }
 }

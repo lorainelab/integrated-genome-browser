@@ -27,13 +27,12 @@ import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
- *  A factory that will arbitrary nesting levels of any symmetry (at least along the given BioSeq).
+ *  A factory that can display arbitrary nesting levels of any symmetry (at least along the given BioSeq).
  *  This is in contrast to GenericAnnotGlyphFactory, which only shows one or two levels of the symmetry
  *     (usually the leaf nodes and their parents).
  */
 public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
   SeqMapView gviewer;
-  String annot_type;
   ExpandedTierPacker packer;
   int min_height = 10;
   int diff_height = 6;
@@ -50,7 +49,6 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void init(Map options) {
-    annot_type = (String)options.get("annot_type");
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
@@ -69,7 +67,7 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     if (meth != null) {
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, true, Color.WHITE, default_tier_color);
+      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, null);
       int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
       glyphifySymmetry(sym, tiers[tier_index], 0, glyph_height);
     }

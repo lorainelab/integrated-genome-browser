@@ -363,8 +363,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   void makeNonPersistentStyle(SymWithProps sym) {
     String method = (String) com.affymetrix.igb.view.SeqMapView.determineMethod(sym);    
     AnnotStyle style = AnnotStyle.getInstance(method, false);
-    
-    System.out.println("Generated Style for: " + method);
+    style.setGlyphDepth(1);
   }
 
   ActionListener action_listener = new ActionListener() {  

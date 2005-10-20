@@ -13,15 +13,15 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
+import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -30,6 +30,7 @@ import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.parsers.ScoredIntervalParser;
+import com.affymetrix.igb.view.TierPrefsView;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -108,6 +109,16 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     colors_box.add(bg_color);
      */
 
+    JPanel customizer_box = new JPanel();
+    customizer_box.setLayout(new FlowLayout());
+    customizer_box.setBorder(new TitledBorder("Tiers"));
+    Action customizer_action = new AbstractAction("Customize Tiers") {
+      public void actionPerformed(ActionEvent evt) {
+        TierPrefsView.showFrame();
+      }
+    };    
+    customizer_box.add(new JButton(customizer_action));
+    
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
@@ -150,6 +161,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
 
+    main_box.add(customizer_box);
     main_box.add(axis_box);
     main_box.add(edge_match_box);
     main_box.add(orf_box);

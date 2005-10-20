@@ -26,20 +26,18 @@ import com.affymetrix.igb.genometry.SeqSpanComparator;
 import com.affymetrix.igb.genometry.SeqSymSummarizer;
 
 /**
- *
- *
  *  Intended for dynamically summarizing coverage of a collection of spans.
  *  Show graph based on xcoords/pixel of current view, with a point per pixel,
  *  and the yval of the point represents the fraction of the xcoords interval spanned by the pixel
  *  that is covered by the spans that intersect the xcoords interval.
  *
  * Currently assumes that none of the "child" spans overlap
- *    (or in other words, that the spans going into this summarizer have alread been "projected")
+ *    (or in other words, that the spans going into this summarizer have alread been "projected").
  *  now working on figuring out if projected, and if not projecting first...
  *
- * two modes:
+ * Two modes:
  *    absolute glyph count,
- *    fraction coverage count
+ *    fraction coverage count.
  */
 public class CoverageSummarizerGlyph extends SolidGlyph {
   public static int COVERAGE = 2;
@@ -61,7 +59,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   float avg_coverage;
 
   /**
-   *  starting to factor in a smoothing based on values of adjacent pixels
+   *  starting to factor in a smoothing based on values of adjacent pixels.
    */
   boolean do_smoothing = true;
   // currently a fixed smoothing factor over three pixels, left/4 + center/2 + right/4
@@ -92,7 +90,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
 	int cur_min = cspan.getMin();
 	if (cur_min < prev_min) {
 	  // need to sort
-	  System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
+	  //System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
 	  SeqSpanComparator span_compare = new SeqSpanComparator();
 	  Collections.sort(spans, span_compare);
 	  // sorted, so don't have to keep checking, so break;
@@ -109,7 +107,7 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
 	if (prev_max > cspan.getMin())  {
 	  // spans overlap, need to project (union all spans together)
 	  // set spanlist to union of spans...
-	  System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
+	  //System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
 	  spanlist = SeqSymSummarizer.getMergedSpans(spans);
 	  break;
 	}

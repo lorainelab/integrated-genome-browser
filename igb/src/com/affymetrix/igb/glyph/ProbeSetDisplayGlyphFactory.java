@@ -93,10 +93,7 @@ the probeset, probe and pieces of probes
    */
   String label_field = "id";
 
-  /** The name of the property in the probe set SeqSymmetry to use to
-   *  construct a label.  Default is "id".  Set to null to turn off labelling. 
-   */
-  String ps_label_field = "id";
+  String ps_label_field = null; // no longer used
 
   /** Color for the consensus sequence glyphs. */
   Color consensus_color;
@@ -111,8 +108,8 @@ the probeset, probe and pieces of probes
 
   /** Initializes options based on given Map.
    *  Special notes: 
-   *    "label_field" and "ps_label_field" both default to "id", but you can set
-   *     them to something else, or set them to "" if you want to turn off labels.
+   *    "label_field" and defaults to "id", but you can set
+   *     it to something else, or set to "" if you want to turn off labels.
    *    "color" sets the color of the consensus sequence glyphs; the colors
    *    of the probe set and poly_A glyphs are hard-wired.  (Color actually
    *    sets the color of the consensus glyph outlines: the centers are drawn
@@ -129,9 +126,9 @@ the probeset, probe and pieces of probes
     if (label_field==null) {label_field="id";}
     if ("".equals(label_field)) {label_field = null;} // turn off labels
 
-    ps_label_field = (String)options.get("ps_label_field");
-    if (ps_label_field==null) {ps_label_field="id";}
-    if ("".equals(ps_label_field)) {ps_label_field = null;} // turn them off
+//    ps_label_field = (String)options.get("ps_label_field");
+//    if (ps_label_field==null) {ps_label_field="id";}
+//    if ("".equals(ps_label_field)) {ps_label_field = null;} // turn them off
     
     do_independent_probeset_glyphs = setBooleanProperty(options, "probeset_glyphs", do_independent_probeset_glyphs);
     outline_probes_in_probeset = setBooleanProperty(options, "outline_probes", outline_probes_in_probeset);
@@ -163,7 +160,11 @@ the probeset, probe and pieces of probes
     }
     if (meth != null) {
       boolean use_fast_packers = false; // Glyphs in tier may have varying heights
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, use_fast_packers, consensus_color, default_tier_color);
+      AnnotStyle style = AnnotStyle.getInstance(meth);
+      consensus_color = style.getColor();
+      label_field = style.getLabelField();
+      
+      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
       BioSeq seq = gviewer.getAnnotatedSeq();
       addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
     }
@@ -267,7 +268,8 @@ the probeset, probe and pieces of probes
     int parent_y = 100; // irrelevant because packing will move the glyphs around
     int child_y = 100; // relevant relative to parent_y
 
-    boolean use_label = (label_field != null && (consensus_sym instanceof SymWithProps));
+    boolean use_label = (label_field != null && (label_field.trim().length()>0) && 
+      (consensus_sym instanceof SymWithProps));
     GlyphI pglyph;
     if (use_label) {
       EfficientLabelledLineGlyph lglyph = new EfficientLabelledLineGlyph();
@@ -382,10 +384,10 @@ the probeset, probe and pieces of probes
     // Note that the transformation generates a probeset_sym of depth 3
 
     String probeset_id = null;
-    boolean use_label = (ps_label_field != null && (probeset instanceof SymWithProps));
-    if (use_label) {
-      probeset_id = (String) ((SymWithProps) probeset).getProperty(ps_label_field);
-    }
+//    boolean use_label = (ps_label_field != null && (probeset instanceof SymWithProps));
+//    if (use_label) {
+//      probeset_id = (String) ((SymWithProps) probeset).getProperty(ps_label_field);
+//    }
     if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
       drawPolyA(probeset_sym, parent_glyph, probeset_id, y, height, poly_a_site_color);
     } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
@@ -482,6 +484,7 @@ the probeset, probe and pieces of probes
     }
   }
 
+  /** @deprecate Not tested with AnnotStyle mechanism */
   void makeFloatingProbesetGlyph(Color probeset_color, SeqSpan span, String probeset_id,
     DerivedSeqSymmetry probeset_sym, SeqSymmetry transformed_probeset_sym) {
       GlyphI another_probeset_glyph = null;
@@ -525,7 +528,7 @@ the probeset, probe and pieces of probes
 
       String meth = SeqMapView.determineMethod(probeset_sym.getOriginalSymmetry());
       if (meth==null) {meth = "unknown";}
-      TierGlyph[] tiers = gviewer.getTiers(meth, false, true, consensus_color, default_tier_color);
+      TierGlyph[] tiers = gviewer.getTiers(meth, false, null);
       if (span.isForward()) {
         tiers[0].addChild(another_probeset_glyph);
       } else {

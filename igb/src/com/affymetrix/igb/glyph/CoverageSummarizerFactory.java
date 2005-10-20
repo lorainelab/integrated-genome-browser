@@ -65,16 +65,22 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
 
     //    AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);
+    AnnotStyle annot_style = AnnotStyle.getInstance(meth , false);
 
     if (meth != null) {
       //      System.out.println("in CoverageSummarizerFactory, annot type = " + meth);
       TierGlyph[] tiers = gviewer.getTiers(meth,
 					   false, // next_to_axis = false
-					   true, // use_fast_packer = true
-					   glyph_color,  // fg_color (sets label color)
-					   default_tier_color);  // bg_color
+					   annot_style);
       TierGlyph ftier = tiers[0];
-      TierGlyph rtier = tiers[1];
+      //TierGlyph rtier = tiers[1]; // ignore the reverse tier
+            
+      Color background_color = tiers[0].getFillColor(); // a default fallback
+      if (annot_style != null) {
+        glyph_color = annot_style.getColor();
+        background_color = annot_style.getBackground();
+      }
+      
       AffyTieredMap map = gviewer.getSeqMap();
 
       BioSeq annotseq = gviewer.getAnnotatedSeq();
@@ -91,6 +97,8 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
       SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
 
       CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();
+      cov.setHitable(false);
+      cov.setBackgroundColor(background_color);
       cov.setCoveredIntervals(leaf_spans);
       cov.setColor(glyph_color);
       cov.setStyle(style);

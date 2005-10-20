@@ -24,7 +24,6 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.GraphSymUtils;
@@ -43,8 +42,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final int default_maxgap_thresh = 100;
 
   static final boolean default_show_thresh = false;
-
-  static final Color default_tier_color = Color.black;
 
   static Map seq2yloc = new HashMap();
   static Map seq2facount = new HashMap();
@@ -139,7 +136,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     if (sym instanceof GraphSym) {
       GraphSym gsym = (GraphSym)sym;
-      GenericGraphGlyphFactory.displayGraph(gsym, smv, state, false);
+      displayGraph(gsym, smv, state, false);
     }
     else {
       System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
@@ -254,17 +251,17 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       if (new_tier) {
 	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph();
+	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphName());
 	  tempgl.setFixedPixelHeight(true);
 	  tempgl.setFixedPixHeight(60);
 	  tglyph = tempgl;
 	}
-	else { tglyph = new TierGlyph(); }
+	  else { tglyph = new TierGlyph(graf.getGraphName()); }
       }
 
-      Map method2color = smv.getColorHash();
-      Color tier_back_col = (Color)method2color.get("background");
-      if (tier_back_col == null) { tier_back_col = default_tier_color; }
+      Color tier_back_col = AnnotStyle.getDefaultInstance().getBackground();
+      if  (tier_back_col == null) tier_back_col = Color.BLACK;
+      
       tglyph.setFillColor(tier_back_col);
       tglyph.setForegroundColor(state.getColor());
       tglyph.addChild(graph_glyph);

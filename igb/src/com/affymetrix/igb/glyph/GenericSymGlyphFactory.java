@@ -67,7 +67,8 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     if (meth != null) {
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, null);
+      AnnotStyle style = AnnotStyle.getInstance(meth);
+      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
       int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
       glyphifySymmetry(sym, tiers[tier_index], 0, glyph_height);
     }

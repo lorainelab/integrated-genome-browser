@@ -29,15 +29,15 @@ import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
-  static boolean SUPPRESS_GLYPHS = false;
+  //static boolean SUPPRESS_GLYPHS = false;
   static boolean USE_EFFICIENT_GLYPHS = true;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;
   static boolean ADD_CHILDREN = true;
   static boolean OPTIMIZE_CHILD_MODEL = false;
 
-  static Color default_annot_color = SeqMapView.default_default_annot_color;
-  static Color default_tier_color = SeqMapView.default_default_background_color;
+  static Color default_annot_color = Color.GREEN;
+  static Color default_tier_color = Color.BLACK;
 
   static Class default_parent_class = (new ImprovedLineContGlyph()).getClass();
   static Class default_child_class = (new FillRectGlyph()).getClass();
@@ -70,16 +70,16 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       parent_labelled_glyph_class = default_labelled_parent_class;
     }
   }
-
+  
   public void init(Map options) {
-    parent_color = (Color)options.get("parent_color");
-    child_color = (Color)options.get("child_color");
-    if (parent_color == null) { parent_color = (Color)options.get("color"); }
-    if (child_color == null) { child_color = (Color)options.get("color"); }
-    if (parent_color == null) { parent_color = default_annot_color; }
-    if (child_color == null) { child_color = default_annot_color; }
+    //parent_color = (Color)options.get("parent_color");
+    //child_color = (Color)options.get("child_color");
+    //if (parent_color == null) { parent_color = (Color)options.get("color"); }
+    //if (child_color == null) { child_color = (Color)options.get("color"); }
+    //if (parent_color == null) { parent_color = default_annot_color; }
+    //if (child_color == null) { child_color = default_annot_color; }
 
-    label_field = (String)options.get("label_field");
+    //label_field = (String)options.get("label_field");
 
     String glyph_depth_string = (String)options.get("glyph_depth");
     if (glyph_depth_string != null) {
@@ -107,22 +107,34 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
     }
   }
-
+  
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     //    return createGlyph(sym, smv, false);
     createGlyph(sym, smv, false);
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
-    if (SUPPRESS_GLYPHS) { return; }
+    //if (SUPPRESS_GLYPHS) { return; }
     setMapView(smv);
     AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);
     // System.out.println("method: " + meth);
 
     if (meth != null) {
-      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, true, parent_color, default_tier_color);
-      addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+      AnnotStyle style = AnnotStyle.getInstance(meth);
+      parent_color = style.getColor();
+      child_color = style.getColor();
+      glyph_depth = style.getGlyphDepth();
+      label_field = style.getLabelField();
+      
+//      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, true, state.getColor(), default_tier_color);
+      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
+      if (style.getSeparate()) {
+        addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
+      } else {
+        // use only one tier
+        addLeafsToTier(sym, tiers[0], tiers[0], glyph_depth);
+      }
     }
     else {  // keep recursing down into child syms if parent sym has no "method" property
       int childCount = sym.getChildCount();
@@ -159,10 +171,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   int optimized_child_count = 0;
+    
   public GlyphI addToTier(SeqSymmetry insym,
                           TierGlyph forward_tier,
                           TierGlyph reverse_tier) {
-
+                            
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
@@ -174,6 +187,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }  // if no span corresponding to seq, then return;
 
     boolean forward = pspan.isForward();
+    TierGlyph the_tier = forward ? forward_tier : reverse_tier;
+        
     GlyphI pglyph = null;
 
     // Note: Setting parent height (pheight) larger than the child height (cheight)
@@ -182,7 +197,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
     double pheight = 25.0001;
 
-    boolean use_label = (label_field != null && (insym instanceof SymWithProps));
+    boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
 
     if (SeqUtils.getDepth(sym) >= 2) {
       try  {
@@ -260,7 +275,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
               GlyphI cds_glyph = (GlyphI) child_glyph_class.newInstance();
               cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), 25);
-              cds_glyph.setColor(child_color);
+              cds_glyph.setColor(parent_color);
               pglyph.addChild(cds_glyph);
               if (SET_CHILD_INFO) {
                 map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
@@ -310,4 +325,5 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
   }  
+  
 }

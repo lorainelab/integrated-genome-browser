@@ -695,7 +695,6 @@ public class GraphSelectionManager
     aseq.addAnnotation(psym);
     Color col = sgg.getColor();
     if (DEBUG) System.out.println("setting new tier color: " + col);
-    //    gviewer.getColorHash().put(meth, col);
     gviewer.addTierInfo(meth, col);
     if (DEBUG) System.out.println("region count: " + psym.getChildCount());
     //    gviewer.setAnnotatedSeq(aseq);

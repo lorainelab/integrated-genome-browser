@@ -152,7 +152,7 @@ public class TierPreferenceState {
   /** Set the maximum number of rows of annotations for this tier. 
    *  Any attempt to set this less than zero or larger than MAX_MAX_DEPTH will 
    *  fail, the value will be truncated to fit the range.
-   *  @param order  a number between 0 and {@link #MAX_MAX_DEPTH}.
+   *  @param max  a number between 0 and {@link #MAX_MAX_DEPTH}.
    */
   public void setMaxDepth(int max) {
     if (max < 0) { max = 0; }

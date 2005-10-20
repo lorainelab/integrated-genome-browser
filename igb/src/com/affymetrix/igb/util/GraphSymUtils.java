@@ -293,7 +293,8 @@ public class GraphSymUtils {
     return revcomp_gsym;
   }
 
-  /** Passes to {@link #writeBgrFormat} or {@link #writeGrFormat} depending
+  /** Passes to {@link com.affymetrix.igb.parsers.BgrParser#writeBgrFormat(GraphSym, OutputStream)} 
+   *  or {@link com.affymetrix.igb.parsers.GrParser#writeGrFormat(GraphSym, OutputStream)} depending
    *  on the suffix of the filename.
    *  @return true if the file was written sucessfully
    */

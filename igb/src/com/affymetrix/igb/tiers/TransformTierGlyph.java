@@ -58,8 +58,16 @@ public class TransformTierGlyph extends TierGlyph {
   // for caching in pickTraversal(pixbox, picks, view) method
   Rectangle2D pix_rect = new Rectangle2D();
 
-  public TransformTierGlyph()  {
+  public TransformTierGlyph() {
     super();
+  }
+  
+  public TransformTierGlyph(AnnotStyle style)  {
+    super(style);
+  }
+
+  public TransformTierGlyph(String name)  {
+    super(name);
   }
 
   public void setTransform(LinearTransform trans) {

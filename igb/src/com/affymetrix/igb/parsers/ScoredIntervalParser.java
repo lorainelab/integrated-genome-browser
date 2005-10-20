@@ -23,6 +23,7 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -334,6 +335,11 @@ public class ScoredIntervalParser {
 	  container.setProperty((String)entry.getKey(), entry.getValue());
 	}
 	container.setProperty("method", stream_name);
+        
+        // Force the AnnotStyle for the container to have glyph depth of 1
+        AnnotStyle style = AnnotStyle.getInstance(stream_name);
+        style.setGlyphDepth(1);
+        
 	//	seq2container.put(seqid, container);
 	java.util.List entry_list = (java.util.List)seq2sinentries.get(aseq);
 	int entry_count = entry_list.size();

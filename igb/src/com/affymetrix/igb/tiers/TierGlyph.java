@@ -36,7 +36,10 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   boolean ready_for_searching = false;
   static Comparator child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
+  //int direction = DIRECTION_FORWARD;
+
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+
   /** glyphs to be drawn in the "middleground" --
    *    in front of the solid background, but behind the child glyphs
    *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
@@ -48,6 +51,10 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   public static final int EXPANDED = 102;
   public static final int FIXED_COORD_HEIGHT = 103;
   //  public static final int SUMMARIZED = 104;
+  
+  //public static final int DIRECTION_FORWARD = +1;
+  //public static final int DIRECTION_NONE = 0;
+  //public static final int DIRECTION_REVERSE = -1;
 
   protected int state = FIXED_COORD_HEIGHT;
   protected int stateBeforeHidden = FIXED_COORD_HEIGHT;
@@ -95,13 +102,51 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
   protected java.util.List max_child_sofar = null;
 
-  public TierGlyph() {
-    state = 0; // do this so that setState() will work.
-    setState(EXPANDED);
-    setSpacer(spacer);
+  AnnotStyle style;
+  
+  public TierGlyph(AnnotStyle style) {
     setHitable(false);
+    setSpacer(spacer);
+    setStyle(style);
   }
 
+  public TierGlyph(String name) {
+    this(AnnotStyle.getInstance(name));
+  }
+  
+  /** Constructor for the case where AnnotStyle is null. */
+  public TierGlyph() {
+    this((AnnotStyle) null);
+  }
+  
+  public void setStyle(AnnotStyle style) {
+    this.style = style;
+    state = 0; // do this so that setState() will work.
+    if (style != null) {
+      // most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
+      // the fg color to the TierLabel glyph, which does pay attention to that color.
+      setForegroundColor(style.getColor());
+      setFillColor(style.getBackground());
+      
+      if (style.getCollapsed()) {
+        setState(TierGlyph.COLLAPSED);
+      } else {
+        setState(TierGlyph.EXPANDED); // otherwise, the packing MoveType may be ignored
+      }
+      if (! style.getShow()) {
+        // important to set EXPANDED or COLLAPSED before HIDDEN
+        setState(TierGlyph.HIDDEN);
+      }
+      setMaxExpandDepth(style.getMaxDepth());
+    } else {
+      setState(TierGlyph.EXPANDED);
+    }
+  }
+  
+  public AnnotStyle getAnnotStyle() {
+    return style;
+  }
+    
 /**
  *  Adds "middleground" glyphs, which are drawn in front of the background but 
  *    behind all "real" child glyphs.
@@ -406,16 +451,30 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return collapse_packer;
   }
 
+  /** Sets the expand packer.  Note that you are responsible for setting
+   *  any properties of the packer, such as those based on the AnnotStyle.
+   */
   public void setExpandedPacker(PackerI packer) {
     this.expand_packer = packer;
     setSpacer(getSpacer());
+    resetState(getState());
   }
 
   public void setCollapsedPacker(PackerI packer) {
     this.collapse_packer = packer;
     setSpacer(getSpacer());
+    resetState(getState());
   }
 
+  // A hack.  Call this after changing the packer.  If not, then the
+  // move-type of the packer may be ignored, though the reason is not clear.
+  void resetState(int newstate) {
+    int old_stateBeforeHidden = stateBeforeHidden;
+    state = 0;
+    setState(newstate);
+    stateBeforeHidden = old_stateBeforeHidden;
+  }
+  
   public void setSpacer(double spacer) {
     this.spacer = spacer;
     if (collapse_packer instanceof PaddedPackerI) {
@@ -488,6 +547,38 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   public String getStateString() {
     return getStateString(getState());
   }
+  
+//  public int getDirection() {
+//    return direction;
+//  }
+//  
+//  /**
+//   *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
+//   *  or DIRECTION_NONE.
+//   */
+//  public void setDirection(int d) {
+//    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) && (d != DIRECTION_REVERSE)) {
+//      throw new IllegalArgumentException();
+//    }
+//    this.direction = d;
+//  }
+  
+
+  /** Changes the maximum depth of the expanded packer.
+   *  This does not call pack() afterwards, and has no effect if the
+   *  getExpandedPacker() is not of the correct type to allow for setting the max depth.
+   *  @return true if the current expand packer allowed the max depth to be set.
+   */
+  public boolean setMaxExpandDepth(int max) {
+    PackerI packer = getExpandedPacker();
+    if (packer instanceof FasterExpandPacker) {
+      FasterExpandPacker fpacker = (FasterExpandPacker)packer;
+      fpacker.setMaxSlots(max);
+      return true;
+    }
+    return false;
+  }
+
 
   /** Converts the given state constant into a human-readable string.
       @see #setState */

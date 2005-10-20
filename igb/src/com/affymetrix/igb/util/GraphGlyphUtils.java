@@ -144,13 +144,13 @@ public class GraphGlyphUtils {
       if (new_tier) {
 	// System.out.println("making new tier");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph();
+	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphName());
 	  tempgl.setFixedPixelHeight(true);
           int h = getGraphPrefsNode().getInt(PREF_FLOATING_PIXEL_HEIGHT, default_pix_height);
           tempgl.setFixedPixHeight(h);
 	  tglyph = tempgl;
 	}
-	else { tglyph = new TierGlyph(); }
+	else { tglyph = new TierGlyph(graf.getGraphName()); }
         tglyph.setFillColor(Color.black);
 	tglyph.setForegroundColor(gl.getColor());
       }

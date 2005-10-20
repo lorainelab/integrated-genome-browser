@@ -103,11 +103,11 @@ public class AnnotStyle {
     this.unique_name = unique_name.toLowerCase();
     this.is_persistent = is_persistent;
     
-    applyHardCodedDefaults();
     
     if (template != null) {
       initFromTemplate(template);
     }
+    applyHardCodedDefaults();
     if (is_persistent) {
       node = tiers_root_node.node(this.unique_name);
       initFromNode(node);
@@ -119,8 +119,9 @@ public class AnnotStyle {
   // Apply a few hard-coded defaults
   // This is a hack, but helps ease the transition away from the igb_default_prefs.xml file
   void applyHardCodedDefaults() {
-    if ("contig".equals(unique_name) || "repeats".equals(unique_name)
-        || "encode regions".equals(unique_name)) {
+    if ("contig".equals(unique_name) || "contigs".equals(unique_name) 
+        || "repeats".equals(unique_name) || "repeat".equals(unique_name)
+        || "encode regions".equals(unique_name) || "encoderegions".equals(unique_name) || "encode".equals(unique_name)) {
       this.glyph_depth = 1;
     }
     else if ("refseq".equals(unique_name)) {
@@ -131,6 +132,7 @@ public class AnnotStyle {
   // Copies properties from the given node, using the currently-loaded values as defaults.
   // generally call initFromTemplate before this.
   // Make sure to set human_name to some default before calling this.
+  // Properties set this way do NOT get put in persistent storage.
   void initFromNode(Preferences node) {
     human_name = node.get(PREF_HUMAN_NAME, this.human_name);
     //factory_instance = null;
@@ -178,7 +180,9 @@ public class AnnotStyle {
    */
   public static AnnotStyle getDefaultInstance() {
     if (default_instance == null) {
-      default_instance = new AnnotStyle("* DEFAULT *", true, null);
+      default_instance = new AnnotStyle(NAME_OF_DEFAULT_INSTANCE, true, null);
+      // Note that name will become lower-case
+      static_map.put(default_instance.unique_name, default_instance);
     }
     return default_instance;
   }

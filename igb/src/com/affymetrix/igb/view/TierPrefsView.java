@@ -352,14 +352,14 @@ public class TierPrefsView extends JPanel implements ListSelectionListener  {
      *  @param fallback  the value to return if the input String is unparseable.
      */
     int parseInteger(String s, int empty_string, int fallback) {
-      System.out.println("Parsing string: '" + s + "'");
+      //System.out.println("Parsing string: '" + s + "'");
       int i = fallback;
       try {
         if ("".equals(s.trim())) {i = empty_string; }
         else { i = Integer.parseInt(s); }
       }
       catch (Exception e) {
-        System.out.println("Exception: " + e);
+        //System.out.println("Exception: " + e);
         // don't report the error, use the fallback value
       }
       return i;

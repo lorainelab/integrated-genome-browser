@@ -34,7 +34,7 @@ public class StatusBar extends JPanel {
     this.add(status_ta, BorderLayout.CENTER);
     this.add(memory_ta, BorderLayout.EAST);
 
-    JMenuItem gc_MI = new JMenuItem("Run Garbage Collection");
+    JMenuItem gc_MI = new JMenuItem("Release Unused Memory");
     popup_menu.add(gc_MI);
     
     gc_MI.addActionListener(new ActionListener() {

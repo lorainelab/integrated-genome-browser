@@ -178,28 +178,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
     setStateFromProps(graf, state);   // set some GraphState properties based on GraphSym
     SmartGraphGlyph graph_glyph;
-    // want to check for CompositeGraphSym, and make CompositeGraphGlyph instead??
-    /*
-    if (graf instanceof CompositeGraphSym) {
-    CompositeGraphSym comp = (CompositeGraphSym)graf;
-      graph_glyph = new CompositeGraphGlyph(state);
-      // don't want to assume there's only two levels, so collect leafs
-      java.util.List leaves = SeqUtils.getLeafSyms(comp);
-      int lcount = leaves.size();
-      for (int i=0; i<lcount; i++) {
-	SeqSymmetry child = (SeqSymmetry)leaves.get(i);
-	//  not sure why leaf of CompositeGraphSym would be anything other than GraphSym, but just in case...
-	if (child instanceof GraphSym) {
-	  GraphSym gsym = (GraphSym)child;
-	  SmartGraphGlyph cglyph = new SmartGraphGlyph(gsym.getGraphXCoords(), gsym.getGraphYCoords(), state);
-	  graph_glyph.addChild(cglyph);
-	}
-      }
-    }
-    else {
-      graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
-    }
-    */
 
     graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
     graph_glyph.setLabel(graf.getGraphName());

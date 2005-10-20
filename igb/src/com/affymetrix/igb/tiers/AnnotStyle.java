@@ -34,8 +34,6 @@ public class AnnotStyle {
   static final String PREF_HUMAN_NAME = "Human Name";
   static final String PREF_LABEL_FIELD = "Label Field";
   static final String PREF_GLYPH_DEPTH = "Glyph Depth";
-//  static final String PREF_SORT_ORDER = "Sort Order";
-//  static final String PREF_GLYPH_FACTORY = "Glyph Factory";
 
   static final boolean default_show = true;
   static final boolean default_separate = true;
@@ -45,10 +43,6 @@ public class AnnotStyle {
   static final Color default_background = Color.BLACK;
   static final String default_label_field = "";
   static final int default_glyph_depth = 2;  
-//  static final int default_sort_order = 100;
-//  static final String default_glyph_factory_name = com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class.getName();
-  
-//  public static final int MAX_SORT_ORDER = 1000;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
   
   // whether to create and use a java Preferences node object for this instance
@@ -61,11 +55,7 @@ public class AnnotStyle {
   Color color = default_color;
   Color background = default_background;
   String label_field = default_label_field;
-  int glyph_depth = default_glyph_depth;
-//  int sort_order = default_sort_order;
-//  String factory_class_name = default_glyph_factory_name;
-//  MapViewGlyphFactoryI factory_instance;
-  
+  int glyph_depth = default_glyph_depth;  
   
   String unique_name;
   String human_name;
@@ -97,17 +87,6 @@ public class AnnotStyle {
   public static Preferences getTiersRootNode() {
     return tiers_root_node;
   }
-
-//  public AnnotStyle getNonPersistentInstance(String name, boolean persistent) {
-//    AnnotStyle tps = new AnnotStyle();
-//    unique_name = null;
-//    human_name = name;
-//    is_persistent = persistent;
-//  }
-//  
-//  // no-arg constructor, useful for non-persistent states
-//  protected AnnotStyle() {
-//  }
   
   protected AnnotStyle() {
   }
@@ -165,8 +144,6 @@ public class AnnotStyle {
   
     label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
     glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
- //   sort_order = node.getInt(PREF_SORT_ORDER, this.getSortOrder());
-//    factory_class_name = node.get(PREF_GLYPH_FACTORY, this.getFactoryClassName());
   }
   
   // Copies properties from the template into this object, but does NOT persist
@@ -185,8 +162,6 @@ public class AnnotStyle {
   
     label_field = template.getLabelField();
     glyph_depth = template.getGlyphDepth();
- //   sort_order = template.getSortOrder();
-//    factory_class_name = template.getFactoryClassName();
   }
   
   // Returns the preferences node, or null if this is a non-persistent instance.
@@ -194,50 +169,7 @@ public class AnnotStyle {
     return this.node;
     // return (is_persistent ? tiers_root_node.node(this.unique_name) : null);
   }
-  
-  
-//  MapViewGlyphFactoryI getFactory() {
-//    if (factory_instance == null) {
-//      factory_instance = getFactoryForName(factory_class_name);
-//    }
-//    return factory_instance;
-//  }
-//  
-//  /** Returns a glyph factory for the given glyph factory class name.
-//   *  Guaranteed to return a valid factory.  If the given class name is
-//   *  invalid, will return a factory of a default type.
-//   */
-//  MapViewGlyphFactoryI getFactoryForName(String factory_class_name) {
-//    MapViewGlyphFactoryI factory_instance = null;
-//    Class factory_class = null;
-//    if (factory_class_name != null) {
-//      try {
-//        factory_class = Class.forName(factory_class_name);
-//      }
-//      catch (ClassNotFoundException ex) {
-//        factory_class = null;
-//      }
-//      catch (Exception e) {
-//        System.out.println("ERROR: Exception while processing preferences for factory name "
-//          +factory_class_name + ":\n"+e.toString());
-//        factory_class = null;
-//      }
-//    }
-//    if (factory_class != null) {
-//      try {
-//        factory_instance = (MapViewGlyphFactoryI) factory_class.newInstance();        
-//      } catch (InstantiationException ie) {
-//        factory_instance = null;
-//      } catch (IllegalAccessException ie) {
-//        factory_instance = null;
-//      }
-//    }
-//    if (factory_instance == null) {
-//      factory_instance = new com.affymetrix.igb.glyph.GenericAnnotGlyphFactory();
-//    }
-//    return factory_instance;
-//  }
-  
+    
   static AnnotStyle default_instance = null;
   
   /* Gets an instance that can be used for holding
@@ -328,26 +260,7 @@ public class AnnotStyle {
       getNode().putInt(PREF_MAX_DEPTH, max);
     }
   }
-  
-//  /** Order for sorting tiers; lower numbers are closer to the axis. */
-//  public int getSortOrder() {
-//    return sort_order;
-//  }
-//  
-//  /** Set the order for sorting tiers; lower numbers are closer to the axis. 
-//   *  Any attempt to set this less than zero or larger than MAX_SORT_ORDER will 
-//   *  fail, the value will be truncated to fit the range.
-//   *  @param order  a number between 0 and {@link #MAX_SORT_ORDER}.
-//   */
-//  public void setSortOrder(int order) {
-//    if (order < 0) { order = 0; }
-//    if (order > MAX_SORT_ORDER) { order = MAX_SORT_ORDER; }
-//    this.sort_order = order;
-//    if (getNode() != null) {
-//      getNode().putInt(PREF_SORT_ORDER, order);
-//    }
-//  }
-  
+    
   /** The color of annotations in the tier. */
   public Color getColor() {
     return color;
@@ -394,19 +307,6 @@ public class AnnotStyle {
       getNode().putInt(PREF_GLYPH_DEPTH, i);
     }
   }
-
-//  public String getFactoryClassName() {
-//    return factory_class_name;
-//  }
-
-//  // TODO: should this have the side-effect of re-creating the factory?
-//  // or at least nulling the current factory?
-//  public void setFactoryClassName(String s) {
-//    factory_class_name = s;
-//    if (getNode() != null) {
-//      getNode().put(PREF_GLYPH_FACTORY, s);
-//    }
-//  }
   
   public boolean getPersistent() {
     return (is_persistent && getNode() != null);
@@ -421,6 +321,4 @@ public class AnnotStyle {
     ;
     return s;
   }
-  
-
 }

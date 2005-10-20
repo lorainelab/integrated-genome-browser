@@ -146,7 +146,7 @@ public abstract class BookmarkController {
         String show_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_show_thresh_" + i);
 
         //        int graph_min = (graph_visible_min == null) ?
-        //        String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style" + i);
+        String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style_" + i);
 
         double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
         double yheight = (graph_height == null)  ? default_yheight : Double.parseDouble(graph_height);
@@ -205,12 +205,19 @@ public abstract class BookmarkController {
         //        displayGraph(graf, col, ypos, 60, true);
         //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),
         //                                     col, ypos, yheight, use_floating_graphs
-
+	Integer graph_style_num = null;
+	if (graph_style != null) {
+	  //	  graph_style_num = (Integer)gstyle2num.get(graph_style);
+	  graph_style_num = GraphGlyphUtils.getStyleNumber(graph_style);
+	}
         if (grafs != null) {
           Iterator graf_iter = grafs.iterator();
           while (graf_iter.hasNext()) {
             GraphSym graf = (GraphSym) graf_iter.next();
             graf.setGraphName(graph_name);
+	    if (graph_style_num != null)  {
+	      graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, graph_style_num);
+	    }
             GenericGraphGlyphFactory.displayGraph(graf, gviewer,
                                                 col, ypos, yheight,
                                                 use_floating_graphs, show_label, show_axis,

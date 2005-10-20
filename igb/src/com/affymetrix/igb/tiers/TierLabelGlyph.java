@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,11 +14,9 @@
 package com.affymetrix.igb.tiers;
 
 import java.awt.*;
-import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.IGB;
 
 /**
  * A glyph used to display a label for a TierGlyph.
@@ -40,18 +38,42 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return ("TierLabelGlyph: string: \""+str+"\"  +coordbox: "+coordbox);
   }
 
-  public TierLabelGlyph (String str) {
+  /**
+   *  Constructor.  
+   *  @param reference_tier the tier in the main part of the AffyLabelledTierMap, 
+   *    must not be null
+   */
+  public TierLabelGlyph(TierGlyph reference_tier) {
     this();
-    this.str = str;
+    str = reference_tier.getLabel();
+    if (str==null) {str = "......."; }
+    this.setInfo(reference_tier);
   }
-
-  public TierLabelGlyph () {
+  
+  private TierLabelGlyph () {
     placement = CENTER;
     if (DEBUG_PIXELBOX) {
       debug_rect = new Rectangle();
     }
   }
 
+  /** Overridden such that the info must be of type TierGlyph.  It is used
+   *  to store the reference tier that will be returned by getReferenceTier().
+   */
+  public void setInfo(Object o) {
+    if (! (o instanceof TierGlyph)) {
+      throw new IllegalArgumentException();
+    }
+    super.setInfo(o);
+  }
+  
+  /** Returns the reference tier from the main map in AffyLabelledTierMap. 
+   *  Equivalent to value returned by getInfo().  Will not be null.
+   */
+  public TierGlyph getReferenceTier() {
+    return (TierGlyph) getInfo();
+  }
+    
   public void setString (String str) {
     this.str = str;
   }

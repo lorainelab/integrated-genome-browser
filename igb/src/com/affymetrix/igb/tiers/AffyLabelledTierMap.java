@@ -119,13 +119,21 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    */
   public void addTier(TierGlyph mtg, int tier_index) {
     super.addTier(mtg, tier_index);
-    TierLabelGlyph label_glyph = new TierLabelGlyph();
-    if (mtg.getLabel() != null) { label_glyph.setString(mtg.getLabel()); }
-    else { label_glyph.setString("......."); }
-    if (mtg.getFillColor() != null) {
-      label_glyph.setBackgroundColor(mtg.getFillColor());
+    TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
+    //if (mtg.getLabel() != null) { label_glyph.setString(mtg.getLabel()); }
+    //else { label_glyph.setString("......."); }
+
+    AnnotStyle style = mtg.getAnnotStyle();
+    if (style != null) {
+      //label_glyph.setBackgroundColor(style.getBackgroundColor());
+      label_glyph.setForegroundColor(style.getColor());
     }
-    label_glyph.setForegroundColor(mtg.getForegroundColor());
+    else {
+      if (mtg.getFillColor() != null) {
+        label_glyph.setBackgroundColor(mtg.getFillColor());
+      }
+      label_glyph.setForegroundColor(mtg.getForegroundColor());
+    }
     label_glyph.setShowBackground(true);
     label_glyph.setShowOutline(true);
     labelmap.addItem(label_glyph);

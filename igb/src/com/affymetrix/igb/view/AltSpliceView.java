@@ -18,17 +18,17 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.util.*;
+import com.affymetrix.igb.tiers.*;
 
 public class AltSpliceView extends JComponent
      implements ActionListener, ComponentListener, ItemListener,
-		SymSelectionListener, SeqSelectionListener {
+		SymSelectionListener, SeqSelectionListener,
+                TierLabelManager.PopupListener {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   boolean CONTROLS_ON_SIDE = false;
@@ -47,7 +47,8 @@ public class AltSpliceView extends JComponent
     original_view = IGB.getSingletonIGB().getMapView();
     Rectangle frmbounds = SwingUtilities.getWindowAncestor(original_view).getBounds();
     this.setLayout(new BorderLayout());
-    spliced_view = new SeqMapView();
+    spliced_view = new SeqMapView(false);
+    spliced_view.SUBSELECT_SEQUENCE = false;
     orf_analyzer = new OrfAnalyzer2(spliced_view, CONTROLS_ON_SIDE);
     buffer_sizeTF = new JTextField(4);
     buffer_sizeTF.setText("" + getSliceBuffer());
@@ -92,13 +93,14 @@ public class AltSpliceView extends JComponent
     }
 
     this.addComponentListener(this);
-    spliced_view.setColorHash(original_view.getColorHash());
     spliced_view.setFrame(original_view.getFrame());
     buffer_sizeTF.addActionListener(this);
     slice_by_selectionCB.addItemListener(this);
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addSymSelectionListener(this);
+    
+    spliced_view.getTierManager().addPopupListener(this);
   }
 
   /**
@@ -267,5 +269,58 @@ public class AltSpliceView extends JComponent
     }
   }
 
+  public void popupNotify(JPopupMenu popup, final TierLabelManager handler) {
+    if (handler != spliced_view.getTierManager()) {
+      return;
+    }
+    
+    java.util.List selected_labels = handler.getSelectedTierLabels();
 
+    Action hide_action = new AbstractAction("Hide") {
+      public void actionPerformed(ActionEvent e) {
+        handler.hideTiers(handler.getSelectedTierLabels(), false, true);
+      }
+    };
+
+    Action show_all_action = new AbstractAction("Show All") {
+      // This form of "Show All" will show all the tiers, regardless of
+      // whether AnnotStyle.getShow() is true
+      public void actionPerformed(ActionEvent e) {
+        handler.showTiers(handler.getAllTierLabels(), true, true);
+      }
+    };
+    
+    Action restore_all_action = new AbstractAction("Show Same as Main View") {
+      public void actionPerformed(ActionEvent e) {
+        java.util.List list = handler.getAllTierLabels();
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+          TierLabelGlyph tlg = (TierLabelGlyph) iter.next();
+          TierGlyph tg = tlg.getReferenceTier();
+          AnnotStyle style = tg.getAnnotStyle();
+          if (style == null) {
+            tg.restoreState();
+          }
+          else {
+            if (style.getShow()) {
+              tg.setState(style.getCollapsed() ? TierGlyph.COLLAPSED : TierGlyph.EXPANDED);
+            } else {
+              tg.setState(TierGlyph.HIDDEN);
+            }
+          }
+          handler.repackTheTiers(true, true);
+        }
+      }
+    };
+    
+    hide_action.setEnabled(! selected_labels.isEmpty());
+    show_all_action.setEnabled( true );
+
+    if (popup.getComponentCount() > 0) {
+      popup.add(new JSeparator());
+    }
+    popup.add(hide_action);
+    popup.add(show_all_action);
+    popup.add(restore_all_action);
+  }
 }

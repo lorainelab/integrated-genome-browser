@@ -183,14 +183,14 @@ public class SeqMapView extends JPanel
   public static final Color default_axis_color = Color.BLACK;
   public static final Color default_axis_background = Color.WHITE;
   public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;
-  public static final Color default_default_annot_color = new Color(192, 192, 114);
-  public static final Color default_default_background_color = Color.BLACK;
+  //public static final Color default_default_annot_color = new Color(192, 192, 114);
+  //public static final Color default_default_background_color = Color.BLACK;
   public static final Color default_edge_match_color = Color.WHITE;
   public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
 
   static NumberFormat nformat = new DecimalFormat();
 
-  Color default_annot_color = default_default_annot_color;
+  //Color default_annot_color = default_default_annot_color;
 
 
   /** hash of method names to forward tiers */
@@ -205,8 +205,6 @@ public class SeqMapView extends JPanel
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
   Map graf2factory = new HashMap();   // hash of graph syms to graph factories
-
-  Map method2color = new HashMap();
 
   //  Color[] tier_colors = { Color.black, almost_black };
   GlyphEdgeMatcher edge_matcher = null;
@@ -251,7 +249,19 @@ public class SeqMapView extends JPanel
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
+  /** Constructor. By default, does not add popup menu items. */
   public SeqMapView() {
+    this(false);
+  }
+  
+  /**
+   * Constructor.
+   * @param add_popups  Whether to add some popup menus to the tier label manager
+   *  that control tier hiding and collapsing and so forth.  It is probably best
+   *  NOT to set this to true in any view other than the main view; it should
+   *  be false in the AltSpliceView, for instance.
+   */
+  public SeqMapView(boolean add_popups) {
     if (LABEL_TIERMAP) {
       map = new AffyLabelledTierMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
       NeoMap label_map = ((AffyLabelledTierMap)map).getLabelMap();
@@ -261,8 +271,9 @@ public class SeqMapView extends JPanel
       map = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
     }
 
-    Color bg = default_default_background_color;
+    //Color bg = default_default_background_color;
     //Color bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DEFAULT_BACKGROUND_COLOR, default_default_background_color);
+    Color bg = AnnotStyle.getDefaultInstance().getBackground();
     map.setMapColor(bg);
 
     edge_matcher = GlyphEdgeMatcher.getSingleton();
@@ -292,7 +303,11 @@ public class SeqMapView extends JPanel
 
     if (LABEL_TIERMAP)  {
       tier_manager = new TierLabelManager((AffyLabelledTierMap)map);
-      tier_manager.setViewer(this);
+      if (add_popups) {
+        tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
+        //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
+        tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
+      }
     }
     map.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     map.addMouseListener(mouse_listener);
@@ -340,16 +355,20 @@ public class SeqMapView extends JPanel
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);
 
+    UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
+  }
+  
+  
     // This preference change listener can reset some things, like whether
     // the axis uses comma format or not, in response to changes in the stored
     // preferences.  Changes to axis, and other tier, colors are not so simple,
     // in part because of the need to coordinate with the label glyphs.
 
-    UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(new PreferenceChangeListener() {
+  PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
       public void preferenceChange(PreferenceChangeEvent pce) {
         if (getAxisTier() == null) { return; }
-
+        
         if (! pce.getNode().equals(UnibrowPrefsUtil.getTopNode())) {
           return;
         }
@@ -402,8 +421,7 @@ public class SeqMapView extends JPanel
           }
         }
       }
-    });
-  }
+  };
 
   public void setFrame(JFrame frm) {
     this.frm = frm;
@@ -437,8 +455,6 @@ public class SeqMapView extends JPanel
 
   public JPopupMenu getSelectionPopup() { return sym_popup; }
 
-  /** Gets the Map used for tier <b>background</b> colors. */
-  public Map getColorHash() { return method2color; }
   Map getFactoryHash() { return meth2factory; }
   Map getForwardTierHash() { return method2ftier; }
   Map getReverseTierHash() { return method2rtier; }
@@ -459,7 +475,6 @@ public class SeqMapView extends JPanel
    *  The method name is case-sensitive.
    */
   public void addTierInfo(String method, Color col, int depth) {
-    //    method2color.put(method.trim().toLowerCase(), col);
     System.out.println("Add tier info: "+method);
     GenericAnnotGlyphFactory factory = new GenericAnnotGlyphFactory();
     Map factory_prefs = new HashMap();
@@ -470,17 +485,12 @@ public class SeqMapView extends JPanel
     meth2factory.put(method, factory);
   }
 
-  /** Sets the Map used for tier <b>background</b> colors. */
-  public void setColorHash(Map hash) {
-    method2color = hash;
-  }
-
   TransformTierGlyph axis_tier;
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
-    axis_tier = new TransformTierGlyph();
+    axis_tier = new TransformTierGlyph((AnnotStyle) null); // null AnnotStyle
     axis_tier.setLabel("Coordinates");
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
@@ -689,7 +699,6 @@ public class SeqMapView extends JPanel
     ArrayList temp_floating_graphs = null;
     /*  for temporarily holding graphs in tiers and then repopulating them into the correct tiers */
     HashMap temp_g2tier = new HashMap();
-    ArrayList temp_tiers = null;
     int axis_index = 0;
     match_glyphs = new Vector();
     java.util.List old_selections = Collections.EMPTY_LIST;
@@ -697,48 +706,21 @@ public class SeqMapView extends JPanel
     double old_zoom_spot_y = map.getZoomCoord(map.Y);
 
     if (same_seq) {
-      // special casing for when setAnnotatedSeq() is really being called
-      // to relayout same seq, for instance when merging annotation results for
-      // the "same" sequence from different sources -- may want to avoid massive repacking???
-
       // Gather information about what is currently selected, so can restore it later
       if (preserve_selection) {
         old_selections = getSelectedSyms();
       } else {
         old_selections = Collections.EMPTY_LIST;
       }
-
-      // stash annotation tiers for proper state restoration after resetting for same seq
-      //    (but presumably added / deleted / modified annotations...)
-
-      temp_tiers = new ArrayList();
-      // copying map tiers to separate list to avoid problems when removing tiers
-      //   (and thus modifying map.getTiers() list -- could probably deal with this
-      //    via iterators, but feels safer this way...)
-      ArrayList cur_tiers = new ArrayList(map.getTiers());
-      for (int i=0; i<cur_tiers.size(); i++) {
-	TierGlyph tg = (TierGlyph)cur_tiers.get(i);
-	if (tg == axis_tier) {
-	  if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
-	  axis_index = i;
-	}
-	else {
-	  tg.removeAllChildren();
-	  temp_tiers.add(tg);
-	  if (DEBUG_TIERS)  { System.out.println("removing tier from map: " + tg.getLabel()); }
-	  map.removeTier(tg);
-	}
-      }
     }
-    else {   // not same seq
-      method2rtier = new HashMap();
-      method2ftier = new HashMap();
-      gstate2tier = new HashMap();
-    }
-
+    
     annot_tiernum = 0;
     map.clearWidget();
     map.clearSelected(); // may already be done by map.clearWidget()
+    
+    method2rtier = new HashMap();
+    method2ftier = new HashMap();
+    gstate2tier = new HashMap();
 
     aseq = seq;
 
@@ -781,24 +763,10 @@ public class SeqMapView extends JPanel
     hairline = new UnibrowHairline(map);
     hairline.getShadow().setLabeled(hairline_is_labeled);
 
-    // if same seq, add back in previous annotation tiers (with all children removed)
-    if (same_seq && (temp_tiers != null)) {
-      if (DEBUG_TIERS)  {
-	System.out.println("same seq, trying to add back old tiers (after removing children)");
-      }
-      for (int i=0; i<temp_tiers.size(); i++) {
-	TierGlyph tg = (TierGlyph)temp_tiers.get(i);
-	if (DEBUG_TIERS)  {
-	  System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
-	}
-	map.addTier(tg);
-      }
-
-    }
-
     addAxisTier(axis_index);
     addAnnotationTiers();
     removeEmptyTiers();
+    //map.sortTiers();
 
     map.repack();
 
@@ -1136,6 +1104,7 @@ public class SeqMapView extends JPanel
       }
     }
     if (factory == null) { factory = default_glyph_factory; }
+    
     factory.createGlyph(annotSym, this);
 
     // do "middleground" shading for tracks loaded via DAS/2
@@ -1336,6 +1305,7 @@ public class SeqMapView extends JPanel
   // assumes that region_sym contains a span with span.getBioSeq() ==  current seq (aseq)
   public void setSelectedRegion(SeqSymmetry region_sym, boolean update_widget) {
     seq_selected_sym = region_sym;
+    // Note: SUBSELECT_SEQUENCE might possibly be set to false in the AltSpliceView
     if (SUBSELECT_SEQUENCE && seq_glyph != null) {
       if (region_sym == null) {
 	seq_glyph.setSelected(false);
@@ -1979,7 +1949,7 @@ public class SeqMapView extends JPanel
       getEdgeMatcher().matchEdges(map, query_glyphs, target_glyphs, match_glyphs);
     }
     else {
-      System.out.println("Skipping edge matching; too many items selected.");
+      IGB.getSingletonIGB().setStatus("Skipping edge matching; too many items selected.");
     }
 
     if (update_map)  { map.updateWidget(); }
@@ -2388,96 +2358,100 @@ public class SeqMapView extends JPanel
     }
   }
 
+  
   /**
    *  Returns a forward and reverse tier for the given method, creating them if they don't
    *  already exist.
+   *  Generally called by the Glyph Factory.
    *  Note that this can create empty tiers.  But if the tiers are not filled with
    *  something, they will later be removed automatically by {@link SeqMapView#setAnnotatedSeq(AnnotatedBioSeq)}.
    *  @param meth  The tier name
    *  @param next_to_axis Do you want the Tier as close to the axis as possible?
-   *  @param fast_packers Do you want to use a FastPacker? (Optimized for the case where
-   *    all glyphs in the tier have the same height.)
-   *  @param default_fg Default foreground Color to use if getColorHash() has no better suggestion
-   *  @param default_bg (Currently Ignored.) Default background Color to use if getColorHash() has no better suggestion
-   *  @return an array of two Tiers, one forward, one reverse.
+   *  @return an array of two Tiers, one forward (or mixed-direction), one reverse;
+   *    If you want to treat the first one as mixed-direction, then place all
+   *    the glyphs in it; the second tier will not be displayed if it remains empty.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, boolean fast_packers,
-    Color default_fg, Color default_bg) {
-      // try to match up method with tier...
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+      if (style == null) {
+        // Create a new style only if necessary.  GlyphFactory should be creating it, though.
+        style = AnnotStyle.getInstance(meth, false);
+        style.setHumanName(meth);
+      }
+      
+      // Always returns two tiers.  Could change to return only one tier if
+      // that is what the style suggests.
+      
       AffyTieredMap map = this.getSeqMap();
 
+      // try to match up method with tier...
       // have meth2forward, meth2reverse hashtables to map
       //    method name to forward and reverse tier hashtables
       Map method2ftier = this.getForwardTierHash();
       Map method2rtier = this.getReverseTierHash();
-
+      
       TierGlyph fortier = (TierGlyph)method2ftier.get(meth);
       TierGlyph revtier = (TierGlyph)method2rtier.get(meth);
-
-      if (fortier==null || revtier==null) {
-        Map method2color = this.getColorHash();
-        Color tier_label_col = default_fg;
-        if (tier_label_col == null) { tier_label_col = default_annot_color; }
-        Color tier_back_col = (Color)method2color.get(meth+"_background");
-        if (tier_back_col == null) {
-          tier_back_col = (Color)method2color.get("background");
-        }
-        if (tier_back_col == null) { tier_back_col = default_bg; }
-
-        TierGlyph axis_tier = this.getAxisTier();
-        if (fortier == null) {
-          fortier = new TierGlyph();
-          fortier.setFillColor(tier_back_col);
-          fortier.setForegroundColor(tier_label_col);
-          fortier.setLabel(meth + " (+)");
-
-          ExpandPacker ep;
-          if (fast_packers) {
-            ep = new FasterExpandPacker();
+        
+      TierGlyph axis_tier = this.getAxisTier();
+      if (fortier == null) {
+        fortier = new TierGlyph(style);
+        setUpTierPacker(fortier, true);
+        method2ftier.put(meth, fortier);
+        String label;
+        if (style != null) {
+          if (style.getSeparate()) {
+            //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+            label = style.getHumanName() + " (+)";
           } else {
-            ep = new EfficientExpandPacker();
+            //fortier.setDirection(TierGlyph.DIRECTION_NONE);
+            label = style.getHumanName() + " (+/-)";
           }
-          ep.setMoveType(ExpandPacker.UP);
-          fortier.setExpandedPacker(ep);
-          fortier.setState(TierGlyph.COLLAPSED); // have to set state first to COLLAPSED, then EXPANDED
-          fortier.setState(TierGlyph.EXPANDED);  // to make sure it really gets set to EXPANDED
-          method2ftier.put(meth, fortier);
-          if (next_to_axis)  {
-            int axis_index = map.getTierIndex(axis_tier);
-            map.addTier(fortier, axis_index);
-          }
-          else { map.addTier(fortier, true); }
+        } else {
+          //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+          label = meth + " (+)";
         }
-        if (revtier == null)  {
-          revtier = new TierGlyph();
-          revtier.setFillColor(tier_back_col);
-          revtier.setForegroundColor(tier_label_col);
+        fortier.setLabel(label);
+
+        if (next_to_axis)  {
+          int axis_index = map.getTierIndex(axis_tier);
+          map.addTier(fortier, axis_index);
+        }
+        else { map.addTier(fortier, true); }
+      }
+      if (revtier == null)  {
+        revtier = new TierGlyph(style);
+        //revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
+        setUpTierPacker(revtier, false);
+        method2rtier.put(meth, revtier);
+        if (style == null) {
           revtier.setLabel(meth + " (-)");
-          ExpandPacker ep;
-          if (fast_packers) {
-            ep = new FasterExpandPacker();
-          } else {
-            ep = new EfficientExpandPacker();
-          }
-          ep.setMoveType(ExpandPacker.DOWN);
-          revtier.setExpandedPacker(ep);
-          revtier.setState(TierGlyph.COLLAPSED); // have to set state first to COLLAPSED, then EXPANDED
-          revtier.setState(TierGlyph.EXPANDED);  // to make sure it really gets set to EXPANDED
-          method2rtier.put(meth, revtier);
-          if (next_to_axis)  {
-            int axis_index = map.getTierIndex(axis_tier);
-            map.addTier(revtier, axis_index+1);
-          }
-          else { map.addTier(revtier, false); }
+        } else {
+          revtier.setLabel(style.getHumanName() + " (-)");
         }
+        if (next_to_axis)  {
+          int axis_index = map.getTierIndex(axis_tier);
+          map.addTier(revtier, axis_index+1);
+        }
+        else { map.addTier(revtier, false); }
       }
 
-      TierGlyph[] tiers = new TierGlyph[2];
-      tiers[0] = fortier;
-      tiers[1] = revtier;
+      TierGlyph[] tiers = {fortier, revtier};
       return tiers;
   }
-
+  
+  void setUpTierPacker(TierGlyph tg, boolean above_axis) {
+    ExpandPacker ep = new FasterExpandPacker();
+    if (above_axis) {
+      ep.setMoveType(ExpandPacker.UP);
+    } else {
+      ep.setMoveType(ExpandPacker.DOWN);
+    }
+    tg.setExpandedPacker(ep);
+    if (tg.getAnnotStyle() != null) {
+      tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
+    }
+  }
+    
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     java.util.List glist = evt.getSelectedGroups();
     AnnotatedSeqGroup group = null;

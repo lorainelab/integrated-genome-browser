@@ -276,21 +276,21 @@ public class AltSpliceView extends JComponent
     
     java.util.List selected_labels = handler.getSelectedTierLabels();
 
-    Action hide_action = new AbstractAction("Hide") {
+    Action hide_action = new AbstractAction("Hide Tier") {
       public void actionPerformed(ActionEvent e) {
         handler.hideTiers(handler.getSelectedTierLabels(), false, true);
       }
     };
 
-    Action show_all_action = new AbstractAction("Show All") {
-      // This form of "Show All" will show all the tiers, regardless of
-      // whether AnnotStyle.getShow() is true
-      public void actionPerformed(ActionEvent e) {
-        handler.showTiers(handler.getAllTierLabels(), true, true);
-      }
-    };
+//    Action show_all_action = new AbstractAction("Show All") {
+//      // This form of "Show All" will show all the tiers, regardless of
+//      // whether AnnotStyle.getShow() is true
+//      public void actionPerformed(ActionEvent e) {
+//        handler.showTiers(handler.getAllTierLabels(), true, true);
+//      }
+//    };
     
-    Action restore_all_action = new AbstractAction("Show Same as Main View") {
+    Action restore_all_action = new AbstractAction("Show Same Tiers as Main View") {
       public void actionPerformed(ActionEvent e) {
         java.util.List list = handler.getAllTierLabels();
         Iterator iter = list.iterator();
@@ -314,13 +314,14 @@ public class AltSpliceView extends JComponent
     };
     
     hide_action.setEnabled(! selected_labels.isEmpty());
-    show_all_action.setEnabled( true );
+    //show_all_action.setEnabled( true );
+    restore_all_action.setEnabled(true);
 
     if (popup.getComponentCount() > 0) {
       popup.add(new JSeparator());
     }
     popup.add(hide_action);
-    popup.add(show_all_action);
+    //popup.add(show_all_action);
     popup.add(restore_all_action);
   }
 }

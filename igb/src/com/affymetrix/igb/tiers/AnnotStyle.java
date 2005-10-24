@@ -12,20 +12,26 @@
 */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
+import java.util.regex.Pattern;
+
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class AnnotStyle {
   
   static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
 
+  // A pattern that matches two or more slash "/" characters.
+  // A preference node name can't contain two slashes, nor end with a slash.
+  static final Pattern multiple_slashes = Pattern.compile("/{2,}");
+
   static public final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
   
   // The String constants named PREF_* are for use in the persistent preferences
   // They are not displayed to users, and should never change
-  static final String PREF_SHOW = "Show";
+  //static final String PREF_SHOW = "Show";
   static final String PREF_SEPARATE = "Separate Tiers";
   static final String PREF_COLLAPSED = "Collapsed";
   static final String PREF_MAX_DEPTH = "Max Depth";
@@ -93,24 +99,38 @@ public class AnnotStyle {
     
   /** Creates an instance associated with a case-insensitive form of the unique name.
    */
-  protected AnnotStyle(String unique_name, boolean is_persistent, AnnotStyle template) {
-    if (is_persistent && unique_name.length() > Preferences.MAX_NAME_LENGTH) {
-      unique_name = unique_name.substring(0,Preferences.MAX_NAME_LENGTH);
-      System.out.println("!!!  Preferences node name trimmed to '"+unique_name+"'");
-    }
-
-    this.human_name = unique_name; // this is the default human name, and is not lower case
-    this.unique_name = unique_name.toLowerCase();
+  protected AnnotStyle(String name, boolean is_persistent, AnnotStyle template) {
+    this.human_name = name; // this is the default human name, and is not lower case
+    this.unique_name = name.toLowerCase();
     this.is_persistent = is_persistent;
     
-    
+    if (is_persistent) {
+      if (unique_name.endsWith("/")) {
+        unique_name = unique_name.substring(0, unique_name.length() -1);
+      }
+      unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
+      if (unique_name.length() > Preferences.MAX_NAME_LENGTH) {
+        unique_name = unique_name.substring(0, Preferences.MAX_NAME_LENGTH);
+        //System.out.println("Preferences node name trimmed to '"+unique_name+"'");
+      }
+    }
+        
     if (template != null) {
       initFromTemplate(template);
     }
     applyHardCodedDefaults();
     if (is_persistent) {
-      node = tiers_root_node.node(this.unique_name);
-      initFromNode(node);
+      try {
+        node = tiers_root_node.node(this.unique_name);
+      } catch (Exception e) {
+        // if there is a problem creating the node, continue with a non-persistent style.
+        System.out.println("Exception: " + e);
+        node = null;
+        is_persistent = false;
+      }
+      if (node != null) {
+        initFromNode(node);
+      }
     } else {
       node = null;
     }
@@ -138,7 +158,7 @@ public class AnnotStyle {
     //factory_instance = null;
     
     separate = node.getBoolean(PREF_SEPARATE, this.getSeparate());
-    show = node.getBoolean(PREF_SHOW, this.getShow());
+    //show = node.getBoolean(PREF_SHOW, this.getShow());
     collapsed = node.getBoolean(PREF_COLLAPSED, this.getCollapsed());
     max_depth = node.getInt(PREF_MAX_DEPTH, this.getMaxDepth());
     color = UnibrowPrefsUtil.getColor(node, PREF_COLOR, this.getColor());
@@ -214,11 +234,12 @@ public class AnnotStyle {
     return show;
   }
   
+  /** Sets whether the tier is shown or hidden; this is a non-persistent setting. */
   public void setShow(boolean b) {
     this.show = b;
-    if (getNode() != null) {
-      getNode().putBoolean(PREF_SHOW, b);
-    }
+//    if (getNode() != null) {
+//      getNode().putBoolean(PREF_SHOW, b);
+//    }
   }
   
   

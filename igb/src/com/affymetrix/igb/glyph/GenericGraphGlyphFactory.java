@@ -110,9 +110,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       current_yloc += state.getGraphHeight() + 10;
       seq2yloc.put(seq, new Double(current_yloc));
     }
-    Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
+    //Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
 
-    state.setColor(col);
+    state.setColor(AnnotStyle.getDefaultInstance().getColor());
     // GAH 8-18-2004 don't have a standard way of figuring out which graphs are probe-based
     //   (in which case need 12/13 thresholded region start/end shift), and which ones aren't.  Since for
     //   now almost all graphs being viewed via IGB and for which thresholding is a useful operation are
@@ -136,6 +136,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     if (sym instanceof GraphSym) {
       GraphSym gsym = (GraphSym)sym;
+
+      AnnotStyle annot_style = AnnotStyle.getInstance(gsym.getGraphName(), false);
+      state.setColor(annot_style.getColor());
+      
       displayGraph(gsym, smv, state, false);
     }
     else {
@@ -176,9 +180,19 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       return null;      
     }
 
+    String graph_name = graf.getGraphName();
+    if (graph_name == null) { 
+      // this probably never actually happens
+      graph_name = "Graph #" + System.currentTimeMillis(); 
+      graf.setGraphName(graph_name); 
+    }
+    
+    AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
+      
+    annot_style.setColor(state.getColor());
+
     setStateFromProps(graf, state);   // set some GraphState properties based on GraphSym
     SmartGraphGlyph graph_glyph;
-
     graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
     graph_glyph.setLabel(graf.getGraphName());
     //    graph_glyph.setGraphState(state);
@@ -229,21 +243,21 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       if (new_tier) {
 	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphName());
+	  TransformTierGlyph tempgl = new TransformTierGlyph(annot_style);
 	  tempgl.setFixedPixelHeight(true);
 	  tempgl.setFixedPixHeight(60);
 	  tglyph = tempgl;
 	}
-	  else { tglyph = new TierGlyph(graf.getGraphName()); }
+	  else { tglyph = new TierGlyph(annot_style); }
       }
-
-      Color tier_back_col = AnnotStyle.getDefaultInstance().getBackground();
-      if  (tier_back_col == null) tier_back_col = Color.BLACK;
+      
+      Color tier_back_col = annot_style.getBackground();
       
       tglyph.setFillColor(tier_back_col);
       tglyph.setForegroundColor(state.getColor());
       tglyph.addChild(graph_glyph);
-      tglyph.setLabel(graf.getGraphName());
+      tglyph.setLabel(annot_style.getHumanName());
+      //tglyph.setLabel(graf.getGraphName());
       // GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
       //   or the TieredLabelMap won't get assigned labels correctly
       if (new_tier) {
@@ -283,7 +297,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   /**
-   *   this method relies on
+   *  Displays a graph.
+   *   This method relies on
    *       displayGraph(GraphSym graf, SeqMapView smv, GraphState state, boolean update_map), but
    *   in addition to what that method does, it also builds the GraphState based on the input params,
    *   and makes a factory, and adds the factory to the SeqMapView's GraphSym-to-Factory hash.
@@ -301,7 +316,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   /**
-   *   this method relies on
+   *   Display a graph with all properties specified.
+   *   This method relies on
    *       displayGraph(GraphSym graf, SeqMapView smv, GraphState state, boolean update_map), but
    *   in addition to what that method does, it also builds the GraphState based on the input params,
    *   and makes a factory, and adds the factory to the SeqMapView's GraphSym-to-Factory hash.
@@ -314,6 +330,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 					boolean show_thresh
 					) {
     GraphState gstate = new GraphState();
+
+    // All properties were specified, so don't check the AnnotStyle here
     gstate.setColor(col);
     gstate.setGraphYPos(graph_yloc);
     gstate.setGraphHeight(graph_height);
@@ -370,6 +388,5 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       // change the style in the GUI, if desired
       graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
     }
-  }
-
+  }  
 }

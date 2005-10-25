@@ -463,28 +463,6 @@ public class SeqMapView extends JPanel
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
 
-  /** Associates a String with a GenericAnnotGlyphFactory with a
-   *  given color.  The method name is case-sensitive.
-   */
-  public void addTierInfo(String method, Color col) {
-    addTierInfo(method, col, 2); // default depth = 2
-  }
-
-  /** Associates a String with a GenericAnnotGlyphFactory with the
-   *  given depth and color.
-   *  The method name is case-sensitive.
-   */
-  public void addTierInfo(String method, Color col, int depth) {
-    System.out.println("Add tier info: "+method);
-    GenericAnnotGlyphFactory factory = new GenericAnnotGlyphFactory();
-    Map factory_prefs = new HashMap();
-    factory_prefs.put("color", col);
-    factory_prefs.put("annot_type", method);
-    factory_prefs.put("glyph_depth", Integer.toString(depth));
-    factory.init(factory_prefs);
-    meth2factory.put(method, factory);
-  }
-
   TransformTierGlyph axis_tier;
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 

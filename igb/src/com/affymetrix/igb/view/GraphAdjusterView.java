@@ -408,22 +408,28 @@ public class GraphAdjusterView extends JComponent
         GraphSym graf_0 = (GraphSym)grafs.get(0);
         GraphGlyph gl_0 = (GraphGlyph) nwidg.getItem(graf_0);
         Color initial_color = gl_0.getColor();
-	Color col = JColorChooser.showDialog((Component)nwidg,
-					     "Graph Color Chooser", initial_color);
+        Color col = JColorChooser.showDialog((Component)nwidg,
+                                             "Graph Color Chooser", initial_color);
         // Note: If the user selects "Cancel", col will be null
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null && col != null) {
-	    gl.setColor(col);
-	    // if graph is in a tier, change foreground color of tier also
-	    //   (which in turn triggers change in color for TierLabelGlyph...)
-	    if (gl.getParent() instanceof TierGlyph) {
-	      gl.getParent().setForegroundColor(col);
-	    }
-	  }
-	}
-	nwidg.updateWidget();
+        if (col != null) for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
+          annot_style.setColor(col);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null) {
+            GraphState state = gl.getGraphState();
+            if (state != null) {
+              state.setColor(col);
+            }
+            gl.setColor(col);
+            // if graph is in a tier, change foreground color of tier also
+            //   (which in turn triggers change in color for TierLabelGlyph...)
+            if (gl.getParent() instanceof TierGlyph) {
+              gl.getParent().setForegroundColor(col);
+            }
+          }
+        }
+        nwidg.updateWidget();
       }
     }
     else if (src == tier_threshB) {
@@ -626,7 +632,7 @@ public class GraphAdjusterView extends JComponent
    *  left after deleting the graph, then delete the tier as well.
    */
   void deleteGraph(GraphSym gsym) {
-    System.out.println("deleting graph: " + gsym);
+    //System.out.println("deleting graph: " + gsym);
     gviewer.getGraphFactoryHash().remove(gsym);
 
     AnnotatedBioSeq aseq = (AnnotatedBioSeq)gsym.getGraphSeq();
@@ -739,7 +745,10 @@ public class GraphAdjusterView extends JComponent
     aseq.addAnnotation(psym);
     Color col = sgg.getColor();
     //    Color col = Color.red;
-    gviewer.addTierInfo(meth, col, 1);
+    AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
+    annot_style.setColor(col);
+    annot_style.setGlyphDepth(1);
+    
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 

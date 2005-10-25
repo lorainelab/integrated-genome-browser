@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,7 +30,6 @@ import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
-import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -193,13 +192,17 @@ public abstract class BookmarkController {
                               score_thresh+", "+maxgap_thresh+", "+ show_thresh);
         }
 
+        if (graph_name == null || graph_name.trim().length()==0) {
+          graph_name = graph_path;
+        }
+
         if (IGB.CACHE_GRAPHS)  {
           istr = LocalUrlCacher.getInputStream(graph_path);
         }
         else {
           URL graphurl = new URL(graph_path);
           istr = graphurl.openStream();
-        }
+        }          
         List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup().getSeqs(), gmodel.getSelectedSeq());
         istr.close();
         //        displayGraph(graf, col, ypos, 60, true);

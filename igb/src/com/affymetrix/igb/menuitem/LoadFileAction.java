@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.menuitem;
 
-// Java
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -26,15 +25,14 @@ import org.xml.sax.InputSource;
 
 import com.affymetrix.genoviz.widget.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.swing.threads.*;
-import com.affymetrix.igb.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.IGB;
 
 public class LoadFileAction {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -191,8 +189,8 @@ public class LoadFileAction {
       if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
-          IGB.errorPanel("ERROR", "Must select a a genome before loading a graph.  " +
-            "Graph data must be merged with already loaded genomic data.");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
+            "Graph data must be merged with already loaded genomic data.", null);
         } else {
           Map seqs = seq_group.getSeqs();
 //          GraphSymUtils.readGraphs(fistr, annotfile.getAbsolutePath(), seqs, input_seq);
@@ -205,7 +203,7 @@ public class LoadFileAction {
       }
     }
     catch (Exception ex) {
-      IGB.errorPanel("Error loading file", ex);
+      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
     }
     finally {
       if (fistr != null) try {fistr.close();} catch (Exception e) {}
@@ -222,7 +220,7 @@ public class LoadFileAction {
       result = load(gviewer, istr, url_name, input_seq);
     }
     catch (Exception ex) {
-      IGB.errorPanel("Error loading file", ex);
+      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
     } finally {
       if (istr != null) try {istr.close();} catch (Exception e) {}
     }
@@ -297,8 +295,8 @@ public class LoadFileAction {
         if (seqhash == null) {
           // It would be possible to allow "sin" files to be read when seqhash is null
           // by using the same technique used below for GFF files
-          IGB.errorPanel("ERROR", "Scored interval files can only be loaded if a genome is already loaded.\n"+
-          "Please load a genome before opening this file '" + stream_name + "'.");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Scored interval files can only be loaded if a genome is already loaded.\n"+
+          "Please load a genome before opening this file '" + stream_name + "'.", null);
         } else {
           ScoredIntervalParser parser = new ScoredIntervalParser();
           Map id2sym_hash = IGB.getSymHash();
@@ -377,7 +375,8 @@ public class LoadFileAction {
         //          seqhash.put(input_seq.getID(), input_seq);
         //        }
         if (seqhash == null) {
-          IGB.errorPanel("ERROR", ".bps files can only be loaded if a seq group is already selected");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+            ".bps files can only be loaded if a seq group is already selected", null);
         }
         else {
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
@@ -391,7 +390,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".bed")) {
         System.out.println("loading via BedParser");
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
-        BedParser parser = new BedParser(gviewer);
+        BedParser parser = new BedParser();
 	//        if (seqhash == null) {
         if (selected_group == null) {
           aseq = parser.parse(str, input_seq);
@@ -406,7 +405,8 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".bgn")) {
         if (seqhash == null) {
-          IGB.errorPanel("ERROR", ".bgn files can only be loaded if a seq group is already selected");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+            ".bgn files can only be loaded if a seq group is already selected", null);
         }
         else {
           BgnParser gene_reader = new BgnParser();
@@ -417,7 +417,8 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".brs")) {
         if (seqhash == null) {
-          IGB.errorPanel("ERROR", ".brs files can only be loaded if a seq group is already selected");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+            ".brs files can only be loaded if a seq group is already selected", null);
         }
         else {
           BrsParser refseq_reader = new BrsParser();
@@ -431,7 +432,8 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".bsnp")) {
         if (seqhash == null) {
-          IGB.errorPanel("ERROR", ".bsnp files can only be loaded if a seq group is already selected");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+            ".bsnp files can only be loaded if a seq group is already selected", null);
         }
         else {
           BsnpParser parser = new BsnpParser();
@@ -443,7 +445,8 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".brpt")) {
         if (seqhash == null) {
-          IGB.errorPanel("ERROR", ".brpt files can only be loaded if a seq group is already selected");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+            ".brpt files can only be loaded if a seq group is already selected", null);
         }
         else {
           BrptParser parser = new BrptParser();
@@ -506,11 +509,13 @@ public class LoadFileAction {
           aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
         }
         else {
-          IGB.errorPanel("ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file");
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ABORTED LOADING BNIB FILE", 
+            "The currently loaded sequence is not the correct type to merge with a bnib file", null);
         }
       }
       else {
-	IGB.errorPanel("FORMAT NOT RECOGNIZED", "Format not recognized for file: " + stream_name);
+	ErrorHandler.errorPanel(gviewer.getFrame(), "FORMAT NOT RECOGNIZED", 
+          "Format not recognized for file: " + stream_name, null);
       }
 
       System.gc();
@@ -526,7 +531,7 @@ public class LoadFileAction {
       }
     }
     catch (Exception ex) {
-      IGB.errorPanel("Error loading file", ex);
+      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
     } finally {
       if (str != null) try {str.close();} catch (Exception e) {}
     }

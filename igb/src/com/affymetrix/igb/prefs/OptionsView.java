@@ -199,36 +199,37 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
     sb.append("This panel allows you to change a variety of miscelaneous settings.  ");
-    sb.append("Most changes here will take effect immediately;  ");
-    sb.append("others take effect only after a re-start.  ");
+    sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
+    //sb.append("Most changes here will take effect immediately;  ");
+    //sb.append("others take effect only after a re-start.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
     sb.append("<h2>Ask before exiting</h2>\n");
     sb.append("Whether to show a confirmation dialog before closing the program. ");
     sb.append("This can help you avoid accidentally losing your work.  ");
-    sb.append("<br><br>Changes do not require re-start.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
     sb.append("<h2>Keep hairline in view</h2>\n");
     sb.append("Whether to automtatically prevent the hairline from moving ");
     sb.append("outside the view as you scroll.  ");
-    sb.append("<br><br>Changes do not require re-start.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
     sb.append("<h2>Make graphs from scored intervals</h2>\n");
     sb.append("Whether to automatically create graphs from data in ");
     sb.append("scored interval ('.sin') files.  ");
-    sb.append("<br><br>Changes do not require re-start.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
     sb.append("<h2>Show DAS query genometry</h2>\n");
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");
     sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
-    sb.append("<br><br>Changes do not require re-start.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
@@ -241,7 +242,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("for example '/home/user/openBrowser.sh'.  ");
     sb.append("<br><br><b>Macintosh OS X</b>: This option is hidden and the 'open' command is used to open your default browser.  ");
     sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
-    sb.append("<br><br>Changes do not require re-start.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     return sb.toString();
   }

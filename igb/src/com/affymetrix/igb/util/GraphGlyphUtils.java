@@ -37,7 +37,7 @@ public class GraphGlyphUtils {
    *   else #3
    */
 
-  public static boolean DEBUG = false;
+  public static final boolean DEBUG = false;
 
   /** Name of a preference for deciding what height to give a graph when converting
    *  it from a floating graph to an attached graph.
@@ -76,8 +76,8 @@ public class GraphGlyphUtils {
   public static final int default_coord_height = 100;
   public static final boolean default_use_floating_graphs = false;
 
-  public static final Color[] default_graph_colors =
-    new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
+  //public static final Color[] default_graph_colors =
+  //  new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
 
   /** The names of preferences for storing default graph colors can be
    *  constructed from this prefix by adding "0", "1", etc., up to
@@ -221,7 +221,7 @@ public class GraphGlyphUtils {
       //	System.out.println("child " + i + ": " + child.getCoordBox());
       //      }
 
-      map.stretchToFit(false, false);
+      map.stretchToFit(false, true);
       map.updateWidget();
       gl.getGraphState().setFloatGraph(false);
       return tglyph;
@@ -257,7 +257,7 @@ public class GraphGlyphUtils {
       floater.setCoords(mapbox.x, 0, mapbox.width, 0);
       //      gl.setCoords(mapbox.x, 0, mapbox.width, 0);
       map.packTiers(false, true, false);
-      map.stretchToFit(false, false);
+      map.stretchToFit(false, true);
       // make sure graph is still within map's pixel bounds after switch to floating pixel layer
       checkPixelBounds(gl, gviewer);
       map.updateWidget();
@@ -360,10 +360,10 @@ public class GraphGlyphUtils {
     return UnibrowPrefsUtil.getTopNode().node("graphs");
   }
 
-  public static Color getDefaultGraphColor(int i) {
-    int index = (i % default_graph_colors.length);
-    String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;
-    Color col = UnibrowPrefsUtil.getColor(getGraphPrefsNode(), color_pref_name, default_graph_colors[index]);
-    return col;
-  }
+//  public static Color getDefaultGraphColor(int i) {
+//    int index = (i % default_graph_colors.length);
+//    String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;
+//    Color col = UnibrowPrefsUtil.getColor(getGraphPrefsNode(), color_pref_name, default_graph_colors[index]);
+//    return col;
+//  }
 }

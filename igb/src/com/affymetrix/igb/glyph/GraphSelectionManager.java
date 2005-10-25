@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -91,7 +91,7 @@ public class GraphSelectionManager
 
   JMenu graph_style = new JMenu("Graph Style");
   JMenu decor = new JMenu("Decorations");
-  JMenu thresh = new JMenu("Thresholding");
+  //JMenu thresh = new JMenu("Thresholding");
   JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
   JMenu combine = new JMenu("Combine Graphs");
   JMenuItem span_graph;
@@ -200,10 +200,10 @@ public class GraphSelectionManager
     decor.add(show_bounds);
     decor.add(show_graph);
 
-    thresh.add(thresh_graph);
-    thresh.add(tweak_thresh);
-    thresh.add(adjust_false_positive);
-    thresh.add(pickle_thresh);
+    //thresh.add(thresh_graph);
+    //thresh.add(tweak_thresh);
+    //thresh.add(adjust_false_positive);
+    //thresh.add(pickle_thresh);
 
     bounds.add(adjust_hilo);
     bounds.add(adjust_percent);
@@ -320,12 +320,12 @@ public class GraphSelectionManager
 	  }
 	}
       }
-      else if (src == pickle_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  pickleThreshold(sgg);
-	}
-      }
+//      else if (src == pickle_thresh) {
+//	if (current_graph instanceof SmartGraphGlyph) {
+//	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+//	  pickleThreshold(sgg);
+//	}
+//      }
      /*
        else if (src == faster_draw_toggle) {
 	if (current_graph instanceof SmartGraphGlyph) {
@@ -678,29 +678,29 @@ public class GraphSelectionManager
     return true;
   }
 
-  static NumberFormat nformat = new DecimalFormat();
-  int pickle_count = 0;
-  public void pickleThreshold(SmartGraphGlyph sgg) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    SimpleSymWithProps psym = new SimpleSymWithProps();
-    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-    //    String meth = "graph pickle " + pickle_count;
-    String meth =
-      "threshold, s:" + nformat.format(sgg.getMinScoreThreshold()) +
-      ", d:" + (int)sgg.getMaxGapThreshold();
-    pickle_count++;
-    psym.setProperty("method", meth);
-    ViewI view = gviewer.getSeqMap().getView();
-    sgg.drawThresholdedRegions(view, psym, aseq);
-    aseq.addAnnotation(psym);
-    Color col = sgg.getColor();
-    if (DEBUG) System.out.println("setting new tier color: " + col);
-    gviewer.addTierInfo(meth, col);
-    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
-    //    gviewer.setAnnotatedSeq(aseq);
-
-    gviewer.setAnnotatedSeq(aseq, true, true);
-  }
+//  static NumberFormat nformat = new DecimalFormat();
+//  int pickle_count = 0;
+//  public void pickleThreshold(SmartGraphGlyph sgg) {
+//    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+//    SimpleSymWithProps psym = new SimpleSymWithProps();
+//    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
+//    //    String meth = "graph pickle " + pickle_count;
+//    String meth =
+//      "threshold, s:" + nformat.format(sgg.getMinScoreThreshold()) +
+//      ", d:" + (int)sgg.getMaxGapThreshold();
+//    pickle_count++;
+//    psym.setProperty("method", meth);
+//    ViewI view = gviewer.getSeqMap().getView();
+//    sgg.drawThresholdedRegions(view, psym, aseq);
+//    aseq.addAnnotation(psym);
+//    Color col = sgg.getColor();
+//    if (DEBUG) System.out.println("setting new tier color: " + col);
+//    gviewer.addTierInfo(meth, col);
+//    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
+//    //    gviewer.setAnnotatedSeq(aseq);
+//
+//    gviewer.setAnnotatedSeq(aseq, true, true);
+//  }
 
   /**
    *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
@@ -752,7 +752,7 @@ public class GraphSelectionManager
 	delete_graph.setEnabled(num_selected_graphs == 1);
 	graph_style.setEnabled(num_selected_graphs == 1);
 	decor.setEnabled(num_selected_graphs == 1);
-	thresh.setEnabled(num_selected_graphs == 1);
+	//thresh.setEnabled(num_selected_graphs == 1);
 	//	  bounds.setEnabled(num_selected_graphs == 1);
 	bounds.setEnabled(num_selected_graphs > 0);
 

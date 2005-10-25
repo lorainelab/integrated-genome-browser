@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -29,8 +29,7 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.util.ErrorHandler;
 
 public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
@@ -59,10 +58,6 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
   public PSLParser() {
     super();
-  }
-
-  public PSLParser(SeqMapView gv) {
-    super(gv);
   }
 
   public void enableSharedQueryTarget(boolean b) {
@@ -471,7 +466,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       if (block_size_array != null && block_size_array.length != 0) {
         sb.append("block_size first element: **" + block_size_array[0] + "**\n");
       }
-      IGB.errorPanel(sb.toString(), e);
+      ErrorHandler.errorPanel(sb.toString(), e);
 
     } finally {
       br.close();

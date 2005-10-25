@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,10 +15,9 @@ package com.affymetrix.igb.parsers;
 
 import java.awt.*;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
-import com.affymetrix.igb.view.SeqMapView;
-import java.util.regex.Matcher;
+import com.affymetrix.igb.tiers.AnnotStyle;
 
 public class TrackLineParser {
 
@@ -39,7 +38,6 @@ public class TrackLineParser {
     + ")");               //    ... end of group 2
 
   Map track_hash = default_track_hash;
-  SeqMapView gviewer = null;
 
   static  {
     default_track_hash = new TreeMap();
@@ -55,10 +53,6 @@ public class TrackLineParser {
   }
 
   public TrackLineParser() {}
-  public TrackLineParser(SeqMapView gv) {
-    gviewer = gv;
-  }
-
 
   public Map getDefaultTrackHash() { return default_track_hash; }
   public Map getCurrentTrackHash() { return track_hash; }
@@ -66,10 +60,10 @@ public class TrackLineParser {
   /**
    *  If the map contains a key named color with a vaule that is a String,
    *  converts the value to a Color object and puts it back in the Map.
-   *  If gviewer is not null and if the Map contains a value for "name",
-   *  adds that association to {@link SeqMapView#addTierInfo(String, Color)}.
+   *  If the Map contains a value for "name", then adds that
+   *  color association to the named instance of AnnotStyle.
    */
-  public static void reformatColor(Map m, SeqMapView gviewer) {
+  public static void reformatColor(Map m) {
     Object o = m.get("color");
     if (o instanceof String) {
       String color_string = (String) o;
@@ -78,12 +72,13 @@ public class TrackLineParser {
       int green = Integer.parseInt(rgb[1]);
       int blue = Integer.parseInt(rgb[2]);
       Color col = new Color(red, green, blue);
-      String name = (String) m.get("name");
-      if (gviewer != null && name != null) {
-        //	  System.out.println("Adding tier info: name = " + name + ", color = " + col);
-        gviewer.addTierInfo(name, col);
-      }
       m.put("color", col);
+
+      String name = (String) m.get("name");
+      if (name != null) {
+        AnnotStyle style = AnnotStyle.getInstance(name);
+        style.setColor(col);
+      }
     }
   }
   
@@ -119,7 +114,7 @@ public class TrackLineParser {
       }
     }
     
-    reformatColor(track_hash, gviewer);
+    reformatColor(track_hash);
     return track_hash;
   }
 

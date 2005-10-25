@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,7 +22,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscBedSym;
@@ -107,10 +106,6 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 
   public void removeParserListener(ParserListener listener) {
     parse_listeners.remove(listener);
-  }
-
-  public BedParser(SeqMapView gv) {
-    super(gv);
   }
 
   public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {

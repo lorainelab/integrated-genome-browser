@@ -209,8 +209,6 @@ public class SeqMapView extends JPanel
   //  Color[] tier_colors = { Color.black, almost_black };
   GlyphEdgeMatcher edge_matcher = null;
 
-  int annot_tiernum = 0;
-
   JPopupMenu sym_popup;
   JMenu sym_menu;
   JLabel sym_info;
@@ -676,10 +674,7 @@ public class SeqMapView extends JPanel
 
     boolean same_seq = ((seq == this.aseq) && (seq != null));
 
-    /*  for temporarily holding floating graphs and then repopulating them onto the map */
-    ArrayList temp_floating_graphs = null;
-    /*  for temporarily holding graphs in tiers and then repopulating them into the correct tiers */
-    HashMap temp_g2tier = new HashMap();
+    ArrayList temp_tiers = null;
     int axis_index = 0;
     match_glyphs = new Vector();
     java.util.List old_selections = Collections.EMPTY_LIST;
@@ -693,16 +688,37 @@ public class SeqMapView extends JPanel
       } else {
         old_selections = Collections.EMPTY_LIST;
       }
+      
+      // stash annotation tiers for proper state restoration after resetting for same seq
+      //    (but presumably added / deleted / modified annotations...)
+
+      temp_tiers = new ArrayList();
+      // copying map tiers to separate list to avoid problems when removing tiers
+      //   (and thus modifying map.getTiers() list -- could probably deal with this
+      //    via iterators, but feels safer this way...)
+      ArrayList cur_tiers = new ArrayList(map.getTiers());
+      for (int i=0; i<cur_tiers.size(); i++) {
+        TierGlyph tg = (TierGlyph)cur_tiers.get(i);
+        if (tg == axis_tier) {
+          if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
+          axis_index = i;
+        }
+        else {
+          tg.removeAllChildren();
+          temp_tiers.add(tg);
+          if (DEBUG_TIERS)  { System.out.println("removing tier from map: " + tg.getLabel()); }
+          map.removeTier(tg);
+        }
+      }
+    } else {
+      method2rtier = new HashMap();
+      method2ftier = new HashMap();
+      gstate2tier = new HashMap();
     }
-    
-    annot_tiernum = 0;
+
     map.clearWidget();
     map.clearSelected(); // may already be done by map.clearWidget()
     
-    method2rtier = new HashMap();
-    method2ftier = new HashMap();
-    gstate2tier = new HashMap();
-
     aseq = seq;
 
     // if shifting coords, then seq2viewSym and viewseq are already taken care of,
@@ -744,6 +760,20 @@ public class SeqMapView extends JPanel
     hairline = new UnibrowHairline(map);
     hairline.getShadow().setLabeled(hairline_is_labeled);
 
+    // add back in previous annotation tiers (with all children removed)
+    if (temp_tiers != null) {
+      if (DEBUG_TIERS)  {
+	System.out.println("same seq, trying to add back old tiers (after removing children)");
+      }
+      for (int i=0; i<temp_tiers.size(); i++) {
+	TierGlyph tg = (TierGlyph)temp_tiers.get(i);
+	if (DEBUG_TIERS)  {
+	  System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
+	}
+	map.addTier(tg);
+      }
+    }
+    
     addAxisTier(axis_index);
     addAnnotationTiers();
     removeEmptyTiers();

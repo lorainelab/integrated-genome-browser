@@ -30,7 +30,6 @@ import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 import com.affymetrix.igb.parsers.ScoredIntervalParser;
-import com.affymetrix.igb.view.TierPrefsView;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -108,7 +107,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     colors_box.add(fg_color);
     colors_box.add(bg_color);
      */
-
+    
+    /*
     JPanel customizer_box = new JPanel();
     customizer_box.setLayout(new FlowLayout());
     customizer_box.setBorder(new TitledBorder("Tiers"));
@@ -118,6 +118,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
       }
     };    
     customizer_box.add(new JButton(customizer_action));
+     */
     
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
@@ -161,7 +162,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
 
-    main_box.add(customizer_box);
+    //main_box.add(customizer_box);
     main_box.add(axis_box);
     main_box.add(edge_match_box);
     main_box.add(orf_box);

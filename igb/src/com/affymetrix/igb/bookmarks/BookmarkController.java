@@ -29,6 +29,7 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
@@ -125,15 +126,23 @@ public abstract class BookmarkController {
           continue;
         }
 
+	// for some parameters, testing more than one parameter name because how some params used to have 
+	//    slightly different names, and we need to support legacy bookmarks
         String graph_name = UnibrowControlServlet.getStringParameter(map, "graph_name_" + i);
 	if (DEBUG) {
 	  System.out.println("loading from bookmark, graph name: " + graph_name + ", url: " + graph_path);
 	}
-        String graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i);
-        String graph_height = UnibrowControlServlet.getStringParameter(map, "graphyheight" + i);
+        String graph_ypos = UnibrowControlServlet.getStringParameter(map, "graph_ypos_" + i);
+        if (graph_ypos == null)  { graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i); }
+
+        String graph_height = UnibrowControlServlet.getStringParameter(map, "graph_yheight_" + i);
+	if (graph_height == null) { graph_height = UnibrowControlServlet.getStringParameter(map, "graphyheight" + i); }
         // graph_col is String rep of RGB integer
-        String graph_col = UnibrowControlServlet.getStringParameter(map, "graphcol" + i);
-        String graph_float = UnibrowControlServlet.getStringParameter(map, "graphfloat" + i);
+        String graph_col = UnibrowControlServlet.getStringParameter(map, "graph_col_" + i);
+        if (graph_col == null)  { graph_col = UnibrowControlServlet.getStringParameter(map, "graphcol" + i); }
+
+        String graph_float = UnibrowControlServlet.getStringParameter(map, "graph_float_" + i);
+	if (graph_float == null)  { graph_float = UnibrowControlServlet.getStringParameter(map, "graphfloat" + i); }
 
         String show_labelstr = UnibrowControlServlet.getStringParameter(map, "graph_show_label_" + i);
         String show_axisstr = UnibrowControlServlet.getStringParameter(map, "graph_show_axis_" + i);
@@ -211,7 +220,7 @@ public abstract class BookmarkController {
 	Integer graph_style_num = null;
 	if (graph_style != null) {
 	  //	  graph_style_num = (Integer)gstyle2num.get(graph_style);
-	  graph_style_num = GraphGlyphUtils.getStyleNumber(graph_style);
+	  graph_style_num = GraphState.getStyleNumber(graph_style);
 	}
         if (grafs != null) {
           Iterator graf_iter = grafs.iterator();
@@ -273,11 +282,11 @@ public abstract class BookmarkController {
         Color col = gr.getBackgroundColor();
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
         mark_sym.setProperty("graph_source_url_" + i, source_url);
-        mark_sym.setProperty("graphypos" + i, Integer.toString((int)gbox.y));
-        mark_sym.setProperty("graphyheight" + i, Integer.toString((int)gbox.height));
-        mark_sym.setProperty("graphcol" + i, sixDigitHex(col));
-        if (is_floating) { mark_sym.setProperty("graphfloat" + i, "true"); }
-        else  {mark_sym.setProperty("graphfloat" + i, "false"); }
+        mark_sym.setProperty("graph_ypos_" + i, Integer.toString((int)gbox.y));
+        mark_sym.setProperty("graph_yheight_" + i, Integer.toString((int)gbox.height));
+        mark_sym.setProperty("graph_col_" + i, sixDigitHex(col));
+        if (is_floating) { mark_sym.setProperty("graph_float_" + i, "true"); }
+        else  {mark_sym.setProperty("graph_float_" + i, "false"); }
 
 	if (DEBUG) {
 	  System.out.println("setting bookmark prop graph_name_" + i + ": " + graf.getGraphName());
@@ -291,6 +300,7 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_maxgap_thresh_" + i, Integer.toString((int)gr.getMaxGapThreshold()));
         mark_sym.setProperty("graph_minrun_thresh_" + i, Integer.toString((int)gr.getMinRunThreshold()));
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
+	mark_sym.setProperty("graph_style_" + i, (GraphState.getStyleName(gr.getGraphStyle())) );
 
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
       }

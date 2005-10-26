@@ -14,6 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.*;
+import java.util.*;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
@@ -78,6 +79,42 @@ public class GraphState {
   boolean show_graph = true;
   boolean show_bounds = false;
   boolean show_label = true;
+
+  public static Map gstyle2num = new HashMap();
+  public static Map num2gstyle = new HashMap();
+
+  static {
+    gstyle2num.put("line", new Integer(SmartGraphGlyph.LINE_GRAPH));
+    gstyle2num.put("bar", new Integer(SmartGraphGlyph.BAR_GRAPH));
+    gstyle2num.put("dot", new Integer(SmartGraphGlyph.DOT_GRAPH));
+    gstyle2num.put("stairstep", new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
+    gstyle2num.put("heatmap", new Integer(SmartGraphGlyph.HEAT_MAP));
+    gstyle2num.put("minmaxavg", new Integer(SmartGraphGlyph.MINMAXAVG));
+    //    gstyle2num.put("span", new Integer(SmartGraphGlyph.SPAN_GRAPH));  // SPAN_GRAPH is deprecated
+    
+    Iterator iter = gstyle2num.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry ent = (Map.Entry)iter.next();
+      Integer style_num = (Integer)ent.getValue();
+      String style_name = (String)ent.getKey();
+      num2gstyle.put(style_num, style_name);
+    }
+  }
+
+  public static Integer getStyleNumber(String style_name) {
+    return (Integer)gstyle2num.get(style_name.toLowerCase());
+  }
+  
+  public static int getStyleInt(String style_name) {
+    Integer num = getStyleNumber(style_name);
+    if (num == null) { return -1; }
+    else { return num.intValue(); }
+  }
+
+  public static String getStyleName(int style_int) {
+    return (String)num2gstyle.get(new Integer(style_int));
+  }
+
 
   public GraphState() { super(); }
   public GraphState(GraphState ostate) {

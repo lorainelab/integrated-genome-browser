@@ -195,12 +195,17 @@ public class AnnotStyle {
   static AnnotStyle default_instance = null;
   
   /* Gets an instance that can be used for holding
-   *  default values.  As currently written, this does NOT have any effect
-   *  on new instances of this class.
+   *  default values.  The default instance is used as a template in creating
+   *  new instances.  (Although not ALL properties of the default instance are used
+   *  in this way.)
    */
   public static AnnotStyle getDefaultInstance() {
     if (default_instance == null) {
       default_instance = new AnnotStyle(NAME_OF_DEFAULT_INSTANCE, true, null);
+      default_instance.setGlyphDepth(2);
+      default_instance.setHumanName("");
+      default_instance.setShow(true);
+      default_instance.setLabelField("");
       // Note that name will become lower-case
       static_map.put(default_instance.unique_name, default_instance);
     }

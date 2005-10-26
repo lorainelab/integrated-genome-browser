@@ -40,22 +40,17 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   
   private static final String TIER_NAME = "Tier";
   private static final String COLOR = "Color";
-  private static final String SHOW = "Show";
-  private static final String SEPARATE = "Separate";
+  private static final String SEPARATE = "2 Tiers";
   private static final String COLLAPSED = "Collapsed";
   private static final String MAX_DEPTH = "Max Depth";
   private static final String BACKGROUND = "Background";
   private static final String GLYPH_DEPTH = "Connected";
   private static final String LABEL_FIELD = "Label Field";
   private static final String HUMAN_NAME = "Display Name";
-  //private static final String PERSISTENT = "Persistent";  
-  //private static final String ORDER = "Order";
-  //private static final String GLYPH_FACTORY = "Glyph Factory";
 
   private final static String[] col_headings = {
     TIER_NAME, HUMAN_NAME,
     COLOR, BACKGROUND,
-    //SHOW, 
     SEPARATE, COLLAPSED,
     MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD,
   };
@@ -70,11 +65,6 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   private final int COL_GLYPH_DEPTH = 7;
   private final int COL_LABEL_FIELD = 8;
 
-  private final int COL_SHOW = -4; //unused
-
-//  private final int COL_ORDER = -1; // unused
-  private final int COL_GLYPH_FACTORY = -2; // unused
-  private final int COL_PERSISTENT = -3; // unused
   
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
@@ -83,16 +73,8 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   
   JButton refresh_map_B = new JButton("Refresh Map");
   SeqMapView smv;
-  //FooPanel annot_style_panel;
   
   static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;
-  
-  static {
-    default_annot_style.setGlyphDepth(1);
-    default_annot_style.setHumanName("");
-    default_annot_style.setShow(true);
-    default_annot_style.setLabelField("");
-  }
   
   public TierPrefsView() {
     this(true, true);
@@ -103,16 +85,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     this.setLayout(new BorderLayout());
    
     JScrollPane table_scroll_pane = new JScrollPane(table);
-    //this.add(table_scroll_pane, BorderLayout.CENTER);
-
     
-    //annot_style_panel = new FooPanel();
-    //JScrollPane other_scroll_pane = new JScrollPane(annot_style_panel);
-    
-//    JSplitPane split_pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-//      table_scroll_pane, other_scroll_pane);
-//    split_pane.setDividerLocation(0.5);
-//    this.add(split_pane, BorderLayout.CENTER);
     this.add(table_scroll_pane, BorderLayout.CENTER);
     
     IGB igb = IGB.getSingletonIGB();
@@ -142,7 +115,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     model = new TierPrefsTableModel();
     model.addTableModelListener(new javax.swing.event.TableModelListener() {
       public void tableChanged(javax.swing.event.TableModelEvent e) {
-//        resetStylePanel();
+        // do nothing.
       }
     });
 
@@ -160,15 +133,6 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     table.setDefaultRenderer(Color.class, new ColorTableCellRenderer(true));
     table.setDefaultEditor(Color.class, new ColorTableCellEditor());
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
-
-//    ActionListener foo_panel_listener = new ActionListener() {
-//      // This action listener should be activated when the "OK" button
-//      // is pressed on the FooPanel
-//      public void actionPerformed(ActionEvent e) {
-//        model.fireTableDataChanged();
-//      }
-//    };
-//    annot_style_panel.addOKListener(foo_panel_listener);
     
     validate();
     
@@ -189,22 +153,8 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
    */
   public void valueChanged(ListSelectionEvent evt) {
     if (evt.getSource()==lsm && ! evt.getValueIsAdjusting()) {
-//      resetStylePanel();
     }
   }
-
-//  void resetStylePanel() {
-//    if (annot_style_panel != null) {
-//      int[] srows = table.getSelectedRows();
-//
-//      ArrayList list = new ArrayList(srows.length);
-//      for (int i=0; i<srows.length; i++) {
-//        AnnotStyle style = (AnnotStyle) model.tier_styles.get(srows[i]);
-//        list.add(style);
-//      }
-//      annot_style_panel.setAnnotStyles(list);
-//    }
-//  }
   
   public void destroy() {
     removeAll();
@@ -250,7 +200,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           return false;
         }
       } else {
-        return (column != COL_TIER_NAME && column != COL_PERSISTENT);
+        return (column != COL_TIER_NAME);
       }
     }
     
@@ -279,14 +229,10 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           return Boolean.valueOf(style.getSeparate());
         case COL_COLLAPSED: 
           return Boolean.valueOf(style.getCollapsed());
-        case COL_SHOW:  
-          return Boolean.valueOf(style.getShow());
         case COL_TIER_NAME:
           String name = style.getUniqueName();
           if (! style.getPersistent()) { name = "<html><i>" + name + "</i></html>"; }
           return name;
-//        case COL_ORDER: 
-//          return String.valueOf(style.getSortOrder());
         case COL_MAX_DEPTH: 
           int md = style.getMaxDepth();
           if (md == 0) { return ""; }
@@ -294,12 +240,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         case COL_BACKGROUND:
           return style.getBackground();
         case COL_GLYPH_DEPTH:
-          //return String.valueOf(style.getGlyphDepth());
           return (style.getGlyphDepth()==2 ? Boolean.TRUE : Boolean.FALSE);
-//        case COL_GLYPH_FACTORY:
-//          return style.getFactoryClassName();
-        case COL_PERSISTENT:
-          return Boolean.valueOf(style.getPersistent());
         case COL_LABEL_FIELD:
           return style.getLabelField();
         case COL_HUMAN_NAME:
@@ -322,18 +263,9 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         case COL_COLLAPSED:
           style.setCollapsed(((Boolean) value).booleanValue());
           break;
-        case COL_SHOW:
-          style.setShow(((Boolean) value).booleanValue());
-          break;
         case COL_TIER_NAME:
           System.out.println("Tier name is not changeable!");
           break;
-//        case COL_ORDER: 
-//          {
-//            int i = parseInteger(value, style.getSortOrder(), style.getSortOrder());
-//            style.setSortOrder(i);
-//          }
-//        break;
         case COL_MAX_DEPTH: 
           {
             int i = parseInteger(((String) value), 0, style.getMaxDepth());
@@ -349,16 +281,6 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           } else {
             style.setGlyphDepth(1);
           }
-//          {
-//            int i = parseInteger(((String) value), 0, style.getGlyphDepth());
-//            if (i<1) { i = 1; } else if (i>2) { i = 2; }
-//            style.setGlyphDepth(i);
-//          }
-          break;
-//        case COL_GLYPH_FACTORY:
-//          style.setFactoryClassName((String) value);
-//          break;
-        case COL_PERSISTENT:
           break;
         case COL_LABEL_FIELD:
           style.setLabelField((String) value);
@@ -467,15 +389,23 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
     sb.append("Use this panel to change properties of annotation tiers.  ");
-    sb.append("Changes do not require re-start.  ");
-    sb.append("Changes to annotation tiers will be remembered between sessions.  ");
-    sb.append("Settings for graphs and for tiers that result from arithmetic manipulation of data,  ");
-    sb.append("such as intersection or union of two tiers, will apply only to the current session.  ");
-    sb.append("Such settings that are not remembered between sessions are indicated by an tier name in <i>italics</i>.  ");
+    sb.append("Changes do not require re-start, and most ");
+    sb.append("will be remembered between sessions.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Display Name</h2>\n");
+    sb.append("<h2>"+TIER_NAME+"</h2>\n");
+    sb.append("The name of the tier.  ");
+    sb.append("If the name is shown in <i>italic</i> font, the settings for that tier ");
+    sb.append("will apply only to the current session.  ");
+    sb.append("If the tier name is shown in normal font, the settings will persist between sessions.  ");
+    sb.append("Non-persistent settings apply to graphs and temporary data that results from arithmetic manipulations,  ");
+    sb.append("such as intersections and unions of tiers.  ");
+    //sb.append("Such settings that are not remembered between sessions are indicated by a tier name in <i>italics</i>.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>"+HUMAN_NAME+"</h2>\n");
     sb.append("Sets the name to display as the tier label.  ");
     sb.append("</p>\n");
 
@@ -485,29 +415,29 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Separate</h2>\n");
+    sb.append("<h2>"+SEPARATE+"</h2>\n");
     sb.append("Whether to display annotations in two tiers (+) and (-), or one (+/-).  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Collapsed</h2>\n");
+    sb.append("<h2>"+COLLAPSED+"</h2>\n");
     sb.append("Whether to collapse the tier to its minimum height.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Max Depth</h2>\n");
+    sb.append("<h2>"+MAX_DEPTH+"</h2>\n");
     sb.append("The maximum rows of data to show in tiers that are <em>not</em> collapsed.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Connected</h2>\n");
+    sb.append("<h2>"+GLYPH_DEPTH+"</h2>\n");
     sb.append("Whether to connect groups of exons into transcripts.  ");
     sb.append("Should be false for data with no intron-exon structure,  ");
     sb.append("such as repeats or contigs.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
-    sb.append("<h2>Label Field</h2>\n");
+    sb.append("<h2>"+LABEL_FIELD+"</h2>\n");
     sb.append("The name of the field to use to construct labels.  ");
     sb.append("For example, with 'RefSeq' data, you may choose to use 'gene_name'.  ");
     sb.append("For many other data types you may choose to use 'id'.  ");

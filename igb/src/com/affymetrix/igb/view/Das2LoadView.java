@@ -29,6 +29,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.GenometryViewer;
@@ -223,6 +224,10 @@ public class Das2LoadView extends JComponent
       }
     }
 
+    if (selected_seq == null) {
+      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
+      return;
+    }
     if (visible_seq != selected_seq) {
       System.out.println("ERROR, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!");
       return;

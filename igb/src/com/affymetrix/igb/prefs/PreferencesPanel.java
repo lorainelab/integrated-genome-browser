@@ -44,6 +44,12 @@ public class PreferencesPanel extends JPanel {
     //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
   }
   
+  public static int TAB_NUM_TIERS = -1;
+  public static int TAB_NUM_DAS = -1;
+  public static int TAB_NUM_KEY_STROKES = -1;
+  public static int TAB_NUM_MISC_OPTIONS = -1;
+  public static int TAB_NUM_GRAPHS_VIEW = -1;
+  
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
    *  JComponent you wish, but probably the best idea is to use
@@ -51,6 +57,8 @@ public class PreferencesPanel extends JPanel {
    */
   public static PreferencesPanel getSingleton() {
     if (singleton == null) {
+      singleton = new PreferencesPanel();
+
       final TierPrefsView tpv = new TierPrefsView(true, true);
       tpv.addComponentListener(new ComponentAdapter() {
         public void componentHidden(ComponentEvent e) {
@@ -58,19 +66,32 @@ public class PreferencesPanel extends JPanel {
         }
       });
 
-      singleton = new PreferencesPanel();
       singleton.addPrefEditorComponent(tpv);
+      TAB_NUM_TIERS = singleton.tab_pane.getComponentCount() - 1;
+      
       singleton.addPrefEditorComponent(new DasServersView());
+      TAB_NUM_DAS = singleton.tab_pane.getComponentCount() - 1;
+      
       singleton.addPrefEditorComponent(new KeyStrokesView());
+      TAB_NUM_KEY_STROKES = singleton.tab_pane.getComponentCount() - 1;
+
       //singleton.addPrefEditorComponent(new PluginsView());
+      //TAB_NUM_PLUGINS = singleton.tab_pane.getComponentCount() - 1;
+
       singleton.addPrefEditorComponent(new GraphsView());
+      TAB_NUM_GRAPHS_VIEW = singleton.tab_pane.getComponentCount() - 1;
+
       singleton.addPrefEditorComponent(new OptionsView());
+      TAB_NUM_MISC_OPTIONS = singleton.tab_pane.getComponentCount() - 1;
     }
     return singleton;
   }
   
   /** Set the tab pane to the given index. */
   public void setTab(int i) {
+    if (i < 0 || i >= tab_pane.getComponentCount()) {
+      return;
+    }
     tab_pane.setSelectedIndex(i);
     Component c = tab_pane.getComponentAt(i);
     if (c instanceof IPrefEditorComponent) {

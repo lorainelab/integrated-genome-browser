@@ -32,6 +32,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.util.*;
 
@@ -86,6 +87,7 @@ public class GraphAdjusterView extends JComponent
   JButton deleteB = new JButton("Delete Graph");
   JButton saveB = new JButton("Save Graph");
   JButton selectAllB = new JButton("Select All Graphs");
+  JButton setDefaultsB = new JButton("Set Defaults");
   JButton groupGraphsB = new JButton("Group Graphs");
   ButtonGroup pgroup = new ButtonGroup();
 
@@ -184,8 +186,9 @@ public class GraphAdjusterView extends JComponent
     thresh_pan.add(thresh_shiftP);
 
     JPanel style_pan = new JPanel();
-    style_pan.setLayout(new GridLayout(1,2));
-    style_pan.add(new JLabel("Graph Style"));
+    style_pan.setLayout(new BoxLayout(style_pan, BoxLayout.X_AXIS));
+    style_pan.add(new JLabel("Style"));
+    style_pan.add(Box.createHorizontalStrut(10));
     style_pan.add(styleCB);
     styleCB.addItem(BLANK);
     styleCB.addItem(MINMAXAVG);
@@ -197,8 +200,10 @@ public class GraphAdjusterView extends JComponent
     // styleCB.addItem(INTERVAL);
 
     JPanel decorP = new JPanel();
-    decorP.setBorder(new TitledBorder("Decorations"));
-    decorP.setLayout(new GridLayout(1, 2));
+    //decorP.setBorder(new TitledBorder("Decorations"));
+    decorP.setBorder(new EtchedBorder());
+    decorP.setLayout(new GridLayout(1, 3));
+    decorP.add(new JLabel("Decorations: "));
     decorP.add(labelCB);
     decorP.add(yaxisCB);
     //    decorP.add(boundsCB);
@@ -206,7 +211,8 @@ public class GraphAdjusterView extends JComponent
 
     JPanel placementP = new JPanel();
     placementP.setLayout(new GridLayout(1, 3));
-    placementP.add(new JLabel("Placement"));
+    placementP.setBorder(new EtchedBorder());
+    placementP.add(new JLabel("Placement: "));
     placementP.add(attachB);
     placementP.add(floatB);
     pgroup = new ButtonGroup();
@@ -214,35 +220,51 @@ public class GraphAdjusterView extends JComponent
     pgroup.add(floatB);
 
     JPanel save_deleteP = new JPanel();
+    save_deleteP.setBorder(new EmptyBorder(3,3,3,3));
     save_deleteP.setLayout(new BoxLayout(save_deleteP, BoxLayout.X_AXIS));
     save_deleteP.add(saveB);
+    save_deleteP.add(Box.createHorizontalStrut(10));
     save_deleteP.add(deleteB);
 
     JPanel colorP = new JPanel();
     colorP.setLayout(new BoxLayout(colorP, BoxLayout.X_AXIS));
+    colorP.setBorder(new EmptyBorder(3,3,3,3));
     colorP.add(cloneB);
+    colorP.add(Box.createHorizontalStrut(10));
     colorP.add(colorB);
 
-    JPanel defaults_pan = new JPanel();
+    JPanel button_row_1 = new JPanel();
+    button_row_1.setBorder(new EmptyBorder(3,3,3,3));
+    button_row_1.setLayout(new BoxLayout(button_row_1, BoxLayout.X_AXIS));
+    button_row_1.add(selectAllB);
+    button_row_1.add(Box.createHorizontalStrut(10));
+    button_row_1.add(setDefaultsB);
+    
+    //JPanel defaults_pan = new JPanel();
     JPanel options_pan = new JPanel();
 
     //    options_pan.setBorder(new TitledBorder("Options"));
     options_pan.setLayout(new BoxLayout(options_pan, BoxLayout.Y_AXIS));
-    options_pan.add(selectAllB);
+    //options_pan.add(setDefaultsB);
+    //options_pan.add(selectAllB);
+    options_pan.add(button_row_1);
     options_pan.add(placementP);
     options_pan.add(decorP);
     options_pan.add(colorP);
     options_pan.add(style_pan);
     options_pan.add(save_deleteP);
 
+    /*
     //    JPanel options_holder = new JPanel();
     JTabbedPane options_holder = new JTabbedPane();
     //    options_holder.add(options_pan);
     options_holder.addTab("Selection", null, options_pan, null);
-    options_holder.addTab("Defaults", null, defaults_pan, null);
+    //options_holder.addTab("Defaults", null, defaults_pan, null);
     options_holder.setBorder(new TitledBorder("Options"));
+    */
+    options_pan.setBorder(new TitledBorder("Options"));
 
-
+    /*
     JPanel defpan2 = new JPanel();
     defpan2.setLayout(new GridLayout(1, 3));
     JCheckBox use_floating_cbox = UnibrowPrefsUtil.createCheckBox("Float by default", GraphGlyphUtils.getGraphPrefsNode(),
@@ -274,6 +296,7 @@ public class GraphAdjusterView extends JComponent
     defaults_pan.add(defpan3);
     defaults_pan.add(defpan4);
     defaults_pan.add(defpan5);
+    */
 
 
     JPanel vis_adjusterP = new JPanel();
@@ -294,10 +317,12 @@ public class GraphAdjusterView extends JComponent
       vis_adjusterP.add("South", transformP);
     }
 
-    this.setLayout(new GridLayout(1, 3));
+    //this.setLayout(new GridLayout(1, 3));
+    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     this.add(vis_adjusterP);
     this.add(thresh_pan);
-    this.add(options_holder);
+    //this.add(options_holder);
+    this.add(options_pan);
 
     visCB.addActionListener(this);
     labelCB.addActionListener(this);
@@ -314,6 +339,7 @@ public class GraphAdjusterView extends JComponent
     saveB.addActionListener(this);
     deleteB.addActionListener(this);
     selectAllB.addActionListener(this);
+    setDefaultsB.addActionListener(this);
     groupGraphsB.addActionListener(this);
     tier_threshB.addActionListener(this);
     shift_startTF.addActionListener(this);
@@ -518,6 +544,11 @@ public class GraphAdjusterView extends JComponent
     }
     else if (src == selectAllB) {
       gviewer.selectAllGraphs();
+    }
+    else if (src == setDefaultsB) {
+      PreferencesPanel pp = PreferencesPanel.getSingleton();
+      pp.setTab(PreferencesPanel.TAB_NUM_GRAPHS_VIEW);
+      pp.getFrame().show();
     }
     else if (src == groupGraphsB) {
       groupGraphs(grafs);

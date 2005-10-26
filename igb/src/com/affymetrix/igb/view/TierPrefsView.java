@@ -475,6 +475,11 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("</p>\n");
 
     sb.append("<p>\n");
+    sb.append("<h2>Display Name</h2>\n");
+    sb.append("Sets the name to display as the tier label.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
     sb.append("<h2>Color and Background</h2>\n");
     sb.append("Sets the foreground and background colors.  ");
     sb.append("</p>\n");

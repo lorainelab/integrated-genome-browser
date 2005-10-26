@@ -15,17 +15,17 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.igb.das.DasDiscovery;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.awt.event.ActionEvent;
+import com.affymetrix.swing.BooleanTableCellRenderer;
 
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
@@ -75,6 +75,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
+    table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
     add_action = new AbstractAction("Add ...") {
       public void actionPerformed(ActionEvent evt) {

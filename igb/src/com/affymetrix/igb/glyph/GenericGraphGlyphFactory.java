@@ -139,7 +139,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
       AnnotStyle annot_style = AnnotStyle.getInstance(gsym.getGraphName(), false);
       state.setColor(annot_style.getColor());
-      
+
       displayGraph(gsym, smv, state, false);
     }
     else {
@@ -161,7 +161,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     AffyTieredMap map = smv.getSeqMap();
 
     if (graph_seq != aseq) {
-      System.out.println("################## ERROR, graph_seq != aseq #################");
+      // System.out.println("################## ERROR, graph_seq != aseq #################");
       // may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
       return null;
     }
@@ -177,18 +177,18 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (newgraf.getGraphXCoords() == null || newgraf.getGraphYCoords() == null) {
       return null;
     } else if (newgraf.getGraphXCoords().length == 0 || newgraf.getGraphYCoords().length == 0) {
-      return null;      
+      return null;
     }
 
     String graph_name = graf.getGraphName();
-    if (graph_name == null) { 
+    if (graph_name == null) {
       // this probably never actually happens
-      graph_name = "Graph #" + System.currentTimeMillis(); 
-      graf.setGraphName(graph_name); 
+      graph_name = "Graph #" + System.currentTimeMillis();
+      graf.setGraphName(graph_name);
     }
-    
+
     AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
-      
+
     annot_style.setColor(state.getColor());
 
     setStateFromProps(graf, state);   // set some GraphState properties based on GraphSym
@@ -250,9 +250,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	}
 	  else { tglyph = new TierGlyph(annot_style); }
       }
-      
+
       Color tier_back_col = annot_style.getBackground();
-      
+
       tglyph.setFillColor(tier_back_col);
       tglyph.setForegroundColor(state.getColor());
       tglyph.addChild(graph_glyph);
@@ -388,5 +388,5 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       // change the style in the GUI, if desired
       graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
     }
-  }  
+  }
 }

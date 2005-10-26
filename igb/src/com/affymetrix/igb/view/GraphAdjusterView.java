@@ -198,11 +198,11 @@ public class GraphAdjusterView extends JComponent
 
     JPanel decorP = new JPanel();
     decorP.setBorder(new TitledBorder("Decorations"));
-    decorP.setLayout(new GridLayout(2, 2));
+    decorP.setLayout(new GridLayout(1, 2));
     decorP.add(labelCB);
     decorP.add(yaxisCB);
-    decorP.add(boundsCB);
-    decorP.add(handleCB);
+    //    decorP.add(boundsCB);
+    //    decorP.add(handleCB);
 
     JPanel placementP = new JPanel();
     placementP.setLayout(new GridLayout(1, 3));

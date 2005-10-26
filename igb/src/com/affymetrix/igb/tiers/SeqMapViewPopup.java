@@ -12,6 +12,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.parsers.BedParser;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
 import java.awt.Color;
@@ -122,7 +123,14 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
 
   void showCustomizer() {
-    TierPrefsView.showFrame();
+    // The old way:
+    //TierPrefsView.showFrame();
+    
+    // The new way:
+    PreferencesPanel pv = PreferencesPanel.getSingleton();
+    pv.setTab(0);
+    JFrame f = pv.getFrame();
+    f.show();
   }
   
   java.util.List getStyles(java.util.List tier_label_glyphs) {

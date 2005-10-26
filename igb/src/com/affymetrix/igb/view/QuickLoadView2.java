@@ -42,13 +42,13 @@ public class QuickLoadView2 extends JComponent
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
 
-    choice_panel.setLayout(new GridLayout(2,2));
+    choice_panel.setLayout(new GridLayout(1,2));
     serverCB = new JComboBox();
     serverCB.addItem("test");
     genomeCB = new JComboBox();
     genomeCB.addItem("genome test");
-    choice_panel.add(new JLabel("Quickload Server:"));
-    choice_panel.add(serverCB);
+    //    choice_panel.add(new JLabel("Quickload Server:"));
+    //    choice_panel.add(serverCB);
     choice_panel.add(new JLabel("Quickload Genome:"));
     choice_panel.add(genomeCB);
     JPanel panel2 = new JPanel(new BorderLayout());

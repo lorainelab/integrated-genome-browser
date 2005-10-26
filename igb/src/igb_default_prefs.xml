@@ -19,6 +19,12 @@
   <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
   <!-- End of probe set display section -->
 
+  <annotation_style annot_type="contigs" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+  /> 
+  <annotation_style annot_type="contig" 
+    child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+  /> 
 
   <annotation_style annot_type="Probesets" 
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"

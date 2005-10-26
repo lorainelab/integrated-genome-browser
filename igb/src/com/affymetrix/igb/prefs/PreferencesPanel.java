@@ -72,6 +72,11 @@ public class PreferencesPanel extends JPanel {
   /** Set the tab pane to the given index. */
   public void setTab(int i) {
     tab_pane.setSelectedIndex(i);
+    Component c = tab_pane.getComponentAt(i);
+    if (c instanceof IPrefEditorComponent) {
+      IPrefEditorComponent p = (IPrefEditorComponent) c;
+      p.refresh();
+    }
   }
   
   /** Adds the given component as a panel to the tab pane of preference editors.

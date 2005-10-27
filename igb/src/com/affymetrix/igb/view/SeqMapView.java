@@ -75,8 +75,8 @@ public class SeqMapView extends JPanel
 	     ActionListener
 {
 
-  static boolean DIAGNOSTICS = false;
-  boolean DEBUG_TIERS = false;
+  static final boolean DIAGNOSTICS = false;
+  static final boolean DEBUG_TIERS = false;
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;
   boolean rev_comp = false;
@@ -244,6 +244,12 @@ public class SeqMapView extends JPanel
   TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
+  
+  /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
+   *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
+   */
+  boolean remember_tiers = true;
+
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
@@ -676,6 +682,7 @@ public class SeqMapView extends JPanel
 
     ArrayList temp_tiers = null;
     int axis_index = 0;
+    boolean axis_was_hidden = false;
     match_glyphs = new Vector();
     java.util.List old_selections = Collections.EMPTY_LIST;
     double old_zoom_spot_x = map.getZoomCoord(map.X);
@@ -688,6 +695,9 @@ public class SeqMapView extends JPanel
       } else {
         old_selections = Collections.EMPTY_LIST;
       }
+    }
+    
+    if (same_seq || remember_tiers) {
       
       // stash annotation tiers for proper state restoration after resetting for same seq
       //    (but presumably added / deleted / modified annotations...)
@@ -702,6 +712,7 @@ public class SeqMapView extends JPanel
         if (tg == axis_tier) {
           if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
           axis_index = i;
+          axis_was_hidden = (tg.getState() == TierGlyph.HIDDEN);
         }
         else {
           tg.removeAllChildren();
@@ -771,13 +782,14 @@ public class SeqMapView extends JPanel
 	  System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
 	}
         // Reset tier properties: this is mainly needed to reset the background color
-        tg.setStyle(tg.getAnnotStyle());
-        
-	map.addTier(tg);
+        if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
+
+        map.addTier(tg);
       }
     }
     
-    addAxisTier(axis_index);
+    TransformTierGlyph at = addAxisTier(axis_index);
+    if (axis_was_hidden) {at.setState(TierGlyph.HIDDEN);}
     addAnnotationTiers();
     removeEmptyTiers();
     //map.sortTiers();
@@ -912,12 +924,21 @@ public class SeqMapView extends JPanel
 	  if (DEBUG_TIERS)  {
 	    System.out.println("in removeEmptyTiers(), removing tier: " + tg.getLabel());
 	  }
-	  map.removeTier(tg);
-	  //      method2ftier.remove(key);
-	  keys_to_remove.add(key);
-	}
+          
+          if (remember_tiers) {
+            tg.setState(TierGlyph.HIDDEN);
+          } else {
+            map.removeTier(tg);
+            keys_to_remove.add(key);
+          }
+	} else {
+          tg.restoreState();
+          // this would also work:
+          // if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
+        }
       }
     }
+
     for (int i=0; i<keys_to_remove.size(); i++) {
       method2ftier.remove(keys_to_remove.get(i));
     }
@@ -936,9 +957,16 @@ public class SeqMapView extends JPanel
 	  if (DEBUG_TIERS)  {
 	    System.out.println("in removeEmptyTiers(), removing tier: " + tg.getLabel());
 	  }
-	  map.removeTier(tg);
-	  //	  method2rtier.remove(key);
-	  keys_to_remove.add(key);
+          if (remember_tiers) {
+            tg.setState(TierGlyph.HIDDEN);
+          } else {
+            map.removeTier(tg);
+            keys_to_remove.add(key);
+          }
+	} else {
+          tg.restoreState();
+          // this would also work:
+          // if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
 	}
       }
     }
@@ -955,7 +983,14 @@ public class SeqMapView extends JPanel
     for (int i=tiercount-1; i>=0; i--) {
       TierGlyph tg = (TierGlyph)tiers.get(i);
       if (tg.getChildCount() <= 0) {
-	map.removeTier(tg);
+        if (DEBUG_TIERS)  {
+          System.out.println("in removeEmptyTiers() part 2, removing tier: " + tg.getLabel());
+        }
+        if (remember_tiers) {
+          tg.setState(TierGlyph.HIDDEN);
+        } else {
+          map.removeTier(tg);
+        }
       }
     }
   }

@@ -712,7 +712,7 @@ public class SeqMapView extends JPanel
         if (tg == axis_tier) {
           if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
           axis_index = i;
-          axis_was_hidden = (tg.getState() == TierGlyph.HIDDEN);
+          axis_was_hidden = (axis_tier.getState() == TierGlyph.HIDDEN);
         }
         else {
           tg.removeAllChildren();
@@ -787,6 +787,7 @@ public class SeqMapView extends JPanel
         map.addTier(tg);
       }
     }
+    temp_tiers.clear(); // redundant hint to garbage collection
     
     TransformTierGlyph at = addAxisTier(axis_index);
     if (axis_was_hidden) {at.setState(TierGlyph.HIDDEN);}
@@ -932,9 +933,8 @@ public class SeqMapView extends JPanel
             keys_to_remove.add(key);
           }
 	} else {
-          tg.restoreState();
-          // this would also work:
-          // if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
+          //doesn't work: tg.restoreState(); // doesn't take into account AnnotStyle.getShow()
+          if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
         }
       }
     }
@@ -964,9 +964,8 @@ public class SeqMapView extends JPanel
             keys_to_remove.add(key);
           }
 	} else {
-          tg.restoreState();
-          // this would also work:
-          // if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
+          //doesn't work: tg.restoreState(); // doesn't take into account AnnotStyle.getShow()
+          if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
 	}
       }
     }

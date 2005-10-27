@@ -31,7 +31,7 @@ public class DataLoadView extends JComponent  {
     this.add("Center", tpane);
     tpane.addTab("QuickLoad", quick_view);
     tpane.addTab("DAS/2", das2_view);
-    tpane.addTab("DAS/1", das1_view);
+    //    tpane.addTab("DAS/1", das1_view);
     this.add("West", group_view);
   }
 

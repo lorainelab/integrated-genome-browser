@@ -36,7 +36,9 @@ public class QuickLoadView2 extends JComponent
   public static final String DEFAULT_DAS_DNA_SERVER = "http://genome.cse.ucsc.edu/cgi-bin/das";
   static Map cache_usage_options;
   static Map usage2str;
-  //  static boolean LOAD_DEFAULT_ANNOTS = true;
+  static boolean LOAD_DEFAULT_ANNOTS = true;
+  static Map default_types = new HashMap();
+  static String default_annot_name  = "refseq";
 
   JComboBox serverCB;
   JComboBox genomeCB;
@@ -63,18 +65,17 @@ public class QuickLoadView2 extends JComponent
   JButton reset_quickload_urlB = new JButton("Reset");
 
   static {
+    default_types.put(default_annot_name, default_annot_name);
     String norm = "Normal Usage";
     String ignore = "Ignore Cache";
     String only = "Use Only Cache";
     Integer normal = new Integer(LocalUrlCacher.NORMAL_CACHE);
     Integer ignore_cache = new Integer(LocalUrlCacher.IGNORE_CACHE);
     Integer cache_only = new Integer(LocalUrlCacher.ONLY_CACHE);
-
     cache_usage_options = new LinkedHashMap();
     cache_usage_options.put(norm, normal);
     cache_usage_options.put(ignore, ignore_cache);
     cache_usage_options.put(only, cache_only);
-
     usage2str = new LinkedHashMap();
     usage2str.put(normal, norm);
     usage2str.put(ignore_cache, ignore);
@@ -142,23 +143,8 @@ public class QuickLoadView2 extends JComponent
 
   public void actionPerformed(ActionEvent evt)  {
     Object src = evt.getSource();
-    if (src instanceof JCheckBox) {
-      if (DEBUG_EVENTS)  { System.out.println("QuickLoadView2 received action on JCheckBox"); }
-      JCheckBox cbox = (JCheckBox)src;
-      String filename = (String)cb2filename.get(cbox);
-      boolean selected = cbox.isSelected();
-      if (selected)  {
-	current_server.loadAnnotations(current_group, filename);
-	gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-	cbox.setEnabled(false);
-      }
-      else {
-	// if deselected, what should happen -- delete the annots?  or just hide them?
-	//	boolean loaded = current_server.getLoadState(current_group, filename);
-      }
-    }
     /* handles residues loading based on partial or full sequence load buttons */
-    else if (src == partial_residuesB) {
+    if (src == partial_residuesB) {
       if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); return; }
       String seq_name = current_seq.getID();
       SeqSpan viewspan = gviewer.getVisibleSpan();
@@ -176,9 +162,11 @@ public class QuickLoadView2 extends JComponent
     }
     else if (src == optionsB) {
       showOptions();
-    } else if (src == reset_das_dna_serverB) {
+    }
+    else if (src == reset_das_dna_serverB) {
       UnibrowPrefsUtil.getLocationsNode().put(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
-    } else if (src == reset_quickload_urlB) {
+    }
+    else if (src == reset_quickload_urlB) {
       String url_from_xml_file = (String) IGB.getIGBPrefs().get("QuickLoadUrl");
       if (url_from_xml_file != null) {
         UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, url_from_xml_file);
@@ -186,7 +174,26 @@ public class QuickLoadView2 extends JComponent
         UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
       }
     }
-
+    else if (src == clear_cacheB) {
+      System.out.println("clearing local cache");
+      LocalUrlCacher.clearCache();
+    }
+    else if (src instanceof JCheckBox) {  // must put this after cache modification branch, since some of those are JCheckBoxes
+      if (DEBUG_EVENTS)  { System.out.println("QuickLoadView2 received annotation load action"); }
+      JCheckBox cbox = (JCheckBox)src;
+      String filename = (String)cb2filename.get(cbox);
+      boolean selected = cbox.isSelected();
+      // probably need to make this threaded (see QuickLoaderView)
+      if (selected)  {
+	current_server.loadAnnotations(current_group, filename);
+	gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+	cbox.setEnabled(false);
+      }
+      else {
+	// if deselected, what should happen -- delete the annots?  or just hide them?
+	//	boolean loaded = current_server.getLoadState(current_group, filename);
+      }
+    }
   }
 
   public void itemStateChanged(ItemEvent evt) {
@@ -244,16 +251,22 @@ public class QuickLoadView2 extends JComponent
 	  Map.Entry ent = (Map.Entry)iter.next();
 	  String filename = (String)ent.getKey();
 //          if (filename == null || filename.equals(""))  { continue; }
-	  Boolean boo = (Boolean)ent.getValue();
+	  boolean prev_loaded = ((Boolean)ent.getValue()).booleanValue();
 	  String annot_name = filename.substring(0, filename.indexOf("."));
 	  JCheckBox cb = new JCheckBox(annot_name);
 	  cb2filename.put(cb, filename);
-	  cb.setSelected(boo == Boolean.TRUE);
-	  types_panel.add(cb);
+          cb.setSelected(prev_loaded);
+	  cb.setEnabled(! prev_loaded);
 	  cb.addActionListener(this);
+	  if ((! prev_loaded) && LOAD_DEFAULT_ANNOTS && (default_types.get(annot_name) != null)) {
+	    //	    cb.setSelected(true);  // rely on checkbox selection event to trigger loading...
+	    current_server.loadAnnotations(current_group, filename);
+	    cb.setEnabled(false);
+	    gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+	  }
+	  types_panel.add(cb);
 	}
       }
-
     }
   }
 
@@ -455,9 +468,9 @@ public class QuickLoadView2 extends JComponent
       cache_options_box.add(usageP);
       cache_options_box.add(clear_cacheB);
 
-      cache_annotsCB.addActionListener(this);
-      cache_residuesCB.addActionListener(this);
-      cache_usage_selector.addItemListener(this);
+      //      cache_annotsCB.addActionListener(this);
+      //      cache_residuesCB.addActionListener(this);
+      //      cache_usage_selector.addItemListener(this);
       clear_cacheB.addActionListener(this);
     }
   }
@@ -470,13 +483,16 @@ public class QuickLoadView2 extends JComponent
     //TODO: Give the user a "Cancel" options as well as "OK"
     //int option = JOptionPane.showConfirmDialog(this, optionsP, "Quickload Options", JOptionPane.OK_
     //if (option == JOptionPane.OK_OPTION) {
-        String usage_str = (String)cache_usage_selector.getSelectedItem();
-	int usage = ((Integer)cache_usage_options.get(usage_str)).intValue();
-        QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-        // Note that the preferred DAS_DNA_SERVER_URL gets set immediately when the JTextBox is changed
-        // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
-        //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
-	//        setQuickLoadURL(getQuickLoadUrl());
+
+    // could handle cache_usage_selector, cache_annotsCB, cache_residuesCB in event handlers, but was getting too spread out
+    // so for now always reset cache options, even if same as before (doesn't really cost anything if they don't change)
+      String usage_str = (String)cache_usage_selector.getSelectedItem();
+      int usage = ((Integer)cache_usage_options.get(usage_str)).intValue();
+      QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
+      // Note that the preferred DAS_DNA_SERVER_URL gets set immediately when the JTextBox is changed
+      // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
+      //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
+      //        setQuickLoadURL(getQuickLoadUrl());
     //}
   }
 
@@ -502,8 +518,7 @@ class QuickLoadServerModel {
     UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
 
   static Pattern tab_regex = Pattern.compile("\t");
-  static Map default_types = new HashMap();
-  static String default_annot_name  = "refseq";
+
 
   String root_url;
   // name2group maps genome "name" from quickload contents.txt file to AnnotatedSeqGroup
@@ -519,10 +534,6 @@ class QuickLoadServerModel {
    */
   Map group2states = new HashMap();
 
-
-  static {
-    default_types.put(default_annot_name, default_annot_name);
-  }
 
   public QuickLoadServerModel(String url) {
     root_url = url;

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,20 +29,23 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.util.ErrorHandler;
 
 public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
   static java.util.List psl_pref_list = new ArrayList();
   static java.util.List psl3_pref_list = new ArrayList();
   static {
-    psl_pref_list.add(".bps");
-    psl_pref_list.add(".psl");
-
-    psl3_pref_list.add(".psl3");
-    psl3_pref_list.add(".bps");
-    psl3_pref_list.add(".psl");
+    //    psl_pref_list.add(".bps");
+    //    psl_pref_list.add(".psl");
+    //    psl3_pref_list.add(".psl3");
+    //    psl3_pref_list.add(".bps");
+    //    psl3_pref_list.add(".psl");
+    psl_pref_list.add("bps");
+    psl_pref_list.add("psl");
+    psl3_pref_list.add("psl3");
+    psl3_pref_list.add("bps");
+    psl3_pref_list.add("psl");
   }
 
   boolean LOOK_FOR_TARGETS_IN_QUERYHASH = false;
@@ -55,10 +58,6 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
   public PSLParser() {
     super();
-  }
-
-  public PSLParser(SeqMapView gv) {
-    super(gv);
   }
 
   public void enableSharedQueryTarget(boolean b) {
@@ -172,9 +171,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       while ((line = br.readLine()) != null) {
 	line_count++;
         // Ignore psl header lines
-	if (line.trim().equals("") || line.startsWith("#") || 
-            line.startsWith("match\t") || line.startsWith("-------")) { 
-          continue; 
+	if (line.trim().equals("") || line.startsWith("#") ||
+            line.startsWith("match\t") || line.startsWith("-------")) {
+          continue;
         }
 	else if (line.startsWith("track")) {
 	  setTrackProperties(line);
@@ -467,7 +466,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       if (block_size_array != null && block_size_array.length != 0) {
         sb.append("block_size first element: **" + block_size_array[0] + "**\n");
       }
-      IGB.errorPanel(sb.toString(), e);
+      ErrorHandler.errorPanel(sb.toString(), e);
 
     } finally {
       br.close();

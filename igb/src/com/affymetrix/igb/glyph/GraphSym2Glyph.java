@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,13 +23,14 @@ import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
 
 /**
+ *  NO LONGER USED, USE GraphSymUtils.transformGraphSym() instead
  *  Takes a GraphSym and a Symmetry hierarchy,
  *  and creates graph glyphs mapping GraphSym xcoords to
  *      scene/map coordinates.
  */
 public class GraphSym2Glyph {
 
-
+  /*
   public static void modifyGraphGlyph(GraphSym osym, SeqSymmetry sym, BioSeq tseq, GraphGlyph gl) {
     //    System.out.println("GraphSym2Glyph received a modifyGraphGlyph() call");
     // System.out.println("mapping symmetry: " );
@@ -50,6 +51,8 @@ public class GraphSym2Glyph {
     FloatList new_ycoords = new FloatList(initcap);
     if (oseq == null || xcoords == null || ycoords == null) { return; }
     List leaf_syms = SeqUtils.getLeafSyms(sym);
+    System.out.println("leaf syms: " + leaf_syms.size());
+    int point_check_count = 0;
     for (int i=0; i<leaf_syms.size(); i++) {
       SeqSymmetry leafsym = (SeqSymmetry)leaf_syms.get(i);
       SeqSpan ospan = leafsym.getSpan(oseq);
@@ -75,6 +78,8 @@ public class GraphSym2Glyph {
       //    any graph points that overlap ospan in oseq
       for (int k=0; k<kmax; k++) {
 	int old_xcoord = xcoords[k];
+        point_check_count++;
+	if (point_check_count > 100000) { break; }
 	if (old_xcoord >= ostart && old_xcoord <= oend) {
 	  int new_xcoord = (int)((scale * old_xcoord) + offset);
 	  new_xcoords.add(new_xcoord);
@@ -82,11 +87,12 @@ public class GraphSym2Glyph {
 	}
       }
     }
+    System.out.println("total loops through point check: " + point_check_count);
     Rectangle2D cbox = gl.getCoordBox();
     //    System.out.println("in GraphSym2Glyph, setting point coords for modified graph");
     gl.setPointCoords(new_xcoords.copyToArray(), new_ycoords.copyToArray());
     SeqSpan parent_tspan = sym.getSpan(tseq);
     gl.setCoords(parent_tspan.getMin(), cbox.y, parent_tspan.getLength(), cbox.height);
   }
-
+  */
 }

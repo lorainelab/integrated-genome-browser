@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -147,9 +147,9 @@ public class GlyphSummarizer {
       transitions++;
       max_depth = Math.max(depth, max_depth);
     }
-    SmartGraphGlyph sgg = new SmartGraphGlyph();
+    SmartGraphGlyph sgg = new SmartGraphGlyph(transition_xpos.copyToArray(), transition_ypos.copyToArray());
     Rectangle2D cbox = map.getCoordBounds();
-    sgg.setPointCoords(transition_xpos.copyToArray(), transition_ypos.copyToArray());
+//    sgg.setPointCoords(transition_xpos.copyToArray(), transition_ypos.copyToArray());
     sgg.setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
     sgg.setColor(glyph_color);
     sgg.setCoords(cbox.x, 0, cbox.width, Math.max(max_depth*3, 50));

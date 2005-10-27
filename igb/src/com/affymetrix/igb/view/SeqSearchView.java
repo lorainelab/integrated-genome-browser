@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -114,6 +114,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
   private void clearAll() {
     NeoMap map = gviewer.getSeqMap();
+    coordsearchTF.setText("");
     idsearchTF.setText("");
     entryTF.setText("");
     regexTF.setText("");
@@ -139,7 +140,8 @@ public class SeqSearchView extends JComponent implements ActionListener  {
     else if (src == coordsearchTF && coordsearchTF.getText().trim().length()>0) {
       try {
         int pos = Integer.parseInt(coordsearchTF.getText());
-        if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
+       //  if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
+        if (vseq != null && pos >= 0 && pos <= vseq.getLength()) {
           Rectangle2D vbox = map.getViewBounds();
           double map_start = pos - vbox.width/2;
           map.scroll(map.X, map_start);
@@ -158,6 +160,11 @@ public class SeqSearchView extends JComponent implements ActionListener  {
       GlyphI seq_glyph = null;
       //    AnnotatedBioSeq vseq = gviewer.getSeq();
       if (vseq==null || ! vseq.isComplete()) {
+        if (src == entryTF) {
+          hitCountL.setText(" No hits");
+        } else if (src == regexTF) {
+          regexHitCountL.setText(" No hits");
+        }
         IGB.errorPanel("Residues for seq not available, search aborted");
         return;
       }
@@ -194,10 +201,10 @@ public class SeqSearchView extends JComponent implements ActionListener  {
         String residues = null;
         int res_index;
         if (use_nibseq) {
-          System.out.println("searching NibbleBioSeq for ocurrences of \"" +
-                             searchstring + "\" in sequence");
           System.out.flush();
 	  searchstring = searchstring.toUpperCase();
+          System.out.println("searching NibbleBioSeq for ocurrences of \"" +
+                             searchstring + "\" in sequence");
           nibseq = (NibbleBioSeq)vseq;
           res_index = nibseq.indexOf(searchstring, 0);
         }
@@ -239,11 +246,11 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 	//   flip searchstring around, and redo nibseq search...
 	String rev_searchstring = DNAUtils.reverseComplement(searchstring);
         if (use_nibseq) {
-          System.out.println("searching NibbleBioSeq for ocurrences of \"" + searchstring + "\" in sequence");
+          System.out.println("searching NibbleBioSeq for ocurrences of \"" + rev_searchstring + "\" in sequence");
           res_index = nibseq.indexOf(rev_searchstring, 0);
         }
         else {
-          System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
+          System.out.println("searching for ocurrences of \"" + rev_searchstring + "\" in residues");
           res_index = residues.indexOf(rev_searchstring, 0);
         }
 

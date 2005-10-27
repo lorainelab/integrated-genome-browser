@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -37,8 +37,8 @@ public class GraphGlyphUtils {
    *   else #3
    */
 
-  public static boolean DEBUG = false;
-  
+  public static final boolean DEBUG = false;
+
   /** Name of a preference for deciding what height to give a graph when converting
    *  it from a floating graph to an attached graph.
    */
@@ -54,6 +54,12 @@ public class GraphGlyphUtils {
   public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
   public static final String PREF_FLOATING_PIXEL_HEIGHT = "default floating graph pixel height";
 
+  /** Pref for whether newly-constructed graph glyphs should only show a
+   *  limited range of values.
+   */
+  public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
+  public static final boolean default_apply_percentage_filter = true;
+
   /** Whether to use a TransformTierGlyph to maintain a fixed pixel height for attached graphs. */
   static final boolean use_fixed_pixel_height = false;
 
@@ -61,17 +67,24 @@ public class GraphGlyphUtils {
   public static final String default_attach_mode = USE_CURRENT_HEIGHT;  // default mode if not specified in prefs
 
   public static final int default_pix_height = 60;
-  public static final double default_coord_height = 100;
+
+  /** Default value for height of attached (non-floating) graphs.  Although
+   *  the height will ultimately have to be expressed as a double rather than
+   *  an integer, there is no good reason to bother the users with that detail,
+   *  so the default should be treated as an integer.
+   */
+  public static final int default_coord_height = 100;
   public static final boolean default_use_floating_graphs = false;
 
-  public static final Color[] default_graph_colors = 
-    new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
+  public static final Color[] default_graph_colors =
+      new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
 
   /** The names of preferences for storing default graph colors can be
    *  constructed from this prefix by adding "0", "1", etc., up to
    *  default_graph_colors.length - 1.
    */
   public static final String PREF_GRAPH_COLOR_PREFIX = "graph color ";
+
 
   public static void toggleFloating(GraphGlyph gl, SeqMapView gviewer) {
     boolean is_floating = hasFloatingAncestor(gl);
@@ -91,7 +104,7 @@ public class GraphGlyphUtils {
     String attach2float_mode = getGraphPrefsNode().get(PREF_ATTACH_HEIGHT_MODE, default_attach_mode);
 
     boolean use_fixed_coord_height = attach2float_mode.equals(USE_DEFAULT_HEIGHT);
-    
+
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     GlyphI parentgl = gl.getParent();
     GraphSym graf = (GraphSym)gl.getInfo();
@@ -115,7 +128,7 @@ public class GraphGlyphUtils {
       //    but setting height will matter
       double yheight = coordbox.height;
       if (use_fixed_coord_height) {
-        yheight = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, default_coord_height);
+        yheight = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, (double) default_coord_height);
       }
 
       gl.setCoords(tempbox.x, coordbox.y, tempbox.width, yheight);
@@ -132,13 +145,13 @@ public class GraphGlyphUtils {
       if (new_tier) {
 	// System.out.println("making new tier");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph();
+	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphName());
 	  tempgl.setFixedPixelHeight(true);
           int h = getGraphPrefsNode().getInt(PREF_FLOATING_PIXEL_HEIGHT, default_pix_height);
           tempgl.setFixedPixHeight(h);
 	  tglyph = tempgl;
 	}
-	else { tglyph = new TierGlyph(); }
+	else { tglyph = new TierGlyph(graf.getGraphName()); }
         tglyph.setFillColor(Color.black);
 	tglyph.setForegroundColor(gl.getColor());
       }
@@ -187,7 +200,7 @@ public class GraphGlyphUtils {
       //	System.out.println("child " + i + ": " + child.getCoordBox());
       //      }
 
-      map.stretchToFit(false, false);
+      map.stretchToFit(false, true);
       map.updateWidget();
       gl.getGraphState().setFloatGraph(false);
       return tglyph;
@@ -223,7 +236,7 @@ public class GraphGlyphUtils {
       floater.setCoords(mapbox.x, 0, mapbox.width, 0);
       //      gl.setCoords(mapbox.x, 0, mapbox.width, 0);
       map.packTiers(false, true, false);
-      map.stretchToFit(false, false);
+      map.stretchToFit(false, true);
       // make sure graph is still within map's pixel bounds after switch to floating pixel layer
       checkPixelBounds(gl, gviewer);
       map.updateWidget();
@@ -283,15 +296,15 @@ public class GraphGlyphUtils {
 
     for (int i=0; i<grafs.size(); i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph();
-      graph_glyph.setFasterDraw(true);
-      graph_glyph.setCalcCache(true);
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setFasterDraw(true);
+      // graph_glyph.setCalcCache(true);
       graph_glyph.setSelectable(false);
       graph_glyph.setLabel(graf.getGraphName());
       graph_glyph.setXPixelOffset(i);
 
       BioSeq graph_seq = graf.getGraphSeq();
-      graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
 
       System.out.println("graf name: " + graf.getGraphName());
       graph_glyph.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
@@ -325,11 +338,15 @@ public class GraphGlyphUtils {
   public static Preferences getGraphPrefsNode() {
     return UnibrowPrefsUtil.getTopNode().node("graphs");
   }
-  
+
+  /**
+   * @deprecated
+   */
   public static Color getDefaultGraphColor(int i) {
     int index = (i % default_graph_colors.length);
     String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;
     Color col = UnibrowPrefsUtil.getColor(getGraphPrefsNode(), color_pref_name, default_graph_colors[index]);
     return col;
   }
+
 }

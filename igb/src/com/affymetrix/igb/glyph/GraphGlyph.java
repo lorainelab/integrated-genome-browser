@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import java.util.*;
 
 /**
- *  A new implementation of graphs for NeoMaps.
+ *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
@@ -37,6 +37,8 @@ public class GraphGlyph extends Glyph {
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
+  static int default_heatmap_bins = 256;
+  static Color[] default_heatmap_colors;  // default is black to white grayscale gradient
 
   public static int LINE_GRAPH = 1;
   public static int BAR_GRAPH = 2;
@@ -68,8 +70,8 @@ public class GraphGlyph extends Glyph {
    *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
    *     be modified (except for resetting the points by calling setPointCoords() again)
    */
-  float point_max_ycoord;
-  float point_min_ycoord;
+  float point_max_ycoord = Float.NEGATIVE_INFINITY;
+  float point_min_ycoord = Float.POSITIVE_INFINITY;
 
   // assumes sorted points, each x corresponding to y
   int xcoords[];
@@ -81,17 +83,63 @@ public class GraphGlyph extends Glyph {
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 
-  GraphState state = new GraphState();
+  GraphState state;
   LinearTransform scratch_trans = new LinearTransform();
 
-  public void setGraphState(GraphState gs) {
-    state = gs;
+  static {
+    default_heatmap_colors = new Color[default_heatmap_bins];
+    for (int i=0; i<default_heatmap_bins; i++) {
+      default_heatmap_colors[i] = new Color(i, i, i);
+    }
+  }
+
+  public GraphGlyph(int[] xcoords, float[] ycoords)  {
+    this(xcoords, ycoords, null);
+  }
+
+  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    super();
+    state = gstate;
+    if (state == null) { state = new GraphState(); }
     setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
-    //    System.out.println("graph state: " + state);
     setColor(state.getColor());
     setGraphStyle(state.getGraphStyle());
-    setShowLabel(state.getShowLabel());
+
+    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    this.xcoords = xcoords;
+    this.ycoords = ycoords;
+    point_min_ycoord = Float.POSITIVE_INFINITY;
+    point_max_ycoord = Float.NEGATIVE_INFINITY;
+    for (int i=0; i<ycoords.length; i++) {
+      if (ycoords[i] < point_min_ycoord) { point_min_ycoord = ycoords[i]; }
+      if (ycoords[i] > point_max_ycoord) { point_max_ycoord = ycoords[i]; }
+    }
+    if (point_max_ycoord == point_min_ycoord) {
+      point_min_ycoord = point_max_ycoord - 1;
+    }
+    //    System.out.println("min: " + min_ycoord + ", max: " + getVisibleMaxY());
+    //    auto_adjust_visible = false;
+    checkVisibleBoundsY();
   }
+
+  protected void checkVisibleBoundsY() {
+    if (getVisibleMinY() == Float.POSITIVE_INFINITY ||
+	getVisibleMinY() == Float.NEGATIVE_INFINITY ||
+	getVisibleMaxY() == Float.POSITIVE_INFINITY ||
+	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
+      setVisibleMaxY(point_max_ycoord);
+      setVisibleMinY(point_min_ycoord);
+    }    
+  }
+
+  /*
+ public void setGraphState(GraphState gs) {
+    state = gs;
+    setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
+    setColor(state.getColor());
+    setGraphStyle(state.getGraphStyle());
+  }
+  */
 
   public GraphState getGraphState() { return state; }
 
@@ -125,7 +173,7 @@ public class GraphGlyph extends Glyph {
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
-    if (getShowGraph())  {
+    if (getShowGraph() && xcoords != null && ycoords != null)  {
       int beg_index = 0;
       int end_index = xcoords.length-1;
 
@@ -166,11 +214,11 @@ public class GraphGlyph extends Glyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
-      
+
       if (draw_end_index >= xcoords.length) {
         // There may be a better way to included this check in earlier logic,
         // but this check is definitely needed at some point.
-        draw_end_index = xcoords.length - 1; 
+        draw_end_index = xcoords.length - 1;
       }
 
       float ytemp;
@@ -206,10 +254,9 @@ public class GraphGlyph extends Glyph {
 	  double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
 	  if (heatmap_index < 0) { heatmap_index = 0; }
 	  else if (heatmap_index > 255) { heatmap_index = 255; }
-	    g.setColor(heatmap_colors[(int)heatmap_index]);
-	    g.fillRect(prev_point.x, pixelbox.y,
-		       curr_point.x - prev_point.x, pixelbox.height);
-	    //	  }
+	  g.setColor(heatmap_colors[(int)heatmap_index]);
+	  g.fillRect(prev_point.x, pixelbox.y,
+		     curr_point.x - prev_point.x, pixelbox.height);
 	}
 	else if (graph_style == SPAN_GRAPH) {
 	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
@@ -393,6 +440,7 @@ public class GraphGlyph extends Glyph {
    *  This will replace any previous setting of maxy and miny!
    *
    */
+  /*
   public void setPointCoords(int xcoords[], float ycoords[]) {
     this.xcoords = xcoords;
     this.ycoords = ycoords;
@@ -415,6 +463,7 @@ public class GraphGlyph extends Glyph {
       setVisibleMinY(point_min_ycoord);
     }
   }
+  */
 
   /**
    *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.
@@ -481,7 +530,7 @@ public class GraphGlyph extends Glyph {
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
     if (type == HEAT_MAP && heatmap_colors == null) {
-      initHeatMap();
+      initHeatMap(default_heatmap_colors);
     }
   }
   public int getGraphStyle() { return state.getGraphStyle(); }
@@ -494,15 +543,22 @@ public class GraphGlyph extends Glyph {
     else { return xcoords.length; }
   }
 
-  public void initHeatMap() {
+  /*  public void initHeatMap() {
     heatmap_colors = new Color[heatmap_bins];
     for (int i=0; i<heatmap_bins; i++) {
       heatmap_colors[i] = new Color(i, 0, i);
     }
   }
+  */
 
   public void initHeatMap(Color[] colors) {
-    heatmap_colors = colors;
+    if (colors == null) {
+      System.out.println("GraphGlyph.initHeatMap called with a null color gradient, ignoring");
+    }
+    else {
+      heatmap_colors = colors;
+      heatmap_bins = heatmap_colors.length;
+    }
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {
@@ -532,11 +588,19 @@ public class GraphGlyph extends Glyph {
       view.transformToCoords(label_pix_box, label_coord_box);
       top_ycoord_inset = label_coord_box.height;
     }
+    /*
+    else {  // GAH 3-21-2005
+      label_pix_box.height = 4;
+      view.transformToCoords(label_pix_box, label_coord_box);
+      top_ycoord_inset = label_coord_box.height;
+    }
+    */
     return top_ycoord_inset;
   }
 
   protected double getLowerYCoordInset(ViewI view) {
-    return 0;
+    //    return 0;
+    return 5;  // GAH 3-21-2005
   }
 
   //  public double getInternalYScale(ViewI view) {

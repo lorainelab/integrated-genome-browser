@@ -29,7 +29,7 @@ public class SynonymLookup {
   static boolean DEBUG = false;
   static final Pattern line_regex = Pattern.compile("\t");
   static SynonymLookup default_lookup = new SynonymLookup();
-  HashMap lookup_hash = new HashMap();
+  LinkedHashMap lookup_hash = new LinkedHashMap();
 
   public static void setDefaultLookup(SynonymLookup lookup) {
     default_lookup = lookup;

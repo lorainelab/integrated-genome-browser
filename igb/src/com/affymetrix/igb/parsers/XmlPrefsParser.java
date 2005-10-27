@@ -405,19 +405,23 @@ public class XmlPrefsParser {
    */
   public static String getLinkURL(Map prefs_hash, String method) {
     // This is not terribly fast, but it is not called in places where speed matters
+    // Loop through the regular expressions in reverse order, so that ones added
+    // at the end of the user's prefs file will be tested AFTER those at
+    // the beginning of the default prefs file.
+    
     String url = null;
     if (method != null) {
       Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-      Iterator iter = regex2url.entrySet().iterator();
-      while (iter.hasNext()) {
-        Map.Entry entry = (Map.Entry) iter.next();
-        Pattern regex = (Pattern) entry.getKey();
+      Vector keyset = new Vector(regex2url.keySet());
+      for (int j=keyset.size()-1 ; j >= 0 ; j--) {
+        Pattern regex = (Pattern) keyset.get(j);
         if (regex.matcher(method).matches()) {
-          url = (String) entry.getValue();
+          url = (String) regex2url.get(regex);
           break;
         }
       }
     }
+
     return url;
   }
 

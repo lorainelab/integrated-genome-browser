@@ -21,7 +21,7 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-//import com.affymetrix.igb.util.TableSorter;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
@@ -58,11 +58,12 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    //TableSorter sort_model = new TableSorter(model);
+    TableSorter2 sort_model = new TableSorter2(model);
     //sort_model.addMouseListenerToHeaderInTable(table);
+    sort_model.setTableHeader(table.getTableHeader());
 
-    table.setModel(model);
-    //table.setModel(sort_model);
+    //table.setModel(model);
+    table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
 
@@ -102,7 +103,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   }
 
   public void refresh() {
-    showShortcuts();
+    //showShortcuts();
   }
 
   /** This is called when the user selects a row of the table;
@@ -130,7 +131,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     }
     // Each time a keystroke preference is changed, update the
     // whole table.  Inelegant, but works.
-    showShortcuts();
+    refresh();
   }  
 
   public void destroy() {

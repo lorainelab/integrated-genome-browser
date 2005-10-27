@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -41,7 +41,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   boolean modification_cached = false;
 
   public SmartAnnotBioSeq() { }
-  
+
   public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
     super(seqid, seqversion, length);
   }
@@ -62,13 +62,15 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
+  // not sure if should expose type2sym like this, maybe return just a list of type strings instead?
+  public Map getTypes() { return type2sym; }
 
   /**
    *  Returns a top-level symmetry or null.
    */
-  public SeqSymmetry getAnnotation(String type) {
+  public TypeContainerAnnot getAnnotation(String type) {
     if (type2sym == null) { return null; }
-    return (SeqSymmetry)type2sym.get(type);
+    return (TypeContainerAnnot)type2sym.get(type);
   }
 
   public void addModifiedListener(SeqModifiedListener listener) {
@@ -81,9 +83,9 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   public void removeModifiedListener(SeqModifiedListener listener) {
     if (modified_listeners != null) {
       modified_listeners.remove(listener);
-      if (modified_listeners.isEmpty()) { 
+      if (modified_listeners.isEmpty()) {
 	// null out listeners list if no more listeners
-	modified_listeners = null; 
+	modified_listeners = null;
       }
     }
   }
@@ -102,7 +104,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
 
   protected void notifyModified()  {
     if (modified_listeners != null) {
-      if (modify_events_enabled) { 
+      if (modify_events_enabled) {
 	SeqModifiedEvent evt = new SeqModifiedEvent(this);
 	notifyModified(evt);
       }
@@ -113,7 +115,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   }
 
   protected void notifyModified(SeqModifiedEvent evt) {
-    if (! modify_events_enabled) { 
+    if (! modify_events_enabled) {
       throw new RuntimeException("ERROR: SmartAnnotBioSeq.notifyModified() called, but " +
 				 "modify_events_enabled flag == false");
     }
@@ -134,7 +136,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public MutableSeqSymmetry addAnnotation(String type) {
     if (type2sym == null) { type2sym = new HashMap(); }
-    MutableSeqSymmetry container = new TypeContainerAnnot();
+    MutableSeqSymmetry container = new TypeContainerAnnot(type);
     ((SymWithProps)container).setProperty("method", type);
     SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
     container.addSpan(span);
@@ -163,7 +165,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   /**
    *  Overriding addAnnotation(sym) to try and extract a "method"/"type" property
    *    from the sym.
-   *  <pre>  
+   *  <pre>
    *    If can be found, then instead of adding annotation directly
    *    to seq, use addAnnotation(sym, type).  Which ends up adding the annotation
    *    as a child of a container annotation (generally means two levels of container,
@@ -185,24 +187,32 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       notifyModified();
       return;
     }
+    String type = null;
+    if (sym instanceof TypedSym)  {
+      type = ((TypedSym)sym).getType();
+    }
     // add other SymWithProps with a "method" property as children
     //   of a top-level container
-    else if (sym instanceof SymWithProps)  {
+    if (type == null && sym instanceof SymWithProps)  {
       SymWithProps swp = (SymWithProps)sym;
       // TODO: use the existing determineMethod() method
-      String type = (String)swp.getProperty("method");
+      type = (String)swp.getProperty("method");
       if (type == null) { type = (String)swp.getProperty("type"); }
-      if (type != null) {
-	// add as child to the top-level container
-	addAnnotation(sym, type);  // side-effect calls notifyModified()
-	return;
-      }
+      if (type == null) { type = (String)swp.getProperty("meth"); }
       //      else { super.addAnnotation(sym); }
     }
+    if (type != null)  {
+      // add as child to the top-level container
+      addAnnotation(sym, type); // side-effect calls notifyModified()
+      return;
+    }
     //    else { super.addAnnotation(sym); }  // this includes GraphSyms
-    throw new RuntimeException("SmartAnnotBioSeq.addAnnotation(sym) will only accept " +
-			       " SeqSymmetries that are also SymWithProps and " +
-			       " have a _method_ property");
+    else  {
+      throw new RuntimeException(
+          "SmartAnnotBioSeq.addAnnotation(sym) will only accept " +
+          " SeqSymmetries that are also SymWithProps and " +
+          " have a _method_ property");
+    }
   }
 
   public void removeAnnotation(SeqSymmetry annot) {

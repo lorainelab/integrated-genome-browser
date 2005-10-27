@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,20 +29,25 @@ import com.affymetrix.igb.parsers.LiftParser;
 import com.affymetrix.igb.parsers.AnnotationWriter;
 
 /**
-   BrsParser can convert UCSC-style RefFlat database table dumps into
-   binary refseq format (".brs").
-
-   Also used to read in binary refseq format.
-
-   Typical Command-line Usage to convert from RefFlat text files to brs files
-   java -classpath igb.jar com.affymetrix.igb.test.BrsParser
-   reflat_input_file brs_output_file.brs
-*/
+ * BrsParser can convert UCSC-style RefFlat database table dumps into
+ * binary refseq format (".brs").
+ *
+ * Also used to read in binary refseq format.
+ *
+ * Typical Command-line Usage to convert from RefFlat text files to brs files
+ * java -classpath igb.jar:genoviz.jar:genometry.jar com.affymetrix.igb.parsers.BrsParser
+ * reflat_input_file brs_output_file.brs
+ *
+ * This class can handle both "refFlat.txt" and "refGene.txt",
+ * but "refFlat.txt" is preferred.
+ * (refFlat contains gene names, while refGene does not.)
+ */
 public class BrsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".brs");
+    // pref_list.add(".brs");
+    pref_list.add("brs");
   }
 
   boolean use_byte_buffer = true;
@@ -521,8 +526,6 @@ public class BrsParser implements AnnotationWriter  {
    *  <code>java -classpath igb.jar com.affymetrix.igb.parsers.BrsParser
    *    refFlat.txt refseq.brs</code>
    *<p>
-   *  If input and output files not specified, assumes the names "refFlat.txt"
-   *  and "refseq.brs".
    */
   public static void main(String[] args) {
     String text_file = null;

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,7 +23,7 @@ import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.widget.*;
 
-public class MaxGapThresholder extends JPanel 
+public class MaxGapThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static int frm_width = 400;
@@ -33,8 +33,11 @@ public class MaxGapThresholder extends JPanel
   NeoWidgetI widg;
   JSlider tslider;
   JTextField maxgapTF;
-  int thresh_min = 0;
-  int thresh_max = 250;
+  int default_thresh_max = 250;
+  int default_thresh_min = 0;
+  int thresh_max = default_thresh_max;
+  int thresh_min = default_thresh_min;
+
   int maxgap_thresh = 0;
 
   int max_chars = 9;
@@ -52,7 +55,7 @@ public class MaxGapThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { 
+      public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
 	w.dispose();
@@ -143,7 +146,9 @@ public class MaxGapThresholder extends JPanel
     if (src == maxgapTF) {
       int new_thresh = Integer.parseInt(maxgapTF.getText());
       if (new_thresh != maxgap_thresh) {
-	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+        boolean new_thresh_max = (new_thresh > thresh_max);
+//	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+        if (new_thresh < thresh_min)  {
 	  // new threshold outside of min/max possible, so keep current threshold instead
 	  maxgapTF.setText(Integer.toString(maxgap_thresh));
 	}
@@ -154,6 +159,14 @@ public class MaxGapThresholder extends JPanel
 	    sgg.setMaxGapThreshold(maxgap_thresh);
 	  }
 	  tslider.removeChangeListener(this);
+          if (new_thresh_max)  {
+            thresh_max = maxgap_thresh;
+            tslider.setMaximum(thresh_max);
+          }
+          else if (maxgap_thresh <= default_thresh_max)  {
+            thresh_max = default_thresh_max;
+            tslider.setMaximum(thresh_max);
+          }
 	  tslider.setValue(maxgap_thresh);
 	  tslider.addChangeListener(this);
 	  widg.updateWidget();

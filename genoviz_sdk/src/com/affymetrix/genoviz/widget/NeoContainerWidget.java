@@ -542,6 +542,7 @@ implements NeoWidgetI{
   }
 
   public void clearWidget() {
+    super.clearWidget();
     Enumeration e = widgets.elements();
     NeoWidgetI widg;
     while (e.hasMoreElements()) {

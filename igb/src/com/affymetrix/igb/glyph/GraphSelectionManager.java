@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -33,14 +33,16 @@ import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileChooser;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.ContextualPopupListener;
 
 public class GraphSelectionManager
-  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener  {
+  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
+  ContextualPopupListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   /**
@@ -53,7 +55,7 @@ public class GraphSelectionManager
 
   boolean ALLOW_THRESHOLD_DRAG = false;
   //  ArrayList stored_threshMI = new ArrayList();
-  Map threshMI_2_thresh = new HashMap();
+  //  Map threshMI_2_thresh = new HashMap();
   final static boolean DEBUG = false;
 
   boolean DRAG_IN_FRONT = true;
@@ -89,7 +91,7 @@ public class GraphSelectionManager
 
   JMenu graph_style = new JMenu("Graph Style");
   JMenu decor = new JMenu("Decorations");
-  JMenu thresh = new JMenu("Thresholding");
+  //JMenu thresh = new JMenu("Thresholding");
   JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
   JMenu combine = new JMenu("Combine Graphs");
   JMenuItem span_graph;
@@ -198,10 +200,10 @@ public class GraphSelectionManager
     decor.add(show_bounds);
     decor.add(show_graph);
 
-    thresh.add(thresh_graph);
-    thresh.add(tweak_thresh);
-    thresh.add(adjust_false_positive);
-    thresh.add(pickle_thresh);
+    //thresh.add(thresh_graph);
+    //thresh.add(tweak_thresh);
+    //thresh.add(adjust_false_positive);
+    //thresh.add(pickle_thresh);
 
     bounds.add(adjust_hilo);
     bounds.add(adjust_percent);
@@ -318,18 +320,20 @@ public class GraphSelectionManager
 	  }
 	}
       }
-      else if (src == pickle_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  pickleThreshold(sgg);
-	}
-      }
-      else if (src == faster_draw_toggle) {
+//      else if (src == pickle_thresh) {
+//	if (current_graph instanceof SmartGraphGlyph) {
+//	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+//	  pickleThreshold(sgg);
+//	}
+//      }
+     /*
+       else if (src == faster_draw_toggle) {
 	if (current_graph instanceof SmartGraphGlyph) {
 	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
 	  sgg.setFasterDraw(! sgg.getFasterDraw());
 	}
       }
+      */
       else if (src == change_color) {
         Color col = JColorChooser.showDialog(frm,
           "Graph Color Chooser", current_graph.getColor());
@@ -382,7 +386,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createDiffGraph(second_current_graph, current_graph, Color.yellow);
+          createDiffGraph(current_graph, second_current_graph, Color.yellow);
         }
       }
       else if (src == sum_graphs) {
@@ -390,7 +394,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createSumGraph(second_current_graph, current_graph, Color.yellow);
+          createSumGraph(current_graph, second_current_graph, Color.yellow);
         }
       }
       else if (src == ratio_graphs) {
@@ -398,7 +402,7 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createRatioGraph(second_current_graph, current_graph, Color.red);
+          createRatioGraph(current_graph, second_current_graph, Color.red);
         }
       }
       else if (src == product_graphs) {
@@ -406,12 +410,13 @@ public class GraphSelectionManager
         if (current_graph == null || second_current_graph == null) {
           IGB.errorPanel("Must select exactly two graphs.");
         } else {
-          createProductGraph(second_current_graph, current_graph, Color.red);
+          createProductGraph(current_graph, second_current_graph, Color.red);
         }
       }
       else if (src == save_graph) {
 	saveGraph(current_graph);
       }
+      /*
       else if ((src instanceof JMenuItem) && (threshMI_2_thresh.get(src) != null)) {
 	JMenuItem item = (JMenuItem)src;
         float val = ((Float)threshMI_2_thresh.get(item)).floatValue();
@@ -419,9 +424,10 @@ public class GraphSelectionManager
 	if (current_graph instanceof SmartGraphGlyph) {
 	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
 	  sgg.setShowThreshold(true);
-	  sgg.setScoreThreshold(val);
+	  sgg.setMinScoreThreshold(val);
 	}
       }
+      */
       current_source.updateWidget();
     }
     graphlist.clear(); // for garbage collection, etc.
@@ -672,32 +678,40 @@ public class GraphSelectionManager
     return true;
   }
 
-  static NumberFormat nformat = new DecimalFormat();
-  int pickle_count = 0;
-  public void pickleThreshold(SmartGraphGlyph sgg) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    SimpleSymWithProps psym = new SimpleSymWithProps();
-    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-    //    String meth = "graph pickle " + pickle_count;
-    String meth =
-      "threshold, s:" + nformat.format(sgg.getScoreThreshold()) +
-      ", d:" + (int)sgg.getMaxGapThreshold();
-    pickle_count++;
-    psym.setProperty("method", meth);
-    ViewI view = gviewer.getSeqMap().getView();
-    sgg.drawThresholdedRegions(view, psym, aseq);
-    aseq.addAnnotation(psym);
-    Color col = sgg.getColor();
-    if (DEBUG) System.out.println("setting new tier color: " + col);
-    //    gviewer.getColorHash().put(meth, col);
-    gviewer.addTierInfo(meth, col);
-    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
-    //    gviewer.setAnnotatedSeq(aseq);
+//  static NumberFormat nformat = new DecimalFormat();
+//  int pickle_count = 0;
+//  public void pickleThreshold(SmartGraphGlyph sgg) {
+//    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+//    SimpleSymWithProps psym = new SimpleSymWithProps();
+//    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
+//    //    String meth = "graph pickle " + pickle_count;
+//    String meth =
+//      "threshold, s:" + nformat.format(sgg.getMinScoreThreshold()) +
+//      ", d:" + (int)sgg.getMaxGapThreshold();
+//    pickle_count++;
+//    psym.setProperty("method", meth);
+//    ViewI view = gviewer.getSeqMap().getView();
+//    sgg.drawThresholdedRegions(view, psym, aseq);
+//    aseq.addAnnotation(psym);
+//    Color col = sgg.getColor();
+//    if (DEBUG) System.out.println("setting new tier color: " + col);
+//    gviewer.addTierInfo(meth, col);
+//    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
+//    //    gviewer.setAnnotatedSeq(aseq);
+//
+//    gviewer.setAnnotatedSeq(aseq, true, true);
+//  }
 
-    gviewer.setAnnotatedSeq(aseq, true, true);
-  }
-
+  /**
+   *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
+   *  that could cause conflicts with the other pop-up menu which is opened
+   *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
+   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List)}
+   *  provided by the interface ContextualPopupListener to add to the pop-up
+   *  menu which the SeqMapView itself constructs.
+   */
   public void mouseClicked(MouseEvent evt) {
+    /*
     int mods = evt.getModifiers();
 
     //TODO: Proper thing here is to check isPopupTrigger() in *both* mousePressed() and mouseReleased(),
@@ -708,6 +722,7 @@ public class GraphSelectionManager
 	 ((mods & InputEvent.BUTTON3_MASK) != 0 )) ) {
            showPopup(evt, current_source.getSelected());
     }
+    */
   }
 
   void showPopup(MouseEvent evt, Vector selected) {
@@ -728,9 +743,8 @@ public class GraphSelectionManager
       if (num_selected_graphs > 0) {
 	current_graph = (GraphGlyph)graphlist.get(0);
 	if (num_selected_graphs > 1) {
-	  second_current_graph = (GraphGlyph)graphlist.get(1);
-	  System.out.println("graphA: " + second_current_graph.getLabel());
-	  System.out.println("graphB: " + current_graph.getLabel());
+	  current_graph = (GraphGlyph)graphlist.get(1);
+	  second_current_graph = (GraphGlyph)graphlist.get(0);
 	}
 
 	toggle_floating.setEnabled(num_selected_graphs == 1);
@@ -738,7 +752,7 @@ public class GraphSelectionManager
 	delete_graph.setEnabled(num_selected_graphs == 1);
 	graph_style.setEnabled(num_selected_graphs == 1);
 	decor.setEnabled(num_selected_graphs == 1);
-	thresh.setEnabled(num_selected_graphs == 1);
+	//thresh.setEnabled(num_selected_graphs == 1);
 	//	  bounds.setEnabled(num_selected_graphs == 1);
 	bounds.setEnabled(num_selected_graphs > 0);
 
@@ -776,7 +790,8 @@ public class GraphSelectionManager
 	  toggle_floating.setText("Attach graph");
 	}
 	// remove previous stored threshold menu selections
-	Iterator iter = threshMI_2_thresh.keySet().iterator();
+	/*
+        Iterator iter = threshMI_2_thresh.keySet().iterator();
 	while (iter.hasNext()) {
 	  JMenuItem item = (JMenuItem)iter.next();
 	  thresh.remove(item);
@@ -794,6 +809,7 @@ public class GraphSelectionManager
 	    threshMI_2_thresh.put(item, new Float(val));
 	  }
 	}
+       */
         popup.show((Component) evt.getSource(),
           evt.getX()+xoffset_pop,
           evt.getY()+yoffset_pop);
@@ -938,7 +954,7 @@ public class GraphSelectionManager
 	SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
 	Rectangle2D tbox = threshgl.getCoordBox();
 	float new_threshold = graphgl.getGraphValue(view, tbox.y);
-	graphgl.setScoreThreshold(new_threshold);
+	graphgl.setMinScoreThreshold(new_threshold);
       }
     }
     else if (id == evt.DRAG_ENDED) {
@@ -958,6 +974,44 @@ public class GraphSelectionManager
       result = result.substring(0, max_label_length);
     }
     return result;
+  }
+
+  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms) {
+    Vector selected_graph_glyphs = new Vector(0);
+    current_graph = null;
+    second_current_graph = null;
+
+    // convert the selected syms to a list of selected graph glyphs
+    Iterator iter = selected_syms.iterator();
+    while (iter.hasNext()) {
+      SeqSymmetry sym = (SeqSymmetry) iter.next();
+      GlyphI g = gviewer.getSeqMap().getItem(sym);
+      if (g instanceof GraphGlyph) {
+        selected_graph_glyphs.add(g);
+      }
+    }
+
+    JMenu combine = new JMenu("Combine Graphs");
+    if (selected_graph_glyphs.size() >= 2) {
+      current_graph = (GraphGlyph) selected_graph_glyphs.get(0);
+      second_current_graph = (GraphGlyph) selected_graph_glyphs.get(1);
+
+      combine.setEnabled(true);
+      JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
+      JLabel graph_info_B = new JLabel("B: "+getGraphLabel(second_current_graph));
+
+      combine.add(graph_info_A);
+      combine.add(graph_info_B);
+      combine.add(new JSeparator());
+      combine.add(sum_graphs);
+      combine.add(diff_graphs);
+      combine.add(product_graphs);
+      combine.add(ratio_graphs);
+    } else {
+      combine.setEnabled(false);
+    }
+
+    the_popup.add(combine);
   }
 }
 

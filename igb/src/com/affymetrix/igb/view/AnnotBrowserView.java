@@ -23,8 +23,11 @@ import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.util.TableSorter;
+import com.affymetrix.igb.event.SymMapChangeEvent;
+import com.affymetrix.igb.event.SymMapChangeListener;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
@@ -32,7 +35,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
-implements ListSelectionListener  {
+implements ListSelectionListener, SymMapChangeListener  {
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"ID", "Start", "End", "Sequence"};
@@ -60,8 +63,9 @@ implements ListSelectionListener  {
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    TableSorter sort_model = new TableSorter(model);
-    sort_model.addMouseListenerToHeaderInTable(table);
+    TableSorter2 sort_model = new TableSorter2(model);
+    //sort_model.addMouseListenerToHeaderInTable(table); // for TableSorter version 1
+    sort_model.setTableHeader(table.getTableHeader()); // for TableSorter2
 
     table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
@@ -71,6 +75,7 @@ implements ListSelectionListener  {
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
+    IGB.addSymMapChangeListener(this);
   }
 
   protected Object[][] buildRows(Map props) {
@@ -97,15 +102,22 @@ implements ListSelectionListener  {
   }
 
   /** Re-populates the table with the given Map, which should contain
-   *  SeqSymmetry values.  Normally, this would be called using
-   *  the Map from {@link IGB#getSymHash()}, which happens
-   *  automatically if you call {@link IGB#symHashChanged()}.
+   *  SeqSymmetry values.
+   *  @param props  A Map of String's to SeqSymmetry's.
    */
   public void showSymHash(Map props) {
     Object[][] rows = buildRows(props);
     model.setDataVector(rows, col_headings);
   }
 
+  /** Causes a call to {@link #showSymHash(Map)}.
+   *  Normally, this occurs as a result of a call to
+   *  {@link IGB#symHashChanged(Object)}.
+   */
+  public void symMapModified(SymMapChangeEvent evt) {
+    showSymHash(evt.getMap());
+  }
+  
   /** This is called when the user selects a row of the table;
    *  It calls {@link #findSym(SeqSymmetry)}.
    */
@@ -116,7 +128,7 @@ implements ListSelectionListener  {
       if (srow >= 0) {
         String id = (String) table.getModel().getValueAt(srow, 0);
         SeqSymmetry sym = (SeqSymmetry)IGB.getSymHash().get(id);
-	findSym(sym);
+        findSym(sym);
       }
     }
   }
@@ -127,11 +139,11 @@ implements ListSelectionListener  {
       SingletonGenometryModel gmodel = IGB.getGenometryModel();
       MutableAnnotatedBioSeq seq = gmodel.getSelectedSeqGroup().getSeq(hitsym);
       if (seq != null) {
-	ArrayList symlist = new ArrayList();
-	symlist.add(hitsym);
-	gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
-	gmodel.setSelectedSymmetries(symlist, this);
-	found = true;
+        ArrayList symlist = new ArrayList();
+        symlist.add(hitsym);
+        gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
+        gmodel.setSelectedSymmetries(symlist, this);
+        found = true;
       }
     }
     return found;
@@ -139,6 +151,7 @@ implements ListSelectionListener  {
 
   public void destroy() {
     removeAll();
+    IGB.removeSymMapChangeListener(this);
     if (lsm != null) {lsm.removeListSelectionListener(this);}
   }
 }

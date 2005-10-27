@@ -770,6 +770,9 @@ public class SeqMapView extends JPanel
 	if (DEBUG_TIERS)  {
 	  System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
 	}
+        // Reset tier properties: this is mainly needed to reset the background color
+        tg.setStyle(tg.getAnnotStyle());
+        
 	map.addTier(tg);
       }
     }

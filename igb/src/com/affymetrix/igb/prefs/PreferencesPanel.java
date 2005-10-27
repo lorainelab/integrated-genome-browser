@@ -61,7 +61,7 @@ public class PreferencesPanel extends JPanel {
     if (singleton == null) {
       singleton = new PreferencesPanel();
 
-      singleton.tpv = new TierPrefsView(true, true);
+      singleton.tpv = new TierPrefsView(false, false);
       singleton.tpv.addComponentListener(new ComponentAdapter() {
         public void componentHidden(ComponentEvent e) {
           singleton.tpv.applyChanges();

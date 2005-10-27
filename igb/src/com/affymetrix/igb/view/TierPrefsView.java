@@ -394,12 +394,21 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("</p>\n");
 
     sb.append("<p>\n");
+    sb.append("<h2>Default Row</h2>\n");
+    sb.append("Properties on the default row apply when loading <em>new</em> types ");
+    sb.append("where specific properties have not been set before.  Once properties are set for ");
+    sb.append("any type, those properties will be remembered and the default properties will ");
+    sb.append("not be used for that type.  ");
+    sb.append("Certain properties of the default row, such as "+HUMAN_NAME+", are not editable.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
     sb.append("<h2>"+TIER_NAME+"</h2>\n");
     sb.append("The name of the tier.  ");
     sb.append("If the name is shown in <i>italic</i> font, the settings for that tier ");
     sb.append("will apply only to the current session.  ");
     sb.append("If the tier name is shown in normal font, the settings will persist between sessions.  ");
-    sb.append("Non-persistent settings apply to graphs and temporary data that results from arithmetic manipulations,  ");
+    sb.append("Non-persistent settings apply to graphs and temporary data resulting from arithmetic manipulations,  ");
     sb.append("such as intersections and unions of tiers.  ");
     //sb.append("Such settings that are not remembered between sessions are indicated by a tier name in <i>italics</i>.  ");
     sb.append("</p>\n");
@@ -426,7 +435,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
 
     sb.append("<p>\n");
     sb.append("<h2>"+MAX_DEPTH+"</h2>\n");
-    sb.append("The maximum rows of data to show in tiers that are <em>not</em> collapsed.  ");
+    sb.append("The maximum rows of annotations to show in tiers that are <em>not</em> collapsed.  ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
@@ -434,15 +443,19 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("Whether to connect groups of exons into transcripts.  ");
     sb.append("Should be false for data with no intron-exon structure,  ");
     sb.append("such as repeats or contigs.  ");
+    sb.append("Setting this to false for items that <em>do</em> have intron-exon structure ");
+    sb.append("may affect whether labels are displayed.  See below.");
     sb.append("</p>\n");
 
     sb.append("<p>\n");
     sb.append("<h2>"+LABEL_FIELD+"</h2>\n");
     sb.append("The name of the field to use to construct labels.  ");
-    sb.append("For example, with 'RefSeq' data, you may choose to use 'gene_name'.  ");
+    sb.append("For example, with 'RefSeq' data, you may choose to use 'gene name'.  ");
     sb.append("For many other data types you may choose to use 'id'.  ");
     sb.append("Leave this blank to turn labels off.  ");
     sb.append("Turning labels off reduces the memory required by the program.  ");
+    sb.append("Note that setting "+GLYPH_DEPTH+" to false will make labels disappear if the ");
+    sb.append("individual exons don't also have the chosen 'id' property.  ");
     sb.append("</p>\n");
 
     return sb.toString();

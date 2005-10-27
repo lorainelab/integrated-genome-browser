@@ -88,6 +88,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     
     this.add(table_scroll_pane, BorderLayout.CENTER);
     
+    
     IGB igb = IGB.getSingletonIGB();
     if (igb != null) {
       smv = igb.getMapView();
@@ -100,17 +101,40 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           refreshSeqMapView();
         }
       });
-      this.add(refresh_map_B, BorderLayout.SOUTH);
+      this.add(refresh_map_B, BorderLayout.NORTH);
     }
 
+    JPanel button_panel = new JPanel();
+    button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.X_AXIS));
+
+    JButton apply_bg_button = new JButton("Apply Default Background");
+    button_panel.add(Box.createHorizontalGlue());
+    button_panel.add(apply_bg_button);
+
+    apply_bg_button.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Iterator iter = AnnotStyle.getAllLoadedInstances().iterator();
+        while (iter.hasNext()) {
+          AnnotStyle as = (AnnotStyle) iter.next();
+          as.setBackground(default_annot_style.getBackground());
+        }
+        refreshList();
+        refreshSeqMapView();
+      }
+    });
+    
     if (add_refresh_list_button) {
-      this.add(refresh_list_B, BorderLayout.NORTH);
+      button_panel.add(Box.createHorizontalStrut(10));
+      button_panel.add(refresh_list_B);
+      //this.add(refresh_list_B, BorderLayout.SOUTH);
       refresh_list_B.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           refreshList();
         }
       });
     }
+    button_panel.add(Box.createHorizontalGlue());
+    this.add(button_panel, BorderLayout.SOUTH);
     
     model = new TierPrefsTableModel();
     model.addTableModelListener(new javax.swing.event.TableModelListener() {

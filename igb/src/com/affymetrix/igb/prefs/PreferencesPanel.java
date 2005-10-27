@@ -50,6 +50,8 @@ public class PreferencesPanel extends JPanel {
   public static int TAB_NUM_MISC_OPTIONS = -1;
   public static int TAB_NUM_GRAPHS_VIEW = -1;
   
+  TierPrefsView tpv = null;
+  
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
    *  JComponent you wish, but probably the best idea is to use
@@ -59,14 +61,14 @@ public class PreferencesPanel extends JPanel {
     if (singleton == null) {
       singleton = new PreferencesPanel();
 
-      final TierPrefsView tpv = new TierPrefsView(true, true);
-      tpv.addComponentListener(new ComponentAdapter() {
+      singleton.tpv = new TierPrefsView(true, true);
+      singleton.tpv.addComponentListener(new ComponentAdapter() {
         public void componentHidden(ComponentEvent e) {
-          tpv.applyChanges();
+          singleton.tpv.applyChanges();
         }
       });
 
-      singleton.addPrefEditorComponent(tpv);
+      singleton.addPrefEditorComponent(singleton.tpv);
       TAB_NUM_TIERS = singleton.tab_pane.getComponentCount() - 1;
       
       singleton.addPrefEditorComponent(new DasServersView());
@@ -82,7 +84,7 @@ public class PreferencesPanel extends JPanel {
       TAB_NUM_GRAPHS_VIEW = singleton.tab_pane.getComponentCount() - 1;
 
       singleton.addPrefEditorComponent(new OptionsView());
-      TAB_NUM_MISC_OPTIONS = singleton.tab_pane.getComponentCount() - 1;
+      TAB_NUM_MISC_OPTIONS = singleton.tab_pane.getComponentCount() - 1;      
     }
     return singleton;
   }
@@ -147,6 +149,13 @@ public class PreferencesPanel extends JPanel {
           // save the current size into the preferences, so the window
           // will re-open with this size next time
           UnibrowPrefsUtil.saveWindowLocation(frame, WINDOW_NAME);
+          // if the TierPrefsView is being displayed, the apply any changes from it.
+          // if it is not being displayed, then it's changes have already been applied in componentHidden()
+          if (singleton.tpv != null) {
+            if (singleton.tab_pane.getSelectedComponent() == singleton.tpv) {
+              singleton.tpv.applyChanges();
+            }
+          }
           frame.dispose();
         }
       });

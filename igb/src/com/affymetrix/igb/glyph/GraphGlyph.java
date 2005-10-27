@@ -254,10 +254,9 @@ public class GraphGlyph extends Glyph {
 	  double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
 	  if (heatmap_index < 0) { heatmap_index = 0; }
 	  else if (heatmap_index > 255) { heatmap_index = 255; }
-	    g.setColor(heatmap_colors[(int)heatmap_index]);
-	    g.fillRect(prev_point.x, pixelbox.y,
-		       curr_point.x - prev_point.x, pixelbox.height);
-	    //	  }
+	  g.setColor(heatmap_colors[(int)heatmap_index]);
+	  g.fillRect(prev_point.x, pixelbox.y,
+		     curr_point.x - prev_point.x, pixelbox.height);
 	}
 	else if (graph_style == SPAN_GRAPH) {
 	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,

@@ -1,13 +1,27 @@
 <prefs>
 
-<!-- 
+<!--
+  This file is rapidly becoming obsolete.  There remain only a few properties
+  that are set from this file.
+
   Example settings follow, currently commented out 
   Defaults are in the igb_default_prefs.xml file in the igb.jar file
   Refer to igb_default_prefs.xml in igb jar for more examples
 -->
 
 <!-- <tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/> -->
-<!-- <annotation_style annot_type="refseq" label_field="gene_name" red="0" green="255" blue="0" /> -->
 <!-- <boolean tag="USE_PIVOT_VIEW" val="true" /> -->
+<!-- 
+  <annotation_url annot_type_regex="EnsGene"
+    url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$" />
+-->
+    
+<!--  
+  Some properties of <annotation_style> are now obsolete:
+    red, green, blue:  obsolete, no longer used
+    label_field:       obsolete, no longer used
+    child_glyph:       Still used, but for advanced users only
+    factory:           Still used, but for advanced users only
+-->
 
 </prefs>

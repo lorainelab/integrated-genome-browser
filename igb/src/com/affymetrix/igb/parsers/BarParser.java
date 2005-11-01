@@ -52,7 +52,6 @@ public class BarParser {
   /**
    *
    */
-  //  public static GraphSym getSlice(String file_name, String seq_name, int min_base, int max_base) {
   public static GraphSym getSlice(String file_name, SeqSpan span) {
     Timer tim = new Timer();
     tim.start();
@@ -639,38 +638,45 @@ public class BarParser {
   }
 
   public static BarFileHeader parseBarHeader(DataInput dis) throws IOException {
-    // READING HEADER
-    //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
-    byte[] headbytes = new byte[8];
-    //    byte[] headbytes = new byte[10];
-    dis.readFully(headbytes);
-    String headstr = new String(headbytes);
-    float version = dis.readFloat();       // int  #rows in data section (nrow)
-    int total_seqs = dis.readInt();
-    int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
-    if (DEBUG_READ) {
-      System.out.println("header: " + headstr);
-      System.out.println("version: " + version);
-      System.out.println("total seqs: " + total_seqs);
-      System.out.println("vals per point: " + vals_per_point);
-    }
-    int[] val_types = new int[vals_per_point];
-    for (int i=0; i<vals_per_point; i++) {
-      val_types[i] = dis.readInt();
-      if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
-    }
-    int tvcount = dis.readInt();
-    if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
-    HashMap file_tagvals = readTagValPairs(dis, tvcount);
-    BarFileHeader header = new BarFileHeader(version, total_seqs, val_types, file_tagvals);
-    return header;
+    try {
+      // READING HEADER
+      //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+      byte[] headbytes = new byte[8];
+      //    byte[] headbytes = new byte[10];
+      dis.readFully(headbytes);
+      String headstr = new String(headbytes);
+      float version = dis.readFloat();       // int  #rows in data section (nrow)
+      int total_seqs = dis.readInt();
+      int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
+      if (DEBUG_READ) {
+        System.out.println("header: " + headstr);
+        System.out.println("version: " + version);
+        System.out.println("total seqs: " + total_seqs);
+        System.out.println("vals per point: " + vals_per_point);
+      }
+      int[] val_types = new int[vals_per_point];
+      for (int i=0; i<vals_per_point; i++) {
+        val_types[i] = dis.readInt();
+        if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
+      }
+      int tvcount = dis.readInt();
+      if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
+      HashMap file_tagvals = readTagValPairs(dis, tvcount);
+      BarFileHeader header = new BarFileHeader(version, total_seqs, val_types, file_tagvals);
+      return header;
     /*
     String graph_name = "unknown";
     if (stream_name != null) { graph_name = stream_name; }
     if (file_tagvals.get("file_type") != null) {
       graph_name += ":" + (String)file_tagvals.get("file_type");
     }
-    */
+     */
+    } catch (Throwable t) {
+      // Catch out-of-memory errors, and other errors caused by poorly-formatted headers.
+      IOException ioe = new IOException("Could not parse bar-file header.");
+      ioe.initCause(t);
+      throw ioe;
+    }
   }
 
   public static BarSeqHeader parseSeqHeader(DataInput dis, Map seqs, BarFileHeader file_header)  throws IOException {

@@ -298,7 +298,11 @@ public class AltSpliceView extends JComponent
           TierLabelGlyph tlg = (TierLabelGlyph) iter.next();
           TierGlyph tg = tlg.getReferenceTier();
           AnnotStyle style = tg.getAnnotStyle();
-          if (style == null) {
+          if (tg.getChildCount() <= 0) {
+            tg.setState(TierGlyph.HIDDEN);
+          }
+          else if (style == null) {
+            // Style may be null for Coordinates, and for "Stop Codons" tiers
             tg.restoreState();
           }
           else {

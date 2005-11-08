@@ -87,6 +87,12 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     JScrollPane table_scroll_pane = new JScrollPane(table);
     
     this.add(table_scroll_pane, BorderLayout.CENTER);
+    JPanel button_panel = new JPanel();
+    button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.X_AXIS));
+
+    JButton apply_bg_button = new JButton("Apply Default Background");
+    button_panel.add(Box.createHorizontalGlue());
+    button_panel.add(apply_bg_button);
     
     
     IGB igb = IGB.getSingletonIGB();
@@ -101,15 +107,9 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           refreshSeqMapView();
         }
       });
-      this.add(refresh_map_B, BorderLayout.NORTH);
+      button_panel.add(Box.createHorizontalStrut(10));
+      button_panel.add(refresh_map_B);
     }
-
-    JPanel button_panel = new JPanel();
-    button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.X_AXIS));
-
-    JButton apply_bg_button = new JButton("Apply Default Background");
-    button_panel.add(Box.createHorizontalGlue());
-    button_panel.add(apply_bg_button);
 
     apply_bg_button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -152,16 +152,13 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     table.setModel(sort_model);
 
     table.setRowSelectionAllowed(true);
-    table.setEnabled( true );
+    table.setEnabled( true ); // doesn't do anything ?
     
     table.setDefaultRenderer(Color.class, new ColorTableCellRenderer(true));
     table.setDefaultEditor(Color.class, new ColorTableCellEditor());
     table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
     
     validate();
-    
-    // setDividerLocation((double) 0.5) only works if the component is already showing.
-//    split_pane.setDividerLocation(300);
   }
   
   public void applyChanges() {
@@ -268,7 +265,8 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         case COL_LABEL_FIELD:
           return style.getLabelField();
         case COL_HUMAN_NAME:
-          return style.getHumanName();
+          if (style == default_annot_style) { return ""; }
+          else { return style.getHumanName(); }
         default:
           return null;
       }

@@ -203,8 +203,14 @@ public class Das2LoadView extends JComponent
 	  load_featuresB.setEnabled(true);
 	  // need to do this here within finished(), otherwise may get threading issues where
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
-	  gmodel.setSelectedSeq(null);
-	  gmodel.setSelectedSeqGroup(current_version.getGenome());
+	  if (gmodel.getSelectedSeqGroup() != current_version.getGenome()) {
+	    gmodel.setSelectedSeq(null);
+	    gmodel.setSelectedSeqGroup(current_version.getGenome());
+	  }
+	  else {
+	    current_seq = gmodel.getSelectedSeq();
+	    loadWholeSequenceAnnots();
+	  }
 	}
       };
     worker.start();
@@ -330,27 +336,31 @@ public class Das2LoadView extends JComponent
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
-      if (current_seq == null)  { return; }
-      if (current_version != null) {
-	SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-	current_region = current_version.getRegion(current_seq);
-	java.util.List type_states = (java.util.List)version2typestates.get(current_version);
-	Iterator titer = type_states.iterator();
-	ArrayList requests = new ArrayList();
-	while (titer.hasNext()) {
-	  Das2TypeState tstate = (Das2TypeState)titer.next();
-	  Das2Type dtype = tstate.getDas2Type();
-	  if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
-	    System.out.println("type to load for entire sequence range: " + dtype.getID());
-	    Das2FeatureRequestSym request_sym =
-	      new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	    requests.add(request_sym);
-	  }
-	}
+      loadWholeSequenceAnnots();
+    }
+  }
 
-	if (requests.size() > 0) {
-	  processFeatureRequests(requests, true);
+  protected void loadWholeSequenceAnnots() {
+    if (current_seq == null)  { return; }
+    if (current_version != null) {
+      SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
+      current_region = current_version.getRegion(current_seq);
+      java.util.List type_states = (java.util.List)version2typestates.get(current_version);
+      Iterator titer = type_states.iterator();
+      ArrayList requests = new ArrayList();
+      while (titer.hasNext()) {
+	Das2TypeState tstate = (Das2TypeState)titer.next();
+	Das2Type dtype = tstate.getDas2Type();
+	if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+	  System.out.println("type to load for entire sequence range: " + dtype.getID());
+	  Das2FeatureRequestSym request_sym =
+	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	  requests.add(request_sym);
 	}
+      }
+
+      if (requests.size() > 0) {
+	processFeatureRequests(requests, true);
       }
     }
   }

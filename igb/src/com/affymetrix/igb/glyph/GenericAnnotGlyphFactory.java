@@ -203,7 +203,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       try  {
         if (use_label) {
           LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-          String label = (String)((SymWithProps)insym).getProperty(label_field);
+          Object property = ((SymWithProps)insym).getProperty(label_field);
+          String label = (property == null) ? "" : property.toString();
           if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
           else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
           //          System.out.println("using label: " + label);
@@ -299,7 +300,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       try  {
         if (use_label) {
           LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-          String label = (String)((SymWithProps)insym).getProperty(label_field);
+          Object property = ((SymWithProps)insym).getProperty(label_field);
+          String label = (property == null) ? "" : property.toString();
           if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
           else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
           //          System.out.println("using label: " + label);

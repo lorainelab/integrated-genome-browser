@@ -113,8 +113,8 @@ public class QuickLoadView2 extends JComponent
       buttonP.add(all_residuesB);
       partial_residuesB = new JButton("Load Sequence Residues in View");
       if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
-	partial_residuesB.addActionListener(this);
-	buttonP.add(partial_residuesB);
+        partial_residuesB.addActionListener(this);
+        buttonP.add(partial_residuesB);
       }
     }
     else {
@@ -149,9 +149,9 @@ public class QuickLoadView2 extends JComponent
       String seq_name = current_seq.getID();
       SeqSpan viewspan = gviewer.getVisibleSpan();
       if (viewspan.getBioSeq() != current_seq) {
-	System.err.println("Error in QuickLoaderView: " +
-			   "SeqMapView seq and QuickLoaderView current_seq not the same!");
-	System.exit(0);
+        System.err.println("Error in QuickLoaderView: " +
+                           "SeqMapView seq and QuickLoaderView current_seq not the same!");
+        System.exit(0);
       }
       loadPartialResidues(viewspan);
     }
@@ -185,13 +185,13 @@ public class QuickLoadView2 extends JComponent
       boolean selected = cbox.isSelected();
       // probably need to make this threaded (see QuickLoaderView)
       if (selected)  {
-	current_server.loadAnnotations(current_group, filename);
-	gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-	cbox.setEnabled(false);
+        current_server.loadAnnotations(current_group, filename);
+        gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+        cbox.setEnabled(false);
       }
       else {
-	// if deselected, what should happen -- delete the annots?  or just hide them?
-	//	boolean loaded = current_server.getLoadState(current_group, filename);
+        // if deselected, what should happen -- delete the annots?  or just hide them?
+        //        boolean loaded = current_server.getLoadState(current_group, filename);
       }
     }
   }
@@ -205,16 +205,16 @@ public class QuickLoadView2 extends JComponent
     else if ((src == genomeCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       String genome_name = (String)genomeCB.getSelectedItem();
       if (! genome_name.equals(SELECT_A_GENOME)) {
-	AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
-	if (gmodel.getSelectedSeqGroup() != group) {
-	  // need to initialize genome before setting it as selected seq group, in
-	  //    case it hasn't been seen before
-	  current_genome_name = genome_name;
-	  current_server.initGenome(genome_name);
-	  // calling gmodel.setSelectedSeqGroup() should also bounce event back to this.groupSelectionChanged()
-	  gmodel.setSelectedSeq(null);
-	  gmodel.setSelectedSeqGroup(group);
-	}
+        AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
+        if (gmodel.getSelectedSeqGroup() != group) {
+          // need to initialize genome before setting it as selected seq group, in
+          //    case it hasn't been seen before
+          current_genome_name = genome_name;
+          current_server.initGenome(genome_name);
+          // calling gmodel.setSelectedSeqGroup() should also bounce event back to this.groupSelectionChanged()
+          gmodel.setSelectedSeq(null);
+          gmodel.setSelectedSeqGroup(group);
+        }
       }
     }
   }
@@ -229,8 +229,8 @@ public class QuickLoadView2 extends JComponent
       cb2filename.clear();
       Component[] comps = types_panel.getComponents();
       for (int i=0; i<comps.length; i++) {
-	JCheckBox cb = (JCheckBox)comps[i];
-	// really shouldn't need to do this, since old checkboxes should get gc'd, but just to make sure...
+        JCheckBox cb = (JCheckBox)comps[i];
+        // really shouldn't need to do this, since old checkboxes should get gc'd, but just to make sure...
         cb.removeActionListener(this);
       }
       types_panel.removeAll();
@@ -238,34 +238,34 @@ public class QuickLoadView2 extends JComponent
       current_group = group;
       current_genome_name = current_server.getGenomeName(group);
       if (current_genome_name == null) {
-	// what should behavior be if no genome in quickload server matches selected AnnotatedSeqGroup?
-	refreshGenomeChoices();
+        // what should behavior be if no genome in quickload server matches selected AnnotatedSeqGroup?
+        refreshGenomeChoices();
       }
       else {
-	current_server.initGenome(current_genome_name);
-	genomeCB.setSelectedItem(current_genome_name);
-	Map load_states = current_server.getLoadStates(current_genome_name);
-	Iterator iter = load_states.entrySet().iterator();
-	// populate list of checkboxes for annotation types
-	while (iter.hasNext()) {
-	  Map.Entry ent = (Map.Entry)iter.next();
-	  String filename = (String)ent.getKey();
+        current_server.initGenome(current_genome_name);
+        genomeCB.setSelectedItem(current_genome_name);
+        Map load_states = current_server.getLoadStates(current_genome_name);
+        Iterator iter = load_states.entrySet().iterator();
+        // populate list of checkboxes for annotation types
+        while (iter.hasNext()) {
+          Map.Entry ent = (Map.Entry)iter.next();
+          String filename = (String)ent.getKey();
 //          if (filename == null || filename.equals(""))  { continue; }
-	  boolean prev_loaded = ((Boolean)ent.getValue()).booleanValue();
-	  String annot_name = filename.substring(0, filename.indexOf("."));
-	  JCheckBox cb = new JCheckBox(annot_name);
-	  cb2filename.put(cb, filename);
+          boolean prev_loaded = ((Boolean)ent.getValue()).booleanValue();
+          String annot_name = filename.substring(0, filename.indexOf("."));
+          JCheckBox cb = new JCheckBox(annot_name);
+          cb2filename.put(cb, filename);
           cb.setSelected(prev_loaded);
-	  cb.setEnabled(! prev_loaded);
-	  cb.addActionListener(this);
-	  if ((! prev_loaded) && LOAD_DEFAULT_ANNOTS && (default_types.get(annot_name) != null)) {
-	    //	    cb.setSelected(true);  // rely on checkbox selection event to trigger loading...
-	    current_server.loadAnnotations(current_group, filename);
-	    cb.setEnabled(false);
-	    gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-	  }
-	  types_panel.add(cb);
-	}
+          cb.setEnabled(! prev_loaded);
+          cb.addActionListener(this);
+          if ((! prev_loaded) && LOAD_DEFAULT_ANNOTS && (default_types.get(annot_name) != null)) {
+            //            cb.setSelected(true);  // rely on checkbox selection event to trigger loading...
+            current_server.loadAnnotations(current_group, filename);
+            cb.setEnabled(false);
+            gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+          }
+          types_panel.add(cb);
+        }
       }
     }
   }
@@ -297,13 +297,13 @@ public class QuickLoadView2 extends JComponent
       String quickload_url = UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
       if (quickload_url.indexOf(DEFUNCT_SERVER) >= 0) {
         System.out.println("WARNING: prefs pointed to deprecated default quickload server: " + DEFUNCT_SERVER);
-	System.out.println("         updating to new default server: " + DEFAULT_QUICKLOAD_URL);
-	UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
-	quickload_url = DEFAULT_QUICKLOAD_URL;
+        System.out.println("         updating to new default server: " + DEFAULT_QUICKLOAD_URL);
+        UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
+        quickload_url = DEFAULT_QUICKLOAD_URL;
       }
       if (! quickload_url.endsWith("/")) {
         quickload_url = quickload_url + "/";
-	UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, quickload_url);
+        UnibrowPrefsUtil.getLocationsNode().put(PREF_QUICKLOAD_URL, quickload_url);
       }
     return quickload_url;
   }
@@ -334,55 +334,66 @@ public class QuickLoadView2 extends JComponent
     else if (aseq instanceof NibbleBioSeq)  {
       String residues = null;
       try {
-	String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
-	if (das_dna_source == null)  {
-	  ErrorHandler.errorPanel("Error", "Couldn't access sequence residues via DAS", gviewer);
-	  return;
-	}
-	String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
-	if (das_seqid == null)  {
-	  ErrorHandler.errorPanel("Error", "Couldn't access sequence residues via DAS", gviewer);
-	  return;
-	}
-	 residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid,
-						  min, max);
-	System.out.println("DAS DNA request length: " + length);
-	System.out.println("DAS DNA response length: " + residues.length());
+        String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
+        if (das_dna_source == null)  {
+          ErrorHandler.errorPanel("Error", "Couldn't find das source genome '"+current_genome_name
+            + "'\n on DAS server:\n"+ das_dna_server, gviewer);
+          return;
+        }
+        String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
+        if (das_seqid == null)  {
+          ErrorHandler.errorPanel("No sequence", 
+            "Couldn't access sequence residues on DAS server\n" +
+            " seqid: '" + seqid +"'\n"+
+            " genome: '"+current_genome_name + "'\n" +
+            " DAS server: " + das_dna_server, 
+            gviewer);
+          return;
+        }
+         residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid,
+                                                  min, max);
+        System.out.println("DAS DNA request length: " + length);
+        System.out.println("DAS DNA response length: " + residues.length());
       }
       catch (Exception ex) {
-	ex.printStackTrace();
+        ErrorHandler.errorPanel("No sequence", 
+          "Couldn't access sequence residues on DAS server\n" +
+          " seqid: '" + seqid +"'\n"+
+          " genome: '"+current_genome_name + "'\n" +
+          " DAS server: " + das_dna_server, 
+          gviewer, ex);
       }
 
       if (residues != null) {
-	BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + min + "-" + max, residues);
+        BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + min + "-" + max, residues);
 
-	SeqSpan span1 = new SimpleSeqSpan(0, length, subseq);
-	SeqSpan span2 = span;
-	MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-	subsym.addSpan(span1);
-	subsym.addSpan(span2);
+        SeqSpan span1 = new SimpleSeqSpan(0, length, subseq);
+        SeqSpan span2 = span;
+        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
+        subsym.addSpan(span1);
+        subsym.addSpan(span2);
 
-	NibbleBioSeq compseq = (NibbleBioSeq)aseq;
-	MutableSeqSymmetry compsym = (MutableSeqSymmetry)compseq.getComposition();
-	if (compsym == null) {
-	  System.err.println("composite symmetry is null!");
-	  compsym = new SimpleMutableSeqSymmetry();
-	  compsym.addChild(subsym);
-	  compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
-	  compseq.setComposition(compsym);
-	}
-	else {
-	  compsym.addChild(subsym);
-	  SeqSpan compspan = compsym.getSpan(aseq);
-	  int compmin = Math.min(compspan.getMin(), min);
-	  int compmax = Math.max(compspan.getMax(), max);
-	  SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-	  compsym.removeSpan(compspan);
-	  compsym.addSpan(new_compspan);
-	  //	System.out.println("adding to composition: " );
-	  //	SeqUtils.printSymmetry(compsym);
-	  gviewer.setAnnotatedSeq(aseq, true, true);
-	}
+        NibbleBioSeq compseq = (NibbleBioSeq)aseq;
+        MutableSeqSymmetry compsym = (MutableSeqSymmetry)compseq.getComposition();
+        if (compsym == null) {
+          System.err.println("composite symmetry is null!");
+          compsym = new SimpleMutableSeqSymmetry();
+          compsym.addChild(subsym);
+          compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
+          compseq.setComposition(compsym);
+        }
+        else {
+          compsym.addChild(subsym);
+          SeqSpan compspan = compsym.getSpan(aseq);
+          int compmin = Math.min(compspan.getMin(), min);
+          int compmax = Math.max(compspan.getMax(), max);
+          SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
+          compsym.removeSpan(compspan);
+          compsym.addSpan(new_compspan);
+          //        System.out.println("adding to composition: " );
+          //        SeqUtils.printSymmetry(compsym);
+          gviewer.setAnnotatedSeq(aseq, true, true);
+        }
       }
     }
     else {
@@ -392,26 +403,26 @@ public class QuickLoadView2 extends JComponent
 
   public void loadAllResidues(String seq_name) {
     System.out.println("processing request to load residues for sequence: " +
-		       seq_name + ", version = " + current_genome_name);
+                       seq_name + ", version = " + current_genome_name);
     if (current_seq.isComplete()) {
       System.out.println("already have residues for " + seq_name);
       return;
     }
     else {
       try {
-	String http_root = getQuickLoadUrl();
-	String url_path = http_root + current_genome_name + "/" + seq_name + ".bnib";
-	System.out.println("location of bnib file: " + url_path);
-	System.out.println("current seq: id = " + current_seq.getID() + ", " + current_seq);
-	InputStream istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
-	//	istr = (new URL(url_path)).openStream();
-	// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-	current_seq = NibbleResiduesParser.parse(istr, (NibbleBioSeq)current_seq);
-	istr.close();
+        String http_root = getQuickLoadUrl();
+        String url_path = http_root + current_genome_name + "/" + seq_name + ".bnib";
+        System.out.println("location of bnib file: " + url_path);
+        System.out.println("current seq: id = " + current_seq.getID() + ", " + current_seq);
+        InputStream istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
+        //        istr = (new URL(url_path)).openStream();
+        // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
+        current_seq = NibbleResiduesParser.parse(istr, (NibbleBioSeq)current_seq);
+        istr.close();
       }
       catch(Exception ex) {
-	ErrorHandler.errorPanel("Error", "cannot access sequence for seq = " + seq_name +
-			   ", version = " + current_genome_name, gviewer, ex);
+        ErrorHandler.errorPanel("Error", "cannot access sequence for seq = " + seq_name +
+                           ", version = " + current_genome_name, gviewer, ex);
       }
       gviewer.setAnnotatedSeq(current_seq, true, true);
     }
@@ -454,8 +465,8 @@ public class QuickLoadView2 extends JComponent
       cache_usage_selector = new JComboBox();
       Iterator iter = cache_usage_options.keySet().iterator();
       while (iter.hasNext()) {
-	String str = (String)iter.next();
-	cache_usage_selector.addItem(str);
+        String str = (String)iter.next();
+        cache_usage_selector.addItem(str);
       }
       cache_usage_selector.setSelectedItem(usage2str.get(new Integer(QuickLoadServerModel.cache_usage)));
 
@@ -544,17 +555,17 @@ class QuickLoadServerModel {
     if (behavior != cache_usage) {
       cache_usage = behavior;
       UnibrowPrefsUtil.saveIntParam("quickload_cache_usage", cache_usage);
-      System.out.println("storing cache_usage behavior: " + cache_usage);
+      //System.out.println("storing cache_usage behavior: " + cache_usage);
     }
     if (residues != cache_residues) {
       cache_residues = residues;
       UnibrowPrefsUtil.saveBooleanParam("quickload_cache_residues", cache_residues);
-      System.out.println("storing cache_residues behavior: " + cache_residues);
+      //System.out.println("storing cache_residues behavior: " + cache_residues);
     }
     if (annots != cache_annots) {
       cache_annots = annots;
       UnibrowPrefsUtil.saveBooleanParam("quickload_cache_annots", cache_annots);
-      System.out.println("storing cache_annots behavior: " + cache_annots);
+      //System.out.println("storing cache_annots behavior: " + cache_annots);
     }
   }
 
@@ -613,17 +624,17 @@ class QuickLoadServerModel {
     Map load_states = new LinkedHashMap();
     try {
       InputStream istr =
-	LocalUrlCacher.getInputStream(filename, cache_usage, cache_annots);
+        LocalUrlCacher.getInputStream(filename, cache_usage, cache_annots);
       InputStreamReader ireader = new InputStreamReader(istr);
       BufferedReader br = new BufferedReader(ireader);
       String line;
       while ((line = br.readLine()) != null) {
-	String[] fields = tab_regex.split(line);
-	if (fields.length >= 1) {
-	  String annot_file_name = fields[0];
-	  //	  System.out.println("    " + annot_file_name);
-	  load_states.put(annot_file_name, Boolean.FALSE);
-	}
+        String[] fields = tab_regex.split(line);
+        if (fields.length >= 1) {
+          String annot_file_name = fields[0];
+          //          System.out.println("    " + annot_file_name);
+          load_states.put(annot_file_name, Boolean.FALSE);
+        }
       }
       group2states.put(group, load_states);
       istr.close();
@@ -652,30 +663,30 @@ class QuickLoadServerModel {
       String lift_path = genome_root + "liftAll.lft";
       String cinfo_path = genome_root + "mod_chromInfo.txt";
       try {
-	lift_stream = LocalUrlCacher.getInputStream(lift_path, cache_usage, cache_annots);
+        lift_stream = LocalUrlCacher.getInputStream(lift_path, cache_usage, cache_annots);
       }
       catch (Exception ex) {
-	System.out.println("couldn't find lift file, looking instead for mod_chromInfo file");
-	lift_stream = null;
+        System.out.println("couldn't find lift file, looking instead for mod_chromInfo file");
+        lift_stream = null;
       }
       if (lift_stream == null) {
-	try {
-	  cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path, cache_usage, cache_annots);
-	}
-	catch (Exception ex) {
-	  System.err.println("ERROR: could find neither liftAll.txt nor mod_chromInfo.txt files");
-	  cinfo_stream = null;
-	}
+        try {
+          cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path, cache_usage, cache_annots);
+        }
+        catch (Exception ex) {
+          System.err.println("ERROR: could find neither liftAll.txt nor mod_chromInfo.txt files");
+          cinfo_stream = null;
+        }
       }
 
       boolean annot_contigs = false;
       if (lift_stream != null) {
-	LiftParser lift_loader = new LiftParser();
-	group = lift_loader.parseGroup(lift_stream, genome_name, annot_contigs);
+        LiftParser lift_loader = new LiftParser();
+        group = lift_loader.parseGroup(lift_stream, genome_name, annot_contigs);
       }
       else if (cinfo_stream != null) {
-	ChromInfoParser chrominfo_loader = new ChromInfoParser();
-	group = chrominfo_loader.parseGroup(cinfo_stream, genome_name);
+        ChromInfoParser chrominfo_loader = new ChromInfoParser();
+        group = chrominfo_loader.parseGroup(cinfo_stream, genome_name);
       }
       System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
@@ -685,8 +696,7 @@ class QuickLoadServerModel {
       success = true;
     }
     catch (Exception ex) {
-      IGB.errorPanel("Error loading data:\n"+ex.toString());
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);
     }
     return success;
   }
@@ -710,27 +720,27 @@ class QuickLoadServerModel {
       String line;
       glist = new ArrayList();
       while ((line = br.readLine()) != null) {
-	AnnotatedSeqGroup group = null;
-	String[] fields = tab_regex.split(line);
-	if (fields.length >= 1) {
-	  String genome_name = fields[0];
-	  glist.add(genome_name);
-	  group = gmodel.addSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
-	  name2group.put(genome_name, group);
-	  group2name.put(group, genome_name);
-	  // System.out.println("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
-	}
-	// if quickload server has description, and group is new or doesn't yet have description, add description to group
-	if ((fields.length >= 2) && (group.getDescription() == null)) {
-	  group.setDescription(fields[1]);
-	}
+        AnnotatedSeqGroup group = null;
+        String[] fields = tab_regex.split(line);
+        if (fields.length >= 1) {
+          String genome_name = fields[0];
+          glist.add(genome_name);
+          group = gmodel.addSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
+          name2group.put(genome_name, group);
+          group2name.put(group, genome_name);
+          // System.out.println("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
+        }
+        // if quickload server has description, and group is new or doesn't yet have description, add description to group
+        if ((fields.length >= 2) && (group.getDescription() == null)) {
+          group.setDescription(fields[1]);
+        }
       }
       istr.close();
       ireader.close();
       br.close();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
     }
     return glist;
   }
@@ -744,17 +754,16 @@ class QuickLoadServerModel {
       String annot_url = root_url + getGenomeName(current_group) + "/" + filename;
       System.out.println("need to load: " + annot_url);
       try {
-	InputStream istr = LocalUrlCacher.getInputStream(annot_url, cache_usage, cache_annots);
-	BufferedInputStream bis = new BufferedInputStream(istr);
-	// really should remove LoadFileAction's requirement for SeqMapView argument...
-	LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
-	lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
-	bis.close();
-	istr.close();
+        InputStream istr = LocalUrlCacher.getInputStream(annot_url, cache_usage, cache_annots);
+        BufferedInputStream bis = new BufferedInputStream(istr);
+        // really should remove LoadFileAction's requirement for SeqMapView argument...
+        LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
+        lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
+        bis.close();
+        istr.close();
       }
       catch (Exception ex) {
-	System.out.println("problem loading requested url: " + annot_url);
-	ex.printStackTrace();
+        ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + annot_url, ex);
       }
       setLoadState(current_group, filename, true);
     }

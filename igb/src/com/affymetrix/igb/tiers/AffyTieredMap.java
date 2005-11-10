@@ -84,6 +84,9 @@ public class AffyTieredMap extends NeoMap {
     return null;
   }
 
+  /** Returns the index of the requested TierGlyph in the map, 
+   *  or -1 if it isn't included. The test is based on "==", not equals().
+   */
   public int getTierIndex(TierGlyph tg) {
     int tindex = -1;
     for (int i=0; i<tiers.size(); i++) {

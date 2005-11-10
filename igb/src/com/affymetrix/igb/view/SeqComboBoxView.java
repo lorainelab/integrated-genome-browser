@@ -45,12 +45,17 @@ public class SeqComboBoxView extends JComponent
     }
     selected_seq = null;
     seqCB.removeAllItems();
-    seqCB.addItem(NO_SEQ_SELECTED);
-    Iterator iter = group.getSeqs().values().iterator();
-    while (iter.hasNext()) {
-      AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
-      String seqid = aseq.getID();
-      seqCB.addItem(seqid);
+    if (group == null || group.getSeqs() == null) {
+      seqCB.addItem(NO_SEQUENCES);
+    }
+    else {
+      seqCB.addItem(NO_SEQ_SELECTED);
+      Iterator iter = group.getSeqs().values().iterator();
+      while (iter.hasNext()) {
+        AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+        String seqid = aseq.getID();
+        seqCB.addItem(seqid);
+      }
     }
   }
 

@@ -40,8 +40,12 @@ public class SeqComboBoxView extends JComponent
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (this.DEBUG_EVENTS)  {
       System.out.println("SeqComboBoxView received groupSelectionChanged() event");
-      System.out.println("  group: " + group.getID());
-      System.out.println("  seq count: " + group.getSeqs().size());
+      if (group == null) {
+        System.out.println("  group: " + null);
+      } else {
+        System.out.println("  group: " + group.getID());
+        System.out.println("  seq count: " + group.getSeqs().size());
+      }
     }
     selected_seq = null;
     seqCB.removeAllItems();
@@ -60,9 +64,12 @@ public class SeqComboBoxView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (this.DEBUG_EVENTS)  { System.out.println("SeqComboBoxView received seqSelectionChanged() event"); }
-
     AnnotatedBioSeq aseq = evt.getSelectedSeq();
+
+    if (this.DEBUG_EVENTS)  { 
+      System.out.println("SeqComboBoxView received seqSelectionChanged() event: " + (aseq == null ? "null" : aseq.getID())); 
+    }
+
     if (aseq == null)  {
       if (seqCB.getSelectedItem() != NO_SEQ_SELECTED) {
 	seqCB.setSelectedItem(NO_SEQ_SELECTED);

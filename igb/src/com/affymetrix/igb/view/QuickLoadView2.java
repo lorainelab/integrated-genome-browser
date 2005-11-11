@@ -409,21 +409,28 @@ public class QuickLoadView2 extends JComponent
       return;
     }
     else {
+      InputStream istr = null;
+      String http_root = getQuickLoadUrl();
       try {
-        String http_root = getQuickLoadUrl();
         String url_path = http_root + current_genome_name + "/" + seq_name + ".bnib";
         System.out.println("location of bnib file: " + url_path);
         System.out.println("current seq: id = " + current_seq.getID() + ", " + current_seq);
-        InputStream istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
+        istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
         //        istr = (new URL(url_path)).openStream();
         // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
         current_seq = NibbleResiduesParser.parse(istr, (NibbleBioSeq)current_seq);
-        istr.close();
       }
       catch(Exception ex) {
-        ErrorHandler.errorPanel("Error", "cannot access sequence for seq = " + seq_name +
-                           ", version = " + current_genome_name, gviewer, ex);
+        ErrorHandler.errorPanel("Error", "cannot access sequence:\n" +
+          "seq = '" + seq_name + "'\n" +
+          "version = '" + current_genome_name +"'\n" +
+          "server = " + http_root, 
+        gviewer, ex);
       }
+      finally {
+        try { istr.close(); } catch (Exception e) {}
+      }
+
       gviewer.setAnnotatedSeq(current_seq, true, true);
     }
   }

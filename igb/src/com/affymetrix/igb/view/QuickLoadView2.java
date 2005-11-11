@@ -134,13 +134,17 @@ public class QuickLoadView2 extends JComponent
     serverCB.addItemListener(this);
     genomeCB.addItemListener(this);
 
+    resetQuickLoadUrl();
+  }
+
+  void resetQuickLoadUrl() {
     String http_root = getQuickLoadUrl();
     System.out.println("Setting QuickLoad server: " + http_root);
     current_server = new QuickLoadServerModel(http_root);
     url2quickload.put(http_root, current_server);
     refreshGenomeChoices();
   }
-
+    
   public void actionPerformed(ActionEvent evt)  {
     Object src = evt.getSource();
     /* handles residues loading based on partial or full sequence load buttons */
@@ -495,6 +499,8 @@ public class QuickLoadView2 extends JComponent
 
 
   public void showOptions() {
+    String old_QL = getQuickLoadUrl();
+    
     //TODO: before showing the options dialog, need to reset its GUI to actual current values
     JOptionPane.showMessageDialog(this, optionsP, "Quickload Options", JOptionPane.PLAIN_MESSAGE);
 
@@ -511,9 +517,12 @@ public class QuickLoadView2 extends JComponent
       // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
       //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
       //        setQuickLoadURL(getQuickLoadUrl());
+      
+      if (! getQuickLoadUrl().equals(old_QL)) {
+        resetQuickLoadUrl();
+      }
     //}
   }
-
 }
 
 
@@ -592,6 +601,7 @@ class QuickLoadServerModel {
 
   public boolean getLoadState(String genome_name, String file_name) {
     Map load_states = getLoadStates(genome_name);
+    if (load_states == null) { return false; /* shouldn't happen */}
     Boolean boo = (Boolean)load_states.get(file_name);
     if (boo == null) { return false; }
     else { return (boo == Boolean.TRUE); }

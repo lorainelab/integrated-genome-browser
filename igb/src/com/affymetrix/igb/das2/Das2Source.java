@@ -34,11 +34,11 @@ public class Das2Source {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  String id;
-  String description;
-  String info_url;
-  String taxon;
-  Map versions = new LinkedHashMap();
+  protected String id;
+  protected String description;
+  protected String info_url;
+  protected String taxon;
+  protected Map versions = new LinkedHashMap();
   Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;

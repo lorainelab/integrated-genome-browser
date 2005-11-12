@@ -24,16 +24,22 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 public class Das2ServerInfo  {
   static boolean REPORT_SOURCES = true;
-  static boolean DO_FILE_TEST = false;
-  static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
+  protected static boolean DO_FILE_TEST = false;
+  protected static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
 
-  String root_url;
+  protected String root_url;
   String das_version;
   String name;
-  Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
-  boolean initialized = false;
+  protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
+  protected boolean initialized = false;
 
-    
+  /**
+   *    The following two objects work with some wrapper functions below 
+   *    to help prevent code repetition in inherited classes.
+   **/  
+   protected Das2Source dasSource;
+   protected Das2VersionedSource dasVersionedSource;   
+   
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
@@ -77,9 +83,19 @@ public class Das2ServerInfo  {
     sources.put(ds.getID(), ds);
   }
 
-
+  /**
+   *    The following two wrapper functions help to prevent code repetition in 
+   *    inherited classes.
+   **/
+  protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
+    Das2Source D2S = new Das2Source(_D2SI, _source_id, _init);
+    dasSource = D2S;
+  }  
+  protected void setDasVersionedSource(Das2Source _D2S, String _version_id, boolean _init ){
+    Das2VersionedSource D2VS = new Das2VersionedSource(_D2S, _version_id, _init);
+    dasVersionedSource = D2VS;
+  }
     
-
   
   /**
    *  assumes there is only one versioned source for each AnnotatedSeqGroup
@@ -146,21 +162,20 @@ public class Das2ServerInfo  {
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxon");
 
-	Das2Source das_source =
-	  new Das2Source(this, source_id, false);
-	das_source.setID(source_id);
-	das_source.setInfoUrl(source_info_url);
-	das_source.setDescription(source_description);
-	das_source.setTaxon(source_taxon);
-	this.addDataSource(das_source);
+        setDasSource(this, source_id, false);
+	dasSource.setID(source_id);
+	dasSource.setInfoUrl(source_info_url);
+	dasSource.setDescription(source_description);
+	dasSource.setTaxon(source_taxon);
+	this.addDataSource(dasSource);
 	NodeList versions = source.getElementsByTagName("VERSION");
 	for (int k=0; k< versions.getLength(); k++) {
 	  Element version = (Element)versions.item(k);
 	  String version_id = version.getAttribute("id");
 	  String version_description = version.getAttribute("description");
 	  String version_info_url = version.getAttribute("doc_href");
-	  Das2VersionedSource versioned_source = new Das2VersionedSource(das_source, version_id, false);
-	  das_source.addVersion(versioned_source);
+	  setDasVersionedSource(dasSource, version_id, false);
+	  dasSource.addVersion(dasVersionedSource);
 	}
       }
     }

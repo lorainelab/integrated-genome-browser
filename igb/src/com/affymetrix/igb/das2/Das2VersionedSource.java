@@ -51,16 +51,16 @@ public class Das2VersionedSource  {
   java.util.List assembly;
 
   AnnotatedSeqGroup genome = null;
-  Map types = new LinkedHashMap();
+  protected Map types = new LinkedHashMap();
   Map assays = new LinkedHashMap();
   Map materials = new LinkedHashMap();
   Map results = new LinkedHashMap();
-  boolean regions_initialized = false;
-  boolean types_initialized = false;
+  protected boolean regions_initialized = false;
+  protected boolean types_initialized = false;
   boolean assays_initialized = false;
   boolean materials_initialized = false;
   boolean results_initialized = false;
-  String types_filter = null;
+  protected String types_filter = null;
   
   public Das2VersionedSource(Das2Source das_source, String version_id, boolean init) {
     id = version_id;
@@ -337,8 +337,9 @@ public class Das2VersionedSource  {
 	for (int k=0; k<ilist.getLength(); k++) {
 	  Element inode = (Element)ilist.item(k);
 	  String uri = inode.getAttribute("URI");
-          images.put(uri.substring(9), uri);
-	}
+          if(uri.equals("")){/*do nothing if there is no image*/}                                      
+          else{images.put(uri.substring(9), uri);} 
+        }
 
         // biomaterials
         HashMap biomat = new HashMap();

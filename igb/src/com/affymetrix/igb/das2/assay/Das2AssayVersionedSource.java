@@ -74,12 +74,12 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
     //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
     String types_request = getSource().getServerInfo().getRootUrl() +
         "/" + this.getID() + "/type";
-
+    
 
     //example of ontology request:  http://das.biopackages.net/das/ontology/obo/1/ontology/
     String ontologyRequest = ((Das2AssayServerInfo)(getSource().getServerInfo() )).getRootOntologyUrl();
 
-    //path needs to look like: /das/ontology/obo/1/ontology/  but must be done in a universal way so...
+/*    //path needs to look like: /das/ontology/obo/1/ontology/  but must be done in a universal way so...
     String ontologyPath = ontologyRequest;
     //the pattern to look for gets compiled in here
     Pattern pat = Pattern.compile("^http://.+?/+");
@@ -91,13 +91,13 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
     ontologyPath = mat.replaceFirst("");
     ontologyPath = "/"+ontologyPath;
     int ontoPathLength = ontologyPath.length();
-    
+*/    
     
     if (filter != null) {
       types_request = types_request+"?ontology="+filter;
       //next I need a string like:
-      //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA
-      ontologyRequest = ontologyRequest+filter;
+      //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA?format=legacy0
+      ontologyRequest = ontologyRequest+filter+"?format=legacy0";
     }
 
     
@@ -109,6 +109,13 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       Document ontoDoc = DasLoader.getDocument(ontologyRequest);
       Element top_element = doc.getDocumentElement();
       Element top_OntoElement = ontoDoc.getDocumentElement();
+      String typeServerName = top_element.getAttribute("xml:base");
+      //Get the actual Server name
+      Matcher mat = Pattern.compile("^http://.+?/+").matcher(typeServerName);
+      if(mat.find()){ //this always has to be tested for
+              typeServerName = typeServerName.substring(mat.start(), (mat.end()-1) );
+      }  
+      String ontologyBaseURL = top_OntoElement.getAttribute("xml:base");
       NodeList typelist = doc.getElementsByTagName("TYPE");
       NodeList ontoTypeList = ontoDoc.getElementsByTagName("TERM");      
       System.out.println("types: " + typelist.getLength());
@@ -119,21 +126,22 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
 
       //this is for tracking whether or not a node has been included in the list of nodes to draw/use later on...
       HashMap uberTrackingHash = new HashMap();     
-      String ontoRootNodeId = new String() ;
+      String ontoRootNodeId = new String();
       int typeCounter = 0;  
 
-      //Loop through the entire ontology and put the relevant reationships into this map
+      //Loop through the entire ontology and put the relevant relationships into this map
       for (int m=0; m< ontoTypeList.getLength(); m++)  {
         Element ontoTypeNode = (Element)ontoTypeList.item(m);
         String termID = ontoTypeNode.getAttribute("id");                        
-
+        termID = ontologyBaseURL+termID;
+        
         // temporary workaround for getting type ending, rather than full URI
         if (termID.startsWith("./")) { termID = termID.substring(2); }          
 
         NodeList localParentsList = ontoTypeNode.getElementsByTagName("PARENT");    
         for (int l=0; l<localParentsList.getLength(); l++) {                    
 
-            //the pattern to look for gets compiled in here
+/*            //the pattern to look for gets compiled in here
             Pattern p = Pattern.compile("/");
             //init the matcher object
             Matcher match = p.matcher("");
@@ -141,16 +149,17 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
             match.reset(termID);                    
             //Replace found characters with an empty string.
             termID = match.replaceAll(":");
-
+*/
             Element pnode = (Element)localParentsList.item(l);                   
            //get the newest parent
-           String newParent = pnode.getAttribute("id"); 
+           String newParent = pnode.getAttribute("id");
+           newParent = ontologyBaseURL+newParent;
            //make a new List to hold all parents (old an new)
 
             //reset the matcher with the string in question
-            match.reset(newParent);                    
+//            match.reset(newParent);                    
             //Replace found characters with an empty string.
-            newParent = match.replaceAll(":");
+//            newParent = match.replaceAll(":");
 
            ArrayList parentsList = new ArrayList();                               
            //add that newest parent to it
@@ -198,13 +207,15 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       //Finally, go through the types and find (match up from the above hashes) parents for each one
       for (int i=0; i< typelist.getLength(); i++)  {     
         Element typenode = (Element)typelist.item(i);                                   
-        String typeid = typenode.getAttribute("id");                            
-
+        String typeid = typenode.getAttribute("ontology");//id");                            
+        typeid = typeServerName+typeid;
+        
         // temporary workaround for getting type ending, rather than full URI
-        if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          
+//        if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          
         //FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         String ontid = typenode.getAttribute("ontology");
+        ontid = typeServerName+ontid;                                           //ontologyBaseURL+ontid;
         String type_source = typenode.getAttribute("source");                   
         String href = typenode.getAttribute("doc_href");                        
 
@@ -238,13 +249,13 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
             //trimmed of whatever base URI information its carrying 1st.
 
             //Independent of server, this will get rid of the cruft at the start of the onto term ids  
-            if (ontid.startsWith(ontologyPath)) { ontid = ontid.substring(ontoPathLength); }    
+//            if (ontid.startsWith(ontologyPath)) { ontid = ontid.substring(ontoPathLength); }    
 
             //this just guarantees that the string is unescaped... (safety feature)           
             ontid = URLDecoder.decode(ontid);
  
 
-            //the pattern to look for gets compiled in here
+/*            //the pattern to look for gets compiled in here
             Pattern p = Pattern.compile("/");
             //init the matcher object
             Matcher m = p.matcher("");
@@ -252,7 +263,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
             m.reset(ontid);                    
             //Replace found characters with an empty string.
             ontid = m.replaceAll(":");
-
+*/
 
             //The following calls get the relevant type nodes needed to make a tree:            
             ArrayList newTypes = new ArrayList();      //the list of this node and its parents who all need to be collected into the cue at this time...    
@@ -297,7 +308,10 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
         //GET -e "http://das.biopackages.net/das/ontology/obo/1/ontology/MA?format=obo" | less
         //returns THAT ontology in OBO format...
         //
-
+        //GET -e "http://das.biopackages.net/das/ontology/obo/1/ontology/MA?format=legacy0" | less
+        //returns THAT ontology in OBO format...
+        //
+        
         System.out.println("Here are the number of new types that have been made: "+typeCounter);
       }
     }

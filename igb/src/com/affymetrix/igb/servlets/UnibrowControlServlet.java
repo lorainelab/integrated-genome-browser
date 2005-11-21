@@ -68,7 +68,7 @@ public class UnibrowControlServlet extends HttpServlet {
       System.out.println("received ping request");
       return;
     }
-    goToBookmark(this.uni, request.getParameterMap());
+//    goToBookmark(this.uni, request.getParameterMap());
   }
 
   /** Convenience method for retreiving a String parameter from a parameter map

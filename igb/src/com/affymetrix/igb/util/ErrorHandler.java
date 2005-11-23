@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -80,6 +80,8 @@ public abstract class ErrorHandler {
     // messages from system.out and system.err don't get out-of-synch
     System.out.flush();
     System.err.flush();
+    System.err.println();
+    System.err.println("-------------------------------------------------------");
     System.err.println(title+": "+message);
     if (e != null) {
       if (print_stack_traces) {e.printStackTrace(System.err);}
@@ -92,6 +94,8 @@ public abstract class ErrorHandler {
       }
     }
 
+    System.err.println("-------------------------------------------------------");
+    System.err.println();
     System.err.flush();
     Toolkit.getDefaultToolkit().beep();
     final Component scroll_pane = makeScrollPane(message);

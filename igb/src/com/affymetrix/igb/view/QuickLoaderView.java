@@ -335,7 +335,8 @@ public class QuickLoaderView extends JComponent
       br.close();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Error loading genome names", gviewer, ex);
+      //ex.printStackTrace();
     }
     return glist;
   }
@@ -367,7 +368,8 @@ public class QuickLoaderView extends JComponent
       br.close();
     }
     catch (Exception ex) {
-      System.out.println("Couldn't find file "+filename);
+      ErrorHandler.errorPanel("ERROR", "Could not load annotation names from file:\n" + filename, gviewer, ex);
+      //System.out.println("Couldn't find file "+filename);
       //ex.printStackTrace();
     }
     return alist;
@@ -562,8 +564,8 @@ public class QuickLoaderView extends JComponent
 	if (cinfo_stream != null) { cinfo_stream.close(); }
       }
       catch (Exception ex) {
-	ErrorHandler.errorPanel("Error", "Error loading data:\n"+ex.toString(), gviewer);
-	ex.printStackTrace();
+	ErrorHandler.errorPanel("Error", "Error loading data:\n"+ex.toString(), gviewer, ex);
+	//ex.printStackTrace();
       }
     }
 
@@ -655,8 +657,9 @@ public class QuickLoaderView extends JComponent
 		} );
 	    }
 	    catch (Exception ex) {
-	      System.out.println("problem loading requested url: " + url_path);
-	      ex.printStackTrace();
+              ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + url_path, gviewer, ex);
+	      //System.out.println("problem loading requested url: " + url_path);
+	      //ex.printStackTrace();
 	    }
 	    monitor.closeDialogEventually();
 	    monitor = null;
@@ -910,7 +913,7 @@ public class QuickLoaderView extends JComponent
 	System.out.println("DAS DNA response length: " + residues.length());
       }
       catch (Exception ex) {
-	ex.printStackTrace();
+        ErrorHandler.errorPanel("Error", "Couldn't access sequence residues via DAS", gviewer, ex);
       }
 
       if (residues != null) {

@@ -25,14 +25,14 @@ public class GraphSliceOptimizer {
   /**
    *  Given a CompositeGraphSym and a SeqSpan, retrieve slice(s) of graph to make sure
    *  entire span is covered by slice(s).  Optimize so any region already retrieved does
-   *  not need to be retrieved again
+   *  not need to be retrieved again.
    *
-   *  returns boolean indicating whether any data points were actually loaded
-   *    (if false (and no errors), then presumably the slice was already completely covered
-   *    by previous requests
+   *  Returns boolean indicating whether any data points were actually loaded.
+   *    If false (and no errors), then presumably the slice was already completely covered
+   *    by previous requests.
    *
    */
-  public static boolean loadSlice(CompositeGraphSym gsym, SeqSpan slice_span) {
+  public static boolean loadSlice(CompositeGraphSym gsym, SeqSpan slice_span) throws IOException {
     boolean TEST1 = false;
     boolean TEST2 = false;
     boolean TEST3 = true;

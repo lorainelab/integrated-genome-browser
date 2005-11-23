@@ -27,6 +27,8 @@ import javax.swing.table.TableCellRenderer;
 public class BooleanTableCellRenderer extends JCheckBox 
 implements TableCellRenderer {
     
+  boolean indicateWhenEditable = true;
+  
   public BooleanTableCellRenderer() {
     super();
     setBorder(null);
@@ -34,9 +36,31 @@ implements TableCellRenderer {
     setHorizontalAlignment(JLabel.CENTER);
   }
   
+  /** Whether or not to visually indicate the differenct between editable
+   *  and non-editable checkboxes.  Does this by calling JCheckBox.setEnabled().
+   *  If your table contains a mix of editable and non-editable checkboxes, you
+   *  should probably set this to true.  If the entire table is not editable,
+   *  you might want to choose to set this to false, but I recommend keeping
+   *  it true.
+   *  Default is true.
+   */
+  public void setIndicateWhenEditable(boolean b) {
+    indicateWhenEditable = b;
+  }
+  
   public Component getTableCellRendererComponent(JTable table, Object value,
     boolean isSelected, boolean hasFocus, int row, int column) {
-        
+    
+    boolean editable = table.isCellEditable(row, column);
+    
+    if (indicateWhenEditable) {
+      setEnabled(editable); // called for the side-effect on the icons:
+        // typically, makes the checkbox be grayed-out when not editable.
+        // See AbstractButton.setSelectedIcon(), setSelectedDisabledIcon(), etc.
+    } else {
+      setEnabled(true);
+    }
+      
     if (isSelected) {
       setForeground(table.getSelectionForeground());
       setBackground(table.getSelectionBackground());
@@ -48,7 +72,7 @@ implements TableCellRenderer {
 
     if (hasFocus) {
       setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
-      if (table.isCellEditable(row, column)) {
+      if (editable) {
           setForeground( UIManager.getColor("Table.focusCellForeground") );
           setBackground( UIManager.getColor("Table.focusCellBackground") );
       }

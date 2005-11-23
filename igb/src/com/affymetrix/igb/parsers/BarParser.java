@@ -52,7 +52,7 @@ public class BarParser {
   /**
    *
    */
-  public static GraphSym getSlice(String file_name, SeqSpan span) {
+  public static GraphSym getSlice(String file_name, SeqSpan span) throws IOException {
     Timer tim = new Timer();
     tim.start();
     boolean USE_RANDOM_ACCESS = false;
@@ -119,8 +119,8 @@ public class BarParser {
     //    int start_point
     //    int point_count =
     Map seqs = new HashMap();
+    DataInput dis = null;
     try {
-      DataInput dis = null;
       if (USE_RANDOM_ACCESS) {
 
       }
@@ -197,11 +197,13 @@ public class BarParser {
       // now output bar file slice??
 
     }
-    catch (Exception ex)  { ex.printStackTrace(); }
+    finally {
+      if (dis instanceof InputStream) try { ((InputStream)dis).close(); } catch (Exception e) {}
+    }
     return graf;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     String test_file = "c:/data/graph_slice_test/test.bar";
     if (args.length > 0) {
       test_file = args[0];
@@ -224,19 +226,22 @@ public class BarParser {
     //    getSlice(test_file, new SimpleSeqSpan(158500000, 159000000, testseq));
   }
 
-  public static void testFullRead(String test_file) {
+  public static void testFullRead(String test_file) throws IOException {
     Timer tim = new Timer();
     tim.start();
+    DataInputStream dis = null;
     try {
       File fil = new File(test_file);
       int total_bytes = (int)fil.length();
       FileInputStream fis = new FileInputStream(fil);
-      DataInputStream dis = new DataInputStream(new BufferedInputStream(fis));
+      dis = new DataInputStream(new BufferedInputStream(fis));
       byte[] buf = new byte[total_bytes];
       dis.readFully(buf);
       dis.close();
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    finally {
+      try {dis.close();} catch (Exception e) {}
+    }
     long time_taken = tim.read();
     System.out.println("time to fully read file: " + time_taken/1000f);
   }
@@ -245,6 +250,8 @@ public class BarParser {
 
 
   /**
+   *  Builds an index for each sequence in the BAR file.
+   *  <pre>
    *  assumes that first field of every data entry is 4-byte signed int representing base position
    *  assumes base positions are sorted
    *  makes no assumption about the "regularity" of the entries.  If there is some regularity to
@@ -272,16 +279,16 @@ public class BarParser {
    *    data off disk per slice query.  And assumption is that this is being applied to bar files
    *    that have > 100K entries, and most likely millions, and the slices are fairly large (at
    *    least 10x > N), so overhead for reading extra data will be minor.
-   *
+   * </pre>
    */
-  public static void buildIndex(String file_name, String coord_set_id, Map seqs) {
+  public static void buildIndex(String file_name, String coord_set_id, Map seqs) 
+  throws IOException {
     Timer tim = new Timer();
     tim.start();
     // builds an index per sequence in the bar file
+    DataInputStream dis = null;
     try {
-      FileInputStream fis = new FileInputStream(new File(file_name));
-      BufferedInputStream bis = new BufferedInputStream(fis);
-      DataInputStream dis = new DataInputStream(bis);
+      dis = new DataInputStream(new BufferedInputStream(new FileInputStream(new File(file_name))));
       BarFileHeader file_header = parseBarHeader(dis);
       int[] val_types = file_header.val_types;
       int bytes_per_point = file_header.bytes_per_point;
@@ -330,7 +337,9 @@ public class BarParser {
 
       dis.close();
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    finally {
+      try {dis.close();} catch (Exception e) {}
+    }
     long index_time = tim.read();
     System.out.println("time to index: " + index_time/1000f);
     System.out.println(" ");
@@ -474,13 +483,20 @@ public class BarParser {
 				  String type, OutputStream outstream) {
   */
 
+  /** Parse a file in BAR format. */
   public static List parse(InputStream istr, Map seqs, String stream_name)
     throws IOException {
 
+    BufferedInputStream bis = null;
+    DataInputStream dis = null;
+    List graphs = null;
+
     Timer tim = new Timer();
     tim.start();
-    BufferedInputStream bis = new BufferedInputStream(istr);
-    DataInputStream dis = new DataInputStream(bis);
+    try {
+    
+    bis = new BufferedInputStream(istr);
+    dis = new DataInputStream(bis);
     BarFileHeader bar_header = parseBarHeader(dis);
 
     boolean bar2 = (bar_header.version >= 2.0f);
@@ -494,15 +510,13 @@ public class BarParser {
     if (file_tagvals.get("file_type") != null) {
       graph_name += ":" + (String)file_tagvals.get("file_type");
     }
-    List graphs = null;
-    int total_total_points = 0;
     for (int k=0; k<total_seqs; k++) {
       BarSeqHeader seq_header = parseSeqHeader(dis, seqs, bar_header);
       int total_points = seq_header.data_point_count;
       Map seq_tagvals = seq_header.tagvals;
       MutableAnnotatedBioSeq seq = seq_header.aseq;
       if (vals_per_point == 1) {
-        System.err.println("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
+        throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
       }
       else if (vals_per_point == 2) {
         if (val_types[0] == BYTE4_SIGNED_INT &&
@@ -538,7 +552,7 @@ public class BarParser {
           graphs.add(graf);
         }
         else {
-          System.err.println("currently, first val must be int4, second must be float4");
+          throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
         }
       }
       else if (vals_per_point == 3) {
@@ -586,13 +600,17 @@ public class BarParser {
           graphs.add(mm_graf);
         }
         else {
-          System.err.println("currently, first val must be int4, second must be float4");
+          throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
         }
       }
     }
     long t1 = tim.read();
     System.out.println("bar load time: " + t1/1000f);
-    System.out.println("total data points in bar file: " + total_total_points);
+    }
+    finally {
+      try { bis.close(); } catch (Exception e) {}
+      try { dis.close(); } catch (Exception e) {}
+    }
 
     return graphs;
   }

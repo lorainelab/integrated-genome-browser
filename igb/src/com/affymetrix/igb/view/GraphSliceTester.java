@@ -60,7 +60,12 @@ public class GraphSliceTester extends JComponent
       if (sym instanceof CompositeGraphSym) {
 	CompositeGraphSym gsym = (CompositeGraphSym)sym;
 	int prev_point_count = gsym.getPointCount();
-	boolean new_points = GraphSliceOptimizer.loadSlice(gsym, viewspan);
+	boolean new_points = false;
+        try {
+          new_points = GraphSliceOptimizer.loadSlice(gsym, viewspan);
+        } catch (IOException ioe) {
+          ioe.printStackTrace(System.err);
+        }
 	any_new_points = (any_new_points || new_points);
 	int new_point_count = gsym.getPointCount() - prev_point_count;
 	points_added += new_point_count;

@@ -69,6 +69,8 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
 
+  static boolean auto_apply_changes = true;
+  
   JButton refresh_list_B = new JButton("Refresh List");
   
   JButton refresh_map_B = new JButton("Refresh Map");
@@ -93,6 +95,11 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     JButton apply_bg_button = new JButton("Apply Default Background");
     button_panel.add(Box.createHorizontalGlue());
     button_panel.add(apply_bg_button);
+    apply_bg_button.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        copyDefaultBG();
+      }
+    });
     
     
     IGB igb = IGB.getSingletonIGB();
@@ -110,18 +117,6 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       button_panel.add(Box.createHorizontalStrut(10));
       button_panel.add(refresh_map_B);
     }
-
-    apply_bg_button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Iterator iter = AnnotStyle.getAllLoadedInstances().iterator();
-        while (iter.hasNext()) {
-          AnnotStyle as = (AnnotStyle) iter.next();
-          as.setBackground(default_annot_style.getBackground());
-        }
-        refreshList();
-        refreshSeqMapView();
-      }
-    });
     
     if (add_refresh_list_button) {
       button_panel.add(Box.createHorizontalStrut(10));
@@ -193,6 +188,17 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     this.setStyleList(styles);
   }
   
+  // Copy the background color from the default style to all loaded styles.
+  void copyDefaultBG() {
+    Iterator iter = AnnotStyle.getAllLoadedInstances().iterator();
+    while (iter.hasNext()) {
+      AnnotStyle as = (AnnotStyle) iter.next();
+      as.setBackground(default_annot_style.getBackground());
+    }
+    refreshList();
+    refreshSeqMapView();
+  }
+
   class TierPrefsTableModel extends AbstractTableModel {
     
     java.util.List tier_styles;
@@ -317,6 +323,14 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       } catch (Exception e) {
         // exceptions should not happen, but must be caught if they do
         System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
+      }
+      
+      if (auto_apply_changes) { 
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            applyChanges();
+          }
+        });
       }
     }
   

@@ -26,7 +26,6 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   private static final boolean DEBUG_PIXELBOX = false;
   private Rectangle debug_rect;
 
-  private String str;
   private Font fnt;
   private int placement;
   private boolean show_background = false;
@@ -35,7 +34,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   static final boolean THICK_OUTLINE = true;
 
   public String toString() {
-    return ("TierLabelGlyph: string: \""+str+"\"  +coordbox: "+coordbox);
+    return ("TierLabelGlyph: label: \""+getLabelString()+"\"  +coordbox: "+coordbox);
   }
 
   /**
@@ -45,8 +44,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
    */
   public TierLabelGlyph(TierGlyph reference_tier) {
     this();
-    str = reference_tier.getLabel();
-    if (str==null) {str = "......."; }
+    //str = reference_tier.getLabel();
+    //if (str==null) {str = "......."; }
     this.setInfo(reference_tier);
   }
   
@@ -74,13 +73,16 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return (TierGlyph) getInfo();
   }
     
-  public void setString (String str) {
-    this.str = str;
+  /** Returns the label of the reference tier, or some default string if there isn't one. */
+  String getLabelString() {
+    TierGlyph reference_tier = getReferenceTier();
+    if (reference_tier == null || reference_tier.getLabel() == null) {
+      return ".......";
+    } else {
+      return reference_tier.getLabel();
+    }
   }
-  public String getString () {
-    return str;
-  }
-
+  
   public void setShowBackground(boolean show) {
     show_background = show;
   }
@@ -99,13 +101,13 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   public void draw(ViewI view) {
     Color bgcolor = null;
     Color fgcolor = null;
-    if (this.getInfo() instanceof TierGlyph) {
-      TierGlyph reftier = (TierGlyph)this.getInfo();
-      //      setBackgroundColor(reftier.getFillColor());
-      //      setForegroundColor(reftier.getForegroundColor());
-      bgcolor = reftier.getFillColor();
-      fgcolor = reftier.getForegroundColor();
-    }
+
+    TierGlyph reftier = this.getReferenceTier();
+    //      setBackgroundColor(reftier.getFillColor());
+    //      setForegroundColor(reftier.getForegroundColor());
+    bgcolor = reftier.getFillColor();
+    fgcolor = reftier.getForegroundColor();
+    
     Graphics g = view.getGraphics();
     g.setPaintMode();
     if ( null != fnt ) {
@@ -113,8 +115,9 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     }
     FontMetrics fm = g.getFontMetrics();
     int text_width = 0;
-    if ( null != str ) {
-      text_width = fm.stringWidth(str);
+    String label = getLabelString();
+    if ( null != label ) {
+      text_width = fm.stringWidth(label);
     }
     int text_height = fm.getAscent() + fm.getDescent();
     int blank_width = fm.charWidth ('z')*2;
@@ -145,7 +148,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     }
 
     // only show text if it will fit in pixelbox (and it's not null)...
-    if ((text_height <= pixelbox.height)  && (str != null)) {
+    if ((text_height <= pixelbox.height)  && (label != null)) {
 
       if (placement == LEFT ) {
 	pixelbox.x = pixelbox.x;
@@ -182,7 +185,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       // define adjust such that: ascent-adjust = descent+adjust
       // (But see comment above about the extra -1 pixel)
       int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
-      g.drawString (str, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
+      g.drawString (label, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
     }
     if (DEBUG_PIXELBOX) {
       // testing pixbox...

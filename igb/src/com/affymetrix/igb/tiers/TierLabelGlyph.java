@@ -103,6 +103,9 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     Color fgcolor = null;
 
     TierGlyph reftier = this.getReferenceTier();
+    // We COULD call setForegroundColor() and setBackgroundColor(), 
+    // but no other object is ever likely to ask for it and
+    // it seems inefficient here
     //      setBackgroundColor(reftier.getFillColor());
     //      setForegroundColor(reftier.getForegroundColor());
     bgcolor = reftier.getFillColor();
@@ -181,7 +184,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       // least one pixel below them
 
       // display string
-      g.setColor( getForegroundColor() );
+      g.setColor( fgcolor );
+      //g.setColor( getForegroundColor() );
       // define adjust such that: ascent-adjust = descent+adjust
       // (But see comment above about the extra -1 pixel)
       int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;

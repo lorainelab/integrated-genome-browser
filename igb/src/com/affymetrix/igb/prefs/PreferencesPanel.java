@@ -68,23 +68,17 @@ public class PreferencesPanel extends JPanel {
         }
       });
 
-      singleton.addPrefEditorComponent(singleton.tpv);
-      TAB_NUM_TIERS = singleton.tab_pane.getComponentCount() - 1;
+      TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
       
-      singleton.addPrefEditorComponent(new DasServersView());
-      TAB_NUM_DAS = singleton.tab_pane.getComponentCount() - 1;
+      TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
       
-      singleton.addPrefEditorComponent(new KeyStrokesView());
-      TAB_NUM_KEY_STROKES = singleton.tab_pane.getComponentCount() - 1;
+      TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
 
-      //singleton.addPrefEditorComponent(new PluginsView());
-      //TAB_NUM_PLUGINS = singleton.tab_pane.getComponentCount() - 1;
+      //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
 
-      singleton.addPrefEditorComponent(new GraphsView());
-      TAB_NUM_GRAPHS_VIEW = singleton.tab_pane.getComponentCount() - 1;
+      TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
 
-      singleton.addPrefEditorComponent(new OptionsView());
-      TAB_NUM_MISC_OPTIONS = singleton.tab_pane.getComponentCount() - 1;      
+      TAB_NUM_MISC_OPTIONS = singleton.addPrefEditorComponent(new OptionsView());
     }
     return singleton;
   }
@@ -105,14 +99,16 @@ public class PreferencesPanel extends JPanel {
   /** Adds the given component as a panel to the tab pane of preference editors.
    *  @param pec  An implementation of PrefEditorComponent that must also be an
    *              instance of java.awt.Component.
+   *  @return the index of the added tab in the tab pane.
    */
-  public void addPrefEditorComponent(final IPrefEditorComponent pec) {
+  public int addPrefEditorComponent(final IPrefEditorComponent pec) {
     tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());    
     ((Component) pec).addComponentListener(new ComponentAdapter() {
       public void componentShown(ComponentEvent e) {
         pec.refresh();
       }
     });
+    return tab_pane.indexOfComponent((Component) pec);
   }
   
   public IPrefEditorComponent[] getPrefEditorComponents() {

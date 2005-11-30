@@ -40,9 +40,11 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
 
   
     boolean platforms_initialized = false;    
-    LinkedList platforms = new LinkedList();    
+    LinkedList platforms = new LinkedList(); 
+          
+    // hash to convert ID to name
+    HashMap typeIdToName = new HashMap();
   
-    
     /** Creates a new instance of Das2AssayVersionedSource */
     public Das2AssayVersionedSource(Das2AssaySource das_source, String version_id, boolean init) {
         super(das_source, version_id, init);
@@ -64,7 +66,15 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
         return this.types;
     }
     
-    
+    // FIXME: Marc, please remove any hardcoded server strings here
+    //        Also, you need to rework the way that "id" and "ontology"
+    //        fields are treated.  You're relying on the id and ontology
+    //        fields being the same/stable and the id is not.  You can't
+    //        count on the id field being in this format, it's just a label.
+    //        Finally, the init_types method will be much simplier when the 
+    //        new obo format is used since the parent/child relationships are
+    //        no longer included.  You can refactor this method up to a higher
+    //        level when everything uses the common obo xml.
     // get annotation types from das server
     protected void initTypes(String filter, boolean getParents) {
     this.types_filter = filter;
@@ -77,28 +87,15 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
     
 
     //example of ontology request:  http://das.biopackages.net/das/ontology/obo/1/ontology/
-    String ontologyRequest = ((Das2AssayServerInfo)(getSource().getServerInfo() )).getRootOntologyUrl();
-
-/*    //path needs to look like: /das/ontology/obo/1/ontology/  but must be done in a universal way so...
-    String ontologyPath = ontologyRequest;
-    //the pattern to look for gets compiled in here
-    Pattern pat = Pattern.compile("^http://.+?/+");
-    //init the matcher object
-    Matcher mat = pat.matcher("");
-    //reset the matcher with the string in question
-    mat.reset(ontologyPath);                    
-    //Replace found characters with an empty string.
-    ontologyPath = mat.replaceFirst("");
-    ontologyPath = "/"+ontologyPath;
-    int ontoPathLength = ontologyPath.length();
-*/    
+    String ontologyRequest = ((Das2AssayServerInfo)(getSource().getServerInfo() )).getRootOntologyUrl();   
     
     if (filter != null) {
       types_request = types_request+"?ontology="+filter;
       //next I need a string like:
       //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA?format=legacy0
-      ontologyRequest = ontologyRequest+filter+"?format=legacy0";
+      ontologyRequest = ontologyRequest+filter;
     }
+    ontologyRequest = ontologyRequest+"?format=legacy0";
 
     
     //    String types_request = "file:/C:/data/das2_responses/alan_server/types_short.xml";
@@ -126,42 +123,34 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
 
       //this is for tracking whether or not a node has been included in the list of nodes to draw/use later on...
       HashMap uberTrackingHash = new HashMap();     
+      
       String ontoRootNodeId = new String();
       int typeCounter = 0;  
 
       //Loop through the entire ontology and put the relevant relationships into this map
       for (int m=0; m< ontoTypeList.getLength(); m++)  {
         Element ontoTypeNode = (Element)ontoTypeList.item(m);
-        String termID = ontoTypeNode.getAttribute("id");                        
-        termID = ontologyBaseURL+termID;
-        
-        // temporary workaround for getting type ending, rather than full URI
-        if (termID.startsWith("./")) { termID = termID.substring(2); }          
+        String termID = ontoTypeNode.getAttribute("id"); 
+        // FIXME: could include relative URL here too
+        if (ontoTypeNode.getAttribute("name") != null && ontoTypeNode.getAttribute("name") != "") {
+            typeIdToName.put(termID, ontoTypeNode.getAttribute("name")); 
+        }
+
+        // loop through all the parents of this node
 
         NodeList localParentsList = ontoTypeNode.getElementsByTagName("PARENT");    
         for (int l=0; l<localParentsList.getLength(); l++) {                    
 
-/*            //the pattern to look for gets compiled in here
-            Pattern p = Pattern.compile("/");
-            //init the matcher object
-            Matcher match = p.matcher("");
-            //reset the matcher with the string in question
-            match.reset(termID);                    
-            //Replace found characters with an empty string.
-            termID = match.replaceAll(":");
-*/
             Element pnode = (Element)localParentsList.item(l);                   
            //get the newest parent
            String newParent = pnode.getAttribute("id");
-           newParent = ontologyBaseURL+newParent;
+           if (pnode.getAttribute("name") != null  && pnode.getAttribute("name") != "") { 
+               typeIdToName.put(newParent, pnode.getAttribute("name")); 
+           }
+           //newParent = ontologyBaseURL+newParent;  // WTF!?!?!?!
            //make a new List to hold all parents (old an new)
 
-            //reset the matcher with the string in question
-//            match.reset(newParent);                    
-            //Replace found characters with an empty string.
-//            newParent = match.replaceAll(":");
-
-           ArrayList parentsList = new ArrayList();                               
+           ArrayList parentsList = new ArrayList(); // FIXME: WRONG?!!!                              
            //add that newest parent to it
            parentsList.add(newParent);
            //if we had a parent for this before...
@@ -188,6 +177,9 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
            }
         }  
       }
+      
+      // the loop through all the ontology terms & direct parents should be done
+      // next, look at the types for this versioned source
 
         //Cycle through the two hashes and annoint a root node...
         //I want the ID of the node that is not shared between parentHoldingHash and the curOntology (not in curOntology)
@@ -207,17 +199,19 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       //Finally, go through the types and find (match up from the above hashes) parents for each one
       for (int i=0; i< typelist.getLength(); i++)  {     
         Element typenode = (Element)typelist.item(i);                                   
-        String typeid = typenode.getAttribute("ontology");//id");                            
-        typeid = typeServerName+typeid;
-        
-        // temporary workaround for getting type ending, rather than full URI
-//        if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          
-        //FIXME: quick hack to get the type IDs to be kind of right (for now)
-
-        String ontid = typenode.getAttribute("ontology");
-        ontid = typeServerName+ontid;                                           //ontologyBaseURL+ontid;
-        String type_source = typenode.getAttribute("source");                   
-        String href = typenode.getAttribute("doc_href");                        
+        String typeid = typenode.getAttribute("ontology");//id");   
+        if (typenode.getAttribute("name") != null  && typenode.getAttribute("name") != "") {
+            typeIdToName.put(typeid, typenode.getAttribute("name")); 
+        }
+        // So above everything is coming back with http://<fullurl>/MA/1232
+        // I've changed this to be MA/123213
+        String[] tokens = typeid.split("/");
+        typeid = tokens[tokens.length-2]+"/"+tokens[tokens.length-1];
+        //typeid = typeServerName+typeid; // FIXME: WTF!?!?!
+              
+        String type_name = typenode.getAttribute("name");
+        String type_source = ""; // not included anymore
+        String href = "";
 
         NodeList flist = typenode.getElementsByTagName("FORMAT");               
         LinkedHashMap formats = new LinkedHashMap();                            
@@ -240,36 +234,21 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
           props.put(key, val);
         }
 
+        // HERE!!!
+        
         HashMap parents = new HashMap();
 
         if(getParents == true){
 
-            //get the elements you need from the hash and then assign them as below 
-            //the value of ontid may need to be unescaped, and then it needs to be 
-            //trimmed of whatever base URI information its carrying 1st.
-
-            //Independent of server, this will get rid of the cruft at the start of the onto term ids  
-//            if (ontid.startsWith(ontologyPath)) { ontid = ontid.substring(ontoPathLength); }    
-
             //this just guarantees that the string is unescaped... (safety feature)           
-            ontid = URLDecoder.decode(ontid);
- 
+            typeid = URLDecoder.decode(typeid);
 
-/*            //the pattern to look for gets compiled in here
-            Pattern p = Pattern.compile("/");
-            //init the matcher object
-            Matcher m = p.matcher("");
-            //reset the matcher with the string in question
-            m.reset(ontid);                    
-            //Replace found characters with an empty string.
-            ontid = m.replaceAll(":");
-*/
 
             //The following calls get the relevant type nodes needed to make a tree:            
             ArrayList newTypes = new ArrayList();      //the list of this node and its parents who all need to be collected into the cue at this time...    
-            parents = getParentsMap(ontid, curOntology);
+            parents = getParentsMap(typeid, curOntology);
             HashMap orphanTypes = new HashMap(); //map to hold the IDs and the parents of each ID that we later want to recover...
-            recurseUntilAllParentsAreFound(this, typeid, ontid, curOntology, uberTrackingHash, 
+            recurseUntilAllParentsAreFound(this, typeid, typeid, curOntology, uberTrackingHash, 
                     newTypes, ontoRootNodeId, parents, orphanTypes, type_source, href, formats, props);
 
             //the final thing will be to loop through throws Das2Types list and do the this.addType(i); for each one
@@ -287,8 +266,9 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
                String key = "";                                                 
                String val = "";                                                 
                parents.put(key, val);                                          
-            }                                                                           
-            Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, parents);
+            }  
+            // FIXME: I think the id and ontology fields should be switched here
+            Das2Type type = new Das2Type(this, typeid, (String)typeIdToName.get(typeid), type_source, href, formats, props, parents);
             this.addType(type);     
         }
 
@@ -342,7 +322,8 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
             if(!_uberTrackingHash.containsKey(_typeid)){    //if we don't have this in the _uberTrackingHash already...        
                     if(!_newTypes.contains(_typeid)){     //make sure we have not seen this element before (in this pass)
                         //1) make a Das2Type...
-                        Das2Type type = new Das2Type(_type, _typeid, _ontid, _type_source, _href, _formats, _props, _parents);
+                        // FIXME: the id and ontology id are probably reversed here
+                        Das2Type type = new Das2Type(_type, _typeid, (String)typeIdToName.get(_typeid), _type_source, _href, _formats, _props, _parents);
                         //2) add the current element to the ArrayList and use a bool to see if its the 1st time or not...
                         _newTypes.add(type);
                         //3) note that we added the element by adding it to the _uberTrackingHash and the

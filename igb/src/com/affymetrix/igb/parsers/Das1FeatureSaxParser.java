@@ -52,7 +52,9 @@ for more than one per feature)
            <SCORE>-</SCORE>
            <ORIENTATION>+</ORIENTATION>
            <PHASE>-</PHASE>
+           <!-- Links and Notes can occur inside or outside the <GROUP> element -->
            <NOTE>This is a feature note</NOTE>
+           <LINK href="http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr22:20012405-20012900&amp;db=hg10">Link to UCSC Browser for the feature</LINK>
            <GROUP id="Em:D87024.C22.12.chr22.20012405">
              <LINK href="http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr22:20012405-20012900&amp;db=hg10">Link to UCSC Browser</LINK>
              <NOTE>This is a group note<NOTE>
@@ -281,7 +283,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       within_group_element = true;
     }
     else if (iname == LINK) {
-      featlink_urls.add(atts.getValue("href"));
+      String href = atts.getValue("href");
+      if (href == null) {
+        System.out.println("WARNING: DAS Format Error: <LINK> element has no href attribute");
+        featlink_urls.add(""); // add a blank URL to keep featlink_urls and featlink_name list sizes the same
+      } else {
+        featlink_urls.add(href);
+      }
     }
     else if (iname == NOTE) {
       // handling NOTES in endElement method...
@@ -344,17 +352,19 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else if (iname == GROUP) {
       within_group_element = false;
     }
-    else if (iname == LINK && current_chars != null) {
-      String link_name = current_chars.toString();
+    else if (iname == LINK) {
+      String link_name = null;
+      if (current_chars != null) {
+        String text = current_chars.toString().trim();
+        if (text.length() > 0) {
+          link_name = text;
+        }
+      }
+      if (link_name == null) {
+        link_name = (String) featlink_urls.get(featlink_urls.size() - 1);
+      }
       featlink_names.add(link_name);
       
-      if (featlink_names.size() < featlink_urls.size()) {
-        String url_as_name = (String)featlink_urls.get(featlink_names.size());
-              featlink_names.add(url_as_name);
-      }
-      //      while (featlink_names.size() < featlink_urls.size()) {
-      //        featlink_names.add("");
-      //      }
     } else if (iname == NOTE && current_chars != null) {
       String note_text = current_chars.toString();
 
@@ -557,7 +567,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
               ((prev_links == null) ||
                 ((prev_link != null) && prev_link.equals((String)featlink_urls.get(0))) )  )  {
             parent_sym.setProperty("link", featlink_urls.get(0));
-            parent_sym.setProperty("link_name", featlink_urls.get(0));
+            if (featlink_names.size() > 0) {
+              parent_sym.setProperty("link_name", featlink_names.get(0));
+            } else {
+              parent_sym.setProperty("link_name", featlink_urls.get(0));
+            }
           }
           else {
             if (links_hash == null) {

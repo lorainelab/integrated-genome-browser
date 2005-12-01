@@ -109,11 +109,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   String featgroup = null;
   java.util.List featlink_urls = new ArrayList();
   java.util.List featlink_names = new ArrayList();
-  HashMap feat_notes = null;
-  HashMap group_notes = null;
+  Map feat_notes = null;
+  Map group_notes = null;
 
-  Hashtable grouphash = new Hashtable();  // maps group id/strings to parent SeqSymmetries
-  Hashtable typehash = new Hashtable();  // maps type id/strings to type symmetries
+  Map grouphash = new HashMap();  // maps group id/strings to parent SeqSymmetries
+  Map typehash = new HashMap();  // maps type id/strings to type symmetries
 
   MutableSeqSpan unionSpan = new SimpleMutableSeqSpan();
 
@@ -126,7 +126,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   boolean prev_chars = false;
   int cached_int = Integer.MIN_VALUE;
 
-  /** indicates whether currently within a GROUP element or any descendant of a GROUP element */
+  /** Indicates whether currently within a GROUP element or any descendant of a GROUP element */
   boolean within_group_element = false;
 
   int featcount = 0;
@@ -134,12 +134,12 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   int elemcount = 0;
 
   /**
-   *  a hash used to filter features with at particular "id" attribute value in "TYPE" element
+   *  A Map used to filter features with at particular "id" attribute value in "TYPE" element.
    */
-  Hashtable filter_hash = new Hashtable();
+  Map filter_hash = new HashMap();
 
   /**
-   *  List of syms resulting from parse
+   *  List of syms resulting from parse.
    *  These are the "low-level" results, _not_ the top-level "container" syms
    *    (two-level if features have group tags, one-level if features have no group tags)
    */
@@ -235,24 +235,27 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     result_syms = new ArrayList();
     seqhash = seqmap;
     //  For now assuming the source XML contains only a single segment
+    XMLReader reader = new org.apache.xerces.parsers.SAXParser();
     try {
-      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
       //      reader.setFeature("http://xml.org/sax/features/string-interning", true);
-
       reader.setFeature("http://xml.org/sax/features/validation", false);
       reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);
       reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-      reader.setContentHandler(this);
-      reader.parse(isrc);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    catch (SAXNotRecognizedException snrex) {
+      // We couldn't care less about these exceptions
+      System.err.println("WARNING: "+snrex.toString());
     }
-    //    return aseq;
+    catch (SAXNotSupportedException snsex) {
+      // We couldn't care less about these exceptions
+      System.err.println("WARNING: "+snsex.toString());
+    }
+    // We DO care about any exceptions coming during parsing
+    reader.setContentHandler(this);
+    reader.parse(isrc);
     return result_syms;
   }
-
+  
   public void startDocument() {
   }
 
@@ -372,7 +375,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  If the note is of form, "tag=value", the tag and value are used as key and value
    *  in the map.  Otherwise, the string is put in the map using the key "note".
    */
-  static HashMap parseNote(String note_text, HashMap map) {
+  static Map parseNote(String note_text, Map map) {
     int split_pos = note_text.indexOf("=");
     if (split_pos > 0 && (split_pos < (note_text.length()-1))) {
       // assuming parsing out a tag-value pair...

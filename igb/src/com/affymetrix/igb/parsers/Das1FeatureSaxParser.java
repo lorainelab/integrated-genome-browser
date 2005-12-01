@@ -52,8 +52,10 @@ for more than one per feature)
            <SCORE>-</SCORE>
            <ORIENTATION>+</ORIENTATION>
            <PHASE>-</PHASE>
+           <NOTE>This is a feature note</NOTE>
            <GROUP id="Em:D87024.C22.12.chr22.20012405">
              <LINK href="http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr22:20012405-20012900&amp;db=hg10">Link to UCSC Browser</LINK>
+             <NOTE>This is a group note<NOTE>
            </GROUP>
        </FEATURE>
      </SEGMENT>
@@ -89,6 +91,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   boolean MAKE_TYPE_CONTAINER_SYM = true;
   boolean READER_DOES_INTERNING = false;
   boolean FILTER_OUT_BY_ID = true;
+  
+  // Whether to keep the content of the <NOTE> elements.
+  // <NOTE>s that have a "key=value" structure are always kept, but this
+  // flag influences whether random textual notes are also kept.
+  static final boolean STORE_TEXTUAL_NOTES = false;
 
   MutableAnnotatedBioSeq aseq = null;
   Map seqhash = null;
@@ -115,10 +122,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   Stack elemstack = new Stack();
   Stack symstack = new Stack();
-  boolean parse_chars_to_int = false;
 
-  // whether to accumulate characters for parsing content...
-  boolean collect_characters = false;
   boolean prev_chars = false;
   int cached_int = Integer.MIN_VALUE;
 
@@ -255,7 +259,6 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   public void endDocument() {
   }
 
-
   public void startElement(String uri, String name, String qname, Attributes atts) {
     //    System.out.println(name);
     elemstack.push(current_elem);
@@ -278,7 +281,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       featlink_urls.add(atts.getValue("href"));
     }
     else if (iname == NOTE) {
-      // handling NOTES in characters method...
+      // handling NOTES in endElement method...
     }
     else if (iname == TYPE) {
       feattype = atts.getValue("id").intern();
@@ -338,7 +341,10 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else if (iname == GROUP) {
       within_group_element = false;
     }
-    else if (iname == LINK) {
+    else if (iname == LINK && current_chars != null) {
+      String link_name = current_chars.toString();
+      featlink_names.add(link_name);
+      
       if (featlink_names.size() < featlink_urls.size()) {
         String url_as_name = (String)featlink_urls.get(featlink_names.size());
               featlink_names.add(url_as_name);
@@ -346,12 +352,49 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       //      while (featlink_names.size() < featlink_urls.size()) {
       //        featlink_names.add("");
       //      }
+    } else if (iname == NOTE && current_chars != null) {
+      String note_text = current_chars.toString();
+
+      if (within_group_element) {
+        if (group_notes == null) { group_notes = new HashMap(); }
+        parseNote(note_text, group_notes);
+      } else {
+        if (feat_notes == null) { feat_notes = new HashMap(); }
+        parseNote(note_text, feat_notes);
+      }
     }
     current_elem = (String)elemstack.pop();
     current_chars = null;
     prev_chars = false;
   }
 
+  /** Parse the text of a DAS-XML NOTE element and put the results in a map. 
+   *  If the note is of form, "tag=value", the tag and value are used as key and value
+   *  in the map.  Otherwise, the string is put in the map using the key "note".
+   */
+  static HashMap parseNote(String note_text, HashMap map) {
+    int split_pos = note_text.indexOf("=");
+    if (split_pos > 0 && (split_pos < (note_text.length()-1))) {
+      // assuming parsing out a tag-value pair...
+      String tag = note_text.substring(0, note_text.indexOf("="));
+      String val = note_text.substring(note_text.indexOf("=")+1);
+      if ((val != null) &&
+          (val.charAt(0) == '\"') &&
+          (val.charAt(val.length()-1) == '\"') ) {
+        val = val.substring(1, val.length()-1);
+      }
+      map.put(tag, val);
+    } else if (split_pos == (note_text.length()-1)) {
+      // If note text ends with "=", like "self_cross_hybridizes=",
+      // then it isn't useful information, so skip it to save memory.
+    } else {
+      if (STORE_TEXTUAL_NOTES) {
+        map.put("note", note_text);
+      }
+    }
+    return map;
+  }
+    
   public void clearFeature() {
     featid = null;
     feattype = null;
@@ -551,7 +594,6 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   }
 
-
   /*
    *  According to SAX2 spec, parsers can split up character content any
    *    way they wish.  This makes designing an efficient processor that can avoid lots of
@@ -563,7 +605,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *    a particular element is a single characters() call, BUT which can handle the cases where this
    *    content is split across multiple characters() calls
    */
-  public void characters(char[] ch, int start, int length) {
+  public void characters(char[] ch, int start, int length) {    
     //    System.out.println("***" + new String(ch, start, length) + "&&&");
     //    if (inStartElem || inEndElem) {
     if (current_elem == START || current_elem == END)  {  // parse out integer
@@ -600,31 +642,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         else if (ch[i] == '-') { featstrand = REVERSE; break; }
       }
     }
-    else if (current_elem == LINK) {
-      String link_name = new String(ch, start, length);
-      featlink_names.add(link_name);
-    }
-    else if (current_elem == NOTE) {
-      String note_text = new String(ch, start, length);
-      int split_pos = note_text.indexOf("=");
-      if (split_pos > 0 && (split_pos < (note_text.length()-1))){
-        // assuming parsing out a tag-value pair...
-        String tag = note_text.substring(0, note_text.indexOf("="));
-        String val = note_text.substring(note_text.indexOf("=")+1);
-        if ((val != null) &&
-            (val.charAt(0) == '\"') &&
-            (val.charAt(val.length()-1) == '\"') ) {
-          val = val.substring(1, val.length()-1);
-        }
-        if (within_group_element) {
-          if (group_notes == null) { group_notes = new HashMap(); }
-          group_notes.put(tag, val);
-        }
-        else {
-          if (feat_notes == null) { feat_notes = new HashMap(); }
-          feat_notes.put(tag, val);
-        }
+    else if (current_elem == LINK || current_elem == NOTE) {
+      if (current_chars == null) {
+        current_chars = new StringBuffer(length);
       }
+      current_chars.append(ch, start, length);
     }
     prev_chars = true;
   }

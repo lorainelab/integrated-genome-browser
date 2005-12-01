@@ -2447,6 +2447,8 @@ public class SeqMapView extends JPanel
         fortier = new TierGlyph(style);
         setUpTierPacker(fortier, true);
         method2ftier.put(meth, fortier);
+      }
+      if (fortier != null) {
         String label;
         if (style != null) {
           if (style.getSeparate()) {
@@ -2461,23 +2463,29 @@ public class SeqMapView extends JPanel
           label = meth + " (+)";
         }
         fortier.setLabel(label);
-
+      }
+      if (map.getTierIndex(fortier) == -1) {
         if (next_to_axis)  {
           int axis_index = map.getTierIndex(axis_tier);
           map.addTier(fortier, axis_index);
         }
         else { map.addTier(fortier, true); }
       }
+      
       if (revtier == null)  {
         revtier = new TierGlyph(style);
         //revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
         setUpTierPacker(revtier, false);
         method2rtier.put(meth, revtier);
+      }
+      if (revtier != null) {
         if (style == null) {
           revtier.setLabel(meth + " (-)");
         } else {
           revtier.setLabel(style.getHumanName() + " (-)");
         }
+      }
+      if (map.getTierIndex(revtier) == -1) {
         if (next_to_axis)  {
           int axis_index = map.getTierIndex(axis_tier);
           map.addTier(revtier, axis_index+1);

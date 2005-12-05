@@ -150,6 +150,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static void main(String[] args) {
    try {
 
+    try {
+      // It this is Windows, then use the Windows look and feel.
+      LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
+      if (look_and_feel.isSupportedLookAndFeel()) {
+        UIManager.setLookAndFeel(look_and_feel);
+      }
+    } catch (UnsupportedLookAndFeelException ulfe) {
+      // Windows look and feel is only supported on Windows.  That is ok.
+    }
+    
     // Initialize the ConsoleView right off, so that ALL output will
     // be captured there.
     ConsoleView.init();
@@ -157,14 +167,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     System.out.println("Starting \"" + IGBConstants.APP_NAME + "\"");
     System.out.println("Version: " + IGBConstants.IGB_VERSION);
     System.out.println();
-
-    try {
-      // It this is Windows, then use the Windows look and feel.
-      LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
-      UIManager.setLookAndFeel(look_and_feel);
-    } catch (UnsupportedLookAndFeelException ulfe) {
-      // Windows look and feel is not supported on Linux.  That is ok.
-    }
 
     main_args = args;
     getIGBPrefs(); // force loading of prefs
@@ -181,7 +183,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     singleton_igb = new IGB();
     singleton_igb.init();
-
+    
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     String url = get_arg("-href", args);

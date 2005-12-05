@@ -134,14 +134,16 @@ public class UrlLoaderThread extends Thread {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (e instanceof UnknownHostException) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host",
-            "Unknown host: "+e.getMessage(), null);
+          //ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host",
+          //  "Unknown host: "+e.getMessage(), null);
+          com.affymetrix.igb.IGB.getSingletonIGB().setStatus("Unknown host: "+e.getMessage());
         } else if (e instanceof FileNotFoundException) {
           ErrorHandler.errorPanel(gviewer.getFrame(), "File not found",
             "File missing or not readable:\n "+e.getMessage(), null);
         } else {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
-            "Exception in UrlLoaderThread", e);
+          //ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
+          //  "Exception in UrlLoaderThread", e);
+          com.affymetrix.igb.IGB.getSingletonIGB().setStatus(e.getMessage());
         }
       }
     });
@@ -235,11 +237,14 @@ public class UrlLoaderThread extends Thread {
       throw new IOException("URL returned no data.");
     }
 
+    URL url = feat_request_con.getURL();
+
     if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
+
     if (content_type == null || content_type.startsWith("content/unknown") || content_type.startsWith("application/zip")
-      || content_type.startsWith("application/octet-stream"))
+      || content_type.startsWith("application/octet-stream") 
+      || "file".equals(url.getProtocol().toLowerCase()))
     {
-      URL url = feat_request_con.getURL();
       System.out.println("Attempting to load data from: " + url.toExternalForm());
 
       // Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"

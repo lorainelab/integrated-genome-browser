@@ -450,8 +450,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
-    startControlServer();
-
     frm = new JFrame(APP_NAME);
 
     // when HTTP authentication is needed, getPasswordAuthentication will
@@ -671,6 +669,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       });
     frm.show();
 
+    // Start listining for http requests only after all set-up is done.
+    startControlServer();
   }
 
   /** Sets the text in the status bar.

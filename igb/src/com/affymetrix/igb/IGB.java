@@ -186,13 +186,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
-    String url = get_arg("-href", args);
+    final String url = get_arg("-href", args);
     if (url != null && url.length() > 0) {
       try {
-        System.out.println("Loading bookmark: "+url);
-        Bookmark bm = new Bookmark(null, url);
+        final Bookmark bm = new Bookmark(null, url);
         if (bm.isUnibrowControl()) {
-          BookmarkController.viewBookmark(singleton_igb, bm);
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              System.out.println("Loading bookmark: "+url);
+              BookmarkController.viewBookmark(singleton_igb, bm);
+            }
+          });
+        } else {
+          System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
         }
       } catch (MalformedURLException mue) {
         mue.printStackTrace(System.err);
@@ -672,7 +678,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // Start listining for http requests only after all set-up is done.
     startControlServer();
   }
-
+  
   /** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.
    *  It is safe to call this method even if the status bar is not being displayed.

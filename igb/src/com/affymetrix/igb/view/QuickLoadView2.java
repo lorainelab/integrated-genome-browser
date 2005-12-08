@@ -98,9 +98,9 @@ public class QuickLoadView2 extends JComponent
     serverCB.addItem("test");
     genomeCB = new JComboBox();
     genomeCB.addItem("genome test");
-    //    choice_panel.add(new JLabel("Quickload Server:"));
+    //    choice_panel.add(new JLabel("QuickLoad Server:"));
     //    choice_panel.add(serverCB);
-    choice_panel.add(new JLabel("Quickload Genome:"));
+    choice_panel.add(new JLabel("QuickLoad Genome:"));
     choice_panel.add(genomeCB);
     JPanel panel2 = new JPanel(new BorderLayout());
     panel2.add("West", choice_panel);
@@ -120,7 +120,7 @@ public class QuickLoadView2 extends JComponent
     else {
       buttonP.add(new JLabel("No sequence residues available", JLabel.CENTER));
     }
-    optionsB = new JButton("Quickload Options");
+    optionsB = new JButton("QuickLoad Options");
     buttonP.add(optionsB);
     optionsB.addActionListener(this);
 
@@ -502,10 +502,10 @@ public class QuickLoadView2 extends JComponent
     String old_QL = getQuickLoadUrl();
     
     //TODO: before showing the options dialog, need to reset its GUI to actual current values
-    JOptionPane.showMessageDialog(this, optionsP, "Quickload Options", JOptionPane.PLAIN_MESSAGE);
+    JOptionPane.showMessageDialog(this, optionsP, "QuickLoad Options", JOptionPane.PLAIN_MESSAGE);
 
     //TODO: Give the user a "Cancel" options as well as "OK"
-    //int option = JOptionPane.showConfirmDialog(this, optionsP, "Quickload Options", JOptionPane.OK_
+    //int option = JOptionPane.showConfirmDialog(this, optionsP, "QuickLoad Options", JOptionPane.OK_
     //if (option == JOptionPane.OK_OPTION) {
 
     // could handle cache_usage_selector, cache_annotsCB, cache_residuesCB in event handlers, but was getting too spread out

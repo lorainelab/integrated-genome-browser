@@ -89,21 +89,25 @@ public class QuickLoadView2 extends JComponent
 
     gviewer = IGB.getSingletonIGB().getMapView();
     this.setLayout(new BorderLayout());
-    JPanel choice_panel = new JPanel();
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
 
-    choice_panel.setLayout(new GridLayout(1,2));
-    serverCB = new JComboBox();
-    serverCB.addItem("test");
+    JPanel choice_panel = new JPanel();
+    choice_panel.setLayout(new BoxLayout(choice_panel, BoxLayout.X_AXIS));
+//    serverCB = new JComboBox();
+//    serverCB.addItemListener(this);
+//    serverCB.addItem("test");
+//    choice_panel.add(new JLabel("QuickLoad Server:"));
+//    choice_panel.add(Box.createHorizontalStrut(5));
+//    choice_panel.add(serverCB);
+//    choice_panel.add(Box.createHorizontalStrut(20));
     genomeCB = new JComboBox();
     genomeCB.addItem("genome test");
-    //    choice_panel.add(new JLabel("QuickLoad Server:"));
-    //    choice_panel.add(serverCB);
+    genomeCB.addItemListener(this);
     choice_panel.add(new JLabel("QuickLoad Genome:"));
+    choice_panel.add(Box.createHorizontalStrut(5));
     choice_panel.add(genomeCB);
-    JPanel panel2 = new JPanel(new BorderLayout());
-    panel2.add("West", choice_panel);
+    choice_panel.add(Box.createHorizontalGlue());
 
     JPanel buttonP = new JPanel();
     buttonP.setLayout(new GridLayout(1, 3));
@@ -124,15 +128,12 @@ public class QuickLoadView2 extends JComponent
     buttonP.add(optionsB);
     optionsB.addActionListener(this);
 
-    this.add("North", panel2);
+    this.add("North", choice_panel);
     this.add("Center", new JScrollPane(types_panel));
     this.add("South", buttonP);
 
-    //    this.add("North", choice_panel);
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
-    serverCB.addItemListener(this);
-    genomeCB.addItemListener(this);
 
     resetQuickLoadUrl();
   }

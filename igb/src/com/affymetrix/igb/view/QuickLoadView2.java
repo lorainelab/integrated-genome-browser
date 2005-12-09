@@ -95,7 +95,6 @@ public class QuickLoadView2 extends JComponent
     JPanel choice_panel = new JPanel();
     choice_panel.setLayout(new BoxLayout(choice_panel, BoxLayout.X_AXIS));
 //    serverCB = new JComboBox();
-//    serverCB.addItemListener(this);
 //    serverCB.addItem("test");
 //    choice_panel.add(new JLabel("QuickLoad Server:"));
 //    choice_panel.add(Box.createHorizontalStrut(5));
@@ -103,7 +102,6 @@ public class QuickLoadView2 extends JComponent
 //    choice_panel.add(Box.createHorizontalStrut(20));
     genomeCB = new JComboBox();
     genomeCB.addItem("genome test");
-    genomeCB.addItemListener(this);
     choice_panel.add(new JLabel("QuickLoad Genome:"));
     choice_panel.add(Box.createHorizontalStrut(5));
     choice_panel.add(genomeCB);
@@ -135,6 +133,8 @@ public class QuickLoadView2 extends JComponent
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
 
+//    serverCB.addItemListener(this);
+    genomeCB.addItemListener(this);
     resetQuickLoadUrl();
   }
 

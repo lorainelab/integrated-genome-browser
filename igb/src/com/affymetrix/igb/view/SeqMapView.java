@@ -331,8 +331,7 @@ public class SeqMapView extends JPanel
     this.setLayout(new BorderLayout());
 
     Box xzoombox = Box.createHorizontalBox();
-    xzoombox.add(new SeqComboBoxView());
-    xzoombox.add((Component)xzoomer);
+    //    xzoombox.add(new SeqComboBoxView());
 
     xzoombox.add(new JLabel("bases per pixel:"));
     bases_per_pixelTF.setMaximumSize(new Dimension(10, 20));
@@ -356,7 +355,7 @@ public class SeqMapView extends JPanel
 	}
       } );
     xzoombox.add(bases_in_viewTF);
-//    this.add(XZOOMER_LOCATION, (Component)xzoomer);
+    xzoombox.add((Component)xzoomer);
     this.add(XZOOMER_LOCATION, xzoombox);
 
     this.add("East", (Component)yzoomer);

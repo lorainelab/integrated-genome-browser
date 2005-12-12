@@ -24,7 +24,7 @@ public class DataLoadView extends JComponent  {
     das2_view = new Das2LoadView();
     das1_view = new DasLoadView();
     quick_view = new QuickLoadView2();
-    //    group_view = new SeqGroupView();
+    group_view = new SeqGroupView();
 
     this.setLayout(new BorderLayout());
     JTabbedPane tpane = new JTabbedPane();
@@ -32,7 +32,7 @@ public class DataLoadView extends JComponent  {
     tpane.addTab("QuickLoad", quick_view);
     tpane.addTab("DAS/2", das2_view);
     //    tpane.addTab("DAS/1", das1_view);
-    //    this.add("West", group_view);
+    this.add("West", group_view);
   }
 
 }

@@ -20,7 +20,7 @@ public class SeqComboBoxView extends JComponent
   JComboBox seqCB;
   static final String SELECT_A_SEQUENC = "Select a sequence";
   static final String NO_SEQUENCES = "No seqs to select";
-  static String NO_SEQ_SELECTED = "No sequence selected";
+  static final String NO_SEQ_SELECTED = "No sequence selected";
 
   public SeqComboBoxView() {
     seqL = new JLabel("Sequence: ");
@@ -72,7 +72,13 @@ public class SeqComboBoxView extends JComponent
 
     if (aseq == null)  {
       if (seqCB.getSelectedItem() != NO_SEQ_SELECTED) {
-	seqCB.setSelectedItem(NO_SEQ_SELECTED);
+        seqCB.setSelectedItem(NO_SEQ_SELECTED);
+        // It is possible that the NO_SEQ_SELECTED item doesn't exist, because
+        // the NO_SEQUENCES item is there instead.
+        // This takes care of that case, though it isn't important:
+        if (seqCB.getSelectedItem() != NO_SEQ_SELECTED) {
+          seqCB.setSelectedItem(NO_SEQUENCES);
+        }
       }
     }
     else  {
@@ -94,7 +100,8 @@ public class SeqComboBoxView extends JComponent
       }
       else {
 	AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-	MutableAnnotatedBioSeq aseq = group.getSeq(seqid);
+	MutableAnnotatedBioSeq aseq = null;
+        if (group != null) { aseq = group.getSeq(seqid); }
 	if (gmodel.getSelectedSeq() != aseq) {  // to catch bounces from seqSelectionChanged() setting of selected item
 	  gmodel.setSelectedSeq(aseq);
 	}

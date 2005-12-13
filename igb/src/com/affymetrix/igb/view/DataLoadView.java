@@ -42,6 +42,8 @@ class SeqGroupView extends JComponent
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static final String NO_GENOME = "No Genome Selected";
+  
   JTable seqtable;
   AnnotatedBioSeq selected_seq = null;
   ListSelectionModel lsm;
@@ -49,7 +51,7 @@ class SeqGroupView extends JComponent
 
   public SeqGroupView() {
     seqtable = new JTable();
-    genomeL = new JLabel("No Genome Selected");
+    genomeL = new JLabel(NO_GENOME);
     genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     this.setLayout(new BorderLayout());
@@ -72,9 +74,12 @@ class SeqGroupView extends JComponent
       System.out.println("  seq count: " + group.getSeqs().size());
     }
 
-    genomeL.setText(group.getID());
+    if (group == null) {
+      genomeL.setText(NO_GENOME);
+    } else {
+      genomeL.setText(group.getID());
+    }
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
-
     selected_seq = null;
     seqtable.setModel(mod);
     seqtable.validate();
@@ -129,7 +134,7 @@ class SeqGroupTableModel extends AbstractTableModel  {
   public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
     group = seq_group;
   }
-  public int getRowCount() { return group.getSeqs().size(); }
+  public int getRowCount() { return (group == null ? 0 : group.getSeqs().size()); }
   public int getColumnCount() { return 2; }
   public Object getValueAt(int row, int col) {
     if (col == 0) {

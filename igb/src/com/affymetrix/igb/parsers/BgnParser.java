@@ -168,6 +168,7 @@ public class BgnParser implements AnnotationWriter  {
 	  for (int i=0; i<ecount; i++) {
 	    emaxs[i] = dis.readInt();
 	  }
+          //TODO: Use SingletonGenometryModel and SynonymLookup to deal with synonyms
 	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
           if (chromseq == null) {
             // A null chromseq would cause a Null Pointer Exception below, so let's

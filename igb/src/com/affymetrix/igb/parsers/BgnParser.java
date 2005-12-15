@@ -1,6 +1,6 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*   $$ID
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.

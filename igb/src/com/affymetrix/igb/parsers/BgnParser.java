@@ -122,6 +122,10 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
 			    AnnotatedSeqGroup seq_group, Map seqhash, Map id2sym_hash, long blength, boolean annotate_seq) throws IOException {
+                              
+    if (seqhash == null && seq_group == null) {
+      throw new IllegalArgumentException("BgnParser called with seq_group and seqhash both null.");
+    }
     Timer tim = new Timer();
     tim.start();
 
@@ -193,9 +197,12 @@ public class BgnParser implements AnnotationWriter  {
 	    emaxs[i] = dis.readInt();
 	  }
 
-          MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seqhash.get(chrom_name);
+          MutableAnnotatedBioSeq chromseq = null;
+          if (seqhash != null) {
+            chromseq = (MutableAnnotatedBioSeq)seqhash.get(chrom_name);
+          }
           
-          if (chromseq == null) {
+          if (chromseq == null && seq_group != null) {
             chromseq = seq_group.getSeq(chrom_name);
           }
                     

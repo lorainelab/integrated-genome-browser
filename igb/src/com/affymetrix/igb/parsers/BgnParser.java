@@ -1,6 +1,6 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   $$ID
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
@@ -22,6 +22,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscGeneSym;
@@ -69,13 +70,18 @@ public class BgnParser implements AnnotationWriter  {
 
   ArrayList chromosomes = new ArrayList();
 
-  public List parse(String file_name, String annot_type, Map seq_hash) throws IOException {
+  public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
     System.out.println("loading file: " + file_name);
     File fil = new File(file_name);
     long blength = fil.length();
-    FileInputStream fis = new FileInputStream(fil);
-    List result = parse(fis, annot_type, seq_hash, blength);
-    fis.close();
+    FileInputStream fis = null;
+    List result;
+    try {
+      fis = new FileInputStream(fil);
+      result = parse(fis, annot_type, seq_group, blength);
+    } finally {
+      if (fis != null) try {fis.close();} catch (Exception e) {}
+    }
     return result;
   }
 
@@ -83,8 +89,21 @@ public class BgnParser implements AnnotationWriter  {
    *  @param blength  Byte Buffer Length.
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
+  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, long blength) throws IOException {
+    return parse(istr, annot_type, seq_group, null, blength);
+  }
+
   public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) throws IOException {
     return parse(istr, annot_type, seq_hash, null, blength);
+  }
+  
+  /**
+   *  @param blength  Byte Buffer Length.
+   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
+   */
+  public List parse(InputStream istr, String annot_type,
+			    AnnotatedSeqGroup seq_group, Map id2sym_hash, long blength) throws IOException {
+    return parse(istr, annot_type, seq_group, null, null, blength, true);
   }
 
   /**
@@ -93,11 +112,16 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
 			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
-    return parse(istr, annot_type, seq_hash, null, blength, true);
+    return parse(istr, annot_type, null, seq_hash, null, blength, true);
   }
 
+  /**
+   *  The main parsing routine.
+   *  Sequences will be looked for first in seqhash, then in seq_group.
+   *  It is ok for seq_group, or seqhash, to be null, but not both.
+   */
   public List parse(InputStream istr, String annot_type,
-			    Map seq_hash, Map id2sym_hash, long blength, boolean annotate_seq) throws IOException {
+			    AnnotatedSeqGroup seq_group, Map seqhash, Map id2sym_hash, long blength, boolean annotate_seq) throws IOException {
     Timer tim = new Timer();
     tim.start();
 
@@ -168,8 +192,13 @@ public class BgnParser implements AnnotationWriter  {
 	  for (int i=0; i<ecount; i++) {
 	    emaxs[i] = dis.readInt();
 	  }
-          //TODO: Use SingletonGenometryModel and SynonymLookup to deal with synonyms
-	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
+
+          MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seqhash.get(chrom_name);
+          
+          if (chromseq == null) {
+            chromseq = seq_group.getSeq(chrom_name);
+          }
+                    
           if (chromseq == null) {
             // A null chromseq would cause a Null Pointer Exception below, so let's
             // throw an IOException which will be easier to deal with.
@@ -180,8 +209,8 @@ public class BgnParser implements AnnotationWriter  {
 
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
 					    tmin, tmax, cmin, cmax, emins, emaxs);
-	  //	  name_hash.put(name, null);
-	  if (id2sym_hash != null) {
+
+          if (id2sym_hash != null) {
 	    id2sym_hash.put(name, sym);
 	  }
 	  results.add(sym);

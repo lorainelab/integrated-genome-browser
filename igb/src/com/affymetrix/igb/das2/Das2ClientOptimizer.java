@@ -321,7 +321,7 @@ public class Das2ClientOptimizer {
 	else if (content_subtype.equals("bgn")) {
 	  System.out.println("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
 	  BgnParser parser = new BgnParser();
-	  feats = parser.parse(bis, type.getID(), seq_group.getSeqs(), null, -1, false);
+	  feats = parser.parse(bis, type.getID(), seq_group, null, null, -1, false);
 	}
 	else if (content_subtype.equals("bps")) {
 	  System.out.println("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");

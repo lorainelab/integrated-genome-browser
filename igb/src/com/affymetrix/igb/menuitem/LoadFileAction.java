@@ -409,9 +409,9 @@ public class LoadFileAction {
             ".bgn files can only be loaded if a seq group is already selected", null);
         }
         else {
-          BgnParser gene_reader = new BgnParser();
+          BgnParser parser = new BgnParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-          gene_reader.parse(str, annot_type, seqhash, -1);
+          parser.parse(str, annot_type, selected_group, -1);
         }
         aseq = input_seq;
       }

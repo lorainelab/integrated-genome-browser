@@ -652,6 +652,7 @@ public class GraphAdjusterView extends JComponent
       GraphSym graf = (GraphSym)grafs.get(i);
       deleteGraph(graf);
     }
+    gmodel.clearSelectedSymmetries(this);
     nwidg.updateWidget();
   }
 

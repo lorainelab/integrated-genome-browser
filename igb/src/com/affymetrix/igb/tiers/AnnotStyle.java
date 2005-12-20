@@ -75,13 +75,13 @@ public class AnnotStyle {
   }
   
   public static AnnotStyle getInstance(String unique_name, boolean persistent) {
-    AnnotStyle style = (AnnotStyle) static_map.get(unique_name);
+    AnnotStyle style = (AnnotStyle) static_map.get(unique_name.toLowerCase());
     if (style == null) {
       AnnotStyle template = getDefaultInstance();
       static_map.put(template.getUniqueName(), template);
       style = new AnnotStyle(unique_name, persistent, template);
     }
-    static_map.put(unique_name, style);
+    static_map.put(unique_name.toLowerCase(), style);
     return style;
   }
   

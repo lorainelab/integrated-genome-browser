@@ -193,9 +193,9 @@ public class SeqMapView extends JPanel
   //Color default_annot_color = default_default_annot_color;
 
 
-  /** hash of method names to forward tiers */
+  /** Hash of method names (lower case) to forward tiers */
   Map method2ftier = new HashMap();
-  /** hash of method names to reverse tiers */
+  /** Hash of method names (lower case) to reverse tiers */
   Map method2rtier = new HashMap();
   /** hash of GraphStates to TierGlyphs,
       ( for those GraphStates where state.getFloatGraph() = false))
@@ -1162,8 +1162,8 @@ public class SeqMapView extends JPanel
 	(annotSym.getChildCount() > 0)  &&
 	(annotSym.getChild(0) instanceof Das2FeatureRequestSym) ) {
       int child_count = annotSym.getChildCount();
-      TierGlyph fortier = (TierGlyph)getForwardTierHash().get(meth);
-      TierGlyph revtier = (TierGlyph)getReverseTierHash().get(meth);
+      TierGlyph fortier = (TierGlyph) getForwardTierHash().get(meth.toLowerCase());
+      TierGlyph revtier = (TierGlyph) getReverseTierHash().get(meth.toLowerCase());
       for (int i=0; i<child_count; i++) {
 	SeqSymmetry csym = annotSym.getChild(i);
 	if (csym instanceof Das2FeatureRequestSym) {
@@ -2414,8 +2414,10 @@ public class SeqMapView extends JPanel
    *  Generally called by the Glyph Factory.
    *  Note that this can create empty tiers.  But if the tiers are not filled with
    *  something, they will later be removed automatically by {@link SeqMapView#setAnnotatedSeq(AnnotatedBioSeq)}.
-   *  @param meth  The tier name
+   *  @param meth  The tier name; it will be treated as case-insensitive.
    *  @param next_to_axis Do you want the Tier as close to the axis as possible?
+   *  @param style  an instance of AnnotStyle; tier label and other properties
+   *   are determined by the AnnotStyle.
    *  @return an array of two Tiers, one forward (or mixed-direction), one reverse;
    *    If you want to treat the first one as mixed-direction, then place all
    *    the glyphs in it; the second tier will not be displayed if it remains empty.
@@ -2438,14 +2440,14 @@ public class SeqMapView extends JPanel
       Map method2ftier = this.getForwardTierHash();
       Map method2rtier = this.getReverseTierHash();
       
-      TierGlyph fortier = (TierGlyph)method2ftier.get(meth);
-      TierGlyph revtier = (TierGlyph)method2rtier.get(meth);
+      TierGlyph fortier = (TierGlyph)method2ftier.get(meth.toLowerCase());
+      TierGlyph revtier = (TierGlyph)method2rtier.get(meth.toLowerCase());
         
       TierGlyph axis_tier = this.getAxisTier();
       if (fortier == null) {
         fortier = new TierGlyph(style);
         setUpTierPacker(fortier, true);
-        method2ftier.put(meth, fortier);
+        method2ftier.put(meth.toLowerCase(), fortier);
       }
       if (fortier != null) {
         String label;
@@ -2475,7 +2477,7 @@ public class SeqMapView extends JPanel
         revtier = new TierGlyph(style);
         //revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
         setUpTierPacker(revtier, false);
-        method2rtier.put(meth, revtier);
+        method2rtier.put(meth.toLowerCase(), revtier);
       }
       if (revtier != null) {
         if (style == null) {

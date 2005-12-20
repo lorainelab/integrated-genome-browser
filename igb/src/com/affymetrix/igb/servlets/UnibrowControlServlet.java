@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.servlets;
 
+import java.awt.Frame;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -58,7 +59,7 @@ public class UnibrowControlServlet extends HttpServlet {
   public void setUnibrowInstance(IGB uni) {
     this.uni = uni;
   }
-
+  
   public void service(HttpServletRequest request, HttpServletResponse response) throws
     ServletException, IOException, NumberFormatException {
     System.out.println("UnibrowControlServlet received request");
@@ -68,6 +69,13 @@ public class UnibrowControlServlet extends HttpServlet {
       System.out.println("received ping request");
       return;
     }
+    
+    //  restore and focus on IGB when a unibrow call is made
+    if ((IGB.getSingletonIGB().getFrame().getExtendedState() & Frame.ICONIFIED) == 1)
+    {
+    	IGB.getSingletonIGB().getFrame().setExtendedState(Frame.NORMAL);
+    }
+    IGB.getSingletonIGB().getFrame().toFront();
     goToBookmark(this.uni, request.getParameterMap());
   }
 
@@ -130,6 +138,12 @@ public class UnibrowControlServlet extends HttpServlet {
 
     String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
     loadDataFromURLs(uni, data_urls, null);
+    
+    String selectParam = getStringParameter(parameters, "select");
+    if (selectParam != null){
+    	performSelection(selectParam);
+    }
+    
   }
 
   public static void loadDataFromURLs(final IGB uni, final String[] das_urls, final String[] tier_names) {
@@ -141,10 +155,12 @@ public class UnibrowControlServlet extends HttpServlet {
         }
         final UrlLoaderThread t = new UrlLoaderThread(uni.getMapView(), urls, tier_names);
         t.runEventually();
+        t.join();
       }
     } catch (MalformedURLException e) {
       IGB.errorPanel("Error loading bookmark\nDAS URL malformed\n", e);
     }
+    catch (InterruptedException ex){}
   }
 
   static boolean goToBookmark(IGB uni, String seqid, String version,
@@ -261,7 +277,7 @@ public class UnibrowControlServlet extends HttpServlet {
 //		gviewer.setAnnotatedSeq(view_seq);
 //                gviewer.setAnnotatedSeq(aseq);
 //	      }
-              gviewer.setZoomSpotX(middle);
+          gviewer.setZoomSpotX(middle);
 	      gviewer.zoomTo(view_span);
 	      if (selstart >= 0 && selend >= 0) {
 		SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
@@ -285,4 +301,62 @@ public class UnibrowControlServlet extends HttpServlet {
     }
     return true; // was not cancelled, was sucessful
   }
+  
+  
+  /**
+   * This handles the "select" API parameter.  The "select" parameter can be followed by one 
+   * or more comma separated IDs in the form: &select=<id_1>,<id_2>,...,<id_n>
+   * Example:  "&select=EPN1,U2AF2,ZNF524" 
+   * Each ID that exists in IGB's ID to symmetry hash will be selected, even if the symmetries 
+   * lie on different sequences.
+   * @param selectParam The select parameter passed in through the API
+   */
+  private static void performSelection (String selectParam)
+  {  
+	  try
+	  {
+		  if (selectParam == null){return;}
+		  HashMap seq2SymsHash = new HashMap();
+		  // split the parameter by commas
+		  String[] ids = selectParam.split(",");
+		  MutableAnnotatedBioSeq seq;
+		  SeqSymmetry sym = null;
+		  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+		  
+		  // for each ID found in the ID2sym hash, add it to the owning sequences 
+		  //  list of selected symmetries
+		  for (int i=0; i<ids.length; i++)
+		  {
+			  sym = (SeqSymmetry)IGB.getSymHash().get(ids[i]);
+		      if (sym != null && 
+		         (seq = gmodel.getSelectedSeqGroup().getSeq(sym)) != null)
+		      {   	          
+		    	  // prepare the list to add the sym to based on the seq ID
+		          ArrayList symlist = (ArrayList)seq2SymsHash.get(seq);
+		    	  if (symlist == null)
+		    	  {
+		    		  symlist = new ArrayList();
+		    		  seq2SymsHash.put(seq, symlist);
+		    	  }
+		    	  // add the sym to the list for the correct seq ID
+		          symlist.add(sym);	      
+		      }	
+		  }
+		 
+		  // if at least one sym was found, then select all the syms for each seq and
+		  //  focus on the first matched sequence
+		  
+		  // clear all the existing selections first
+		  gmodel.clearSelectedSymmetries(new Object());
+		  
+		  // now perform the selections for each sequence that was matched
+		  for(Iterator i=seq2SymsHash.keySet().iterator();i.hasNext();) 
+		  {
+			  seq = (MutableAnnotatedBioSeq)i.next();
+			  gmodel.setSelectedSymmetries((List)seq2SymsHash.get(seq), new Object(), seq);
+		  }	  	  
+	  }
+	  catch (Exception ex){ex.printStackTrace();}
+  }
+
 }

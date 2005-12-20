@@ -28,6 +28,7 @@ import org.w3c.dom.Text;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 
 import com.affymetrix.igb.parsers.BpsParser;
@@ -245,7 +246,7 @@ public abstract class DasLoader {
         new_seq = parser.parse(bis, current_seq, type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, false, true);
+        parser.parse(bis, type, null, seqhash, IGB.getSymHash(), false, true);
         new_seq = current_seq;
       }
     } finally {

@@ -24,7 +24,6 @@ public class DisplayUtils {
    *  without changing the minimized/maximized state.
    */
   public static void bringFrameToFront(Frame frame) {
-    boolean isShowing = frame.isShowing();
     if ((frame.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
       // de-iconify it while leaving the maximized/minimized state flags alone
       frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);

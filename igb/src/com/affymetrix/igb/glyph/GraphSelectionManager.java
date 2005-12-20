@@ -442,7 +442,7 @@ public class GraphSelectionManager
   void deleteGraph(NeoWidgetI source, GraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
-    gviewer.select(Collections.EMPTY_LIST);
+    gmodel.clearSelectedSymmetries(this);
 
     Object info = gl.getInfo();
     if (info instanceof GraphSym) {

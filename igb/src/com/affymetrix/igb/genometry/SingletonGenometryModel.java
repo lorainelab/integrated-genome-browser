@@ -222,6 +222,8 @@ public class SingletonGenometryModel {
    *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
    */
   public void setSelectedSymmetries(List syms, Object src, MutableAnnotatedBioSeq seq ) {
+    if (seq == null) { return; }
+    
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSymmetries() called, ");
       System.out.println("    syms = " + syms);

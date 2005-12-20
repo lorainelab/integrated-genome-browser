@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.SwingUtilities;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
@@ -112,7 +113,10 @@ public class UrlLoaderThread extends Thread {
         monitor.setMessageEventually("Loading data from "+where_from);
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
-        parseDataFromURL(gviewer, connection, seq, tier_name);
+        try{
+        	parseDataFromURL(gviewer, connection, seq, tier_name);
+        }
+        catch (IOException ex){handleException(ex); continue;}
 
         monitor.setMessageEventually("Updating view");
         if (isInterrupted() || monitor.isCancelled()) {break;}
@@ -134,20 +138,17 @@ public class UrlLoaderThread extends Thread {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (e instanceof UnknownHostException) {
-          //ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host",
-          //  "Unknown host: "+e.getMessage(), null);
           com.affymetrix.igb.IGB.getSingletonIGB().setStatus("Unknown host: "+e.getMessage());
         } else if (e instanceof FileNotFoundException) {
           ErrorHandler.errorPanel(gviewer.getFrame(), "File not found",
             "File missing or not readable:\n "+e.getMessage(), null);
         } else {
-          //ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
-          //  "Exception in UrlLoaderThread", e);
           com.affymetrix.igb.IGB.getSingletonIGB().setStatus(e.getMessage());
         }
       }
     });
   }
+
 
   void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
     if (gviewer==null || seq==null) return;
@@ -234,16 +235,16 @@ public class UrlLoaderThread extends Thread {
     String content_type = feat_request_con.getContentType();
     int content_length = feat_request_con.getContentLength();
     if (content_length == 0) { // Note: length == -1 means "length unknown"
-      throw new IOException("URL returned no data.");
+      throw new IOException("\n" + feat_request_con.getURL() + " returned no data.");
     }
 
     URL url = feat_request_con.getURL();
-
     if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
-
-    if (content_type == null || content_type.startsWith("content/unknown") || content_type.startsWith("application/zip")
-      || content_type.startsWith("application/octet-stream") 
-      || "file".equals(url.getProtocol().toLowerCase()))
+    if (content_type == null || 
+	content_type.startsWith("content/unknown") || 
+	content_type.startsWith("application/zip") || 
+	content_type.startsWith("application/octet-stream") || 
+	"file".equals(url.getProtocol().toLowerCase()))
     {
       System.out.println("Attempting to load data from: " + url.toExternalForm());
 
@@ -294,7 +295,7 @@ public class UrlLoaderThread extends Thread {
         new_seq = parser.parse(bis, current_seq, type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, false, true);
+        parser.parse(bis, type, null, seqhash, IGB.getSymHash(), false, true);
         new_seq = current_seq;
       }
     } finally {
@@ -348,7 +349,7 @@ public class UrlLoaderThread extends Thread {
       temphash.put(seq_id, current_seq);
 
       BpsParser bps_parser = new BpsParser();
-      bps_parser.parse(dis, type, temphash);
+      bps_parser.parse(dis, type, temphash, IGB.getSymHash());
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}
       if (bis != null) try {bis.close();} catch (Exception e) {}

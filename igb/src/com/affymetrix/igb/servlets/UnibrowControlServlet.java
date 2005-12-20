@@ -138,7 +138,7 @@ public class UnibrowControlServlet extends HttpServlet {
     
     String selectParam = getStringParameter(parameters, "select");
     if (selectParam != null){
-    	performSelection(selectParam);
+      performSelection(selectParam);
     }
     
   }
@@ -161,9 +161,9 @@ public class UnibrowControlServlet extends HttpServlet {
   }
 
   static boolean goToBookmark(IGB uni, String seqid, String version,
-			   String start_param, String end_param,
-			   String select_start_param, String select_end_param,
-			   final String[] graph_files) throws NumberFormatException {
+                           String start_param, String end_param,
+                           String select_start_param, String select_end_param,
+                           final String[] graph_files) throws NumberFormatException {
 
     int start = 0;
     int end = Integer.MAX_VALUE;
@@ -182,7 +182,7 @@ public class UnibrowControlServlet extends HttpServlet {
     int selstart = -1;
     int selend = -1;
     if (select_start_param != null && select_end_param != null
-	&& select_start_param.length()>0 && select_end_param.length()>0) {
+        && select_start_param.length()>0 && select_end_param.length()>0) {
       selstart = Integer.parseInt(select_start_param);
       selend = Integer.parseInt(select_end_param);
     }
@@ -190,7 +190,7 @@ public class UnibrowControlServlet extends HttpServlet {
   }
 
   static boolean goToBookmark(IGB uni, String seqid, String version, int start, int end,
-			   final String[] graph_files) {
+                           final String[] graph_files) {
     return goToBookmark(uni, seqid, version, start, end, -1, -1, graph_files);
   }
 
@@ -205,8 +205,8 @@ public class UnibrowControlServlet extends HttpServlet {
    *  @return true indicates that the action suceeded
    */
   static boolean goToBookmark(IGB uni, String seqid, String version,
-			   int start, int end, final int selstart, final int selend,
-			   final String[] graph_files) {
+                           int start, int end, final int selstart, final int selend,
+                           final String[] graph_files) {
 
     if (version == null || version.trim().equals("")) {
       IGB.errorPanel("Genome version not specified in bookmark.");
@@ -224,7 +224,8 @@ public class UnibrowControlServlet extends HttpServlet {
     AnnotatedSeqGroup book_group = gmodel.getSeqGroup(version);
 
     if (book_group == null) {
-      IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.");
+      IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
+        "You may need to choose a different QuickLoad server.");
       return false; // cancel
     }
     System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
@@ -266,35 +267,35 @@ public class UnibrowControlServlet extends HttpServlet {
       final double middle = (start + end)/2.0;
 //      System.out.println("graph files: " + graph_files);
       SwingUtilities.invokeLater(new Runnable() {
-	  public void run() {
-	    try {
-//	      MutableAnnotatedBioSeq view_seq = (MutableAnnotatedBioSeq)
-//		view_span.getBioSeq();
-//	      if (view_seq != gmodel.getSelectedSeq()) {
-//		gviewer.setAnnotatedSeq(view_seq);
+          public void run() {
+            try {
+//              MutableAnnotatedBioSeq view_seq = (MutableAnnotatedBioSeq)
+//                view_span.getBioSeq();
+//              if (view_seq != gmodel.getSelectedSeq()) {
+//                gviewer.setAnnotatedSeq(view_seq);
 //                gviewer.setAnnotatedSeq(aseq);
-//	      }
-          gviewer.setZoomSpotX(middle);
-	      gviewer.zoomTo(view_span);
-	      if (selstart >= 0 && selend >= 0) {
-		SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-		gviewer.setSelectedRegion(regionsym, true);
-	      }
-	      if (graph_files != null) {
-		URL[] graph_urls = new URL[graph_files.length];
-		for (int i = 0; i < graph_files.length; i++) {
-		  graph_urls[i] = new URL(graph_files[i]);
-		}
-		Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
-		  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
-		t.start();
-	      }
-	    }
-	    catch (Exception ex) {
-	      ex.printStackTrace();
-	    }
-	  }
-	});
+//              }
+              gviewer.setZoomSpotX(middle);
+              gviewer.zoomTo(view_span);
+              if (selstart >= 0 && selend >= 0) {
+                SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+                gviewer.setSelectedRegion(regionsym, true);
+              }
+              if (graph_files != null) {
+                URL[] graph_urls = new URL[graph_files.length];
+                for (int i = 0; i < graph_files.length; i++) {
+                  graph_urls[i] = new URL(graph_files[i]);
+                }
+                Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
+                  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
+                t.start();
+              }
+            }
+            catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+        });
     }
     return true; // was not cancelled, was sucessful
   }
@@ -308,52 +309,49 @@ public class UnibrowControlServlet extends HttpServlet {
    * lie on different sequences.
    * @param selectParam The select parameter passed in through the API
    */
-  private static void performSelection (String selectParam)
-  {  
-	  try
-	  {
-		  if (selectParam == null){return;}
-		  HashMap seq2SymsHash = new HashMap();
-		  // split the parameter by commas
-		  String[] ids = selectParam.split(",");
-		  MutableAnnotatedBioSeq seq;
-		  SeqSymmetry sym = null;
-		  SingletonGenometryModel gmodel = IGB.getGenometryModel();
-		  
-		  // for each ID found in the ID2sym hash, add it to the owning sequences 
-		  //  list of selected symmetries
-		  for (int i=0; i<ids.length; i++)
-		  {
-			  sym = (SeqSymmetry)IGB.getSymHash().get(ids[i]);
-		      if (sym != null && 
-		         (seq = gmodel.getSelectedSeqGroup().getSeq(sym)) != null)
-		      {   	          
-		    	  // prepare the list to add the sym to based on the seq ID
-		          ArrayList symlist = (ArrayList)seq2SymsHash.get(seq);
-		    	  if (symlist == null)
-		    	  {
-		    		  symlist = new ArrayList();
-		    		  seq2SymsHash.put(seq, symlist);
-		    	  }
-		    	  // add the sym to the list for the correct seq ID
-		          symlist.add(sym);	      
-		      }	
-		  }
-		 
-		  // if at least one sym was found, then select all the syms for each seq and
-		  //  focus on the first matched sequence
-		  
-		  // clear all the existing selections first
-		  gmodel.clearSelectedSymmetries(new Object());
-		  
-		  // now perform the selections for each sequence that was matched
-		  for(Iterator i=seq2SymsHash.keySet().iterator();i.hasNext();) 
-		  {
-			  seq = (MutableAnnotatedBioSeq)i.next();
-			  gmodel.setSelectedSymmetries((List)seq2SymsHash.get(seq), new Object(), seq);
-		  }	  	  
-	  }
-	  catch (Exception ex){ex.printStackTrace();}
+  private static void performSelection(String selectParam) {
+
+    if (selectParam == null){return;}
+    
+    HashMap seq2SymsHash = new HashMap();
+    // split the parameter by commas
+    String[] ids = selectParam.split(",");
+    MutableAnnotatedBioSeq seq;
+    SeqSymmetry sym = null;
+    SingletonGenometryModel gmodel = IGB.getGenometryModel();
+
+    // for each ID found in the ID2sym hash, add it to the owning sequences 
+    //  list of selected symmetries
+    for (int i=0; i<ids.length; i++)
+    {
+        sym = (SeqSymmetry)IGB.getSymHash().get(ids[i]);
+        if (sym != null && 
+           (seq = gmodel.getSelectedSeqGroup().getSeq(sym)) != null)
+        {                 
+            // prepare the list to add the sym to based on the seq ID
+            ArrayList symlist = (ArrayList)seq2SymsHash.get(seq);
+            if (symlist == null)
+            {
+                symlist = new ArrayList();
+                seq2SymsHash.put(seq, symlist);
+            }
+            // add the sym to the list for the correct seq ID
+            symlist.add(sym);          
+        }
+    }
+
+    // if at least one sym was found, then select all the syms for each seq and
+    //  focus on the first matched sequence
+
+    // clear all the existing selections first
+    gmodel.clearSelectedSymmetries(UnibrowControlServlet.class);
+
+    // now perform the selections for each sequence that was matched
+    for(Iterator i=seq2SymsHash.keySet().iterator();i.hasNext();) 
+    {
+      seq = (MutableAnnotatedBioSeq)i.next();
+      gmodel.setSelectedSymmetries((List)seq2SymsHash.get(seq), UnibrowControlServlet.class, seq);
+    }
   }
 
 }

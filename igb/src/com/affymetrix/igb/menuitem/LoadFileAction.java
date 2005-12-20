@@ -356,13 +356,13 @@ public class LoadFileAction {
                              ", target = " + annotate_target +
                              ", other = " + annotate_other);
           if (annotate_query) {
-            parser.parse(str, stream_name, seqhash, null, true, false);
+            parser.parse(str, stream_name, seqhash, null, null, true, false);
           }
           else if (annotate_target)  {
-            parser.parse(str, stream_name, null, seqhash, false, true);
+            parser.parse(str, stream_name, null, seqhash, IGB.getSymHash(), false, true);
           }
           else if (annotate_other)  {
-            parser.parse(str, stream_name, null, null, seqhash, false, false, true);
+            parser.parse(str, stream_name, null, null, seqhash, null, false, false, true);
           }
           aseq = input_seq;
         }
@@ -382,7 +382,7 @@ public class LoadFileAction {
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
           DataInputStream dis = new DataInputStream(str);
           BpsParser psl_reader = new BpsParser();
-          psl_reader.parse(dis, annot_type, seqhash);
+          psl_reader.parse(dis, annot_type, seqhash, IGB.getSymHash());
           psl_reader = null;
         }
         aseq = input_seq;
@@ -409,9 +409,9 @@ public class LoadFileAction {
             ".bgn files can only be loaded if a seq group is already selected", null);
         }
         else {
-          BgnParser parser = new BgnParser();
+          BgnParser gene_reader = new BgnParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-          parser.parse(str, annot_type, selected_group, -1);
+          gene_reader.parse(str, annot_type, seqhash, IGB.getSymHash(), -1);
         }
         aseq = input_seq;
       }

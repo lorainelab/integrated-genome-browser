@@ -1,12 +1,27 @@
+/**
+*   Copyright (c) 2005 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.swing.DisplayUtils;
 
 public class ConsoleView {
   
@@ -41,12 +56,7 @@ public class ConsoleView {
     frame.doLayout();
     frame.repaint();
     
-    if ((frame.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-      // de-iconify it while leaving the maximized/minimized state flags alone
-      frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);
-    }
-    if (! frame.isShowing()) { frame.show(); }
-    frame.toFront();
+    DisplayUtils.bringFrameToFront(frame);
   }
   
   /**

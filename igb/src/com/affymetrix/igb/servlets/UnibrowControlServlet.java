@@ -30,6 +30,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -71,11 +72,7 @@ public class UnibrowControlServlet extends HttpServlet {
     }
     
     //  restore and focus on IGB when a unibrow call is made
-    if ((IGB.getSingletonIGB().getFrame().getExtendedState() & Frame.ICONIFIED) == 1)
-    {
-    	IGB.getSingletonIGB().getFrame().setExtendedState(Frame.NORMAL);
-    }
-    IGB.getSingletonIGB().getFrame().toFront();
+    DisplayUtils.bringFrameToFront(IGB.getSingletonIGB().getFrame());
     goToBookmark(this.uni, request.getParameterMap());
   }
 

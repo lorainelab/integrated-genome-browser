@@ -38,6 +38,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -1104,14 +1105,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     // extra window already exists, but may not be visible
     else {
-      Frame win = (Frame) comp2window.get(comp);
-      boolean isShowing = win.isShowing();
-      if ((win.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-        // de-iconify it while leaving the maximized/minimized state flags alone
-        win.setExtendedState(win.getExtendedState() & ~Frame.ICONIFIED);
-      }
-      if (! win.isShowing()) { win.show(); }
-      win.toFront();
+      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
     }
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);

@@ -307,7 +307,7 @@ public class GraphAdjusterView extends JComponent
       JPanel transformP = new JPanel();
       transformP.setLayout(new BoxLayout(transformP, BoxLayout.Y_AXIS));
       if (TEST_GRAPH_EVAL)  {
-	transformP.add(transformTF);
+        transformP.add(transformTF);
       }
       JPanel scaleP = new JPanel();
       scaleP.setLayout(new GridLayout(1, 2));
@@ -365,7 +365,7 @@ public class GraphAdjusterView extends JComponent
     grafs.clear();
     for (int i=0; i<symcount; i++) {
       if (selected_syms.get(i) instanceof GraphSym) {
-	grafs.add(selected_syms.get(i));
+        grafs.add(selected_syms.get(i));
       }
     }
     int grafcount = grafs.size();
@@ -375,7 +375,7 @@ public class GraphAdjusterView extends JComponent
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
       if (gl != null) {
-	glyphs.add(gl);
+        glyphs.add(gl);
       }
     }
     if (glyphs.size() > 0) {
@@ -393,38 +393,38 @@ public class GraphAdjusterView extends JComponent
     if (src == labelCB) {
       boolean selected = labelCB.isSelected();
       for (int i=0; i<gcount; i++) {
-	GraphSym graf = (GraphSym)grafs.get(i);
-	GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	if (gl != null) { gl.setShowLabel(selected); }
+        GraphSym graf = (GraphSym)grafs.get(i);
+        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+        if (gl != null) { gl.setShowLabel(selected); }
       }
       nwidg.updateWidget();
     }
     else if (src == boundsCB) {
       boolean selected = boundsCB.isSelected();
       for (int i=0; i<gcount; i++) {
-	GraphSym graf = (GraphSym)grafs.get(i);
-	GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	if (gl != null) { gl.setShowBounds(selected); }
+        GraphSym graf = (GraphSym)grafs.get(i);
+        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+        if (gl != null) { gl.setShowBounds(selected); }
       }
       nwidg.updateWidget();
     }
     else if (src == handleCB) {
       boolean selected = handleCB.isSelected();
       for (int i=0; i<gcount; i++) {
-	GraphSym graf = (GraphSym)grafs.get(i);
-	GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	if (gl != null)  { gl.setShowHandle(selected); }
+        GraphSym graf = (GraphSym)grafs.get(i);
+        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+        if (gl != null)  { gl.setShowHandle(selected); }
       }
       nwidg.updateWidget();
     }
     else if (src == yaxisCB) {
       boolean selected = yaxisCB.isSelected();
       for (int i=0; i<gcount; i++) {
-	GraphSym graf = (GraphSym)grafs.get(i);
-	GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	if (gl != null && gl instanceof SmartGraphGlyph) {
-	  ((SmartGraphGlyph)gl).setShowAxis(selected);
-	}
+        GraphSym graf = (GraphSym)grafs.get(i);
+        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+        if (gl != null && gl instanceof SmartGraphGlyph) {
+          ((SmartGraphGlyph)gl).setShowAxis(selected);
+        }
       }
       nwidg.updateWidget();
     }
@@ -460,30 +460,30 @@ public class GraphAdjusterView extends JComponent
     }
     else if (src == tier_threshB) {
       for (int i=0; i<gcount; i++) {
-	GraphSym graf = (GraphSym)grafs.get(i);
-	GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	if (gl != null && gl instanceof SmartGraphGlyph) {
-	  System.out.println("pickling graph: " + gl.getLabel());
-	  pickleThreshold((SmartGraphGlyph)gl);
-	}
+        GraphSym graf = (GraphSym)grafs.get(i);
+        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+        if (gl != null && gl instanceof SmartGraphGlyph) {
+          System.out.println("pickling graph: " + gl.getLabel());
+          pickleThreshold((SmartGraphGlyph)gl);
+        }
       }
       nwidg.updateWidget();
     }
     else if (src == styleCB) {
       String selection = (String)((JComboBox)styleCB).getSelectedItem();
-      if (selection == BLANK) { } 	// do nothing
+      if (selection == BLANK) { }         // do nothing
       else  {
-	int style = ((Integer)string2style.get(selection)).intValue();
-	//	System.out.println("style val: " + style);
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null && gl instanceof SmartGraphGlyph) {
-	    gl.setShowGraph(true);
-	    ((SmartGraphGlyph)gl).setGraphStyle(style);
-	  }
-	}
-	nwidg.updateWidget();
+        int style = ((Integer)string2style.get(selection)).intValue();
+        //        System.out.println("style val: " + style);
+        for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null && gl instanceof SmartGraphGlyph) {
+            gl.setShowGraph(true);
+            ((SmartGraphGlyph)gl).setGraphStyle(style);
+          }
+        }
+        nwidg.updateWidget();
       }
     }
     else if (src == threshCB) {
@@ -491,13 +491,13 @@ public class GraphAdjusterView extends JComponent
       boolean thresh_on = (selection == ON);
       boolean thresh_off = (selection == OFF);
       if (thresh_on || thresh_off) {
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null && gl instanceof SmartGraphGlyph) {
-	    ((SmartGraphGlyph)gl).setShowThreshold(thresh_on);
-	  }
-	}
+        for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null && gl instanceof SmartGraphGlyph) {
+            ((SmartGraphGlyph)gl).setShowThreshold(thresh_on);
+          }
+        }
       }
       nwidg.updateWidget();
     }
@@ -506,40 +506,40 @@ public class GraphAdjusterView extends JComponent
       boolean vis_on = (selection == ON);
       boolean vis_off = (selection == OFF);
       if (vis_on || vis_off) {
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null)  { gl.setShowGraph(vis_on); }
-	}
+        for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null)  { gl.setShowGraph(vis_on); }
+        }
       }
       nwidg.updateWidget();
     }
     else if (src == floatB) {
       if (floatB.isSelected()) {
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null) {
-	    boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
-	    if (! is_floating) {
-	      GraphGlyphUtils.floatGraph(gl, gviewer);
-	    }
-	  }
-	}
+        for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null) {
+            boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
+            if (! is_floating) {
+              GraphGlyphUtils.floatGraph(gl, gviewer);
+            }
+          }
+        }
       }
     }
     else if (src == attachB) {
       if (attachB.isSelected()) {
-	for (int i=0; i<gcount; i++) {
-	  GraphSym graf = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-	  if (gl != null) {
-	    boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
-	    if (is_floating) {
-	      GraphGlyphUtils.attachGraph(gl, gviewer);
-	    }
-	  }
-	}
+        for (int i=0; i<gcount; i++) {
+          GraphSym graf = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
+          if (gl != null) {
+            boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
+            if (is_floating) {
+              GraphGlyphUtils.attachGraph(gl, gviewer);
+            }
+          }
+        }
       }
     }
     else if (src == selectAllB) {
@@ -564,27 +564,27 @@ public class GraphAdjusterView extends JComponent
     }
     else if (src == shift_startTF) {
       try {
-	int start_shift = Integer.parseInt(shift_startTF.getText());
-	adjustThreshStartShift(start_shift);
+        int start_shift = Integer.parseInt(shift_startTF.getText());
+        adjustThreshStartShift(start_shift);
       }
       catch (Exception ex) { ex.printStackTrace(); }
     }
     else if (src == shift_endTF) {
       try {
-	int end_shift = Integer.parseInt(shift_endTF.getText());
-	adjustThreshEndShift(end_shift);
+        int end_shift = Integer.parseInt(shift_endTF.getText());
+        adjustThreshEndShift(end_shift);
       }
       catch (Exception ex) { ex.printStackTrace(); }
     }
     else if (src == scaleCB) {
       String selection = (String)((JComboBox)scaleCB).getSelectedItem();
       if (selection != BLANK) {
-	System.out.println("selected scaling: " + selection);
-	FloatTransformer trans = (FloatTransformer)name2transform.get(selection);
-	Timer tim = new Timer();
-	tim.start();
-	transformGraph(selection, trans);
-	System.out.println("time to transform graph: " + tim.read()/1000f);
+        System.out.println("selected scaling: " + selection);
+        FloatTransformer trans = (FloatTransformer)name2transform.get(selection);
+        Timer tim = new Timer();
+        tim.start();
+        transformGraph(selection, trans);
+        System.out.println("time to transform graph: " + tim.read()/1000f);
       }
     }
   }
@@ -601,11 +601,11 @@ public class GraphAdjusterView extends JComponent
       float[] new_ycoords = new float[pcount];
 
       for (int k=0; k<pcount; k++) {
-	new_ycoords[k] = transformer.transform(old_ycoords[k]);
+        new_ycoords[k] = transformer.transform(old_ycoords[k]);
       }
       String newname = trans_name + " (" + graf.getGraphName() + ") ";
       GraphSym newgraf =
-	new GraphSym(graf.getGraphXCoords(), new_ycoords, newname, graf.getGraphSeq());
+        new GraphSym(graf.getGraphXCoords(), new_ycoords, newname, graf.getGraphSeq());
       //      System.out.println(newgraf);
       ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
       newgraf_count++;
@@ -686,18 +686,18 @@ public class GraphAdjusterView extends JComponent
       // if this is not a floating graph, then it's in a tier,
       //    so check tier -- if this graph is only child, then get rid of the tier also
       if (nwidg instanceof AffyLabelledTierMap &&
-	  (! GraphGlyphUtils.hasFloatingAncestor(gl)) ) {
-	AffyLabelledTierMap map = (AffyLabelledTierMap)nwidg;
-	GlyphI parentgl = gl.getParent();
-	parentgl.removeChild(gl);
-	if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
-	  if (parentgl instanceof TierGlyph) {
-	    map.removeTier((TierGlyph)parentgl);
-	    gviewer.getGraphStateTierHash().remove(gl.getGraphState());
-	    map.packTiers(false, true, false);
-	    map.stretchToFit(false, false);
-	  }
-	}
+          (! GraphGlyphUtils.hasFloatingAncestor(gl)) ) {
+        AffyLabelledTierMap map = (AffyLabelledTierMap)nwidg;
+        GlyphI parentgl = gl.getParent();
+        parentgl.removeChild(gl);
+        if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
+          if (parentgl instanceof TierGlyph) {
+            map.removeTier((TierGlyph)parentgl);
+            gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+            map.packTiers(false, true, false);
+            map.stretchToFit(false, false);
+          }
+        }
       }
     }
   }
@@ -714,16 +714,16 @@ public class GraphAdjusterView extends JComponent
       FileOutputStream ostr = null;
       try {
         JFileChooser chooser = new JFileChooser();
-	chooser.setCurrentDirectory(load_dir_tracker.getFile());
-	int option = chooser.showSaveDialog(gviewer.getFrame());
-	if (option == JFileChooser.APPROVE_OPTION) {
+        chooser.setCurrentDirectory(load_dir_tracker.getFile());
+        int option = chooser.showSaveDialog(gviewer.getFrame());
+        if (option == JFileChooser.APPROVE_OPTION) {
           load_dir_tracker.setFile(chooser.getCurrentDirectory());
-	  File fil = chooser.getSelectedFile();
-	  GraphSymUtils.writeGraphFile(gsym, fil.getAbsolutePath());
-	}
+          File fil = chooser.getSelectedFile();
+          GraphSymUtils.writeGraphFile(gsym, fil.getAbsolutePath());
+        }
       }
       catch (Exception ex) {
-	IGB.errorPanel("Error saving graph", ex);
+        IGB.errorPanel("Error saving graph", ex);
       }
     }
   }
@@ -734,7 +734,7 @@ public class GraphAdjusterView extends JComponent
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
       if (gl != null && gl instanceof SmartGraphGlyph) {
-	((SmartGraphGlyph)gl).setThreshStartShift(shift);
+        ((SmartGraphGlyph)gl).setThreshStartShift(shift);
       }
     }
     nwidg.updateWidget();
@@ -747,7 +747,7 @@ public class GraphAdjusterView extends JComponent
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
       if (gl != null && gl instanceof SmartGraphGlyph) {
-	((SmartGraphGlyph)gl).setThreshEndShift(shift);
+        ((SmartGraphGlyph)gl).setThreshEndShift(shift);
       }
     }
     nwidg.updateWidget();
@@ -791,23 +791,23 @@ public class GraphAdjusterView extends JComponent
       GraphSym sym1 = (GraphSym)grafs.get(0);
       GraphGlyph glyph1 = (GraphGlyph)nwidg.getItem(sym1);
       if (glyph1 != null) {
-	float_group = GraphGlyphUtils.hasFloatingAncestor(glyph1);
-	GlyphI parent = glyph1.getParent();
-	TierGlyph parent_tier = null;
-	if (parent instanceof TierGlyph) {
-	  parent_tier = (TierGlyph)parent;
-	}
-	else {
-	  parent_tier = GraphGlyphUtils.attachGraph(glyph1, gviewer, null);
-	}
-	for (int i=1; i<gcount; i++) {
-	  GraphSym sym = (GraphSym)grafs.get(i);
-	  GraphGlyph gl = (GraphGlyph)nwidg.getItem(sym);
-	  if (gl != null) {
-	    GraphGlyphUtils.attachGraph(gl, gviewer, parent_tier);
-	  }
-	}
-	//    }
+        float_group = GraphGlyphUtils.hasFloatingAncestor(glyph1);
+        GlyphI parent = glyph1.getParent();
+        TierGlyph parent_tier = null;
+        if (parent instanceof TierGlyph) {
+          parent_tier = (TierGlyph)parent;
+        }
+        else {
+          parent_tier = GraphGlyphUtils.attachGraph(glyph1, gviewer, null);
+        }
+        for (int i=1; i<gcount; i++) {
+          GraphSym sym = (GraphSym)grafs.get(i);
+          GraphGlyph gl = (GraphGlyph)nwidg.getItem(sym);
+          if (gl != null) {
+            GraphGlyphUtils.attachGraph(gl, gviewer, parent_tier);
+          }
+        }
+        //    }
       }
     }
   }
@@ -871,7 +871,7 @@ class LogNatural implements FloatTransformer {
   }
   public float inverseTransform(float y) {
     throw new RuntimeException("LogNatural.inverseTransform called, " +
-			       "but LogNatural is not an invertible function");
+                               "but LogNatural is not an invertible function");
   }
   /** not invertible because values < 1 before transform cannot be recovered... */
   public boolean isInvertible()  { return false; }
@@ -901,7 +901,7 @@ class LogBase2 implements FloatTransformer {
   }
   public float inverseTransform(float x) {
     throw new RuntimeException("LogBase2.inverseTransform called, " +
-			       "but LogBase2 is not an invertible function");
+                               "but LogBase2 is not an invertible function");
   }
   public boolean isInvertible()  { return false; }
 }
@@ -943,7 +943,7 @@ class PowTransform implements FloatTransformer {
   }
   public float inverseTransform(float x) {
     //    throw new RuntimeException("LogBase2.inverseTransform called, " +
-    //			       "but LogBase2 is not an invertible function");
+    //                               "but LogBase2 is not an invertible function");
     return (x <= 1) ? LOG_1 : (float)(Math.log(x)/LN_BASE);
   }
   public boolean isInvertible() { return true; }

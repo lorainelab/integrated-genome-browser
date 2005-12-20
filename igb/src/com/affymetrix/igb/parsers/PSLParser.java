@@ -92,7 +92,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     if (aseq != null) {
       target_hash.put(aseq.getID(), aseq);
     }
-    parse(istr, meth, null, target_hash, annotate_query, annotate_target);
+    parse(istr, meth, null, target_hash, null, annotate_query, annotate_target);
     if (aseq == null) {
       Iterator iter = target_hash.values().iterator();
       if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
@@ -105,9 +105,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
 
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash,
+			      Map qhash, Map thash, Map id2sym_hash,
 			      boolean annotate_query, boolean annotate_target)  throws IOException  {
-    return parse(istr, annot_type, qhash, thash, null,
+    return parse(istr, annot_type, qhash, thash, null, id2sym_hash,
 		 annotate_query, annotate_target, false);
   }
 
@@ -122,16 +122,16 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
    *
    */
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash,  Map ohash,
+			      Map qhash, Map thash,  Map ohash, Map id2sym_hash,
 			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
     throws IOException {
     return parse(istr, annot_type, false,
-		 qhash, thash, ohash,
+		 qhash, thash, ohash, id2sym_hash, 
 		 annotate_query, annotate_target, annotate_other);
   }
 
   public java.util.List parse(InputStream istr, String annot_type,  boolean create_container_annot,
-			      Map qhash, Map thash,  Map ohash,
+			      Map qhash, Map thash,  Map ohash, Map id2sym_hash,
 			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
     throws IOException {
     System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
@@ -454,6 +454,10 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	total_annot_count++;
 	total_child_count += sym.getChildCount();
 	results.add(sym);
+        if (id2sym_hash != null)
+        {
+            id2sym_hash.put(sym.getID(), sym);
+        }
 	if (total_annot_count % 5000 == 0) {
 	  System.out.println("current annot count: " + total_annot_count);
 	}
@@ -703,7 +707,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	//	results = test.parse(fistr, "psl_test", query_hash, target_hash, true, true);
 	// trying with containers...
 	results = test.parse(fistr, "psl_test", true,
-			     query_hash, target_hash, null, true, true, false);
+			     query_hash, target_hash, null, null, true, true, false);
 	fistr.close();
 	int acount = results.size();
 	System.out.println("Results: annotation count = " + acount);

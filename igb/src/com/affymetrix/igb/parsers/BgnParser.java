@@ -103,7 +103,7 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
 			    AnnotatedSeqGroup seq_group, Map id2sym_hash, long blength) throws IOException {
-    return parse(istr, annot_type, seq_group, null, null, blength, true);
+    return parse(istr, annot_type, seq_group, null, id2sym_hash, blength, true);
   }
 
   /**
@@ -112,7 +112,7 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
 			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
-    return parse(istr, annot_type, null, seq_hash, null, blength, true);
+    return parse(istr, annot_type, null, seq_hash, id2sym_hash, blength, true);
   }
 
   /**

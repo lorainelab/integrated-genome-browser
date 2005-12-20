@@ -15,6 +15,7 @@ package com.affymetrix.igb.parsers;
 
 import java.io.*;
 import java.util.*;
+
 import com.affymetrix.genoviz.util.Timer;
 
 import java.util.Comparator;
@@ -188,7 +189,7 @@ public class BpsParser implements AnnotationWriter  {
       else {
 	dis = new DataInputStream(bis);
       }
-      return parse(dis, annot_type, target_hash);
+      return parse(dis, annot_type, target_hash, null);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -196,16 +197,23 @@ public class BpsParser implements AnnotationWriter  {
     return null;
   }
 
-  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash) {
-    return parse(dis, annot_type, null, target_hash, false, true);
+
+  
+  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash, Map id2sym_hash) {
+    return parse(dis, annot_type, null, target_hash, id2sym_hash, false, true);
   }
 
+  public static java.util.List parse(DataInputStream dis, String annot_type,
+	      Map qhash, Map thash, boolean annot_query, boolean annot_target) {
+	  return parse (dis, annot_type, qhash, thash, null, annot_query, annot_target);
+  }
+  
   /** Reads binary PSL data from the given stream.  Note that this method <b>can</b>
    *  be interrupted early by Thread.interrupt().  The input stream will always be closed
    *  before exiting this method.
    */
   public static java.util.List parse(DataInputStream dis, String annot_type,
-				      Map qhash, Map thash, boolean annot_query, boolean annot_target) {
+				      Map qhash, Map thash, Map id2sym_hash,  boolean annot_query, boolean annot_target) {
     Map query_hash = qhash;
     Map target_hash = thash;
     if (query_hash == null) { query_hash = new HashMap(); }
@@ -275,7 +283,9 @@ public class BpsParser implements AnnotationWriter  {
 			 queryseq, qmin, qmax, targetseq, tmin, tmax,
 			 blockcount, blockSizes, qmins, tmins);
 	results.add(sym);
-
+	if (id2sym_hash != null) {
+		id2sym_hash.put(sym.getID(), sym);
+	}
 	if (annot_query && (queryseq instanceof MutableAnnotatedBioSeq)) {
 	  SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
 	  if (query_parent_sym == null) {
@@ -360,7 +370,7 @@ public class BpsParser implements AnnotationWriter  {
       }
       PSLParser parser = new PSLParser();
       // don't bother annotating the sequences, just get the list of syms
-      results = parser.parse(istr, file_name, null, null, false, false);
+      results = parser.parse(istr, file_name, null, null, null, false, false);
     }
     catch (Exception ex) {
       ex.printStackTrace();

@@ -29,14 +29,16 @@ public class SingletonGenometryModel {
 
   Map seq_groups = new LinkedHashMap();
   // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
-
+  
+  // maps sequences to lists of selected symmetries
+  Map seq2selectedSymsHash = new HashMap();
+  
   List seq_selection_listeners = new ArrayList();
   List group_selection_listeners = new ArrayList();
   List sym_selection_listeners = new ArrayList();
 
   AnnotatedSeqGroup selected_group = null;
   MutableAnnotatedBioSeq selected_seq = null;
-  List selected_syms = null;
 
   public static SingletonGenometryModel getGenometryModel() {
     return smodel;
@@ -148,6 +150,22 @@ public class SingletonGenometryModel {
       SeqSelectionListener listener = (SeqSelectionListener)iter.next();
       listener.seqSelectionChanged(evt);
     }
+    
+    // Retrieve and update the list of selections for this sequence 
+    List syms;
+    if (seq != null && 
+       (syms = (List)seq2selectedSymsHash.get(seq)) != null && 
+        syms.size() > 0)
+    {
+    	// notify all listeners to update their selection
+    	SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
+		for (int i=0; i<sym_selection_listeners.size(); i++) 
+		{
+			SymSelectionListener listener = 
+				(SymSelectionListener)sym_selection_listeners.get(i);
+			listener.symSelectionChanged(sevt);
+		}
+    }
   }
 
 
@@ -175,24 +193,76 @@ public class SingletonGenometryModel {
     return sym_selection_listeners;
   }
 
+  /**
+   *  Sets the selected symmetries for a the currently selected sequence.
+   *  All the selection listeners will be notified.
+   *  @param syms A List of SeqSymmetry objects to select.
+   */
   public void setSelectedSymmetries(List syms)  {
     setSelectedSymmetries(syms, this);
   }
-
-  public void setSelectedSymmetries(List syms, Object src) {
+  
+  /**
+   *  Sets the selected symmetries for a the currently selected sequence. 
+   *  All the selection listeners will be notified.
+   *  @param syms A List of SeqSymmetry objects to select.
+   *  @param src The object responsible for selecting the sequences.
+   */
+  public void setSelectedSymmetries(List syms, Object src) 
+  {
+	  setSelectedSymmetries(syms, src, selected_seq );
+  }
+  
+  /**
+   *  Selects a List of SeqSymmetry objects for a particular MutableAnnotatedBioSeq object.
+   *  If the sequence is the currently selected sequence, all the selection listeners 
+   *  will be notified.
+   *  @param syms A List of SeqSymmetry objects to select.
+   *  @param src The object responsible for selecting the sequences.
+   *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
+   */
+  public void setSelectedSymmetries(List syms, Object src, MutableAnnotatedBioSeq seq ) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSymmetries() called, ");
       System.out.println("    syms = " + syms);
     }
-    selected_syms = syms;
-    SymSelectionEvent sevt = new SymSelectionEvent(src, selected_syms);
-    for (int i=0; i<sym_selection_listeners.size(); i++) {
-      SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
-      listener.symSelectionChanged(sevt);
+    // set the selected syms for the sequence 
+    seq2selectedSymsHash.put(seq, syms);
+
+    // if the selection is changing for the currently selected seq, notify all the
+    //  selection listeners
+    if (seq.equals(selected_seq))
+    {
+    	SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
+    	for (int i=0; i<sym_selection_listeners.size(); i++) {
+    		SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
+    		listener.symSelectionChanged(sevt);
+    	}
     }
   }
-
+  
+  /**
+   *  @return A List of the selected SeqSymmetry objects selected on the currently selected sequence
+   */
   public List getSelectedSymmetries() {
-    return selected_syms;
+	return (List)seq2selectedSymsHash.get(selected_seq);
+  }
+  
+  /**
+   *  Clears the symmetry selection for every sequence. Notifies all the selection listeners.
+   *  @param src The object responsible for clearing the selections.
+   */
+  public void clearSelectedSymmetries(Object src) {
+	  for(Iterator i=seq2selectedSymsHash.values().iterator();i.hasNext();) 
+	  {
+		  List list = (List)i.next();
+		  list.clear();
+	  }
+	  SymSelectionEvent sevt = new SymSelectionEvent(src, Collections.EMPTY_LIST);
+	  for (int i=0; i<sym_selection_listeners.size(); i++) 
+	  {
+		  SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
+		  listener.symSelectionChanged(sevt);
+	  }
   }
 }

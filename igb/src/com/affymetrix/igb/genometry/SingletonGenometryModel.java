@@ -54,11 +54,11 @@ public class SingletonGenometryModel {
       // try and find a synonym
       Iterator iter = seq_groups.values().iterator();
       while (iter.hasNext()) {
-	AnnotatedSeqGroup curgroup = (AnnotatedSeqGroup)iter.next();
-	if (curgroup.isSynonymous(group_syn)) {
-	  group = curgroup;
-	  break;
-	}
+        AnnotatedSeqGroup curgroup = (AnnotatedSeqGroup)iter.next();
+        if (curgroup.isSynonymous(group_syn)) {
+          group = curgroup;
+          break;
+        }
       }
     }
     return group;
@@ -157,14 +157,14 @@ public class SingletonGenometryModel {
        (syms = (List)seq2selectedSymsHash.get(seq)) != null && 
         syms.size() > 0)
     {
-    	// notify all listeners to update their selection
-    	SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
-		for (int i=0; i<sym_selection_listeners.size(); i++) 
-		{
-			SymSelectionListener listener = 
-				(SymSelectionListener)sym_selection_listeners.get(i);
-			listener.symSelectionChanged(sevt);
-		}
+      // notify all listeners to update their selection
+      SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
+    for (int i=0; i<sym_selection_listeners.size(); i++) 
+    {
+      SymSelectionListener listener = 
+        (SymSelectionListener)sym_selection_listeners.get(i);
+      listener.symSelectionChanged(sevt);
+    }
     }
   }
 
@@ -210,7 +210,7 @@ public class SingletonGenometryModel {
    */
   public void setSelectedSymmetries(List syms, Object src) 
   {
-	  setSelectedSymmetries(syms, src, selected_seq );
+    setSelectedSymmetries(syms, src, selected_seq );
   }
   
   /**
@@ -233,11 +233,11 @@ public class SingletonGenometryModel {
     //  selection listeners
     if (seq.equals(selected_seq))
     {
-    	SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
-    	for (int i=0; i<sym_selection_listeners.size(); i++) {
-    		SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
-    		listener.symSelectionChanged(sevt);
-    	}
+      SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
+      for (int i=0; i<sym_selection_listeners.size(); i++) {
+        SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
+        listener.symSelectionChanged(sevt);
+      }
     }
   }
   
@@ -245,7 +245,7 @@ public class SingletonGenometryModel {
    *  @return A List of the selected SeqSymmetry objects selected on the currently selected sequence
    */
   public List getSelectedSymmetries() {
-	return (List)seq2selectedSymsHash.get(selected_seq);
+  return (List)seq2selectedSymsHash.get(selected_seq);
   }
   
   /**
@@ -253,16 +253,16 @@ public class SingletonGenometryModel {
    *  @param src The object responsible for clearing the selections.
    */
   public void clearSelectedSymmetries(Object src) {
-	  for(Iterator i=seq2selectedSymsHash.values().iterator();i.hasNext();) 
-	  {
-		  List list = (List)i.next();
-		  list.clear();
-	  }
-	  SymSelectionEvent sevt = new SymSelectionEvent(src, Collections.EMPTY_LIST);
-	  for (int i=0; i<sym_selection_listeners.size(); i++) 
-	  {
-		  SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
-		  listener.symSelectionChanged(sevt);
-	  }
+    for(Iterator i=seq2selectedSymsHash.values().iterator();i.hasNext();) 
+    {
+      List list = (List)i.next();
+      list.clear();
+    }
+    SymSelectionEvent sevt = new SymSelectionEvent(src, Collections.EMPTY_LIST);
+    for (int i=0; i<sym_selection_listeners.size(); i++) 
+    {
+      SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
+      listener.symSelectionChanged(sevt);
+    }
   }
 }

@@ -197,7 +197,9 @@ public class BpsParser implements AnnotationWriter  {
     return null;
   }
 
-
+  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash)  {
+    return parse(dis, annot_type, target_hash, null);
+  }
   
   public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash, Map id2sym_hash) {
     return parse(dis, annot_type, null, target_hash, id2sym_hash, false, true);

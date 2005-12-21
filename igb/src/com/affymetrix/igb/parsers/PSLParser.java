@@ -105,10 +105,23 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
 
   public java.util.List parse(InputStream istr, String annot_type,
+			      Map qhash, Map thash,
+			      boolean annotate_query, boolean annotate_target)  throws IOException  {
+    return parse(istr, annot_type, qhash, thash, null, annotate_query, annotate_target);
+  }
+
+  public java.util.List parse(InputStream istr, String annot_type,
 			      Map qhash, Map thash, Map id2sym_hash,
 			      boolean annotate_query, boolean annotate_target)  throws IOException  {
     return parse(istr, annot_type, qhash, thash, null, id2sym_hash,
 		 annotate_query, annotate_target, false);
+  }
+
+  public java.util.List parse(InputStream istr, String annot_type,
+			      Map qhash, Map thash,  Map ohash,
+			      boolean annotate_query, boolean annotate_target, boolean annotate_other) 
+  throws IOException {
+    return parse(istr, annot_type, qhash, thash, ohash, null, annotate_query, annotate_target, annotate_other);
   }
 
   /**

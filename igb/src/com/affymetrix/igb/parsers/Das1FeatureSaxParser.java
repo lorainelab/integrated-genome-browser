@@ -421,6 +421,42 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     feat_notes = null;
     group_notes = null;
   }
+  
+  
+  /**
+   *  Get a parent SeqSymmetry for holding all children of a given group
+   *  in a given feature type.  For example, the type may be "RefSeq" and
+   *  the group may be a gene "NM_0000042".  This is essentially a two-level
+   *  hash.  The return type is declared as Object rather than SeqSymmetry to
+   *  avoid multiple casts since you will most likely have to cast the return value
+   *  to a specific sub-type of SeqSymmetry before using it.
+   *
+   *  @return a SeqSymmetry or null.
+   */
+  public Object getGroupSymmetryForType(String feattype, String featgroup) {
+    Map map = (Map) grouphash.get(feattype);
+    if (map == null) {
+      return null;
+    } else {
+      return map.get(featgroup);
+    }
+  }
+  
+  /**
+   *  Store a SeqSymmetry object for holding all children of a given group
+   *  in a given feature type.  For example, the type may be "RefSeq" and
+   *  the group may be a gene "NM_0000042".
+   *
+   *  @return the Object previously stored for that type and group, or null.
+   */
+  public Object putGroupSymmetryForType(String feattype, String featgroup, Object o) {
+    Map map = (Map) grouphash.get(feattype);
+    if (map == null) {
+      map = new HashMap();
+      grouphash.put(feattype, map);
+    }
+    return map.put(featgroup, o);
+  }
 
   public void addFeature() {
     Map global_symhash = IGB.getSymHash();
@@ -436,7 +472,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       filter =
         (
          ((feattype != null) && (filter_hash.get(feattype) != null)) ||
-         (FILTER_OUT_BY_ID && (grouphash.get(featgroup) == null) && (global_symhash.get(featgroup) != null))
+         (FILTER_OUT_BY_ID && (getGroupSymmetryForType(feattype, featgroup) == null) && (global_symhash.get(featgroup) != null))
          );
     }
     else {
@@ -506,15 +542,16 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
       }
       if (featgroup != null) {  // if there is a group id, add annotation to parent annotation
-        //      parent_sym = (MutableSingletonSeqSymmetry)grouphash.get(featgroup);
-        parent_sym = (SingletonSymWithProps)grouphash.get(featgroup);
+        
+        parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
+        
         if (parent_sym == null) {
           groupcount++;
           //        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
           parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
           parent_sym.setProperty("id", featgroup);
           if (feattype != null)  { parent_sym.setProperty("method", feattype); }
-          grouphash.put(featgroup, parent_sym);
+          putGroupSymmetryForType(feattype, featgroup, parent_sym);
           global_symhash.put(featgroup, parent_sym);
           if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null))  { grandparent_sym.addChild(parent_sym); }
           else { aseq.addAnnotation(parent_sym); }

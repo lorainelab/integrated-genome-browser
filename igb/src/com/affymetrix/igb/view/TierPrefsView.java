@@ -28,6 +28,7 @@ import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.*;
 import java.util.prefs.*;
 
@@ -69,17 +70,26 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
 
-  static boolean auto_apply_changes = true;
+  static final String PREF_AUTO_REFRESH = "Auto-Apply Tier Customizer Changes";
+  static final boolean default_auto_refresh = true;
+  JCheckBox auto_refresh_CB;
   
-  JButton refresh_list_B = new JButton("Refresh List");
+  static final String REFRESH_LIST = "Refresh List";
+  JButton refresh_list_B = new JButton(REFRESH_LIST);
   
-  JButton refresh_map_B = new JButton("Refresh Map");
+  static final String REFRESH_MAP = "Refresh Map";
+  JButton refresh_map_B = new JButton(REFRESH_MAP);
+  
+  static final String AUTO_REFRESH = "Auto Refresh";
+  static final String APPLY_DEFAULT_BG = "Apply Default Background";
+  
+  
   SeqMapView smv;
   
-  static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;
+  static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;  
   
   public TierPrefsView() {
-    this(true, true);
+    this(false, true);
   }
   
   public TierPrefsView(boolean add_refresh_list_button, boolean add_refresh_map_button) {
@@ -92,7 +102,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     JPanel button_panel = new JPanel();
     button_panel.setLayout(new BoxLayout(button_panel, BoxLayout.X_AXIS));
 
-    JButton apply_bg_button = new JButton("Apply Default Background");
+    JButton apply_bg_button = new JButton(APPLY_DEFAULT_BG);
     button_panel.add(Box.createHorizontalGlue());
     button_panel.add(apply_bg_button);
     apply_bg_button.addActionListener(new ActionListener() {
@@ -116,6 +126,20 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       });
       button_panel.add(Box.createHorizontalStrut(10));
       button_panel.add(refresh_map_B);
+
+      auto_refresh_CB = UnibrowPrefsUtil.createCheckBox(AUTO_REFRESH, 
+        UnibrowPrefsUtil.getTopNode(), PREF_AUTO_REFRESH, default_auto_refresh);
+      auto_refresh_CB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          if (refresh_map_B != null) {
+            refreshSeqMapView();
+            refresh_map_B.setEnabled(! auto_refresh_CB.isSelected());
+          }
+        }
+      });
+      refresh_map_B.setEnabled(! auto_refresh_CB.isSelected());
+      button_panel.add(Box.createHorizontalStrut(10));
+      button_panel.add(auto_refresh_CB);
     }
     
     if (add_refresh_list_button) {
@@ -195,8 +219,20 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       AnnotStyle as = (AnnotStyle) iter.next();
       as.setBackground(default_annot_style.getBackground());
     }
-    refreshList();
-    refreshSeqMapView();
+    table.repaint(); // table needs to redraw itself due to changed values
+    if (autoApplyChanges()) {
+      refreshSeqMapView();
+    }
+  }
+
+  /** Whether or not changes to the table should automatically be
+   *  applied to the view.
+   */
+  boolean autoApplyChanges() {
+    boolean auto_apply_changes = UnibrowPrefsUtil.getBooleanParam(
+      PREF_AUTO_REFRESH, default_auto_refresh);
+    if (auto_refresh_CB == null) { auto_apply_changes = true; }
+    return auto_apply_changes;
   }
 
   class TierPrefsTableModel extends AbstractTableModel {
@@ -325,7 +361,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         System.out.println("Exception in TierPrefsView.setValueAt(): " + e);
       }
       
-      if (auto_apply_changes) { 
+      if (autoApplyChanges()) { 
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             applyChanges();
@@ -333,7 +369,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         });
       }
     }
-  
+      
     /** Parse an integer, using the given fallback if any exception occurrs.
      *  @param s  The String to parse.
      *  @param empty_string  the value to return if the input is an empty string.
@@ -363,7 +399,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   
   /**
    *  Gets an instance of TierPrefsView wrapped in a JFrame, useful
-   *  as a pop-up dialog for setting annotatin styles. 
+   *  as a pop-up dialog for setting annotation styles. 
    */
   public static JFrame showFrame() {
     if (static_frame == null) {
@@ -501,6 +537,21 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     sb.append("changing the setting of "+GLYPH_DEPTH+" may affect which labels are shown.  ");
     sb.append("</p>\n");
 
+    sb.append("<p>\n");
+    sb.append("<h2>"+APPLY_DEFAULT_BG+"</h2>\n");
+    sb.append("Copies the background color from the default row to all other rows.");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>"+REFRESH_MAP+"</h2>\n");
+    sb.append("Redraws the display applying any changes that have been made in the table.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>"+AUTO_REFRESH+"</h2>\n");
+    sb.append("If selected, the display will refresh automatically after each change.");
+    sb.append("</p>\n");
+    
     return sb.toString();
   }
   

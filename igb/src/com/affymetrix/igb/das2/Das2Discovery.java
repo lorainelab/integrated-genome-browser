@@ -31,7 +31,7 @@ public class Das2Discovery {
 
   /**
    *  Gets a Map of DAS servers.
-   *  Map is from Strings (server names) to DasServerInfo's.
+   *  Map is from Strings (server names) to Das2ServerInfo's.
    */
   public static Map getDas2Servers() {
     if (! servers_initialized)  {

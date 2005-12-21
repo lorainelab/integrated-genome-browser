@@ -1258,11 +1258,11 @@ public class SeqMapView extends JPanel
     }
   }
 
-  public void select(java.util.List sym_list) {
+  void select(java.util.List sym_list) {
     select(sym_list, false, false, true);
   }
 
-  public void select(java.util.List sym_list, boolean add_to_previous,
+  void select(java.util.List sym_list, boolean add_to_previous,
 		     boolean call_listeners, boolean update_widget) {
     if (! add_to_previous)  {
       clearSelection();
@@ -1281,7 +1281,7 @@ public class SeqMapView extends JPanel
     }
   }
 
-  public void select(SeqSymmetry sym, boolean add_to_previous,
+  void select(SeqSymmetry sym, boolean add_to_previous,
 		     boolean call_listeners, boolean update_widget) {
     if (! add_to_previous) {
       clearSelection();
@@ -2079,6 +2079,8 @@ public class SeqMapView extends JPanel
       //   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
       select(symlist, false, false, false);
       zoomToSelections();
+      String title = getSelectionTitle(map.getSelected());
+      IGB.getSingletonIGB().setStatus(title, false);
     }
   }
 

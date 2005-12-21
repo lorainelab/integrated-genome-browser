@@ -22,6 +22,7 @@ import javax.swing.*;
 public class PreferencesPanel extends JPanel {
   
   static final String WINDOW_NAME = "Preferences Window";
+  static final String HELP_WINDOW_NAME = "Preferences Help Window";
   
   JFrame frame = null;
   static PreferencesPanel singleton = null;
@@ -206,8 +207,18 @@ public class PreferencesPanel extends JPanel {
     dialog.getContentPane().add(button_box, "South");
     dialog.pack();
     dialog.setLocationRelativeTo(this);
-    
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
+    if (pos != null) {
+      UnibrowPrefsUtil.setWindowSize(dialog, pos);
+    }
+    dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    dialog.addWindowListener( new WindowAdapter() {
+      public void windowClosing(WindowEvent evt) {
+        UnibrowPrefsUtil.saveWindowLocation(dialog, HELP_WINDOW_NAME);
+        dialog.dispose();
+      }
+    });
     
     dialog.setVisible(true);
   }

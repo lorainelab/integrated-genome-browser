@@ -1271,22 +1271,6 @@ public class SeqMapView extends JPanel
     int symcount = sym_list.size();
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)sym_list.get(i);
-      select(sym, true, false, false);
-    }
-    if (update_widget) {
-      map.updateWidget();
-    }
-    if (call_listeners) {
-      postSelections();
-    }
-  }
-
-  void select(SeqSymmetry sym, boolean add_to_previous,
-		     boolean call_listeners, boolean update_widget) {
-    if (! add_to_previous) {
-      clearSelection();
-    }
-    if (sym != null) { // sym could be null if the caller was trying to clear selections
       // currently assuming 1-to-1 mapping of sym to glyph
       GlyphI gl = (GlyphI)map.getItem(sym);
       if (gl != null) {
@@ -1298,6 +1282,18 @@ public class SeqMapView extends JPanel
     }
     if (call_listeners) {
       postSelections();
+    }
+  }
+
+  // This version of select() is not currently used
+  void select(SeqSymmetry sym, boolean add_to_previous,
+		     boolean call_listeners, boolean update_widget) {
+    if (sym == null) {
+      select(Collections.EMPTY_LIST, add_to_previous, call_listeners, update_widget);
+    } else {
+      ArrayList list = new ArrayList(1);
+      list.add(sym);
+      select(list, add_to_previous, call_listeners, update_widget);
     }
   }
 

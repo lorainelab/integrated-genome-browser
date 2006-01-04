@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*    
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.  
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.view;
 
 import java.awt.*;
@@ -131,17 +144,24 @@ class SeqGroupView extends JComponent
 
 class SeqGroupTableModel extends AbstractTableModel  {
   AnnotatedSeqGroup group;
+
   public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
     group = seq_group;
   }
-  public int getRowCount() { return (group == null ? 0 : group.getSeqs().size()); }
+
+  public int getRowCount() { return (group == null ? 0 : group.getSeqCount()); }
+
   public int getColumnCount() { return 2; }
+
   public Object getValueAt(int row, int col) {
-    if (col == 0) {
-      return group.getSeq(row).getID();
-    }
-    else if (col == 1) {
-      return Integer.toString(group.getSeq(row).getLength());
+    if (group != null) {
+      MutableAnnotatedBioSeq seq = group.getSeq(row);
+      if (col == 0) {
+        return seq.getID();
+      }
+      else if (col == 1) {
+        return Integer.toString(seq.getLength());
+      }
     }
     return null;
   }
@@ -151,8 +171,6 @@ class SeqGroupTableModel extends AbstractTableModel  {
     else if (col == 1) { return "Length"; }
     else { return null; }
   }
-
-
 }
 
 

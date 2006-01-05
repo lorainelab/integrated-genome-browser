@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -44,6 +44,7 @@ public class SynonymLookup {
       }
     }
     catch (Exception ex) {
+      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
       ex.printStackTrace();
     }
   }

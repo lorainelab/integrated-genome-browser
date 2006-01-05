@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -670,6 +670,22 @@ public class SeqMapView extends JPanel
 			 (vbufimg instanceof VolatileImage));
     }
 
+    if (frm != null) {
+      String title = null;
+      if (seq == null) {
+        title = IGB.APP_NAME;
+      } else {
+        String version_info = getVersionInfo(seq);
+        if (version_info == null) {
+          title = IGB.APP_NAME + ":      " + seq.getID();
+        }
+        else {
+          title = IGB.APP_NAME + ":      " + seq.getID() + "  (" + version_info + ")";
+        }
+      }
+      frm.setTitle(title);
+    }
+
     if (seq == null) {
       clear();
       return;
@@ -862,20 +878,6 @@ public class SeqMapView extends JPanel
     map.updateWidget();
     if (DIAGNOSTICS) {
       System.out.println("Time to convert models to display: " + tim.read()/1000f);
-    }
-    if (! same_seq) {
-      // setting title for window
-      if (frm != null) {
-        String version_info = getVersionInfo(seq);
-	String title = null;
-	if (version_info == null) {
-	  title = IGB.APP_NAME + ":      " + seq.getID();
-	}
-	else {
-	  title = IGB.APP_NAME + ":      " + seq.getID() + "  (" + version_info + ")";
-	}
-	frm.setTitle(title);
-      }
     }
   }
 
@@ -2536,23 +2538,10 @@ public class SeqMapView extends JPanel
       System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
-    if (newseq != null)  {
-      if (newseq != getAnnotatedSeq()) {
-	/*   temporarily turned off seq modification event propagation
-	BioSeq oldseq = getAnnotatedSeq();
-	if (oldseq instanceof SmartAnnotBioSeq) {
-	  ((SmartAnnotBioSeq)oldseq).removeModifiedListener(this);
-	}
-        setAnnotatedSeq(seq);
-	if (newseq instanceof SmartAnnotBioSeq)  {
-	  ((SmartAnnotBioSeq)newseq).addModifiedListener(this);
-        }
-	*/
-        setAnnotatedSeq(newseq);
-      }
-    }
-    else  {
-      clear();
+    if (newseq != getAnnotatedSeq()) {
+      // Don't worry if newseq is null, setAnnotatedSeq can handle that
+      // (It can also handle the case where newseq is same as old seq.)
+      setAnnotatedSeq(newseq);
     }
   }
 

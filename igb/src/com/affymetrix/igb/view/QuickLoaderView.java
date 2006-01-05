@@ -56,7 +56,6 @@ public class QuickLoaderView extends JComponent
 
   public static final String PREF_QUICKLOAD_URL = "QuickLoad URL";
   public static final String PREF_DAS_DNA_SERVER_URL = "DAS DNA Server URL";
-  public static final String PREF_QUICKLOAD_CACHE_USAGE = "quickload_cache_usage";
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
 
@@ -66,7 +65,6 @@ public class QuickLoaderView extends JComponent
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String SELECT_A_GENOME = "Select a genome to load";
-  static int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
   static boolean LOAD_DEFAULT_ANNOTS = true;
@@ -99,7 +97,7 @@ public class QuickLoaderView extends JComponent
   String default_annot_name  = "refseq";
 
   int cache_usage =
-    UnibrowPrefsUtil.getIntParam(PREF_QUICKLOAD_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    UnibrowPrefsUtil.getIntParam(LocalUrlCacher.PREF_CACHE_USAGE, LocalUrlCacher.CACHE_USAGE_DEFAULT);
   boolean cache_residues =
     UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
   boolean cache_annots =
@@ -202,7 +200,7 @@ public class QuickLoaderView extends JComponent
   public QuickLoaderView() {
     //gviewer = IGB.getSingletonIGB().getMapView(); // now this gets set when IGB calls putPluginProperty()
 
-    cache_usage = UnibrowPrefsUtil.getIntParam("quickload_cache_usage", CACHE_USAGE_DEFAULT);
+    cache_usage = UnibrowPrefsUtil.getIntParam("quickload_cache_usage", LocalUrlCacher.CACHE_USAGE_DEFAULT);
     cache_residues = UnibrowPrefsUtil.getBooleanParam("quickload_cache_residues", CACHE_RESIDUES_DEFAULT);
     cache_annots = UnibrowPrefsUtil.getBooleanParam("quickload_cache_annots", CACHE_ANNOTS_DEFAULT);
 

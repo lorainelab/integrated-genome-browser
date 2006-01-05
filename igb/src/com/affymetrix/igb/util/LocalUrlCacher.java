@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -32,17 +32,8 @@ public class LocalUrlCacher {
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 
   public static InputStream getInputStream(String url) throws IOException  {
-    int cache_usage =
-      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
-    return getInputStream(url, cache_usage);
+    return getInputStream(url, getPreferredCacheUsage(), true);
   }
-
-  public static InputStream getInputStream(String url, int write_to_cache)  throws IOException {
-    int cache_usage =
-      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
-    return getInputStream(url, cache_usage, true);
-  }
-
 
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
@@ -238,6 +229,13 @@ public class LocalUrlCacher {
   /** Returns the location of the root directory of the cache. */
   public static String getCacheRoot() {
     return cache_root;
+  }
+
+  /** Returns the current value of the persistent user preference PREF_CACHE_USAGE. */
+  public static int getPreferredCacheUsage() {
+    int cache_usage =
+      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    return cache_usage;
   }
   
   public static void reportHeaders(URLConnection query_con) {

@@ -27,12 +27,20 @@ public class LocalUrlCacher {
   public static int ONLY_CACHE = 101;
   public static int NORMAL_CACHE = 102;
 
+  // the "quickload" part of the constant value is there for historical reasons
+  public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
+  public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
+
   public static InputStream getInputStream(String url) throws IOException  {
-    return getInputStream(url, NORMAL_CACHE);
+    int cache_usage =
+      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    return getInputStream(url, cache_usage);
   }
 
-  public static InputStream getInputStream(String url, int return_behavior)  throws IOException {
-    return getInputStream(url, NORMAL_CACHE, true);
+  public static InputStream getInputStream(String url, int write_to_cache)  throws IOException {
+    int cache_usage =
+      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    return getInputStream(url, cache_usage, true);
   }
 
 
@@ -42,14 +50,9 @@ public class LocalUrlCacher {
     // if url is a file url, and not caching files, then just directly return stream
     if ((! CACHE_FILE_URLS) && (url.startsWith("file:"))) {
       InputStream fstr = null;
-      try {
-	URL furl = new URL(url);
-	fstr = furl.openConnection().getInputStream();
-        System.out.println("URL is file url, so not caching: " + furl);
-      }
-      catch (Exception ex) {
-	System.out.println("File for URL not found: " + url);
-      }
+      URL furl = new URL(url);
+      fstr = furl.openConnection().getInputStream();
+      System.out.println("URL is file url, so not caching: " + furl);
       return fstr;
     }
     File fil = new File(cache_root);
@@ -105,17 +108,30 @@ public class LocalUrlCacher {
         
     // if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
     if (cached && (cache_option != IGNORE_CACHE)) {
-      long local_timestamp = cache_file.lastModified();
-      String local_date = DateFormat.getDateTimeInstance().format(new Date(local_timestamp)); ;
-      if ((! url_reachable) ||
-	  (has_timestamp && (remote_timestamp <= local_timestamp)) ) {
-	System.out.println("cache exists and is more recent, using cache: " + cache_file);
-	result_stream = new FileInputStream(cache_file);
-      }
-      else {
-	System.out.println("cached file exists, but URL is more recent, so reloading cache");
+      if (! url_reachable) {
+        if (cache_option != ONLY_CACHE) {
+          System.out.println("Remote URL not reachable.");
+        }
+        if (cached) {
+          System.out.println("Loading cached file for URL");
+          result_stream = new FileInputStream(cache_file);
+        } else {
+          System.out.println("No cached local copy of the file is available.");
+          result_stream = null;
+        }
+      } else { // url is reachable
+        long local_timestamp = cache_file.lastModified();
+        if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
+	  System.out.println("Cache exists and is more recent, using cache: " + cache_file);
+	  result_stream = new FileInputStream(cache_file);
+        }      
+        else {
+	  System.out.println("cached file exists, but URL is more recent, so reloading cache");
+          result_stream = null;
+        }
       }
     }
+
     // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
     if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {
       // no cache hit, or stale, or cache_option set to IGNORE_CACHE...
@@ -186,6 +202,19 @@ public class LocalUrlCacher {
       }
       result_stream = new ByteArrayInputStream(content);
     }
+    
+    if (result_stream == null) {
+      String message;
+      if (cache_option == ONLY_CACHE) {
+        message = "Local cache file not found.  You may wish to change your caching preferences in QuickLoad options.";
+      } else if (cache_option == IGNORE_CACHE) {
+        message = "Remote URL could not be opened.";
+      } else {
+        message = "Either the remote URL or the local cached copy could not be opened.";
+      }
+      throw new IOException(message);
+    }
+    
     //    System.out.println("returning stream: " + result_stream);
     return result_stream;
   }
@@ -210,7 +239,7 @@ public class LocalUrlCacher {
   public static String getCacheRoot() {
     return cache_root;
   }
-
+  
   public static void reportHeaders(URLConnection query_con) {
     try {
       System.out.println("URL: " + query_con.getURL().toString());

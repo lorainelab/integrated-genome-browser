@@ -176,12 +176,13 @@ public class GraphGlyphUtils {
 	}
       }
 
-      if (graf != null) {
-	tglyph.setLabel(graf.getGraphName());
+      AnnotStyle style = tglyph.getAnnotStyle();
+      if (style != null) {
+        tglyph.setLabel(style.getHumanName());
+      } else {
+        tglyph.setLabel("unknown");
       }
-      else {
-	tglyph.setLabel("unknown");
-      }
+      
       //      tglyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
       if (new_tier)  {
 	map.addTier(tglyph, true);

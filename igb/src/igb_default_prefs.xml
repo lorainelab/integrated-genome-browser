@@ -1,6 +1,9 @@
 <prefs>
 
+<!-- It not necessary to set the QuickLoadUrl in this file.
+     If one is specified, it will be used in addition to the default one(s).
 <tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/>
+-->
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 
 <boolean tag="USE_QUICK_LOADER" val="true" />
@@ -88,7 +91,7 @@
 
   <!-- <annotation_url> associates a "method" type regular expression with a URL.
        parameters:
-         annot_type_regex:  a regular expression
+         annot_type_regex:  a regular expression (case insensitive by default)
          url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->

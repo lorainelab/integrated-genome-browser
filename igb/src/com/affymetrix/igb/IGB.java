@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -172,18 +172,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     main_args = args;
     getIGBPrefs(); // force loading of prefs
 
-    String url_from_xml_prefs = (String) IGB.getIGBPrefs().get("QuickLoadUrl");
-    if (url_from_xml_prefs != null) {
-      UnibrowPrefsUtil.getLocationsNode().put(QuickLoaderView.PREF_QUICKLOAD_URL, url_from_xml_prefs);
-    }
-
-    SynonymLookup dlookup = new SynonymLookup();
-    String quick_load_url = QuickLoaderView.getQuickLoadUrl();
+    String quick_load_url = QuickLoadView2.getQuickLoadUrl();
+    SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     dlookup.loadSynonyms(quick_load_url + "synonyms.txt");
-    SynonymLookup.setDefaultLookup(dlookup);
 
     singleton_igb = new IGB();
     singleton_igb.init();
+    
     
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
@@ -208,7 +203,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
-   }
+   }   
   }
 
 

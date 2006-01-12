@@ -39,10 +39,9 @@ public class SynonymLookup {
     try {
       syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
     } catch (IOException ioe) {
-      syn_stream = null;
-    } finally {
       if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
-    }
+      syn_stream = null;
+    } 
 
     if (syn_stream == null) {
       System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);

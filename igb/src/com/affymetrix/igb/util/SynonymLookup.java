@@ -35,17 +35,28 @@ public class SynonymLookup {
 
   public void loadSynonyms(String synonym_loc) {
     System.out.println("url to load synonyms from: " + synonym_loc);
+    InputStream syn_stream = null;
     try {
-      InputStream syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
-      if (syn_stream == null) {
-        System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
-      } else {
-        loadSynonyms(syn_stream);
-      }
+      syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
+    } catch (IOException ioe) {
+      syn_stream = null;
+    } finally {
+      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
+    }
+
+    if (syn_stream == null) {
+      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
+      return;
+    }
+
+    try {
+      loadSynonyms(syn_stream);
     }
     catch (Exception ex) {
-      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
+      System.out.println("WARNING: Error while loading synonym data from: " + synonym_loc);
       ex.printStackTrace();
+    } finally {
+      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
     }
   }
 
@@ -155,7 +166,9 @@ public class SynonymLookup {
       lookup_hash.put(str1, list1);
       list1.add(str1);  // now including self as synonym -- GAH 10-28-2002
     }
-    list1.add(str2);
+    if (! list1.contains(str2)) {
+      list1.add(str2);
+    }
 
     ArrayList list2 = (ArrayList)lookup_hash.get(str2);
     if (list2 == null) {
@@ -163,7 +176,9 @@ public class SynonymLookup {
       lookup_hash.put(str2, list2);
       list2.add(str2);  // now including self as synonym -- GAH 10-28-2002
     }
-    list2.add(str1);
+    if (! list2.contains(str1)) {
+      list2.add(str1);
+    }
 
   }
 

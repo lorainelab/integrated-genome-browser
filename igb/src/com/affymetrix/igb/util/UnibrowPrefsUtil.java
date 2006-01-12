@@ -261,7 +261,10 @@ import com.affymetrix.igb.menuitem.FileTracker;
       try {
         importPreferences(f);
       } catch (InvalidPreferencesFormatException ipfe) {
-        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage());
+        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage()
+        +"\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "+
+        "In particular, you cannot import the file 'igb_prefs.xml' that was "+
+        "used in earlier versions of this program.");
       } catch (Exception e) {
         ErrorHandler.errorPanel("ERROR", "Error importing preferences from file", e);
       }

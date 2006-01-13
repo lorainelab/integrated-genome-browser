@@ -108,6 +108,7 @@ public class QuickLoadView2 extends JComponent
   }
 
 
+  //TODO: This should be a singleton
   public QuickLoadView2() {
     
     initOptionsDialog();
@@ -167,6 +168,8 @@ public class QuickLoadView2 extends JComponent
     serverCB.addItemListener(this);
     genomeCB.addItemListener(this);
     initializeQLServers();
+    
+    resetToLastQLServerAtStartup();
   }
     
   public void actionPerformed(ActionEvent evt)  {
@@ -428,6 +431,52 @@ public class QuickLoadView2 extends JComponent
   // equivalent to getURLLastUsed()
   public static String getQuickLoadUrl() {
     return getUrlLastUsed();
+  }
+  
+  void resetToLastQLServerAtStartup() {
+    // tries to reset the quickload server back to the one used when the program last shut-down
+    // Must be done only after IGB has finished initializing, so the SeqMapView is ready
+    // Run on the Swing Thread, so we are sure necessary initialization is finished
+    
+    Runnable r = new Runnable() {
+      public void run() {
+        try {
+
+          for (int i=0; (i<1000) && (! IGB.getSingletonIGB().isInitialized()); i++) {
+            // wait for IGB to be ready, and then switch genomes
+            Thread.currentThread().sleep(500);
+          }
+          if (! IGB.getSingletonIGB().isInitialized()) {
+            // if you waited this long and IGB isn't ready, then just give up
+            return;
+          }
+    
+          final String last_name = getLastServerName();
+          setSelectedServerEventually(last_name);
+        } catch (Exception e) {
+          // no exceptions are expected, but if there are any, ignore them.
+          System.out.println("WARNING: Problem resetting to last QL server: " + e.toString());
+        }
+      }
+    };
+    
+    Thread t = new Thread(r);
+    t.start();
+  }
+  
+  void setSelectedServerEventually(String server) {
+    final JComboBox combo_box = serverCB;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        try {    
+          final String last_name = getLastServerName();
+          combo_box.setSelectedItem(last_name);
+        } catch (Exception e) {
+          // no exceptions are expected, but if there are any, ignore them.
+          System.out.println("WARNING: Problem resetting to last QL server: " + e.toString());
+        }
+      }
+    });
   }
 
   /**

@@ -240,10 +240,10 @@ public class UrlLoaderThread extends Thread {
 
     URL url = feat_request_con.getURL();
     if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
-    if (content_type == null || 
-	content_type.startsWith("content/unknown") || 
-	content_type.startsWith("application/zip") || 
-	content_type.startsWith("application/octet-stream") || 
+    if (content_type == null ||
+	content_type.startsWith("content/unknown") ||
+	content_type.startsWith("application/zip") ||
+	content_type.startsWith("application/octet-stream") ||
 	"file".equals(url.getProtocol().toLowerCase()))
     {
       System.out.println("Attempting to load data from: " + url.toExternalForm());
@@ -344,12 +344,9 @@ public class UrlLoaderThread extends Thread {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
       dis = new DataInputStream(bis);
-
-      HashMap temphash = new HashMap();
-      temphash.put(seq_id, current_seq);
-
+      
       BpsParser bps_parser = new BpsParser();
-      bps_parser.parse(dis, type, temphash, IGB.getSymHash());
+      bps_parser.parse(dis, type, gmodel.getSelectedSeqGroup().getSeqs(), IGB.getSymHash());
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}
       if (bis != null) try {bis.close();} catch (Exception e) {}

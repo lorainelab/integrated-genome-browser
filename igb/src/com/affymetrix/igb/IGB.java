@@ -144,6 +144,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   static String rest_file = "rest_enzymes"; // located in same directory as this class
 
+  boolean initialized = false;
 
   /**
    * Start the program.
@@ -200,10 +201,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         mue.printStackTrace(System.err);
       }
     }
+    
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
-   }   
+   }
   }
 
 
@@ -673,6 +675,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     // Start listining for http requests only after all set-up is done.
     startControlServer();
+    
+    initialized = true;
+  }
+  
+  /** Returns true if initialization as completed. */
+  public boolean isInitialized() {
+    return initialized;
   }
   
   /** Sets the text in the status bar.

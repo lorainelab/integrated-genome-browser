@@ -78,11 +78,11 @@ public class GraphAdjusterView extends JComponent
   JComboBox styleCB = new JComboBox();
   JComboBox visCB = new JComboBox();
   JComboBox threshCB = new JComboBox();
-  JButton tier_threshB = new JButton("Make Tier");
+  JButton tier_threshB = new JButton("Make Track");
 
   JButton boundsB = new JButton("Toggle Bounds");
   JRadioButton floatB = new JRadioButton("Floating");
-  JRadioButton attachB = new JRadioButton("Tiered");
+  JRadioButton attachB = new JRadioButton("Attached");
   JButton cloneB = new JButton("Clone Graphs");
   JButton deleteB = new JButton("Delete Graph");
   JButton saveB = new JButton("Save Graph");

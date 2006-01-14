@@ -672,7 +672,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	public void windowClosing(WindowEvent evt) {exit();}
       });
     frm.show();
-
+    
     // Start listining for http requests only after all set-up is done.
     startControlServer();
     

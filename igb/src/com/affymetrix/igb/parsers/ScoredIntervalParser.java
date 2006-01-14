@@ -106,7 +106,7 @@ public class ScoredIntervalParser {
    */
   static public final String PREF_ALWAYS_ADD_CONTAINER_GLYPHS = "Always add container glyphs";
   static public final boolean default_always_add_container_glyphs = false;
-  
+
   /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
    *      each array of scores is converted to a GraphSym and also added as annotation to seq.
@@ -114,12 +114,12 @@ public class ScoredIntervalParser {
   boolean attach_graphs = default_attach_graphs;
 
 
-  public void parse(InputStream istr, String stream_name, Map seqhash) 
+  public void parse(InputStream istr, String stream_name, Map seqhash)
   throws IOException {
     parse(istr, stream_name, seqhash, null);
   }
 
-  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash) 
+  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash)
   throws IOException {
     attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
     BufferedReader br= null;
@@ -167,14 +167,14 @@ public class ScoredIntervalParser {
       int mod_hit_count = 0;
       int total_mod_hit_count = 0;
       int miss_count = 0;
-      
+
       Matcher strand_matcher = strand_regex.matcher("");
       boolean sin1 = false;
       boolean sin2 = false;
       boolean sin3 = false;
       boolean all_sin3 = true;
       java.util.List isyms = new ArrayList();
-      
+
       // There should already be a non-header line in the 'line' variable.
       // Continue reading lines until there are no more lines.
       for ( ; line != null ; line = br.readLine()) {
@@ -289,7 +289,7 @@ public class ScoredIntervalParser {
 	  findex++;
 	}
 
-	// usually there will be only one IndexedSingletonSym in isyms list, 
+	// usually there will be only one IndexedSingletonSym in isyms list,
 	//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
 	//    so cycle through all isyms
 	int icount = isyms.size();
@@ -317,9 +317,9 @@ public class ScoredIntervalParser {
 	BioSeq aseq = (BioSeq)ent.getKey();
 	//	java.util.List entry_list = (java.util.List)entrylists.next();
 	java.util.List entry_list = (java.util.List)ent.getValue();
-        
+
 	//	System.out.println("hmm, seq = " + aseq.getID() + ", entry count = " + entry_list.size());
-	Collections.sort(entry_list, comp);        
+	Collections.sort(entry_list, comp);
       }
 
       System.out.println("number of scores per line: " + score_count);
@@ -335,11 +335,11 @@ public class ScoredIntervalParser {
 	  container.setProperty((String)entry.getKey(), entry.getValue());
 	}
 	container.setProperty("method", stream_name);
-        
+
         // Force the AnnotStyle for the container to have glyph depth of 1
         AnnotStyle style = AnnotStyle.getInstance(stream_name);
         style.setGlyphDepth(1);
-        
+
 	//	seq2container.put(seqid, container);
 	java.util.List entry_list = (java.util.List)seq2sinentries.get(aseq);
 	int entry_count = entry_list.size();
@@ -360,9 +360,9 @@ public class ScoredIntervalParser {
 	  }
 	  container.addScores(score_name, score_column);
 	}
-	        
+
         boolean always_add_container_glyphs = UnibrowPrefsUtil.getBooleanParam(PREF_ALWAYS_ADD_CONTAINER_GLYPHS, default_always_add_container_glyphs);
-        
+
         // if not sin3, then add container as annotation to seq
 	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
 	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
@@ -380,7 +380,7 @@ public class ScoredIntervalParser {
       System.out.println("data lines in .sin file: " + line_count);
       if ((hit_count + miss_count) > 0)  {
 	System.out.println("sin3 miss count: " + miss_count);
-	System.out.println("sin3 exact id hit count: " + hit_count); 
+	System.out.println("sin3 exact id hit count: " + hit_count);
       }
       if (mod_hit_count > 0)  {System.out.println("sin3 extended id hit count: " + mod_hit_count); }
       if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + mod_hit_count); }
@@ -391,7 +391,7 @@ public class ScoredIntervalParser {
       ioe.initCause(ex);
       throw ioe;
     }
-    finally {      
+    finally {
       if (br != null) try { br.close(); } catch (Exception e) {}
     }
   }
@@ -442,9 +442,9 @@ public class ScoredIntervalParser {
         if (stream_name == null) {  id = "score" + i;  }
         else {
           if (score_count > 1) {
-            id = stream_name + ": score" + i; 
+            id = stream_name + ": score" + i;
           } else {
-            id = stream_name; 
+            id = stream_name;
           }
         }
       }

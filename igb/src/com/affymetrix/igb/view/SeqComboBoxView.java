@@ -23,6 +23,7 @@ public class SeqComboBoxView extends JComponent
   static final String NO_SEQ_SELECTED = "No sequence selected";
 
   public SeqComboBoxView() {
+    // need to set maximum x size of seqL and seqCB (or entire SeqComboBoxView), so doesn't grab space needed by other parts of GUI
     seqL = new JLabel("Sequence: ");
     seqCB = new JComboBox();
     seqCB.addItem(NO_SEQUENCES);

@@ -139,10 +139,12 @@ public class BsnpParser {
   }
 
   /**
+   *  Reads a GFF document.
    *  Assumes specific GFF variant used to represent SNPs on Affy genotyping chips:
+   *<pre>
          #seqname	enzyme	probeset_id	start	end	score	strand	frame
 	 chr1	XbaI	SNP_A-1507333	219135381	219135381	.	+	.
-   *  
+   *</pre>
    */
   public java.util.List readGffFormat(InputStream istr) {
     List results = new ArrayList();

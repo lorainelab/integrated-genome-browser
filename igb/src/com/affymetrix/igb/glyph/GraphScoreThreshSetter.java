@@ -326,8 +326,9 @@ public class GraphScoreThreshSetter extends JPanel
   }
 
   /**
-   *  if (thresh_is_min), then values must >= threshold to pass
-   *  if (! thresh_is_min), then values must be <= threshold to pass
+   *  Sets the flag thresh_is_min.
+   *  if (thresh_is_min), then values must >= threshold to pass.
+   *  if (! thresh_is_min), then values must be <= threshold to pass.
    */
   public void setThresholdDirection(boolean b) {
     if (thresh_is_min != b) {

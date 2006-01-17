@@ -2,6 +2,11 @@ Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
 
+IGB-4.02
+  + Added preliminary support for version 2 of the DAS protocol
+  + Implemented a customizer for setting properties of annotation tiers
+  + Deprecated most features of the igb_prefs.xml file
+
 IGB-3.62
   + Overhaul of the selection mechanism: 
   ++ dragging selects multiple items; 

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
 /**
+ *  A composite graph that contains average, min, and max of a set of graphs.
  *  This assumes that all graphs in the multigraph have the same xcoords!
  *
  *  For building "composite" graphs from graph slices, see CompositeGraphSym
@@ -222,7 +223,7 @@ public class MultiGraph extends SmartGraphGlyph {
   }
 
   /**
-   *  Temporarily changing view's transform for drawing children --
+   *  Temporarily changing view's transform for drawing children.
    *  if child is itself a graph, then it can handle it's own transformations
    *  if child is not a graph, then use modified transform.
    */

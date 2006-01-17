@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -66,13 +66,14 @@ public class Das2Region {
     return segment_span;
   }
 
-  /** or should this return a SmartAnnotbioSeq??? */
+  // or should this return a SmartAnnotbioSeq???
   public MutableAnnotatedBioSeq getAnnotatedSeq() {
     return aseq;
   }
 
 
   /**
+   *  Retrieves features from a DAS2 server based on inforation in the Das2FeatureRequestSym.
    *  Takes an uninitialized Das2FeatureRequestSym as an argument,
    *    constructs a DAS2 query based on sym,
    *    sends query to DAS2 server
@@ -87,7 +88,6 @@ public class Das2Region {
    *
    */
   public boolean getFeatures(Das2FeatureRequestSym request_sym) {
-    System.out.println("hi");
     boolean success = true;
       SeqSpan overlap_span = request_sym.getOverlapSpan();
       String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);

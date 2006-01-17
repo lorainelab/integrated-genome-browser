@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -55,7 +55,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String PARENT = "PARENT";
 
   /**
-   *  attributes possible in DAS2 feature respons
+   *  attributes possible in DAS2 feature response
    */
   static final String ID = "id";   // in <FEATURE>, <PART>
   static final String TYPE = "type";  // in <FEATURE>
@@ -161,7 +161,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   /**
-   *  return value is List of all top-level features as symmetries
+   *  Parse a DAS2 features document.
+   *  return value is List of all top-level features as symmetries.
    *  if annot_seq, then feature symmetries will also be added as annotations to seqs in seq group
    *
    *  For example of situation where annot_seq = false:
@@ -175,7 +176,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     clearAll();
     add_annots_to_seq = annot_seq;
 
-    /**
+    /*
      *  result_syms get populated via callbacks from reader.parse(),
      *    eventually leading to result_syms.add() calls in addFeatue();
      */
@@ -382,7 +383,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       featsym.addSpan(span);
     }
 
-    /**
+    /*
      *  Add children _only_ if all children already have symmetries in feat_parts
      *  Otherwise need to wait till have all child syms, because need to be
      *     added to parent sym in order.
@@ -478,7 +479,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   /**
    *  Implementing AnnotationWriter interface to write out annotations
-   *    to an output stream as "DASGFF" XML format
+   *    to an output stream as "DASGFF" XML format.
    */
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
                                   String type, OutputStream outstream) {
@@ -521,8 +522,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
   /**
-   *  Write out a SeqSymmetry in DAS2FEATURE format
-   *  recursively descends to write out all descendants
+   *  Write out a SeqSymmetry in DAS2FEATURE format.
+   *  Recursively descends to write out all descendants
    */
   public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
 				     BioSeq aseq, String feat_type, PrintWriter pw) {
@@ -616,6 +617,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
   /**
+   *  Get position span as a SeqSpan.
    *  Or should this be called parseRegion() ??
    *
    *  From the DAS2 spec:
@@ -682,6 +684,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
   /**
+   *   Converts a SeqSpan to a DAS2 region String.
    *   if include_header, then prepends "region/" to String, otherwise leaves it off
    *   if include_strand, then appends strand info to end of String (":1") or (":-1")
    *

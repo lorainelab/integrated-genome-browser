@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -233,8 +233,7 @@ public class UnibrowControlServlet extends HttpServlet {
     if (book_group != null && ! book_group.equals(selected_group)) {
       if (selected_group != null && ! selected_group.equals("null")) {
         if (!uni.confirmPanel("Do you want to switch the Genome version to '" +
-                              version +
-                              "' ?\n Please be aware you will loose your current work")) {
+                              version )) {
           return false; // was cancelled
         }
       }

@@ -20,12 +20,12 @@ an OSI approved open source license.
 
 See http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx
 
-IGB uses other open source software packages that are not distributed 
+IGB uses other open source software packages that may be distributed 
 with the IGB source code release, including Xerces from Apache, 
-and Jetty from Mortbay Consulting, which are covered by their own 
+and Jetty from Mortbay Consulting.  Those are covered by their own 
 open source licenses.
 
-IGB is Copyright (c) 2000-2005 Affymetrix, Inc.  
+IGB is Copyright (c) 2000-2006 Affymetrix, Inc.  
 Research and development of IGB is supported in part by NIH grant R01HG003040.
 
 GenoViz is hosted on SourceForge.net at 
@@ -42,6 +42,8 @@ the genoviz_sdk directory.  These are described later below.
 Javadocs can also be created from the java code using the
 provided 'ant' scripts.
 
+See also
+http://sourceforge.net/docman/?group_id=129420
 
 ----------------- REQUIRED RESOURCES -----------------------
 
@@ -50,11 +52,10 @@ IGB requires the Java 2 Platform, Standard Edition (J2SE),
   http://java.sun.com/j2se/
 
 
-IGB requires several additional resources.  Download the following
-java 'jar' files and place them in the 'lib' directory of the 
-IGB distribution:
+IGB requires several additional resources.  These are included 
+in the 'ext' directory, and you do not need to download them.
 
-jetty.jar  
+org.mortbay.jetty.jar  
   Version 4.1 or higher
   http://www.jettyserver.org/jetty/index.html
 
@@ -63,12 +64,9 @@ servlet.jar
   http://java.sun.com/products/servlet/2.2/
 
 xerces.jar
+(or xml-apis.jar, xercesImpl.jar and commons-logging.jar)
   Version 1.3 or higher, but NOT Version 2.0 or higher.
   http://xml.apache.org/xerces-j/
-
-
-(If you choose to use Apache Ant, you can skip the xerces.jar file and instead
-make use of the xercesImpl.jar and xml-apis.jar files included with Ant.)
 
 
 ----------------- OPTIONAL RESOURCES -----------------------
@@ -85,23 +83,17 @@ The provided build.xml file was tested with Apache Ant version 1.5.2.
 
 ----------------- COMPILING IGB ----------------------------
 
-Download the jar files listed above in REQUIRED RESOURCES.
-Place them together in any directory.
 
 If you wish to use 'ant':
-
-You will have to let ant know the name of the directory where
-you placed the third-party jar files.  To do this, add the
-flag '-Dlib.dir=...'.  For example, if the files are located in
-'/home/gregg/lib', then use:
  
-'ant -Dlib.dir=/home/gregg/lib jar' 
-  to compile the source and create the igb.jar file.
+'ant jar' 
+  to compile the source and create the three jar files:
+  igb.jar genoviz_sdk/genoviz.jar and genometry/genometry.jar
 
-'ant -Dlib.dir=/home/gregg/lib docs' 
+'ant docs' 
   to create javadocs documentation into the 'api-docs' folder.
 
-'ant -Dlib.dir=/home/gregg/lib clean' 
+'ant clean' 
   to remove compiled classes and documentation.
 
 The compiled code will be placed in the same directory structure 
@@ -125,12 +117,21 @@ The output is easier to read if you run it from the
 command line.
 
 Note that the following commands make use of the preferences
-file in igb_src/igb_prefs.xml.  If you have your own 
+file in igb/src/igb_prefs.xml.  If you have your own 
 preferences file(s), edit the commands below.
+(Few users need an igb_prefs.xml file with IGB 4.02 or higher.)
+
+
+Running with ant:
+
+Use the ant task 'run' to run the program from within ant.
+ 
+'ant run'
+
 
 Running from the command line. Sample command:
 
-java -Xmx512m -classpath lib/xercesImpl.jar:lib/xml-apis.jar:lib/servlet.jar:lib/jetty.jar:genometry/genometry.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb_src/igb_prefs.xml
+java -Xmx512m -classpath ext/xercesImpl.jar:ext/xml-apis.jar:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/commons-logging.jar:genometry/genometry.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb/src/igb_prefs.xml
 
 This sample command assumes that:
 
@@ -138,19 +139,10 @@ This sample command assumes that:
    and genometry subdirectories, respectively, relative to the
    top-level IGB release directory (this happens automatically
    when building via the ant 'jar' task),
-2) all third-party required jars are in a subdirectory called 'lib'
+2) all third-party required jars are in a subdirectory called 'ext'
    relative to the top-level IGB release directory, and
 3) it is executed in the top-level IGB release directory.
 
-
-Running with ant:
-
-Use the ant task 'run' to run the program from within ant.
-You must let ant know the location of the external
-resources.  For example, if the files are located in
-'/home/gregg/lib', then use:
- 
-'ant -Dlib.dir=/home/gregg/lib run'
 
 
 ----------------- RUNNING GENOVIZ TUTORIALS ------------------

@@ -4,8 +4,8 @@ This is the build file that is used by ant to compile IGB.
 
 Make sure that both 'ant' and 'javac' are in your path.
 
-Make sure that the 'lib' directory exists and includes
-  all needed jar files.  Refer to the README.txt file
+Make sure that the 'ext' directory exists and includes
+  all needed external jar files.  Refer to the README.txt file
   for the list of needed jar files.
 
 -->
@@ -41,12 +41,17 @@ Make sure that the 'lib' directory exists and includes
     <!--   (The source and class directories are the same)  -->
     <property name="classes.dir" value="${igb.dir}/src"/>
 
+    <!-- Define the directory with external jar files -->
+    <property name="lib.dir" value="${root.dir}/ext" />
+
     <!-- Define the output jar file -->
     <property name="igb.jar" value="${root.dir}/igb.jar"/>
 
     <!-- Define the output documentation directory -->
     <property name="api-docs.dir" value="${root.dir}/documentation/api-docs"/>
 
+    <!-- Define the output executable jar file -->
+    <property name="igb_exe.jar" value="${root.dir}/igb_exe.jar"/>
   </target>
   
   <target name="init-igb" depends="init">
@@ -169,26 +174,24 @@ Make sure that the 'lib' directory exists and includes
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates an executable, giganto-.jar file                            -->
+  <!-- Creates an executable, large .jar file                              -->
   <!-- =================================================================== -->
-  <!-- All jar files in the "lib" directory will be used during compilation. -->
-  <path id="project.class.path">
-    <fileset dir="${lib.dir}" id="extLibs">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-
+  <!-- Contents of all external jar files will be included  -->
+    
   <target name="exe" depends="jar" 
           description="generate executable .jar file" >
-    <!-- Put everything in ${build} into .jar file -->
-      <jar jarfile="igb_exe.jar" update="false">
+      <jar jarfile="${igb_exe.jar}" update="false">
       <manifest>
         <attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
       </manifest>
+      <metainf file="LICENSE.html"/>
+      <metainf file="NOTICES.txt"/>
       <zipfileset src="${igb.jar}"/>
       <zipfileset src="genometry/genometry.jar"/>
       <zipfileset src="genoviz_sdk/genoviz.jar"/>
-      <zipgroupfileset refid="extLibs"/>
+      <zipgroupfileset dir="${lib.dir}">
+        <include name="**/*.jar"/>
+      </zipgroupfileset>
     </jar>
   </target>
 
@@ -200,6 +203,7 @@ Make sure that the 'lib' directory exists and includes
     <ant dir="${genoviz.dir}" target="clean" inheritAll="false"/>
     <ant dir="${genometry.dir}" target="clean" inheritAll="false"/>
     <delete file="${igb.jar}"/>
+    <delete file="${igb_exe.jar}"/>
     <delete dir="${api-docs.dir}"/>
     <delete>
       <fileset dir="${root.dir}">
@@ -243,12 +247,18 @@ Make sure that the 'lib' directory exists and includes
            source="1.4"
            >
       <classpath refid="project.class.path"/>
-      <packageset dir="./igb/src"/>
+      <packageset dir="${igb.src.dir}"/>
       <packageset dir="${genoviz.src.dir}"/>
       <packageset dir="${genometry.src.dir}"/>
       <doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
     </javadoc>
+    <echo>
+     ***********************************************
+       Javadocs were created in the directory: 
+       ${api-docs.dir}
+     ***********************************************
+    </echo>
   </target> 
 
 </project>

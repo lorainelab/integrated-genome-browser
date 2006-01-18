@@ -444,7 +444,7 @@ public class QuickLoadView2 extends JComponent
 
           for (int i=0; (i<1000) && (! IGB.getSingletonIGB().isInitialized()); i++) {
             // wait for IGB to be ready, and then switch genomes
-            Thread.currentThread().sleep(500);
+            Thread.currentThread().sleep(100);
           }
           if (! IGB.getSingletonIGB().isInitialized()) {
             // if you waited this long and IGB isn't ready, then just give up

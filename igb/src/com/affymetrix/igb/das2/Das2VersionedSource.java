@@ -406,52 +406,56 @@ public class Das2VersionedSource  {
     String types_request = getSource().getServerInfo().getRootUrl() +
         "/" + this.getID() + "/type";
 
-    String ontologyRequest = "http://das.biopackages.net/das/ontology/obo/1/ontology";
     if (filter != null) {
       types_request = types_request+"?ontology="+filter;
-      //next I need a string like:
-      //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA
-      ontologyRequest = ontologyRequest+"/"+filter;
     }
 
     //    String types_request = "file:/C:/data/das2_responses/alan_server/types_short.xml";
     try {
-      System.out.println("Das Ontology Request: " + ontologyRequest);
       System.out.println("Das Types Request: " + types_request);
       Document doc = DasLoader.getDocument(types_request);
-      Document ontoDoc = DasLoader.getDocument(ontologyRequest);
       Element top_element = doc.getDocumentElement();
-      Element top_OntoElement = ontoDoc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");
-      NodeList ontoTypeList = ontoDoc.getElementsByTagName("TERM");
       System.out.println("types: " + typelist.getLength());
-      System.out.println("Onto Terms: " + ontoTypeList.getLength());
+      int typeCounter = 0;
 
+      HashMap curOntology = new HashMap();
+      HashMap uberTrackingHash = new HashMap();  //this is for tracking whether or not a node has been included in the list of nodes to draw/use later on...
+      String ontoRootNodeId = new String() ;
 
       //I HAVE to get the relevant ontoNode for each typeNode down below
       //OR I can just prefetch the parents into a map up here beforehand...
-      HashMap curOntology = new HashMap();
-      HashMap parentHoldingHash = new HashMap();
-      HashMap uberTrackingHash = new HashMap();                               //this is for tracking whether or not a node has been included in the list of nodes to draw/use later on...
-      String ontoRootNodeId = new String() ;
-      int typeCounter = 0;
+      if (getParents) {
+	String ontologyRequest = "http://das.biopackages.net/das/ontology/obo/1/ontology";
+	//next I need a string like:
+	//example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA
+	if (filter != null) {
+	  ontologyRequest = ontologyRequest+"/"+filter;
+	}
+	System.out.println("Das Ontology Request: " + ontologyRequest);
+	Document ontoDoc = DasLoader.getDocument(ontologyRequest);
+	Element top_OntoElement = ontoDoc.getDocumentElement();
+	NodeList ontoTypeList = ontoDoc.getElementsByTagName("TERM");
+	System.out.println("Onto Terms: " + ontoTypeList.getLength());
 
-      //now loop through the entire ontology and put the relevant reationships into this map
-      for (int m=0; m< ontoTypeList.getLength(); m++)  {
-        Element ontoTypeNode = (Element)ontoTypeList.item(m);
-        String termID = ontoTypeNode.getAttribute("id");                        //I most certainly will have duplicate key issues (many parents per key)
-                                                                                //So I will make a map where the vals are ArrayLists
-        // temporary workaround for getting type ending, rather than full URI
-	if (termID.startsWith("./")) { termID = termID.substring(2); }          //do I still need to do this BS?
+	HashMap parentHoldingHash = new HashMap();
 
-        //I need a way to set a variable so that I KNOW which element is the ROOT node.
-        //So I think I will make a HashMap and then anytime a new parent comes along,
-        //I will then add it to the hash (automatically there will be no dups).
-        //THERE is already a list of all the non-parent terms in the curOntology hash.
-        //Therefore at the end, I will grab the thing that was in the parents list and not the other list...
+	//now loop through the entire ontology and put the relevant reationships into this map
+	for (int m=0; m< ontoTypeList.getLength(); m++)  {
+	  Element ontoTypeNode = (Element)ontoTypeList.item(m);
+	  String termID = ontoTypeNode.getAttribute("id");                        //I most certainly will have duplicate key issues (many parents per key)
+	  //So I will make a map where the vals are ArrayLists
+	  // temporary workaround for getting type ending, rather than full URI
+	  if (termID.startsWith("./")) { termID = termID.substring(2); }          //do I still need to do this BS?
 
-        NodeList localParentsList = ontoTypeNode.getElementsByTagName("PARENT");
-        for (int l=0; l<localParentsList.getLength(); l++) {
+	  //I need a way to set a variable so that I KNOW which element is the ROOT node.
+	  //So I think I will make a HashMap and then anytime a new parent comes along,
+	  //I will then add it to the hash (automatically there will be no dups).
+	  //THERE is already a list of all the non-parent terms in the curOntology hash.
+	  //Therefore at the end, I will grab the thing that was in the parents list and not the other list...
+
+	  NodeList localParentsList = ontoTypeNode.getElementsByTagName("PARENT");
+	  for (int l=0; l<localParentsList.getLength(); l++) {
 
             //the pattern to look for gets compiled in here
             Pattern p = Pattern.compile("/");
@@ -463,63 +467,63 @@ public class Das2VersionedSource  {
             termID = match.replaceAll(":");
 
             Element pnode = (Element)localParentsList.item(l);
-           //get the newest parent
-           String newParent = pnode.getAttribute("id");
-           //make a new List to hold all parents (old an new)
+	    //get the newest parent
+	    String newParent = pnode.getAttribute("id");
+	    //make a new List to hold all parents (old an new)
 
             //reset the matcher with the string in question
             match.reset(newParent);
             //Replace found characters with an empty string.
             newParent = match.replaceAll(":");
 
-           ArrayList parentsList = new ArrayList();
-           //add that newest parent to it
-           parentsList.add(newParent);
-           //if we had a parent for this before...
+	    ArrayList parentsList = new ArrayList();
+	    //add that newest parent to it
+	    parentsList.add(newParent);
+	    //if we had a parent for this before...
 
-           //now I need to make sure that ALL parents get added to the following list NO MATTER WHAT.
-           //ALSO, these objects must all contain
-           parentHoldingHash.put(newParent, newParent);    //will just hold a bunch of strings corresponding to the relevant IDs...
+	    //now I need to make sure that ALL parents get added to the following list NO MATTER WHAT.
+	    //ALSO, these objects must all contain
+	    parentHoldingHash.put(newParent, newParent);    //will just hold a bunch of strings corresponding to the relevant IDs...
 
-           if(curOntology.containsKey(termID)){
-             //then we need to get the prev parents list out of there
-             ArrayList prevParents = new ArrayList();
-             //get out the existing list
-             prevParents = (ArrayList)curOntology.get(termID);
-                //add all those other parents to the newest list
-                for(int i=0;i<prevParents.size();i++){
-                    parentsList.add(prevParents.get(i));
-                }
-             //key and value pair
-             curOntology.put(termID, parentsList);
-           }                                            //need this to hold arraylists for each termID
-           //OR if this is the 1st time then just add it in there
-           else{
-             curOntology.put(termID, parentsList);               //key and value pair
-           }
-        }
-      }
+	    if(curOntology.containsKey(termID)){
+	      //then we need to get the prev parents list out of there
+	      ArrayList prevParents = new ArrayList();
+	      //get out the existing list
+	      prevParents = (ArrayList)curOntology.get(termID);
+	      //add all those other parents to the newest list
+	      for(int i=0;i<prevParents.size();i++){
+		parentsList.add(prevParents.get(i));
+	      }
+	      //key and value pair
+	      curOntology.put(termID, parentsList);
+	    }                                            //need this to hold arraylists for each termID
+	    //OR if this is the 1st time then just add it in there
+	    else{
+	      curOntology.put(termID, parentsList);               //key and value pair
+	    }
+	  }
+	}
 
         //HERE I need to go through the two hashes and annoint a root node...
         //I want the ID of the node that is not shared between parentHoldingHash and the curOntology (not in curOntology)
         Iterator parentIt = parentHoldingHash.keySet().iterator();
         while(parentIt.hasNext()) {
-            String curId = (String)parentIt.next();
-            if(curOntology.containsKey(curId)){
-                //remove that value from the parentHoldingHash
-            }
-            else{
-                ontoRootNodeId = (String)parentHoldingHash.get(curId).toString();
-            }
+	  String curId = (String)parentIt.next();
+	  if(curOntology.containsKey(curId)){
+	    //remove that value from the parentHoldingHash
+	  }
+	  else{
+	    ontoRootNodeId = (String)parentHoldingHash.get(curId).toString();
+	  }
         }
-
         System.out.println("the root node is:"+ontoRootNodeId);
+      }    // end ontology setup
 
 
       for (int i=0; i< typelist.getLength(); i++)  {
 	Element typenode = (Element)typelist.item(i);
         String typeid = typenode.getAttribute("id");                            // Gets the ID value
-//        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
+	//        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
         //FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         // temporary workaround for getting type ending, rather than full URI
@@ -554,7 +558,6 @@ public class Das2VersionedSource  {
         HashMap parents = new HashMap();
 
         if(getParents == true){
-
             //get the elements you need from the hash and then assign them as below
             //the value of ontid needs to be unescaped?  And then it needs to be trimmed of whatever base URI information its carrying 1st.
             //So I need to get some java code for dealing with that.
@@ -577,23 +580,16 @@ public class Das2VersionedSource  {
             //Replace found characters with an empty string.
             ontid = m.replaceAll(":");
 
+	    //OLDE way of doing this:
+	    /*            //temporarily we have to leave this here...  move this into the recursion later on...
+			  parents = getParentsMap(ontid, curOntology);
+			  
+			  Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, parents);
+			  this.addType(type);
+			  typeCounter++;
+	    */
 
-
-
-
-
-//OLDE way of doing this:
-/*            //temporarily we have to leave this here...  move this into the recursion later on...
-            parents = getParentsMap(ontid, curOntology);
-
-            Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, parents);
-            this.addType(type);
-            typeCounter++;
-*/
-
-
-
-//New way of doing this:
+	    //New way of doing this:
             ArrayList newTypes = new ArrayList();      //the list of this node and its parents who all need to be collected into the cue at this time...
             parents = getParentsMap(ontid, curOntology);
             HashMap orphanTypes = new HashMap(); //map to hold the IDs and the parents of each ID that we later want to recover...
@@ -606,8 +602,6 @@ public class Das2VersionedSource  {
                 this.addType(curType);
                 typeCounter++;
             }
-
-
         }
         else if (getParents == false){
             //do not assign real vals to these
@@ -637,7 +631,7 @@ public class Das2VersionedSource  {
         //GET -e "http://das.biopackages.net/das/ontology/obo/1/ontology/MA" | less
         //returns all the info from THAT particular ontology...
         //
-        System.out.println("Here are the number of new types that have been made: "+typeCounter);
+	//        System.out.println("Here are the number of new types that have been made: "+typeCounter);
       }
     }
     catch (Exception ex) {

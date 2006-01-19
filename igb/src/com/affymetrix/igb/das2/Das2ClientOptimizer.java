@@ -36,7 +36,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
-  static boolean DEBUG_HEADERS = true;
+  static boolean DEBUG_HEADERS = false;
   static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
 

@@ -1688,6 +1688,11 @@ public class SeqMapView extends JPanel
       int bases_in_view = (int) map.getView().getCoordBox().width;
       int pixel_width = map.getView().getPixelBox().width;
       as_bases_per_pix = bases_in_view / pixel_width;
+      
+      // as_bases_per_pix *should* be a float, or else should simply
+      // use the current resoltion without asking the user,
+      // but since it is an integer, we have to set the minimum value as 1
+      if (as_bases_per_pix < 1) {as_bases_per_pix = 1;}
 
       final JTextField bases_per_pixTF = new JTextField("" + as_bases_per_pix);
       final JTextField pix_to_scrollTF = new JTextField("" + as_pix_to_scroll);

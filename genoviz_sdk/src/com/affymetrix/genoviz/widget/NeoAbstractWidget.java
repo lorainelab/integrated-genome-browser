@@ -154,7 +154,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
   }
 
 
-  /** Subclasses should implement this. Default does nothing. */
+  /** Subclasses should implement this. Default does nothing. 
+   *  Implementations should add selections to the Vector 'selected',
+   *  in addition to any other tasks specific to those classes.
+   */
   public void select(GlyphI g) {
     // Implement in subclasses
   }
@@ -168,6 +171,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     }
   }
 
+  /**
+   *  Clears all selections by actaually calling {@link #deselect(GlyphI)}
+   *  on each one as well as removing them from the vector of selections.
+   */
   public void clearSelected() {
     while (selected.size() > 0) {
       // selected.size() shrinks because deselect(glyph)
@@ -181,7 +188,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     selected.removeAllElements();
   }
 
-  /** Subclasses should implement this. Default does nothing. */
+  /** Subclasses should implement this. Default does nothing.
+   *  Implementations should remove selections from the Vector 'selected',
+   *  in addition to any other tasks specific to those classes.
+   */
   public void deselect(GlyphI gl) {}
 
   public void deselect(Vector vec) {
@@ -201,6 +211,20 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   public Vector getSelected() {
     return selected;
+  }
+  
+  /** Clears all graphs from the widget.
+   *  This default implementation simply removes all elements from the
+   *  list of selections.  (It does this without calling clearSelected(),
+   *  because it is faster to skip an explict call to deselect(GlyphI)
+   *  for each Glyph.)
+   *  Subclasses should call this method during their own implementation.
+   *  Subclasses may choose to call clearSelected() before calling this
+   *  method if they require an explicit call to deselect(GlyphI) for
+   *  each Glyph.
+   */
+  public void clearWidget() {
+    selected.removeAllElements();
   }
 
 

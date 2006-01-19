@@ -27,7 +27,7 @@ public class NibbleResiduesParser {
   /**
    *  Parses an input stream.
    */
-  public static NibbleBioSeq parse(InputStream istr, NibbleBioSeq input_seq)  {
+  public static NibbleBioSeq parse(InputStream istr, NibbleBioSeq input_seq) throws IOException {
     NibbleBioSeq result_seq = null;
     DataInputStream dis = null;
     try {
@@ -74,34 +74,28 @@ public class NibbleResiduesParser {
       float read_time = tim.read()/1000f;
       System.out.println("time to read in bnib residues file: " + read_time);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
     finally {
       if (dis != null) try {dis.close();} catch(Exception e) {}
     }
     return result_seq;
   }
 
-  public static NibbleBioSeq readBinaryFile(String file_name) {
+  public static NibbleBioSeq readBinaryFile(String file_name) throws IOException {
     FileInputStream fis = null;
+    NibbleBioSeq seq = null;
     try {
       File fil = new File(file_name);
       fis = new FileInputStream(fil);
-      NibbleBioSeq seq = parse(fis, null);
-      return seq;
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
+      seq = parse(fis, null);
     }
     finally {
       if (fis != null) try {fis.close();} catch(Exception e) {}
     }
-    return null;
+    return seq;
   }
 
   public static void writeBinaryFile(String file_name, String seqname, String seqversion,
-				     String residues) {
+				     String residues) throws IOException {
     // binary DNA residues format
     // header:
     //   UTF8-encoded sequence name
@@ -146,9 +140,6 @@ public class NibbleResiduesParser {
       dos.flush();
       dos.close();
       System.out.println("done writing out nibble file");
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
     }
     finally {
       if (dos != null) try {dos.close();} catch(Exception e) {}

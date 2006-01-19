@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -32,7 +32,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
  * <li> improves efficiency of drawing zoomed-out large graphs (via max once-per-pixel drawing)
  * <li> improves efficiency of drawing zoomed-in large graphs (via binary search for draw end-points)
  * <li> allows for summarizing min, max, and average separately for zoomed-out graphs
- * <li> allows for on-the-fly thresholding and "glyphification" of regions above threshold
+ * <li> allows for on-the-fly thresholding and "glyphification" of regions that pass threshold
  * </ol>
  *
  *  Also, now trying to further improve efficiency for zoomed-out large graphs via data structure
@@ -72,13 +72,15 @@ public class SmartGraphGlyph extends GraphGlyph {
   Color lighter;
   Color darker;
   Color thresh_color;
-  ThreshGlyph thresh_glyph;
+
+  // still need to make thresh_glyph draw as a fixed-pixel (1 or 2) line instead of as a variable-pixel fillRect...
+  ThreshGlyph thresh_glyph = new ThreshGlyph();
 
   // eventually want hierarchy of graph compression caches at multiple compression levels...
   //  GraphCache[] caches;
   //  GraphCache graph_cache;
   //  GraphCache2 graph_cache;
-  ArrayList caches;  // the hiearchy of graph caches (well really just one for now...)
+  ArrayList caches = new ArrayList();  // the hiearchy of graph caches (well really just one for now...)
   int compression_level = 100;  // average # of points per entry in flat graph compression cache
 
   /*
@@ -112,20 +114,47 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph() {
-    super();
-    thresh_glyph = new ThreshGlyph();
-    thresh_glyph.setVisibility(getShowThreshold());
-
-    thresh_glyph.setSelectable(false);
-    this.addChild(thresh_glyph);
-    caches = new ArrayList();
+  public SmartGraphGlyph(int[] xcoords, float[] ycoords)  {
+    this(xcoords, ycoords, null);
   }
 
- public void setGraphState(GraphState state) {
-   super.setGraphState(state);
-   setScoreThreshold(state.getScoreThreshold());  // to trigger setting of threshold glyph's label
- }
+  public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    super(xcoords, ycoords, gstate);
+    setDrawOrder(Glyph.DRAW_SELF_FIRST);
+
+    //    thresh_glyph = new ThreshGlyph();
+    thresh_glyph.setVisibility(getShowThreshold());
+    thresh_glyph.setSelectable(false);
+    if (thresh_color != null)  { thresh_glyph.setColor(thresh_color); }
+    this.addChild(thresh_glyph);
+
+    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    caches.clear();
+    if (CALC_GRAPH_CACHE) {
+      double graph_coord_length = xcoords[xcoords.length-1] - xcoords[0];
+      double avg_bases_per_point = graph_coord_length / ((double)xcoords.length);
+      int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
+
+      GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ycoords);
+      caches.add(graph_cache);
+    }
+    //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
+    //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
+    //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    //    }
+    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
+      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    }
+    resetThreshLabel();
+  }
+
+  /*
+  public void setGraphState(GraphState state) {
+    super.setGraphState(state);
+    //   setMinScoreThreshold(state.getMinScoreThreshold());  // to trigger setting of threshold glyph's label
+    resetThreshLabel();
+  }
+  */
 
   public void draw(ViewI view) {
     if (NEWDEBUG) {
@@ -140,20 +169,33 @@ public class SmartGraphGlyph extends GraphGlyph {
     if (this.getChildCount() == 0) {
       if (thresh_glyph == null) {
 	thresh_glyph = new ThreshGlyph();
-	thresh_glyph.setVisibility(getShowThreshold());
+	//	thresh_glyph.setVisibility(getShowThreshold());
 	thresh_glyph.setSelectable(false);
-	double thresh_ycoord = getCoordValue(view, getScoreThreshold());
-	//	double thresh_ycoord = getCoordValue(min_score_threshold);
-	thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
+	thresh_glyph.setColor(thresh_color);
       }
       this.addChild(thresh_glyph);
+      /*
+      double thresh_ycoord;
+      if (getMinScoreThreshold() != Float.NEGATIVE_INFINITY) {
+	thresh_ycoord = getCoordValue(view, getMinScoreThreshold());
+      }
+      else if (getMaxScoreThreshold() != Float.POSITIVE_INFINITY) {
+	thresh_ycoord = getCoordValue(view, getMaxScoreThreshold());
+      }
+      else {
+	System.out.println("in SmartGraphGlyph.draw(), problem with setting up threshold line!");
+	thresh_ycoord = 0;
+      }
+      thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
+      */
     }
 
     if (graph_style == LINE_GRAPH ||
 	graph_style == BAR_GRAPH ||
 	graph_style == DOT_GRAPH ||
 	graph_style == STAIRSTEP_GRAPH ||
-	graph_style == SPAN_GRAPH) {
+	graph_style == SPAN_GRAPH || 
+	graph_style == HEAT_MAP) {
       super.draw(view);
     }
     else if (graph_style == MINMAXAVG) {
@@ -174,6 +216,9 @@ public class SmartGraphGlyph extends GraphGlyph {
     if (getShowThreshold()) {
       drawThresholdedRegions(view);
       //      thresh_glyph.draw(view);
+    }
+    else {
+      thresh_glyph.setVisibility(false);
     }
   }
 
@@ -429,11 +474,13 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
     }
     else  { // not using graph cache...
-    //    if (true)  {
-      // switched over to using binary search to find end points --
+      // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
       int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
+
+      // The +1 on draw_end_index might be an error, but it gets corrected below
       int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
+
       if (draw_beg_index < 0) {
 	// want draw_beg_index to be index of max xcoord <= view_start
 	//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
@@ -448,6 +495,12 @@ public class SmartGraphGlyph extends GraphGlyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
+
+      // draw_end_index is sometimes too large (by 1)
+      if (draw_end_index >= xcoords.length) {
+        draw_end_index = xcoords.length - 1;
+      }
+
       //      System.out.println("start index = " + draw_beg_index + ", val = " + xcoords[draw_beg_index]);
       //      System.out.println("end index = " + draw_end_index + ", val = " + xcoords[draw_end_index]);
       coord.x = xcoords[draw_beg_index];
@@ -574,16 +627,17 @@ public class SmartGraphGlyph extends GraphGlyph {
   /**
    *  Draws thresholded regions.
    *  Current set up so that if regions_parent != null, then instead of drawing to view,
-   *   populate regions_parent with child SeqSymmetries for each region above threshold,
+   *   populate regions_parent with child SeqSymmetries for each region that passes threshold,
    *
    */
   public void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
    /*
     *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
-    *     drawThresholdedRegions() populate regions above threshold as two IntLists or
+    *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or
     *     something...
     */
-    double min_score_threshold = getScoreThreshold();
+    double min_score_threshold = getMinScoreThreshold();
+    double max_score_threshold = getMaxScoreThreshold();
     double max_gap_threshold = getMaxGapThreshold();
     double min_run_threshold = getMinRunThreshold();
     double span_start_shift = getThreshStartShift();
@@ -613,7 +667,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       // want draw_beg_index to be index of max xcoord <= view_start
       //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
       draw_beg_index = (-draw_beg_index -1) - 1;
-      if (draw_beg_index < 0) { draw_beg_index = 0; }
+     if (draw_beg_index < 0) { draw_beg_index = 0; }
     }
     if (draw_end_index < 0) {
       // want draw_end_index to be index of min xcoord >= view_end
@@ -623,50 +677,60 @@ public class SmartGraphGlyph extends GraphGlyph {
       else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
       if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
     }
-    if (min_score_threshold == Float.NEGATIVE_INFINITY) {  // threshold not yet set, so make it middle
-      setScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+
+    // if neither min or max score thresholds have been set, assume that only using
+    //     min score threshold and set so it is in the middle of visible score range
+    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
+      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+      min_score_threshold = getMinScoreThreshold();
     }
+
     // dynamicly confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
     //   I'm having trouble dealing with this in GlyphDragger (where I'm trying to
     //   optionally confine drag of glyph so that it can't go outside it's parent's borders...
     else {
-      //      if (min_score_threshold < getVisibleMinY()) { min_score_threshold = getVisibleMinY(); }
-      //      else if (min_score_threshold > getVisibleMaxY()) { min_score_threshold = getVisibleMaxY(); }
-      if (min_score_threshold < getVisibleMinY()) { setScoreThreshold(getVisibleMinY()); }
-      else if (min_score_threshold > getVisibleMaxY()) { setScoreThreshold(getVisibleMaxY()); }
+      // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
+      //   otherwise it could conflict with reported threshold settings in GraphAdjusterView
+      //   instead, later in method setting thresh glyph visibility to false if outside visible score range
+      //      if (min_score_threshold < getVisibleMinY()) { setScoreThreshold(getVisibleMinY()); }
+      //      else if (min_score_threshold > getVisibleMaxY()) { setScoreThreshold(getVisibleMaxY()); }
     }
 
-    getInternalLinearTransform(view, scratch_trans);
-    double yscale = scratch_trans.getScaleY();
-    double offset = scratch_trans.getOffsetY();
-    double ythresh = offset - ((min_score_threshold - getVisibleMinY()) * yscale);
+    double thresh_ycoord;
+    double thresh_score;
+    if (min_score_threshold != Float.NEGATIVE_INFINITY) {
+      thresh_score = min_score_threshold;
+    }
+    else if (max_score_threshold != Float.POSITIVE_INFINITY) {
+      thresh_score = max_score_threshold;
+    }
+    else {
+      System.out.println("in SmartGraphGlyph.drawThresholdedRegions(), problem with setting up threshold line!");
+      thresh_score = (getVisibleMinY() + (getVisibleMaxY()/2));
+    }
+    if (thresh_score < getVisibleMinY()  ||
+	thresh_score > getVisibleMaxY() ) {
+      thresh_glyph.setVisibility(false);
+    }
+    else {
+      thresh_glyph.setVisibility(true);
+    }
 
-    // this is now being done in draw() method???
-    thresh_glyph.setCoords(coordbox.x, ythresh, coordbox.width, 1);
-    //    System.out.println("thresh glyph coords: " + thresh_glyph.getCoordBox());
-    //    thresh_glyph.setCoords(coordbox.x, min_score_threshold, coordbox.width, 1);
-    //    System.out.println("threshold = " + min_score_threshold + ", glyph = " + thresh_glyph.getCoordBox());
+    thresh_ycoord = getCoordValue(view, (float)thresh_score);
+    thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
 
-    //    view.transformToPixels(thresh_point, curr_point);
     Graphics g = view.getGraphics();
-    /*
-      g.setColor(Color.black);
-      g.setXORMode(Color.darkGray);
-      g.drawLine(pixelbox.x, curr_point.y, pixelbox.width, curr_point.y);
-      g.setPaintMode();
-    */
-
     g.setColor(lighter);
     double x, y;
-    double above_thresh_start = 0;
-    double above_thresh_end = 0;
-    int above_thresh_count = 0;
-    boolean above_threshold_mode = false;
+    double pass_thresh_start = 0;
+    double pass_thresh_end = 0;
+    int pass_thresh_count = 0;
+    boolean pass_threshold_mode = false;
     int min_index = 0;
     int max_index = xcoords.length-1;
 
     // need to widen range searched to include previous and next points out of view that
-    //   are above threshold (unless distance to view is > max_gap_threshold
+    //   pass threshold (unless distance to view is > max_gap_threshold
     int new_beg = draw_beg_index;
 
     while ((new_beg > min_index) &&
@@ -676,7 +740,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     draw_beg_index = new_beg;
 
     int new_end = draw_end_index;
-    boolean above_score_thresh;
+    boolean pass_score_thresh;
     boolean passes_max_gap;
     //    boolean passes_min_run;
     boolean draw_previous = false;
@@ -708,7 +772,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
     // eight possible states:
     //
-    //     above_threshold_mode    [y >= min_score_threshold]   [x-above_thresh_end <= max_dis_thresh]
+    //     pass_threshold_mode    [y >= min_score_threshold]   [x-pass_thresh_end <= max_dis_thresh]
     //
     //  prune previous region and draw when:
     //      true, false, false
@@ -717,32 +781,34 @@ public class SmartGraphGlyph extends GraphGlyph {
       x = xcoords[i];
       y = ycoords[i];
 
-      above_score_thresh = (y >= min_score_threshold);
-      passes_max_gap = ((x - above_thresh_end) <= max_gap_threshold);
-      if (above_threshold_mode) {  // if currently keeping track of potential above-threshold region
+      //      pass_score_thresh = (y >= min_score_threshold);
+      pass_score_thresh = ((y >= min_score_threshold) &&
+			   (y <= max_score_threshold) );
+      passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
+      if (pass_threshold_mode) {  // if currently keeping track of potential passed-threshold region
 	// true, ?, ?
-	if (above_score_thresh) { // this point is above threshold
+	if (pass_score_thresh) { // this point passes threshold test
 	  // true, true, ?
 	  if (passes_max_gap) { // AND its within max distance
 	    // true, true, true
-	    // above min threshold, within max distance, keep extending region
-	    above_thresh_end = x;
+	    // passes threshold test, within max distance, keep extending region
+	    pass_thresh_end = x;
 	  }
 	  else {
 	    // true, true, false
-	    // above threshold, but NOT within max distance
+	    // passes threshold test, but NOT within max distance
 	    // therefore end (and draw) previous region, and start this as a potential new region
 	    draw_previous = true;
 	  }
 	}
-	else {  // this point is not above threshold
+	else {  // this point does not pass threshold test
 	  // true, false, ?
 	  if (passes_max_gap) {
 	    // true, false, true
 	  }
 	  else {
 	    // true, false, false
-	    // attempting to extend region, but NOT above threshold, and NOT within max distance
+	    // attempting to extend region, but NOT passing threshold, and NOT within max distance
 	    // therefore end (and draw) previous region
 	    draw_previous = true;
 	  }
@@ -750,25 +816,25 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
       else {
 	// false, ?, ?
-	if (above_score_thresh) {
+	if (pass_score_thresh) {
 	  // false, true, ?
-	  // switch into above_threshold_mode
+	  // switch into pass_threshold_mode
 	  // don't need to worry about distance thresh here
-	  above_thresh_start = x;
-	  above_thresh_end = x;
-	  above_threshold_mode = true;
+	  pass_thresh_start = x;
+	  pass_thresh_end = x;
+	  pass_threshold_mode = true;
 	}
 	else {
 	  // false, false, ?
-	  // not extending a region (since not in above_threshold_mode), so do nothing?
+	  // not extending a region (since not in pass_threshold_mode), so do nothing?
 	  // don't need to worry about distance thresh here
 	}
       }
 
       if (draw_previous) {
 	// make sure that length of region is >= min_run_threshold
-	double draw_min = above_thresh_start + span_start_shift;
-	double draw_max = above_thresh_end + span_end_shift;
+	double draw_min = pass_thresh_start + span_start_shift;
+	double draw_max = pass_thresh_end + span_end_shift;
 	boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
 	if (passes_min_run) {  // make sure aren't drawing single points
 	  coord.x = draw_min;
@@ -790,22 +856,22 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  }
 	}
 	draw_previous = false;
-	if (above_score_thresh) {  // current point is above threshold, start new region scan
-	  above_thresh_start = x;
-	  above_thresh_end = x;
-	  above_threshold_mode = true;
+	if (pass_score_thresh) {  // current point passes threshold test, start new region scan
+	  pass_thresh_start = x;
+	  pass_thresh_end = x;
+	  pass_threshold_mode = true;
 	}
 	else {
-	  above_threshold_mode = false;
+	  pass_threshold_mode = false;
 	}
       }
     }
 
-    // clean up by doing a draw if exited loop while still in above_threshold_mode
-    if (above_threshold_mode && (above_thresh_end != above_thresh_start)) {
-      //	  System.out.println("clean up at " + above_thresh_start);
-      double draw_min = above_thresh_start + span_start_shift;
-      double draw_max = above_thresh_end + span_end_shift;
+    // clean up by doing a draw if exited loop while still in pass_threshold_mode
+    if (pass_threshold_mode && (pass_thresh_end != pass_thresh_start)) {
+      //	  System.out.println("clean up at " + pass_thresh_start);
+      double draw_min = pass_thresh_start + span_start_shift;
+      double draw_max = pass_thresh_end + span_end_shift;
       boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
       if (passes_min_run) {
 	coord.x = draw_min;
@@ -814,7 +880,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	view.transformToPixels(coord, curr_point);
 	if (make_syms) {
 	  SeqSymmetry sym =
-	    new SingletonSeqSymmetry((int)above_thresh_start, (int)above_thresh_end, aseq);
+	    new SingletonSeqSymmetry((int)pass_thresh_start, (int)pass_thresh_end, aseq);
 	  region_holder.addChild(sym);
 	}
 	else {
@@ -834,7 +900,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     lighter = col.brighter();
     darker = col.darker();
     thresh_color = darker.darker();
-    thresh_glyph.setColor(thresh_color);
+    if (thresh_glyph != null)  { thresh_glyph.setColor(thresh_color); }
   }
 
   public void setShowThreshold(boolean show) {
@@ -844,16 +910,42 @@ public class SmartGraphGlyph extends GraphGlyph {
 
   public boolean getShowThreshold() { return state.getShowThreshold(); }
 
-  public void setScoreThreshold(float thresh) {
+  public void resetThreshLabel() {
+    float min_thresh = getMinScoreThreshold();
+    float max_thresh = getMaxScoreThreshold();
+    if (min_thresh != Float.NEGATIVE_INFINITY &&
+	max_thresh != Float.POSITIVE_INFINITY) {
+      thresh_glyph.setLabel(nformat.format(min_thresh) + " -- " + nformat.format(max_thresh));
+    }
+    else if (min_thresh != Float.NEGATIVE_INFINITY) {
+      thresh_glyph.setLabel(">= " + nformat.format(min_thresh));
+    }
+    else if (max_thresh != Float.POSITIVE_INFINITY) {
+      thresh_glyph.setLabel("<= " + nformat.format(max_thresh));
+    }
+  }
+
+  public void setMinScoreThreshold(float thresh) {
     float newthresh = thresh;
-    if (thresh < getVisibleMinY())  {
+    /*
+     // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
+     //   otherwise it could conflict with reported threshold settings in GraphAdjusterView...
+     if (thresh < getVisibleMinY())  {
       newthresh = getVisibleMinY();
     }
     else if (thresh > getVisibleMaxY()) {
       newthresh = getVisibleMaxY();
     }
-    state.setScoreThreshold(newthresh);
-    thresh_glyph.setLabel(nformat.format(newthresh));
+    */
+    state.setMinScoreThreshold(newthresh);
+    resetThreshLabel();
+  }
+
+
+  public void setMaxScoreThreshold(float thresh) {
+    float newthresh = thresh;
+    state.setMaxScoreThreshold(newthresh);
+    resetThreshLabel();
   }
 
   public void setMaxGapThreshold(int thresh) { state.setMaxGapThreshold(thresh); }
@@ -861,13 +953,15 @@ public class SmartGraphGlyph extends GraphGlyph {
   public void setThreshStartShift(double d) { state.setThreshStartShift(d); }
   public void setThreshEndShift(double d) { state.setThreshEndShift(d); }
 
-  public float getScoreThreshold() { return state.getScoreThreshold(); }
+  public float getMinScoreThreshold() { return state.getMinScoreThreshold(); }
+  public float getMaxScoreThreshold()  { return state.getMaxScoreThreshold(); }
   public double getMaxGapThreshold() { return state.getMaxGapThreshold(); }
   public double getMinRunThreshold() { return state.getMinRunThreshold(); }
   public double getThreshStartShift() { return state.getThreshStartShift(); }
   public double getThreshEndShift() { return state.getThreshEndShift(); }
 
 
+  /*
   public void setPointCoords(int xcoords[], float ycoords[]) {
     if (xcoords.length <= 0 || ycoords.length <= 0) {
       return;
@@ -882,16 +976,20 @@ public class SmartGraphGlyph extends GraphGlyph {
       GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ycoords);
       caches.add(graph_cache);
     }
-    if (getScoreThreshold() == Float.NEGATIVE_INFINITY ||
-	getScoreThreshold() == Float.POSITIVE_INFINITY) {
-      setScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
+    //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
+    //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+    //    }
+    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
+      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
     }
   }
+  */
 
-  public void setFasterDraw(boolean b) { USE_GRAPH_CACHE = b; }
-  public boolean getFasterDraw() { return USE_GRAPH_CACHE; }
-  public void setCalcCache(boolean b) { CALC_GRAPH_CACHE = b; }
-  public boolean getCalcCache() { return CALC_GRAPH_CACHE; }
+ //  public void setFasterDraw(boolean b) { USE_GRAPH_CACHE = b; }
+  // public boolean getFasterDraw() { return USE_GRAPH_CACHE; }
+  // public void setCalcCache(boolean b) { CALC_GRAPH_CACHE = b; }
+  // public boolean getCalcCache() { return CALC_GRAPH_CACHE; }
 
   /**
    *  Same as GraphGlyph.getInternalLinearTransform(), except
@@ -922,7 +1020,11 @@ class GraphCache2 {
   public int[] num_points;
 
   public GraphCache2(int bases_per_entry, int[] xcoords, float[] ycoords) {
-    int count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+    int count_guess = 1;
+    if (bases_per_entry != 0) {
+      count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+    }
+    if (count_guess < 1)  { count_guess = 1; }
     IntList xmin_list = new IntList(count_guess);
     IntList xmax_list = new IntList(count_guess);
     FloatList ymin_list = new FloatList(count_guess);
@@ -942,24 +1044,32 @@ class GraphCache2 {
       // really don't need entry_xmax assignment here, always gets assigned in loop
       //   (even if only one point in this cache entry), but setting for clarification...
       int entry_xmax = entry_xmin;
+      if ( (cur_index < xcoords.length) &&
+	      (xcoords[cur_index] <= entry_xlimit) ) {
+	while ( (cur_index < xcoords.length) &&
+		(xcoords[cur_index] <= entry_xlimit) ) {
+	  float yval = ycoords[cur_index];
+	  entry_xmax = xcoords[cur_index];
+	  valmin = Math.min(valmin, yval);
+	  valmax = Math.max(valmax, yval);
+	  valavg += yval;
+	  entry_points++;
+	  cur_index++;
+	}
+	valavg = valavg / (float)entry_points;
 
-      while ((cur_index < xcoords.length) && (xcoords[cur_index] <= entry_xlimit)) {
-	float yval = ycoords[cur_index];
-	entry_xmax = xcoords[cur_index];
-	valmin = Math.min(valmin, yval);
-	valmax = Math.max(valmax, yval);
-	valavg += yval;
-	entry_points++;
+	xmin_list.add(entry_xmin);
+	xmax_list.add(entry_xmax);
+	num_points_list.add(entry_points);
+	ymin_list.add(valmin);
+	ymax_list.add(valmax);
+	yavg_list.add(valavg);
+      }
+      else {
+	// shouldn't hit this branch unless somethings gone wrong.
+	// for now just increment cur_index to avoid infinite loop...
 	cur_index++;
       }
-      valavg = valavg / (float)entry_points;
-
-      xmin_list.add(entry_xmin);
-      xmax_list.add(entry_xmax);
-      num_points_list.add(entry_points);
-      ymin_list.add(valmin);
-      ymax_list.add(valmax);
-      yavg_list.add(valavg);
     }
 
     xmin = xmin_list.copyToArray();

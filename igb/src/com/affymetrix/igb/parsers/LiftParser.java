@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -105,10 +105,13 @@ public class LiftParser {
 	String tempname = fields[COMBO_NAME];
 	String splitname[] = re_name.split(tempname);
 	String contig_name = splitname[CONTIG_NAME_SUBFIELD];
-	MutableAnnotatedBioSeq contig = new SimpleAnnotatedBioSeq(contig_name, match_length);
+	// experimenting with constructing virtual sequences by using chromosomes as contigs
+	MutableAnnotatedBioSeq contig = seq_group.getSeq(contig_name);
+	if (contig == null)  { contig = (MutableAnnotatedBioSeq)temp_seqhash.get(contig_name); }
+	if (contig == null)  { contig = new SimpleAnnotatedBioSeq(contig_name, match_length); }
 
 	contig_count++;
-	MutableAnnotatedBioSeq chrom = (MutableAnnotatedBioSeq)seq_group.getSeq(chrom_name);
+	MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
 	if (chrom == null) { chrom = (MutableAnnotatedBioSeq)temp_seqhash.get(chrom_name); }
 	if (chrom == null) {
 	  chrom_count++;
@@ -120,20 +123,27 @@ public class LiftParser {
 	  if (chrom instanceof Versioned) {
 	    ((Versioned)chrom).setVersion(genome_version);
 	  }
+	  /*
 	  SymWithProps comp = new SimpleSymWithProps();
 	  comp.setProperty("method", "contigs");
 	  if (chrom instanceof CompositeBioSeq) {
 	    ((CompositeBioSeq)chrom).setComposition(comp);
 	  }
-
-	  if (annotate_seq)  {
-	    chrom.addAnnotation(comp);
-	  }
+	  if (annotate_seq)  { chrom.addAnnotation(comp); }
+	  */
 	  seqlist.add(chrom);  // adding to seqlist for sorting
 	  temp_seqhash.put(chrom_name, chrom);
 	}
 	if (chrom instanceof CompositeBioSeq) {
 	  MutableSeqSymmetry comp = (MutableSeqSymmetry)(((CompositeBioSeq)chrom).getComposition());
+          if (comp == null)  {
+	    comp = new SimpleSymWithProps();
+	    ((SimpleSymWithProps)comp).setProperty("method", "contigs");
+            ((CompositeBioSeq)chrom).setComposition(comp);
+	    if (annotate_seq)  {
+	      chrom.addAnnotation(comp);
+	    }
+          }
 	  SimpleSymWithProps csym = new SimpleSymWithProps();
 	  csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
 	  csym.addSpan(new SimpleSeqSpan(0, match_length, contig));
@@ -157,8 +167,10 @@ public class LiftParser {
     while (iter.hasNext()) {
       CompositeBioSeq chrom = (CompositeBioSeq)iter.next();
       MutableSeqSymmetry comp = (MutableSeqSymmetry)chrom.getComposition();
-      SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
-      comp.addSpan(chromspan);
+      if (comp != null) {
+	SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
+	comp.addSpan(chromspan);
+      }
     }
     System.out.println("chroms loaded, load time = " + tim.read()/1000f);
     System.out.println("contig count: " + contig_count);

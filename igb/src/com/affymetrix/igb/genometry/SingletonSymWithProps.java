@@ -33,6 +33,12 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
     return props;
   }
 
+  public String getID() {
+    if (id != null) { return id; };
+    if (props != null) { return (String)props.get("id"); }
+    return null;
+  }
+
   /**
    *  Creates a clone of the properties Map. 
    *  Uses the same type of Map class (HashMap, TreeMap, etc.)

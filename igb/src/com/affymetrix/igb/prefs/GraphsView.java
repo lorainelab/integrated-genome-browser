@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -38,12 +38,10 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
     main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
     
     JScrollPane scroll_pane = new JScrollPane(main_box);
-//    this.add(scroll_pane, BorderLayout.CENTER);
     this.add(scroll_pane);
     
     JPanel graphs_box = new JPanel();
     graphs_box.setLayout(new BoxLayout(graphs_box, BoxLayout.Y_AXIS));
-    //graphs_box.setBorder(new javax.swing.border.TitledBorder("Graph Settings"));
     main_box.add(graphs_box);
     
     Box box_0 = new Box(BoxLayout.X_AXIS);
@@ -66,7 +64,7 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
 
     JLabel graph_height_label2 = new JLabel("Tiered graph default coord height: ");
     JTextField graph_height_field2 = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Double.toString(GraphGlyphUtils.default_coord_height), Double.class);
+      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
     Box height_box2 = new Box(BoxLayout.Y_AXIS);
     height_box2.add(graph_height_label2);
     height_box2.add(Box.createHorizontalStrut(5));
@@ -85,17 +83,7 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
     graphs_box.add(defpan5);
 
     graphs_box.add(Box.createVerticalStrut(5));
-    
-    Box graph_colors_box = new Box(BoxLayout.X_AXIS);
-    graph_colors_box.setBorder(new javax.swing.border.TitledBorder("Default Graph Colors"));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"0", GraphGlyphUtils.default_graph_colors[0]));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"1", GraphGlyphUtils.default_graph_colors[1]));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"2", GraphGlyphUtils.default_graph_colors[2]));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"3", GraphGlyphUtils.default_graph_colors[3]));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"4", GraphGlyphUtils.default_graph_colors[4]));
-    graph_colors_box.add(UnibrowPrefsUtil.createColorButton(null, GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_GRAPH_COLOR_PREFIX+"5", GraphGlyphUtils.default_graph_colors[5]));
-    graphs_box.add(graph_colors_box);
-    
+        
     validate();
   }
 
@@ -134,7 +122,7 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
         
     sb.append("<h2>Graph Bookmarks</h2>\n");
     sb.append("<p>\n");
-    sb.append("Since graph bookmarks contain information about the color and size  ");
+    sb.append("Since graph bookmarks contain information about the properties  ");
     sb.append("of each graph, the options here have no effect on graphs loaded from bookmarks.  ");
     sb.append("</p>\n");
     return sb.toString();

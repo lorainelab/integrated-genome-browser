@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -26,6 +26,7 @@ public class AnnotatedSeqGroup {
   String description;
 
   Map id2seq = new LinkedHashMap();
+  ArrayList seqlist = new ArrayList();
 
   public AnnotatedSeqGroup(String gid) {
     id = gid;
@@ -35,6 +36,30 @@ public class AnnotatedSeqGroup {
 
   public Map getSeqs() { return id2seq; }
 
+  public MutableAnnotatedBioSeq getSeq(int index) {
+
+    if (seqlist.size() != id2seq.size()) {
+      //TODO: BUG: the lists in id2seq and seqlist can get out-of-sync with each other
+      // since the Map returned by getSeqs() is modifiable.  The PSL parser, and perhaps others,
+      // adds items to that map, but not to the seqlist.  We need to make that
+      // impossible, perhaps by eliminating the getSeqs() method
+      
+      // this hack recreates the seqlist if it is not up-to-date
+      seqlist = new ArrayList(id2seq.values());
+    }
+    
+    if (index < seqlist.size()) {
+      return (MutableAnnotatedBioSeq)seqlist.get(index);
+    }
+    else { return null; }
+  }
+
+  /** Returns the number of sequences in the group. */
+  public int getSeqCount() {
+    return id2seq.size();
+  }
+  
+  /** Gets a sequence based on its name, taking synonyms into account. */
   public MutableAnnotatedBioSeq getSeq(String synonym) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)id2seq.get(synonym);
     if (aseq == null) {
@@ -94,11 +119,24 @@ public class AnnotatedSeqGroup {
     }
   }
 
+  public MutableAnnotatedBioSeq addSeq(String seqid, int length) {
+    MutableAnnotatedBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+    this.addSeq(aseq);
+    return aseq;
+  }
 
   public void addSeq(MutableAnnotatedBioSeq seq) {
-    id2seq.put(seq.getID(), seq);
-    if (seq instanceof SmartAnnotBioSeq) {
-      ((SmartAnnotBioSeq)seq).setSeqGroup(this);
+    MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
+    if (oldseq == null) {
+      id2seq.put(seq.getID(), seq);
+      seqlist.add(seq);
+      if (seq instanceof SmartAnnotBioSeq) {
+	((SmartAnnotBioSeq)seq).setSeqGroup(this);
+      }
+    }
+    else {
+      throw new RuntimeException("ERROR! tried to add seq: " + seq.getID() + " to AnnotatedSeqGroup: " +
+				 this.getID() + ", but seq with same id is already in group");
     }
   }
 

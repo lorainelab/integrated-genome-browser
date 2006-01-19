@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,24 +21,18 @@ import java.net.*;
 import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
-import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
-import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class OpenGraphAction extends AbstractAction {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -162,22 +156,20 @@ public class OpenGraphAction extends AbstractAction {
     InputStream fis = null;
     try {
       String name = furl.getPath();
-      fis = furl.openStream();
-
-      String stripped_name = Streamer.stripEndings(name);
-
-      if (stripped_name.endsWith(".bar") ||
-	  stripped_name.endsWith(".mbar") ||
-	  stripped_name.endsWith(".sgr")) {
-        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seqhash);
-        for (int k=0; k<multigraphs.size(); k++) {
-          GraphSym graf = (GraphSym)multigraphs.get(k);
-          graphs.addElement(graf);
-        }
+      if (IGB.CACHE_GRAPHS)  {
+        String graph_url = furl.toExternalForm();
+        System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
+        fis = LocalUrlCacher.getInputStream(graph_url);
       }
       else {
-        GraphSym graf = GraphSymUtils.readGraph(fis, furl.toExternalForm(), aseq);
-        graphs.addElement(graf);
+        fis = furl.openStream();
+      }
+
+      if (GraphSymUtils.isAGraphFilename(name)) {
+        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seqhash);
+        graphs.addAll(multigraphs);
+      } else {
+        throw new IOException("Filename does not match any known type of graph:\n" + name);
       }
     } finally {
       if (fis != null) try { fis.close(); } catch (IOException ioe) {}
@@ -192,10 +184,12 @@ public class OpenGraphAction extends AbstractAction {
       chooser = new JFileChooser();
       chooser.setMultiSelectionEnabled(true);
       // set directory later // chooser.setCurrentDirectory(new File((String) System.getProperties().get("user.dir")));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
+            chooser.addChoosableFileFilter(new UniFileFilter("bar"));
+//      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
-      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bgr", "bpr"}));
+//      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
+      chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
+      chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {
@@ -217,8 +211,6 @@ public class OpenGraphAction extends AbstractAction {
   }
 
 }
-
-
 
 
 

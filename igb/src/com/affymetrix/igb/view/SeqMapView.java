@@ -1664,7 +1664,6 @@ public class SeqMapView extends JPanel
       boolean grid_on =  grid_glyph.isVisible();
       grid_on = ! grid_on;
       grid_glyph.setVisibility(grid_on);
-      System.out.println("grid on: " + grid_on);
       map.updateWidget();
     }
   }
@@ -1696,6 +1695,7 @@ public class SeqMapView extends JPanel
       float bases_per_minute = (float)
 	// 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
 	(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+      bases_per_minute = Math.abs(bases_per_minute);
       float minutes_per_seq = viewseq.getLength() / bases_per_minute;
       final JLabel bases_per_minuteL = new JLabel("" + (bases_per_minute/1000000));
       final JLabel minutes_per_seqL = new JLabel("" + (minutes_per_seq));
@@ -1711,56 +1711,36 @@ public class SeqMapView extends JPanel
       pan.add(bases_per_minuteL);
       pan.add(new JLabel("Total minutes for seq:  "));
       pan.add(minutes_per_seqL);
-      bases_per_pixTF.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent evt) {
-	    as_bases_per_pix = Integer.parseInt(bases_per_pixTF.getText());
-	    as_pix_to_scroll = Integer.parseInt(pix_to_scrollTF.getText());
-	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
-	    float bases_per_minute = (float)
-	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
-            System.out.println("Bases per minute: " + bases_per_minute);
-	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
-	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
-	    minutes_per_seqL.setText("" + (minutes_per_seq));
-	  }
-	} );
-      pix_to_scrollTF.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent evt) {
-	    as_bases_per_pix = Integer.parseInt(bases_per_pixTF.getText());
-	    as_pix_to_scroll = Integer.parseInt(pix_to_scrollTF.getText());
-	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
-	    float bases_per_minute = (float)
-	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
-	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
-	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
-	    minutes_per_seqL.setText("" + (minutes_per_seq));
-	  }
-	} );
-      time_intervalTF.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent evt) {
-	    as_bases_per_pix = Integer.parseInt(bases_per_pixTF.getText());
-	    as_pix_to_scroll = Integer.parseInt(pix_to_scrollTF.getText());
-	    as_time_interval = Integer.parseInt(time_intervalTF.getText());
-	    float bases_per_minute = (float)
-	      // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
-	      (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
-	    float minutes_per_seq = viewseq.getLength() / bases_per_minute;
-	    bases_per_minuteL.setText("" + (bases_per_minute/1000000));
-	    minutes_per_seqL.setText("" + (minutes_per_seq));
-	  }
-	} );
+     
+      ActionListener al = new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
+          as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
+          as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
+
+          float bases_per_minute = (float)
+            // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
+            (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
+          bases_per_minute = Math.abs(bases_per_minute);
+          float minutes_per_seq = viewseq.getLength() / bases_per_minute;
+          bases_per_minuteL.setText("" + (bases_per_minute/1000000));
+          minutes_per_seqL.setText("" + (minutes_per_seq));
+        }
+      };
+      
+      bases_per_pixTF.addActionListener(al);
+      pix_to_scrollTF.addActionListener(al);
+      time_intervalTF.addActionListener(al);
 
       int val = JOptionPane.showOptionDialog(this, pan, "AutoScroll Parameters",
 					     JOptionPane.OK_CANCEL_OPTION,
 					     JOptionPane.PLAIN_MESSAGE,
 					     null, null, null);
       if (val == JOptionPane.OK_OPTION) {
-	as_bases_per_pix = Integer.parseInt(bases_per_pixTF.getText());
-	as_pix_to_scroll = Integer.parseInt(pix_to_scrollTF.getText());
-	as_time_interval = Integer.parseInt(time_intervalTF.getText());
-	toggleAutoScroll(as_bases_per_pix, as_pix_to_scroll, as_time_interval);
+        as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
+        as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
+        as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
+        toggleAutoScroll(as_bases_per_pix, as_pix_to_scroll, as_time_interval);
       }
     }
     else {
@@ -1768,6 +1748,22 @@ public class SeqMapView extends JPanel
       swing_timer = null;
       map_auto_scroller = null;
     }
+  }
+  
+  // Normalize a text field so that it holds an integer, with a fallback value 
+  // if there is a problem, and a minimum and maximum
+  int normalizeTF(JTextField tf, int fallback, int min, int max) {
+    int result = fallback;
+    try {
+      result = Integer.parseInt(tf.getText());
+    } catch (NumberFormatException nfe) {
+      Toolkit.getDefaultToolkit().beep();
+      result = fallback;
+    }
+    if (result < min) { result = min; }
+    else if (result > max) { result = max; }
+    tf.setText(Integer.toString(result));
+    return result;
   }
 
   public void toggleAutoScroll(int bases_per_pixel, int pix_to_scroll,

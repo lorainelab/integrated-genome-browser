@@ -1,6 +1,11 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+IGB-4.10
+  + Added the possibility to have multiple QuickLoad servers
+  + Now restores your most recent genome and sequence when restarting
+  + Updated user's manual
+  + Various bugfixes
 
 IGB-4.02
   + Added preliminary support for version 2 of the DAS protocol

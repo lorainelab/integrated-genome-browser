@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -103,7 +103,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   }
 
   public void refresh() {
-    //showShortcuts();
+    showShortcuts();
   }
 
   /** This is called when the user selects a row of the table;

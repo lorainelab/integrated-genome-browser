@@ -26,6 +26,7 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.*;
 
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.*;
@@ -230,7 +231,7 @@ public class QuickLoadView2 extends JComponent
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_QUICKLOAD_URL, current_server.getRootUrl());
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_SERVER_NAME, selection);
       }
-
+      
       refreshGenomeChoices();
       
       // optional: try to set back to the same old group and sequence on the new server
@@ -334,10 +335,10 @@ public class QuickLoadView2 extends JComponent
           }
           types_panel.add(cb);
         }
-      }
+      }      
     }
-    types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)
-    types_panel.repaint();
+    types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)    
+    types_panel.repaint();        
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -700,6 +701,23 @@ public class QuickLoadView2 extends JComponent
     //}
   }  
   
+  /** Adds the DAS servers from the file on the quickload server to the
+   *  persistent list managed by DasDiscovery.  If the file doesn't exist,
+   *  or can't be loaded, a warning is printed to stdout, but that is all,
+   *  since it isn't a fatal error.
+   *  @param ql_url The root URL for the QuickLoad server, ending with "/".
+   */
+  public static void processDasServersList(String ql_url) {
+    String server_loc_list = ql_url + "das_servers.txt";
+    try {
+      System.out.println("Trying to load DAS Server list: " + server_loc_list);
+      DasDiscovery.addServersFromTabFile(server_loc_list);
+    }
+    catch (Exception ex) {
+      System.out.println("WARNING: Failed to load DAS Server list: " + ex);
+    }
+  }
+  
   // This is used when the user selects a server name from the combo box
   static QuickLoadServerModel getQLModelForName(String ql_server_name) {
     String the_url_string = null;
@@ -725,6 +743,11 @@ public class QuickLoadView2 extends JComponent
       ErrorHandler.errorPanel("ERROR", "Error opening QuickLoad server:\n server='"+the_url_string+"'"
        + "\n" + e.toString());
     }
+    
+    if (result != null) {
+      processDasServersList(result.getRootUrl());
+    }
+    
     return result;
   }
 }

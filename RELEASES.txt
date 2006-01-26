@@ -1,6 +1,10 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+IGB-4.12
+  + Fixed bug that QuickLoad das_servers.txt files were not being read
+  + Fixed bug where keyboard shortcut list wasn't kept up-to-date 
+
 IGB-4.10
   + Added the possibility to have multiple QuickLoad servers
   + Now restores your most recent genome and sequence when restarting

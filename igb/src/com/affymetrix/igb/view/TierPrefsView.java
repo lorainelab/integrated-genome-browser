@@ -21,16 +21,12 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.event.SymMapChangeEvent;
-import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.*;
-import java.util.prefs.*;
 
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.

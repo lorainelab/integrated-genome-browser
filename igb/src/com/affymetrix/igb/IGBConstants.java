@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,5 +23,5 @@ public abstract class IGBConstants {
 
   public static String APP_NAME = "Integrated Genome Browser";
   public static String APP_SHORT_NAME = "IGB";
-  public static String IGB_VERSION = "4.10";
+  public static String IGB_VERSION = "4.12";
 }

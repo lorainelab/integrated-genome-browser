@@ -13,10 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.view.*;
 

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,23 +18,21 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.util.*;
 
 public class AltSpliceView extends JComponent
      implements ActionListener, ComponentListener, ItemListener,
-		SymSelectionListener, SeqSelectionListener {
+		SymSelectionListener, SeqSelectionListener,
+                TierLabelManager.PopupListener {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   boolean CONTROLS_ON_SIDE = false;
   SeqMapView original_view;
-  //  AffyLabelledTierMap map;
   SeqMapView spliced_view;
   OrfAnalyzer2 orf_analyzer;
   JTextField buffer_sizeTF;
@@ -49,7 +47,8 @@ public class AltSpliceView extends JComponent
     original_view = IGB.getSingletonIGB().getMapView();
     Rectangle frmbounds = SwingUtilities.getWindowAncestor(original_view).getBounds();
     this.setLayout(new BorderLayout());
-    spliced_view = new SeqMapView();
+    spliced_view = new SeqMapView(false);
+    spliced_view.SUBSELECT_SEQUENCE = false;
     orf_analyzer = new OrfAnalyzer2(spliced_view, CONTROLS_ON_SIDE);
     buffer_sizeTF = new JTextField(4);
     buffer_sizeTF.setText("" + getSliceBuffer());
@@ -94,20 +93,23 @@ public class AltSpliceView extends JComponent
     }
 
     this.addComponentListener(this);
-    spliced_view.setColorHash(original_view.getColorHash());
     spliced_view.setFrame(original_view.getFrame());
     buffer_sizeTF.addActionListener(this);
     slice_by_selectionCB.addItemListener(this);
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addSymSelectionListener(this);
+    
+    spliced_view.getTierManager().addPopupListener(this);
   }
 
   /**
    *  This method is notified when selected symmetries change.
    *  It usually triggers a re-computation of the sliced symmetries to draw.
    *  If no selected syms, then don't change.
-   *  If all selected syms are graphs, don't change (because graphs currently span entire sequence).
+   *  Any Graphs in the selected symmetries will be ignored
+   *  (because graphs currently span entire sequence and slicing on them can
+   *  use too much memory).
    */
   public void symSelectionChanged(SymSelectionEvent evt) {
     if (IGB.DEBUG_EVENTS)  { System.out.println("AltSpliceView received selection changed event"); }
@@ -118,16 +120,10 @@ public class AltSpliceView extends JComponent
       // catching spliced_view as source of event because currently sym selection events actually originating
       //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
       last_selected_syms = evt.getSelectedSyms();
+      last_selected_syms = removeGraphs(last_selected_syms);
       int symcount = last_selected_syms.size();
       if (symcount > 0) {
-	boolean all_graphs = true;
-	for (int i=0; i<symcount; i++) {
-	  if (! (last_selected_syms.get(i) instanceof GraphSym)) {
-	    all_graphs = false;
-	    break;
-	  }
-	}
-	if (! all_graphs) {
+	{
 	  if (! this.isShowing()) {
 	    pending_selection_change = true;
 	  }
@@ -145,7 +141,6 @@ public class AltSpliceView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-//  public void sequenceChanged(AnnotatedBioSeq newseq) {
     if (IGB.DEBUG_EVENTS)  {
       System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
@@ -203,7 +198,7 @@ public class AltSpliceView extends JComponent
 	   *  So for now, transfrag graphs and other graphs that use SPAN_GRAPH style
 	   *    will be switched over to MINMAXAVG style for the sliced view, which ends up
 	   *    showing a bar at the start and end of each span instead of filling across the span.
-	   *    Hopefullly will fix soon with some modifications to GraphGlyph and GraphSym2Glyph.
+	   *    Hopefullly will fix soon with some modifications to GraphGlyph and transformGraphSym
 	   */
 	  if (new_state.getGraphStyle() == SmartGraphGlyph.SPAN_GRAPH) {
 	    new_state.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
@@ -216,26 +211,23 @@ public class AltSpliceView extends JComponent
     }
   }
 
-  public static void main(String[] args) {
-    // testing AltSpliceView as standalone
-    JFrame frm = new JFrame("AltSpliceView test");
-    AltSpliceView view = new AltSpliceView();
-    Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
-    cpane.add("Center", view);
-    frm.setSize(600, 400);
-    frm.show();
-    frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { System.exit(0); }
-    });
+  // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
+  java.util.List removeGraphs(java.util.List syms) {
+    int symcount = syms.size();
+    Vector v = new Vector(syms.size());
+    for (int i=0; i<symcount; i++) {
+      Object sym = syms.get(i);
+      if (! (sym instanceof GraphSym)) {
+        v.add(sym);
+      }
+    }
+    return v;
   }
 
   // ComponentListener implementation
   public void componentResized(ComponentEvent e) { }
   public void componentMoved(ComponentEvent e) { }
   public void componentShown(ComponentEvent e) {
-    //    System.out.println("AltSpliceView was just made visible");
-    //    System.out.println("AltSpliceView.isShowing(): " + this.isShowing());
     if (pending_sequence_change && slice_by_selection_on) {
       spliced_view.setAnnotatedSeq(last_seq_changed);
       pending_sequence_change = false;
@@ -251,8 +243,6 @@ public class AltSpliceView extends JComponent
     }
   }
   public void componentHidden(ComponentEvent e) {
-    //    System.out.println("AltSpliceView was just hidden");
-    //    System.out.println("AltSpliceView.isShowing(): " + this.isShowing());
   }
 
   public void actionPerformed(ActionEvent evt) {
@@ -276,9 +266,66 @@ public class AltSpliceView extends JComponent
       else {
 	setSliceBySelection(false);
       }
-      //System.out.println("toggled selection tracking: " + getSliceBySelection());
     }
   }
 
+  public void popupNotify(JPopupMenu popup, final TierLabelManager handler) {
+    if (handler != spliced_view.getTierManager()) {
+      return;
+    }
+    
+    java.util.List selected_labels = handler.getSelectedTierLabels();
 
+    Action hide_action = new AbstractAction("Hide Tier") {
+      public void actionPerformed(ActionEvent e) {
+        handler.hideTiers(handler.getSelectedTierLabels(), false, true);
+      }
+    };
+
+//    Action show_all_action = new AbstractAction("Show All") {
+//      // This form of "Show All" will show all the tiers, regardless of
+//      // whether AnnotStyle.getShow() is true
+//      public void actionPerformed(ActionEvent e) {
+//        handler.showTiers(handler.getAllTierLabels(), true, true);
+//      }
+//    };
+    
+    Action restore_all_action = new AbstractAction("Show Same Tiers as Main View") {
+      public void actionPerformed(ActionEvent e) {
+        java.util.List list = handler.getAllTierLabels();
+        Iterator iter = list.iterator();
+        while (iter.hasNext()) {
+          TierLabelGlyph tlg = (TierLabelGlyph) iter.next();
+          TierGlyph tg = tlg.getReferenceTier();
+          AnnotStyle style = tg.getAnnotStyle();
+          if (tg.getChildCount() <= 0) {
+            tg.setState(TierGlyph.HIDDEN);
+          }
+          else if (style == null) {
+            // Style may be null for Coordinates, and for "Stop Codons" tiers
+            tg.restoreState();
+          }
+          else {
+            if (style.getShow()) {
+              tg.setState(style.getCollapsed() ? TierGlyph.COLLAPSED : TierGlyph.EXPANDED);
+            } else {
+              tg.setState(TierGlyph.HIDDEN);
+            }
+          }
+          handler.repackTheTiers(true, true);
+        }
+      }
+    };
+    
+    hide_action.setEnabled(! selected_labels.isEmpty());
+    //show_all_action.setEnabled( true );
+    restore_all_action.setEnabled(true);
+
+    if (popup.getComponentCount() > 0) {
+      popup.add(new JSeparator());
+    }
+    popup.add(hide_action);
+    //popup.add(show_all_action);
+    popup.add(restore_all_action);
+  }
 }

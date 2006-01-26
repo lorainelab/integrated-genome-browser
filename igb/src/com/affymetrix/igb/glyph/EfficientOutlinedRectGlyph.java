@@ -42,32 +42,17 @@ public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
     g.setColor(getBackgroundColor());
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
     if (pixelbox.width > 2 && pixelbox.height > 2) {
-      g.setColor(fill_color);
+      g.setColor(getBackgroundColor().darker());
       g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-2, pixelbox.height-2);
     }
 
     super.draw(view);
   }
-  
-  Color fill_color = null;
-  
-  /** Sets the background (outline) color to given color; foreground is automatically 
-   *  set to a darker shade. 
+
+  /** Sets the outline color; the fill color is automatically calculated as  
+   *  a darker shade. 
    */
   public void setColor(Color c) {
     super.setColor(c);
-    if (color == null) { // silly to check this?
-      fill_color = null;
-    } else {
-      setForegroundColor(color.darker());
-    }
-  }
-  
-  public void setForegroundColor(Color c) {
-    this.fill_color = c;
-  }
-
-  public Color getForegroundColor() {
-    return fill_color;
   }
 }

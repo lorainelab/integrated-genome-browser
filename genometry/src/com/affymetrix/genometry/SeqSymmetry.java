@@ -23,8 +23,13 @@ public interface SeqSymmetry {
   public int getSpanCount();
   public SeqSpan getSpan(BioSeq seq);
   public SeqSpan getSpan(int index);
+  /** maybe this method should be called copySpan() ? */
   public boolean getSpan(BioSeq seq, MutableSeqSpan span);
+  /**  maybe this method should be called copySpan() ? */
   public boolean getSpan(int index, MutableSeqSpan span);
+  /** 
+   * getSpanSeq(index) is not being used much, so might remove it soon (4-22-2005)
+   */
   public BioSeq getSpanSeq(int index);
   public int getChildCount();
   public SeqSymmetry getChild(int index);

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,27 +13,29 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
+import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
+import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
+import com.affymetrix.igb.parsers.ScoredIntervalParser;
 
 /**
- *  A panel that shows the preferences for particular special URLs and file locations. 
+ *  A panel that shows the preferences for particular special URLs and file locations.
  */
 public class OptionsView extends JPanel implements IPrefEditorComponent  {
-    
+
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
 
   public OptionsView() {
@@ -44,8 +46,8 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JPanel main_box = new JPanel();
     main_box.setLayout(new BoxLayout(main_box,BoxLayout.Y_AXIS));
     main_box.setBorder(new javax.swing.border.EmptyBorder(5,5,5,5));
-    
-    main_box.add(Box.createVerticalGlue());
+
+    //main_box.add(Box.createVerticalGlue());
 
     JScrollPane scroll_pane = new JScrollPane(main_box);
     this.add(scroll_pane, BorderLayout.CENTER);
@@ -56,31 +58,43 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     //main_box.add(edit_panel1);
     //main_box.add(Box.createVerticalStrut(5));
-    
-    
-    JPanel misc_box = new JPanel();
-    misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
-    misc_box.setBorder(new javax.swing.border.EtchedBorder());
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(), 
-      UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
-    main_box.add(misc_box);
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(), 
+
+    JPanel misc_box = new JPanel();
+    boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
+    if (is_unix) {
+      misc_box.setLayout(new GridLayout(6,1));
+    } else {
+      misc_box.setLayout(new GridLayout(4,1));
+    }
+    // The BoxLayout would seem to make sense for misc_box, but it oddly causes
+    // side-effects in the *other* boxes on this panel.
+    //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
+    misc_box.setBorder(new javax.swing.border.EtchedBorder());
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
+      UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
-    
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(), 
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored intervals",
+						 UnibrowPrefsUtil.getTopNode(),
+						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+						 ScoredIntervalParser.default_attach_graphs));
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
 
-    //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(), 
+    //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use control server", UnibrowPrefsUtil.getTopNode(), 
-      IGB.PREF_USE_CONTROL_SERVER, IGB.default_use_control_server));
-
-    misc_box.add(new JLabel("Browser command: "));
-    misc_box.add(UnibrowPrefsUtil.createTextField(
-      UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, WebBrowserControl.DEFAULT_BROWSER_CMD));
-
+    if ( is_unix ) {
+      misc_box.add(new JLabel("Browser command: "));
+      // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
+      // force the WebBrowserControl to issue a warning.
+      misc_box.add(UnibrowPrefsUtil.createTextField(
+        UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, ""));
+    }
 
     /*
     JPanel colors_box = new JPanel();
@@ -94,10 +108,21 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     colors_box.add(bg_color);
      */
     
+    /*
+    JPanel customizer_box = new JPanel();
+    customizer_box.setLayout(new FlowLayout());
+    customizer_box.setBorder(new TitledBorder("Tiers"));
+    Action customizer_action = new AbstractAction("Customize Tiers") {
+      public void actionPerformed(ActionEvent evt) {
+        TierPrefsView.showFrame();
+      }
+    };    
+    customizer_box.add(new JButton(customizer_action));
+     */
+    
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
-    main_box.add(edge_match_box);
 
     JButton edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color);
     edge_match_box.add(new JLabel("Standard color: "));
@@ -105,6 +130,17 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     JButton fuzzy_edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching color: "));
     edge_match_box.add(fuzzy_edge_match_color);
+
+    JPanel orf_box = new JPanel();
+    orf_box.setLayout(new GridLayout(2,2));
+    orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
+
+    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_STOP_CODON_COLOR, OrfAnalyzer2.default_stop_codon_color);
+    orf_box.add(new JLabel("Stop Codon: "));
+    orf_box.add(stop_codon_color);
+    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer2.default_dynamic_orf_color);
+    orf_box.add(new JLabel("Dynamic ORF: "));
+    orf_box.add(dynamic_orf_color);
 
     JPanel axis_box = new JPanel();
     axis_box.setLayout(new GridLayout(3,2));
@@ -120,13 +156,18 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     axis_box.add(new JLabel("Number format: "));
     String default_label_format = SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA;
-    String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL, SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA};
+    String[] label_format_options = new String[] {SeqMapView.VALUE_AXIS_LABEL_FORMAT_FULL,
+                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_COMMA,
+                                                  SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
+
+    //main_box.add(customizer_box);
     main_box.add(axis_box);
-    
-    
-    
+    main_box.add(edge_match_box);
+    main_box.add(orf_box);
+    main_box.add(misc_box);
+
     validate();
   }
 
@@ -137,12 +178,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {
     OptionsView p = new OptionsView();
-   
+
     JDialog d = new JDialog();
     d.setTitle(p.getName());
     d.getContentPane().add(p);
     d.pack();
-    
+
     d.setVisible(true);
     d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     d.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -152,33 +193,74 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     }
     );
   }
-  
+
   public String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
 
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
     sb.append("This panel allows you to change a variety of miscelaneous settings.  ");
-    sb.append("In some cases, the changes will take effect immediately.  ");
-    sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
+    sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
+    //sb.append("Most changes here will take effect immediately;  ");
+    //sb.append("others take effect only after a re-start.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>Ask before exiting</h2>\n");
+    sb.append("Whether to show a confirmation dialog before closing the program. ");
+    sb.append("This can help you avoid accidentally losing your work.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>Keep hairline in view</h2>\n");
+    sb.append("Whether to automtatically prevent the hairline from moving ");
+    sb.append("outside the view as you scroll.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
+    sb.append("<p>\n");
+    sb.append("<h2>Make graphs from scored intervals</h2>\n");
+    sb.append("Whether to automatically create graphs from data in ");
+    sb.append("scored interval ('.sin') files.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Show DAS query genometry</h2>\n");
+    sb.append("Intended for advanced users, for debugging of DAS servers.  ");
+    sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Browser Command (Unix Only)</h2>\n");
+    sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
+    sb.append("Depending on your configuration, you may use something like ");
+    sb.append("'firefox' or 'netscape', but you may need a full path like '/usr/bin/firefox'.  ");
+    sb.append("<br><br>The command must accept the web address as a single argument on the command line.  ");
+    sb.append("If you need to do something more sophisticated, you may define your own command script ");
+    sb.append("for example '/home/user/openBrowser.sh'.  ");
+    sb.append("<br><br><b>Macintosh OS X</b>: This option is hidden and the 'open' command is used to open your default browser.  ");
+    sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
     return sb.toString();
   }
-  
+
   public Icon getIcon() {
     return null;
   }
-  
+
   public String getToolTip() {
     return "Edit Miscelaneous Options";
   }
-  
+
   public String getInfoURL() {
     return null;
-  }   
-  
+  }
+
   public void refresh() {
   }
-  
+
 }

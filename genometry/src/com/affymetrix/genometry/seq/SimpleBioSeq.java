@@ -45,8 +45,8 @@ public class SimpleBioSeq implements BioSeq, MutableBioSeq {
   }
 
   public String getID() { return id; }
-  public int getMin() { return 0; }
-  public int getMax() { return getLength(); }
+  //  public int getMin() { return 0; }
+  //  public int getMax() { return getLength(); }
   public int getLength() { return length; }
   public String getResidues() { 
     return residues; 

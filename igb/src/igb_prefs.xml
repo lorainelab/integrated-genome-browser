@@ -1,86 +1,34 @@
 <prefs>
 
-<boolean tag="USE_QUICK_LOADER" val="true" />
-<boolean tag="USE_GRAPH_ADJUSTER" val="true" />
-<boolean tag="USE_SLICE_VIEW" val="true" />
-<boolean tag="USE_PATTERN_SEARCHER" val="true" />
-<boolean tag="USE_ANNOT_BROWSER" val="true" />
-<boolean tag="USE_BOOKMARK_MANAGER" val="true" />
-<boolean tag="USE_RESTRICTION_MAPPER" val="false" />
+<!--
+  This file is rapidly becoming obsolete.  There remain only a few properties
+  that are set from this file.
 
-  <background red="0" green="0" blue="0" />  black
+  Example settings follow, currently commented out 
+  Defaults are in the igb_default_prefs.xml file in the igb.jar file
+  Refer to igb_default_prefs.xml in igb jar for more examples
+-->
 
-<annotation_style annot_type="ENCODE regions" label_field="name" glyph_depth="1" red="255" green="255" blue="0" />
-<annotation_style annot_type="contig" glyph_depth="1" red="0" green="0" blue="255" />
-<annotation_style annot_type="Contig" glyph_depth="1" red="0" green="0" blue="255" />
-<annotation_style annot_type="knownGene" label_field="gene_name" red="0" green="200" blue="150" /> 
-<annotation_style annot_type="EnsGene" red="200" green="100" blue="100" /> 
-<annotation_style annot_type="ensGene" red="200" green="100" blue="100" /> 
-<annotation_style annot_type="refseq" label_field="gene_name" red="0" green="255" blue="0" /> 
+<!-- QuickLoadUrl should now be set from the GUI instead of here. -->
+<!-- <tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/> -->
+<!-- <boolean tag="USE_PIVOT_VIEW" val="true" /> -->
+<!-- 
+  <annotation_url annot_type_regex="EnsGene"
+    url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$" />
+-->
 
-<annotation_style annot_type="genscan" red="200" green="0" blue="100" />
-<annotation_style annot_type="geneid" red="200" green="50" blue="50" />
-<annotation_style annot_type="twinscan" red="200" green="100" blue="0" />
-<annotation_style annot_type="sgpGene" red="150" green="0" blue="150" />
-<annotation_style annot_type="mgcGenes" red="150" green="75" blue="75" />
-<annotation_style annot_type="acembly" red="150" green="150" blue="0" />
-
-<annotation_style annot_type_starts_with="mrna" 
-                  label_field="query seq" red="255" green="255" blue="0" /> yellow 
-<annotation_style annot_type="mRNA" 
-                  label_field="query seq" red="255" green="255" blue="0" /> yellow
-
-<annotation_style annot_type="intronEst" red="0" green="150" blue="150" /> blueish-green? 
-
-  <annotation_style annot_type="Affy_u133_targets" 
-                    label_field="id" red="200" green="150" blue="150" /> reddish gray
-  <annotation_style annot_type="affy_u133_targets.bps" 
-                    label_field="id" red="200" green="150" blue="150" /> reddish gray
-  <annotation_style annot_type="Affy_u133_probes" red="255" green="150" blue="150" /> brighter reddish gray
-  <annotation_style annot_type="blastzBestMm3" red="150" green="150" blue="150" /> medium gray
-  <annotation_style annot_type="blastzTightMm3" red="200" green="200" blue="200" /> medium gray
-  <annotation_style annot_type="musMrna" red="200" green="200" blue="0" /> yellowish
-  <annotation_style annot_type="mapped_musMrna" red="255" green="100" blue="100" /> yellowish
-  <annotation_style annot_type="xenoMrna" red="170" green="170" blue="0" /> yellowish
-  <annotation_style annot_type="mapped_results" red="255" green="0" blue="255" /> bright purple?
-  <annotation_style annot_type="spliced_est" red="0" green="255" blue="255" /> bright blueish-green?
-  <annotation_style annot_type="primer" red="255" green="0" blue="255" /> bright purple?
-  <annotation_style annot_type="curation" red="0" green="255" blue="255" /> bright blueish-green?
-  <annotation_style annot_type="Curation" red="0" green="255" blue="255" /> bright blueish-green?
-
-  <annotation_style annot_type="est" red="84" green="168" blue="132" /> greenish
-  <annotation_style annot_type="EST" red="84" green="168" blue="132" /> greenish
-  <annotation_style annot_type="cmrna" red="255" green="255" blue="100" /> greenish
-  <annotation_style annot_type="rsmrna" red="0" green="255" blue="100" /> blueish-green
-  <annotation_style annot_type="Sanger" red="0" green="255" blue="0" /> green
-  <annotation_style annot_type="default" red="192" green="192" blue="114" /> darkish yellow
-  <annotation_style annot_type="cosmod" red="192" green="100" blue="100" /> darkish yellow
-  <annotation_style annot_type="mRNA_exon" red="0" green="255" blue="100" /> blueish-green
-  <annotation_style annot_type="genepred" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="stop_codon" red="200" green="100" blue="150" /> reddish gray
-  <annotation_style annot_type="dynamic_orf" red="100" green="200" blue="100" /> greenish lightgray
-  <annotation_style annot_type="genscan_exon" red="200" green="100" blue="100" /> ???
-  <annotation_style annot_type="curation_background" red="128" green="128" blue="128" />
-  <annotation_style annot_type="axis_background" red="255" green="255" blue="255" />  white
-  <annotation_style annot_type="axis" red="0" green="0" blue="0" /> black
-
-<annotation_style annot_type="repeats" glyph_depth="1" 
-                  red="150" green="150" blue="200" /> 
-
-<!-- <annotation_style annot_type_starts_with="threshold" glyph_depth="1" red="200" green="100" blue="100" /> -->
-<annotation_style annot_type_starts_with="intersect" glyph_depth="1" 
-                  red="0" green="255" blue="255" />
-<annotation_style annot_type_starts_with="union" glyph_depth="1" 
-                  red="255" green="0" blue="255" />
-<annotation_style annot_type_starts_with="A not B" glyph_depth="1" 
-                  red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="B not A" glyph_depth="1" 
-                  red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="not" glyph_depth="1" 
-                  red="255" green="255" blue="0" />
-<annotation_style annot_type_starts_with="xor" glyph_depth="1" 
-                  red="255" green="255" blue="0" />
+<!--  
+  <annotation_style> is now only for advanced users, and
+  some properties of <annotation_style> are now obsolete:
+    red, green, blue:  obsolete, no longer used
+    label_field:       obsolete, no longer used
+    child_glyph:       Still used, but for advanced users only
+    factory:           Still used, but for advanced users only
+-->
+<!--
+<annotation_style annot_type_regex="^YourSpecialType$"
+  child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+/>
+-->
 
 </prefs>
-

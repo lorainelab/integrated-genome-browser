@@ -84,12 +84,10 @@ public class PropertySheet extends JPanel {
       col_headings = new String[num_items+1];
       col_headings[0] = PROPERTY;
       for (int i = 0 ; i < num_items ; i++) {
-        // now we just number the columns - TODO: use
-        // a label that lets the user connect the heading
-        // with what they see on the display
-        // col_headings[i+1] = "Value " + String.valueOf(i+1);
-        String id = (String)props[i].get("id");
-        if (id == null) { id = "unknown"; }
+        Object id_obj = props[i].get("id");
+        String id;
+        if (id_obj == null) { id = "unknown"; }
+        else {id = id_obj.toString(); } // in most cases the id already is a String
         col_headings[i+1] = id;
       }
     }

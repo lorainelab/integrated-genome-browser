@@ -1,0 +1,103 @@
+Integrated Genome Browser - Versions
+-------------------------------------------------------------------
+
+IGB-4.12
+  + Fixed bug that QuickLoad das_servers.txt files were not being read
+  + Fixed bug where keyboard shortcut list wasn't kept up-to-date 
+
+IGB-4.10
+  + Added the possibility to have multiple QuickLoad servers
+  + Now restores your most recent genome and sequence when restarting
+  + Updated user's manual
+  + Various bugfixes
+
+IGB-4.02
+  + Added preliminary support for version 2 of the DAS protocol
+  + Implemented a customizer for setting properties of annotation tiers
+  + Deprecated most features of the igb_prefs.xml file
+
+IGB-3.62
+  + Overhaul of the selection mechanism: 
+  ++ dragging selects multiple items; 
+  ++ dragging started in Axis selects sequence residues
+  + Changed the order that preferences from igb_prefs.xml are applied:
+  ++ Exact matches ('annot_type') are tested first, and are case sensitive.
+  ++ Regular expressions ('annot_type_regex') are tested next, 
+     and are case-sensitive unless the flag '(?i)' is used. 
+  ++ In both cases, items later in the xml files override ones listed earlier.
+  + More support for reading .bar and .bed files produced by the
+    Affymetrix "GTAS" program.
+	+ Fixed bug #1219403 where opening the "combine graphs" pop-up was 
+    hard to do on Macintosh.
+  + Fixed bug #1241228 where sliced view could get out-of-memory errors 
+    due to graphs
+  + Fixed bug #1143530 involving case-sensitivity in GFF file parsing
+  + File-type extensions now treated as case-insensitive.
+	+ Added Help->Console where diagnostic and operational data is printed.
+	+ Fixed round-off errors in the auto-scroll panel.
+  + Added a status bar that reports which items are selected, among other things
+
+
+IGB-3.58
+  + Bug fixes and enhancements for viewing graphs from '.bar' files 
+  + Usability enhancements for viewing graphs from '.sin' files.
+  + Now accepts content-type "text/xml" for DASGFF xml
+  + "Clear" button on the Pattern Search view now clears all the text fields
+
+IGB-3.56
+  + Bug fixes and enhancements for viewing graphs from '.sin' files
+  
+IGB-3.54
+  + Improvements to loading data when the "merge" box is not selected.
+  
+IGB-3.51
+  + Added capabilities for parsing '.sin' files in sin format 3,
+    including matching IDs to multiple items labeled as "id.0", "id.1", etc.
+  + Prelimiary code preparing for future support of the DAS/2 protocol
+  + Add group ID's from GFF (GFF version 1) files to the symbol hash
+  + Added support for loading data from the HuEx-1_0 GeneChip (TM)
+
+
+IGB-3.42
+  + When making graphs for '.sin' files, can now make separate graphs
+    for '+' and '-' strands, and these graphs automatically start
+    in the "stair-step" style
+  + Added a 'bp1' file format and a EfficientProbesetSymA object
+    for efficient representation of probe set data for the 
+    HuEx-1_0 GeneChip (TM)
+
+IGB-3.31
+  + Adding "Make graphs from scored intervals" preference to general 
+    options pane.
+  + Bug fixes in SmartGraphGlyph
+  + Added ability to "clone" graphs (duplicate them in the display)
+  + Added some heatmap coloring options in the Pivot View
+  + Changed some of the "Toggle" menu items to use JCheckBoxMenuItem
+  + Removed the "Add Graph" menu item.  Graphs are now opened with
+    "Open File"
+  + Removed the option to set the browser command in Mac OS X, as
+    it isn't needed.  Mac's "open" command works best.
+  + Added an additional optional format for the Axis Glyph: "ABBREV"
+  + Improvements in Edge Matching
+  + Stopped adding all the extra temporary sequences from the ".link.psl" 
+    alignment files to the list shown in QuickLoad
+  + Prelimiary code preparing for future support of the DAS/2 protocol
+  +  Changed how score-based graph thresholding is handled.  Now score 
+     thresholding can have both a min that score must be >=, 
+     and a max that score must be <=.  
+  
+
+IGB-3.22
+  + Version 3.22 is the initial release of the Integrated Genome Browser 
+    via SourceForge.
+  + The SorceForge release includes code for the GenoViz SDK, Genometry, 
+    and the Integraged Genome Browser (IGB).
+  + Earlier versions of the Integrated Genome Browser, including the code
+    from Genometry, had been released by Affymetrix, Inc.
+    http://www.affymetrix.com/support/developer/tools/affytools.affx
+  + Earlier versions of the GenoViz SDK had been released under the name
+    "Neomorphic Genome Software Development Kit" (NGSDK) by Neomorphic, Inc.,
+    and later as part of the source code for IGB, released by Affymetrix, Inc.
+  + Further development will occur through SourceForge.
+
+

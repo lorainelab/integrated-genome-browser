@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -58,12 +58,15 @@ public class WebBrowserControl {
     Thread t = new Thread() {
       public void run() {
         try {
-          System.out.println("Opening URL in browser: " + url);
+          IGB.getSingletonIGB().setStatus("Opening URL in browser: " + url);
+          //System.err.println("Opening URL in browser: " + url);
           displayURL(url);
         } catch (final Exception e) {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              ErrorHandler.errorPanel("Error while opening URL in external browser.", e);
+              ErrorHandler.errorPanel("Error while opening URL in external browser." +
+              "\n\nYou may need to reset the browser command in the preferences panel " +
+              "at File->Preferences->Other\n", e);
             }
           });
         }
@@ -80,59 +83,80 @@ public class WebBrowserControl {
    * "file://").
    */
   public static void displayURL(String url) {
-    boolean windows = isWindowsPlatform();
+    int platform = getPlatformCode();
     String cmd = null;
+    Process p = null;
     try {
-      if (windows) {
+      switch (platform) {
+      case 1:
         cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
-        Process p = Runtime.getRuntime().exec(cmd);
-      }
-      else {
-        try {
-          int exitCode = -1;
-          if (isNetscapeOrMozilla(getUnixPath())) {
+        p = Runtime.getRuntime().exec(cmd);
+        break;
+      case 2:
+        cmd = "open " + url;
+        p = Runtime.getRuntime().exec(cmd);
+        break;
+      case 3:
+        String unix_path = getUnixPath();
+        int exitCode = -1;
+        if (isNetscapeOrMozilla(unix_path)) {
             // Under Unix, Netscape or Mozilla or Firefox has to be running for the
             // "-remote" flag to work.  So, we try sending the command and
             // check for an exit value.  If the exit command is 0,
             // it worked, otherwise we need to start the browser.
-            cmd = getUnixPath() + " -remote openURL(" + url + ")";
-            //System.out.println("cmd: "+cmd);
-            Process p = Runtime.getRuntime().exec(cmd);
-
+            // (Firefox 1.0 and up doesn't require the "remote" flag)
+            cmd = unix_path + " -remote openURL(" + url + ")";
+            p = Runtime.getRuntime().exec(cmd);
             // wait for exit code -- if it's 0, command worked,
             // otherwise we need to start the browser.
             exitCode = p.waitFor();
-          }
-          if (exitCode != 0) {
-            // Command failed, start up the browser
-            cmd = getUnixPath() + " "  + url;
-            //System.out.println("cmd: "+cmd);
-            Process p = Runtime.getRuntime().exec(cmd);
-          }
         }
-        catch(InterruptedException x) {
-          ErrorHandler.errorPanel("Error invoking browser, command:\n" 
-            + cmd + "\n\n" + x.toString());
+        if (exitCode != 0) {
+          // Command failed, start up the browser
+          cmd = unix_path + " "  + url;
+          p = Runtime.getRuntime().exec(cmd);
         }
       }
+    } 
+    catch(InterruptedException x) {
+      ErrorHandler.errorPanel("Error invoking browser, command:\n" 
+                              + cmd + "\n\n" + x.toString() +
+                              "\n\nYou may need to reset the browser command in the preferences panel "+
+                              "at File->Preferences->Other\n");
     }
     catch(IOException x) {
       // couldn't exec browser
       IGB.errorPanel("Could not invoke browser, command:\n" 
-        + cmd + "\n\n" + x.toString());
+                     + cmd + "\n\n" + x.toString() +
+                     "\n\nYou may need to reset the browser command in the preferences panel "+
+                     "at File->Preferences->Other\n");
     }
   }
 
   /**
-   * Try to determine whether this application is running under Windows
-   * by examing the "os.name" property.
+   * Try to identify the operating system by examining the 
+   * by examining the "os.name" property.
    *
-   * @return true if this application is running under a Windows OS
+   * @return WINDOWS if this application is running under a Windows OS
+   * @return MAC if this application is running under Mac OS
+   * @return UNIX if this application is running under none of the above
    */
-  public static boolean isWindowsPlatform()
-  {
+  public static int getPlatformCode() {
     String os = System.getProperty("os.name");
-    return ( os != null && os.startsWith(WIN_ID));
+    int to_return = -1;
+    if (os == null) {
+      to_return = UNKNOWN_PLATFORM; // is this even possible?
+    }
+    else if (os.startsWith(WIN_ID)) {
+      to_return = WINDOWS;
+    }
+    else if (os.startsWith(MAC_ID)) {
+      to_return = MAC;
+    }
+    else {
+      to_return = UNIX;
+    }
+    return to_return;
   }
 
   private static boolean isNetscapeOrMozilla(String path) {
@@ -163,7 +187,21 @@ public class WebBrowserControl {
    *  other special flags for their browser.
    */
   public static String getUnixPath() {
-    return UnibrowPrefsUtil.getTopNode().get(PREF_BROWSER_CMD, DEFAULT_BROWSER_CMD);
+    // The first time we ask for PREF_BROWSER_CMD is just to see if it is set or not
+    String command = UnibrowPrefsUtil.getTopNode().get(PREF_BROWSER_CMD, "").trim();
+    if ("".equals(command)) {
+      ErrorHandler.errorPanel("Browser Command Undefined",
+        "You have not set the Unix command for opening your web browser.\n\n" +
+        "Please set the value of 'browser command' in the Preferences panel at "+
+        "File->Preferences->Other\n\n" +
+        "You must use a command that takes a single URL as an argument, "+
+        "such as '/usr/bin/firefox' or '/usr/bin/konqueror'\n" +
+        "\nThe program will attempt to use '"+DEFAULT_BROWSER_CMD+"', but this " +
+        "may not work on your system.\n"
+      );
+      command = DEFAULT_BROWSER_CMD;
+    }
+    return command;
   }
 
   /**
@@ -173,7 +211,16 @@ public class WebBrowserControl {
     WebBrowserControl.displayURL("http://www.affymetrix.com");
   }
 
-  // Used to identify the windows platform.
+  // used to encode platform identity
+  public static final int UNKNOWN_PLATFORM = 0;
+  public static final int WINDOWS = 1;
+  public static final int MAC = 2;
+  public static final int UNIX = 3;
+
+
+  // Used to identify the Mac OS X platform.
+  private static final String MAC_ID = "Mac OS X";
+
   private static final String WIN_ID = "Windows";
   // The default system browser under windows.
   private static final String WIN_PATH = "rundll32";

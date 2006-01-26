@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -20,13 +20,15 @@ import java.io.*;
 import java.util.*;
 import javax.swing.SwingUtilities;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.DasFeat2GenometrySaxParser;
+import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
 import com.affymetrix.igb.parsers.PSLParser;
 
 public class UrlLoaderThread extends Thread {
@@ -68,15 +70,18 @@ public class UrlLoaderThread extends Thread {
 
   public void run() {
     ThreadProgressMonitor monitor = null;
-    MutableAnnotatedBioSeq seq = null;
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     try {
-      // should really move to using gmodel's currently selected  _group_ of sequences rather than 
+      // should really move to using gmodel's currently selected  _group_ of sequences rather than
       //    a single sequence...
-      seq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
-      if (seq == null) {
-        throw new RuntimeException("UrlLoaderThread: aborting because there is no sequence loaded in the view");
+      if (aseq == null) {
+        throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq");
       }
-      //System.out.println("in UrlLoaderThread, get selected seq: " + seq.getID());
+      if (seq_group == null) {
+        throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq group");
+      }
+      //System.out.println("in UrlLoaderThread, get selected seq: " + aseq.getID());
 
       monitor = new ThreadProgressMonitor(
         gviewer.getFrame(),
@@ -90,7 +95,7 @@ public class UrlLoaderThread extends Thread {
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
         URL url = urls[i];
-        String tier_name = null;
+         String tier_name = null;
         if (tier_names != null) {
           tier_name = tier_names[i];
         } else {
@@ -112,13 +117,17 @@ public class UrlLoaderThread extends Thread {
         monitor.setMessageEventually("Loading data from "+where_from);
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
-        parseDataFromURL(gviewer, connection, seq, tier_name);
+        try {
+	  //  parseDataFromURL(gviewer, connection, aseq, tier_name);
+	  parseDataFromURL(gviewer, connection, tier_name);
+        }
+        catch (IOException ex){handleException(ex); continue;}
 
         monitor.setMessageEventually("Updating view");
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
         // update the view, except for the last time where we let the "finally" block do it
-        if (i<urls.length) {updateViewer(gviewer, seq);}
+        if (i<urls.length) {updateViewer(gviewer, aseq);}
       }
 
     } catch (Exception e) {
@@ -126,7 +135,7 @@ public class UrlLoaderThread extends Thread {
     } finally {
       if (monitor != null) {monitor.closeDialogEventually();}
       // update the view again, mainly in case the thread was interrupted
-      updateViewer(gviewer, seq);
+      updateViewer(gviewer, aseq);
     }
   }
 
@@ -134,18 +143,17 @@ public class UrlLoaderThread extends Thread {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (e instanceof UnknownHostException) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "Unknown Host", 
-            "Unknown host: "+e.getMessage(), null);
+          com.affymetrix.igb.IGB.getSingletonIGB().setStatus("Unknown host: "+e.getMessage());
         } else if (e instanceof FileNotFoundException) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "File not found", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "File not found",
             "File missing or not readable:\n "+e.getMessage(), null);
         } else {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
-            "Exception in UrlLoaderThread", e);
+          com.affymetrix.igb.IGB.getSingletonIGB().setStatus(e.getMessage());
         }
       }
     });
   }
+
 
   void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
     if (gviewer==null || seq==null) return;
@@ -213,33 +221,27 @@ public class UrlLoaderThread extends Thread {
    *  data to the given BioSeq.
    *  @param type  a parameter passed on to parsePSL
    */
-  static MutableAnnotatedBioSeq parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con,
-    MutableAnnotatedBioSeq current_seq, String type)
-  throws java.net.UnknownHostException, java.io.IOException {
-    //TODO: This is an important part of the data loading code, but it could be improved.
-    MutableAnnotatedBioSeq result_seq = current_seq;
+  static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String type)
+    throws java.net.UnknownHostException, java.io.IOException {
 
-    /*
-    // Some debugging lines
-    Map m = feat_request_con.getHeaderFields();
-    Iterator iter = m.keySet().iterator();
-    while (iter.hasNext()) {
-      String key = (String) iter.next();
-      System.out.println(key + " --> " + m.get(key));
-    }
-    */
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
+    //TODO: This is an important part of the data loading code, but it could be improved.
 
     String content_type = feat_request_con.getContentType();
     int content_length = feat_request_con.getContentLength();
     if (content_length == 0) { // Note: length == -1 means "length unknown"
-      throw new IOException("URL returned no data.");
+      throw new IOException("\n" + feat_request_con.getURL() + " returned no data.");
     }
-    
+
+    URL url = feat_request_con.getURL();
     if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
-    if (content_type == null || content_type.startsWith("content/unknown") || content_type.startsWith("application/zip")
-      || content_type.startsWith("application/octet-stream"))
+    if (content_type == null ||
+	content_type.startsWith("content/unknown") ||
+	content_type.startsWith("application/zip") ||
+	content_type.startsWith("application/octet-stream") ||
+	"file".equals(url.getProtocol().toLowerCase()))
     {
-      URL url = feat_request_con.getURL();
       System.out.println("Attempting to load data from: " + url.toExternalForm());
 
       // Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
@@ -248,22 +250,26 @@ public class UrlLoaderThread extends Thread {
       String filename = url.getPath();
 
       InputStream stream = feat_request_con.getInputStream();
-      LoadFileAction.load(gviewer, stream,  filename, current_seq);
+      LoadFileAction.load(gviewer, stream,  filename, aseq);
     }
     else if (content_type.startsWith("binary/bps")) {
-      result_seq = parseBinaryBps(feat_request_con, current_seq, type);
-    } else if (content_type.startsWith("text/plain") || content_type.startsWith("text/html")) {
+      parseBinaryBps(feat_request_con, type);
+    }
+    else if (content_type.startsWith("text/plain") ||
+               content_type.startsWith("text/html") ||
+               content_type.startsWith("text/xml")
+        ) {
       // Note that some http servers will return "text/html" even when that is untrue.
       // we could try testing whether the filename extension is a recognized extension, like ".psl"
       // and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-      
-      result_seq = parseDasGff(feat_request_con, current_seq);
-    } else if (content_type.startsWith("text/psl")) {
-      result_seq = parsePSL(gviewer, feat_request_con, current_seq, type);
-    } else {
+      parseDasGff(feat_request_con);
+    }
+    else if (content_type.startsWith("text/psl")) {
+      parsePSL(feat_request_con, type);
+    }
+    else {
       throw new IOException("Declared data type "+content_type+" cannot be processed");
     }
-    return result_seq;
   }
 
   /**
@@ -271,7 +277,7 @@ public class UrlLoaderThread extends Thread {
    *  PSL file, and then adds the resulting data to the given BioSeq,
    *  using the parser {@link PSLParser}.
    */
-  static MutableAnnotatedBioSeq parsePSL(SeqMapView gviewer, URLConnection feat_request_con, MutableAnnotatedBioSeq current_seq, String type)
+  static void parsePSL(URLConnection feat_request_con, String type)
   throws IOException {
     MutableAnnotatedBioSeq new_seq = null;
     InputStream result_stream = null;
@@ -279,28 +285,26 @@ public class UrlLoaderThread extends Thread {
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
-      Map seqhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqs();
+      Map seqhash = gmodel.getSelectedSeqGroup().getSeqs();
       PSLParser parser = new PSLParser();
       parser.enableSharedQueryTarget(true);
       if (seqhash == null) {
-        new_seq = parser.parse(bis, current_seq, type);
+        parser.parse(bis, gmodel.getSelectedSeq(), type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, false, true);
-        new_seq = current_seq;
+        parser.parse(bis, type, null, seqhash, IGB.getSymHash(), false, true);
       }
     } finally {
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
-    return new_seq;
   }
 
   /**
    *  Opens a text input stream from the given url and adds the resulting
    *  data to the given BioSeq.
    */
-  static MutableAnnotatedBioSeq parseDasGff(URLConnection feat_request_con, MutableAnnotatedBioSeq current_seq)
+  static void parseDasGff(URLConnection feat_request_con)
   throws IOException {
     MutableAnnotatedBioSeq new_seq = null;
     InputStream result_stream = null;
@@ -308,15 +312,14 @@ public class UrlLoaderThread extends Thread {
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
-      DasFeat2GenometrySaxParser das_parser = new DasFeat2GenometrySaxParser();
-      new_seq = das_parser.parse(result_stream, current_seq);
+      Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
+      new_seq = das_parser.parse(result_stream, gmodel.getSelectedSeq());
     } catch (org.xml.sax.SAXException se) {
       throw new IOException("\n" + se.toString());
     } finally {
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
-    return new_seq;
   }
 
   /**
@@ -325,9 +328,8 @@ public class UrlLoaderThread extends Thread {
    *  @param type  a parameter passed on to
    *  {@link BpsParser#parse(DataInputStream, String, Map)}.
    */
-  static MutableAnnotatedBioSeq parseBinaryBps(URLConnection feat_request_con, MutableAnnotatedBioSeq current_seq, String type)
+  static void parseBinaryBps(URLConnection feat_request_con, String type)
   throws IOException {
-    String seq_id = current_seq.getID(); // let this throw a NullPointerException right away
     InputStream result_stream = null;
     BufferedInputStream bis = null;
     DataInputStream dis = null;
@@ -336,17 +338,14 @@ public class UrlLoaderThread extends Thread {
       bis = new BufferedInputStream(result_stream);
       dis = new DataInputStream(bis);
 
-      HashMap temphash = new HashMap();
-      temphash.put(seq_id, current_seq);
-
       BpsParser bps_parser = new BpsParser();
-      bps_parser.parse(dis, type, temphash);
+      Map seqhash = gmodel.getSelectedSeqGroup().getSeqs();
+      bps_parser.parse(dis, type, seqhash, IGB.getSymHash());
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
-    return current_seq;
   }
-  
+
 }

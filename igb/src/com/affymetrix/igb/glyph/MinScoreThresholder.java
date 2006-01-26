@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -24,7 +24,7 @@ import java.util.*;
 
 import com.affymetrix.genoviz.widget.*;
 
-public class MinScoreThresholder extends JPanel 
+public class MinScoreThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static NumberFormat nformat = new DecimalFormat();
@@ -48,7 +48,7 @@ public class MinScoreThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { 
+      public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
 	w.dispose();
@@ -100,9 +100,9 @@ public class MinScoreThresholder extends JPanel
       graphs.add(gl);
       thresh_min = Math.min(thresh_min, gl.getGraphMinY());
       thresh_max = Math.max(thresh_max, gl.getGraphMaxY());
-      newthresh += gl.getScoreThreshold();
+      newthresh += gl.getMinScoreThreshold();
     }
-    
+
     // set default thresh to average thresh of selected graphs
     minscore_thresh = newthresh / (float)gcount;
     //    System.out.println("thresh min: " + thresh_min);
@@ -128,13 +128,13 @@ public class MinScoreThresholder extends JPanel
     graphs.clear();
     graphs.add(gl);
     //    this.sgg = gl;
-    
+
     tslider.removeChangeListener(this);
     minscoreTF.removeActionListener(this);
 
     thresh_min = gl.getGraphMinY();
     thresh_max = gl.getGraphMaxY();
-    minscore_thresh = gl.getScoreThreshold();
+    minscore_thresh = gl.getMinScoreThreshold();
 
     float score_range = thresh_max - thresh_min;
     sliders_per_score = 1000.0f/score_range;
@@ -167,7 +167,7 @@ public class MinScoreThresholder extends JPanel
 	minscore_thresh = current_thresh;
 	for (int i=0; i<graphs.size(); i++) {
 	  SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
-	  sgg.setScoreThreshold(minscore_thresh);
+	  sgg.setMinScoreThreshold(minscore_thresh);
 	}
 	minscoreTF.removeActionListener(this);
 	minscoreTF.setText(nformat.format(minscore_thresh));
@@ -189,7 +189,7 @@ public class MinScoreThresholder extends JPanel
 	  minscore_thresh = new_thresh;
 	  for (int i=0; i<graphs.size(); i++) {
 	    SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
-	    sgg.setScoreThreshold(minscore_thresh);
+	    sgg.setMinScoreThreshold(minscore_thresh);
 	  }
 	  tslider.removeChangeListener(this);
 	  tslider.setValue(calcSliderVal(minscore_thresh));

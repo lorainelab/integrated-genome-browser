@@ -33,8 +33,7 @@ public class Memer {
   }
 
   /**
-   * checks memory
-   * and prints a message if the total memory usage has changed
+   * Checks memory and prints a message if the total memory usage has changed
    * since the last time this was called.
    */
   public void checkMemory() {
@@ -46,7 +45,7 @@ public class Memer {
   }
 
   /**
-   * refreshes this object's data from the Runtime.
+   * Refreshes this object's data from the Runtime.
    */
   public void calcMem() {
     currFreeMem = rt.freeMemory();
@@ -60,7 +59,7 @@ public class Memer {
   }
 
   /**
-   * returns the change in memory usage
+   * Returns the change in memory usage
    * between the last two calls to calcMem.
    *
    * @return the most recent change in memory usage.
@@ -71,10 +70,17 @@ public class Memer {
   }
 
   /**
-   * prints this object's data to stderr.
+   * Prints this object's data to the given stream.
+   */
+  public void printMemory(java.io.PrintStream str) {
+    str.println(this.toString());
+  }
+
+  /**
+   * Prints this object's data to stderr.
    */
   public void printMemory() {
-    System.err.println(this.toString());
+    printMemory(System.err);
   }
 
   /**

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -14,6 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.*;
+import java.util.*;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
@@ -27,13 +28,18 @@ public class GraphState {
 
   double graph_ypos = 20;
   double graph_height = 60;
-  float graph_threshold = 0;
 
   /**
    *  The minimum score the ycoord of a point must be >= in order to be counted
-   *     as being above threshold.
+   *     as passing threshold.
    */
   float min_score_threshold = Float.NEGATIVE_INFINITY;  // NEGATIVE_INFINITY means hasn't been set yet
+
+  /**
+   *  The maximum score the ycoord of a point must be <= in order to be counted
+   *    as passing threshold
+   */
+  float max_score_threshold = Float.POSITIVE_INFINITY;  // POSITIVE_INFINITY means hasn't been set yet
 
   /**
    *  The maximum distance (in xcooords) allowed between points that
@@ -65,7 +71,7 @@ public class GraphState {
 
   // if float_graph, then graph should float above annotations in tiers
   // if !float_graph, then graph should be in its own tier
-  boolean float_graph = true; 
+  boolean float_graph = true;
   boolean show_threshold = false;
   boolean show_axis = false;
 
@@ -73,6 +79,42 @@ public class GraphState {
   boolean show_graph = true;
   boolean show_bounds = false;
   boolean show_label = true;
+
+  public static Map gstyle2num = new HashMap();
+  public static Map num2gstyle = new HashMap();
+
+  static {
+    gstyle2num.put("line", new Integer(SmartGraphGlyph.LINE_GRAPH));
+    gstyle2num.put("bar", new Integer(SmartGraphGlyph.BAR_GRAPH));
+    gstyle2num.put("dot", new Integer(SmartGraphGlyph.DOT_GRAPH));
+    gstyle2num.put("stairstep", new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
+    gstyle2num.put("heatmap", new Integer(SmartGraphGlyph.HEAT_MAP));
+    gstyle2num.put("minmaxavg", new Integer(SmartGraphGlyph.MINMAXAVG));
+    //    gstyle2num.put("span", new Integer(SmartGraphGlyph.SPAN_GRAPH));  // SPAN_GRAPH is deprecated
+    
+    Iterator iter = gstyle2num.entrySet().iterator();
+    while (iter.hasNext()) {
+      Map.Entry ent = (Map.Entry)iter.next();
+      Integer style_num = (Integer)ent.getValue();
+      String style_name = (String)ent.getKey();
+      num2gstyle.put(style_num, style_name);
+    }
+  }
+
+  public static Integer getStyleNumber(String style_name) {
+    return (Integer)gstyle2num.get(style_name.toLowerCase());
+  }
+  
+  public static int getStyleInt(String style_name) {
+    Integer num = getStyleNumber(style_name);
+    if (num == null) { return -1; }
+    else { return num.intValue(); }
+  }
+
+  public static String getStyleName(int style_int) {
+    return (String)num2gstyle.get(new Integer(style_int));
+  }
+
 
   public GraphState() { super(); }
   public GraphState(GraphState ostate) {
@@ -91,7 +133,8 @@ public class GraphState {
     setShowGraph(ostate.getShowGraph());
     setShowBounds(ostate.getShowBounds());
     setShowLabel(ostate.getShowLabel());
-    setScoreThreshold(ostate.getScoreThreshold());
+    setMinScoreThreshold(ostate.getMinScoreThreshold());
+    setMaxScoreThreshold(ostate.getMaxScoreThreshold());
     setMaxGapThreshold(ostate.getMaxGapThreshold());
     setMinRunThreshold(ostate.getMinRunThreshold());
     setThreshStartShift(ostate.getThreshStartShift());
@@ -117,7 +160,9 @@ public class GraphState {
   public final boolean getShowBounds() { return show_bounds; }
   public final boolean getShowLabel() { return show_label; }
 
-  public float getScoreThreshold() { return min_score_threshold; }
+  public float getMinScoreThreshold() { return min_score_threshold; }
+  public float getMaxScoreThreshold() { return max_score_threshold; }
+
   public int getMaxGapThreshold() { return max_gap_threshold; }
   public int getMinRunThreshold() { return min_run_threshold; }
   public double getThreshStartShift() { return span_start_shift; }
@@ -128,10 +173,7 @@ public class GraphState {
   public final void setGraphYPos(double ypos) { graph_ypos = ypos; }
   public final void setGraphHeight(double height) { graph_height = height; }
 
-  public final void setGraphStyle(int style) {
-    graph_style = style;
-    //    System.out.println("graph style: " + graph_style);
-  }  // check
+  public final void setGraphStyle(int style) { graph_style = style; } 
   public final void setColor(Color col) { graph_col = col; }  // check
   public final void setVisibleMinY(float vminy) { graph_visible_min = vminy; }  // check
   public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy; }  // check
@@ -142,7 +184,8 @@ public class GraphState {
   public final void setShowBounds(boolean b) { show_bounds = b; }  // check
   public final void setShowLabel(boolean b) { show_label = b; }    // check
 
-  public void setScoreThreshold(float thresh) { min_score_threshold = thresh; }
+  public void setMinScoreThreshold(float thresh) { min_score_threshold = thresh; }
+  public void setMaxScoreThreshold(float thresh) { max_score_threshold = thresh; }
   public void setMaxGapThreshold(int thresh) { max_gap_threshold = thresh; }
   public void setMinRunThreshold(int thresh) { min_run_threshold = thresh; }
   public void setThreshStartShift(double d) { span_start_shift = d; }

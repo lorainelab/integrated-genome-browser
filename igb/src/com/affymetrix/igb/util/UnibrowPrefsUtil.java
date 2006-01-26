@@ -261,7 +261,10 @@ import com.affymetrix.igb.menuitem.FileTracker;
       try {
         importPreferences(f);
       } catch (InvalidPreferencesFormatException ipfe) {
-        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage());
+        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage()
+        +"\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "+
+        "In particular, you cannot import the file 'igb_prefs.xml' that was "+
+        "used in earlier versions of this program.");
       } catch (Exception e) {
         ErrorHandler.errorPanel("ERROR", "Error importing preferences from file", e);
       }
@@ -536,7 +539,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
    *  @param new_val  The value you to be tested.
    *  @param fallback  The value to use if the given value isn't parseable as the
    *    given class type
-   *  @param class_type one of Double, Long, Short, Integer, or Float
+   *  @param type one of Double, Long, Short, Integer, or Float
    *  @return a String representing the value given by new_val, if it was
    *    parseable as the requested class type, or else the fallback value.
    *    (Note that the value of the fallback string is never tested and might not

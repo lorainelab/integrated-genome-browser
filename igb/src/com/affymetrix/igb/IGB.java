@@ -161,7 +161,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     } catch (UnsupportedLookAndFeelException ulfe) {
       // Windows look and feel is only supported on Windows.  That is ok.
     }
-    
+        
     // Initialize the ConsoleView right off, so that ALL output will
     // be captured there.
     ConsoleView.init();
@@ -176,6 +176,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     dlookup.loadSynonyms(quick_load_url + "synonyms.txt");
+    QuickLoadView2.processDasServersList(quick_load_url);
 
     singleton_igb = new IGB();
     singleton_igb.init();

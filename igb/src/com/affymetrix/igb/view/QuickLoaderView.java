@@ -383,16 +383,13 @@ public class QuickLoaderView extends JComponent
    *        available (and loaded) for selected seq group
    */
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
-    java.util.List glist = evt.getSelectedGroups();
-    AnnotatedSeqGroup group = null;
-    if (glist.size() > 0)  {
-      group = (AnnotatedSeqGroup)glist.get(0);
-      if (IGB.DEBUG_EVENTS)  {
+    AnnotatedSeqGroup group = evt.getSelectedGroup();
+    if (IGB.DEBUG_EVENTS) {
+      if (group == null) {
+        System.out.println("QuickLoaderView received seqGroupSelected() call, but group = null");
+      } else {
         System.out.println("QuickLoaderView received seqGroupSelected() call: " + group.getID() + ",  " + group);
       }
-    }
-    else {
-      if (IGB.DEBUG_EVENTS)  { System.out.println("QuickLoaderView received seqGroupSelected() call, but group = null"); }
     }
     if (group == null)  { return; }
 
@@ -482,7 +479,7 @@ public class QuickLoaderView extends JComponent
     // but will not be in the sym hash anymore.)  This also happens when
     // loading a file with "merge" un-checked, which causes the creation of a
     // new "genome".
-    IGB.clearSymHash();
+    //IGB.clearSymHash();
 
     if (! prev_loaded) {
       checkboxes = new ArrayList();

@@ -242,6 +242,8 @@ public class LoadFileAction {
                                      MutableAnnotatedBioSeq input_seq, int stream_length) {
     MutableAnnotatedBioSeq aseq = null;
     InputStream str = null;
+    boolean sym_hash_changed = false;
+    
     try {
       StringBuffer stripped_name = new StringBuffer();
       str = Streamer.unzipStream(instr, stream_name, stripped_name);
@@ -299,9 +301,9 @@ public class LoadFileAction {
           "Please load a genome before opening this file '" + stream_name + "'.", null);
         } else {
           ScoredIntervalParser parser = new ScoredIntervalParser();
-          Map id2sym_hash = IGB.getSymHash();
+          Map id2sym_hash = gmodel.getSelectedSeqGroup().getSymHash();
           parser.parse(str, stream_name, seqhash, id2sym_hash);
-          IGB.symHashChanged(parser);
+          sym_hash_changed = true;
           aseq = input_seq;
           parser = null;
         }
@@ -359,7 +361,7 @@ public class LoadFileAction {
             parser.parse(str, stream_name, seqhash, null, null, true, false);
           }
           else if (annotate_target)  {
-            parser.parse(str, stream_name, null, seqhash, IGB.getSymHash(), false, true);
+            parser.parse(str, stream_name, null, seqhash, gmodel.getSelectedSeqGroup().getSymHash(), false, true);
           }
           else if (annotate_other)  {
             parser.parse(str, stream_name, null, null, seqhash, null, false, false, true);
@@ -382,7 +384,7 @@ public class LoadFileAction {
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
           DataInputStream dis = new DataInputStream(str);
           BpsParser psl_reader = new BpsParser();
-          psl_reader.parse(dis, annot_type, seqhash, IGB.getSymHash());
+          psl_reader.parse(dis, annot_type, seqhash, gmodel.getSelectedSeqGroup().getSymHash());
           psl_reader = null;
         }
         aseq = input_seq;
@@ -411,7 +413,7 @@ public class LoadFileAction {
         else {
           BgnParser gene_reader = new BgnParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
-          gene_reader.parse(str, annot_type, seqhash, IGB.getSymHash(), -1);
+          gene_reader.parse(str, annot_type, seqhash, gmodel.getSelectedSeqGroup().getSymHash(), -1);
         }
         aseq = input_seq;
       }
@@ -423,9 +425,9 @@ public class LoadFileAction {
         else {
           BrsParser refseq_reader = new BrsParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-          Map id2sym_hash = IGB.getSymHash();
+          Map id2sym_hash = gmodel.getSelectedSeqGroup().getSymHash();
           java.util.List alist = refseq_reader.parse(str, annot_type, seqhash, id2sym_hash, -1);
-          IGB.symHashChanged(refseq_reader);
+          sym_hash_changed = true;
           System.out.println("total refseq annotations loaded: " + alist.size());
         }
         aseq = input_seq;
@@ -474,17 +476,17 @@ public class LoadFileAction {
           if (input_seq != null) {
             new_group.addSeq(input_seq);
           }
-          parser.parse(str, new_group.getSeqs(), IGB.getSymHash(), false);
+          parser.parse(str, new_group.getSeqs(), gmodel.getSelectedSeqGroup().getSymHash(), false);
           gmodel.setSelectedSeqGroup(new_group); // needs to come after parsing for QuickLoad panel to find all the sequences
           aseq = input_seq;
           gmodel.setSelectedSeq(input_seq);
         }
         else {
           System.out.println("in GFFParser, annotating all seqs in SeqMapView seqhash");
-          parser.parse(str, seqhash, IGB.getSymHash(), false);
+          parser.parse(str, seqhash, gmodel.getSelectedSeqGroup().getSymHash(), false);
           aseq = input_seq;
         }
-        IGB.symHashChanged(parser);
+        sym_hash_changed = true;
         parser = null;
       }
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {
@@ -528,6 +530,12 @@ public class LoadFileAction {
           gmodel.setSelectedSeqGroup(new_group);
           gmodel.setSelectedSeq(aseq);
         }
+      }
+      
+      if (sym_hash_changed) {
+        gmodel.getSelectedSeqGroup().symHashChanged(LoadFileAction.class);
+        // This is the only place in the code calling symHashChanged(),
+        // so maybe get rid of that method and just call setSelectedSeqGroup()
       }
     }
     catch (Exception ex) {

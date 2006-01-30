@@ -67,8 +67,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  private static Map id2sym_hash = new HashMap();
-  private static Vector sym_map_change_listeners = new Vector(1);
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -329,45 +327,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return to_return;
   }
 
-  /**
-   *  Map of tags (usually names or ids) to SeqSymmetries for currently
-   *  loaded genome and/or chromosome.
-   */
-  public static final Map getSymHash() {
-    return id2sym_hash;
-  }
-
-  public static void clearSymHash() {
-    id2sym_hash.clear();
-    symHashChanged(IGB.class); // IGB.class is the most obvious event source
-  }
-
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
-  }
-
-  /** Call this method if you alter the Map returned by {@link #getSymHash}.
-   *  @param source  The source responsible for the change, used in constructing
-   *    the {@link SymMapChangeEvent}.
-   */
-  public static void symHashChanged(Object source) {
-    java.util.List list = getSymMapChangeListeners();
-    for (int i=0; i<list.size(); i++) {
-      SymMapChangeListener l = (SymMapChangeListener) list.get(i);
-      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
-    }
-  }
-
-  public static java.util.List getSymMapChangeListeners() {
-    return sym_map_change_listeners;
-  }
-
-  public static void addSymMapChangeListener(SymMapChangeListener l) {
-    sym_map_change_listeners.add(l);
-  }
-
-  public static void removeSymMapChangeListener(SymMapChangeListener l) {
-    sym_map_change_listeners.remove(l);
   }
 
   /**

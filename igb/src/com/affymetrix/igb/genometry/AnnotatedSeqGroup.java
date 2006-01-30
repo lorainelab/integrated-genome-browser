@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.igb.event.SymMapChangeEvent;
+import com.affymetrix.igb.event.SymMapChangeListener;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
@@ -28,6 +30,9 @@ public class AnnotatedSeqGroup {
   Map id2seq = new LinkedHashMap();
   ArrayList seqlist = new ArrayList();
 
+  static Vector sym_map_change_listeners = new Vector(1);
+  Map id2sym_hash = new HashMap();
+  
   public AnnotatedSeqGroup(String gid) {
     id = gid;
   }
@@ -149,5 +154,36 @@ public class AnnotatedSeqGroup {
   public String getOrganism() { return organism; }
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
+  
+  /**
+   *  Map of tags (usually names or ids) to SeqSymmetries for this AnnotatedSeqGroup.
+   */
+  public final Map getSymHash() {
+    return id2sym_hash;
+  }
+
+  /** Call this method if you alter the Map returned by {@link #getSymHash}.
+   *  @param source  The source responsible for the change, used in constructing
+   *    the {@link SymMapChangeEvent}.
+   */
+  public void symHashChanged(Object source) {
+    java.util.List list = getSymMapChangeListeners();
+    for (int i=0; i<list.size(); i++) {
+      SymMapChangeListener l = (SymMapChangeListener) list.get(i);
+      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
+    }
+  }
+
+  public static java.util.List getSymMapChangeListeners() {
+    return sym_map_change_listeners;
+  }
+
+  public static void addSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.add(l);
+  }
+
+  public static void removeSymMapChangeListener(SymMapChangeListener l) {
+    sym_map_change_listeners.remove(l);
+  }
 
 }

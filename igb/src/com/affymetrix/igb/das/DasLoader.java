@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.das;
 
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -239,14 +240,16 @@ public abstract class DasLoader {
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
-      Map seqhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqs();
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      Map seqhash = group.getSeqs();
       PSLParser parser = new PSLParser();
       parser.enableSharedQueryTarget(true);
       if (seqhash == null) {
         new_seq = parser.parse(bis, current_seq, type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, IGB.getSymHash(), false, true);
+        parser.parse(bis, type, null, seqhash, group.getSymHash(), false, true);
         new_seq = current_seq;
       }
     } finally {

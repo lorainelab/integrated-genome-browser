@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,7 +14,6 @@
 package com.affymetrix.igb.view;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -23,11 +22,13 @@ import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.event.GroupSelectionEvent;
+import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SymMapChangeEvent;
 import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
@@ -35,7 +36,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
-implements ListSelectionListener, SymMapChangeListener  {
+implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  {
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"ID", "Start", "End", "Sequence"};
@@ -75,7 +76,8 @@ implements ListSelectionListener, SymMapChangeListener  {
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
-    IGB.addSymMapChangeListener(this);
+    AnnotatedSeqGroup.addSymMapChangeListener(this);
+    SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
   }
 
   protected Object[][] buildRows(Map props) {
@@ -112,10 +114,22 @@ implements ListSelectionListener, SymMapChangeListener  {
 
   /** Causes a call to {@link #showSymHash(Map)}.
    *  Normally, this occurs as a result of a call to
-   *  {@link IGB#symHashChanged(Object)}.
+   *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
    */
   public void symMapModified(SymMapChangeEvent evt) {
     showSymHash(evt.getMap());
+  }
+  
+  public void groupSelectionChanged(GroupSelectionEvent evt) {
+    AnnotatedSeqGroup group = evt.getSelectedGroup();
+    Map props;
+    if (group == null) {
+      props = Collections.EMPTY_MAP;
+    }
+    else {
+      props = group.getSymHash();
+    }
+    showSymHash(props);
   }
   
   /** This is called when the user selects a row of the table;
@@ -127,7 +141,8 @@ implements ListSelectionListener, SymMapChangeListener  {
       int srow = table.getSelectedRow();
       if (srow >= 0) {
         String id = (String) table.getModel().getValueAt(srow, 0);
-        SeqSymmetry sym = (SeqSymmetry)IGB.getSymHash().get(id);
+        SingletonGenometryModel gmodel = IGB.getGenometryModel();
+        SeqSymmetry sym = (SeqSymmetry) gmodel.getSelectedSeqGroup().getSymHash().get(id);
         findSym(sym);
       }
     }
@@ -151,7 +166,7 @@ implements ListSelectionListener, SymMapChangeListener  {
 
   public void destroy() {
     removeAll();
-    IGB.removeSymMapChangeListener(this);
+    AnnotatedSeqGroup.removeSymMapChangeListener(this);
     if (lsm != null) {lsm.removeListSelectionListener(this);}
   }
 }

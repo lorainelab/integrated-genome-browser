@@ -323,7 +323,7 @@ public class UnibrowControlServlet extends HttpServlet {
     //  list of selected symmetries
     for (int i=0; i<ids.length; i++)
     {
-        sym = (SeqSymmetry)IGB.getSymHash().get(ids[i]);
+        sym = (SeqSymmetry) gmodel.getSelectedSeqGroup().getSymHash().get(ids[i]);
         if (sym != null && 
            (seq = gmodel.getSelectedSeqGroup().getSeq(sym)) != null)
         {                 

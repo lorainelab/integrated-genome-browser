@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -285,14 +285,15 @@ public class UrlLoaderThread extends Thread {
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
-      Map seqhash = gmodel.getSelectedSeqGroup().getSeqs();
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      Map seqhash = group.getSeqs();
       PSLParser parser = new PSLParser();
       parser.enableSharedQueryTarget(true);
       if (seqhash == null) {
         parser.parse(bis, gmodel.getSelectedSeq(), type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, IGB.getSymHash(), false, true);
+        parser.parse(bis, type, null, seqhash, group.getSymHash(), false, true);
       }
     } finally {
       if (bis != null) try {bis.close();} catch (Exception e) {}
@@ -339,8 +340,9 @@ public class UrlLoaderThread extends Thread {
       dis = new DataInputStream(bis);
 
       BpsParser bps_parser = new BpsParser();
-      Map seqhash = gmodel.getSelectedSeqGroup().getSeqs();
-      bps_parser.parse(dis, type, seqhash, IGB.getSymHash());
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      Map seqhash = group.getSeqs();
+      bps_parser.parse(dis, type, seqhash, group.getSymHash());
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}
       if (bis != null) try {bis.close();} catch (Exception e) {}

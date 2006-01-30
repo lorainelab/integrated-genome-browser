@@ -2513,13 +2513,9 @@ public class SeqMapView extends JPanel
   }
     
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
-    java.util.List glist = evt.getSelectedGroups();
-    AnnotatedSeqGroup group = null;
-    if (! glist.isEmpty())  {
-      group = (AnnotatedSeqGroup)glist.get(0);
-      if (IGB.DEBUG_EVENTS)  {
-        System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
-      }
+    AnnotatedSeqGroup group = evt.getSelectedGroup();
+    if (IGB.DEBUG_EVENTS)  {
+      System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
     }
     else {
       if (IGB.DEBUG_EVENTS)  { System.out.println("SeqMapView received seqGroupSelected() call, but group = null"); }
@@ -2538,10 +2534,10 @@ public class SeqMapView extends JPanel
     if (IGB.DEBUG_EVENTS)  {
       System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
-    AnnotatedBioSeq newseq = evt.getSelectedSeq();
+    final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (newseq != getAnnotatedSeq()) {
       // Don't worry if newseq is null, setAnnotatedSeq can handle that
-      // (It can also handle the case where newseq is same as old seq.)
+      // (It can also handle the case where newseq is same as old seq.)      
       setAnnotatedSeq(newseq);
     }
   }

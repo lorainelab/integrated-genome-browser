@@ -281,9 +281,7 @@ public class QuickLoadView2 extends JComponent
     //  that causes a call to SingletonGenomeModel.setSelectedSeqGroup(), and that
     //  causes a call to here.
     
-    java.util.List glist = evt.getSelectedGroups();
-    AnnotatedSeqGroup group = null;
-    if (glist.size() > 0)  { group = (AnnotatedSeqGroup)glist.get(0); }
+    AnnotatedSeqGroup group = evt.getSelectedGroup();
     if (DEBUG_EVENTS) { System.out.println("QuickLoadView2.groupSelectionChanged() called, group: " + (group == null ? null : group.getID())); }
     if (current_group != group) {
       cb2filename.clear();
@@ -457,6 +455,7 @@ public class QuickLoadView2 extends JComponent
         } catch (Exception e) {
           // no exceptions are expected, but if there are any, ignore them.
           System.out.println("WARNING: Problem resetting to last QL server: " + e.toString());
+          e.printStackTrace();
         }
       }
     };
@@ -475,6 +474,7 @@ public class QuickLoadView2 extends JComponent
         } catch (Exception e) {
           // no exceptions are expected, but if there are any, ignore them.
           System.out.println("WARNING: Problem resetting to last QL server: " + e.toString());
+          e.printStackTrace();
         }
       }
     });

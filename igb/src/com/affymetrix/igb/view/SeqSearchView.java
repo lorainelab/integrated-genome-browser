@@ -374,17 +374,17 @@ public class SeqSearchView extends JComponent implements ActionListener  {
   public void findSym(String id)  {
     if (id == null) { return; }
     System.out.println("looking for id: " + id);
-    Map id2sym_hash = IGB.getSymHash();
+    Map id2sym_hash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSymHash();
     NeoMap seqmap = gviewer.getSeqMap();
     SeqSymmetry hitsym = (SeqSymmetry)id2sym_hash.get(id);
     int hitcount = 0;
     int symcount = 0;
     if (hitsym == null) {
       Hashtable modelhash = seqmap.getModelMapping();
-      Enumeration enum = modelhash.keys();
+      Iterator iter = modelhash.keySet().iterator();
       Vector syms = new Vector();
-      while (enum.hasMoreElements()) {
-	Object obj = enum.nextElement();
+      while (iter.hasNext()) {
+	Object obj = iter.next();
 	if (obj instanceof SymWithProps) {
 	  SymWithProps swp = (SymWithProps)obj;
 	  String swpid = (String)swp.getProperty("id");

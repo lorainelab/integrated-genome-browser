@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 
@@ -459,7 +460,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public void addFeature() {
-    Map global_symhash = IGB.getSymHash();
+    Map global_symhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSymHash();
     boolean filter = false;
 
     /*

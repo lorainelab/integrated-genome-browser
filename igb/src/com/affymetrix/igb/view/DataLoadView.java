@@ -48,6 +48,9 @@ public class DataLoadView extends JComponent  {
     this.add("West", group_view);
   }
 
+  public void initialize() {
+    quick_view.initialize();
+  }
 }
 
 class SeqGroupView extends JComponent

@@ -119,6 +119,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   CurationControl curation_control;
   AlignControl align_control;
+  DataLoadView data_load_view = null;
 
   java.util.List plugin_list;
 
@@ -266,8 +267,25 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public JFrame getFrame() { return frm; }
   public JTabbedPane getTabPane() { return tab_pane; }
 
-  public void startControlServer() {
-    web_control = new UnibrowControlServer(this);
+  void startControlServer() {
+    // Use the Swing Thread to start a non-Swing thread
+    // that will start the control server.
+    // Thus the control server will be started only after current GUI stuff is finished,
+    // but starting it won't cause the GUI to hang.
+    
+    Runnable r = new Runnable() {
+      public void run() {
+        web_control = new UnibrowControlServer(IGB.this);
+      }
+    };
+    
+    final Thread t = new Thread(r);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        t.start();
+      }
+    });    
   }
 
   public UnibrowControlServer getControlServer() {
@@ -635,13 +653,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       });
     frm.show();
     
+    // We need to let the QuickLoad system get started-up before starting
+    // the control server that listens to ping requests.
+    if (data_load_view != null) {
+      data_load_view.initialize();
+    }
+    
     // Start listining for http requests only after all set-up is done.
     startControlServer();
     
     initialized = true;
   }
-  
-  /** Returns true if initialization as completed. */
+    
+  /** Returns true if initialization has completed. */
   public boolean isInitialized() {
     return initialized;
   }
@@ -729,8 +753,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
       addToPopupWindows(comp, title);
     }
+    
+    if (plugin instanceof DataLoadView) {
+      data_load_view = (DataLoadView) plugin;
+    }
   }
-
+  
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == open_file_item) {

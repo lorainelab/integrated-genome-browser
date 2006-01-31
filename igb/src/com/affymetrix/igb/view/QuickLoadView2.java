@@ -166,11 +166,10 @@ public class QuickLoadView2 extends JComponent
     serverCB.addItem(SELECT_A_SERVER);
     genomeCB.addItem(SELECT_A_GENOME);
     
+    initializeQLServerList();
+
     serverCB.addItemListener(this);
     genomeCB.addItemListener(this);
-    initializeQLServers();
-    
-    resetToLastQLServerAtStartup();
   }
     
   public void actionPerformed(ActionEvent evt)  {
@@ -366,9 +365,7 @@ public class QuickLoadView2 extends JComponent
     genomeCB.setSelectedItem(SELECT_A_GENOME);    
   }
     
-  void initializeQLServers() {
-    serverCB.removeItemListener(this);
-    serverCB.removeAllItems();
+  void initializeQLServerList() {
     serverCB.addItem(SELECT_A_SERVER);
     
     serverCB.addItem(SERVER_NAME_DEFAULT);
@@ -384,10 +381,7 @@ public class QuickLoadView2 extends JComponent
       }
     }
     
-    //serverCB.setSelectedIndex(-1); // deselect everything, so later selection will send event
     serverCB.setSelectedItem(SELECT_A_SERVER);    
-    serverCB.addItemListener(this);
-    //serverCB.setSelectedItem(SELECT_A_SERVER);    
   }
   
   static boolean compareURLs(String url1, String url2) {
@@ -432,44 +426,25 @@ public class QuickLoadView2 extends JComponent
     return getUrlLastUsed();
   }
   
-  void resetToLastQLServerAtStartup() {
+  /**  
+   *   Optionally call this after IGB has been set-up.
+   *   Resets the server to the one that was in use the last time the program
+   *   was shut down.
+   */
+  void initialize() {
     // tries to reset the quickload server back to the one used when the program last shut-down
     // Must be done only after IGB has finished initializing, so the SeqMapView is ready
     // Run on the Swing Thread, so we are sure necessary initialization is finished
     
-    Runnable r = new Runnable() {
-      public void run() {
-        try {
-
-          for (int i=0; (i<1000) && (! IGB.getSingletonIGB().isInitialized()); i++) {
-            // wait for IGB to be ready, and then switch genomes
-            Thread.currentThread().sleep(100);
-          }
-          if (! IGB.getSingletonIGB().isInitialized()) {
-            // if you waited this long and IGB isn't ready, then just give up
-            return;
-          }
-    
-          final String last_name = getLastServerName();
-          setSelectedServerEventually(last_name);
-        } catch (Exception e) {
-          // no exceptions are expected, but if there are any, ignore them.
-          System.out.println("WARNING: Problem resetting to last QL server: " + e.toString());
-          e.printStackTrace();
-        }
-      }
-    };
-    
-    Thread t = new Thread(r);
-    t.start();
+    String last_name = getLastServerName();
+    setSelectedServerEventually(last_name);    
   }
   
-  void setSelectedServerEventually(String server) {
+  void setSelectedServerEventually(final String last_name) {
     final JComboBox combo_box = serverCB;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {    
-          final String last_name = getLastServerName();
           combo_box.setSelectedItem(last_name);
         } catch (Exception e) {
           // no exceptions are expected, but if there are any, ignore them.
@@ -479,7 +454,7 @@ public class QuickLoadView2 extends JComponent
       }
     });
   }
-
+  
   /**
    *  Load sequence residues for a span along a sequence.
    *  Access residues via DAS reference server

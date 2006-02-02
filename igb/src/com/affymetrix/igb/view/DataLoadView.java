@@ -24,6 +24,7 @@ import javax.swing.tree.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.swing.DisplayUtils;
 
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -116,6 +117,7 @@ class SeqGroupView extends JComponent
 	    if (selected_seq.getID() ==  seqtable.getValueAt(i, 0)) {
 	      //	    lsm.setSelectionInterval(i, i); // equivalent to seqtable.setRowSelectionInterval()?
 	      seqtable.setRowSelectionInterval(i, i);
+              DisplayUtils.scrollToVisible(seqtable, i, 0);
 	      break;
 	    }
 	  }

@@ -98,7 +98,7 @@
   <annotation_url annot_type_regex="RefSeq"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="TAIR" 
+  <annotation_url annot_type_regex="TAIR\S*" 
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
   <annotation_url annot_type_regex="EnsGene"

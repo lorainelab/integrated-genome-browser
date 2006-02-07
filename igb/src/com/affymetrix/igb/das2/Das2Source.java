@@ -39,6 +39,7 @@ public class Das2Source {
   protected String info_url;
   protected String taxon;
   protected Map versions = new LinkedHashMap();
+  protected String source_root_url;
   Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;
@@ -48,6 +49,7 @@ public class Das2Source {
   public Das2Source(Das2ServerInfo source_server, String source_id, boolean init) {
     id = source_id;
     server = source_server;
+    source_root_url = server.getRootUrl() + "/" + Das2ServerInfo.SOURCES_QUERY + "/" + source_id;
     //    if (init) {
     // initVersions();
     //    }
@@ -57,6 +59,7 @@ public class Das2Source {
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public String getTaxon() { return taxon; }
+  public String getRootUrl() { return source_root_url; }
 
   public Das2ServerInfo getServerInfo() { return server; }
 

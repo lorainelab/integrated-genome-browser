@@ -33,109 +33,51 @@ public class GraphSliceOptimizer {
    *
    */
   public static boolean loadSlice(CompositeGraphSym gsym, SeqSpan slice_span) throws IOException {
-    boolean TEST1 = false;
-    boolean TEST2 = false;
-    boolean TEST3 = true;
     boolean new_points = true;
     BioSeq aseq = slice_span.getBioSeq();
 
-    // test by adding points in middle of slice_span
-    if (TEST1) {
-      int test_count = 1000;
-      int test_step = 50;
-      int midspan = (slice_span.getMin() + (slice_span.getLength()/2));
-      int[] xcoords = new int[test_count];
-      float[] ycoords = new float[test_count];
-      int xpos = midspan - (test_count * test_step / 2);
-      for (int i=0; i<test_count; i++) {
-	xcoords[i] = xpos;
-	ycoords[i] = (float)(100 * Math.random()) - 50f;
-	xpos += test_step;
-      }
-      ycoords[0] = 200f;
-      ycoords[1] = 100f;
-      ycoords[ycoords.length-1] = 200f;
-      ycoords[ycoords.length-2] = 100f;
+    int prevcount = gsym.getChildCount();
+    java.util.List subslices = new ArrayList();
+    SeqSymmetry slice_sym = new SingletonSeqSymmetry(slice_span);
 
-      GraphSym child = new GraphSym(xcoords, ycoords, "unknown", aseq);
-      child.removeSpan(child.getSpan(aseq));
-      child.addSpan(slice_span);
-      gsym.addChild(child);
+    if (prevcount == 0) {
+      subslices.add(slice_sym);
     }
     else {
-      int prevcount = gsym.getChildCount();
-      java.util.List subslices = new ArrayList();
-      SeqSymmetry slice_sym = new SingletonSeqSymmetry(slice_span);
-
-      if (prevcount == 0) {
-	subslices.add(slice_sym);
-      }
-      else {
-	ArrayList prev_slices = new ArrayList(prevcount);
-	for (int i=0; i<prevcount; i++) {
-	  SeqSymmetry prev_slice = gsym.getChild(i);
-	  if (prev_slice instanceof GraphSym) {
-	    prev_slices.add(prev_slice);
-	  }
-	}
-
-	//	System.out.println("number of previous slices: " + prev_slices.size());
-	SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_slices, aseq);
-	//	System.out.println("union of previous slices: ");
-	//	SeqUtils.printSymmetry(prev_union);
-	ArrayList qnewlist = new ArrayList();
-	qnewlist.add(slice_sym);
-	ArrayList qoldlist = new ArrayList();
-	qoldlist.add(prev_union);
-	SeqSymmetry split_slice = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
-        if (split_slice == null)  {
-          System.out.println("split slice is null!");
-          return true;
-        }
-
-	int slice_count = split_slice.getChildCount();
-	for (int i=0; i<slice_count; i++) {
-	  subslices.add(split_slice.getChild(i));
+      ArrayList prev_slices = new ArrayList(prevcount);
+      for (int i=0; i<prevcount; i++) {
+	SeqSymmetry prev_slice = gsym.getChild(i);
+	if (prev_slice instanceof GraphSym) {
+	  prev_slices.add(prev_slice);
 	}
       }
 
-
-      for (int slice_index=0; slice_index < subslices.size(); slice_index++) {
-	SeqSymmetry subslice = (SeqSymmetry)subslices.get(slice_index);
-	SeqSpan subspan = subslice.getSpan(aseq);
-	if (TEST2) {
-	  int test_count = 1000;
-	  int test_step = 50;
-	  int midspan = (subspan.getMin() + (subspan.getLength()/2));
-	  int[] xcoords = new int[test_count];
-	  float[] ycoords = new float[test_count];
-	  int xpos = midspan - (test_count * test_step / 2);
-	  for (int i=0; i<test_count; i++) {
-	    xcoords[i] = xpos;
-	    ycoords[i] = (float)(100 * Math.random()) - 50f;
-	    xpos += test_step;
-	  }
-	  xcoords[0] = subspan.getMin();
-	  xcoords[1] = subspan.getMin() + 5;
-	  ycoords[0] = 200f;
-	  ycoords[1] = 100f;
-
-	  xcoords[xcoords.length-1] = subspan.getMax()-5;
-	  xcoords[xcoords.length-2] = subspan.getMax()-10;
-	  ycoords[ycoords.length-1] = 200f;
-	  ycoords[ycoords.length-2] = 100f;
-
-	  GraphSym child = new GraphSym(xcoords, ycoords, "unknown", aseq);
-          child.removeSpan(child.getSpan(aseq));
-	  child.addSpan(subspan);
-	  gsym.addChild(child);
-	}
-	else if (TEST3) {
-	  // graphsym span is also set correctly in BarParser.getSlice()
-	  GraphSym child = BarParser.getSlice(TEST_BAR_FILE, subspan);
-	  gsym.addChild(child);
-	}
+      //	System.out.println("number of previous slices: " + prev_slices.size());
+      SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_slices, aseq);
+      //	System.out.println("union of previous slices: ");
+      //	SeqUtils.printSymmetry(prev_union);
+      ArrayList qnewlist = new ArrayList();
+      qnewlist.add(slice_sym);
+      ArrayList qoldlist = new ArrayList();
+      qoldlist.add(prev_union);
+      SeqSymmetry split_slice = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
+      if (split_slice == null)  {
+	System.out.println("split slice is null!");
+	return true;
       }
+
+      int slice_count = split_slice.getChildCount();
+      for (int i=0; i<slice_count; i++) {
+	subslices.add(split_slice.getChild(i));
+      }
+    }
+
+    for (int slice_index=0; slice_index < subslices.size(); slice_index++) {
+      SeqSymmetry subslice = (SeqSymmetry)subslices.get(slice_index);
+      SeqSpan subspan = subslice.getSpan(aseq);
+      // graphsym span is also set correctly in BarParser.getSlice()
+      GraphSym child = BarParser.getSlice(TEST_BAR_FILE, subspan);
+      gsym.addChild(child);
     }
     return new_points;
   }

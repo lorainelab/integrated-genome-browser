@@ -38,7 +38,7 @@ import javax.swing.event.*;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
   implements ActionListener, TableModelListener,
-	     // ItemListener, 
+	     // ItemListener,
              // ComponentListener,  turned off pending change mechanism for now
 	     //  TreeExpansionListener  {  // TreeWillExpandListener  {
 	     SeqSelectionListener, GroupSelectionListener,

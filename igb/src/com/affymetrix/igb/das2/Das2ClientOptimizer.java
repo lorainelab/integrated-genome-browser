@@ -299,7 +299,7 @@ public class Das2ClientOptimizer {
 	  bis = new BufferedInputStream(istr);
 	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
 	  System.out.println("content subtype: " + content_subtype);
-	  if (content_type == null || 
+	  if (content_type == null ||
 	      content_subtype == null ||
 	      content_type.equals("unknown") ||
 	      content_subtype.equals("unknown") ||
@@ -310,7 +310,7 @@ public class Das2ClientOptimizer {
 	  }
 	}
       }
-      if (success) { 
+      if (success) {
 	java.util.List feats = null;
 	if (content_subtype.equals("das2feature") ||
 	    content_subtype.startsWith("x-das-feature")) {
@@ -362,7 +362,7 @@ public class Das2ClientOptimizer {
 	}
       }  // end if (success) conditional
       if (bis != null)  { bis.close(); }
-    }  
+    }
     catch (Exception ex) {
       ex.printStackTrace();
       success = false;

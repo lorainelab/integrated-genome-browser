@@ -27,33 +27,36 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 public class Das2Region {
   String region_id;
-  int start;
-  int end;
+  int length;
   String name;
-  String info_url;
-  boolean forward;
+  String info_url;  // doc_href
   //  java.util.List assembly;  // or should this be a SeqSymmetry??   // or composition of CompositeBioSeq??
   SeqSpan segment_span;
   MutableAnnotatedBioSeq aseq;
   Das2VersionedSource versioned_source;
+  //  int start;   // no longer used
+  //  int end;     // no longer used
+  //  boolean forward;  // no longer used
 
-  public Das2Region(Das2VersionedSource source, String id, int start, int end, boolean forward_orient) {
+  //  public Das2Region(Das2VersionedSource source, String id, int start, int end, boolean forward_orient) {
+  public Das2Region(Das2VersionedSource source, String id, String nm, String info, int ln) {
     region_id = id;
+    name = nm;
+    info_url = info;
+    length = ln;
+
     versioned_source = source;
     AnnotatedSeqGroup genome = versioned_source.getGenome();
     // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
     aseq = genome.getSeq(region_id);
+    if (aseq == null) { aseq = genome.getSeq(name); }
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
-      aseq = new SmartAnnotBioSeq(region_id, genome.getID(), end);  // therefore end must be populated first!
+      aseq = new SmartAnnotBioSeq(region_id, genome.getID(), length);
       genome.addSeq(aseq);
     }
-    this.start = start;  // should already be in 0-interbase coords
-    this.end = end;
-    this.forward = forward_orient;
-    if (forward) {  segment_span = new SimpleSeqSpan(start, end, aseq);  }
-    else {  segment_span = new SimpleSeqSpan(end, start, aseq); }
+    segment_span = new SimpleSeqSpan(0, length, aseq);
   }
 
 

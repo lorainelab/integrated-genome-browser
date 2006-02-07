@@ -22,10 +22,11 @@ public class Das2Discovery {
   static boolean servers_initialized = false;
 
   static {
-    name2url.put("netaffx", "http://netaffxdas.affymetrix.com/das2/genome");
-    name2url.put("das.biopackages.net", "http://das.biopackages.net/das/genome");
+    name2url.put("codesprint", "http://das.biopackages.net/codesprint");
+    //    name2url.put("localhost", "http://localhost:9092/das2");
+    //    name2url.put("netaffx", "http://netaffxdas.affymetrix.com/das2");
+    //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");
     //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
-    //    name2url.put("localhost", "http://localhost:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");
   }
 

@@ -26,14 +26,14 @@ import com.affymetrix.igb.genometry.*;
  *  Text repeat format (from UCSC sql tables, chr*_rmsk.sql):
  *
  *  bin smallint(5) unsigned NOT NULL default '0',
- *  swScore int(10) unsigned NOT NULL default '0',
+ *  swScore int(10) unsigned NOT NULL default 'b0',
  *  milliDiv int(10) unsigned NOT NULL default '0',
  *  milliDel int(10) unsigned NOT NULL default '0',
  *  milliIns int(10) unsigned NOT NULL default '0',
  *  genoName varchar(255) NOT NULL default '',
  *  genoStart int(10) unsigned NOT NULL default '0',
  *  genoEnd int(10) unsigned NOT NULL default '0',
- *  genoLeft int(11) NOT NULL default '0',
+ *  genoLeft int(11) NOT NULL default '0',     
  *  strand char(1) NOT NULL default '',
  *  repName varchar(255) NOT NULL default '',
  *  repClass varchar(255) NOT NULL default '',
@@ -46,6 +46,11 @@ import com.affymetrix.igb.genometry.*;
  *
  *  Frist pass at binary representation: 
  *  genome_version
+ *  // TO BE ADDED number of different repeat types
+ *  // TO BE ADDED for each repeat type {
+ *  // TO BE ADDED     type id
+ *  // TO BE ADDED     byte/short/int used to code for repeat type
+ *  // TO BE ADDED  }
  *  number of seqs annotated
  *  for each seq  {
  *     seqid
@@ -55,6 +60,7 @@ import com.affymetrix.igb.genometry.*;
  *     for each repeat (repeat_count)  {
  *        base_start
  *        base_end   [ and if base_start > base_end then on negative strand ]
+ *        // TO BE ADDED byte/short/int? for repeat type
  *     }
  *  }
  *

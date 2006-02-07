@@ -26,6 +26,7 @@ public class Das2ServerInfo  {
   static boolean REPORT_SOURCES = true;
   protected static boolean DO_FILE_TEST = false;
   protected static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
+  protected static String SOURCES_QUERY = "sequence";
 
   protected String root_url;
   String das_version;
@@ -34,12 +35,12 @@ public class Das2ServerInfo  {
   protected boolean initialized = false;
 
   /**
-   *    The following two objects work with some wrapper functions below 
+   *    The following two objects work with some wrapper functions below
    *    to help prevent code repetition in inherited classes.
-   **/  
+   **/
    protected Das2Source dasSource;
-   protected Das2VersionedSource dasVersionedSource;   
-   
+   protected Das2VersionedSource dasVersionedSource;
+
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
@@ -84,19 +85,19 @@ public class Das2ServerInfo  {
   }
 
   /**
-   *    The following two wrapper functions help to prevent code repetition in 
+   *    The following two wrapper functions help to prevent code repetition in
    *    inherited classes.
    **/
   protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
     Das2Source D2S = new Das2Source(_D2SI, _source_id, _init);
     dasSource = D2S;
-  }  
+  }
   protected void setDasVersionedSource(Das2Source _D2S, String _version_id, boolean _init ){
     Das2VersionedSource D2VS = new Das2VersionedSource(_D2S, _version_id, _init);
     dasVersionedSource = D2VS;
   }
-    
-  
+
+
   /**
    *  assumes there is only one versioned source for each AnnotatedSeqGroup
    *    may want to change this to return a list of versioned sources instead
@@ -139,7 +140,7 @@ public class Das2ServerInfo  {
 	das_request = new URL(test_file);
       }
       else {
-	das_request = new URL(root_url);
+	das_request = new URL(root_url+"/" + SOURCES_QUERY);
       }
       URLConnection request_con = das_request.openConnection();
       String das_version = request_con.getHeaderField("X-DAS-Version");
@@ -157,7 +158,7 @@ public class Das2ServerInfo  {
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
         String source_id = source.getAttribute("id");
-        
+
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxon");
@@ -192,7 +193,7 @@ public class Das2ServerInfo  {
   public static void main(String[] args) {
     // String test_url = "file:/C:/data/das2_responses/alan_server/sources.xml";
     String test_url = "http://das.ev.affymetrix.com/das/genome";
-    
+
     // DEBUG: The first is a squid proxy that greatly increases response time
     // email me if you want access <boconnor@ucla.edu>
     //String test_url = "http://radius.genomics.ctrl.ucla.edu/das/genome";

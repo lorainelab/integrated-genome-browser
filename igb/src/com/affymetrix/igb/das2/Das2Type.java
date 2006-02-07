@@ -20,12 +20,12 @@ public class Das2Type {
   String id;
   String ontology;
   String derivation;  // in DAS2 XML, this is source attribute
-  String info_url;
+  String info_url;    // doc_href
   Map props;
-  Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings 
-  Map parents; // the das2 server will change soon and parent/child relationships will be moved to another ontology namespace
+  Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
+  //  Map parents; // the das2 server will change soon and parent/child relationships will be moved to another ontology namespace
 
-  
+
   public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href, Map formats, Map props, Map parents) {
     this.versioned_source = version;
     this.id = id;
@@ -34,7 +34,7 @@ public class Das2Type {
     this.info_url = href;
     this.formats = formats;
     this.props = props;
-    this.parents = parents;
+    //    this.parents = parents;
   }
 
   public Das2VersionedSource getVersionedSource() { return versioned_source; }
@@ -44,5 +44,5 @@ public class Das2Type {
   public String getInfoUrl() { return info_url; }
   public Map getProps() { return props; }
   public Map getFormats() { return formats; }
-  public Map getParents() { return parents; }
+  //  public Map getParents() { return parents; }
 }

@@ -13,20 +13,20 @@ package com.affymetrix.igb.das2;
 /**
  *
  * @author Marc Carlson Need a small object to hold the platform information and
- * even though there is only one tiny string inside this right now, I am betting 
- * that there will be more...  
+ * even though there is only one tiny string inside this right now, I am betting
+ * that there will be more...
  */
 
 public class Das2Platform {
-    Das2VersionedSource versioned_source;
+    Das2VersionedSourcePlus versioned_source;
     String platform;
-    
+
     /** Creates a new instance of Das2Platform */
-    public Das2Platform(Das2VersionedSource _version, String _platform) {
+    public Das2Platform(Das2VersionedSourcePlus _version, String _platform) {
         this.versioned_source = _version;
         this.platform = _platform;
     }
-    
-    public Das2VersionedSource getVersionedSource() { return versioned_source; }    
+
+    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
     public String getPlatform(){ return platform; }
 }

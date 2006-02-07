@@ -17,30 +17,30 @@ import java.util.*;
  * @author boconnor
  */
 public class Das2Result {
-    
-    Das2VersionedSource versioned_source;
+
+    Das2VersionedSourcePlus versioned_source;
     String id;
     String assayId;
     String imageId;
     String protocolId;
-    
+
     /** Creates a new instance of Das2Assay */
     public Das2Result() {
         //nothing
     }
-    
-    public Das2Result(Das2VersionedSource version, String id, String assayId, String imageId, String protocolId) {
+
+    public Das2Result(Das2VersionedSourcePlus version, String id, String assayId, String imageId, String protocolId) {
       this.versioned_source = version;
       this.id = id;
       this.assayId = assayId;
       this.imageId = imageId;
       this.protocolId = protocolId;
     }
-    
-    public Das2VersionedSource getVersionedSource() { return versioned_source; }
+
+    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
     public String getID() { return id; }
     public String getAssayId() { return assayId; }
     public String getImageId() { return imageId; }
     public String getProtocolId() { return protocolId; }
-    
+
 }

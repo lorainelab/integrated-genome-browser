@@ -17,29 +17,29 @@ import java.util.*;
  * @author boconnor
  */
 public class Das2Material {
-    
-    Das2VersionedSource versioned_source;
+
+    Das2VersionedSourcePlus versioned_source;
     String id;
     String name;
     Map types;
     Map contacts;
-    
+
     /** Creates a new instance of Das2Assay */
     public Das2Material() {
         //nothing
     }
-    
-    public Das2Material(Das2VersionedSource version, String id, String name, Map types, Map contacts) {
+
+    public Das2Material(Das2VersionedSourcePlus version, String id, String name, Map types, Map contacts) {
       this.versioned_source = version;
       this.id = id;
       this.name = name;
       this.types = types;
       this.contacts = contacts;
     }
-    
-    public Das2VersionedSource getVersionedSource() { return versioned_source; }
+
+    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
     public String getID() { return id; }
     public Map getTypes() { return types; }
     public Map getContacts() { return contacts; }
-    
+
 }

@@ -17,30 +17,30 @@ import java.util.*;
  * @author boconnor
  */
 public class Das2Assay {
-    
-    Das2VersionedSource versioned_source;
+
+    Das2VersionedSourcePlus versioned_source;
     String id;
     Map images;
     Map biomaterials;
     Map platforms;
-    
+
     /** Creates a new instance of Das2Assay */
     public Das2Assay() {
         //nothing
     }
-    
-    public Das2Assay(Das2VersionedSource version, String id, Map images, Map biomaterials, Map platforms) {
+
+    public Das2Assay(Das2VersionedSourcePlus version, String id, Map images, Map biomaterials, Map platforms) {
       this.versioned_source = version;
       this.id = id;
       this.images = images;
       this.biomaterials = biomaterials;
       this.platforms = platforms;
     }
-    
-    public Das2VersionedSource getVersionedSource() { return versioned_source; }
+
+    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
     public String getID() { return id; }
     public Map getImages() { return images; }
     public Map getBiomaterials() { return biomaterials; }
     public Map getPlatforms() { return platforms; }
-    
+
 }

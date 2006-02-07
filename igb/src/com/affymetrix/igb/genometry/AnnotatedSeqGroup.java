@@ -22,8 +22,8 @@ import com.affymetrix.igb.util.SynonymLookup;
 
 public class AnnotatedSeqGroup {
   String id;
-  String version;  // not currently used
-  String organism;  // not currently used
+  String organism;
+  String version; // not currently used
   Date version_date;  // not currently used
   String description;
 
@@ -148,10 +148,13 @@ public class AnnotatedSeqGroup {
   public void setDescription(String str) { description = str; }
   public String getDescription() { return description; }
 
+  /** may want to move set/getOrganism() to an AnnotatedGenome subclass */
+  public void setOrganism(String org) {  organism = org; }
+  public String getOrganism() { return organism; }
+
   /** Not currently used, may want to move getVersion() to an AnnotatedGenome subclass */
   public String getVersion() { return version; }
-  /** Not currently used, may want to move getOrganism() to an AnnotatedGenome subclass */
-  public String getOrganism() { return organism; }
+
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
   

@@ -248,7 +248,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	  tempgl.setFixedPixHeight(60);
 	  tglyph = tempgl;
 	}
-	  else { tglyph = new TierGlyph(annot_style); }
+	else { tglyph = new TierGlyph(annot_style); }
       }
 
       Color tier_back_col = annot_style.getBackground();

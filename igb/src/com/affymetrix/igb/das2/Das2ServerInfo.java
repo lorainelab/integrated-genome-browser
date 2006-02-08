@@ -34,13 +34,6 @@ public class Das2ServerInfo  {
   protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   protected boolean initialized = false;
 
-  /**
-   *    The following two objects work with some wrapper functions below
-   *    to help prevent code repetition in inherited classes.
-   **/
-   protected Das2Source dasSource;
-   protected Das2VersionedSource dasVersionedSource;
-
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
@@ -84,19 +77,6 @@ public class Das2ServerInfo  {
     sources.put(ds.getID(), ds);
   }
 
-  /**
-   *    The following two wrapper functions help to prevent code repetition in
-   *    inherited classes.
-   **/
-  protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
-    Das2Source D2S = new Das2Source(_D2SI, _source_id, _init);
-    dasSource = D2S;
-  }
-  protected void setDasVersionedSource(Das2Source _D2S, String _version_id, boolean _init ){
-    Das2VersionedSource D2VS = new Das2VersionedSource(_D2S, _version_id, _init);
-    dasVersionedSource = D2VS;
-  }
-
 
   /**
    *  assumes there is only one versioned source for each AnnotatedSeqGroup
@@ -134,7 +114,6 @@ public class Das2ServerInfo  {
     try {
       //      System.out.println("in DasUtils.findDasSource()");
       //      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      System.out.println("Das Request: " + root_url);
       URL das_request;
       if (DO_FILE_TEST)  {
 	das_request = new URL(test_file);
@@ -142,6 +121,7 @@ public class Das2ServerInfo  {
       else {
 	das_request = new URL(root_url+"/" + SOURCES_QUERY);
       }
+      System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String das_version = request_con.getHeaderField("X-DAS-Version");
       String das_status = request_con.getHeaderField("X-DAS-Status");
@@ -157,26 +137,50 @@ public class Das2ServerInfo  {
       System.out.println("source count: " + sources.getLength());
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
+        //        System.out.println("source base URI: " + source.getBaseURI());
         String source_id = source.getAttribute("id");
 
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxon");
 
-        setDasSource(this, source_id, false);
+	Das2Source dasSource = new Das2Source(this, source_id, false);
+	//        setDasSource(this, source_id, false);
+
 	dasSource.setID(source_id);
 	dasSource.setInfoUrl(source_info_url);
 	dasSource.setDescription(source_description);
 	dasSource.setTaxon(source_taxon);
 	this.addDataSource(dasSource);
-	NodeList versions = source.getElementsByTagName("VERSION");
-	for (int k=0; k< versions.getLength(); k++) {
-	  Element version = (Element)versions.item(k);
-	  String version_id = version.getAttribute("id");
-	  String version_description = version.getAttribute("description");
-	  String version_info_url = version.getAttribute("doc_href");
-	  setDasVersionedSource(dasSource, version_id, false);
-	  dasSource.addVersion(dasVersionedSource);
+	NodeList slist = source.getChildNodes();
+	for (int k=0; k < slist.getLength(); k++) {
+	  if (slist.item(k).getNodeName().equals("VERSION"))  {
+	    Element version = (Element)slist.item(k);
+	    String version_id = version.getAttribute("id");
+	    String version_description = version.getAttribute("description");
+	    String version_info_url = version.getAttribute("doc_href");
+	    //	    setDasVersionedSource(dasSource, version_id, false);
+	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_id, false);
+	    dasSource.addVersion(vsource);
+	    System.out.println("base URI for version element: " + getBaseURI(version));
+
+	    NodeList vlist = version.getChildNodes();
+	    for (int j=0; j<vlist.getLength(); j++) {
+	      String nodename = vlist.item(j).getNodeName();
+	      // was CATEGORY, renamed CAPABILITY
+	      if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
+		Element capel = (Element)vlist.item(j);
+		String captype = capel.getAttribute("type");
+		String query_id = capel.getAttribute("query_id");
+		URI base_uri = getBaseURI(capel);
+		URI cap_root = base_uri.resolve(query_id);
+		System.out.println("Capability: " + captype + ", URI: " + cap_root);
+		// for now don't worry about format subelements
+		Das2Capability cap = new Das2Capability(captype, cap_root, null);
+		vsource.addCapability(cap);
+	      }
+	    }
+	  }
 	}
       }
     }
@@ -186,6 +190,40 @@ public class Das2ServerInfo  {
     initialized = true;
     return initialized;
   }
+
+  /**
+   * Attempt to retrieve base URI for an Element from a DOM-level2 model
+   */
+  public static URI getBaseURI(Node cnode) {
+    Stack xml_bases = new Stack();
+    Node pnode = cnode;
+    while (pnode != null) {
+      if (pnode instanceof Element) {
+	Element el = (Element)pnode;
+	String xbase = el.getAttribute("xml:base");
+	if (xbase != null) { xml_bases.push(xbase); }
+      }
+      pnode = pnode.getParentNode();
+    }
+
+    URI base_uri = null;
+    try  {
+      if (! (xml_bases.empty())) {
+        String xbase = (String) xml_bases.pop();
+        base_uri = new URI(xbase);
+        while (! (xml_bases.empty())) {
+          xbase = (String) xml_bases.pop();
+          base_uri = base_uri.resolve(xbase);
+        }
+      }
+    }
+    catch (Exception ex)  {
+      System.out.println("*** problem figuring out base URI, setting to null");
+      base_uri = null;
+    }
+    return base_uri;
+  }
+
 
   /**
    *  For testing.

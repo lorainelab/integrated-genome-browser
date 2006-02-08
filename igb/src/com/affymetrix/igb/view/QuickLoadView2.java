@@ -108,8 +108,6 @@ public class QuickLoadView2 extends JComponent
     usage2str.put(cache_only, only);
   }
 
-
-  //TODO: This should be a singleton
   public QuickLoadView2() {
     
     initOptionsDialog();
@@ -163,7 +161,6 @@ public class QuickLoadView2 extends JComponent
     // Prototypes can be used to set the "preferred" display size
     //serverCB.setPrototypeDisplayValue("XXXX");
     //genomeCB.setPrototypeDisplayValue("XXXX");
-    serverCB.addItem(SELECT_A_SERVER);
     genomeCB.addItem(SELECT_A_GENOME);
     
     initializeQLServerList();

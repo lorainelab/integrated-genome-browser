@@ -298,8 +298,10 @@ public class QuickLoadView2 extends JComponent
       }
       
       if (current_genome_name == null) {
-        // what should behavior be if no genome in quickload server matches selected AnnotatedSeqGroup?
-        refreshGenomeChoices();
+        // if no genome in quickload server matches selected AnnotatedSeqGroup,
+        // then clear the types_panel and un-select the item in the genomeCB
+        types_panel.add(new JLabel("The selected genome is not included in this QuickLoad server."));
+        genomeCB.setSelectedIndex(-1);
       }
       else {
         current_server.initGenome(current_genome_name);

@@ -38,8 +38,8 @@ import com.affymetrix.igb.das.DasLoader;
 public class Das2VersionedSource  {
   static boolean DO_FILE_TEST = false;
   static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
-  static String SEGMENTS_QUERY = "segments";
-  static String TYPES_QUERY = "types";
+  static String SEGMENTS_QUERY_CAP = "segments";
+  static String TYPES_QUERY_CAP = "types";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -49,7 +49,7 @@ public class Das2VersionedSource  {
   String info_url;
   Date creation_date;
   Date modified_date;
-  Map capabilities;
+  Map capabilities = new HashMap();
   Map namespaces;
   Map regions = new LinkedHashMap();
   Map properties;
@@ -83,13 +83,21 @@ public class Das2VersionedSource  {
   public String getRootUrl() { return vsource_root_url; }
 
   /** NOT YET IMPLEMENTED */
-  public List getAssembly()   { return assembly; }
+  //  public List getAssembly()   { return assembly; }
   /** NOT YET IMPLEMENTED */
-  public Map getProperties()  { return properties; }
+  //  public Map getProperties()  { return properties; }
   /** NOT YET IMPLEMENTED */
-  public Map getNamespaces()  { return namespaces; }
+  //  public Map getNamespaces()  { return namespaces; }
   /** NOT YET IMPLEMENTED */
-  public Map getCapabilities()  { return capabilities; }
+  //  public Map getCapabilities()  { return capabilities; }
+
+  public void addCapability(Das2Capability cap)  {
+    capabilities.put(cap.getType(), cap);
+  }
+
+  public Das2Capability getCapability(String type) {
+    return (Das2Capability)capabilities.get(type);
+  }
 
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
@@ -165,7 +173,9 @@ public class Das2VersionedSource  {
     else {
       //      region_request = getSource().getServerInfo().getRootUrl() + "/" +
       //          this.getID() + "/" + SEGMENTS_QUERY;
-      region_request = this.getRootUrl() + "/" + SEGMENTS_QUERY;
+      //      region_request = this.getRootUrl() + "/" + SEGMENTS_QUERY;
+      Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_QUERY_CAP);
+      region_request = segcap.getRootURI().toString();
     }
     try {
       System.out.println("Das Region Request: " + region_request);
@@ -184,6 +194,7 @@ public class Das2VersionedSource  {
 	String description = null;
 	int length = Integer.parseInt(lengthstr);
 	Das2Region region = new Das2Region(this, region_id, region_name, region_info_url, length);
+	System.out.println("region: " + region_id + ", length = " + lengthstr + ", name = " + region_name);
 	this.addRegion(region);
       }
     }
@@ -205,7 +216,9 @@ public class Das2VersionedSource  {
 
     // how should xml:base be handled?
     //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-    String types_request = this.getRootUrl() + "/" + TYPES_QUERY;
+    //    String types_request = this.getRootUrl() + "/" + TYPES_QUERY;
+    Das2Capability typecap = this.getCapability(TYPES_QUERY_CAP);
+    String types_request = typecap.getRootURI().toString();
 
     //    if (filter != null) { types_request = types_request+"?ontology="+filter; }
     try {

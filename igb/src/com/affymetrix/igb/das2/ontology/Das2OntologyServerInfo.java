@@ -27,6 +27,8 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
  *
  */
 public class Das2OntologyServerInfo extends Das2ServerInfo{
+  protected Das2Source dasSource;
+  protected Das2VersionedSource dasVersionedSource;
 
 
     /** Creates a new instance of Das2OntologyServerInfo */
@@ -35,11 +37,11 @@ public class Das2OntologyServerInfo extends Das2ServerInfo{
     }
 
 
-    //overridden methods    
+    //overridden methods
     protected void addDataSource(Das2Source ds) {
         this.sources.put(ds.getID(), (Das2OntologySource) ds);
     }
-    
+
     protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
         Das2OntologySource D2S = new Das2OntologySource( (Das2OntologyServerInfo) _D2SI, _source_id, _init);
         dasSource =  D2S;
@@ -49,5 +51,5 @@ public class Das2OntologyServerInfo extends Das2ServerInfo{
         Das2OntologyVersionedSource D2VS = new Das2OntologyVersionedSource( (Das2OntologySource) _D2S, _version_id, _init);
         dasVersionedSource = D2VS;
     }
-    
+
 }

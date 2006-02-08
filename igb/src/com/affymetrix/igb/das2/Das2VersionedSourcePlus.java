@@ -40,6 +40,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
   boolean materials_initialized = false;
   boolean results_initialized = false;
   boolean platforms_initialized = false;
+  String TYPES_QUERY = "types";
 
   LinkedList platforms = new LinkedList();
 

@@ -93,24 +93,22 @@ public class Das2Region {
   public boolean getFeatures(Das2FeatureRequestSym request_sym) {
     boolean success = true;
       SeqSpan overlap_span = request_sym.getOverlapSpan();
-      String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
+      //      String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
+      String overlap_filter = getPositionString(overlap_span, false);
       SeqSpan inside_span = request_sym.getInsideSpan();
-      String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
+      //      String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
+      String inside_filter = getPositionString(inside_span, false);
+
       System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
       Das2Type type = request_sym.getDas2Type();
       String format = FormatPriorities.getFormat(type);
 
-      String version_url =
-	getVersionedSource().getSource().getServerInfo().getRootUrl() + "/" +
-	//      getVersionedSource().getSource().getID() + "/" +
-	getVersionedSource().getID();
-      System.out.println("   version url: " + version_url);
-      System.out.println("   preferred format: " + format);
-
       StringBuffer buf = new StringBuffer(200);
+      Das2Capability featcap = getVersionedSource().getCapability(Das2VersionedSource.FEATURES_QUERY_CAP);
+      URI query_root = featcap.getRootURI();
+      buf.append(query_root);
+      buf.append("?");
 
-      buf.append(version_url);
-      buf.append("/feature?");
       buf.append("overlaps=");
       buf.append(overlap_filter);
       buf.append(";");
@@ -152,5 +150,47 @@ public class Das2Region {
       }
     return success;
   }
+
+
+  /**
+   *  moved into Das2Region
+   *  for now, assume that 
+   *   Converts a SeqSpan to a DAS2 region String.
+   *   if include_header, then prepends "region/" to String, otherwise leaves it off
+   *   if include_strand, then appends strand info to end of String (":1") or (":-1")
+   *
+   *   Need to enhance this to deal with synonyms, so if seq id is different than
+   *     corresponding region id, use region id instead.  To do this, probably
+   *     need to add an Das2VersionedSource argument (Das2Region would work also,
+   *     but probably better to have this method figure out region based on versioned source
+   */
+  public String getPositionString(SeqSpan span, boolean include_strand) {
+    String result = null;
+    if (span != null) { 
+      BioSeq spanseq = span.getBioSeq();
+      if (this.getAnnotatedSeq() == spanseq) {
+	StringBuffer buf = new StringBuffer(100);
+	// making sure to use name/id given by DAS server, which may be a synonym of the seq's id instead of the seq id itself
+	buf.append(this.getName());
+	// buf.append(span.getBioSeq().getID());
+	buf.append("/");
+	buf.append(Integer.toString(span.getMin()));
+	buf.append(":");
+	buf.append(Integer.toString(span.getMax()));
+	if (include_strand) {
+	  if (span.isForward()) { buf.append(":1"); }
+	  else { buf.append(":-1"); }
+	}      
+	result = buf.toString();
+      }
+      else {  // this region's annotated seq is _not_ the same seq as the span argument seq
+	// throw an error?
+	// return null?
+	// try using Das2VersionedSource.getRegion()?
+      }
+    }
+    return result;
+  }
+
 
 }

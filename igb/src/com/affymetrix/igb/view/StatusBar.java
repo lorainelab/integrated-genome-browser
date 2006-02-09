@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*    
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.  
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.view;
 
 import java.awt.*;
@@ -64,6 +77,7 @@ public class StatusBar extends JPanel {
     
   /** Sets the String in the status bar.
    *  HTML can be used if prefixed with "<html>".
+   *  Can be safely called from any thread.
    *  @param s  a String, null is ok; null will erase the status String.
    */
   public void setStatus(String s) {
@@ -85,14 +99,20 @@ public class StatusBar extends JPanel {
     double mb = 1.0 * memory / (1024 * 1024);
     String text = num_format.format(mb) + " MB";
 
-    double percentage = 100.0d * memory / rt.maxMemory();    
-    text += "; "+num_format.format(percentage) + "%";
+    long max_memory = rt.maxMemory();
+    if (max_memory != Long.MAX_VALUE) {
+      double max = 1.0 * rt.maxMemory() / (1024 * 1024);
+      text += " / " + num_format.format(max) + " MB";
     
-    /*
-    if (percentage > 90.0d) {
-       text = "<html><font color=\"red\">" + text + "</font></html>";
+      //double percentage = 100.0d * memory / rt.maxMemory();    
+      //text += "; "+num_format.format(percentage) + "%";
+    
+      /*
+      if (percentage > 90.0d) {
+         text = "<html><font color=\"red\">" + text + "</font></html>";
+      }
+      */
     }
-    */
     updateSafely(memory_ta, text);    
   }
   

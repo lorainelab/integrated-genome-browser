@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,8 +23,9 @@ import com.affymetrix.igb.genometry.*;
 
 /**
  *
- *  Text repeat format (from UCSC sql tables, chr*_rmsk.sql):
+ *  Parser for the Text repeat format (from UCSC sql tables, chr*_rmsk.sql).
  *
+ *  <pre>
  *  bin smallint(5) unsigned NOT NULL default '0',
  *  swScore int(10) unsigned NOT NULL default 'b0',
  *  milliDiv int(10) unsigned NOT NULL default '0',
@@ -64,6 +65,7 @@ import com.affymetrix.igb.genometry.*;
  *     }
  *  }
  *
+ * </pre>
  */
   public class BrptParser {
     //    static String default_text_infile = "c:/data/ucsc/hg17/repeats/rmsk_all.txt";

@@ -283,9 +283,11 @@ public class QuickLoadView2 extends JComponent
       cb2filename.clear();
       Component[] comps = types_panel.getComponents();
       for (int i=0; i<comps.length; i++) {
-        JCheckBox cb = (JCheckBox)comps[i];
-        // really shouldn't need to do this, since old checkboxes should get gc'd, but just to make sure...
-        cb.removeActionListener(this);
+        if (comps[i] instanceof JCheckBox) {
+          JCheckBox cb = (JCheckBox)comps[i];
+          // really shouldn't need to do this, since old checkboxes should get gc'd, but just to make sure...
+          cb.removeActionListener(this);
+        }
       }
       types_panel.removeAll();
 

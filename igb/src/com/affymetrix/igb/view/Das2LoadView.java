@@ -484,7 +484,7 @@ class Das2TypeState {
   static Preferences das2_node = root_node.node("das2");
 
   static {
-    LOAD_STRINGS[OFF] = "Off";
+    LOAD_STRINGS[OFF] = "Off"; // OFF strategy is deprecated; use load=false
     LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
     LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
@@ -513,6 +513,11 @@ class Das2TypeState {
     lnode_strategy = das2_node.node(subnode_strategy);
     load = lnode_load.getBoolean(type.getID(), default_load);
     load_strategy = lnode_strategy.getInt(type.getID(), default_load_strategy);
+    if (load_strategy == OFF) {
+      // OFF strategy has been deprecated but may still exist in some user's prefs
+      setLoadStrategy(default_load_strategy); 
+      setLoad(false);
+    }
   }
 
   public void setLoad(boolean b) {

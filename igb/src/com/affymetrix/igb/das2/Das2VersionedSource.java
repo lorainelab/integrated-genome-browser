@@ -40,6 +40,7 @@ public class Das2VersionedSource  {
   static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
   static String SEGMENTS_QUERY_CAP = "segments";
   static String TYPES_QUERY_CAP = "types";
+  static String FEATURES_QUERY_CAP = "features";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -276,7 +277,6 @@ public class Das2VersionedSource  {
     //TODO should types_initialized be true after an exception?
     types_initialized = true;
   }
-
 
 
 

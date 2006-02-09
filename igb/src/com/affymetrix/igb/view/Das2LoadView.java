@@ -44,6 +44,7 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
+  static boolean USE_DAS2_OPTIMIZER = false;
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
   static boolean DEBUG_EVENTS = false;
 
@@ -145,7 +146,7 @@ public class Das2LoadView extends JComponent
     if (node instanceof Das2VersionTreeNode) {
       current_version = ((Das2VersionTreeNode)node).getVersionedSource();
       System.out.println(current_version);
-      System.out.println("  version id: " + current_version.getGenome().getID());
+      System.out.println("  clicked on Das2VersionTreeNode to select genome: " + current_version.getGenome().getID());
       setRegionsAndTypes();
     }
   }
@@ -203,8 +204,11 @@ public class Das2LoadView extends JComponent
 	  load_featuresB.setEnabled(true);
 	  // need to do this here within finished(), otherwise may get threading issues where
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
+	  System.out.println("gmodel selected group:  " + gmodel.getSelectedSeqGroup());
+	  System.out.println("current_vers.getGenome: " + current_version.getGenome());
 	  if (gmodel.getSelectedSeqGroup() != current_version.getGenome()) {
 	    gmodel.setSelectedSeq(null);
+	    System.out.println("setting selected group to : " + current_version.getGenome());
 	    gmodel.setSelectedSeqGroup(current_version.getGenome());
 	  }
 	  else {
@@ -283,7 +287,14 @@ public class Das2LoadView extends JComponent
 	public Object construct() {
 	  for (int i=0; i<request_syms.size(); i++) {
 	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
-	    Das2ClientOptimizer.loadFeatures(request_sym);
+	    if (USE_DAS2_OPTIMIZER) {
+	      Das2ClientOptimizer.loadFeatures(request_sym);
+	    }
+	    else {
+	      request_sym.getRegion().getFeatures(request_sym);
+	      MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
+	      aseq.addAnnotation(request_sym);
+	    }
 	  }
 	  return null;
 	}

@@ -29,10 +29,10 @@ public class SingletonGenometryModel {
 
   Map seq_groups = new LinkedHashMap();
   // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
-  
+
   // maps sequences to lists of selected symmetries
   Map seq2selectedSymsHash = new HashMap();
-  
+
   List seq_selection_listeners = new ArrayList();
   List group_selection_listeners = new ArrayList();
   List sym_selection_listeners = new ArrayList();
@@ -70,12 +70,12 @@ public class SingletonGenometryModel {
    *  @return a non-null AnnotatedSeqGroup
    */
   public AnnotatedSeqGroup addSeqGroup(String group_id) {
-    //    System.out.println("SingletonGenometryModel.addSeqGroup() called, id = " + group_id);
+    //    System.out.println("%%%%%%%%% SingletonGenometryModel.addSeqGroup() called, id = " + group_id);
     // if AnnotatedSeqGroup with same or synonymous id already exists, then return it
     AnnotatedSeqGroup group = getSeqGroup(group_id);
     // otherwise create a new AnnotatedSeqGroup
     if (group == null) {
-      //      System.out.println("  adding new seq group: " + group_id);
+      System.out.println("  adding new seq group: " + group_id);
       group = new AnnotatedSeqGroup(group_id);
       seq_groups.put(group.getID(), group);
     }
@@ -85,7 +85,7 @@ public class SingletonGenometryModel {
     return group;
   }
 
-  public void addSeqGroup(AnnotatedSeqGroup group) {
+  protected void addSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.put(group.getID(), group);
   }
 
@@ -150,18 +150,18 @@ public class SingletonGenometryModel {
       SeqSelectionListener listener = (SeqSelectionListener)iter.next();
       listener.seqSelectionChanged(evt);
     }
-    
-    // Retrieve and update the list of selections for this sequence 
+
+    // Retrieve and update the list of selections for this sequence
     List syms;
-    if (seq != null && 
-       (syms = (List)seq2selectedSymsHash.get(seq)) != null && 
+    if (seq != null &&
+       (syms = (List)seq2selectedSymsHash.get(seq)) != null &&
         syms.size() > 0)
     {
       // notify all listeners to update their selection
       SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
-    for (int i=0; i<sym_selection_listeners.size(); i++) 
+    for (int i=0; i<sym_selection_listeners.size(); i++)
     {
-      SymSelectionListener listener = 
+      SymSelectionListener listener =
         (SymSelectionListener)sym_selection_listeners.get(i);
       listener.symSelectionChanged(sevt);
     }
@@ -201,21 +201,21 @@ public class SingletonGenometryModel {
   public void setSelectedSymmetries(List syms)  {
     setSelectedSymmetries(syms, this);
   }
-  
+
   /**
-   *  Sets the selected symmetries for a the currently selected sequence. 
+   *  Sets the selected symmetries for a the currently selected sequence.
    *  All the selection listeners will be notified.
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
    */
-  public void setSelectedSymmetries(List syms, Object src) 
+  public void setSelectedSymmetries(List syms, Object src)
   {
     setSelectedSymmetries(syms, src, selected_seq );
   }
-  
+
   /**
    *  Selects a List of SeqSymmetry objects for a particular MutableAnnotatedBioSeq object.
-   *  If the sequence is the currently selected sequence, all the selection listeners 
+   *  If the sequence is the currently selected sequence, all the selection listeners
    *  will be notified.
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
@@ -223,12 +223,12 @@ public class SingletonGenometryModel {
    */
   public void setSelectedSymmetries(List syms, Object src, MutableAnnotatedBioSeq seq ) {
     if (seq == null) { return; }
-    
+
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSymmetries() called, ");
       System.out.println("    syms = " + syms);
     }
-    // set the selected syms for the sequence 
+    // set the selected syms for the sequence
     seq2selectedSymsHash.put(seq, syms);
 
     // if the selection is changing for the currently selected seq, notify all the
@@ -242,26 +242,26 @@ public class SingletonGenometryModel {
       }
     }
   }
-  
+
   /**
    *  @return A List of the selected SeqSymmetry objects selected on the currently selected sequence
    */
   public List getSelectedSymmetries() {
   return (List)seq2selectedSymsHash.get(selected_seq);
   }
-  
+
   /**
    *  Clears the symmetry selection for every sequence. Notifies all the selection listeners.
    *  @param src The object responsible for clearing the selections.
    */
   public void clearSelectedSymmetries(Object src) {
-    for(Iterator i=seq2selectedSymsHash.values().iterator();i.hasNext();) 
+    for(Iterator i=seq2selectedSymsHash.values().iterator();i.hasNext();)
     {
       List list = (List)i.next();
       list.clear();
     }
     SymSelectionEvent sevt = new SymSelectionEvent(src, Collections.EMPTY_LIST);
-    for (int i=0; i<sym_selection_listeners.size(); i++) 
+    for (int i=0; i<sym_selection_listeners.size(); i++)
     {
       SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
       listener.symSelectionChanged(sevt);

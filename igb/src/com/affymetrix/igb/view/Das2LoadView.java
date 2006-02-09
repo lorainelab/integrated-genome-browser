@@ -104,7 +104,7 @@ public class Das2LoadView extends JComponent
     load_featuresB = new JButton("Load Features");
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
-    for (int i=0; i<load_states.length; i++) {
+    for (int i=1; i<load_states.length; i++) {
       typestateCB.addItem(load_states[i]);
     }
 
@@ -257,7 +257,7 @@ public class Das2LoadView extends JComponent
     while (titer.hasNext()) {
       Das2TypeState tstate = (Das2TypeState)titer.next();
       Das2Type dtype = tstate.getDas2Type();
-      if (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
+      if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
 	System.out.println("type to load for visible range: " + dtype.getID());
 	Das2FeatureRequestSym request_sym =
 	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
@@ -362,7 +362,7 @@ public class Das2LoadView extends JComponent
       while (titer.hasNext()) {
 	Das2TypeState tstate = (Das2TypeState)titer.next();
 	Das2Type dtype = tstate.getDas2Type();
-	if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+	if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
 	  System.out.println("type to load for entire sequence range: " + dtype.getID());
 	  Das2FeatureRequestSym request_sym =
 	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
@@ -434,7 +434,7 @@ public class Das2LoadView extends JComponent
       current_region = current_version.getRegion(current_seq);
 
       Das2Type dtype = tstate.getDas2Type();
-      if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+      if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
 	System.out.println("type to load for entire sequence range: " + dtype.getID());
 	Das2FeatureRequestSym request_sym =
 	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
@@ -467,12 +467,12 @@ public class Das2LoadView extends JComponent
  *  or "visible range", and possibly other details.
  */
 class Das2TypeState {
-  //  static String[] LOAD_STRINGS = new String[3];
+  static boolean default_load = false;
   static String[] LOAD_STRINGS = new String[3];
   static int OFF = 0;
   static int VISIBLE_RANGE = 1;   // MANUAL_VISIBLE_RANGE
   static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
-  static int default_load_strategy = OFF;
+  static int default_load_strategy = VISIBLE_RANGE;
 
   /*
    *  Want to retrieve type state from Preferences if possible
@@ -489,9 +489,11 @@ class Das2TypeState {
     LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
 
+  boolean load;
   int load_strategy;
   Das2Type type;
-  Preferences lnode;
+  Preferences lnode_strategy;
+  Preferences lnode_load;
 
   public Das2TypeState(Das2Type dtype) {
     this.type = dtype;
@@ -503,13 +505,25 @@ class Das2TypeState {
     if (server_root_url.indexOf("//") > -1) {
       System.out.println("need to replace all double slashes in path!");
     }
-    String subnode = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
+    String subnode_strategy = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
+    String subnode_load = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load";
     //    System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
-    lnode = das2_node.node(subnode);
-    load_strategy = lnode.getInt(type.getID(), default_load_strategy);
+    lnode_load = das2_node.node(subnode_load);
+    lnode_strategy = das2_node.node(subnode_strategy);
+    load = lnode_load.getBoolean(type.getID(), default_load);
+    load_strategy = lnode_strategy.getInt(type.getID(), default_load_strategy);
   }
 
+  public void setLoad(boolean b) {
+    load = b;
+    lnode_load.putBoolean(type.getID(), load);
+  }
+  
+  public boolean getLoad() {
+    return load;
+  }
+  
   public void setLoadStrategy(String strat) {
     for (int i=0; i<LOAD_STRINGS.length; i++) {
       if (strat.equals(LOAD_STRINGS[i])) {
@@ -521,7 +535,7 @@ class Das2TypeState {
 
   public void setLoadStrategy(int strategy) {
     load_strategy = strategy;
-    lnode.putInt(type.getID(), strategy);
+    lnode_strategy.putInt(type.getID(), strategy);
   }
 
   public int getLoadStrategy() { return load_strategy; }
@@ -531,13 +545,12 @@ class Das2TypeState {
 
 
 class Das2TypesTableModel extends AbstractTableModel   {
-  //  static String[] type_columns = { "type ID", "load", "ontology", "source", "load strategy" };
-  static String[] column_names = { "type ID", "ontology", "source", "load strategy" };
-  static int ID_COLUMN = 0;
-  static int ONTOLOGY_COLUMN = 1;
-  static int SOURCE_COLUMN = 2;
-  static int LOAD_STRATEGY_COLUMN = 3;
-  //  static int LOAD_BOOLEAN_COLUMN = 1;
+  static String[] column_names = { "load", "type ID", "ontology", "source", "load strategy" };
+  static int LOAD_BOOLEAN_COLUMN = 0;
+  static int ID_COLUMN = 1;
+  static int ONTOLOGY_COLUMN = 2;
+  static int SOURCE_COLUMN = 3;
+  static int LOAD_STRATEGY_COLUMN = 4;
 
   static int model_count = 0;
 
@@ -583,9 +596,9 @@ class Das2TypesTableModel extends AbstractTableModel   {
     else if (col == LOAD_STRATEGY_COLUMN) {
       return state.getLoadString();
     }
-    //      else if (col == LOAD_BOOLEAN_COLUMN) {
-    //	return ((state.getLoadStrategy() == Das2TypeState.OFF) ? Boolean.FALSE : Boolean.TRUE);
-    //      }
+    else if (col == LOAD_BOOLEAN_COLUMN) {
+      return (state.getLoad() ? Boolean.TRUE : Boolean.FALSE);
+    }
     return null;
   }
 
@@ -594,9 +607,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
   }
 
   public boolean isCellEditable(int row, int col) {
-    //      if (col == Das2LoadView.LOAD_STRATEGY_COLUMN ||
-    //	  col == Das2LoadView.LOAD_BOOLEAN_COLUMN) { return true; }
-    if (col == LOAD_STRATEGY_COLUMN) { return true; }
+    if (col == LOAD_STRATEGY_COLUMN || col == LOAD_BOOLEAN_COLUMN) { return true; }
     else { return false; }
   }
 
@@ -607,13 +618,12 @@ class Das2TypesTableModel extends AbstractTableModel   {
     if (col == LOAD_STRATEGY_COLUMN)  {
       state.setLoadStrategy(value.toString());
     }
-    /*
-      else if (col == Das2LoadView.LOAD_BOOLEAN_COLUMN) {
+    
+    else if (col == LOAD_BOOLEAN_COLUMN) {
       Boolean bool = (Boolean)value;
-      if (bool == Boolean.TRUE) {  state.setLoadStrategy(Das2TypeState.VISIBLE_RANGE); }
-      else { state.setLoadStrategy(Das2TypeState.OFF); }
-      }
-    */
+      state.setLoad(bool.booleanValue());
+    }
+    
     fireTableCellUpdated(row, col);
   }
 }

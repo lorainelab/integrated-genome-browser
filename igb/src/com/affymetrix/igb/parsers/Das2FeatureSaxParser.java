@@ -39,6 +39,9 @@ import com.affymetrix.igb.util.GenometryViewer; // for testing main
 public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     implements AnnotationWriter  {
 
+  // DO_SEQID_HACK is a very temporary fix!!!
+  // Need to move to using full URI references to identify sequences,
+  public static boolean DO_SEQID_HACK = true;
   static boolean DEBUG = false;
   static boolean REPORT_RESULTS = false;
 
@@ -259,6 +262,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else if (current_elem == LOC)  {
       String seqid = atts.getValue("id");
       String range = atts.getValue("range");
+      // DO_SEQID_HACK is a very temporary fix!!!
+      // Need to move to using full URI references to identify sequences,
+      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
       SeqSpan span = getLocationSpan(seqid, range, seqgroup);
       feat_locs.add(span);
     }
@@ -466,7 +472,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
 
 
-
     protected void addChildren(MutableSeqSymmetry parent_sym)  {
       // get parts
       LinkedHashMap parts = (LinkedHashMap)parent2parts.get(parent_sym);
@@ -475,6 +480,16 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	Map.Entry keyval = (Map.Entry)citer.next();
 	String child_id = (String)keyval.getKey();
 	SeqSymmetry child_sym = (SeqSymmetry)keyval.getValue();
+	if (child_sym instanceof SymWithProps)  {
+          String child_type = (String)((SymWithProps)child_sym).getProperty("type");
+          if (child_type != null && child_type.endsWith("SO:intron"))  {
+            // GAH 2-2006
+	    // TEMPORARY HACK!! -- hardwiring to not add intron children from codesprint server
+            //    once stylesheets etc. are in place, should be able to add introns
+            //    but specify a line or null drawing style
+            continue;
+          }
+	}
 	parent_sym.addChild(child_sym);
       }
       //    id2sym.remove(parent_sym);
@@ -680,39 +695,52 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     public static SeqSpan getLocationSpan(String seqrng, AnnotatedSeqGroup group) {
       int sindex =  seqrng.lastIndexOf("/");
       String seqid = seqrng.substring(0, sindex);
-      String rng = seqrng.substring(sindex);
+      String rng = seqrng.substring(sindex+1);
       return getLocationSpan(seqid, rng, group);
     }
+
     public static String getLocationSeqId(String seqrng) {
       int sindex =  seqrng.lastIndexOf("/");
       String seqid = seqrng.substring(0, sindex);
       return seqid;
     }
 
-    public static SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
-      if (seqid == null || rng == null) { return null; }
-      String[] subfields = interval_splitter.split(rng);
-      int min = Integer.parseInt(subfields[0]);
-      int max = Integer.parseInt(subfields[1]);
-      boolean forward = true;
-      if (subfields.length >= 3) {
-	if (subfields[2].equals("-1")) { forward = false; }
-      }
-      BioSeq seq = group.getSeq(seqid);
-      if (seq == null) {
-	MutableAnnotatedBioSeq newseq = new SmartAnnotBioSeq(seqid, group.getVersion(), 123123123);
-	group.addSeq(newseq);
-	seq = newseq;
-      }
-      SeqSpan span;
-      if (forward)  {
-	span = new SimpleSeqSpan(min, max, seq);
-      }
-      else {
-	span = new SimpleSeqSpan(max, min, seq);
-      }
-      return span;
+  /**
+   *  This is a very temporary fix!!!
+   *  Need to move to using full URI references to identify sequences,
+   *      and optional name property to present to users
+   */
+  public static String doSeqIdHack(String seqid) {
+    String new_seqid = seqid;
+    int slash_index =  new_seqid.lastIndexOf("/");
+    if (slash_index >= 0) { new_seqid = new_seqid.substring(slash_index+1); }
+    return new_seqid;
+  }
+
+  public static SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
+    if (seqid == null || rng == null) { return null; }
+    String[] subfields = interval_splitter.split(rng);
+    int min = Integer.parseInt(subfields[0]);
+    int max = Integer.parseInt(subfields[1]);
+    boolean forward = true;
+    if (subfields.length >= 3) {
+      if (subfields[2].equals("-1")) { forward = false; }
     }
+    BioSeq seq = group.getSeq(seqid);
+    if (seq == null) {
+      MutableAnnotatedBioSeq newseq = new SmartAnnotBioSeq(seqid, group.getVersion(), 123123123);
+      group.addSeq(newseq);
+      seq = newseq;
+    }
+    SeqSpan span;
+    if (forward)  {
+      span = new SimpleSeqSpan(min, max, seq);
+    }
+    else {
+      span = new SimpleSeqSpan(max, min, seq);
+    }
+    return span;
+  }
 
 
     /**

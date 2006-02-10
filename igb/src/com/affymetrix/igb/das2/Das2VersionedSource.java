@@ -30,6 +30,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 /**
  *
@@ -38,9 +39,9 @@ import com.affymetrix.igb.das.DasLoader;
 public class Das2VersionedSource  {
   static boolean DO_FILE_TEST = false;
   static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
-  static String SEGMENTS_QUERY_CAP = "segments";
-  static String TYPES_QUERY_CAP = "types";
-  static String FEATURES_QUERY_CAP = "features";
+  static String SEGMENTS_CAP_QUERY = "segments";
+  static String TYPES_CAP_QUERY = "types";
+  static String FEATURES_CAP_QUERY = "features";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -172,22 +173,23 @@ public class Das2VersionedSource  {
       region_request = test_file;
     }
     else {
-      //      region_request = getSource().getServerInfo().getRootUrl() + "/" +
-      //          this.getID() + "/" + SEGMENTS_QUERY;
-      //      region_request = this.getRootUrl() + "/" + SEGMENTS_QUERY;
-      Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_QUERY_CAP);
+      Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_CAP_QUERY);
       region_request = segcap.getRootURI().toString();
     }
     try {
       System.out.println("Das Region Request: " + region_request);
       Document doc = DasLoader.getDocument(region_request);
       Element top_element = doc.getDocumentElement();
-      //      NodeList regionlist = doc.getElementsByTagName("REGION");
       NodeList regionlist = doc.getElementsByTagName("SEGMENT");
       System.out.println("regions: " + regionlist.getLength());
       for (int i=0; i< regionlist.getLength(); i++)  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute("id");
+	// GAH _TEMPORARY_ hack to strip down region_id
+	// Need to move to full URI resolution very soon!
+	if (Das2FeatureSaxParser.DO_SEQID_HACK) {
+	  region_id = Das2FeatureSaxParser.doSeqIdHack(region_id);
+	}
 	String lengthstr = reg.getAttribute("length");
 	String region_name = reg.getAttribute("name");
 	String region_info_url = reg.getAttribute("doc_href");
@@ -218,7 +220,7 @@ public class Das2VersionedSource  {
     // how should xml:base be handled?
     //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
     //    String types_request = this.getRootUrl() + "/" + TYPES_QUERY;
-    Das2Capability typecap = this.getCapability(TYPES_QUERY_CAP);
+    Das2Capability typecap = this.getCapability(TYPES_CAP_QUERY);
     String types_request = typecap.getRootURI().toString();
 
     //    if (filter != null) { types_request = types_request+"?ontology="+filter; }

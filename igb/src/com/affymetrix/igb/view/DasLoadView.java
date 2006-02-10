@@ -28,7 +28,7 @@ import com.affymetrix.swing.threads.SwingWorker;
 public class DasLoadView extends JComponent
   implements ItemListener, SeqSelectionListener, GroupSelectionListener  {
 
-  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   JComboBox das_serverCB;
   JComboBox das_sourceCB;
@@ -44,7 +44,7 @@ public class DasLoadView extends JComponent
   String source_filler = "Choose a DAS source";
   String entry_filler = "Choose a DAS seq";
 
-  /**
+  /*
    *  choices for DAS annot loading range:
    *    whole genome
    *    whole chromosome
@@ -52,6 +52,11 @@ public class DasLoadView extends JComponent
    *    gviewer's view bounds on current chromosome
    */
 
+  /**
+   *  A Panel for Loading from a DAS/1 server.
+   *  This panel can be included as a tab in the DataLoadView.
+   *  It should eventually replace the DasFeaturesAction2 pop-up window.
+   */
   public DasLoadView() {
     myself = this;
     das_serverCB = new JComboBox();
@@ -71,8 +76,7 @@ public class DasLoadView extends JComponent
     }
 
     this.setLayout(new BorderLayout());
-    JPanel panA = new JPanel();
-    panA.setLayout(new GridLayout(3, 2));
+    JPanel panA = new JPanel(new GridLayout(6,1));
 
     //    JButton test_button = new JButton("Test Button");
     //    this.add("North", test_button);
@@ -82,8 +86,13 @@ public class DasLoadView extends JComponent
     panA.add(das_sourceCB);
     panA.add(new JLabel("DAS Entry Point: "));
     panA.add(das_entryCB);
+    
+    // putting panA inside panelB rather than directly in the main panel
+    // prevents the combo boxes from being stretched vertically
+    JPanel panelB = new JPanel(new BorderLayout());
+    panelB.add("North", panA);
 
-    this.add("North", panA);
+    this.add("West", panelB);
     this.add("Center", scrollpane);
 
     //    das_serverCB.addActionListener(this);

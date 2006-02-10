@@ -203,9 +203,9 @@ public class Das2ClientOptimizer {
     boolean success = true;
 
     SeqSpan overlap_span = request_sym.getOverlapSpan();
-    String overlap_filter = Das2FeatureSaxParser.getPositionString(overlap_span, false, false);
+    String overlap_filter = request_sym.getRegion().getPositionString(overlap_span, false);
     SeqSpan inside_span = request_sym.getInsideSpan();
-    String inside_filter = Das2FeatureSaxParser.getPositionString(inside_span, false, false);
+    String inside_filter = request_sym.getRegion().getPositionString(inside_span, false);
     System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
     String format = null;

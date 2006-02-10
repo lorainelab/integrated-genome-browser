@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.servlets;
 
-import java.awt.Frame;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -312,45 +311,16 @@ public class UnibrowControlServlet extends HttpServlet {
 
     if (selectParam == null){return;}
     
-    HashMap seq2SymsHash = new HashMap();
     // split the parameter by commas
     String[] ids = selectParam.split(",");
-    MutableAnnotatedBioSeq seq;
-    SeqSymmetry sym = null;
-    SingletonGenometryModel gmodel = IGB.getGenometryModel();
-
-    // for each ID found in the ID2sym hash, add it to the owning sequences 
-    //  list of selected symmetries
-    for (int i=0; i<ids.length; i++)
-    {
-        sym = (SeqSymmetry) gmodel.getSelectedSeqGroup().getSymHash().get(ids[i]);
-        if (sym != null && 
-           (seq = gmodel.getSelectedSeqGroup().getSeq(sym)) != null)
-        {                 
-            // prepare the list to add the sym to based on the seq ID
-            ArrayList symlist = (ArrayList)seq2SymsHash.get(seq);
-            if (symlist == null)
-            {
-                symlist = new ArrayList();
-                seq2SymsHash.put(seq, symlist);
-            }
-            // add the sym to the list for the correct seq ID
-            symlist.add(sym);          
-        }
+    
+    if (selectParam.length() == 0) {return;}
+    
+    List sym_list = new ArrayList(ids.length);
+    for (int i=0; i<ids.length; i++) {
+      sym_list.addAll(gmodel.getSelectedSeqGroup().findSyms(ids[i]));
     }
-
-    // if at least one sym was found, then select all the syms for each seq and
-    //  focus on the first matched sequence
-
-    // clear all the existing selections first
-    gmodel.clearSelectedSymmetries(UnibrowControlServlet.class);
-
-    // now perform the selections for each sequence that was matched
-    for(Iterator i=seq2SymsHash.keySet().iterator();i.hasNext();) 
-    {
-      seq = (MutableAnnotatedBioSeq)i.next();
-      gmodel.setSelectedSymmetries((List)seq2SymsHash.get(seq), UnibrowControlServlet.class, seq);
-    }
+    
+    gmodel.setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);    
   }
-
 }

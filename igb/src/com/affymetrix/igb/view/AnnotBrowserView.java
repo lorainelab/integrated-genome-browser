@@ -21,7 +21,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SymMapChangeEvent;
@@ -32,7 +31,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
- *  {@link IGB#getSymHash()}.  When the user selects an item,
+ *  {@link AnnotatedSeqGroup#getSymHash()}.  When the user selects an item,
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
@@ -88,12 +87,28 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
     for (int j = 0 ; j < num_rows ; j++) {
       Map.Entry entry = (Map.Entry) entries.get(j);
       rows[j][0]= entry.getKey().toString();
-      SeqSymmetry sym = (SeqSymmetry) entry.getValue();
+      Object o = entry.getValue();
+      
+      SeqSymmetry sym;
+      int num_matches = 1;
+      if (o instanceof java.util.List) {
+        // For now, only display the first match of the list
+        java.util.List sym_list = (java.util.List) o;
+        sym = (SeqSymmetry) sym_list.get(0);
+        num_matches = sym_list.size();
+      } else {
+        sym = (SeqSymmetry) entry.getValue();
+        num_matches = 1;
+      }
+
       SeqSpan span = sym.getSpan(0); // Is this correct?
       if (span!= null) {
         rows[j][1]= new Integer(span.getStart());
         rows[j][2]= new Integer(span.getEnd());
         rows[j][3]= span.getBioSeq().getID() + (span.isForward() ? "+" : "-");
+        if (num_matches > 1) {
+          rows[j][3] = "" + num_matches + " matches";
+        }
       } else {
         rows[j][1] = new Integer(0);
         rows[j][2] = new Integer(0);
@@ -133,7 +148,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
   }
   
   /** This is called when the user selects a row of the table;
-   *  It calls {@link #findSym(SeqSymmetry)}.
+   *  It calls {@link AnnotatedSeqGroup#findSyms(String)}.
    */
   public void valueChanged(ListSelectionEvent evt) {
     boolean old_way = true;
@@ -141,27 +156,12 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
       int srow = table.getSelectedRow();
       if (srow >= 0) {
         String id = (String) table.getModel().getValueAt(srow, 0);
-        SingletonGenometryModel gmodel = IGB.getGenometryModel();
-        SeqSymmetry sym = (SeqSymmetry) gmodel.getSelectedSeqGroup().getSymHash().get(id);
-        findSym(sym);
+        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+        java.util.List syms = group.findSyms(id);
+        gmodel.setSelectedSymmetriesAndSeq(syms, this);
       }
     }
-  }
-
-  public final boolean findSym(SeqSymmetry hitsym) {
-    boolean found = false;
-    if (hitsym != null) {
-      SingletonGenometryModel gmodel = IGB.getGenometryModel();
-      MutableAnnotatedBioSeq seq = gmodel.getSelectedSeqGroup().getSeq(hitsym);
-      if (seq != null) {
-        ArrayList symlist = new ArrayList();
-        symlist.add(hitsym);
-        gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
-        gmodel.setSelectedSymmetries(symlist, this);
-        found = true;
-      }
-    }
-    return found;
   }
 
   public void destroy() {

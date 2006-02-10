@@ -44,7 +44,7 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
-  static boolean USE_DAS2_OPTIMIZER = false;
+  static boolean USE_DAS2_OPTIMIZER = true;
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
   static boolean DEBUG_EVENTS = false;
 

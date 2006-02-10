@@ -618,9 +618,10 @@ public class SeqMapView extends JPanel
     else {
       System.err.println("Current annotated seq is not mutable, cannot call SeqMapView.clearGraphs()!");
     }
-    //TODO: Make sure the graph is un-selected in the genometry model,
-    // and maybe don' call the preserve_selections method
-    setAnnotatedSeq(aseq, true, true);
+    
+    //Make sure the graph is un-selected in the genometry model, to allow GC
+    gmodel.clearSelectedSymmetries(this);
+    setAnnotatedSeq(aseq, false, true);
   }
 
   /** Sets the sequence; if null, has the same effect as calling clear(). */

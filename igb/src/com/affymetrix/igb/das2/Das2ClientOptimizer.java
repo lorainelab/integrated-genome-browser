@@ -218,16 +218,21 @@ public class Das2ClientOptimizer {
     Das2VersionedSource versioned_source = region.getVersionedSource();
     AnnotatedSeqGroup seq_group = versioned_source.getGenome();
     Das2Source source = versioned_source.getSource();
-    String version_url = source.getServerInfo().getRootUrl() + "/" +
-      //      getVersionedSource().getSource().getID() + "/" +
-      versioned_source.getID();
-    System.out.println("   version url: " + version_url);
+    //    String version_url = source.getServerInfo().getRootUrl() + "/" +
+    //      versioned_source.getID();
+
+    Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
+    URI query_root = featcap.getRootURI();
+
+    //    System.out.println("   version url: " + version_url);
+    System.out.println("   query root: " + query_root.toString());
     System.out.println("   preferred format: " + format);
 
     StringBuffer buf = new StringBuffer(200);
-
-    buf.append(version_url);
-    buf.append("/feature?");
+    buf.append(query_root.toString());
+    buf.append("?");
+    //    buf.append(version_url);
+    //    buf.append("/feature?");
     buf.append("overlaps=");
     buf.append(overlap_filter);
     buf.append(";");

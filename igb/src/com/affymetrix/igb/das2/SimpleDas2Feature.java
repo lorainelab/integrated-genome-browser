@@ -61,9 +61,9 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     if (cprops == null) {
       cprops = new LinkedHashMap();
     }
-    cprops.put("id", id);
-    cprops.put("name", name);
-    cprops.put("type", type);
+    if (id != null)  { cprops.put("id", id); }  // should never be null though
+    if (type != null)  { cprops.put("type", type); }  // shuold never be null though
+    if (name != null)  { cprops.put("name", name); }  
     if (doc_href != null) { cprops.put("link", doc_href); }
     return cprops;
   }

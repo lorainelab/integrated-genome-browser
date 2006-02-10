@@ -373,55 +373,19 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
   public void findSym(String id)  {
     if (id == null) { return; }
-    System.out.println("looking for id: " + id);
-    Map id2sym_hash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSymHash();
-    NeoMap seqmap = gviewer.getSeqMap();
-    SeqSymmetry hitsym = (SeqSymmetry)id2sym_hash.get(id);
-    int hitcount = 0;
-    int symcount = 0;
-    if (hitsym == null) {
-      Hashtable modelhash = seqmap.getModelMapping();
-      Iterator iter = modelhash.keySet().iterator();
-      Vector syms = new Vector();
-      while (iter.hasNext()) {
-	Object obj = iter.next();
-	if (obj instanceof SymWithProps) {
-	  SymWithProps swp = (SymWithProps)obj;
-	  String swpid = (String)swp.getProperty("id");
-	  if (swpid == null) { swpid = (String)swp.getProperty("transcript_id"); }
-	  // slower, but no assumptions of string interning
-	  if ((swpid != null) && (swpid.equals(id)))  {
-	    hitsym = swp;
-	    break;
-	  }
-	}
-      }
-    }
-    if (hitsym != null) {
-      findSym(hitsym);
-      idHitCountL.setText(" match found");
+    //System.out.println("looking for id: " + id);
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    
+    java.util.List sym_list = group.findSyms(id);
+    
+    if (sym_list != null && ! sym_list.isEmpty()) {
+      idHitCountL.setText(sym_list.size() + " matches found");
+      gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
     }
     else  {
       idHitCountL.setText(" no matches");
     }
   }
-
-  public boolean findSym(SeqSymmetry hitsym) {
-    boolean found = false;
-    if (hitsym != null) {
-      MutableAnnotatedBioSeq seq = gmodel.getSelectedSeqGroup().getSeq(hitsym);
-      if (seq != null) {
-	gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
-	ArrayList symlist = new ArrayList(1);
-	symlist.add(hitsym);
-	gmodel.setSelectedSymmetries(symlist, this);
-	//	gviewer.select(hitsym, false, true, true);
-	//	gviewer.zoomToSelections();
-	found = true;
-      }
-    }
-    return found;
-  }
-
 }
 

@@ -61,7 +61,7 @@ class SeqGroupView extends JComponent
   implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener,
   ItemListener {
 
-  static boolean DEBUG_EVENTS = true;
+  static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String NO_GENOME = "No Genome Selected";
 

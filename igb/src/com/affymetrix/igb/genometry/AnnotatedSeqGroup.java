@@ -31,7 +31,7 @@ public class AnnotatedSeqGroup {
   ArrayList seqlist = new ArrayList();
 
   static Vector sym_map_change_listeners = new Vector(1);
-  Map id2sym_hash = new HashMap();
+  Map id2sym_hash = new ListmakingHashMap();
   
   public AnnotatedSeqGroup(String gid) {
     id = gid;
@@ -158,6 +158,20 @@ public class AnnotatedSeqGroup {
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
   
+  public java.util.List findSyms(String id) {
+    java.util.List sym_list = null;
+    Object o = id2sym_hash.get(id);
+    if (o == null) {
+      sym_list = Collections.EMPTY_LIST;
+    } else if (o instanceof java.util.List) {
+      sym_list = (java.util.List) o;
+    } else {
+      sym_list = new ArrayList(1);
+      sym_list.add(o);
+    }
+    return sym_list;
+  }
+  
   /**
    *  Map of tags (usually names or ids) to SeqSymmetries for this AnnotatedSeqGroup.
    */
@@ -189,4 +203,30 @@ public class AnnotatedSeqGroup {
     sym_map_change_listeners.remove(l);
   }
 
+  public class ListmakingHashMap extends HashMap {
+    public Object put(Object key, Object value) {
+      Object x = this.get(key);
+      if (value == null) {
+        super.put(key, null);
+      } else if (x == null) {
+        super.put(key, value);
+      } else if (x instanceof List) {
+        ((List) x).add(value);
+      } else {
+        ArrayList al = new ArrayList(2);
+        al.add(x);
+        al.add(value);
+        super.put(key, al);
+      }
+      return x;
+    }
+
+    // Does exactly the same thing as the superclass:
+    // reports true if the value is contained directly as a value,
+    // but not if the value is included inside one of the Lists
+    public boolean containsValue(Object value) {
+      return super.containsValue(value);
+    }    
+  }
+  
 }

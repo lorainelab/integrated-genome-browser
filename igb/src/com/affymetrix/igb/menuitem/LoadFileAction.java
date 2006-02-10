@@ -243,7 +243,7 @@ public class LoadFileAction {
     MutableAnnotatedBioSeq aseq = null;
     InputStream str = null;
     boolean sym_hash_changed = false;
-    
+
     try {
       StringBuffer stripped_name = new StringBuffer();
       str = Streamer.unzipStream(instr, stream_name, stripped_name);
@@ -276,13 +276,25 @@ public class LoadFileAction {
       else if (lcname.endsWith(".das2xml")) {
 	System.out.println("in LoadFileAction.load(), parsing with Das2FeatureSaxParser");
 	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+	if (selected_group == null) {
+	  AnnotatedSeqGroup newgroup = gmodel.addSeqGroup(lcname);
+	  gmodel.setSelectedSeqGroup(newgroup);
+	  selected_group = gmodel.getSelectedSeqGroup();
+	  System.out.println("set selected seq group to: " + selected_group.getID());
+	}
 	java.util.List results = parser.parse(new InputSource(str), selected_group, true);
 	System.out.println("result count: " + results.size());
-	for (int i=0; i<results.size(); i++) {
-	  SeqSymmetry sym = (SeqSymmetry)results.get(i);
-	  //	  SeqUtils.printSymmetry(sym);
+	if (results.size() > 0) {
+	  SeqSymmetry fsym = (SeqSymmetry)results.get(0);
+	  SeqSpan fspan = fsym.getSpan(0);
+	  MutableAnnotatedBioSeq das_seq = (MutableAnnotatedBioSeq)fspan.getBioSeq();
+	  gmodel.setSelectedSeq(das_seq);
+	  aseq = das_seq;
 	}
-	aseq = input_seq;
+	//	for (int i=0; i<results.size(); i++) {
+	///	  SeqSymmetry sym = (SeqSymmetry)results.get(i);
+	//	  SeqUtils.printSymmetry(sym);
+	//	aseq = input_seq;
       }
       else if (lcname.endsWith(".map"))  {
         ScoredMapParser parser = new ScoredMapParser();
@@ -377,7 +389,7 @@ public class LoadFileAction {
         //          seqhash.put(input_seq.getID(), input_seq);
         //        }
         if (seqhash == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             ".bps files can only be loaded if a seq group is already selected", null);
         }
         else {
@@ -407,7 +419,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".bgn")) {
         if (seqhash == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             ".bgn files can only be loaded if a seq group is already selected", null);
         }
         else {
@@ -419,7 +431,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".brs")) {
         if (seqhash == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             ".brs files can only be loaded if a seq group is already selected", null);
         }
         else {
@@ -434,7 +446,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".bsnp")) {
         if (seqhash == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             ".bsnp files can only be loaded if a seq group is already selected", null);
         }
         else {
@@ -447,7 +459,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".brpt")) {
         if (seqhash == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR",
             ".brpt files can only be loaded if a seq group is already selected", null);
         }
         else {
@@ -511,12 +523,12 @@ public class LoadFileAction {
           aseq = NibbleResiduesParser.parse(str, (NibbleBioSeq)input_seq);
         }
         else {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ABORTED LOADING BNIB FILE", 
+          ErrorHandler.errorPanel(gviewer.getFrame(), "ABORTED LOADING BNIB FILE",
             "The currently loaded sequence is not the correct type to merge with a bnib file", null);
         }
       }
       else {
-	ErrorHandler.errorPanel(gviewer.getFrame(), "FORMAT NOT RECOGNIZED", 
+	ErrorHandler.errorPanel(gviewer.getFrame(), "FORMAT NOT RECOGNIZED",
           "Format not recognized for file: " + stream_name, null);
       }
 
@@ -531,7 +543,7 @@ public class LoadFileAction {
           gmodel.setSelectedSeq(aseq);
         }
       }
-      
+
       if (sym_hash_changed) {
         gmodel.getSelectedSeqGroup().symHashChanged(LoadFileAction.class);
         // This is the only place in the code calling symHashChanged(),

@@ -104,9 +104,9 @@ public class Das2Region {
       String format = FormatPriorities.getFormat(type);
 
       StringBuffer buf = new StringBuffer(200);
-      Das2Capability featcap = getVersionedSource().getCapability(Das2VersionedSource.FEATURES_QUERY_CAP);
+      Das2Capability featcap = getVersionedSource().getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
       URI query_root = featcap.getRootURI();
-      buf.append(query_root);
+      buf.append(query_root.toString());
       buf.append("?");
 
       buf.append("overlaps=");
@@ -154,7 +154,7 @@ public class Das2Region {
 
   /**
    *  moved into Das2Region
-   *  for now, assume that 
+   *  for now, assume that
    *   Converts a SeqSpan to a DAS2 region String.
    *   if include_header, then prepends "region/" to String, otherwise leaves it off
    *   if include_strand, then appends strand info to end of String (":1") or (":-1")
@@ -166,7 +166,7 @@ public class Das2Region {
    */
   public String getPositionString(SeqSpan span, boolean include_strand) {
     String result = null;
-    if (span != null) { 
+    if (span != null) {
       BioSeq spanseq = span.getBioSeq();
       if (this.getAnnotatedSeq() == spanseq) {
 	StringBuffer buf = new StringBuffer(100);
@@ -180,7 +180,7 @@ public class Das2Region {
 	if (include_strand) {
 	  if (span.isForward()) { buf.append(":1"); }
 	  else { buf.append(":-1"); }
-	}      
+	}
 	result = buf.toString();
       }
       else {  // this region's annotated seq is _not_ the same seq as the span argument seq

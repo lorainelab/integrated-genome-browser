@@ -16,13 +16,12 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
-import java.util.regex.*;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -37,7 +36,6 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.genometry.GraphSym;
@@ -48,6 +46,8 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.util.CharIterator;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.util.UnibrowControlUtils;
@@ -64,10 +64,7 @@ import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.util.CharIterator;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import java.text.*;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -621,6 +618,8 @@ public class SeqMapView extends JPanel
     else {
       System.err.println("Current annotated seq is not mutable, cannot call SeqMapView.clearGraphs()!");
     }
+    //TODO: Make sure the graph is un-selected in the genometry model,
+    // and maybe don' call the preserve_selections method
     setAnnotatedSeq(aseq, true, true);
   }
 
@@ -831,6 +830,16 @@ public class SeqMapView extends JPanel
       setZoomSpotY(old_zoom_spot_y);
 
       doEdgeMatching(map.getSelected(), false);
+
+    } else {
+      // do selection based on what the genometry model thinks is selected      
+      java.util.List symlist = gmodel.getSelectedSymmetries(seq);
+      select(symlist,false,false,false);
+
+      String title = getSelectionTitle(map.getSelected());
+      IGB.getSingletonIGB().setStatus(title, false);
+      
+      doEdgeMatching(map.getSelected(), false);
     }
 
     if (SHRINK_WRAP_MAP_BOUNDS) {
@@ -874,6 +883,9 @@ public class SeqMapView extends JPanel
     }
     else {
       map.stretchToFit(true, true);
+      zoomToSelections();
+      int[] range = map.getVisibleRange();
+      setZoomSpotX(0.5*(range[0] + range[1]));
     }
     map.updateWidget();
     if (DIAGNOSTICS) {
@@ -1560,11 +1572,8 @@ public class SeqMapView extends JPanel
   }
 
   /**
-   *  Testing genometry slice-and-dice.
-   *  make a more sophisticated mapping of aseq to viewseq, such that viewseq is composed
-   *    of slices of aseq taken around each exon in transcript sym...
-   *
-   *  assumes that symmetry children are ordered by child.getSpan(aseq).getMin()
+   *  Performs a genometry-based slice-and-dice.
+   *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
    */
   public void sliceAndDice(SeqSymmetry sym) {
     if (! slicing_in_effect) {

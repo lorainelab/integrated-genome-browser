@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -137,13 +137,13 @@ public class PropertySheet extends JPanel {
 
 
   /**
-   * take name_values and return a new Vector that 
-   *  starts with the names found in preferred_ordering in the specified order, 
+   * take name_values and return a new Vector that
+   *  starts with the names found in preferred_ordering in the specified order,
    *  and then adds entries in name_values that were not found in preferred_ordering.
-   *  
-   *  WARNING! this destroys integrity of original name_values Vector! 
+   *
+   *  WARNING! this destroys integrity of original name_values Vector!
    *  also assumes that there are no null entries in name_values Vector
-   * 
+   *
    * @param name_values   a Vector of String[]'s
    */
   public static Vector reorderNames(Vector name_values, Vector preferred_ordering) {
@@ -190,7 +190,7 @@ public class PropertySheet extends JPanel {
    */
   public void showProperties(Map[] props, Vector preferred_prop_order) {
     PropertyKeys propkeys = new PropertyKeys();
-    
+
     Vector name_values = propkeys.getNameValues(props);
     if (preferred_prop_order != null) {
       name_values = reorderNames(name_values, preferred_prop_order);

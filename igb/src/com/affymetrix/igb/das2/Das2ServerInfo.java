@@ -119,7 +119,12 @@ public class Das2ServerInfo  {
 	das_request = new URL(test_file);
       }
       else {
-	das_request = new URL(root_url+"/" + SOURCES_QUERY);
+	// GAH 2006-02-10
+	//  changed to assuming the root_url is the full URL for a sources (sequence?)
+	//  done for compatibility with 
+
+	//	das_request = new URL(root_url+"/" + SOURCES_QUERY);
+	das_request = new URL(root_url);
       }
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2005-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -31,6 +31,7 @@ import com.affymetrix.swing.DisplayUtils;
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
+  static boolean USE_QUICKLOAD = true;
   Das2LoadView das2_view;
   DasLoadView das1_view;
   QuickLoadView2 quick_view;
@@ -39,20 +40,20 @@ public class DataLoadView extends JComponent  {
   public DataLoadView() {
     das2_view = new Das2LoadView();
     das1_view = new DasLoadView();
-    quick_view = new QuickLoadView2();
+    if (USE_QUICKLOAD)  { quick_view = new QuickLoadView2(); }
     group_view = new SeqGroupView();
 
     this.setLayout(new BorderLayout());
     JTabbedPane tpane = new JTabbedPane();
     this.add("Center", tpane);
-    tpane.addTab("QuickLoad", quick_view);
+    if (USE_QUICKLOAD)  { tpane.addTab("QuickLoad", quick_view); }
     tpane.addTab("DAS/2", das2_view);
     //tpane.addTab("DAS/1", das1_view);
     this.add("West", group_view);
   }
 
   public void initialize() {
-    quick_view.initialize();
+    if (USE_QUICKLOAD)  { quick_view.initialize(); }
   }
 }
 
@@ -60,10 +61,10 @@ class SeqGroupView extends JComponent
   implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener,
   ItemListener {
 
-  static boolean DEBUG_EVENTS = false;
+  static boolean DEBUG_EVENTS = true;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String NO_GENOME = "No Genome Selected";
-  
+
   JTable seqtable;
   AnnotatedBioSeq selected_seq = null;
   ListSelectionModel lsm;
@@ -95,8 +96,11 @@ class SeqGroupView extends JComponent
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (this.DEBUG_EVENTS)  {
       System.out.println("SeqGroupView received groupSelectionChanged() event");
-      System.out.println("  group: " + group.getID());
-      System.out.println("  seq count: " + group.getSeqs().size());
+      if (group == null)  { System.out.println("  group is null"); }
+      else  {
+        System.out.println("  group: " + group.getID());
+        System.out.println("  seq count: " + group.getSeqs().size());
+      }
     }
 
     if (group == null) {

@@ -282,7 +282,7 @@ public class LoadFileAction {
 	  selected_group = gmodel.getSelectedSeqGroup();
 	  System.out.println("set selected seq group to: " + selected_group.getID());
 	}
-	java.util.List results = parser.parse(new InputSource(str), selected_group, true);
+	java.util.List results = parser.parse(new InputSource(str), stream_name, selected_group, true);
 	System.out.println("result count: " + results.size());
 	if (results.size() > 0) {
 	  SeqSymmetry fsym = (SeqSymmetry)results.get(0);

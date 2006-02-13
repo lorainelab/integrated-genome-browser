@@ -21,10 +21,14 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
   String id;
   String type;  // eventually replace with Das2Type
   String name;
-  String parent_id;
   String created;
   String modified;
   String doc_href;
+  // need to change this, since
+  String parent_id;  // problem here, DAS2XML features can have multiple parents
+  //  List parents; // DAS2XML now allows features to have multiple parents
+  List notes;  // or should these just be folded into properties?
+  List xids;   // or should these just be folded into properties?
 
   public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
 			   String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
@@ -63,7 +67,7 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     }
     if (id != null)  { cprops.put("id", id); }  // should never be null though
     if (type != null)  { cprops.put("type", type); }  // shuold never be null though
-    if (name != null)  { cprops.put("name", name); }  
+    if (name != null)  { cprops.put("name", name); }
     if (doc_href != null) { cprops.put("link", doc_href); }
     return cprops;
   }

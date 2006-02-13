@@ -321,7 +321,11 @@ public class Das2ClientOptimizer {
 	    content_subtype.startsWith("x-das-feature")) {
 	  System.out.println("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-	  feats = parser.parse(new InputSource(bis), seq_group, false);
+          InputSource isrc = new InputSource(bis);
+          // make sure to set system id to ensure proper resolution of relative URIs
+          //    (for example, if no xml:base in DAS2XML doc)
+          //          isrc.setSystemId(feature_query);
+	  feats = parser.parse(isrc, feature_query, seq_group, false);
 	}
 	else if (content_subtype.equals("bgn")) {
 	  System.out.println("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");

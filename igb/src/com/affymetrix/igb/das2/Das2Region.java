@@ -132,7 +132,7 @@ public class Das2Region {
 	URLConnection query_con = query_url.openConnection();
 	InputStream istr = query_con.getInputStream();
 	BufferedInputStream bis = new BufferedInputStream(istr);
-	List feats = parser.parse(new InputSource(bis), getVersionedSource().getGenome(), false);
+	List feats = parser.parse(new InputSource(bis), feature_query, getVersionedSource().getGenome(), false);
 	int feat_count = feats.size();
 	System.out.println("parsed query results, annot count = " + feat_count);
 	for (int k=0; k<feat_count; k++) {

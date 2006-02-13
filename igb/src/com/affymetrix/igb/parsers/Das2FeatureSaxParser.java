@@ -14,6 +14,7 @@
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -102,7 +103,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   String current_elem = null;  // current element
   StringBuffer current_chars = null;
   Stack elemstack = new Stack();
-  String xml_base = null;
+  Stack base_uri_stack = new Stack();
+  URI current_base_uri = null;
 
   String feat_id = null;
   String feat_type = null;
@@ -157,27 +159,23 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    */
 
   /**
-   *  setXmlBase() is a temporary fix to allow setting of xml:base for das2xml feature output
-   *   from DAS/2 genometry server
+   *   setBaseURI should only be used when writing out DAS2XML
+   *   (maybe should force specification of base URI in constructor?  
+   *      then wuoldn't need extra url argument in parse() method...)
    */
-  public void setXmlBase(String base) { xml_base = base; }
+  public void setBaseURI(URI base) { current_base_uri = base; }
+  public URI getBaseURI() { return current_base_uri; }
 
-  public List parse(InputSource isrc, String seqgroup_name)  throws IOException, SAXException {
-    return parse(isrc, seqgroup_name, true);
-  }
-
-  public List parse(InputSource isrc, String seqgroup_name, boolean annot_seq)  throws IOException, SAXException {
-    AnnotatedSeqGroup group = gmodel.addSeqGroup(seqgroup_name);
-    return parse(isrc, group, annot_seq);
-  }
-
-  public List parse(InputSource isrc, AnnotatedSeqGroup group)  throws IOException, SAXException {
-    return parse(isrc, group, true);
-  }
 
   /**
    *  Parse a DAS2 features document.
    *  return value is List of all top-level features as symmetries.
+   *
+   *  uri argument is the URI the XML document was retrieved from 
+   *  this argument is needed to ensure that Xml Base resolution is handled correctly 
+   *      (sometimes can get base url from isrc.getSystemId(), but some InputSources may not have this set correctly)
+   *     not sure if this strategy is currently handling URL redirects correctly... 
+   * 
    *  if annot_seq, then feature symmetries will also be added as annotations to seqs in seq group
    *
    *  For example of situation where annot_seq = false:
@@ -187,8 +185,17 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *   which in turn is directly attached to the seq as an annotation (giving two levels of additional
    *   annotation hierarchy)
    */
-  public List parse(InputSource isrc, AnnotatedSeqGroup group, boolean annot_seq)  throws IOException, SAXException {
+  public List parse(InputSource isrc, String uri, AnnotatedSeqGroup group, boolean annot_seq)  throws IOException, SAXException {
     clearAll();
+    try  {
+      //      URI source_uri = new URI(isrc.getSystemId());
+      URI source_uri = new URI(uri);
+      System.out.println("parsing XML doc, original URI = " + source_uri);
+      current_base_uri = source_uri.resolve("");
+      System.out.println("  initial base uri: " + current_base_uri);
+      base_uri_stack.push(current_base_uri);
+    }
+    catch (Exception ex)  { ex.printStackTrace(); }
     add_annots_to_seq = annot_seq;
 
     /*
@@ -244,12 +251,20 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     if (DEBUG)  { System.out.println("start element: " + name); }
     elemstack.push(current_elem);
     current_elem = name.intern();
+    String xml_base = atts.getValue("xml:base");
+    if (xml_base != null)  {
+      current_base_uri = current_base_uri.resolve(xml_base);
+      System.out.println("resolved new base uri: " + current_base_uri);
+    }
+    // push base_uri onto stack whether it has changed or not
+    base_uri_stack.push(current_base_uri);
 
     if (current_elem == FEATURES) {
     }
     else if (current_elem == FEATURE) {
 
-      feat_id = atts.getValue("id");
+      String feat_id_att = atts.getValue("id");
+      feat_id = current_base_uri.resolve(feat_id_att).toString();
       feat_type = atts.getValue("type");
       feat_name = atts.getValue("name");
       // feat_parent_id has moved to <PARENT> element
@@ -271,13 +286,17 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else if (current_elem == XID) {
     }
     else if (current_elem == PARENT) {
-      if (feat_parent_id == null) { feat_parent_id = atts.getValue("id"); }
+      if (feat_parent_id == null) {
+	feat_parent_id = atts.getValue("id");
+	feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
+      }
       else {
 	System.out.println("WARNING:  multiple parents for feature, just using first one");
       }
     }
     else if (current_elem == PART) {
       String part_id = atts.getValue("id");
+      part_id = current_base_uri.resolve(part_id).toString();
       /*
        *  Use part_id to look for child sym already constructed and placed in id2sym hash
        *  If child sym found then map part_id to child sym in feat_parts
@@ -305,6 +324,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   public void clearAll() {
     result_syms = null;
     id2sym.clear();
+    base_uri_stack.clear();
+    current_base_uri = null;
     clearFeature();
   }
 
@@ -372,6 +393,11 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       feat_prop_val = null;
       current_elem = (String)elemstack.pop();
     }
+
+    // base_uri_stack.push(...) is getting called in every startElement() call,
+    // so need to call base_uri_stack.pop() at end of every endElement() call;
+    current_base_uri = (URI)base_uri_stack.pop();
+
   }
 
     /**
@@ -532,8 +558,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	pw.println("   xmlns=\"http://www.biodas.org/ns/das/2.00\" ");
 	pw.println("   xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 	//      pw.println("   xml:base=\"http:...\"> ");
-	if (xml_base != null) {
-	  pw.println("   xml:base=\"" + xml_base + "\" >");
+	if (getBaseURI() != null) {
+	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
 	}
 
 	Iterator iterator = syms.iterator();
@@ -618,6 +644,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  pw.println();
 	}
       }
+
+      // also need to write out any properties (other than type, id, start, end, length, etc.....)
 
       // close this feature element
       pw.println("  </FEATURE>");
@@ -766,7 +794,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	File test_file = new File(test_file_name);
 	FileInputStream fistr = new FileInputStream(test_file);
 	BufferedInputStream bis = new BufferedInputStream(fistr);
-	List annots = test.parse(new InputSource(bis), "test_group");
+	List annots = test.parse(new InputSource(bis), test_file_name, gmodel.addSeqGroup("test_group"), true);
 	bis.close();
 	System.out.println("annot count: " + annots.size());
 	SeqSymmetry first_annot = (SeqSymmetry)annots.get(0);

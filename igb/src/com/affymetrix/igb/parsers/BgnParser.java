@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -19,17 +19,12 @@ import java.util.regex.*;
 import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscGeneSym;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
 import com.affymetrix.igb.genometry.SupportsCdsSpan;
-import com.affymetrix.igb.parsers.LiftParser;
-import com.affymetrix.igb.parsers.AnnotationWriter;
 
 /**
  *  Just like refFlat table format, except no geneName field (just name field).
@@ -40,7 +35,6 @@ public class BgnParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    //    pref_list.add(".bgn");
     pref_list.add("bgn");
   }
 
@@ -78,53 +72,37 @@ public class BgnParser implements AnnotationWriter  {
     List result;
     try {
       fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_group, blength);
+      result = parse(fis, annot_type, seq_group, blength, true);
     } finally {
       if (fis != null) try {fis.close();} catch (Exception e) {}
     }
     return result;
   }
-
-  /**
-   *  @param blength  Byte Buffer Length.
-   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
-   */
-  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, long blength) throws IOException {
-    return parse(istr, annot_type, seq_group, null, blength);
-  }
-
+  
+  // This method is needed only by some affy-internal classes.
   public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) throws IOException {
-    return parse(istr, annot_type, seq_hash, null, blength);
+    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Unknown Seq Group");
+    Iterator iter = seq_hash.values().iterator();
+    while (iter.hasNext()) {
+      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+      seq_group.addSeq(seq);
+    }
+    List result = parse(istr, annot_type, seq_group, blength, true);
+    seq_hash.putAll(seq_group.getSeqs());
+    return result;
   }
   
   /**
-   *  @param blength  Byte Buffer Length.
-   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
-   */
-  public List parse(InputStream istr, String annot_type,
-			    AnnotatedSeqGroup seq_group, Map id2sym_hash, long blength) throws IOException {
-    return parse(istr, annot_type, seq_group, null, id2sym_hash, blength, true);
-  }
-
-  /**
-   *  @param blength  Byte Buffer Length.
-   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
-   */
-  public List parse(InputStream istr, String annot_type,
-			    Map seq_hash, Map id2sym_hash, long blength) throws IOException {
-    return parse(istr, annot_type, null, seq_hash, id2sym_hash, blength, true);
-  }
-
-  /**
    *  The main parsing routine.
-   *  Sequences will be looked for first in seqhash, then in seq_group.
-   *  It is ok for seq_group, or seqhash, to be null, but not both.
+   *  @param seq_group  must not be null.
+   *  @param blength  Byte Buffer Length.
+   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
   public List parse(InputStream istr, String annot_type,
-			    AnnotatedSeqGroup seq_group, Map seqhash, Map id2sym_hash, long blength, boolean annotate_seq) throws IOException {
+                    AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq) throws IOException {
                               
-    if (seqhash == null && seq_group == null) {
-      throw new IllegalArgumentException("BgnParser called with seq_group and seqhash both null.");
+    if (seq_group == null) {
+      throw new IllegalArgumentException("BgnParser called with seq_group null.");
     }
     Timer tim = new Timer();
     tim.start();
@@ -174,7 +152,7 @@ public class BgnParser implements AnnotationWriter  {
 	 *  can't call close() on the inputstream(s)...
 	 *
 	 */
-	// just keep looping till hitting end-of-file throws an
+	// just keep looping till hitting end-of-file throws an EOFException
 	while (true) {
 	  //
 	  String name = dis.readUTF();
@@ -197,15 +175,8 @@ public class BgnParser implements AnnotationWriter  {
 	    emaxs[i] = dis.readInt();
 	  }
 
-          MutableAnnotatedBioSeq chromseq = null;
-          if (seqhash != null) {
-            chromseq = (MutableAnnotatedBioSeq)seqhash.get(chrom_name);
-          }
+          MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
           
-          if (chromseq == null && seq_group != null) {
-            chromseq = seq_group.getSeq(chrom_name);
-          }
-                    
           if (chromseq == null) {
             // A null chromseq would cause a Null Pointer Exception below, so let's
             // throw an IOException which will be easier to deal with.
@@ -217,10 +188,8 @@ public class BgnParser implements AnnotationWriter  {
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
 					    tmin, tmax, cmin, cmax, emins, emaxs);
 
-          if (id2sym_hash != null) {
-	    id2sym_hash.put(name, sym);
-	  }
-	  results.add(sym);
+          seq_group.addToIndex(name, sym);
+          results.add(sym);
 
 	  if (annotate_seq)  {
 	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
@@ -228,10 +197,7 @@ public class BgnParser implements AnnotationWriter  {
 	      parent_sym = new SimpleSymWithProps();
 	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
 	      parent_sym.setProperty("method", annot_type);
-	      //	    System.out.println("adding preferred_formats, " + chromseq.getID());
 	      parent_sym.setProperty("preferred_formats", pref_list);
-	      //	    parent_sym.setProperty("format", ".bgn");
-	      //	    chromseq.addAnnotation(parent_sym);
 	      annots.add(parent_sym);
 	      chrom2sym.put(chrom_name, parent_sym);
 	    }
@@ -240,8 +206,6 @@ public class BgnParser implements AnnotationWriter  {
 	  total_exon_count += ecount;
 	  count++;
 	}
-	//	dis.close();
-	//	bis.close();
       }
     }
     catch (EOFException ex) {

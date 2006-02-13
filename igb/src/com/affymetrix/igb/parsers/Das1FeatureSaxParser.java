@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 
@@ -23,15 +22,14 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
-
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SingletonSymWithProps;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.SymWithProps;
 
 import com.affymetrix.igb.util.GenometryViewer; // for testing main
 
@@ -460,7 +458,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public void addFeature() {
-    Map global_symhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSymHash();
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
     boolean filter = false;
 
     /*
@@ -473,14 +471,14 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       filter =
         (
          ((feattype != null) && (filter_hash.get(feattype) != null)) ||
-         (FILTER_OUT_BY_ID && (getGroupSymmetryForType(feattype, featgroup) == null) && (global_symhash.get(featgroup) != null))
+         (FILTER_OUT_BY_ID && (getGroupSymmetryForType(feattype, featgroup) == null) && (! seq_group.findSyms(featgroup).isEmpty()))
          );
     }
     else {
       filter =
         (
          ((feattype != null) && (filter_hash.get(feattype) != null)) ||
-         (FILTER_OUT_BY_ID && (global_symhash.get(featid) != null))
+         (FILTER_OUT_BY_ID && (! seq_group.findSyms(featid).isEmpty()))
          );
     }
 
@@ -553,7 +551,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           parent_sym.setProperty("id", featgroup);
           if (feattype != null)  { parent_sym.setProperty("method", feattype); }
           putGroupSymmetryForType(feattype, featgroup, parent_sym);
-          global_symhash.put(featgroup, parent_sym);
+          seq_group.addToIndex(featgroup, parent_sym);
           if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null))  { grandparent_sym.addChild(parent_sym); }
           else { aseq.addAnnotation(parent_sym); }
           result_syms.add(parent_sym);
@@ -630,7 +628,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
       }
       else {  // if no group id, add annotation directly to AnnotatedBioSeq
-        global_symhash.put(featid, current_sym);
+        seq_group.addToIndex(featid, current_sym);
         //        if (featlink != null) { current_sym.setProperty("link", featlink); }
         if (featlink_urls.size() > 0)  {
           int linkcount = featlink_urls.size();

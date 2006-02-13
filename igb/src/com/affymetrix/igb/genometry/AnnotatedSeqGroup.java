@@ -158,6 +158,9 @@ public class AnnotatedSeqGroup {
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
   
+  /** Finds all symmetries with the given ID. 
+   *  @return a non-null List, possibly an empty one.
+   */
   public java.util.List findSyms(String id) {
     java.util.List sym_list = null;
     Object o = id2sym_hash.get(id);
@@ -170,6 +173,16 @@ public class AnnotatedSeqGroup {
       sym_list.add(o);
     }
     return sym_list;
+  }
+  
+  /**
+   *  Assosicates a symmetry with an ID.  You can later retrieve the
+   *  list of all matching symmetries for a given ID by calling findSyms(String).
+   *  Niether argument should be null.
+   */
+  public void addToIndex(String id, SeqSymmetry sym) {
+    if (id==null || sym==null) throw new NullPointerException();
+    id2sym_hash.put(id, sym);
   }
   
   /**

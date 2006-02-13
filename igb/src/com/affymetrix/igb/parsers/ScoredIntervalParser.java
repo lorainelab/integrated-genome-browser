@@ -119,7 +119,7 @@ public class ScoredIntervalParser {
     parse(istr, stream_name, seqhash, null);
   }
 
-  public void parse(InputStream istr, String stream_name, Map seqhash, Map id2sym_hash)
+  public void parse(InputStream istr, String stream_name, Map seqhash, AnnotatedSeqGroup seq_group)
   throws IOException {
     attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
     BufferedReader br= null;
@@ -230,20 +230,20 @@ public class ScoredIntervalParser {
 	  sin3 = true; sin1 = false; sin2 = false;
 	  score_offset = 1;
 	  annot_id = fields[0];
-	  // need to match up to pre-existing annotation in id2sym_hash
-	  SeqSymmetry original_sym = (SeqSymmetry)id2sym_hash.get(annot_id);
-	  if (original_sym == null) {
+	  // need to match up to pre-existing annotation in seq_group
+          SeqSymmetry original_sym = findSym(seq_group, annot_id);
+          if (original_sym == null) {
 	    // if no sym with exact id found, then try "extended id", because may be
 	    //     a case where sym id had to be "extended" to uniquify it
 	    //     for instance, when the same probeset maps to multiple locations
 	    //     extended ids are just the original id with ".$" appended, where $ is
 	    //     a number, and if id with $ exists, then there must also be ids with all
 	    //     positive integers < $ as well.
-	    SeqSymmetry mod_sym = (SeqSymmetry)id2sym_hash.get(annot_id + ".0");
-	    // if found matching sym based on extended id, then need to keep incrementing and
+            SeqSymmetry mod_sym = findSym(seq_group, annot_id + ".0");
+            // if found matching sym based on extended id, then need to keep incrementing and
 	    //    looking for more syms with extended ids
 	    if (mod_sym == null) {
-	      // no sym matching id found in id2sym_hash -- filtering out
+	      // no sym matching id found -- filtering out
 	      miss_count++;
 	      continue;
 	    }
@@ -257,7 +257,7 @@ public class ScoredIntervalParser {
 		isyms.add(child);
 		total_mod_hit_count++;
 		ext++;
-		mod_sym = (SeqSymmetry)id2sym_hash.get(annot_id + "." + ext);
+                mod_sym = findSym(seq_group, annot_id + "." + ext);
 	      }
 	    }
 	  }
@@ -396,6 +396,19 @@ public class ScoredIntervalParser {
     }
   }
 
+  /** Find the first matching symmetry in the seq_group, or null */
+  private SeqSymmetry findSym(AnnotatedSeqGroup seq_group, String id) {
+    //TODO: Make this parser deal with the fact that there can be multiple
+    // syms with the same ID rather than insisting on taking only the first match.
+    // This probably will make this parser simpler, since we may be able to drop
+    // this stuff about adding ".0" and ".1" to non-unique ids.
+    List sym_list = seq_group.findSyms(id);
+    if (sym_list.isEmpty()) {
+      return null;
+    } else {
+      return (SeqSymmetry) sym_list.get(0);
+    }
+  }
 
   protected MutableAnnotatedBioSeq makeNewSeq(String seqid, Map seqhash) {
     System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);

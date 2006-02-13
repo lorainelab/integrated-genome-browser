@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,15 +13,12 @@
 
 package com.affymetrix.igb.parsers;
 
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscBedSym;
@@ -379,6 +376,9 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	      listener.annotationParsed(bedline_sym);
 	    }
 	  }
+          if (annot_name != null) {
+            seq_group.addToIndex(annot_name, bedline_sym);
+          }
 	}  // end field_count >= 3
       }  // end of line.startsWith() else
     }   // end of line-reading loop

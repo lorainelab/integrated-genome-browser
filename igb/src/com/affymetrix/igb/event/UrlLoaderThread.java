@@ -13,15 +13,12 @@
 
 package com.affymetrix.igb.event;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-
 import java.net.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.event.ThreadProgressMonitor;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.ErrorHandler;
@@ -293,8 +290,9 @@ public class UrlLoaderThread extends Thread {
         parser.parse(bis, gmodel.getSelectedSeq(), type);
       }
       else {
-        parser.parse(bis, type, null, seqhash, group.getSymHash(), false, true);
+        parser.parse(bis, type, null, seqhash, group, false, true);
       }
+      group.symHashChanged(parser);
     } finally {
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
@@ -342,7 +340,8 @@ public class UrlLoaderThread extends Thread {
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
       Map seqhash = group.getSeqs();
-      bps_parser.parse(dis, type, seqhash, group.getSymHash());
+      bps_parser.parse(dis, type, seqhash, group);
+      group.symHashChanged(bps_parser);
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}
       if (bis != null) try {bis.close();} catch (Exception e) {}

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,6 +22,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.*;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SeqSymStartComparator;
@@ -242,16 +243,16 @@ public class GFFParser implements AnnotationWriter  {
 
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
   throws IOException {
-    return parse(istr, aseq, (Map) null);
+    return parse(istr, aseq, (AnnotatedSeqGroup) null);
   }
 
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, Map id2sym_hash)
+  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, AnnotatedSeqGroup seq_group)
   throws IOException {
     Map seqhash = new HashMap();
     if (aseq != null) {
       seqhash.put(aseq.getID(), aseq);
     }
-    parse(istr, seqhash, id2sym_hash, default_create_container_annot);
+    parse(istr, seqhash, seq_group, default_create_container_annot);
     if (aseq == null) {
       Iterator iter = seqhash.values().iterator();
       if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
@@ -263,10 +264,10 @@ public class GFFParser implements AnnotationWriter  {
   }
 
   public List parse(InputStream istr, Map seqhash) throws IOException {
-    return parse(istr, seqhash, (Map) null, default_create_container_annot);
+    return parse(istr, seqhash, (AnnotatedSeqGroup) null, default_create_container_annot);
   }
 
-  public List parse(InputStream istr, Map seqhash, Map id2sym_hash, boolean create_container_annot)
+  public List parse(InputStream istr, Map seqhash, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
 
@@ -405,16 +406,16 @@ public class GFFParser implements AnnotationWriter  {
                 // If one field, like "probeset_id" was chosen as the group_id_field_name,
                 // then make the contents of that field be the "id" of the group symmetry
                 // and also index it in the IGB id-to-symmetry hash
-                Object index_id = null;
+                String index_id = null;
                 if (group_id_field_name != null) {
-                  index_id = sym.getProperty(group_id_field_name);
+                  index_id = (String) sym.getProperty(group_id_field_name);
                 }
                 if (index_id != null) {
                   groupsym.setProperty("id", index_id);
-                  if (id2sym_hash != null) { id2sym_hash.put(index_id, groupsym); }
+                  if (seq_group != null) { seq_group.addToIndex(index_id, groupsym); }
                 } else {
                   groupsym.setProperty("id", group_id);
-                  if (id2sym_hash != null) { id2sym_hash.put(group_id, groupsym); }
+                  if (seq_group != null) { seq_group.addToIndex(group_id, groupsym); }
                 }
 
                 group_hash.put(group_id, groupsym);

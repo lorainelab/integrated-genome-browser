@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,27 +18,20 @@ import java.util.*;
 
 import com.affymetrix.genoviz.util.Timer;
 
-import java.util.Comparator;
-
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.UcscPslComparator;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
-import com.affymetrix.igb.parsers.PSLParser;
-import com.affymetrix.igb.parsers.AnnotationWriter;
 
 public class BpsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    //    pref_list.add(".bps");
-    //    pref_list.add(".psl");
     pref_list.add("bps");
     pref_list.add("psl");
   }
@@ -201,8 +194,8 @@ public class BpsParser implements AnnotationWriter  {
     return parse(dis, annot_type, target_hash, null);
   }
   
-  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash, Map id2sym_hash) {
-    return parse(dis, annot_type, null, target_hash, id2sym_hash, false, true);
+  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash, AnnotatedSeqGroup seq_group) {
+    return parse(dis, annot_type, null, target_hash, seq_group, false, true);
   }
 
   public static java.util.List parse(DataInputStream dis, String annot_type,
@@ -215,7 +208,7 @@ public class BpsParser implements AnnotationWriter  {
    *  before exiting this method.
    */
   public static java.util.List parse(DataInputStream dis, String annot_type,
-				      Map qhash, Map thash, Map id2sym_hash,  boolean annot_query, boolean annot_target) {
+				      Map qhash, Map thash, AnnotatedSeqGroup seq_group,  boolean annot_query, boolean annot_target) {
     Map query_hash = qhash;
     Map target_hash = thash;
     if (query_hash == null) { query_hash = new HashMap(); }
@@ -285,8 +278,8 @@ public class BpsParser implements AnnotationWriter  {
 			 queryseq, qmin, qmax, targetseq, tmin, tmax,
 			 blockcount, blockSizes, qmins, tmins);
 	results.add(sym);
-	if (id2sym_hash != null) {
-		id2sym_hash.put(sym.getID(), sym);
+	if (seq_group != null) {
+          seq_group.addToIndex(sym.getID(), sym);
 	}
 	if (annot_query && (queryseq instanceof MutableAnnotatedBioSeq)) {
 	  SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);

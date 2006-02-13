@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,12 +21,9 @@ import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscGeneSym;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
-import com.affymetrix.igb.parsers.LiftParser;
-import com.affymetrix.igb.parsers.AnnotationWriter;
 
 /**
  * BrsParser can convert UCSC-style RefFlat database table dumps into
@@ -107,10 +104,9 @@ public class BrsParser implements AnnotationWriter  {
   }
 
   public java.util.List parse(InputStream istr, String annot_type,
-				       Map seq_hash, Map id2sym_hash, long blength) {
+				       Map seq_hash, AnnotatedSeqGroup seq_group, long blength) {
     Timer tim = new Timer();
     tim.start();
-  //    System.out.println("id2sym_hash: " + id2sym_hash);
 
     // annots is list of top-level parent syms (max 1 per seq in seq_hash) that get
     //    added as annotations to the annotated BioSeqs -- their children
@@ -189,12 +185,12 @@ public class BrsParser implements AnnotationWriter  {
 	  }
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
 					      tmin, tmax, cmin, cmax, emins, emaxs);
-	  if (id2sym_hash != null) {
+	  if (seq_group != null) {
             if (geneName.length()!=0) {
-              id2sym_hash.put(geneName, sym);
+              seq_group.addToIndex(geneName, sym);
             }
             if (name.length()!=0) {
-              id2sym_hash.put(name, sym);
+              seq_group.addToIndex(name, sym);
             }
 	  }
 	  parent_sym.addChild(sym);

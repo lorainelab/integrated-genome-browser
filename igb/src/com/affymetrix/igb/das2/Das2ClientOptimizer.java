@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.das2;
 
 import java.io.*;
@@ -16,7 +29,7 @@ import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for diagnostics
 
-/**
+/*
  * Desired optimizations:
  *
  *      Split up by range // not really an optmization, but necessary for other optimizations
@@ -330,7 +343,7 @@ public class Das2ClientOptimizer {
 	else if (content_subtype.equals("bgn")) {
 	  System.out.println("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
 	  BgnParser parser = new BgnParser();
-	  feats = parser.parse(bis, type.getID(), seq_group, null, null, -1, false);
+          feats = parser.parse(bis, type.getID(), seq_group, -1, false);
 	}
 	else if (content_subtype.equals("bps")) {
 	  System.out.println("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");

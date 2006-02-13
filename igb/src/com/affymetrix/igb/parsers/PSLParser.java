@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,6 +14,7 @@
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -24,8 +25,9 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
@@ -36,11 +38,6 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
   static java.util.List psl_pref_list = new ArrayList();
   static java.util.List psl3_pref_list = new ArrayList();
   static {
-    //    psl_pref_list.add(".bps");
-    //    psl_pref_list.add(".psl");
-    //    psl3_pref_list.add(".psl3");
-    //    psl3_pref_list.add(".bps");
-    //    psl3_pref_list.add(".psl");
     psl_pref_list.add("bps");
     psl_pref_list.add("psl");
     psl3_pref_list.add("psl3");
@@ -111,9 +108,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
   }
 
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash, Map id2sym_hash,
+			      Map qhash, Map thash, AnnotatedSeqGroup seq_group,
 			      boolean annotate_query, boolean annotate_target)  throws IOException  {
-    return parse(istr, annot_type, qhash, thash, null, id2sym_hash,
+    return parse(istr, annot_type, qhash, thash, null, seq_group,
 		 annotate_query, annotate_target, false);
   }
 
@@ -135,16 +132,16 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
    *
    */
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash,  Map ohash, Map id2sym_hash,
+			      Map qhash, Map thash,  Map ohash, AnnotatedSeqGroup seq_group,
 			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
     throws IOException {
     return parse(istr, annot_type, false,
-		 qhash, thash, ohash, id2sym_hash, 
+		 qhash, thash, ohash, seq_group, 
 		 annotate_query, annotate_target, annotate_other);
   }
 
   public java.util.List parse(InputStream istr, String annot_type,  boolean create_container_annot,
-			      Map qhash, Map thash,  Map ohash, Map id2sym_hash,
+			      Map qhash, Map thash,  Map ohash, AnnotatedSeqGroup seq_group,
 			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
     throws IOException {
     System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
@@ -467,9 +464,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	total_annot_count++;
 	total_child_count += sym.getChildCount();
 	results.add(sym);
-        if (id2sym_hash != null)
-        {
-            id2sym_hash.put(sym.getID(), sym);
+        if (seq_group != null) {
+          seq_group.addToIndex(sym.getID(), sym);
         }
 	if (total_annot_count % 5000 == 0) {
 	  System.out.println("current annot count: " + total_annot_count);

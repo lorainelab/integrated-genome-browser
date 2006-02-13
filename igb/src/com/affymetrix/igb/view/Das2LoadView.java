@@ -21,7 +21,6 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
-import javax.swing.event.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
@@ -635,7 +634,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
 
 
 /**
- *  TreeNode wrapper around a Das2ServerInfo object
+ *  TreeNode wrapper around a Das2ServerInfo object.
  */
 class Das2ServerTreeNode extends DataSourcesAbstractNode {
   Das2ServerInfo server;
@@ -662,7 +661,7 @@ class Das2ServerTreeNode extends DataSourcesAbstractNode {
   }
 
   /**
-   *  first time children are accessed, this will trigger dynamic access to DAS2 server..
+   *  First time children are accessed, this will trigger dynamic access to DAS2 server.
    */
   protected void populate() {
     if (child_nodes == null) {
@@ -688,7 +687,7 @@ class Das2ServerTreeNode extends DataSourcesAbstractNode {
 }
 
 /**
- *  TreeNode wrapper around a Das2Source object
+ *  TreeNode wrapper around a Das2Source object.
  */
 class Das2SourceTreeNode extends DataSourcesAbstractNode {
   Das2Source source;
@@ -721,8 +720,9 @@ class Das2SourceTreeNode extends DataSourcesAbstractNode {
 }
 
 /**
- * May don't really need Das2VersionTreeNode, since Das2VersionedSource could itself serve as a leaf
- *    (since no requirement for TreeNodes?)
+ * TreeNode wrapper around a Das2VersionedSource object.
+ * Maybe don't really need this, since Das2VersionedSource could itself serve 
+ * as a leaf.
  */
 class Das2VersionTreeNode extends DataSourcesAbstractNode {
   Das2VersionedSource version;
@@ -739,4 +739,21 @@ class Das2VersionTreeNode extends DataSourcesAbstractNode {
   public int getIndex(TreeNode node) { return -1; }
 }
 
+/**
+ *   Stubs out MutableTreeNode methods that aren't used for Das2*Node objects.
+ */
+abstract class DataSourcesAbstractNode implements MutableTreeNode {
+  TreeNode parent;
+  public void insert(MutableTreeNode child, int index)  {}
+  public void remove(int index) {}
+  public void remove(MutableTreeNode node) {}
+  public void removeFromParent() {}
+  public void setParent(MutableTreeNode newParent) {
+    this.parent = parent;
+  }
+  public TreeNode getParent() {
+    return parent;
+  }
+  public void setUserObject(Object object) {}
+}
 

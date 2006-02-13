@@ -214,22 +214,3 @@ class SeqGroupTableModel extends AbstractTableModel  {
     else { return null; }
   }
 }
-
-
-/**
- *   Stubs out MutableTreeNode methods that aren't used for Das2*Node objects
- */
-abstract class DataSourcesAbstractNode implements MutableTreeNode {
-  TreeNode parent;
-  public void insert(MutableTreeNode child, int index)  {}
-  public void remove(int index) {}
-  public void remove(MutableTreeNode node) {}
-  public void removeFromParent() {}
-  public void setParent(MutableTreeNode newParent) {
-    this.parent = parent;
-  }
-  public TreeNode getParent() {
-    return parent;
-  }
-  public void setUserObject(Object object) {}
-}

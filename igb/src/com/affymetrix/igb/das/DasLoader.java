@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.das;
 
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -25,18 +24,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-
-import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
-import com.affymetrix.igb.parsers.PSLParser;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 
 /**
  * A class to help load and parse documents from a DAS server.
@@ -223,39 +213,4 @@ public abstract class DasLoader {
     }
     return ids;
   }
-
-  /**
-   *  Opens a text input stream from the given url, parses it has a
-   *  PSL file, and then adds the resulting data to the given BioSeq,
-   *  using the parser {@link PSLParser}.
-   *
-   *  Note: This method might belong in the PSLParser class.
-   */
-  static MutableAnnotatedBioSeq parsePSL(SeqMapView gviewer, URLConnection feat_request_con, MutableAnnotatedBioSeq current_seq, String type)
-  throws IOException {
-    //TODO: Move this method to PSLParser
-    MutableAnnotatedBioSeq new_seq = null;
-    InputStream result_stream = null;
-    BufferedInputStream bis = null;
-    try {
-      result_stream = feat_request_con.getInputStream();
-      bis = new BufferedInputStream(result_stream);
-      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-      Map seqhash = group.getSeqs();
-      PSLParser parser = new PSLParser();
-      parser.enableSharedQueryTarget(true);
-      if (seqhash == null) {
-        new_seq = parser.parse(bis, current_seq, type);
-      }
-      else {
-        parser.parse(bis, type, null, seqhash, group.getSymHash(), false, true);
-        new_seq = current_seq;
-      }
-    } finally {
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
-    }
-    return new_seq;
-  }  
 }

@@ -14,7 +14,6 @@
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -27,7 +26,6 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
@@ -177,8 +175,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     int total_annot_count = 0;
     int total_child_count = 0;
     String[] block_size_array = null;
+    Thread thread = Thread.currentThread();
     try {
-      while ((line = br.readLine()) != null) {
+      while ((line = br.readLine()) != null && (! thread.isInterrupted())) {
 	line_count++;
         // Ignore psl header lines
 	if (line.trim().equals("") || line.startsWith("#") ||

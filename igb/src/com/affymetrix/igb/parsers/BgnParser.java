@@ -123,6 +123,7 @@ public class BgnParser implements AnnotationWriter  {
     int same_count = 0;
     BufferedInputStream bis = new BufferedInputStream(istr);
     DataInputStream dis = null;
+    boolean reached_EOF = false;
 
     try {
       //      BufferedInputStream bis = new BufferedInputStream(fis, 16384);
@@ -135,7 +136,7 @@ public class BgnParser implements AnnotationWriter  {
       }
       else {
 	dis = new DataInputStream(bis);
-      }
+      }      
       if (true) {
 	/*
 	 *  "while (dis.available() > 0)" loop is not a good alternative
@@ -152,8 +153,10 @@ public class BgnParser implements AnnotationWriter  {
 	 *  can't call close() on the inputstream(s)...
 	 *
 	 */
-	// just keep looping till hitting end-of-file throws an EOFException
-	while (true) {
+        // Loop will usually be ended by EOFException, but
+        // can also be interrupted by Thread.interrupt()
+        Thread thread = Thread.currentThread();
+        while (! thread.isInterrupted()) {
 	  //
 	  String name = dis.readUTF();
 	  String chrom_name = dis.readUTF();
@@ -210,6 +213,7 @@ public class BgnParser implements AnnotationWriter  {
     }
     catch (EOFException ex) {
       // System.out.println("end of file reached, file successfully loaded");
+      reached_EOF = true;
     }
     catch (IOException ioe) {
       throw ioe;
@@ -237,6 +241,9 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("exon count = " + total_exon_count);
     System.out.println("average exons / transcript = " +
 		       ((double)total_exon_count/(double)count));
+    if (! reached_EOF) {
+      System.out.println("File loading was terminated early.");
+    }
     return results;
   }
 

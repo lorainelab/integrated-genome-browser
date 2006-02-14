@@ -22,7 +22,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 
-public class WiggleParser {
+public class WiggleParser extends TrackLineParser {
 
   /**
    *  wiggle subformats 
@@ -47,7 +47,7 @@ public class WiggleParser {
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
    */
-  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name) {
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name) {
     List grafs = new ArrayList();
     int current_format = UNKNOWN;
     IntList xlist = null;
@@ -62,7 +62,8 @@ public class WiggleParser {
 	if (line.startsWith("#")) { continue; }
 	else if (line.startsWith("%")) { continue; }
 	else if (line.startsWith("track")) { 
-	  
+	  setTrackProperties(line);
+	  continue;
 	}
 	else if (line.startsWith("variableStep")) {
 	  if (xlist != null && ylist != null) {

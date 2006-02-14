@@ -1,3 +1,15 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -26,7 +38,7 @@ public class WiggleParser {
   static Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
 
   /**
-   * NOR YET IMPLEMENTED
+   * NOR YET IMPLEMENTED.
    *  Currently only reading one particular wiggle format:
    *     variableStep two-column data; started by a declaration line and followed with
    *       chromosome positions and data values:
@@ -35,7 +47,7 @@ public class WiggleParser {
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
    */
-  public static List parse(InputStream istr, Map seqhash, boolean annotate_seq, String stream_name) {
+  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name) {
     List grafs = new ArrayList();
     int current_format = UNKNOWN;
     IntList xlist = null;
@@ -54,7 +66,7 @@ public class WiggleParser {
 	}
 	else if (line.startsWith("variableStep")) {
 	  if (xlist != null && ylist != null) {
-	    grafs.add(createGraph(seqhash, graph_name, graph_props, seqid, xlist, ylist));
+	    grafs.add(createGraph(seq_group, graph_name, graph_props, seqid, xlist, ylist));
 	  }
 	  String[] fields = field_regex.split(line);
 	  for (int i=1; i<fields.length; i++) {
@@ -85,22 +97,23 @@ public class WiggleParser {
   }
 
 
-  protected static GraphSym createGraph(Map seqhash, String gname, Map gprops, String seqid, 
+  protected static GraphSym createGraph(AnnotatedSeqGroup seq_group, String gname, Map gprops, String seqid, 
 					IntList xlist, FloatList ylist) {
-    BioSeq seq = (BioSeq)seqhash.get(seqid);
+    BioSeq seq = seq_group.getSeq(seqid);
     GraphSym gsym = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), gname, seq);
     // add props ??? NOT YET IMPLEMENTED
     return gsym;
   }
 
   /**
-   *  Currently only writing out one particular wiggle format:
+   *  Currently only writing out one particular wiggle format. Specifically:
    *     variableStep two-column data; started by a declaration line and followed with
    *       chromosome positions and data values:
-   *
-   *   variableStep  chrom=chrN  [span=windowSize}
+   *<pre>
+   *   variableStep  chrom=chrN  [span=windowSize]
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
+   *</pre>
    */
   public static boolean writeGraphs(java.util.Collection graphs, OutputStream outstream) {
     try {

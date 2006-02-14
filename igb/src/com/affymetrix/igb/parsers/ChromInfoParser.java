@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -40,6 +40,10 @@ public class ChromInfoParser {
     return seqhash;
   }
 
+  /**
+   *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
+   *  adds it to the SingletonGenometryModel.
+   */
   public AnnotatedSeqGroup parseGroup(InputStream istr, String genome_version)
     throws IOException {
 
@@ -64,7 +68,11 @@ public class ChromInfoParser {
 	    ((Versioned)chrom).setVersion(genome_version);
 	  }
 	  seqlist.add(chrom);
-	} catch (Exception ex) { ex.printStackTrace(); }
+	} catch (Exception ex) {
+          IOException ioe = new IOException("Problem parsing chrom info file");
+          ioe.initCause(ex);
+          throw ioe;
+        }
       }
     }
     Collections.sort(seqlist, new ChromComparator());

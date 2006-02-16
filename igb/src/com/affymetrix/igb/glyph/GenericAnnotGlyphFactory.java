@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -46,6 +46,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static Class default_labelled_parent_class = (new LabelledLineContGlyph2()).getClass();
   static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 
+  static int DEFAULT_THICK_HEIGHT = 25;
+  static int DEFAULT_THIN_HEIGHT = 15;
+
   SeqMapView gviewer;
   Color parent_color = default_annot_color;
   Color child_color = default_annot_color;
@@ -70,7 +73,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       parent_labelled_glyph_class = default_labelled_parent_class;
     }
   }
-  
+
   public void init(Map options) {
     //parent_color = (Color)options.get("parent_color");
     //child_color = (Color)options.get("child_color");
@@ -107,7 +110,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
     }
   }
-  
+
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     //    return createGlyph(sym, smv, false);
     createGlyph(sym, smv, false);
@@ -126,7 +129,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       child_color = style.getColor();
       glyph_depth = style.getGlyphDepth();
       label_field = style.getLabelField();
-      
+
 //      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, true, state.getColor(), default_tier_color);
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       if (style.getSeparate()) {
@@ -171,11 +174,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   int optimized_child_count = 0;
-    
+
   public GlyphI addToTier(SeqSymmetry insym,
                           TierGlyph forward_tier,
                           TierGlyph reverse_tier) {
-                            
+
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
@@ -188,14 +191,14 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     boolean forward = pspan.isForward();
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
-        
+
     GlyphI pglyph = null;
 
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
-    double pheight = 25.0001;
+    double pheight = DEFAULT_THICK_HEIGHT + 0.0001;
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
 
@@ -264,23 +267,23 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           try  { cglyph = (GlyphI)child_glyph_class.newInstance(); }
           catch (Exception ex) { ex.printStackTrace(); }
 
-          int cheight = 25;
+          int cheight = DEFAULT_THICK_HEIGHT;
           if (cdsSpan != null) {
-            cheight = 15;
-            if (SeqUtils.contains(cdsSpan, cspan)) { cheight = 25; }
+            cheight = DEFAULT_THIN_HEIGHT;
+            if (SeqUtils.contains(cdsSpan, cspan)) { cheight = DEFAULT_THICK_HEIGHT; }
             else if (SeqUtils.overlap(cdsSpan, cspan)) {
               try {
-              SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
-              SeqSymmetry cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2);
-              //SeqSpan cds_span = SeqUtils.intersection(cdsSpan, cspan);
-              SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
-              GlyphI cds_glyph = (GlyphI) child_glyph_class.newInstance();
-              cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), 25);
-              cds_glyph.setColor(parent_color);
-              pglyph.addChild(cds_glyph);
-              if (SET_CHILD_INFO) {
-                map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
-              }
+		SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
+		SeqSymmetry cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2);
+		//SeqSpan cds_span = SeqUtils.intersection(cdsSpan, cspan);
+		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
+		GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
+		cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
+		cds_glyph.setColor(parent_color);
+		pglyph.addChild(cds_glyph);
+		if (SET_CHILD_INFO) {
+		  map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
+		}
 
               } catch (Exception e) {
                 e.printStackTrace();
@@ -326,6 +329,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (forward)  { forward_tier.addChild(pglyph); }
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
-  }  
-  
+  }
+
 }

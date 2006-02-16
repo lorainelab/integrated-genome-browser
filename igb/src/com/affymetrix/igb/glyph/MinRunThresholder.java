@@ -80,7 +80,7 @@ public class MinRunThresholder extends JPanel
     minrunTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.add(new JLabel("Min Run: "));
+    this.add(new JLabel("Min Run > "));
     this.add(minrunTF);
     this.add(tslider);
 

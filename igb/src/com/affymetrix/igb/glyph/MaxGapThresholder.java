@@ -82,7 +82,7 @@ public class MaxGapThresholder extends JPanel
     maxgapTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.add(new JLabel("Max Gap: "));
+    this.add(new JLabel("Max Gap <= "));
     this.add(maxgapTF);
     this.add(tslider);
 

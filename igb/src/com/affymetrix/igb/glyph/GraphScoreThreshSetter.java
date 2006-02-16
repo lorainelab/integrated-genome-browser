@@ -116,7 +116,7 @@ public class GraphScoreThreshSetter extends JPanel
     textP.setLayout(new BoxLayout(textP, BoxLayout.Y_AXIS));
     slideP.setLayout(new BoxLayout(slideP, BoxLayout.Y_AXIS));
 
-    thresh_aboveB = new JRadioButton(">= thresh");
+    thresh_aboveB = new JRadioButton("> thresh");
     thresh_belowB = new JRadioButton("<= thresh");
     ButtonGroup pgroup = new ButtonGroup();
     pgroup.add(thresh_aboveB);

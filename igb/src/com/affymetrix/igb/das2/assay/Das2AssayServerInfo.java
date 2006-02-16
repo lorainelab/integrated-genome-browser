@@ -50,14 +50,18 @@ public class Das2AssayServerInfo extends Das2ServerInfo{
         this.sources.put(ds.getID(), (Das2AssaySource) ds);
     }
 
-    protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
-        Das2AssaySource D2S = new Das2AssaySource( (Das2AssayServerInfo) _D2SI, _source_id, _init);
+    protected void setDasSource(Das2ServerInfo _D2SI, URI source_uri, boolean _init){
+        Das2AssaySource D2S = new Das2AssaySource( (Das2AssayServerInfo) _D2SI, source_uri, _init);
         dasSource =  D2S;
     }
 
     protected void setDasVersionedSource(Das2Source _D2S, String _version_id, boolean _init ){
-        Das2AssayVersionedSource D2VS = new Das2AssayVersionedSource( (Das2AssaySource) _D2S, _version_id, _init);
+      try  {
+        URI vers_uri = new URI(_version_id);
+        Das2AssayVersionedSource D2VS = new Das2AssayVersionedSource( (Das2AssaySource) _D2S, vers_uri, _init);
         dasVersionedSource = D2VS;
+      }
+      catch (Exception ex)  { ex.printStackTrace(); }
     }
 
 }

@@ -38,8 +38,8 @@ import com.affymetrix.igb.das.DasLoader;
 public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
 
     /** Creates a new instance of Das2OntologyVersionedSource */
-    public Das2OntologyVersionedSource(Das2OntologySource das_source, String version_id, boolean init) {
-        super(das_source, version_id, init);
+    public Das2OntologyVersionedSource(Das2OntologySource das_source, URI vers_uri, boolean init) {
+        super(das_source, vers_uri, init);
     }
 
     // get annotation types from das server
@@ -49,7 +49,7 @@ public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
 
     //ontology_types_request should look like:
     //String ontologyRequest = "http://das.biopackages.net/das/ontology/obo/1/ontology/";
-    String ontologyTypesRequest = getSource().getServerInfo().getRootUrl();
+    String ontologyTypesRequest = getSource().getID();
 
     if (filter != null) {
       //next I need a string like:
@@ -92,6 +92,7 @@ public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
         String ontid = typeNode.getAttribute("ontology");
 	String type_source = typeNode.getAttribute("source");
 	String href = typeNode.getAttribute("doc_href");
+        String type_name = typeNode.getAttribute("name");
 
 	NodeList flist = typeNode.getElementsByTagName("FORMAT");
 	LinkedHashMap formats = new LinkedHashMap();
@@ -134,9 +135,14 @@ public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
            parents.put(key, key);
         }
 
-        //add each node as you ID them and their parents
-        Das2Type type = new Das2Type(this, termID, ontid, type_source, href, formats, props, parents);
-        this.addType(type);
+        try  {
+          //add each node as you ID them and their parents
+          Das2Type type = new Das2Type(this, new URI(termID), type_name, ontid, type_source, href, formats,
+                                       props, parents);
+          this.addType(type);
+        }
+        catch (Exception ex)  { ex.printStackTrace(); }
+
 
         typeCounter++;
       }

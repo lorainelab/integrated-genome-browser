@@ -46,8 +46,8 @@ public class Das2AssayVersionedSource extends Das2VersionedSourcePlus {
     HashMap typeIdToName = new HashMap();
 
     /** Creates a new instance of Das2AssayVersionedSource */
-    public Das2AssayVersionedSource(Das2AssaySource das_source, String version_id, boolean init) {
-        super(das_source, version_id, init);
+    public Das2AssayVersionedSource(Das2AssaySource das_source, URI vers_uri, boolean init) {
+        super(das_source, vers_uri, init);
     }
 
 
@@ -82,7 +82,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSourcePlus {
 
     // how should xml:base be handled?
     //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-    String types_request = getSource().getServerInfo().getRootUrl() +
+    String types_request = getSource().getID() +
         "/" + this.getID() + "/type";
 
 
@@ -268,7 +268,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSourcePlus {
                parents.put(key, val);
             }
             // FIXME: I think the id and ontology fields should be switched here
-            Das2Type type = new Das2Type(this, typeid, (String)typeIdToName.get(typeid), type_source, href, formats, props, parents);
+            Das2Type type = new Das2Type(this, new URI(typeid), type_name, (String)typeIdToName.get(typeid), type_source, href, formats, props, parents);
             this.addType(type);
         }
 
@@ -320,14 +320,21 @@ public class Das2AssayVersionedSource extends Das2VersionedSourcePlus {
 
             //instructions for adding nodes:
             if(!_uberTrackingHash.containsKey(_typeid)){    //if we don't have this in the _uberTrackingHash already...
-                    if(!_newTypes.contains(_typeid)){     //make sure we have not seen this element before (in this pass)
+                    if(!_newTypes.contains(_typeid)){
+                      try { //make sure we have not seen this element before (in this pass)
                         //1) make a Das2Type...
                         // FIXME: the id and ontology id are probably reversed here
-                        Das2Type type = new Das2Type(_type, _typeid, (String)typeIdToName.get(_typeid), _type_source, _href, _formats, _props, _parents);
+                        Das2Type type = new Das2Type(_type, new URI(_typeid), _typeid,
+                                                     (String)
+                                                     typeIdToName.get(_typeid),
+                                                     _type_source, _href, _formats,
+                                                     _props, _parents);
                         //2) add the current element to the ArrayList and use a bool to see if its the 1st time or not...
                         _newTypes.add(type);
                         //3) note that we added the element by adding it to the _uberTrackingHash and the
                         _uberTrackingHash.put(_typeid, type);
+                      }
+                      catch (Exception ex)  { ex.printStackTrace(); }
                     }
             }
 
@@ -412,7 +419,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSourcePlus {
 
     protected void initPlatforms(){
         this.clearPlatforms();
-        String plat_request = getSource().getServerInfo().getRootUrl() +
+        String plat_request = getSource().getID() +
         "/" + this.getID() + "/platform";
     try {
         System.out.println("Current DAS platform Request: " + plat_request);

@@ -31,15 +31,17 @@ import com.affymetrix.igb.util.ErrorHandler;
  *
  */
 public class Das2OntologySource extends Das2Source {
-    
+
+  boolean init;
     /** Creates a new instance of Das2OntologySource */
-    public Das2OntologySource(Das2OntologyServerInfo source_server, String source_id, boolean init) {
-        super(source_server, source_id, init);
+    public Das2OntologySource(Das2OntologyServerInfo source_server, URI src_uri, boolean init) {
+      super(source_server, src_uri, null, null, null, null);
+      this.init = init;
     }
-    
-    //overridden methods    
+
+    //overridden methods
     public void addVersion(Das2OntologyVersionedSource version) {
         this.versions.put(version.getID(), version);
-    }    
-        
+    }
+
 }

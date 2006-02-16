@@ -42,14 +42,26 @@ public class Das2OntologyServerInfo extends Das2ServerInfo{
         this.sources.put(ds.getID(), (Das2OntologySource) ds);
     }
 
+    /**
+     * @param _init boolean  deprecated, doesn't do anything
+     */
     protected void setDasSource(Das2ServerInfo _D2SI, String _source_id, boolean _init){
-        Das2OntologySource D2S = new Das2OntologySource( (Das2OntologyServerInfo) _D2SI, _source_id, _init);
-        dasSource =  D2S;
+      try  {
+        URI source_uri = new URI(_source_id);
+        Das2OntologySource D2S = new Das2OntologySource( (
+            Das2OntologyServerInfo) _D2SI, source_uri, _init);
+        dasSource = D2S;
+      }
+      catch (Exception ex)  { ex.printStackTrace(); }
     }
 
     protected void setDasVersionedSource(Das2Source _D2S, String _version_id, boolean _init ){
-        Das2OntologyVersionedSource D2VS = new Das2OntologyVersionedSource( (Das2OntologySource) _D2S, _version_id, _init);
+      try  {
+        URI vers_uri = new URI(_version_id);
+        Das2OntologyVersionedSource D2VS = new Das2OntologyVersionedSource( (Das2OntologySource) _D2S, vers_uri, _init);
         dasVersionedSource = D2VS;
+      }
+      catch (Exception ex)  { ex.printStackTrace(); }
     }
 
 }

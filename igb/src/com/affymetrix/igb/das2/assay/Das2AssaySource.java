@@ -32,15 +32,18 @@ import com.affymetrix.igb.util.ErrorHandler;
  */
 
 public class Das2AssaySource extends Das2Source {
-    
+
+  boolean init;
+
     /** Creates a new instance of Das2AssaySource */
-    public Das2AssaySource(Das2AssayServerInfo source_server, String source_id, boolean init) {
-        super(source_server, source_id, init);
-    }     
-    
+    public Das2AssaySource(Das2AssayServerInfo source_server, URI source_uri, boolean init) {
+        super(source_server, source_uri, null, null, null, null);
+        this.init = init;
+    }
+
     //overridden methods
     public void addVersion(Das2AssayVersionedSource version) {
         this.versions.put(version.getID(), version);
-    }    
-    
+    }
+
 }

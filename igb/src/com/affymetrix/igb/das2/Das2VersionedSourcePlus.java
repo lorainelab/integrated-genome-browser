@@ -44,9 +44,12 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 
   LinkedList platforms = new LinkedList();
 
-  public Das2VersionedSourcePlus(Das2Source das_source, String version_id, boolean init) {
-    super(das_source, version_id, init);
-  }
+ // public Das2VersionedSourcePlus(Das2Source das_source, String version_id, boolean init) {
+//    super(das_source, version_id, init);
+//  }
+    public Das2VersionedSourcePlus(Das2Source das_source, URI vers_uri, boolean init) {
+        super(das_source, vers_uri, init);
+    }
 
   public void addAssay(Das2Assay assay) {
       assays.put(assay.getID(), assay);
@@ -119,7 +122,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 
   protected void initMaterials() {
     this.clearMaterials();
-    String materials_request = getSource().getServerInfo().getRootUrl() +
+    String materials_request = getSource().getID() +
       "/" + this.getID() + "/material";
     try {
       System.out.println("Das Materials Request: " + materials_request);
@@ -165,7 +168,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 
   protected void initResults() {
     this.clearResults();
-    String results_request = getSource().getServerInfo().getRootUrl() +
+    String results_request = getSource().getID() +
       "/" + this.getID() + "/result";
     try {
       System.out.println("Das Results Request: " + results_request);
@@ -197,7 +200,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 
   protected void initAssays() {
     this.clearAssays();
-    String assays_request = getSource().getServerInfo().getRootUrl() +
+    String assays_request = getSource().getID() +
       "/" + this.getID() + "/assay";
     try {
       System.out.println("Das Assays Request: " + assays_request);
@@ -252,7 +255,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 
     // how should xml:base be handled?
     //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-    String types_request = this.getRootUrl() + "/" + TYPES_QUERY;
+    String types_request = this.getID() + "/" + TYPES_QUERY;
 
     if (filter != null) {
       types_request = types_request+"?ontology="+filter;
@@ -380,6 +383,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
         String ontid = typenode.getAttribute("ontology");
 	String type_source = typenode.getAttribute("source");                   //PROBLEM!  This is missing too (no longer in this doc?)
 	String href = typenode.getAttribute("doc_href");                        //ALSO MIA is this attribute  Are these needed?  I doubt they are needed YET
+        String type_name = typenode.getAttribute("name");
 
 	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
 	LinkedHashMap formats = new LinkedHashMap();                            //I don't think that this has ever been used yet.
@@ -457,7 +461,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
                String val = "";                                                 //used to be = pnode.getAttribute("id"); as well
                parents.put(key, val);                                           //
             }                                                                   //
-            Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, parents);
+            Das2Type type = new Das2Type(this, new URI(typeid), type_name, ontid, type_source, href, formats, props, parents);
             this.addType(type);
         }
 
@@ -513,11 +517,16 @@ protected void recurseUntilAllParentsAreFound(Das2VersionedSource _type, String 
         if(!_uberTrackingHash.containsKey(_typeid)){    //if we don't have this in the _uberTrackingHash already...
                 if(!_newTypes.contains(_typeid)){     //make sure we have not seen this element before (in this pass)
                     //1) make a Das2Type...
-                    Das2Type type = new Das2Type(_type, _typeid, _ontid, _type_source, _href, _formats, _props, _parents);
-                    //2) add the current element to the ArrayList and use a bool to see if its the 1st time or not...
-                    _newTypes.add(type);
-                    //3) note that we added the element by adding it to the _uberTrackingHash and the
-                    _uberTrackingHash.put(_typeid, type);
+                    try  {
+                      Das2Type type = new Das2Type(_type, new URI(_typeid), _typeid, _ontid,
+                                                   _type_source, _href, _formats,
+                                                   _props, _parents);
+                      //2) add the current element to the ArrayList and use a bool to see if its the 1st time or not...
+                      _newTypes.add(type);
+                      //3) note that we added the element by adding it to the _uberTrackingHash and the
+                      _uberTrackingHash.put(_typeid, type);
+                    }
+                    catch (Exception ex)  { ex.printStackTrace(); }
                 }
         }
 
@@ -584,7 +593,7 @@ protected HashMap getParentsMap(String _ontid, HashMap _curOntology){
 
   protected void initPlatforms(){
       this.clearPlatforms();
-      String plat_request = getSource().getServerInfo().getRootUrl() +
+      String plat_request = getSource().getID() +
         "/" + this.getID() + "/platform";
     try {
       System.out.println("Current DAS platform Request: " + plat_request);

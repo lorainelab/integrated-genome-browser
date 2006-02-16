@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 /**
  * A class to help load and parse documents from a DAS server.
@@ -110,10 +111,9 @@ public abstract class DasLoader {
   
   /**
    *  Returns a Map where keys are String labels and values are SeqSpan's.
-   *  Looks for <gff><segment id="..."> where the id's are in the given seqhash.
-   *  @param seqhash  a Map of id's to BioSeq's
+   *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
    */
-  public static Map parseTermQuery(Document doc, Map seqhash) {
+  public static Map parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
     if (DEBUG) System.out.println("========= Parsing term query");
     Map segment_hash = new HashMap();
 
@@ -132,7 +132,7 @@ public abstract class DasLoader {
             Element seg_elem = (Element)gff_child;
             String id = seg_elem.getAttribute("id");
             if (id != null) {
-              BioSeq segmentseq = (BioSeq)seqhash.get(id);
+              BioSeq segmentseq = seq_group.getSeq(id);
               if (segmentseq != null) {
                 int start = Integer.parseInt(seg_elem.getAttribute("start"));
                 int end = Integer.parseInt(seg_elem.getAttribute("end"));

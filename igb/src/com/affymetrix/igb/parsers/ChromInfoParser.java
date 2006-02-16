@@ -34,17 +34,11 @@ public class ChromInfoParser {
     template_seq = template;
   }
 
-  public Map parse(InputStream istr, String genome_version) throws IOException {
-    AnnotatedSeqGroup grp = parseGroup(istr, genome_version);
-    Map seqhash = grp.getSeqs();
-    return seqhash;
-  }
-
   /**
    *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
    *  adds it to the SingletonGenometryModel.
    */
-  public AnnotatedSeqGroup parseGroup(InputStream istr, String genome_version)
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version)
     throws IOException {
 
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);

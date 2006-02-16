@@ -218,9 +218,14 @@ public class UnibrowControlServlet extends HttpServlet {
 
     // no longer special-casing for version = "unknown"...
     final SeqMapView gviewer = uni.getMapView();
-    final SingletonGenometryModel gmodel = IGB.getGenometryModel();
+    final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
-    AnnotatedSeqGroup book_group = gmodel.getSeqGroup(version);
+    AnnotatedSeqGroup book_group = null;
+    if ("unknown".equals(version)) {
+      book_group = selected_group;
+    } else {
+      book_group = gmodel.getSeqGroup(version);
+    }
 
     if (book_group == null) {
       IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+

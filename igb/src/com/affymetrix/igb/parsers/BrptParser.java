@@ -76,7 +76,8 @@ import com.affymetrix.igb.genometry.*;
     Map source_hash = new HashMap();
     Map type_hash = new HashMap();
 
-    public void outputBrptFormat(java.util.List parents, String genome_version, DataOutputStream dos) {
+    public void outputBrptFormat(java.util.List parents, String genome_version, DataOutputStream dos) 
+    throws IOException {
     try	{
       int pcount = parents.size();
       dos.writeUTF(genome_version);
@@ -103,12 +104,12 @@ import com.affymetrix.igb.genometry.*;
 	}
       }
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      // close the stream?
     }
   }
 
-  public java.util.List readTextFormat(BufferedReader br) {
+  public java.util.List readTextFormat(BufferedReader br) throws IOException {
     int weird_length_count = 0;
     Map id2psym = new HashMap();
     ArrayList parent_syms = new ArrayList();
@@ -153,8 +154,8 @@ import com.affymetrix.igb.genometry.*;
 	repeat_count++;
       }
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      
     }
     System.out.println("repeat count: " + repeat_count);
     System.out.println("repeats on + strand: " + pos_count);
@@ -162,14 +163,16 @@ import com.affymetrix.igb.genometry.*;
     return parent_syms;
   }
 
-  public List parse(InputStream istr, String annot_type, Map seq_hash, boolean annot_seq) {
+  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
+  throws IOException {
     System.out.println("parsing brpt file");
     java.util.List rpt_syms = null;
+    BufferedInputStream bis = null;
+    DataInputStream dis = null;
     try {
-    BufferedInputStream bis;
     if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
     else { bis = new BufferedInputStream(istr); }
-    DataInputStream dis = new DataInputStream(bis);
+    dis = new DataInputStream(bis);
     String genome_version = dis.readUTF();
     int seq_count = dis.readInt();
     int[] rpt_counts = new int[seq_count];
@@ -181,8 +184,11 @@ import com.affymetrix.igb.genometry.*;
     for (int i=0; i<seq_count; i++) {
       String seqid = dis.readUTF();
       seqids[i] = seqid;
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq_hash.get(seqid);
-      seqs[i] = aseq;   // will be null if no seq with given seqid in seqhash,
+      MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+      if (aseq == null) {
+        aseq = seq_group.addSeq(seqid, 0);
+      }
+      seqs[i] = aseq;
       rpt_counts[i] = dis.readInt();
       total_rpt_count += rpt_counts[i];
     }
@@ -190,12 +196,7 @@ import com.affymetrix.igb.genometry.*;
     rpt_syms = new ArrayList(total_rpt_count);
     for (int i=0; i<seq_count; i++) {
       MutableAnnotatedBioSeq aseq = seqs[i];
-      /*
-      if (aseq == null) {
-	System.out.println("No seq matching seqid: " + seqids[i] + " found, aborting BrptParser parsing!");
-	break;
-      }
-      */
+
       int rpt_count = rpt_counts[i];
       System.out.println("seqid: " + seqids[i] + ", rpts: " + rpt_counts[i]);
       SimpleSymWithProps psym = new SimpleSymWithProps();
@@ -213,7 +214,10 @@ import com.affymetrix.igb.genometry.*;
       }
     }
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    finally {
+      if (bis != null) try { bis.close(); } catch (Exception e) {}
+      if (dis != null) try { dis.close(); } catch (Exception e) {}
+    }
     return rpt_syms;
   }
 
@@ -226,7 +230,10 @@ import com.affymetrix.igb.genometry.*;
 	BrptParser tester = new BrptParser();
 	File ifil = new File(binfile);
 	InputStream istr = new FileInputStream(ifil);
-	tester.parse(istr, "rpt", new HashMap(), true);
+        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+        AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+        
+	tester.parse(istr, "rpt", seq_group, true);
 	System.out.println("finished parsing in rpt data from .brpt file");
       }
       else {

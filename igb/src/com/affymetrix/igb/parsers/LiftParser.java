@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -34,7 +34,6 @@ public class LiftParser {
   static int CHROM_LENGTH = 4;
   static int CONTIG_NAME_SUBFIELD = 1;
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
   MutableAnnotatedBioSeq template_seq = default_seq_template;
 
@@ -44,18 +43,20 @@ public class LiftParser {
     template_seq = template;
   }
 
-  public Map loadChroms(String file_name, String genome_version) {
+  public AnnotatedSeqGroup loadChroms(String file_name, String genome_version) 
+  throws IOException {
     System.out.println("trying to load lift file: " + file_name);
+    FileInputStream fistr = null;
+    AnnotatedSeqGroup result = null;
     try {
       File fil = new File(file_name);
-      FileInputStream fistr = new FileInputStream(fil);
-      Map liftmap = this.parse(fistr, genome_version);
-      return liftmap;
+      fistr = new FileInputStream(fil);
+      result = this.parse(fistr, genome_version);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+       if (fistr != null) try { fistr.close(); } catch (Exception e) {} 
     }
-    return null;
+    return result;
   }
 
 
@@ -64,29 +65,24 @@ public class LiftParser {
    *  @return  A Map with chromosome ids as keys, and CompositeBioSeqs representing
    *     chromosomes in the lift file as values.
    */
-  public Map parse(InputStream istr, String genome_version) throws IOException {
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version) throws IOException {
     return parse(istr, genome_version, true);
   }
 
-
-  private Map parse(InputStream istr, String genome_version, boolean annotate_seq) throws IOException {
-    AnnotatedSeqGroup grp = parseGroup(istr, genome_version, annotate_seq);
-    Map seqhash = grp.getSeqs();
-    return seqhash;
-  }
-
   /**
-   *  Reads lift-format from the input stream.
+   *  Reads lift-format from the input stream and creates a new AnnotatedSeqGroup.
+   *  The new AnnotatedSeqGroup will be inserted into the SingletonGenometryModel.
    *  @return an AnnotatedSeqGroup containing CompositeBioSeqs representing
    *     chromosomes in the lift file.
    */
-  public AnnotatedSeqGroup parseGroup(InputStream istr, String genome_version, boolean annotate_seq)
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version, boolean annotate_seq)
     throws IOException {
     System.out.println("parsing in lift file");
     Timer tim = new Timer();
     tim.start();
     int contig_count = 0;
     int chrom_count = 0;
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
 
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
@@ -95,7 +91,8 @@ public class LiftParser {
 
     try {
       String line;
-      while ((line = br.readLine()) != null)  {
+      Thread thread = Thread.currentThread();
+      while ((line = br.readLine()) != null && (! thread.isInterrupted())) {
 	String fields[] = re_tab.split(line);
 	int chrom_start = Integer.parseInt(fields[CHROM_START]);
 	int match_length = Integer.parseInt(fields[MATCH_LENGTH]);
@@ -117,7 +114,11 @@ public class LiftParser {
 	  chrom_count++;
 	  try  {
 	    chrom = (MutableAnnotatedBioSeq)template_seq.getClass().newInstance();
-	  } catch (Exception ex) { ex.printStackTrace(); }
+	  } catch (Exception ex) { 
+            IOException ioe = new IOException("Error while parsing lift file");
+            ioe.initCause(ex);
+            throw ioe;
+          }
 	  chrom.setID(chrom_name);
 	  chrom.setLength(chrom_length);
 	  if (chrom instanceof Versioned) {

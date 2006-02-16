@@ -1,11 +1,24 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.util.*;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.GraphSym;
 
 public class BgrParser {
 
@@ -74,14 +87,7 @@ public class BgrParser {
     return true;
   }
 
-
-  public static GraphSym parse(InputStream istr, BioSeq aseq) throws IOException {
-    Map seqhash = new HashMap();
-    seqhash.put(aseq.getID(), aseq);
-    return parse(istr, seqhash);
-  }
-
-  public static GraphSym parse(InputStream istr, Map seqhash)
+  public static GraphSym parse(InputStream istr, AnnotatedSeqGroup seq_group)
     throws IOException  {
     com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
     tim.start();
@@ -113,35 +119,20 @@ public class BgrParser {
                        ", total_points = " + total_points);
     int[] xcoords = new int[total_points];
     float[] ycoords = new float[total_points];
-    for (int i=0; i<total_points; i++) {
-      xcoords[i] = dis.readInt();
+    int largest_x = 0; // assume the x-values are sorted, so the max is the last one read.
+    Thread thread = Thread.currentThread();
+    for (int i=0; i<total_points && ! thread.isInterrupted(); i++) {
+      largest_x = xcoords[i] = dis.readInt();
       ycoords[i] = dis.readFloat();
       count++;
     }
-    // can't just hash, because _could_ be a synonym instead of an exact match
-    //    BioSeq seq = (BioSeq)seqhash.get(seq_name);
-    MutableAnnotatedBioSeq seq = null;
-    SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-    Iterator iter = seqhash.values().iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq)iter.next();
-      if (lookup.isSynonym(testseq.getID(), seq_name)) {
-        seq = testseq;
-        break;
-      }
-    }
+    
+    MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);    
     if (seq == null) {
-      System.out.println("seq not found, creating new seq");
-      seq = new NibbleBioSeq(seq_name, release_name, 500000000);
+      System.out.println("seq not found, creating new seq: '"+seq_name+"'");
+      seq = seq_group.addSeq(seq_name, largest_x);
     }
-    //    if (seq == null) { seq = new SimpleBioSeq(seq_name, 500000000); }
-    /*
-     BioSeq seq = null;
-     if (aseq == null) {
-      seq = new SimpleBioSeq(seq_name, 500000000);
-    }
-    else { seq = aseq; }
-    */
+
     String graph_name =
       analysis_group_name + ", " +
       value_type_name + ", " +

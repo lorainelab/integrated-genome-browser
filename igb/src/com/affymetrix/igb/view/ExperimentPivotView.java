@@ -32,7 +32,6 @@ import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.parsers.*;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGB;
 
 public class ExperimentPivotView extends JComponent
@@ -583,17 +582,15 @@ public class ExperimentPivotView extends JComponent
     MutableAnnotatedBioSeq testseq = null;
     FileInputStream fis = new FileInputStream(new File(testgff));
     GFFParser parser = new GFFParser();
-    testseq = parser.parse(fis);
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+    
+    java.util.List syms = parser.parse(fis, seq_group, false);
+    SeqSymmetry first_sym = (SeqSymmetry) syms.get(0);
+    testseq = (MutableAnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
 
     JFrame frm = new JFrame( "ExperimentPivotView Test" );
     frm.setDefaultCloseOperation( frm.EXIT_ON_CLOSE );
-
-    /*
-    JMenuBar mbar = new JMenuBar();
-    frm.setJMenuBar(mbar);
-    JMenu view_menu = new JMenu("View");
-    mbar.add(view_menu);
-    */
 
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());

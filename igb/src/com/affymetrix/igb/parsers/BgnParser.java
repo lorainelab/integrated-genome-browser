@@ -78,20 +78,7 @@ public class BgnParser implements AnnotationWriter  {
     }
     return result;
   }
-  
-  // This method is needed only by some affy-internal classes.
-  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) throws IOException {
-    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Unknown Seq Group");
-    Iterator iter = seq_hash.values().iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
-      seq_group.addSeq(seq);
-    }
-    List result = parse(istr, annot_type, seq_group, blength, true);
-    seq_hash.putAll(seq_group.getSeqs());
-    return result;
-  }
-  
+    
   /**
    *  The main parsing routine.
    *  @param seq_group  must not be null.
@@ -107,7 +94,7 @@ public class BgnParser implements AnnotationWriter  {
     Timer tim = new Timer();
     tim.start();
 
-    // annots is list of top-level parent syms (max 1 per seq in seq_hash) that get
+    // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
     //    added as annotations to the annotated BioSeqs -- their children
     //    are then actual transcript annotations
     ArrayList annots = new ArrayList();
@@ -181,11 +168,7 @@ public class BgnParser implements AnnotationWriter  {
           MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
           
           if (chromseq == null) {
-            // A null chromseq would cause a Null Pointer Exception below, so let's
-            // throw an IOException which will be easier to deal with.
-            throw new IOException("File refers to unknown sequence '"+ chrom_name +"'");
-
-            //TODO: It might be nice to let this parser add new sequences to the AnnotatedSeqGroup
+            chromseq = seq_group.addSeq(chrom_name, 0);
           }
 
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
@@ -193,6 +176,10 @@ public class BgnParser implements AnnotationWriter  {
 
           seq_group.addToIndex(name, sym);
           results.add(sym);
+              
+          if (tmax > chromseq.getLength()) {              
+              chromseq.setLength(tmax);
+          }
 
 	  if (annotate_seq)  {
 	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
@@ -204,6 +191,7 @@ public class BgnParser implements AnnotationWriter  {
 	      annots.add(parent_sym);
 	      chrom2sym.put(chrom_name, parent_sym);
 	    }
+            //TODO: Make sure parent_sym is long enough to encompas all its children
 	    parent_sym.addChild(sym);
 	  }
 	  total_exon_count += ecount;
@@ -311,8 +299,7 @@ public class BgnParser implements AnnotationWriter  {
     }
   }
 
-  //  public void readTextTest(String file_name, Map seq_hash) {
-  public void convertTextToBinary(String text_file, String bin_file, Map seq_hash) {
+  public void convertTextToBinary(String text_file, String bin_file, AnnotatedSeqGroup seq_group) {
     System.out.println("loading file: " + text_file);
     int count = 0;
     long flength = 0;
@@ -357,7 +344,7 @@ public class BgnParser implements AnnotationWriter  {
 	String name = fields[0];
 	//	name_hash.put(name, null);
 	String chrom = fields[1];
-	if ((seq_hash != null)  && (seq_hash.get(chrom) == null)) {
+	if (seq_group.getSeq(chrom) == null) {
 	  System.out.println("sequence not recognized, ignoring: " + chrom);
 	  continue;
 	}

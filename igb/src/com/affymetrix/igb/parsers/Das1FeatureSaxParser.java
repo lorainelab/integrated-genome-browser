@@ -19,7 +19,6 @@ import java.util.*;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -99,7 +98,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final boolean STORE_TEXTUAL_NOTES = false;
 
   MutableAnnotatedBioSeq aseq = null;
-  Map seqhash = null;
+  AnnotatedSeqGroup seq_group = null;
   SingletonSymWithProps current_sym = null;
 
   String featid = null;
@@ -172,69 +171,23 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     filter_hash.remove(feat_str);
   }
 
-
-  public MutableAnnotatedBioSeq parse(InputStream istr)
-  throws IOException, SAXException {
-    return parse(istr, new HashMap());
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group)
+  throws IOException {
+     InputSource isrc = new InputSource(istr);
+     return parse(isrc, seq_group);
   }
-
-  public MutableAnnotatedBioSeq parse(InputSource insource)
-  throws IOException, SAXException {
-    return parse(insource, new HashMap());
-  }
-
-  public MutableAnnotatedBioSeq parse(String uri, MutableAnnotatedBioSeq seq)
-  throws IOException, SAXException {
-    InputSource isrc = new InputSource(uri);
-    return parse(isrc, seq);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, Map seqmap)
-  throws IOException, SAXException {
-    InputSource isrc = new InputSource(istr);
-    return parse(isrc, seqmap);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq seq)
-  throws IOException, SAXException {
-    InputSource isrc = new InputSource(istr);
-    return parse(isrc, seq);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputSource isrc, MutableAnnotatedBioSeq seq)
-  throws IOException, SAXException {
-    HashMap singlet_hash = new HashMap();
-    if (seq != null) {
-      singlet_hash.put(seq.getID(), seq);
-    }
-    return parse(isrc, singlet_hash);
-  }
-
-
-  public MutableAnnotatedBioSeq parse(InputSource isrc, Map seqmap)
-  throws IOException, SAXException {
-    return parse(isrc, seqmap, null);
-  }
-
+  
   /**
-   *  @param annotmap  parameter currently not used
+   *  Parses a DAS/1 XML file and returns a List of SeqSymmetry's.
    */
-  public MutableAnnotatedBioSeq parse(InputSource isrc, Map seqmap, Map annotmap)
-  throws IOException, SAXException {
-    parseWithResultList(isrc, seqmap);
-    return aseq;
-  }
-
-
-  public List parseWithResultList(InputSource isrc, Map seqmap)
-  throws IOException, SAXException {
-    /*
-     *  result_syms get populated via callbacks from reader.parse(),
-     *    eventually leading to result_syms.add() calls in addFeatue();
-     */
-    //    System.out.println("in DasFeat2GenometrySaxParser, seqhash = " + seqhash);
+  public List parse(InputSource isrc, AnnotatedSeqGroup seq_group)
+  throws IOException {
+    //  result_syms get populated via callbacks from reader.parse(),
+    //    eventually leading to result_syms.add() calls in addFeatue();
+    
     result_syms = new ArrayList();
-    seqhash = seqmap;
+    this.seq_group = seq_group;
+    
     //  For now assuming the source XML contains only a single segment
     XMLReader reader = new org.apache.xerces.parsers.SAXParser();
     try {
@@ -253,7 +206,19 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     // We DO care about any exceptions coming during parsing
     reader.setContentHandler(this);
-    reader.parse(isrc);
+    try {
+      reader.parse(isrc);
+    } catch (SAXException se) {
+      IOException ioe = new IOException("Problem parsing DAS XML data: " + se.getMessage());
+      ioe.initCause(se);
+      throw ioe;
+    }
+
+    this.seq_group = null; // for garbage-collection
+    this.aseq = null;
+    this.current_sym = null;
+    clearFeature();
+
     return result_syms;
   }
   
@@ -300,38 +265,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else if (iname == DASGFF) { }
     else if (iname == GFF) { }
     else if (iname == SEGMENT) {
-      //      System.out.println("got segment element start");
       String seqid = atts.getValue("id").intern();
       int seqlength = Integer.parseInt(atts.getValue("stop"));
-      // if no sequence passed in (to merge), or if id doesn't match, go ahead and make new seq here
-      //      if (aseq == null || aseq.getID() == null || (! aseq.getID().equals(seqid))) {
-      if (seqhash != null) {
-        if (seqhash.get(seqid) != null) {
-          aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-        }
-        else {
-          Iterator iter = seqhash.values().iterator();
-          while (iter.hasNext()) {
-            MutableAnnotatedBioSeq checkseq = (MutableAnnotatedBioSeq)iter.next();
-            //            System.out.println("checking for id match:  seqid = " + seqid +
-            //                               ", seq from hash id = " + checkseq.getID());
-            if (lookup.isSynonym(seqid, checkseq.getID())) {
-              aseq = (MutableAnnotatedBioSeq)checkseq;
-              break;
-            }
-          }
-        }
-      }
+      // if sequence id doesn't match, go ahead and make new seq here
+      aseq = seq_group.getSeq(seqid);
       if (aseq == null) {
         System.out.println("making new annotated sequence: " + seqid + ", length = " + seqlength);
-        aseq = new SimpleAnnotatedBioSeq(seqid, seqlength);
-      }
-      // otherwise, try and merge?
-      // should really make sure it's also the same server, mapmaster, data-source...
-      else {  // same seqid as previous
-        // just keep same aseq
-        //        System.out.println("trying to merge with prior sequence, " +
-        //                           "not all equality checks are in place yet...");
+        aseq = seq_group.addSeq(seqid, seqlength);
       }
     }
   }
@@ -705,7 +645,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public static void main(String[] args) {
-    boolean test_result_list = false;
+    boolean use_viewer = true;
     Das1FeatureSaxParser test = new Das1FeatureSaxParser();
     try {
       String user_dir = System.getProperty("user.dir");
@@ -713,16 +653,18 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       String test_file_name = user_dir + "/testdata/das/dastesting3.xml";
       File test_file = new File(test_file_name);
       FileInputStream fistr = new FileInputStream(test_file);
-      if (test_result_list) {
-        InputSource isrc = new InputSource(fistr);
-        HashMap result_seqs = new LinkedHashMap();
-        List results = test.parseWithResultList(isrc, result_seqs);
-        System.out.println("result annotation count: " + results.size());
-        System.out.println("first annotation:");
-        SeqUtils.printSymmetry((SeqSymmetry)results.get(1));
-      }
-      else {
-        MutableAnnotatedBioSeq seq = test.parse(fistr);
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Seq Group");
+      List results = test.parse(fistr, seq_group);
+      
+      SeqSymmetry first_sym = (SeqSymmetry) results.get(1);
+      
+      System.out.println("result annotation count: " + results.size());
+      System.out.println("first annotation:");
+      SeqUtils.printSymmetry(first_sym);
+      
+      if (use_viewer) {
+        AnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
         GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
         viewer.setAnnotatedSeq(seq);
       }

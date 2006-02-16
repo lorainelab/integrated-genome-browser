@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -17,7 +30,8 @@ public class SgrParser {
   static Comparator pointcomp = new Point2DComparator(true, true);
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-  public List parse(InputStream istr, Map seqhash, boolean annotate_seq, String stream_name) {
+  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotate_seq) 
+  throws IOException {
     System.out.println("trying to parse with SgrParser: " + stream_name);
     ArrayList results = new ArrayList();
     InputStreamReader isr = new InputStreamReader(istr);
@@ -26,8 +40,6 @@ public class SgrParser {
     String line;
     Map xhash = new HashMap();
     Map yhash = new HashMap();
-
-    try {
 
     while ((line = br.readLine()) != null) {
       if (line.startsWith("#")) { continue; }
@@ -53,9 +65,6 @@ public class SgrParser {
       ylist.add(y);
     }
 
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
-
     // after populating all xlists, now make sure sorted
     sortAll(xhash, yhash);
 
@@ -63,13 +72,12 @@ public class SgrParser {
     while (iter.hasNext()) {
       Map.Entry keyval = (Map.Entry)iter.next();
       String seqid = (String)keyval.getKey();
-      BioSeq aseq = (BioSeq)seqhash.get(seqid);
+      BioSeq aseq = seq_group.getSeq(seqid);
       IntList xlist = (IntList)keyval.getValue();
       FloatList ylist = (FloatList)yhash.get(seqid);
 
       if (aseq == null) {
-	aseq = new SmartAnnotBioSeq(seqid, "unknown_version", xlist.get(xlist.size()-1));
-	seqhash.put(seqid, aseq);
+        aseq = seq_group.addSeq(seqid, xlist.get(xlist.size()-1));
       }
 
       int[] xcoords = xlist.copyToArray();
@@ -142,7 +150,8 @@ public class SgrParser {
 
     try {
       FileInputStream fis = new FileInputStream(new File(test_file));
-      test.parse(fis, testhash, true, test_file);
+      AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("New Group");
+      test.parse(fis, test_file, seq_group, true);
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }

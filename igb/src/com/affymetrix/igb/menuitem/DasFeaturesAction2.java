@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,10 +18,8 @@ import com.affymetrix.igb.event.UrlLoaderThread;
 // Java
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -30,7 +28,6 @@ import org.xml.sax.*;
 import org.w3c.dom.Document;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.igb.das.*;
 import com.affymetrix.genometry.*;
@@ -39,10 +36,8 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.NibbleBioSeq; // should replace with Versioned interface...
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
@@ -263,8 +258,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
   void handleTermQuery(String das_server, String das_source, String term) {
     lmodel.clear();
     segment_hash.clear();
-    Map seqhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqs();
-    if (seqhash == null) {
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+    if (seq_group == null) {
       ErrorHandler.errorPanel("Cannot perform Term Query when no sequence is loaded.");
       return;
     }
@@ -279,7 +274,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
     Document doc = getDasDocument(das_request);
     if (doc != null) {
-      Map segment_hash_2 = DasLoader.parseTermQuery(doc, seqhash);
+      Map segment_hash_2 = DasLoader.parseTermQuery(doc, seq_group);
 
       // Copy the lables into the ListModel
       Iterator labels = segment_hash_2.keySet().iterator();

@@ -47,7 +47,9 @@ public class WiggleParser extends TrackLineParser {
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
    */
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name) {
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, 
+    String stream_name) throws IOException {
+    
     List grafs = new ArrayList();
     int current_format = UNKNOWN;
     IntList xlist = null;
@@ -55,7 +57,6 @@ public class WiggleParser extends TrackLineParser {
     String graph_name = null;
     String seqid = null;
     Map graph_props = null;
-    try {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line;
       while ((line = br.readLine()) != null) {
@@ -84,8 +85,7 @@ public class WiggleParser extends TrackLineParser {
 	  String[] fields = field_regex.split(line);
 	}
       }
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
+    
     if (annotate_seq) {
       Iterator giter = grafs.iterator();
       while (giter.hasNext()) {
@@ -153,6 +153,8 @@ public class WiggleParser extends TrackLineParser {
     String in_file = args[0];
     String out_file = args[1];
     // read in_file using GraphSymUtils.readGraphs() ?  need to modify to handle gr (like readGraph())
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+    
     try {
       InputStream istr = new FileInputStream(new File(in_file));
       List gsyms = new ArrayList();
@@ -161,7 +163,7 @@ public class WiggleParser extends TrackLineParser {
 	System.err.println("     Conversion of .gr files not yet implemented");
       }
       else {
-	gsyms = GraphSymUtils.readGraphs(istr, in_file, new HashMap());
+	gsyms = GraphSymUtils.readGraphs(istr, in_file, seq_group);
       }
       // write out_file using WiggleParser.writeGraphs();
       System.out.println("writing out graphs in wiggle format: " + out_file);

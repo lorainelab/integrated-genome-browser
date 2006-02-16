@@ -134,6 +134,7 @@ public class AnnotatedSeqGroup {
     MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
     if (oldseq == null) {
       id2seq.put(seq.getID(), seq);
+      System.out.println("Added seq: " + seq.getID());
       seqlist.add(seq);
       if (seq instanceof SmartAnnotBioSeq) {
 	((SmartAnnotBioSeq)seq).setSeqGroup(this);

@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -69,15 +82,10 @@ public class BarParser {
     //     but rather extracted from a field (or set of fields) in the bar file, so can be shared
     //     across bar files that have the exact same base coords
     int[] chunk_mins = (int[])coordset2seqs.get(file_name);
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     if (chunk_mins == null) {
-      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-      Map seqs = null;
-      if ((group != null) && (group.getSeqs() != null)) {
-        seqs = group.getSeqs();
-      }
-      else { seqs = new HashMap(); }
-      buildIndex(file_name, file_name, seqs);
+      buildIndex(file_name, file_name, seq_group);
       // index??
       chunk_mins = (int[])coordset2seqs.get(file_name);
     }
@@ -129,7 +137,7 @@ public class BarParser {
 	dis = new DataInputStream(new BufferedInputStream(fis));
       }
       BarFileHeader bar_header = parseBarHeader(dis);
-      BarSeqHeader seq_header = parseSeqHeader(dis, seqs, bar_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, bar_header);
       int bytes_per_point = bar_header.bytes_per_point;
       int points_per_index = points_per_chunk;
       int points_to_skip = min_index * points_per_index;
@@ -210,7 +218,8 @@ public class BarParser {
     }
     //    testFullRead(test_file);
     Map seqs = new HashMap();
-    buildIndex(test_file, test_file, seqs);
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+    buildIndex(test_file, test_file, seq_group);
     BioSeq testseq = new SimpleBioSeq("test", 150200300);
     //    getSlice(test_file, "temp", 0, 2000000);
     getSlice(test_file, new SimpleSeqSpan(67000000, 68000000, testseq));
@@ -281,7 +290,7 @@ public class BarParser {
    *    least 10x > N), so overhead for reading extra data will be minor.
    * </pre>
    */
-  public static void buildIndex(String file_name, String coord_set_id, Map seqs) 
+  public static void buildIndex(String file_name, String coord_set_id, AnnotatedSeqGroup seq_group) 
   throws IOException {
     Timer tim = new Timer();
     tim.start();
@@ -292,7 +301,7 @@ public class BarParser {
       BarFileHeader file_header = parseBarHeader(dis);
       int[] val_types = file_header.val_types;
       int bytes_per_point = file_header.bytes_per_point;
-      BarSeqHeader seq_header = parseSeqHeader(dis, seqs, file_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, file_header);
       int total_points = seq_header.data_point_count;
 
       int point_count = 0;
@@ -474,17 +483,17 @@ public class BarParser {
   }
 
 
-  /**
-   *  Implementing AnnotationWriter interface to write out graph annotations
-   *    to an output stream as "bar" format.
-   **/
-  /*
-  public boolean writeAnnotations(java.util.Collection graphs, BioSeq seq,
-				  String type, OutputStream outstream) {
-  */
+//  /**
+//   *  Implementing AnnotationWriter interface to write out graph annotations
+//   *    to an output stream as "bar" format.
+//   **/
+//  /*
+//  public boolean writeAnnotations(java.util.Collection graphs, BioSeq seq,
+//				  String type, OutputStream outstream) {
+//  */
 
   /** Parse a file in BAR format. */
-  public static List parse(InputStream istr, Map seqs, String stream_name)
+  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name)
     throws IOException {
 
     BufferedInputStream bis = null;
@@ -511,7 +520,7 @@ public class BarParser {
       graph_name += ":" + (String)file_tagvals.get("file_type");
     }
     for (int k=0; k<total_seqs; k++) {
-      BarSeqHeader seq_header = parseSeqHeader(dis, seqs, bar_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, bar_header);
       int total_points = seq_header.data_point_count;
       Map seq_tagvals = seq_header.tagvals;
       MutableAnnotatedBioSeq seq = seq_header.aseq;
@@ -697,7 +706,7 @@ public class BarParser {
     }
   }
 
-  public static BarSeqHeader parseSeqHeader(DataInput dis, Map seqs, BarFileHeader file_header)  throws IOException {
+  public static BarSeqHeader parseSeqHeader(DataInput dis, AnnotatedSeqGroup seq_group, BarFileHeader file_header)  throws IOException {
       int namelength = dis.readInt();
       //      String
       byte[] barray = new byte[namelength];
@@ -743,8 +752,10 @@ public class BarParser {
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      Iterator iter = seqs.values().iterator();
-      // can't just hash, because _could_ be a synonym instead of an exact match
+      
+      //TODO: Convert this to the standard way of getting synomous sequences,
+      // but we may have to check for extra bar-specific synonyms involving seq group and version
+      Iterator iter = seq_group.getSeqs().values().iterator();
 
       while (iter.hasNext()) {
 	// testing both seq id and version id (if version id is available)
@@ -781,6 +792,7 @@ public class BarParser {
 	}
 	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
         seq = new NibbleBioSeq(seqname, seqversion, 500000000);
+        seq_group.addSeq(seq);
       }
       //      System.out.println("seq: " + seq);
       BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);

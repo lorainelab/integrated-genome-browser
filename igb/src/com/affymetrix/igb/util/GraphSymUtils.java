@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,19 +14,14 @@
 package com.affymetrix.igb.util;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.seq.SimpleBioSeq;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.Versioned;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.parsers.SgrParser;
 import com.affymetrix.igb.parsers.BarParser;
@@ -153,8 +148,8 @@ public class GraphSymUtils {
    *  Reads one or more graphs from an input stream.
    *  Equivalent to a call to the other readGraphs() method using seq = null.
    */
-  public static List readGraphs(InputStream istr, String stream_name, Map seqs) throws IOException  {
-    return readGraphs(istr, stream_name, seqs, (MutableAnnotatedBioSeq) null);
+  public static List readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException  {
+    return readGraphs(istr, stream_name, seq_group, (MutableAnnotatedBioSeq) null);
   }
 
   /**
@@ -168,7 +163,7 @@ public class GraphSymUtils {
    *   do not specify a BioSeq, use this parameter to specify it.  If null
    *   then SingletonGenometryModel.getSelectedSeq() will be used.
    */
-  public static List readGraphs(InputStream istr, String stream_name, Map seqs, BioSeq seq) throws IOException  {
+  public static List readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
     List grafs = null;
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
@@ -177,10 +172,8 @@ public class GraphSymUtils {
     if (seq == null) {
       seq = SingletonGenometryModel.getGenometryModel().getSelectedSeq();
     }
-    //    if (sname.endsWith(".bar") || sname.endsWith(".mbar")) {
     if (sname.endsWith(".bar"))  {
-      //      grafs = readMbarFormat(newstr, seqs, stream_name);
-      grafs = BarParser.parse(newstr, seqs, stream_name);
+      grafs = BarParser.parse(newstr, seq_group, stream_name);
     }
     else if (sname.endsWith(".gr")) {
       if (seq == null) {
@@ -197,11 +190,11 @@ public class GraphSymUtils {
     }
     */
     else if (sname.endsWith(".bgr")) {
-      grafs = wrapInList(BgrParser.parse(newstr, seqs));
+      grafs = wrapInList(BgrParser.parse(newstr, seq_group));
     }
     else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();
-      grafs = sgr_parser.parse(newstr, seqs, false, stream_name);
+      grafs = sgr_parser.parse(newstr, stream_name, seq_group, false);
     } else {
       throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
     }
@@ -220,11 +213,11 @@ public class GraphSymUtils {
    */
   public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
     //TODO: Maybe this should throw an exception if the file contains more than one graph?
-    Map seqs = new HashMap();
-    if (seq != null) {
-      seqs.put(seq.getID(), seq);
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+    if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
+      seq_group.addSeq((MutableAnnotatedBioSeq) seq);
     }
-    List grafs = readGraphs(istr, stream_name, seqs, seq);
+    List grafs = readGraphs(istr, stream_name, seq_group, seq);
     GraphSym graf = null;
     if (grafs.size() > 0) {
       graf = (GraphSym) grafs.get(0);

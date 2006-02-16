@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import java.io.*;
 import java.util.*;
 import java.net.MalformedURLException;
@@ -208,8 +209,10 @@ public class BookmarksParser {
     boolean had_errors = false;
 
     BedParser bparser = new BedParser();
-    Map temphash = new HashMap();
-    java.util.List annots = bparser.parse(istr, temphash);
+    
+    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
+    java.util.List annots = bparser.parse(istr, seq_group, true, "bookmarks", false);
+    
     if ((annots != null) && (annots.size() > 0)) {
       for (int k=0; k<annots.size(); k++) {
         SeqSymmetry annot = (SeqSymmetry)annots.get(k);
@@ -239,8 +242,7 @@ public class BookmarksParser {
       }
     }
     if (had_errors) {
-      if (DEBUG) System.out.println("Some bookmarks were junky!");
-      //throw new IOException("Some bookmarks could not be read");
+      throw new IOException("Some bookmarks could not be read");
     }
   }
 

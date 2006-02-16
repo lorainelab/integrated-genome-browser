@@ -305,17 +305,16 @@ public class UrlLoaderThread extends Thread {
    */
   static void parseDasGff(URLConnection feat_request_con)
   throws IOException {
-    MutableAnnotatedBioSeq new_seq = null;
     InputStream result_stream = null;
     BufferedInputStream bis = null;
     try {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
       Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
-      new_seq = das_parser.parse(result_stream, gmodel.getSelectedSeq());
-    } catch (org.xml.sax.SAXException se) {
-      throw new IOException("\n" + se.toString());
+      das_parser.parse(result_stream, gmodel.getSelectedSeqGroup());
+      
     } finally {
+      
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
@@ -340,7 +339,7 @@ public class UrlLoaderThread extends Thread {
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
       Map seqhash = group.getSeqs();
-      bps_parser.parse(dis, type, seqhash, group);
+      bps_parser.parse(dis, type, group);
       group.symHashChanged(bps_parser);
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}

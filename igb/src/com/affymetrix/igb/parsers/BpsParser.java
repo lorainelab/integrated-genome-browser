@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 
@@ -88,7 +89,7 @@ public class BpsParser implements AnnotationWriter  {
 
   static int estimated_count = 80000;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     //    BpsParser test = new BpsParser();
     if (write_from_text) {
       if (main_batch_mode) {
@@ -127,9 +128,10 @@ public class BpsParser implements AnnotationWriter  {
       }
     }
     if (read_from_bps) {
-      Map chrom_hash = new HashMap();
+      AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Group");
+      
       String bin_file = args[0];
-      java.util.List syms = parse(bin_file, default_annot_type, chrom_hash);
+      java.util.List syms = parse(bin_file, default_annot_type, seq_group);
       int symcount = syms.size();
       System.out.println("total sym count: " + symcount);
       int[] blockcount = new int[100];
@@ -158,19 +160,17 @@ public class BpsParser implements AnnotationWriter  {
   }
 
 
-  /**
-   *  @param target_hash  a HashMap of target (chromosome) names to MutableAnnotatedBioSeqs
-   *    that represent the targets (chromosomes)
-   */
-  public static java.util.List parse(String file_name, String annot_type, Map target_hash) {
+  public static java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
+  throws IOException {
     System.out.println("loading file: " + file_name);
+    java.util.List results = null;
+    FileInputStream fis = null;
+    DataInputStream dis = null;
     try {
       File fil = new File(file_name);
       long flength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      //      BufferedInputStream bis = new BufferedInputStream(fis, 16384);
+      fis = new FileInputStream(fil);
       BufferedInputStream bis = new BufferedInputStream(fis);
-      DataInputStream dis = null;
 
       if (use_byte_buffer) {
 	byte[] bytebuf = new byte[(int)flength];
@@ -182,25 +182,24 @@ public class BpsParser implements AnnotationWriter  {
       else {
 	dis = new DataInputStream(bis);
       }
-      return parse(dis, annot_type, target_hash, null);
+      results = parse(dis, annot_type, seq_group);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      if (dis != null) try { dis.close(); } catch (Exception e) {}
+      if (fis != null) try { fis.close(); } catch (Exception e) {}
     }
-    return null;
-  }
-
-  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash)  {
-    return parse(dis, annot_type, target_hash, null);
+    return results;
   }
   
-  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash, AnnotatedSeqGroup seq_group) {
-    return parse(dis, annot_type, null, target_hash, seq_group, false, true);
+  public static java.util.List parse(DataInputStream dis, String annot_type, 
+      AnnotatedSeqGroup seq_group) throws IOException {
+    return parse(dis, annot_type, null, seq_group.getSeqs(), seq_group, false, true);
   }
 
   public static java.util.List parse(DataInputStream dis, String annot_type,
-	      Map qhash, Map thash, boolean annot_query, boolean annot_target) {
-	  return parse (dis, annot_type, qhash, thash, null, annot_query, annot_target);
+              Map qhash, Map thash, boolean annot_query, boolean annot_target) 
+  throws IOException {
+     return parse (dis, annot_type, qhash, thash, null, annot_query, annot_target);
   }
   
   /** Reads binary PSL data from the given stream.  Note that this method <b>can</b>
@@ -208,7 +207,8 @@ public class BpsParser implements AnnotationWriter  {
    *  before exiting this method.
    */
   public static java.util.List parse(DataInputStream dis, String annot_type,
-				      Map qhash, Map thash, AnnotatedSeqGroup seq_group,  boolean annot_query, boolean annot_target) {
+    Map qhash, Map thash, AnnotatedSeqGroup seq_group,  boolean annot_query, boolean annot_target) 
+  throws IOException {
     Map query_hash = qhash;
     Map target_hash = thash;
     if (query_hash == null) { query_hash = new HashMap(); }
@@ -310,9 +310,6 @@ public class BpsParser implements AnnotationWriter  {
     }
     catch (EOFException ex) {
       reached_EOF = true;
-    }
-    catch (IOException ex) {
-      ex.printStackTrace();
     }
     finally {try { dis.close(); } catch (Exception ex) {}}
 

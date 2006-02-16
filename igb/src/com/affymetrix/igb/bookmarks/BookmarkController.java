@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,7 +22,6 @@ import java.net.URL;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
@@ -211,8 +210,8 @@ public abstract class BookmarkController {
         else {
           URL graphurl = new URL(graph_path);
           istr = graphurl.openStream();
-        }          
-        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup().getSeqs(), gmodel.getSelectedSeq());
+        }
+        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
         istr.close();
         //        displayGraph(graf, col, ypos, 60, true);
         //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),

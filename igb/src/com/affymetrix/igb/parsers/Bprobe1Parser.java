@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -68,7 +68,9 @@ public class Bprobe1Parser {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static boolean DEBUG = true;
 
-  public AnnotatedSeqGroup parse(InputStream istr, AnnotatedSeqGroup group, boolean annotate_seq, String default_type) {
+  public AnnotatedSeqGroup parse(InputStream istr, AnnotatedSeqGroup group, 
+    boolean annotate_seq, String default_type) throws IOException {
+    
     BufferedInputStream bis;
     AnnotatedSeqGroup seqs = null;
     Map tagvals = new LinkedHashMap();
@@ -172,10 +174,6 @@ public class Bprobe1Parser {
       System.out.println("finished parsing bp1 file");
     }
 
-    catch (Exception ex)  {
-      ex.printStackTrace();
-    }
-
     finally {
       if (dis != null) try { dis.close(); } catch (Exception e) {}
     }
@@ -185,33 +183,38 @@ public class Bprobe1Parser {
   /**
    *  Converts a "GFF" file into a "bp1" file.
    *  Assumes
-   *     All annotations in GFF file are genome-based probes (contiguous intervals on genome)
+   *     All annotations in GFF file are genome-based probes (contiguous intervals on genome);
    *     25-mer probes (for now)
    */
   public static void convertGff(String gff_file, String output_file,
-				String seq_group, String seq_group_version, String annot_type) {
+      AnnotatedSeqGroup seq_group, String version_id, String annot_type) 
+    throws IOException {
+
     int probe_length = 25;
     Map tagvals = new HashMap();
     tagvals.put("tagval_test_1", "testing1");
     tagvals.put("tagval_test_2", "testing2");
+    
+    BufferedOutputStream bos = null;
+    DataOutputStream dos = null;
     try {
       System.out.println("parsing gff file: " + gff_file);
       GFFParser gff_parser = new GFFParser();
       BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
       Map seqs = new LinkedHashMap();
-      List annots = gff_parser.parse(bis, seqs);
+      List annots = gff_parser.parse(bis, seq_group, gff_parser.default_create_container_annot);
       bis.close();
       int total_annot_count = annots.size();
       int seq_count = seqs.size();
       System.out.println("done parsing, seq count = " + seq_count + ", total annot count = " + total_annot_count);
 
-      BufferedOutputStream bos = new BufferedOutputStream( new FileOutputStream( new File( output_file) ) );
-      DataOutputStream dos = new DataOutputStream(bos);
+      bos = new BufferedOutputStream( new FileOutputStream( new File( output_file) ) );
+      dos = new DataOutputStream(bos);
 
       dos.writeUTF("bp1");
       dos.writeInt(1);
-      dos.writeUTF(seq_group);
-      dos.writeUTF(seq_group_version);
+      dos.writeUTF(seq_group.getID());
+      dos.writeUTF(version_id);
       dos.writeUTF(annot_type);
       dos.writeInt(probe_length);
       dos.writeInt(seq_count);
@@ -260,10 +263,10 @@ public class Bprobe1Parser {
 	  }
 	}
       }
-      dos.close();
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      if (bos != null) try { bos.close(); } catch (Exception e) {}
+      if (dos != null) try { dos.close(); } catch (Exception e) {}
     }
   }
 
@@ -287,7 +290,7 @@ public class Bprobe1Parser {
    *  if no second arg, output is written to standard out??
    *</pre>
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     String in_file = "";
     String out_file = "";
     String genomeid= "";
@@ -310,7 +313,8 @@ public class Bprobe1Parser {
     System.out.println("Creating a '.bp1' format file: ");
     System.out.println("Input '"+in_file+"'");
     System.out.println("Output '"+out_file+"'");
-    convertGff(in_file, out_file, genomeid, versionid, annot_type);
+    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genomeid);
+    convertGff(in_file, out_file, seq_group, versionid, annot_type);
     System.out.println("DONE!  Finished converting GFF file to BP1 file.");
     System.out.println("");
     

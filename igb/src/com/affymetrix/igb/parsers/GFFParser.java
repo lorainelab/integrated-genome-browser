@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
@@ -236,38 +236,7 @@ public class GFFParser implements AnnotationWriter  {
     group_tag = tag;
   }
 
-  public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
-    MutableAnnotatedBioSeq seq = null;
-    return parse(istr, seq);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
-  throws IOException {
-    return parse(istr, aseq, (AnnotatedSeqGroup) null);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, AnnotatedSeqGroup seq_group)
-  throws IOException {
-    Map seqhash = new HashMap();
-    if (aseq != null) {
-      seqhash.put(aseq.getID(), aseq);
-    }
-    parse(istr, seqhash, seq_group, default_create_container_annot);
-    if (aseq == null) {
-      Iterator iter = seqhash.values().iterator();
-      if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
-      else { return null; }
-    }
-    else {
-      return aseq;
-    }
-  }
-
-  public List parse(InputStream istr, Map seqhash) throws IOException {
-    return parse(istr, seqhash, (AnnotatedSeqGroup) null, default_create_container_annot);
-  }
-
-  public List parse(InputStream istr, Map seqhash, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
 
@@ -319,10 +288,9 @@ public class GFFParser implements AnnotationWriter  {
           float score = UcscGffSym.UNKNOWN_SCORE;
           if (! score_str.equals(".")) { score = Float.parseFloat(score_str); }
 
-          MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqhash.get(seq_name);
+          MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);          
           if (seq == null) {
-            seq = new SimpleAnnotatedBioSeq(seq_name, 0);
-            seqhash.put(seq_name, seq);
+            seq = seq_group.addSeq(seq_name, 0);
           }
 
           UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
@@ -432,9 +400,6 @@ public class GFFParser implements AnnotationWriter  {
           sym_count++;
         }
       }
-    } catch (Exception e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
     } finally {
       br.close();
     }
@@ -745,6 +710,9 @@ public class GFFParser implements AnnotationWriter  {
       System.exit(0);
     }
 
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+    
     test.addStandardFilters();
 
     Memer mem = new Memer();
@@ -753,8 +721,7 @@ public class GFFParser implements AnnotationWriter  {
     try {
       File fl = new File(file_name);
       FileInputStream fistr = new FileInputStream(fl);
-      Map seqhash = new HashMap();
-      annots = test.parse(fistr, seqhash);
+      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
     }
     catch (Exception ex) {
       ex.printStackTrace();

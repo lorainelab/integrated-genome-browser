@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.igb.genometry.*;
 
 /**
@@ -99,7 +98,8 @@ public class BsnpParser {
   Map source_hash = new HashMap();
   Map type_hash = new HashMap();
 
-  public void outputBsnpFormat(java.util.List parents, String genome_version, DataOutputStream dos) {
+  public void outputBsnpFormat(java.util.List parents, String genome_version, DataOutputStream dos) 
+  throws IOException {
     try	{
       int pcount = parents.size();
       dos.writeUTF(genome_version);
@@ -133,26 +133,28 @@ public class BsnpParser {
       }
       System.out.println("total snps output to bsnp file: " + total_snp_count);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      // close stream ?
     }
   }
 
   /**
-   *  Reads a GFF document.
+   *  Reads a GFF document containing SNP data.
    *  Assumes specific GFF variant used to represent SNPs on Affy genotyping chips:
    *<pre>
          #seqname	enzyme	probeset_id	start	end	score	strand	frame
 	 chr1	XbaI	SNP_A-1507333	219135381	219135381	.	+	.
    *</pre>
    */
-  public java.util.List readGffFormat(InputStream istr) {
+  public java.util.List readGffFormat(InputStream istr) throws IOException {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+    
     List results = new ArrayList();
     try {
-      Map seqhash = new HashMap();
       GFFParser gff_parser = new GFFParser();
-      gff_parser.parse(istr, seqhash, null, true);
-      Iterator iter = seqhash.values().iterator();
+      gff_parser.parse(istr, seq_group, true);
+      Iterator iter = seq_group.getSeqs().values().iterator();
       int problem_count = 0;
       while (iter.hasNext()) {
 	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
@@ -189,8 +191,8 @@ public class BsnpParser {
       }
       System.out.println("problems: " + problem_count);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      // close stream ? 
     }
     return results;
   }
@@ -238,13 +240,14 @@ public class BsnpParser {
     return parent_syms;
   }
 
-  public List parse(InputStream istr, String annot_type, Map seq_hash, boolean annot_seq) {
-    System.out.println("parsing bsnp file");
+  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
+  throws IOException {
+    //System.out.println("parsing bsnp file");
     Timer tim = new Timer();
     tim.start();
     java.util.List snp_syms = null;
-    try {
-      BufferedInputStream bis;
+
+    BufferedInputStream bis;
       if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
       else { bis = new BufferedInputStream(istr); }
       DataInputStream dis = new DataInputStream(bis);
@@ -253,14 +256,17 @@ public class BsnpParser {
       int[] snp_counts = new int[seq_count];
       String[] seqids = new String[seq_count];
       MutableAnnotatedBioSeq[] seqs = new MutableAnnotatedBioSeq[seq_count];
-      System.out.println("genome version: " + genome_version);
-      System.out.println("seqs: " + seq_count);
+      //System.out.println("genome version: " + genome_version);
+      //System.out.println("seqs: " + seq_count);
       int total_snp_count = 0;
       for (int i=0; i<seq_count; i++) {
 	String seqid = dis.readUTF();
 	seqids[i] = seqid;
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq_hash.get(seqid);
-	seqs[i] = aseq;   // will be null if no seq with given seqid in seqhash,
+	MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+        if (aseq == null) {
+          aseq = seq_group.addSeq(seqid, 0);
+        }
+	seqs[i] = aseq;
 	snp_counts[i] = dis.readInt();
 	total_snp_count += snp_counts[i];
       }
@@ -269,12 +275,6 @@ public class BsnpParser {
       // Object[] all_coord_arrays = new Object[seq_count];
       for (int i=0; i<seq_count; i++) {
 	MutableAnnotatedBioSeq aseq = seqs[i];
-	/*
-	  if (aseq == null) {
-	  System.out.println("No seq matching seqid: " + seqids[i] + " found, aborting BsnpParser parsing!");
-	  break;
-	  }
-	*/
 	int snp_count = snp_counts[i];
 	//	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
 	SimpleSymWithProps psym = new SimpleSymWithProps();
@@ -285,20 +285,20 @@ public class BsnpParser {
 	  aseq.addAnnotation(psym);
 	}
         int[] coords = new int[snp_count];
-        // all_coord_arrays[i] = coords;
+        int base_coord = 0;
 	for (int k=0; k<snp_count; k++) {
-          int base_coord = dis.readInt();
-          // int base_coord = 2;
+          base_coord = dis.readInt();
           EfficientSnpSym snp = new EfficientSnpSym(psym, base_coord);
-          // EfficientSnpSym snp = dummy_snp;
-          // coords[k] = base_coord;
           psym.addChild(snp);
           snp_syms.add(snp);
 	}
+        // I'm assuming the snp coords are sorted from min to max, thus the last coord is the max
+        if (aseq.getLength() < base_coord) {
+          aseq.setLength(base_coord);
+        }
       }
       //      System.out.println("total snps: " + total_snp_count);
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
+
     tim.print();
     return snp_syms;
   }
@@ -310,12 +310,15 @@ public class BsnpParser {
   public static void main(String[] args) {
     try {
       if (TEST_BINARY_PARSE) {
+        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+        AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+        
 	String binfile = args[0];
 	System.out.println("parsing in snp data from .bsnp file: " + binfile);
 	BsnpParser tester = new BsnpParser();
 	File ifil = new File(binfile);
 	InputStream istr = new FileInputStream(ifil);
-	tester.parse(istr, "snp", new HashMap(), true);
+        tester.parse(istr, "snp", seq_group, true);
 	System.out.println("finished parsing in snp data from .bsnp file");
 	istr.close();
       }

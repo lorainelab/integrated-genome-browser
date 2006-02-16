@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -19,13 +19,9 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.IntList;
-import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
@@ -114,12 +110,7 @@ public class ScoredIntervalParser {
   boolean attach_graphs = default_attach_graphs;
 
 
-  public void parse(InputStream istr, String stream_name, Map seqhash)
-  throws IOException {
-    parse(istr, stream_name, seqhash, null);
-  }
-
-  public void parse(InputStream istr, String stream_name, Map seqhash, AnnotatedSeqGroup seq_group)
+  public void parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group)
   throws IOException {
     attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
     BufferedReader br= null;
@@ -201,12 +192,13 @@ public class ScoredIntervalParser {
 	  min = Integer.parseInt(fields[1]);
 	  max = Integer.parseInt(fields[2]);
 	  strand = fields[3];
-	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	  if (aseq == null) { aseq = makeNewSeq(seqid, seqhash); }
+	  MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+	  if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
 	  IndexedSingletonSym child;
 	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 	  else { child = new IndexedSingletonSym(min, max, aseq); }
 	  isyms.add(child);
+          if (max > aseq.getLength()) { aseq.setLength(max); }
 	}
 	// sin2 format if 5th field is strand: [+-.]
 	else if ((fields.length > 4) && strand_matcher.reset(fields[4]).matches())  {
@@ -218,8 +210,9 @@ public class ScoredIntervalParser {
 	  max = Integer.parseInt(fields[3]);
 	  strand = fields[4];
 
-	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqhash.get(seqid);
-	  if (aseq == null) { aseq = makeNewSeq(seqid, seqhash); }
+	  MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+	  if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
+          if (max > aseq.getLength()) { aseq.setLength(max); }
 	  IndexedSingletonSym child;
 	  if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
 	  else { child = new IndexedSingletonSym(min, max, aseq); }
@@ -410,11 +403,9 @@ public class ScoredIntervalParser {
     }
   }
 
-  protected MutableAnnotatedBioSeq makeNewSeq(String seqid, Map seqhash) {
+  protected MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
     System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
-    MutableAnnotatedBioSeq aseq = new SimpleAnnotatedBioSeq(seqid, 0); // hmm, should a default size be set?
-    seqhash.put(seqid, aseq);
-    return aseq;
+    return seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
   }
 
 
@@ -471,10 +462,10 @@ public class ScoredIntervalParser {
     String test_name = "name_testing";
     System.out.println("testing ScoredIntervalParser, parsing file: " + test_file);
     ScoredIntervalParser tester = new ScoredIntervalParser();
-    Map seqhash = new HashMap();
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
     try {
       FileInputStream fis = new FileInputStream(new File(test_file));
-      tester.parse(fis, test_name, seqhash);
+      tester.parse(fis, test_name, seq_group);
     }
     catch (Exception ex) { ex.printStackTrace(); }
     System.out.println("done testing ScoredMapParser");

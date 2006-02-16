@@ -357,7 +357,7 @@ public class Das2ClientOptimizer {
           System.out.println("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
           BrsParser parser = new BrsParser();
           DataInputStream dis = new DataInputStream(bis);
-          feats = parser.parse(dis, type.getID(), seq_group.getSeqs());
+          feats = parser.parse(dis, type.getID(), seq_group);
         }
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);

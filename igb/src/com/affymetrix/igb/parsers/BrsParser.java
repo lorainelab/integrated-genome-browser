@@ -19,7 +19,6 @@ import java.util.regex.*;
 import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
@@ -43,7 +42,6 @@ public class BrsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    // pref_list.add(".brs");
     pref_list.add("brs");
   }
 
@@ -78,37 +76,37 @@ public class BrsParser implements AnnotationWriter  {
   int max_genes = 50000;  // guesstimate...
   ArrayList chromosomes = new ArrayList();
 
-  public java.util.List parse(String file_name, String annot_type, Map seq_hash) {
+  public java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
+  throws IOException {
     System.out.println("loading file: " + file_name);
     java.util.List result = null;
+    FileInputStream fis = null;
     try {
       File fil = new File(file_name);
       long blength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_hash, blength);
+      fis = new FileInputStream(fil);
+      result = parse(fis, annot_type, seq_group, blength);
+    } finally {
+      if (fis != null) try { fis.close(); } catch (Exception e) {}
     }
-    catch (Exception ex) { ex.printStackTrace(); }
     return result;
   }
 
-  public java.util.List parse(InputStream istr, String annot_type, Map seq_hash) {
-    return parse(istr, annot_type, seq_hash, -1);
+  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group) 
+  throws IOException {
+    return parse(istr, annot_type, seq_group, -1);
   }
 
   /**
-   *  if length is unknown, force to skip using byte buffer by passing in blength = -1;
+   *  @param blength, buffer length, if unknown use -1;
    */
   public java.util.List parse(InputStream istr, String annot_type,
-				       Map seq_hash, long blength) {
-    return parse(istr, annot_type, seq_hash, null, blength);
-  }
-
-  public java.util.List parse(InputStream istr, String annot_type,
-				       Map seq_hash, AnnotatedSeqGroup seq_group, long blength) {
+                              AnnotatedSeqGroup seq_group, long blength) 
+  throws IOException {
     Timer tim = new Timer();
     tim.start();
 
-    // annots is list of top-level parent syms (max 1 per seq in seq_hash) that get
+    // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
     //    added as annotations to the annotated BioSeqs -- their children
     //    are then actual transcript annotations
     ArrayList annots = new ArrayList();
@@ -138,12 +136,12 @@ public class BrsParser implements AnnotationWriter  {
 	dis = new DataInputStream(bis);
       }
       if (true) {
-	// just keep looping till hitting end-of-file throws an
-	while (true) {
+	// just keep looping till hitting end-of-file throws an EOFException
+        Thread thread = Thread.currentThread();
+	while (! thread.isInterrupted()) {
 	  String geneName = dis.readUTF();
 	  String name = dis.readUTF();
 	  String chrom_name = dis.readUTF();
-	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
 
 	  String strand = dis.readUTF();
 	  boolean forward = (strand.equals("+") || (strand.equals("++")));
@@ -168,10 +166,10 @@ public class BrsParser implements AnnotationWriter  {
 	    emaxs[i] = dis.readInt();
 	  }
 
-	  if (chromseq == null) {
-	    chromseq = new SimpleAnnotatedBioSeq(chrom_name, tmax);
-	    seq_hash.put(chrom_name, chromseq);
-	  }
+	  MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
+          if (chromseq == null) {
+            chromseq = seq_group.addSeq(chrom_name, tmax);
+          }
 	  if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
 
 	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
@@ -202,10 +200,6 @@ public class BrsParser implements AnnotationWriter  {
     }
     catch (EOFException ex) {
       // System.out.println("end of file reached, file successfully loaded");
-    }
-    catch (IOException ex) {
-      System.err.println("problem with loading file");
-      ex.printStackTrace();
     }
 
     for (int i=0; i<annots.size(); i++) {

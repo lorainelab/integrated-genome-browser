@@ -567,7 +567,7 @@ public class QuickLoadView2 extends JComponent
         istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
         //        istr = (new URL(url_path)).openStream();
         // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-        current_seq = NibbleResiduesParser.parse(istr, (NibbleBioSeq)current_seq);
+        current_seq = NibbleResiduesParser.parse(istr, gmodel.getSelectedSeqGroup());
       }
       catch(Exception ex) {
         ErrorHandler.errorPanel("Error", "cannot access sequence:\n" +
@@ -953,11 +953,11 @@ class QuickLoadServerModel {
       boolean annot_contigs = false;
       if (lift_stream != null) {
         LiftParser lift_loader = new LiftParser();
-        group = lift_loader.parseGroup(lift_stream, genome_name, annot_contigs);
+        group = lift_loader.parse(lift_stream, genome_name, annot_contigs);
       }
       else if (cinfo_stream != null) {
         ChromInfoParser chrominfo_loader = new ChromInfoParser();
-        group = chrominfo_loader.parseGroup(cinfo_stream, genome_name);
+        group = chrominfo_loader.parse(cinfo_stream, genome_name);
       }
       System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,8 +13,6 @@
 
 package com.affymetrix.igb.menuitem;
 
-// Java
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -27,10 +25,11 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.GraphSym;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
@@ -51,7 +50,7 @@ public class OpenGraphAction extends AbstractAction {
     // allowing for multiple file selection, so may have multiple graphs
     BioSeq aseq = gmodel.getSelectedSeq();
     if (aseq == null) {
-      IGB.errorPanel("Must load a sequence before loading a graph");
+      ErrorHandler.errorPanel("Must load a sequence before loading a graph");
       return;
     }
 
@@ -63,7 +62,7 @@ public class OpenGraphAction extends AbstractAction {
       Thread t = loadAndShowGraphs(files, aseq, gviewer);
       t.start();
     } catch (MalformedURLException m) {
-      IGB.errorPanel("Error loading graphs", m);
+      ErrorHandler.errorPanel("Error loading graphs", m);
     }
   }
 
@@ -89,13 +88,13 @@ public class OpenGraphAction extends AbstractAction {
         monitor.showDialogEventually();
         Vector graphs = null;
         try {
-          Map shash = IGB.getGenometryModel().getSelectedSeqGroup().getSeqs();
-          graphs = loadGraphFiles(files, shash, aseq, true, monitor, gviewer);
+          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+          graphs = loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
         } catch (final Throwable t) { // catch Out-Of-Memory Errors, etc.
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               if (monitor != null) monitor.closeDialog();
-              IGB.errorPanel("Error loading graphs", t);
+              ErrorHandler.errorPanel("Error loading graphs", t);
             }
 	    });
         }
@@ -137,13 +136,13 @@ public class OpenGraphAction extends AbstractAction {
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static Vector loadGraphFiles(URL[] files, Map seqhash, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  static Vector loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
     Vector graphs = new Vector();
     if (aseq != null) {
       for (int i=0; i<files.length; i++) {
         if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+files[i].getPath());}
-        Vector v = loadGraphFile(files[i], seqhash, aseq);
+        Vector v = loadGraphFile(files[i], seq_group, aseq);
         graphs.addAll(v);
         if (update_viewer && ! v.isEmpty()) {updateViewer(gviewer);}
       }
@@ -151,7 +150,7 @@ public class OpenGraphAction extends AbstractAction {
     return graphs;
   }
 
-  static Vector loadGraphFile(URL furl, Map seqhash, BioSeq aseq) throws IOException, OutOfMemoryError {
+  static Vector loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
     Vector graphs = new Vector();
     InputStream fis = null;
     try {
@@ -166,7 +165,7 @@ public class OpenGraphAction extends AbstractAction {
       }
 
       if (GraphSymUtils.isAGraphFilename(name)) {
-        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seqhash);
+        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
         graphs.addAll(multigraphs);
       } else {
         throw new IOException("Filename does not match any known type of graph:\n" + name);

@@ -733,8 +733,10 @@ public class SmartGraphGlyph extends GraphGlyph {
     //   pass threshold (unless distance to view is > max_gap_threshold
     int new_beg = draw_beg_index;
 
+    // GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
     while ((new_beg > min_index) &&
-    	   ((xcoords[draw_beg_index] - xcoords[new_beg]) < max_gap_threshold)) {
+    	   // ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
+    	   ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
       new_beg--;
     }
     draw_beg_index = new_beg;
@@ -747,8 +749,11 @@ public class SmartGraphGlyph extends GraphGlyph {
     //    while ((new_end < max_index) &&   // end_index is really the maximum allowed draw_end_index
     //	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold) &&
     //	   (ycoords[new_end] < min_score_threshold)) {
+
+    // GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
     while ((new_end < max_index) &&   // end_index is really the maximum allowed draw_end_index
-    	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold)) {
+	   // 	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold)) {
+	   ((xcoords[new_end] - xcoords[draw_end_index]) <= max_gap_threshold)) {
       new_end++;
     }
     draw_end_index = new_end;
@@ -768,8 +773,6 @@ public class SmartGraphGlyph extends GraphGlyph {
       if (delta_xmax < 0) { System.out.println("$$$$$$$$$$$$ xmax > check_xmax $$$$$$$$$$$"); }
     }
 
-
-
     // eight possible states:
     //
     //     pass_threshold_mode    [y >= min_score_threshold]   [x-pass_thresh_end <= max_dis_thresh]
@@ -781,9 +784,10 @@ public class SmartGraphGlyph extends GraphGlyph {
       x = xcoords[i];
       y = ycoords[i];
 
-      //      pass_score_thresh = (y >= min_score_threshold);
-      pass_score_thresh = ((y >= min_score_threshold) &&
-			   (y <= max_score_threshold) );
+      //      pass_score_thresh = ((y >= min_score_threshold) &&
+      // GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
+      pass_score_thresh = ((y > min_score_threshold) &&
+      			   (y <= max_score_threshold) );
       passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
       if (pass_threshold_mode) {  // if currently keeping track of potential passed-threshold region
 	// true, ?, ?
@@ -832,10 +836,12 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
 
       if (draw_previous) {
-	// make sure that length of region is >= min_run_threshold
 	double draw_min = pass_thresh_start + span_start_shift;
 	double draw_max = pass_thresh_end + span_end_shift;
-	boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+	//	boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+	// make sure that length of region is > min_run_threshold
+	// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+	boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
 	if (passes_min_run) {  // make sure aren't drawing single points
 	  coord.x = draw_min;
 	  view.transformToPixels(coord, prev_point);
@@ -872,7 +878,9 @@ public class SmartGraphGlyph extends GraphGlyph {
       //	  System.out.println("clean up at " + pass_thresh_start);
       double draw_min = pass_thresh_start + span_start_shift;
       double draw_max = pass_thresh_end + span_end_shift;
-      boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+      //      boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+      // GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+      boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
       if (passes_min_run) {
 	coord.x = draw_min;
 	view.transformToPixels(coord, prev_point);

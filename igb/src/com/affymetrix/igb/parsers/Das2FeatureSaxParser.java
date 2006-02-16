@@ -265,7 +265,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
       String feat_id_att = atts.getValue("id");
       feat_id = current_base_uri.resolve(feat_id_att).toString();
-      feat_type = atts.getValue("type");
+      String feat_type_att = atts.getValue("type");
+      feat_type = current_base_uri.resolve(feat_type_att).toString();
+      
       feat_name = atts.getValue("name");
       // feat_parent_id has moved to <PARENT> element
       //      feat_parent_id = atts.getValue("parent");

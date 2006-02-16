@@ -28,9 +28,9 @@ public class Das2ServerInfo  {
   protected static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
   protected static String SOURCES_QUERY = "sequence";
 
-  protected String root_url;
-  String das_version;
-  String name;
+  protected URI server_uri;
+  protected String das_version;
+  protected String name;
   protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   protected boolean initialized = false;
 
@@ -39,21 +39,28 @@ public class Das2ServerInfo  {
    *    will not contact the server to initialize data until needed.
    */
   public Das2ServerInfo(String url, String name, boolean init) {
-    this.root_url = url;
-    this.name = name;
+    String root_string = url;
     // all trailing "/" chars are stripped off the end if present
-    while (root_url.endsWith("/")) {
-      root_url = root_url.substring(0, root_url.length()-1);
+    while (root_string.endsWith("/")) {
+      root_string = root_string.substring(0, root_string.length()-1);
     }
+
+    try {
+      this.server_uri = new URI(root_string);
+    }
+    catch (Exception ex) {
+      System.err.println("problem constructing URI for DAS/2 server");
+      ex.printStackTrace();
+    }
+    this.name = name;
     if (init) {
       initialize();
     }
   }
 
   /** Returns the root URL String.  Will not have any trailing "/" at the end. */
-  public String getRootUrl() {
-    return root_url;
-  }
+  public URI getURI() { return server_uri; }
+  public String getID() { return server_uri.toString(); }
 
   public String getName() {
     return name;
@@ -114,18 +121,18 @@ public class Das2ServerInfo  {
     try {
       //      System.out.println("in DasUtils.findDasSource()");
       //      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      URL das_request;
+      String das_query;
       if (DO_FILE_TEST)  {
-	das_request = new URL(test_file);
+	das_query = test_file;
       }
       else {
 	// GAH 2006-02-10
-	//  changed to assuming the root_url is the full URL for a sources (sequence?)
-	//  done for compatibility with 
-
-	//	das_request = new URL(root_url+"/" + SOURCES_QUERY);
-	das_request = new URL(root_url);
+	//  changed to assuming the root_string is the full URL for a sources (sequence?)
+	//  done for compatibility with
+	//	das_request = new URL(root_string+"/" + SOURCES_QUERY);
+	das_query = server_uri.toString();
       }
+      URL das_request = new URL(das_query);
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String das_version = request_con.getHeaderField("X-DAS-Version");
@@ -142,20 +149,17 @@ public class Das2ServerInfo  {
       System.out.println("source count: " + sources.getLength());
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
-        //        System.out.println("source base URI: " + source.getBaseURI());
+        //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute("id");
-
+	String source_title = source.getAttribute("title");
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
-        String source_taxon = source.getAttribute("taxon");
+        String source_taxon = source.getAttribute("taxid");
 
-	Das2Source dasSource = new Das2Source(this, source_id, false);
-	//        setDasSource(this, source_id, false);
+	URI source_uri = getBaseURI(das_query, source).resolve(source_id);
 
-	dasSource.setID(source_id);
-	dasSource.setInfoUrl(source_info_url);
-	dasSource.setDescription(source_description);
-	dasSource.setTaxon(source_taxon);
+	Das2Source dasSource = new Das2Source(this, source_uri, source_title, source_info_url,
+					      source_taxon, source_description);
 	this.addDataSource(dasSource);
 	NodeList slist = source.getChildNodes();
 	for (int k=0; k < slist.getLength(); k++) {
@@ -165,10 +169,13 @@ public class Das2ServerInfo  {
 	    String version_description = version.getAttribute("description");
 	    String version_info_url = version.getAttribute("doc_href");
 	    //	    setDasVersionedSource(dasSource, version_id, false);
-	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_id, false);
+	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
+	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+	    System.out.println("version URI: " + version_uri.toString());
+	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
 	    dasSource.addVersion(vsource);
-	    System.out.println("base URI for version element: " + getBaseURI(version));
 
+  
 	    NodeList vlist = version.getChildNodes();
 	    for (int j=0; j<vlist.getLength(); j++) {
 	      String nodename = vlist.item(j).getNodeName();
@@ -177,7 +184,7 @@ public class Das2ServerInfo  {
 		Element capel = (Element)vlist.item(j);
 		String captype = capel.getAttribute("type");
 		String query_id = capel.getAttribute("query_id");
-		URI base_uri = getBaseURI(capel);
+		URI base_uri = getBaseURI(das_query, capel);
 		URI cap_root = base_uri.resolve(query_id);
 		System.out.println("Capability: " + captype + ", URI: " + cap_root);
 		// for now don't worry about format subelements
@@ -199,7 +206,7 @@ public class Das2ServerInfo  {
   /**
    * Attempt to retrieve base URI for an Element from a DOM-level2 model
    */
-  public static URI getBaseURI(Node cnode) {
+  public static URI getBaseURI(String doc_uri, Node cnode) {
     Stack xml_bases = new Stack();
     Node pnode = cnode;
     while (pnode != null) {
@@ -211,15 +218,12 @@ public class Das2ServerInfo  {
       pnode = pnode.getParentNode();
     }
 
-    URI base_uri = null;
+    URI base_uri;
     try  {
-      if (! (xml_bases.empty())) {
-        String xbase = (String) xml_bases.pop();
-        base_uri = new URI(xbase);
-        while (! (xml_bases.empty())) {
-          xbase = (String) xml_bases.pop();
-          base_uri = base_uri.resolve(xbase);
-        }
+      base_uri = new URI(doc_uri);
+      while (! (xml_bases.empty())) {
+	String xbase = (String) xml_bases.pop();
+	base_uri = base_uri.resolve(xbase);
       }
     }
     catch (Exception ex)  {
@@ -244,7 +248,7 @@ public class Das2ServerInfo  {
 
     Das2ServerInfo test = new Das2ServerInfo(test_url, "name unknown", true);
     System.out.println("***** DAS Server Info *****");
-    System.out.println("  root URL: " + test.getRootUrl());
+    System.out.println("  root URL: " + test.getID());
     System.out.println("  DAS version: " + test.getDasVersion());
 
     Iterator sources = test.getSources().values().iterator();

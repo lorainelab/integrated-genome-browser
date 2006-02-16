@@ -499,14 +499,21 @@ class Das2TypeState {
     Das2VersionedSource version = type.getVersionedSource();
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
-    String server_root_url = server.getRootUrl();
+    String server_root_url = server.getID();
     if (server_root_url.startsWith("http://")) { server_root_url = server_root_url.substring(7); }
     if (server_root_url.indexOf("//") > -1) {
       System.out.println("need to replace all double slashes in path!");
     }
-    String subnode_strategy = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
-    String subnode_load = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load";
-    //    System.out.println("subnode = " + subnode);
+    // String subnode_strategy = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load_strategy";
+    // String subnode_load = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load";
+    String base_node_id = version.getID();
+    base_node_id = base_node_id.replaceAll("/{2,}", "/");
+//    base_node_id.
+    String subnode_strategy = base_node_id + "/type_load_strategy";
+    String subnode_load = base_node_id + "/type_load";
+    System.out.println("subnode_strategy = " + subnode_strategy);
+    System.out.println("subnode_load = " + subnode_load);
+    //        System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
     lnode_load = das2_node.node(subnode_load);
     lnode_strategy = das2_node.node(subnode_strategy);
@@ -514,7 +521,7 @@ class Das2TypeState {
     load_strategy = lnode_strategy.getInt(type.getID(), default_load_strategy);
     if (load_strategy == OFF) {
       // OFF strategy has been deprecated but may still exist in some user's prefs
-      setLoadStrategy(default_load_strategy); 
+      setLoadStrategy(default_load_strategy);
       setLoad(false);
     }
   }
@@ -523,11 +530,11 @@ class Das2TypeState {
     load = b;
     lnode_load.putBoolean(type.getID(), load);
   }
-  
+
   public boolean getLoad() {
     return load;
   }
-  
+
   public void setLoadStrategy(String strat) {
     for (int i=0; i<LOAD_STRINGS.length; i++) {
       if (strat.equals(LOAD_STRINGS[i])) {
@@ -549,12 +556,13 @@ class Das2TypeState {
 
 
 class Das2TypesTableModel extends AbstractTableModel   {
-  static String[] column_names = { "load", "type ID", "ontology", "source", "load strategy" };
+  static String[] column_names = { "load", "name", "ID", "ontology", "source", "load strategy" };
   static int LOAD_BOOLEAN_COLUMN = 0;
-  static int ID_COLUMN = 1;
-  static int ONTOLOGY_COLUMN = 2;
-  static int SOURCE_COLUMN = 3;
-  static int LOAD_STRATEGY_COLUMN = 4;
+  static int NAME_COLUMN = 1;
+  static int ID_COLUMN = 2;
+  static int ONTOLOGY_COLUMN = 3;
+  static int SOURCE_COLUMN = 4;
+  static int LOAD_STRATEGY_COLUMN = 5;
 
   static int model_count = 0;
 
@@ -588,7 +596,10 @@ class Das2TypesTableModel extends AbstractTableModel   {
   public Object getValueAt(int row, int col) {
     Das2TypeState state = getTypeState(row);
     Das2Type type = state.getDas2Type();
-    if (col == ID_COLUMN) {
+    if (col == NAME_COLUMN) {
+      return type.getName();
+    }
+    else if (col == ID_COLUMN) {
       return type.getID();
     }
     else if (col == ONTOLOGY_COLUMN) {
@@ -622,12 +633,12 @@ class Das2TypesTableModel extends AbstractTableModel   {
     if (col == LOAD_STRATEGY_COLUMN)  {
       state.setLoadStrategy(value.toString());
     }
-    
+
     else if (col == LOAD_BOOLEAN_COLUMN) {
       Boolean bool = (Boolean)value;
       state.setLoad(bool.booleanValue());
     }
-    
+
     fireTableCellUpdated(row, col);
   }
 }
@@ -721,7 +732,7 @@ class Das2SourceTreeNode extends DataSourcesAbstractNode {
 
 /**
  * TreeNode wrapper around a Das2VersionedSource object.
- * Maybe don't really need this, since Das2VersionedSource could itself serve 
+ * Maybe don't really need this, since Das2VersionedSource could itself serve
  * as a leaf.
  */
 class Das2VersionTreeNode extends DataSourcesAbstractNode {

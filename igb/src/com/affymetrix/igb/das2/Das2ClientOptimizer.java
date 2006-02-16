@@ -255,7 +255,9 @@ public class Das2ClientOptimizer {
       buf.append(";");
     }
     buf.append("type=");
-    buf.append(type.getID());
+    //    buf.append(type.getID());
+    // GAH temporary hack till server can accept full URI for type id
+    buf.append("SO:" + type.getName());
     if (OPTIMIZE_FORMAT && format != null) {
       buf.append(";");
       buf.append("format=");

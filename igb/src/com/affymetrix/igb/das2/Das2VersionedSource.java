@@ -46,7 +46,7 @@ public class Das2VersionedSource  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   Das2Source source;
-  String id;
+  URI version_uri;
   String description;
   String info_url;
   Date creation_date;
@@ -56,7 +56,6 @@ public class Das2VersionedSource  {
   Map regions = new LinkedHashMap();
   Map properties;
   java.util.List assembly;
-  String vsource_root_url;
 
   AnnotatedSeqGroup genome = null;
   protected Map types = new LinkedHashMap();
@@ -66,23 +65,21 @@ public class Das2VersionedSource  {
 
   LinkedList platforms = new LinkedList();
 
-  public Das2VersionedSource(Das2Source das_source, String version_id, boolean init) {
-    id = version_id;
+  public Das2VersionedSource(Das2Source das_source, URI vers_uri, boolean init) {
+    version_uri = vers_uri;
     source = das_source;
-    vsource_root_url = source.getRootUrl() + "/" + version_id;
     if (init) {
       initRegions();
       initTypes(null, false);
     }
   }
 
-  public String getID() { return id; }
+  public String getID() { return version_uri.toString(); }
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public Date getCreationDate() { return creation_date; }
   public Date getLastModifiedDate() { return modified_date; }
   public Das2Source getSource() { return source; }
-  public String getRootUrl() { return vsource_root_url; }
 
   /** NOT YET IMPLEMENTED */
   //  public List getAssembly()   { return assembly; }
@@ -103,12 +100,12 @@ public class Das2VersionedSource  {
 
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
-      genome = gmodel.addSeqGroup(id);  // gets existing seq group if possible, otherwise adds new one
+      genome = gmodel.addSeqGroup(this.getID());  // gets existing seq group if possible, otherwise adds new one
     }
     return genome;
   }
 
-  void setID(String id)  { this.id = id; }
+  //  void setID(String id)  { this.id = id; }
   void setDescription(String desc) { this.description = desc; }
   void setInfoUrl(String url) { this.info_url = url; }
 
@@ -235,17 +232,25 @@ public class Das2VersionedSource  {
       //      ontologyStuff1();
       for (int i=0; i< typelist.getLength(); i++)  {
 	Element typenode = (Element)typelist.item(i);
-        String typeid = typenode.getAttribute("id");                            // Gets the ID value
+
+	String typeid = typenode.getAttribute("id");                            // Gets the ID value
+	// GAH Temporary hack to deal with typeids that are not legal URIs
+	//    unfortunately this can mess up XML Base resolution when the id is an absolute URI
+	//    (because URI-encoding will replace any colons, but those are used by URI resolution...)
+	//    real fix needs to be on server(s), not client!!
+	typeid = URLEncoder.encode(typeid, "UTF-8");
+	//	typeid = "./" + typeid;
 	//        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
         //FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         // temporary workaround for getting type ending, rather than full URI
-	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          //if these characters are one the beginning, take off the 1st 2 characters...
+	//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          //if these characters are one the beginning, take off the 1st 2 characters...
 	//FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         String ontid = typenode.getAttribute("ontology");
-	String type_source = typenode.getAttribute("source");                   //PROBLEM!  This is missing too (no longer in this doc?)
-	String href = typenode.getAttribute("doc_href");                        //ALSO MIA is this attribute  Are these needed?  I doubt they are needed YET
+	String type_source = typenode.getAttribute("source");                   
+	String href = typenode.getAttribute("doc_href");                        
+	String type_name = typenode.getAttribute("name");
 
 	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
 	LinkedHashMap formats = new LinkedHashMap();                            //I don't think that this has ever been used yet.
@@ -268,7 +273,12 @@ public class Das2VersionedSource  {
 	  props.put(key, val);
 	}
 	//	ontologyStuff2();
-	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
+	System.out.println("type id att: " + typeid);
+	System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
+	URI type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
+	System.out.println("type URI: " + type_uri.toString());
+	Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?
+	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
 	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
 	this.addType(type);
       }

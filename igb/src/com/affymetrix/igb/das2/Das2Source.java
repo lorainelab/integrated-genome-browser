@@ -34,32 +34,33 @@ public class Das2Source {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  protected String id;
+  protected URI source_uri;
+  protected String name;
   protected String description;
   protected String info_url;
   protected String taxon;
   protected Map versions = new LinkedHashMap();
-  protected String source_root_url;
   Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;
   AnnotatedSeqGroup genome = null;
-  //  boolean versions_initialized = false;
 
-  public Das2Source(Das2ServerInfo source_server, String source_id, boolean init) {
-    id = source_id;
+
+  public Das2Source(Das2ServerInfo source_server, URI src_uri, String source_name,
+		    String source_href, String source_taxid, String desc) {
+    source_uri = src_uri;
     server = source_server;
-    source_root_url = server.getRootUrl() + "/" + Das2ServerInfo.SOURCES_QUERY + "/" + source_id;
-    //    if (init) {
-    // initVersions();
-    //    }
+    name = source_name;
+    info_url = source_href;
+    taxon = source_taxid;
+    description = desc;
   }
 
-  public String getID() { return id; }
+  public URI getURI() { return source_uri; }
+  public String getID() { return source_uri.toString(); }
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public String getTaxon() { return taxon; }
-  public String getRootUrl() { return source_root_url; }
 
   public Das2ServerInfo getServerInfo() { return server; }
 
@@ -72,20 +73,12 @@ public class Das2Source {
    */
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
-      genome = gmodel.addSeqGroup(id);
+      genome = gmodel.addSeqGroup(source_uri.toString());
     }
     return genome;
   }
 
-  void setID(String id)  { this.id = id; }
-  void setDescription(String desc) { this.description = desc; }
-  void setInfoUrl(String url) { this.info_url = url; }
-  void setTaxon(String taxon)  { this.taxon = taxon; }
-
   public Map getVersions() {
-    //    if (! versions_initialized) {
-    // initVersions();
-    //    }
     return versions;
   }
 

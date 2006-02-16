@@ -182,6 +182,8 @@ public class Das2VersionedSource  {
       for (int i=0; i< regionlist.getLength(); i++)  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute("id");
+	URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
+	
 	// GAH _TEMPORARY_ hack to strip down region_id
 	// Need to move to full URI resolution very soon!
 	if (Das2FeatureSaxParser.DO_SEQID_HACK) {
@@ -193,8 +195,8 @@ public class Das2VersionedSource  {
 
 	String description = null;
 	int length = Integer.parseInt(lengthstr);
-	Das2Region region = new Das2Region(this, region_id, region_name, region_info_url, length);
-	System.out.println("region: " + region_id + ", length = " + lengthstr + ", name = " + region_name);
+	Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
+	System.out.println("region: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
 	this.addRegion(region);
       }
     }

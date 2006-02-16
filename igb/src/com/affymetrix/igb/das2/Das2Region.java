@@ -26,7 +26,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 public class Das2Region {
-  String region_id;
+  URI region_uri;
   int length;
   String name;
   String info_url;  // doc_href
@@ -39,8 +39,8 @@ public class Das2Region {
   //  boolean forward;  // no longer used
 
   //  public Das2Region(Das2VersionedSource source, String id, int start, int end, boolean forward_orient) {
-  public Das2Region(Das2VersionedSource source, String id, String nm, String info, int ln) {
-    region_id = id;
+  public Das2Region(Das2VersionedSource source, URI reg_uri, String nm, String info, int ln) {
+    region_uri = reg_uri;
     name = nm;
     info_url = info;
     length = ln;
@@ -48,19 +48,21 @@ public class Das2Region {
     versioned_source = source;
     AnnotatedSeqGroup genome = versioned_source.getGenome();
     // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
-    aseq = genome.getSeq(region_id);
-    if (aseq == null) { aseq = genome.getSeq(name); }
+    aseq = genome.getSeq(name);
+    if (aseq == null) { aseq = genome.getSeq(this.getID()); }
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
-      aseq = new SmartAnnotBioSeq(region_id, genome.getID(), length);
+      //      aseq = new SmartAnnotBioSeq(this.getID(), genome.getID(), length);
+      aseq = new SmartAnnotBioSeq(name, genome.getID(), length);
       genome.addSeq(aseq);
     }
     segment_span = new SimpleSeqSpan(0, length, aseq);
   }
 
 
-  public String getID() { return region_id; }  // or should ID be a URI?
+  public URI getURI() { return region_uri; }
+  public String getID() { return region_uri.toString(); }
   public String getName() { return name; }
   public String getInfoUrl() { return info_url; }
   public Das2VersionedSource getVersionedSource() { return versioned_source; }

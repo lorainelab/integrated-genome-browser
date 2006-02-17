@@ -48,7 +48,7 @@ public class Das2VersionedSourcePlus extends Das2VersionedSource {
 //    super(das_source, version_id, init);
 //  }
     public Das2VersionedSourcePlus(Das2Source das_source, URI vers_uri, boolean init) {
-        super(das_source, vers_uri, init);
+        super(das_source, vers_uri, vers_uri.toString(), null, null, init);
     }
 
   public void addAssay(Das2Assay assay) {

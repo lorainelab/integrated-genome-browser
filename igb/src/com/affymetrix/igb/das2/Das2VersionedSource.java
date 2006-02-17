@@ -45,8 +45,9 @@ public class Das2VersionedSource  {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  Das2Source source;
   URI version_uri;
+  Das2Source source;
+  String name;
   String description;
   String info_url;
   Date creation_date;
@@ -65,7 +66,9 @@ public class Das2VersionedSource  {
 
   LinkedList platforms = new LinkedList();
 
-  public Das2VersionedSource(Das2Source das_source, URI vers_uri, boolean init) {
+  public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name, 
+			     String href, String description, boolean init) {
+    this.name = name;
     version_uri = vers_uri;
     source = das_source;
     if (init) {
@@ -74,7 +77,9 @@ public class Das2VersionedSource  {
     }
   }
 
+  public URI getURI() { return version_uri; }
   public String getID() { return version_uri.toString(); }
+  public String getName() { return name; }
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public Date getCreationDate() { return creation_date; }

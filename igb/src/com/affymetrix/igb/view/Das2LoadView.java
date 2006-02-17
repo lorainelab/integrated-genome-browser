@@ -721,7 +721,7 @@ class Das2SourceTreeNode extends DataSourcesAbstractNode {
   public Enumeration children() { return version_nodes.elements(); }
   public boolean getAllowsChildren() { return true; }
   public boolean isLeaf() { return false; }
-  public String toString() { return source.getID(); }
+  public String toString() { return source.getName(); }
   /** NOT YET IMPLEMENTED */
   public int getIndex(TreeNode node) {
     System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
@@ -740,7 +740,7 @@ class Das2VersionTreeNode extends DataSourcesAbstractNode {
 
   public Das2VersionTreeNode(Das2VersionedSource version) { this.version = version; }
   public Das2VersionedSource getVersionedSource() { return version; }
-  public String toString() { return version.getID(); }
+  public String toString() { return version.getName(); }
   public boolean getAllowsChildren() { return false; }
   public boolean isLeaf() { return true; }
   // Das2VersionTreeNode cannot have children, so some TreeNode methods are just stubs

@@ -51,6 +51,7 @@ public class Das2Region {
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
+      // using name instead of id for now
       aseq = genome.addSeq(name, length);
     }
     segment_span = new SimpleSeqSpan(0, length, aseq);

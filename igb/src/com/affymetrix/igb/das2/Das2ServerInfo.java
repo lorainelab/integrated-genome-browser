@@ -151,14 +151,15 @@ public class Das2ServerInfo  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute("id");
-	String source_title = source.getAttribute("title");
+	String source_name = source.getAttribute("title");
+	if (source_name == null) { source_name = source_id; }
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxid");
 
 	URI source_uri = getBaseURI(das_query, source).resolve(source_id);
 
-	Das2Source dasSource = new Das2Source(this, source_uri, source_title, source_info_url,
+	Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
 					      source_taxon, source_description);
 	this.addDataSource(dasSource);
 	NodeList slist = source.getChildNodes();
@@ -166,13 +167,18 @@ public class Das2ServerInfo  {
 	  if (slist.item(k).getNodeName().equals("VERSION"))  {
 	    Element version = (Element)slist.item(k);
 	    String version_id = version.getAttribute("id");
-	    String version_description = version.getAttribute("description");
+	    String version_name = version.getAttribute("title");
+	    if (version_name == null) { version_name = version_id; }
+
+	    String version_desc = version.getAttribute("description");
 	    String version_info_url = version.getAttribute("doc_href");
 	    //	    setDasVersionedSource(dasSource, version_id, false);
 	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
 	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
 	    System.out.println("version URI: " + version_uri.toString());
-	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
+	    //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
+	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name, 
+								  version_desc, version_info_url, false);
 	    dasSource.addVersion(vsource);
 
   

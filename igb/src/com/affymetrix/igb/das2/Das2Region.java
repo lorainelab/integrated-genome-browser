@@ -20,8 +20,6 @@ import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
@@ -53,9 +51,7 @@ public class Das2Region {
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
-      //      aseq = new SmartAnnotBioSeq(this.getID(), genome.getID(), length);
-      aseq = new SmartAnnotBioSeq(name, genome.getID(), length);
-      genome.addSeq(aseq);
+      aseq = genome.addSeq(name, length);
     }
     segment_span = new SimpleSeqSpan(0, length, aseq);
   }

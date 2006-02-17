@@ -44,7 +44,6 @@ public class ChromInfoParser {
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
     BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
     String line;
-    java.util.List seqlist = new ArrayList();
     while ((line = dis.readLine()) != null) {
       if (line.equals("") || line.startsWith("#"))  { continue; }
       String[] fields = tab_regex.split(line);
@@ -54,25 +53,11 @@ public class ChromInfoParser {
       int chrLength = Integer.parseInt(fields[1]);
       MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
       if (chrom == null) {  // if chrom already in seq group, then don't add to list
-	try {
-	  chrom = (MutableAnnotatedBioSeq)template_seq.getClass().newInstance();
-	  chrom.setID(chrom_name);
-	  chrom.setLength(chrLength);
-	  if (chrom instanceof Versioned) {
-	    ((Versioned)chrom).setVersion(genome_version);
-	  }
-	  seqlist.add(chrom);
-	} catch (Exception ex) {
-          IOException ioe = new IOException("Problem parsing chrom info file");
-          ioe.initCause(ex);
-          throw ioe;
+        chrom = seq_group.addSeq(chrom_name, chrLength);
+        if (chrom instanceof Versioned) {
+          ((Versioned)chrom).setVersion(genome_version);
         }
       }
-    }
-    Collections.sort(seqlist, new ChromComparator());
-    for (int i=0; i<seqlist.size(); i++) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqlist.get(i);
-      seq_group.addSeq(seq);
     }
     return seq_group;
   }

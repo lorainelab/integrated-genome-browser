@@ -27,7 +27,10 @@ public class AnnotatedSeqGroup {
   Date version_date;  // not currently used
   String description;
 
-  Map id2seq = new LinkedHashMap();
+  // Using a sorted map to get the chromosome numbers in a reasonable order.
+  // A better option may be to use a LinkedHashMap and simply make all users
+  // of this class sort the sequences id's before adding them.
+  SortedMap id2seq = new TreeMap(new ChromComparator());
   ArrayList seqlist = new ArrayList();
 
   static Vector sym_map_change_listeners = new Vector(1);
@@ -45,11 +48,9 @@ public class AnnotatedSeqGroup {
 
     if (seqlist.size() != id2seq.size()) {
       //TODO: BUG: the lists in id2seq and seqlist can get out-of-sync with each other
-      // since the Map returned by getSeqs() is modifiable.  The PSL parser, and perhaps others,
-      // adds items to that map, but not to the seqlist.  We need to make that
-      // impossible, perhaps by eliminating the getSeqs() method
+      // since the Map returned by getSeqs() is modifiable.
       
-      // this hack recreates the seqlist if it is not up-to-date
+      // recreate the seqlist if it is not up-to-date
       seqlist = new ArrayList(id2seq.values());
     }
     
@@ -114,8 +115,6 @@ public class AnnotatedSeqGroup {
     return result;
   }
 
-
-
   public boolean isSynonymous(String synonym) {
     if (id.equals(synonym)) { return true; }
     else {
@@ -124,8 +123,8 @@ public class AnnotatedSeqGroup {
     }
   }
 
-  public MutableAnnotatedBioSeq addSeq(String seqid, int length) {
-    MutableAnnotatedBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+  public SmartAnnotBioSeq addSeq(String seqid, int length) {
+    SmartAnnotBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
     this.addSeq(aseq);
     return aseq;
   }
@@ -135,7 +134,7 @@ public class AnnotatedSeqGroup {
     if (oldseq == null) {
       id2seq.put(seq.getID(), seq);
       System.out.println("Added seq: " + seq.getID());
-      seqlist.add(seq);
+      //seqlist.add(seq); // don't add to seqlist, to keep it properly sorted, rebuild it only when needed
       if (seq instanceof SmartAnnotBioSeq) {
 	((SmartAnnotBioSeq)seq).setSeqGroup(this);
       }

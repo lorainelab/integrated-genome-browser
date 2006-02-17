@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,7 +15,6 @@ package com.affymetrix.igb.das;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 
@@ -77,15 +76,14 @@ public class DasEntryPoint {
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
-      aseq = new SmartAnnotBioSeq(entry_id, genome.getID(), stop);  // therefore stop must be populated first!
-      genome.addSeq(aseq);
+      // therefore stop must be populated first!
+      genome.addSeq(entry_id, stop);
     }
 
     // System.out.println(aseq);
 
     if (forward) {  segment_span = new SimpleSeqSpan(start, stop, aseq);  }
     else {  segment_span = new SimpleSeqSpan(stop, start, aseq); }
-
   }
 
 }

@@ -21,12 +21,8 @@ import java.util.regex.*;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
-
-import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.SimpleDas2Feature;
 
@@ -758,9 +754,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     BioSeq seq = group.getSeq(seqid);
     if (seq == null) {
-      MutableAnnotatedBioSeq newseq = new SmartAnnotBioSeq(seqid, group.getVersion(), 123123123);
-      group.addSeq(newseq);
-      seq = newseq;
+      seq = group.addSeq(seqid, 123123123);
     }
     SeqSpan span;
     if (forward)  {

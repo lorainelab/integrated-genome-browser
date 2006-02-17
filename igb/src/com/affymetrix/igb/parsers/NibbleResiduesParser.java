@@ -64,8 +64,7 @@ public class NibbleResiduesParser {
         }
       }
       else {
-        result_seq = new NibbleBioSeq(name, version, num_residues);
-        seq_group.addSeq(result_seq);
+        result_seq = seq_group.addSeq(name, num_residues);
       }
 
       System.out.println("NibbleBioSeq: " + result_seq);

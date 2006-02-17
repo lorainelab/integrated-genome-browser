@@ -791,8 +791,7 @@ public class BarParser {
 	  seqversion = groupname + ":" + seqversion;
 	}
 	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
-        seq = new NibbleBioSeq(seqname, seqversion, 500000000);
-        seq_group.addSeq(seq);
+        seq = seq_group.addSeq(seqname, 500000000);
       }
       //      System.out.println("seq: " + seq);
       BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);

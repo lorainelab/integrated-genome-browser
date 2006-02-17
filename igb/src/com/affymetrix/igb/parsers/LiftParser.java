@@ -86,8 +86,6 @@ public class LiftParser {
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
 
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-    java.util.List seqlist = new ArrayList();
-    Map temp_seqhash = new HashMap();
 
     try {
       String line;
@@ -104,36 +102,16 @@ public class LiftParser {
 	String contig_name = splitname[CONTIG_NAME_SUBFIELD];
 	// experimenting with constructing virtual sequences by using chromosomes as contigs
 	MutableAnnotatedBioSeq contig = seq_group.getSeq(contig_name);
-	if (contig == null)  { contig = (MutableAnnotatedBioSeq)temp_seqhash.get(contig_name); }
 	if (contig == null)  { contig = new SimpleAnnotatedBioSeq(contig_name, match_length); }
 
 	contig_count++;
 	MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
-	if (chrom == null) { chrom = (MutableAnnotatedBioSeq)temp_seqhash.get(chrom_name); }
 	if (chrom == null) {
 	  chrom_count++;
-	  try  {
-	    chrom = (MutableAnnotatedBioSeq)template_seq.getClass().newInstance();
-	  } catch (Exception ex) { 
-            IOException ioe = new IOException("Error while parsing lift file");
-            ioe.initCause(ex);
-            throw ioe;
-          }
-	  chrom.setID(chrom_name);
-	  chrom.setLength(chrom_length);
+          chrom = seq_group.addSeq(chrom_name, chrom_length);
 	  if (chrom instanceof Versioned) {
 	    ((Versioned)chrom).setVersion(genome_version);
 	  }
-	  /*
-	  SymWithProps comp = new SimpleSymWithProps();
-	  comp.setProperty("method", "contigs");
-	  if (chrom instanceof CompositeBioSeq) {
-	    ((CompositeBioSeq)chrom).setComposition(comp);
-	  }
-	  if (annotate_seq)  { chrom.addAnnotation(comp); }
-	  */
-	  seqlist.add(chrom);  // adding to seqlist for sorting
-	  temp_seqhash.put(chrom_name, chrom);
 	}
 	if (chrom instanceof CompositeBioSeq) {
 	  MutableSeqSymmetry comp = (MutableSeqSymmetry)(((CompositeBioSeq)chrom).getComposition());
@@ -152,11 +130,6 @@ public class LiftParser {
 	  csym.setProperty("id", contig.getID());
 	  comp.addChild(csym);
 	}
-      }
-      Collections.sort(seqlist, new ChromComparator()); // sorting seqlist before adding seqs to seq group
-      for (int i=0; i<seqlist.size(); i++) {
-	MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqlist.get(i);
-	seq_group.addSeq(seq);
       }
     }
     catch (EOFException ex) {

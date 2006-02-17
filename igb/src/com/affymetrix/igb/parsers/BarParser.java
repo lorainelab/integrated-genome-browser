@@ -290,7 +290,7 @@ public class BarParser {
    *    least 10x > N), so overhead for reading extra data will be minor.
    * </pre>
    */
-  public static void buildIndex(String file_name, String coord_set_id, AnnotatedSeqGroup seq_group) 
+  public static void buildIndex(String file_name, String coord_set_id, AnnotatedSeqGroup seq_group)
   throws IOException {
     Timer tim = new Timer();
     tim.start();
@@ -411,7 +411,7 @@ public class BarParser {
 22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
 23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
   */
-  public static boolean outputBarFormat(GraphSym graf, OutputStream ostr) throws IOException {
+public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throws IOException {
     boolean success = false;
     BufferedOutputStream bos = new BufferedOutputStream(ostr);
     DataOutputStream dos = new DataOutputStream(bos);
@@ -503,7 +503,7 @@ public class BarParser {
     Timer tim = new Timer();
     tim.start();
     try {
-    
+
     bis = new BufferedInputStream(istr);
     dis = new DataInputStream(bis);
     BarFileHeader bar_header = parseBarHeader(dis);
@@ -752,7 +752,7 @@ public class BarParser {
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      
+
       //TODO: Convert this to the standard way of getting synomous sequences,
       // but we may have to check for extra bar-specific synonyms involving seq group and version
       Iterator iter = seq_group.getSeqs().values().iterator();

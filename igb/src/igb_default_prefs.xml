@@ -95,7 +95,10 @@
          url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->
-  <annotation_url annot_type_regex="RefSeq"
+  <annotation_url annot_type_regex="RefSeq\S*"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="mRNA\S*"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
   <annotation_url annot_type_regex="TAIR\S*" 

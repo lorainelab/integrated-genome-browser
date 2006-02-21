@@ -38,6 +38,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
   static {
     psl_pref_list.add("bps");
     psl_pref_list.add("psl");
+    
     psl3_pref_list.add("psl3");
     psl3_pref_list.add("bps");
     psl3_pref_list.add("psl");
@@ -59,14 +60,6 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     LOOK_FOR_TARGETS_IN_QUERYHASH = b;
   }
 
-  public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
-    return parse(istr, null, "psl");
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
-    throws IOException {
-    return parse(istr, aseq, "psl");
-  }
 
   /**
    *  @param aseq should be target seq.
@@ -145,19 +138,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
     ArrayList results = new ArrayList();
 
-    // added target2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (target2types) from
-    //    target seq to another hash (usually referred to as type2csym) of types to container sym
+    // the three xxx2types Maps accomodate using create_container_annot and psl with track lines.
     HashMap target2types = new HashMap();
-
-    // added query2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (query2types) from
-    //    query seq to another hash (usually referred to as type2csym) of types to container sym
     HashMap query2types = new HashMap();
-
-    // added other2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (other2types) from
-    //    other seq to another hash (usually referred to as type2csym) of types to container sym
     HashMap other2types = new HashMap();
 
     Map query_hash = qhash;
@@ -322,6 +305,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	if (fields.length > findex &&
 	    (fields[findex].equals("+") || fields[findex].equals("-")) ) {
 	  // a "+" or "-" in first field after tmins indicates that it's a Psl3 format
+	  is_psl3 = true;
+          
 	  String otherstrand_string = fields[findex++];
 	  boolean other_same_orientation = otherstrand_string.equals("+");
 	  String oname = fields[findex++];
@@ -346,32 +331,14 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 			    same_orientation, other_same_orientation,
 			    qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax,
 			    blockcount, blocksizes, qmins, tmins, omins);
-	  is_psl3 = true;
-	  //	  System.out.println("making PSL3 sym");
-	  if (annotate_other) {
-	    if (create_container_annot) {
-	      Map type2csym = (Map)other2types.get(oseq);
-	      if (type2csym == null) {
-		type2csym = new HashMap();
-		other2types.put(oseq, type2csym);
-	      }
-	      //	      SimpleSymWithProps other_parent_sym = (SimpleSymWithProps)other2sym.get(tname);
-	      SimpleSymWithProps other_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	      if (other_parent_sym == null) {
-		other_parent_sym = new SimpleSymWithProps();
-		other_parent_sym.addSpan(new SimpleSeqSpan(0, oseq.getLength(), oseq));
-		other_parent_sym.setProperty("method", type);
-		other_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-		oseq.addAnnotation(other_parent_sym);
-		//		other2sym.put(tname, other_parent_sym);
-		type2csym.put(type, other_parent_sym);
-	      }
-	      other_parent_sym.addChild(sym);
-	    }
-	    else {
-	      oseq.addAnnotation(sym);
-	    }
-	  }
+
+          if (annotate_other) {
+            if (create_container_annot) {
+              createContainerAnnot(other2types, oseq, type, sym, is_psl3);
+            } else {
+              oseq.addAnnotation(sym);
+            }
+          }
 	}
 	else {
 	  sym = new UcscPslSym(type, match, mismatch, repmatch, n_count,
@@ -380,8 +347,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 			       qseq, qmin, qmax, tseq, tmin, tmax,
 			       blockcount, blocksizes, qmins, tmins);
 	}
-	//	System.out.println("looking for extra tagval fields");
-
+        
 	// looking for extra tag-value fields at end of line
 	if (fields.length > findex) {
 	  for (int i=findex; i<fields.length; i++) {
@@ -390,77 +356,29 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	    if (tagval.length >= 2) {
 	      String tag = tagval[0];
 	      String val = tagval[1];
-	      //	      System.out.println("setting property: " + tag + ", " + val);
 	      sym.setProperty(tag, val);
 	    }
 	  }
 	}
 
-	if (annotate_query) {
-	  if (create_container_annot) {
-	    Map type2csym = (Map)query2types.get(qseq);
-	    if (type2csym == null) {
-	      type2csym = new HashMap();
-	      query2types.put(qseq, type2csym);
-	    }
-	    //	    SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
-	    SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	    if (query_parent_sym == null) {
-	      query_parent_sym = new SimpleSymWithProps();
-	      query_parent_sym.addSpan(new SimpleSeqSpan(0, qseq.getLength(), qseq));
-	      query_parent_sym.setProperty("method", type);
-	      if (is_psl3) {
-		query_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-	      }
-	      else {
-		query_parent_sym.setProperty("preferred_formats", psl_pref_list);
-	      }
-	      qseq.addAnnotation(query_parent_sym);
-	      //	      query2sym.put(qname, query_parent_sym);
-	      type2csym.put(type, query_parent_sym);
-	    }
-	    query_parent_sym.addChild(sym);
-	  }
-	  else {
-	    qseq.addAnnotation(sym); // GAH commenting out for memory testing 8-20-2003
-	  }
-	}
+        if (annotate_query) {
+          if (create_container_annot) {
+            createContainerAnnot(query2types,qseq,type,sym,is_psl3);
+          } else {
+            qseq.addAnnotation(sym);
+          }
+        }
 
 	if (annotate_target) {
-
-	  // need to work on adding a top-level symmetry X here which is itself added
-	  // (just once, then hashed to keep track of it) to the tseq, and add psl syms as
-	  //    children of X (rather than directly to tseq)
-	  // and similarly with qseq...
-	  //	  System.out.println("annotating target: ");
-	  //	  SeqUtils.printSymmetry(sym);
 	  if (create_container_annot) {
-	    Map type2csym = (Map)target2types.get(tseq);
-	    if (type2csym == null) {
-	      type2csym = new HashMap();
-	      target2types.put(tseq, type2csym);
-	    }
-	    SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	    if (target_parent_sym == null) {
-	      target_parent_sym = new SimpleSymWithProps();
-	      target_parent_sym.addSpan(new SimpleSeqSpan(0, tseq.getLength(), tseq));
-	      target_parent_sym.setProperty("method", type);
-	      if (is_psl3) {
-		target_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-	      }
-	      else {
-		target_parent_sym.setProperty("preferred_formats", psl_pref_list);
-	      }
-	      tseq.addAnnotation(target_parent_sym);
-	      type2csym.put(type, target_parent_sym);
-	    }
-	    target_parent_sym.addChild(sym);
+            createContainerAnnot(target2types, tseq, type, sym, is_psl3);
 	  }
 	  else {
 	    tseq.addAnnotation(sym);
 	  }
 	}
-	total_annot_count++;
+
+        total_annot_count++;
 	total_child_count += sym.getChildCount();
 	results.add(sym);
         if (seq_group != null) {
@@ -486,6 +404,30 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 		       ", child count: " + total_child_count);
     return results;
+  }
+    
+  static void createContainerAnnot(Map seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3) {
+    //    If using a container sym, need to first hash (seq2types) from
+    //    seq to another hash (type2csym) of types to container sym
+    Map type2csym = (Map) seq2types.get(seq);
+    if (type2csym == null) {
+      type2csym = new HashMap();
+      seq2types.put(seq, type2csym);
+    }
+    SimpleSymWithProps parent_sym = (SimpleSymWithProps)type2csym.get(type);
+    if (parent_sym == null) {
+      parent_sym = new SimpleSymWithProps();
+      parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+      parent_sym.setProperty("method", type);
+      if (is_psl3) {
+        parent_sym.setProperty("preferred_formats", psl3_pref_list);
+      } else {
+        parent_sym.setProperty("preferred_formats", psl_pref_list);
+      }
+      seq.addAnnotation(parent_sym);
+      type2csym.put(type, parent_sym);
+    }
+    parent_sym.addChild(sym);
   }
 
 

@@ -152,7 +152,11 @@ public class Das2ServerInfo  {
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute("id");
 	String source_name = source.getAttribute("title");
-	if (source_name == null) { source_name = source_id; }
+	System.out.println("title: " + source_name + ",  length: " + source_name.length());
+	if (source_name == null || source_name.length() == 0) { 
+	  source_name = source_id; 
+	}
+	System.out.println("source_name: " + source_name);
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxid");
@@ -168,7 +172,10 @@ public class Das2ServerInfo  {
 	    Element version = (Element)slist.item(k);
 	    String version_id = version.getAttribute("id");
 	    String version_name = version.getAttribute("title");
-	    if (version_name == null) { version_name = version_id; }
+	    if (version_name == null || version_name.length() == 0) { 
+	      version_name = version_id; 
+	    }
+	    System.out.println("version_name: " + version_name);
 
 	    String version_desc = version.getAttribute("description");
 	    String version_info_url = version.getAttribute("doc_href");

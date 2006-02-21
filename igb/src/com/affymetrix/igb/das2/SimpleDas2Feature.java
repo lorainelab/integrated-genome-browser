@@ -12,13 +12,14 @@
 */
 package com.affymetrix.igb.das2;
 
+import java.net.URI;
 import java.util.*;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.TypedSym;
 
 public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
-
   String id;
+  //  URI feat_uri;
   String type;  // eventually replace with Das2Type
   String name;
   String created;
@@ -30,28 +31,35 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
   List notes;  // or should these just be folded into properties?
   List xids;   // or should these just be folded into properties?
 
+  // public SimpleDas2Feature(URI furi, String feat_type, String feat_name, String feat_parent_id,
   public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
 			   String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
     id = feat_id;
+    //    feat_uri = furi;
     type = feat_type;
     name = feat_name;
     parent_id = feat_parent_id;
     created = feat_created;
     modified = feat_modified;
     doc_href = feat_doc_href;
-    setProperties(feat_props);   // feat_props should be null if no feature XML had no <PROP> elements
+    setProperties(feat_props);   // feat_props should be null if the feature XML had no <PROP> elements
   }
 
-  /** implementing TypedSym interface */
-  public String getType() { return type; }
+  //  public URI getURI() { return feat_uri; }
+  //  public String getID() { return feat_uri.toString(); }
   public String getID() { return id; }
   public String getName() { return name; }
+  /** implementing TypedSym interface */
+  public String getType() { return type; }
 
   public Object getProperty(String prop) {
+      //    if (prop.equals("id")) { return feat_uri.toString(); }
     if (prop.equals("id")) { return id; }
     else if (prop.equals("name")) { return name; }
     else if (prop.equals("type")) { return type; }
     else if (prop.equals("link")) { return doc_href; }
+    else if (prop.equals("created")) { return created; }
+    else if (prop.equals("modified")) { return modified; }
     else { return super.getProperty(prop); }
   }
 
@@ -65,10 +73,13 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     if (cprops == null) {
       cprops = new LinkedHashMap();
     }
-    if (id != null)  { cprops.put("id", id); }  // should never be null though
-    if (type != null)  { cprops.put("type", type); }  // shuold never be null though
+    //    cprops.put("id", feat_uri.toString());
+    cprops.put("id", id);
+    if (type != null)  { cprops.put("type", type); }  // should never be null though
     if (name != null)  { cprops.put("name", name); }
     if (doc_href != null) { cprops.put("link", doc_href); }
+    if (created != null) { cprops.put("created", created); }
+    if (modified != null) { cprops.put("modified", modified); }
     return cprops;
   }
 

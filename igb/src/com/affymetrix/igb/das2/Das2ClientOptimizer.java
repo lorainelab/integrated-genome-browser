@@ -49,6 +49,10 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
+  static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
+  static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
+  static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
+
   static boolean DEBUG_HEADERS = false;
   static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
@@ -216,13 +220,16 @@ public class Das2ClientOptimizer {
     boolean success = true;
 
     SeqSpan overlap_span = request_sym.getOverlapSpan();
-    String overlap_filter = request_sym.getRegion().getPositionString(overlap_span, false);
+    String overlap_filter = request_sym.getRegion().getPositionString(
+        overlap_span, USE_SEGMENT_URI, false);
     SeqSpan inside_span = request_sym.getInsideSpan();
-    String inside_filter = request_sym.getRegion().getPositionString(inside_span, false);
-    System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
+    String inside_filter = request_sym.getRegion().getPositionString(inside_span,
+        USE_SEGMENT_URI, false);
+    System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter +
+                       ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
     String format = null;
-    if (OPTIMIZE_FORMAT)  {
+    if (OPTIMIZE_FORMAT) {
       format = FormatPriorities.getFormat(type);
     }
 
@@ -234,16 +241,16 @@ public class Das2ClientOptimizer {
     //    String version_url = source.getServerInfo().getRootUrl() + "/" +
     //      versioned_source.getID();
 
-    Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
-    URI query_root = featcap.getRootURI();
+    Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.
+        FEATURES_CAP_QUERY);
+    String request_root = featcap.getRootURI().toString();
 
-    //    System.out.println("   version url: " + version_url);
-    System.out.println("   query root: " + query_root.toString());
+    System.out.println("   request root: " + request_root);
     System.out.println("   preferred format: " + format);
 
     StringBuffer buf = new StringBuffer(200);
-    buf.append(query_root.toString());
-    buf.append("?");
+    //    buf.append(query_root.toString());
+    //    buf.append("?");
     //    buf.append(version_url);
     //    buf.append("/feature?");
     buf.append("overlaps=");
@@ -255,24 +262,38 @@ public class Das2ClientOptimizer {
       buf.append(";");
     }
     buf.append("type=");
-    //    buf.append(type.getID());
-    // GAH temporary hack till server can accept full URI for type id
-    buf.append("SO:" + type.getName());
+    if (USE_TYPE_URI) {
+      buf.append(type.getID());
+    }
+    else {
+      // GAH temporary hack till biopackages recognition of type URIs and/or names are fixed
+      if (request_root.indexOf("biopackages") >= 0) {
+        buf.append("SO:");
+      }
+      buf.append(type.getName());
+    }
+
     if (OPTIMIZE_FORMAT && format != null) {
       buf.append(";");
       buf.append("format=");
       buf.append(format);
     }
 
-    if (format == null) { format = default_format; }
+    if (format == null) {
+      format = default_format;
+    }
 
-    String feature_query = buf.toString();
-    System.out.println("feature query:  " + feature_query);
+    try {
+      String query_part = buf.toString();
+      if (URL_ENCODE_QUERY) {
+        query_part = URLEncoder.encode(query_part, "UTF-8");
+      }
+      String feature_query = request_root + "?" + query_part;
+      System.out.println("feature query:  " + feature_query);
 
     /**
      *  Need to look at content-type of server response
      */
-    try {
       BufferedInputStream bis = null;
       String content_subtype = null;
       // if overlap_span is entire length of sequence, then check for caching

@@ -21,6 +21,7 @@ import java.util.regex.*;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
@@ -67,11 +68,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String CREATED = "created";    // FEATURE
   static final String MODIFIED = "modified";  // FEATURE
   static final String DOC_HREF = "doc_href";  // FEATURE
-  static final String MIME_TYPE = "mimetype";  // FORMAT, PROP
+  static final String MIME_TYPE = "mimetype";  // PROP
   static final String RANGE = "range";         // LOC, ALIGN
   // PROP attributes -- leaving out for now, not sure if common.rnc is current for t
   static final String TARGETID = "target_id";  // ALIGN
-  static final String GAP = "gap";             // ALIGN
+  static final String CIGAR = "gap";             // ALIGN
+  static final String KEY = "key";             // PROP
+  static final String VALUE = "value";         // PROP
 
 
   //  static final String POS = "pos";  // in <LOC>
@@ -115,6 +118,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   /**  list of SeqSpans specifying feature locations */
   List feat_locs = new ArrayList();
+  List feat_aligns = new ArrayList();
   List feat_xids = new ArrayList();
   /**
    *  map of child feature id to either:
@@ -122,7 +126,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *      child feature object (if child feature already parsed)
    */
   Map feat_parts = new LinkedHashMap();
-  List feat_aligns = new ArrayList();
   Map feat_props = null;
 
   /**
@@ -156,7 +159,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   /**
    *   setBaseURI should only be used when writing out DAS2XML
-   *   (maybe should force specification of base URI in constructor?  
+   *   (maybe should force specification of base URI in constructor?
    *      then wuoldn't need extra url argument in parse() method...)
    */
   public void setBaseURI(URI base) { current_base_uri = base; }
@@ -167,17 +170,17 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  Parse a DAS2 features document.
    *  return value is List of all top-level features as symmetries.
    *
-   *  uri argument is the URI the XML document was retrieved from 
-   *  this argument is needed to ensure that Xml Base resolution is handled correctly 
+   *  uri argument is the URI the XML document was retrieved from
+   *  this argument is needed to ensure that Xml Base resolution is handled correctly
    *      (sometimes can get base url from isrc.getSystemId(), but some InputSources may not have this set correctly)
-   *     not sure if this strategy is currently handling URL redirects correctly... 
-   * 
+   *     not sure if this strategy is currently handling URL redirects correctly...
+   *
    *  if annot_seq, then feature symmetries will also be added as annotations to seqs in seq group
    *
    *  For example of situation where annot_seq = false:
-   *   with standard IGB DAS2 access, don't want to add annotatons directly to seqs,
-   *   but rather want them to be children of a Das2FeatureRequestSym (which in turn is a child of
-   *   Das2ContainerAnnot [or possibly TypeContainerAnnot constructed by SmartAnnotSeq itself]),
+   *   with standard IGB DAS2 access, don't want to add annotatons directly to seqs, but rather want
+   *   them to be children of a Das2FeatureRequestSym (which in turn is a child of TypeContainerAnnot
+   *   constructed by SmartAnnotSeq itself [though may change this to a Das2ContainerAnnot in the future]),
    *   which in turn is directly attached to the seq as an annotation (giving two levels of additional
    *   annotation hierarchy)
    */
@@ -247,7 +250,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     if (DEBUG)  { System.out.println("start element: " + name); }
     elemstack.push(current_elem);
     current_elem = name.intern();
-    String xml_base = atts.getValue("xml:base");
+    String xml_base = atts.getValue(XMLBASE);
     if (xml_base != null)  {
       current_base_uri = current_base_uri.resolve(xml_base);
       System.out.println("resolved new base uri: " + current_base_uri);
@@ -259,33 +262,35 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     else if (current_elem == FEATURE) {
 
-      String feat_id_att = atts.getValue("id");
+      String feat_id_att = atts.getValue(ID);
       feat_id = current_base_uri.resolve(feat_id_att).toString();
-      String feat_type_att = atts.getValue("type");
+      String feat_type_att = atts.getValue(TYPEID);
       feat_type = current_base_uri.resolve(feat_type_att).toString();
-      
-      feat_name = atts.getValue("name");
+
+      feat_name = atts.getValue(NAME);
       // feat_parent_id has moved to <PARENT> element
       //      feat_parent_id = atts.getValue("parent");
-      feat_created = atts.getValue("created");
-      feat_modified = atts.getValue("modified");
-      feat_doc_href = atts.getValue("doc_href");
+      feat_created = atts.getValue(CREATED);
+      feat_modified = atts.getValue(MODIFIED);
+      feat_doc_href = atts.getValue(DOC_HREF);
 
     }
     else if (current_elem == LOC)  {
-      String seqid = atts.getValue("id");
-      String range = atts.getValue("range");
+      String seqid_att = atts.getValue(ID);
+      String seqid = current_base_uri.resolve(seqid_att).toString();
+      String range = atts.getValue(RANGE);
       // DO_SEQID_HACK is a very temporary fix!!!
       // Need to move to using full URI references to identify sequences,
-      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
+      //      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
       SeqSpan span = getLocationSpan(seqid, range, seqgroup);
       feat_locs.add(span);
     }
     else if (current_elem == XID) {
+
     }
     else if (current_elem == PARENT) {
       if (feat_parent_id == null) {
-	feat_parent_id = atts.getValue("id");
+	feat_parent_id = atts.getValue(ID);
 	feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
       }
       else {
@@ -293,7 +298,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
     else if (current_elem == PART) {
-      String part_id = atts.getValue("id");
+      String part_id = atts.getValue(ID);
       part_id = current_base_uri.resolve(part_id).toString();
       /*
        *  Use part_id to look for child sym already constructed and placed in id2sym hash
@@ -309,10 +314,21 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
     else if (current_elem == PROP) {
-      feat_prop_key = atts.getValue("key");
-      feat_prop_val = atts.getValue("value");
+      feat_prop_key = atts.getValue(KEY);
+      feat_prop_val = atts.getValue(VALUE);
     }
     else if (current_elem == ALIGN) {
+      String target_id = atts.getValue(TARGETID);
+      String target_range = atts.getValue(RANGE);
+      String cigar = atts.getValue(CIGAR);
+      // not sure yet how to handle optional cigar string
+      // calling getLocationSpan() with null seq_group arg means that 
+      //    a new BioSeq will be created.  If we want this method to try and 
+      //    find existing BioSeqs to use, probably need some universal 
+      //    BioSeq id resolution mechanism (similar or same as SeqSymmetry resolution)
+      //    right now only have BioSeq id resolution relative to a particular AnnotatedSeqGroup
+      SeqSpan span = getLocationSpan(target_id, target_range, null);
+      feat_aligns.add(span);
     }
     else {
       System.out.println("element not recognized: " + current_elem);
@@ -416,6 +432,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       System.out.println("WARNING, duplicate feature id: " + feat_id);
       return;
     }
+    //SimpleDas2Feature featsym = new SimpleDas2Feature(new URI(feat_id), feat_type, feat_name, feat_parent_id,
     SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
 						      feat_created, feat_modified, feat_doc_href, feat_props);
     // add featsym to id2sym hash
@@ -426,6 +443,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     int loc_count = feat_locs.size();
     for (int i=0; i<loc_count; i++) {
       SeqSpan span = (SeqSpan)feat_locs.get(i);
+      featsym.addSpan(span);
+    }
+
+    // add aligns as spans??
+    int align_count = feat_aligns.size();
+    for (int i=0; i<align_count; i++) {
+      SeqSpan span = (SeqSpan)feat_aligns.get(i);
       featsym.addSpan(span);
     }
 
@@ -449,9 +473,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	BioSeq seq = span.getBioSeq();
 	MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq
 	if ((seq != null) && (aseq != null) && (seq == aseq)) {
-	  // really want an extra level of annotation here (add as child to a Das2FeatureRequestSym),
-	  //    but Das2FeatureRequestSym is not yet implemented
-	  //
 	  result_syms.add(featsym);
 	  if (add_annots_to_seq)  {
 	    aseq.addAnnotation(featsym);
@@ -752,9 +773,16 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     if (subfields.length >= 3) {
       if (subfields[2].equals("-1")) { forward = false; }
     }
-    BioSeq seq = group.getSeq(seqid);
-    if (seq == null) {
-      seq = group.addSeq(seqid, 123123123);
+    BioSeq seq;
+    // need to revisit what to do if group == null
+    if (group == null) {
+      seq = new SimpleBioSeq(seqid, max);
+    }
+    else  {
+      seq = group.getSeq(seqid);
+      if (seq == null) {
+	seq = group.addSeq(seqid, max);
+      }
     }
     SeqSpan span;
     if (forward)  {

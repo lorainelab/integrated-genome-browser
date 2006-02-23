@@ -154,7 +154,7 @@ public class BsnpParser {
     try {
       GFFParser gff_parser = new GFFParser();
       gff_parser.parse(istr, seq_group, true);
-      Iterator iter = seq_group.getSeqs().values().iterator();
+      Iterator iter = seq_group.getSeqList().iterator();
       int problem_count = 0;
       while (iter.hasNext()) {
 	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();

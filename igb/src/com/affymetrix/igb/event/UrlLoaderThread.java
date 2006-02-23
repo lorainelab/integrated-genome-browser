@@ -283,15 +283,9 @@ public class UrlLoaderThread extends Thread {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-      Map seqhash = group.getSeqs();
       PSLParser parser = new PSLParser();
       parser.enableSharedQueryTarget(true);
-      if (seqhash == null) {
-        parser.parse(bis, gmodel.getSelectedSeq(), type);
-      }
-      else {
-        parser.parse(bis, type, null, seqhash, group, false, true);
-      }
+      parser.parse(bis, type, null, group, false, true);
       group.symHashChanged(parser);
     } finally {
       if (bis != null) try {bis.close();} catch (Exception e) {}
@@ -338,8 +332,8 @@ public class UrlLoaderThread extends Thread {
 
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-      Map seqhash = group.getSeqs();
-      bps_parser.parse(dis, type, group);
+      
+      bps_parser.parse(dis, type, group, null, true, false);
       group.symHashChanged(bps_parser);
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}

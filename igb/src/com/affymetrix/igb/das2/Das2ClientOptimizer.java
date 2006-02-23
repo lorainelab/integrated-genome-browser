@@ -372,7 +372,7 @@ public class Das2ClientOptimizer {
 	  System.out.println("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
 	  BpsParser parser = new BpsParser();
 	  DataInputStream dis = new DataInputStream(bis);
-	  feats = parser.parse(dis, type.getID(), null, seq_group.getSeqs(), false, false);
+          feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
 	}
         else if (content_subtype.equals("brs"))  {
           System.out.println("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");

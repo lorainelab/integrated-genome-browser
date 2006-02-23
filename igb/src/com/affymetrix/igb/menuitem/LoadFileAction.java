@@ -259,13 +259,6 @@ public class LoadFileAction {
         str = new BufferedInputStream(str);
       }
 
-      Map seqhash = selected_group.getSeqs();
-      if (seqhash == null) {
-        // this will never happen, but I'm checking anyway.
-        ErrorHandler.errorPanel("ERROR", "Select a genome before loading a file.", gviewer.getFrame());
-        return null;
-      }
-
       if (lcname.endsWith(".axml")) {
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
@@ -308,12 +301,8 @@ public class LoadFileAction {
           // Otherwise, the user has to tell us wether to annotate the
           // "query" or "target" or "other"
           if (lcname.endsWith(".link.psl")) {
+            parser.setIsLinkPsl(true);
             psl_option = 1; // "target"
-            // Make a copy of the seqhash, because we do NOT want all the temporary
-            // sequences found in the link.psl file to be added to the real seqmap.
-            Map seqhash_copy = new HashMap();
-            seqhash_copy.putAll(seqhash);
-            seqhash = seqhash_copy;
           } else {
             if (lcname.endsWith(".psl3")) {
               options = new Object[] { "Query", "Target", "Other"};
@@ -340,13 +329,13 @@ public class LoadFileAction {
                              ", target = " + annotate_target +
                              ", other = " + annotate_other);
           if (annotate_query) {
-            parser.parse(str, stream_name, seqhash, null, null, true, false);
+            parser.parse(str, stream_name, selected_group, null, null, true, false, false);
           }
           else if (annotate_target)  {
-            parser.parse(str, stream_name, null, seqhash, selected_group, false, true);
+            parser.parse(str, stream_name, null, selected_group, null, false, true, false);
           }
           else if (annotate_other)  {
-            parser.parse(str, stream_name, null, null, seqhash, null, false, false, true);
+            parser.parse(str, stream_name, null, null, selected_group, false, false, true);
           }
           aseq = input_seq;
         }
@@ -356,7 +345,7 @@ public class LoadFileAction {
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
         DataInputStream dis = new DataInputStream(str);
         BpsParser bps_parser = new BpsParser();
-        bps_parser.parse(dis, annot_type, selected_group);
+        bps_parser.parse(dis, annot_type, selected_group, null, true, false);
         bps_parser = null;
         aseq = input_seq;
       }

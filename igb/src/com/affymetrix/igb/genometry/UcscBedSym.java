@@ -266,10 +266,14 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       // only keep going if has score field
       if (score > Float.NEGATIVE_INFINITY) {
 	out.write('\t');
-	out.write(Float.toString(score));
+        if (score == 0) {
+          out.write('0');
+        } else {
+	  out.write(Float.toString(score));
+        }
 	out.write('\t');
-	if (forward) { out.write("+"); }
-	else { out.write("-"); }
+	if (forward) { out.write('+'); }
+	else { out.write('-'); }
 	// only keep going if has thickstart/thickend
 	if (cdsMin > Integer.MIN_VALUE &&
 	    cdsMax > Integer.MIN_VALUE)  {

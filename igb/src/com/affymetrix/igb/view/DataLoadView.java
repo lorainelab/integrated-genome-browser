@@ -16,12 +16,10 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
-import javax.swing.tree.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.event.*;
@@ -99,7 +97,7 @@ class SeqGroupView extends JComponent
       if (group == null)  { System.out.println("  group is null"); }
       else  {
         System.out.println("  group: " + group.getID());
-        System.out.println("  seq count: " + group.getSeqs().size());
+        System.out.println("  seq count: " + group.getSeqCount());
       }
     }
 

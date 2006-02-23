@@ -36,6 +36,10 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *  optional fields. The number of fields per line must be consistent throughout
  *  any single set of data in an annotation track.
  *
+ * Some BED files from UCSC contain an initial column *before* the chromosome name.
+ * We simply ignore this column; we recognize that it is there by the fact that
+ * the strand is given in (zero-based-)column 6 rather than 5.
+ *
  * The first three required BED fields are:
  *    [0] chrom - The name of the chromosome (e.g. chr3, chrY, chr2_random) or contig (e.g. ctgY1).
  *    [1] chromStart - The starting position of the feature in the chromosome or contig.
@@ -146,7 +150,8 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     boolean some_children = false;
 
     Thread thread = Thread.currentThread();
-    while ((line = dis.readLine()) != null && (! thread.isInterrupted())) {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
       if (line.startsWith("#") || line.equals("")) {  // skip comment lines
 	continue;
       }
@@ -495,8 +500,6 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     System.out.println("in BedParser.writeAnnotations()");
     boolean success = true;
     try {
-      //    response.setContentType("text/psl");
-      //    PrintWriter pw = outstream.getWriter();
       Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {

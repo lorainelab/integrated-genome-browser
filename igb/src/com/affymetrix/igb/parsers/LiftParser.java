@@ -136,7 +136,7 @@ public class LiftParser {
       System.out.println("reached end of lift file");
     }
 
-    Collection chroms = seq_group.getSeqs().values();
+    Collection chroms = seq_group.getSeqList();
     Iterator iter = chroms.iterator();
     while (iter.hasNext()) {
       CompositeBioSeq chrom = (CompositeBioSeq)iter.next();

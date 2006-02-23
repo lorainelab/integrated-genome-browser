@@ -20,7 +20,6 @@ import java.util.*;
 import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
@@ -43,8 +42,6 @@ public class BpsParser implements AnnotationWriter  {
   static boolean use_byte_buffer = true;
   static boolean REPORT_LOAD_STATS = true;
 
-  // mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
-  //   that all random, etc. bits are at bottom
   static String user_dir = System.getProperty("user.dir");
 
   // .bps is for "binary PSL format"
@@ -182,7 +179,7 @@ public class BpsParser implements AnnotationWriter  {
       else {
 	dis = new DataInputStream(bis);
       }
-      results = parse(dis, annot_type, seq_group);
+      results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
     }
     finally {
       if (dis != null) try { dis.close(); } catch (Exception e) {}
@@ -190,29 +187,20 @@ public class BpsParser implements AnnotationWriter  {
     }
     return results;
   }
-  
-  public static java.util.List parse(DataInputStream dis, String annot_type, 
-      AnnotatedSeqGroup seq_group) throws IOException {
-    return parse(dis, annot_type, null, seq_group.getSeqs(), seq_group, false, true);
-  }
-
-  public static java.util.List parse(DataInputStream dis, String annot_type,
-              Map qhash, Map thash, boolean annot_query, boolean annot_target) 
-  throws IOException {
-     return parse (dis, annot_type, qhash, thash, null, annot_query, annot_target);
-  }
-  
+    
   /** Reads binary PSL data from the given stream.  Note that this method <b>can</b>
    *  be interrupted early by Thread.interrupt().  The input stream will always be closed
    *  before exiting this method.
    */
   public static java.util.List parse(DataInputStream dis, String annot_type,
-    Map qhash, Map thash, AnnotatedSeqGroup seq_group,  boolean annot_query, boolean annot_target) 
+    AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, 
+    boolean annot_query, boolean annot_target) 
   throws IOException {
-    Map query_hash = qhash;
-    Map target_hash = thash;
-    if (query_hash == null) { query_hash = new HashMap(); }
-    if (target_hash == null) { target_hash = new HashMap(); }
+    
+    // make temporary seq groups to avoid null pointers later
+    if (query_group == null) { query_group = new AnnotatedSeqGroup("Query"); }
+    if (target_group == null) { target_group = new AnnotatedSeqGroup("Target"); }
+    
     int total_block_count = 0;
     HashMap target2sym = new HashMap(); // maps target chrom name to top-level symmetry
     HashMap query2sym = new HashMap(); // maps query chrom name to top-level symmetry
@@ -240,21 +228,24 @@ public class BpsParser implements AnnotationWriter  {
 	int qsize = dis.readInt();
 	int qmin = dis.readInt();
 	int qmax = dis.readInt();
-	BioSeq queryseq = (BioSeq)query_hash.get(qname);
+        
+        MutableAnnotatedBioSeq queryseq = query_group.getSeq(qname);
 	if (queryseq == null)  {
-	  queryseq = new SimpleAnnotatedBioSeq(qname, qsize);
-	  query_hash.put(qname, queryseq);
+          queryseq = query_group.addSeq(qname, qsize);
 	}
+        if (queryseq.getLength() < qsize) { queryseq.setLength(qsize); }
 
 	String tname = dis.readUTF();
 	int tsize = dis.readInt();
 	int tmin = dis.readInt();
 	int tmax = dis.readInt();
-	BioSeq targetseq = (BioSeq)target_hash.get(tname);
+        
+        
+	MutableAnnotatedBioSeq targetseq = target_group.getSeq(tname);
 	if (targetseq == null) {
-	  targetseq = new SimpleAnnotatedBioSeq(tname, tsize);
-	  target_hash.put(tname, targetseq);
+          targetseq = target_group.addSeq(tname, tsize);
 	}
+        if (targetseq.getLength() < tsize) { targetseq.setLength(tsize); }
 
 	int blockcount = dis.readInt();
 	int[] blockSizes = new int[blockcount];
@@ -278,33 +269,34 @@ public class BpsParser implements AnnotationWriter  {
 			 queryseq, qmin, qmax, targetseq, tmin, tmax,
 			 blockcount, blockSizes, qmins, tmins);
 	results.add(sym);
-	if (seq_group != null) {
-          seq_group.addToIndex(sym.getID(), sym);
-	}
-	if (annot_query && (queryseq instanceof MutableAnnotatedBioSeq)) {
+        
+
+        if (annot_query) {
 	  SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
 	  if (query_parent_sym == null) {
 	    query_parent_sym = new SimpleSymWithProps();
 	    query_parent_sym.addSpan(new SimpleSeqSpan(0, queryseq.getLength(), queryseq));
 	    query_parent_sym.setProperty("method", annot_type);
 	    query_parent_sym.setProperty("preferred_formats", pref_list);
-	    ((MutableAnnotatedBioSeq)queryseq).addAnnotation(query_parent_sym);
+	    queryseq.addAnnotation(query_parent_sym);
 	    query2sym.put(qname, query_parent_sym);
 	  }
+          query_group.addToIndex(sym.getID(), sym);
 	  query_parent_sym.addChild(sym);
 	}
 
-	if (annot_target && (targetseq instanceof MutableAnnotatedBioSeq)) {
+	if (annot_target) {
 	  SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)target2sym.get(tname);
 	  if (target_parent_sym == null) {
 	    target_parent_sym = new SimpleSymWithProps();
 	    target_parent_sym.addSpan(new SimpleSeqSpan(0, targetseq.getLength(), targetseq));
 	    target_parent_sym.setProperty("method", annot_type);
 	    target_parent_sym.setProperty("preferred_formats", pref_list);
-	    ((MutableAnnotatedBioSeq)targetseq).addAnnotation(target_parent_sym);
+	    targetseq.addAnnotation(target_parent_sym);
 	    target2sym.put(tname, target_parent_sym);
 	  }
 	  target_parent_sym.addChild(sym);
+          target_group.addToIndex(sym.getID(), sym);
 	}
       }
     }
@@ -362,7 +354,7 @@ public class BpsParser implements AnnotationWriter  {
       }
       PSLParser parser = new PSLParser();
       // don't bother annotating the sequences, just get the list of syms
-      results = parser.parse(istr, file_name, null, null, null, false, false);
+      results = parser.parse(istr, file_name, null, null, false, false);
     }
     catch (Exception ex) {
       ex.printStackTrace();

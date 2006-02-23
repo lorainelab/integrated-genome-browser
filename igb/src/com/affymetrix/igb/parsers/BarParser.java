@@ -755,7 +755,7 @@ public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throw
 
       //TODO: Convert this to the standard way of getting synomous sequences,
       // but we may have to check for extra bar-specific synonyms involving seq group and version
-      Iterator iter = seq_group.getSeqs().values().iterator();
+      Iterator iter = seq_group.getSeqList().iterator();
 
       while (iter.hasNext()) {
 	// testing both seq id and version id (if version id is available)

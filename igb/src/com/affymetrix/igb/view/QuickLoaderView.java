@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,14 +16,11 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
-
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
@@ -564,11 +561,11 @@ public class QuickLoaderView extends JComponent
       }
     }
 
-    Iterator iter = group.getSeqs().values().iterator();
-    /**  turning off listening to table selections while table is being repopulated */
+    Iterator iter = group.getSeqList().iterator();
+    /*  turning off listening to table selections while table is being repopulated */
     seqtable_model.removeListSelectionListener(this);
     populateSeqTable(group);
-    /**  turning back on listening to table selections */
+    /*  turning back on listening to table selections */
     seqtable_model.addListSelectionListener(this);
 
     current_seq = null;

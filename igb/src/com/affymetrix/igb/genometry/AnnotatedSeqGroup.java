@@ -26,6 +26,8 @@ public class AnnotatedSeqGroup {
   String version; // not currently used
   Date version_date;  // not currently used
   String description;
+  
+  boolean use_synonyms = true;
 
   // Using a sorted map to get the chromosome numbers in a reasonable order.
   // A better option may be to use a LinkedHashMap and simply make all users
@@ -71,11 +73,25 @@ public class AnnotatedSeqGroup {
     return id2seq.size();
   }
   
-  /** Gets a sequence based on its name, taking synonyms into account. */
+  /**
+   *  Sets whether or not to use the SynonymLookup class to search for synonymous
+   *  BioSeq's when using the getSeq(String) method.
+   *  If you set this to false and then add new sequences, you should probably 
+   *  NOT later set it back to true unless you are sure you did not add
+   *  some synonymous sequences.
+   */
+  public void setUseSynonyms(boolean b) {
+    use_synonyms = b;
+  }
+  
+  /** Gets a sequence based on its name, possibly taking synonyms into account. 
+   *  See {@link #setUseSynonyms(boolean)}.
+   */
   public MutableAnnotatedBioSeq getSeq(String synonym) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)id2seq.get(synonym);
-    if (aseq == null) {
+    if (use_synonyms && aseq == null) {
       // try and find a synonym
+      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
       Iterator iter = id2seq.values().iterator();
       while (iter.hasNext()) {
         MutableAnnotatedBioSeq synseq = (MutableAnnotatedBioSeq)iter.next();
@@ -86,7 +102,6 @@ public class AnnotatedSeqGroup {
 	  }
 	}
 	else {
-	  SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 	  if (lookup.isSynonym(synseq.getID(), synonym)) {
 	    aseq = synseq;
 	    break;

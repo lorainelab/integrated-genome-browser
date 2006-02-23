@@ -584,12 +584,11 @@ public class QuickLoaderView extends JComponent
 
 
   protected void populateSeqTable(AnnotatedSeqGroup group) {
-    Collection seqs = group.getSeqs().values();
+    Collection seqs = group.getSeqList();
     Iterator iter = seqs.iterator();
     Vector allrows = new Vector();
     while (iter.hasNext()) {
       MutableAnnotatedBioSeq curseq = (MutableAnnotatedBioSeq)iter.next();
-      //      System.out.println(curseq.getID());
       Vector seqrow = new Vector();
       seqrow.add(curseq.getID());
       seqrow.add(new Integer(curseq.getLength()));

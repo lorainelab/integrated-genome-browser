@@ -41,12 +41,6 @@ public class AnnotatedSeqGroup {
   }
 
   public String getID() { return id; }
-
-  /**
-   *  Returns a Map mapping String id's to MutableAnnotatedBioSeq objects.
-   *  Will not return null.
-   */
-  public Map getSeqs() { return id2seq; }
   
   /**
    *  Returns a List of MutableAnnotatedBioSeq objects.

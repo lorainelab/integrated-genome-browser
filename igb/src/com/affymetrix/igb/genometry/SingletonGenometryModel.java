@@ -87,7 +87,7 @@ public class SingletonGenometryModel {
     return group;
   }
 
-  protected void addSeqGroup(AnnotatedSeqGroup group) {
+  public void addSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.put(group.getID(), group);
   }
 

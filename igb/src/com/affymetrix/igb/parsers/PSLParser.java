@@ -107,10 +107,21 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
     ArrayList results = new ArrayList();
 
-    // make temporary seq groups for any unspecified group
-    if (query_group == null) { query_group = new AnnotatedSeqGroup("Query"); }
-    if (target_group == null) { target_group = new AnnotatedSeqGroup("Target"); }
-    if (other_group == null) { other_group = new AnnotatedSeqGroup("Other"); }
+    // Make temporary seq groups for any unspecified group.
+    // These temporary groups do not require synonym matching, because they should
+    // only refer to sequences from a single file.
+    if (query_group == null) {
+      query_group = new AnnotatedSeqGroup("Query");
+      query_group.setUseSynonyms(false);
+    }
+    if (target_group == null) {
+      target_group = new AnnotatedSeqGroup("Target"); 
+      target_group.setUseSynonyms(false);
+    }
+    if (other_group == null) {
+      other_group = new AnnotatedSeqGroup("Other");
+      other_group.setUseSynonyms(false);
+    }
     
     // the three xxx2types Maps accomodate using create_container_annot and psl with track lines.
     HashMap target2types = new HashMap();

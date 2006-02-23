@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.genometry;
 
-import com.affymetrix.igb.event.SymMapChangeEvent;
-import com.affymetrix.igb.event.SymMapChangeListener;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.igb.event.SymMapChangeEvent;
+import com.affymetrix.igb.event.SymMapChangeListener;
 
 public class AnnotatedSeqGroup {
   String id;
@@ -42,20 +42,32 @@ public class AnnotatedSeqGroup {
 
   public String getID() { return id; }
 
+  /**
+   *  Returns a Map mapping String id's to MutableAnnotatedBioSeq objects.
+   *  Will not return null.
+   */
   public Map getSeqs() { return id2seq; }
-
-  public MutableAnnotatedBioSeq getSeq(int index) {
-
+  
+  /**
+   *  Returns a List of MutableAnnotatedBioSeq objects.
+   *  Will not return null.  The list is in the same order as in
+   *  {@link #getSeq(int)}.
+   */
+  public List getSeqList() {
     if (seqlist.size() != id2seq.size()) {
-      //TODO: BUG: the lists in id2seq and seqlist can get out-of-sync with each other
-      // since the Map returned by getSeqs() is modifiable.
-      
-      // recreate the seqlist if it is not up-to-date
+      // lazily keep the seqlist up-to-date
       seqlist = new ArrayList(id2seq.values());
     }
-    
-    if (index < seqlist.size()) {
-      return (MutableAnnotatedBioSeq)seqlist.get(index);
+    return seqlist;
+  }
+
+  /**
+   *  Returns the sequence at the given position in the sequence list.
+   */
+  public MutableAnnotatedBioSeq getSeq(int index) {
+    List the_list = getSeqList();
+    if (index < the_list.size()) {
+      return (MutableAnnotatedBioSeq) the_list.get(index);
     }
     else { return null; }
   }
@@ -133,7 +145,6 @@ public class AnnotatedSeqGroup {
     MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
     if (oldseq == null) {
       id2seq.put(seq.getID(), seq);
-      System.out.println("Added seq: " + seq.getID());
       //seqlist.add(seq); // don't add to seqlist, to keep it properly sorted, rebuild it only when needed
       if (seq instanceof SmartAnnotBioSeq) {
 	((SmartAnnotBioSeq)seq).setSeqGroup(this);
@@ -141,7 +152,7 @@ public class AnnotatedSeqGroup {
     }
     else {
       throw new RuntimeException("ERROR! tried to add seq: " + seq.getID() + " to AnnotatedSeqGroup: " +
-				 this.getID() + ", but seq with same id is already in group");
+        this.getID() + ", but seq with same id is already in group");
     }
   }
 

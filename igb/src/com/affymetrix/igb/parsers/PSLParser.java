@@ -123,6 +123,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       other_group.setUseSynonyms(false);
     }
     
+    boolean in_bottom_of_link_psl = false;
+    
     // the three xxx2types Maps accomodate using create_container_annot and psl with track lines.
     HashMap target2types = new HashMap();
     HashMap query2types = new HashMap();
@@ -148,6 +150,12 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
         }
 	else if (line.startsWith("track")) {
 	  Map track_props = setTrackProperties(line);
+          if (is_link_psl) {
+            String track_name = (String) track_props.get("name");
+            if (track_name != null && track_name.endsWith("probesets")) {
+              in_bottom_of_link_psl = true;
+            }
+          }
           // You can later get the track properties with getCurrentTrackHash();
 	  continue;
 	}
@@ -238,7 +246,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	  System.err.println(line);
 	  continue;
 	}
-
+        
         MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
 	if (qseq == null)  {
 	  // Doing a new String() here gives a > 4X reduction in
@@ -250,7 +258,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	}
 	if (qseq.getLength() < qsize) { qseq.setLength(qsize); }
 
-	MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
+
+ 	MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
 	if (tseq == null) {
 	  if (look_for_targets_in_query_group && (query_group.getSeq(tname) != null))  {
 	    tseq = query_group.getSeq(tname);
@@ -258,9 +267,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	  else {
             if (look_for_targets_in_query_group && is_link_psl) {
               // If we are in the bottom section of a ".link.psl" file,
-              // where all the Query name start with "P.",
-              // then special rules apply.
-              if (qname.startsWith("P.")) {
+              // then add sequences only to the query sequence, never the target sequence.
+              if (in_bottom_of_link_psl) {
                 tseq = query_group.addSeq(new String(tname), qsize);
               } else {
                 tseq = target_group.addSeq(new String(tname), qsize);                
@@ -271,6 +279,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	  }
 	}
 	if (tseq.getLength() < tsize)  { tseq.setLength(tsize); }
+          
 
 	java.util.List child_arrays = calcChildren(qseq, tseq, qforward, tforward,
 						   block_size_array, q_start_array, t_start_array);
@@ -364,7 +373,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	  else {
 	    tseq.addAnnotation(sym);
 	  }
-          target_group.addToIndex(sym.getID(), sym);
+          if (! in_bottom_of_link_psl) {
+            target_group.addToIndex(sym.getID(), sym);
+          }
 	}
 
         total_annot_count++;

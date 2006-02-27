@@ -1165,6 +1165,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PluginInfo pi = new PluginInfo(GraphAdjusterView.class.getName(), "Graph Adjuster", true);
       plugin_list.add(pi);
     }
+    if (SimpleGraphTab.USE_SIMPLE_GRAPH_TAB) {
+      PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graphs", true);
+      plugin_list.add(pi);
+    }    
     if (USE_PATTERN_SEARCHER) {
       PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
       plugin_list.add(pi);

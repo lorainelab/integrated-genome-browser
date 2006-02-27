@@ -79,15 +79,22 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
     SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
   }
 
-  protected Object[][] buildRows(Map props) {
-    ArrayList entries = new ArrayList(props.entrySet());
+  protected Object[][] buildRows(AnnotatedSeqGroup seq_group) {
+    if (seq_group == null) {
+      return new Object[0][4];
+    }
+    
+    Set sym_ids = seq_group.getSymmetryIDs();
+    java.util.List seq_list = seq_group.getSeqList();
+    
+    ArrayList entries = new ArrayList(sym_ids);
     int num_rows = entries.size();
     int num_cols = 4;
     Object[][] rows = new Object[num_rows][num_cols];
     for (int j = 0 ; j < num_rows ; j++) {
-      Map.Entry entry = (Map.Entry) entries.get(j);
-      rows[j][0]= entry.getKey().toString();
-      Object o = entry.getValue();
+      String key = (String) entries.get(j);
+      rows[j][0]= key;
+      Object o = seq_group.findSyms(key);
       
       SeqSymmetry sym;
       int num_matches = 1;
@@ -97,33 +104,50 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
         sym = (SeqSymmetry) sym_list.get(0);
         num_matches = sym_list.size();
       } else {
-        sym = (SeqSymmetry) entry.getValue();
+        sym = (SeqSymmetry) o;
         num_matches = 1;
       }
-
-      SeqSpan span = sym.getSpan(0); // Is this correct?
-      if (span!= null) {
-        rows[j][1]= new Integer(span.getStart());
-        rows[j][2]= new Integer(span.getEnd());
-        rows[j][3]= span.getBioSeq().getID() + (span.isForward() ? "+" : "-");
-        if (num_matches > 1) {
-          rows[j][3] = "" + num_matches + " matches";
-        }
-      } else {
+      
+      if (num_matches != 1) {
         rows[j][1] = new Integer(0);
         rows[j][2] = new Integer(0);
-        rows[j][3] = "?";
+        rows[j][3] = "" + num_matches + " matches";
+        
+      } else {
+        
+        int span_count = sym.getSpanCount();
+        SeqSpan first_span_in_group = null; // first span with a BioSeq in this SeqGroup
+        for (int i=0; i<span_count; i++) {
+          SeqSpan span = sym.getSpan(i);
+          if (span == null) continue;
+          
+          BioSeq seq = span.getBioSeq();
+          if (seq_list.contains(seq)) {
+            first_span_in_group = span;
+            break;
+          }
+        }
+        
+        if (first_span_in_group != null) {
+          rows[j][1]= new Integer(first_span_in_group.getStart());
+          rows[j][2]= new Integer(first_span_in_group.getEnd());
+          rows[j][3]= first_span_in_group.getBioSeq().getID() + (first_span_in_group.isForward() ? "+" : "-");
+        } else {
+          rows[j][1] = new Integer(0);
+          rows[j][2] = new Integer(0);
+          rows[j][3] = "?";
+        }
       }
     }
+    
     return rows;
   }
 
-  /** Re-populates the table with the given Map, which should contain
-   *  SeqSymmetry values.
-   *  @param props  A Map of String's to SeqSymmetry's.
+  /** 
+   * Re-populates the table with the given AnnotatedSeqGroup.
    */
-  public void showSymHash(Map props) {
-    Object[][] rows = buildRows(props);
+  public void showSymHash(AnnotatedSeqGroup seq_group) {
+    Object[][] rows = buildRows(seq_group);
     model.setDataVector(rows, col_headings);
   }
 
@@ -132,19 +156,11 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
    *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
    */
   public void symMapModified(SymMapChangeEvent evt) {
-    showSymHash(evt.getMap());
+    showSymHash(evt.getSeqGroup());
   }
   
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    AnnotatedSeqGroup group = evt.getSelectedGroup();
-    Map props;
-    if (group == null) {
-      props = Collections.EMPTY_MAP;
-    }
-    else {
-      props = group.getSymHash();
-    }
-    showSymHash(props);
+    showSymHash(evt.getSelectedGroup());
   }
   
   /** This is called when the user selects a row of the table;

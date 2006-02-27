@@ -178,12 +178,15 @@ public class AnnotatedSeqGroup {
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
   
-  /** Finds all symmetries with the given ID. 
+  /** Finds all symmetries with the given case-insensitive ID. 
    *  @return a non-null List, possibly an empty one.
    */
   public java.util.List findSyms(String id) {
+    if (id==null) {
+      return Collections.EMPTY_LIST;
+    }
     java.util.List sym_list = null;
-    Object o = id2sym_hash.get(id);
+    Object o = id2sym_hash.get(id.toLowerCase());
     if (o == null) {
       sym_list = Collections.EMPTY_LIST;
     } else if (o instanceof java.util.List) {
@@ -196,22 +199,23 @@ public class AnnotatedSeqGroup {
   }
   
   /**
-   *  Assosicates a symmetry with an ID.  You can later retrieve the
+   *  Assosicates a symmetry with a case-insensitive ID.  You can later retrieve the
    *  list of all matching symmetries for a given ID by calling findSyms(String).
    *  Niether argument should be null.
    */
   public void addToIndex(String id, SeqSymmetry sym) {
     if (id==null || sym==null) throw new NullPointerException();
-    id2sym_hash.put(id, sym);
+    id2sym_hash.put(id.toLowerCase(), sym);
   }
   
-  /**
-   *  Map of tags (usually names or ids) to SeqSymmetries for this AnnotatedSeqGroup.
+  /** Returns a set of the String IDs that have been added to the ID index using
+   *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
+   *  Each of the keys can be used as a parameter for the findSyms(String) method.
    */
-  public final Map getSymHash() {
-    return id2sym_hash;
+  public Set getSymmetryIDs() {
+    return id2sym_hash.keySet();
   }
-
+  
   /** Call this method if you alter the Map returned by {@link #getSymHash}.
    *  @param source  The source responsible for the change, used in constructing
    *    the {@link SymMapChangeEvent}.
@@ -220,7 +224,7 @@ public class AnnotatedSeqGroup {
     java.util.List list = getSymMapChangeListeners();
     for (int i=0; i<list.size(); i++) {
       SymMapChangeListener l = (SymMapChangeListener) list.get(i);
-      l.symMapModified(new SymMapChangeEvent(source, getSymHash()));
+      l.symMapModified(new SymMapChangeEvent(source, this));
     }
   }
 

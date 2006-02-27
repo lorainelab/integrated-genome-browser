@@ -13,21 +13,22 @@
 
 package com.affymetrix.igb.event;
 
-import java.util.*;
+import java.util.EventObject;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 /**
  *  Events used to let listeners know about changes in the 
- *  ID-to-Symmetry Map in IGB.
+ *  ID-to-Symmetry Mapping in an AnnotatedSeqGroup.
  */
 public class SymMapChangeEvent extends EventObject {
-  transient Map map;
+  transient AnnotatedSeqGroup group;
 
-  public SymMapChangeEvent(Object src, Map map) {
+  public SymMapChangeEvent(Object src, AnnotatedSeqGroup seq_group) {
     super(src);
-    this.map = map;
+    this.group = seq_group;
   }
   
-  public Map getMap() {
-    return map;
+  public AnnotatedSeqGroup getSeqGroup() {
+    return group;
   }
 }

@@ -36,7 +36,7 @@ public class AnnotatedSeqGroup {
   ArrayList seqlist = new ArrayList();
 
   static Vector sym_map_change_listeners = new Vector(1);
-  Map id2sym_hash = new ListmakingHashMap();
+  SortedMap id2sym_hash = new ListmakingHashMap();
   
   public AnnotatedSeqGroup(String gid) {
     id = gid;
@@ -216,6 +216,33 @@ public class AnnotatedSeqGroup {
     return id2sym_hash.keySet();
   }
   
+  /** Returns a set of the String IDs alphabetically between start and end 
+   *  that have been added to the ID index using
+   *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
+   *  Each of the keys can be used as a parameter for the findSyms(String) method.
+   *  @param start  A String indicating the lowest index value; null or empty start
+   *   string will get all index strings up to the given end value.
+   *  @param end    A String indicating the highest index value; null or empty end
+   *   string will get all index strings above the given start value.
+   */
+  public Set getSymmetryIDs(String start, String end) {
+    if (start == null) { start = ""; }
+    if (end == null) { end = ""; }
+    
+    start = start.toLowerCase();
+    end = end.toLowerCase();
+    
+    if (start.equals("") && end.equals("")) {
+      return getSymmetryIDs();
+    } else if (start.equals("")) {
+      return id2sym_hash.headMap(end).keySet();
+    } else if (end.equals("")) {
+      return id2sym_hash.tailMap(start).keySet();
+    } else {
+      return id2sym_hash.subMap(start, end).keySet();
+    }    
+  }
+  
   /** Call this method if you alter the Map returned by {@link #getSymHash}.
    *  @param source  The source responsible for the change, used in constructing
    *    the {@link SymMapChangeEvent}.
@@ -240,15 +267,22 @@ public class AnnotatedSeqGroup {
     sym_map_change_listeners.remove(l);
   }
 
-  public class ListmakingHashMap extends HashMap {
+  public class ListmakingHashMap extends TreeMap {
     public Object put(Object key, Object value) {
       Object x = this.get(key);
+      if (x == value) {
+        return x; // do not store the same value twice
+      }
+      
       if (value == null) {
         super.put(key, null);
       } else if (x == null) {
         super.put(key, value);
       } else if (x instanceof List) {
-        ((List) x).add(value);
+        List list_x = (List) x;
+        if (! list_x.contains(value)) {
+          list_x.add(value);
+        }
       } else {
         ArrayList al = new ArrayList(2);
         al.add(x);

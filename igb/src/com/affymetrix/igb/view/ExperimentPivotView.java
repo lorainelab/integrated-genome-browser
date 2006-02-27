@@ -278,7 +278,6 @@ public class ExperimentPivotView extends JComponent
     if (this.currentSeq == null) {
       System.err.println("ERROR: ExperimentPivotView.resetThisWidget() called, "  +
 			 "but no current annotated seq: " + this.currentSeq );
-      (new Exception()).printStackTrace();
       return;
     }
     int symcount = theSyms.size();

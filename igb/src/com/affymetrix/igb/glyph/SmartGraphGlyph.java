@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,11 +16,9 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.TransientGlyph;
 
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
@@ -58,9 +56,9 @@ public class SmartGraphGlyph extends GraphGlyph {
   boolean CALC_GRAPH_CACHE = true;
   boolean CACHE_DIRECT_DRAW = false;
 
-  public static int MINMAXAVG = 4;
-  public static int MINMAXAVG_BARS = 101;  // NOT YET IMPLEMENTED
-  public static int MINMAXAVG_STAIRSTEP = 102;  // NOT YET IMPLEMENTED
+  public static final int MINMAXAVG = 4;
+  public static final int MINMAXAVG_BARS = 101;  // NOT YET IMPLEMENTED
+  public static final int MINMAXAVG_STAIRSTEP = 102;  // NOT YET IMPLEMENTED
 
 
   boolean AVGLINE = true;

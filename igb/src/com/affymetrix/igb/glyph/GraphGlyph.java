@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -40,12 +40,12 @@ public class GraphGlyph extends Glyph {
   static int default_heatmap_bins = 256;
   static Color[] default_heatmap_colors;  // default is black to white grayscale gradient
 
-  public static int LINE_GRAPH = 1;
-  public static int BAR_GRAPH = 2;
-  public static int DOT_GRAPH = 3;
-  public static int STAIRSTEP_GRAPH = 5;
-  public static int SPAN_GRAPH = 6;
-  public static int HEAT_MAP = 7;
+  public static final int LINE_GRAPH = 1;
+  public static final int BAR_GRAPH = 2;
+  public static final int DOT_GRAPH = 3;
+  public static final int STAIRSTEP_GRAPH = 5;
+  public static final int SPAN_GRAPH = 6;
+  public static final int HEAT_MAP = 7;
 
   int xpix_offset = 0;
   Point zero_point = new Point(0,0);

@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2001-2005 Affymetrix, Inc.
+ *   Copyright (c) 2001-2006 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -13,8 +13,10 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.TierPrefsView;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -157,12 +159,19 @@ public class PreferencesPanel extends JPanel {
         }
       });
     }
+    
+    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
+    if (icon != null) {
+      frame.setIconImage(icon.getImage());
+    }
+    
     return frame;
   }
   
   JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu prefs_menu = new JMenu("Preferences");
+    prefs_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     prefs_menu.setMnemonic('P');
 
     prefs_menu.add(getExportAction());
@@ -173,6 +182,7 @@ public class PreferencesPanel extends JPanel {
     menu_bar.add(prefs_menu);
     
     JMenu help_menu = new JMenu("Help");
+    help_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
     help_menu.setMnemonic('H');
     menu_bar.add(help_menu);
     help_menu.add(getHelpAction());
@@ -207,6 +217,12 @@ public class PreferencesPanel extends JPanel {
     dialog.getContentPane().add(button_box, "South");
     dialog.pack();
     dialog.setLocationRelativeTo(this);
+    
+    //ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
+    //if (icon != null) {
+      // It is impossible to set an image for a dialog window, but I wish I could.
+      // dialog.setIconImage(icon.getImage());
+    //}
 
     Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
     if (pos != null) {
@@ -298,6 +314,8 @@ public class PreferencesPanel extends JPanel {
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
       export_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(EXPORT_ACTION_COMMAND));
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif");
+      export_action.putValue(Action.SMALL_ICON, icon);
     }
     return export_action;
   }
@@ -316,6 +334,8 @@ public class PreferencesPanel extends JPanel {
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
       import_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
       import_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(IMPORT_ACTION_COMMAND));
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif");
+      import_action.putValue(Action.SMALL_ICON, icon);
     }
     return import_action;
   }
@@ -344,7 +364,9 @@ public class PreferencesPanel extends JPanel {
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
       help_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
       help_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_ACTION_COMMAND));
-    }
+      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
+      help_action.putValue(Action.SMALL_ICON, icon);
+    }    
     return help_action;
   }
   
@@ -358,6 +380,8 @@ public class PreferencesPanel extends JPanel {
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
       help_for_tab_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
       help_for_tab_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_TAB_ACTION_COMMAND));
+      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/ContextualHelp16.gif");
+      help_for_tab_action.putValue(Action.SMALL_ICON, icon);
     }
     return help_for_tab_action;
   }

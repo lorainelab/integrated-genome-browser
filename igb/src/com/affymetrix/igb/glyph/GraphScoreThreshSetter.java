@@ -66,6 +66,7 @@ public class GraphScoreThreshSetter extends JPanel
   float abs_max_per = 100;
   float prev_score_per;
 
+  boolean show_min_and_max = false;
 
   int max_chars = 15;
   int max_pix_per_char = 6;
@@ -215,10 +216,13 @@ public class GraphScoreThreshSetter extends JPanel
     score_val_slider.setValue(calcSliderForValue(avg_of_scoremins));
     if (min_of_scoremins == max_of_scoremins) {
       score_valT.setText(val_format.format(min_of_scoremins));
-    }
-    else {
-      score_valT.setText(val_format.format(min_of_scoremins) +
-			" : " + val_format.format(max_of_scoremins));
+    } else {
+      if (show_min_and_max) {
+        score_valT.setText(val_format.format(min_of_scoremins) +
+          " : " + val_format.format(max_of_scoremins));
+      } else {
+        score_valT.setText("");
+      }
     }
     prev_score_val = avg_of_scoremins;
     }
@@ -241,9 +245,12 @@ public class GraphScoreThreshSetter extends JPanel
     avg_of_scoremins = avg_of_scoremins / gcount;
     if (min_of_scoremins == max_of_scoremins) {
       score_perT.setText(per_format.format(min_of_scoremins));
-    }
-    else {
-      score_perT.setText(per_format.format(min_of_scoremins) + " : " + per_format.format(max_of_scoremins));
+    } else {
+      if (show_min_and_max) {
+        score_perT.setText(per_format.format(min_of_scoremins) + " : " + per_format.format(max_of_scoremins));        
+      } else {
+        score_perT.setText("");
+      }
     }
     //    System.out.println("setting min percent slider: " + (int)(avg_of_scoremins * sliders_per_percent));
     score_percent_slider.setValue((int)(avg_of_scoremins * sliders_per_percent));
@@ -399,10 +406,13 @@ public class GraphScoreThreshSetter extends JPanel
 
       // set percentages
       if (min_per == max_per) {
-	score_perT.setText(per_format.format(avg_per));
-      }
-      else {
-	score_perT.setText(per_format.format(min_per) + " : " + per_format.format(max_per));
+        score_perT.setText(per_format.format(avg_per));
+      } else {
+        if (show_min_and_max) {
+          score_perT.setText(per_format.format(min_per) + " : " + per_format.format(max_per));
+        } else {
+          score_perT.setText("");
+        }
       }
       score_percent_slider.setValue((int)(min_per * sliders_per_percent));
 
@@ -444,11 +454,14 @@ public class GraphScoreThreshSetter extends JPanel
 
       // set values
       if (min_val == max_val) {
-	score_valT.setText(val_format.format(avg_val));
-      }
-      else {
-	score_valT.setText(val_format.format(min_val) +
-			 " : " + val_format.format(max_val));
+        score_valT.setText(val_format.format(avg_val));
+      } else {
+        if (show_min_and_max) {
+          score_valT.setText(val_format.format(min_val) +
+            " : " + val_format.format(max_val));
+        } else {
+          score_valT.setText("");
+        }
       }
       score_val_slider.setValue(calcSliderForValue(avg_val));
 

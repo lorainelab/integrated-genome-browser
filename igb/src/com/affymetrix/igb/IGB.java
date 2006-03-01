@@ -486,17 +486,22 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
+    open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
     load_das_item = new JMenuItem("Load DAS Features", KeyEvent.VK_D);
+    load_das_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
+    print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
 
     exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
     adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
     view_ucsc_item = new JMenuItem("View Region in UCSC Browser", KeyEvent.VK_R);
+    view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
     clamp_view_item = new JMenuItem("Clamp To View", KeyEvent.VK_V);
     res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
+    res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
     unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
     rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
     shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
@@ -515,9 +520,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
     toggle_edge_matching_item.setState(map_view.getEdgeMatching());
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
+    autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
-
+    
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
+    preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
 
     MenuUtil.addToMenu(file_menu, open_file_item);
@@ -550,6 +557,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
+    about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));    
     console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
 
     MenuUtil.addToMenu(help_menu, about_item);

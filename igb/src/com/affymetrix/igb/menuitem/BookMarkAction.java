@@ -63,9 +63,12 @@ public class BookMarkAction implements ActionListener, MenuListener {
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
     add_pos_markMI = new JMenuItem("Add Position Bookmark", KeyEvent.VK_P);
+    add_pos_markMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif"));
     add_graph_markMI = new JMenuItem("Add Position & Graphs Bookmark", KeyEvent.VK_G);
     exportMI = new JMenuItem("Export Bookmarks", KeyEvent.VK_E);
+    exportMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
     importMI = new JMenuItem("Import Bookmarks", KeyEvent.VK_I);
+    importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     clearMI = new JMenuItem("Clear Bookmarks", KeyEvent.VK_C);
 
     add_pos_markMI.addActionListener(this);

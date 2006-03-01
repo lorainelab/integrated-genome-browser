@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -378,12 +378,32 @@ public class GraphAdjusterView extends JComponent
         glyphs.add(gl);
       }
     }
-    if (glyphs.size() > 0) {
-      vis_bounds_adjuster.setGraphs(glyphs);
-      score_thresh_adjuster.setGraphs(glyphs);
-      max_gap_thresher.setGraphs(glyphs);
-      min_run_thresher.setGraphs(glyphs);
-    }
+    
+    vis_bounds_adjuster.setGraphs(glyphs);
+    score_thresh_adjuster.setGraphs(glyphs);
+    max_gap_thresher.setGraphs(glyphs);
+    min_run_thresher.setGraphs(glyphs);
+    setEnabled(! glyphs.isEmpty());
+  }
+  
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    shift_startTF.setEnabled(b);
+    shift_endTF.setEnabled(b);
+    threshCB.setEnabled(b);
+    tier_threshB.setEnabled(b);
+    scaleCB.setEnabled(b);
+    labelCB.setEnabled(b);
+    yaxisCB.setEnabled(b);
+    handleCB.setEnabled(b);
+    boundsCB.setEnabled(b);
+    colorB.setEnabled(b);
+    cloneB.setEnabled(b);
+    saveB.setEnabled(b);
+    deleteB.setEnabled(b);
+    styleCB.setEnabled(b);
+    attachB.setEnabled(b);
+    floatB.setEnabled(b);
   }
 
   public void actionPerformed(ActionEvent evt) {

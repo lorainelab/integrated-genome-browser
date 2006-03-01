@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,19 +13,19 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.swing.dnd.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.igb.menuitem.BookMarkAction;
-import com.affymetrix.igb.parsers.BookmarksParser;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.swing.dnd.*;
+
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -35,7 +35,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
 /**
- *  A panel for viewing and re-arranging bookmarks in a heirarchy.
+ *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public class BookmarkManagerView extends JPanel implements TreeSelectionListener, IPlugin {
   JTree tree;
@@ -103,7 +103,12 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     add_bookmark_action = makeAddAction(tree, 2);
 
     setUpMenuBar();
-    //setUpToolBar();
+    ImageIcon test_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif");
+//    if (test_icon != null) {
+//      // Only use the toolbar if the icons are available.
+//      // Otherwise the toolbar just looks stupid.
+//      setUpToolBar();
+//    }
     setUpPopupMenu();
 
     // Start with an empty bookmark list.
@@ -355,15 +360,29 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
           if (selected_bl == null || selected_bl.getUserObject() instanceof Separator) {
             setEnabled(false);
           } else {
-            // Give the new window the same icon that the parent frame of this item has
-            JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, tree);
-            if (frame != null) {bl_editor.setIconImage(frame.getIconImage());}
+            ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif");
+            Image image = null;
+            
+            if (icon == null) {
+              JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, tree);
+              if (frame != null) {
+                image = frame.getIconImage();
+              }
+            } else {
+              image = icon.getImage();
+            }
+            
+            if (image != null) {
+              bl_editor.setIconImage(image);
+            }
 
-            // then open it
             bl_editor.openDialog(selected_bl);
           }
         }
       };
+      
+      a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif"));
+      a.putValue(Action.SHORT_DESCRIPTION, "Properties");
       setAccelerator(a);
       return a;
     }
@@ -383,6 +402,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
           }
         }
       };
+      a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/media/Play16.gif"));
+      a.putValue(Action.SHORT_DESCRIPTION, "Go To Bookmark");
       setAccelerator(a);
       return a;
     }
@@ -418,7 +439,13 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
 
   void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
-    JMenu bookmarks_menu = new JMenu("Bookmarks");
+    JMenu bookmarks_menu = new JMenu("Bookmarks") {      
+      public JMenuItem add(Action a) {
+        JMenuItem menu_item = super.add(a);
+        menu_item.setToolTipText(null);
+        return menu_item;
+      }
+    };
 
     //bookmarks_menu.add(refresh_action);
     bookmarks_menu.add(add_folder_action);
@@ -438,7 +465,13 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
 
   void setUpPopupMenu() {
-    final JPopupMenu popup = new JPopupMenu();
+    final JPopupMenu popup = new JPopupMenu() {      
+      public JMenuItem add(Action a) {
+        JMenuItem menu_item = super.add(a);
+        menu_item.setToolTipText(null);
+        return menu_item;
+      }
+    };
     popup.add(add_folder_action);
     popup.add(add_separator_action);
     popup.add(add_bookmark_action);
@@ -466,7 +499,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
 
   void setUpToolBar() {
-    JToolBar tool_bar = new JToolBar(JToolBar.VERTICAL);
+    JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
     tool_bar.setFloatable(false);
     //tool_bar.add(refresh_action);
     tool_bar.add(add_folder_action);
@@ -480,7 +513,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     tool_bar.addSeparator();
     tool_bar.add(import_action);
     tool_bar.add(export_action);
-    this.add(tool_bar, BorderLayout.EAST);
+    this.add(tool_bar, BorderLayout.NORTH);
   }
 
   Action makeRefreshAction() {
@@ -489,6 +522,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         tree_model.reload();
       }
     };
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
+    a.putValue(Action.SHORT_DESCRIPTION, "Refresh");
     setAccelerator(a);
     return a;
   }
@@ -501,6 +536,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         tree_model.reload();
       }
     };
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
+    a.putValue(Action.SHORT_DESCRIPTION, "Import Bookmarks");
     setAccelerator(a);
     return a;
   }
@@ -512,6 +549,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         BookMarkAction.exportBookmarks(bl, null); // already contains a null check on bookmark list
       }
     };
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
+    a.putValue(Action.SHORT_DESCRIPTION, "Export Bookmarks");
     setAccelerator(a);
     return a;
   }
@@ -538,18 +577,30 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         }
       }
     };
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
+    a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Bookmark(s)");
     setAccelerator(a);
     return a;
   }
 
   Action makeAddAction(final JTree tree, final int type) {
     String title;
+    ImageIcon icon = null;
+    String tool_tip = null;
     if (type==0) {
       title = "New Separator";
+      // "RowDelete" looks vaguely like a separator...
+      icon = MenuUtil.getIcon("toolbarButtonGraphics/table/RowDelete16.gif");
+      tool_tip = "New Separator";
     } else if (type==1) {
       title = "New Folder";
+      // the "Open" icon looks like a folder...
+      icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif");
+      tool_tip = "New Folder";
     } else if (type==2) {
       title = "New Bookmark";
+      icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif");
+      tool_tip = "New Bookmark";
     } else {
       title = "New ???";
     }
@@ -581,6 +632,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         }
       }
     };
+    a.putValue(Action.SMALL_ICON, icon);
+    a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
     setAccelerator(a);
     return a;
   }
@@ -741,7 +794,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
       } catch (Exception e) {
         JFrame frame =
             (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.tree);
-        IGB.errorPanel(frame, "Error", "Error in Drag-and-drop", e);
+        ErrorHandler.errorPanel(frame, "Error", "Error in Drag-and-drop", e);
         return false;
       }
       if (nodes==null || nodes.length==0) {

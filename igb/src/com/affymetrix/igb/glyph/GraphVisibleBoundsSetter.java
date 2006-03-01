@@ -221,11 +221,17 @@ public class GraphVisibleBoundsSetter extends JPanel
   public void setGraphs(java.util.List newgraphs) {
     turnOffListening();
     graphs.clear();
-    graphs.addAll(newgraphs);
+    int gcount = newgraphs.size();
+    for (int i=0; i<gcount; i++) {
+      GraphGlyph gl = (GraphGlyph) newgraphs.get(i);
+      if (gl instanceof SmartGraphGlyph) {
+	graphs.add(gl);
+      }
+    }
     
-    setEnabled(! graphs.isEmpty());    
     initPercents();
     initValues();
+    setEnabled(! graphs.isEmpty());    
     turnOnListening();
   }
 
@@ -708,7 +714,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   float[] getPercents2Scores(GraphGlyph gl) {
     Object info = gl.getInfo();
     if (info == null) { System.err.println("Graph has no info! " + gl); }
-    float[] p2score = (float[])info2pscores.get(info);
+    float[] p2score = (float[]) info2pscores.get(info);
     if (p2score == null) {
       p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
       info2pscores.put(info, p2score);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -113,6 +113,7 @@ public class MaxGapThresholder extends JPanel
 
     tslider.addChangeListener(this);
     maxgapTF.addActionListener(this);
+    setEnabled(! graphs.isEmpty());
   }
 
   public void setGraph(SmartGraphGlyph gl) {
@@ -121,6 +122,12 @@ public class MaxGapThresholder extends JPanel
     setGraphs(newgraphs);
   }
 
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    tslider.setEnabled(b);
+    maxgapTF.setEnabled(b);
+  }
+  
   public void stateChanged(ChangeEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();

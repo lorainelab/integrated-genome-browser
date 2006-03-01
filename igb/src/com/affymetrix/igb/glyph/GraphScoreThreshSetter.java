@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,9 +20,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
 import java.util.*;
+
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphScoreThreshSetter extends JPanel
@@ -166,7 +165,18 @@ public class GraphScoreThreshSetter extends JPanel
     }
     initPercents();
     initValues();
+    setEnabled( ! graphs.isEmpty());
     turnOnListening();
+  }
+
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    score_val_slider.setEnabled(b);
+    score_percent_slider.setEnabled(b);
+    score_valT.setEnabled(b);
+    score_perT.setEnabled(b);
+    thresh_aboveB.setEnabled(b);
+    thresh_belowB.setEnabled(b);
   }
 
   public void initValues() {

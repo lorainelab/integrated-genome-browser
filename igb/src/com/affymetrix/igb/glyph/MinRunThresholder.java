@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -110,6 +110,7 @@ public class MinRunThresholder extends JPanel
 
     tslider.addChangeListener(this);
     minrunTF.addActionListener(this);
+    setEnabled(! graphs.isEmpty());
   }
 
 
@@ -117,6 +118,12 @@ public class MinRunThresholder extends JPanel
     java.util.List newgraphs = new ArrayList();
     newgraphs.add(gl);
     setGraphs(newgraphs);
+  }
+  
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    tslider.setEnabled(b);
+    minrunTF.setEnabled(b);
   }
 
   public void stateChanged(ChangeEvent evt) {

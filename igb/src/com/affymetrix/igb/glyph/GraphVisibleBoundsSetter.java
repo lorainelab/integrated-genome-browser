@@ -108,6 +108,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   Dimension textbox_sizepref = new Dimension(400, 15);
   boolean set_slider_sizepref = false;
   boolean set_textbox_sizepref = false;
+  boolean show_min_and_max = false;
 
   static GraphVisibleBoundsSetter showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
@@ -247,6 +248,15 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_val_slider.setEnabled(b);
   }
 
+  /**
+   *  When there are multiple graphs selected, you can show the minimum and
+   *  maximum values in the text boxes like "min : max", or the text boxes
+   *  can be set to blank values.
+   *  @param b set to true if you want to show the range as "min : max"
+   */
+  public void setShowMinAndMax(boolean b) {
+    show_min_and_max = b;
+  }
 
   protected void initValues() {
     float min_of_mins = Float.POSITIVE_INFINITY;
@@ -309,18 +319,24 @@ public class GraphVisibleBoundsSetter extends JPanel
 
 
       if (min_of_vismins == max_of_vismins) {
-	min_valT.setText(val_format.format(min_of_vismins));
-      }
-      else {
-	min_valT.setText(val_format.format(min_of_vismins) +
-			 " : " + val_format.format(max_of_vismins));
+        min_valT.setText(val_format.format(min_of_vismins));
+      } else {
+        if (show_min_and_max) {
+          min_valT.setText(val_format.format(min_of_vismins) +
+            " : " + val_format.format(max_of_vismins));
+        } else {
+          min_valT.setText("");
+        }
       }
       if (min_of_vismaxes == max_of_vismaxes) {
-	max_valT.setText(val_format.format(max_of_vismaxes));
-      }
-      else {
-	max_valT.setText(val_format.format(min_of_vismaxes) +
-			 " : " + val_format.format(max_of_vismaxes));
+        max_valT.setText(val_format.format(max_of_vismaxes));
+      } else {
+        if (show_min_and_max) {
+          max_valT.setText(val_format.format(min_of_vismaxes) +
+            " : " + val_format.format(max_of_vismaxes));
+        } else {
+          max_valT.setText("");
+        }
       }
 
       min_val_slider.setMinimum((int)(min_of_mins * sliders_per_val));
@@ -376,13 +392,21 @@ public class GraphVisibleBoundsSetter extends JPanel
       min_perT.setText(per_format.format(min_of_vismins));
     }
     else {
-      min_perT.setText(per_format.format(min_of_vismins) + " : " + per_format.format(max_of_vismins));
+      if (show_min_and_max) {
+        min_perT.setText(per_format.format(min_of_vismins) + " : " + per_format.format(max_of_vismins));
+      } else {
+        min_perT.setText("");
+      }
     }
     if (min_of_vismaxes == max_of_vismaxes) {
       max_perT.setText(per_format.format(max_of_vismaxes));
     }
     else {
-      max_perT.setText(per_format.format(min_of_vismaxes) + " : " + per_format.format(max_of_vismaxes));
+      if (show_min_and_max) {
+        max_perT.setText(per_format.format(min_of_vismaxes) + " : " + per_format.format(max_of_vismaxes));
+      } else {
+        max_perT.setText("");
+      }
     }
 
     min_percent_slider.setValue((int)(avg_of_vismins * sliders_per_percent));
@@ -563,10 +587,14 @@ public class GraphVisibleBoundsSetter extends JPanel
 
       // then set percentages
       if (min_of_mins == max_of_mins) {
-	min_perT.setText(per_format.format(min_of_mins));
+        min_perT.setText(per_format.format(min_of_mins));
       }
       else {
-	min_perT.setText(per_format.format(min_of_mins) + " : " + per_format.format(max_of_mins));
+        if (show_min_and_max) {
+          min_perT.setText(per_format.format(min_of_mins) + " : " + per_format.format(max_of_mins));
+        } else {
+          min_perT.setText("");
+        }
       }
       min_percent_slider.setValue((int)(avg_of_mins * sliders_per_percent));
 
@@ -599,10 +627,14 @@ public class GraphVisibleBoundsSetter extends JPanel
       max_val_slider.setValue((int)(val * sliders_per_val));
 
       if (min_of_maxes == max_of_maxes) {
-	max_perT.setText(per_format.format(min_of_maxes));
+        max_perT.setText(per_format.format(min_of_maxes));
       }
       else {
-	max_perT.setText(per_format.format(min_of_maxes) + " : " + per_format.format(max_of_maxes));
+        if (show_min_and_max) {
+          max_perT.setText(per_format.format(min_of_maxes) + " : " + per_format.format(max_of_maxes));
+        } else {
+          max_perT.setText("");
+        }
       }
       max_percent_slider.setValue((int)(avg_of_maxes * sliders_per_percent));
 
@@ -648,10 +680,14 @@ public class GraphVisibleBoundsSetter extends JPanel
 
       // then set values
       if (min_of_mins == max_of_mins) {
-	min_valT.setText(val_format.format(min_of_mins));
+        min_valT.setText(val_format.format(min_of_mins));
       }
       else {
-	min_valT.setText(val_format.format(min_of_mins) + " : " + val_format.format(max_of_mins));
+        if (show_min_and_max) {
+          min_valT.setText(val_format.format(min_of_mins) + " : " + val_format.format(max_of_mins));
+        } else {
+          min_valT.setText("");          
+        }
       }
       min_val_slider.setValue((int)(avg_of_mins * sliders_per_val));
 
@@ -694,10 +730,13 @@ public class GraphVisibleBoundsSetter extends JPanel
       if (widg != null) { widg.updateWidget(); }
 
       if (min_of_maxes == max_of_maxes) {
-	max_valT.setText(val_format.format(min_of_maxes));
-      }
-      else {
-	max_valT.setText(val_format.format(min_of_maxes) + " : " + val_format.format(max_of_maxes));
+        max_valT.setText(val_format.format(min_of_maxes));
+      } else {
+        if (show_min_and_max) {
+          max_valT.setText(val_format.format(min_of_maxes) + " : " + val_format.format(max_of_maxes));
+        } else {
+          max_valT.setText("");
+        }
       }
       max_val_slider.setValue((int)(avg_of_maxes * sliders_per_val));
 

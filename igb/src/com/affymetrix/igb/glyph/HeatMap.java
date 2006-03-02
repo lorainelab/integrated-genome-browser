@@ -33,8 +33,22 @@ public class HeatMap {
   /** Name of the second Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_4 = "Blue/Yellow 2";
   
+  /** Name of the Transparent Black-and-White Standard HeatMap. */
+  public static final String HEATMAP_T_0 = "Transparent B/W";
+  
+  /** Name of the Transparent Violet Standard HeatMap. */
+  public static final String HEATMAP_T_1 = "Transparent Violet";
+
+  /** Name of the Transparent Blue/Yellow Standard HeatMap. */
+  public static final String HEATMAP_T_2 = "Transparent Blue/Yellow";
+
+  /** Name of the Transparent Red/Green Standard HeatMap. */
+  public static final String HEATMAP_T_3 = "Transparent Red/Green";
+
+  
   static String[] HEATMAP_NAMES = {
-    HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4
+    HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4,
+    HEATMAP_T_0, HEATMAP_T_1, HEATMAP_T_2, HEATMAP_T_3
   };
   
   static Map name_to_color_array = new HashMap();  
@@ -91,6 +105,29 @@ public class HeatMap {
         for (int i=0; i<bins; i++) {
           cc[i] = new Color(r++, g++, b);
           if (i % 2 == 0)  { b--; }
+        }
+      } 
+      
+      // Now the transparent ones
+      else if (HEATMAP_T_0.equals(name)) {
+        r=0; g=0; b=0;
+        for (int i=0; i<bins; i++) {
+          cc[i] = new Color(r++, g++, b++, 128);
+        }
+      } else if (HEATMAP_T_1.equals(name)) {
+        r=0; g=0; b=0;
+        for (int i=0; i<bins; i++) {
+          cc[i] = new Color(r++, g, b++, 128);
+        }
+      } else if (HEATMAP_T_2.equals(name)) {
+        r=0; g=0; b=255;
+        for (int i=0; i<bins; i++) {
+          cc[i] = new Color(r++, g++, b--, 128);
+        }
+      } else if (HEATMAP_T_3.equals(name)) {
+        r=255; g=0; b=0;
+        for (int i=0; i<bins; i++) {
+          cc[i] = new Color(r--, g++, b, 128);
         }
       } else {
         cc = null;

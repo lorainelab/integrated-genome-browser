@@ -84,6 +84,10 @@ implements SeqSelectionListener, SymSelectionListener {
     v.add(HeatMap.HEATMAP_2);
     v.add(HeatMap.HEATMAP_3);
     v.add(HeatMap.HEATMAP_4);
+    v.add(HeatMap.HEATMAP_T_0);
+    v.add(HeatMap.HEATMAP_T_1);
+    v.add(HeatMap.HEATMAP_T_2);
+    v.add(HeatMap.HEATMAP_T_3);
     heat_mapCB = new JComboBox(v);
     heat_mapCB.addItemListener(new HeatMapItemListener());
     

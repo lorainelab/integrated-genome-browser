@@ -444,6 +444,7 @@ public class SeqMapView extends JPanel
     sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
     zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
+    zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
     selectParentMI = setUpMenuItem(sym_popup, "Select parent");
     printSymmetryMI = setUpMenuItem(sym_popup, "Print symmetry");
     if (show_slicendice) {

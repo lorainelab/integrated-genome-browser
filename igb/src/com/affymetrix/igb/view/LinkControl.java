@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.WebBrowserControl;
 
@@ -116,6 +117,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
 	}
 	if (weburl != null) {
 	  JMenuItem browserMI = new JMenuItem("Get more info");
+          browserMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
 	  browserMI.addActionListener(this);
 	  menu2url.put(browserMI, weburl);
 	  popup.add(browserMI);

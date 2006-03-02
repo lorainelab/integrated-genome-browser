@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -51,17 +51,13 @@ public class ExperimentPivotView extends JComponent
   static String COLUMN_MIN_MAX = "Column Min/Max";
   static Map string2style;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static Color[] BLUE_YELLOW_HEATMAP;
-  static Color[] BLUE_YELLOW_HEATMAP_2;
-  static Color[] RED_GREEN_HEATMAP;
-  static Color[] VIOLET_HEATMAP;
 
   int numscores = 0;
   int score_spacing = 10;
   int graph_xoffset = 2;
   float overall_score_min = Float.POSITIVE_INFINITY;
   float overall_score_max = Float.NEGATIVE_INFINITY;
-  Color[] current_heatmap = VIOLET_HEATMAP;
+  HeatMap current_heatmap = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_1);
 
   AffyTieredMultiMap map;
   TierLabelManager tier_manager;  
@@ -78,67 +74,15 @@ public class ExperimentPivotView extends JComponent
   Color[] tcolors = { (new Color(0, 0, 0)), new Color(20, 20, 20) };
 
   static {
-    int red, green, blue;
-    int bins = 256;
-
-    BLUE_YELLOW_HEATMAP = new Color[bins];
-    red = 0;
-    green = 0;
-    blue = 255;
-    for (int i=0; i<bins; i++) {
-      Color col = new Color(red, green, blue);
-      BLUE_YELLOW_HEATMAP[i] = col;
-      blue--;
-      red++;
-      green++;
-      //      if (i % 2 == 0) { red++; }
-      //      else { green++; }
-    }
-
-    BLUE_YELLOW_HEATMAP_2 = new Color[bins];
-    red = 0;
-    green = 0;
-    blue = 128;
-    for (int i=0; i<bins; i++) {
-      Color col = new Color(red, green, blue);
-      BLUE_YELLOW_HEATMAP_2[i] = col;
-      if (i % 2 == 0)  { blue--; }
-      red++;
-      green++;
-      //      if (i % 2 == 0) { red++; }
-      //      else { green++; }
-    }
-
-    VIOLET_HEATMAP = new Color[bins];
-    red = 0;
-    green = 0;
-    blue = 0;
-    for (int i=0; i<bins; i++) {
-      Color col = new Color(red, green, blue);
-      VIOLET_HEATMAP[i] = col;
-      blue++;
-      red++;
-    }
-
-    RED_GREEN_HEATMAP = new Color[bins];
-    red = 255;
-    green = 0;
-    blue = 0;
-    for (int i=0; i<bins; i++) {
-      Color col = new Color(red, green, blue);
-      RED_GREEN_HEATMAP[i] = col;
-      red--;
-      green++;
-    }
-
     string2style = new HashMap();
     string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
     string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
-    //    string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
-    string2style.put(HEATMAP1, VIOLET_HEATMAP);
-    string2style.put(HEATMAP2, BLUE_YELLOW_HEATMAP);
-    string2style.put(HEATMAP4, BLUE_YELLOW_HEATMAP_2);
-    string2style.put(HEATMAP3, RED_GREEN_HEATMAP);
+
+    //string2style.put(HEATMAP, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0));
+    string2style.put(HEATMAP1, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_1));
+    string2style.put(HEATMAP2, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_2));
+    string2style.put(HEATMAP4, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_4));
+    string2style.put(HEATMAP3, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_3));
   }
 
 
@@ -388,13 +332,13 @@ public class ExperimentPivotView extends JComponent
     }
   }
 
-  public void setHeatMapColors(Color[] colors, boolean update_widget) {
+  public void setHeatMap(HeatMap heat_map, boolean update_widget) {
     int graph_count = experiment_graphs.size();
     for (int i=0; i<graph_count; i++) {
       GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
-      gr.initHeatMap(colors);
+      gr.initHeatMap(heat_map.getColors());
     }
-    current_heatmap = colors;
+    current_heatmap = heat_map;
     if (update_widget) {
       map.updateWidget();
     }
@@ -420,7 +364,7 @@ public class ExperimentPivotView extends JComponent
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
       gl = new GraphGlyph(xcoords, ycoords);
-      gl.initHeatMap(current_heatmap);
+      gl.initHeatMap(current_heatmap.getColors());
       gl.setGraphStyle(experiment_style);
       gl.setShowHandle(false);
       gl.setShowBounds(false);
@@ -469,12 +413,10 @@ public class ExperimentPivotView extends JComponent
 	if (obj instanceof Integer) {
 	  int style = ((Integer)string2style.get(selection)).intValue();
 	  setExperimentStyle(style);
-	}
-	else if (obj instanceof Color[]) {
-	  Color[] colors = (Color[])obj;
-	  setHeatMapColors(colors, false);
-	  setExperimentStyle(GraphGlyph.HEAT_MAP);
-	}
+	} else if (obj instanceof HeatMap) {
+          setHeatMap((HeatMap) obj, false);
+          setExperimentStyle(GraphGlyph.HEAT_MAP);
+        }
       }
     }
     else if (src == scaleCB) {

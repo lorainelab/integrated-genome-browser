@@ -18,10 +18,19 @@ import java.util.*;
 
 public class HeatMap {
   
+  /** Name of the Black-and-White Standard HeatMap. */
   public static final String HEATMAP_0 = "Black/White";
+
+  /** Name of the Violet Standard HeatMap. */
   public static final String HEATMAP_1 = "Violet";
+
+  /** Name of the Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_2 = "Blue/Yellow";
+
+  /** Name of the Red/Green Standard HeatMap. */
   public static final String HEATMAP_3 = "Red/Green";
+
+  /** Name of the second Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_4 = "Blue/Yellow 2";
   
   static String[] HEATMAP_NAMES = {

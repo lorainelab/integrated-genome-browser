@@ -23,5 +23,12 @@ B)   This product includes portions of the Jetty package
      The files from the Jetty project included with this product include: 
      org.mortbay.jetty.jar, javax.servlet.jar
 
+C)   This product may include the Java look and feel Graphics Repository
+     Copyright 1994-2006 Sun Microsystems, Inc.
+     http://java.sun.com/developer/techDocs/hi/repository/
+     
+     The file, if present, will be named jlfgr-1_0.jar, in the "ext" directory.
+     The license file is included in the "ext" directory.
+     IGB can be used with or without this jar file.
 
 

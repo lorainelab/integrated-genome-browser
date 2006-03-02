@@ -37,8 +37,7 @@ public class GraphGlyph extends Glyph {
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
-  static int default_heatmap_bins = 256;
-  static Color[] default_heatmap_colors;  // default is black to white grayscale gradient
+  static HeatMap default_heatmap = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
 
   public static final int LINE_GRAPH = 1;
   public static final int BAR_GRAPH = 2;
@@ -52,8 +51,7 @@ public class GraphGlyph extends Glyph {
   Point2D coord = new Point2D(0,0);
   Point curr_point = new Point(0,0);
   Point prev_point = new Point(0,0);
-  Color[] heatmap_colors = null;
-  int heatmap_bins = 256;
+  HeatMap heatmap = null;
 
   Rectangle2D label_coord_box = new Rectangle2D();
   Rectangle label_pix_box = new Rectangle();
@@ -85,13 +83,6 @@ public class GraphGlyph extends Glyph {
 
   GraphState state;
   LinearTransform scratch_trans = new LinearTransform();
-
-  static {
-    default_heatmap_colors = new Color[default_heatmap_bins];
-    for (int i=0; i<default_heatmap_bins; i++) {
-      default_heatmap_colors[i] = new Color(i, i, i);
-    }
-  }
 
   public GraphGlyph(int[] xcoords, float[] ycoords)  {
     this(xcoords, ycoords, null);
@@ -166,7 +157,12 @@ public class GraphGlyph extends Glyph {
     //     so y = m(x-xmin)
 
     // calculate slope (m)
-    double heatmap_scaling = (double)(heatmap_bins-1) / (getVisibleMaxY() - getVisibleMinY());
+    Color[] heatmap_colors = null;
+    double heatmap_scaling = 1;
+    if (heatmap != null) {
+      heatmap_colors = heatmap.getColors();
+      heatmap_scaling = (double)(heatmap_colors.length - 1) / (getVisibleMaxY() - getVisibleMinY());
+    }
 
     //    Rectangle view_pixbox = view.getPixelBox();
     Rectangle2D view_coordbox = view.getCoordBox();
@@ -529,8 +525,8 @@ public class GraphGlyph extends Glyph {
 
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
-    if (type == HEAT_MAP && heatmap_colors == null) {
-      initHeatMap(default_heatmap_colors);
+    if (type == HEAT_MAP && heatmap == null) {
+      setHeatMap(default_heatmap);
     }
   }
   public int getGraphStyle() { return state.getGraphStyle(); }
@@ -543,22 +539,12 @@ public class GraphGlyph extends Glyph {
     else { return xcoords.length; }
   }
 
-  /*  public void initHeatMap() {
-    heatmap_colors = new Color[heatmap_bins];
-    for (int i=0; i<heatmap_bins; i++) {
-      heatmap_colors[i] = new Color(i, 0, i);
-    }
+  public void setHeatMap(HeatMap hmap) {
+    this.heatmap = hmap;
   }
-  */
-
-  public void initHeatMap(Color[] colors) {
-    if (colors == null) {
-      System.out.println("GraphGlyph.initHeatMap called with a null color gradient, ignoring");
-    }
-    else {
-      heatmap_colors = colors;
-      heatmap_bins = heatmap_colors.length;
-    }
+  
+  public HeatMap getHeatMap() {
+    return this.heatmap;
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {

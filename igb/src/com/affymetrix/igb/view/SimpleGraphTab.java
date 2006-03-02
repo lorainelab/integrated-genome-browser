@@ -23,6 +23,7 @@ import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
+import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 
 import java.awt.*;
@@ -30,6 +31,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import org.jdesktop.layout.*;
 
 public class SimpleGraphTab extends JPanel
 implements SeqSelectionListener, SymSelectionListener {
@@ -55,6 +57,8 @@ implements SeqSelectionListener, SymSelectionListener {
   JRadioButton hidden_styleB = new JRadioButton("No Selectoin"); // this button will not be displayed
   ButtonGroup stylegroup = new ButtonGroup();
   
+  JComboBox heat_mapCB;
+  
   JSlider height_slider = new JSlider(JSlider.VERTICAL);
   
   JButton selectAllB = new JButton("Select All Graphs");
@@ -74,13 +78,26 @@ implements SeqSelectionListener, SymSelectionListener {
     
     this.setLayout(new BorderLayout());
 
+    Vector v = new Vector(8);
+    v.add(HeatMap.HEATMAP_0);
+    v.add(HeatMap.HEATMAP_1);
+    v.add(HeatMap.HEATMAP_2);
+    v.add(HeatMap.HEATMAP_3);
+    v.add(HeatMap.HEATMAP_4);
+    heat_mapCB = new JComboBox(v);
+    heat_mapCB.addItemListener(new HeatMapItemListener());
+    
     Box stylebox = Box.createVerticalBox();
     stylebox.add(barB);
     stylebox.add(dotB);
     stylebox.add(hmapB);
+    stylebox.add(heat_mapCB);
     stylebox.add(lineB);
     stylebox.add(mmavgB);
     stylebox.add(sstepB);
+    stylebox.add(Box.createVerticalGlue());    
+    
+    heat_mapCB.setMaximumSize(heat_mapCB.getPreferredSize());
 
     barB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.BAR_GRAPH));
     dotB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.DOT_GRAPH));
@@ -132,7 +149,7 @@ implements SeqSelectionListener, SymSelectionListener {
     this.add(selected_graphs_label, "North");
     this.add(stylebox, "West");
     this.add(scalebox, "Center");
-    this.add(butbox, "South");    
+    this.add(butbox, "South");
     
     setSeqMapView(this.gviewer); // called for the side-effects
 
@@ -144,8 +161,7 @@ implements SeqSelectionListener, SymSelectionListener {
   void setSeqMapView(SeqMapView smv) {
     this.gviewer = smv;
     boolean enabled = (gviewer != null);
-    enableButtons(stylegroup, enabled);
-    selectAllB.setEnabled(enabled);
+    setEnabled(enabled);
   }  
   
   public void setEnabled(boolean b) {
@@ -153,6 +169,7 @@ implements SeqSelectionListener, SymSelectionListener {
     resetB.setEnabled(b);
     height_slider.setEnabled(b);
     enableButtons(stylegroup, b);
+    // don't control the heat_mapCB here, it depends on other things.
   }
   
   void enableButtons(ButtonGroup g, boolean b) {
@@ -163,9 +180,34 @@ implements SeqSelectionListener, SymSelectionListener {
     }
   }
     
+  HeatMap getCommonHeatMap() {
+    // Take the first glyph in the list as a prototype
+    SmartGraphGlyph first_glyph = null;
+    int graph_style = -1;
+    HeatMap hm = null;
+    if (! glyphs.isEmpty()) {
+      first_glyph = (SmartGraphGlyph) glyphs.get(0);
+      graph_style = first_glyph.getGraphStyle();
+      hm = first_glyph.getHeatMap();
+    }
+    
+    // Now loop through other glyphs if there are more than one
+    // and see if the graph_style and heatmap are the same in all selections
+    int num_glyphs = glyphs.size();
+    for (int i=1; i < num_glyphs; i++) {
+      SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+      if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+        graph_style = -1;
+      }
+      if (first_glyph.getHeatMap() != gl.getHeatMap()) {
+        hm = null;
+      }
+    }
+    return hm;
+  }
+  
   java.util.List grafs = new ArrayList();
   java.util.List glyphs = new ArrayList();  
-  int graph_style = -1;
   
   public void symSelectionChanged(SymSelectionEvent evt) {
     if (DEBUG_EVENTS) {
@@ -181,8 +223,7 @@ implements SeqSelectionListener, SymSelectionListener {
     grafs.clear();
     glyphs.clear();
     
-    graph_style = -1;
-    
+    // First loop through and collect graphs and glyphs, discard any that are not SmartGraphGlyph's
     for (int i=0; i<symcount; i++) {
       if (selected_syms.get(i) instanceof GraphSym) {
         GraphSym graf = (GraphSym) selected_syms.get(i);
@@ -192,26 +233,48 @@ implements SeqSelectionListener, SymSelectionListener {
           glyphs.add(gl);
           if (gl instanceof SmartGraphGlyph) {
             SmartGraphGlyph sggl = (SmartGraphGlyph) gl;
-            int this_graph_style = sggl.getGraphStyle();
-            if (graph_style == -1) {
-              graph_style = this_graph_style;
-            } else if (this_graph_style != graph_style) {
-              graph_style = -2; // indicates that multiple graphs are of different styles
-            }
           }
         }
       }
     }
     
-    int num_graphs = grafs.size();
+    int num_glyphs = glyphs.size();
+    
+    // Take the first glyph in the list as a prototype
+    SmartGraphGlyph first_glyph = null;
+    int graph_style = -1;
+    HeatMap hm = null;
+    if (! glyphs.isEmpty()) {
+      first_glyph = (SmartGraphGlyph) glyphs.get(0);
+      graph_style = first_glyph.getGraphStyle();
+      if (graph_style == GraphGlyph.HEAT_MAP) {
+        hm = first_glyph.getHeatMap();
+      }
+    }
+    
+    // Now loop through other glyphs if there are more than one
+    // and see if the graph_style and heatmap are the same in all selections
+    for (int i=1; i < num_glyphs; i++) {
+      SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+      if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+        graph_style = -1;
+      }
+      if (graph_style == GraphGlyph.HEAT_MAP) {
+        if (first_glyph.getHeatMap() != gl.getHeatMap()) {
+          hm = null;
+        }
+      } else {
+        hm = null;
+      }
+    }
 
-    if (num_graphs == 0) {
+    if (num_glyphs == 0) {
       selected_graphs_label.setText("No graphs selected");
-    } else if (num_graphs == 1) {
+    } else if (num_glyphs == 1) {
       GraphSym graf_0 =(GraphSym) grafs.get(0);
       selected_graphs_label.setText(graf_0.getGraphName());
     } else {
-      selected_graphs_label.setText(num_graphs + " graphs selected");
+      selected_graphs_label.setText(num_glyphs + " graphs selected");
     }
         
     switch(graph_style) {
@@ -239,6 +302,17 @@ implements SeqSelectionListener, SymSelectionListener {
     }
     
     setEnabled(! grafs.isEmpty());
+    if (graph_style == GraphGlyph.HEAT_MAP) {
+      heat_mapCB.setEnabled(true);
+      if (hm == null) {
+        heat_mapCB.setSelectedIndex(-1);
+      } else {
+        heat_mapCB.setSelectedItem(hm.getName());
+      }
+    } else {
+      heat_mapCB.setEnabled(false);
+    }
+    
     vis_bounds_setter.setGraphs(glyphs);    
   }
   
@@ -274,19 +348,39 @@ implements SeqSelectionListener, SymSelectionListener {
     }
     
     public void actionPerformed(ActionEvent event) {
-      if (gviewer == null) {
+      if (DEBUG_EVENTS) {
+        System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
+      }
+      if (gviewer == null || grafs.isEmpty()) {
         return;
       }
       
       Runnable r = new Runnable() {
         public void run() {
+          SmartGraphGlyph first_glyph = (SmartGraphGlyph) glyphs.get(0);
+          if (style == GraphGlyph.HEAT_MAP) {
+            // set to heat map FIRST so that getHeatMap() below will return default map instead of null
+            first_glyph.setGraphStyle(GraphGlyph.HEAT_MAP);
+          }
+          HeatMap hm = ((SmartGraphGlyph) glyphs.get(0)).getHeatMap();
           for (int i=0; i<grafs.size(); i++) {
-            GraphSym graf = (GraphSym) grafs.get(i);
-            GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
-            if (gl != null && gl instanceof SmartGraphGlyph) {
-              gl.setShowGraph(true);
-              ((SmartGraphGlyph) gl).setGraphStyle(style);
+            SmartGraphGlyph sggl = (SmartGraphGlyph) glyphs.get(i);
+            sggl.setShowGraph(true);
+            sggl.setGraphStyle(style); // leave the heat map whatever it was
+            if ((style == GraphGlyph.HEAT_MAP) && (hm != sggl.getHeatMap())) {
+              hm = null;
             }
+          }
+          if (style == GraphGlyph.HEAT_MAP) {
+            heat_mapCB.setEnabled(true);
+            if (hm == null) {
+              heat_mapCB.setSelectedIndex(-1);
+            } else {
+              heat_mapCB.setSelectedItem(hm.getName());
+            }
+          } else {
+            heat_mapCB.setEnabled(false);            
+            // don't bother to change the displayed heat map name
           }
           gviewer.getSeqMap().updateWidget();
         }
@@ -296,4 +390,29 @@ implements SeqSelectionListener, SymSelectionListener {
     }
   }
   
+  class HeatMapItemListener implements ItemListener {
+    public void itemStateChanged(ItemEvent e) {
+      if (gviewer == null) {
+        return;
+      }
+      
+      if (e.getStateChange() == ItemEvent.SELECTED) {
+        String name = (String) e.getItem();
+        HeatMap hm = HeatMap.getStandardHeatMap(name);
+        
+        if (hm != null) {
+          for (int i=0; i<grafs.size(); i++) {
+            GraphSym graf = (GraphSym) grafs.get(i);
+            GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
+            if (gl != null) {
+              gl.setShowGraph(true);
+              gl.setGraphStyle(GraphGlyph.HEAT_MAP);
+              gl.setHeatMap(hm);
+            }
+          }
+          gviewer.getSeqMap().updateWidget();
+        }
+      }
+    }
+  }
 }

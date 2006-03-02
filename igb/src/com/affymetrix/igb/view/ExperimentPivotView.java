@@ -336,7 +336,7 @@ public class ExperimentPivotView extends JComponent
     int graph_count = experiment_graphs.size();
     for (int i=0; i<graph_count; i++) {
       GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
-      gr.initHeatMap(heat_map.getColors());
+      gr.setHeatMap(heat_map);
     }
     current_heatmap = heat_map;
     if (update_widget) {
@@ -364,7 +364,7 @@ public class ExperimentPivotView extends JComponent
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
       gl = new GraphGlyph(xcoords, ycoords);
-      gl.initHeatMap(current_heatmap.getColors());
+      gl.setHeatMap(current_heatmap);
       gl.setGraphStyle(experiment_style);
       gl.setShowHandle(false);
       gl.setShowBounds(false);

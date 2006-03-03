@@ -28,7 +28,6 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
@@ -1146,7 +1145,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
-    boolean USE_BOOKMARK_MANAGER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
 
@@ -1162,8 +1160,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       USE_PATTERN_SEARCHER = ((Boolean)prefs_hash.get("USE_PATTERN_SEARCHER")).booleanValue(); }
     if (prefs_hash.get("USE_ANNOT_BROWSER") != null) {
       USE_ANNOT_BROWSER = ((Boolean)prefs_hash.get("USE_ANNOT_BROWSER")).booleanValue(); }
-    if (prefs_hash.get("USE_BOOKMARK_MANAGER") != null) {
-      USE_BOOKMARK_MANAGER = ((Boolean)prefs_hash.get("USE_BOOKMARK_MANAGER")).booleanValue(); }
 
     if (USE_SLICE_VIEW) {
       PluginInfo pi = new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true);
@@ -1179,10 +1175,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }    
     if (USE_PATTERN_SEARCHER) {
       PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
-      plugin_list.add(pi);
-    }
-    if (USE_BOOKMARK_MANAGER) {
-      PluginInfo pi = new PluginInfo(BookmarkManagerView.class.getName(), "Bookmarks", true);
       plugin_list.add(pi);
     }
 

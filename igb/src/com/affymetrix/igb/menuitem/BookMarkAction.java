@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -27,7 +27,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.util.SynonymLookup;
 
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.IGB;
@@ -38,6 +37,7 @@ import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
+import com.affymetrix.swing.DisplayUtils;
 
 public class BookMarkAction implements ActionListener, MenuListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -49,12 +49,14 @@ public class BookMarkAction implements ActionListener, MenuListener {
   JMenuItem exportMI;
   JMenuItem importMI;
   JMenuItem clearMI;
+  JMenuItem manage_bookmarksMI;
   SeqMapView gviewer;
   IGB uni;
   private Map component_hash = new HashMap();
   BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
   JMenu main_bm_menu;
   boolean unsaved_bookmarks = false;
+  JFrame bookmark_manager_frame = null;
   BookmarkManagerView bmv = null;
 
   public BookMarkAction(IGB unib, SeqMapView smv, JMenu bm_menu) {
@@ -70,18 +72,22 @@ public class BookMarkAction implements ActionListener, MenuListener {
     importMI = new JMenuItem("Import Bookmarks", KeyEvent.VK_I);
     importMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     clearMI = new JMenuItem("Clear Bookmarks", KeyEvent.VK_C);
+    manage_bookmarksMI = new JMenuItem("Manage Bookmarks", KeyEvent.VK_M);
 
     add_pos_markMI.addActionListener(this);
     add_graph_markMI.addActionListener(this);
     importMI.addActionListener(this);
     exportMI.addActionListener(this);
     clearMI.addActionListener(this);
+    manage_bookmarksMI.addActionListener(this);
     MenuUtil.addToMenu(bm_menu, add_pos_markMI);
     MenuUtil.addToMenu(bm_menu, add_graph_markMI);
     bm_menu.addSeparator();
-    MenuUtil.addToMenu(bm_menu, exportMI);
-    MenuUtil.addToMenu(bm_menu, importMI);
-    MenuUtil.addToMenu(bm_menu, clearMI);
+    MenuUtil.addToMenu(bm_menu, manage_bookmarksMI);
+    // export/import/clear are better done with the bookmark manager
+    //MenuUtil.addToMenu(bm_menu, exportMI);
+    //MenuUtil.addToMenu(bm_menu, importMI);
+    //MenuUtil.addToMenu(bm_menu, clearMI);
     bm_menu.addSeparator();
 
     main_bm_menu = bm_menu;
@@ -98,6 +104,9 @@ public class BookMarkAction implements ActionListener, MenuListener {
   public void setBookmarkManager(BookmarkManagerView bmv) {
     this.bmv = bmv;
     if (bmv != null) {
+      // import/export can be done with the bookmark manager
+      main_bm_menu.remove(exportMI);
+      main_bm_menu.remove(importMI);
       main_bm_menu.remove(clearMI);
     }
     updateBookmarkManager();
@@ -202,7 +211,11 @@ public class BookMarkAction implements ActionListener, MenuListener {
     else if (src == clearMI) {
       removeAllBookmarks();
       unsaved_bookmarks = false;
-    } else if (src instanceof BookmarkJMenuItem) {
+    } 
+    else if (src == manage_bookmarksMI) {
+      showBookmarkManager();
+    } 
+    else if (src instanceof BookmarkJMenuItem) {
       BookmarkJMenuItem item = (BookmarkJMenuItem) src;
       Bookmark bm = item.getBookmark();
       try {
@@ -215,7 +228,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
       System.out.println("command: "+evt.getActionCommand());
     }
   }
-
+    
   void removeAllBookmarks() {
     removeAllBookmarkMenuItems();
     main_bookmark_list.removeAllChildren();
@@ -362,7 +375,6 @@ public class BookMarkAction implements ActionListener, MenuListener {
     int option = chooser.showOpenDialog(frame);
     if (option == JFileChooser.APPROVE_OPTION) {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
       try {
         File fil = chooser.getSelectedFile();
         BookmarksParser.parse(bookmark_list, fil);
@@ -482,6 +494,44 @@ public class BookMarkAction implements ActionListener, MenuListener {
   public void menuSelected(javax.swing.event.MenuEvent e) {
     if (e.getSource()==bookmark_menu) {
       rebuildMenus();
+    }
+  }
+
+    
+  void showBookmarkManager() {  
+    if (bmv == null) {
+      bmv = new BookmarkManagerView();
+      bmv.setIGB(uni);
+    }
+    
+    // If not already open in a new window, make a new window
+    if (bookmark_manager_frame == null) {
+      bookmark_manager_frame = new JFrame("Bookmarks");
+
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif");
+      if (icon != null) { bookmark_manager_frame.setIconImage(icon.getImage()); }
+      bookmark_manager_frame.getContentPane().add(bmv);
+      bookmark_manager_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+
+      bmv.setVisible(true);
+      bookmark_manager_frame.pack(); // pack() to set frame to its preferred size
+
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(bookmark_manager_frame.getTitle(), bookmark_manager_frame.getBounds());
+      if (pos != null) {
+        UnibrowPrefsUtil.setWindowSize(bookmark_manager_frame, pos);
+      }
+      bookmark_manager_frame.show();
+      bookmark_manager_frame.addWindowListener( new WindowAdapter() {
+	  public void windowClosing(WindowEvent evt) {
+            // save the current size into the preferences, so the window
+            // will re-open with this size next time
+            UnibrowPrefsUtil.saveWindowLocation(bookmark_manager_frame, bookmark_manager_frame.getTitle());
+	  }
+	});
+    }
+    // window already exists, but may not be visible
+    else {
+      DisplayUtils.bringFrameToFront(bookmark_manager_frame);
     }
   }
 

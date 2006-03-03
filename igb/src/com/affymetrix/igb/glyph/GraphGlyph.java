@@ -51,7 +51,6 @@ public class GraphGlyph extends Glyph {
   Point2D coord = new Point2D(0,0);
   Point curr_point = new Point(0,0);
   Point prev_point = new Point(0,0);
-  HeatMap heatmap = null;
 
   Rectangle2D label_coord_box = new Rectangle2D();
   Rectangle label_pix_box = new Rectangle();
@@ -159,8 +158,8 @@ public class GraphGlyph extends Glyph {
     // calculate slope (m)
     Color[] heatmap_colors = null;
     double heatmap_scaling = 1;
-    if (heatmap != null) {
-      heatmap_colors = heatmap.getColors();
+    if (state.getHeatMap() != null) {
+      heatmap_colors = state.getHeatMap().getColors();
       heatmap_scaling = (double)(heatmap_colors.length - 1) / (getVisibleMaxY() - getVisibleMinY());
     }
 
@@ -525,8 +524,8 @@ public class GraphGlyph extends Glyph {
 
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
-    if (type == HEAT_MAP && heatmap == null) {
-      setHeatMap(default_heatmap);
+    if (type == HEAT_MAP) {
+      setHeatMap(state.getHeatMap());
     }
   }
   public int getGraphStyle() { return state.getGraphStyle(); }
@@ -540,11 +539,11 @@ public class GraphGlyph extends Glyph {
   }
 
   public void setHeatMap(HeatMap hmap) {
-    this.heatmap = hmap;
+    state.setHeatMap(hmap);
   }
   
   public HeatMap getHeatMap() {
-    return this.heatmap;
+    return state.getHeatMap();
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {

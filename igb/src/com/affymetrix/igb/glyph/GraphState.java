@@ -80,6 +80,8 @@ public class GraphState {
   boolean show_bounds = false;
   boolean show_label = true;
 
+  HeatMap heat_map = GraphGlyph.default_heatmap;
+  
   public static Map gstyle2num = new HashMap();
   public static Map num2gstyle = new HashMap();
 
@@ -144,6 +146,7 @@ public class GraphState {
 
   public final String getUrl() { return graph_path; }
   public final int getGraphStyle() { return graph_style; }
+  public final HeatMap getHeatMap() { return heat_map; }
   public final Color getColor() { return graph_col; }
 
   public final double getGraphYPos() { return graph_ypos; }
@@ -174,6 +177,7 @@ public class GraphState {
   public final void setGraphHeight(double height) { graph_height = height; }
 
   public final void setGraphStyle(int style) { graph_style = style; } 
+  public final void setHeatMap(HeatMap hmap) { heat_map = hmap; }
   public final void setColor(Color col) { graph_col = col; }  // check
   public final void setVisibleMinY(float vminy) { graph_visible_min = vminy; }  // check
   public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy; }  // check

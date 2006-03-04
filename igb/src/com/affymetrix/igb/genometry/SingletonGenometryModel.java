@@ -77,7 +77,7 @@ public class SingletonGenometryModel {
     AnnotatedSeqGroup group = getSeqGroup(group_id);
     // otherwise create a new AnnotatedSeqGroup
     if (group == null) {
-      System.out.println("  adding new seq group: " + group_id);
+      //      System.out.println("  adding new seq group: " + group_id);
       group = new AnnotatedSeqGroup(group_id);
       seq_groups.put(group.getID(), group);
     }

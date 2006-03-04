@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -47,6 +47,11 @@ public class AffyTieredMap extends NeoMap {
     super();
   }
 
+  public AffyTieredMap(AffyTieredMap rootmap) {
+    super(rootmap);
+    this.tiers = rootmap.tiers;
+  }
+
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
   }
@@ -84,7 +89,7 @@ public class AffyTieredMap extends NeoMap {
     return null;
   }
 
-  /** Returns the index of the requested TierGlyph in the map, 
+  /** Returns the index of the requested TierGlyph in the map,
    *  or -1 if it isn't included. The test is based on "==", not equals().
    */
   public int getTierIndex(TierGlyph tg) {
@@ -131,7 +136,7 @@ public class AffyTieredMap extends NeoMap {
    *
    * if tier has no children, won't be considered in packing
    *
-   * Protected because outside of subclasses of AffyTieredMap, all calls should 
+   * Protected because outside of subclasses of AffyTieredMap, all calls should
    *   go through packTiers(boolean, boolean, boolean)
    */
   protected void packTiers(boolean full_repack, boolean stretch_map) {
@@ -158,7 +163,7 @@ public class AffyTieredMap extends NeoMap {
     for (int i=0; i<tiers.size(); i++) {
       mtg = (TierGlyph) tiers.elementAt(i);
       // don't make room if tier is'nt visible, or if it's hidden
-      if ( (! mtg.isVisible()) || 
+      if ( (! mtg.isVisible()) ||
 	   ((mtg.getState() == TierGlyph.HIDDEN))) {
 	//	System.out.println("hiding tier: " + mtg.getLabel());
         continue;
@@ -191,16 +196,16 @@ public class AffyTieredMap extends NeoMap {
 
       for (int i=0; i<tiers.size(); i++) {
         mtg = (TierGlyph) tiers.elementAt(i);
-	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {  
+	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {
 	  //	  System.out.println("still trying to hide tier: " + mtg.getLabel());
-	  continue; 
+	  continue;
 	}
 	else if ( newbox == null ) {
 	  newbox = new Rectangle2D();
 	  newbox.reshape(pbox.x, mtg.getCoordBox().y,
 			 pbox.width, mtg.getCoordBox().height);
 	}
-	else { 
+	else {
 	  GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
 	}
       }
@@ -222,7 +227,7 @@ public class AffyTieredMap extends NeoMap {
 
   public void clearWidget() {
     super.clearWidget();
-    tiers = new Vector();
+    tiers.clear();
   }
 
   /**
@@ -246,8 +251,8 @@ public class AffyTieredMap extends NeoMap {
     if (gl.getChildren() != null) {
       Vector children = gl.getChildren();
       int childCount = children.size();
-      /* remove from end of child Vector instead of beginning! -- that way, won't 
-       *   get issues with trying to access elements off end of Vector as 
+      /* remove from end of child Vector instead of beginning! -- that way, won't
+       *   get issues with trying to access elements off end of Vector as
        *   Vector shrinks during removal...
        */
       for (int i=childCount-1; i>=0; i--) {
@@ -369,7 +374,7 @@ public class AffyTieredMap extends NeoMap {
       fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
       //      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
     }
-    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired 
+    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired
     //   _coord_ of a glyph that needs to stay fixed in pixel-space may change.
     //   therefore need a better way of dealing with this...
     else if (zoom_behavior[id] == CONSTRAIN_COORD) {
@@ -459,8 +464,8 @@ public class AffyTieredMap extends NeoMap {
     cpp = null; // for garbage collection
   }
 
-  /** Sets the data model to the given SeqSymmetry, unless it is a 
-   *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used. 
+  /** Sets the data model to the given SeqSymmetry, unless it is a
+   *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used.
    */
   public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
     if (sym instanceof DerivedSeqSymmetry)  {

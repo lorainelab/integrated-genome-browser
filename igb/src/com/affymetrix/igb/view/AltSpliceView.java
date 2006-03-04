@@ -99,8 +99,9 @@ public class AltSpliceView extends JComponent
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addSymSelectionListener(this);
-    
-    spliced_view.getTierManager().addPopupListener(this);
+
+    TierLabelManager tlman = spliced_view.getTierManager();
+    if (tlman != null)  { tlman.addPopupListener(this); }
   }
 
   /**
@@ -273,7 +274,7 @@ public class AltSpliceView extends JComponent
     if (handler != spliced_view.getTierManager()) {
       return;
     }
-    
+
     java.util.List selected_labels = handler.getSelectedTierLabels();
 
     Action hide_action = new AbstractAction("Hide Tier") {
@@ -289,7 +290,7 @@ public class AltSpliceView extends JComponent
 //        handler.showTiers(handler.getAllTierLabels(), true, true);
 //      }
 //    };
-    
+
     Action restore_all_action = new AbstractAction("Show Same Tiers as Main View") {
       public void actionPerformed(ActionEvent e) {
         java.util.List list = handler.getAllTierLabels();
@@ -316,7 +317,7 @@ public class AltSpliceView extends JComponent
         }
       }
     };
-    
+
     hide_action.setEnabled(! selected_labels.isEmpty());
     //show_all_action.setEnabled( true );
     restore_all_action.setEnabled(true);

@@ -47,6 +47,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String APP_NAME = IGBConstants.APP_NAME;
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean USE_MULTI_WINDOW_MAP = false;
+  public static boolean REPLACE_REPAINT_MANAGER = false;
+
   public static boolean USE_QUICKLOAD = false;
   public static boolean USE_DATALOAD = true;
   public static boolean CACHE_GRAPHS = true;
@@ -159,7 +162,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     } catch (UnsupportedLookAndFeelException ulfe) {
       // Windows look and feel is only supported on Windows.  That is ok.
     }
-        
+
     // Initialize the ConsoleView right off, so that ALL output will
     // be captured there.
     ConsoleView.init();
@@ -178,8 +181,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     singleton_igb = new IGB();
     singleton_igb.init();
-    
-    
+
+
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
     final String url = get_arg("-href", args);
@@ -200,7 +203,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         mue.printStackTrace(System.err);
       }
     }
-    
+
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
@@ -271,20 +274,20 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // that will start the control server.
     // Thus the control server will be started only after current GUI stuff is finished,
     // but starting it won't cause the GUI to hang.
-    
+
     Runnable r = new Runnable() {
       public void run() {
         web_control = new UnibrowControlServer(IGB.this);
       }
     };
-    
+
     final Thread t = new Thread(r);
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         t.start();
       }
-    });    
+    });
   }
 
   public UnibrowControlServer getControlServer() {
@@ -370,6 +373,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       } finally {
 	try {default_prefs_stream.close();} catch (Exception e) {}
       }
+      System.out.println("after resource loading prefs attempt, before url loading prefs attempt");
 
       String deploy_type = get_deployment_type(main_args);
       if (deploy_type != null) {
@@ -380,6 +384,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
 
       String def_prefs_url = get_default_prefs_url(main_args);
+      System.out.println("def_prefs_url: " + def_prefs_url);
       if (def_prefs_url != null) {
 	InputStream default_prefs_url_str = null;
 	try {
@@ -427,13 +432,26 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   protected void init() {
+    frm = new JFrame(APP_NAME);
+    RepaintManager rm = RepaintManager.currentManager(frm);
+    System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
+    /*
+    if (REPLACE_REPAINT_MANAGER) {
+      RepaintManager new_manager = new IgbRepaintManager();
+      new_manager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
+      RepaintManager.setCurrentManager(new_manager);
+      //	RepaintManager.setCurrentManager(new DiagnosticRepaintManager());
+    }
+    else {
+    }
+    */
+    GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
+
     // force loading of prefs if hasn't happened yet
     // usually since IGB.main() is called first, prefs will have already been loaded
     //   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
-
-    frm = new JFrame(APP_NAME);
 
     // when HTTP authentication is needed, getPasswordAuthentication will
     //    be called on the authenticator set as the default
@@ -464,7 +482,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     //    select_broker = new SymSelectionBroker();
 
-    map_view = new SeqMapView(true);
+    System.out.println("****** called SeqMapView constructor ******");
+    map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);
 
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
@@ -514,14 +533,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       map_view.toggleHairlineLabel();
     }
     toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
-    
-    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");    
+
+    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
     toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
     toggle_edge_matching_item.setState(map_view.getEdgeMatching());
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
-    
+
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
@@ -556,7 +575,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
-    about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));    
+    about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
     console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
 
     MenuUtil.addToMenu(help_menu, about_item);
@@ -594,7 +613,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Container cpane = frm.getContentPane();
     int table_height = 250;
     int fudge = 55;
-    RepaintManager rm = RepaintManager.currentManager(frm);
+    //    RepaintManager rm = RepaintManager.currentManager(frm);
+    System.out.println("repaint manager: " + rm.getClass());
     Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
         new Rectangle(0, 0, 800, 600));
     UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);
@@ -626,7 +646,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     plugin_list.addAll(getPluginsFromXmlPrefs(getIGBPrefs()));
     //plugin_list = null;
     //try {
-    //  plugin_list = PluginInfo.getAllPlugins();
+    //  plugin_list = Plugin>Info.getAllPlugins();
     //} catch (java.util.prefs.BackingStoreException bse) {
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
@@ -658,25 +678,26 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     frm.addWindowListener( new WindowAdapter() {
 	public void windowClosing(WindowEvent evt) {exit();}
       });
+    //    frm.resize(1000, 750);
     frm.show();
-    
+
     // We need to let the QuickLoad system get started-up before starting
     // the control server that listens to ping requests.
     if (data_load_view != null) {
       data_load_view.initialize();
     }
-    
+
     // Start listining for http requests only after all set-up is done.
     startControlServer();
-    
+
     initialized = true;
   }
-    
+
   /** Returns true if initialization has completed. */
   public boolean isInitialized() {
     return initialized;
   }
-  
+
   /** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.
    *  It is safe to call this method even if the status bar is not being displayed.
@@ -760,12 +781,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
       addToPopupWindows(comp, title);
     }
-    
+
     if (plugin instanceof DataLoadView) {
       data_load_view = (DataLoadView) plugin;
     }
   }
-  
+
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == open_file_item) {
@@ -1172,7 +1193,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (SimpleGraphTab.USE_SIMPLE_GRAPH_TAB) {
       PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graphs", true);
       plugin_list.add(pi);
-    }    
+    }
     if (USE_PATTERN_SEARCHER) {
       PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
       plugin_list.add(pi);

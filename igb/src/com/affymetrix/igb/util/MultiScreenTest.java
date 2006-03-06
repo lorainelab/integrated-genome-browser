@@ -187,9 +187,8 @@ public class MultiScreenTest implements ActionListener {
 
 	    //	    NeoMap newmap = new NeoMap(map);  // make a new map with original
 	    //	    NeoMap newmap = new NeoMap(false, false);
-	    //	    NeoMap newmap = new NeoMap(true, true);
-	    AffyTieredMap newmap = new AffyTieredMap(map);
-	    //	    newmap.setRoot(map);
+	    NeoMap newmap = new NeoMap(true, true);
+	    newmap.setRoot(map);
 	    Container cpane = newfrm.getContentPane();
 	    cpane.setLayout(new BorderLayout());
 	    newmap.getNeoCanvas().setDoubleBuffered(false);

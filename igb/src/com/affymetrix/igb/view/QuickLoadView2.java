@@ -50,7 +50,7 @@ public class QuickLoadView2 extends JComponent
   static final String SERVER_NAME_DEFAULT = "NetAffx";
   static final String SERVER_NAME_USER_DEFINED = "Personal";
   static final String SERVER_NAME_FROM_IGB_PREFS_FILE = "Auxiliary";
-  
+
   // constants for remembering state
   static final String PREF_LAST_QUICKLOAD_URL = "QuickLoad: Last URL";
   static final String PREF_LAST_SERVER_NAME = "QuickLoad: Last Server";
@@ -109,7 +109,7 @@ public class QuickLoadView2 extends JComponent
   }
 
   public QuickLoadView2() {
-    
+
     initOptionsDialog();
 
     gviewer = IGB.getSingletonIGB().getMapView();
@@ -162,13 +162,13 @@ public class QuickLoadView2 extends JComponent
     //serverCB.setPrototypeDisplayValue("XXXX");
     //genomeCB.setPrototypeDisplayValue("XXXX");
     genomeCB.addItem(SELECT_A_GENOME);
-    
+
     initializeQLServerList();
 
     serverCB.addItemListener(this);
     genomeCB.addItemListener(this);
   }
-    
+
   public void actionPerformed(ActionEvent evt)  {
     Object src = evt.getSource();
     /* handles residues loading based on partial or full sequence load buttons */
@@ -227,13 +227,13 @@ public class QuickLoadView2 extends JComponent
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_QUICKLOAD_URL, current_server.getRootUrl());
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_SERVER_NAME, selection);
       }
-      
+
       refreshGenomeChoices();
-      
+
       // optional: try to set back to the same old group and sequence on the new server
       String old_group_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_GENOME, null);
       String old_seq_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_SEQ, null);
-      
+
       AnnotatedSeqGroup group = gmodel.getSeqGroup(old_group_id);
       gmodel.setSelectedSeqGroup(group); // causes a GroupSelectionEvent
       if (group != null && group == gmodel.getSelectedSeqGroup()) {
@@ -262,7 +262,7 @@ public class QuickLoadView2 extends JComponent
           gmodel.setSelectedSeq(null);
           gmodel.setSelectedSeqGroup(group);
         }
-        
+
         if (group != null) {
           UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_GENOME, group.getID());
         }
@@ -276,7 +276,7 @@ public class QuickLoadView2 extends JComponent
     //  the genome to change.  Internally, when the genome combo box is changed,
     //  that causes a call to SingletonGenomeModel.setSelectedSeqGroup(), and that
     //  causes a call to here.
-    
+
     AnnotatedSeqGroup group = evt.getSelectedGroup();
     if (DEBUG_EVENTS) { System.out.println("QuickLoadView2.groupSelectionChanged() called, group: " + (group == null ? null : group.getID())); }
     if (current_group != group) {
@@ -292,13 +292,13 @@ public class QuickLoadView2 extends JComponent
       types_panel.removeAll();
 
       current_group = group;
-      
+
       if (current_group == null || current_server == null) {
         current_genome_name = null;
       } else {
         current_genome_name = current_server.getGenomeName(group);
       }
-      
+
       if (current_genome_name == null) {
         // if no genome in quickload server matches selected AnnotatedSeqGroup,
         // then clear the types_panel and un-select the item in the genomeCB
@@ -308,17 +308,19 @@ public class QuickLoadView2 extends JComponent
       else {
         current_server.initGenome(current_genome_name);
         genomeCB.setSelectedItem(current_genome_name);
-        
+
         java.util.List file_names = current_server.getFilenames(current_genome_name);
         Iterator iter = file_names.iterator();
-        
+
         // populate list of checkboxes for annotation types
         while (iter.hasNext()) {
           String filename = (String) iter.next();
-          
+
 //          if (filename == null || filename.equals(""))  { continue; }
           boolean prev_loaded = QuickLoadServerModel.getLoadState(group, filename);
-          String annot_name = filename.substring(0, filename.indexOf("."));
+          int pindex = filename.indexOf(".");
+          if (pindex < 0)  { continue; }
+          String annot_name = filename.substring(0, pindex);
           JCheckBox cb = new JCheckBox(annot_name);
           cb2filename.put(cb, filename);
           cb.setSelected(prev_loaded);
@@ -333,10 +335,10 @@ public class QuickLoadView2 extends JComponent
           }
           types_panel.add(cb);
         }
-      }      
+      }
     }
-    types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)    
-    types_panel.repaint();        
+    types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)
+    types_panel.repaint();
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -363,39 +365,39 @@ public class QuickLoadView2 extends JComponent
     }
     genomeCB.setSelectedIndex(-1); // deselect everything, so later selection will send event
     genomeCB.addItemListener(this);
-    genomeCB.setSelectedItem(SELECT_A_GENOME);    
+    genomeCB.setSelectedItem(SELECT_A_GENOME);
   }
-    
+
   void initializeQLServerList() {
     serverCB.addItem(SELECT_A_SERVER);
-    
+
     serverCB.addItem(SERVER_NAME_DEFAULT);
     serverCB.addItem(SERVER_NAME_USER_DEFINED);
-    
+
     // Add a choice for the server from the prefs file only if it is not the
     // same server as the Default one or the user-defined one
     String url_from_prefs_file = getUrlFromPrefsFile();
     if (url_from_prefs_file != null && url_from_prefs_file.trim().length() > 0) {
-      if ((! compareURLs(url_from_prefs_file, DEFAULT_QUICKLOAD_URL)) && 
+      if ((! compareURLs(url_from_prefs_file, DEFAULT_QUICKLOAD_URL)) &&
           (! compareURLs(url_from_prefs_file, getUrlFromPersistentPrefs()))) {
         serverCB.addItem(SERVER_NAME_FROM_IGB_PREFS_FILE);
       }
     }
-    
-    serverCB.setSelectedItem(SELECT_A_SERVER);    
+
+    serverCB.setSelectedItem(SELECT_A_SERVER);
   }
-  
+
   static boolean compareURLs(String url1, String url2) {
     if (url1==url2) {return true;}
     if (url1==null || url2==null) {return false;}
-    
+
     url1 = url1.toLowerCase().trim();
     url2 = url2.toLowerCase().trim();
     while (url1.endsWith("/")) { url1 = url1.substring(0, url1.length()-1); }
     while (url2.endsWith("/")) { url2 = url2.substring(0, url2.length()-1); }
     return url1.equals(url2);
   }
-  
+
   // this one is always the hard-coded netaffx server
   static String getUrlDefault() {
     return DEFAULT_QUICKLOAD_URL;
@@ -405,7 +407,7 @@ public class QuickLoadView2 extends JComponent
   static String getUrlFromPersistentPrefs() {
     return UnibrowPrefsUtil.getLocation(PREF_USER_DEFINED_QUICKLOAD_URL, "");
   }
-  
+
   // this one is set by the user in the igb_prefs file.  It can be null
   // we sort-of hope to phase this out
   static String getUrlFromPrefsFile() {
@@ -417,17 +419,17 @@ public class QuickLoadView2 extends JComponent
     if ("".equals(url)) { url = DEFAULT_QUICKLOAD_URL; }
     return url;
   }
-  
+
   static String getLastServerName() {
     return UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_SERVER_NAME, SERVER_NAME_DEFAULT);
   }
-  
+
   // equivalent to getURLLastUsed()
   public static String getQuickLoadUrl() {
     return getUrlLastUsed();
   }
-  
-  /**  
+
+  /**
    *   Optionally call this after IGB has been set-up.
    *   Resets the server to the one that was in use the last time the program
    *   was shut down.
@@ -436,16 +438,16 @@ public class QuickLoadView2 extends JComponent
     // tries to reset the quickload server back to the one used when the program last shut-down
     // Must be done only after IGB has finished initializing, so the SeqMapView is ready
     // Run on the Swing Thread, so we are sure necessary initialization is finished
-    
+
     String last_name = getLastServerName();
-    setSelectedServerEventually(last_name);    
+    setSelectedServerEventually(last_name);
   }
-  
+
   void setSelectedServerEventually(final String last_name) {
     final JComboBox combo_box = serverCB;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        try {    
+        try {
           combo_box.setSelectedItem(last_name);
         } catch (Exception e) {
           // no exceptions are expected, but if there are any, ignore them.
@@ -455,7 +457,7 @@ public class QuickLoadView2 extends JComponent
       }
     });
   }
-  
+
   /**
    *  Load sequence residues for a span along a sequence.
    *  Access residues via DAS reference server
@@ -490,11 +492,11 @@ public class QuickLoadView2 extends JComponent
         }
         String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
         if (das_seqid == null)  {
-          ErrorHandler.errorPanel("No sequence", 
+          ErrorHandler.errorPanel("No sequence",
             "Couldn't access sequence residues on DAS server\n" +
             " seqid: '" + seqid +"'\n"+
             " genome: '"+current_genome_name + "'\n" +
-            " DAS server: " + das_dna_server, 
+            " DAS server: " + das_dna_server,
             gviewer);
           return;
         }
@@ -504,11 +506,11 @@ public class QuickLoadView2 extends JComponent
         System.out.println("DAS DNA response length: " + residues.length());
       }
       catch (Exception ex) {
-        ErrorHandler.errorPanel("No sequence", 
+        ErrorHandler.errorPanel("No sequence",
           "Couldn't access sequence residues on DAS server\n" +
           " seqid: '" + seqid +"'\n"+
           " genome: '"+current_genome_name + "'\n" +
-          " DAS server: " + das_dna_server, 
+          " DAS server: " + das_dna_server,
           gviewer, ex);
       }
 
@@ -573,7 +575,7 @@ public class QuickLoadView2 extends JComponent
         ErrorHandler.errorPanel("Error", "cannot access sequence:\n" +
           "seq = '" + seq_name + "'\n" +
           "version = '" + current_genome_name +"'\n" +
-          "server = " + http_root, 
+          "server = " + http_root,
         gviewer, ex);
       }
       finally {
@@ -645,7 +647,7 @@ public class QuickLoadView2 extends JComponent
 
   public void showOptions() {
     String old_QL = getUrlFromPersistentPrefs();
-    
+
     //TODO: before showing the options dialog, need to reset its GUI to actual current values
     JOptionPane.showMessageDialog(this, optionsP, "QuickLoad Options", JOptionPane.PLAIN_MESSAGE);
 
@@ -662,7 +664,7 @@ public class QuickLoadView2 extends JComponent
       // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
       //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
       //        setQuickLoadURL(getQuickLoadUrl());
-      
+
       if (! getUrlFromPersistentPrefs().equals(old_QL)) {
         // If the user is currently looking at the user-defined QL server, must force it to reload
         if (SERVER_NAME_USER_DEFINED.equals(serverCB.getSelectedItem())) {
@@ -675,8 +677,8 @@ public class QuickLoadView2 extends JComponent
         }
       }
     //}
-  }  
-  
+  }
+
   /** Adds the DAS servers from the file on the quickload server to the
    *  persistent list managed by DasDiscovery.  If the file doesn't exist,
    *  or can't be loaded, a warning is printed to stdout, but that is all,
@@ -693,7 +695,7 @@ public class QuickLoadView2 extends JComponent
       System.out.println("WARNING: Failed to load DAS Server list: " + ex);
     }
   }
-  
+
   // This is used when the user selects a server name from the combo box
   static QuickLoadServerModel getQLModelForName(String ql_server_name) {
     String the_url_string = null;
@@ -706,12 +708,12 @@ public class QuickLoadView2 extends JComponent
     } else if (SELECT_A_SERVER.equals(ql_server_name)) {
       the_url_string = null;
     }
-    
+
     QuickLoadServerModel result = null;
     if (the_url_string != null && ! "".equals(the_url_string.trim())) try {
       URL the_url = new URL(the_url_string);
       result = QuickLoadServerModel.getQLModelForURL(the_url);
-      
+
       if (result != null) {
         SynonymLookup.getDefaultLookup().loadSynonyms(result.getRootUrl()+"synonyms.txt");
       }
@@ -719,11 +721,11 @@ public class QuickLoadView2 extends JComponent
       ErrorHandler.errorPanel("ERROR", "Error opening QuickLoad server:\n server='"+the_url_string+"'"
        + "\n" + e.toString());
     }
-    
+
     if (result != null) {
       processDasServersList(result.getRootUrl());
     }
-    
+
     return result;
   }
 }
@@ -748,16 +750,16 @@ class QuickLoadServerModel {
 
   String root_url;
   java.util.List genome_names = new ArrayList();
-  
+
   Map group2name = new HashMap();
   Map genome2init = new HashMap();
-  
+
   // A map from String genome name to a List of filenames on the server for that group
   Map genome2file_names = new HashMap();
 
   /**
    *  Map of AnnotatedSeqGroup to a load state map.
-   *  Each load state map is a map of an annotation type name to Boolean for 
+   *  Each load state map is a map of an annotation type name to Boolean for
    *  whether it has already been loaded or not
    */
   static Map group2states = new HashMap();
@@ -775,7 +777,7 @@ class QuickLoadServerModel {
   }
 
   static Map url2quickload = new HashMap();
-  
+
   public static QuickLoadServerModel getQLModelForURL(URL url) {
     String ql_http_root = url.toExternalForm();
     if (! ql_http_root.endsWith("/")) {
@@ -789,7 +791,7 @@ class QuickLoadServerModel {
     }
     return ql_server;
   }
-  
+
   protected static void setCacheBehavior(int behavior, boolean annots, boolean residues) {
     if (behavior != cache_usage) {
       cache_usage = behavior;
@@ -813,7 +815,7 @@ class QuickLoadServerModel {
   public java.util.List getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
   public static AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
-  
+
   /** Returns the name that this QuickLoad server uses to refer to the given AnnotatedSeqGroup.
    *  Because of synonyms, different QuickLoad servers may use different names to
    *  refer to the same genome.
@@ -841,7 +843,7 @@ class QuickLoadServerModel {
     if (filenames == null) return Collections.EMPTY_LIST;
     else return filenames;
   }
-  
+
   /** Returns Map of annotation type name to Boolean, true iff annotation type is already loaded */
   public static Map getLoadStates(AnnotatedSeqGroup group) {
     return (Map)group2states.get(group);
@@ -888,7 +890,7 @@ class QuickLoadServerModel {
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
     System.out.println("loading list of available annotations for genome: " + genome_name);
     String filename = genome_root + "annots.txt";
-    
+
     InputStream istr = null;
     BufferedReader br = null;
     try {
@@ -1050,7 +1052,7 @@ class QuickLoadServerModel {
       if (istr != null) try {istr.close();} catch (Exception e) {}
     }
   }
-  
+
   public String toString() {
     return "QuickLoadServerModel: url='" + getRootUrl() + "'";
   }

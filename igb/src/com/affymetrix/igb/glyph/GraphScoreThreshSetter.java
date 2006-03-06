@@ -13,23 +13,36 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.view.GraphAdjusterView;
+import com.affymetrix.igb.view.SeqMapView;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+import javax.swing.border.*;
+import javax.swing.event.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphScoreThreshSetter extends JPanel
   implements ChangeListener, ActionListener  {
 
+  SeqMapView gviewer = null;
+  
   static Object placeholder_object = new Object();
   static DecimalFormat val_format;
   static DecimalFormat per_format;
+  static String BLANK = "";
+  static String ON = "On";
+  static String OFF = "Off";
 
   Dimension slider_sizepref = new Dimension(600, 15);
   Dimension textbox_sizepref = new Dimension(400, 15);
@@ -42,6 +55,8 @@ public class GraphScoreThreshSetter extends JPanel
 
   NeoWidgetI widg;
   GraphVisibleBoundsSetter per_info_provider;
+  MaxGapThresholder max_gap_thresher;
+  MinRunThresholder min_run_thresher;
 
   JSlider score_val_slider;
   JSlider score_percent_slider;
@@ -49,6 +64,10 @@ public class GraphScoreThreshSetter extends JPanel
   JTextField score_perT;
   JRadioButton thresh_aboveB;
   JRadioButton thresh_belowB;
+  JTextField shift_startTF = new JTextField("0", 5);
+  JTextField shift_endTF = new JTextField("0", 5);
+  JComboBox threshCB = new JComboBox();
+  JButton tier_threshB = new JButton("Make Track");
 
   float sliders_per_percent = 10.0f;
   float percents_per_slider = 1.0f / sliders_per_percent;
@@ -89,9 +108,10 @@ public class GraphScoreThreshSetter extends JPanel
     per_format.setGroupingUsed(false);
   }
 
-  public GraphScoreThreshSetter(NeoWidgetI w,
+  public GraphScoreThreshSetter(SeqMapView gviewer,
 				GraphVisibleBoundsSetter bounds_setter) {
-    widg = w;
+    this.gviewer = gviewer;
+    widg = gviewer.getSeqMap();
     per_info_provider = bounds_setter;
 
     score_val_slider = new JSlider(JSlider.HORIZONTAL);
@@ -136,18 +156,53 @@ public class GraphScoreThreshSetter extends JPanel
     slideP.add(score_val_slider);
     slideP.add(score_percent_slider);
 
-    //    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.setLayout(new BorderLayout());
+    JPanel thresh_toggle_pan = new JPanel();
+    thresh_toggle_pan.setLayout(new GridLayout(1, 2));
+    threshCB.addItem(BLANK);
+    threshCB.addItem(ON);
+    threshCB.addItem(OFF);
+    threshCB.setPreferredSize(new Dimension(30, 10));
+    threshCB.setMaximumSize(new Dimension(60, 30));
+    
+    JPanel thresh_butP = new JPanel();
+    thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));
+    thresh_butP.add(new JLabel("Visibility  "));
+    thresh_butP.add(threshCB);
+    thresh_butP.add(tier_threshB);
+
+    JPanel thresh_shiftP = new JPanel();
+    thresh_shiftP.setBorder(new TitledBorder("Offsets for Thresholded Regions"));
+    thresh_shiftP.setLayout(new GridLayout(1, 4));
+    thresh_shiftP.add(new JLabel("Start  ", JLabel.RIGHT));
+    thresh_shiftP.add(shift_startTF);
+    thresh_shiftP.add(new JLabel("End  ", JLabel.RIGHT));
+    thresh_shiftP.add(shift_endTF);
+    thresh_shiftP.setMaximumSize(new Dimension(300, tf_max_ypix + 30));
+    
+    
+    min_run_thresher = new MinRunThresholder(gviewer.getSeqMap());
+    max_gap_thresher = new MaxGapThresholder(gviewer.getSeqMap());
+    
+    JPanel silly_panel = new JPanel();
+    
+    silly_panel.setLayout(new BorderLayout());
     JPanel cbox = new JPanel();
     cbox.setLayout(new BoxLayout(cbox, BoxLayout.X_AXIS));
-    this.add("South", directionP);
-    this.add("Center", cbox);
+    silly_panel.add("South", directionP);
+    silly_panel.add("Center", cbox);
 
     cbox.add(labP);
     cbox.add(textP);
     cbox.add(slideP);
-
-  }
+    
+    this.setBorder(new TitledBorder("Thresholding"));
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(thresh_butP);
+    this.add(silly_panel);
+    this.add(thresh_shiftP);
+    this.add(max_gap_thresher);
+    this.add(min_run_thresher);    
+  }  
 
   /**
    *  Sets the list of graphs.
@@ -166,6 +221,10 @@ public class GraphScoreThreshSetter extends JPanel
     }
     initPercents();
     initValues();
+    
+    max_gap_thresher.setGraphs(graphs);
+    min_run_thresher.setGraphs(graphs);
+    
     setEnabled( ! graphs.isEmpty());
     turnOnListening();
   }
@@ -178,6 +237,10 @@ public class GraphScoreThreshSetter extends JPanel
     score_perT.setEnabled(b);
     thresh_aboveB.setEnabled(b);
     thresh_belowB.setEnabled(b);
+    shift_startTF.setEnabled(b);
+    shift_endTF.setEnabled(b);
+    threshCB.setEnabled(b);
+    tier_threshB.setEnabled(b);
   }
 
   public void initValues() {
@@ -320,6 +383,40 @@ public class GraphScoreThreshSetter extends JPanel
 	setThresholdDirection(false);
       }
     }
+    else if (src == shift_startTF) {
+      try {
+        int start_shift = Integer.parseInt(shift_startTF.getText());
+        adjustThreshStartShift(graphs, start_shift);
+      }
+      catch (Exception ex) { ex.printStackTrace(); }
+    }
+    else if (src == shift_endTF) {
+      try {
+        int end_shift = Integer.parseInt(shift_endTF.getText());
+        adjustThreshEndShift(graphs, end_shift);
+      }
+      catch (Exception ex) { ex.printStackTrace(); }
+    }
+    else if (src == tier_threshB) {
+      int gcount = graphs.size();
+      for (int i=0; i<gcount; i++) {
+        SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+        System.out.println("pickling graph: " + sggl.getLabel());
+        pickleThreshold(sggl);
+      }
+      widg.updateWidget();
+    }
+    else if (src == threshCB) {
+      String selection = (String)((JComboBox)threshCB).getSelectedItem();
+      boolean thresh_on = (selection == ON);
+      boolean thresh_off = (selection == OFF);
+      int gcount = graphs.size();
+      for (int i=0; i<gcount; i++) {
+        SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+        sggl.setShowThreshold(thresh_on);
+      }
+      widg.updateWidget();
+    }
   }
 
 
@@ -331,6 +428,10 @@ public class GraphScoreThreshSetter extends JPanel
     score_perT.removeActionListener(this);
     thresh_aboveB.removeActionListener(this);
     thresh_belowB.removeActionListener(this);
+    threshCB.removeActionListener(this);
+    tier_threshB.removeActionListener(this);
+    shift_startTF.removeActionListener(this);
+    shift_endTF.removeActionListener(this);
   }
 
   public void turnOnListening() {
@@ -340,6 +441,10 @@ public class GraphScoreThreshSetter extends JPanel
     score_perT.addActionListener(this);
     thresh_aboveB.addActionListener(this);
     thresh_belowB.addActionListener(this);
+    threshCB.addActionListener(this);
+    tier_threshB.addActionListener(this);
+    shift_startTF.addActionListener(this);
+    shift_endTF.addActionListener(this);
   }
 
   /**
@@ -471,6 +576,59 @@ public class GraphScoreThreshSetter extends JPanel
   }
 
 
+  /**
+   *  Sets the ThreshStartShift on a collection of SmartGraphGlyphs.
+   */
+  public void adjustThreshStartShift(Collection glyphs, int shift) {
+    Iterator iter = glyphs.iterator();
+    while (iter.hasNext()) {
+      SmartGraphGlyph sggl = (SmartGraphGlyph) iter.next();
+      sggl.setThreshStartShift(shift);
+    }
+  }
+
+  /**
+   *  Sets the ThreshEndShift on a collection of SmartGraphGlyphs.
+   */
+  public void adjustThreshEndShift(Collection glyphs, int shift) {
+    Iterator iter = glyphs.iterator();
+    while (iter.hasNext()) {
+      SmartGraphGlyph sggl = (SmartGraphGlyph) iter.next();
+      sggl.setThreshEndShift(shift);
+    }
+  }
+
+  static DecimalFormat nformat = new DecimalFormat();
+  int pickle_count = 0;
+  public void pickleThreshold(SmartGraphGlyph sgg) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
+//    if (aseq != current_seq) {
+//      IGB.errorPanel("Problem finding sequence to annotate!");
+//      return;
+//    }
+    SimpleSymWithProps psym = new SimpleSymWithProps();
+    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
+    //    String meth = "graph pickle " + pickle_count;
+    String meth =
+      "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
+      ", max_gap=" + (int)sgg.getMaxGapThreshold() +
+      ", min_run=" + (int)sgg.getMinRunThreshold() +
+      ", graph: " + sgg.getLabel();
+    pickle_count++;
+    psym.setProperty("method", meth);
+    ViewI view = gviewer.getSeqMap().getView();
+    sgg.drawThresholdedRegions(view, psym, aseq);
+    aseq.addAnnotation(psym);
+    Color col = sgg.getColor();
+    //    Color col = Color.red;
+    AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
+    annot_style.setColor(col);
+    annot_style.setGlyphDepth(1);
+    
+    gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+  }
+
   /*
    static float[] flipArray(float[] forward) {
     int length = forward.length;
@@ -485,6 +643,8 @@ public class GraphScoreThreshSetter extends JPanel
   public void deleteGraph(GraphGlyph gl) {
     Object info = gl.getInfo();
     graphs.remove(gl);
+    // done in setGraphs? max_gap_thresher.deleteGraph(gl);
+    //  min_run_thresher.deleteGraph(gl);
     setGraphs(graphs);
   }
 

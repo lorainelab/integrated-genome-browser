@@ -19,22 +19,28 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.util.*;
-import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.Timer;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
+import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.util.*;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.FloatTransformer;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class GraphAdjusterView extends JComponent
      implements SymSelectionListener, ActionListener, SeqSelectionListener  {
@@ -42,8 +48,6 @@ public class GraphAdjusterView extends JComponent
   static boolean TEST_GRAPH_TRANSFORM = true;
   static boolean TEST_GRAPH_EVAL = false;
   static String BLANK = "";
-  static String ON = "On";
-  static String OFF = "Off";
   static String MINMAXAVG = "MinMaxAvg";
   static String LINE = "Line";
   static String BAR = "Bar";
@@ -59,8 +63,6 @@ public class GraphAdjusterView extends JComponent
   GraphVisibleBoundsSetter vis_bounds_adjuster;
   JTextField transformTF = new JTextField(20);
   GraphScoreThreshSetter score_thresh_adjuster;
-  MaxGapThresholder max_gap_thresher;
-  MinRunThresholder min_run_thresher;
 
   NeoWidgetI nwidg = null;
   SeqMapView gviewer = null;
@@ -73,12 +75,7 @@ public class GraphAdjusterView extends JComponent
   JCheckBox boundsCB = new JCheckBox("Bounds");
 
   JButton colorB = new JButton("Change Color");
-  JTextField shift_startTF = new JTextField("0", 5);
-  JTextField shift_endTF = new JTextField("0", 5);
   JComboBox styleCB = new JComboBox();
-  JComboBox visCB = new JComboBox();
-  JComboBox threshCB = new JComboBox();
-  JButton tier_threshB = new JButton("Make Track");
 
   JButton boundsB = new JButton("Toggle Bounds");
   JRadioButton floatB = new JRadioButton("Floating");
@@ -128,62 +125,26 @@ public class GraphAdjusterView extends JComponent
 
 
   public GraphAdjusterView() {
-    this(IGB.getSingletonIGB().getMapView().getSeqMap());
-    gviewer = IGB.getSingletonIGB().getMapView();
-    gmodel.addSeqSelectionListener(this);
-    gmodel.addSymSelectionListener(this);
+    this(IGB.getSingletonIGB().getMapView());
   }
 
-  public GraphAdjusterView(NeoWidgetI nw) {
+  public GraphAdjusterView(SeqMapView gviewer) {
     super();
 
-    //    scaleCB.addItem(BLANK);
+    //  scaleCB.addItem(BLANK);
     Iterator iter = name2transform.keySet().iterator();
     while (iter.hasNext()) {
       String name = (String)iter.next();
       scaleCB.addItem(name);
     }
 
-    nwidg = nw;
+    this.gviewer = gviewer;
+    nwidg = gviewer.getSeqMap();
     vis_bounds_adjuster = new GraphVisibleBoundsSetter(nwidg);
-    score_thresh_adjuster = new GraphScoreThreshSetter(nwidg, vis_bounds_adjuster);
-    max_gap_thresher = new MaxGapThresholder(nwidg);
-    min_run_thresher = new MinRunThresholder(nwidg);
+    score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_adjuster);
 
     score_thresh_adjuster.setBorder(new TitledBorder("Score"));
     vis_bounds_adjuster.setBorder(new TitledBorder("Visible Bounds"));
-
-    JPanel thresh_toggle_pan = new JPanel();
-    thresh_toggle_pan.setLayout(new GridLayout(1, 2));
-    threshCB.addItem(BLANK);
-    threshCB.addItem(ON);
-    threshCB.addItem(OFF);
-    threshCB.setPreferredSize(new Dimension(30, 10));
-    threshCB.setMaximumSize(new Dimension(60, 30));
-
-    JPanel thresh_butP = new JPanel();
-    thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));
-    thresh_butP.add(new JLabel("Visibility  "));
-    thresh_butP.add(threshCB);
-    thresh_butP.add(tier_threshB);
-
-    JPanel thresh_shiftP = new JPanel();
-    thresh_shiftP.setBorder(new TitledBorder("Offsets for Thresholded Regions"));
-    thresh_shiftP.setLayout(new GridLayout(1, 4));
-    thresh_shiftP.add(new JLabel("Start  ", JLabel.RIGHT));
-    thresh_shiftP.add(shift_startTF);
-    thresh_shiftP.add(new JLabel("End  ", JLabel.RIGHT));
-    thresh_shiftP.add(shift_endTF);
-    thresh_shiftP.setMaximumSize(new Dimension(300, tf_max_ypix + 30));
-
-    JPanel thresh_pan = new JPanel();
-    thresh_pan.setBorder(new TitledBorder("Thresholding"));
-    thresh_pan.setLayout(new BoxLayout(thresh_pan, BoxLayout.Y_AXIS));
-    thresh_pan.add(thresh_butP);
-    thresh_pan.add(score_thresh_adjuster);
-    thresh_pan.add(max_gap_thresher);
-    thresh_pan.add(min_run_thresher);
-    thresh_pan.add(thresh_shiftP);
 
     JPanel style_pan = new JPanel();
     style_pan.setLayout(new BoxLayout(style_pan, BoxLayout.X_AXIS));
@@ -320,11 +281,10 @@ public class GraphAdjusterView extends JComponent
     //this.setLayout(new GridLayout(1, 3));
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     this.add(vis_adjusterP);
-    this.add(thresh_pan);
+    this.add(score_thresh_adjuster);
     //this.add(options_holder);
     this.add(options_pan);
 
-    visCB.addActionListener(this);
     labelCB.addActionListener(this);
     yaxisCB.addActionListener(this);
     boundsCB.addActionListener(this);
@@ -332,7 +292,6 @@ public class GraphAdjusterView extends JComponent
     cloneB.addActionListener(this);
     colorB.addActionListener(this);
     styleCB.addActionListener(this);
-    threshCB.addActionListener(this);
     boundsB.addActionListener(this);
     floatB.addActionListener(this);
     attachB.addActionListener(this);
@@ -341,11 +300,11 @@ public class GraphAdjusterView extends JComponent
     selectAllB.addActionListener(this);
     setDefaultsB.addActionListener(this);
     groupGraphsB.addActionListener(this);
-    tier_threshB.addActionListener(this);
-    shift_startTF.addActionListener(this);
-    shift_endTF.addActionListener(this);
     transformTF.addActionListener(this);
     scaleCB.addActionListener(this);
+    
+    gmodel.addSeqSelectionListener(this);
+    gmodel.addSymSelectionListener(this);
   }
 
   public void symSelectionChanged(SymSelectionEvent evt) {
@@ -381,17 +340,11 @@ public class GraphAdjusterView extends JComponent
     
     vis_bounds_adjuster.setGraphs(glyphs);
     score_thresh_adjuster.setGraphs(glyphs);
-    max_gap_thresher.setGraphs(glyphs);
-    min_run_thresher.setGraphs(glyphs);
     setEnabled(! glyphs.isEmpty());
   }
   
   public void setEnabled(boolean b) {
     super.setEnabled(b);
-    shift_startTF.setEnabled(b);
-    shift_endTF.setEnabled(b);
-    threshCB.setEnabled(b);
-    tier_threshB.setEnabled(b);
     scaleCB.setEnabled(b);
     labelCB.setEnabled(b);
     yaxisCB.setEnabled(b);
@@ -478,17 +431,6 @@ public class GraphAdjusterView extends JComponent
         nwidg.updateWidget();
       }
     }
-    else if (src == tier_threshB) {
-      for (int i=0; i<gcount; i++) {
-        GraphSym graf = (GraphSym)grafs.get(i);
-        GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-        if (gl != null && gl instanceof SmartGraphGlyph) {
-          System.out.println("pickling graph: " + gl.getLabel());
-          pickleThreshold((SmartGraphGlyph)gl);
-        }
-      }
-      nwidg.updateWidget();
-    }
     else if (src == styleCB) {
       String selection = (String)((JComboBox)styleCB).getSelectedItem();
       if (selection == BLANK) { }         // do nothing
@@ -505,34 +447,6 @@ public class GraphAdjusterView extends JComponent
         }
         nwidg.updateWidget();
       }
-    }
-    else if (src == threshCB) {
-      String selection = (String)((JComboBox)threshCB).getSelectedItem();
-      boolean thresh_on = (selection == ON);
-      boolean thresh_off = (selection == OFF);
-      if (thresh_on || thresh_off) {
-        for (int i=0; i<gcount; i++) {
-          GraphSym graf = (GraphSym)grafs.get(i);
-          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-          if (gl != null && gl instanceof SmartGraphGlyph) {
-            ((SmartGraphGlyph)gl).setShowThreshold(thresh_on);
-          }
-        }
-      }
-      nwidg.updateWidget();
-    }
-    else if (src == visCB) {
-      String selection = (String)((JComboBox)visCB).getSelectedItem();
-      boolean vis_on = (selection == ON);
-      boolean vis_off = (selection == OFF);
-      if (vis_on || vis_off) {
-        for (int i=0; i<gcount; i++) {
-          GraphSym graf = (GraphSym)grafs.get(i);
-          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-          if (gl != null)  { gl.setShowGraph(vis_on); }
-        }
-      }
-      nwidg.updateWidget();
     }
     else if (src == floatB) {
       if (floatB.isSelected()) {
@@ -581,20 +495,6 @@ public class GraphAdjusterView extends JComponent
     }
     else if (src == cloneB) {
       cloneGraphs();
-    }
-    else if (src == shift_startTF) {
-      try {
-        int start_shift = Integer.parseInt(shift_startTF.getText());
-        adjustThreshStartShift(start_shift);
-      }
-      catch (Exception ex) { ex.printStackTrace(); }
-    }
-    else if (src == shift_endTF) {
-      try {
-        int end_shift = Integer.parseInt(shift_endTF.getText());
-        adjustThreshEndShift(end_shift);
-      }
-      catch (Exception ex) { ex.printStackTrace(); }
     }
     else if (src == scaleCB) {
       String selection = (String)((JComboBox)scaleCB).getSelectedItem();
@@ -696,8 +596,6 @@ public class GraphAdjusterView extends JComponent
     if (gl != null) {
       vis_bounds_adjuster.deleteGraph(gl);  // trying to remove any references to GraphSym
       score_thresh_adjuster.deleteGraph(gl);
-      max_gap_thresher.deleteGraph(gl);
-      min_run_thresher.deleteGraph(gl);
 
       nwidg.removeItem(gl);
       // clean-up references to the graph, allowing garbage-collection, etc.
@@ -748,62 +646,6 @@ public class GraphAdjusterView extends JComponent
     }
   }
 
-  public void adjustThreshStartShift(int shift) {
-    int gcount = grafs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphSym graf = (GraphSym)grafs.get(i);
-      GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-      if (gl != null && gl instanceof SmartGraphGlyph) {
-        ((SmartGraphGlyph)gl).setThreshStartShift(shift);
-      }
-    }
-    nwidg.updateWidget();
-  }
-
-
-  public void adjustThreshEndShift(int shift) {
-    int gcount = grafs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphSym graf = (GraphSym)grafs.get(i);
-      GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-      if (gl != null && gl instanceof SmartGraphGlyph) {
-        ((SmartGraphGlyph)gl).setThreshEndShift(shift);
-      }
-    }
-    nwidg.updateWidget();
-  }
-
-
-  static DecimalFormat nformat = new DecimalFormat();
-  int pickle_count = 0;
-  public void pickleThreshold(SmartGraphGlyph sgg) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    if (aseq != current_seq) {
-      IGB.errorPanel("Problem finding sequence to annotate!");
-      return;
-    }
-    SimpleSymWithProps psym = new SimpleSymWithProps();
-    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-    //    String meth = "graph pickle " + pickle_count;
-    String meth =
-      "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
-      ", max_gap=" + (int)sgg.getMaxGapThreshold() +
-      ", min_run=" + (int)sgg.getMinRunThreshold() +
-      ", graph: " + sgg.getLabel();
-    pickle_count++;
-    psym.setProperty("method", meth);
-    ViewI view = gviewer.getSeqMap().getView();
-    sgg.drawThresholdedRegions(view, psym, aseq);
-    aseq.addAnnotation(psym);
-    Color col = sgg.getColor();
-    //    Color col = Color.red;
-    AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
-    annot_style.setColor(col);
-    annot_style.setGlyphDepth(1);
-    
-    gviewer.setAnnotatedSeq(aseq, true, true);
-  }
-
   public void groupGraphs(java.util.List grafs) {
     int gcount = grafs.size();
     boolean float_group = false;
@@ -827,14 +669,13 @@ public class GraphAdjusterView extends JComponent
             GraphGlyphUtils.attachGraph(gl, gviewer, parent_tier);
           }
         }
-        //    }
       }
     }
   }
 
 
   public static void main(String[] args) {
-    NeoMap map = new NeoMap();
+    SeqMapView map = new SeqMapView();
 
     JFrame frm = new JFrame();
     GraphAdjusterView tester = new GraphAdjusterView(map);

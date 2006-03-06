@@ -75,7 +75,7 @@ class SeqGroupView extends JComponent
     //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     genomeCB = new JComboBox();
-    
+
     this.setLayout(new BorderLayout());
     this.add("Center", new JScrollPane(seqtable));
     //this.add("North", genomeL);
@@ -127,7 +127,7 @@ class SeqGroupView extends JComponent
     }
     cb.addItem(item);
   }
-  
+
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
     synchronized (seqtable) {  // or should synchronize on lsm?
@@ -166,12 +166,12 @@ class SeqGroupView extends JComponent
       }
     }
   }
-  
+
   public Dimension getMinimumSize() { return new Dimension(200, 50); }
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
   public void itemStateChanged(ItemEvent e) {
-    if (e.getSource() == genomeCB && e.getStateChange() == ItemEvent.SELECTED) { 
+    if (e.getSource() == genomeCB && e.getStateChange() == ItemEvent.SELECTED) {
       String genome_id = (String) e.getItem();
       if (genome_id != null) {
         AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_id);

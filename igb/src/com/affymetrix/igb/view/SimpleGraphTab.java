@@ -22,6 +22,7 @@ import com.affymetrix.igb.event.SymSelectionListener;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
@@ -40,6 +41,7 @@ implements SeqSelectionListener, SymSelectionListener {
   AnnotatedBioSeq current_seq;
   SingletonGenometryModel gmodel;
 
+  GraphScoreThreshSetter score_thresh_adjuster;  
   GraphVisibleBoundsSetter vis_bounds_setter;
 
   // Whether to use this tab or not
@@ -61,9 +63,10 @@ implements SeqSelectionListener, SymSelectionListener {
 
   JSlider height_slider = new JSlider(JSlider.VERTICAL);
 
-  JButton selectAllB = new JButton("Select All Graphs");
+  JButton selectAllB = new JButton("Select All");
   JButton resetB = new JButton("Reset Appearance");
   JButton advB = new JButton("Advanced...");
+  JButton threshB = new JButton("Thresholding...");
 
   public SimpleGraphTab() {
     this(IGB.getSingletonIGB());
@@ -71,7 +74,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public SimpleGraphTab(IGB igb) {
     if (igb == null) {
-      this.gviewer = null;
+      this.gviewer = new SeqMapView(); // for testing only
     } else {
       this.gviewer = igb.getMapView();
     }
@@ -126,6 +129,7 @@ implements SeqSelectionListener, SymSelectionListener {
     } else {
       vis_bounds_setter = new GraphVisibleBoundsSetter(gviewer.getSeqMap());
     }
+    score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_setter);
 
     Box scalebox = Box.createVerticalBox();
     //    scalebox.setBorder(new TitledBorder("Graph Scaling"));
@@ -142,11 +146,19 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(resetB);
     butbox.add(Box.createHorizontalStrut(5));
     butbox.add(advB);
+    butbox.add(Box.createHorizontalStrut(5));
+    butbox.add(threshB);
     butbox.add(Box.createHorizontalGlue());
 
     selectAllB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (gviewer != null) { gviewer.selectAllGraphs(); }
+      }
+    });
+    
+    threshB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showGraphScoreThreshSetter();
       }
     });
 
@@ -162,6 +174,16 @@ implements SeqSelectionListener, SymSelectionListener {
     gmodel.addSymSelectionListener(this);
   }
 
+  public JFrame showGraphScoreThreshSetter() {
+    JPanel thresh_setter_panel =  (JPanel) score_thresh_adjuster;
+
+    JFrame thresh_setter_frame = new JFrame("Graph Thresholds");
+    thresh_setter_frame.getContentPane().add(thresh_setter_panel);
+    thresh_setter_frame.pack();
+    thresh_setter_frame.setVisible(true);
+    return thresh_setter_frame;
+  }
+  
   void setSeqMapView(SeqMapView smv) {
     this.gviewer = smv;
     boolean enabled = (gviewer != null);
@@ -170,8 +192,10 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public void setEnabled(boolean b) {
     super.setEnabled(b);
-    resetB.setEnabled(b);
     height_slider.setEnabled(b);
+    resetB.setEnabled(b);
+    advB.setEnabled(b);
+    threshB.setEnabled(true);
     enableButtons(stylegroup, b);
     // don't control the heat_mapCB here, it depends on other things.
   }
@@ -318,6 +342,7 @@ implements SeqSelectionListener, SymSelectionListener {
     }
 
     vis_bounds_setter.setGraphs(glyphs);
+    score_thresh_adjuster.setGraphs(glyphs);
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {

@@ -93,24 +93,41 @@ public class MinRunThresholder extends JPanel
     tslider.removeChangeListener(this);
     minrunTF.removeActionListener(this);
 
+    int first_min_run = 0;
+    boolean all_have_same_min_run = false;
+    boolean all_have_thresh_on = false;
+    
     int gcount = newgraphs.size();
     if (gcount > 0) {
       int newthresh = 0;
       for (int i=0; i<gcount; i++) {
 	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
 	graphs.add(gl);
-	newthresh += (int)gl.getMinRunThreshold();
+        int this_min_run = (int) gl.getMinRunThreshold();
+	newthresh += this_min_run;
+        if (i==0) {
+          first_min_run = this_min_run;
+          all_have_same_min_run = true;
+          all_have_thresh_on = gl.getShowThreshold();
+        } else {
+          all_have_same_min_run &= (this_min_run == first_min_run);
+          all_have_thresh_on &= gl.getShowThreshold();
+        }
       }
       minrun_thresh = newthresh / gcount;
       tslider.setMinimum(thresh_min);
       tslider.setMaximum(thresh_max);
       tslider.setValue(minrun_thresh);
-      minrunTF.setText(Integer.toString(minrun_thresh));
+      if (all_have_same_min_run) {
+        minrunTF.setText(Integer.toString(minrun_thresh));
+      } else {
+        minrunTF.setText("");
+      }
     }
 
     tslider.addChangeListener(this);
     minrunTF.addActionListener(this);
-    setEnabled(! graphs.isEmpty());
+    setEnabled(all_have_thresh_on);
   }
 
 

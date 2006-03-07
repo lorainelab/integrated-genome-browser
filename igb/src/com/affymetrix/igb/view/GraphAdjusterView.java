@@ -143,7 +143,7 @@ public class GraphAdjusterView extends JComponent
     vis_bounds_adjuster = new GraphVisibleBoundsSetter(nwidg);
     score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_adjuster);
 
-    score_thresh_adjuster.setBorder(new TitledBorder("Score"));
+    score_thresh_adjuster.setBorder(new TitledBorder("Thresholding"));
     vis_bounds_adjuster.setBorder(new TitledBorder("Visible Bounds"));
 
     JPanel style_pan = new JPanel();

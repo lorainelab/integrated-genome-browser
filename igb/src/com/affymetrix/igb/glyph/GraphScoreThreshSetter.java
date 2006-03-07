@@ -481,7 +481,7 @@ public class GraphScoreThreshSetter extends JPanel
         sggl.setShowThreshold(thresh_on);
       }
       widg.updateWidget();
-      this.setGraphs(graphs);
+      this.setGraphs(new java.util.ArrayList(graphs));
     }
   }
 

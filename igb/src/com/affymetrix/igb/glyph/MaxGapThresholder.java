@@ -96,24 +96,41 @@ public class MaxGapThresholder extends JPanel
     tslider.removeChangeListener(this);
     maxgapTF.removeActionListener(this);
 
+    int first_thresh = 0;
+    boolean all_have_same_thresh = false;
+    boolean all_have_thresh_on = false;
+    
     int gcount = newgraphs.size();
     if (gcount > 0) {
       int newthresh = 0;
       for (int i=0; i<gcount; i++) {
 	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
 	graphs.add(gl);
-	newthresh += (int)gl.getMaxGapThreshold();
+        int this_thresh = (int) gl.getMaxGapThreshold();
+	newthresh += this_thresh;
+        if (i==0) {
+          first_thresh = this_thresh;
+          all_have_same_thresh = true;
+          all_have_thresh_on = gl.getShowThreshold();
+        } else {
+          all_have_same_thresh = all_have_same_thresh && (this_thresh == first_thresh);
+          all_have_thresh_on &= gl.getShowThreshold();
+        }
       }
       maxgap_thresh = newthresh / gcount;
       tslider.setMinimum(thresh_min);
       tslider.setMaximum(thresh_max);
       tslider.setValue(maxgap_thresh);
-      maxgapTF.setText(Integer.toString(maxgap_thresh));
+      if (all_have_same_thresh) {
+        maxgapTF.setText(Integer.toString(maxgap_thresh));
+      } else {
+        maxgapTF.setText("");
+      }
     }
 
     tslider.addChangeListener(this);
     maxgapTF.addActionListener(this);
-    setEnabled(! graphs.isEmpty());
+    setEnabled(all_have_thresh_on);
   }
 
   public void setGraph(SmartGraphGlyph gl) {

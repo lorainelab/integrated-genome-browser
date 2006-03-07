@@ -21,14 +21,15 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.NeoWidgetI;
+
 
 public class MaxGapThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static int frm_width = 400;
   static int frm_height = 200;
-  //  SmartGraphGlyph sgg;
+
   java.util.List graphs = new ArrayList();
   NeoWidgetI widg;
   JSlider tslider;

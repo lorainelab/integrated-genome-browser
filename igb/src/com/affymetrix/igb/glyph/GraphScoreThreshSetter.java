@@ -238,7 +238,7 @@ public class GraphScoreThreshSetter extends JPanel
   }
 
   /**
-   *  Sets the list of graphs.
+   *  Sets the list of GraphGlyphs.
    *  Filters out any graphs that aren't SmartGraphGlyphs
    *  so other methods don't have to worry about doing type checking.
    */
@@ -254,6 +254,38 @@ public class GraphScoreThreshSetter extends JPanel
     }
     initPercents();
     initValues();
+
+    if (graphs.isEmpty()) {
+      threshCB.setSelectedIndex(-1);
+      threshCB.setEnabled(false);
+      tier_threshB.setEnabled(false);
+    } else {
+      SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+      boolean show_thresholds_match = true;
+      //boolean thresh_direction_matches = true;
+
+      gcount = graphs.size();
+      for (int i=1; i<gcount; i++) {
+        SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+        show_thresholds_match &= (first_glyph.getShowThreshold() == sggl.getShowThreshold());
+        //thresh_direction_matches &= (first_glyph.getThreshDirection() == sggl.getThreshDirection());
+      }
+
+      if (show_thresholds_match) {
+        if (first_glyph.getShowThreshold()) {
+          threshCB.setSelectedItem(ON);
+        } else {
+          threshCB.setSelectedItem(OFF);
+        }
+      } else {
+        threshCB.setSelectedIndex(-1);
+      }
+      
+      threshCB.setEnabled(true);
+      tier_threshB.setEnabled(true);
+    }
+    
+    
     
     max_gap_thresher.setGraphs(graphs);
     min_run_thresher.setGraphs(graphs);
@@ -272,8 +304,8 @@ public class GraphScoreThreshSetter extends JPanel
     thresh_belowB.setEnabled(b);
     shift_startTF.setEnabled(b);
     shift_endTF.setEnabled(b);
-    threshCB.setEnabled(b);
-    tier_threshB.setEnabled(b);
+    //threshCB.setEnabled(b); // dealt with elsewhere
+    //tier_threshB.setEnabled(b);
   }
 
   public void initValues() {
@@ -449,6 +481,7 @@ public class GraphScoreThreshSetter extends JPanel
         sggl.setShowThreshold(thresh_on);
       }
       widg.updateWidget();
+      this.setGraphs(graphs);
     }
   }
 
@@ -479,7 +512,7 @@ public class GraphScoreThreshSetter extends JPanel
     shift_startTF.addActionListener(this);
     shift_endTF.addActionListener(this);
   }
-
+  
   /**
    *  Sets the flag thresh_is_min.
    *  if (thresh_is_min), then values must >= threshold to pass.

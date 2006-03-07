@@ -174,14 +174,8 @@ implements SeqSelectionListener, SymSelectionListener {
     gmodel.addSymSelectionListener(this);
   }
 
-  public JFrame showGraphScoreThreshSetter() {
-    JPanel thresh_setter_panel =  (JPanel) score_thresh_adjuster;
-
-    JFrame thresh_setter_frame = new JFrame("Graph Thresholds");
-    thresh_setter_frame.getContentPane().add(thresh_setter_panel);
-    thresh_setter_frame.pack();
-    thresh_setter_frame.setVisible(true);
-    return thresh_setter_frame;
+  void showGraphScoreThreshSetter() {
+    score_thresh_adjuster.showFrame();
   }
   
   void setSeqMapView(SeqMapView smv) {

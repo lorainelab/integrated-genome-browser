@@ -17,11 +17,14 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.swing.DisplayUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -155,6 +158,12 @@ public class GraphScoreThreshSetter extends JPanel
     textP.add(score_perT);
     slideP.add(score_val_slider);
     slideP.add(score_percent_slider);
+    
+    JPanel cbox = new JPanel();
+    cbox.setLayout(new BoxLayout(cbox, BoxLayout.X_AXIS));
+    cbox.add(labP);
+    cbox.add(textP);
+    cbox.add(slideP);
 
     JPanel thresh_toggle_pan = new JPanel();
     thresh_toggle_pan.setLayout(new GridLayout(1, 2));
@@ -182,27 +191,51 @@ public class GraphScoreThreshSetter extends JPanel
     
     min_run_thresher = new MinRunThresholder(gviewer.getSeqMap());
     max_gap_thresher = new MaxGapThresholder(gviewer.getSeqMap());
-    
-    JPanel silly_panel = new JPanel();
-    
-    silly_panel.setLayout(new BorderLayout());
-    JPanel cbox = new JPanel();
-    cbox.setLayout(new BoxLayout(cbox, BoxLayout.X_AXIS));
-    silly_panel.add("South", directionP);
-    silly_panel.add("Center", cbox);
+        
+    JPanel center_panel = new JPanel();    
+    center_panel.setLayout(new BorderLayout());
+    center_panel.add("South", directionP);
+    center_panel.add("Center", cbox);
 
-    cbox.add(labP);
-    cbox.add(textP);
-    cbox.add(slideP);
-    
-    this.setBorder(new TitledBorder("Thresholding"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(thresh_butP);
-    this.add(silly_panel);
+    this.add(center_panel);
     this.add(thresh_shiftP);
     this.add(max_gap_thresher);
     this.add(min_run_thresher);    
-  }  
+  }
+  
+  JFrame thresh_setter_frame = null;
+  
+  public JFrame showFrame() {
+
+    if (thresh_setter_frame == null) {
+      JPanel thresh_setter_panel =  (JPanel) this;
+      thresh_setter_frame = new JFrame("Graph Thresholds");
+      thresh_setter_frame.getContentPane().add(thresh_setter_panel);
+      thresh_setter_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      thresh_setter_frame.pack();
+
+      Image icon = IGB.getIcon();
+      if (icon != null) { thresh_setter_frame.setIconImage(icon); }
+
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(thresh_setter_frame.getTitle(), thresh_setter_frame.getBounds());
+      if (pos != null) {
+        UnibrowPrefsUtil.setWindowSize(thresh_setter_frame, pos);
+      }
+      thresh_setter_frame.show();
+      thresh_setter_frame.addWindowListener( new WindowAdapter() {
+	  public void windowClosing(WindowEvent evt) {
+            // save the current size into the preferences, so the window
+            // will re-open with this size next time
+            UnibrowPrefsUtil.saveWindowLocation(thresh_setter_frame, thresh_setter_frame.getTitle());
+	  }
+	});
+    } else {
+      DisplayUtils.bringFrameToFront(thresh_setter_frame);
+    }
+    return thresh_setter_frame;
+  }
 
   /**
    *  Sets the list of graphs.

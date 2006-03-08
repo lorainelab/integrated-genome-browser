@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
@@ -12,6 +13,10 @@ import com.affymetrix.genoviz.bioviews.*;
  *  maybe have one master map and others use it as root?
  */
 public class MultiWindowTierMap extends AffyTieredMap {
+  //  Frame, Window, JFrame, JWindow
+  boolean USE_SWING = true;
+  boolean USE_FRAME = false;
+
   int tile_width = 300;
   int tile_height = 200;
   int tile_columns = 4;
@@ -102,8 +107,16 @@ public class MultiWindowTierMap extends AffyTieredMap {
       if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {
 	for (int x=0; x < xwindows_per_screen; x++) {
 	  for (int y=0; y < ywindows_per_screen; y++) {
-	    //	    JFrame newfrm = new JFrame(gconfig);
-	    JWindow newfrm = new JWindow(gconfig);
+	    //	    JFrame win = new JFrame(gconfig);
+	    Container win;
+	    if (USE_SWING) {
+	      if (USE_FRAME) { win = new JFrame(gconfig); }
+	      else { win = new JWindow(gconfig); }
+	    }
+	    else {
+	      if (USE_FRAME) { win = new Frame(gconfig); }
+	      else { win = new Window(IGB.getSingletonIGB().getFrame(), gconfig); }
+	    }
 
 	    //	    int xpixels_per_window = config_bounds.width / xwindows_per_screen;
 	    //	    int ypixels_per_window = config_bounds.height / ywindows_per_screen;
@@ -112,23 +125,38 @@ public class MultiWindowTierMap extends AffyTieredMap {
 	    //	    int ypixels_per_window = (config_bounds.height - 30) / ywindows_per_screen
 	    // -30 so Windows control bar will be visible at bottom
 
-	    //	    newfrm.setLocation(x*400, yoffset + y*300);
-	    newfrm.setLocation(config_bounds.x + (x * xpixels_per_window),
+	    //	    win.setLocation(x*400, yoffset + y*300);
+	    win.setLocation(config_bounds.x + (x * xpixels_per_window),
 			       config_bounds.y + (y * ypixels_per_window));
-	    newfrm.setSize(xpixels_per_window, ypixels_per_window);
+	    win.setSize(xpixels_per_window, ypixels_per_window);
 
-	    //	    NeoMap newmap = new NeoMap(map);  // make a new map with original
-	    NeoMap newmap = new NeoMap(false, false);
-	    //	    NeoMap newmap = new NeoMap(true, true);
-	    newmap.setRoot(this);
 	    //	    AffyTieredMap newmap = new AffyTieredMap(main_map);
-	    Container cpane = newfrm.getContentPane();
-	    cpane.setLayout(new BorderLayout());
+	    //	    NeoMap newmap = new NeoMap(map);  // make a new map with original
+	    //	    NeoMap newmap = new NeoMap(true, true);
+	    NeoMap newmap = new NeoMap(false, false);
+	    newmap.setRoot(this);
+
+	    if (USE_SWING) {  // win is a JWindow or JFrame
+	      Container cpane;
+	      if (USE_FRAME) {  // win is a JFrame
+		JFrame frm = (JFrame)win;
+		cpane = frm.getContentPane();
+	      }
+	      else {  // win is a JWindow
+		JWindow jwin = (JWindow)win;
+		cpane = jwin.getContentPane();
+	      }
+	      cpane.setLayout(new BorderLayout());
+	      cpane.add("Center", newmap);
+	    }
+	    else {  // win is a Window or Frame
+	      win.setLayout(new BorderLayout());
+	      win.add("Center", newmap);
+	    }
+
 	    newmap.getNeoCanvas().setDoubleBuffered(false);
-            //	    newmap.setZoomer(NeoMap.X, xzoomer);
-	    cpane.add("Center", newmap);
 	    child_maps[x][y] = newmap;
-	    newfrm.show();
+	    win.show();
 	  }
 	}
       }

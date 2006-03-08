@@ -269,6 +269,7 @@ public class SeqMapView extends JPanel
    */
   public SeqMapView(boolean add_popups, boolean split_win) {
     SPLIT_WINDOWS = split_win;
+
     if (SPLIT_WINDOWS) {
       seqmap = new MultiWindowTierMap(false, false);
     }
@@ -2410,8 +2411,8 @@ public class SeqMapView extends JPanel
     }
     if (sym_popup.getComponentCount() > 0) {
       //      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
-      // if seqmap is a MultiWindowTierMap, then using seqmap as Component target arg to popup.show() 
-      //  won't work, since it's component is never actually rendered -- so checking here 
+      // if seqmap is a MultiWindowTierMap, then using seqmap as Component target arg to popup.show()
+      //  won't work, since it's component is never actually rendered -- so checking here
       /// to use appropriate target Component and pixel position
       EventObject oevt = nevt.getOriginalEvent();
       //      System.out.println("original event: " + oevt);

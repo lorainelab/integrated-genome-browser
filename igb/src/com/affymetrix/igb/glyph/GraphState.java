@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.*;
 
 /**
@@ -41,6 +41,13 @@ public class GraphState {
    */
   float max_score_threshold = Float.POSITIVE_INFINITY;  // POSITIVE_INFINITY means hasn't been set yet
 
+  public static int THRESHOLD_DIRECTION_GREATER = 1;
+  public static int THRESHOLD_DIRECTION_BETWEEN = 0;
+  public static int THRESHOLD_DIRECTION_LESS = -1;
+
+  int threshold_direction = THRESHOLD_DIRECTION_GREATER;
+  
+  
   /**
    *  The maximum distance (in xcooords) allowed between points that
    *     exceed the min_score_threshold in order for region between points to be painted
@@ -135,6 +142,7 @@ public class GraphState {
     setShowGraph(ostate.getShowGraph());
     setShowBounds(ostate.getShowBounds());
     setShowLabel(ostate.getShowLabel());
+    setThresholdDirection(ostate.getThresholdDirection());
     setMinScoreThreshold(ostate.getMinScoreThreshold());
     setMaxScoreThreshold(ostate.getMaxScoreThreshold());
     setMaxGapThreshold(ostate.getMaxGapThreshold());
@@ -170,6 +178,12 @@ public class GraphState {
   public int getMinRunThreshold() { return min_run_threshold; }
   public double getThreshStartShift() { return span_start_shift; }
   public double getThreshEndShift() { return span_end_shift; }
+  
+  /**
+   *  Returns either {@link #THRESHOLD_DIRECTION_GREATER} or
+   *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
+   */
+  public int getThresholdDirection() { return threshold_direction; }
 
   public final void setUrl(String url) { graph_path = url; }
   public final void setFloatGraph(boolean b) { float_graph = b; }
@@ -194,7 +208,16 @@ public class GraphState {
   public void setMinRunThreshold(int thresh) { min_run_threshold = thresh; }
   public void setThreshStartShift(double d) { span_start_shift = d; }
   public void setThreshEndShift(double d) { span_end_shift = d; }
-
-
-
+  
+  /**
+   *  Set to either {@link #THRESHOLD_DIRECTION_GREATER} or
+   *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
+   */
+  public void setThresholdDirection(int d) {
+    if (d != THRESHOLD_DIRECTION_GREATER && d != THRESHOLD_DIRECTION_LESS
+        && d != THRESHOLD_DIRECTION_BETWEEN) {
+      throw new IllegalArgumentException();
+    }
+    threshold_direction = d;
+  }
 }

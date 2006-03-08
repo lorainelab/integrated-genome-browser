@@ -99,6 +99,7 @@ public abstract class BookmarkController {
     int default_minrun_thresh = 30;
     int default_maxgap_thresh = 100;
     boolean default_show_thresh = false;
+    int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 
     //System.err.println("I am in loadGraphs!!!!");
 
@@ -151,6 +152,7 @@ public abstract class BookmarkController {
         String maxgap_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_maxgap_thresh_" + i);
         String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_minrun_thresh_" + i);
         String show_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_show_thresh_" + i);
+        String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, "graph_thresh_direction_" + i);
 
         //        int graph_min = (graph_visible_min == null) ?
         String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style_" + i);
@@ -184,6 +186,8 @@ public abstract class BookmarkController {
           (minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
         boolean show_thresh =
           (show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
+        int thresh_direction =
+          (thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
 
         if (DEBUG) {
           System.out.println("graph path: " + graph_path);
@@ -196,8 +200,9 @@ public abstract class BookmarkController {
           System.out.println(gviewer.getSeqMap());
           System.out.println(col+", "+ypos+", "+ yheight
                              +", "+use_floating_graphs+", "+show_label+", "+ show_axis
-                             +", "+minvis+", "+maxvis+", "+
-                              score_thresh+", "+maxgap_thresh+", "+ show_thresh);
+                             +", "+minvis+", "+maxvis+", "
+                             + score_thresh+", "+maxgap_thresh+", "
+                             + show_thresh + ", " + thresh_direction);
         }
 
         if (graph_name == null || graph_name.trim().length()==0) {
@@ -233,7 +238,8 @@ public abstract class BookmarkController {
                                                 col, ypos, yheight,
                                                 use_floating_graphs, show_label, show_axis,
                                                 (float)minvis, (float)maxvis,
-                                                (float)score_thresh, minrun_thresh, maxgap_thresh, show_thresh
+                                                (float)score_thresh, minrun_thresh, maxgap_thresh, 
+                                                show_thresh, thresh_direction
                                                 );
           }
         }
@@ -300,6 +306,7 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_minrun_thresh_" + i, Integer.toString((int)gr.getMinRunThreshold()));
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
 	mark_sym.setProperty("graph_style_" + i, (GraphState.getStyleName(gr.getGraphStyle())) );
+        mark_sym.setProperty("graph_thresh_direction_" + i, Integer.toString(gr.getThresholdDirection()));
 
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
       }

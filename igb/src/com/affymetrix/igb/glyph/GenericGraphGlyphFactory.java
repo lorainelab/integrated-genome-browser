@@ -40,8 +40,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final float default_score_thresh = 0;
   static final int default_minrun_thresh = 30;
   static final int default_maxgap_thresh = 100;
-
   static final boolean default_show_thresh = false;
+  static final int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 
   static Map seq2yloc = new HashMap();
   static Map seq2facount = new HashMap();
@@ -312,7 +312,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 			use_floater, show_label, show_axis,
 			default_minvis, default_maxvis,
 			default_score_thresh, default_minrun_thresh, default_maxgap_thresh,
-			default_show_thresh);
+			default_show_thresh, default_thresh_direction);
   }
 
   /**
@@ -327,7 +327,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 					boolean use_floater, boolean show_label, boolean show_axis,
 					float minvis, float maxvis,
 					float score_thresh, int minrun_thresh, int maxgap_thresh,
-					boolean show_thresh
+					boolean show_thresh, int thresh_direction
 					) {
     GraphState gstate = new GraphState();
 
@@ -344,6 +344,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setMinRunThreshold(minrun_thresh);
     gstate.setMaxGapThreshold(maxgap_thresh);
     gstate.setShowThreshold(show_thresh);
+    gstate.setThresholdDirection(thresh_direction);
 
     //TODO: Should this stuff about is_trans_frag be moved to setStateFromProps()
     // so that it can be used from all the displayGraph() methods ?

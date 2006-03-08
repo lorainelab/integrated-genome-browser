@@ -13,15 +13,22 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableSeqSymmetry;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 
 /**
  *  A smarter graph glyph.
@@ -140,7 +147,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
     //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
     //    }
-    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
+    if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
       setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
     }
     resetThreshLabel();
@@ -634,12 +641,34 @@ public class SmartGraphGlyph extends GraphGlyph {
     *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or
     *     something...
     */
-    double min_score_threshold = getMinScoreThreshold();
-    double max_score_threshold = getMaxScoreThreshold();
     double max_gap_threshold = getMaxGapThreshold();
     double min_run_threshold = getMinRunThreshold();
     double span_start_shift = getThreshStartShift();
     double span_end_shift = getThreshEndShift();
+    
+    int thresh_direction = getThresholdDirection();
+    float min_score_threshold = Float.NEGATIVE_INFINITY;
+    float max_score_threshold = Float.POSITIVE_INFINITY;
+    if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
+      min_score_threshold = getMinScoreThreshold();
+      max_score_threshold = Float.POSITIVE_INFINITY; 
+    }
+    else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+      min_score_threshold = Float.NEGATIVE_INFINITY;
+      max_score_threshold = getMaxScoreThreshold(); 
+    }
+    else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
+      min_score_threshold = getMinScoreThreshold();
+      max_score_threshold = getMaxScoreThreshold(); 
+    }
+    
+    // if neither min or max score thresholds have been set, assume that only using
+    //     min score threshold and set so it is in the middle of visible score range
+    if (Float.isInfinite(min_score_threshold) && Float.isInfinite(max_score_threshold)) {
+      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
+      min_score_threshold = getMinScoreThreshold();
+      max_score_threshold = Float.POSITIVE_INFINITY;
+    }
 
     Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
@@ -676,12 +705,6 @@ public class SmartGraphGlyph extends GraphGlyph {
       if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
     }
 
-    // if neither min or max score thresholds have been set, assume that only using
-    //     min score threshold and set so it is in the middle of visible score range
-    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
-      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
-      min_score_threshold = getMinScoreThreshold();
-    }
 
     // dynamicly confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
     //   I'm having trouble dealing with this in GlyphDragger (where I'm trying to
@@ -696,10 +719,10 @@ public class SmartGraphGlyph extends GraphGlyph {
 
     double thresh_ycoord;
     double thresh_score;
-    if (min_score_threshold != Float.NEGATIVE_INFINITY) {
+    if ( ! Float.isInfinite(min_score_threshold)) {
       thresh_score = min_score_threshold;
     }
-    else if (max_score_threshold != Float.POSITIVE_INFINITY) {
+    else if (! Float.isInfinite(max_score_threshold)) {
       thresh_score = max_score_threshold;
     }
     else {
@@ -915,42 +938,34 @@ public class SmartGraphGlyph extends GraphGlyph {
   }
 
   public boolean getShowThreshold() { return state.getShowThreshold(); }
-
+  
   public void resetThreshLabel() {
     float min_thresh = getMinScoreThreshold();
     float max_thresh = getMaxScoreThreshold();
-    if (min_thresh != Float.NEGATIVE_INFINITY &&
-	max_thresh != Float.POSITIVE_INFINITY) {
+    int direction = state.getThresholdDirection();
+    if (direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
       thresh_glyph.setLabel(nformat.format(min_thresh) + " -- " + nformat.format(max_thresh));
     }
-    else if (min_thresh != Float.NEGATIVE_INFINITY) {
+    else if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
       thresh_glyph.setLabel(">= " + nformat.format(min_thresh));
     }
-    else if (max_thresh != Float.POSITIVE_INFINITY) {
+    else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
       thresh_glyph.setLabel("<= " + nformat.format(max_thresh));
     }
   }
 
+  public void setThresholdDirection(int d) {
+    state.setThresholdDirection(d);
+    resetThreshLabel();
+  }
+    
   public void setMinScoreThreshold(float thresh) {
-    float newthresh = thresh;
-    /*
-     // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
-     //   otherwise it could conflict with reported threshold settings in GraphAdjusterView...
-     if (thresh < getVisibleMinY())  {
-      newthresh = getVisibleMinY();
-    }
-    else if (thresh > getVisibleMaxY()) {
-      newthresh = getVisibleMaxY();
-    }
-    */
-    state.setMinScoreThreshold(newthresh);
+    state.setMinScoreThreshold(thresh);
     resetThreshLabel();
   }
 
-
   public void setMaxScoreThreshold(float thresh) {
-    float newthresh = thresh;
-    state.setMaxScoreThreshold(newthresh);
+    state.setMaxScoreThreshold(thresh);
     resetThreshLabel();
   }
 
@@ -959,6 +974,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   public void setThreshStartShift(double d) { state.setThreshStartShift(d); }
   public void setThreshEndShift(double d) { state.setThreshEndShift(d); }
 
+  public int getThresholdDirection() { return state.getThresholdDirection(); }  
   public float getMinScoreThreshold() { return state.getMinScoreThreshold(); }
   public float getMaxScoreThreshold()  { return state.getMaxScoreThreshold(); }
   public double getMaxGapThreshold() { return state.getMaxGapThreshold(); }

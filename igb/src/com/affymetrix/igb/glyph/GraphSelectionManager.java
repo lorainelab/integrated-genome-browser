@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-200 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -954,7 +954,11 @@ public class GraphSelectionManager
         SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
         Rectangle2D tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
-        graphgl.setMinScoreThreshold(new_threshold);
+        if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+          graphgl.setMinScoreThreshold(new_threshold);          
+        } else {
+          graphgl.setMaxScoreThreshold(new_threshold);
+        }
       }
     }
     else if (id == evt.DRAG_ENDED) {

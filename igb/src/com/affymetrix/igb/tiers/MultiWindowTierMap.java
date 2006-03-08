@@ -19,11 +19,11 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
   boolean USE_SWING = true;
   boolean USE_FRAME = false;
 
-  int tile_width = 512;
-  int tile_height = 512;
+  public static int tile_width = 1024;
+  public static int tile_height = 768;
+  public static int tile_columns = 4;
+  public static int tile_rows = 2;
 
-  int tile_columns = 2;
-  int tile_rows = 2;
   int total_width = tile_width * tile_columns;
   int total_height = tile_height * tile_rows;
   NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
@@ -146,7 +146,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 
 	    //	    win.setLocation(x*400, yoffset + y*300);
 	    win.setLocation(config_bounds.x + (x * xpixels_per_window),
-			       config_bounds.y + (y * ypixels_per_window));
+			    config_bounds.y + (y * ypixels_per_window));
 	    win.setSize(xpixels_per_window, ypixels_per_window);
 
 	    //	    AffyTieredMap newmap = new AffyTieredMap(main_map);

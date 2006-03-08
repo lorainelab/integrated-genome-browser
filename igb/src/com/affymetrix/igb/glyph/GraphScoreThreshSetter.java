@@ -43,6 +43,7 @@ public class GraphScoreThreshSetter extends JPanel
   static Object placeholder_object = new Object();
   static DecimalFormat val_format;
   static DecimalFormat per_format;
+  static DecimalFormat shift_format;
   static String BLANK = "";
   static String ON = "On";
   static String OFF = "Off";
@@ -51,7 +52,7 @@ public class GraphScoreThreshSetter extends JPanel
   Dimension textbox_sizepref = new Dimension(400, 15);
   boolean set_slider_sizepref = false;
   boolean set_textbox_sizepref = false;
-  boolean thresh_is_min = true;
+//  boolean thresh_is_min = true;
 
   java.util.List graphs = new ArrayList();
   Map flipped_hash = new HashMap();
@@ -67,6 +68,7 @@ public class GraphScoreThreshSetter extends JPanel
   JTextField score_perT;
   JRadioButton thresh_aboveB;
   JRadioButton thresh_belowB;
+  JRadioButton thresh_unknownB; // invisible radio button
   JTextField shift_startTF = new JTextField("0", 5);
   JTextField shift_endTF = new JTextField("0", 5);
   JComboBox threshCB = new JComboBox();
@@ -82,11 +84,11 @@ public class GraphScoreThreshSetter extends JPanel
 
   float abs_min_val;
   float abs_max_val;
-  float prev_score_val;
+  float prev_thresh_val;
 
   float abs_min_per = 0;
   float abs_max_per = 100;
-  float prev_score_per;
+  float prev_thresh_per;
 
   boolean show_min_and_max = false;
 
@@ -109,6 +111,7 @@ public class GraphScoreThreshSetter extends JPanel
     per_format.setMaximumFractionDigits(1);
     per_format.setPositiveSuffix("%");
     per_format.setGroupingUsed(false);
+    shift_format = new DecimalFormat();
   }
 
   public GraphScoreThreshSetter(SeqMapView gviewer,
@@ -121,10 +124,10 @@ public class GraphScoreThreshSetter extends JPanel
     score_percent_slider = new JSlider(JSlider.HORIZONTAL,
 				     (int)(abs_min_per * sliders_per_percent),
 				     (int)(abs_max_per * sliders_per_percent),
-				     (int)(prev_score_per * sliders_per_percent));
+				     (int)(prev_thresh_per * sliders_per_percent));
 
-    score_valT = new JTextField(20);
-    score_perT = new JTextField(20);
+    score_valT = new JTextField(10);
+    score_perT = new JTextField(10);
 
     JPanel labP = new JPanel();
     JPanel textP = new JPanel();
@@ -141,11 +144,14 @@ public class GraphScoreThreshSetter extends JPanel
 
     thresh_aboveB = new JRadioButton("> thresh");
     thresh_belowB = new JRadioButton("<= thresh");
+    thresh_unknownB = new JRadioButton(">?< thresh"); // invisible button
     ButtonGroup pgroup = new ButtonGroup();
     pgroup.add(thresh_aboveB);
     pgroup.add(thresh_belowB);
-    thresh_aboveB.setSelected(true);
+    pgroup.add(thresh_unknownB);
+    thresh_aboveB.setSelected(false);
     thresh_belowB.setSelected(false);
+    thresh_unknownB.setSelected(true);
     JPanel directionP = new JPanel();
     directionP.setLayout(new GridLayout(1, 3));
     directionP.add(new JLabel("Direction: "));
@@ -153,7 +159,7 @@ public class GraphScoreThreshSetter extends JPanel
     directionP.add(thresh_belowB);
 
     labP.add(new JLabel("By Value:"));
-    labP.add(new JLabel("By % Probes < Value:"));
+    labP.add(new JLabel("By Percentile:"));
     textP.add(score_valT);
     textP.add(score_perT);
     slideP.add(score_val_slider);
@@ -255,6 +261,7 @@ public class GraphScoreThreshSetter extends JPanel
     initPercents();
     initValues();
 
+    boolean thresh_is_on = false;
     if (graphs.isEmpty()) {
       threshCB.setSelectedIndex(-1);
       threshCB.setEnabled(false);
@@ -262,18 +269,23 @@ public class GraphScoreThreshSetter extends JPanel
     } else {
       SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
       boolean show_thresholds_match = true;
-      //boolean thresh_direction_matches = true;
+      boolean thresh_directions_match = true;
+      boolean thresh_starts_match = true;
+      boolean thresh_ends_match = true;
 
       gcount = graphs.size();
       for (int i=1; i<gcount; i++) {
         SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
         show_thresholds_match &= (first_glyph.getShowThreshold() == sggl.getShowThreshold());
-        //thresh_direction_matches &= (first_glyph.getThreshDirection() == sggl.getThreshDirection());
+        thresh_directions_match &= (first_glyph.getThresholdDirection() == sggl.getThresholdDirection());
+        thresh_starts_match &= (first_glyph.getThreshStartShift() == sggl.getThreshStartShift());
+        thresh_ends_match &= (first_glyph.getThreshEndShift() == sggl.getThreshEndShift());
       }
-
+          
       if (show_thresholds_match) {
         if (first_glyph.getShowThreshold()) {
           threshCB.setSelectedItem(ON);
+          thresh_is_on = true;
         } else {
           threshCB.setSelectedItem(OFF);
         }
@@ -281,56 +293,75 @@ public class GraphScoreThreshSetter extends JPanel
         threshCB.setSelectedIndex(-1);
       }
       
+      if (thresh_directions_match) {
+        if (first_glyph.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+          thresh_aboveB.setSelected(true);
+        } else {
+          thresh_belowB.setSelected(true);
+        }
+      } else {
+        thresh_unknownB.setSelected(true);
+      }
+      
+      if (thresh_starts_match) {
+        shift_startTF.setText(shift_format.format(first_glyph.getThreshStartShift()));
+      } else {
+        shift_startTF.setText("");
+      }
+      
+      if (thresh_ends_match) {
+        shift_endTF.setText(shift_format.format(first_glyph.getThreshEndShift()));
+      } else {
+        shift_endTF.setText("");
+      }
+      
       threshCB.setEnabled(true);
       tier_threshB.setEnabled(true);
     }
     
-    
-    
     max_gap_thresher.setGraphs(graphs);
     min_run_thresher.setGraphs(graphs);
     
-    setEnabled( ! graphs.isEmpty());
+    score_val_slider.setEnabled(thresh_is_on);
+    score_percent_slider.setEnabled(thresh_is_on);
+    score_valT.setEnabled(thresh_is_on);
+    score_perT.setEnabled(thresh_is_on);
+    thresh_aboveB.setEnabled(thresh_is_on);
+    thresh_belowB.setEnabled(thresh_is_on);
+    shift_startTF.setEnabled(thresh_is_on);
+    shift_endTF.setEnabled(thresh_is_on);
+    
     turnOnListening();
-  }
-
-  public void setEnabled(boolean b) {
-    super.setEnabled(b);
-    score_val_slider.setEnabled(b);
-    score_percent_slider.setEnabled(b);
-    score_valT.setEnabled(b);
-    score_perT.setEnabled(b);
-    thresh_aboveB.setEnabled(b);
-    thresh_belowB.setEnabled(b);
-    shift_startTF.setEnabled(b);
-    shift_endTF.setEnabled(b);
-    //threshCB.setEnabled(b); // dealt with elsewhere
-    //tier_threshB.setEnabled(b);
   }
 
   public void initValues() {
     if (graphs.size() > 0) {
     abs_min_val = Float.POSITIVE_INFINITY;
     abs_max_val = Float.NEGATIVE_INFINITY;
-    float min_of_scoremins = Float.POSITIVE_INFINITY;
-    float max_of_scoremins = Float.NEGATIVE_INFINITY;
-    float avg_of_scoremins = 0;
+    float min_of_score_vals = Float.POSITIVE_INFINITY;
+    float max_of_score_vals = Float.NEGATIVE_INFINITY;
+    float avg_of_score_vals = 0;
     int gcount = graphs.size();
 
     for (int i=0; i<gcount; i++) {
       SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
       float min = gl.getGraphMinY();
       float max = gl.getGraphMaxY();
-      float scoremin = gl.getMinScoreThreshold();
+      float score_val;
+      if (gl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+        score_val = gl.getMinScoreThreshold();
+      } else { // assume direction is GraphState.THRESHOLD_DIRECTION_LESS
+        score_val = gl.getMaxScoreThreshold();        
+      }
       abs_min_val = Math.min(abs_min_val, min);
       abs_max_val = Math.max(abs_max_val, max);
-      min_of_scoremins = Math.min(min_of_scoremins, scoremin);
-      max_of_scoremins = Math.max(max_of_scoremins, scoremin);
-      avg_of_scoremins += scoremin;
+      min_of_score_vals = Math.min(min_of_score_vals, score_val);
+      max_of_score_vals = Math.max(max_of_score_vals, score_val);
+      avg_of_score_vals += score_val;
     }
 
     // set default thresh to average thresh of selected graphs
-    avg_of_scoremins = avg_of_scoremins / gcount;
+    avg_of_score_vals = avg_of_score_vals / gcount;
 
     float val_range = abs_max_val - abs_min_val;
     //    sliders_per_score = 1000.0f/val_range;
@@ -341,48 +372,57 @@ public class GraphScoreThreshSetter extends JPanel
     score_val_slider.setMinimum(calcSliderForValue(abs_min_val));
     score_val_slider.setMaximum(calcSliderForValue(abs_max_val));
 
-    score_val_slider.setValue(calcSliderForValue(avg_of_scoremins));
-    if (min_of_scoremins == max_of_scoremins) {
-      score_valT.setText(val_format.format(min_of_scoremins));
+    score_val_slider.setValue(calcSliderForValue(avg_of_score_vals));
+    if (min_of_score_vals == max_of_score_vals) {
+      score_valT.setText(val_format.format(min_of_score_vals));
     } else {
       if (show_min_and_max) {
-        score_valT.setText(val_format.format(min_of_scoremins) +
-          " : " + val_format.format(max_of_scoremins));
+        score_valT.setText(val_format.format(min_of_score_vals) +
+          " : " + val_format.format(max_of_score_vals));
       } else {
         score_valT.setText("");
       }
     }
-    prev_score_val = avg_of_scoremins;
+    prev_thresh_val = avg_of_score_vals;
+    } else {
+      score_valT.setText("");
     }
   }
 
   public void initPercents() {
     if (graphs.size() > 0) {
-    float min_of_scoremins = Float.POSITIVE_INFINITY;
-    float max_of_scoremins = Float.NEGATIVE_INFINITY;
-    float avg_of_scoremins = 0;
+    float min_of_score_vals = Float.POSITIVE_INFINITY;
+    float max_of_score_vals = Float.NEGATIVE_INFINITY;
+    float avg_of_score_vals = 0;
     int gcount = graphs.size();
     for (int i=0; i<gcount; i++) {
       SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
-      float val = gl.getMinScoreThreshold();
+      float val;
+      if (gl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+        val = gl.getMinScoreThreshold();
+      } else { // assume direction is GraphState.THRESHOLD_DIRECTION_LESS
+        val = gl.getMaxScoreThreshold();        
+      }
       float percent = per_info_provider.getPercentForValue(gl, val);
-      min_of_scoremins = Math.min(min_of_scoremins, percent);
-      max_of_scoremins = Math.max(max_of_scoremins, percent);
-      avg_of_scoremins += percent;
+      min_of_score_vals = Math.min(min_of_score_vals, percent);
+      max_of_score_vals = Math.max(max_of_score_vals, percent);
+      avg_of_score_vals += percent;
     }
-    avg_of_scoremins = avg_of_scoremins / gcount;
-    if (min_of_scoremins == max_of_scoremins) {
-      score_perT.setText(per_format.format(min_of_scoremins));
+    avg_of_score_vals = avg_of_score_vals / gcount;
+    if (min_of_score_vals == max_of_score_vals) {
+      score_perT.setText(per_format.format(min_of_score_vals));
     } else {
       if (show_min_and_max) {
-        score_perT.setText(per_format.format(min_of_scoremins) + " : " + per_format.format(max_of_scoremins));        
+        score_perT.setText(per_format.format(min_of_score_vals) + " : " + per_format.format(max_of_score_vals));        
       } else {
         score_perT.setText("");
       }
     }
     //    System.out.println("setting min percent slider: " + (int)(avg_of_scoremins * sliders_per_percent));
-    score_percent_slider.setValue((int)(avg_of_scoremins * sliders_per_percent));
-    prev_score_per = avg_of_scoremins;
+    score_percent_slider.setValue((int)(avg_of_score_vals * sliders_per_percent));
+    prev_thresh_per = avg_of_score_vals;
+    } else {
+      score_perT.setText("");
     }
   }
 
@@ -400,16 +440,15 @@ public class GraphScoreThreshSetter extends JPanel
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
     if (src == score_val_slider) {
-      float min_val = calcValueForSlider(score_val_slider.getValue());
-      if (min_val != prev_score_val) {
-	setScoreThreshold(min_val);
-      }
-    }
-    else if (src == score_percent_slider) {
-      float min_per = score_percent_slider.getValue() * percents_per_slider;
-      if (min_per != prev_score_per) {
-	setScoreMinPercent(min_per);
-      }
+      float thresh = calcValueForSlider(score_val_slider.getValue());
+      //if (thresh != prev_thresh_val) {
+        setScoreThreshold(thresh);
+      //}
+    } else if (src == score_percent_slider) {
+      float thresh_per = score_percent_slider.getValue() * percents_per_slider;
+      //if (thresh_per != prev_thresh_per) {
+        setScoreThresholdByPercent(thresh_per);
+      //}
     }
   }
 
@@ -418,35 +457,31 @@ public class GraphScoreThreshSetter extends JPanel
     Object src = evt.getSource();
     if (src == score_valT) {
       try {
-	float minval = Float.parseFloat(score_valT.getText());
-	if (minval < abs_min_val) { minval = abs_min_val; }
-	else if (minval > abs_max_val) { minval = abs_max_val; }
-	setScoreThreshold(minval);  // also sets prev_min_val
+	float thresh = Float.parseFloat(score_valT.getText());
+	if (thresh < abs_min_val) { thresh = abs_min_val; }
+	else if (thresh > abs_max_val) { thresh = abs_max_val; }
+        setScoreThreshold(thresh);  // also sets prev_thresh_val          
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-	score_valT.setText(val_format.format(prev_score_val));
+	score_valT.setText(val_format.format(prev_thresh_val));
       }
     }
     else if (src == score_perT) {
       try {
-        float minper = GraphAdjusterView.parsePercent(score_perT.getText());
-	if (minper < abs_min_per) { minper = abs_min_per; }
-	else if (minper > abs_max_per) { minper = abs_max_per; }
-	setScoreMinPercent(minper); // also sets prev_min_per
+        float thresh_per = GraphAdjusterView.parsePercent(score_perT.getText());
+	if (thresh_per < abs_min_per) { thresh_per = abs_min_per; }
+	else if (thresh_per > abs_max_per) { thresh_per = abs_max_per; }
+	setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-	score_perT.setText(per_format.format(prev_score_per));
+	score_perT.setText(per_format.format(prev_thresh_per));
       }
     }
     else if (src == thresh_aboveB) {
-      if (thresh_aboveB.isSelected()) {
-	setThresholdDirection(true);
-      }
+      setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_GREATER, true);
     }
     else if (src == thresh_belowB) {
-      if (thresh_belowB.isSelected()) {
-	setThresholdDirection(false);
-      }
+      setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_LESS, true);
     }
     else if (src == shift_startTF) {
       try {
@@ -513,41 +548,22 @@ public class GraphScoreThreshSetter extends JPanel
     shift_endTF.addActionListener(this);
   }
   
-  /**
-   *  Sets the flag thresh_is_min.
-   *  if (thresh_is_min), then values must >= threshold to pass.
-   *  if (! thresh_is_min), then values must be <= threshold to pass.
-   */
-  public void setThresholdDirection(boolean b) {
-    if (thresh_is_min != b) {
-      turnOffListening();
-      thresh_is_min = b;
-      int gcount = graphs.size();
-      for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
-	if (thresh_is_min) {
-	  float prev_max_thresh = sgg.getMaxScoreThreshold();
-	  sgg.setMinScoreThreshold(prev_max_thresh);
-	  sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
-	}
-	else {
-	  float prev_min_thresh = sgg.getMinScoreThreshold();
-	  sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
-	  sgg.setMaxScoreThreshold(prev_min_thresh);
-	}
-      }
-      widg.updateWidget();
-      turnOnListening();
-    }
+  void setScoreThreshold(float thresh) {
+    if (thresh_aboveB.isSelected()) {
+      setScoreThreshold(thresh, GraphState.THRESHOLD_DIRECTION_GREATER);  // also sets prev_thresh_val
+    } else {
+      setScoreThreshold(thresh, GraphState.THRESHOLD_DIRECTION_LESS);  // also sets prev_thresh_val          
+    }    
+  }
+  
+  public void setScoreThreshold(float val, int direction) {
+    setScoreThreshold(val, direction, true);
   }
 
-  public void setScoreThreshold(float val) {
-    setScoreThreshold(val, false);
-  }
-
-  public void setScoreThreshold(float val, boolean force_change) {
+  public void setScoreThreshold(float val, int direction, boolean force_change) {
     int gcount = graphs.size();
-    if (force_change  || (gcount > 0 && (val != prev_score_val))) {
+    force_change = true;  // (maybe temporarily) force change to always take place
+    if (force_change  || (gcount > 0 && (val != prev_thresh_val))) {
       turnOffListening();
       float min_per = Float.POSITIVE_INFINITY;
       float max_per = Float.NEGATIVE_INFINITY;
@@ -559,14 +575,16 @@ public class GraphScoreThreshSetter extends JPanel
 	max_per = Math.max(percent, max_per);
 	avg_per += percent;
 
-	if (thresh_is_min) {
+        sgg.setThresholdDirection(direction);
+	if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 	  sgg.setMinScoreThreshold(val);
-	  sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
 	}
-	else {
-	  sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
+	else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
 	  sgg.setMaxScoreThreshold(val);
 	}
+        else {
+          System.out.println("Threshold 'between' not yet implemented");
+        }
       }
       avg_per = avg_per / gcount;
       widg.updateWidget();
@@ -587,14 +605,23 @@ public class GraphScoreThreshSetter extends JPanel
       }
       score_percent_slider.setValue((int)(min_per * sliders_per_percent));
 
-      prev_score_val = val;
       turnOnListening();
     }
+    prev_thresh_val = val;
   }
 
-  public void setScoreMinPercent(float percent) {
+  void setScoreThresholdByPercent(float thresh) {
+    if (thresh_aboveB.isSelected()) {
+      setScoreThresholdByPercent(thresh, GraphState.THRESHOLD_DIRECTION_GREATER);  // also sets prev_thresh_per
+    } else {
+      setScoreThresholdByPercent(thresh, GraphState.THRESHOLD_DIRECTION_LESS);  // also sets prev_thresh_per
+    }    
+  }
+
+  void setScoreThresholdByPercent(float percent, int direction) {
     int gcount = graphs.size();
-    if (gcount > 0 && (percent != prev_score_per)) {
+    boolean force_change = true;  // (maybe temporarily) force change to always take place
+    if (force_change  || (gcount > 0 && (percent != prev_thresh_per))) {
       turnOffListening();
       float min_val = Float.POSITIVE_INFINITY;
       float max_val = Float.NEGATIVE_INFINITY;
@@ -607,14 +634,16 @@ public class GraphScoreThreshSetter extends JPanel
 	max_val = Math.max(val, max_val);
 	avg_val += val;
 
-	if (thresh_is_min) {
+        sgg.setThresholdDirection(direction);
+	if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 	  sgg.setMinScoreThreshold(val);
-	  sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
 	}
-	else {
-	  sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
+	else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
 	  sgg.setMaxScoreThreshold(val);
 	}
+        else {
+          System.out.println("Threshold 'between' not yet implemented");
+        }
       }
       avg_val = avg_val / gcount;
       widg.updateWidget();
@@ -636,9 +665,9 @@ public class GraphScoreThreshSetter extends JPanel
       }
       score_val_slider.setValue(calcSliderForValue(avg_val));
 
-      prev_score_per = percent;
       turnOnListening();
     }
+    prev_thresh_per = percent;
   }
 
 
@@ -669,15 +698,14 @@ public class GraphScoreThreshSetter extends JPanel
   public void pickleThreshold(SmartGraphGlyph sgg) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
-//    if (aseq != current_seq) {
-//      IGB.errorPanel("Problem finding sequence to annotate!");
-//      return;
-//    }
+
     SimpleSymWithProps psym = new SimpleSymWithProps();
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
     //    String meth = "graph pickle " + pickle_count;
     String meth =
       "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
+      ", max_score=" + nformat.format(sgg.getMaxScoreThreshold()) +
+      ", thresh_direction=" + sgg.getThresholdDirection() +
       ", max_gap=" + (int)sgg.getMaxGapThreshold() +
       ", min_run=" + (int)sgg.getMinRunThreshold() +
       ", graph: " + sgg.getLabel();

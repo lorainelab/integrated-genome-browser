@@ -17,8 +17,8 @@ public class MultiWindowTierMap extends AffyTieredMap {
   boolean USE_SWING = true;
   boolean USE_FRAME = false;
 
-  int tile_width = 300;
-  int tile_height = 200;
+  int tile_width = 800;
+  int tile_height = 600;
   int tile_columns = 4;
   int tile_rows = 2;
   int total_width = tile_width * tile_columns;
@@ -68,8 +68,7 @@ public class MultiWindowTierMap extends AffyTieredMap {
     }
   }
 
-  int xwindows_per_screen = tile_columns;
-  int ywindows_per_screen = tile_rows;
+
   public void initMultiWindows() {
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice default_device = genv.getDefaultScreenDevice();
@@ -82,6 +81,16 @@ public class MultiWindowTierMap extends AffyTieredMap {
     System.out.println("Default Screen device: " + default_device);
     System.out.println("max bounds: " + maxbounds);
     System.out.println("center point: " + center);
+
+    int screen_count = 0;
+    for (int i=0; i<devices.length; i++)  {
+      int type = devices[i].getType();
+      if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {  screen_count++; }
+    }
+    int xwindows_per_screen = tile_columns / screen_count;
+    int ywindows_per_screen = tile_rows;
+    int col = 0;
+
     for (int i=0; i<devices.length; i++) {
       GraphicsDevice dev = devices[i];
       String id = dev.getIDstring();
@@ -106,6 +115,7 @@ public class MultiWindowTierMap extends AffyTieredMap {
       int yoffset = 600;
       if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {
 	for (int x=0; x < xwindows_per_screen; x++) {
+	  int row = 0;
 	  for (int y=0; y < ywindows_per_screen; y++) {
 	    //	    JFrame win = new JFrame(gconfig);
 	    Container win;
@@ -148,16 +158,22 @@ public class MultiWindowTierMap extends AffyTieredMap {
 	      }
 	      cpane.setLayout(new BorderLayout());
 	      cpane.add("Center", newmap);
+	      newmap.getNeoCanvas().setDoubleBuffered(false);
 	    }
 	    else {  // win is a Window or Frame
 	      win.setLayout(new BorderLayout());
+	      newmap.getNeoCanvas().setDoubleBuffered(false);
 	      win.add("Center", newmap);
 	    }
 
-	    newmap.getNeoCanvas().setDoubleBuffered(false);
-	    child_maps[x][y] = newmap;
+	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
+	    //	    newmap.getNeoCanvas().setDoubleBuffered(false);
+	    //	    child_maps[x][y] = newmap;
+	    child_maps[col][row] = newmap;
 	    win.show();
+	    row++;
 	  }
+	  col++;
 	}
       }
     }

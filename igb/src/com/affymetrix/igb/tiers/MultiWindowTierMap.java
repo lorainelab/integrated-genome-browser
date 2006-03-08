@@ -1,29 +1,37 @@
 package com.affymetrix.igb.tiers;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.event.*;
 
 /**
  *  trying to split a tiered map across multiple windows on multiple screens
  *  maybe have one master map and others use it as root?
  */
-public class MultiWindowTierMap extends AffyTieredMap {
+public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
   //  Frame, Window, JFrame, JWindow
   boolean USE_SWING = true;
   boolean USE_FRAME = false;
 
-  int tile_width = 800;
-  int tile_height = 600;
-  int tile_columns = 4;
+  int tile_width = 512;
+  int tile_height = 512;
+
+  int tile_columns = 2;
   int tile_rows = 2;
   int total_width = tile_width * tile_columns;
   int total_height = tile_height * tile_rows;
   NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
+  MultiMapEventHandler child_event_handler;
+
+  // shouldn't need this, but appear to be problems returning listeners normally when 
+  //   component isn't actually being displayed???
+  java.util.List mlisteners = new ArrayList();
   // java.util.List child_maps = new ArrayList();
   //  LinearTransform temp_trans = new LinearTransform();
 
@@ -31,6 +39,7 @@ public class MultiWindowTierMap extends AffyTieredMap {
     super(hscroll, vscroll);
     this.setSize(total_width, total_height);
     this.getNeoCanvas().setSize(total_width, total_height);
+    child_event_handler = new MultiMapEventHandler(this);
     initMultiWindows();
   }
 
@@ -158,14 +167,15 @@ public class MultiWindowTierMap extends AffyTieredMap {
 	      }
 	      cpane.setLayout(new BorderLayout());
 	      cpane.add("Center", newmap);
-	      newmap.getNeoCanvas().setDoubleBuffered(false);
 	    }
 	    else {  // win is a Window or Frame
 	      win.setLayout(new BorderLayout());
-	      newmap.getNeoCanvas().setDoubleBuffered(false);
+
 	      win.add("Center", newmap);
 	    }
 
+	    newmap.getNeoCanvas().setDoubleBuffered(false);
+            newmap.addMouseListener(child_event_handler);
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
 	    //	    newmap.getNeoCanvas().setDoubleBuffered(false);
 	    //	    child_maps[x][y] = newmap;
@@ -180,5 +190,77 @@ public class MultiWindowTierMap extends AffyTieredMap {
     System.out.println("*******************************************");
   }
 
+  public void transformMouseEvent(MouseEvent evt) {
+    // if NeoMouseEvent on one of the child maps, coord position for event should be correct
+    //   (since each child map has a proper view), though pixels position will be position in
+    //   child canvas and therefore most likely wrong.
+    // To fix pixels should be able to just do a reverse transform with view of parent (this) map?
+    //    System.out.println("MultiWindowTierMap.transformMouseEvent() called");
+    if (evt instanceof NeoMouseEvent) {
+      NeoMouseEvent cevt = (NeoMouseEvent)evt;
+      // make new event with this (parent) map as source
+      NeoMouseEvent pevt =
+	//	new NeoMouseEvent((MouseEvent)cevt.getOriginalEvent(), this, cevt.getCoordX(), cevt.getCoordY());
+	new NeoMouseEvent(cevt, this, cevt.getCoordX(), cevt.getCoordY());
+      // post new event to any listeners on this map
+      //      System.out.println("posting new event: " + pevt);
+
+      // First tried just calling processMouseEvent(), but apparently that doesn't actually end up 
+      //    calling the mouse listeners if this component is not actually being rendered itself
+      // Therefore setting up extra list to keep track of listeners and notify them here
+      //  this.processMouseEvent(pevt);
+      for (int i=0; i<mlisteners.size(); i++) {
+	MouseListener listener = (MouseListener)mlisteners.get(i);
+	//	System.out.println("listener: " + listener);
+        if (listener != null) {
+	  int id = pevt.getID();
+	  switch(id) {
+	  case MouseEvent.MOUSE_PRESSED:
+	    listener.mousePressed(pevt);
+	    break;
+	  case MouseEvent.MOUSE_RELEASED:
+	    listener.mouseReleased(pevt);
+	    break;
+	  case MouseEvent.MOUSE_CLICKED:
+	    listener.mouseClicked(pevt);
+	    break;
+	  case MouseEvent.MOUSE_EXITED:
+	    listener.mouseExited(pevt);
+	    break;
+	  case MouseEvent.MOUSE_ENTERED:
+	    listener.mouseEntered(pevt);
+	    break;
+	  }
+	}
+      }
+    }
+  }
+
+  public void addMouseListener(MouseListener listener) {
+    System.out.println("-------- adding mouse listener to MultiWindowTierMap: " + listener);
+    super.addMouseListener(listener);
+    mlisteners.add(listener);
+  }
+
+  public void removeMouseListener(MouseListener listener) {
+    super.removeMouseListener(listener);
+    mlisteners.remove(listener);
+  }
+
+}
+
+class MultiMapEventHandler implements MouseListener {
+  MultiWindowTierMap main_map;
+  public MultiMapEventHandler(MultiWindowTierMap map) {
+    main_map = map;
+  }
+  public void mouseEntered(MouseEvent evt) { main_map.transformMouseEvent(evt); }
+  public void mouseExited(MouseEvent evt) { main_map.transformMouseEvent(evt); }
+  public void mouseClicked(MouseEvent evt) { main_map.transformMouseEvent(evt); }
+  public void mousePressed(MouseEvent evt) { main_map.transformMouseEvent(evt); }
+  public void mouseReleased(MouseEvent evt) { main_map.transformMouseEvent(evt); }
+    //    if (isOurPopupTrigger(evt)) {
+    //      smv.showPopup((NeoMouseEvent) evt);
+    //    }
 
 }

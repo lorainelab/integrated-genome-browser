@@ -2409,7 +2409,27 @@ public class SeqMapView extends JPanel
       listener.popupNotify(sym_popup, selected_syms);
     }
     if (sym_popup.getComponentCount() > 0) {
-      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+      //      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+      // if seqmap is a MultiWindowTierMap, then using seqmap as Component target arg to popup.show() 
+      //  won't work, since it's component is never actually rendered -- so checking here 
+      /// to use appropriate target Component and pixel position
+      EventObject oevt = nevt.getOriginalEvent();
+      //      System.out.println("original event: " + oevt);
+      if ((oevt != null) && (oevt.getSource() instanceof Component)) {
+	Component target = (Component)oevt.getSource();
+	if (oevt instanceof MouseEvent) {
+	  //	  System.out.println("using original event target and coords");
+	  MouseEvent mevt = (MouseEvent)oevt;
+	  sym_popup.show(target, mevt.getX()+xoffset_pop, mevt.getY()+yoffset_pop);
+	}
+	else {
+	  //	  System.out.println("using original event target");
+	  sym_popup.show(target, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+	}
+      }
+      else {
+	sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+      }
     }
     // For garbage collection, it would be nice to add a listener that
     // could call sym_popup.removeAll() when the popup is removed from view.

@@ -454,7 +454,7 @@ public class GraphScoreThreshSetter extends JPanel
 
   public void actionPerformed(ActionEvent evt) {
     if (graphs.size() <= 0) { return; }
-    Object src = evt.getSource();
+    Object src = evt.getSource();    
     if (src == score_valT) {
       try {
 	float thresh = Float.parseFloat(score_valT.getText());
@@ -463,7 +463,7 @@ public class GraphScoreThreshSetter extends JPanel
         setScoreThreshold(thresh);  // also sets prev_thresh_val          
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-	score_valT.setText(val_format.format(prev_thresh_val));
+        score_valT.setText(val_format.format(prev_thresh_val));
       }
     }
     else if (src == score_perT) {
@@ -474,7 +474,7 @@ public class GraphScoreThreshSetter extends JPanel
 	setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-	score_perT.setText(per_format.format(prev_thresh_per));
+        score_perT.setText(per_format.format(prev_thresh_per));
       }
     }
     else if (src == thresh_aboveB) {
@@ -488,14 +488,20 @@ public class GraphScoreThreshSetter extends JPanel
         int start_shift = Integer.parseInt(shift_startTF.getText());
         adjustThreshStartShift(graphs, start_shift);
       }
-      catch (Exception ex) { ex.printStackTrace(); }
+      catch (NumberFormatException ex) { 
+        SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+        shift_startTF.setText(val_format.format(first_glyph.getThreshStartShift())); 
+      }
     }
     else if (src == shift_endTF) {
       try {
         int end_shift = Integer.parseInt(shift_endTF.getText());
         adjustThreshEndShift(graphs, end_shift);
       }
-      catch (Exception ex) { ex.printStackTrace(); }
+      catch (NumberFormatException ex) {
+        SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+        shift_endTF.setText(val_format.format(first_glyph.getThreshEndShift())); 
+      }
     }
     else if (src == tier_threshB) {
       int gcount = graphs.size();
@@ -680,6 +686,7 @@ public class GraphScoreThreshSetter extends JPanel
       SmartGraphGlyph sggl = (SmartGraphGlyph) iter.next();
       sggl.setThreshStartShift(shift);
     }
+    widg.updateWidget();
   }
 
   /**
@@ -691,6 +698,7 @@ public class GraphScoreThreshSetter extends JPanel
       SmartGraphGlyph sggl = (SmartGraphGlyph) iter.next();
       sggl.setThreshEndShift(shift);
     }
+    widg.updateWidget();
   }
 
   static DecimalFormat nformat = new DecimalFormat();

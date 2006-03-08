@@ -90,7 +90,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
 
   public void mouseReleased(MouseEvent evt) {
-
     // process selections in mousePressed() or mouseReleased()
     if (! SELECT_ON_MOUSE_PRESSED) processSelections(evt);
 

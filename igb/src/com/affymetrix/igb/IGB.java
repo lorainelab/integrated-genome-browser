@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
@@ -172,6 +173,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     System.out.println();
 
     main_args = args;
+    
     getIGBPrefs(); // force loading of prefs
 
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
@@ -479,10 +481,27 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     help_menu = new JMenu("Help");
     help_menu.setMnemonic('H');
     mbar.add(help_menu);
-
     //    select_broker = new SymSelectionBroker();
 
-    System.out.println("****** called SeqMapView constructor ******");
+    String tile_xpixels_arg = get_arg("-tile_width", main_args);
+    String tile_ypixels_arg = get_arg("-tile_height", main_args);
+    String tile_col_arg = get_arg("-tile_columns", main_args);
+    String tile_row_arg = get_arg("-tile_rows", main_args);
+    if (tile_xpixels_arg != null && 
+	tile_ypixels_arg != null &&
+	tile_col_arg != null && 
+	tile_row_arg != null) {
+      USE_MULTI_WINDOW_MAP = true;
+      try {
+	MultiWindowTierMap.tile_width = Integer.parseInt(tile_xpixels_arg);
+	MultiWindowTierMap.tile_height = Integer.parseInt(tile_ypixels_arg);
+	MultiWindowTierMap.tile_columns = Integer.parseInt(tile_col_arg);
+	MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
+      }
+      catch (Exception ex) {
+	ex.printStackTrace(); 
+      }
+    }
     map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);
 
     gmodel.addSeqSelectionListener(map_view);

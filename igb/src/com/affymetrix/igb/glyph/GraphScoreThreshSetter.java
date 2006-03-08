@@ -463,7 +463,8 @@ public class GraphScoreThreshSetter extends JPanel
         setScoreThreshold(thresh);  // also sets prev_thresh_val          
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-        score_valT.setText(val_format.format(prev_thresh_val));
+        //score_valT.setText(val_format.format(prev_thresh_val));
+        setGraphs(new ArrayList(graphs));
       }
     }
     else if (src == score_perT) {
@@ -474,7 +475,8 @@ public class GraphScoreThreshSetter extends JPanel
 	setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...
-        score_perT.setText(per_format.format(prev_thresh_per));
+        //score_perT.setText(per_format.format(prev_thresh_per));
+        setGraphs(new ArrayList(graphs));
       }
     }
     else if (src == thresh_aboveB) {
@@ -489,8 +491,9 @@ public class GraphScoreThreshSetter extends JPanel
         adjustThreshStartShift(graphs, start_shift);
       }
       catch (NumberFormatException ex) { 
-        SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
-        shift_startTF.setText(val_format.format(first_glyph.getThreshStartShift())); 
+        //SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+        //shift_startTF.setText(val_format.format(first_glyph.getThreshStartShift())); 
+        setGraphs(new ArrayList(graphs));
       }
     }
     else if (src == shift_endTF) {
@@ -499,8 +502,9 @@ public class GraphScoreThreshSetter extends JPanel
         adjustThreshEndShift(graphs, end_shift);
       }
       catch (NumberFormatException ex) {
-        SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
-        shift_endTF.setText(val_format.format(first_glyph.getThreshEndShift())); 
+        //SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+        //shift_endTF.setText(val_format.format(first_glyph.getThreshEndShift())); 
+        setGraphs(new ArrayList(graphs));
       }
     }
     else if (src == tier_threshB) {

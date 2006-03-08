@@ -165,7 +165,7 @@ public class MinRunThresholder extends JPanel
   public void actionPerformed(ActionEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
-    if (src == minrunTF) {
+    if (src == minrunTF) try {
       int new_thresh = Integer.parseInt(minrunTF.getText());
       if (new_thresh != minrun_thresh) {
 	boolean new_thresh_max = (new_thresh > thresh_max);
@@ -194,12 +194,14 @@ public class MinRunThresholder extends JPanel
 	  widg.updateWidget();
 	}
       }
+    } catch (NumberFormatException nfe) {
+      setGraphs(new ArrayList(graphs));
     }
   }
 
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
-    setGraphs(graphs);
+    setGraphs(new ArrayList(graphs));
   }
 
 

@@ -173,7 +173,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     System.out.println();
 
     main_args = args;
-    
+
     getIGBPrefs(); // force loading of prefs
 
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
@@ -487,9 +487,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     String tile_ypixels_arg = get_arg("-tile_height", main_args);
     String tile_col_arg = get_arg("-tile_columns", main_args);
     String tile_row_arg = get_arg("-tile_rows", main_args);
-    if (tile_xpixels_arg != null && 
+    if (tile_xpixels_arg != null &&
 	tile_ypixels_arg != null &&
-	tile_col_arg != null && 
+	tile_col_arg != null &&
 	tile_row_arg != null) {
       USE_MULTI_WINDOW_MAP = true;
       try {
@@ -499,7 +499,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
       }
       catch (Exception ex) {
-	ex.printStackTrace(); 
+	ex.printStackTrace();
       }
     }
     map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);

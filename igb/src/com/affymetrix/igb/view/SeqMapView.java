@@ -74,7 +74,7 @@ public class SeqMapView extends JPanel
 
   static final boolean DIAGNOSTICS = false;
   static final boolean DEBUG_TIERS = false;
-  boolean LABEL_TIERMAP = false;
+  boolean LABEL_TIERMAP = true;
   boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;

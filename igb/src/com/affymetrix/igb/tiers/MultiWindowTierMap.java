@@ -29,7 +29,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
   NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
   MultiMapEventHandler child_event_handler;
 
-  // shouldn't need this, but appear to be problems returning listeners normally when 
+  // shouldn't need this, but appear to be problems returning listeners normally when
   //   component isn't actually being displayed???
   java.util.List mlisteners = new ArrayList();
   // java.util.List child_maps = new ArrayList();
@@ -67,7 +67,10 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
       //      NeoMap cmap = (NeoMap)child_maps.get(i);
       for (int y=0; y<tile_rows; y++) {
 	NeoMap cmap = child_maps[x][y];
-        LinearTransform ctrans = (LinearTransform)cmap.getView().getTransform();
+        // System.out.println("map: " + cmap);
+        ViewI cview = cmap.getView();
+        // System.out.println("view: " + cview);
+        LinearTransform ctrans = (LinearTransform)cview.getTransform();
 	ctrans.setScaleX(xscale);
 	ctrans.setScaleY(yscale);
 	ctrans.setOffsetX(xoffset - (x * tile_width));
@@ -96,11 +99,20 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
       int type = devices[i].getType();
       if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {  screen_count++; }
     }
-    int xwindows_per_screen = tile_columns / screen_count;
-    int ywindows_per_screen = tile_rows;
-    int col = 0;
+//    int xwindows_per_screen = tile_columns / screen_count;
+//    int ywindows_per_screen = tile_rows;
+    int xwindows_per_screen = 1;
+    int ywindows_per_screen = 1;
+//    int col = 0;
 
-    for (int i=0; i<devices.length; i++) {
+    int map_count = tile_columns * tile_rows;
+    for (int i=0; i<devices.length && i< map_count; i++) {
+//    for (int i=0; i<devices.length && i< 4; i++) {
+//    for (int i=4; i<devices.length; i++) {
+      int col = i % tile_columns;
+      int row = i / tile_columns;
+      //      int row = i % tile_rows;
+      System.out.println("&&&&&&&&&&&&&&& device index: " + i + ", col = " + col + ", row = " + row);
       GraphicsDevice dev = devices[i];
       String id = dev.getIDstring();
       int type = dev.getType();
@@ -124,9 +136,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
       int yoffset = 600;
       if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {
 	for (int x=0; x < xwindows_per_screen; x++) {
-	  int row = 0;
 	  for (int y=0; y < ywindows_per_screen; y++) {
-	    //	    JFrame win = new JFrame(gconfig);
 	    Container win;
 	    if (USE_SWING) {
 	      if (USE_FRAME) { win = new JFrame(gconfig); }
@@ -179,11 +189,10 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
 	    //	    newmap.getNeoCanvas().setDoubleBuffered(false);
 	    //	    child_maps[x][y] = newmap;
-	    child_maps[col][row] = newmap;
+            child_maps[col][row] = newmap;
+            System.out.println("added map : " + child_maps[col][row]);
 	    win.show();
-	    row++;
 	  }
-	  col++;
 	}
       }
     }
@@ -205,7 +214,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
       // post new event to any listeners on this map
       //      System.out.println("posting new event: " + pevt);
 
-      // First tried just calling processMouseEvent(), but apparently that doesn't actually end up 
+      // First tried just calling processMouseEvent(), but apparently that doesn't actually end up
       //    calling the mouse listeners if this component is not actually being rendered itself
       // Therefore setting up extra list to keep track of listeners and notify them here
       //  this.processMouseEvent(pevt);

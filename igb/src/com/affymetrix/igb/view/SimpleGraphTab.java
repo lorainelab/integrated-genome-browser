@@ -63,7 +63,7 @@ implements SeqSelectionListener, SymSelectionListener {
   JRadioButton hmapB = new JRadioButton("Heat Map");
   JRadioButton hidden_styleB = new JRadioButton("No Selectoin"); // this button will not be displayed
   ButtonGroup stylegroup = new ButtonGroup();
-
+  
   JComboBox heat_mapCB;
 
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
@@ -99,17 +99,23 @@ implements SeqSelectionListener, SymSelectionListener {
     heat_mapCB = new JComboBox(v);
     heat_mapCB.addItemListener(new HeatMapItemListener());
 
+    // A box to contain the heat-map JComboBox, to help get the alignment right
+    Box heat_mapCB_box = Box.createHorizontalBox();
+    heat_mapCB_box.setAlignmentX(0.0f);
+    heat_mapCB_box.add(Box.createHorizontalStrut(16));
+    heat_mapCB_box.add(heat_mapCB);
+    heat_mapCB_box.add(Box.createHorizontalGlue());
+    heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
+    
     Box stylebox = Box.createVerticalBox();
+    stylebox.setAlignmentX(1.0f);
     stylebox.add(barB);
     stylebox.add(dotB);
-    stylebox.add(hmapB);
-    stylebox.add(heat_mapCB);
     stylebox.add(lineB);
     stylebox.add(mmavgB);
     stylebox.add(sstepB);
-    stylebox.add(Box.createVerticalGlue());
-
-    heat_mapCB.setMaximumSize(heat_mapCB.getPreferredSize());
+    stylebox.add(hmapB);
+    stylebox.add(heat_mapCB_box);
 
     barB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.BAR_GRAPH));
     dotB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.DOT_GRAPH));
@@ -155,7 +161,7 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createHorizontalStrut(5));
     butbox.add(threshB);
     butbox.add(Box.createHorizontalGlue());
-
+    
     selectAllB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (gviewer != null) { gviewer.selectAllGraphs(); }
@@ -467,5 +473,5 @@ implements SeqSelectionListener, SymSelectionListener {
       }
       gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
-  }
+  }  
 }

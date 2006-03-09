@@ -29,9 +29,12 @@ import com.affymetrix.igb.glyph.SmartGraphGlyph;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.text.*;
 // import org.jdesktop.layout.*;
 
 public class SimpleGraphTab extends JPanel
@@ -40,6 +43,8 @@ implements SeqSelectionListener, SymSelectionListener {
   SeqMapView gviewer = null;
   AnnotatedBioSeq current_seq;
   SingletonGenometryModel gmodel;
+  
+  boolean is_listening = true; // used to turn on and off listening to GUI events
 
   GraphScoreThreshSetter score_thresh_adjuster;  
   GraphVisibleBoundsSetter vis_bounds_setter;
@@ -61,8 +66,8 @@ implements SeqSelectionListener, SymSelectionListener {
 
   JComboBox heat_mapCB;
 
-  JSlider height_slider = new JSlider(JSlider.VERTICAL);
-
+  JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
+  
   JButton selectAllB = new JButton("Select All");
   JButton resetB = new JButton("Reset Appearance");
   JButton advB = new JButton("Advanced...");
@@ -134,11 +139,12 @@ implements SeqSelectionListener, SymSelectionListener {
     Box scalebox = Box.createVerticalBox();
     //    scalebox.setBorder(new TitledBorder("Graph Scaling"));
     scalebox.setBorder(new TitledBorder("Y-axis Scale"));
-    scalebox.add(vis_bounds_setter);
-    height_slider = new JSlider(JSlider.HORIZONTAL);
+    scalebox.add(vis_bounds_setter);    
     height_slider.setBorder(new TitledBorder("Height"));
     scalebox.add(height_slider);
-
+    
+    height_slider.addChangeListener(new GraphHeightSetter());
+    
     Box butbox = Box.createHorizontalBox();
     butbox.add(Box.createHorizontalGlue());
     butbox.add(selectAllB);
@@ -180,18 +186,6 @@ implements SeqSelectionListener, SymSelectionListener {
   
   void setSeqMapView(SeqMapView smv) {
     this.gviewer = smv;
-    boolean enabled = (gviewer != null);
-    setEnabled(enabled);
-  }
-
-  public void setEnabled(boolean b) {
-    super.setEnabled(b);
-    height_slider.setEnabled(b);
-    resetB.setEnabled(b);
-    advB.setEnabled(b);
-    threshB.setEnabled(true);
-    enableButtons(stylegroup, b);
-    // don't control the heat_mapCB here, it depends on other things.
   }
 
   void enableButtons(ButtonGroup g, boolean b) {
@@ -230,7 +224,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   java.util.List grafs = new ArrayList();
   java.util.List glyphs = new ArrayList();
-
+  
   public void symSelectionChanged(SymSelectionEvent evt) {
     if (DEBUG_EVENTS) {
       System.out.println("SymSelectionEvent received by " + this.getClass().getName());
@@ -239,6 +233,8 @@ implements SeqSelectionListener, SymSelectionListener {
     // if selection event originally came from here, then ignore it...
     if (src == this) { return; }
 
+    is_listening = false; // turn off propagation of events from the GUI while we modify the settings
+    
     java.util.List selected_syms = evt.getSelectedSyms();
     int symcount = selected_syms.size();
 
@@ -261,6 +257,7 @@ implements SeqSelectionListener, SymSelectionListener {
     }
 
     int num_glyphs = glyphs.size();
+    double the_height = -1; // -1 indicates unknown height
 
     // Take the first glyph in the list as a prototype
     SmartGraphGlyph first_glyph = null;
@@ -272,6 +269,7 @@ implements SeqSelectionListener, SymSelectionListener {
       if (graph_style == GraphGlyph.HEAT_MAP) {
         hm = first_glyph.getHeatMap();
       }
+      the_height = first_glyph.getGraphState().getGraphHeight();
     }
 
     // Now loop through other glyphs if there are more than one
@@ -323,7 +321,6 @@ implements SeqSelectionListener, SymSelectionListener {
         break;
     }
 
-    setEnabled(! grafs.isEmpty());
     if (graph_style == GraphGlyph.HEAT_MAP) {
       heat_mapCB.setEnabled(true);
       if (hm == null) {
@@ -335,11 +332,23 @@ implements SeqSelectionListener, SymSelectionListener {
       heat_mapCB.setEnabled(false);
     }
 
+    if (the_height != -1) {
+      height_slider.setValue((int) the_height);
+    }
     vis_bounds_setter.setGraphs(glyphs);
     score_thresh_adjuster.setGraphs(glyphs);
+    
+    boolean b = ! (grafs.isEmpty());
+    height_slider.setEnabled(b);
+    resetB.setEnabled(b);
+    advB.setEnabled(b);
+    threshB.setEnabled(true);
+    enableButtons(stylegroup, b);
+    
+    is_listening = true; // turn back on GUI events
   }
 
-  public void seqSelectionChanged(SeqSelectionEvent evt)  {
+  public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (DEBUG_EVENTS)  {
       System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " recieved by " + this.getClass().getName());
     }
@@ -374,7 +383,7 @@ implements SeqSelectionListener, SymSelectionListener {
       if (DEBUG_EVENTS) {
         System.out.println(this.getClass().getName() + " got an ActionEvent: " + event);
       }
-      if (gviewer == null || grafs.isEmpty()) {
+      if (gviewer == null || glyphs.isEmpty() || ! is_listening) {
         return;
       }
 
@@ -415,7 +424,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   class HeatMapItemListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
-      if (gviewer == null) {
+      if (gviewer == null || glyphs.isEmpty() || ! is_listening) {
         return;
       }
 
@@ -424,18 +433,39 @@ implements SeqSelectionListener, SymSelectionListener {
         HeatMap hm = HeatMap.getStandardHeatMap(name);
 
         if (hm != null) {
-          for (int i=0; i<grafs.size(); i++) {
-            GraphSym graf = (GraphSym) grafs.get(i);
-            GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
-            if (gl != null) {
-              gl.setShowGraph(true);
-              gl.setGraphStyle(GraphGlyph.HEAT_MAP);
-              gl.setHeatMap(hm);
-            }
+          for (int i=0; i<glyphs.size(); i++) {
+            GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+            gl.setShowGraph(true);
+            gl.setGraphStyle(GraphGlyph.HEAT_MAP);
+            gl.setHeatMap(hm);
           }
           gviewer.getSeqMap().updateWidget();
         }
       }
+    }
+  }
+  
+  class GraphHeightSetter implements  ChangeListener {
+    public void stateChanged(ChangeEvent e) {
+      if (gviewer == null || glyphs.isEmpty() || ! is_listening) {
+        return;
+      }
+      
+      JSlider source = (JSlider) e.getSource();
+      if (source.getValueIsAdjusting()) {
+        setTheHeights((double) height_slider.getValue());
+      }
+    }
+    
+    void setTheHeights(double height) {
+      if (gviewer == null) { 
+        return; // for testing
+      }
+      for (int i=0; i<glyphs.size(); i++) {
+        SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+        gl.getGraphState().setGraphHeight(height);
+      }
+      gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
   }
 }

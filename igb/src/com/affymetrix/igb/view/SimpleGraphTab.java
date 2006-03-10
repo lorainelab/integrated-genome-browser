@@ -144,7 +144,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
     Box scalebox = Box.createVerticalBox();
     //    scalebox.setBorder(new TitledBorder("Graph Scaling"));
-    scalebox.setBorder(new TitledBorder("Y-axis Scale"));
+    //scalebox.setBorder(new TitledBorder("Y-axis Scale"));
     scalebox.add(vis_bounds_setter);    
     height_slider.setBorder(new TitledBorder("Height"));
     scalebox.add(height_slider);

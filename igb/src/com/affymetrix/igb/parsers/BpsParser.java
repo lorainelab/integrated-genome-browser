@@ -198,8 +198,14 @@ public class BpsParser implements AnnotationWriter  {
   throws IOException {
     
     // make temporary seq groups to avoid null pointers later
-    if (query_group == null) { query_group = new AnnotatedSeqGroup("Query"); }
-    if (target_group == null) { target_group = new AnnotatedSeqGroup("Target"); }
+    if (query_group == null) { 
+      query_group = new AnnotatedSeqGroup("Query"); 
+      query_group.setUseSynonyms(false);
+    }
+    if (target_group == null) { 
+      target_group = new AnnotatedSeqGroup("Target");
+      target_group.setUseSynonyms(false);
+    }
     
     int total_block_count = 0;
     HashMap target2sym = new HashMap(); // maps target chrom name to top-level symmetry

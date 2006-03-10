@@ -345,7 +345,7 @@ public class LoadFileAction {
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
         DataInputStream dis = new DataInputStream(str);
         BpsParser bps_parser = new BpsParser();
-        bps_parser.parse(dis, annot_type, selected_group, null, true, false);
+        bps_parser.parse(dis, annot_type, null, selected_group, false, true);
         bps_parser = null;
         aseq = input_seq;
       }

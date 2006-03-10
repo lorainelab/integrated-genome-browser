@@ -40,10 +40,16 @@ public class GraphVisibleBoundsSetter extends JPanel
   JTextField max_perT;
   JTextField min_valT;
   JTextField max_valT;
+  
+  JRadioButton by_valRB = new JRadioButton("By Value");
+  JRadioButton by_percentileRB = new JRadioButton("By Percentile");
+  
+  JPanel valP = new JPanel();  // for adjust-by-value controls
+  JPanel perP = new JPanel();  // for adjust-by-percent controls
 
   JCheckBox syncCB;
   boolean sync_min_max;
-  int max_chars = 15;
+  int max_chars = 8;
   int max_pix_per_char = 6;
   int tf_min_xpix = max_chars * max_pix_per_char;
   int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
@@ -158,11 +164,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     min_val_slider = new JSlider(JSlider.HORIZONTAL);
     max_val_slider = new JSlider(JSlider.HORIZONTAL);
 
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-    JPanel valP = new JPanel();  // for adjust-by-value controls
-    JPanel perP = new JPanel();  // for adjust-by-percent controls
-
     min_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     max_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     min_perT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
@@ -173,8 +174,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
     valP.setLayout(new BoxLayout(valP, BoxLayout.X_AXIS));
     perP.setLayout(new BoxLayout(perP, BoxLayout.X_AXIS));
-    valP.setBorder(new TitledBorder("By Value"));
-    perP.setBorder(new TitledBorder("By Percentile"));
+    //valP.setBorder(new TitledBorder("By Value"));
+    //perP.setBorder(new TitledBorder("By Percentile"));
 
     JPanel labP2 = new JPanel();
     JPanel textP2 = new JPanel();
@@ -208,14 +209,54 @@ public class GraphVisibleBoundsSetter extends JPanel
     perP.add(textP);
     perP.add(slideP);
 
+    Box by_val_box = Box.createHorizontalBox();
+    ButtonGroup by_val_group = new ButtonGroup();
+    by_val_group.add(by_valRB);
+    by_val_group.add(by_percentileRB);
+    by_valRB.setSelected(true);
+    by_percentileRB.setSelected(false);
+    by_valRB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switchView(false);
+      }
+    });
+    by_percentileRB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switchView(true);
+      }
+    });
+    by_val_box.add(by_valRB);
+    by_val_box.add(by_percentileRB);
+    by_val_box.add(Box.createHorizontalGlue());
+
+    this.setBorder(new TitledBorder("Y-Axis Scale"));
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(Box.createRigidArea(new Dimension(5,5)));
+    this.add(by_val_box);
+    this.add(Box.createRigidArea(new Dimension(5,5)));
     this.add(valP);
     this.add(perP);
+    valP.setVisible(true);
+    perP.setVisible(false);
     
-    syncCB = new JCheckBox("Sync Min/Max");
+    syncCB = new JCheckBox("Sync Min/Max"); // not actually used
 
     turnOnListening();
   }
 
+  public void switchView(boolean b) {
+    if (b) {
+      valP.setVisible(false);
+      perP.setVisible(true);
+    } else {
+      valP.setVisible(true);
+      perP.setVisible(false);
+    }
+//    this.doLayout();
+//    this.invalidate(); // redraw the display
+//    this.repaint();
+  }
+  
   /**
    *  Set the set of graphs to the given List of GraphGlyph objects.
    */
@@ -825,5 +866,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     setGraphs(graphs);
   }
 
-
+  public static void main(String[] args) {
+    com.affymetrix.igb.view.SimpleGraphTab.main(args);
+  }
 }

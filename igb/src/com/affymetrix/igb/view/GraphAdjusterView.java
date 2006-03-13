@@ -80,6 +80,7 @@ public class GraphAdjusterView extends JComponent
   JButton boundsB = new JButton("Toggle Bounds");
   JRadioButton floatB = new JRadioButton("Floating");
   JRadioButton attachB = new JRadioButton("Attached");
+  JRadioButton not_attached_or_floatingB = new JRadioButton("Neither"); // hidden button
   JButton cloneB = new JButton("Clone Graphs");
   JButton deleteB = new JButton("Delete Graph");
   JButton saveB = new JButton("Save Graph");
@@ -179,7 +180,8 @@ public class GraphAdjusterView extends JComponent
     pgroup = new ButtonGroup();
     pgroup.add(attachB);
     pgroup.add(floatB);
-
+    pgroup.add(not_attached_or_floatingB);
+    
     JPanel save_deleteP = new JPanel();
     save_deleteP.setBorder(new EmptyBorder(3,3,3,3));
     save_deleteP.setLayout(new BoxLayout(save_deleteP, BoxLayout.X_AXIS));
@@ -312,12 +314,6 @@ public class GraphAdjusterView extends JComponent
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
     if (src == this) { return; }
-    pgroup = null;
-    attachB.setSelected(false);
-    floatB.setSelected(false);
-    pgroup = new ButtonGroup();
-    pgroup.add(attachB);
-    pgroup.add(floatB);
 
     java.util.List selected_syms = evt.getSelectedSyms();
     int symcount = selected_syms.size();
@@ -327,27 +323,59 @@ public class GraphAdjusterView extends JComponent
         grafs.add(selected_syms.get(i));
       }
     }
+    
+    boolean all_match_attached = true;
+    boolean all_match_y_axis = true;
+    boolean all_match_label = true;
+    
     int grafcount = grafs.size();
     saveB.setEnabled(grafcount <= 1);
     glyphs = new ArrayList();
+    GraphGlyph first_glyph = null;
+    
     for (int i=0; i<grafcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-      if (gl != null) {
+      if (gl instanceof SmartGraphGlyph) {
+        if (i==0) {
+          first_glyph = gl;
+        }
         glyphs.add(gl);
+        all_match_label &= (first_glyph.getShowLabel() == gl.getShowLabel());
+        all_match_y_axis &= (first_glyph.getShowAxis() == gl.getShowAxis());
+        all_match_attached &= (GraphGlyphUtils.hasFloatingAncestor(first_glyph) == GraphGlyphUtils.hasFloatingAncestor(gl));
       }
     }
     
     vis_bounds_adjuster.setGraphs(glyphs);
     score_thresh_adjuster.setGraphs(glyphs);
-    setEnabled(! glyphs.isEmpty());
-  }
-  
-  public void setEnabled(boolean b) {
-    super.setEnabled(b);
+    
+    if (glyphs.isEmpty()) {
+      attachB.setEnabled(false);
+      floatB.setEnabled(false);
+      yaxisCB.setEnabled(false);
+      labelCB.setEnabled(false);
+      not_attached_or_floatingB.setSelected(true);
+    } else {
+      attachB.setEnabled(true);
+      floatB.setEnabled(true);
+      yaxisCB.setEnabled(true);
+      labelCB.setEnabled(true);
+      if (all_match_attached) {
+        if (GraphGlyphUtils.hasFloatingAncestor(first_glyph)) {
+          floatB.setSelected(true);
+        } else {
+          attachB.setSelected(true);
+        }
+      } else {
+        not_attached_or_floatingB.setSelected(true);
+      }
+      yaxisCB.setSelected(all_match_y_axis && first_glyph.getShowAxis());
+      labelCB.setSelected(all_match_label && first_glyph.getShowLabel());
+    }
+    
+    boolean b = (! glyphs.isEmpty());
     scaleCB.setEnabled(b);
-    labelCB.setEnabled(b);
-    yaxisCB.setEnabled(b);
     handleCB.setEnabled(b);
     boundsCB.setEnabled(b);
     colorB.setEnabled(b);
@@ -355,10 +383,8 @@ public class GraphAdjusterView extends JComponent
     saveB.setEnabled(b);
     deleteB.setEnabled(b);
     styleCB.setEnabled(b);
-    attachB.setEnabled(b);
-    floatB.setEnabled(b);
   }
-
+  
   public void actionPerformed(ActionEvent evt) {
     //    System.out.println("GraphAdjusterView heard action event: " + evt);
     Object src = evt.getSource();

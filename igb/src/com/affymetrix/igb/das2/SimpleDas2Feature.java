@@ -75,8 +75,8 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     }
     //    cprops.put("id", feat_uri.toString());
     cprops.put("id", id);
-    if (type != null)  { cprops.put("type", type); }  // should never be null though
     if (name != null)  { cprops.put("name", name); }
+    if (type != null)  { cprops.put("type", type); }  // should never be null though
     if (doc_href != null) { cprops.put("link", doc_href); }
     if (created != null) { cprops.put("created", created); }
     if (modified != null) { cprops.put("modified", modified); }

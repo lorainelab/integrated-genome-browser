@@ -25,7 +25,7 @@ import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.das2.SimpleDas2Feature;
+import com.affymetrix.igb.das2.*;
 
 import com.affymetrix.igb.util.GenometryViewer; // for testing main
 
@@ -39,14 +39,21 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   // DO_SEQID_HACK is a very temporary fix!!!
   // Need to move to using full URI references to identify sequences,
-  public static boolean DO_SEQID_HACK = true;
+  public static boolean DO_SEQID_HACK = ! Das2Region.USE_SEGMENT_URI;
   static boolean DEBUG = false;
   static boolean REPORT_RESULTS = false;
+
+
+  //   "text/plain";
+  //   "text/x-das-feature+xml";
+  public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
+  public static String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
 
   /**
    *  elements possible in DAS2 feature response
    */
-  static final String FEATURES = "FEATURES";
+  //  static final String FEATURES = "FEATURES";
+  static String FEATURELIST = "FEATURELIST";
   static final String FEATURE = "FEATURE";
   static final String LOC = "LOC";
   static final String REGION = "REGION";
@@ -62,7 +69,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String XMLBASE = "xml:base";   // common to all elements?
   static final String XMLLANG = "xml:lang";   // common to all elements?
   static final String ID = "id";              // FEATURE, PARENT, PART, LOC, REGION
-  //  static final String TYPE = "type";      // replaced by "type_id"?
+  static final String TYPE = "type";      // replaced by "type_id"?
   static final String TYPEID = "type_id";     // FEATURE
   static final String NAME = "name";          // FEATURE
   static final String CREATED = "created";    // FEATURE
@@ -258,13 +265,15 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     // push base_uri onto stack whether it has changed or not
     base_uri_stack.push(current_base_uri);
 
-    if (current_elem == FEATURES) {
+    if (current_elem == FEATURELIST) {
     }
     else if (current_elem == FEATURE) {
 
       String feat_id_att = atts.getValue(ID);
       feat_id = current_base_uri.resolve(feat_id_att).toString();
+      // trying both "type" and "type_id" for type attribute name
       String feat_type_att = atts.getValue(TYPEID);
+      if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPE); }
       feat_type = current_base_uri.resolve(feat_type_att).toString();
 
       feat_name = atts.getValue(NAME);
@@ -281,7 +290,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       String range = atts.getValue(RANGE);
       // DO_SEQID_HACK is a very temporary fix!!!
       // Need to move to using full URI references to identify sequences,
-      //      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
+      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
       SeqSpan span = getLocationSpan(seqid, range, seqgroup);
       feat_locs.add(span);
     }
@@ -322,9 +331,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       String target_range = atts.getValue(RANGE);
       String cigar = atts.getValue(CIGAR);
       // not sure yet how to handle optional cigar string
-      // calling getLocationSpan() with null seq_group arg means that 
-      //    a new BioSeq will be created.  If we want this method to try and 
-      //    find existing BioSeqs to use, probably need some universal 
+      // calling getLocationSpan() with null seq_group arg means that
+      //    a new BioSeq will be created.  If we want this method to try and
+      //    find existing BioSeqs to use, probably need some universal
       //    BioSeq id resolution mechanism (similar or same as SeqSymmetry resolution)
       //    right now only have BioSeq id resolution relative to a particular AnnotatedSeqGroup
       SeqSpan span = getLocationSpan(target_id, target_range, null);
@@ -375,7 +384,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   public void endElement(String uri, String name, String qname)  {
     if (DEBUG)  { System.out.println("end element: " + name); }
     // only two elements that need post-processing are  <FEATURE> and <PROP> ?
-    //   other elements are either top <FEATURES> or have only attributes
+    //   other elements are either top <FEATURELISTS> or have only attributes
     if (name == FEATURE) {
       addFeature();
       clearFeature();
@@ -471,6 +480,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       for (int i=0; i<loc_count; i++) {
 	SeqSpan span = (SeqSpan)feat_locs.get(i);
 	BioSeq seq = span.getBioSeq();
+	//	System.out.println("top-level annotation created, seq = " + seq.getID());
 	MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq
 	if ((seq != null) && (aseq != null) && (seq == aseq)) {
 	  result_syms.add(featsym);
@@ -549,8 +559,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      *    need to switch over once stabilized
      **/
     public String getMimeType() {
-      //    return "text/x-das-feature+xml";
-      return "text/plain";
+      return FEATURES_CONTENT_TYPE;
     }
 
     /**
@@ -573,7 +582,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 	pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
 	pw.println("<!DOCTYPE DAS2FEATURE SYSTEM \"http://www.biodas.org/dtd/das2feature.dtd\"> ");
-	pw.println("<FEATURES  ");
+	pw.println("<" + FEATURELIST + " ");
 	pw.println("   xmlns=\"http://www.biodas.org/ns/das/2.00\" ");
 	pw.println("   xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 	//      pw.println("   xml:base=\"http:...\"> ");
@@ -586,7 +595,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  SeqSymmetry annot = (SeqSymmetry)iterator.next();
 	  writeDasFeature(annot, null, 0, seq, type, pw);
 	}
-	pw.println("</FEATURES>");
+	pw.println("</" + FEATURELIST + ">");
 	pw.flush();
       }
       catch (Exception ex) {

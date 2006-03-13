@@ -26,7 +26,8 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 public class Das2Region {
   static public boolean USE_TYPE_URI = false;
   static public boolean USE_SEGMENT_URI = false;
-  static public  boolean URL_ENCODE_QUERY = true;
+  //  static public boolean USE_SEQGROUP_URI = false;
+  static public  boolean URL_ENCODE_QUERY = false;
 
   URI region_uri;
   int length;

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,10 +13,10 @@
 
 package com.affymetrix.igb.genometry;
 
-import java.util.*;
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.glyph.GraphState;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -26,6 +26,7 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   float ycoords[];
   BioSeq graph_original_seq;
   String graph_name;
+  GraphState state;
 
   /** Property name that can be used to set/get the desired initial graph style.
    *  The property value should be an Integer where the int value can
@@ -41,6 +42,9 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   public Object clone() throws CloneNotSupportedException {
     GraphSym newsym = (GraphSym)super.clone();
     newsym.setGraphName(this.getGraphName() + ":clone");
+    if (state != null) {
+      newsym.state = new GraphState(state);
+    }
     return newsym;
   }
 
@@ -106,6 +110,20 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     return graph_original_seq;
   }
 
+  /**
+   *  Sets the graph state.  May be null.
+   */
+  public void setGraphState(GraphState state) {
+    this.state = state;
+  }
+  
+  /**
+   *  Returns the graph state.  May be null.
+   */
+  public GraphState getGraphState() {
+    return state;
+  }
+  
   /**
    *  Overriding request for property "method" to return graph name.
    */

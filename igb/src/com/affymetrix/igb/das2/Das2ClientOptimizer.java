@@ -54,7 +54,7 @@ public class Das2ClientOptimizer {
   static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
 
   static boolean DEBUG_HEADERS = false;
-  static boolean OPTIMIZE_FORMAT = true;
+  static boolean OPTIMIZE_FORMAT = false;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
 
   static String default_format = "das2feature";
@@ -354,13 +354,11 @@ public class Das2ClientOptimizer {
       if (success) {
 	java.util.List feats = null;
 	if (content_subtype.equals("das2feature") ||
+	    content_subtype.equals("das2xml") ||
 	    content_subtype.startsWith("x-das-feature")) {
 	  System.out.println("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
           InputSource isrc = new InputSource(bis);
-          // make sure to set system id to ensure proper resolution of relative URIs
-          //    (for example, if no xml:base in DAS2XML doc)
-          //          isrc.setSystemId(feature_query);
 	  feats = parser.parse(isrc, feature_query, seq_group, false);
 	}
 	else if (content_subtype.equals("bgn")) {

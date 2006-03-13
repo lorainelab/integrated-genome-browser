@@ -24,6 +24,7 @@ public class Das2Discovery {
   static {
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
     name2url.put("codesprint", "http://das.biopackages.net/codesprint/sequence");
+    name2url.put("Affy-temp", "http://205.217.46.81:9091/das2/sequence");  
     //    name2url.put("localhost", "http://localhost:9092/das2/sequence");
     //    name2url.put("netaffx", "http://netaffxdas.affymetrix.com/das2");
     //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");

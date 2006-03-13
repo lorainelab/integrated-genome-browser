@@ -511,8 +511,8 @@ class Das2TypeState {
 //    base_node_id.
     String subnode_strategy = base_node_id + "/type_load_strategy";
     String subnode_load = base_node_id + "/type_load";
-    System.out.println("subnode_strategy = " + subnode_strategy);
-    System.out.println("subnode_load = " + subnode_load);
+    // System.out.println("subnode_strategy = " + subnode_strategy);
+    //    System.out.println("subnode_load = " + subnode_load);
     //        System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
     lnode_load = das2_node.node(subnode_load);

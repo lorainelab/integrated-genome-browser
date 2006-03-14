@@ -66,7 +66,7 @@ public class Das2VersionedSource  {
 
   LinkedList platforms = new LinkedList();
 
-  public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name, 
+  public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
 			     String href, String description, boolean init) {
     this.name = name;
     version_uri = vers_uri;
@@ -105,7 +105,11 @@ public class Das2VersionedSource  {
 
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
-      genome = gmodel.addSeqGroup(this.getID());  // gets existing seq group if possible, otherwise adds new one
+      // trying to use name for groupd id first, if no name then use full URI
+      // This won't work in every situation!  Really need to resolve issues between VersionedSource URI ids and group ids
+      String groupid = this.getName();
+      if (groupid == null) { groupid = this.getID(); }
+      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
     }
     return genome;
   }
@@ -188,7 +192,7 @@ public class Das2VersionedSource  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute("id");
 	URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
-	
+
 	// GAH _TEMPORARY_ hack to strip down region_id
 	// Need to move to full URI resolution very soon!
 	if (Das2FeatureSaxParser.DO_SEQID_HACK) {
@@ -255,8 +259,8 @@ public class Das2VersionedSource  {
 	//FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         String ontid = typenode.getAttribute("ontology");
-	String type_source = typenode.getAttribute("source");                   
-	String href = typenode.getAttribute("doc_href");                        
+	String type_source = typenode.getAttribute("source");
+	String href = typenode.getAttribute("doc_href");
 	String type_name = typenode.getAttribute("name");
 
 	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
@@ -280,10 +284,10 @@ public class Das2VersionedSource  {
 	  props.put(key, val);
 	}
 	//	ontologyStuff2();
-	System.out.println("type id att: " + typeid);
-	System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
+	// System.out.println("type id att: " + typeid);
+	// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
 	URI type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
-	System.out.println("type URI: " + type_uri.toString());
+	// System.out.println("type URI: " + type_uri.toString());
 	Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?
 	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
 	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);

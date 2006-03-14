@@ -140,7 +140,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       AnnotStyle annot_style = AnnotStyle.getInstance(gsym.getGraphName(), false);
       state.setColor(annot_style.getColor());
 
-      displayGraph(gsym, smv, state, false);
+      if (gsym.getGraphState() == null) {
+        GraphState newstate = new GraphState(this.state);
+        gsym.setGraphState(newstate);
+      }
+      
+      displayGraph(gsym, smv, gsym.getGraphState(), false);
     }
     else {
       System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
@@ -279,6 +284,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (update_map) {
       map.updateWidget();
     }
+        
     return graph_glyph;
   }
 
@@ -329,7 +335,11 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 					float score_thresh, int minrun_thresh, int maxgap_thresh,
 					boolean show_thresh, int thresh_direction
 					) {
-    GraphState gstate = new GraphState();
+    if (graf.getGraphState() == null) {
+      GraphState newstate = new GraphState();
+      graf.setGraphState(newstate);
+    }
+    GraphState gstate = graf.getGraphState();
 
     // All properties were specified, so don't check the AnnotStyle here
     gstate.setColor(col);

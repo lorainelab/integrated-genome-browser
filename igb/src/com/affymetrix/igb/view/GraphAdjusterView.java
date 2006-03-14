@@ -343,7 +343,7 @@ public class GraphAdjusterView extends JComponent
         glyphs.add(gl);
         all_match_label &= (first_glyph.getShowLabel() == gl.getShowLabel());
         all_match_y_axis &= (first_glyph.getShowAxis() == gl.getShowAxis());
-        all_match_attached &= (GraphGlyphUtils.hasFloatingAncestor(first_glyph) == GraphGlyphUtils.hasFloatingAncestor(gl));
+        all_match_attached &= (first_glyph.getGraphState().getFloatGraph() == gl.getGraphState().getFloatGraph());
       }
     }
     
@@ -362,7 +362,7 @@ public class GraphAdjusterView extends JComponent
       yaxisCB.setEnabled(true);
       labelCB.setEnabled(true);
       if (all_match_attached) {
-        if (GraphGlyphUtils.hasFloatingAncestor(first_glyph)) {
+        if (first_glyph.getGraphState().getFloatGraph()) {
           floatB.setSelected(true);
         } else {
           attachB.setSelected(true);
@@ -480,7 +480,7 @@ public class GraphAdjusterView extends JComponent
           GraphSym graf = (GraphSym)grafs.get(i);
           GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
           if (gl != null) {
-            boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
+            boolean is_floating = gl.getGraphState().getFloatGraph();
             if (! is_floating) {
               GraphGlyphUtils.floatGraph(gl, gviewer);
             }
@@ -494,7 +494,7 @@ public class GraphAdjusterView extends JComponent
           GraphSym graf = (GraphSym)grafs.get(i);
           GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
           if (gl != null) {
-            boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gl);
+            boolean is_floating = gl.getGraphState().getFloatGraph();
             if (is_floating) {
               GraphGlyphUtils.attachGraph(gl, gviewer);
             }
@@ -630,7 +630,7 @@ public class GraphAdjusterView extends JComponent
       // if this is not a floating graph, then it's in a tier,
       //    so check tier -- if this graph is only child, then get rid of the tier also
       if (nwidg instanceof AffyLabelledTierMap &&
-          (! GraphGlyphUtils.hasFloatingAncestor(gl)) ) {
+          (! gl.getGraphState().getFloatGraph()) ) {
         AffyLabelledTierMap map = (AffyLabelledTierMap)nwidg;
         GlyphI parentgl = gl.getParent();
         parentgl.removeChild(gl);
@@ -679,7 +679,7 @@ public class GraphAdjusterView extends JComponent
       GraphSym sym1 = (GraphSym)grafs.get(0);
       GraphGlyph glyph1 = (GraphGlyph)nwidg.getItem(sym1);
       if (glyph1 != null) {
-        float_group = GraphGlyphUtils.hasFloatingAncestor(glyph1);
+        float_group = glyph1.getGraphState().getFloatGraph();
         GlyphI parent = glyph1.getParent();
         TierGlyph parent_tier = null;
         if (parent instanceof TierGlyph) {

@@ -15,7 +15,6 @@ package com.affymetrix.igb.event;
 
 import java.net.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
@@ -333,7 +332,7 @@ public class UrlLoaderThread extends Thread {
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
       
-      bps_parser.parse(dis, type, group, null, true, false);
+      bps_parser.parse(dis, type, null, group, false, true);
       group.symHashChanged(bps_parser);
     } finally {
       if (dis != null) try {dis.close();} catch (Exception e) {}

@@ -265,7 +265,6 @@ public class GraphScoreThreshSetter extends JPanel
     if (graphs.isEmpty()) {
       threshCB.setSelectedIndex(-1);
       threshCB.setEnabled(false);
-      tier_threshB.setEnabled(false);
     } else {
       SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
       boolean show_thresholds_match = true;
@@ -316,12 +315,12 @@ public class GraphScoreThreshSetter extends JPanel
       }
       
       threshCB.setEnabled(true);
-      tier_threshB.setEnabled(true);
     }
     
     max_gap_thresher.setGraphs(graphs);
     min_run_thresher.setGraphs(graphs);
     
+    tier_threshB.setEnabled(thresh_is_on);
     score_val_slider.setEnabled(thresh_is_on);
     score_percent_slider.setEnabled(thresh_is_on);
     score_valT.setEnabled(thresh_is_on);

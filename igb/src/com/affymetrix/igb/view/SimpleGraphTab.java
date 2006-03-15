@@ -191,7 +191,7 @@ implements SeqSelectionListener, SymSelectionListener {
     advanced_panel.setAlignmentY(0.0f);
     row1.add(advanced_panel);
 
-    advanced_panel.setVisible(true); // will be turned-on by a button
+    advanced_panel.setVisible(false); // will be turned-on by a button
     advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
     advB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

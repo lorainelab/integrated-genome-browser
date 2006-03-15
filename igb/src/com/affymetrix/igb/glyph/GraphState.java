@@ -149,6 +149,7 @@ public class GraphState {
     setMinRunThreshold(ostate.getMinRunThreshold());
     setThreshStartShift(ostate.getThreshStartShift());
     setThreshEndShift(ostate.getThreshEndShift());
+    setHeatMap(ostate.getHeatMap());
   }
 
 

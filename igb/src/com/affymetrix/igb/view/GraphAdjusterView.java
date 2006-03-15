@@ -38,6 +38,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
@@ -428,34 +429,7 @@ public class GraphAdjusterView extends JComponent
       nwidg.updateWidget();
     }
     else if (src == colorB) {
-      if (gcount > 0) {
-        // Set an initial color so that the "reset" button will work.
-        GraphSym graf_0 = (GraphSym)grafs.get(0);
-        GraphGlyph gl_0 = (GraphGlyph) nwidg.getItem(graf_0);
-        Color initial_color = gl_0.getColor();
-        Color col = JColorChooser.showDialog((Component)nwidg,
-                                             "Graph Color Chooser", initial_color);
-        // Note: If the user selects "Cancel", col will be null
-        if (col != null) for (int i=0; i<gcount; i++) {
-          GraphSym graf = (GraphSym)grafs.get(i);
-          AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
-          annot_style.setColor(col);
-          GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
-          if (gl != null) {
-            GraphState state = gl.getGraphState();
-            if (state != null) {
-              state.setColor(col);
-            }
-            gl.setColor(col);
-            // if graph is in a tier, change foreground color of tier also
-            //   (which in turn triggers change in color for TierLabelGlyph...)
-            if (gl.getParent() instanceof TierGlyph) {
-              gl.getParent().setForegroundColor(col);
-            }
-          }
-        }
-        nwidg.updateWidget();
-      }
+      changeColor(grafs, gviewer);      
     }
     else if (src == styleCB) {
       String selection = (String)((JComboBox)styleCB).getSelectedItem();
@@ -514,13 +488,16 @@ public class GraphAdjusterView extends JComponent
       groupGraphs(grafs);
     }
     else if (src == saveB) {
-      saveGraph();
+      saveGraphs(gviewer, grafs);
     }
     else if (src == deleteB) {
-      deleteGraphs();
+      deleteGraphs(gmodel, gviewer, grafs);
+      // trying to remove any references to deleted GraphSyms
+      vis_bounds_adjuster.setGraphs(this.grafs);
+      score_thresh_adjuster.setGraphs(this.grafs);
     }
     else if (src == cloneB) {
-      cloneGraphs();
+      cloneGraphs(gviewer, grafs);
     }
     else if (src == scaleCB) {
       String selection = (String)((JComboBox)scaleCB).getSelectedItem();
@@ -529,14 +506,14 @@ public class GraphAdjusterView extends JComponent
         FloatTransformer trans = (FloatTransformer)name2transform.get(selection);
         Timer tim = new Timer();
         tim.start();
-        transformGraph(selection, trans);
+        transformGraphs(gviewer, grafs, selection, trans);
         System.out.println("time to transform graph: " + tim.read()/1000f);
       }
     }
   }
 
-  int transform_count = 0;
-  public void transformGraph(String trans_name, FloatTransformer transformer) {
+  public static void transformGraphs(SeqMapView gviewer, java.util.List grafs, String trans_name, FloatTransformer transformer) {
+    int transform_count = 0;
     int gcount = grafs.size();
     int newgraf_count = 0;
     for (int i=0; i<gcount; i++) {
@@ -558,12 +535,12 @@ public class GraphAdjusterView extends JComponent
       transform_count++;
     }
     if (newgraf_count > 0)  {
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
+      updateViewer(gviewer);
     }
   }
 
-  public void cloneGraphs() {
-    System.out.println("cloning graphs");
+  public static void cloneGraphs(SeqMapView gviewer, java.util.List grafs) {
+    //System.out.println("cloning graphs");
     int gcount = grafs.size();
     try  {
       for (int i=0; i<gcount; i++) {
@@ -577,13 +554,17 @@ public class GraphAdjusterView extends JComponent
       }
     }
     catch (Exception ex)  {
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Error while trying to clone graphs", gviewer.getSeqMap(), ex);
     }
-    updateViewer();
+    updateViewer(gviewer);
     //    nwidg.updateWidget();
   }
 
-  protected void updateViewer()  {
+  void updateViewer() {
+    updateViewer(gviewer);
+  }
+  
+  static void updateViewer(SeqMapView gviewer)  {
     final SeqMapView current_viewer = gviewer;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -592,14 +573,14 @@ public class GraphAdjusterView extends JComponent
     });
   }
 
-  public void deleteGraphs() {
+  public static void deleteGraphs(SingletonGenometryModel gmodel, SeqMapView gviewer, java.util.List grafs) {
     int gcount = grafs.size();
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
-      deleteGraph(graf);
+      deleteGraph(gviewer, graf);
     }
-    gmodel.clearSelectedSymmetries(this);
-    nwidg.updateWidget();
+    gmodel.clearSelectedSymmetries(GraphAdjusterView.class);
+    gviewer.getSeqMap().updateWidget();
   }
 
   /**
@@ -609,7 +590,7 @@ public class GraphAdjusterView extends JComponent
    *  happens to be a child of a tier in the widget, and the tier has no children
    *  left after deleting the graph, then delete the tier as well.
    */
-  void deleteGraph(GraphSym gsym) {
+  public static void deleteGraph(SeqMapView gviewer, GraphSym gsym) {
     //System.out.println("deleting graph: " + gsym);
     gviewer.getGraphFactoryHash().remove(gsym);
 
@@ -618,20 +599,17 @@ public class GraphAdjusterView extends JComponent
       MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
       mut.removeAnnotation(gsym);
     }
-    GraphGlyph gl = (GraphGlyph)nwidg.getItem(gsym);
+    GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
     if (gl != null) {
-      vis_bounds_adjuster.deleteGraph(gl);  // trying to remove any references to GraphSym
-      score_thresh_adjuster.deleteGraph(gl);
-
-      nwidg.removeItem(gl);
+      gviewer.getSeqMap().removeItem(gl);
       // clean-up references to the graph, allowing garbage-collection, etc.
       gviewer.select(Collections.EMPTY_LIST);
 
       // if this is not a floating graph, then it's in a tier,
       //    so check tier -- if this graph is only child, then get rid of the tier also
-      if (nwidg instanceof AffyLabelledTierMap &&
+      if (gviewer.getSeqMap() instanceof AffyLabelledTierMap &&
           (! gl.getGraphState().getFloatGraph()) ) {
-        AffyLabelledTierMap map = (AffyLabelledTierMap)nwidg;
+        AffyLabelledTierMap map = (AffyLabelledTierMap)gviewer.getSeqMap();
         GlyphI parentgl = gl.getParent();
         parentgl.removeChild(gl);
         if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
@@ -647,11 +625,11 @@ public class GraphAdjusterView extends JComponent
   }
 
 
-  public void saveGraph() {
+  public static void saveGraphs(SeqMapView gviewer, java.util.List grafs) {
     int gcount = grafs.size();
     if (gcount > 1) {
       // actually shouldn't get here, since save button is disabled if more than one graph
-      IGB.errorPanel("Can only save one graph at a time");
+      ErrorHandler.errorPanel("Can only save one graph at a time");
     }
     else if (gcount == 1) {
       GraphSym gsym = (GraphSym)grafs.get(0);
@@ -667,7 +645,7 @@ public class GraphAdjusterView extends JComponent
         }
       }
       catch (Exception ex) {
-        IGB.errorPanel("Error saving graph", ex);
+        ErrorHandler.errorPanel("Error saving graph", ex);
       }
     }
   }
@@ -698,7 +676,38 @@ public class GraphAdjusterView extends JComponent
       }
     }
   }
-
+  
+  public static void changeColor(java.util.List graf_syms, SeqMapView gviewer) {
+    int gcount = graf_syms.size();
+    if (gcount > 0) {
+      // Set an initial color so that the "reset" button will work.
+      GraphSym graf_0 = (GraphSym) graf_syms.get(0);
+      GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
+      Color initial_color = gl_0.getColor();
+      Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
+        "Graph Color Chooser", initial_color);
+      // Note: If the user selects "Cancel", col will be null
+      if (col != null) for (int i=0; i<gcount; i++) {
+        GraphSym graf = (GraphSym) graf_syms.get(i);
+        AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
+        annot_style.setColor(col);
+        GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
+        if (gl != null) {
+          GraphState state = gl.getGraphState();
+          if (state != null) {
+            state.setColor(col);
+          }
+          gl.setColor(col);
+          // if graph is in a tier, change foreground color of tier also
+          //   (which in turn triggers change in color for TierLabelGlyph...)
+          if (gl.getParent() instanceof TierGlyph) {
+            gl.getParent().setForegroundColor(col);
+          }
+        }
+      }
+      gviewer.getSeqMap().updateWidget();
+    }
+  }
 
   public static void main(String[] args) {
     SeqMapView map = new SeqMapView();

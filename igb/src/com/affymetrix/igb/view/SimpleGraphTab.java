@@ -14,6 +14,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.SeqSelectionListener;
@@ -26,16 +27,16 @@ import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.util.FloatTransformer;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
-// import org.jdesktop.layout.*;
+
 
 public class SimpleGraphTab extends JPanel
 implements SeqSelectionListener, SymSelectionListener {
@@ -64,14 +65,16 @@ implements SeqSelectionListener, SymSelectionListener {
   JRadioButton hidden_styleB = new JRadioButton("No Selectoin"); // this button will not be displayed
   ButtonGroup stylegroup = new ButtonGroup();
   
-  JComboBox heat_mapCB;
-
+  JButton colorB = new JButton("Color");
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
-  
+      
   JButton selectAllB = new JButton("Select All");
-  JButton resetB = new JButton("Reset Appearance");
+  JButton resetB = new JButton("Use Defaults");
   JButton advB = new JButton("Advanced...");
   JButton threshB = new JButton("Thresholding...");
+  
+  JPanel advanced_panel;
+  
 
   public SimpleGraphTab() {
     this(IGB.getSingletonIGB());
@@ -83,8 +86,6 @@ implements SeqSelectionListener, SymSelectionListener {
     } else {
       this.gviewer = igb.getMapView();
     }
-
-    this.setLayout(new BorderLayout());
 
     Vector v = new Vector(8);
     v.add(HeatMap.HEATMAP_0);
@@ -99,13 +100,6 @@ implements SeqSelectionListener, SymSelectionListener {
     heat_mapCB = new JComboBox(v);
     heat_mapCB.addItemListener(new HeatMapItemListener());
 
-    // A box to contain the heat-map JComboBox, to help get the alignment right
-    Box heat_mapCB_box = Box.createHorizontalBox();
-    heat_mapCB_box.setAlignmentX(0.0f);
-    heat_mapCB_box.add(Box.createHorizontalStrut(16));
-    heat_mapCB_box.add(heat_mapCB);
-    heat_mapCB_box.add(Box.createHorizontalGlue());
-    heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
     
     Box stylebox = Box.createVerticalBox();
     stylebox.setAlignmentX(1.0f);
@@ -115,7 +109,6 @@ implements SeqSelectionListener, SymSelectionListener {
     stylebox.add(mmavgB);
     stylebox.add(sstepB);
     stylebox.add(hmapB);
-    stylebox.add(heat_mapCB_box);
 
     barB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.BAR_GRAPH));
     dotB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.DOT_GRAPH));
@@ -142,23 +135,29 @@ implements SeqSelectionListener, SymSelectionListener {
     }
     score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_setter);
 
-    Box scalebox = Box.createVerticalBox();
-    //    scalebox.setBorder(new TitledBorder("Graph Scaling"));
-    //scalebox.setBorder(new TitledBorder("Y-axis Scale"));
-    scalebox.add(vis_bounds_setter);    
+    
+    Box height_and_color_box = Box.createHorizontalBox();
+    height_and_color_box.add(colorB);
+    height_and_color_box.add(Box.createRigidArea(new Dimension(5,5)));
     height_slider.setBorder(new TitledBorder("Height"));
-    scalebox.add(height_slider);
+    height_and_color_box.add(height_slider);
+    
+    Box scalebox = Box.createVerticalBox();
+    vis_bounds_setter.setAlignmentX(0.0f);
+    scalebox.add(vis_bounds_setter);
+    scalebox.add(height_and_color_box);
+    height_and_color_box.setAlignmentX(0.0f);
     
     height_slider.addChangeListener(new GraphHeightSetter());
     
     Box butbox = Box.createHorizontalBox();
     butbox.add(Box.createHorizontalGlue());
     butbox.add(selectAllB);
-    butbox.add(Box.createHorizontalStrut(5));
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(resetB);
-    butbox.add(Box.createHorizontalStrut(5));
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(advB);
-    butbox.add(Box.createHorizontalStrut(5));
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(threshB);
     butbox.add(Box.createHorizontalGlue());
     
@@ -173,11 +172,43 @@ implements SeqSelectionListener, SymSelectionListener {
         showGraphScoreThreshSetter();
       }
     });
+       
+    colorB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        GraphAdjusterView.changeColor(grafs, gviewer);
+      }
+    });
+    
+    Box label_box = Box.createHorizontalBox();
+    label_box.add(selected_graphs_label);
+        
+    Box row1 = Box.createHorizontalBox();
+    stylebox.setAlignmentY(0.0f);
+    row1.add(stylebox);
+    scalebox.setAlignmentY(0.0f);
+    row1.add(scalebox);
+    advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
+    advanced_panel.setAlignmentY(0.0f);
+    row1.add(advanced_panel);
 
-    this.add(selected_graphs_label, "North");
-    this.add(stylebox, "West");
-    this.add(scalebox, "Center");
-    this.add(butbox, "South");
+    advanced_panel.setVisible(true); // will be turned-on by a button
+    advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
+    advB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        advanced_panel.setVisible(! advanced_panel.isVisible());
+        advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
+      }
+    });
+    
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    label_box.setAlignmentX(0.0f);
+    this.add(label_box);
+    row1.setAlignmentX(0.0f);
+    this.add(row1);
+    butbox.setAlignmentX(0.0f);
+    butbox.setAlignmentY(1.0f);
+    this.add(Box.createVerticalGlue());
+    this.add(butbox);
 
     setSeqMapView(this.gviewer); // called for the side-effects
 
@@ -264,6 +295,10 @@ implements SeqSelectionListener, SymSelectionListener {
 
     int num_glyphs = glyphs.size();
     double the_height = -1; // -1 indicates unknown height
+    
+    boolean all_are_floating = false;
+    boolean all_show_axis = false;
+    boolean all_show_label = false;
 
     // Take the first glyph in the list as a prototype
     SmartGraphGlyph first_glyph = null;
@@ -276,12 +311,20 @@ implements SeqSelectionListener, SymSelectionListener {
         hm = first_glyph.getHeatMap();
       }
       the_height = first_glyph.getGraphState().getGraphHeight();
+      all_are_floating = first_glyph.getGraphState().getFloatGraph();
+      all_show_axis = first_glyph.getGraphState().getShowAxis();
+      all_show_label = first_glyph.getGraphState().getShowLabel();
     }
 
     // Now loop through other glyphs if there are more than one
     // and see if the graph_style and heatmap are the same in all selections
     for (int i=1; i < num_glyphs; i++) {
       SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+      
+      all_are_floating &= gl.getGraphState().getFloatGraph();
+      all_show_axis &= gl.getGraphState().getShowAxis();
+      all_show_label &= gl.getGraphState().getShowLabel();
+      
       if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
         graph_style = -1;
       }
@@ -344,12 +387,26 @@ implements SeqSelectionListener, SymSelectionListener {
     vis_bounds_setter.setGraphs(glyphs);
     score_thresh_adjuster.setGraphs(glyphs);
     
+    if (! glyphs.isEmpty()) {
+      floatCB.setSelected(all_are_floating);
+      yaxisCB.setSelected(all_show_axis);
+      labelCB.setSelected(all_show_label);
+    }
+    
     boolean b = ! (grafs.isEmpty());
     height_slider.setEnabled(b);
-    resetB.setEnabled(b);
-    advB.setEnabled(b);
+    resetB.setEnabled(false);
+    advB.setEnabled(true);
     threshB.setEnabled(true);
     enableButtons(stylegroup, b);
+    floatCB.setEnabled(b);
+    yaxisCB.setEnabled(b);
+    labelCB.setEnabled(b);
+    
+    colorB.setEnabled(b);
+    saveB.setEnabled(grafs.size() == 1);
+    deleteB.setEnabled(b);
+    cloneB.setEnabled(b);
     
     is_listening = true; // turn back on GUI events
   }
@@ -427,6 +484,16 @@ implements SeqSelectionListener, SymSelectionListener {
       SwingUtilities.invokeLater(r);
     }
   }
+  
+  void updateViewer() {
+    final SeqMapView current_viewer = gviewer;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        current_viewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+      }
+    });
+  }
+
 
   class HeatMapItemListener implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
@@ -473,5 +540,201 @@ implements SeqSelectionListener, SymSelectionListener {
       }
       gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
     }
-  }  
-}
+  }
+
+  static Map name2transform;
+  
+  static String BLANK = "";
+  static String LOG_10 = "Log10";
+  static String LOG_2 = "Log2";
+  static String LOG_NATURAL = "Natural Log";
+  static String INVERSE_LOG_10 = "Inverse Log10";
+  static String INVERSE_LOG_2 = "Inverse Log2";
+  static String INVERSE_LOG_NATURAL = "Inverse Natural Log";
+  
+  static {
+    name2transform = new LinkedHashMap();
+    name2transform.put(LOG_10, new LogTransform(10));
+    name2transform.put(LOG_2, new LogTransform(2));
+    name2transform.put(LOG_NATURAL, new LogTransform(Math.E));
+    name2transform.put(INVERSE_LOG_10, new InverseLogTransform(10));
+    name2transform.put(INVERSE_LOG_2, new InverseLogTransform(2));
+    name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
+  }
+
+  JButton saveB = new JButton("Save...");
+  JButton deleteB = new JButton("Delete");
+  JButton cloneB = new JButton("Clone");
+  JLabel heat_map_label = new JLabel("Heat Map:");
+  JLabel scale_type_label = new JLabel("Clone with new scale:");
+  JComboBox scaleCB = new JComboBox();
+  
+  JCheckBox labelCB = new JCheckBox("Label");
+  JCheckBox yaxisCB = new JCheckBox("Y Axis");
+  JCheckBox floatCB = new JCheckBox("Floating");
+  
+  JComboBox heat_mapCB;
+  
+
+  class AdvancedGraphPanel extends JPanel {
+    
+    
+    public AdvancedGraphPanel() {
+      
+      JPanel advanced_panel = this;
+      
+      advanced_panel.setLayout(new BoxLayout(advanced_panel, BoxLayout.Y_AXIS));
+      
+      //  scaleCB.addItem(BLANK);
+      Iterator iter = name2transform.keySet().iterator();
+      while (iter.hasNext()) {
+        String name = (String)iter.next();
+        scaleCB.addItem(name);
+      }
+
+      Box save_delete_button_box = Box.createHorizontalBox();
+      //save_delete_button_box.add(Box.createHorizontalGlue());
+      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      save_delete_button_box.add(saveB);
+      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      save_delete_button_box.add(deleteB);
+      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      save_delete_button_box.add(cloneB);
+      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      //save_delete_button_box.add(Box.createHorizontalGlue());
+      
+      Box decoration_row = Box.createHorizontalBox();
+      decoration_row.setBorder(new EtchedBorder());
+      decoration_row.add(labelCB);
+      decoration_row.add(yaxisCB);
+      decoration_row.add(floatCB);
+      //decoration_row.add(Box.createHorizontalGlue());
+      
+      // A box to contain the heat-map JComboBox, to help get the alignment right
+      Box heat_mapCB_box = Box.createHorizontalBox();
+      heat_mapCB_box.setAlignmentX(0.0f);
+      heat_mapCB_box.add(Box.createHorizontalStrut(16));
+      heat_mapCB_box.add(heat_mapCB);
+      //heat_mapCB_box.add(Box.createHorizontalGlue());
+      heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
+      
+      // A box to contain the scaleCB JComboBox, to help get the alignment right
+      Box scaleCB_box = Box.createHorizontalBox();
+      scaleCB_box.setAlignmentX(0.0f);
+      scaleCB_box.add(Box.createRigidArea(new Dimension(16,5)));
+      scaleCB_box.add(scaleCB);
+      //scaleCB_box.add(Box.createHorizontalGlue());
+      scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
+      
+      
+      advanced_panel.setBorder(new TitledBorder("Advanced"));
+      save_delete_button_box.setAlignmentX(0.0f);
+      advanced_panel.add(save_delete_button_box);
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
+      //
+      decoration_row.setAlignmentX(0.0f);
+      advanced_panel.add(decoration_row);
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
+      //
+      //colorB_box.setAlignmentX(0.0f);
+      //advanced_panel.add(colorB);
+      //advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
+      //
+      advanced_panel.add(heat_map_label);
+      advanced_panel.add(heat_mapCB_box);
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
+      //
+      //resetB.setAlignmentX(0.0f);
+      //advanced_panel.add(resetB);
+      advanced_panel.add(scale_type_label);
+      scaleCB_box.setAlignmentX(0.0f);
+      advanced_panel.add(scaleCB_box);
+      
+      saveB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          GraphAdjusterView.saveGraphs(gviewer, grafs);
+        }
+      });
+      
+      deleteB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
+        }
+      });
+      
+      cloneB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          GraphAdjusterView.cloneGraphs(gviewer, grafs);
+        }
+      });
+
+      scaleCB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          scaleGraphs();
+        }
+      });
+      
+      floatCB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          floatGraphs(floatCB.isSelected());
+        }
+      });      
+      
+      labelCB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          setShowLabels(labelCB.isSelected());
+        }
+      });
+      
+      yaxisCB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          setShowAxis(yaxisCB.isSelected());
+        }
+      });      
+    }
+
+    void setShowAxis(boolean b) {
+      for (int i=0; i<glyphs.size(); i++) {
+        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+        if (gl instanceof SmartGraphGlyph) {
+          ((SmartGraphGlyph)gl).setShowAxis(b);
+        }
+      }
+      gviewer.getSeqMap().updateWidget();
+    }
+    
+    void setShowLabels(boolean b) {
+      for (int i=0; i<glyphs.size(); i++) {
+        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+        if (gl instanceof SmartGraphGlyph) {
+          ((SmartGraphGlyph)gl).setShowLabel(b);
+        }
+      }
+      gviewer.getSeqMap().updateWidget();
+    }
+    
+    void scaleGraphs() {
+      String selection = (String) scaleCB.getSelectedItem();
+      if (selection != BLANK) {
+        System.out.println("selected scaling: " + selection);
+        FloatTransformer trans = (FloatTransformer) name2transform.get(selection);
+        Timer tim = new Timer();
+        tim.start();
+        GraphAdjusterView.transformGraphs(gviewer, grafs, selection, trans);
+        System.out.println("time to transform graph: " + tim.read()/1000f);
+      }
+    }
+    
+    void floatGraphs(boolean do_float) {
+      for (int i=0; i<glyphs.size(); i++) {
+        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+        boolean is_floating = gl.getGraphState().getFloatGraph();
+        if (do_float && (! is_floating)) {
+          GraphGlyphUtils.floatGraph(gl, gviewer);
+        } else if ( (! do_float) && is_floating) {
+          GraphGlyphUtils.attachGraph(gl, gviewer);
+        }
+      }
+    }
+  }
+ }

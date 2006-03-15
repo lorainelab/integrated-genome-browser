@@ -69,8 +69,8 @@ implements SeqSelectionListener, SymSelectionListener {
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
       
   JButton selectAllB = new JButton("Select All");
-  JButton resetB = new JButton("Use Defaults");
-  JButton advB = new JButton("Advanced...");
+  JButton resetB = new JButton("Reset");
+  //JButton advB = new JButton("Advanced...");
   JButton threshB = new JButton("Thresholding...");
   
   JPanel advanced_panel;
@@ -156,8 +156,8 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(resetB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    butbox.add(advB);
-    butbox.add(Box.createRigidArea(new Dimension(5,5)));
+    //butbox.add(advB);
+    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(threshB);
     butbox.add(Box.createHorizontalGlue());
     
@@ -191,14 +191,14 @@ implements SeqSelectionListener, SymSelectionListener {
     advanced_panel.setAlignmentY(0.0f);
     row1.add(advanced_panel);
 
-    advanced_panel.setVisible(false); // will be turned-on by a button
-    advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
-    advB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        advanced_panel.setVisible(! advanced_panel.isVisible());
-        advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
-      }
-    });
+//    advanced_panel.setVisible(false); // will be turned-on by a button
+//    advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
+//    advB.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        advanced_panel.setVisible(! advanced_panel.isVisible());
+//        advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
+//      }
+//    });
     
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     label_box.setAlignmentX(0.0f);
@@ -396,7 +396,7 @@ implements SeqSelectionListener, SymSelectionListener {
     boolean b = ! (grafs.isEmpty());
     height_slider.setEnabled(b);
     resetB.setEnabled(false);
-    advB.setEnabled(true);
+    //advB.setEnabled(true);
     threshB.setEnabled(true);
     enableButtons(stylegroup, b);
     floatCB.setEnabled(b);

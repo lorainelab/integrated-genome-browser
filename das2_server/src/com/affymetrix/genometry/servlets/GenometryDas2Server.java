@@ -25,6 +25,9 @@ public class GenometryDas2Server {
       String data_path = args[1];
       System.setProperty("das2_genometry_server_dir", data_path);
     }
+    if (args.length > 2) {
+      System.setProperty("das2_maintainer_email", args[2]);
+    }
 
     if (SHOW_GUI) {
       final JFrame frm = new JFrame("Genometry Server");

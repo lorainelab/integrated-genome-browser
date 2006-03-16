@@ -62,19 +62,23 @@ implements SeqSelectionListener, SymSelectionListener {
   JRadioButton dotB = new JRadioButton("Dot");
   JRadioButton sstepB = new JRadioButton("Stairstep");
   JRadioButton hmapB = new JRadioButton("Heat Map");
-  JRadioButton hidden_styleB = new JRadioButton("No Selectoin"); // this button will not be displayed
+  JRadioButton hidden_styleB = new JRadioButton("No Selection"); // this button will not be displayed
   ButtonGroup stylegroup = new ButtonGroup();
   
   JButton colorB = new JButton("Color");
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
-      
+
   JButton selectAllB = new JButton("Select All");
   JButton resetB = new JButton("Reset");
+  JButton saveB = new JButton("Save...");
+  JButton deleteB = new JButton("Delete");
   //JButton advB = new JButton("Advanced...");
   JButton threshB = new JButton("Thresholding...");
   
-  JPanel advanced_panel;
+  JLabel heat_map_label = new JLabel("Heat Map:");
+  JComboBox heat_mapCB;
   
+  JPanel advanced_panel;  
 
   public SimpleGraphTab() {
     this(IGB.getSingletonIGB());
@@ -100,15 +104,37 @@ implements SeqSelectionListener, SymSelectionListener {
     heat_mapCB = new JComboBox(v);
     heat_mapCB.addItemListener(new HeatMapItemListener());
 
+    // A box to contain the heat-map JComboBox, to help get the alignment right
+    Box heat_mapCB_box = Box.createHorizontalBox();
+    heat_mapCB_box.add(Box.createHorizontalStrut(16));
+    heat_mapCB_box.add(heat_mapCB);
+    //heat_mapCB_box.add(Box.createHorizontalGlue());
+    heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
+    
+    Box stylebox_radiobox = Box.createHorizontalBox();
+    Box stylebox_radiobox_col1 = Box.createVerticalBox();
+    Box stylebox_radiobox_col2 = Box.createVerticalBox();
+    stylebox_radiobox_col1.add(barB);
+    stylebox_radiobox_col1.add(dotB);
+    stylebox_radiobox_col1.add(hmapB);
+    stylebox_radiobox_col2.add(lineB);
+    stylebox_radiobox_col2.add(mmavgB);
+    stylebox_radiobox_col2.add(sstepB);
+    stylebox_radiobox.add(stylebox_radiobox_col1);
+    stylebox_radiobox.add(stylebox_radiobox_col2);
+
+    Box color_button_box = Box.createHorizontalBox();
+    color_button_box.add(Box.createRigidArea(new Dimension(16, 1)));
+    color_button_box.add(colorB);
     
     Box stylebox = Box.createVerticalBox();
-    stylebox.setAlignmentX(1.0f);
-    stylebox.add(barB);
-    stylebox.add(dotB);
-    stylebox.add(lineB);
-    stylebox.add(mmavgB);
-    stylebox.add(sstepB);
-    stylebox.add(hmapB);
+    color_button_box.setAlignmentX(0.0f);
+    stylebox.add(color_button_box);
+    stylebox_radiobox.setAlignmentX(0.0f);
+    stylebox.add(stylebox_radiobox);
+    //stylebox.add(heat_map_label);
+    heat_mapCB_box.setAlignmentX(0.0f);
+    stylebox.add(heat_mapCB_box);
 
     barB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.BAR_GRAPH));
     dotB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.DOT_GRAPH));
@@ -136,17 +162,15 @@ implements SeqSelectionListener, SymSelectionListener {
     score_thresh_adjuster = new GraphScoreThreshSetter(gviewer, vis_bounds_setter);
 
     
-    Box height_and_color_box = Box.createHorizontalBox();
-    height_and_color_box.add(colorB);
-    height_and_color_box.add(Box.createRigidArea(new Dimension(5,5)));
+    //Box height_and_color_box = Box.createHorizontalBox();
     height_slider.setBorder(new TitledBorder("Height"));
-    height_and_color_box.add(height_slider);
+    //height_and_color_box.add(height_slider);
     
     Box scalebox = Box.createVerticalBox();
     vis_bounds_setter.setAlignmentX(0.0f);
     scalebox.add(vis_bounds_setter);
-    scalebox.add(height_and_color_box);
-    height_and_color_box.setAlignmentX(0.0f);
+    height_slider.setAlignmentX(0.0f);
+    scalebox.add(height_slider);
     
     height_slider.addChangeListener(new GraphHeightSetter());
     
@@ -158,7 +182,12 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     //butbox.add(advB);
     //butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    butbox.add(threshB);
+    //butbox.add(threshB);
+    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
+    butbox.add(saveB);
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
+    butbox.add(deleteB);
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(Box.createHorizontalGlue());
     
     selectAllB.addActionListener(new ActionListener() {
@@ -167,20 +196,9 @@ implements SeqSelectionListener, SymSelectionListener {
       }
     });
     
-    threshB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showGraphScoreThreshSetter();
-      }
-    });
-       
-    colorB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        GraphAdjusterView.changeColor(grafs, gviewer);
-      }
-    });
-    
     Box label_box = Box.createHorizontalBox();
     label_box.add(selected_graphs_label);
+    label_box.add(Box.createHorizontalGlue());
         
     Box row1 = Box.createHorizontalBox();
     stylebox.setAlignmentY(0.0f);
@@ -200,9 +218,17 @@ implements SeqSelectionListener, SymSelectionListener {
 //      }
 //    });
     
+    colorB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        GraphAdjusterView.changeColor(grafs, gviewer);
+      }
+    });
+    
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     label_box.setAlignmentX(0.0f);
+    this.add(Box.createRigidArea(new Dimension(1,5)));
     this.add(label_box);
+    this.add(Box.createRigidArea(new Dimension(1,5)));
     row1.setAlignmentX(0.0f);
     this.add(row1);
     butbox.setAlignmentX(0.0f);
@@ -562,10 +588,7 @@ implements SeqSelectionListener, SymSelectionListener {
     name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
   }
 
-  JButton saveB = new JButton("Save...");
-  JButton deleteB = new JButton("Delete");
   JButton cloneB = new JButton("Clone");
-  JLabel heat_map_label = new JLabel("Heat Map:");
   JLabel scale_type_label = new JLabel("Clone with new scale:");
   JComboBox scaleCB = new JComboBox();
   
@@ -573,12 +596,8 @@ implements SeqSelectionListener, SymSelectionListener {
   JCheckBox yaxisCB = new JCheckBox("Y Axis");
   JCheckBox floatCB = new JCheckBox("Floating");
   
-  JComboBox heat_mapCB;
-  
-
   class AdvancedGraphPanel extends JPanel {
-    
-    
+      
     public AdvancedGraphPanel() {
       
       JPanel advanced_panel = this;
@@ -592,31 +611,20 @@ implements SeqSelectionListener, SymSelectionListener {
         scaleCB.addItem(name);
       }
 
-      Box save_delete_button_box = Box.createHorizontalBox();
-      //save_delete_button_box.add(Box.createHorizontalGlue());
-      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      save_delete_button_box.add(saveB);
-      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      save_delete_button_box.add(deleteB);
-      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      save_delete_button_box.add(cloneB);
-      save_delete_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      //save_delete_button_box.add(Box.createHorizontalGlue());
+      Box advanced_button_box = Box.createHorizontalBox();
+      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      advanced_button_box.add(cloneB);
+      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      advanced_button_box.add(threshB);
+      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      //advanced_button_box.add(Box.createHorizontalGlue());
       
       Box decoration_row = Box.createHorizontalBox();
-      decoration_row.setBorder(new EtchedBorder());
+      //decoration_row.setBorder(new EtchedBorder());
       decoration_row.add(labelCB);
       decoration_row.add(yaxisCB);
       decoration_row.add(floatCB);
       //decoration_row.add(Box.createHorizontalGlue());
-      
-      // A box to contain the heat-map JComboBox, to help get the alignment right
-      Box heat_mapCB_box = Box.createHorizontalBox();
-      heat_mapCB_box.setAlignmentX(0.0f);
-      heat_mapCB_box.add(Box.createHorizontalStrut(16));
-      heat_mapCB_box.add(heat_mapCB);
-      //heat_mapCB_box.add(Box.createHorizontalGlue());
-      heat_mapCB_box.setMaximumSize(heat_mapCB_box.getPreferredSize());
       
       // A box to contain the scaleCB JComboBox, to help get the alignment right
       Box scaleCB_box = Box.createHorizontalBox();
@@ -628,24 +636,14 @@ implements SeqSelectionListener, SymSelectionListener {
       
       
       advanced_panel.setBorder(new TitledBorder("Advanced"));
-      save_delete_button_box.setAlignmentX(0.0f);
-      advanced_panel.add(save_delete_button_box);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
-      //
+      advanced_button_box.setAlignmentX(0.0f);
       decoration_row.setAlignmentX(0.0f);
       advanced_panel.add(decoration_row);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
       //
-      //colorB_box.setAlignmentX(0.0f);
-      //advanced_panel.add(colorB);
-      //advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
-      //
-      advanced_panel.add(heat_map_label);
-      advanced_panel.add(heat_mapCB_box);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,5)));
-      //
-      //resetB.setAlignmentX(0.0f);
-      //advanced_panel.add(resetB);
+      advanced_panel.add(advanced_button_box);
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
+
       advanced_panel.add(scale_type_label);
       scaleCB_box.setAlignmentX(0.0f);
       advanced_panel.add(scaleCB_box);
@@ -690,7 +688,13 @@ implements SeqSelectionListener, SymSelectionListener {
         public void actionPerformed(ActionEvent e) {
           setShowAxis(yaxisCB.isSelected());
         }
-      });      
+      });
+
+      threshB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          showGraphScoreThreshSetter();
+        }
+      });
     }
 
     void setShowAxis(boolean b) {

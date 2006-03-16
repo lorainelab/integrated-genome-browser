@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.regex.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 
 // import com.affymetrix.igb.test.SearchSymTest;
@@ -35,31 +35,45 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
   static boolean MAKE_LANDSCAPES = false;
   static boolean TIME_RESPONSES = true;
+  static boolean ADD_VERSION_TO_CONTENT_TYPE = true;
+  static boolean USE_CREATED_ATT = true;
 
+  static String DAS2_VERSION = "200";
+  public static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
   static String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
   static String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
   static String TYPES_CONTENT_TYPE = "application/x-das-types+xml";
   //    FEATURES_CONTENT_TYPE is set in the AnnotationWriter
   //  static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
 
+  // For now server doesn't really understand seqeunce ontology, so just 
+  //    using the topmost term for annotations with sequence locations: 
+  //    SO:0000110, "located_sequence_feature";
+  static String default_onto_term = "SO:0000110";  
+  static String default_onto_uri = default_onto_term;
+
+  static String URID = "uri";
+  static String NAME = "title";
+  static String ONTOLOGY = "ontology";
+
   /*
    *  DAS commands recognized by GenometryDas2Servlet
    *  (additional commands may be recognized by command plugins)
    */
-  //  static String sources_query = "genome";
-  //  static String regions_query = "region";
-  //  static String types_query = "type";
-  //  static String range_feature_query = "feature";
   static String sources_query = "sequence";
   static String segments_query = "segments";
   static String types_query = "types";
   static String features_query = "features";
+  static String query_att = "query_uri";
   //  static String add_command = "add_features";
 
   static String default_feature_format = "das2feature";
+
   // see data_root for explanation
-  static final String genometry_server_dir = System.getProperty("das2_genometry_server_dir");
   static String default_data_root = "c:/data/genometry_server_data/das2_2005-02/";
+  static String genometry_server_dir = System.getProperty("das2_genometry_server_dir");
+  static String maintainer_email = System.getProperty("das2_maintainer_email");
+
   // static default_data_root = System.getProperty("user.dir") + "/das2_server/test_2005-02/" :
 
   /** The root directory of the data to be served-up.
@@ -109,8 +123,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
   //  HashMap directory_filter = new HashMap();
   Memer mem;
   Map output_registry = new HashMap();
-  DateFormat date_formatter = DateFormat.getDateTimeInstance();
+  //  DateFormat date_formatter = DateFormat.getDateTimeInstance();
+  SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
   long date_initialized = 0;
+  String date_init_string = null;
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
@@ -161,6 +177,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
     System.out.println("finished with GenometryDas2Servlet.init()");
     date_initialized = System.currentTimeMillis();
+    date_init_string = date_formatter.format(new Date(date_initialized));
   }
 
   public void loadGenomes() throws IOException {
@@ -472,7 +489,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
     log.add("request uri = " + request.getRequestURI());
     log.add("servlet path = " + request.getServletPath());
 
-    //    response.setContentType("text/html");
     //    PrintWriter pw = response.getWriter();
     addDasHeaders(response);
 
@@ -562,18 +578,21 @@ public class GenometryDas2Servlet extends HttpServlet  {
   public void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException  {
     log.add("received data source query");
-    response.setContentType(SOURCES_CONTENT_TYPE);
+    setContentType(response, SOURCES_CONTENT_TYPE);
     addDasHeaders(response);
     PrintWriter pw = response.getWriter();
-
+    String xml_base = request.getRequestURL().toString();
+    //    static String xml_base = request.getRequestUri();
     printXmlDeclaration(pw);
-    //    pw.println("<!DOCTYPE DAS2DSN SYSTEM \"http://www.biodas.org/dtd/das2dsn.dtd\">");
-    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
+    //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SOURCES");
-    pw.println("    xmlns=\"http://www.biodas.org/ns/das/2.00\"");
-    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
+    pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
+    pw.println("    xml:base=\"" + xml_base + "\" >");
+    if (maintainer_email != null && maintainer_email.length() > 0) {
+      pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
+    }
     // other elements to add:
-    //   <MAINTAINER>
+
     //    Map genomes = gmodel.getSeqGroups();
     Iterator oiter = organisms.entrySet().iterator();
     while (oiter.hasNext()) {
@@ -581,7 +600,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
       String org = (String)oentry.getKey();
       List versions = (List)oentry.getValue();
       //Iterator giter = genomes.entrySet().iterator();
-      pw.println("  <SOURCE id=\"" + org + "\" >" );
+      //      pw.println("  <SOURCE id=\"" + org + "\" >" );
+      pw.println("  <SOURCE uri=\"" + org + "\" title=\"" + org + "\" >" );
 
       Iterator giter = versions.iterator();
       while (giter.hasNext()) {
@@ -589,13 +609,19 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
 			   ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
 	//      pw.println("      <VERSION id=\"" + genome.getID() + "\" />" );
-	pw.println("      <VERSION id=\"" + genome.getID() + "\" >" );
-	pw.println("           <CAPABILITY type=\"segments\" query_id=\"" +
-		   genome.getID() + "/segments\" />");
-	pw.println("           <CAPABILITY type=\"types\" query_id=\"" +
-		   genome.getID() + "/types\" />");
-	pw.println("           <CAPABILITY type=\"features\" query_id=\"" +
-		   genome.getID() + "/features\" />");
+	if (USE_CREATED_ATT) {
+	  pw.println("      <VERSION uri=\"" + genome.getID() + "\" title=\"" + genome.getID() +
+		     "\" created=\"" + date_init_string + "\" >" );
+	}
+	else {
+	  pw.println("      <VERSION uri=\"" + genome.getID() + "\" title=\"" + genome.getID() + "\" >" );
+	}
+	pw.println("           <CAPABILITY type=\"" + segments_query + "\" " + query_att + "=\"" +
+		   genome.getID() + "/" + segments_query + "\" />");
+	pw.println("           <CAPABILITY type=\"" + types_query + "\" " + query_att + "=\"" +
+		   genome.getID() + "/" + types_query + "\" />");
+	pw.println("           <CAPABILITY type=\"" + features_query + "\" " + query_att + "=\"" +
+		   genome.getID() + "/" + features_query + "\" />");
 	// other attributes to add:
 	//   title, created, modified, writeable
 	//   also doc_href -- need to change sources.rnc file for this!
@@ -619,13 +645,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
       // add error headers?
       return;
     }
-    response.setContentType(SEGMENTS_CONTENT_TYPE);
+    //    response.setContentType(SEGMENTS_CONTENT_TYPE);
+    setContentType(response, SEGMENTS_CONTENT_TYPE);
     addDasHeaders(response);
     PrintWriter pw = response.getWriter();
     printXmlDeclaration(pw);
-    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
+    String xml_base = request.getRequestURL().toString();
+    //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SEGMENTS ");
-    pw.println("    xmlns=\"http://www.biodas.org/ns/das/2.00\"");
+    pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
     pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
 
     List seq_list = genome.getSeqList();
@@ -634,7 +662,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //      Map.Entry keyval = (Map.Entry)siter.next();
       //      AnnotatedBioSeq aseq = (AnnotatedBioSeq)keyval.getValue();
       AnnotatedBioSeq aseq = (AnnotatedBioSeq)siter.next();
-      pw.println("   <SEGMENT id=\"" + aseq.getID() + "\" name=\"" + aseq.getID() + "\"" +
+      pw.println("   <SEGMENT " + URID + "=\"" + aseq.getID() + "\" " + NAME + "=\"" + aseq.getID() + "\"" +
       		 " length=\"" + aseq.getLength() + "\" />");
       //      pw.println("<REGION id=\"" + aseq.getID() +
       //		 "\" start=\"0\" end=\"" + aseq.getLength() + "\" />");
@@ -656,16 +684,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
       response.setStatus(response.SC_BAD_REQUEST);
       return;
     }
-    
-    response.setContentType(TYPES_CONTENT_TYPE);
+
+    //    response.setContentType(TYPES_CONTENT_TYPE);
+    setContentType(response, TYPES_CONTENT_TYPE);
     addDasHeaders(response);
     PrintWriter pw = response.getWriter();
 
     printXmlDeclaration(pw);
-    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
+    String xml_base = request.getRequestURL().toString();
+    //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
-    pw.println("<TYPES>");
-    pw.println("    xmlns=\"http://www.biodas.org/ns/das/genome/2.00\"");
+    pw.println("<TYPES ");
+    pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
     pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
 
     Map types_hash = getTypes(genome);
@@ -678,11 +708,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
 
-      pw.println("   <TYPE id=\"" + feat_type + "\" name=\"" + feat_type + "\" >");
+      pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type + 
+		 "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
       if (! formats.isEmpty()) {
         for (int k=0; k<formats.size(); k++) {
           String format = (String)formats.get(k);
-          pw.println("       <FORMAT id=\"" + format + "\" />");
+          // pw.println("       <FORMAT id=\"" + format + "\" />");
+	  pw.println("       <FORMAT name=\"" + format + "\" />");
         }
       }
       pw.println("   </TYPE>");
@@ -945,12 +977,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
       }
       else {
 	AnnotationWriter writer = (AnnotationWriter)writerclass.newInstance();
+	String mime_type = writer.getMimeType();
 	if (writer instanceof Das2FeatureSaxParser) {
 	  ((Das2FeatureSaxParser)writer).setBaseURI(new URI(request.getRequestURI().toString()) );
+	  setContentType(response, mime_type);
 	}
-	String mime_type = writer.getMimeType();
+	else {
+	  response.setContentType(mime_type);
+	}
 	System.out.println("return mime type: " + mime_type);
-	response.setContentType(mime_type);
 	OutputStream outstream = response.getOutputStream();
 	// need to test and see if creating a new BufferedOutputStream in the
 	//   AnnotationWriter.writeAnnotations implementations is necessary
@@ -1001,6 +1036,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
     // long declaration (version, encoding, standalone)
     //  pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
+  }
+
+  public static void setContentType(HttpServletResponse response, String ctype) {
+    if (ADD_VERSION_TO_CONTENT_TYPE)  {
+      response.setContentType(ctype + "; version=" + DAS2_VERSION);
+    }
+    else {
+      response.setContentType(ctype);
+    }
   }
 
 

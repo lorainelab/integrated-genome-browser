@@ -42,46 +42,55 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   public static boolean DO_SEQID_HACK = ! Das2Region.USE_SEGMENT_URI;
   static boolean DEBUG = false;
   static boolean REPORT_RESULTS = false;
-
+  static boolean REPORT_MULTI_LOC = true;
+  static boolean REQUIRE_DAS2_NAMESPACE = false;
 
   //   "text/plain";
   //   "text/x-das-feature+xml";
   public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
   public static String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
 
+  //  static String DAS2_NAMESPACE = "http://www.biodas.org/ns/das/2.00";
+  public static String DAS2_NAMESPACE = "http://biodas.org/documents/das2";
+
   /**
    *  elements possible in DAS2 feature response
    */
   //  static final String FEATURES = "FEATURES";
-  static String FEATURELIST = "FEATURELIST";
-  static final String FEATURE = "FEATURE";
-  static final String LOC = "LOC";
-  static final String REGION = "REGION";
-  static final String XID = "XID";
-  static final String PART = "PART";
-  static final String PARENT = "PARENT";
-  static final String ALIGN = "ALIGN";
-  static final String PROP = "PROP";
+  public static String FEATURELIST = "FEATURELIST";
+  public static String FEATURES = "FEATURES";
+  public static String FEATURE = "FEATURE";
+  public static String LOC = "LOC";
+  public static String XID = "XID";
+  public static String PART = "PART";
+  public static String PARENT = "PARENT";
+  public static String ALIGN = "ALIGN";
+  public static String PROP = "PROP";
 
   /**
    *  attributes possible in DAS2 feature response
    */
-  static final String XMLBASE = "xml:base";   // common to all elements?
-  static final String XMLLANG = "xml:lang";   // common to all elements?
-  static final String ID = "id";              // FEATURE, PARENT, PART, LOC, REGION
-  static final String TYPE = "type";      // replaced by "type_id"?
-  static final String TYPEID = "type_id";     // FEATURE
-  static final String NAME = "name";          // FEATURE
-  static final String CREATED = "created";    // FEATURE
-  static final String MODIFIED = "modified";  // FEATURE
-  static final String DOC_HREF = "doc_href";  // FEATURE
-  static final String MIME_TYPE = "mimetype";  // PROP
-  static final String RANGE = "range";         // LOC, ALIGN
+  static public String XMLBASE = "xml:base";   // common to all elements?
+  static public String XMLLANG = "xml:lang";   // common to all elements?
+  static public String ID = "id";     // replaced by "uri"?
+  static public String URID = "uri";  // FEATURE, PARENT, PART, LOC
+  static public String TYPE = "type";      // replaced by "type_id"?
+  static public String TYPEID = "type_id";     // FEATURE
+  static public String TYPEURI = "type_uri";     // FEATURE
+  static public String NAME = "name";          // replaced by "title"?
+  static public String TITLE = "title";          // FEATURE
+  static public String CREATED = "created";    // FEATURE
+  static public String MODIFIED = "modified";  // FEATURE
+  static public String DOC_HREF = "doc_href";  // FEATURE
+  static public String MIME_TYPE = "mimetype";  // PROP
+  static public String RANGE = "range";         // LOC, ALIGN
   // PROP attributes -- leaving out for now, not sure if common.rnc is current for t
-  static final String TARGETID = "target_id";  // ALIGN
-  static final String CIGAR = "gap";             // ALIGN
-  static final String KEY = "key";             // PROP
-  static final String VALUE = "value";         // PROP
+  static public String TARGETID = "target_id";  // ALIGN
+  static public String TARGETURI = "target_uri";  // ALIGN
+  static public String CIGAR = "gap";             // ALIGN
+  static public String KEY = "key";             // PROP
+  static public String VALUE = "value";         // PROP
+  static public String SEGMENT = "segment";     // LOC
 
 
   //  static final String POS = "pos";  // in <LOC>
@@ -105,6 +114,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   AnnotatedSeqGroup seqgroup = null;
   boolean add_annots_to_seq = false;
+  boolean add_to_sym_hash = true;
 
   String current_elem = null;  // current element
   StringBuffer current_chars = null;
@@ -253,8 +263,14 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   /**
    *  implementing sax content handler interface
    */
-  public void startElement(String uri, String name, String qname, Attributes atts) {
+  public void startElement(String uri, String localName, String qname, Attributes atts) {
+    // to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
+    //     should make sure that the uri is the DAS/2 namespace URI
+    //     because otherwise if there is arbitrary embedded XML, could have other elements with same localName
+    //     (but they will have different namespace uri (or none)?)
+    String name = localName;
     if (DEBUG)  { System.out.println("start element: " + name); }
+
     elemstack.push(current_elem);
     current_elem = name.intern();
     String xml_base = atts.getValue(XMLBASE);
@@ -264,83 +280,97 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     // push base_uri onto stack whether it has changed or not
     base_uri_stack.push(current_base_uri);
+    // check to make sure elements are in DAS/2 namespace for standard handling
+    if ((! REQUIRE_DAS2_NAMESPACE) || uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
+      if (current_elem == FEATURELIST) {
+      }
+      else if (current_elem == FEATURE) {
+	String feat_id_att = atts.getValue(URID);
+	if (feat_id_att.length() == 0) { feat_id_att = atts.getValue(ID); }  // for backward-compatibility
+	feat_id = current_base_uri.resolve(feat_id_att).toString();
+	// trying "type", "type_id", and "type_uri" for type attribute name
+	String feat_type_att = atts.getValue(TYPE);
+	if (feat_type_att.length() == 0)  { feat_type_att = atts.getValue(TYPEID); }  // for backward-compatibility
+	if (feat_type_att.length() == 0)  { feat_type_att = atts.getValue(TYPEURI); }  // for backward-compatibility
+	feat_type = current_base_uri.resolve(feat_type_att).toString();
+	feat_name = atts.getValue(TITLE);
+	if (feat_name.length() == 0) {  feat_name = atts.getValue(NAME); }  // for backward-compatibility
+	// feat_parent_id has moved to <PARENT> element
+	//      feat_parent_id = atts.getValue("parent");
+	feat_created = atts.getValue(CREATED);
+	feat_modified = atts.getValue(MODIFIED);
+	feat_doc_href = atts.getValue(DOC_HREF);
 
-    if (current_elem == FEATURELIST) {
-    }
-    else if (current_elem == FEATURE) {
+      }
+      else if (current_elem == LOC)  {
+	String seqid_att = atts.getValue(SEGMENT);
+	if (seqid_att.length() == 0) { seqid_att = atts.getValue(URID); }
+	if (seqid_att.length() == 0) { seqid_att = atts.getValue(ID); }
+	String seqid = current_base_uri.resolve(seqid_att).toString();
+	String range = atts.getValue(RANGE);
+	// DO_SEQID_HACK is a very temporary fix!!!
+	// Need to move to using full URI references to identify sequences,
+	if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
+	SeqSpan span = getLocationSpan(seqid, range, seqgroup);
+	feat_locs.add(span);
+      }
+      else if (current_elem == XID) {
 
-      String feat_id_att = atts.getValue(ID);
-      feat_id = current_base_uri.resolve(feat_id_att).toString();
-      // trying both "type" and "type_id" for type attribute name
-      String feat_type_att = atts.getValue(TYPEID);
-      if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPE); }
-      feat_type = current_base_uri.resolve(feat_type_att).toString();
-
-      feat_name = atts.getValue(NAME);
-      // feat_parent_id has moved to <PARENT> element
-      //      feat_parent_id = atts.getValue("parent");
-      feat_created = atts.getValue(CREATED);
-      feat_modified = atts.getValue(MODIFIED);
-      feat_doc_href = atts.getValue(DOC_HREF);
-
-    }
-    else if (current_elem == LOC)  {
-      String seqid_att = atts.getValue(ID);
-      String seqid = current_base_uri.resolve(seqid_att).toString();
-      String range = atts.getValue(RANGE);
-      // DO_SEQID_HACK is a very temporary fix!!!
-      // Need to move to using full URI references to identify sequences,
-      if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
-      SeqSpan span = getLocationSpan(seqid, range, seqgroup);
-      feat_locs.add(span);
-    }
-    else if (current_elem == XID) {
-
-    }
-    else if (current_elem == PARENT) {
-      if (feat_parent_id == null) {
-	feat_parent_id = atts.getValue(ID);
-	feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
+      }
+      else if (current_elem == PARENT) {
+	if (feat_parent_id == null) {
+	  feat_parent_id = atts.getValue(URID);
+	  if (feat_parent_id.length() == 0) { feat_parent_id = atts.getValue(ID); }
+	  feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
+	}
+	else {
+	  System.out.println("WARNING:  multiple parents for feature, just using first one");
+	}
+      }
+      else if (current_elem == PART) {
+	String part_id = atts.getValue(URID);
+	if (part_id.length() == 0) { part_id = atts.getValue(ID); }
+	part_id = current_base_uri.resolve(part_id).toString();
+	/*
+	 *  Use part_id to look for child sym already constructed and placed in id2sym hash
+	 *  If child sym found then map part_id to child sym in feat_parts
+	 *  If child sym not found then map part_id to itself, and swap in child sym later when it's created
+	 */
+	SeqSymmetry child_sym = (SeqSymmetry)id2sym.get(part_id);
+	if (child_sym == null) {
+	  feat_parts.put(part_id, part_id);
+	}
+	else {
+	  feat_parts.put(part_id, child_sym);
+	}
+      }
+      else if (current_elem == PROP) {
+	feat_prop_key = atts.getValue(KEY);
+	feat_prop_val = atts.getValue(VALUE);
+      }
+      else if (current_elem == ALIGN) {
+	String target_id = atts.getValue(TARGETURI);
+	if (target_id.length() == 0) { target_id = atts.getValue(TARGETID); }  // for backward compatibility
+	String target_range = atts.getValue(RANGE);
+	String cigar = atts.getValue(CIGAR);
+	// not sure yet how to handle optional cigar string
+	// calling getLocationSpan() with null seq_group arg means that
+	//    a new BioSeq will be created.  If we want this method to try and
+	//    find existing BioSeqs to use, probably need some universal
+	//    BioSeq id resolution mechanism (similar or same as SeqSymmetry resolution)
+	//    right now only have BioSeq id resolution relative to a particular AnnotatedSeqGroup
+	SeqSpan span = getLocationSpan(target_id, target_range, null);
+	feat_aligns.add(span);
       }
       else {
-	System.out.println("WARNING:  multiple parents for feature, just using first one");
+	System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
       }
     }
-    else if (current_elem == PART) {
-      String part_id = atts.getValue(ID);
-      part_id = current_base_uri.resolve(part_id).toString();
-      /*
-       *  Use part_id to look for child sym already constructed and placed in id2sym hash
-       *  If child sym found then map part_id to child sym in feat_parts
-       *  If child sym not found then map part_id to itself, and swap in child sym later when it's created
-       */
-      SeqSymmetry child_sym = (SeqSymmetry)id2sym.get(part_id);
-      if (child_sym == null) {
-	feat_parts.put(part_id, part_id);
-      }
-      else {
-	feat_parts.put(part_id, child_sym);
-      }
-    }
-    else if (current_elem == PROP) {
-      feat_prop_key = atts.getValue(KEY);
-      feat_prop_val = atts.getValue(VALUE);
-    }
-    else if (current_elem == ALIGN) {
-      String target_id = atts.getValue(TARGETID);
-      String target_range = atts.getValue(RANGE);
-      String cigar = atts.getValue(CIGAR);
-      // not sure yet how to handle optional cigar string
-      // calling getLocationSpan() with null seq_group arg means that
-      //    a new BioSeq will be created.  If we want this method to try and
-      //    find existing BioSeqs to use, probably need some universal
-      //    BioSeq id resolution mechanism (similar or same as SeqSymmetry resolution)
-      //    right now only have BioSeq id resolution relative to a particular AnnotatedSeqGroup
-      SeqSpan span = getLocationSpan(target_id, target_range, null);
-      feat_aligns.add(span);
-    }
-    else {
-      System.out.println("element not recognized: " + current_elem);
+    else {  // element is not in DAS/2 namespace
+      // this may be some arbitrary XML mixed in with feature XML
+      // if within the feature XML, should make a subtree of this XML and any subnodes, and attach
+      //    as additional structured data as property of feature?
+      System.out.println("element not recognized, and not within DAS2 namespace: " + current_elem);
     }
   }
 
@@ -477,6 +507,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     // if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
     if (feat_parent_id == null) {
+      if (REPORT_MULTI_LOC && loc_count > 1)  { System.out.println("loc count: " + loc_count); }
       for (int i=0; i<loc_count; i++) {
 	SeqSpan span = (SeqSpan)feat_locs.get(i);
 	BioSeq seq = span.getBioSeq();
@@ -484,6 +515,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq
 	if ((seq != null) && (aseq != null) && (seq == aseq)) {
 	  result_syms.add(featsym);
+	  if (add_to_sym_hash) {
+	    //	    System.out.println("adding to sym hash: " + featsym.getName() + ", " + featsym.getID());
+	    seqgroup.addToIndex(featsym.getID(), featsym);
+	    if (featsym.getName() != null)  {
+              seqgroup.addToIndex(featsym.getName(), featsym);
+            }
+	  }
 	  if (add_annots_to_seq)  {
 	    aseq.addAnnotation(featsym);
 	  }
@@ -580,12 +618,12 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  seq_version = ((Versioned)seq).getVersion();
 	}
 
-	pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
-	pw.println("<!DOCTYPE DAS2FEATURE SYSTEM \"http://www.biodas.org/dtd/das2feature.dtd\"> ");
-	pw.println("<" + FEATURELIST + " ");
-	pw.println("   xmlns=\"http://www.biodas.org/ns/das/2.00\" ");
-	pw.println("   xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-	//      pw.println("   xml:base=\"http:...\"> ");
+	//	pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
+	//	pw.println("<!DOCTYPE DAS2FEATURE SYSTEM \"http://www.biodas.org/dtd/das2feature.dtd\"> ");
+	pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	pw.println("<" + FEATURES + " ");
+	pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
+	pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 	if (getBaseURI() != null) {
 	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
 	}
@@ -595,7 +633,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  SeqSymmetry annot = (SeqSymmetry)iterator.next();
 	  writeDasFeature(annot, null, 0, seq, type, pw);
 	}
-	pw.println("</" + FEATURELIST + ">");
+	pw.println("</" + FEATURES + ">");
 	pw.flush();
       }
       catch (Exception ex) {
@@ -607,25 +645,31 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
     /**
-     *  Write out a SeqSymmetry in DAS2FEATURE format.
+     *  Write out a SeqSymmetry in DAS2FEATURE format.p
      *  Recursively descends to write out all descendants
      */
     public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
 				BioSeq aseq, String feat_type, PrintWriter pw) {
-      if (feat_type == null && annot instanceof SymWithProps) {
-	feat_type = (String)((SymWithProps)annot).getProperty("method");
+      String feat_name = null;
+      if (annot instanceof SymWithProps) {
+	SymWithProps swp = (SymWithProps)annot;
 	if (feat_type == null) {
-	  feat_type = (String)((SymWithProps)annot).getProperty("meth");
-	}
-	if (feat_type == null) {
-	  feat_type = (String)((SymWithProps)annot).getProperty("type");
+	  feat_type = (String)swp.getProperty("method");
+	  if (feat_type == null) {
+	    feat_type = (String)swp.getProperty("meth");
+	  }
+	  if (feat_type == null) {
+	    feat_type = (String)swp.getProperty("type");
+	  }
 	}
       }
       String feat_id = getChildID(annot, parent_id, parent_index);
       SeqSpan span = annot.getSpan(aseq);
 
       // print <FEATURE ...> line
-      pw.print("  <FEATURE id=\"");
+      pw.print("  <FEATURE uri=\"");
+      pw.print(feat_id);
+      pw.print("\" title=\"");
       pw.print(feat_id);
       pw.print("\" type=\"");
       pw.print(feat_type);
@@ -643,7 +687,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
       // print  <LOC .../> line
 
-      pw.print("     <LOC id=\"");
+      pw.print("     <LOC segment=\"");
       pw.print(span.getBioSeq().getID());
       pw.print("\" range=\"");
       String range = getRangeString(span);
@@ -654,7 +698,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       //  parent has moved from being an attribute to being an element (zero or more)
       //    writeDasFeature() currently does not handle multiple parents, only zero or one
       if (parent_id != null) {
-	pw.print("     <PARENT id=\"");
+	pw.print("     <PARENT ");
+	pw.print(URID);
+	pw.print("=\"");
 	pw.print(parent_id);
 	pw.print("\" />");
 	pw.println();
@@ -666,7 +712,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	for (int i=0; i<child_count; i++) {
 	  SeqSymmetry child = annot.getChild(i);
 	  String child_id = getChildID(child, feat_id, i);
-	  pw.print("     <PART id=\"");
+	  pw.print("     <PART ");
+	  pw.print(URID);
+	  pw.print("=\"");
 	  pw.print(child_id);
 	  pw.print("\" />");
 	  pw.println();
@@ -823,7 +871,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       boolean test_result_list = true;
       Das2FeatureSaxParser test = new Das2FeatureSaxParser();
       try {
-	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
+	//	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
+	String test_file_name = "c:/data/das2_responses/codesprint/genometry/features3.xml";
 	File test_file = new File(test_file_name);
 	FileInputStream fistr = new FileInputStream(test_file);
 	BufferedInputStream bis = new BufferedInputStream(fistr);

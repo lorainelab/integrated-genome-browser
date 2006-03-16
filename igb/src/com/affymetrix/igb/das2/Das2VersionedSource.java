@@ -43,6 +43,13 @@ public class Das2VersionedSource  {
   static String TYPES_CAP_QUERY = "types";
   static String FEATURES_CAP_QUERY = "features";
 
+  static String ID = Das2FeatureSaxParser.ID;
+  static String URID = Das2FeatureSaxParser.URID;
+  static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
+  static String NAME = Das2FeatureSaxParser.NAME;
+  static String TITLE = Das2FeatureSaxParser.TITLE;
+  
+
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   URI version_uri;
@@ -190,7 +197,8 @@ public class Das2VersionedSource  {
       System.out.println("regions: " + regionlist.getLength());
       for (int i=0; i< regionlist.getLength(); i++)  {
 	Element reg = (Element)regionlist.item(i);
-        String region_id = reg.getAttribute("id");
+        String region_id = reg.getAttribute(URID);
+	if (region_id == null || region_id.length() == 0) { region_id = reg.getAttribute(ID); }
 	URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
 
 	// GAH _TEMPORARY_ hack to strip down region_id
@@ -199,7 +207,8 @@ public class Das2VersionedSource  {
 	  region_id = Das2FeatureSaxParser.doSeqIdHack(region_id);
 	}
 	String lengthstr = reg.getAttribute("length");
-	String region_name = reg.getAttribute("name");
+	String region_name = reg.getAttribute(NAME);
+	if (region_name == null || region_name.length() == 0) { region_name = reg.getAttribute(TITLE); }
 	String region_info_url = reg.getAttribute("doc_href");
 
 	String description = null;
@@ -244,7 +253,9 @@ public class Das2VersionedSource  {
       for (int i=0; i< typelist.getLength(); i++)  {
 	Element typenode = (Element)typelist.item(i);
 
-	String typeid = typenode.getAttribute("id");                            // Gets the ID value
+	String typeid = typenode.getAttribute(URID); // Gets the ID value
+	if (typeid == null)  { typeid = typenode.getAttribute(ID); }
+
 	// GAH Temporary hack to deal with typeids that are not legal URIs
 	//    unfortunately this can mess up XML Base resolution when the id is an absolute URI
 	//    (because URI-encoding will replace any colons, but those are used by URI resolution...)
@@ -261,14 +272,16 @@ public class Das2VersionedSource  {
         String ontid = typenode.getAttribute("ontology");
 	String type_source = typenode.getAttribute("source");
 	String href = typenode.getAttribute("doc_href");
-	String type_name = typenode.getAttribute("name");
+	String type_name = typenode.getAttribute(NAME);
+	if (type_name == null || (type_name.length() == 0)) { type_name = typenode.getAttribute(TITLE); }
 
 	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
 	LinkedHashMap formats = new LinkedHashMap();                            //I don't think that this has ever been used yet.
 	HashMap props = new HashMap();
 	for (int k=0; k<flist.getLength(); k++) {
 	  Element fnode = (Element)flist.item(k);
-	  String formatid = fnode.getAttribute("id");
+	  String formatid = fnode.getAttribute(NAME);
+	  if (formatid == null) { formatid = fnode.getAttribute(ID); }
 	  String mimetype = fnode.getAttribute("mimetype");
 	  if (mimetype == null || mimetype.equals("")) { mimetype = "unknown"; }
           //	  System.out.println("alternative format for annot type " + typeid +

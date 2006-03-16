@@ -33,6 +33,11 @@ public class Das2ServerInfo  {
   protected String name;
   protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   protected boolean initialized = false;
+  
+  static String URID = "uri";
+  static String NAME = "title";
+  static String TYPE = "type";
+  static String QUERY_ID = "query_uri";
 
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
@@ -150,8 +155,8 @@ public class Das2ServerInfo  {
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
-        String source_id = source.getAttribute("id");
-	String source_name = source.getAttribute("title");
+        String source_id = source.getAttribute(URID);
+	String source_name = source.getAttribute(NAME);
 	System.out.println("title: " + source_name + ",  length: " + source_name.length());
 	if (source_name == null || source_name.length() == 0) { 
 	  source_name = source_id; 
@@ -170,8 +175,8 @@ public class Das2ServerInfo  {
 	for (int k=0; k < slist.getLength(); k++) {
 	  if (slist.item(k).getNodeName().equals("VERSION"))  {
 	    Element version = (Element)slist.item(k);
-	    String version_id = version.getAttribute("id");
-	    String version_name = version.getAttribute("title");
+	    String version_id = version.getAttribute(URID);
+	    String version_name = version.getAttribute(NAME);
 	    if (version_name == null || version_name.length() == 0) { 
 	      version_name = version_id; 
 	    }
@@ -195,8 +200,8 @@ public class Das2ServerInfo  {
 	      // was CATEGORY, renamed CAPABILITY
 	      if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
 		Element capel = (Element)vlist.item(j);
-		String captype = capel.getAttribute("type");
-		String query_id = capel.getAttribute("query_id");
+		String captype = capel.getAttribute(TYPE);
+		String query_id = capel.getAttribute(QUERY_ID);
 		URI base_uri = getBaseURI(das_query, capel);
 		URI cap_root = base_uri.resolve(query_id);
 		System.out.println("Capability: " + captype + ", URI: " + cap_root);

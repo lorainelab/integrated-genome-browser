@@ -216,12 +216,10 @@ public class Das2ClientOptimizer {
 
 
   static boolean optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
-
     boolean success = true;
-
     SeqSpan overlap_span = request_sym.getOverlapSpan();
-    String overlap_filter = request_sym.getRegion().getPositionString(
-        overlap_span, USE_SEGMENT_URI, false);
+    Das2Region region = request_sym.getRegion();
+    String overlap_filter = region.getPositionString(overlap_span, USE_SEGMENT_URI, false);
     SeqSpan inside_span = request_sym.getInsideSpan();
     String inside_filter = request_sym.getRegion().getPositionString(inside_span,
         USE_SEGMENT_URI, false);
@@ -233,7 +231,6 @@ public class Das2ClientOptimizer {
       format = FormatPriorities.getFormat(type);
     }
 
-    Das2Region region = request_sym.getRegion();
     MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
     Das2VersionedSource versioned_source = region.getVersionedSource();
     AnnotatedSeqGroup seq_group = versioned_source.getGenome();
@@ -338,8 +335,9 @@ public class Das2ClientOptimizer {
 	  System.out.println("    getting input stream");
 	  InputStream istr = query_con.getInputStream();
 	  bis = new BufferedInputStream(istr);
+          System.out.println("content type: " + content_type);
 	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
-	  System.out.println("content subtype: " + content_subtype);
+          System.out.println("content subtype: " + content_subtype);
 	  if (content_type == null ||
 	      content_subtype == null ||
 	      content_type.equals("unknown") ||

@@ -191,7 +191,7 @@ public class PluginInfo {
      PluginInfo.getNodeForName("Selection Info").put(KEY_CLASS, SymTableView.class.getName());
 
      PluginInfo.getNodeForName("Sliced View").put(KEY_CLASS, AltSpliceView.class.getName());
-     PluginInfo.getNodeForName("Graph Adjuster").put(KEY_CLASS, GraphAdjusterView.class.getName());
+     PluginInfo.getNodeForName("Graph Adjuster").put(KEY_CLASS, SimpleGraphTab.class.getName());
      PluginInfo.getNodeForName("Pattern Search").put(KEY_CLASS, SeqSearchView.class.getName());
      PluginInfo.getNodeForName("Bookmarks").put(KEY_CLASS, BookmarkManagerView.class.getName());
      PluginInfo.getNodeForName("Pivot View").put(KEY_CLASS, ExperimentPivotView.class.getName());

@@ -1187,7 +1187,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_PATTERN_SEARCHER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
-
     if (prefs_hash.get("USE_GRAPH_ADJUSTER") != null) {
       USE_GRAPH_ADJUSTER = ((Boolean)prefs_hash.get("USE_GRAPH_ADJUSTER")).booleanValue(); }
     if (prefs_hash.get("USE_PIVOT_VIEW") != null) {
@@ -1206,11 +1205,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       plugin_list.add(pi);
     }
     if (USE_GRAPH_ADJUSTER) {
-      PluginInfo pi = new PluginInfo(GraphAdjusterView.class.getName(), "Graph Adjuster", true);
-      plugin_list.add(pi);
-    }
-    if (SimpleGraphTab.USE_SIMPLE_GRAPH_TAB) {
-      PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graphs", true);
+      PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true);
       plugin_list.add(pi);
     }
     if (USE_PATTERN_SEARCHER) {

@@ -26,7 +26,6 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 public class Das2Region {
   static public boolean USE_TYPE_URI = false;
   static public boolean USE_SEGMENT_URI = false;
-  //  static public boolean USE_SEQGROUP_URI = false;
   static public  boolean URL_ENCODE_QUERY = false;
 
   URI region_uri;
@@ -92,9 +91,11 @@ public class Das2Region {
   public boolean getFeatures(Das2FeatureRequestSym request_sym) {
     boolean success = true;
       SeqSpan overlap_span = request_sym.getOverlapSpan();
-      String overlap_filter = getPositionString(overlap_span, USE_SEGMENT_URI, false);
+      //      String overlap_filter = getPositionString(overlap_span, USE_SEGMENT_URI, false);
+      String overlap_filter = getPositionString(overlap_span, false);
       SeqSpan inside_span = request_sym.getInsideSpan();
-      String inside_filter = getPositionString(inside_span, USE_SEGMENT_URI, false);
+      //      String inside_filter = getPositionString(inside_span, USE_SEGMENT_URI, false);
+      String inside_filter = getPositionString(inside_span, false);
 
       System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
       Das2Type type = request_sym.getDas2Type();
@@ -173,19 +174,17 @@ public class Das2Region {
    *     need to add an Das2VersionedSource argument (Das2Region would work also,
    *     but probably better to have this method figure out region based on versioned source
    */
-  public String getPositionString(SeqSpan span, boolean use_segment_uri, boolean include_strand) {
+  public String getPositionString(SeqSpan span, boolean include_strand) {
+  //  public String getPositionString(SeqSpan span, boolean use_segment_uri, boolean include_strand) {
     String result = null;
     if (span != null) {
       BioSeq spanseq = span.getBioSeq();
       if (this.getAnnotatedSeq() == spanseq) {
 	StringBuffer buf = new StringBuffer(100);
 	// making sure to use name/id given by DAS server, which may be a synonym of the seq's id instead of the seq id itself
-	if (use_segment_uri) {
-	  buf.append(this.getID());
-	}
-	else {
-	  buf.append(this.getName());
-	}
+	//	if (use_segment_uri) { buf.append(this.getID()); }
+	//	else { buf.append(this.getName()); }
+	buf.append(this.getName());
 	// buf.append(span.getBioSeq().getID());
 	buf.append("/");
 	buf.append(Integer.toString(span.getMin()));

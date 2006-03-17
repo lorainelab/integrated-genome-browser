@@ -56,6 +56,12 @@ public class Das2ClientOptimizer {
   static boolean DEBUG_HEADERS = false;
   static boolean OPTIMIZE_FORMAT = false;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
+  /**
+   *  For DAS/2 version >= 300, the segment part of location-based feature filters is split 
+   *  out into a separate query field, "segment", that applies to all location-based filters in the query 
+   *  (overlaps, inside, ??)
+   */
+  static boolean SEPARATE_SEGMENT_FILTER = false;
 
   static String default_format = "das2feature";
 
@@ -217,12 +223,19 @@ public class Das2ClientOptimizer {
 
   static boolean optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
     boolean success = true;
-    SeqSpan overlap_span = request_sym.getOverlapSpan();
     Das2Region region = request_sym.getRegion();
-    String overlap_filter = region.getPositionString(overlap_span, USE_SEGMENT_URI, false);
+    SeqSpan overlap_span = request_sym.getOverlapSpan();
     SeqSpan inside_span = request_sym.getInsideSpan();
-    String inside_filter = request_sym.getRegion().getPositionString(inside_span,
-        USE_SEGMENT_URI, false);
+    String overlap_filter = null;
+    String inside_filter = null;
+    if (USE_SEGMENT_URI) {
+      overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
+      if (inside_span != null)  { inside_filter =  Das2FeatureSaxParser.getRangeString(inside_span, false); }
+    }
+    else {
+      overlap_filter = region.getPositionString(overlap_span, false);
+      if (inside_span != null)  { inside_filter = region.getPositionString(inside_span, false); }
+    }
     System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter +
                        ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
@@ -246,10 +259,11 @@ public class Das2ClientOptimizer {
     System.out.println("   preferred format: " + format);
 
     StringBuffer buf = new StringBuffer(200);
-    //    buf.append(query_root.toString());
-    //    buf.append("?");
-    //    buf.append(version_url);
-    //    buf.append("/feature?");
+    if (USE_SEGMENT_URI) {
+      buf.append("segment=");
+      buf.append(region.getID());
+      buf.append(";");
+    }
     buf.append("overlaps=");
     buf.append(overlap_filter);
     buf.append(";");

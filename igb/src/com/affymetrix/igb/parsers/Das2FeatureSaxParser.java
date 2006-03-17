@@ -23,6 +23,7 @@ import org.xml.sax.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
@@ -39,11 +40,12 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   // DO_SEQID_HACK is a very temporary fix!!!
   // Need to move to using full URI references to identify sequences,
-  public static boolean DO_SEQID_HACK = ! Das2Region.USE_SEGMENT_URI;
+  public static boolean DO_SEQID_HACK = true;
   static boolean DEBUG = false;
   static boolean REPORT_RESULTS = false;
   static boolean REPORT_MULTI_LOC = true;
   static boolean REQUIRE_DAS2_NAMESPACE = false;
+  static boolean ADD_NEW_SEQS_TO_GROUP = false;
 
   //   "text/plain";
   //   "text/x-das-feature+xml";
@@ -282,19 +284,19 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     base_uri_stack.push(current_base_uri);
     // check to make sure elements are in DAS/2 namespace for standard handling
     if ((! REQUIRE_DAS2_NAMESPACE) || uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
-      if (current_elem == FEATURELIST) {
+      if (current_elem == FEATURELIST || current_elem == FEATURES) {
       }
       else if (current_elem == FEATURE) {
 	String feat_id_att = atts.getValue(URID);
-	if (feat_id_att.length() == 0) { feat_id_att = atts.getValue(ID); }  // for backward-compatibility
+	if (feat_id_att == null) { feat_id_att = atts.getValue(ID); }  // for backward-compatibility
 	feat_id = current_base_uri.resolve(feat_id_att).toString();
 	// trying "type", "type_id", and "type_uri" for type attribute name
 	String feat_type_att = atts.getValue(TYPE);
-	if (feat_type_att.length() == 0)  { feat_type_att = atts.getValue(TYPEID); }  // for backward-compatibility
-	if (feat_type_att.length() == 0)  { feat_type_att = atts.getValue(TYPEURI); }  // for backward-compatibility
+	if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPEID); }  // for backward-compatibility
+	if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPEURI); }  // for backward-compatibility
 	feat_type = current_base_uri.resolve(feat_type_att).toString();
 	feat_name = atts.getValue(TITLE);
-	if (feat_name.length() == 0) {  feat_name = atts.getValue(NAME); }  // for backward-compatibility
+	if (feat_name == null) {  feat_name = atts.getValue(NAME); }  // for backward-compatibility
 	// feat_parent_id has moved to <PARENT> element
 	//      feat_parent_id = atts.getValue("parent");
 	feat_created = atts.getValue(CREATED);
@@ -304,8 +306,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
       else if (current_elem == LOC)  {
 	String seqid_att = atts.getValue(SEGMENT);
-	if (seqid_att.length() == 0) { seqid_att = atts.getValue(URID); }
-	if (seqid_att.length() == 0) { seqid_att = atts.getValue(ID); }
+	if (seqid_att == null) { seqid_att = atts.getValue(URID); }
+	if (seqid_att == null) { seqid_att = atts.getValue(ID); }
 	String seqid = current_base_uri.resolve(seqid_att).toString();
 	String range = atts.getValue(RANGE);
 	// DO_SEQID_HACK is a very temporary fix!!!
@@ -320,7 +322,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       else if (current_elem == PARENT) {
 	if (feat_parent_id == null) {
 	  feat_parent_id = atts.getValue(URID);
-	  if (feat_parent_id.length() == 0) { feat_parent_id = atts.getValue(ID); }
+	  if (feat_parent_id == null) { feat_parent_id = atts.getValue(ID); }
 	  feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
 	}
 	else {
@@ -329,7 +331,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
       else if (current_elem == PART) {
 	String part_id = atts.getValue(URID);
-	if (part_id.length() == 0) { part_id = atts.getValue(ID); }
+	if (part_id == null) { part_id = atts.getValue(ID); }
 	part_id = current_base_uri.resolve(part_id).toString();
 	/*
 	 *  Use part_id to look for child sym already constructed and placed in id2sym hash
@@ -350,7 +352,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
       else if (current_elem == ALIGN) {
 	String target_id = atts.getValue(TARGETURI);
-	if (target_id.length() == 0) { target_id = atts.getValue(TARGETID); }  // for backward compatibility
+	if (target_id == null) { target_id = atts.getValue(TARGETID); }  // for backward compatibility
 	String target_range = atts.getValue(RANGE);
 	String cigar = atts.getValue(CIGAR);
 	// not sure yet how to handle optional cigar string
@@ -507,7 +509,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     // if no parent, then attach directly to AnnotatedBioSeq(s)  (get seqid(s) from location)
     if (feat_parent_id == null) {
-      if (REPORT_MULTI_LOC && loc_count > 1)  { System.out.println("loc count: " + loc_count); }
+      if (REPORT_MULTI_LOC && loc_count > 2)  { System.out.println("loc count: " + loc_count); }
       for (int i=0; i<loc_count; i++) {
 	SeqSpan span = (SeqSpan)feat_locs.get(i);
 	BioSeq seq = span.getBioSeq();
@@ -628,10 +630,11 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
 	}
 
+	MutableSeqSpan mspan = new SimpleMutableSeqSpan();
 	Iterator iterator = syms.iterator();
 	while (iterator.hasNext()) {
 	  SeqSymmetry annot = (SeqSymmetry)iterator.next();
-	  writeDasFeature(annot, null, 0, seq, type, pw);
+	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
 	}
 	pw.println("</" + FEATURES + ">");
 	pw.flush();
@@ -649,7 +652,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      *  Recursively descends to write out all descendants
      */
     public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
-				BioSeq aseq, String feat_type, PrintWriter pw) {
+				BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
       String feat_name = null;
       if (annot instanceof SymWithProps) {
 	SymWithProps swp = (SymWithProps)annot;
@@ -664,7 +667,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	}
       }
       String feat_id = getChildID(annot, parent_id, parent_index);
-      SeqSpan span = annot.getSpan(aseq);
 
       // print <FEATURE ...> line
       pw.print("  <FEATURE uri=\"");
@@ -673,20 +675,28 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       pw.print(feat_id);
       pw.print("\" type=\"");
       pw.print(feat_type);
-      pw.print("\" ");
-      /*   parent has moved from being an attribute to being an element (zero or more)
-	   writeDasFeature() currently does not handle multiple parents, only zero or one
-	   if (parent_id != null) {
-	   pw.print("parent=\"");
-	   pw.print(parent_id);
-	   pw.print("\" ");
-	   }
-      */
-      pw.print(">");
+      pw.print("\" >");
       pw.println();
 
-      // print  <LOC .../> line
+      // print  all spans as <LOC .../> elements
+      int scount = annot.getSpanCount();
+      for (int i=0; i<scount; i++) {
+	SeqSpan span = null;
+	if (mspan == null) { span = annot.getSpan(i); }
+	else  { // trying use of mspan for efficiency...
+          annot.getSpan(i, mspan);
+          span = mspan;
+        }
+	pw.print("     <LOC segment=\"");
+	pw.print(span.getBioSeq().getID());
+	pw.print("\" range=\"");
+	String range = getRangeString(span);
+	pw.print(range);
+	pw.print("\" />");
+	pw.println();
+      }
 
+      /*
       pw.print("     <LOC segment=\"");
       pw.print(span.getBioSeq().getID());
       pw.print("\" range=\"");
@@ -694,6 +704,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       pw.print(range);
       pw.print("\" />");
       pw.println();
+      */
 
       //  parent has moved from being an attribute to being an element (zero or more)
       //    writeDasFeature() currently does not handle multiple parents, only zero or one
@@ -730,7 +741,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       if (child_count > 0) {
 	for (int i=0; i<child_count; i++) {
 	  SeqSymmetry child = annot.getChild(i);
-	  writeDasFeature(child, feat_id, i, aseq, feat_type, pw);
+	  writeDasFeature(child, feat_id, i, aseq, feat_type, pw, mspan);
 	}
       }
     }
@@ -838,7 +849,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     else  {
       seq = group.getSeq(seqid);
       if (seq == null) {
-	seq = group.addSeq(seqid, max);
+	if (ADD_NEW_SEQS_TO_GROUP) { seq = group.addSeq(seqid, max); }
+	else { seq = new SimpleBioSeq(seqid, max); }
       }
     }
     SeqSpan span;
@@ -852,17 +864,24 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
 
+  public static String getRangeString(SeqSpan span)  {
+    return getRangeString(span, true);
+  }
+
     /**
      *  Generating a range string from a SeqSpan
      */
-    public static String getRangeString(SeqSpan span)  {
+
+  public static String getRangeString(SeqSpan span, boolean indicate_strand) {
       if (span == null) { return null; }
       StringBuffer buf = new StringBuffer(100);
       buf.append(Integer.toString(span.getMin()));
       buf.append(":");
       buf.append(Integer.toString(span.getMax()));
-      if (span.isForward()) { buf.append(":1"); }
-      else { buf.append(":-1"); }
+      if (indicate_strand) {
+	if (span.isForward()) { buf.append(":1"); }
+	else { buf.append(":-1"); }
+      }
       return buf.toString();
     }
 

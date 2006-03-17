@@ -33,11 +33,14 @@ public class Das2ServerInfo  {
   protected String name;
   protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   protected boolean initialized = false;
-  
+
   static String URID = "uri";
-  static String NAME = "title";
+  static String ID = "id";
+  static String TITLE = "title";
+  static String NAME = "name";
   static String TYPE = "type";
-  static String QUERY_ID = "query_uri";
+  static String QUERY_URI = "query_uri";
+  static String QUERY_ID = "query_id";
 
   /** Creates an instance of Das2ServerInfo for the given DAS server.
    *  @param init  whether or not to initialize the data right away.  If false
@@ -156,10 +159,12 @@ public class Das2ServerInfo  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute(URID);
-	String source_name = source.getAttribute(NAME);
+	if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
+	String source_name = source.getAttribute(TITLE);
+	if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
 	System.out.println("title: " + source_name + ",  length: " + source_name.length());
-	if (source_name == null || source_name.length() == 0) { 
-	  source_name = source_id; 
+	if (source_name == null || source_name.length() == 0) {
+	  source_name = source_id;
 	}
 	System.out.println("source_name: " + source_name);
         String source_info_url = source.getAttribute("doc_href");
@@ -176,10 +181,10 @@ public class Das2ServerInfo  {
 	  if (slist.item(k).getNodeName().equals("VERSION"))  {
 	    Element version = (Element)slist.item(k);
 	    String version_id = version.getAttribute(URID);
-	    String version_name = version.getAttribute(NAME);
-	    if (version_name == null || version_name.length() == 0) { 
-	      version_name = version_id; 
-	    }
+	    if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
+	    String version_name = version.getAttribute(TITLE);
+	    if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
+	    if (version_name.length() == 0) { version_name = version_id; }
 	    System.out.println("version_name: " + version_name);
 
 	    String version_desc = version.getAttribute("description");
@@ -189,11 +194,11 @@ public class Das2ServerInfo  {
 	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
 	    System.out.println("version URI: " + version_uri.toString());
 	    //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
-	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name, 
+	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
 								  version_desc, version_info_url, false);
 	    dasSource.addVersion(vsource);
 
-  
+
 	    NodeList vlist = version.getChildNodes();
 	    for (int j=0; j<vlist.getLength(); j++) {
 	      String nodename = vlist.item(j).getNodeName();
@@ -201,7 +206,8 @@ public class Das2ServerInfo  {
 	      if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
 		Element capel = (Element)vlist.item(j);
 		String captype = capel.getAttribute(TYPE);
-		String query_id = capel.getAttribute(QUERY_ID);
+		String query_id = capel.getAttribute(QUERY_URI);
+		if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
 		URI base_uri = getBaseURI(das_query, capel);
 		URI cap_root = base_uri.resolve(query_id);
 		System.out.println("Capability: " + captype + ", URI: " + cap_root);

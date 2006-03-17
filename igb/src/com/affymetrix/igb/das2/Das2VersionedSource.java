@@ -48,7 +48,7 @@ public class Das2VersionedSource  {
   static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
   static String NAME = Das2FeatureSaxParser.NAME;
   static String TITLE = Das2FeatureSaxParser.TITLE;
-  
+
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -198,7 +198,7 @@ public class Das2VersionedSource  {
       for (int i=0; i< regionlist.getLength(); i++)  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute(URID);
-	if (region_id == null || region_id.length() == 0) { region_id = reg.getAttribute(ID); }
+	if (region_id.length() == 0) { region_id = reg.getAttribute(ID); }
 	URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
 
 	// GAH _TEMPORARY_ hack to strip down region_id
@@ -208,7 +208,7 @@ public class Das2VersionedSource  {
 	}
 	String lengthstr = reg.getAttribute("length");
 	String region_name = reg.getAttribute(NAME);
-	if (region_name == null || region_name.length() == 0) { region_name = reg.getAttribute(TITLE); }
+	if (region_name.length() == 0) { region_name = reg.getAttribute(TITLE); }
 	String region_info_url = reg.getAttribute("doc_href");
 
 	String description = null;
@@ -254,7 +254,7 @@ public class Das2VersionedSource  {
 	Element typenode = (Element)typelist.item(i);
 
 	String typeid = typenode.getAttribute(URID); // Gets the ID value
-	if (typeid == null)  { typeid = typenode.getAttribute(ID); }
+	if (typeid.length() == 0)  { typeid = typenode.getAttribute(ID); }
 
 	// GAH Temporary hack to deal with typeids that are not legal URIs
 	//    unfortunately this can mess up XML Base resolution when the id is an absolute URI
@@ -273,7 +273,7 @@ public class Das2VersionedSource  {
 	String type_source = typenode.getAttribute("source");
 	String href = typenode.getAttribute("doc_href");
 	String type_name = typenode.getAttribute(NAME);
-	if (type_name == null || (type_name.length() == 0)) { type_name = typenode.getAttribute(TITLE); }
+	if (type_name.length() == 0) { type_name = typenode.getAttribute(TITLE); }
 
 	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
 	LinkedHashMap formats = new LinkedHashMap();                            //I don't think that this has ever been used yet.

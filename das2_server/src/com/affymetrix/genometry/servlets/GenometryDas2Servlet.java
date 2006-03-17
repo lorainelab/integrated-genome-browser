@@ -38,7 +38,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean ADD_VERSION_TO_CONTENT_TYPE = true;
   static boolean USE_CREATED_ATT = true;
 
-  static String DAS2_VERSION = "200";
+  static String DAS2_VERSION = "300";
   public static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
   static String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
   static String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
@@ -46,10 +46,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
   //    FEATURES_CONTENT_TYPE is set in the AnnotationWriter
   //  static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
 
-  // For now server doesn't really understand seqeunce ontology, so just 
-  //    using the topmost term for annotations with sequence locations: 
+  // For now server doesn't really understand seqeunce ontology, so just
+  //    using the topmost term for annotations with sequence locations:
   //    SO:0000110, "located_sequence_feature";
-  static String default_onto_term = "SO:0000110";  
+  static String default_onto_term = "SO:0000110";
   static String default_onto_uri = default_onto_term;
 
   static String URID = "uri";
@@ -708,7 +708,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
 
-      pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type + 
+      pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type +
 		 "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
       if (! formats.isEmpty()) {
         for (int k=0; k<formats.size(); k++) {
@@ -803,7 +803,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     SeqSpan identical_span = null;
 
     query = URLDecoder.decode(query);
-    if (query == null) {
+    if (query == null || query.length() == 0) {
 
     }
     else {
@@ -829,6 +829,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
        *  (OR similar filters, AND different filters)
        */
 
+      String[] segments = request.getParameterValues("segment");
       String[] types = request.getParameterValues("type");
       String[] overlaps = request.getParameterValues("overlaps");
       String[] insides = request.getParameterValues("inside");
@@ -848,8 +849,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //  will be "prop-curator".  So above approach won't work -- will need to go through
       //  entire list of parameter names and extract any that start with "prop-"...
 
-
       String[] query_array = query_splitter.split(query);
+      boolean has_segment = false;
+      String seqid = null;
       for (int i=0; i< query_array.length; i++) {
 	String tagval = query_array[i];
 	String[] tagval_array = tagval_splitter.split(tagval);
@@ -859,15 +861,26 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	if (tag.equals("format")) {
 	  output_format = val;
 	}
+	else if (tag.equalsIgnoreCase("segment")) {
+	  has_segment = true;
+	  seqid = val;
+	  int sindex = seqid.lastIndexOf("/");
+	  if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
+	}
 	else if (tag.equalsIgnoreCase("type")) {
 	  // only track the last "type" value for now...
 	  query_type = val;
+	  // hack to extract last part if type is given as full URI...
+	  int sindex = query_type.lastIndexOf("/");
+	  if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
 	}
 	else if (tag.equalsIgnoreCase("overlaps")) {
-	  overlap_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
+	  if (has_segment) { overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
+	  else  { overlap_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
 	}
 	else if (tag.equalsIgnoreCase("inside")) {
-	  inside_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
+	  if (has_segment) { inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
+	  else  { inside_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
 	}
 	else if (tag.equalsIgnoreCase("contains")) {
 	  contain_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
@@ -979,7 +992,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	AnnotationWriter writer = (AnnotationWriter)writerclass.newInstance();
 	String mime_type = writer.getMimeType();
 	if (writer instanceof Das2FeatureSaxParser) {
-	  ((Das2FeatureSaxParser)writer).setBaseURI(new URI(request.getRequestURI().toString()) );
+	  ((Das2FeatureSaxParser)writer).setBaseURI(new URI(request.getRequestURL().toString()) );
 	  setContentType(response, mime_type);
 	}
 	else {

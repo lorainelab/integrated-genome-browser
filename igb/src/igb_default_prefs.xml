@@ -64,29 +64,29 @@
      style="coverage" />
 
 
-<!-- Configure the Human All-Exon array "HuEx-1_0-st" -->
+<!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
 <!-- 
-  Must match all these names:  
+  Must match all these names:  (and similar ones for non-human chips)
     "HuEx-1_0-st", "HuEx-1_0-st-Probes", "HuEx-1_0-st-Transcripts"
     "HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
 -->
 
-<annotation_style annot_type_regex="^HuEx-1_0-st.*Probes$"
+<annotation_style annot_type_regex="^.*Ex-1_0-st.*Probes$"
   child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   label_field="id"
 />
-<annotation_style annot_type_regex="^HuEx-1_0-st.*Transcripts$"
+<annotation_style annot_type_regex="^.*Ex-1_0-st.*Transcripts$"
   child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   label_field="id"
 />
 
 <!-- This is for the 5-level GFF files -->
-<annotation_style annot_type_regex="^HuEx-1_0-st$"
+<annotation_style annot_type_regex="^.*Ex-1_0-st$"
   child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   label_field="probeset_id"
   />
 
-<!-- End: Configure the Human All-Exon array "HuEx-1_0-st" -->
+<!-- End: configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
 
 
   <!-- <annotation_url> associates a "method" type regular expression with a URL.
@@ -110,10 +110,10 @@
   <annotation_url annot_type_regex=".* netaffx consensus"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$"
   />
-  <annotation_url annot_type_regex="^HuEx-1_0-st.*Probes$"
+  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"
     url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
   />
-  <annotation_url annot_type_regex="^HuEx-1_0-st.*Transcripts$"
+  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Transcripts$"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
      

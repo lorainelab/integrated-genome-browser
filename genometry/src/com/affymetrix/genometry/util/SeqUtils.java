@@ -146,7 +146,11 @@ public abstract class SeqUtils {
       MutableSeqSpan span = (MutableSeqSpan)sym.getSpan(k);
       BioSeq seq = span.getBioSeq();
       SeqSpan newspan = getChildBounds(sym, seq);
-      span.set(newspan.getStart(), newspan.getEnd(), seq);
+      // Throwing a null pointer exception with AnnotMapper during 
+      // hg16-hg17 mapping used for exon array. --steve chervitz
+      if(newspan != null) {
+        span.set(newspan.getStart(), newspan.getEnd(), seq);
+      }
     }
   }
 

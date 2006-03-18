@@ -315,5 +315,51 @@ public class Das2VersionedSource  {
   }
 
 
+  /**
+   *  use the name feature filter in DAS/2 to retrieve features by name/id/(alias?)
+   *  this method should also add any feature retrieved to the appropriate seq(s) in the AnnotatedSeqGroup
+   *      (should they be added directly or indirectly?  For range-based queries the returned features are
+   *       wrapped in a Das2FeatureRequestSym -- should there be a wrapper sym for name-based queries also,
+   *       or expand/refactor/subclass Das2FeatureRequestSym to serve as wrapper for name-based queries?
+   *       For now, trying to just add features directly to seq...)
+   *   For now, not allowing combination with any other filters
+   */
+  public List getFeaturesByName(String name) {
+    List feats = null;
+    try {
+      Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
+      String request_root = featcap.getRootURI().toString();
+      String nameglob = name;
+      if (Das2Region.URL_ENCODE_QUERY) {
+	nameglob = URLEncoder.encode(nameglob, "UTF-8");
+      }
+      String feature_query = request_root + "?name=" + nameglob;
+      System.out.println("feature query: " + feature_query);
+
+      Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+      URL query_url = new URL(feature_query);
+      URLConnection query_con = query_url.openConnection();
+      InputStream istr = query_con.getInputStream();
+      BufferedInputStream bis = new BufferedInputStream(istr);
+      //      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
+      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), true);
+      int feat_count = feats.size();
+      System.out.println("parsed query results, annot count = " + feat_count);
+      /*
+      for (int k=0; k<feat_count; k++) {
+	SeqSymmetry feat = (SeqSymmetry)feats.get(k);
+	//	request_sym.addChild(feat);
+      }
+      */
+      bis.close();
+      istr.close();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    return feats;
+  }
+
+
 
 }

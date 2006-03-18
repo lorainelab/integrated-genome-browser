@@ -849,102 +849,114 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //  will be "prop-curator".  So above approach won't work -- will need to go through
       //  entire list of parameter names and extract any that start with "prop-"...
 
-      String[] query_array = query_splitter.split(query);
-      boolean has_segment = false;
-      String seqid = null;
-      for (int i=0; i< query_array.length; i++) {
-	String tagval = query_array[i];
-	String[] tagval_array = tagval_splitter.split(tagval);
-	String tag = tagval_array[0];
-	String val = tagval_array[1];
-	log.add("tag = " + tag + ", val = " + val);
-	if (tag.equals("format")) {
-	  output_format = val;
-	}
-	else if (tag.equalsIgnoreCase("segment")) {
-	  has_segment = true;
-	  seqid = val;
-	  int sindex = seqid.lastIndexOf("/");
-	  if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
-	}
-	else if (tag.equalsIgnoreCase("type")) {
-	  // only track the last "type" value for now...
-	  query_type = val;
-	  // hack to extract last part if type is given as full URI...
-	  int sindex = query_type.lastIndexOf("/");
-	  if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
-	}
-	else if (tag.equalsIgnoreCase("overlaps")) {
-	  if (has_segment) { overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
-	  else  { overlap_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
-	}
-	else if (tag.equalsIgnoreCase("inside")) {
-	  if (has_segment) { inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
-	  else  { inside_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
-	}
-	else if (tag.equalsIgnoreCase("contains")) {
-	  contain_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
-	}
-	else if (tag.equalsIgnoreCase("identical")) {
-	  identical_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
-	}
-	//	else if (tag.equals("depth")) {
-	//	  System.out.println("NOT YET IMPLEMENTED, depth = " + val);
-	//	}
-	else {
-	  log.add("query tagval not recognized: tag = " + tag + ", value = " + val);
-	}
-      }
-      if (query_type != null) { log.add("   query type: " + query_type); }
-      if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
-      if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
-      if (contain_span != null) { log.add("  contain_span: " + SeqUtils.spanToString(contain_span)); }
-      if (identical_span != null) { log.add("   identical_span: " + SeqUtils.spanToString(identical_span)); }
-
-      BioSeq oseq = overlap_span.getBioSeq();
       com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
-      timecheck.start();
-      java.util.List result = this.getIntersectedSymmetries(overlap_span, query_type);
-      long tim = timecheck.read();
-      log.add("  overlapping annotations of type " + query_type + ": " + result.size());
-      log.add("  time for range query: " + tim/1000f);
+      long tim;
+      List result = null;
+      BioSeq outseq = null;
 
-      // if an inside_span specified, then filter out intersected symmetries based on this:
-      //    don't return symmetries with a min < inside_span.min()  (even if they overlap query interval)
-      //    don't return symmetries with a max > inside_span.max()  (even if they overlap query interval)
-      //    if (hard_min > 0 || hard_max < seqlength) {
-      if (inside_span != null) {
-	int inside_min = inside_span.getMin();
-	int inside_max = inside_span.getMax();
-	BioSeq iseq = inside_span.getBioSeq();
-	log.add("*** trying to apply inside_span constraints ***");
-	if (iseq != oseq) {
-	  log.add("Problem with applying inside_span constraint, different seqs: iseq = " +
-		  iseq.getID() + ", oseq = " + oseq.getID());
-	  // if different seqs, then no feature can pass constraint...
-	  //   hmm, this might not strictly be true based on genometry, but in such a case then in
-	  //   DAS2 query rather than "inside" region filter should use "target_inside" region filter
-	  result = null;
-	}
-	else {
-	  timecheck.start();
-	  MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-	  List orig_result = result;
-	  int rcount = orig_result.size();
-	  result = new ArrayList(rcount);
-	  for (int i=0; i<rcount; i++) {
-	    SeqSymmetry sym = (SeqSymmetry)orig_result.get(i);
-	    // fill in testspan with span values for sym (on aseq)
-	    sym.getSpan(iseq, testspan);
-	    //	Ssytem.out.println("testing: " + testspan.getMin() + ", " + testspan.getMax()
-	    if ((testspan.getMin() >= inside_min) &&
-		(testspan.getMax() <= inside_max)) {
-	      result.add(sym);
-	    }
+      if (names != null && names.length >= 1) {
+	String name = names[0];
+	result = genome.findSyms(name);
+      }
+      else {  // not a name query
+	String[] query_array = query_splitter.split(query);
+	boolean has_segment = false;
+	String seqid = null;
+	for (int i=0; i< query_array.length; i++) {
+	  String tagval = query_array[i];
+	  String[] tagval_array = tagval_splitter.split(tagval);
+	  String tag = tagval_array[0];
+	  String val = tagval_array[1];
+	  log.add("tag = " + tag + ", val = " + val);
+	  if (tag.equals("format")) {
+	    output_format = val;
 	  }
-	  tim = timecheck.read();
-	  log.add("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-	  log.add("  time for inside_span filtering: " + tim/1000f);
+	  else if (tag.equalsIgnoreCase("segment")) {
+	    has_segment = true;
+	    seqid = val;
+	    // hack to extract last part if segment is given as full URI (as it should according to DAS/2 spec v.300)...
+	    int sindex = seqid.lastIndexOf("/");
+	    if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
+	  }
+	  else if (tag.equalsIgnoreCase("type")) {
+	    // only track the last "type" value for now...
+	    query_type = val;
+	    // hack to extract last part if type is given as full URI (as it should according to DAS/2 spec v.300)...
+	    int sindex = query_type.lastIndexOf("/");
+	    if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
+	  }
+	  else if (tag.equalsIgnoreCase("overlaps")) {
+	    if (has_segment) { overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
+	    else  { overlap_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
+	  }
+	  else if (tag.equalsIgnoreCase("inside")) {
+	    if (has_segment) { inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
+	    else  { inside_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
+	  }
+	  else if (tag.equalsIgnoreCase("contains")) {
+	    contain_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
+	  }
+	  else if (tag.equalsIgnoreCase("identical")) {
+	    identical_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
+	  }
+	  //	else if (tag.equals("depth")) {
+	  //	  System.out.println("NOT YET IMPLEMENTED, depth = " + val);
+	  //	}
+	  else {
+	    log.add("query tagval not recognized: tag = " + tag + ", value = " + val);
+	  }
+	}
+	if (query_type != null) { log.add("   query type: " + query_type); }
+	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
+	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
+	if (contain_span != null) { log.add("  contain_span: " + SeqUtils.spanToString(contain_span)); }
+	if (identical_span != null) { log.add("   identical_span: " + SeqUtils.spanToString(identical_span)); }
+
+	BioSeq oseq = overlap_span.getBioSeq();
+	outseq = oseq;
+	timecheck.start();
+	result = this.getIntersectedSymmetries(overlap_span, query_type);
+	tim = timecheck.read();
+	log.add("  overlapping annotations of type " + query_type + ": " + result.size());
+	log.add("  time for range query: " + tim/1000f);
+
+	// if an inside_span specified, then filter out intersected symmetries based on this:
+	//    don't return symmetries with a min < inside_span.min()  (even if they overlap query interval)
+	//    don't return symmetries with a max > inside_span.max()  (even if they overlap query interval)
+	//    if (hard_min > 0 || hard_max < seqlength) {
+	if (inside_span != null) {
+	  int inside_min = inside_span.getMin();
+	  int inside_max = inside_span.getMax();
+	  BioSeq iseq = inside_span.getBioSeq();
+	  log.add("*** trying to apply inside_span constraints ***");
+	  if (iseq != oseq) {
+	    log.add("Problem with applying inside_span constraint, different seqs: iseq = " +
+		    iseq.getID() + ", oseq = " + oseq.getID());
+	    // if different seqs, then no feature can pass constraint...
+	    //   hmm, this might not strictly be true based on genometry, but in such a case then in
+	    //   DAS2 query rather than "inside" region filter should use "target_inside" region filter
+	    result = null;
+	  }
+	  else {
+	    timecheck.start();
+	    MutableSeqSpan testspan = new SimpleMutableSeqSpan();
+	    List orig_result = result;
+	    int rcount = orig_result.size();
+	    result = new ArrayList(rcount);
+	    for (int i=0; i<rcount; i++) {
+	      SeqSymmetry sym = (SeqSymmetry)orig_result.get(i);
+	      // fill in testspan with span values for sym (on aseq)
+	      sym.getSpan(iseq, testspan);
+	      //	Ssytem.out.println("testing: " + testspan.getMin() + ", " + testspan.getMax()
+	      if ((testspan.getMin() >= inside_min) &&
+		  (testspan.getMax() <= inside_max)) {
+		result.add(sym);
+	      }
+	    }
+	    tim = timecheck.read();
+	    log.add("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
+	    log.add("  time for inside_span filtering: " + tim/1000f);
+	  }
 	}
       }
       timecheck.start();
@@ -958,7 +970,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  pw.println("overlapping annotations found: " + result.size());
 	}
 	else {
-	  outputAnnotations(result, oseq, query_type, request, response, output_format);
+	  outputAnnotations(result, outseq, query_type, request, response, output_format);
 	  tim = timecheck.read();
 	  log.add("  time for buffered output of results: " + tim/1000f);
 	  timecheck.start();

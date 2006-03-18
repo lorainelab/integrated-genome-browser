@@ -606,19 +606,21 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      *  Implementing AnnotationWriter interface to write out annotations
      *    to an output stream as "DASGFF" XML format.
      */
-    public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				    String type, OutputStream outstream) {
+    public boolean writeAnnotations(java.util.Collection syms, BioSeq seq, String type, OutputStream outstream) {
+      // Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
+      //  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
+
       boolean success = true;
       try {
 	PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 
 	// may need to extract seqid, seq version, genome for properly setting xml:base...
 	// for now only way to specify xml:base is to explicitly set via this.setXmlBase()
-	String seq_id = seq.getID();
-	String seq_version = null;
-	if (seq instanceof Versioned) {
-	  seq_version = ((Versioned)seq).getVersion();
-	}
+	//	String seq_id = seq.getID();
+	//	String seq_version = null;
+	//	if (seq instanceof Versioned) {
+	//	  seq_version = ((Versioned)seq).getVersion();
+	//	}
 
 	//	pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
 	//	pw.println("<!DOCTYPE DAS2FEATURE SYSTEM \"http://www.biodas.org/dtd/das2feature.dtd\"> ");
@@ -634,7 +636,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	Iterator iterator = syms.iterator();
 	while (iterator.hasNext()) {
 	  SeqSymmetry annot = (SeqSymmetry)iterator.next();
-	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
+	  // removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
+	  //	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
+	  writeDasFeature(annot, null, 0, type, pw, mspan);
 	}
 	pw.println("</" + FEATURES + ">");
 	pw.flush();
@@ -652,7 +656,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      *  Recursively descends to write out all descendants
      */
     public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
-				BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
+				String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
+      // removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
+      //	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
       String feat_name = null;
       if (annot instanceof SymWithProps) {
 	SymWithProps swp = (SymWithProps)annot;
@@ -741,7 +747,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       if (child_count > 0) {
 	for (int i=0; i<child_count; i++) {
 	  SeqSymmetry child = annot.getChild(i);
-	  writeDasFeature(child, feat_id, i, aseq, feat_type, pw, mspan);
+	  // removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
+	  //	  writeDasFeature(child, feat_id, i, aseq, feat_type, pw, mspan);
+	  writeDasFeature(child, feat_id, i, feat_type, pw, mspan);
 	}
       }
     }

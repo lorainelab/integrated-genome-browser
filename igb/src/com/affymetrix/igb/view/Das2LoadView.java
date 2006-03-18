@@ -43,6 +43,7 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
+  static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
   static boolean DEBUG_EVENTS = false;
@@ -52,6 +53,8 @@ public class Das2LoadView extends JComponent
   SeqMapView gviewer = null;
   GenometryViewer simple_viewer = null;
 
+  JTabbedPane tpane = new JTabbedPane();
+  JTextField searchTF = new JTextField(40);
   JComboBox typestateCB;
   JButton load_featuresB;
   JTable types_table;
@@ -116,6 +119,13 @@ public class Das2LoadView extends JComponent
 
     JPanel types_panel = new JPanel(new BorderLayout());
     types_panel.setBorder(new TitledBorder("Available Annotation Types"));
+
+    JPanel namesearchP = new JPanel();
+
+    namesearchP.add(new JLabel("name search: "));
+    namesearchP.add(searchTF);
+
+    //    types_panel.add("North", namesearchP);
     types_panel.add("Center", table_scroller);
     types_panel.add("South", load_featuresB);
 
@@ -124,8 +134,16 @@ public class Das2LoadView extends JComponent
     splitpane.setOneTouchExpandable(true);
     //    splitpane.setDividerSize(8);
     //    splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
-    splitpane.setLeftComponent(new JScrollPane(tree));
-    splitpane.setRightComponent(types_panel);
+    if (INCLUDE_NAME_SEARCH) {
+      splitpane.setLeftComponent(new JScrollPane(tree));
+      tpane.addTab("Types", types_panel);
+      tpane.addTab("Name Search", namesearchP);
+      splitpane.setRightComponent(tpane);
+    }
+    else {
+      splitpane.setRightComponent(types_panel);
+    }
+
     this.add("Center", splitpane);
 
     load_featuresB.addActionListener(this);
@@ -136,6 +154,8 @@ public class Das2LoadView extends JComponent
     tree.getSelectionModel().setSelectionMode
       (TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.addTreeSelectionListener(this);
+
+    searchTF.addActionListener(this);
   }
 
 
@@ -155,6 +175,13 @@ public class Das2LoadView extends JComponent
     if (src == load_featuresB) {
       System.out.println("Das2LoadView received ActionEvent on load features button");
       loadFeaturesInView();
+    }
+    else if (src == searchTF) {
+      String name = searchTF.getText();
+      System.out.println("trying to search for annotation name: " + name);
+      loadFeaturesByName(name);
+      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+      gviewer.setAnnotatedSeq(aseq, true, true);
     }
   }
 
@@ -217,6 +244,13 @@ public class Das2LoadView extends JComponent
 	}
       };
     worker.start();
+  }
+
+  public void loadFeaturesByName(String name) {
+    if (current_version != null) {
+      // Das2VersionedSource.getFeaturesByName() should also add features as annotations to seqs...
+      java.util.List feats = current_version.getFeaturesByName(name);
+    }
   }
 
   public void loadFeaturesInView() {

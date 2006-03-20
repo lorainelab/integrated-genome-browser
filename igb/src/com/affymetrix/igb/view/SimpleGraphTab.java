@@ -178,8 +178,8 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createHorizontalGlue());
     butbox.add(selectAllB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    butbox.add(resetB);
-    butbox.add(Box.createRigidArea(new Dimension(5,5)));
+    //butbox.add(resetB);
+    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
     //butbox.add(advB);
     //butbox.add(Box.createRigidArea(new Dimension(5,5)));
     //butbox.add(threshB);
@@ -225,14 +225,15 @@ implements SeqSelectionListener, SymSelectionListener {
     });
     
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    label_box.setAlignmentX(0.0f);
-    this.add(Box.createRigidArea(new Dimension(1,5)));
-    this.add(label_box);
+    //label_box.setAlignmentX(0.0f);
+    //this.add(Box.createRigidArea(new Dimension(1,5)));
+    //this.add(label_box);
     this.add(Box.createRigidArea(new Dimension(1,5)));
     row1.setAlignmentX(0.0f);
     this.add(row1);
     butbox.setAlignmentX(0.0f);
     butbox.setAlignmentY(1.0f);
+    this.add(Box.createRigidArea(new Dimension(1,5)));
     this.add(Box.createVerticalGlue());
     this.add(butbox);
 

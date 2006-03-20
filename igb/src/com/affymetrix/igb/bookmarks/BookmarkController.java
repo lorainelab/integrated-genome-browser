@@ -29,6 +29,7 @@ import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
@@ -156,6 +157,7 @@ public abstract class BookmarkController {
 
         //        int graph_min = (graph_visible_min == null) ?
         String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style_" + i);
+        String heatmap_name = UnibrowControlServlet.getStringParameter(map, "graph_heatmap_" + i);
 
         double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
         double yheight = (graph_height == null)  ? default_yheight : Double.parseDouble(graph_height);
@@ -235,6 +237,12 @@ public abstract class BookmarkController {
               graf.getGraphState().setGraphStyle(graph_style_num.intValue());
               // graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, graph_style_num);
 	    }
+            if (heatmap_name != null) {
+              HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);
+              if (heat_map != null) {
+                graf.getGraphState().setHeatMap(heat_map);
+              }
+            }
             GenericGraphGlyphFactory.displayGraph(graf, gviewer,
                                                 col, ypos, yheight,
                                                 use_floating_graphs, show_label, show_axis,
@@ -308,6 +316,9 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
 	mark_sym.setProperty("graph_style_" + i, (GraphState.getStyleName(gr.getGraphStyle())) );
         mark_sym.setProperty("graph_thresh_direction_" + i, Integer.toString(gr.getThresholdDirection()));
+        if (gr.getGraphStyle() == SmartGraphGlyph.HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
+          mark_sym.setProperty("graph_heatmap_" + i, gr.getGraphState().getHeatMap().getName());
+        }
 
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
       }

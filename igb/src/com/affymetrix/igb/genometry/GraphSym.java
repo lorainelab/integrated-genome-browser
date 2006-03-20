@@ -110,6 +110,16 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     return state;
   }
   
+  /** Sets the graph state.  This will get rid of any previous state settings,
+   *  including the name.
+   */
+  public void setGraphState(GraphState state) {
+    if (state == null) {
+      throw new NullPointerException();
+    }
+    this.state = state;
+  }
+  
   /**
    *  Overriding request for property "method" to return graph name.
    */

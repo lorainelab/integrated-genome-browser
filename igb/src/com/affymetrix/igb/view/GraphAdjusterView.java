@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.glyph.GraphState;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -516,17 +517,25 @@ public class GraphAdjusterView extends JComponent
       GraphSym graf = (GraphSym)grafs.get(i);
 
       float[] old_ycoords = graf.getGraphYCoords();
-      int pcount = old_ycoords.length;
-      float[] new_ycoords = new float[pcount];
+      float[] new_ycoords;
 
-      for (int k=0; k<pcount; k++) {
-        new_ycoords[k] = transformer.transform(old_ycoords[k]);
+      if (transformer instanceof IdentityTransform) {
+        new_ycoords = old_ycoords;
+      } else {
+        int pcount = old_ycoords.length;
+        new_ycoords = new float[pcount];
+        for (int k=0; k<pcount; k++) {
+          new_ycoords[k] = transformer.transform(old_ycoords[k]);
+        }
       }
       String newname = trans_name + " (" + graf.getGraphName() + ") ";
+      GraphState newstate = new GraphState(graf.getGraphState());
+      newstate.setLabel(newname);
       GraphSym newgraf =
         new GraphSym(graf.getGraphXCoords(), new_ycoords, newname, graf.getGraphSeq());
       //      System.out.println(newgraf);
       ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
+      newgraf.setGraphState(newstate);
       newgraf_count++;
       transform_count++;
     }
@@ -849,5 +858,12 @@ class InverseLogTransform implements FloatTransformer {
   }
   public float transform(float x) { return inner_trans.inverseTransform(x); }
   public float inverseTransform(float x) { return inner_trans.transform(x); }
+  public boolean isInvertible() { return true; }
+}
+
+class IdentityTransform implements FloatTransformer {
+  public IdentityTransform() {}
+  public float transform(float x) { return x; }
+  public float inverseTransform(float x) { return x; }
   public boolean isInvertible() { return true; }
 }

@@ -143,7 +143,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = tlg.getReferenceTier();
-      AnnotStyle tps = tier.getAnnotStyle();
+      IAnnotStyle tps = tier.getAnnotStyle();
       if (tps != null && ! styles.contains(tps)) styles.add(tps);
     }
     return styles;
@@ -152,8 +152,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   void setTiersCollapsed(java.util.List tier_labels, boolean collapsed) {
     java.util.List styles = getStyles(tier_labels);
     for (int i=0; i<styles.size(); i++) {
-      AnnotStyle style = (AnnotStyle) styles.get(i);
-      style.setCollapsed(collapsed);
+      IAnnotStyle style = (IAnnotStyle) styles.get(i);
+      if (style instanceof AnnotStyle) {
+        ((AnnotStyle) style).setCollapsed(collapsed);
+      } // else if it is a graph style, collapsed has no meaning
     }
     refreshMap(false);
   }
@@ -168,7 +170,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (tier_labels.size() == 1) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(0);
       TierGlyph tg = (TierGlyph) tlg.getInfo();
-      AnnotStyle style = tg.getAnnotStyle();
+      IAnnotStyle style = tg.getAnnotStyle();
       if (style != null) { initial_value = "" + style.getMaxDepth(); }
     }
     
@@ -198,11 +200,11 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = (TierGlyph) tlg.getInfo();
-      AnnotStyle style = tier.getAnnotStyle();
+      IAnnotStyle style = tier.getAnnotStyle();
 
-      if (style != null) {
-        style.setMaxDepth(max); 
-      }
+      if (style instanceof AnnotStyle) {
+        ((AnnotStyle) style).setMaxDepth(max); 
+      } // else if a graph style, max depth has no meaning
       tier.setMaxExpandDepth(max);
     }
     refreshMap(false);
@@ -214,10 +216,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     for (int i=0; i<tiervec.size(); i++) {
       TierLabelGlyph label = (TierLabelGlyph) tiervec.get(i);
       TierGlyph tier = (TierGlyph) label.getInfo();
-      tier.restoreState();
-      AnnotStyle style = tier.getAnnotStyle();
+      IAnnotStyle style = tier.getAnnotStyle();
       if (style != null) {
         style.setShow(true);
+      }
+      if (style.getShow()) {
+        tier.restoreState();        
       }
     }
     refreshMap(true);
@@ -227,10 +231,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
    *  Does not re-pack the given tier, or any other tiers.
    */
   protected void hideOneTier(final TierGlyph tier) {
-    tier.setState(TierGlyph.HIDDEN);
-    AnnotStyle style = tier.getAnnotStyle();
+    IAnnotStyle style = tier.getAnnotStyle();
     if (style != null) {
       style.setShow(false);
+    }
+    if (! style.getShow()) {
+      tier.setState(TierGlyph.HIDDEN);      
     }
   }
 
@@ -262,7 +268,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     
     TierLabelGlyph tlg_0 = (TierLabelGlyph) tier_label_glyphs.get(0);
     TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
-    AnnotStyle style_0 = tier_0.getAnnotStyle();
+    IAnnotStyle style_0 = tier_0.getAnnotStyle();
     if (style_0 != null) {
       chooser.setColor(style_0.getColor());
     }
@@ -272,7 +278,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         for (int i=0; i<tier_label_glyphs.size(); i++) {
           TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
           TierGlyph tier = (TierGlyph) tlg.getInfo();
-          AnnotStyle style = tier.getAnnotStyle();
+          IAnnotStyle style = tier.getAnnotStyle();
 
           if (style != null) { style.setColor(chooser.getColor()); }
         }
@@ -469,7 +475,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       Iterator iter = current_tiers.iterator();
       while (iter.hasNext()) {
         TierGlyph tg = (TierGlyph) iter.next();
-        AnnotStyle style = (AnnotStyle) tg.getAnnotStyle();
+        IAnnotStyle style = (IAnnotStyle) tg.getAnnotStyle();
         System.out.println("Tier: " + tg);
         System.out.println("Style: " + style);
       }

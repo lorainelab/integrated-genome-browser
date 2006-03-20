@@ -62,7 +62,7 @@ public class TransformTierGlyph extends TierGlyph {
     super();
   }
   
-  public TransformTierGlyph(AnnotStyle style)  {
+  public TransformTierGlyph(IAnnotStyle style)  {
     super(style);
   }
 

@@ -499,11 +499,27 @@ public class SeqMapView extends JPanel
   public Map getGraphFactoryHash() { return graf2factory; }
 
   TransformTierGlyph axis_tier;
+  
+  /** An un-collapsible instance.  It is hideable, though. */
+  AnnotStyle axis_annot_style = new AnnotStyle() {
+    //public void setShow(boolean b) {}
+    public void setSeparate(boolean b) { /* do nothing */ }
+    public void setCollapsed(boolean b) { /* do nothing */ }
+    public void setColor(Color c) {}
+    public void setBackground(Color c) {}
+    public void setHumanName(String s) {}
+    public void setLabelField(String s) {}
+    public void setMaxDepth(int i) {}
+  };
+  
   public TransformTierGlyph getAxisTier() { return axis_tier; }
-
+  
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
-    axis_tier = new TransformTierGlyph((AnnotStyle) null); // null AnnotStyle
+    
+    IAnnotStyle blank_style = axis_annot_style;
+
+    axis_tier = new TransformTierGlyph(blank_style);
     axis_tier.setLabel("Coordinates");
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
@@ -2477,17 +2493,15 @@ public class SeqMapView extends JPanel
    *  something, they will later be removed automatically by {@link SeqMapView#setAnnotatedSeq(AnnotatedBioSeq)}.
    *  @param meth  The tier name; it will be treated as case-insensitive.
    *  @param next_to_axis Do you want the Tier as close to the axis as possible?
-   *  @param style  an instance of AnnotStyle; tier label and other properties
-   *   are determined by the AnnotStyle.
+   *  @param style  a non-null instance of IAnnotStyle; tier label and other properties
+   *   are determined by the IAnnotStyle.
    *  @return an array of two Tiers, one forward (or mixed-direction), one reverse;
    *    If you want to treat the first one as mixed-direction, then place all
    *    the glyphs in it; the second tier will not be displayed if it remains empty.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyle style) {
       if (style == null) {
-        // Create a new style only if necessary.  GlyphFactory should be creating it, though.
-        style = AnnotStyle.getInstance(meth, false);
-        style.setHumanName(meth);
+        throw new NullPointerException();
       }
 
       // Always returns two tiers.  Could change to return only one tier if
@@ -2512,17 +2526,18 @@ public class SeqMapView extends JPanel
       }
       if (fortier != null) {
         String label;
-        if (style != null) {
-          if (style.getSeparate()) {
+        if (style instanceof AnnotStyle) {
+          if (((AnnotStyle) style).getSeparate()) {
             //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
             label = style.getHumanName() + " (+)";
           } else {
             //fortier.setDirection(TierGlyph.DIRECTION_NONE);
             label = style.getHumanName() + " (+/-)";
           }
-        } else {
+        } else { // may be an instance of graph annot style
           //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
-          label = meth + " (+)";
+          //label = meth + " (+)";
+          label = meth;
         }
         fortier.setLabel(label);
       }
@@ -2541,10 +2556,10 @@ public class SeqMapView extends JPanel
         method2rtier.put(meth.toLowerCase(), revtier);
       }
       if (revtier != null) {
-        if (style == null) {
-          revtier.setLabel(meth + " (-)");
-        } else {
-          revtier.setLabel(style.getHumanName() + " (-)");
+        if (style instanceof AnnotStyle) {
+          revtier.setLabel(style.getHumanName() + " (-)");          
+        } else { // style is a graph style or is null (this may not even be possible)
+          revtier.setLabel(meth + " (-)");          
         }
       }
       if (map.getTierIndex(revtier) == -1) {
@@ -2567,9 +2582,7 @@ public class SeqMapView extends JPanel
       ep.setMoveType(ExpandPacker.DOWN);
     }
     tg.setExpandedPacker(ep);
-    if (tg.getAnnotStyle() != null) {
-      tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
-    }
+    tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {

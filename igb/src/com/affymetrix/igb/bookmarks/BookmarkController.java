@@ -232,7 +232,8 @@ public abstract class BookmarkController {
             GraphSym graf = (GraphSym) graf_iter.next();
             graf.setGraphName(graph_name);
 	    if (graph_style_num != null)  {
-	      graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, graph_style_num);
+              graf.getGraphState().setGraphStyle(graph_style_num.intValue());
+              // graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, graph_style_num);
 	    }
             GenericGraphGlyphFactory.displayGraph(graf, gviewer,
                                                 col, ypos, yheight,

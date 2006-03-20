@@ -43,7 +43,6 @@ public class GraphGlyph extends Glyph {
   public static final int BAR_GRAPH = 2;
   public static final int DOT_GRAPH = 3;
   public static final int STAIRSTEP_GRAPH = 5;
-  public static final int SPAN_GRAPH = 6;
   public static final int HEAT_MAP = 7;
 
   int xpix_offset = 0;
@@ -60,7 +59,6 @@ public class GraphGlyph extends Glyph {
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
   boolean hide_zero_points = true;
-  String label = null;
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -84,13 +82,15 @@ public class GraphGlyph extends Glyph {
   LinearTransform scratch_trans = new LinearTransform();
 
   public GraphGlyph(int[] xcoords, float[] ycoords)  {
-    this(xcoords, ycoords, null);
+    this(xcoords, ycoords, new GraphState());
   }
 
   public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
     super();
     state = gstate;
-    if (state == null) { state = new GraphState(); }
+    if (state == null) { 
+      throw new NullPointerException();
+    }
     setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
     setColor(state.getColor());
     setGraphStyle(state.getGraphStyle());
@@ -253,18 +253,18 @@ public class GraphGlyph extends Glyph {
 	  g.fillRect(prev_point.x, pixelbox.y,
 		     curr_point.x - prev_point.x, pixelbox.height);
 	}
-	else if (graph_style == SPAN_GRAPH) {
-	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
-	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
-	  if ((i % 2) != 0) {
-	    int xpixend = curr_point.x;
-	    coord.x = xcoords[i-1];
-	    view.transformToPixels(coord, curr_point);
-	    int xpixbeg = curr_point.x;
-	    g.fillRect(xpixbeg, pixelbox.y+pixelbox.height/2,
-		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
-	  }
-	}
+//	else if (graph_style == SPAN_GRAPH) {
+//	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
+//	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
+//	  if ((i % 2) != 0) {
+//	    int xpixend = curr_point.x;
+//	    coord.x = xcoords[i-1];
+//	    view.transformToPixels(coord, curr_point);
+//	    int xpixbeg = curr_point.x;
+//	    g.fillRect(xpixbeg, pixelbox.y+pixelbox.height/2,
+//		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
+//	  }
+//	}
 	else if (graph_style == STAIRSTEP_GRAPH) {
 	  if (i<=0 || (!(hide_zero_points && ycoords[i-1] == 0))) {
 	    int stairwidth = curr_point.x - prev_point.x;
@@ -308,13 +308,13 @@ public class GraphGlyph extends Glyph {
   }
 
   public void drawLabel(ViewI view) {
-    if (label == null) { return; }
+    if (getLabel() == null) { return; }
     Rectangle hpix = calcHandlePix(view);
     Graphics g = view.getGraphics();
     g.setColor(Color.lightGray);
     g.setFont(default_font);
     FontMetrics fm = g.getFontMetrics();
-    g.drawString(label, (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
   }
 
   public void drawHandle(ViewI view) {
@@ -500,14 +500,7 @@ public class GraphGlyph extends Glyph {
     state.setColor(c);
   }
 
-  public void setLabel(String str) {
-    this.label = str;
-  }
-
-  public String getLabel() {
-    return label;
-  }
-
+  public String getLabel() { return state.getLabel(); }
   public boolean getShowGraph() { return state.getShowGraph(); }
   public boolean getShowBounds() { return state.getShowBounds();  }
   public boolean getShowHandle() { return state.getShowHandle(); }
@@ -515,6 +508,7 @@ public class GraphGlyph extends Glyph {
   public boolean getShowAxis() { return state.getShowAxis(); }
   public int getXPixelOffset() { return xpix_offset; }
 
+  public void setLabel(String str) { state.setLabel(str); }
   public void setShowGraph(boolean show) { state.setShowGraph(show); }
   public void setShowHandle(boolean show) { state.setShowHandle(show); }
   public void setShowBounds(boolean show) { state.setShowBounds(show); }

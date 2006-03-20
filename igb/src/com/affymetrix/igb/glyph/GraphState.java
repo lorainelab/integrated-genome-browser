@@ -13,6 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.IAnnotStyle;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import java.awt.Color;
 import java.util.*;
 
@@ -20,9 +23,10 @@ import java.util.*;
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public class GraphState {
+public class GraphState implements IAnnotStyle {
 
   String graph_path;
+  String graph_label;
   int graph_style = SmartGraphGlyph.MINMAXAVG;
   Color graph_col = Color.pink;
 
@@ -62,10 +66,9 @@ public class GraphState {
   int min_run_threshold = 30;
 
   /**  how much to shift xcoords of span start when painting spans that pass thresholds */
-  double span_start_shift = 0;  // currently should be 12 for transcriptome graphs
+  double span_start_shift = 12;  // currently should be 12 for transcriptome graphs
   /**  how much to shift xcoords of span end when painting spans that pass thresholds */
-  double span_end_shift = 0;  // currently should be 13 for transcriptome graphs
-
+  double span_end_shift = 13;  // currently should be 13 for transcriptome graphs
 
   /**
    *  visible_max_ycoord is the max ycoord (in graph coords) that is visible (rendered)
@@ -81,6 +84,7 @@ public class GraphState {
   boolean float_graph = true;
   boolean show_threshold = false;
   boolean show_axis = false;
+  boolean show = true; // whether to show or hide the graph. (Usually true.)
 
   boolean show_handle = true;
   boolean show_graph = true;
@@ -125,10 +129,35 @@ public class GraphState {
   }
 
 
-  public GraphState() { super(); }
+  public GraphState() { 
+    super();
+    
+    // Now set some defaults.
+    // (This used to be done in the GenericGraphGlyphFactory.)
+
+    boolean use_floating_graphs = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
+      setFloatGraph(use_floating_graphs);
+
+    // graph height is in coords if graph is attached, and in pixels if graph is floating
+    if (getFloatGraph()) {
+      int pix_height = GraphGlyphUtils.getGraphPrefsNode().getInt(
+        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);
+      setGraphHeight(pix_height);
+    }
+    else {
+      double coord_height = GraphGlyphUtils.getGraphPrefsNode().getDouble(
+        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
+      setGraphHeight(coord_height);
+    }
+
+    setColor(AnnotStyle.getDefaultInstance().getColor());    
+  }
+
   public GraphState(GraphState ostate) {
     this();
     setUrl(ostate.getUrl());
+    setLabel(ostate.getLabel());
     setGraphStyle(ostate.getGraphStyle());
     setColor(ostate.getColor());
     setGraphYPos(ostate.getGraphYPos());
@@ -154,6 +183,7 @@ public class GraphState {
 
 
   public final String getUrl() { return graph_path; }
+  public final String getLabel() { return graph_label; }
   public final int getGraphStyle() { return graph_style; }
   public final HeatMap getHeatMap() { return heat_map; }
   public final Color getColor() { return graph_col; }
@@ -171,6 +201,7 @@ public class GraphState {
   public final boolean getShowGraph() { return show_graph; }
   public final boolean getShowBounds() { return show_bounds; }
   public final boolean getShowLabel() { return show_label; }
+  public final boolean getShow() { return show; }
 
   public float getMinScoreThreshold() { return min_score_threshold; }
   public float getMaxScoreThreshold() { return max_score_threshold; }
@@ -187,6 +218,7 @@ public class GraphState {
   public int getThresholdDirection() { return threshold_direction; }
 
   public final void setUrl(String url) { graph_path = url; }
+  public final void setLabel(String name) { graph_label = name; }
   public final void setFloatGraph(boolean b) { float_graph = b; }
   public final void setGraphYPos(double ypos) { graph_ypos = ypos; }
   public final void setGraphHeight(double height) { graph_height = height; }
@@ -202,6 +234,7 @@ public class GraphState {
   public final void setShowGraph(boolean b) { show_graph = b; }    // check
   public final void setShowBounds(boolean b) { show_bounds = b; }  // check
   public final void setShowLabel(boolean b) { show_label = b; }    // check
+  public final void setShow(boolean b) { show = b; }
 
   public void setMinScoreThreshold(float thresh) { min_score_threshold = thresh; }
   public void setMaxScoreThreshold(float thresh) { max_score_threshold = thresh; }
@@ -220,5 +253,25 @@ public class GraphState {
       throw new IllegalArgumentException();
     }
     threshold_direction = d;
+  }
+
+  /** Simply returns the background color of the default AnnotStyle. */
+  public Color getBackground() {
+    return AnnotStyle.getDefaultInstance().getBackground();
+  }
+
+  /** Always returns false, since graphs can't be collapsed. */
+  public boolean getCollapsed() {
+    return false;
+  }
+
+  /** Returns the same thing as getLabel(). */
+  public String getHumanName() {
+    return getLabel();
+  }
+
+  /** Always returns zero, since graphs have no idea of max depth. */
+  public int getMaxDepth() {
+    return 0;
   }
 }

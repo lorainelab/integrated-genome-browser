@@ -187,23 +187,10 @@ public class AltSpliceView extends JComponent
 	GraphSym gsym = (GraphSym)keyval.getKey();
 	if (gsym.getGraphSeq() == original_view.getAnnotatedSeq()) {
 	  GenericGraphGlyphFactory orig_factory = (GenericGraphGlyphFactory)keyval.getValue();
-	  GraphState new_state = new GraphState(orig_factory.getGraphState());
-	  GenericGraphGlyphFactory new_factory = new GenericGraphGlyphFactory(new_state);
-	  /**
-	   *  GAH 11-22-2003
-	   *  There is a problem with showing SPAN_GRAPH style graphs in the spliced view,
-	   *    because they assume that the even positions in the graph's xcoords array are
-	   *    starts and the odd positions are stops of the spans.  But when slicing for
-	   *    the AltSpliceView, even/odd of GraphSym's coords may not be preserved, so
-	   *    can get rendering of spans that are the inverse of what it should be.
-	   *  So for now, transfrag graphs and other graphs that use SPAN_GRAPH style
-	   *    will be switched over to MINMAXAVG style for the sliced view, which ends up
-	   *    showing a bar at the start and end of each span instead of filling across the span.
-	   *    Hopefullly will fix soon with some modifications to GraphGlyph and transformGraphSym
-	   */
-	  if (new_state.getGraphStyle() == SmartGraphGlyph.SPAN_GRAPH) {
-	    new_state.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
-	  }
+          
+          GraphState new_state = new GraphState(gsym.getGraphState());
+	  GenericGraphGlyphFactory new_factory = new GenericGraphGlyphFactory(spliced_view);
+          
 	  spliced_graph_factories.put(gsym, new_factory);
 	}
       }
@@ -298,7 +285,7 @@ public class AltSpliceView extends JComponent
         while (iter.hasNext()) {
           TierLabelGlyph tlg = (TierLabelGlyph) iter.next();
           TierGlyph tg = tlg.getReferenceTier();
-          AnnotStyle style = tg.getAnnotStyle();
+          IAnnotStyle style = tg.getAnnotStyle();
           if (tg.getChildCount() <= 0) {
             tg.setState(TierGlyph.HIDDEN);
           }

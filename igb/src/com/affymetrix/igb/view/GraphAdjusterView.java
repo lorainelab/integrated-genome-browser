@@ -31,12 +31,10 @@ import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
-import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
@@ -54,7 +52,6 @@ public class GraphAdjusterView extends JComponent
   static String BAR = "Bar";
   static String DOT = "Dot";
   static String STAIRSTEP = "StairStep";
-  static String INTERVAL = "Interval";
   static String HIDE = "Hide";
   static String HEATMAP = "Heat Map";
 
@@ -113,7 +110,6 @@ public class GraphAdjusterView extends JComponent
     string2style.put(BAR, new Integer(SmartGraphGlyph.BAR_GRAPH));
     string2style.put(DOT, new Integer(SmartGraphGlyph.DOT_GRAPH));
     string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
-    string2style.put(INTERVAL, new Integer(SmartGraphGlyph.SPAN_GRAPH));
     string2style.put(HEATMAP, new Integer(SmartGraphGlyph.HEAT_MAP));
 
     name2transform = new LinkedHashMap();
@@ -689,15 +685,9 @@ public class GraphAdjusterView extends JComponent
       // Note: If the user selects "Cancel", col will be null
       if (col != null) for (int i=0; i<gcount; i++) {
         GraphSym graf = (GraphSym) graf_syms.get(i);
-        AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
-        annot_style.setColor(col);
         GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
         if (gl != null) {
-          GraphState state = gl.getGraphState();
-          if (state != null) {
-            state.setColor(col);
-          }
-          gl.setColor(col);
+          gl.setColor(col); // this automatically sets the GraphState color
           // if graph is in a tier, change foreground color of tier also
           //   (which in turn triggers change in color for TierLabelGlyph...)
           if (gl.getParent() instanceof TierGlyph) {

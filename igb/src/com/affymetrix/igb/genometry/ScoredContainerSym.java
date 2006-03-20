@@ -133,7 +133,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       ycoords[(i*2)+1] = 0;
     }
     GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
-    gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+    gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
     gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character('.'));
     return gsym;
   }
@@ -184,7 +184,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     else {
       String name_with_strand = name + (orientation ? " (+)" : " (-)" );
       GraphSym gsym = new GraphSym(xcoords, ycoords, name_with_strand, aseq);
-      gsym.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, new Integer(GraphGlyph.STAIRSTEP_GRAPH));
+      gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
       gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character(orientation ? '+' : '-'));
       return gsym;
     }

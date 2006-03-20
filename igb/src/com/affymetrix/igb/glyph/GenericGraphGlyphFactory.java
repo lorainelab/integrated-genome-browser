@@ -44,24 +44,17 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 
   static Map seq2yloc = new HashMap();
-  static Map seq2facount = new HashMap();
 
-  GraphState state;
   SeqMapView gviewer;
-
+  
   public static void clear() {
     seq2yloc = new HashMap();
-    seq2facount = new HashMap();
-  }
-
-  public GenericGraphGlyphFactory(GraphState gs)  {
-    super();
-    state = gs;
   }
 
   public GenericGraphGlyphFactory(SeqMapView gv) {
-    this(new GraphState());
-    gviewer = gv;
+    //this(new GraphState());
+    gviewer = gv;    
+    
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     Rectangle mapbox = map.getView().getPixelBox();
     BioSeq seq = gmodel.getSelectedSeq();
@@ -75,34 +68,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     else {
       current_yloc = ((Double)seq2yloc.get(seq)).doubleValue();
     }
-    int facount;
-    if (seq2facount.get(seq) == null) {
-      facount = 0;
-      seq2facount.put(seq, new Integer(facount));
-    }
-    else {
-      facount = ((Integer)seq2facount.get(seq)).intValue();
-    }
 
-    boolean use_floating_graphs = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
-      state.setFloatGraph(use_floating_graphs);
-
-    // for now, state's graph height is in coords if graph is attached, and in
-    //    pixels if graph is floating
-    boolean height_set = false;
+    /*
     if (state.getFloatGraph()) {
-      int pix_height = GraphGlyphUtils.getGraphPrefsNode().getInt(
-        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);
-      state.setGraphHeight(pix_height);
-    }
-    else {
-      double coord_height = GraphGlyphUtils.getGraphPrefsNode().getDouble(
-        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
-      state.setGraphHeight(coord_height);
-    }
-
-  if (state.getFloatGraph()) {
       if (current_yloc > (mapbox.y + mapbox.height - state.getGraphHeight())) {
 	current_yloc = mapbox.y + 10;
       }
@@ -110,24 +78,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       current_yloc += state.getGraphHeight() + 10;
       seq2yloc.put(seq, new Double(current_yloc));
     }
-    //Color col = GraphGlyphUtils.getDefaultGraphColor(facount);
-
-    state.setColor(AnnotStyle.getDefaultInstance().getColor());
-    // GAH 8-18-2004 don't have a standard way of figuring out which graphs are probe-based
-    //   (in which case need 12/13 thresholded region start/end shift), and which ones aren't.  Since for
-    //   now almost all graphs being viewed via IGB and for which thresholding is a useful operation are
-    //   probe-based, hardwiring 12/13 shift by default.  If this is not what is desired, users will
-    //   need to modify via GraphAdjusterView
-    //   Hopefully soon will put in a more intelligent way of assigning threshold region shifts
-    //      (or switch to probe-based graphs mapping to center point of probe rather than min of probe span
-    state.setThreshStartShift(12);
-    state.setThreshEndShift(13);
-
-    seq2facount.put(seq, new Integer(facount + 1));
-
+     */
   }
 
-  public GraphState getGraphState() { return state; }
 
   public void init (Map options) {
 
@@ -135,16 +88,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     if (sym instanceof GraphSym) {
-      GraphSym gsym = (GraphSym)sym;
-
-      AnnotStyle annot_style = AnnotStyle.getInstance(gsym.getGraphName(), false);
-      state.setColor(annot_style.getColor());
-
-      if (gsym.getGraphState() == null) {
-        GraphState newstate = new GraphState(this.state);
-        gsym.setGraphState(newstate);
-      }
-      
+      GraphSym gsym = (GraphSym) sym;
       displayGraph(gsym, smv, gsym.getGraphState(), false);
     }
     else {
@@ -192,11 +136,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       graf.setGraphName(graph_name);
     }
 
-    AnnotStyle annot_style = AnnotStyle.getInstance(graf.getGraphName(), false);
-
-    annot_style.setColor(state.getColor());
-
-    setStateFromProps(graf, state);   // set some GraphState properties based on GraphSym
     SmartGraphGlyph graph_glyph;
     graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
     graph_glyph.setLabel(graf.getGraphName());
@@ -248,20 +187,20 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       if (new_tier) {
 	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph(annot_style);
+	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphState());
 	  tempgl.setFixedPixelHeight(true);
 	  tempgl.setFixedPixHeight(60);
 	  tglyph = tempgl;
 	}
-	else { tglyph = new TierGlyph(annot_style); }
+	else { tglyph = new TierGlyph(graf.getGraphState()); }
       }
 
-      Color tier_back_col = annot_style.getBackground();
+      Color tier_back_col = graf.getGraphState().getBackground();
 
       tglyph.setFillColor(tier_back_col);
       tglyph.setForegroundColor(state.getColor());
       tglyph.addChild(graph_glyph);
-      tglyph.setLabel(annot_style.getHumanName());
+      tglyph.setLabel(graf.getGraphState().getLabel());
       //tglyph.setLabel(graf.getGraphName());
       // GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
       //   or the TieredLabelMap won't get assigned labels correctly
@@ -335,10 +274,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 					float score_thresh, int minrun_thresh, int maxgap_thresh,
 					boolean show_thresh, int thresh_direction
 					) {
-    if (graf.getGraphState() == null) {
-      GraphState newstate = new GraphState();
-      graf.setGraphState(newstate);
-    }
     GraphState gstate = graf.getGraphState();
 
     // All properties were specified, so don't check the AnnotStyle here
@@ -356,48 +291,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setShowThreshold(show_thresh);
     gstate.setThresholdDirection(thresh_direction);
 
-    //TODO: Should this stuff about is_trans_frag be moved to setStateFromProps()
-    // so that it can be used from all the displayGraph() methods ?
-    boolean is_trans_frag = ((graf.getProperty("parameter_set_name") != null) &&
-			     (((String)graf.getProperty("parameter_set_name")).indexOf("TransFrag") > -1) ) ;
-    if (is_trans_frag) {
-      gstate.setGraphStyle(GraphGlyph.SPAN_GRAPH);
-      // trans frag graphs shouldn't be shifted...
-      gstate.setThreshStartShift(0);
-      gstate.setThreshEndShift(0);
-    }
-    else {
-      gstate.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
-      // hardwiring in shift settings,
-      //    assuming these are probe graphs with probe size = 25...
-      gstate.setThreshStartShift(12);
-      gstate.setThreshEndShift(13);
-    }
-
-    setStateFromProps(graf, gstate);
-
     Map gfactories = smv.getGraphFactoryHash();
-    GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
+    //GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
+    GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(smv);
     //		gfactories.put(fgraf, gstate);
     gfactories.put(graf, gfac);
     GraphGlyph graph_glyph = GenericGraphGlyphFactory.displayGraph(graf, smv, gstate, true);
     return graph_glyph;
-  }
-
-  /**
-   *  Sets some properties of the given GraphState based on properties in
-   *  the given GraphSym's property map.
-   *  Currently, sets only the graph "style" based on the value of the property
-   *    GraphSym.PROP_INITIAL_GRAPH_STYLE.
-   */
-  static void setStateFromProps(GraphSym graf, GraphState state) {
-    Integer requested_graph_style = (Integer) graf.getProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE);
-    if (requested_graph_style != null) {
-      state.setGraphStyle(requested_graph_style.intValue());
-
-      // Now set the requested graph style to null so that the user can later
-      // change the style in the GUI, if desired
-      graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, null);
-    }
   }
 }

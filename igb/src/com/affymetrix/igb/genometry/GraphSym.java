@@ -16,6 +16,7 @@ package com.affymetrix.igb.genometry;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
 
 /**
@@ -25,32 +26,24 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   int xcoords[];
   float ycoords[];
   BioSeq graph_original_seq;
-  String graph_name;
   GraphState state;
 
-  /** Property name that can be used to set/get the desired initial graph style.
-   *  The property value should be an Integer where the int value can
-   *  be used in GraphState.setGraphStyle().
-   */
-  public static final String PROP_INITIAL_GRAPH_STYLE = "Initial Graph Style";
-
-  /** Property name that can be used to set/get the strand this graph corresponds to.
+ /** Property name that can be used to set/get the strand this graph corresponds to.
    *  The property value should be a Character, equal to '+', '-' or '.'.
    */
   public static final String PROP_GRAPH_STRAND = "Graph Strand";
-
+  
   public Object clone() throws CloneNotSupportedException {
     GraphSym newsym = (GraphSym)super.clone();
     newsym.setGraphName(this.getGraphName() + ":clone");
-    if (state != null) {
-      newsym.state = new GraphState(state);
-    }
+    newsym.state = new GraphState(state);
     return newsym;
   }
 
   public GraphSym(BioSeq seq) { 
     super();
     this.graph_original_seq = seq;
+    this.state = new GraphState();
   }
 
   /** add a constructor to explicitly set span? */
@@ -62,7 +55,7 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     this(seq);
     this.xcoords = x;
     this.ycoords = y;
-    this.graph_name = name;
+    setGraphName(name);
     //    this.graph_original_seq = seq;
     // should at some point probably make seqspan shrink-wrap to bounds of xcoords...
     SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
@@ -70,11 +63,11 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   }
 
   public void setGraphName(String name) {
-    this.graph_name = name;
+    state.setLabel(name);
   }
 
   public String getGraphName() {
-    return graph_name;
+    return state.getLabel();
   }
 
   /* removed setGraphCoords() method, now can only set graph coord arrays in constructor
@@ -109,16 +102,9 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   public BioSeq getGraphSeq() {
     return graph_original_seq;
   }
-
-  /**
-   *  Sets the graph state.  May be null.
-   */
-  public void setGraphState(GraphState state) {
-    this.state = state;
-  }
   
   /**
-   *  Returns the graph state.  May be null.
+   *  Returns the graph state.  Will never be null.
    */
   public GraphState getGraphState() {
     return state;

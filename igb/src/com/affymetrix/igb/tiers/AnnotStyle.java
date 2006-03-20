@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
-public class AnnotStyle {
+public class AnnotStyle implements IAnnotStyle {
   
   static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
 
@@ -69,6 +69,21 @@ public class AnnotStyle {
   Preferences node;
 
   static Map static_map = new LinkedHashMap();
+
+  /** An immutable instance with default properties. */
+  public static AnnotStyle IMMUTABLE_INSTANCE = new AnnotStyle() {
+    public void setShow() { /* do nothing */ }
+    public void setSeparate() { /* do nothing */ }
+    public void setCollaped() { /* do nothing */ }
+    public void setColor() {}
+    public void setBackground() {}
+    public void setHumanName() {}
+    public void setLabelField(String s) {}
+    public void setMaxDepth() {}
+  };
+  
+  /** A mutable instance with default properties. */
+  public static AnnotStyle NULL_INSTANCE = new AnnotStyle();
   
   public static AnnotStyle getInstance(String unique_name) {
     return getInstance(unique_name, true);

@@ -102,9 +102,9 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
   protected java.util.List max_child_sofar = null;
 
-  AnnotStyle style;
+  IAnnotStyle style;
   
-  public TierGlyph(AnnotStyle style) {
+  public TierGlyph(IAnnotStyle style) {
     setHitable(false);
     setSpacer(spacer);
     setStyle(style);
@@ -116,10 +116,13 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   
   /** Constructor for the case where AnnotStyle is null. */
   public TierGlyph() {
-    this((AnnotStyle) null);
+    this(AnnotStyle.NULL_INSTANCE);
   }
   
-  public void setStyle(AnnotStyle style) {
+  public void setStyle(IAnnotStyle style) {
+    if (style == null) {
+      throw new NullPointerException();
+    }
     this.style = style;
     state = 0; // do this so that setState() will work.
     if (style != null) {
@@ -143,7 +146,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     }
   }
   
-  public AnnotStyle getAnnotStyle() {
+  public IAnnotStyle getAnnotStyle() {
     return style;
   }
     

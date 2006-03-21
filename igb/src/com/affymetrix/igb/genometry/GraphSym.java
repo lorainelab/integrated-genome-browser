@@ -32,7 +32,7 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
    *  The property value should be a Character, equal to '+', '-' or '.'.
    */
   public static final String PROP_GRAPH_STRAND = "Graph Strand";
-  
+
   public Object clone() throws CloneNotSupportedException {
     GraphSym newsym = (GraphSym)super.clone();
     newsym.setGraphName(this.getGraphName() + ":clone");
@@ -40,14 +40,14 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     return newsym;
   }
 
-  public GraphSym(BioSeq seq) { 
+  public GraphSym(BioSeq seq) {
     super();
     this.graph_original_seq = seq;
     this.state = new GraphState();
   }
 
   /** add a constructor to explicitly set span? */
-  //  this would be for slices, which need a span that expresses the bounds of the slice 
+  //  this would be for slices, which need a span that expresses the bounds of the slice
   //     (which will often be slightly bigger than the xcoord min and max)
   //  public GraphSym(int[] x, float[] y, String name, BioSeq seq, SeqSpan span) {
 
@@ -67,15 +67,10 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   }
 
   public String getGraphName() {
-    return state.getLabel();
+    String name = state.getLabel();
+    if (name == null) { name = (String)this.getID(); }
+    return name;
   }
-
-  /* removed setGraphCoords() method, now can only set graph coord arrays in constructor
-    public void setGraphCoords(int[] x, float[] y) {
-    this.xcoords = x;
-    this.ycoords = y;
-  }
-  */
 
   public int getPointCount() {
     if (xcoords == null) { return 0; }
@@ -90,26 +85,20 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     return ycoords;
   }
 
-  /*  removed setGraphSeq() method, now graph seq can only be set in constructor
-  public void setGraphSeq(BioSeq seq) {
-    this.graph_original_seq = seq;
-  }
-  */
-
   /**
    *  Get the seq that the graph's xcoords are specified in
    */
   public BioSeq getGraphSeq() {
     return graph_original_seq;
   }
-  
+
   /**
    *  Returns the graph state.  Will never be null.
    */
   public GraphState getGraphState() {
     return state;
   }
-  
+
   /** Sets the graph state.  This will get rid of any previous state settings,
    *  including the name.
    */
@@ -119,7 +108,7 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     }
     this.state = state;
   }
-  
+
   /**
    *  Overriding request for property "method" to return graph name.
    */

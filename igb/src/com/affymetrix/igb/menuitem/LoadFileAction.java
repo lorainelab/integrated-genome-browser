@@ -162,6 +162,14 @@ public class LoadFileAction {
         gmodel.setSelectedSeq(previous_seq);
       }
       else {
+        // The purpose of calling setSelectedSeqGroup, even if identity of 
+        // the seq group has not changed, is to make sure that
+        // the DataLoadView and the AnnotBrowserView update their displays.
+        // (Because the contents of the seq group may have changed.)
+        gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+        
+        // Setting the selected Seq, even if it hasn't changed identity, is to
+        // make the SeqMapView update itself.  (It's contents may have changed.)
         if (new_seq != null && group.getSeqList().contains(new_seq)) {
           gmodel.setSelectedSeq(new_seq);
         } else if (! group.getSeqList().isEmpty()){
@@ -170,7 +178,6 @@ public class LoadFileAction {
         }
       }
     }
-    // setting the selected seq in the gmodel will automatically set it in the viewer.
 
     return gmodel.getSelectedSeq();
   }
@@ -443,12 +450,6 @@ public class LoadFileAction {
       }
 
       System.gc();
-      
-      // The purpose of calling setSelectedSeqGroup, even if identity of 
-      // the seq group has not changed, is to make sure that
-      // the DataLoadView and the AnnotBrowserView update their displays.
-      // (Because the contents of the seq group may have changed.)
-      gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());      
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);

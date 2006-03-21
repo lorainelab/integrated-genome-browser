@@ -503,16 +503,18 @@ public class GraphAdjusterView extends JComponent
         FloatTransformer trans = (FloatTransformer)name2transform.get(selection);
         Timer tim = new Timer();
         tim.start();
-        transformGraphs(gviewer, grafs, selection, trans);
+        java.util.List newgrafs = transformGraphs(grafs, selection, trans);
+        if (! newgrafs.isEmpty() )  {
+          updateViewer(gviewer);
+        }
         System.out.println("time to transform graph: " + tim.read()/1000f);
       }
     }
   }
 
-  public static void transformGraphs(SeqMapView gviewer, java.util.List grafs, String trans_name, FloatTransformer transformer) {
-    int transform_count = 0;
+  public static java.util.List transformGraphs(java.util.List grafs, String trans_name, FloatTransformer transformer) {
     int gcount = grafs.size();
-    int newgraf_count = 0;
+    java.util.List newgrafs = new ArrayList(grafs.size());
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
 
@@ -536,12 +538,9 @@ public class GraphAdjusterView extends JComponent
       //      System.out.println(newgraf);
       ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
       newgraf.setGraphState(newstate);
-      newgraf_count++;
-      transform_count++;
+      newgrafs.add(newgraf);
     }
-    if (newgraf_count > 0)  {
-      updateViewer(gviewer);
-    }
+    return newgrafs;
   }
 
   public static void cloneGraphs(SeqMapView gviewer, java.util.List grafs) {

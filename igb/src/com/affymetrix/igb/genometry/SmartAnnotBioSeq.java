@@ -189,7 +189,9 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     // GAH 3-20-2006  now adding graphs to type2sym hash also, with id of graph used as type
     if (sym instanceof GraphSym) {
       if (type2sym == null) { type2sym = new HashMap(); }
-      type2sym.put(sym.getID(), sym);
+      String id = sym.getID();
+      if (id == null) { id = ((GraphSym)sym).getGraphName(); }
+      type2sym.put(id, sym);
       super.addAnnotation(sym);
       notifyModified();
       return;

@@ -416,8 +416,12 @@ public class BarParser implements AnnotationWriter  {
     Timer tim = new Timer();
     tim.start();
     try {
-
-    bis = new BufferedInputStream(istr);
+      if (istr instanceof BufferedInputStream) {
+	bis = (BufferedInputStream)istr;
+      }
+      else {
+	bis = new BufferedInputStream(istr);
+      }
     dis = new DataInputStream(bis);
     BarFileHeader bar_header = parseBarHeader(dis);
 
@@ -465,6 +469,7 @@ public class BarParser implements AnnotationWriter  {
               System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
             }
           }
+	  System.out.println("graph name: " + graph_name);
           GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);

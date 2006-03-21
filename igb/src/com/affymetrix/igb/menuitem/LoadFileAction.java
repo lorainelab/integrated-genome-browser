@@ -456,6 +456,16 @@ public class LoadFileAction {
     } finally {
       if (str != null) try {str.close();} catch (Exception e) {}
     }
+
+    // The purpose of calling setSelectedSeqGroup, even if identity of 
+    // the seq group has not changed, is to make sure that
+    // the DataLoadView and the AnnotBrowserView update their displays.
+    // (Because the contents of the seq group may have changed.)
+    //
+    // Note that this must be done regardless of whether this load() method was
+    // called from inside this class or in loading a bookmark, etc.
+    gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+
     return aseq;
   }
 

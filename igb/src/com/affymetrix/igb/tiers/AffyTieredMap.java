@@ -456,6 +456,20 @@ public class AffyTieredMap extends NeoMap {
     //	System.out.println("SceneCoordBox: " + scene.getCoordBox());
     //	System.out.println("ViewCoordBox:  " + view.getCoordBox());
   }
+  
+  /**
+   *  Repacks tiers.  Should be called after hiding or showing tiers or
+   *  changing their heights.
+   */
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    packTiers(full_repack, true, false);
+    stretchToFit(true, stretch_vertically);
+    // apply a hack to make sure strechToFit worked
+    if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
+      stretchToFit(false, true);
+    }
+    updateWidget();
+  }
 
   /** Prints this component. */
   public void print() throws java.awt.print.PrinterException {

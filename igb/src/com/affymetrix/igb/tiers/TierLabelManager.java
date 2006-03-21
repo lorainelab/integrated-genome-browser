@@ -191,14 +191,7 @@ public class TierLabelManager {
    *  changing their heights.
    */
   public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
-    tiermap.packTiers(full_repack, true, false);
-    tiermap.stretchToFit(true, stretch_vertically);
-    // apply a hack to make sure strechToFit worked
-    if ((tiermap.getZoom(tiermap.Y) < tiermap.getMinZoom(tiermap.Y))
-      || (tiermap.getZoom(tiermap.Y) > tiermap.getMaxZoom(tiermap.Y))) {
-      tiermap.stretchToFit(false, true);
-    }
-    tiermap.updateWidget();
+    tiermap.repackTheTiers(full_repack, stretch_vertically);
   }
   
   java.util.List popup_listeners = new ArrayList();

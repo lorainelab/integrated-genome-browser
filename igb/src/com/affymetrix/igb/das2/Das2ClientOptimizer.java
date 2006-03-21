@@ -195,14 +195,7 @@ public class Das2ClientOptimizer {
     for (int i=0; i<output_requests.size(); i++) {
       Das2FeatureRequestSym request = (Das2FeatureRequestSym)output_requests.get(i);
       boolean success = optimizedLoadFeatures(request);
-      if (success) {
-	// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
-	// on one thread when might be rendering based on aseq in event thread...
-	//
-	// or maybe should just make addAnnotation() a synchronized method
-	MutableAnnotatedBioSeq aseq = request.getRegion().getAnnotatedSeq();
-	synchronized (aseq)  { aseq.addAnnotation(request); }
-      }
+
     }
 
     if (SHOW_DAS_QUERY_GENOMETRY) {
@@ -392,6 +385,10 @@ public class Das2ClientOptimizer {
           DataInputStream dis = new DataInputStream(bis);
           feats = parser.parse(dis, type.getID(), seq_group);
         }
+	else if (content_subtype.equals("bar")) {
+	  System.out.println("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
+	  feats = BarParser.parse(bis, seq_group, type.getName());
+	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  success = false;
@@ -409,12 +406,27 @@ public class Das2ClientOptimizer {
 	  request_sym.addChild(child);
 	  */
 	}
-	else {
+	else if (success)  {  // checking success again, could have changed before getting to this point...
 	  int feat_count = feats.size();
 	  System.out.println("parsed query results, annot count = " + feat_count);
+	  boolean no_graphs = true;
 	  for (int k=0; k<feat_count; k++) {
 	    SeqSymmetry feat = (SeqSymmetry)feats.get(k);
-	    request_sym.addChild(feat);
+	    if (feat instanceof GraphSym) {
+	      addChildGraph((GraphSym)feat);
+	      no_graphs = false;
+	    }
+	    else  {
+	      request_sym.addChild(feat);
+	    }
+	  }
+	  // probably want to synchronize on annotated seq, since don't want to add annotations to aseq
+	  // on one thread when might be rendering based on aseq in event thread...
+	  //
+	  // or maybe should just make addAnnotation() a synchronized method
+	  if (no_graphs) {
+	    // aseq = request_sym.getRegion().getAnnotatedSeq();
+	    synchronized (aseq)  { aseq.addAnnotation(request_sym); }
 	  }
 	}
       }  // end if (success) conditional
@@ -425,6 +437,27 @@ public class Das2ClientOptimizer {
       success = false;
     }
     return success;
+  }
+
+  /**
+   *  Assumes ids of parent graphs are unique among annotations on seq
+   */
+  public static void addChildGraph(GraphSym cgraf) {
+    System.out.println("adding a child GraphSym to parent graph");
+    SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)cgraf.getGraphSeq();
+    // check and see if parent graph already exists
+    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+    System.out.println("   child graph id: " + id);
+    System.out.println("   seq: " + aseq.getID());
+    GraphSym pgraf = (GraphSym)aseq.getAnnotation(id);
+    if (pgraf == null) {
+      System.out.println("$$$$ creating new parent composite graph sym");
+      //      pgraf = new CompositeGraphSym(new int[0], new float[0], id, aseq);
+      pgraf = new CompositeGraphSym(id, aseq);
+      pgraf.setGraphName(id);
+      aseq.addAnnotation(pgraf);
+    }
+    pgraf.addChild(cgraf);
   }
 
 

@@ -66,7 +66,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   public static String XID = "XID";
   public static String PART = "PART";
   public static String PARENT = "PARENT";
-  public static String ALIGN = "ALIGN";
+  //  public static String ALIGN = "ALIGN";  // no longer have ALIGN elements, these are now also LOC elements
   public static String PROP = "PROP";
 
   /**
@@ -85,21 +85,15 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static public String MODIFIED = "modified";  // FEATURE
   static public String DOC_HREF = "doc_href";  // FEATURE
   static public String MIME_TYPE = "mimetype";  // PROP
-  static public String RANGE = "range";         // LOC, ALIGN
-  // PROP attributes -- leaving out for now, not sure if common.rnc is current for t
-  static public String TARGETID = "target_id";  // ALIGN
-  static public String TARGETURI = "target_uri";  // ALIGN
-  static public String CIGAR = "gap";             // ALIGN
+  static public String RANGE = "range";         // LOC
+  static public String CIGAR = "gap";             // LOC
   static public String KEY = "key";             // PROP
   static public String VALUE = "value";         // PROP
   static public String SEGMENT = "segment";     // LOC
 
-
-  //  static final String POS = "pos";  // in <LOC>
+  // PROP attributes -- leaving out for now, not sure if common.rnc is current for t
   //  static final String PTYPE = "ptype";  // in <PROP>
-
   //  static final String CONTENT_ENCODING = "content_encoding";  // in <PROP>
-  //  static final String TGT = "tgt";  // in <ALIGN>
 
   /**
    *  built-in ptype attribute values possible for <PROP> element in DAS2 feature response
@@ -137,7 +131,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
   /**  list of SeqSpans specifying feature locations */
   List feat_locs = new ArrayList();
-  List feat_aligns = new ArrayList();
+  //  List feat_aligns = new ArrayList();  // alignments are now merged with locations
   List feat_xids = new ArrayList();
   /**
    *  map of child feature id to either:
@@ -310,6 +304,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	if (seqid_att == null) { seqid_att = atts.getValue(ID); }
 	String seqid = current_base_uri.resolve(seqid_att).toString();
 	String range = atts.getValue(RANGE);
+	String cigar = atts.getValue(CIGAR);  // location can optionally have an alignment cigar string
 	// DO_SEQID_HACK is a very temporary fix!!!
 	// Need to move to using full URI references to identify sequences,
 	if (DO_SEQID_HACK) { seqid = doSeqIdHack(seqid); }
@@ -350,20 +345,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	feat_prop_key = atts.getValue(KEY);
 	feat_prop_val = atts.getValue(VALUE);
       }
-      else if (current_elem == ALIGN) {
-	String target_id = atts.getValue(TARGETURI);
-	if (target_id == null) { target_id = atts.getValue(TARGETID); }  // for backward compatibility
-	String target_range = atts.getValue(RANGE);
-	String cigar = atts.getValue(CIGAR);
-	// not sure yet how to handle optional cigar string
-	// calling getLocationSpan() with null seq_group arg means that
-	//    a new BioSeq will be created.  If we want this method to try and
-	//    find existing BioSeqs to use, probably need some universal
-	//    BioSeq id resolution mechanism (similar or same as SeqSymmetry resolution)
-	//    right now only have BioSeq id resolution relative to a particular AnnotatedSeqGroup
-	SeqSpan span = getLocationSpan(target_id, target_range, null);
-	feat_aligns.add(span);
-      }
       else {
 	System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
       }
@@ -397,7 +378,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     feat_xids.clear();
     // making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
     feat_parts = new LinkedHashMap();
-    feat_aligns.clear();
 
     feat_notes.clear();
     feat_aliass.clear();
@@ -484,13 +464,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     int loc_count = feat_locs.size();
     for (int i=0; i<loc_count; i++) {
       SeqSpan span = (SeqSpan)feat_locs.get(i);
-      featsym.addSpan(span);
-    }
-
-    // add aligns as spans??
-    int align_count = feat_aligns.size();
-    for (int i=0; i<align_count; i++) {
-      SeqSpan span = (SeqSpan)feat_aligns.get(i);
       featsym.addSpan(span);
     }
 

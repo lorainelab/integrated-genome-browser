@@ -269,6 +269,11 @@ public class GraphState implements IAnnotStyle {
   public String getHumanName() {
     return getLabel();
   }
+  
+  /** Same as setLabel(String). */
+  public void setHumanName(String s) {
+    setLabel(s);
+  }
 
   /** Always returns zero, since graphs have no idea of max depth. */
   public int getMaxDepth() {

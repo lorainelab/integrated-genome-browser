@@ -25,8 +25,10 @@ public interface IAnnotStyle {
   public boolean getShow();
   public void setShow(boolean b);
   
+  public String getHumanName();
+  public void setHumanName(String s);
+  
   public Color getBackground();
   public boolean getCollapsed();
-  public String getHumanName();
   public int getMaxDepth();
 }

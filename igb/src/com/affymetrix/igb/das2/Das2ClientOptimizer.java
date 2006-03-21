@@ -57,8 +57,8 @@ public class Das2ClientOptimizer {
   static boolean OPTIMIZE_FORMAT = false;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
   /**
-   *  For DAS/2 version >= 300, the segment part of location-based feature filters is split 
-   *  out into a separate query field, "segment", that applies to all location-based filters in the query 
+   *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
+   *  out into a separate query field, "segment", that applies to all location-based filters in the query
    *  (overlaps, inside, ??)
    */
   static boolean SEPARATE_SEGMENT_FILTER = false;
@@ -102,7 +102,9 @@ public class Das2ClientOptimizer {
     }
     else {
       SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)seq;
-      MutableSeqSymmetry cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
+      MutableSeqSymmetry cont_sym;
+      // this should work even for graphs, now that graphs are added to SmartAnnotBioSeq's type hash (with id as type)
+      cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
 
       if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
 	System.out.println("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);

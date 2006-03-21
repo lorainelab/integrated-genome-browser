@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
 /**
- *  A composite graph that contains average, min, and max of a set of graphs.
+ *  A graph that holds a set of graphs and contains average, min, and max for the whole set.
  *  This assumes that all graphs in the multigraph have the same xcoords!
  *
  *  For building "composite" graphs from graph slices, see CompositeGraphSym

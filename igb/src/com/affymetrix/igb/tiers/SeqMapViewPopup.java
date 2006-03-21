@@ -25,6 +25,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;
   
+  Action rename_action = new AbstractAction("Change Label") {
+    public void actionPerformed(ActionEvent e) {
+      java.util.List current_tiers = handler.getSelectedTiers();
+      if (current_tiers.size() != 1) {
+        ErrorHandler.errorPanel("Must select only one tier");
+      }
+      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      renameTier(current_tier);
+    }
+  };
+  
   Action customize_action = new AbstractAction("Customize") {
     public void actionPerformed(ActionEvent e) {
       showCustomizer();
@@ -67,7 +78,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
   
-  Action change_color_action = new AbstractAction("Change Annotation Color") {
+  Action change_color_action = new AbstractAction("Change Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels());
     }
@@ -296,6 +307,19 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
   
+  public void renameTier(final TierGlyph tier) {
+    if (tier == null) {
+      return;
+    }
+    IAnnotStyle style = tier.getAnnotStyle();
+    
+    String new_label = JOptionPane.showInputDialog("Label: ", style.getHumanName());
+    if (new_label != null && new_label.length() > 0) {
+      style.setHumanName(new_label);
+    }
+    refreshMap(false);
+  }
+  
   public void saveAsBedFile(TierGlyph atier) {
     int childcount= atier.getChildCount();
     java.util.List syms = new ArrayList(childcount);
@@ -418,8 +442,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
   
   public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
-    int num_selections = handler.getSelectedTierLabels().size();
+    java.util.List labels = handler.getSelectedTierLabels();
+    int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
+    
     
     customize_action.setEnabled(true);
 
@@ -427,7 +453,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     show_all_action.setEnabled(not_empty);
     
     change_color_action.setEnabled(num_selections > 0);
-
+    rename_action.setEnabled(num_selections == 1);
+    
     collapse_action.setEnabled(num_selections > 0);
     expand_action.setEnabled(num_selections > 0);
     change_expand_max_action.setEnabled(num_selections > 0);
@@ -437,14 +464,25 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     save_bed_action.setEnabled(num_selections == 1);
 
-    sym_summarize_action.setEnabled(num_selections == 1);
-    coverage_action.setEnabled(num_selections == 1);
+    if (num_selections == 1) {
+      // Check whether this selection is a graph or an annotation
+      TierLabelGlyph label = (TierLabelGlyph) labels.get(0);
+      TierGlyph glyph = (TierGlyph) label.getInfo();
+      IAnnotStyle style = glyph.getAnnotStyle();
+      boolean is_annotation_type = (style instanceof AnnotStyle);
+      sym_summarize_action.setEnabled(is_annotation_type);
+      coverage_action.setEnabled(is_annotation_type);
+    } else {
+      sym_summarize_action.setEnabled(num_selections == 1);
+      coverage_action.setEnabled(num_selections == 1);
+    }
     
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
     popup.add(show_all_action);
     popup.add(new JSeparator());
+    popup.add(rename_action);
     popup.add(change_color_action);
     popup.add(new JSeparator());
     popup.add(collapse_action);

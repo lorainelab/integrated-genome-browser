@@ -72,7 +72,6 @@ implements SeqSelectionListener, SymSelectionListener {
   JButton resetB = new JButton("Reset");
   JButton saveB = new JButton("Save...");
   JButton deleteB = new JButton("Delete");
-  //JButton advB = new JButton("Advanced...");
   JButton threshB = new JButton("Thresholding...");
   
   JLabel heat_map_label = new JLabel("Heat Map:");
@@ -180,10 +179,6 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     //butbox.add(resetB);
     //butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    //butbox.add(advB);
-    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    //butbox.add(threshB);
-    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(saveB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(deleteB);
@@ -208,15 +203,6 @@ implements SeqSelectionListener, SymSelectionListener {
     advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
     advanced_panel.setAlignmentY(0.0f);
     row1.add(advanced_panel);
-
-//    advanced_panel.setVisible(false); // will be turned-on by a button
-//    advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
-//    advB.addActionListener(new ActionListener() {
-//      public void actionPerformed(ActionEvent e) {
-//        advanced_panel.setVisible(! advanced_panel.isVisible());
-//        advB.setText(advanced_panel.isVisible() ? "Hide Advanced" : "Show Advanced");
-//      }
-//    });
     
     colorB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -572,6 +558,7 @@ implements SeqSelectionListener, SymSelectionListener {
   static Map name2transform;
   
   static String BLANK = "";
+  static String IDENTITY_TRANSFORM = "Copy";
   static String LOG_10 = "Log10";
   static String LOG_2 = "Log2";
   static String LOG_NATURAL = "Natural Log";
@@ -581,6 +568,7 @@ implements SeqSelectionListener, SymSelectionListener {
   
   static {
     name2transform = new LinkedHashMap();
+    name2transform.put(IDENTITY_TRANSFORM, new IdentityTransform());
     name2transform.put(LOG_10, new LogTransform(10));
     name2transform.put(LOG_2, new LogTransform(2));
     name2transform.put(LOG_NATURAL, new LogTransform(Math.E));
@@ -589,8 +577,8 @@ implements SeqSelectionListener, SymSelectionListener {
     name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
   }
 
-  JButton cloneB = new JButton("Clone");
-  JLabel scale_type_label = new JLabel("Clone with new scale:");
+  JButton cloneB = new JButton("Copy/Transform");
+  JLabel scale_type_label = new JLabel("Transformation:");
   JComboBox scaleCB = new JComboBox();
   
   JCheckBox labelCB = new JCheckBox("Label");
@@ -663,12 +651,6 @@ implements SeqSelectionListener, SymSelectionListener {
       
       cloneB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          GraphAdjusterView.cloneGraphs(gviewer, grafs);
-        }
-      });
-
-      scaleCB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
           scaleGraphs();
         }
       });
@@ -720,13 +702,14 @@ implements SeqSelectionListener, SymSelectionListener {
     
     void scaleGraphs() {
       String selection = (String) scaleCB.getSelectedItem();
-      if (selection != BLANK) {
-        System.out.println("selected scaling: " + selection);
-        FloatTransformer trans = (FloatTransformer) name2transform.get(selection);
-        Timer tim = new Timer();
-        tim.start();
-        GraphAdjusterView.transformGraphs(gviewer, grafs, selection, trans);
-        System.out.println("time to transform graph: " + tim.read()/1000f);
+      System.out.println("selected scaling: " + selection);
+      FloatTransformer trans = (FloatTransformer) name2transform.get(selection);
+      Timer tim = new Timer();
+      tim.start();
+      java.util.List newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
+      System.out.println("time to transform graph: " + tim.read()/1000f);
+      if (! newgrafs.isEmpty() )  {
+        GraphAdjusterView.updateViewer(gviewer);
       }
     }
     

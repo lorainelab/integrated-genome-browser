@@ -157,6 +157,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //      output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
       output_registry.put("das2feature", Das2FeatureSaxParser.class);
       output_registry.put("das2xml", Das2FeatureSaxParser.class);
+      output_registry.put("bar", BarParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE, Das2FeatureSaxParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, Das2FeatureSaxParser.class);
 
@@ -760,7 +761,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  String type = (String)titer.next();
 	  java.util.List flist = Collections.EMPTY_LIST;
 	  if (genome_types.get(type) == null) {
-	    TypeContainerAnnot tannot = aseq.getAnnotation(type);
+	    SymWithProps tannot = aseq.getAnnotation(type);
 	    //	    System.out.println("type: " + type + ", format info: " +
 	    //			       tannot.getProperty("preferred_formats"));
 	    SymWithProps first_child = (SymWithProps)tannot.getChild(0);
@@ -836,13 +837,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
       String[] formats = request.getParameterValues("format");
 
       String[] xids = request.getParameterValues("xid");
-      String[] exact_types = request.getParameterValues("exacttype");
       String[] contains = request.getParameterValues("contains");
       String[] identicals = request.getParameterValues("identical");
-      String[] target_overlaps = request.getParameterValues("target_overlaps");
-      String[] target_insides = request.getParameterValues("target_inside");
-      String[] target_contains = request.getParameterValues("target_contains");
-      String[] target_identicals = request.getParameterValues("target_identical");
       String[] names = request.getParameterValues("name");
       // property-based filters use a hybrid filter name of ("prop-" + prop_key)
       //  so for example if the property to filter by is "curator" then the parameter name
@@ -881,9 +877,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  else if (tag.equalsIgnoreCase("type")) {
 	    // only track the last "type" value for now...
 	    query_type = val;
-	    // hack to extract last part if type is given as full URI (as it should according to DAS/2 spec v.300)...
-	    int sindex = query_type.lastIndexOf("/");
-	    if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
+	    // hack to extract last part if type is given as full URI
+	    //    (as it should according to DAS/2 spec v.300)...
+	    //    special-case exception is when giving "file:" URI for graph
+	    //	    if (! (query_type.startsWith("file:") && query_type.endsWith(".bar"))) {
+	    if (!(query_type.endsWith(".bar"))) {
+	      int sindex = query_type.lastIndexOf("/");
+	      if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
+	    }
 	  }
 	  else if (tag.equalsIgnoreCase("overlaps")) {
 	    if (has_segment) { overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
@@ -911,6 +912,11 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
 	if (contain_span != null) { log.add("  contain_span: " + SeqUtils.spanToString(contain_span)); }
 	if (identical_span != null) { log.add("   identical_span: " + SeqUtils.spanToString(identical_span)); }
+	//	if (query_type != null && query_type.startsWith("file:") && query_type.endsWith(".bar")) {
+	if (query_type != null && query_type.endsWith(".bar")) {
+	  handleGraphRequest(request, response, query_type, overlap_span);
+	  return;
+	}
 
 	BioSeq oseq = overlap_span.getBioSeq();
 	outseq = oseq;
@@ -933,8 +939,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    log.add("Problem with applying inside_span constraint, different seqs: iseq = " +
 		    iseq.getID() + ", oseq = " + oseq.getID());
 	    // if different seqs, then no feature can pass constraint...
-	    //   hmm, this might not strictly be true based on genometry, but in such a case then in
-	    //   DAS2 query rather than "inside" region filter should use "target_inside" region filter
+	    //   hmm, this might not strictly be true based on genometry...
 	    result = null;
 	  }
 	  else {
@@ -983,6 +988,41 @@ public class GenometryDas2Servlet extends HttpServlet  {
       }
 
     }  // end (query != null) conditional
+  }
+
+  //  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response)  {
+  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response,
+				 String type, SeqSpan span) {
+    log.add("#### handling graph request");
+    SmartAnnotBioSeq seq = (SmartAnnotBioSeq)span.getBioSeq();
+    String seqid = seq.getID();
+    AnnotatedSeqGroup genome = seq.getSeqGroup();
+    log.add("#### genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
+    // use bar parser to extract just the overlap slice from the graph
+    String file_name = type;   // for now using file_name as graph type
+    GraphSym graf = null;
+    try  {
+      graf = BarParser.getSlice(file_name, span);
+    }
+    catch (Exception ex)  { ex.printStackTrace(); }
+    if (graf != null) {
+      ArrayList gsyms = new ArrayList();
+      gsyms.add(graf);
+      log.add("#### returning graph slice in bar format");
+      outputAnnotations(gsyms, span.getBioSeq(), type, request, response, "bar");
+    }
+    else {
+      // couldn't generate a GraphSym, so return an error?
+      log.add("####### problem with retrieving graph slice ########");
+      response.setStatus(response.SC_NOT_FOUND);
+      try {
+        PrintWriter pw = response.getWriter();
+        pw.println("DAS/2 server could not find graph to return for type: " +
+                   type);
+      }
+      catch (Exception ex) { ex.printStackTrace(); }
+      log.add("set status to 404 not found");
+    }
   }
 
 
@@ -1041,7 +1081,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
    */
   public List getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
     SmartAnnotBioSeq seq = (SmartAnnotBioSeq)query_span.getBioSeq();
-    TypeContainerAnnot container = seq.getAnnotation(annot_type);
+    SymWithProps container = seq.getAnnotation(annot_type);
     if (container != null) {
       int annot_count = container.getChildCount();
       for (int i=0; i<annot_count; i++) {

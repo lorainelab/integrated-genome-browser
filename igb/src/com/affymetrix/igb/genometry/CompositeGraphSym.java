@@ -5,22 +5,23 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genoviz.util.Timer;
 
+/**
+ *   CompositeGraphSym.
+ *   Was originally envisioning that a CompositeGraphSym would have a set of GraphSym children
+ *   But, this causes lots of problems for calculations that need to cross transitions between children,
+ *      for example percentile binning or dynamic thresholding
+ *   So, new plan is to keep composite graph x and y coords each in single array, and every time
+ *      more coords are added make new array and populate with old and new coords via System.arraycopy()
+ *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
+ *      been populated from
+ */
 public class CompositeGraphSym extends GraphSym  {
-  /**
-   *   Was originally envisioning that a CompositeGraphSym would have a set of GraphSym children
-   *   But, this causes lots of problems for calculations that need to cross transitions between children,
-   *      for example percentile binning or dynamic thresholding
-   *   So, new plan is to keep composite graph x and y coords each in single array, and every time
-   *      more coords are added make new array and populate with old and new coords via System.arraycopy()
-   *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
-   *      been populated from
-   */
   // extends GraphSym  {
-
   //  public Object clone()  // Does clone need to be reimplemented here?  Not sure yet...
 
-  public CompositeGraphSym(BioSeq seq) {
+  public CompositeGraphSym(String id, BioSeq seq) {
     super(seq);
+    setProperty("id", id);
   }
 
   /**

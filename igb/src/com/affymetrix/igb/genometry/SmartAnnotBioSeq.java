@@ -67,10 +67,14 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
 
   /**
    *  Returns a top-level symmetry or null.
+   *  Used to return a TypeContainerAnnot, but now returns a SymWithProps which is 
+   *     either a TypeContainerAnnot or a GraphSym, so GraphSyms can be retrieved with graph id given as type
    */
-  public TypeContainerAnnot getAnnotation(String type) {
+  public SymWithProps getAnnotation(String type) {
+  //  public TypeContainerAnnot getAnnotation(String type) {
     if (type2sym == null) { return null; }
-    return (TypeContainerAnnot)type2sym.get(type);
+    //    return (TypeContainerAnnot)type2sym.get(type);
+    return (SymWithProps)type2sym.get(type);
   }
 
   public void addModifiedListener(SeqModifiedListener listener) {
@@ -182,7 +186,10 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public void addAnnotation(SeqSymmetry sym) {
     // add graphs directly as annotations
+    // GAH 3-20-2006  now adding graphs to type2sym hash also, with id of graph used as type
     if (sym instanceof GraphSym) {
+      if (type2sym == null) { type2sym = new HashMap(); }
+      type2sym.put(sym.getID(), sym);
       super.addAnnotation(sym);
       notifyModified();
       return;

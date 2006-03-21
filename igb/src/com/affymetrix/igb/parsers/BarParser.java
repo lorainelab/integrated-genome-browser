@@ -23,8 +23,48 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.SynonymLookup;
 
-public class BarParser {
-  static boolean DEBUG_READ = false;
+
+/**
+   Bar format definition:
+
+   1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
+   2	Float	4	The file version number.  Valid versions are 1.0 and 2.0
+   3	Integer	4	The number of sequences stored in the file. Referred to as NSEQ.
+   4	Integer	4	The number of columns per data point. Referred to as NCOL.
+   5	Integer	4*NCOL	The field types, one per column of data. The possible values are:
+                         0 - Double
+                         1 - Float
+                         2 - 4 byte signed integer
+                         3 - 2 byte signed integer
+			 4 - 1 byte signed integer
+			 5 - 4 byte unsigned integer
+			 6 - 2 byte unsigned integer
+			 7 - 1 byte unsigned integer
+   6	Integer	4	Numbern of tag/value pairs.
+   7	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.
+   8	Char	TAGNAMELEN	The name of the tag.
+   9	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.
+   10	Char	TAGVALLEN	The value of the tag/value pair.
+
+
+   BAR SEQ/DATA SECTION HEADER
+
+   11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
+   12	Char	SEQNAMELEN	The sequence name.
+   13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
+   14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
+   15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
+   16	Char	SEQVERLEN	The sequence version.
+   17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
+   18	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.  Used only in version 2.0 or greater.
+   19	Char	TAGNAMELEN	The name of the tag.  Used only in version 2.0 or greater.
+   20	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.  Used only in version 2.0 or greater.
+   21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
+   22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
+   23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
+*/
+public class BarParser implements AnnotationWriter  {
+  static boolean DEBUG_READ = true;
   static boolean DEBUG_SLICE = false;
   static boolean DEBUG_DATA = false;
   static boolean DEBUG_INDEXER = false;
@@ -83,7 +123,15 @@ public class BarParser {
     //     across bar files that have the exact same base coords
     int[] chunk_mins = (int[])coordset2seqs.get(file_name);
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
+    //    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
+    AnnotatedSeqGroup seq_group;
+    if (aseq instanceof SmartAnnotBioSeq) {
+      seq_group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
+    }
+    else {
+      seq_group = gmodel.getSelectedSeqGroup();
+    }
+    System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
     if (chunk_mins == null) {
       buildIndex(file_name, file_name, seq_group);
       // index??
@@ -354,143 +402,8 @@ public class BarParser {
     System.out.println(" ");
   }
 
-  /**
-   * Writes sbar format.
-   * <pre>
-     Basic BAR (binary array) format:
-
-     #bytes                type        content
-     BAR FILE HEADER:
-     8                char        "barr\r\n\032\n"
-     4                float        version (2.0)
-
-     4                int        #rows in data section (nrow)
-     4                int        #columns in data section (ncol)
-     4xncol                int        field types (see below for possible values)
-     4                int        #tag-value pairs (ntag)
-     4                int        tag len
-     4xtaglen        char        tag string
-     4                int        value len
-     4xvaluelen        char        value string
-   * </pre>
 
 
-   1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
-   2	Float	4	The file version number.  Valid versions are 1.0 and 2.0
-   3	Integer	4	The number of sequences stored in the file. Referred to as NSEQ.
-   4	Integer	4	The number of columns per data point. Referred to as NCOL.
-   5	Integer	4*NCOL	The field types, one per column of data. The possible values are:
-                         0 - Double
-                         1 - Float
-                         2 - 4 byte signed integer
-                         3 - 2 byte signed integer
-			 4 - 1 byte signed integer
-			 5 - 4 byte unsigned integer
-			 6 - 2 byte unsigned integer
-			 7 - 1 byte unsigned integer
-   6	Integer	4	Numbern of tag/value pairs.
-   7	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.
-   8	Char	TAGNAMELEN	The name of the tag.
-   9	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.
-   10	Char	TAGVALLEN	The value of the tag/value pair.
-
-
-   BAR SEQ/DATA SECTION HEADER
-
-11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
-12	Char	SEQNAMELEN	The sequence name.
-13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
-14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
-15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
-16	Char	SEQVERLEN	The sequence version.
-17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
-18	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.  Used only in version 2.0 or greater.
-19	Char	TAGNAMELEN	The name of the tag.  Used only in version 2.0 or greater.
-20	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.  Used only in version 2.0 or greater.
-21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
-22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
-23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
-  */
-public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throws IOException {
-    boolean success = false;
-    BufferedOutputStream bos = new BufferedOutputStream(ostr);
-    DataOutputStream dos = new DataOutputStream(bos);
-    int[] xcoords = graf.getGraphXCoords();
-    float[] ycoords = graf.getGraphYCoords();
-    int total_points = xcoords.length;
-
-    // WRITING BAR FILE HEADER
-    dos.writeBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
-    dos.writeFloat(2.0f);       // version of bar format = 2.0
-    dos.writeInt(1);  // number of seq data sections in file -- if single graph, then 1
-    dos.writeInt(2);  // number of columns (dimensions) per data point
-    dos.writeInt(2);  // int  first column/dimension type ==> type 2 ==> 4-byte signed int
-    dos.writeInt(1);  // int  second column/dimension type ==> type1 ==> 4-byte float
-
-    Map props = graf.getProperties();
-    // add all graf props as tag/value pairs,
-    //    plus genome, version, ???
-    // for now, no tag/val pairs
-    dos.writeInt(0);      // for now, no file header tag/val pairs
-    // DONE WRITING BAR FILE HEADER
-
-    // WRITING SEQ SECTION HEADER
-    BioSeq seq = graf.getGraphSeq();
-    String seq_name = seq.getID();
-    dos.writeInt(seq_name.length());
-    dos.writeBytes(seq_name);
-
-    // write empty group?
-    dos.writeInt(0);  // for now no group
-    // write verion/group info in version field?
-    dos.writeInt(0);  // for now no version
-
-    dos.writeInt(0);  // for now, no seq header tag/val pairs
-    /*
-    Map props = graf.getProperties();
-    int propcount = 0;
-    if (props != null) { propcount = props.size(); }
-    int tvcount = propcount + 2;
-    dos.writeInt(tvcount); // int  #tag-value pairs (ntag)
-    writeTagVal(dos, "graph_name", graf.getGraphName());
-    writeTagVal(dos, "seq_name", graf.getGraphSeq().getID());
-    if (props != null)  {
-      Iterator propit = props.entrySet().iterator();
-      while (propit.hasNext()) {
-        Map.Entry keyval = (Map.Entry)propit.next();
-        Object key = keyval.getKey();
-        Object val = keyval.getValue();
-        // doing toString() just in case properties contains non-String objects
-        writeTagVal(dos, key.toString(), val.toString());
-      }
-    }
-    */
-
-    // WRITING DATA
-    for (int i=0; i<total_points; i++) {
-      dos.writeInt((int)xcoords[i]);
-      dos.writeFloat((float)ycoords[i]);
-    }
-
-    // DONE WRITING SEQ SECTION HEADER
-
-
-    // WRITING FOOTER
-    dos.close();
-    success = true;
-    System.out.println("wrote .bar file to stream");
-    return success;
-  }
-
-
-//  /**
-//   *  Implementing AnnotationWriter interface to write out graph annotations
-//   *    to an output stream as "bar" format.
-//   **/
-//  /*
-//  public boolean writeAnnotations(java.util.Collection graphs, BioSeq seq,
-//				  String type, OutputStream outstream) {
-//  */
 
   /** Parse a file in BAR format. */
   public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name)
@@ -664,6 +577,10 @@ public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throw
     }
   }
 
+  public static void writeBarHeader(DataOutput dos) throws IOException {
+
+  }
+
   public static BarFileHeader parseBarHeader(DataInput dis) throws IOException {
     try {
       // READING HEADER
@@ -733,6 +650,7 @@ public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throw
       // hack to extract seq version and seq name from seqname field for bar files that were made
       //   with the version and name concatenated (with ";" separator) into the seqname field
       int sc_pos = seqname.lastIndexOf(";");
+      String orig_seqname = seqname;
       if (sc_pos >= 0) {
         seqversion = seqname.substring(0, sc_pos);
 	seqname = seqname.substring(sc_pos+1);
@@ -751,41 +669,49 @@ public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throw
 			 ", data points = " + total_points);
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-      //TODO: Convert this to the standard way of getting synomous sequences,
-      // but we may have to check for extra bar-specific synonyms involving seq group and version
-      Iterator iter = seq_group.getSeqList().iterator();
+      // trying standard AnnotatedSeqGroup seq id resolution first
+      seq = seq_group.getSeq(seqname);
+      if (seq == null) { seq = seq_group.getSeq(orig_seqname); }
 
-      while (iter.hasNext()) {
-	// testing both seq id and version id (if version id is available)
-        MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
-        if (lookup.isSynonym(testseq.getID(), seqname)) {
-	  // GAH 1-23-2005
-	  // need to ensure that if bar2 format, the seq group is also a synonym!
-	  // GAH 7-7-2005
-	  //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
-	  //      groupname
-	  //      seqversion
-	  //      groupname + ":" + seqversion
-	  if ((seqversion == null && groupname == null) ||
-	      (((seqversion == null)  || seqversion.equals("")) && ((groupname == null) || groupname.equals("")) ) ||
-	      (! (testseq instanceof Versioned))) {
-	    seq = testseq;
-	    break;
-	  }
-	  else {
-	    String test_version = ((Versioned)testseq).getVersion();
-	    if ((lookup.isSynonym(test_version, seqversion)) ||
-		(lookup.isSynonym(test_version, groupname)) ||
-		(lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
-	      if (DEBUG_READ) { System.out.println("found synonymn"); }
+      // if standard AnnotatedSeqGroup seq id resolution doesn't work, try old technique
+      //    (hopefully can eliminate this soon)
+      if (seq == null) {
+	SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+	//TODO: Convert this to the standard way of getting synomous sequences,
+	// but we may have to check for extra bar-specific synonyms involving seq group and version
+	Iterator iter = seq_group.getSeqList().iterator();
+	while (iter.hasNext()) {
+	  // testing both seq id and version id (if version id is available)
+	  MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
+	  if (lookup.isSynonym(testseq.getID(), seqname)) {
+	    // GAH 1-23-2005
+	    // need to ensure that if bar2 format, the seq group is also a synonym!
+	    // GAH 7-7-2005
+	    //    but now there's some confusion about seqversion vs seqgroup, so try all three possibilities:
+	    //      groupname
+	    //      seqversion
+	    //      groupname + ":" + seqversion
+	    if ((seqversion == null && groupname == null) ||
+		(((seqversion == null)  || seqversion.equals("")) && ((groupname == null) || groupname.equals("")) ) ||
+		(! (testseq instanceof Versioned))) {
 	      seq = testseq;
 	      break;
 	    }
+	    else {
+	      String test_version = ((Versioned)testseq).getVersion();
+	      if ((lookup.isSynonym(test_version, seqversion)) ||
+		  (lookup.isSynonym(test_version, groupname)) ||
+		  (lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
+		if (DEBUG_READ) { System.out.println("found synonymn"); }
+		seq = testseq;
+		break;
+	      }
+	    }
 	  }
-        }
+	}
       }
+
       if (seq == null) {
 	if (bar2 && groupname != null) {
 	  seqversion = groupname + ":" + seqversion;
@@ -793,12 +719,83 @@ public static boolean oldOutputBarFormat(GraphSym graf, OutputStream ostr) throw
 	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
         seq = seq_group.addSeq(seqname, 500000000);
       }
-      //      System.out.println("seq: " + seq);
+      if (DEBUG_READ)  { System.out.println("seq: " + seq); }
       BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);
       return seq_header;
   }
 
+
+  /**
+   * Writes bar format.
+   * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
+   */
+  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+				  String type, OutputStream ostr) {
+    boolean success = false;
+    BufferedOutputStream bos = new BufferedOutputStream(ostr);
+    DataOutputStream dos = new DataOutputStream(bos);
+
+    // for now assume just outputting one graph?
+    Iterator iter = syms.iterator();
+    GraphSym graf = (GraphSym)iter.next();
+    // should check to make sure seq is same as graf.getGraphSeq()??
+
+    AnnotatedSeqGroup group = null;
+    if (seq instanceof SmartAnnotBioSeq) {
+      group = ((SmartAnnotBioSeq)seq).getSeqGroup();
+    }
+    String groupid = group.getID();
+    String version = groupid;
+    String seqid = seq.getID();
+
+    try {
+      dos.writeBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
+      dos.writeFloat(2.0f);       // version of bar format = 2.0
+      dos.writeInt(1);  // number of seq data sections in file -- if single graph, then 1
+      dos.writeInt(2);  // number of columns (dimensions) per data point
+      dos.writeInt(BYTE4_SIGNED_INT);  // int  first column/dimension type ==> 4-byte signed int
+      dos.writeInt(BYTE4_FLOAT);  // int  second column/dimension type ==> 4-byte float
+
+      // should write out all properties from group and/or graphs as tag/vals?  For now just saying no tag/vals
+      dos.writeInt(0);
+
+      // assuming one graph for now, so only one seq section
+      dos.writeInt(seqid.length());
+      dos.writeBytes(seqid);
+      dos.writeInt(groupid.length());
+      dos.writeBytes(groupid);
+      dos.writeInt(version.length());
+      dos.writeBytes(version);
+
+      // should write out all properties from seq and/or graphs as tag/vals?  For now just saying no tag/vals
+      dos.writeInt(0);
+
+      int[] xcoords = graf.getGraphXCoords();
+      float[] ycoords = graf.getGraphYCoords();
+      int total_points = xcoords.length;
+
+      dos.writeInt(total_points);
+      for (int i=0; i<total_points; i++) {
+	dos.writeInt(xcoords[i]);
+	dos.writeFloat(ycoords[i]);
+      }
+      dos.close();  // or should responsibility for closting stream be left to the caller??
+      success = true;
+    }
+    catch (Exception ex) { 
+      ex.printStackTrace();
+      success = false;
+    }
+
+    System.out.println("wrote .bar file to stream");
+    return success;
+  }
+
+  public String getMimeType() { return "binary/bar"; }
+
+
 }
+
 
 class BarSeqHeader {
   MutableAnnotatedBioSeq aseq;

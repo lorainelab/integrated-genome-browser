@@ -2608,11 +2608,9 @@ public class SeqMapView extends JPanel
       System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
-    if (newseq != getAnnotatedSeq()) {
-      // Don't worry if newseq is null, setAnnotatedSeq can handle that
-      // (It can also handle the case where newseq is same as old seq.)
-      setAnnotatedSeq(newseq);
-    }
+    // Don't worry if newseq is null, setAnnotatedSeq can handle that
+    // (It can also handle the case where newseq is same as old seq.)
+    setAnnotatedSeq(newseq);
   }
 
   public void seqModified(SeqModifiedEvent evt) {

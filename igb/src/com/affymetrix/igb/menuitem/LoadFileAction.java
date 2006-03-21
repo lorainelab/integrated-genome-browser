@@ -49,11 +49,7 @@ public class LoadFileAction {
   }
 
   public void actionPerformed(ActionEvent e) {
-    AnnotatedBioSeq aseq = loadFile();
-    //if (aseq != null) {
-      // This is redundant: was done in loadFile();
-      //gviewer.setAnnotatedSeq(aseq, true, true);
-    //}
+    loadFile();
   }
 
   static MergeOptionFileChooser chooser = null;
@@ -129,15 +125,16 @@ public class LoadFileAction {
       File[] fils = chooser.getSelectedFiles();
       
       AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
+      MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
 
-      if (chooser.merge_button.isSelected()) {
-      }
-      else {
+      if (! chooser.merge_button.isSelected()) {
         // Not merging, so create a new Seq Group
         AnnotatedSeqGroup new_group = getNewGroup();
         gmodel.setSelectedSeqGroup(new_group);
       }
 
+      MutableAnnotatedBioSeq new_seq = null;
+      
       for (int i=0; i<fils.length; i++) {
         File cfil = fils[i];
         String file_name = cfil.toString();
@@ -153,18 +150,27 @@ public class LoadFileAction {
           System.out.println("Loading from a URL is not currently supported.");
         }
         else {
-          load(gviewer, cfil, gmodel.getSelectedSeq());
+          new_seq = load(gviewer, cfil, previous_seq);
         }
       }
 
-      if (gmodel.getSelectedSeqGroup() == null) {
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      if (group == null) {
         // This primarily can happen if the merge button is not selected
         // and the loading of the file fails or fails to create a seq group.
         gmodel.setSelectedSeqGroup(previous_seq_group);
+        gmodel.setSelectedSeq(previous_seq);
       }
-
-      gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), false, true);
+      else {
+        if (new_seq != null && group.getSeqList().contains(new_seq)) {
+          gmodel.setSelectedSeq(new_seq);
+        } else if (! group.getSeqList().isEmpty()){
+          new_seq = (MutableAnnotatedBioSeq) group.getSeqList().get(0);
+          gmodel.setSelectedSeq(new_seq);
+        }
+      }
     }
+    // setting the selected seq in the gmodel will automatically set it in the viewer.
 
     return gmodel.getSelectedSeq();
   }
@@ -437,10 +443,12 @@ public class LoadFileAction {
       }
 
       System.gc();
-
-      gmodel.getSelectedSeqGroup().symHashChanged(LoadFileAction.class);
-      // This is the only place in the code calling symHashChanged(),
-      // so maybe get rid of that method and just call setSelectedSeqGroup()      
+      
+      // The purpose of calling setSelectedSeqGroup, even if identity of 
+      // the seq group has not changed, is to make sure that
+      // the DataLoadView and the AnnotBrowserView update their displays.
+      // (Because the contents of the seq group may have changed.)
+      gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());      
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);

@@ -42,7 +42,7 @@ public class GraphSliceTester extends JComponent
     if (! initialized) {
       // need to initialize load of graph,
       // which mainly means constructing CompositeGraphSym and adding as annotation to visible_seq
-      CompositeGraphSym gsym = new CompositeGraphSym(visible_seq);
+      CompositeGraphSym gsym = new CompositeGraphSym("composite_test", visible_seq);
       gsym.setGraphName("slice test graph");
       gsym.addSpan(new SimpleSeqSpan(0, visible_seq.getLength(), visible_seq));
       // need to add sym as annotation to visible_seq,

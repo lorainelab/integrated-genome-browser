@@ -127,6 +127,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
   SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
   long date_initialized = 0;
   String date_init_string = null;
+  Map graph_name2file = new LinkedHashMap();
+  ArrayList graph_formats = new ArrayList();
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
@@ -160,6 +162,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
       output_registry.put("bar", BarParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE, Das2FeatureSaxParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, Das2FeatureSaxParser.class);
+
+      graph_formats.add("bar");
 
       loadSynonyms();
       loadGenomes();
@@ -419,6 +423,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
       for (int i=0; i<child_files.length; i++) {
 	loadAnnotsFromFile(child_files[i], seq_group);
       }
+    }
+    else if (file_name.endsWith(".bar"))  {
+      String file_path = current_file.getPath();
+      // special casing so bar files are seen in types request, but not parsed in on startup
+      //    (because using graph slicing so don't have to pull all bar file graphs into memory)
+      System.out.println("@@@ adding graph file to types: " + file_name + ", path: " + file_path);
+      graph_name2file.put(file_name, file_path);
     }
     else {  // current file is not a directory, so try and recognize as annotation file
       InputStream istr = null;
@@ -733,7 +744,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       }
       */
 
-      types_hash.put(feat_type, feat_type);
+      // types_hash.put(feat_type, feat_type);
     }
     pw.println("</TYPES>");
   }
@@ -779,6 +790,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	System.out.println("in DAS2 servlet getTypes(), found a seq that is _not_ a SmartAnnotSeq: " + mseq);
       }
     }
+    // adding in any graph files as additional types (with type id = file name)
+    // this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
+    //    show up in seq.getTypes(), but without actually being loaded??
+    Iterator giter = graph_name2file.keySet().iterator();
+    while (giter.hasNext()) {
+      String gname = (String)giter.next();
+      genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+    }
+
     return genome_types;
   }
 
@@ -1000,9 +1020,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
     log.add("#### genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
     // use bar parser to extract just the overlap slice from the graph
     String file_name = type;   // for now using file_name as graph type
+    String file_path = (String)graph_name2file.get(file_name);
+    if (file_path == null) { file_path = file_name; }
+    log.add("####    file: " + file_path);
     GraphSym graf = null;
     try  {
-      graf = BarParser.getSlice(file_name, span);
+      graf = BarParser.getSlice(file_path, span);
     }
     catch (Exception ex)  { ex.printStackTrace(); }
     if (graf != null) {

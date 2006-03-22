@@ -44,6 +44,10 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     super();
     this.graph_original_seq = seq;
     this.state = new GraphState();
+    //    this.graph_original_seq = seq;
+    // should at some point probably make seqspan shrink-wrap to bounds of xcoords...
+    SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
+    this.addSpan(span);
   }
 
   /** add a constructor to explicitly set span? */
@@ -56,10 +60,6 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     this.xcoords = x;
     this.ycoords = y;
     setGraphName(name);
-    //    this.graph_original_seq = seq;
-    // should at some point probably make seqspan shrink-wrap to bounds of xcoords...
-    SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
-    this.addSpan(span);
   }
 
   public void setGraphName(String name) {

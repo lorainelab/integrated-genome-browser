@@ -83,6 +83,7 @@ public class Das2ClientOptimizer {
   // also attaches
   // assume for now one type, one overlap span
   public static List loadFeatures(Das2FeatureRequestSym request_sym) {
+    System.out.println("called Das2ClientOptimizer.loadFeatures()");
     //  public static List optimizeFeatureRequests(List input_requests) {
     List output_requests = new ArrayList();
     // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
@@ -105,6 +106,12 @@ public class Das2ClientOptimizer {
       MutableSeqSymmetry cont_sym;
       // this should work even for graphs, now that graphs are added to SmartAnnotBioSeq's type hash (with id as type)
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
+      // little hack fro GraphSyms, need to resolve when to use id vs. name vs. type      
+      if (cont_sym == null && typeid.endsWith(".bar")) {
+	System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
+	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
+	System.out.println("cont_sym: " + cont_sym);
+      }
 
       if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
 	System.out.println("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);
@@ -113,11 +120,15 @@ public class Das2ClientOptimizer {
 
       else {
 	int prevcount = cont_sym.getChildCount();
+	System.out.println("  child count: " + prevcount);
 	ArrayList prev_overlaps = new ArrayList(prevcount);
 	for (int i=0; i<prevcount; i++) {
 	  SeqSymmetry prev_request = cont_sym.getChild(i);
 	  if (prev_request instanceof Das2FeatureRequestSym) {
 	    prev_overlaps.add(((Das2FeatureRequestSym)prev_request).getOverlapSym());
+	  }
+	  else if (prev_request instanceof GraphSym) {
+	    prev_overlaps.add(prev_request);
 	  }
 	}
 
@@ -172,6 +183,7 @@ public class Das2ClientOptimizer {
 	      else { cur_within_max = ospan.getMax(); }
 
 	      SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
+	      System.out.println("   new request: " + SeqUtils.spanToString(ispan));
 	      Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
 	      output_requests.add(new_request);
 
@@ -413,7 +425,7 @@ public class Das2ClientOptimizer {
 	  for (int k=0; k<feat_count; k++) {
 	    SeqSymmetry feat = (SeqSymmetry)feats.get(k);
 	    if (feat instanceof GraphSym) {
-	      addChildGraph((GraphSym)feat);
+	      addChildGraph((GraphSym)feat, request_sym);
 	      no_graphs = false;
 	    }
 	    else  {
@@ -440,9 +452,12 @@ public class Das2ClientOptimizer {
   }
 
   /**
+   *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it
+   *     
    *  Assumes ids of parent graphs are unique among annotations on seq
+   *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
    */
-  public static void addChildGraph(GraphSym cgraf) {
+  public static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
     System.out.println("adding a child GraphSym to parent graph");
     SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)cgraf.getGraphSeq();
     // check and see if parent graph already exists
@@ -457,6 +472,13 @@ public class Das2ClientOptimizer {
       pgraf.setGraphName(id);
       aseq.addAnnotation(pgraf);
     }
+    // since GraphSyms get a span automatically set to the whole seq when constructed, need to first 
+    //    remove that span, then add overlap span from Das2FeatureRequestSym
+    //    could instead create new span based on start and end xcoord, but for better integration with 
+    //    rest of Das2ClientOptimizer span of request is preferred
+    cgraf.removeSpan(cgraf.getSpan(aseq));
+    cgraf.addSpan(request_sym.getOverlapSpan());
+    System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
     pgraf.addChild(cgraf);
   }
 

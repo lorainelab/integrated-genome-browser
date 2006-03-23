@@ -117,7 +117,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
       String id = dev.getIDstring();
       int type = dev.getType();
       GraphicsConfiguration gconfig = dev.getDefaultConfiguration();
-      DisplayMode dmode = dev.getDisplayMode();
+      // DisplayMode dmode = dev.getDisplayMode();
       boolean fullscreen = dev.isFullScreenSupported();
       boolean change = dev.isDisplayChangeSupported();
       Rectangle config_bounds = gconfig.getBounds();

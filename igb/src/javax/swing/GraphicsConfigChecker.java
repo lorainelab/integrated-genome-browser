@@ -22,7 +22,7 @@ public class GraphicsConfigChecker {
     //    rmanager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
     //    System.out.println("new max double buffer size: " + rmanager.getDoubleBufferMaximumSize());
     System.out.println(".... ");
-    
+
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice default_device = genv.getDefaultScreenDevice();
     Rectangle maxbounds = genv.getMaximumWindowBounds();
@@ -40,7 +40,7 @@ public class GraphicsConfigChecker {
       String id = dev.getIDstring();
       int type = dev.getType();
       GraphicsConfiguration gconfig = dev.getDefaultConfiguration();
-      DisplayMode dmode = dev.getDisplayMode();
+//      DisplayMode dmode = dev.getDisplayMode();
       boolean fullscreen = dev.isFullScreenSupported();
       boolean change = dev.isDisplayChangeSupported();
       Rectangle config_bounds = gconfig.getBounds();

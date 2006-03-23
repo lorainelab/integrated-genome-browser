@@ -23,6 +23,8 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
   public static int tile_height = 768;
   public static int tile_columns = 4;
   public static int tile_rows = 2;
+  public static int xbump = 0;
+  public static int ybump = 0;
 
   int total_width = tile_width * tile_columns;
   int total_height = tile_height * tile_rows;
@@ -103,40 +105,43 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 //    int ywindows_per_screen = tile_rows;
     int xwindows_per_screen = 1;
     int ywindows_per_screen = 1;
-//    int col = 0;
 
-    int map_count = tile_columns * tile_rows;
-    for (int i=0; i<devices.length && i< map_count; i++) {
-//    for (int i=0; i<devices.length && i< 4; i++) {
-//    for (int i=4; i<devices.length; i++) {
-      int col = i % tile_columns;
-      int row = i / tile_columns;
-      //      int row = i % tile_rows;
-      System.out.println("&&&&&&&&&&&&&&& device index: " + i + ", col = " + col + ", row = " + row);
+    Map bounds2config = new LinkedHashMap();
+    for (int i=0; i<devices.length; i++)  {
       GraphicsDevice dev = devices[i];
       String id = dev.getIDstring();
       int type = dev.getType();
-      GraphicsConfiguration gconfig = dev.getDefaultConfiguration();
-      // DisplayMode dmode = dev.getDisplayMode();
-      boolean fullscreen = dev.isFullScreenSupported();
-      boolean change = dev.isDisplayChangeSupported();
-      Rectangle config_bounds = gconfig.getBounds();
-      int avail_accelmem = dev.getAvailableAcceleratedMemory() / 1000000;
-
-      System.out.print("Graphics Device " + i + ", id =  " + id + " : " );
-      if (type == GraphicsDevice.TYPE_RASTER_SCREEN) { System.out.print("RASTER\n"); }
-      else if (type == GraphicsDevice.TYPE_IMAGE_BUFFER) { System.out.print("BUFFER\n"); }
-      else if (type == GraphicsDevice.TYPE_PRINTER) { System.out.print("PRINTER\n"); }
-
-      System.out.println("   default config: " + gconfig);
-      System.out.println("   bounds: " + config_bounds);
-      System.out.println("   available VRAM: " + avail_accelmem + " MB");
-      System.out.println("   full screen support: " + fullscreen);
-      System.out.println("   display change support: " + change);
-      int yoffset = 600;
       if (type == GraphicsDevice.TYPE_RASTER_SCREEN) {
-	for (int x=0; x < xwindows_per_screen; x++) {
-	  for (int y=0; y < ywindows_per_screen; y++) {
+	GraphicsConfiguration gconfig = dev.getDefaultConfiguration();
+	Rectangle config_bounds = gconfig.getBounds();
+	bounds2config.put(config_bounds, gconfig);
+	boolean fullscreen = dev.isFullScreenSupported();
+	boolean change = dev.isDisplayChangeSupported();
+	int avail_accelmem = dev.getAvailableAcceleratedMemory() / 1000000;
+
+	System.out.print("Graphics Device " + i + ", id =  " + id + " : " );
+	if (type == GraphicsDevice.TYPE_RASTER_SCREEN) { System.out.print("RASTER\n"); }
+	else if (type == GraphicsDevice.TYPE_IMAGE_BUFFER) { System.out.print("BUFFER\n"); }
+	else if (type == GraphicsDevice.TYPE_PRINTER) { System.out.print("PRINTER\n"); }
+
+	System.out.println("   default config: " + gconfig);
+	System.out.println("   bounds: " + config_bounds);
+	System.out.println("   available VRAM: " + avail_accelmem + " MB");
+	System.out.println("   full screen support: " + fullscreen);
+	System.out.println("   display change support: " + change);
+      }
+    }
+    for (int x=0; x<tile_columns; x++) {
+      for (int y=0; y<tile_rows; y++) {
+	Point topleft = new Point((x * tile_width) + xbump, (y * tile_height) + ybump);
+	Rectangle win_bounds = new Rectangle((x * tile_width) + xbump, (y * tile_height) + ybump,
+					 tile_width, tile_height);
+	Iterator iterbounds = bounds2config.keySet().iterator();
+	while (iterbounds.hasNext()) {
+	  Rectangle screen_bounds = (Rectangle)iterbounds.next();
+	  if (win_bounds.intersects(screen_bounds)) {
+	    // found the right screen for this window
+            GraphicsConfiguration gconfig = (GraphicsConfiguration)bounds2config.get(screen_bounds);
 	    Container win;
 	    if (USE_SWING) {
 	      if (USE_FRAME) { win = new JFrame(gconfig); }
@@ -146,25 +151,10 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 	      if (USE_FRAME) { win = new Frame(gconfig); }
 	      else { win = new Window(IGB.getSingletonIGB().getFrame(), gconfig); }
 	    }
-
-	    //	    int xpixels_per_window = config_bounds.width / xwindows_per_screen;
-	    //	    int ypixels_per_window = config_bounds.height / ywindows_per_screen;
-	    int xpixels_per_window = tile_width;
-	    int ypixels_per_window = tile_height;
-	    //	    int ypixels_per_window = (config_bounds.height - 30) / ywindows_per_screen
-	    // -30 so Windows control bar will be visible at bottom
-
-	    //	    win.setLocation(x*400, yoffset + y*300);
-	    win.setLocation(config_bounds.x + (x * xpixels_per_window),
-			    config_bounds.y + (y * ypixels_per_window));
-	    win.setSize(xpixels_per_window, ypixels_per_window);
-
-	    //	    AffyTieredMap newmap = new AffyTieredMap(main_map);
-	    //	    NeoMap newmap = new NeoMap(map);  // make a new map with original
-	    //	    NeoMap newmap = new NeoMap(true, true);
+	    win.setLocation(win_bounds.x, win_bounds.y);
+	    win.setSize(win_bounds.width, win_bounds.height);
 	    NeoMap newmap = new NeoMap(false, false);
 	    newmap.setRoot(this);
-
 	    if (USE_SWING) {  // win is a JWindow or JFrame
 	      Container cpane;
 	      if (USE_FRAME) {  // win is a JFrame
@@ -180,22 +170,20 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 	    }
 	    else {  // win is a Window or Frame
 	      win.setLayout(new BorderLayout());
-
 	      win.add("Center", newmap);
 	    }
-
 	    newmap.getNeoCanvas().setDoubleBuffered(false);
             newmap.addMouseListener(child_event_handler);
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
-	    //	    newmap.getNeoCanvas().setDoubleBuffered(false);
-	    //	    child_maps[x][y] = newmap;
-            child_maps[col][row] = newmap;
-            System.out.println("added map : " + child_maps[col][row]);
+            child_maps[x][y] = newmap;
+            System.out.println("added map : " + child_maps[x][y]);
 	    win.show();
+	    break;
 	  }
 	}
       }
     }
+
     System.out.println("*******************************************");
   }
 

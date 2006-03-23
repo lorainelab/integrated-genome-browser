@@ -215,7 +215,14 @@ public class GraphSymUtils {
     //TODO: Maybe this should throw an exception if the file contains more than one graph?
     AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
     if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
-      seq_group.addSeq((MutableAnnotatedBioSeq) seq);
+      MutableAnnotatedBioSeq gseq = seq_group.getSeq(seq.getID());
+      if (gseq == null)  { seq_group.addSeq( (MutableAnnotatedBioSeq) seq); }
+      else if (gseq != seq)  {
+        throw new RuntimeException("ERROR! graph seq with id: " + seq.getID() +
+                                   " is not same as seq found in group with id: " + gseq.getID() +
+                                   " that matches via group.getSeq(id)");
+      }
+      // if seq is already part of AnnotatedSeqGroup, don't need to add to group
     }
     List grafs = readGraphs(istr, stream_name, seq_group, seq);
     GraphSym graf = null;
@@ -286,7 +293,7 @@ public class GraphSymUtils {
     return revcomp_gsym;
   }
 
-  /** Passes to {@link com.affymetrix.igb.parsers.BgrParser#writeBgrFormat(GraphSym, OutputStream)} 
+  /** Passes to {@link com.affymetrix.igb.parsers.BgrParser#writeBgrFormat(GraphSym, OutputStream)}
    *  or {@link com.affymetrix.igb.parsers.GrParser#writeGrFormat(GraphSym, OutputStream)} depending
    *  on the suffix of the filename.
    *  @return true if the file was written sucessfully

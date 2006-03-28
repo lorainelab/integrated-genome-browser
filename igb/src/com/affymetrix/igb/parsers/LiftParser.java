@@ -37,6 +37,8 @@ public class LiftParser {
   static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
   MutableAnnotatedBioSeq template_seq = default_seq_template;
 
+  boolean SET_COMPOSITION = true;
+
   public LiftParser()  {  }
 
   public LiftParser(MutableAnnotatedBioSeq template) {
@@ -118,7 +120,7 @@ public class LiftParser {
           if (comp == null)  {
 	    comp = new SimpleSymWithProps();
 	    ((SimpleSymWithProps)comp).setProperty("method", "contigs");
-            ((CompositeBioSeq)chrom).setComposition(comp);
+            if (SET_COMPOSITION)  { ((CompositeBioSeq)chrom).setComposition(comp); }
 	    if (annotate_seq)  {
 	      chrom.addAnnotation(comp);
 	    }
@@ -141,7 +143,7 @@ public class LiftParser {
     while (iter.hasNext()) {
       CompositeBioSeq chrom = (CompositeBioSeq)iter.next();
       MutableSeqSymmetry comp = (MutableSeqSymmetry)chrom.getComposition();
-      if (comp != null) {
+      if (comp != null && SET_COMPOSITION) {
 	SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
 	comp.addSpan(chromspan);
       }

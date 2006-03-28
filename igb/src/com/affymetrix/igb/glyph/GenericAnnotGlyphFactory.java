@@ -112,8 +112,33 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
+    BioSeq aseq = smv.getAnnotatedSeq();
+    BioSeq vseq = smv.getViewSeq();
+    if (SeqMapView.DEBUG_COMP)  {
+      System.out.println("called GenericAnnotGlyphFactory.createGlyph(sym,smv), " +
+			 "annotated_seq = " + aseq.getID() + ", view_seq = " + vseq.getID() + ", " + (aseq == vseq));
+      if (aseq != vseq) {
+	SeqSymmetry comp = ((CompositeBioSeq)vseq).getComposition();
+	SeqUtils.printSymmetry(comp);
+      }
+    }
+    standard_transform_call_count = 0;
+    cds_transform_call_count = 0;
+    cds_transform_direct_count = 0;
+    SeqUtils.unsuccessful_count = 0;
     //    return createGlyph(sym, smv, false);
     createGlyph(sym, smv, false);
+    if (SeqMapView.DEBUG_COMP)  {
+      System.out.println("   transform calls:  standard = " + standard_transform_call_count +
+			 ", cds = " + cds_transform_call_count +
+			 ", cds direct = " + cds_transform_direct_count + 
+			 ", unsuccessful = " + SeqUtils.unsuccessful_count);
+      System.out.println("");
+    }
+    standard_transform_call_count = 0;
+    cds_transform_call_count = 0;
+    cds_transform_direct_count = 0;
+    SeqUtils.unsuccessful_count = 0;
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
@@ -144,8 +169,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childSym = sym.getChild(i);
         //        addAnnotationTiers(childSym);
-        createGlyph(childSym, gviewer);
-
+        createGlyph(childSym, gviewer, false);
+	//        createGlyph(childSym, gviewer, next_to_axis);
       }
     }
   }
@@ -175,6 +200,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
   int optimized_child_count = 0;
 
+  int standard_transform_call_count = 0;
+  int cds_transform_call_count = 0;
+  int cds_transform_direct_count = 0;
   public GlyphI addToTier(SeqSymmetry insym,
                           TierGlyph forward_tier,
                           TierGlyph reverse_tier) {
@@ -182,7 +210,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
-    SeqSymmetry sym = gviewer.transformForViewSeq(insym);
+    SeqSymmetry sym = insym;
+    if (annotseq != coordseq) {
+      sym = gviewer.transformForViewSeq(insym);
+      standard_transform_call_count++;
+    }
 
     SeqSpan pspan = sym.getSpan(coordseq);
     if (pspan == null) {
@@ -237,6 +269,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         if (annotseq != coordseq) {
           SeqSymmetry[] transform_path = gviewer.getTransformPath();
           SeqUtils.transformSymmetry(tempsym, transform_path);
+	  cds_transform_direct_count++;
           cdsSpan = tempsym.getSpan(coordseq);
         }
         cds_sym = tempsym;
@@ -274,7 +307,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             else if (SeqUtils.overlap(cdsSpan, cspan)) {
               try {
 		SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
-		SeqSymmetry cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2);
+		SeqSymmetry cds_sym_3 = cds_sym_2;
+		if (annotseq != coordseq) {
+		  cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2);
+		  cds_transform_call_count++;
+		}
 		//SeqSpan cds_span = SeqUtils.intersection(cdsSpan, cspan);
 		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
 		GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();

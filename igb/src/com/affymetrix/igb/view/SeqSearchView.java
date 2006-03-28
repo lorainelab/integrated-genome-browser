@@ -211,21 +211,27 @@ public class SeqSearchView extends JComponent implements ActionListener  {
         boolean use_nibseq = (vseq instanceof NibbleBioSeq);
         NibbleBioSeq nibseq = null;
         String residues = null;
-        int res_index;
-        if (use_nibseq) {
-          System.out.flush();
-	  searchstring = searchstring.toUpperCase();
-          System.out.println("searching NibbleBioSeq for ocurrences of \"" +
-                             searchstring + "\" in sequence");
-          nibseq = (NibbleBioSeq)vseq;
-          res_index = nibseq.indexOf(searchstring, 0);
-        }
-        else {
-          System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
-          System.out.flush();
-          residues = vseq.getResidues();
-          res_index = residues.indexOf(searchstring, 0);
-        }
+        int res_index = -1;
+	try {
+	  if (use_nibseq) {
+	    System.out.flush();
+	    searchstring = searchstring.toUpperCase();
+	    System.out.println("searching NibbleBioSeq for ocurrences of \"" +
+			       searchstring + "\" in sequence");
+	    nibseq = (NibbleBioSeq)vseq;
+	    res_index = nibseq.indexOf(searchstring, 0);
+	  }
+	  else {
+	    System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
+	    System.out.flush();
+	    residues = vseq.getResidues();
+	    res_index = residues.indexOf(searchstring, 0);
+	  }
+	}
+	catch (Exception ex) {
+	  IGB.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
+	  return;
+	}
 
         int seq_index;
         int length = searchstring.length();

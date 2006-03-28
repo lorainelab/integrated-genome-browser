@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,7 +23,7 @@ import com.affymetrix.genometry.util.SeqUtils;
  *  A CompositeBioSeq that can have start less than 0.
  *  (Other BioSeqs only have a length, and start = 0, end = length is implicit)
  *  <p>
- *  <strong>Strongly urge</strong> that this is only used when BioSeq 
+ *  <strong>Strongly urge</strong> that this is only used when BioSeq
  *  <em>has</em> to have negative coords.
  *  <p>
  *  For example when renumbering from a given point in an
@@ -37,27 +37,54 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
 
   int start;
   int end;
+  //  double start;
+  //  double end;
 
   /**
    *  assume start < end
    */
   public CompositeNegSeq(String id, int min, int max) {
-    super(id);
+    this(id);
     this.start = min;
     this.end = max;
-    if (min > max) { 
+    if (min > max) {
       throw new RuntimeException("problem in CompositeNegSeq constructor! min must be < max");
     }
-    this.length = end - start;
+    //    this.length = end - start;
+    this.length = (double)end - (double)start;
   }
+
+
+  public CompositeNegSeq(String id, int length) {
+    this(id);
+    this.length = length;
+    start = 0;
+    end = length;
+  }
+
+  public CompositeNegSeq(String id) {
+    super(id);
+  }
+
+  public CompositeNegSeq() { }
+
 
   public int getMin() { return start; }
   public int getMax() { return end; }
 
+  public void setBoundsDouble(double min, double max) {
+    length = max - min;
+    if (min < Integer.MIN_VALUE) { start = Integer.MIN_VALUE + 1; }
+    else { start = (int)min; }
+    if (max > Integer.MAX_VALUE) { end = Integer.MAX_VALUE - 1; }
+    else { end = (int)max; }
+  }
+
   public void setBounds(int min, int max) {
     start = min;
     end = max;
-    length = end - start;
+    //    length = end - start;
+    length = (double)end - (double)start;
   }
 
   public boolean isComplete() {
@@ -67,7 +94,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
   /**
    *  overriding getResidues() to include residues where position < 0
    */
-  public String getResidues() { 
+  public String getResidues() {
     return getResidues(start, end);
   }
 
@@ -80,13 +107,14 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
       char_array[i] = fillchar;
     }
     SeqSymmetry rootsym = this.getComposition();
+    if (rootsym == null)  { return null; }
     // adjusting index into array to compensate for possible seq start < 0
-    int array_offset = -start;  
+    int array_offset = -start;
     getResidues(residue_span, fillchar, rootsym, char_array, array_offset);
     String res = new String(char_array);
     return res;
   }
-  
+
 
 }
 

@@ -322,8 +322,10 @@ public class SmartGraphGlyph extends GraphGlyph {
      *     cache entry at that level) is still less than avg_points_per_pixel)
      */
     double graph_coord_length = xcoords[end_index] - xcoords[beg_index];
-    double avg_coords_between_points = graph_coord_length / ((double)xcoords.length);
-    double avg_points_per_coord = 1.0f / avg_coords_between_points;
+    //    double avg_coords_between_points = graph_coord_length / ((double)xcoords.length);
+    //    double avg_points_per_coord = 1.0f / avg_coords_between_points;
+    double avg_coords_between_points = graph_coord_length / xcoords.length;
+    double avg_points_per_coord = 1.0 / avg_coords_between_points;
     // want points_per_coord * coords_per_pixel   ( = points_per_pixel)
     //    double avg_points_per_pixel = avg_coords_per_point / coords_per_pixel;
     double avg_points_per_pixel = avg_points_per_coord * coords_per_pixel;
@@ -409,7 +411,10 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
       else {  // using cache, but still collecting values per pixel...
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	  coord.x = (graph_cache.xmin[i] + graph_cache.xmax[i]) / 2.0f;
+	  //	  coord.x = (graph_cache.xmin[i] + graph_cache.xmax[i]) / 2.0f;
+	  //	  coord.x = (graph_cache.xmin[i]/2) + (graph_cache.xmax[i]/2);
+	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
+
 	  //	  coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
 	  view.transformToPixels(coord, curr_point);
@@ -644,23 +649,23 @@ public class SmartGraphGlyph extends GraphGlyph {
     double min_run_threshold = getMinRunThreshold();
     double span_start_shift = getThreshStartShift();
     double span_end_shift = getThreshEndShift();
-    
+
     int thresh_direction = getThresholdDirection();
     float min_score_threshold = Float.NEGATIVE_INFINITY;
     float max_score_threshold = Float.POSITIVE_INFINITY;
     if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
       min_score_threshold = getMinScoreThreshold();
-      max_score_threshold = Float.POSITIVE_INFINITY; 
+      max_score_threshold = Float.POSITIVE_INFINITY;
     }
     else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
       min_score_threshold = Float.NEGATIVE_INFINITY;
-      max_score_threshold = getMaxScoreThreshold(); 
+      max_score_threshold = getMaxScoreThreshold();
     }
     else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
       min_score_threshold = getMinScoreThreshold();
-      max_score_threshold = getMaxScoreThreshold(); 
+      max_score_threshold = getMaxScoreThreshold();
     }
-    
+
     // if neither min or max score thresholds have been set, assume that only using
     //     min score threshold and set so it is in the middle of visible score range
     if (Float.isInfinite(min_score_threshold) && Float.isInfinite(max_score_threshold)) {
@@ -937,7 +942,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   }
 
   public boolean getShowThreshold() { return state.getShowThreshold(); }
-  
+
   public void resetThreshLabel() {
     float min_thresh = getMinScoreThreshold();
     float max_thresh = getMaxScoreThreshold();
@@ -957,7 +962,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     state.setThresholdDirection(d);
     resetThreshLabel();
   }
-    
+
   public void setMinScoreThreshold(float thresh) {
     state.setMinScoreThreshold(thresh);
     resetThreshLabel();
@@ -973,7 +978,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   public void setThreshStartShift(double d) { state.setThreshStartShift(d); }
   public void setThreshEndShift(double d) { state.setThreshEndShift(d); }
 
-  public int getThresholdDirection() { return state.getThresholdDirection(); }  
+  public int getThresholdDirection() { return state.getThresholdDirection(); }
   public float getMinScoreThreshold() { return state.getMinScoreThreshold(); }
   public float getMaxScoreThreshold()  { return state.getMaxScoreThreshold(); }
   public double getMaxGapThreshold() { return state.getMaxGapThreshold(); }

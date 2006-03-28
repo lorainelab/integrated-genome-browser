@@ -32,6 +32,7 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.parsers.LiftParser;
 import com.affymetrix.igb.parsers.ChromInfoParser;
+import com.affymetrix.igb.parsers.BedParser;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.parsers.NibbleResiduesParser;
 import java.net.URL;
@@ -40,6 +41,7 @@ public class QuickLoadView2 extends JComponent
          implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener  {
 
   static boolean DEBUG_EVENTS = false;
+  static boolean build_virtual_encode = true;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
 
@@ -733,6 +735,7 @@ public class QuickLoadView2 extends JComponent
 class QuickLoadServerModel {
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
+  static String ENCODE_FILE_NAME = "encodeRegions.bed";
 
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
@@ -873,7 +876,9 @@ class QuickLoadServerModel {
       System.out.println("initializing data for genome: " + genome_name);
       boolean seq_init = loadSeqInfo(genome_name);
       boolean annot_init = loadAnnotationNames(genome_name);
-      if (seq_init && annot_init) { genome2init.put(genome_name, Boolean.TRUE); }
+      if (seq_init && annot_init) {
+	genome2init.put(genome_name, Boolean.TRUE);
+      }
     }
   }
 
@@ -885,7 +890,7 @@ class QuickLoadServerModel {
    *  You can retrieve the filenames with {@link #getFilenames(String)}
    */
   public boolean loadAnnotationNames(String genome_name) {
-    boolean success = false;
+    boolean success = true;
     String genome_root = root_url + genome_name + "/";
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
     System.out.println("loading list of available annotations for genome: " + genome_name);
@@ -908,6 +913,9 @@ class QuickLoadServerModel {
             genome2file_names.put(genome_name, file_names);
           }
           file_names.add(annot_file_name);
+	  if (annot_file_name.equals(ENCODE_FILE_NAME) && QuickLoadView2.build_virtual_encode) {
+	    addEncodeVirtualSeq(group, (genome_root + ENCODE_FILE_NAME));
+	  }
         }
       }
       success = true;
@@ -921,6 +929,104 @@ class QuickLoadServerModel {
     return success;
   }
 
+
+
+  /**
+   *  addEncodeVirtualSeq.
+   *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
+   *  assumes urlpath resolves to bed file for ENCODE regions
+   */
+  public boolean addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
+    boolean TEST_REGION = false;
+    // assume it's a bed file...
+    BedParser parser = new BedParser();
+    try {
+
+	/**  Composite sym for test region around C21orf94 on chr21
+SimpleMutableSeqSymmetry (18c6c98)
+  chr21: [28,307,471 - 28,317,243] (+9,772)
+  view_seq: [0 - 708] (+708)
+  SimpleMutableSeqSymmetry (2dae86)
+    chr21: [28,307,471 - 28,307,722] (+251)
+    view_seq: [0 - 251] (+251)
+  SimpleMutableSeqSymmetry (11d0054)
+    chr21: [28,316,786 - 28,317,243] (+457)
+    view_seq: [251 - 708] (+457)
+     */
+      if (TEST_REGION) {
+	int pmin = 28307471;
+	int pmax = 28317243;
+	int plength = pmax - pmin;
+
+	int c1min = 28307471;
+	int c1max = 28307722;
+	int c1length = c1max - c1min;
+	int c2min = 28316786;
+	int c2max = 28317243;
+	int c2length = c2max - c2min;
+
+	int vlength = c1length + c2length;
+
+	BioSeq real_seq = seq_group.getSeq("chr21");
+	SmartAnnotBioSeq virtual_seq = seq_group.addSeq("virtual_test", 0);
+	MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
+
+	MutableSeqSymmetry child1 = new SimpleMutableSeqSymmetry();
+	child1.addSpan(new SimpleSeqSpan(c1min, c1max, real_seq));
+	child1.addSpan(new SimpleSeqSpan(0, c1length, virtual_seq));
+	mapping.addChild(child1);
+
+	MutableSeqSymmetry child2 = new SimpleMutableSeqSymmetry();
+	child2.addSpan(new SimpleSeqSpan(c2min, c2max, real_seq));
+	//	child2.addSpan(new SimpleSeqSpan(plength-c2length, plength, virtual_seq));
+	child2.addSpan(new SimpleSeqSpan(vlength-c2length, vlength, virtual_seq));
+	mapping.addChild(child2);
+
+	//	virtual_seq.setLength(plength);
+	virtual_seq.setLength(vlength);
+
+	//	mapping.addSpan(new SimpleSeqSpan(c1min, c2max, real_seq));
+	//	mapping.addSpan(new SimpleSeqSpan(0, plength, virtual_seq));
+	mapping.addSpan(new SimpleSeqSpan(0, vlength, virtual_seq));
+	virtual_seq.setComposition(mapping);
+      }
+      else {
+	InputStream istr= LocalUrlCacher.getInputStream(urlpath, cache_usage, cache_annots);
+	//      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
+	java.util.List regions = parser.parse(istr, seq_group, false, AnnotatedSeqGroup.ENCODE_REGIONS_ID, false);
+	int rcount = regions.size();
+	System.out.println("Encode regions: " + rcount);
+	SmartAnnotBioSeq virtual_seq = seq_group.addSeq(AnnotatedSeqGroup.ENCODE_REGIONS_ID, 0);
+	MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
+
+	//	int min_base_pos = -5000000;
+	int min_base_pos = 0;
+	int current_base = min_base_pos;
+	int spacer = 20000;
+	for (int i=0; i<rcount; i++) {
+	  SeqSymmetry esym = (SeqSymmetry)regions.get(i);
+	  SeqSpan espan = esym.getSpan(0);
+	  int elength = espan.getLength();
+	  //	  System.out.println(SeqUtils.spanToString(espan));
+	  MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+	  child.addSpan(espan);
+	  //	child.addSpan(new SimpleSeqSpan(espan.getStart(), espan.getEnd(), espan.getBioSeq()));
+	  child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
+	  mapping.addChild(child);
+	  current_base = current_base + elength + spacer;
+	  //	  System.out.println("current encode seq position: " + current_base);
+	}
+	//	virtual_seq.setLength(current_base);
+	virtual_seq.setBounds(min_base_pos, current_base);
+	//	mapping.addSpan(((SeqSymmetry)regions.get(0)).getSpan(0));
+	//	mapping.addSpan(new SimpleSeqSpan(0, current_base, virtual_seq));
+	mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
+	virtual_seq.setComposition(mapping);
+      }
+    }
+    catch (Exception ex) {  ex.printStackTrace(); }
+    return true;
+  }
 
 
   public boolean loadSeqInfo(String genome_name) {

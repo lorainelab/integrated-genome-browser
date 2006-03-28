@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,10 +22,11 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
 public class SimpleCompositeBioSeq implements CompositeBioSeq {
-  
+
   public boolean DEBUG_GET_RESIDUES = false;
   protected String id;
-  protected int length = 0;
+  //  protected int length = 0;
+  protected double length = 0;
   protected SeqSymmetry compose;
 
   public SimpleCompositeBioSeq(String id, int length) {
@@ -47,7 +48,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   }
 
   public SimpleCompositeBioSeq() { }
-  
+
   public SeqSymmetry getComposition() {
     return compose;
   }
@@ -59,20 +60,26 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   public String getID() { return id; }
 
   /**
-   *  TODO: Need to implement calculation of length in constructors 
+   *  TODO: Need to implement calculation of length in constructors
    *  (or else change constructors to specifically take length as an argument)
    */
-  public int getLength() { return length; }
+  public int getLength() {
+    if (length > Integer.MAX_VALUE)  { return Integer.MAX_VALUE - 1; }
+    else  { return (int)length; }
+  }
   //  public int getMin() { return 0; }
   //  public int getMax() { return getLength(); }
 
-  public String getResidues() { 
-    // may want to do a caching strategy at some point, in case there are repeated 
+  public double getLengthDouble() { return length; }
+
+  public String getResidues() {
+    // may want to do a caching strategy at some point, in case there are repeated
     //   getResidues calls...
-    return getResidues(0, length);
+//    return getResidues(0, length);
+        return getResidues(0, getLength());
   }
 
-  public String getResidues(int start, int end) { 
+  public String getResidues(int start, int end) {
     return getResidues(start, end, ' ');
   }
 
@@ -90,21 +97,21 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
       SeqSymmetry rootsym = this.getComposition();
       getResidues(residue_span, fillchar, rootsym, char_array, 0);
       result = new String(char_array);
-      if (DEBUG_GET_RESIDUES)  { 
+      if (DEBUG_GET_RESIDUES)  {
 	System.out.println(result.substring(0, 15) + "..." + result.substring(result.length()-15));
       }
 
     }
     return result;
   }
-  
-  protected void getResidues(SeqSpan this_residue_span, char fillchar, 
+
+  protected void getResidues(SeqSpan this_residue_span, char fillchar,
 			     SeqSymmetry sym, char[] residues, int buf_offset) {
     int symCount = sym.getChildCount();
     if (symCount == 0) {  // leaf symmetry, need to retrieve residues from other seq in sym
       SeqSpan this_comp_span = sym.getSpan(this);
       if (SeqUtils.intersects(this_comp_span, this_residue_span)) {
-	BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);	
+	BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
 	SeqSpan other_comp_span = sym.getSpan(other_seq);
 	MutableSeqSpan ispan = new SimpleMutableSeqSpan();
 	boolean intersects = SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
@@ -118,17 +125,17 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
 	String spanResidues;
 
 	if (resultForward) {
-	  spanResidues = other_seq.getResidues(other_residue_span.getMin(), 
+	  spanResidues = other_seq.getResidues(other_residue_span.getMin(),
 					       other_residue_span.getMax());
 	}
 	else {
-	  spanResidues = other_seq.getResidues(other_residue_span.getMax(), 
+	  spanResidues = other_seq.getResidues(other_residue_span.getMax(),
 					       other_residue_span.getMin());
 	}
 
 	if (spanResidues != null) {
 	  if (DEBUG_GET_RESIDUES) {
-	    System.out.println(spanResidues.substring(0, 15) + "..." + 
+	    System.out.println(spanResidues.substring(0, 15) + "..." +
 			       spanResidues.substring(spanResidues.length()-15));
 	    System.out.println("desired span: " + SeqUtils.spanToString(this_residue_span));
 	    System.out.println("child residue span: " + SeqUtils.spanToString(this_comp_span));
@@ -136,7 +143,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
 	    System.out.println("other seq span: " + SeqUtils.spanToString(other_residue_span));
 	    System.out.println("opposite strands: " + opposite_strands);
 	    System.out.println("result forward: " + resultForward);
-	    System.out.println("start < end: " + 
+	    System.out.println("start < end: " +
 			       (other_residue_span.getStart() < other_residue_span.getEnd()));
 	    System.out.println("");
 	  }
@@ -157,20 +164,20 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
     }
   }
 
-  public boolean isComplete() { 
+  public boolean isComplete() {
     return isComplete(0, this.getLength());
   }
 
-  public boolean isComplete(int start, int end) { 
-    // assuming that if all sequences the composite is composed of are 
+  public boolean isComplete(int start, int end) {
+    // assuming that if all sequences the composite is composed of are
     //    complete, then composite is also complete
-    //    [which is an invalid assumption! Because that further assumes that composed seq 
+    //    [which is an invalid assumption! Because that further assumes that composed seq
     //     is fully covered by the sequences that it is composed from...]
     SeqSymmetry rootsym = this.getComposition();
     if (rootsym == null) { return false; }
     int comp_count = rootsym.getChildCount();
     if (comp_count == 0) {
-      BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);	
+      BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
       return other_seq.isComplete(start, end);
     }
     else {

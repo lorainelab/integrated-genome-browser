@@ -22,6 +22,8 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.seq.CompositeNegSeq;
+import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.swing.DisplayUtils;
@@ -200,7 +202,12 @@ class SeqGroupTableModel extends AbstractTableModel  {
         return seq.getID();
       }
       else if (col == 1) {
-        return Integer.toString(seq.getLength());
+	if (seq instanceof CompositeNegSeq) { 
+	  return Long.toString((long)((CompositeNegSeq)seq).getLengthDouble()); 
+	}
+	else {
+	  return Integer.toString(seq.getLength());
+	}
       }
     }
     return null;

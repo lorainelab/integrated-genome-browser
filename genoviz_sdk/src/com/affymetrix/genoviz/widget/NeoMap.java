@@ -566,10 +566,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     // scene.setCoords() is now handled in setBounds()
 
     if (orient == VERTICAL) {
-      this.setBounds(Y,start,end);
+      //      this.setBounds(Y,start,end);
+      this.setFloatBounds(Y,(double)start,(double)end);
     }
     else {
-      this.setBounds(X,start,end);
+      //      this.setBounds(X,start,end);
+      this.setFloatBounds(X,(double)start,(double)end);
     }
     AxisGlyph ga;
     if (axes != null) {

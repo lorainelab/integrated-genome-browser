@@ -28,6 +28,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genoviz.widget.NeoMap;
 
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -45,17 +46,20 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
   static Map seq2yloc = new HashMap();
 
-  SeqMapView gviewer;
-  
+  //  SeqMapView gviewer;
+
   public static void clear() {
     seq2yloc = new HashMap();
   }
 
   public GenericGraphGlyphFactory(SeqMapView gv) {
+    this(gv.getSeqMap());
+  }
+
+  public GenericGraphGlyphFactory(NeoMap map) {
     //this(new GraphState());
-    gviewer = gv;    
-    
-    AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
+    //    gviewer = gv;
+    //    AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     Rectangle mapbox = map.getView().getPixelBox();
     BioSeq seq = gmodel.getSelectedSeq();
     if (seq == null) { return; }
@@ -114,6 +118,22 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       // may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
       return null;
     }
+
+    // GAH 2006-03-26 
+    //    want to add code here to handle situation where a "virtual" seq is being display on SeqMapView, 
+    //       and it is composed of GraphSym's from multiple annotated seqs, but they're really from the 
+    //       same data source (or they're the "same" data on different chromosomes for example) 
+    //       In this case want these displayed as a single graph
+
+    //   match these up based on identical graph names / ids, then:
+    //    Approach 1)  
+    //       build a CompositeGraphSym on the virtual seq
+    //       make a single GraphGlyph
+    //    Approach 2)
+    //       create a new CompositeGraphGlyph subclass (or do I already have this?)
+    //       make multiple GraphGlyphs
+    //    Approach 3)
+    //       ???
 
     GraphSym newgraf = graf;
     if (graph_seq != vseq) {
@@ -223,7 +243,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (update_map) {
       map.updateWidget();
     }
-        
+
     return graph_glyph;
   }
 

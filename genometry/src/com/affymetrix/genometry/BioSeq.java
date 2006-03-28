@@ -25,6 +25,7 @@ public interface BioSeq {
   // public int getMin();
   //  public int getMax();
   public int getLength();
+  //  public int getLengthDouble();
   public String getResidues();
   public String getResidues(int start, int end);
   public boolean isComplete();

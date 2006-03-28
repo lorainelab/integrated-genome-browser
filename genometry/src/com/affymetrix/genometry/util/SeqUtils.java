@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -146,7 +146,7 @@ public abstract class SeqUtils {
       MutableSeqSpan span = (MutableSeqSpan)sym.getSpan(k);
       BioSeq seq = span.getBioSeq();
       SeqSpan newspan = getChildBounds(sym, seq);
-      // Throwing a null pointer exception with AnnotMapper during 
+      // Throwing a null pointer exception with AnnotMapper during
       // hg16-hg17 mapping used for exon array. --steve chervitz
       if(newspan != null) {
         span.set(newspan.getStart(), newspan.getEnd(), seq);
@@ -537,7 +537,7 @@ public abstract class SeqUtils {
   }
 
   /**
-   *  Returns the first BioSeq in the SeqSymmetry that is NOT 
+   *  Returns the first BioSeq in the SeqSymmetry that is NOT
    *  equivalent to the given BioSeq.  (Compared using '=='.)
    */
   public static BioSeq getOtherSeq(SeqSymmetry sym, BioSeq seq) {
@@ -761,6 +761,7 @@ public abstract class SeqUtils {
     return transformSymmetry2(resultSym, mapSym, true);
   }
 
+  public static int unsuccessful_count = 0;
   /**
    *  More general version of
    *      transformSymmetry(resultSet,  src2dstSym, srcSeq, dstSeq, rootSeq, src2dst_recurse).
@@ -977,21 +978,18 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
                 success = transformSpan(interSpan, newResSpan, seq, mapSym);
               }
 
-              // GAH 6-25-2003  commenting out
-              //              success = transformSpan(linkSpan, newResSpan, seq, mapSym);  // pre-5-17-2003
-              //
-
-              //              System.out.println("transforming span:");
-              //              System.out.print("linkSpan: "); printSpan(linkSpan);
-              //              System.out.print("mapping sym: "); printSymmetry(mapSym);
-              //              System.out.print("newResSpan: "); printSpan(newResSpan);
+	      /*
+	      System.out.print("  linkSpan:          "); printSpan(linkSpan);
+	      System.out.print("  mapping span:      "); printSpan(mapSpan);
+	      System.out.print("  intersection span: "); printSpan(interSpan);
+	      System.out.print("  newResSpan:        "); printSpan(newResSpan);
+	      */
               if (success) {
                 resultSym.addSpan(newResSpan);
               }
               else {
-                System.out.println("unsuccessful trying to transform: ");
-                System.out.println("   src span: " + linkSpan);
-                System.out.println("   dst seq: " + seq.getID());
+		//		System.out.println("unsuccessful trying to transform span: ");
+		unsuccessful_count++;
                 return false;
               }
             }
@@ -1487,6 +1485,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
 
   /**
    *  Return SeqSpan that is the intersection of spanA and spanB.
+
    *  returns null if spans aren't on same seq
    *  returns null if spans have no intersection (don't overlap)
    *  orientation of returned SeqSpan:
@@ -1499,6 +1498,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    *
    */
   public static SeqSpan intersection(SeqSpan spanA, SeqSpan spanB) {
+    if (! (overlap(spanA, spanB))) { return null; }
     MutableSeqSpan dstSpan = null;
     //    dstSpan = new SimpleMutableSeqSpan();
     dstSpan = new MutableDoubleSeqSpan();
@@ -1846,7 +1846,8 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
   public static String spanToString(SeqSpan span) {
     if (USE_SHORT_FORMAT_FOR_SPANS) {
       if (span == null) { return "Span: null"; }
-      return (span.getBioSeq().getID() + ": [" +
+      BioSeq seq = span.getBioSeq();
+      return ((seq == null ? "nullseq" : seq.getID()) + ": [" +
         span_format.format(span.getMin()) + " - " + span_format.format(span.getMax()) +
         "] (" +
         ( span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")"

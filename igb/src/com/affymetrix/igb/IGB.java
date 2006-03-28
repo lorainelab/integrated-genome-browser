@@ -48,6 +48,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static String APP_NAME = IGBConstants.APP_NAME;
   public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
   public static boolean REPLACE_REPAINT_MANAGER = false;
 
@@ -118,6 +119,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem move_tab_to_window_item;
 
   SeqMapView map_view;
+  //  SeqMapView overview;
+  OverView overview;
+  
   //QuickLoaderView quickload_view;
 
   CurationControl curation_control;
@@ -152,7 +156,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    * Start the program.
    */
   public static void main(String[] args) {
-   try {
+    try {
 
     try {
       // It this is Windows, then use the Windows look and feel.
@@ -647,7 +651,25 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setTopComponent(map_view);
     splitpane.setBottomComponent(tab_pane);
-    cpane.add("Center", splitpane);
+
+    if (USE_OVERVIEW) {
+      //      overview = new SeqMapView(true);
+      overview = new OverView(false);
+      gmodel.addSeqSelectionListener(overview);
+      gmodel.addGroupSelectionListener(overview);
+      gmodel.addSymSelectionListener(overview);
+      overview.setFrame(frm);
+      JSplitPane oversplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+      oversplit.setOneTouchExpandable(true);
+      oversplit.setDividerSize(8);
+      oversplit.setDividerLocation(100);
+      oversplit.setTopComponent(overview);
+      oversplit.setBottomComponent(splitpane);
+      cpane.add("Center", oversplit);
+    }
+    else {
+      cpane.add("Center", splitpane);
+    }
 
     ArrayList plugin_list = new ArrayList(16);
     if (USE_QUICKLOAD) {

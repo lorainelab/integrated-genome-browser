@@ -74,6 +74,7 @@ public class SeqMapView extends JPanel
 
   static final boolean DIAGNOSTICS = false;
   static final boolean DEBUG_TIERS = false;
+  public static boolean DEBUG_COMP = false;
   boolean LABEL_TIERMAP = true;
   boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
@@ -350,13 +351,10 @@ public class SeqMapView extends JPanel
     seqmap.addViewBoxListener(new NeoViewBoxListener() {
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 	  Rectangle2D vbox = evt.getCoordBox();
-	  //	  int bases_in_view = (int)vbox.width;
-	  //	  bases_in_viewTF.setText(Integer.toString(bases_in_view));
 	  double bases_in_view = vbox.width;
+	  //	  System.out.println("map coord width: " + seqmap.getScene().getCoordBox().width + ", view width: " + vbox.width);
 	  bases_in_viewTF.setText(nformat.format(bases_in_view));
 	  int pixel_width = seqmap.getView().getPixelBox().width;
-	  //	  int bases_per_pixel = bases_in_view / pixel_width;
-	  //	  bases_per_pixelTF.setText(Integer.toString(bases_per_pixel));
 	  double bases_per_pixel = (double)bases_in_view / (double)pixel_width;
 	  bases_per_pixelTF.setText(nformat.format(bases_per_pixel));
 	}
@@ -499,7 +497,7 @@ public class SeqMapView extends JPanel
   public Map getGraphFactoryHash() { return graf2factory; }
 
   TransformTierGlyph axis_tier;
-  
+
   /** An un-collapsible instance.  It is hideable, though. */
   AnnotStyle axis_annot_style = new AnnotStyle() {
     //public void setShow(boolean b) {}
@@ -511,12 +509,12 @@ public class SeqMapView extends JPanel
     public void setLabelField(String s) {}
     public void setMaxDepth(int i) {}
   };
-  
+
   public TransformTierGlyph getAxisTier() { return axis_tier; }
-  
+
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
-    
+
     IAnnotStyle blank_style = axis_annot_style;
 
     axis_tier = new TransformTierGlyph(blank_style);
@@ -561,7 +559,15 @@ public class SeqMapView extends JPanel
     seq_glyph.setHitable(false);
     seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
 //    seq_glyph.setCoords(viewseq.getMin(), 0, viewseq.getLength(), 10);
-    seq_glyph.setCoords(0, 0, viewseq.getLength(), 10);
+    if (viewseq instanceof CompositeNegSeq) {
+      CompositeNegSeq compseq = (CompositeNegSeq)viewseq;
+      seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
+    }
+    else {
+      seq_glyph.setCoords(0, 0, viewseq.getLength(), 10);
+    }
+    //    System.out.println("seq glyph coords: " + seq_glyph.getCoordBox());
+
     axis_tier.addChild(seq_glyph);
 
       // need to change this to get residues from viewseq! (to take account of reverse complement,
@@ -593,11 +599,18 @@ public class SeqMapView extends JPanel
 	      cgl.setColor(Color.lightGray);
 	    }
 	    else {
-	      cgl = new OutlineRectGlyph();
+	      //	      cgl = new OutlineRectGlyph();
+	      cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+	      String label = ospan.getBioSeq().getID();
+	      if (label.startsWith("chr")) { label = label.substring(3); }
+	      ((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
 	      cgl.setColor(Color.lightGray);
 	    }
-	    cgl.setCoords(childspan.getMin(), 0,
-			  childspan.getMax()-childspan.getMin(), 10);
+	    //	    cgl.setCoords(childspan.getMin(), 0,
+	    //			  childspan.getMax()-childspan.getMin(), 10);
+	    cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
+	    // System.out.println("comp coords: " + cgl.getCoordBox());
+
             // calling cgl.setInfo()
             //   allows info to be seen in selection table
             //   allows easily selecting sequence for contig
@@ -800,7 +813,7 @@ public class SeqMapView extends JPanel
     if (coord_shift) {
       // map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
       //      map.setMapRange(viewseq.getMin(), viewseq.getMax());
-      seqmap.setMapRange(0, viewseq.getLength());
+      //      seqmap.setMapRange(0, viewseq.getLength());
       coord_shift = false;
     }
     else {
@@ -825,8 +838,19 @@ public class SeqMapView extends JPanel
         seq2viewSym = null;
         transform_path = null;
       }
-      seqmap.setMapRange(0, aseq.getLength());
     }
+    int seq_min;
+    int seq_max;
+    if (viewseq instanceof CompositeNegSeq) {
+      seq_min = ((CompositeNegSeq)viewseq).getMin();
+      seq_max = ((CompositeNegSeq)viewseq).getMax();
+    }
+    else {
+      seq_min = 0;
+      seq_max = viewseq.getLength();
+    }
+
+    seqmap.setMapRange(seq_min, seq_max);
 
     // The hairline needs to be among the first glyphs added,
     // to keep it from interfering with selection of other glyphs.
@@ -1104,6 +1128,9 @@ public class SeqMapView extends JPanel
   }
 
   void addAnnotationTiers() {
+    if (DEBUG_COMP)  {
+      System.out.println("$$$$$$$ called SeqMapView.addAnnotationTiers(), aseq: " + aseq.getID() + " $$$$$$$");
+    }
     int annotCount = aseq.getAnnotationCount();
     for (int i=0; i<annotCount; i++) {
       SeqSymmetry annotSym = aseq.getAnnotation(i);
@@ -1126,9 +1153,11 @@ public class SeqMapView extends JPanel
       //   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
       int scount = comp.getChildCount();
       for (int i=0; i<scount; i++) {
+      //      for (int i=0; i<1; i++) {
 	SeqSymmetry csym = comp.getChild(i);
 	// return seq in a symmetry span that _doesn't_ match aseq
 	BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
+	if (DEBUG_COMP)  { System.out.println(" other seq: " + cseq.getID() + ",  " + cseq); }
 	if (cseq instanceof AnnotatedBioSeq) {
 	  aseq = (AnnotatedBioSeq)cseq;
 	  if (cached_seq2viewSym == null) {
@@ -1139,6 +1168,9 @@ public class SeqMapView extends JPanel
 	    transform_path = new SeqSymmetry[2];
 	    transform_path[0] = csym;
 	    transform_path[1] = cached_seq2viewSym;
+	  }
+	  if (DEBUG_COMP) {
+	    System.out.println("  calling addAnnotationTiers with transform path length: " + transform_path.length);
 	  }
 	  addAnnotationTiers();
 	}
@@ -1215,6 +1247,12 @@ public class SeqMapView extends JPanel
     }
     if (factory == null) { factory = default_glyph_factory; }
 
+    if (DEBUG_COMP && transform_path != null)  {
+      System.out.println("transform path length: " + transform_path.length);
+      for (int i=0; i<transform_path.length; i++) {
+	SeqUtils.printSymmetry(transform_path[i]);
+      }
+    }
     factory.createGlyph(annotSym, this);
 
     // do "middleground" shading for tracks loaded via DAS/2
@@ -1283,6 +1321,7 @@ public class SeqMapView extends JPanel
     SeqSymmetry result_sym = insym;
     if (getAnnotatedSeq() != getViewSeq()) {
       MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
+      //      System.out.println("^^^^^^^ calling SeqUtils.transformSymmetry()");
       SeqUtils.transformSymmetry(tempsym, getTransformPath());
       result_sym = tempsym;
     }
@@ -1623,6 +1662,7 @@ public class SeqMapView extends JPanel
    *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
    */
   public void sliceAndDice(SeqSymmetry sym) {
+    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
     if (! slicing_in_effect) {
       //   only redo viewspan_before_slicing if slicing is not already in effect, because
       //   if (slicing_in_effect) and slicing again, probably just adjusting slice buffer
@@ -1937,8 +1977,16 @@ public class SeqMapView extends JPanel
 
 
   public void unclamp() {
-    System.out.println("unclamping, xmin = " + 0 + ", xmax = " + viewseq.getLength());
-    seqmap.setMapRange(0, viewseq.getLength());
+    if (viewseq instanceof CompositeNegSeq) {
+      int min = ((CompositeNegSeq)viewseq).getMin();
+      int max = ((CompositeNegSeq)viewseq).getMax();
+      System.out.println("unclamping, xmin = " + min + ", xmax = " + max);
+      seqmap.setMapRange(min, max);
+    }
+    else {
+      System.out.println("unclamping, xmin = " + 0 + ", xmax = " + viewseq.getLength());
+      seqmap.setMapRange(0, viewseq.getLength());
+    }
     seqmap.stretchToFit(false, false);
     seqmap.updateWidget();
   }
@@ -2557,9 +2605,9 @@ public class SeqMapView extends JPanel
       }
       if (revtier != null) {
         if (style instanceof AnnotStyle) {
-          revtier.setLabel(style.getHumanName() + " (-)");          
+          revtier.setLabel(style.getHumanName() + " (-)");
         } else { // style is a graph style or is null (this may not even be possible)
-          revtier.setLabel(meth + " (-)");          
+          revtier.setLabel(meth + " (-)");
         }
       }
       if (map.getTierIndex(revtier) == -1) {

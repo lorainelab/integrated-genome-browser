@@ -41,7 +41,13 @@ public class QuickLoadView2 extends JComponent
          implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener  {
 
   static boolean DEBUG_EVENTS = false;
-  static boolean build_virtual_encode = true;
+  static public boolean build_virtual_genome = true;
+  static public boolean build_virtual_encode = true;
+  // hardwiring names for genome and encode virtual seqs, need to generalize this soon
+  static public String GENOME_SEQ_ID = "genome";
+  static public String ENCODE_REGIONS_ID = "encode_regions";
+
+
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
 
@@ -736,6 +742,7 @@ class QuickLoadServerModel {
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
   static String ENCODE_FILE_NAME = "encodeRegions.bed";
+  static String ENCODE_FILE_NAME2 = "encode.bed";
 
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
@@ -913,8 +920,10 @@ class QuickLoadServerModel {
             genome2file_names.put(genome_name, file_names);
           }
           file_names.add(annot_file_name);
-	  if (annot_file_name.equals(ENCODE_FILE_NAME) && QuickLoadView2.build_virtual_encode) {
-	    addEncodeVirtualSeq(group, (genome_root + ENCODE_FILE_NAME));
+	  if (QuickLoadView2.build_virtual_encode &&
+	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) ) {
+	    //	    addEncodeVirtualSeq(group, (genome_root + ENCODE_FILE_NAME));
+	    addEncodeVirtualSeq(group, (genome_root + annot_file_name));
 	  }
         }
       }
@@ -929,103 +938,97 @@ class QuickLoadServerModel {
     return success;
   }
 
+  /** 
+   *  using negative start coord for virtual genome seq because (at least for human genome)
+   *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
+   */
+  double default_genome_min = -2100200300;
+  boolean DEBUG_VIRTUAL_GENOME = false;
+  public void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
+    System.out.println("$$$$$ adding virtual genome seq to seq group");
+    if (QuickLoadView2.build_virtual_genome) {
+      SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
+      int seq_count = group.getSeqCount();
+      for (int i=0; i<seq_count; i++) {
+	BioSeq seq = group.getSeq(i);
+	if (seq != genome_seq) {
+	  double glength = genome_seq.getLengthDouble();
+	  int clength = seq.getLength();
+	  int spacer = (clength > 5000000) ? 5000000 : 100000;
+	  double new_glength = glength + clength + spacer;
+	  //	genome_seq.setLength(new_glength);
+	  genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
+	  if (DEBUG_VIRTUAL_GENOME)  {
+	    System.out.println("added seq: " + seq.getID() + ", new genome bounds: min = " + genome_seq.getMin() +
+			       ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
+	  }
 
+	  MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+	  MutableSeqSymmetry mapping = (MutableSeqSymmetry)genome_seq.getComposition();
+	  if (mapping == null) {
+	    mapping = new SimpleMutableSeqSymmetry();
+	    mapping.addSpan(new MutableDoubleSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
+	    genome_seq.setComposition(mapping);
+	  }
+	  else {
+	    MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan)mapping.getSpan(genome_seq);
+	    mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
+	  }
+	  
+	  // using doubles for coords, because may end up with coords > MAX_INT
+	  child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
+	  child.addSpan(new MutableDoubleSeqSpan(0, clength, seq));
+	  if (DEBUG_VIRTUAL_GENOME) {
+	    SeqUtils.printSpan(child.getSpan(0));
+	    SeqUtils.printSpan(child.getSpan(1));
+	  }
+	  mapping.addChild(child);
+	}
+      }  // end loop through group's seqs
+    }
+  }
 
   /**
    *  addEncodeVirtualSeq.
    *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
    *  assumes urlpath resolves to bed file for ENCODE regions
    */
-  public boolean addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
-    boolean TEST_REGION = false;
+  public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
+    System.out.println("$$$$$ adding virtual encode seq to seq group");
     // assume it's a bed file...
     BedParser parser = new BedParser();
     try {
+      InputStream istr= LocalUrlCacher.getInputStream(urlpath, cache_usage, cache_annots);
+      //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
+      java.util.List regions = parser.parse(istr, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
+      int rcount = regions.size();
+      //      System.out.println("Encode regions: " + rcount);
+      SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
+      MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
 
-	/**  Composite sym for test region around C21orf94 on chr21
-SimpleMutableSeqSymmetry (18c6c98)
-  chr21: [28,307,471 - 28,317,243] (+9,772)
-  view_seq: [0 - 708] (+708)
-  SimpleMutableSeqSymmetry (2dae86)
-    chr21: [28,307,471 - 28,307,722] (+251)
-    view_seq: [0 - 251] (+251)
-  SimpleMutableSeqSymmetry (11d0054)
-    chr21: [28,316,786 - 28,317,243] (+457)
-    view_seq: [251 - 708] (+457)
-     */
-      if (TEST_REGION) {
-	int pmin = 28307471;
-	int pmax = 28317243;
-	int plength = pmax - pmin;
-
-	int c1min = 28307471;
-	int c1max = 28307722;
-	int c1length = c1max - c1min;
-	int c2min = 28316786;
-	int c2max = 28317243;
-	int c2length = c2max - c2min;
-
-	int vlength = c1length + c2length;
-
-	BioSeq real_seq = seq_group.getSeq("chr21");
-	SmartAnnotBioSeq virtual_seq = seq_group.addSeq("virtual_test", 0);
-	MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
-
-	MutableSeqSymmetry child1 = new SimpleMutableSeqSymmetry();
-	child1.addSpan(new SimpleSeqSpan(c1min, c1max, real_seq));
-	child1.addSpan(new SimpleSeqSpan(0, c1length, virtual_seq));
-	mapping.addChild(child1);
-
-	MutableSeqSymmetry child2 = new SimpleMutableSeqSymmetry();
-	child2.addSpan(new SimpleSeqSpan(c2min, c2max, real_seq));
-	//	child2.addSpan(new SimpleSeqSpan(plength-c2length, plength, virtual_seq));
-	child2.addSpan(new SimpleSeqSpan(vlength-c2length, vlength, virtual_seq));
-	mapping.addChild(child2);
-
-	//	virtual_seq.setLength(plength);
-	virtual_seq.setLength(vlength);
-
-	//	mapping.addSpan(new SimpleSeqSpan(c1min, c2max, real_seq));
-	//	mapping.addSpan(new SimpleSeqSpan(0, plength, virtual_seq));
-	mapping.addSpan(new SimpleSeqSpan(0, vlength, virtual_seq));
-	virtual_seq.setComposition(mapping);
+      int min_base_pos = 0;
+      int current_base = min_base_pos;
+      int spacer = 20000;
+      for (int i=0; i<rcount; i++) {
+	SeqSymmetry esym = (SeqSymmetry)regions.get(i);
+	SeqSpan espan = esym.getSpan(0);
+	int elength = espan.getLength();
+	//	  System.out.println(SeqUtils.spanToString(espan));
+	MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+	child.addSpan(espan);
+	//	child.addSpan(new SimpleSeqSpan(espan.getStart(), espan.getEnd(), espan.getBioSeq()));
+	child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
+	mapping.addChild(child);
+	current_base = current_base + elength + spacer;
       }
-      else {
-	InputStream istr= LocalUrlCacher.getInputStream(urlpath, cache_usage, cache_annots);
-	//      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-	java.util.List regions = parser.parse(istr, seq_group, false, AnnotatedSeqGroup.ENCODE_REGIONS_ID, false);
-	int rcount = regions.size();
-	System.out.println("Encode regions: " + rcount);
-	SmartAnnotBioSeq virtual_seq = seq_group.addSeq(AnnotatedSeqGroup.ENCODE_REGIONS_ID, 0);
-	MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
-
-	//	int min_base_pos = -5000000;
-	int min_base_pos = 0;
-	int current_base = min_base_pos;
-	int spacer = 20000;
-	for (int i=0; i<rcount; i++) {
-	  SeqSymmetry esym = (SeqSymmetry)regions.get(i);
-	  SeqSpan espan = esym.getSpan(0);
-	  int elength = espan.getLength();
-	  //	  System.out.println(SeqUtils.spanToString(espan));
-	  MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
-	  child.addSpan(espan);
-	  //	child.addSpan(new SimpleSeqSpan(espan.getStart(), espan.getEnd(), espan.getBioSeq()));
-	  child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
-	  mapping.addChild(child);
-	  current_base = current_base + elength + spacer;
-	  //	  System.out.println("current encode seq position: " + current_base);
-	}
-	//	virtual_seq.setLength(current_base);
-	virtual_seq.setBounds(min_base_pos, current_base);
-	//	mapping.addSpan(((SeqSymmetry)regions.get(0)).getSpan(0));
-	//	mapping.addSpan(new SimpleSeqSpan(0, current_base, virtual_seq));
-	mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
-	virtual_seq.setComposition(mapping);
-      }
+      //	virtual_seq.setLength(current_base);
+      virtual_seq.setBounds(min_base_pos, current_base);
+      mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
+      virtual_seq.setComposition(mapping);
     }
     catch (Exception ex) {  ex.printStackTrace(); }
-    return true;
+    //    return true;
+    return;
   }
 
 
@@ -1069,8 +1072,8 @@ SimpleMutableSeqSymmetry (18c6c98)
       }
       System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
-
       success = true;
+      if (QuickLoadView2.build_virtual_genome) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);

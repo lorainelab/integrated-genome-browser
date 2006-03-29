@@ -28,9 +28,6 @@ import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.genometry.util.SeqUtils;
 
 public class AnnotatedSeqGroup {
-  // hardwiring names for genome and encode virtual seqs, need to generalize this soon
-  public static String GENOME_SEQ_ID = "genome";
-  public static String ENCODE_REGIONS_ID = "encode_regions";
 
   String id;
   String organism;
@@ -40,15 +37,11 @@ public class AnnotatedSeqGroup {
 
   boolean use_synonyms = true;
 
-  boolean build_virtual_genome = true;
-  boolean DEBUG_VIRTUAL_GENOME = false;
-  SmartAnnotBioSeq genome_seq;
-  //  CompositeNegSeq genome_seq;
-
   // Using a sorted map to get the chromosome numbers in a reasonable order.
   // A better option may be to use a LinkedHashMap and simply make all users
   // of this class sort the sequences id's before adding them.
-  SortedMap id2seq = new TreeMap(new ChromComparator());
+  //  SortedMap id2seq = new TreeMap(new ChromComparator());
+  Map id2seq = new LinkedHashMap();
   ArrayList seqlist = new ArrayList();
 
   static Vector sym_map_change_listeners = new Vector(1);
@@ -56,11 +49,6 @@ public class AnnotatedSeqGroup {
 
   public AnnotatedSeqGroup(String gid) {
     id = gid;
-    if (build_virtual_genome) {
-      genome_seq = new SmartAnnotBioSeq(GENOME_SEQ_ID, gid, 0);
-      //    genome_seq = new CompositeNegSeq(GENOME_SEQ_ID, 0, 0);
-      addSeq(genome_seq);
-    }
   }
 
   public String getID() { return id; }
@@ -171,7 +159,6 @@ public class AnnotatedSeqGroup {
     return aseq;
   }
 
-  double default_genome_min = -2100200300;
   public void addSeq(MutableAnnotatedBioSeq seq) {
     MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
     if (oldseq == null) {
@@ -179,55 +166,6 @@ public class AnnotatedSeqGroup {
       //seqlist.add(seq); // don't add to seqlist, to keep it properly sorted, rebuild it only when needed
       if (seq instanceof SmartAnnotBioSeq) {
 	((SmartAnnotBioSeq)seq).setSeqGroup(this);
-      }
-      // hardwiring to not add encode virtual seq to genome -- need to generalize this soon
-      if (build_virtual_genome && (seq != genome_seq) && 
-	  (! seq.getID().equals(ENCODE_REGIONS_ID))) {
-	double glength = genome_seq.getLengthDouble();
-	int clength = seq.getLength();
-	int spacer = (clength > 5000000) ? 5000000 : 100000;
-	double new_glength = glength + clength + spacer;
-	// need to switch to long/double because whole genome can't be represented with positive numbers!
-	//   (or possibly use range from negative to positive??)
-	if (new_glength < 0) { return; }
-	//	genome_seq.setLength(new_glength);
-	genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
-	//	System.out.println("added seq: " + seq.getID() + ", new genome length: " + genome_seq.getLength());
-	if (DEBUG_VIRTUAL_GENOME)  {
-	  System.out.println("added seq: " + seq.getID() + ", new genome bounds: min = " + genome_seq.getMin() +
-			   ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
-	}
-
-	MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
-	MutableSeqSymmetry mapping = (MutableSeqSymmetry)genome_seq.getComposition();
-	if (mapping == null) {
-	  mapping = new SimpleMutableSeqSymmetry();
-	  //	  mapping.addSpan(new SimpleMutableSeqSpan(0, clength, genome_seq));
-	  //	  mapping.addSpan(new MutableDoubleSeqSpan(0, clength, genome_seq));
-	  //	  mapping.addSpan(new SimpleMutableSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
-	  mapping.addSpan(new MutableDoubleSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
-	  genome_seq.setComposition(mapping);
-	}
-	else {
-	  //	  MutableSeqSpan mspan = (MutableSeqSpan)mapping.getSpan(genome_seq);
-	  MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan)mapping.getSpan(genome_seq);
-	  //	  mspan.set(0, new_glength, genome_seq);
-	  //	  mspan.set(default_genome_min, (int)(default_genome_min + new_glength), genome_seq);
-	  mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
-	}
-	//	child.addSpan(new SimpleSeqSpan(glength, glength + clength, genome_seq));
-	//	child.addSpan(new SimpleSeqSpan((int)(glength - default_genome_min),
-	//                                      (int)(glength + clength - default_genome_min), genome_seq));
-	//	child.addSpan(new SimpleSeqSpan(0, clength, seq));
-
-	// using doubles for coords, because may end up with coords > MAX_INT
-	child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
-	child.addSpan(new MutableDoubleSeqSpan(0, clength, seq));
-	if (DEBUG_VIRTUAL_GENOME) {
-	  SeqUtils.printSpan(child.getSpan(0));
-	  SeqUtils.printSpan(child.getSpan(1));
-	}
-	mapping.addChild(child);
       }
     }
     else {

@@ -762,6 +762,7 @@ public abstract class SeqUtils {
   }
 
   public static int unsuccessful_count = 0;
+  public static boolean debug_step3 = false;
   /**
    *  More general version of
    *      transformSymmetry(resultSet,  src2dstSym, srcSeq, dstSeq, rootSeq, src2dst_recurse).
@@ -915,8 +916,15 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       }  // end of loop through mapSym children
 
       // is mapSym leaf?  yes
-      else {
+      else {  // STEP3
         // STEP 3
+	//
+	// GAH 2006-03-28
+	// changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even 
+	//   if they are already present in result sym.  This fixes bug encountered with shallow transforms 
+	//   (result depth = 1, mapping depth = 1)
+	// Not sure how this will affect deep transformations, but so far appears to be working properly
+
         int spanCount = mapSym.getSpanCount();
         boolean success = false;
 
@@ -925,9 +933,11 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // find a linker span first -- a span in resSym that has same BioSeq as
         //    a span in mapSym
         SeqSpan linkSpan = null;
+	SeqSpan mapSpan = null;
         for (int spandex=0; spandex < spanCount; spandex++) {
-          SeqSpan mapspan = mapSym.getSpan(spandex);
-          BioSeq seq = mapspan.getBioSeq();
+	  //          SeqSpan mapspan = mapSym.getSpan(spandex);
+          mapSpan = mapSym.getSpan(spandex);
+          BioSeq seq = mapSpan.getBioSeq();
           SeqSpan respan = resultSym.getSpan(seq);
           if (respan != null) {
             linkSpan = respan;
@@ -945,54 +955,74 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // for each spanX in mapSym that has no SeqSpan in resultSym with same
         //    BioSeq seqY
         else {  // have a linker span
+	  MutableSeqSpan interSpan = null;
           for (int spandex=0; spandex < spanCount; spandex++) {
-            //            SeqSpan mapspan = mapSym.getSpan(spandex);
+            //            SeqSpan mapSpan = mapSym.getSpan(spandex);
             SeqSpan newspan = mapSym.getSpan(spandex);
             BioSeq seq = newspan.getBioSeq();
             SeqSpan respan = resultSym.getSpan(seq);
-            if (respan == null) {
-              //              MutableSeqSpan newResSpan = new SimpleMutableSeqSpan();
-              MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
-              // GAH 5-17-2003
-              // problem here when linkSpan is not contained within mapSym.getSpan(linkSpan.getBioSeq())!!!
-              // transforSpan will transform _as if_ above were the case, therefore giving incorrect results
-              // trying to fix by always calculating intersection: (interSpan) of
-              //  interSpan = intersection(linkSpan and mapSym.getSpan(linkSpan.getBioSeq())),
-              //  and doing tranform with interSpan instead of linkSpan...
-              //
-              success = false;
-              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
-              MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
-              if (interSpan != null) {
-                // GAH 6-12-2003
-                // problem with using intersection!
-                // since intersection() obliterates orientation (span returned is _always_ forward),
-                //   need to set intersect_span orientation afterwards to be same as linkSpan
-                //   (so it has coorect orientation regardless of behavior of intersection());
-                if (linkSpan.isForward()) {
-                  interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-                }
-                else {
-                  interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-                }
-                success = transformSpan(interSpan, newResSpan, seq, mapSym);
-              }
+	    //            if (respan == null) {
+	    //	    MutableSeqSpan newResSpan = (MutableSeqSpan)respan;
+	    // GAH 5-17-2003
+	    // problem here when linkSpan is not contained within mapSym.getSpan(linkSpan.getBioSeq())!!!
+	    // transforSpan will transform _as if_ above were the case, therefore giving incorrect results
+	    // trying to fix by always calculating intersection: (interSpan) of
+	    //  interSpan = intersection(linkSpan and mapSym.getSpan(linkSpan.getBioSeq())),
+	    //  and doing tranform with interSpan instead of linkSpan...
+	    //
+	    success = false;
+	    //              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
+	    //              MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
+	    if (interSpan == null) {
+	      interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
+	      if (interSpan != null) {
+		// GAH 6-12-2003
+		// problem with using intersection!
+		// since intersection() obliterates orientation (span returned is _always_ forward),
+		//   need to set intersect_span orientation afterwards to be same as linkSpan
+		//   (so it has coorect orientation regardless of behavior of intersection());
+		if (linkSpan.isForward()) {
+		  interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
+		}
+		else {
+		  interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
+		}
+	      }
+	    }
+	    MutableSeqSpan newResSpan = null;
+	    if (interSpan != null) {
+	      if (respan == null) { newResSpan = new MutableDoubleSeqSpan(); }
+	      else { newResSpan = (MutableSeqSpan)respan; }
+	      success = transformSpan(interSpan, newResSpan, seq, mapSym);
+	    }
 
-	      /*
+	    if (debug_step3) {
+	      System.out.println("in SeqUtils.transformSymmetry(), step3");
+	      System.out.print("  span to transform: "); printSpan(respan);
 	      System.out.print("  linkSpan:          "); printSpan(linkSpan);
 	      System.out.print("  mapping span:      "); printSpan(mapSpan);
 	      System.out.print("  intersection span: "); printSpan(interSpan);
-	      System.out.print("  newResSpan:        "); printSpan(newResSpan);
-	      */
-              if (success) {
-                resultSym.addSpan(newResSpan);
-              }
-              else {
-		//		System.out.println("unsuccessful trying to transform span: ");
-		unsuccessful_count++;
-                return false;
-              }
-            }
+	      System.out.print("  transformed span:  "); printSpan(newResSpan);
+	    }
+	    if (success) {
+	      if ((respan == null) && (newResSpan != null))  {  // only add new span if respan was not reused for transformed span
+		resultSym.addSpan(newResSpan);
+	      }
+	    }
+	    else {
+	      //		System.out.println("unsuccessful trying to transform span: ");
+	      unsuccessful_count++;
+	      return false;
+	    }
+	    /*	    }
+		    else {
+		    if (debug_step3)  {
+		    System.out.println("in SeqUtils.transformSymmetry(), step3");
+		    System.out.print("  linkSpan:          "); printSpan(linkSpan);
+		    System.out.println("respan already exists: " + SeqUtils.spanToString(respan));
+		    }
+		    }
+	    */
           }
         }
       }  // end of STEP 3
@@ -1202,7 +1232,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
               //              MutableSeqSpan newResSpan = new SimpleMutableSeqSpan();
               MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
               success = false;
-              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
+	      SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
               MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
               if (interSpan != null) {
                 if (linkSpan.isForward()) {

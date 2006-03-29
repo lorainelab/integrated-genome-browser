@@ -260,9 +260,13 @@ public class GraphState implements IAnnotStyle {
     return AnnotStyle.getDefaultInstance().getBackground();
   }
 
-  /** Always returns false, since graphs can't be collapsed. */
+  // Always returns false, since graphs can't be collapsed.
+  /**
+   *  Always returns true, to allow for multiple graphs overlaid on same tier?
+   */
   public boolean getCollapsed() {
-    return false;
+    //    return false;
+    return true;
   }
 
   /** Returns the same thing as getLabel(). */

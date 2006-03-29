@@ -74,12 +74,12 @@ public class LocalUrlCacher {
     if (cache_option != ONLY_CACHE) {
       try {
 	URL theurl = new URL(url);
-	conn = theurl.openConnection();  
+	conn = theurl.openConnection();
 	// adding a conn.connect() call here to force throwing of error here if can't open connection
-	//    because some method calls on URLConnection like those below don't always throw errors 
-	//    when connection can't be opened -- which woule end up allowing url_reachable to be set to true 
+	//    because some method calls on URLConnection like those below don't always throw errors
+	//    when connection can't be opened -- which woule end up allowing url_reachable to be set to true
 	///   even when there's no connection
-	conn.connect(); 
+	conn.connect();
 	if (DEBUG_CONNECTION) {
 	  reportHeaders(conn);
 	}
@@ -96,7 +96,7 @@ public class LocalUrlCacher {
         if (! cached) { throw ioe; }
       }
     }
-        
+
     // if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
     if (cached && (cache_option != IGNORE_CACHE)) {
       if (! url_reachable) {
@@ -105,7 +105,7 @@ public class LocalUrlCacher {
         }
         if (cached) {
           System.out.println("Loading cached file for URL");
-          result_stream = new FileInputStream(cache_file);
+          result_stream = new BufferedInputStream(new FileInputStream(cache_file));
         } else {
           System.out.println("No cached local copy of the file is available.");
           result_stream = null;
@@ -114,8 +114,8 @@ public class LocalUrlCacher {
         long local_timestamp = cache_file.lastModified();
         if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
 	  System.out.println("Cache exists and is more recent, using cache: " + cache_file);
-	  result_stream = new FileInputStream(cache_file);
-        }      
+	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
+        }
         else {
 	  System.out.println("cached file exists, but URL is more recent, so reloading cache");
           result_stream = null;
@@ -155,17 +155,17 @@ public class LocalUrlCacher {
 	  byte[] chunk = new byte[chunk_size];
 	  bytes_read = bis.read(chunk, 0, chunk_size);
 	  if (DEBUG_CONNECTION) {
-	    System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);	    
+	    System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
 	  }
 	  if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
-	    total_byte_count += bytes_read; 
+	    total_byte_count += bytes_read;
 	    chunks.add(chunk);
 	    byte_counts.add(bytes_read);
 	  }
 	  chunk_count++;
 	}
 	if (DEBUG_CONNECTION) {
-	  System.out.println("total bytes: " + total_byte_count + 
+	  System.out.println("total bytes: " + total_byte_count +
 			     ", total chunks with > 0 bytes: " + chunks.size());
 	}
 
@@ -193,7 +193,7 @@ public class LocalUrlCacher {
       }
       result_stream = new ByteArrayInputStream(content);
     }
-    
+
     if (result_stream == null) {
       String message;
       if (cache_option == ONLY_CACHE) {
@@ -205,7 +205,7 @@ public class LocalUrlCacher {
       }
       throw new IOException(message);
     }
-    
+
     //    System.out.println("returning stream: " + result_stream);
     return result_stream;
   }
@@ -237,7 +237,7 @@ public class LocalUrlCacher {
       UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
     return cache_usage;
   }
-  
+
   public static void reportHeaders(URLConnection query_con) {
     try {
       System.out.println("URL: " + query_con.getURL().toString());

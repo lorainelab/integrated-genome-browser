@@ -168,6 +168,8 @@ public class SeqMapView extends JPanel
   public static final String VALUE_AXIS_LABEL_FORMAT_FULL = "FULL";
   /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
   public static final String VALUE_AXIS_LABEL_FORMAT_ABBREV = "ABBREV";
+  /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
+  public static final String VALUE_AXIS_LABEL_FORMAT_NO_LABELS = "NO_LABELS";
 
   public static final String PREF_AXIS_COLOR = "Axis color";
   public static final String PREF_AXIS_BACKGROUND = "Axis background";
@@ -200,6 +202,7 @@ public class SeqMapView extends JPanel
       ( for those GraphStates where state.getFloatGraph() = false))
   */
   Map gstate2tier = new HashMap();
+  Map gname2tier = new HashMap();
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
@@ -440,7 +443,10 @@ public class SeqMapView extends JPanel
               ag.setLabelFormat(AxisGlyph.COMMA);
             } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
               ag.setLabelFormat(AxisGlyph.FULL);
-            } else {
+            } else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format))  {
+	      ag.setLabelFormat(AxisGlyph.NO_LABELS);
+	    }
+	    else {
               ag.setLabelFormat(AxisGlyph.ABBREV);
             }
           }
@@ -496,6 +502,8 @@ public class SeqMapView extends JPanel
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
 
+  public Map getGraphNameTierHash() { return gname2tier; }
+
   TransformTierGlyph axis_tier;
 
   /** An un-collapsible instance.  It is hideable, though. */
@@ -539,6 +547,8 @@ public class SeqMapView extends JPanel
       axis.setLabelFormat(AxisGlyph.COMMA);
     } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
       axis.setLabelFormat(AxisGlyph.FULL);
+    } else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
+      axis.setLabelFormat(AxisGlyph.NO_LABELS);
     } else {
       axis.setLabelFormat(AxisGlyph.ABBREV);
     }
@@ -599,11 +609,17 @@ public class SeqMapView extends JPanel
 	      cgl.setColor(Color.lightGray);
 	    }
 	    else {
-	      //	      cgl = new OutlineRectGlyph();
-	      cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-	      String label = ospan.getBioSeq().getID();
-	      if (label.startsWith("chr")) { label = label.substring(3); }
-	      ((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
+	      if (viewseq.getID().equals(QuickLoadView2.GENOME_SEQ_ID)) {
+		// hide axis numbering
+		axis.setLabelFormat(AxisGlyph.NO_LABELS);
+		cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+		String label = ospan.getBioSeq().getID();
+		if (label.startsWith("chr")) { label = label.substring(3); }
+		((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
+	      }
+	      else {
+		cgl = new OutlineRectGlyph();
+	      }
 	      cgl.setColor(Color.lightGray);
 	    }
 	    //	    cgl.setCoords(childspan.getMin(), 0,
@@ -644,6 +660,7 @@ public class SeqMapView extends JPanel
     method2rtier = new HashMap();
     method2ftier = new HashMap();
     gstate2tier = new HashMap();
+    gname2tier = new HashMap();
     match_glyphs = new Vector();
     seqmap.updateWidget();
     GenericGraphGlyphFactory.clear();
@@ -801,6 +818,7 @@ public class SeqMapView extends JPanel
       method2rtier = new HashMap();
       method2ftier = new HashMap();
       gstate2tier = new HashMap();
+      gname2tier = new HashMap();
     }
 
     seqmap.clearWidget();
@@ -1318,8 +1336,13 @@ public class SeqMapView extends JPanel
    *  returns the original symmetry.
    */
   public SeqSymmetry transformForViewSeq(SeqSymmetry insym) {
+    return transformForViewSeq(insym, getAnnotatedSeq());
+  }
+
+  public SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
     SeqSymmetry result_sym = insym;
-    if (getAnnotatedSeq() != getViewSeq()) {
+    //    if (getAnnotatedSeq() != getViewSeq()) {
+    if (seq_to_compare != getViewSeq()) {
       MutableSeqSymmetry tempsym = SeqUtils.copyToDerived(insym);
       //      System.out.println("^^^^^^^ calling SeqUtils.transformSymmetry()");
       SeqUtils.transformSymmetry(tempsym, getTransformPath());

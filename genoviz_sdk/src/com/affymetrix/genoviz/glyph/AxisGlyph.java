@@ -150,6 +150,7 @@ public class AxisGlyph extends Glyph {
   public static final int FULL = 0;
   public static final int ABBREV = FULL+1;
   public static final int COMMA = ABBREV+1;
+  public static final int NO_LABELS = COMMA+1;
   protected int labelFormat = FULL;
 
   /**
@@ -162,9 +163,9 @@ public class AxisGlyph extends Glyph {
    * @param theFormat {@link #FULL} or {@link #ABBREV} or {@link #COMMA}.
    */
   public void setLabelFormat(int theFormat) {
-    if (theFormat != FULL && theFormat != ABBREV && theFormat != COMMA) {
+    if (theFormat != FULL && theFormat != ABBREV && theFormat != COMMA && theFormat != NO_LABELS) {
       throw new IllegalArgumentException(
-        "Label format must be FULL, ABBREV, or COMMA.");
+        "Label format must be FULL, ABBREV, COMMA, or NO_LABELS.");
     }
     this.labelFormat = theFormat;
   }
@@ -462,7 +463,7 @@ public class AxisGlyph extends Glyph {
   private final Rectangle scratchpixels = new Rectangle();
 
   public void draw(ViewI view) {
-    String label;
+    String label = null;
     int axis_loc;
     TransformI cumulative;
     int axis_length;
@@ -708,23 +709,29 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        label = stringRepresentation((double)tick_loc, (double)tick_increment);
+        if (labelFormat != NO_LABELS)  { 
+	  label = stringRepresentation((double)tick_loc, (double)tick_increment); 
+	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (tick_loc >= scene_start && tick_loc <= scene_end) {
           if (orient == VERTICAL) {
-            if (LEFT == this.labelPlacement) {
-              int x = fm.stringWidth(label);
-              g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-            }
-            else {
-              g.drawString(label, center_line_start+labelShift, canvas_loc);
-            }
+	    if (labelFormat != NO_LABELS) {
+	      if (LEFT == this.labelPlacement) {
+		int x = fm.stringWidth(label);
+		g.drawString(label, center_line_start-labelGap-x, canvas_loc);
+	      }
+	      else {
+		g.drawString(label, center_line_start+labelShift, canvas_loc);
+	      }
+	    }
             g.fillRect(center_line_start-2, canvas_loc,
                        centerLineThickness+4, 2);
           }
           else {
-            g.drawString(label, canvas_loc, center_line_start-labelShift);
+            if (labelFormat != NO_LABELS)  {
+	      g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    }
             g.fillRect(canvas_loc, center_line_start-2,
                        2, centerLineThickness+4);
           }
@@ -755,23 +762,29 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
+        if (labelFormat != NO_LABELS)  { 
+	  label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
+	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (rev_tick_loc >= scene_start && rev_tick_loc <= scene_end) {
           if (orient == VERTICAL) {
-            if (LEFT == this.labelPlacement) {
-              int x = fm.stringWidth(label);
-              g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-            }
-            else {
-              g.drawString(label, center_line_start+labelShift, canvas_loc);
-            }
+	    if (labelFormat != NO_LABELS)  { 
+	      if (LEFT == this.labelPlacement) {
+		int x = fm.stringWidth(label);
+		g.drawString(label, center_line_start-labelGap-x, canvas_loc);
+	      }
+	      else {
+		g.drawString(label, center_line_start+labelShift, canvas_loc);
+	      }
+	    }
             g.fillRect(center_line_start-2, canvas_loc,
                        centerLineThickness+4, 2);
           }
           else {
-            g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    if (labelFormat != NO_LABELS)  { 
+	      g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    }
             g.fillRect(canvas_loc, center_line_start-2,
                         2, centerLineThickness+4);
           }

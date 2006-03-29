@@ -182,11 +182,12 @@ public class GraphGlyphUtils {
       } else {
         tglyph.setLabel("unknown");
       }
-      
+
       //      tglyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
       if (new_tier)  {
 	map.addTier(tglyph, true);
 	gviewer.getGraphStateTierHash().put(gl.getGraphState(), tglyph);
+        gviewer.getGraphNameTierHash().put(gl.getLabel(), tglyph);
       }
       tglyph.setState(TierGlyph.COLLAPSED);
       tglyph.pack(map.getView());
@@ -228,6 +229,7 @@ public class GraphGlyphUtils {
       if (parentgl instanceof TierGlyph) {
 	map.removeTier((TierGlyph)parentgl);
 	gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+        gviewer.getGraphNameTierHash().remove(gl.getLabel());
       }
 
       PixelFloaterGlyph floater = new PixelFloaterGlyph();

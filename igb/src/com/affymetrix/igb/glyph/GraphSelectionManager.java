@@ -465,6 +465,7 @@ public class GraphSelectionManager
       if (parentgl instanceof TierGlyph) {
         map.removeTier((TierGlyph)parentgl);
         gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+        gviewer.getGraphStateTierHash().remove(gl.getLabel());
         map.packTiers(false, true, false);
         map.stretchToFit(false, false);
       }
@@ -955,7 +956,7 @@ public class GraphSelectionManager
         Rectangle2D tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
         if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
-          graphgl.setMinScoreThreshold(new_threshold);          
+          graphgl.setMinScoreThreshold(new_threshold);
         } else {
           graphgl.setMaxScoreThreshold(new_threshold);
         }

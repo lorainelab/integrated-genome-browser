@@ -179,7 +179,7 @@ public class GraphAdjusterView extends JComponent
     pgroup.add(attachB);
     pgroup.add(floatB);
     pgroup.add(not_attached_or_floatingB);
-    
+
     JPanel save_deleteP = new JPanel();
     save_deleteP.setBorder(new EmptyBorder(3,3,3,3));
     save_deleteP.setLayout(new BoxLayout(save_deleteP, BoxLayout.X_AXIS));
@@ -200,7 +200,7 @@ public class GraphAdjusterView extends JComponent
     button_row_1.add(selectAllB);
     button_row_1.add(Box.createHorizontalStrut(10));
     button_row_1.add(setDefaultsB);
-    
+
     //JPanel defaults_pan = new JPanel();
     JPanel options_pan = new JPanel();
 
@@ -302,7 +302,7 @@ public class GraphAdjusterView extends JComponent
     groupGraphsB.addActionListener(this);
     transformTF.addActionListener(this);
     scaleCB.addActionListener(this);
-    
+
     gmodel.addSeqSelectionListener(this);
     gmodel.addSymSelectionListener(this);
   }
@@ -321,16 +321,16 @@ public class GraphAdjusterView extends JComponent
         grafs.add(selected_syms.get(i));
       }
     }
-    
+
     boolean all_match_attached = true;
     boolean all_match_y_axis = true;
     boolean all_match_label = true;
-    
+
     int grafcount = grafs.size();
     saveB.setEnabled(grafcount <= 1);
     glyphs = new ArrayList();
     GraphGlyph first_glyph = null;
-    
+
     for (int i=0; i<grafcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphGlyph gl = (GraphGlyph)nwidg.getItem(graf);
@@ -344,10 +344,10 @@ public class GraphAdjusterView extends JComponent
         all_match_attached &= (first_glyph.getGraphState().getFloatGraph() == gl.getGraphState().getFloatGraph());
       }
     }
-    
+
     vis_bounds_adjuster.setGraphs(glyphs);
     score_thresh_adjuster.setGraphs(glyphs);
-    
+
     if (glyphs.isEmpty()) {
       attachB.setEnabled(false);
       floatB.setEnabled(false);
@@ -371,7 +371,7 @@ public class GraphAdjusterView extends JComponent
       yaxisCB.setSelected(all_match_y_axis && first_glyph.getShowAxis());
       labelCB.setSelected(all_match_label && first_glyph.getShowLabel());
     }
-    
+
     boolean b = (! glyphs.isEmpty());
     scaleCB.setEnabled(b);
     handleCB.setEnabled(b);
@@ -382,7 +382,7 @@ public class GraphAdjusterView extends JComponent
     deleteB.setEnabled(b);
     styleCB.setEnabled(b);
   }
-  
+
   public void actionPerformed(ActionEvent evt) {
     //    System.out.println("GraphAdjusterView heard action event: " + evt);
     Object src = evt.getSource();
@@ -426,7 +426,7 @@ public class GraphAdjusterView extends JComponent
       nwidg.updateWidget();
     }
     else if (src == colorB) {
-      changeColor(grafs, gviewer);      
+      changeColor(grafs, gviewer);
     }
     else if (src == styleCB) {
       String selection = (String)((JComboBox)styleCB).getSelectedItem();
@@ -567,7 +567,7 @@ public class GraphAdjusterView extends JComponent
   void updateViewer() {
     updateViewer(gviewer);
   }
-  
+
   static void updateViewer(SeqMapView gviewer)  {
     final SeqMapView current_viewer = gviewer;
     SwingUtilities.invokeLater(new Runnable() {
@@ -620,6 +620,7 @@ public class GraphAdjusterView extends JComponent
           if (parentgl instanceof TierGlyph) {
             map.removeTier((TierGlyph)parentgl);
             gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+            gviewer.getGraphNameTierHash().remove(gl.getLabel());
             map.packTiers(false, true, false);
             map.stretchToFit(false, false);
           }
@@ -680,7 +681,7 @@ public class GraphAdjusterView extends JComponent
       }
     }
   }
-  
+
   public static void changeColor(java.util.List graf_syms, SeqMapView gviewer) {
     int gcount = graf_syms.size();
     if (gcount > 0) {
@@ -733,10 +734,10 @@ public class GraphAdjusterView extends JComponent
       symSelectionChanged(newevt);
     }
   }
-  
+
   /** Parse a String floating-point number that may optionally end with a "%" symbol. */
   public static float parsePercent(String text) throws NumberFormatException {
-    if (text.endsWith("%")) { 
+    if (text.endsWith("%")) {
       text = text.substring(0, text.length()-1);
     }
 

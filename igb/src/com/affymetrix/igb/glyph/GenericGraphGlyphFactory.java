@@ -119,14 +119,14 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       return null;
     }
 
-    // GAH 2006-03-26 
-    //    want to add code here to handle situation where a "virtual" seq is being display on SeqMapView, 
-    //       and it is composed of GraphSym's from multiple annotated seqs, but they're really from the 
-    //       same data source (or they're the "same" data on different chromosomes for example) 
+    // GAH 2006-03-26
+    //    want to add code here to handle situation where a "virtual" seq is being display on SeqMapView,
+    //       and it is composed of GraphSym's from multiple annotated seqs, but they're really from the
+    //       same data source (or they're the "same" data on different chromosomes for example)
     //       In this case want these displayed as a single graph
 
     //   match these up based on identical graph names / ids, then:
-    //    Approach 1)  
+    //    Approach 1)
     //       build a CompositeGraphSym on the virtual seq
     //       make a single GraphGlyph
     //    Approach 2)
@@ -137,7 +137,25 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
     GraphSym newgraf = graf;
     if (graph_seq != vseq) {
-      SeqSymmetry mapping_sym = smv.transformForViewSeq(graf);
+      System.out.println("need to transform graph sym: ");
+      SeqUtils.printSymmetry(graf);
+      //      SeqSymmetry mapping_sym = smv.transformForViewSeq(graf);
+      SeqSymmetry[] transform_path = smv.getTransformPath();
+      if (transform_path != null && transform_path.length > 0) {
+	System.out.println("transform path, length: " + transform_path.length);
+	SeqUtils.printSymmetry(transform_path[0]);
+//	if (tempsym != null && transform_path != null && transform_path.length > 0) {
+	  //SeqSymmetry path0 = transform_path[0];
+//	  for (int i=0; i<tempsym.getSpanCount(); i++) {
+	  //}
+//	}
+      }
+      else {
+	System.out.println("no transform path");
+      }
+      //      SeqUtils.debug_step3 = true;
+      SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
+      //      SeqUtils.debug_step3 = false;
       newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
       SeqSpan span_on_vseq = mapping_sym.getSpan(vseq);
       //      Rectangle2D gbox = graph_glyph.getCoordBox();
@@ -149,16 +167,16 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       return null;
     }
 
-    String graph_name = graf.getGraphName();
+    String graph_name = newgraf.getGraphName();
     if (graph_name == null) {
       // this probably never actually happens
       graph_name = "Graph #" + System.currentTimeMillis();
-      graf.setGraphName(graph_name);
+      newgraf.setGraphName(graph_name);
     }
 
     SmartGraphGlyph graph_glyph;
     graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
-    graph_glyph.setLabel(graf.getGraphName());
+    graph_glyph.setLabel(newgraf.getGraphName());
     //    graph_glyph.setGraphState(state);
     //    graph_glyph.setPointCoords(newgraf.getGraphXCoords(), newgraf.getGraphYCoords());
 
@@ -201,9 +219,11 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
     }
     else {
-      //	System.out.println("*** in GenericGrphaGlyphFactory.displayGraph() ***");
-      TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
+      //      System.out.println("*** in GenericGraphGlyphFactory.displayGraph() ***");
+      //      TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
+      TierGlyph tglyph = (TierGlyph)smv.getGraphNameTierHash().get(newgraf.getGraphName());
       boolean new_tier = (tglyph == null);
+      System.out.println("^^in GenericGraphGlyphFactory.displayGraph(), new tier: " + new_tier);
       if (new_tier) {
 	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
 	if (use_fixed_pixel_height)  {
@@ -214,6 +234,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	}
 	else { tglyph = new TierGlyph(graf.getGraphState()); }
       }
+
+      // want to allow for multiple graph glyphs overlaid in same tier
+      tglyph.setState(TierGlyph.COLLAPSED);
 
       Color tier_back_col = graf.getGraphState().getBackground();
 
@@ -232,6 +255,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	}
 	map.addTier(tglyph, upper_strand);
 	smv.getGraphStateTierHash().put(state, tglyph);
+	smv.getGraphNameTierHash().put(newgraf.getGraphName(), tglyph);
       }
       tglyph.pack(map.getView());
       if (update_map) {

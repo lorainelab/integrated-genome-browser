@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,19 +29,34 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
   boolean move_children = true;
 
   public void draw(ViewI view) {
-    super.draw(view);
+    //    super.draw(view);
     Rectangle pixelbox = view.getScratchPixBox();
+    Rectangle2D full_view_cbox = view.getFullView().getCoordBox();
     Graphics g = view.getGraphics();
-    view.transformToPixels(this, pixelbox);
+    //    view.transformToPixels(this, pixelbox);
+    Rectangle2D trimmed_cbox;
+    if ((this.x < full_view_cbox.x) || 
+	((this.x + this.width) > (full_view_cbox.x + full_view_cbox.width)) ) {
+      // intersection() returns intersection in scratch_cbox (which trimmed_cbox is then set to)
+      trimmed_cbox = GeometryUtils.intersection(full_view_cbox, this.getCoordBox(), scratch_cbox);
+    }
+    else {
+      trimmed_cbox = this.getCoordBox();
+    }
+    view.transformToPixels(trimmed_cbox, pixelbox);
+
     int original_pix_width = pixelbox.width;
     if (pixelbox.width == 0) { pixelbox.width = 1; }
     if (pixelbox.height == 0) { pixelbox.height = 1; }
 
-    Rectangle compbox = view.getComponentSizeRect();
-    if ((pixelbox.x < compbox.x) ||
-        ((pixelbox.x + pixelbox.width) > (compbox.x + compbox.width))) {
-      pixelbox = GeometryUtils.intersection(compbox, pixelbox, pixelbox);
+    /*
+    //    Rectangle compbox = view.getComponentSizeRect();  // this should probably just be view.getPixelBox()
+    Rectangle full_pixbox = view.getFullView().getPixelBox();
+    if ((pixelbox.x < full_pixbox.x) ||
+        ((pixelbox.x + pixelbox.width) > (full_pixbox.x + full_pixbox.width))) {
+      pixelbox = GeometryUtils.intersection(full_pixbox, pixelbox, pixelbox);
     }
+    */
     // We use fillRect instead of drawLine, because it may be faster.
     g.setColor(getBackgroundColor());
     if (show_label) {

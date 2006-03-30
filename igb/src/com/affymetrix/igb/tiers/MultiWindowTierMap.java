@@ -30,6 +30,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
   int total_height = tile_height * tile_rows;
   NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
   MultiMapEventHandler child_event_handler;
+  Rectangle total_pixbox = new Rectangle(xbump, ybump, total_width, total_height);
 
   // shouldn't need this, but appear to be problems returning listeners normally when
   //   component isn't actually being displayed???
@@ -50,7 +51,9 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     //    super.updateWidget(full_update);
     // set views of child maps based on this map's view
     ViewI rootview = this.getView();
-
+    if (rootview instanceof View)  {
+      ((View)rootview).calcCoordBox();  // just to make sure...
+    }
     // transform scale is pixels/coord, transform offset is in pixels
     LinearTransform trans = (LinearTransform)rootview.getTransform();
     double xscale = trans.getScaleX();
@@ -77,6 +80,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 	ctrans.setScaleY(yscale);
 	ctrans.setOffsetX(xoffset - (x * tile_width));
 	ctrans.setOffsetY(yoffset - (y * tile_height));
+	cview.setFullView(rootview);
 	cmap.updateWidget();
       }
     }

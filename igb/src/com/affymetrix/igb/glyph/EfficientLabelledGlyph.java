@@ -54,7 +54,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
   static {
     Font base_fnt = new Font("Monospaced", Font.PLAIN, 1);
     Toolkit kit = Toolkit.getDefaultToolkit();
-    Dimension dim = kit.getScreenSize();
+    // Dimension dim = kit.getScreenSize();
 
     int pixindex = 1;;
     int pntcount = 3;

@@ -134,6 +134,9 @@ public interface ViewI  {
    */
   public Rectangle2D getCoordBox();
 
+  public void setFullView(ViewI full_view);
+  public ViewI getFullView();
+
   /**
    *  sets the TransformI that is used to transform widget coordinates to
    *  pixels and vice versa.

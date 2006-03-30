@@ -88,7 +88,7 @@ public class GraphGlyph extends Glyph {
   public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
     super();
     state = gstate;
-    if (state == null) { 
+    if (state == null) {
       throw new NullPointerException();
     }
     setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
@@ -119,7 +119,7 @@ public class GraphGlyph extends Glyph {
 	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
       setVisibleMaxY(point_max_ycoord);
       setVisibleMinY(point_min_ycoord);
-    }    
+    }
   }
 
   /*
@@ -310,48 +310,54 @@ public class GraphGlyph extends Glyph {
   public void drawLabel(ViewI view) {
     if (getLabel() == null) { return; }
     Rectangle hpix = calcHandlePix(view);
-    Graphics g = view.getGraphics();
-    g.setColor(Color.lightGray);
-    g.setFont(default_font);
-    FontMetrics fm = g.getFontMetrics();
-    g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(Color.lightGray);
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    }
   }
 
   public void drawHandle(ViewI view) {
     Rectangle hpix = calcHandlePix(view);
-    Graphics g = view.getGraphics();
-    g.setColor(this.getColor());
-    g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
-    g.setColor(Color.gray);
-    g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(this.getColor());
+      g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
+      g.setColor(Color.gray);
+      g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    }
   }
 
   public void drawAxisLabel(ViewI view) {
     Graphics g = view.getGraphics();
     Rectangle hpix = calcHandlePix(view);
 
-    getInternalLinearTransform(view, scratch_trans);
-    double yscale = scratch_trans.getScaleY();
-    double yoffset = scratch_trans.getOffsetY();
+    if (hpix != null) {
+      getInternalLinearTransform(view, scratch_trans);
+      double yscale = scratch_trans.getScaleY();
+      double yoffset = scratch_trans.getOffsetY();
 
-    coord.y = yoffset;
-    view.transformToPixels(coord, curr_point);
-    double max_ypix = curr_point.y;
-    coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-    view.transformToPixels(coord, curr_point);
-    double min_ypix = curr_point.y;
-    double pix_height = max_ypix - min_ypix;
-    double spacing = pix_height / axis_bins;
-    double mark_ypix = min_ypix;
-    g.setColor(Color.gray);
-    for (int i=0; i<=axis_bins; i++) {
-      g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
-      mark_ypix += spacing;
+      coord.y = yoffset;
+      view.transformToPixels(coord, curr_point);
+      double max_ypix = curr_point.y;
+      coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+      view.transformToPixels(coord, curr_point);
+      double min_ypix = curr_point.y;
+      double pix_height = max_ypix - min_ypix;
+      double spacing = pix_height / axis_bins;
+      double mark_ypix = min_ypix;
+      g.setColor(Color.gray);
+      for (int i=0; i<=axis_bins; i++) {
+	g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
+	mark_ypix += spacing;
+      }
+      g.setColor(Color.gray);
+      g.setFont(axis_font);
+      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
+      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
     }
-    g.setColor(Color.gray);
-    g.setFont(axis_font);
-    g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
-    g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
   }
 
   /** Draws the outline in a way that looks good for tiers.  With other glyphs,
@@ -408,7 +414,7 @@ public class GraphGlyph extends Glyph {
       // overlapping handle ?  (need to do this one in pixel space?)
       view.transformToPixels(coord_hitbox, pixel_hitbox);
       Rectangle hpix = calcHandlePix(view);
-      if (hpix.intersects(pixel_hitbox)) { return true; }
+      if (hpix != null && (hpix.intersects(pixel_hitbox))) { return true; }
     }
     return false;
   }
@@ -418,6 +424,14 @@ public class GraphGlyph extends Glyph {
     //    have multiple views on same scene / glyph hierarchy
     // therefore reconstructing handle pixel bounds here... (although reusing same object to
     //    cut down on object creation)
+    //    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
+    //		       ", view cbox.x: " + view.getCoordBox().x);
+
+    // if full view differs from current view, and current view doesn't left align with full view, 
+    //   don't draw handle (only want handle at left side of full view)
+    if (view.getFullView().getCoordBox().x != view.getCoordBox().x)  {
+      return null;
+    }
       view.transformToPixels(coordbox, pixelbox);
       Rectangle view_pixbox = view.getPixelBox();
       int xbeg = Math.max(view_pixbox.x, pixelbox.x);
@@ -535,7 +549,7 @@ public class GraphGlyph extends Glyph {
   public void setHeatMap(HeatMap hmap) {
     state.setHeatMap(hmap);
   }
-  
+
   public HeatMap getHeatMap() {
     return state.getHeatMap();
   }

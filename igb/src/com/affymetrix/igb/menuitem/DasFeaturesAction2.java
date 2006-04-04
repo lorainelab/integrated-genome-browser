@@ -608,6 +608,13 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     try {
       int seqstart = Integer.parseInt(min_fieldTF.getText());
       int seqstop = Integer.parseInt(max_fieldTF.getText());
+      
+      if (seqstart == 0) {
+        // due to a bug on the UCSC DAS server, re-set any start of 0 to 1.
+        // The only possible features that this could cause you to miss are those
+        // that are at position 0 and are 1 base long; which is not likely to happen.
+        seqstart = 1;
+      }
 
     MutableAnnotatedBioSeq current_seq =
       (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();

@@ -82,12 +82,23 @@ import com.affymetrix.igb.genometry.UcscGffSym;
  *</pre>
  */
 public class GFFParser implements AnnotationWriter  {
+  public static final int VERSION_UNKNOWN = 0;
+  public static final int GFF1 = 1;
+  public static final int GFF2 = 2;
+  public static final int GFF3 = 3;
+  public static final int GTF = 201;
+
+  public static final String GFF3_ID = "ID";
+  public static final String GFF3_PARENT = "Parent";
+
+  int gff_version = 0;
+
   boolean DEBUG_GROUPING = false;
   boolean USE_FILTER = true;
   boolean USE_GROUPING = true;
 
   boolean default_create_container_annot = false;
-
+  boolean use_standard_filters = false;
   boolean gff_base1 = true;
 
   // should only be one tab between each field, but just in case,
@@ -118,16 +129,22 @@ public class GFFParser implements AnnotationWriter  {
     + "\\s*([^\"\\s]\\S*)"  /* pattern 2 */
   );
 
+  static final Pattern gff3_tagval_splitter = Pattern.compile("=");
+  static final Pattern gff3_multival_splitter = Pattern.compile(",");
+
   // a hash used to filter
   //  Hashtable fail_filter_hash = new Hashtable();
   Map fail_filter_hash = null;
   Map pass_filter_hash = null;
+
+  Map gff3_id_hash = new HashMap();
 
   /*
    *  tag to group features on
    */
   String group_tag = null;
   String group_id_field_name = null;
+  String id_tag = null;
 
   /** Whether to convert group_id field value to lower case.
    *  Beginning with source forge version 1.5 of this file, we started always
@@ -236,6 +253,10 @@ public class GFFParser implements AnnotationWriter  {
     group_tag = tag;
   }
 
+  public void setIdTag(String tag) {
+    id_tag = tag;
+  }
+
   public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
@@ -246,6 +267,7 @@ public class GFFParser implements AnnotationWriter  {
 
     Map seq2meths = new HashMap(); // see getContainer()
     Map group_hash = new HashMap();
+    gff3_id_hash = new HashMap();
     java.util.List results = new ArrayList();
 
     // By default, no hierarchical grouping; turned on with a directive
@@ -258,7 +280,8 @@ public class GFFParser implements AnnotationWriter  {
 
     try {
       Thread thread = Thread.currentThread();
-      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) ) {
+      //      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) && (line_count < 100)) {
+      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
         if (line == null) { continue; }
         if (line.startsWith("##")) { processDirective(line); continue; }
         if (line.startsWith("#")) { continue; }
@@ -283,18 +306,24 @@ public class GFFParser implements AnnotationWriter  {
           String frame_str = fields[7].intern();
           String last_field = null;
           if (fields.length>=9) { last_field = new String(fields[8]); } // creating a new String saves memory
-            // last_field is "group" in GFF1 or "attributes" in GFF2
+            // last_field is "group" in GFF1 or "attributes" in GFF2 and GFF3
 
           float score = UcscGffSym.UNKNOWN_SCORE;
           if (! score_str.equals(".")) { score = Float.parseFloat(score_str); }
 
-          MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);          
+          MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
           if (seq == null) {
             seq = seq_group.addSeq(seq_name, 0);
           }
 
-          UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
-              score, strand_str.charAt(0), frame_str.charAt(0), last_field, gff_base1);
+	  if (gff_version == GFF3) {
+	    // temporary hack to make GFF3 look like GFF1
+	    last_field = hackGff3GroupId(last_field);
+	    //	    System.out.println("group id: " + last_field);
+	  }
+	  UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
+					  score, strand_str.charAt(0), frame_str.charAt(0),
+					  last_field, gff_base1);
 
           int max = sym.getMax();
           if (max > seq.getLength()) { seq.setLength(max); }
@@ -500,6 +529,7 @@ public class GFFParser implements AnnotationWriter  {
     }
   }
 
+  static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
   static final Pattern directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)");
   static final Pattern directive_hierarchy = Pattern.compile("##IGB-filter-hierarchy (.*)");
   static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
@@ -518,7 +548,21 @@ public class GFFParser implements AnnotationWriter  {
    *  and "##IGB-hierarchy 3 exon <exon_id>".
    */
   void processDirective(String line) throws IOException {
-    Matcher m = directive_filter.matcher(line);
+    Matcher m = directive_version.matcher(line);
+    if (m.matches()) {
+      String vstr = m.group(1).trim();
+      try {
+	int vers = (int)(Float.parseFloat(vstr));
+	System.out.println("parsing GFF, setting version to: " + vers);
+	setGffVersion(vers);
+      }
+      catch (Exception ex) {
+	System.err.println("could not parse \"##gff-version\" pragma line: " + line);
+	ex.printStackTrace();
+      }
+      return;
+    }
+    m = directive_filter.matcher(line);
     if (m.matches()) {
       resetFilters();
       String[] feature_types = m.group(2).split(" ");
@@ -657,44 +701,110 @@ public class GFFParser implements AnnotationWriter  {
    *  Sets the parser to some standard settings that filter-out "intron" and
    *  "transcript" lines, among other things, and groups by "transcript_id".
    */
-  public void addStandardFilters() {
+  public void setUseStandardFilters(boolean b) {
+    // "standard" filters may depend on whether file is GFF1, GFF2, GTF, or GFF3
     addFeatureFilter("intron");
     addFeatureFilter("splice3");
     addFeatureFilter("splice5");
+    addFeatureFilter("splice_donor");
+    addFeatureFilter("splice_acceptor");
     addFeatureFilter("prim_trans");
-    addFeatureFilter("gene");
-
     addFeatureFilter("transcript");
+    addFeatureFilter("gene");
     addFeatureFilter("cluster");
     addFeatureFilter("psr");
     addFeatureFilter("link");
+    if (gff_version == GFF3)  {
+      System.out.println("group tag: " + GFF3_PARENT);
+      // NEED TO FIX SOON TO HANDLE > 2 LEVELS OF FEATURE HIERARCHY!!
+      // hacking for now to handle two-level hierarchy by removing top levels (transcript, gene, etc.)
+      //    and just using gff2/gtf grouping mechanism with "Parent" id used for group id
+      setGroupTag(GFF3_PARENT);
+      //      setIdTag("ID");
+    }
+    else {
+      System.out.println("group tag: transcript_id");
+      setGroupTag("transcript_id");
+    }
 
-    setGroupTag("transcript_id");
+
+  }
+
+  public void setGffVersion(int version) {
+    // is use_standard_filters, then reset filters whenever gff version is set
+    gff_version = version;
+    setUseStandardFilters(use_standard_filters);
+  }
+
+
+  public String hackGff3GroupId(String atts) {
+    String groupid = null;
+    String featid = null;
+    String[] tagvals = att_regex.split(atts);
+    for (int i=0; i<tagvals.length; i++) {
+      String tagval = tagvals[i];
+      String[] tv = gff3_tagval_splitter.split(tagval);
+      String tag = tv[0];
+      String val = tv[1];
+      //      String vals = gff3_multival_splitter.split(val);
+      if (tag.equals(GFF3_PARENT)) {
+	groupid = val;
+      }
+      else if (tag.equals(GFF3_ID)) {
+	featid = val;
+	Object obj = gff3_id_hash.get(featid);
+	if (obj == null) { gff3_id_hash.put(featid, featid); }
+	else {
+	  if (obj instanceof String) {
+	    gff3_id_hash.put(featid, new Integer(2));
+	    featid = featid + "_1";
+	  }
+	  else if (obj instanceof Integer) {
+	    Integer iobj = (Integer)obj;
+	    int fcount = iobj.intValue();
+	    gff3_id_hash.put(featid, new Integer(fcount+1));
+	    featid = featid + "_" + iobj.toString();
+	  }
+	  System.out.println("duplicate feature id, new id: " + featid);
+	}
+      }
+    }
+    if (groupid == null) {
+      return featid;
+    }
+    else  {
+      return groupid;
+    }
   }
 
   public String determineGroupId(SymWithProps sym, String group_tag) {
     String group_id = null;
     if ((group_tag != null)) {
-      Object value = sym.getProperty(group_tag);
-      if (value != null) {
-        if (value instanceof String) {
-          group_id = (String) value;
-          if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
-        }
-        else if (value instanceof Number) {
-          group_id = "" + value;
-        }
-        else if (value instanceof Character) {
-          group_id = "" + value;
-        }
-        else if (value instanceof List) {  // such as a Vector
-          // If there are multiple values for the group_tag, then take first one as String value
-          List valist = (List)value;
-          if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
-            group_id = (String) valist.get(0);
-            if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
-          }
-        }
+      if (gff_version == GFF3) {
+	System.out.println("shouldn't get here, GFF3 should have been transformed to look like GFF1");
+      }
+      else {
+	Object value = sym.getProperty(group_tag);
+	if (value != null) {
+	  if (value instanceof String) {
+	    group_id = (String) value;
+	    if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
+	  }
+	  else if (value instanceof Number) {
+	    group_id = "" + value;
+	  }
+	  else if (value instanceof Character) {
+	    group_id = "" + value;
+	  }
+	  else if (value instanceof List) {  // such as a Vector
+	    // If there are multiple values for the group_tag, then take first one as String value
+	    List valist = (List)value;
+	    if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
+	      group_id = (String) valist.get(0);
+	      if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
+	    }
+	  }
+	}
       }
     }
     return group_id;
@@ -702,44 +812,69 @@ public class GFFParser implements AnnotationWriter  {
 
   public static void main(String[] args) {
     GFFParser test = new GFFParser();
-    String file_name = null;
+    String input_file_name = null;
+    String output_file_name = null;
+    /*
     if (args.length >= 1)  {
-      file_name = args[0];
+      input_file_name = args[0];
     } else {
       System.out.println("Usage:  java GFFParser <filename>");
       System.exit(0);
     }
+    */
+    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.sang.gff3";
+    //    output_file_name = "c:/data/pombe_annots/pombe_sanger_2006-03-01.gff";
+    //    output_file_name = "c:/data/yeast2_chip/test2.gff";
+    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109-peps-mapping.EXONERATE.gff3";
+    //    output_file_name = "c:/data/pombe_annots/exonerate.gff";
+    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109.Rfam.gff3";
+    //    output_file_name = "c:/data/pombe_annots/Rfam.gff";
+    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109.tRNA.gff3";
+    output_file_name = "c:/data/pombe_annots/tRNA.gff";
 
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
-    
-    test.addStandardFilters();
+
+    test.setUseStandardFilters(true);
+    test.setGffVersion(GFF3);
+    test.addFeatureFilter("misc_feature");
+    test.addFeatureFilter("tRNA_gene");
 
     Memer mem = new Memer();
     System.out.println(mem.toString());
     java.util.List annots = null;
     try {
-      File fl = new File(file_name);
+      File fl = new File(input_file_name);
       FileInputStream fistr = new FileInputStream(fl);
-      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
+      //      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
+      annots = test.parse(fistr, seq_group, false);
+      fistr.close();
+
+      int annots_to_write = 1;
+      for (int i = 0; i < annots_to_write && i < annots.size(); i++) {
+        System.out.println("\nSymmetry #" + (i + 1) +
+                           " ------------------------------");
+        SymWithProps sym = (SymWithProps) annots.get(i);
+        SeqUtils.printSymmetry(sym, "  ", true);
+      }
+      System.out.println("------------------------------");
+
+      System.out.println("\nannots: " + annots.size());
+      System.out.println(mem.toString());
+      System.gc();
+      if (output_file_name != null) {
+        System.out.println("writing out annots to: " + output_file_name);
+        FileOutputStream fos = new FileOutputStream(new File(output_file_name));
+        test.writeAnnotations(annots, null, fos);
+        fos.close();
+      }
     }
     catch (Exception ex) {
       ex.printStackTrace();
     }
-
-    int annots_to_write = 1;
-    for (int i=0; i < annots_to_write && i < annots.size() ; i++) {
-      System.out.println("\nSymmetry #"+ (i+1) +" ------------------------------");
-      SymWithProps sym = (SymWithProps) annots.get(i);
-      SeqUtils.printSymmetry(sym, "  ", true);
-    }
-    System.out.println("------------------------------");
-
-    System.out.println("\nannots: " + annots.size());
+    //    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
     System.out.println(mem.toString());
-    System.gc();
-    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
-    System.out.println(mem.toString());
+    System.out.println("done");
   }
 
   /**
@@ -783,9 +918,9 @@ public class GFFParser implements AnnotationWriter  {
       wr.write(Integer.toString(span.getMax())); wr.write('\t');  // end
 
       // score
-      String score = null;
-      if (cwp != null) { score = (String)cwp.getProperty("score"); }
-      if (score != null) { wr.write(score); }
+      Object score = null;
+      if (cwp != null) { score = cwp.getProperty("score"); }
+      if (score != null) { wr.write(score.toString()); }
       else { wr.write("."); }
       wr.write('\t');
 
@@ -807,6 +942,42 @@ public class GFFParser implements AnnotationWriter  {
       wr.write('\n');
     }
   }
+
+
+  // assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
+  // currently type is ignored
+  public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
+    boolean success = true;
+    int count = 0;
+    System.out.println("in GFFParser.writeAnnotations()");
+    try {
+      Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+      Iterator iterator = syms.iterator();
+      while (iterator.hasNext()) {
+	count++;
+	if (count % 1000 == 0) {
+	  System.out.println("output count: " + count);
+	}
+        SeqSymmetry sym = (SeqSymmetry)iterator.next();
+	SeqSpan span = sym.getSpan(0);
+	BioSeq seq = span.getBioSeq();
+        if (sym instanceof SymWithProps) {
+          outputGffFormat((SymWithProps)sym, seq, bw);
+        }
+        else {
+          System.err.println("sym is not instance of SymWithProps");
+        }
+      }
+      bw.flush();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      success = false;
+    }
+    System.out.println("total line count: " + count);
+    return success;
+  }
+
 
   /**
    *  Implementing AnnotationWriter interface to write out annotations

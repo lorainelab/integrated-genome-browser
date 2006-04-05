@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.parsers.Streamer;
@@ -55,8 +56,14 @@ public class GraphSymUtils {
    *    it is simpler, and assumes that the mapping symmetry is of depth=2 (or possibly 1?) and
    *    breadth = 2, and that they're "regular" (parent sym and each child sym have seqspans pointing
    *    to same two BioSeqs
+   *  ensure_unique_id indicates whether should try to muck with id so it's not same as any GraphSym on the seq
+   *     (including the original_graf, if it's one of seq's annotations)
+   *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
    */
-  public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym) {
+  public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
+    //    System.out.println("called GraphGlyphUtils.transformGraphSym(), mapping sym:");
+    //    SeqUtils.printSymmetry(mapsym);
+    //    System.out.println("");
     BioSeq fromseq = original_graf.getGraphSeq();
     SeqSpan fromspan = mapsym.getSpan(fromseq);
     GraphSym new_graf = null;
@@ -109,17 +116,9 @@ public class GraphSymUtils {
 	      new_xcoords.add(new_xcoord);
 	      new_ycoords.add(ycoords[k]);
 	    }
-	    /* replaced with binary search
-	    for (int k=0; k<kmax; k++) {
-	      double old_xcoord = xcoords[k];
-	      if (old_xcoord >= ostart && old_xcoord <= oend) {
-		int new_xcoord = (int)((scale * old_xcoord) + offset);
-		new_xcoords.add(new_xcoord);
-		new_ycoords.add(ycoords[k]);
-	      }
-	    }
-	    */
 	  }
+          String newid = original_graf.getID();
+          if (ensure_unique_id)  { newid = GraphSymUtils.getUniqueGraphID(newid, toseq); }
 	  new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
 				  original_graf.getGraphName(), toseq);
 	}
@@ -207,6 +206,53 @@ public class GraphSymUtils {
     return grafs;
   }
 
+  /**
+   *  Returns input id if no GraphSyms on seq with given id.
+   *  Otherwise uses id to build a new id that is not used by a GraphSym (or top-level container sym )
+   *     currently on the seq
+   *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs
+   */
+  public static String getUniqueGraphID(String id, BioSeq seq) {
+    if (id == null) { return null; }
+    String newid = id;
+    if (seq instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sab = (SmartAnnotBioSeq)seq;
+      int prevcount = 0;
+      while (sab.getAnnotation(newid) != null) {
+	prevcount++;
+	newid = id + "." + prevcount;
+      }
+    }
+    else if (seq instanceof AnnotatedBioSeq)  {
+      AnnotatedBioSeq aseq = (AnnotatedBioSeq)seq;
+      // check every annotation on seq, but assume graphs are directly attached to seq, so
+      //   don't have to do recursive descent into children?
+      // potentially really bad performance, but this is just a fallback -- most
+      //      seqs that GraphSyms are being attached to will be SmartAnnotBioSeqs and dealt with
+      //      in the other branch of the conditional
+      int prevcount = 0;
+      int acount = aseq.getAnnotationCount();
+      boolean hit = true;
+      while (hit) {
+	hit = false;
+	for (int i=0; i<acount; i++) {
+	  SeqSymmetry sym = aseq.getAnnotation(i);
+	  if ((sym instanceof GraphSym) && (newid.equals(sym.getID()))) {
+	      prevcount++;
+	      newid = id + "." + prevcount;
+	      hit = true;
+	      break;
+	  }
+	}
+
+      }
+    }
+    else {
+      // BioSeq is not an AnnotatedBioSeq, so just punt and return input
+    }
+    return newid;
+  }
+
   /** This is a wrapper around readGraphs() for the case where you expect to
    *  have a single GraphSym returned.  This will return only the first graph
    *  from the list returned by readGraphs(), or null.
@@ -229,6 +275,9 @@ public class GraphSymUtils {
     if (grafs.size() > 0) {
       graf = (GraphSym) grafs.get(0);
       if (graph_name != null) {
+	System.out.println("in GraphSymUtils.readGraph(), renaming graph");
+	System.out.println("   old name: " + graf.getGraphName());
+	System.out.println("   new name: " + graph_name);
         graf.setGraphName(graph_name);
       }
     }
@@ -259,12 +308,40 @@ public class GraphSymUtils {
       for (int i=0; i<grafs.size(); i++) {
         GraphSym gsym = (GraphSym)grafs.get(i);
         BioSeq gseq = gsym.getGraphSeq();
-        if (gseq instanceof MutableAnnotatedBioSeq) {
-          ((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
+        if (gseq instanceof SmartAnnotBioSeq) {
+	  SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)gseq;
+	  int prevcount = 0;
+	  String gid = gsym.getID();
+	  String gname = gsym.getGraphName();
+	  String newid = gid;
+	  String newname = gname;
+
+	  // if id already in use by another GraphSym, uniquify id
+	  if (gid != null) {
+	    SeqSymmetry prevsym = aseq.getAnnotation(gid);
+	    while (prevsym != null) {
+	      prevcount++;
+	      newid = gid + "." + prevcount;
+	      prevsym = aseq.getAnnotation(newid);
+	    }
+	    if (prevcount > 0) { gsym.setID(newid); }
+	  }
+	  else if (gname != null) {
+	    SeqSymmetry prevsym = aseq.getAnnotation(gname);
+	    while (prevsym != null) {
+	      prevcount++;
+	      newname = gname + "." + prevcount;
+	      prevsym = aseq.getAnnotation(newname);
+	    }
+	    if (prevcount > 0) { gsym.setGraphName(newname); }
+
+	  }
+          aseq.addAnnotation(gsym);
         }
 
         if (gsym != null)  {
           gsym.setProperty("source_url", original_stream_name);
+	  //	  System.out.println("in GraphSymUtils.processGraphSyms(), setting name = " + graph_name);
           gsym.setGraphName(graph_name);
         }
         if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
@@ -273,7 +350,6 @@ public class GraphSymUtils {
       }
     }
   }
-
 
 
   public static GraphSym revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
@@ -288,8 +364,10 @@ public class GraphSymUtils {
     for (int i=0; i<ypos.length; i++) {
       rcypos[i] = ypos[ypos.length - i -1];
     }
+    String newid = "rev_comp ( " + gsym.getID() + " )";
+    newid = GraphSymUtils.getUniqueGraphID(newid, revcomp_symseq);
     GraphSym revcomp_gsym =
-      new GraphSym(rcxpos, rcypos, "rev comp matrix scores", revcomp_symseq);
+      new GraphSym(rcxpos, rcypos, newid, revcomp_symseq);
     return revcomp_gsym;
   }
 
@@ -402,7 +480,7 @@ public class GraphSymUtils {
     // just making sure max 100% is really 100%...
     percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
     long t = tim.read();
-    System.out.println("time taken for GraphSymUtils.calcPercents2Scores(): " + (t/1000f));
+    //    System.out.println("time taken for GraphSymUtils.calcPercents2Scores(): " + (t/1000f));
     return percent2score;
   }
 
@@ -454,9 +532,9 @@ public class GraphSymUtils {
     newy.add(y_at_xmin);
     newx.add(curx);
     newy.add(cury);
+    String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
+    GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(), newid, seq);
 
-    GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(),
-                                       trans_frag_graph.getGraphName(), seq);
     // copy properties over...
     span_graph.setProperties(trans_frag_graph.cloneProperties());
 

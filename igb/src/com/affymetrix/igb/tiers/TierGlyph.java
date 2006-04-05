@@ -51,7 +51,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   public static final int EXPANDED = 102;
   public static final int FIXED_COORD_HEIGHT = 103;
   //  public static final int SUMMARIZED = 104;
-  
+
   //public static final int DIRECTION_FORWARD = +1;
   //public static final int DIRECTION_NONE = 0;
   //public static final int DIRECTION_REVERSE = -1;
@@ -66,7 +66,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
   /*
    * other_fill_color is derived from fill_color whenever setFillColor() is called.
-   * if there are any "middle" glyphs, then background is drawn with other_fill_color and 
+   * if there are any "middle" glyphs, then background is drawn with other_fill_color and
    *    middle glyphs are drawn with fill_color
    * if no "middle" glyphs, then background is drawn with fill_color
    */
@@ -103,7 +103,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   protected java.util.List max_child_sofar = null;
 
   IAnnotStyle style;
-  
+
   public TierGlyph(IAnnotStyle style) {
     setHitable(false);
     setSpacer(spacer);
@@ -113,12 +113,12 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   public TierGlyph(String name) {
     this(AnnotStyle.getInstance(name));
   }
-  
+
   /** Constructor for the case where AnnotStyle is null. */
   public TierGlyph() {
     this(AnnotStyle.NULL_INSTANCE);
   }
-  
+
   public void setStyle(IAnnotStyle style) {
     if (style == null) {
       throw new NullPointerException();
@@ -130,7 +130,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
       // the fg color to the TierLabel glyph, which does pay attention to that color.
       setForegroundColor(style.getColor());
       setFillColor(style.getBackground());
-      
+
       if (style.getCollapsed()) {
         setState(TierGlyph.COLLAPSED);
       } else {
@@ -145,13 +145,13 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
       setState(TierGlyph.EXPANDED);
     }
   }
-  
+
   public IAnnotStyle getAnnotStyle() {
     return style;
   }
-    
+
 /**
- *  Adds "middleground" glyphs, which are drawn in front of the background but 
+ *  Adds "middleground" glyphs, which are drawn in front of the background but
  *    behind all "real" child glyphs.
  *  These are generally not considered children of
  *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
@@ -342,15 +342,15 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
     if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
       if (fill_color != null) {
-	g.setColor(fill_color);      
+	g.setColor(fill_color);
 	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
       }
     }
-    else {  
-      // there are middle glyphs, so use other_fill_color to fill entire tier, 
+    else {
+      // there are middle glyphs, so use other_fill_color to fill entire tier,
       //   and fill_color to color middle glyphs
       if (other_fill_color != null) {
-	g.setColor(other_fill_color);      
+	g.setColor(other_fill_color);
 	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
       }
     }
@@ -378,7 +378,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   }
 
   /**
-   *  Remove all children of the glyph, including those added with 
+   *  Remove all children of the glyph, including those added with
    *  addMiddleGlyph(GlyphI).
    */
   public void removeAllChildren() {
@@ -477,7 +477,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     setState(newstate);
     stateBeforeHidden = old_stateBeforeHidden;
   }
-  
+
   public void setSpacer(double spacer) {
     this.spacer = spacer;
     if (collapse_packer instanceof PaddedPackerI) {
@@ -511,7 +511,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
    */
   public void setFillColor(Color col) {
     fill_color = col;
-    
+
     // Now set the "middleground" color based on the fill color
     if (col == null) {
       other_fill_color = Color.DARK_GRAY;
@@ -526,7 +526,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   /** Returns the color used to draw the tier background, or null
       if there is no background. */
   public Color getFillColor() {
-    return fill_color; 
+    return fill_color;
   }
 
   /** Set whether or not the tier wants to allow itself to be hidden;
@@ -550,11 +550,11 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   public String getStateString() {
     return getStateString(getState());
   }
-  
+
 //  public int getDirection() {
 //    return direction;
 //  }
-//  
+//
 //  /**
 //   *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
 //   *  or DIRECTION_NONE.
@@ -565,7 +565,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 //    }
 //    this.direction = d;
 //  }
-  
+
 
   /** Changes the maximum depth of the expanded packer.
    *  This does not call pack() afterwards, and has no effect if the

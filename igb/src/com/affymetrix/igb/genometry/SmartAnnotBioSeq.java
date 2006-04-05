@@ -67,7 +67,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
 
   /**
    *  Returns a top-level symmetry or null.
-   *  Used to return a TypeContainerAnnot, but now returns a SymWithProps which is 
+   *  Used to return a TypeContainerAnnot, but now returns a SymWithProps which is
    *     either a TypeContainerAnnot or a GraphSym, so GraphSyms can be retrieved with graph id given as type
    */
   public SymWithProps getAnnotation(String type) {
@@ -190,7 +190,10 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     if (sym instanceof GraphSym) {
       if (type2sym == null) { type2sym = new HashMap(); }
       String id = sym.getID();
-      if (id == null) { id = ((GraphSym)sym).getGraphName(); }
+      if (id == null) {
+	System.out.println("WARNING: GraphSym ID is null!!!");
+	throw new RuntimeException("GraphSym ID is null, this should never happen!");
+      }
       type2sym.put(id, sym);
       super.addAnnotation(sym);
       notifyModified();

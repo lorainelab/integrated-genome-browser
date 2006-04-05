@@ -54,7 +54,7 @@ public class Das2ClientOptimizer {
   static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
 
   static boolean DEBUG_HEADERS = false;
-  static boolean OPTIMIZE_FORMAT = false;
+  static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
   /**
    *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
@@ -399,7 +399,7 @@ public class Das2ClientOptimizer {
         }
 	else if (content_subtype.equals("bar")) {
 	  System.out.println("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
-	  feats = BarParser.parse(bis, seq_group, type.getName());
+	  feats = BarParser.parse(bis, seq_group, type.getName(), false);
 	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
@@ -461,13 +461,16 @@ public class Das2ClientOptimizer {
     System.out.println("adding a child GraphSym to parent graph");
     SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)cgraf.getGraphSeq();
     // check and see if parent graph already exists
-    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+    //    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+    String id = cgraf.getID();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
     System.out.println("   child graph id: " + id);
     System.out.println("   seq: " + aseq.getID());
     GraphSym pgraf = (GraphSym)aseq.getAnnotation(id);
     if (pgraf == null) {
       System.out.println("$$$$ creating new parent composite graph sym");
       //      pgraf = new CompositeGraphSym(new int[0], new float[0], id, aseq);
+      //      String compid = GraphSymUtils.getUniqueGraphID(id, aseq);
+      // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
       pgraf = new CompositeGraphSym(id, aseq);
       pgraf.setGraphName(id);
       aseq.addAnnotation(pgraf);

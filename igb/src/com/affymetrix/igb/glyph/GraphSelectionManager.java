@@ -445,9 +445,11 @@ public class GraphSelectionManager
     gmodel.clearSelectedSymmetries(this);
 
     Object info = gl.getInfo();
+    GraphSym gsym = null;
     if (info instanceof GraphSym) {
-      GraphSym gsym = (GraphSym) info;
+      gsym = (GraphSym) info;
       gviewer.getGraphFactoryHash().remove(gsym);
+      gviewer.getGraphIdFactoryHash().remove(gsym.getID());
       AnnotatedBioSeq aseq = (AnnotatedBioSeq) gsym.getGraphSeq();
       if (aseq instanceof MutableAnnotatedBioSeq) {
         MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
@@ -456,16 +458,18 @@ public class GraphSelectionManager
     }
 
     // if this is not a floating graph, get rid of the tier it was in
-    if (source instanceof AffyLabelledTierMap &&
+    if (source instanceof AffyTieredMap &&
       ! GraphGlyphUtils.hasFloatingAncestor(gl) ) {
 
-      AffyLabelledTierMap map = (AffyLabelledTierMap) source;
+      AffyTieredMap map = (AffyTieredMap) source;
       GlyphI parentgl = gl.getParent();
       parentgl.removeChild(gl);
       if (parentgl instanceof TierGlyph) {
         map.removeTier((TierGlyph)parentgl);
         gviewer.getGraphStateTierHash().remove(gl.getGraphState());
-        gviewer.getGraphStateTierHash().remove(gl.getLabel());
+        gviewer.getGraphNameTierHash().remove(gl.getLabel());
+        if (gsym != null)  { gviewer.getGraphIdTierHash().remove(gsym.getID()); }
+        else  { gviewer.getGraphIdTierHash().remove(gl.getID()); }
         map.packTiers(false, true, false);
         map.stretchToFit(false, false);
       }
@@ -548,7 +552,9 @@ public class GraphSelectionManager
       String newname = "diff: (" + graphA.getLabel() + ") - (" + graphB.getLabel() + ")";
       MutableAnnotatedBioSeq aseq =
         (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
       GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+      newsym.setGraphName(newname);
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
@@ -569,7 +575,9 @@ public class GraphSelectionManager
       String newname = "sum: (" + graphA.getLabel() + ") + (" + graphB.getLabel() + ")";
       MutableAnnotatedBioSeq aseq =
         (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
       GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+      newsym.setGraphName(newname);
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
@@ -611,7 +619,9 @@ public class GraphSelectionManager
         ") / (" + graphB.getLabel() + ")";
       MutableAnnotatedBioSeq aseq =
         (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
       GraphSym newsym = new GraphSym(newX, newY, newname, aseq);
+      newsym.setGraphName(newname);
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
@@ -633,7 +643,9 @@ public class GraphSelectionManager
         ") * (" + graphB.getLabel() + ")";
       MutableAnnotatedBioSeq aseq =
         (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
       GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+      newsym.setGraphName(newname);
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
@@ -826,12 +838,12 @@ public class GraphSelectionManager
       NeoWidget widg = (NeoWidget)nevt.getSource();
       Vector selected = nevt.getItems();
       for (int i=selected.size()-1; i >=0; i--) {
-        //        System.out.println("selected: " + selected.elementAt(i));
+	//        System.out.println("selected: " + selected.elementAt(i));
         GlyphI gl = (GlyphI)selected.elementAt(i);
         if (ALLOW_THRESHOLD_DRAG &&
             (! (gl instanceof GraphGlyph)) &&
             (gl.getParent() instanceof GraphGlyph)) {
-          // for now assume if child of GraphGlyph then it's the threshold glyph
+          // for now assume if child of GraphGlyph and not itself a GraphGlyph then it's the threshold glyph
           //          System.out.println("hit child of GraphGlyph");
           dragGraph(gl, nevt);
           break;

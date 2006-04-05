@@ -1013,21 +1013,20 @@ class QuickLoadServerModel {
 	SeqSymmetry esym = (SeqSymmetry)regions.get(i);
 	SeqSpan espan = esym.getSpan(0);
 	int elength = espan.getLength();
-	//	  System.out.println(SeqUtils.spanToString(espan));
-	MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+
+	SimpleSymWithProps child = new SimpleSymWithProps();
+	String cid = esym.getID();
+	if (cid != null) { child.setID(cid); }
 	child.addSpan(espan);
-	//	child.addSpan(new SimpleSeqSpan(espan.getStart(), espan.getEnd(), espan.getBioSeq()));
 	child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
 	mapping.addChild(child);
 	current_base = current_base + elength + spacer;
       }
-      //	virtual_seq.setLength(current_base);
       virtual_seq.setBounds(min_base_pos, current_base);
       mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
       virtual_seq.setComposition(mapping);
     }
     catch (Exception ex) {  ex.printStackTrace(); }
-    //    return true;
     return;
   }
 

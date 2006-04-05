@@ -18,6 +18,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -88,23 +89,25 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
   }
 
-  /**
-   *  Creates a GraphSym.
-   *  Assumes all child syms have already been added, and span has already been set.
-   *<pre>
-   *  Resultant graph sym has two data points for each child sym,
-   *     first  with x = min of child's span, y = score at child's index in "name" float array
-   *     second with x = max of child's span, y = 0
-   *</pre>
-   *
-   *  The returned GraphSym will have some properties set by default:
-   *  <ol>
-   *  <li>GraphSym.PROP_INITIAL_GRAPH_STYLE will be Integer(GraphGlyph.STAIRSTEP_GRAPH)
-   *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Character.
-   *  </ol>
-   * @return a GraphSym or null if there was an error condition
+
+ /**
+  *  Creates a GraphSym.
+  *  Assumes all child syms have already been added, and span has already been set.
+  *<pre>
+  *  Resultant graph sym has two data points for each child sym,
+  *     first  with x = min of child's span, y = score at child's index in "name" float array
+  *     second with x = max of child's span, y = 0
+  *</pre>
+  *
+  *  The returned GraphSym will have some properties set by default:
+  *  <ol>
+  *  <li>GraphSym.PROP_INITIAL_GRAPH_STYLE will be Integer(GraphGlyph.STAIRSTEP_GRAPH)
+  *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Character.
+  *  </ol>
+  *
+  * @return a GraphSym or null if there was an error condition
    */
-  public GraphSym makeGraphSym(String name)  {
+  public GraphSym makeGraphSym(String name, boolean ensure_unique_id)  {
     float[] scores = getScores(name);
     SeqSpan pspan = this.getSpan(0);
     if (scores == null) {
@@ -132,6 +135,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       xcoords[(i*2)+1] = cspan.getMax();
       ycoords[(i*2)+1] = 0;
     }
+
+    if (ensure_unique_id)  { name = GraphSymUtils.getUniqueGraphID(name, aseq); }
     GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
     gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
     gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character('.'));
@@ -143,7 +148,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
    *  @param orientation  true for forward strand intervals.
    *  @see #makeGraphSym(String)
    */
-  public GraphSym makeGraphSym(String name, boolean orientation)  {
+  public GraphSym makeGraphSym(String name, boolean ensure_unique_id, boolean orientation)  {
     float[] scores = getScores(name);
     SeqSpan pspan = this.getSpan(0);
     if (scores == null) {
@@ -183,6 +188,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     else {
       String name_with_strand = name + (orientation ? " (+)" : " (-)" );
+      if (ensure_unique_id)  {  name_with_strand = GraphSymUtils.getUniqueGraphID(name_with_strand, aseq); }
       GraphSym gsym = new GraphSym(xcoords, ycoords, name_with_strand, aseq);
       gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
       gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character(orientation ? '+' : '-'));

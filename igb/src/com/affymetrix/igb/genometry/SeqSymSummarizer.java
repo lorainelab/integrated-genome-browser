@@ -21,16 +21,9 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class SeqSymSummarizer {
-
-  /**
-   *  Gets a summary with binary_depth = false.
-   *  @see #getSymmetrySummary(List, BioSeq, boolean)
-   */
-  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq)  {
-    return getSymmetrySummary(syms, seq, false);
-  }
 
   /**
    *  Makes a summary graph of a set the spans of some SeqSymmetries on a given BioSeq.
@@ -50,19 +43,16 @@ public class SeqSymSummarizer {
    *  @param seq the sequence you want the summary computed for
    *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean)}
    */
-  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth)  {
+  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
     int symcount = syms.size();
     java.util.List leaf_spans = new ArrayList(symcount);
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)syms.get(i);
       SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
     }
-    return getSpanSummary(leaf_spans, binary_depth);
+    return getSpanSummary(leaf_spans, binary_depth, id);
   }
 
-  public static GraphSym getSpanSummary(java.util.List spans)  {
-    return getSpanSummary(spans, false);
-  }
 
   /**
    *  GetSpanSummary.
@@ -73,7 +63,7 @@ public class SeqSymSummarizer {
    *                  if true, then return a graph with flattened / binary depth information,
    *                  1 for covered, 0 for not covered
    */
-  public static GraphSym getSpanSummary(java.util.List spans, boolean binary_depth) {
+  public static GraphSym getSpanSummary(java.util.List spans, boolean binary_depth, String gid) {
     //    System.out.println("SeqSymSummarizer: starting to summarize syms");
     //    System.out.println("binary depth: " + binary_depth);
     BioSeq seq = ((SeqSpan)spans.get(0)).getBioSeq();
@@ -169,9 +159,9 @@ public class SeqSymSummarizer {
       }
     }
 
+    String uid = GraphSymUtils.getUniqueGraphID(gid, seq);
     GraphSym gsym =
-      new GraphSym(transition_xpos.copyToArray(), transition_ypos.copyToArray(),
-		   "summary", seq);
+      new GraphSym(transition_xpos.copyToArray(), transition_ypos.copyToArray(), uid, seq);
     return gsym;
   }
 
@@ -180,7 +170,7 @@ public class SeqSymSummarizer {
    *  Assumes all spans refer to same BioSeq
    */
   public static java.util.List getMergedSpans(java.util.List spans) {
-    GraphSym landscape = getSpanSummary(spans, true);
+    GraphSym landscape = getSpanSummary(spans, true, null);
     java.util.List merged_spans = projectLandscapeSpans(landscape);
     return merged_spans;
   }
@@ -286,7 +276,7 @@ public class SeqSymSummarizer {
   public static SeqSymmetry getUnion(java.util.List syms, BioSeq seq)  {
     //    MutableSeqSymmetry psym = new SimpleSymWithProps();
     // first get the landscape as a GraphSym
-    GraphSym landscape = getSymmetrySummary(syms, seq, true);
+    GraphSym landscape = getSymmetrySummary(syms, seq, true, null);
     // now just flatten it
     SeqSymmetry union = projectLandscape(landscape);
     return union;
@@ -305,7 +295,7 @@ public class SeqSymSummarizer {
     java.util.List symsAB = new ArrayList();
     symsAB.add(unionA);
     symsAB.add(unionB);
-    GraphSym combo_graph = getSymmetrySummary(symsAB, seq);
+    GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
     // combo_graph should now be landscape where:
     //    no coverage ==> depth = 0;
     //    A not B     ==> depth = 1;
@@ -379,7 +369,7 @@ public class SeqSymSummarizer {
     java.util.List symsAB = new ArrayList();
     symsAB.add(unionA);
     symsAB.add(unionB);
-    GraphSym combo_graph = getSymmetrySummary(symsAB, seq);
+    GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
     // combo_graph should now be landscape where:
     //    no coverage ==> depth = 0;
     //    A not B     ==> depth = 1;

@@ -183,16 +183,23 @@ public class AltSpliceView extends JComponent
       spliced_graph_factories.clear();
       Iterator iter = orig_graph_factories.entrySet().iterator();
       while (iter.hasNext()) {
-	Map.Entry keyval = (Map.Entry)iter.next();
-	GraphSym gsym = (GraphSym)keyval.getKey();
-	if (gsym.getGraphSeq() == original_view.getAnnotatedSeq()) {
-	  GenericGraphGlyphFactory orig_factory = (GenericGraphGlyphFactory)keyval.getValue();
-          
-          GraphState new_state = new GraphState(gsym.getGraphState());
-	  GenericGraphGlyphFactory new_factory = new GenericGraphGlyphFactory(spliced_view);
-          
-	  spliced_graph_factories.put(gsym, new_factory);
-	}
+        Map.Entry keyval = (Map.Entry)iter.next();
+        GraphSym gsym = (GraphSym)keyval.getKey();
+        //        if (gsym.getGraphSeq() == original_view.getAnnotatedSeq()) {
+        //      GenericGraphGlyphFactory orig_factory = (GenericGraphGlyphFactory)keyval.getValue();
+        GenericGraphGlyphFactory new_factory = new GenericGraphGlyphFactory(spliced_view);
+        spliced_graph_factories.put(gsym, new_factory);
+        //	}
+      }
+      Map orig_gid_factories = original_view.getGraphIdFactoryHash();
+      Map spliced_gid_factories = spliced_view.getGraphIdFactoryHash();
+      iter = orig_gid_factories.entrySet().iterator();
+      while (iter.hasNext())  {
+        Map.Entry keyval = (Map.Entry)iter.next();
+        String gid = (String)keyval.getKey();
+        //        GenericGraphGlyphFactory orig_factory = (GenericGraphGlyphFactory)keyval.getValue();
+        GenericGraphGlyphFactory new_factory = new GenericGraphGlyphFactory(spliced_view);
+        spliced_gid_factories.put(gid, new_factory);
       }
       spliced_view.sliceAndDice(syms);
       orf_analyzer.redoOrfs();

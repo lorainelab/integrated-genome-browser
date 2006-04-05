@@ -88,6 +88,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
   /** Retrieves the property called "id". */
   public String getID() { return (String)getProperty("id"); }
+  public void setID(String id) { setProperty("id", id); }
 
   public boolean setProperty(String name, Object val) {
     if (name == null)  { return false; }

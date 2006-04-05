@@ -69,6 +69,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
 
   boolean AVGLINE = true;
+  boolean MINMAXBAR = true;
   int thresh_contig_height = 10;  // in pixels, for calculating where to draw thresholded regions
   int thresh_contig_yoffset = 2;  // in pixels, for calculating where to draw thresholded regions
   Rectangle2D thresh_coord_box = new Rectangle2D();  // for calculating where to draw thresholded regions
@@ -443,7 +444,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  }
 
 	  else {  // draw previous pixel position
-	    if (graph_style == MINMAXAVG) {
+	    if ((graph_style == MINMAXAVG) && MINMAXBAR) {
 	      g.setColor(darker);
 	      g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
 			 prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
@@ -541,7 +542,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
 
 	else {  // draw previous pixel position
-	  if (graph_style == MINMAXAVG) {
+	  if ((graph_style == MINMAXAVG) && MINMAXBAR) {
 	    g.setColor(darker);
 	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
 		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));

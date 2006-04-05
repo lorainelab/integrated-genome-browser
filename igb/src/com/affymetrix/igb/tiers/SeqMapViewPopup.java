@@ -18,13 +18,13 @@ import com.affymetrix.igb.view.*;
 import java.awt.Color;
 
 public class SeqMapViewPopup implements TierLabelManager.PopupListener {
-  
+
   static final boolean DEBUG = false;
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;
-  
+
   Action rename_action = new AbstractAction("Change Label") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTiers();
@@ -35,13 +35,13 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       renameTier(current_tier);
     }
   };
-  
+
   Action customize_action = new AbstractAction("Customize") {
     public void actionPerformed(ActionEvent e) {
       showCustomizer();
     }
   };
-  
+
   Action expand_action = new AbstractAction("Expand") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getSelectedTierLabels(), false);
@@ -65,25 +65,25 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       setTiersCollapsed(handler.getAllTierLabels(), true);
     }
   };
-  
+
   Action hide_action = new AbstractAction("Hide") {
     public void actionPerformed(ActionEvent e) {
       hideTiers(handler.getSelectedTierLabels());
     }
   };
-  
+
   Action show_all_action = new AbstractAction("Show All") {
     public void actionPerformed(ActionEvent e) {
       showAllTiers();
     }
   };
-  
+
   Action change_color_action = new AbstractAction("Change Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels());
     }
   };
-  
+
   Action sym_summarize_action = new AbstractAction("Make Annotation Depth Track") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTiers();
@@ -126,7 +126,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
-  
+
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
     this.handler = handler;
     this.gviewer = gviewer;
@@ -136,17 +136,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   void showCustomizer() {
     // The old way:
     //TierPrefsView.showFrame();
-    
+
     // The new way:
     PreferencesPanel pv = PreferencesPanel.getSingleton();
     pv.setTab(0);
     JFrame f = pv.getFrame();
     f.show();
   }
-  
+
   java.util.List getStyles(java.util.List tier_label_glyphs) {
     if (tier_label_glyphs.size() == 0) { return Collections.EMPTY_LIST; }
-    
+
     // styles is a list of styles with no duplicates, so a Set rather than a List
     // might make sense.  But at the moment it seems faster to use a List
     java.util.List styles = new ArrayList(tier_label_glyphs.size());
@@ -170,13 +170,13 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
     refreshMap(false);
   }
-  
+
   public void changeExpandMax(java.util.List tier_labels) {
     if (tier_labels == null || tier_labels.size() == 0) {
       ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
       return;
     }
-    
+
     String initial_value = "0";
     if (tier_labels.size() == 1) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(0);
@@ -184,7 +184,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       IAnnotStyle style = tg.getAnnotStyle();
       if (style != null) { initial_value = "" + style.getMaxDepth(); }
     }
-    
+
     String input =
       (String)JOptionPane.showInputDialog(null,
 					  "Enter new maximum tier height, 0 for unlimited",
@@ -203,10 +203,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       ErrorHandler.errorPanel("Couldn't parse new tier max '"+input+"'");
       return;
     }
-    
+
     changeExpandMax(tier_labels, newmax);
   }
-  
+
   void changeExpandMax(java.util.List tier_label_glyphs, int max) {
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
@@ -214,7 +214,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       IAnnotStyle style = tier.getAnnotStyle();
 
       if (style instanceof AnnotStyle) {
-        ((AnnotStyle) style).setMaxDepth(max); 
+        ((AnnotStyle) style).setMaxDepth(max);
       } // else if a graph style, max depth has no meaning
       tier.setMaxExpandDepth(max);
     }
@@ -232,7 +232,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         style.setShow(true);
       }
       if (style.getShow()) {
-        tier.restoreState();        
+        tier.restoreState();
       }
     }
     refreshMap(true);
@@ -247,7 +247,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       style.setShow(false);
     }
     if (! style.getShow()) {
-      tier.setState(TierGlyph.HIDDEN);      
+      tier.setState(TierGlyph.HIDDEN);
     }
   }
 
@@ -267,23 +267,23 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     refreshMap(false);
   }
-  
+
   // although this will work on a list of selected tier labels, it is
   // probably more intuitive if its use is restricted to a single tier.
   public void changeColor(final java.util.List tier_label_glyphs) {
     if (tier_label_glyphs.isEmpty()) {
       return;
     }
-    
+
     final JColorChooser chooser = new JColorChooser();
-    
+
     TierLabelGlyph tlg_0 = (TierLabelGlyph) tier_label_glyphs.get(0);
     TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
     IAnnotStyle style_0 = tier_0.getAnnotStyle();
     if (style_0 != null) {
       chooser.setColor(style_0.getColor());
     }
-    
+
     ActionListener al = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (int i=0; i<tier_label_glyphs.size(); i++) {
@@ -295,7 +295,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         }
       }
     };
-    
+
     JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
                                         "Pick a Color",
                                         true,  //modal
@@ -306,20 +306,20 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     refreshMap(false);
   }
-  
+
   public void renameTier(final TierGlyph tier) {
     if (tier == null) {
       return;
     }
     IAnnotStyle style = tier.getAnnotStyle();
-    
+
     String new_label = JOptionPane.showInputDialog("Label: ", style.getHumanName());
     if (new_label != null && new_label.length() > 0) {
       style.setHumanName(new_label);
     }
     refreshMap(false);
   }
-  
+
   public void saveAsBedFile(TierGlyph atier) {
     int childcount= atier.getChildCount();
     java.util.List syms = new ArrayList(childcount);
@@ -331,10 +331,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
     System.out.println("Saving symmetries: "+ syms.size());
 //    com.affymetrix.genometry.util.SeqUtils.printSymmetry((SeqSymmetry) syms.get(0));
-    
+
     JFileChooser chooser = UniFileChooser.getFileChooser("Bed file (*.bed)", "bed");
     chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-        
+
     int option = chooser.showSaveDialog(null);
     if (option == JFileChooser.APPROVE_OPTION) {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
@@ -372,7 +372,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   public void addSymCoverageTier(TierGlyph atier) {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
-    
+
     java.util.List syms = new ArrayList(child_count);
     collectSyms(atier, syms);
     if (child_count == 0 || syms.size() == 0) {
@@ -392,13 +392,13 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         ((SimpleSymWithProps) wrapperSym).addSpan(union_sym.getSpan(i));
       }
     }
-       
+
     String method = "coverage: " + atier.getLabel();
     wrapperSym.setProperty("method", method);
 
     // Generate a non-persistent style.  Factory should be CoverageSummarizerFactory
     AnnotStyle style = AnnotStyle.getInstance(method, false);
-    
+
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
@@ -416,9 +416,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         "The selected tier is empty. It contains nothing to summarize");
       return;
     }
-    
+
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq);
+    String graphid = "summary: " + atier.getLabel();
+    GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
     gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -440,21 +441,21 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       handler.repackTheTiers(false, stretch_vertically);
     }
   }
-  
+
   public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
     java.util.List labels = handler.getSelectedTierLabels();
     int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
-    
-    
+
+
     customize_action.setEnabled(true);
 
     hide_action.setEnabled(num_selections > 0);
     show_all_action.setEnabled(not_empty);
-    
+
     change_color_action.setEnabled(num_selections > 0);
     rename_action.setEnabled(num_selections == 1);
-    
+
     collapse_action.setEnabled(num_selections > 0);
     expand_action.setEnabled(num_selections > 0);
     change_expand_max_action.setEnabled(num_selections > 0);
@@ -476,7 +477,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       sym_summarize_action.setEnabled(num_selections == 1);
       coverage_action.setEnabled(num_selections == 1);
     }
-    
+
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
@@ -496,7 +497,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
     popup.add(coverage_action);
-    
+
     if (DEBUG) {
       popup.add(new AbstractAction("DEBUG") {
         public void actionPerformed(ActionEvent e) {
@@ -505,7 +506,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       });
     }
   }
-  
+
   // purely for debugging
   void doDebugAction() {
     if (DEBUG) {

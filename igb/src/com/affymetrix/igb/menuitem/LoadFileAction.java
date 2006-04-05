@@ -64,7 +64,7 @@ public class LoadFileAction {
         new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1"},
         "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"gff", "gtf"},
+        new String[] {"gff", "gtf", "gff3"},
         "GFF Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"fa", "fasta"},
@@ -76,7 +76,7 @@ public class LoadFileAction {
         new String[] {"das", "dasxml", "das2xml"},
         "DAS Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"gr", "bgr", "sgr", "bar"},
+        new String[] {"gr", "bgr", "sgr", "bar", "chp"},
         "Graph Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"sin", "egr", "egr.txt"},
@@ -123,7 +123,7 @@ public class LoadFileAction {
     if (option == JFileChooser.APPROVE_OPTION) {
       load_dir_tracker.setFile(chooser.getCurrentDirectory());
       File[] fils = chooser.getSelectedFiles();
-      
+
       AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
       MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
 
@@ -134,7 +134,7 @@ public class LoadFileAction {
       }
 
       MutableAnnotatedBioSeq new_seq = null;
-      
+
       for (int i=0; i<fils.length; i++) {
         File cfil = fils[i];
         String file_name = cfil.toString();
@@ -162,20 +162,23 @@ public class LoadFileAction {
         gmodel.setSelectedSeq(previous_seq);
       }
       else {
-        // The purpose of calling setSelectedSeqGroup, even if identity of 
+        // The purpose of calling setSelectedSeqGroup, even if identity of
         // the seq group has not changed, is to make sure that
         // the DataLoadView and the AnnotBrowserView update their displays.
         // (Because the contents of the seq group may have changed.)
         gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-        
+
         // Setting the selected Seq, even if it hasn't changed identity, is to
         // make the SeqMapView update itself.  (It's contents may have changed.)
-        if (new_seq != null && group.getSeqList().contains(new_seq)) {
+	if (new_seq == null) {
+	  gmodel.setSelectedSeq(previous_seq);
+	}
+	else if (group.getSeqList().contains(new_seq)) {
           gmodel.setSelectedSeq(new_seq);
-        } else if (! group.getSeqList().isEmpty()){
-          new_seq = (MutableAnnotatedBioSeq) group.getSeqList().get(0);
-          gmodel.setSelectedSeq(new_seq);
-        }
+	}
+	else if (group.getSeqCount() > 0) {
+	  gmodel.setSelectedSeq(group.getSeq(0));
+	}
       }
     }
 
@@ -195,8 +198,18 @@ public class LoadFileAction {
       StringBuffer sb = new StringBuffer();
       fistr = Streamer.getInputStream(annotfile,  sb);
       String stripped_name = sb.toString();
-
-      if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+      int pindex = stripped_name.lastIndexOf(".");
+      String suffix = null;
+      if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
+      // need to handle CHP files as a special case, because ChpParser currently only has
+      //    a parse() method that takes the file name as an argument, no method to parse from
+      //    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
+      if (suffix.equalsIgnoreCase("chp"))  {
+        fistr.close();
+        System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
+        ChpParser.parse(annotfile.getPath());
+      }
+      else if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
           ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
@@ -246,7 +259,7 @@ public class LoadFileAction {
    *  The stream will be passed through uncompression routines in the Streamer
    *  class if necessary.
    */
-  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr, 
+  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
         String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length) {
 
     MutableAnnotatedBioSeq aseq = null;
@@ -257,14 +270,14 @@ public class LoadFileAction {
       // this should never happen
       ErrorHandler.errorPanel("ERROR", "Must select a genome before loading a file", gviewer.getFrame());
     }
-      
+
     try {
       StringBuffer stripped_name = new StringBuffer();
       str = Streamer.unzipStream(instr, stream_name, stripped_name);
       stream_name = stripped_name.toString();
       String lcname = stream_name.toLowerCase();
 
-      
+
       if (str instanceof BufferedInputStream)  {
         str = (BufferedInputStream) str;
       }
@@ -407,10 +420,10 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
-        // assume it's GFF1, GFF2, or GTF format
+      else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf") || lcname.endsWith(".gff3")) {
+        // assume it's GFF1, GFF2, GTF, or GFF3 format
         GFFParser parser = new GFFParser();
-        parser.addStandardFilters();
+        parser.setUseStandardFilters(true);
         parser.parse(str, selected_group, false);
         aseq = input_seq;
         parser = null;
@@ -457,7 +470,7 @@ public class LoadFileAction {
       if (str != null) try {str.close();} catch (Exception e) {}
     }
 
-    // The purpose of calling setSelectedSeqGroup, even if identity of 
+    // The purpose of calling setSelectedSeqGroup, even if identity of
     // the seq group has not changed, is to make sure that
     // the DataLoadView and the AnnotBrowserView update their displays.
     // (Because the contents of the seq group may have changed.)

@@ -93,6 +93,7 @@ public class LiftParser {
       String line;
       Thread thread = Thread.currentThread();
       while ((line = br.readLine()) != null && (! thread.isInterrupted())) {
+	if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
 	String fields[] = re_tab.split(line);
 	int chrom_start = Integer.parseInt(fields[CHROM_START]);
 	int match_length = Integer.parseInt(fields[MATCH_LENGTH]);

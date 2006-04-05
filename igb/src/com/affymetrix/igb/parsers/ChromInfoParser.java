@@ -45,7 +45,7 @@ public class ChromInfoParser {
     BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
     String line;
     while ((line = dis.readLine()) != null) {
-      if (line.equals("") || line.startsWith("#"))  { continue; }
+      if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
       String[] fields = tab_regex.split(line);
       if (fields.length <= 0) { continue; }
       String chrom_name = fields[0];

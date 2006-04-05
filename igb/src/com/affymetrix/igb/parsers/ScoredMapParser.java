@@ -86,7 +86,7 @@ public class ScoredMapParser {
 	// make a GraphSym for each scores column, and add as an annotation to aseq
 	for (int i=0; i<score_count; i++) {
 	  String score_name = parent.getScoreName(i);
-	  GraphSym gsym = parent.makeGraphSym(score_name);
+	  GraphSym gsym = parent.makeGraphSym(score_name, true);
 	  aseq.addAnnotation(gsym);
 	}
 	// System.out.println("finished attaching graphs");

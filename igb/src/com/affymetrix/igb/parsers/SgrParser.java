@@ -23,15 +23,22 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.Point2DComparator;
-
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class SgrParser {
   static boolean DEBUG = false;
   static Comparator pointcomp = new Point2DComparator(true, true);
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean annotate_seq) 
-  throws IOException {
+  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+                    boolean annotate_seq)
+        throws IOException {
+      return parse(istr, stream_name, seq_group, annotate_seq, true);
+    }
+
+  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+                    boolean annotate_seq, boolean ensure_unique_id)
+      throws IOException {
     System.out.println("trying to parse with SgrParser: " + stream_name);
     ArrayList results = new ArrayList();
     InputStreamReader isr = new InputStreamReader(istr);
@@ -84,7 +91,12 @@ public class SgrParser {
       xlist = null;
       float[] ycoords = ylist.copyToArray();
       ylist = null;
-      GraphSym graf = new GraphSym(xcoords, ycoords, stream_name, aseq);
+
+      String gid = stream_name;
+      if (ensure_unique_id)  {
+        gid = GraphSymUtils.getUniqueGraphID(gid, aseq);
+      }
+      GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
       results.add(graf);
     }
 

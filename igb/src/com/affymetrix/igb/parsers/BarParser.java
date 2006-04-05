@@ -22,7 +22,7 @@ import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.SynonymLookup;
-
+import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
    Bar format definition:
@@ -64,7 +64,7 @@ import com.affymetrix.igb.util.SynonymLookup;
    23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
 */
 public class BarParser implements AnnotationWriter  {
-  static boolean DEBUG_READ = true;
+  static boolean DEBUG_READ = false;
   static boolean DEBUG_SLICE = false;
   static boolean DEBUG_DATA = false;
   static boolean DEBUG_INDEXER = false;
@@ -243,6 +243,9 @@ public class BarParser implements AnnotationWriter  {
       //      BioSeq gseq = gmodel.getSelectedSeq();
       //      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
       //      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
+
+      // don't need a unique id for this GraphSym, since slices are not added directly as annotations
+      //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
       graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
       graf.removeSpan(graf.getSpan(aseq));
       graf.addSpan(span);
@@ -402,11 +405,15 @@ public class BarParser implements AnnotationWriter  {
     System.out.println(" ");
   }
 
-
-
-
   /** Parse a file in BAR format. */
   public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name)
+      throws IOException  {
+    return parse(istr, seq_group, stream_name, true);
+  }
+
+  /** Parse a file in BAR format. */
+  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name,
+			   boolean ensure_unique_id)
     throws IOException {
 
     BufferedInputStream bis = null;
@@ -431,10 +438,10 @@ public class BarParser implements AnnotationWriter  {
     int vals_per_point = bar_header.vals_per_point;
     Map file_tagvals = bar_header.tagvals;
 
-    String graph_name = "unknown";
-    if (stream_name != null) { graph_name = stream_name; }
+    String graph_id = "unknown";
+    if (stream_name != null) { graph_id = stream_name; }
     if (file_tagvals.get("file_type") != null) {
-      graph_name += ":" + (String)file_tagvals.get("file_type");
+      graph_id += ":" + (String)file_tagvals.get("file_type");
     }
     for (int k=0; k<total_seqs; k++) {
       BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, bar_header);
@@ -469,12 +476,13 @@ public class BarParser implements AnnotationWriter  {
               System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
             }
           }
-	  System.out.println("graph name: " + graph_name);
-          GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
+	  System.out.println("in BarParser, creating GraphSym, graph id: " + graph_id);
+	  if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, seq); }
+          GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);
 	  if (bar2)  { copyProps(graf, seq_tagvals); }
-	  //	  graf.setProperty("method", graph_name);
+	  //	  graf.setProperty("method", graph_id);
           //          System.out.println("done reading graph data: " + graf);
           graphs.add(graf);
         }
@@ -504,8 +512,12 @@ public class BarParser implements AnnotationWriter  {
             if (DEBUG_DATA && i < 100) {
               System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1 + "\t" + col2); }
           }
-          String pm_name = graph_name + " : pm";
-          String mm_name = graph_name + " : mm";
+          String pm_name = graph_id + " : pm";
+          String mm_name = graph_id + " : mm";
+	  if (ensure_unique_id) {
+	    pm_name = GraphSymUtils.getUniqueGraphID(pm_name, seq);
+	    mm_name = GraphSymUtils.getUniqueGraphID(mm_name, seq);
+	  }
           GraphSym pm_graf =
             new GraphSym(xcoords, ycoords, pm_name, seq);
           GraphSym mm_graf =
@@ -552,7 +564,7 @@ public class BarParser implements AnnotationWriter  {
 
   public static HashMap readTagValPairs(DataInput dis, int pair_count) throws IOException  {
     HashMap tvpairs = new HashMap(pair_count);
-    if (DEBUG_READ) { System.out.println("seq tagval count: " + pair_count); }
+    if (DEBUG_READ) { System.out.println("reading tagvals: "); }
     for (int i=0; i<pair_count; i++) {
       int taglength = dis.readInt();
       byte[] barray = new byte[taglength];
@@ -598,8 +610,8 @@ public class BarParser implements AnnotationWriter  {
       int total_seqs = dis.readInt();
       int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)
       if (DEBUG_READ) {
-        System.out.println("header: " + headstr);
-        System.out.println("version: " + version);
+	//        System.out.println("header: " + headstr);
+        System.out.println("bar version: " + version);
         System.out.println("total seqs: " + total_seqs);
         System.out.println("vals per point: " + vals_per_point);
       }
@@ -609,17 +621,10 @@ public class BarParser implements AnnotationWriter  {
         if (DEBUG_READ)  { System.out.println("val type for column " + i + ": " + valstrings[val_types[i]]); }
       }
       int tvcount = dis.readInt();
-      if (DEBUG_READ) { System.out.println("tag-value count: " + tvcount); }
+      if (DEBUG_READ) { System.out.println("file tagval count: " + tvcount); }
       HashMap file_tagvals = readTagValPairs(dis, tvcount);
       BarFileHeader header = new BarFileHeader(version, total_seqs, val_types, file_tagvals);
       return header;
-    /*
-    String graph_name = "unknown";
-    if (stream_name != null) { graph_name = stream_name; }
-    if (file_tagvals.get("file_type") != null) {
-      graph_name += ":" + (String)file_tagvals.get("file_type");
-    }
-     */
     } catch (Throwable t) {
       // Catch out-of-memory errors, and other errors caused by poorly-formatted headers.
       IOException ioe = new IOException("Could not parse bar-file header.");
@@ -665,6 +670,7 @@ public class BarParser implements AnnotationWriter  {
       HashMap seq_tagvals = null;
       if (bar2) {
 	int seq_tagval_count = dis.readInt();
+	if (DEBUG_READ)  { System.out.println("seq tagval count: " + seq_tagval_count); }
 	seq_tagvals = readTagValPairs(dis, seq_tagval_count);
       }
 
@@ -787,7 +793,7 @@ public class BarParser implements AnnotationWriter  {
       dos.close();  // or should responsibility for closting stream be left to the caller??
       success = true;
     }
-    catch (Exception ex) { 
+    catch (Exception ex) {
       ex.printStackTrace();
       success = false;
     }

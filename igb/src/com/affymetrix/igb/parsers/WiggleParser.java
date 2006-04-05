@@ -25,7 +25,7 @@ import com.affymetrix.igb.util.FloatList;
 public class WiggleParser extends TrackLineParser {
 
   /**
-   *  wiggle subformats 
+   *  wiggle subformats
    *    BED4
    *    VARSTEP
    *    FIXEDSTEP
@@ -47,45 +47,54 @@ public class WiggleParser extends TrackLineParser {
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
    */
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, 
-    String stream_name) throws IOException {
-    
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq,
+                    String stream_name) throws IOException {
+    return parse(istr, seq_group, annotate_seq, stream_name, true);
+  }
+
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq,
+    String stream_name, boolean ensure_unique_id) throws IOException {
+
     List grafs = new ArrayList();
     int current_format = UNKNOWN;
     IntList xlist = null;
     FloatList ylist = null;
-    String graph_name = null;
+    String graph_id = stream_name;
     String seqid = null;
     Map graph_props = null;
-      BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-      String line;
-      while ((line = br.readLine()) != null) {
-	if (line.startsWith("#")) { continue; }
-	else if (line.startsWith("%")) { continue; }
-	else if (line.startsWith("track")) { 
-	  setTrackProperties(line);
-	  continue;
-	}
-	else if (line.startsWith("variableStep")) {
-	  if (xlist != null && ylist != null) {
-	    grafs.add(createGraph(seq_group, graph_name, graph_props, seqid, xlist, ylist));
-	  }
-	  String[] fields = field_regex.split(line);
-	  for (int i=1; i<fields.length; i++) {
-	    if (fields[i].startsWith("chrom=")) {
-	      seqid = fields[i].substring(6);
-	      System.out.println("current seqid = " + seqid);
-	    }
-	  }
-	  current_format = VARSTEP;
-	  xlist = new IntList();
-	  ylist = new FloatList();
-	}
-	else {
-	  String[] fields = field_regex.split(line);
-	}
+    BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+    String line;
+    while ((line = br.readLine()) != null) {
+      if (line.startsWith("#")) { continue; }
+      else if (line.startsWith("%")) { continue; }
+      else if (line.startsWith("track")) {
+	setTrackProperties(line);
+	continue;
       }
-    
+      else if (line.startsWith("variableStep")) {
+	if (xlist != null && ylist != null) {
+	  if (ensure_unique_id) {
+	    BioSeq aseq = seq_group.getSeq(seqid);
+	    graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq);
+	  }
+	  grafs.add(createGraph(seq_group, graph_id, graph_props, seqid, xlist, ylist));
+	}
+	String[] fields = field_regex.split(line);
+	for (int i=1; i<fields.length; i++) {
+	  if (fields[i].startsWith("chrom=")) {
+	    seqid = fields[i].substring(6);
+	    System.out.println("current seqid = " + seqid);
+	  }
+	}
+	current_format = VARSTEP;
+	xlist = new IntList();
+	ylist = new FloatList();
+      }
+      else {
+	String[] fields = field_regex.split(line);
+      }
+    }
+
     if (annotate_seq) {
       Iterator giter = grafs.iterator();
       while (giter.hasNext()) {
@@ -98,7 +107,7 @@ public class WiggleParser extends TrackLineParser {
   }
 
 
-  protected static GraphSym createGraph(AnnotatedSeqGroup seq_group, String gname, Map gprops, String seqid, 
+  protected static GraphSym createGraph(AnnotatedSeqGroup seq_group, String gname, Map gprops, String seqid,
 					IntList xlist, FloatList ylist) {
     BioSeq seq = seq_group.getSeq(seqid);
     GraphSym gsym = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), gname, seq);
@@ -145,8 +154,8 @@ public class WiggleParser extends TrackLineParser {
   }
 
   public static void main(String[] args) {
-    if (args.length < 2) { 
-      System.err.println("Usage: WiggleParser in_file out_file [seqid]"); 
+    if (args.length < 2) {
+      System.err.println("Usage: WiggleParser in_file out_file [seqid]");
       System.err.println("     (seqid is required if and only if input format is .gr)");
       System.exit(1);
     }
@@ -154,7 +163,7 @@ public class WiggleParser extends TrackLineParser {
     String out_file = args[1];
     // read in_file using GraphSymUtils.readGraphs() ?  need to modify to handle gr (like readGraph())
     AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
-    
+
     try {
       InputStream istr = new FileInputStream(new File(in_file));
       List gsyms = new ArrayList();

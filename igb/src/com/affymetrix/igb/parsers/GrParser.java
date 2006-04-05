@@ -25,7 +25,10 @@ public class GrParser {
     return true;
   }
 
-  public static GraphSym parse(InputStream istr, BioSeq aseq, String name)
+  public static GraphSym parse(InputStream istr, BioSeq aseq, String name) throws IOException {
+    return parse(istr, aseq, name, true);
+  }
+  public static GraphSym parse(InputStream istr, BioSeq aseq, String name, boolean ensure_unique_id)
     throws IOException {
     GraphSym graf = null;
     String line = null;
@@ -131,6 +134,7 @@ public class GrParser {
       System.gc();
     }
     //    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
+    if (ensure_unique_id)  { name = GraphSymUtils.getUniqueGraphID(name, aseq); }
     graf = new GraphSym(xcoords, ycoords, name, aseq);
     System.out.println("loaded graph data, total points = " + count);
     return graf;

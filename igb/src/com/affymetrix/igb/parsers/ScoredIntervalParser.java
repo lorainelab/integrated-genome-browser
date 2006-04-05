@@ -418,8 +418,8 @@ public class ScoredIntervalParser {
     for (int i=0; i<score_count; i++) {
       String score_name = container.getScoreName(i);
       if (separate_by_strand)  {
-	GraphSym forward_gsym = container.makeGraphSym(score_name, true);
-	GraphSym reverse_gsym = container.makeGraphSym(score_name, false);
+	GraphSym forward_gsym = container.makeGraphSym(score_name, true, true);
+	GraphSym reverse_gsym = container.makeGraphSym(score_name, true, false);
 	if (forward_gsym != null) {
 	  aseq.addAnnotation(forward_gsym);
 	}
@@ -428,7 +428,7 @@ public class ScoredIntervalParser {
 	}
       }
       else {
-	GraphSym gsym = container.makeGraphSym(score_name);
+	GraphSym gsym = container.makeGraphSym(score_name, true);
 	if (gsym != null) {
 	  aseq.addAnnotation(gsym);
 	}

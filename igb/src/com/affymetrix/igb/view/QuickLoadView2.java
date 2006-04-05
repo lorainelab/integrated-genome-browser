@@ -921,8 +921,8 @@ class QuickLoadServerModel {
           }
           file_names.add(annot_file_name);
 	  if (QuickLoadView2.build_virtual_encode &&
-	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) ) {
-	    //	    addEncodeVirtualSeq(group, (genome_root + ENCODE_FILE_NAME));
+	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
+	      (group.getSeq(QuickLoadView2.ENCODE_REGIONS_ID) == null) ) {
 	    addEncodeVirtualSeq(group, (genome_root + annot_file_name));
 	  }
         }
@@ -938,7 +938,7 @@ class QuickLoadServerModel {
     return success;
   }
 
-  /** 
+  /**
    *  using negative start coord for virtual genome seq because (at least for human genome)
    *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
    */
@@ -946,7 +946,8 @@ class QuickLoadServerModel {
   boolean DEBUG_VIRTUAL_GENOME = false;
   public void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
     System.out.println("$$$$$ adding virtual genome seq to seq group");
-    if (QuickLoadView2.build_virtual_genome) {
+    if (QuickLoadView2.build_virtual_genome &&
+	(group.getSeq(QuickLoadView2.GENOME_SEQ_ID) == null) ) {
       SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
       int seq_count = group.getSeqCount();
       for (int i=0; i<seq_count; i++) {
@@ -974,7 +975,7 @@ class QuickLoadServerModel {
 	    MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan)mapping.getSpan(genome_seq);
 	    mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
 	  }
-	  
+
 	  // using doubles for coords, because may end up with coords > MAX_INT
 	  child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
 	  child.addSpan(new MutableDoubleSeqSpan(0, clength, seq));

@@ -38,6 +38,8 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   protected Hashtable glyph_hash = new Hashtable();
   protected Hashtable model_hash = new Hashtable();
+  
+  protected boolean models_have_multiple_glyphs = false;
 
   protected static Hashtable colormap = GeneralUtils.getColorMap();
 
@@ -45,6 +47,15 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   // a list of selected glyphs
   protected Vector selected = new Vector();
+
+  /**
+   *  whether any models are represented by multiple glyphs
+   *  WARNING: once one model is represented by multiple glyphs, this flag will only 
+   *     be reset to false when clearWidget() is called
+  */
+  public boolean hasMultiGlyphsPerModel() {
+    return models_have_multiple_glyphs;
+  }
 
   public void setDataModel(GlyphI gl, Object datamodel) {
     // glyph to datamodel must be one-to-one
@@ -61,6 +72,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
       model_hash.put(datamodel, gl);
     }
     else {
+      models_have_multiple_glyphs = true;
       if (previous instanceof Vector) {
         ((Vector)previous).addElement(gl);
       }
@@ -225,6 +237,13 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
    */
   public void clearWidget() {
     selected.removeAllElements();
+    // reset glyph_hash
+    glyph_hash = new Hashtable();
+
+    // reset model_hash
+    model_hash = new Hashtable();
+
+    models_have_multiple_glyphs = false;
   }
 
 

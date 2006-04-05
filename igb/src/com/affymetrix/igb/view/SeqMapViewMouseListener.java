@@ -62,6 +62,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   // the rubber band simply looks odd sometimes (particularly with a fast drag) 
   // if this flag is true.
   private boolean SELECT_ON_MOUSE_PRESSED = false;
+  boolean DEBUG_RUBBERBAND = false;
 
   SeqMapView smv;
   AffyTieredMap map;
@@ -110,6 +111,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
     Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
+    java.util.List hits = nevt.getItems();
+    int hcount = hits.size();
 
     GlyphI topgl = null;
     if (! nevt.getItems().isEmpty()) {
@@ -151,13 +154,34 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     // seems no longer needed
     //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
+    Vector graphs = new Vector();
+    for (int i=0; i<hcount; i++) {
+      Object obj = hits.get(i);
+      if (obj instanceof GraphGlyph) {
+	graphs.add(obj);
+      }
+    }
+    int gcount = graphs.size();
 
     if (topgl != null) {
-      if (isToggleSelectionEvent(nevt) && map.getSelected().contains(topgl)) {
+      boolean toggle_event = isToggleSelectionEvent(evt);
+      //      if (toggle_event && map.getSelected().contains(topgl)) {
+      if (toggle_event && topgl.isSelected()) {
         map.deselect(topgl);
       }
       else {
         map.select(topgl);
+      }
+      for (int i=0; i<gcount; i++) {      
+	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	if (gl != topgl) {  // if gl == topgl, already handled above...
+	  if (toggle_event && gl.isSelected()) {
+	    map.deselect(gl);
+	  }
+	  else {
+	    map.select(gl);
+	  }
+	}
       }
     }
 
@@ -279,6 +303,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       Rectangle2D cbox = new Rectangle2D();
       Rectangle pbox = evt.getPixelBox();
       map.getView().transformToCoords(pbox, cbox);
+      if (DEBUG_RUBBERBAND) {
+	System.out.println("SeqMapViewMouseListener received rubber band end event");
+      	System.out.println("pbox: " + pbox);
+	System.out.println("cbox: " + cbox);
+      }
 
       // setZoomSpot is best if done before updateWidget
       smv.setZoomSpotX(cbox.x + cbox.width);
@@ -301,7 +330,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
       } else {
         // started outside axis tier: user is trying to select glyphs
-
         doTheSelection(map.getItemsByCoord(cbox), rubber_band_start);
       }
 
@@ -331,7 +359,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
   
   void doTheSelection(Vector glyphs, MouseEvent evt) {
-
     boolean something_changed = true;
 
     // Remove any children of the axis tier (like contigs) from the selections.
@@ -345,7 +372,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
         li.remove();
       }
     }
-    
     // Now correct for the fact that we might be zoomed way-out.  In that case
     // select only the parent glyphs (RNA's), not all the little children (Exons).
     Point2D.Double zoom_point = new Point2D.Double(0,0); // dummy variable, value not used
@@ -375,6 +401,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (smv.show_edge_matches && something_changed) {
       smv.doEdgeMatching(map.getSelected(), false);
     }
+
     map.updateWidget();
     
     if (something_changed) {

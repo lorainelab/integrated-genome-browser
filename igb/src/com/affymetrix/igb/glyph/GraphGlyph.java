@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
 
 /**
@@ -130,6 +131,18 @@ public class GraphGlyph extends Glyph {
     setGraphStyle(state.getGraphStyle());
   }
   */
+
+  public String getID() {
+    Object mod = this.getInfo();
+    String ident = null;
+    if (mod instanceof SeqSymmetry) {
+      ident = ((SeqSymmetry)mod).getID();
+    }
+    if (ident == null) {
+      ident = state.getLabel();
+    }
+    return null;
+  }
 
   public GraphState getGraphState() { return state; }
 
@@ -427,7 +440,7 @@ public class GraphGlyph extends Glyph {
     //    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
     //		       ", view cbox.x: " + view.getCoordBox().x);
 
-    // if full view differs from current view, and current view doesn't left align with full view, 
+    // if full view differs from current view, and current view doesn't left align with full view,
     //   don't draw handle (only want handle at left side of full view)
     if (view.getFullView().getCoordBox().x != view.getCoordBox().x)  {
       return null;
@@ -514,7 +527,15 @@ public class GraphGlyph extends Glyph {
     state.setColor(c);
   }
 
-  public String getLabel() { return state.getLabel(); }
+  public String getLabel() { 
+    String lab = state.getLabel();
+    if (lab == null) {
+      // if no label was set, try using ID
+      lab = getID();
+    }
+    return lab;
+  }
+
   public boolean getShowGraph() { return state.getShowGraph(); }
   public boolean getShowBounds() { return state.getShowBounds();  }
   public boolean getShowHandle() { return state.getShowHandle(); }
@@ -601,7 +622,13 @@ public class GraphGlyph extends Glyph {
     Graphics g = view.getGraphics();
     double top_ycoord_inset = getUpperYCoordInset(view);
     double bottom_ycoord_inset = getLowerYCoordInset(view);
-    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    double num = getVisibleMaxY() - getVisibleMinY();
+    // if 
+    if (num <= 0) { num = 0.1; } // if scale is 0 or negative, set to a small default instead
+
+    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
     double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
     lt.setScaleY(yscale);
     lt.setOffsetY(yoffset);

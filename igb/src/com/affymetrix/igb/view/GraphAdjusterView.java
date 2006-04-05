@@ -35,7 +35,7 @@ import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
-import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
@@ -533,11 +533,14 @@ public class GraphAdjusterView extends JComponent
       String newname = trans_name + " (" + graf.getGraphName() + ") ";
       GraphState newstate = new GraphState(graf.getGraphState());
       newstate.setLabel(newname);
+      String newid = trans_name + " (" + graf.getID() + ") ";
+      newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
       GraphSym newgraf =
-        new GraphSym(graf.getGraphXCoords(), new_ycoords, newname, graf.getGraphSeq());
+        new GraphSym(graf.getGraphXCoords(), new_ycoords, newid, graf.getGraphSeq());
+	//        new GraphSym(graf.getGraphXCoords(), new_ycoords, newname, graf.getGraphSeq());
       //      System.out.println(newgraf);
-      ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
       newgraf.setGraphState(newstate);
+      ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
       newgrafs.add(newgraf);
     }
     return newgrafs;
@@ -597,6 +600,7 @@ public class GraphAdjusterView extends JComponent
   public static void deleteGraph(SeqMapView gviewer, GraphSym gsym) {
     //System.out.println("deleting graph: " + gsym);
     gviewer.getGraphFactoryHash().remove(gsym);
+    gviewer.getGraphIdFactoryHash().remove(gsym.getID());
 
     AnnotatedBioSeq aseq = (AnnotatedBioSeq)gsym.getGraphSeq();
     if (aseq instanceof MutableAnnotatedBioSeq) {
@@ -611,9 +615,9 @@ public class GraphAdjusterView extends JComponent
 
       // if this is not a floating graph, then it's in a tier,
       //    so check tier -- if this graph is only child, then get rid of the tier also
-      if (gviewer.getSeqMap() instanceof AffyLabelledTierMap &&
+      if (gviewer.getSeqMap() instanceof AffyTieredMap &&
           (! gl.getGraphState().getFloatGraph()) ) {
-        AffyLabelledTierMap map = (AffyLabelledTierMap)gviewer.getSeqMap();
+        AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
         GlyphI parentgl = gl.getParent();
         parentgl.removeChild(gl);
         if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
@@ -621,6 +625,7 @@ public class GraphAdjusterView extends JComponent
             map.removeTier((TierGlyph)parentgl);
             gviewer.getGraphStateTierHash().remove(gl.getGraphState());
             gviewer.getGraphNameTierHash().remove(gl.getLabel());
+            gviewer.getGraphIdTierHash().remove(gsym.getID());
             map.packTiers(false, true, false);
             map.stretchToFit(false, false);
           }
@@ -683,8 +688,8 @@ public class GraphAdjusterView extends JComponent
   }
 
   public static void changeColor(java.util.List graf_syms, SeqMapView gviewer) {
-    int gcount = graf_syms.size();
-    if (gcount > 0) {
+    int scount = graf_syms.size();
+    if (scount > 0) {
       // Set an initial color so that the "reset" button will work.
       GraphSym graf_0 = (GraphSym) graf_syms.get(0);
       GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
@@ -692,17 +697,24 @@ public class GraphAdjusterView extends JComponent
       Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
         "Graph Color Chooser", initial_color);
       // Note: If the user selects "Cancel", col will be null
-      if (col != null) for (int i=0; i<gcount; i++) {
-        GraphSym graf = (GraphSym) graf_syms.get(i);
-        GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
-        if (gl != null) {
-          gl.setColor(col); // this automatically sets the GraphState color
-          // if graph is in a tier, change foreground color of tier also
-          //   (which in turn triggers change in color for TierLabelGlyph...)
-          if (gl.getParent() instanceof TierGlyph) {
-            gl.getParent().setForegroundColor(col);
-          }
-        }
+      if (col != null) {
+	for (int i=0; i<scount; i++) {
+	  GraphSym graf = (GraphSym) graf_syms.get(i);
+	  // using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
+	  java.util.List glist = gviewer.getSeqMap().getItems(graf);
+	  if (glist != null) {
+	    int glyphcount = glist.size();
+	    for (int k=0; k<glyphcount; k++) {
+	      GraphGlyph gl = (GraphGlyph)glist.get(k);
+	      gl.setColor(col); // this automatically sets the GraphState color
+	      // if graph is in a tier, change foreground color of tier also
+	      //   (which in turn triggers change in color for TierLabelGlyph...)
+	      if (gl.getParent() instanceof TierGlyph) {
+		gl.getParent().setForegroundColor(col);
+	      }
+	    }
+	  }
+	}
       }
       gviewer.getSeqMap().updateWidget();
     }

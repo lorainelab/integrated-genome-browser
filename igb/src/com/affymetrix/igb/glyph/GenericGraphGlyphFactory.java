@@ -137,26 +137,20 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 
     GraphSym newgraf = graf;
     if (graph_seq != vseq) {
-      System.out.println("need to transform graph sym: ");
-      SeqUtils.printSymmetry(graf);
-      //      SeqSymmetry mapping_sym = smv.transformForViewSeq(graf);
+      //      System.out.println("need to transform graph sym: ");
+      //      SeqUtils.printSymmetry(graf);
       SeqSymmetry[] transform_path = smv.getTransformPath();
       if (transform_path != null && transform_path.length > 0) {
-	System.out.println("transform path, length: " + transform_path.length);
-	SeqUtils.printSymmetry(transform_path[0]);
-//	if (tempsym != null && transform_path != null && transform_path.length > 0) {
-	  //SeqSymmetry path0 = transform_path[0];
-//	  for (int i=0; i<tempsym.getSpanCount(); i++) {
-	  //}
-//	}
+	//	System.out.println("transform path, length: " + transform_path.length);
+	//	SeqUtils.printSymmetry(transform_path[0]);
       }
       else {
-	System.out.println("no transform path");
+	//	System.out.println("no transform path");
       }
       //      SeqUtils.debug_step3 = true;
       SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
       //      SeqUtils.debug_step3 = false;
-      newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym);
+      newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
       SeqSpan span_on_vseq = mapping_sym.getSpan(vseq);
       //      Rectangle2D gbox = graph_glyph.getCoordBox();
       //      graph_glyph.setCoords(span_on_vseq.getMin(), gbox.y, span_on_vseq.getLength(), gbox.height);
@@ -219,31 +213,36 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
     }
     else {
-      //      System.out.println("*** in GenericGraphGlyphFactory.displayGraph() ***");
       //      TierGlyph tglyph = (TierGlyph)smv.getGraphStateTierHash().get(state);
-      TierGlyph tglyph = (TierGlyph)smv.getGraphNameTierHash().get(newgraf.getGraphName());
+      //      TierGlyph tglyph = (TierGlyph)smv.getGraphNameTierHash().get(newgraf.getGraphName());
+      TierGlyph tglyph = (TierGlyph)smv.getGraphIdTierHash().get(newgraf.getID());
+
       boolean new_tier = (tglyph == null);
-      System.out.println("^^in GenericGraphGlyphFactory.displayGraph(), new tier: " + new_tier);
       if (new_tier) {
-	//	  System.out.println("*** in GenericGrphaGlyphFactory, making new tier ***");
+	//        System.out.println("*** in GenericGraphGlyphFactory, making new tier ***");
 	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph(graf.getGraphState());
+	  TransformTierGlyph tempgl = new TransformTierGlyph(state);
 	  tempgl.setFixedPixelHeight(true);
 	  tempgl.setFixedPixHeight(60);
 	  tglyph = tempgl;
 	}
-	else { tglyph = new TierGlyph(graf.getGraphState()); }
+	else { tglyph = new TierGlyph(state); }
+	tglyph.setState(TierGlyph.COLLAPSED);
+	PackerI pack = tglyph.getPacker();
+	if (pack instanceof CollapsePacker) {
+	  ((CollapsePacker)pack).setParentSpacer(0);
+	}
       }
 
       // want to allow for multiple graph glyphs overlaid in same tier
       tglyph.setState(TierGlyph.COLLAPSED);
 
-      Color tier_back_col = graf.getGraphState().getBackground();
+      Color tier_back_col = state.getBackground();
 
       tglyph.setFillColor(tier_back_col);
       tglyph.setForegroundColor(state.getColor());
       tglyph.addChild(graph_glyph);
-      tglyph.setLabel(graf.getGraphState().getLabel());
+      tglyph.setLabel(state.getLabel());
       //tglyph.setLabel(graf.getGraphName());
       // GAH 11-21-2003  WARNING -- have to add tier to map _after_ it's label has been set,
       //   or the TieredLabelMap won't get assigned labels correctly
@@ -254,9 +253,11 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 	  upper_strand = false;
 	}
 	map.addTier(tglyph, upper_strand);
-	smv.getGraphStateTierHash().put(state, tglyph);
-	smv.getGraphNameTierHash().put(newgraf.getGraphName(), tglyph);
       }
+      smv.getGraphStateTierHash().put(state, tglyph);
+      smv.getGraphNameTierHash().put(newgraf.getGraphName(), tglyph);
+      smv.getGraphIdTierHash().put(newgraf.getID(), tglyph);
+
       tglyph.pack(map.getView());
       if (update_map) {
 	map.packTiers(false, true, false);
@@ -335,11 +336,11 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     gstate.setShowThreshold(show_thresh);
     gstate.setThresholdDirection(thresh_direction);
 
-    Map gfactories = smv.getGraphFactoryHash();
     //GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(gstate);
     GenericGraphGlyphFactory gfac = new GenericGraphGlyphFactory(smv);
     //		gfactories.put(fgraf, gstate);
-    gfactories.put(graf, gfac);
+    smv.getGraphFactoryHash().put(graf, gfac);
+    smv.getGraphIdFactoryHash().put(graf.getID(), gfac);
     GraphGlyph graph_glyph = GenericGraphGlyphFactory.displayGraph(graf, smv, gstate, true);
     return graph_glyph;
   }

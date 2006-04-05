@@ -63,7 +63,7 @@ public class UcscGffSym extends SingletonSymWithProps {
    * The coordinates should be given exactly as they appear in a GFF file.
    * In principle, the first coordinate is supposed to be less than the second one,
    * but in practice this isn't always followed, so this constructor will correct
-   * those errors and will also convert from interbase-0 to base-1 coordinates.
+   * those errors and will also convert from base-1 to interbase-0 coordinates.
    * @param a  The coordinate in column 4 of the GFF file.
    * @param b  The coordinate in column 5 of the GFF file.
    * @param convert_base Whether to convert from base-1 to interbase-0 

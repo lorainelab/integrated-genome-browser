@@ -20,8 +20,7 @@ public class CompositeGraphSym extends GraphSym  {
   //  public Object clone()  // Does clone need to be reimplemented here?  Not sure yet...
 
   public CompositeGraphSym(String id, BioSeq seq) {
-    super(seq);
-    setProperty("id", id);
+    super(null, null, id, seq);
   }
 
   /**

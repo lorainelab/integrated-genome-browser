@@ -5,36 +5,51 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.glyph.SmartRubberBand;
+import com.affymetrix.igb.event.VirtualRubberBandEvent;
+
 /**
  *  trying to split a tiered map across multiple windows on multiple screens
- *  maybe have one master map and others use it as root?
+ *  maybe have one parent master map and others use it as root?
+ *
+ *  Any methods that only affect scene should not need to be propagated to child windows,
+ *     since scene is shared by parent and all children
  */
-public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
+public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, NeoRubberBandListener {
   //  Frame, Window, JFrame, JWindow
   boolean USE_SWING = true;
   boolean USE_FRAME = false;
+  boolean DEBUG_RUBBERBAND = false;
 
+  /*  params for running on 4x2 XGA (1024x768) screens */
   public static int tile_width = 1024;
   public static int tile_height = 768;
   public static int tile_columns = 4;
   public static int tile_rows = 2;
+
+  /*  params for testing on single screen, 2x2 400x300 windows
+  public static int tile_width = 400;
+  public static int tile_height = 300;
+  public static int tile_columns = 2;
+  public static int tile_rows = 2;
+  */
+
   public static int xbump = 0;
   public static int ybump = 0;
 
   int total_width = tile_width * tile_columns;
   int total_height = tile_height * tile_rows;
   NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
-  MultiMapEventHandler child_event_handler;
+  MultiMapMouseHandler child_mouse_handler;
   Rectangle total_pixbox = new Rectangle(xbump, ybump, total_width, total_height);
 
-  // shouldn't need this, but appear to be problems returning listeners normally when
-  //   component isn't actually being displayed???
-  java.util.List mlisteners = new ArrayList();
+  ArrayList mlisteners = new ArrayList();
+  ArrayList rlisteners = new ArrayList();
   // java.util.List child_maps = new ArrayList();
   //  LinearTransform temp_trans = new LinearTransform();
 
@@ -42,7 +57,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     super(hscroll, vscroll);
     this.setSize(total_width, total_height);
     this.getNeoCanvas().setSize(total_width, total_height);
-    child_event_handler = new MultiMapEventHandler(this);
+    child_mouse_handler = new MultiMapMouseHandler(this);
     initMultiWindows();
   }
 
@@ -177,7 +192,14 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
 	      win.add("Center", newmap);
 	    }
 	    newmap.getNeoCanvas().setDoubleBuffered(false);
-            newmap.addMouseListener(child_event_handler);
+            newmap.addMouseListener(child_mouse_handler);
+
+	    SmartRubberBand srb = new SmartRubberBand(newmap);
+	    newmap.setRubberBand(srb);
+	    srb.setColor(new Color(100, 100, 255));
+
+	    newmap.addRubberBandListener(this);
+	    //	    newmap.addMouseListener(graph_manager);
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
             child_maps[x][y] = newmap;
             System.out.println("added map : " + child_maps[x][y]);
@@ -191,6 +213,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     System.out.println("*******************************************");
   }
 
+
   public void transformMouseEvent(MouseEvent evt) {
     // if NeoMouseEvent on one of the child maps, coord position for event should be correct
     //   (since each child map has a proper view), though pixels position will be position in
@@ -199,7 +222,11 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     //    System.out.println("MultiWindowTierMap.transformMouseEvent() called");
     if (evt instanceof NeoMouseEvent) {
       NeoMouseEvent cevt = (NeoMouseEvent)evt;
+
       // make new event with this (parent) map as source
+      // Current approach  is a little messy, since the pixel position is valid for the child window but not for
+      //    the virtual parent window -- but need to keep it in child pixels because popups may use it
+      //    for drawing/placement of popup window
       NeoMouseEvent pevt =
 	//	new NeoMouseEvent((MouseEvent)cevt.getOriginalEvent(), this, cevt.getCoordX(), cevt.getCoordY());
 	new NeoMouseEvent(cevt, this, cevt.getCoordX(), cevt.getCoordY());
@@ -237,8 +264,67 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     }
   }
 
+
+  public void rubberBandChanged(NeoRubberBandEvent evt) {
+    transformRubberBandEvent(evt);
+  }
+
+  /**
+   *   Handling of NeoRubberBandEvent propogation from child maps up to listeners on this parent map
+   *      is different from how MouseEvents are propogated, since rubber band listener is unlikely
+   *      to draw anything (drawing is handled internally by RubberBands), and since rubber band event
+   *      has no coord position, listener will often transform pixel to coords -- so pixels need
+   *      to be relative to virtual parent window
+   */
+  public void transformRubberBandEvent(NeoRubberBandEvent evt) {
+    Object orig_source = (Component)evt.getSource();
+    if (DEBUG_RUBBERBAND)  { System.out.println("called transformRubberBandEvent(), source: " + orig_source); }
+    if (orig_source instanceof NeoMap) {
+      NeoMap orig_map = (NeoMap)orig_source;
+      // to set pixel x and y for full map canvas, need to create a new mouse event that
+      //     calculates full map pixel x and y
+      // calculate pixel point for new RubberBandEvent
+      Point orig_pixpoint = evt.getPoint();
+      // transform pixels from child map to coords
+      Point2D cpoint = new Point2D(0, 0);
+      orig_map.getView().transformToCoords(orig_pixpoint, cpoint);
+      // transform coords to pixels on full/parent map
+      Point new_pixpoint = new Point();
+      this.getView().transformToPixels(cpoint, new_pixpoint);
+      int newx = new_pixpoint.x;
+      int newy = new_pixpoint.y;
+
+      // do same to calculate pixel box for new RubberBandEvent
+      Rectangle orig_pixbox = evt.getPixelBox();
+      Rectangle2D cbox = new Rectangle2D();
+      orig_map.getView().transformToCoords(orig_pixbox, cbox);
+      Rectangle new_pixbox = new Rectangle();
+      this.getView().transformToPixels(cbox, new_pixbox);
+
+      if (DEBUG_RUBBERBAND) {
+	System.out.println("original pixel position: " + evt.getX() + ", " + evt.getY() +
+			   ", new position: " + newx + ", " + newy);
+	System.out.println("original pixel box: " + orig_pixbox + ", new box: " + new_pixbox);
+      }
+
+      NeoRubberBandEvent new_evt =
+      	new VirtualRubberBandEvent(this.getNeoCanvas(), evt.getID(), evt.getWhen(), evt.getModifiers(),
+				   newx, newy, evt.getClickCount(), evt.isPopupTrigger(), new_pixbox);
+      //      NeoRubberBandEvent new_evt =
+      //	new NeoRubberBandEvent(this.getNeoCanvas(), evt.getID(), evt.getWhen(), evt.getModifiers(),
+      //			       newx, newy, evt.getClickCount(), evt.isPopupTrigger(), evt.getRubberBand());
+      for (int i=0; i<rlisteners.size(); i++) {
+	NeoRubberBandListener listener = (NeoRubberBandListener)rlisteners.get(i);
+	if (listener != null) {
+	  listener.rubberBandChanged(new_evt);
+	}
+      }
+
+    }
+  }
+
   public void addMouseListener(MouseListener listener) {
-    System.out.println("-------- adding mouse listener to MultiWindowTierMap: " + listener);
+    //    System.out.println("-------- adding mouse listener to MultiWindowTierMap: " + listener);
     super.addMouseListener(listener);
     mlisteners.add(listener);
   }
@@ -248,11 +334,22 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener {
     mlisteners.remove(listener);
   }
 
+  public void addRubberBandListener(NeoRubberBandListener listener) {
+    //    System.out.println("-------- adding rubberband listener to MultiWindowTierMap: " + listener);
+    super.addRubberBandListener(listener);
+    rlisteners.add(listener);
+  }
+
+  public void removeRubberBandListener(NeoRubberBandListener listener) {
+    super.removeRubberBandListener(listener);
+    rlisteners.remove(listener);
+  }
+
 }
 
-class MultiMapEventHandler implements MouseListener {
+class MultiMapMouseHandler implements MouseListener {
   MultiWindowTierMap main_map;
-  public MultiMapEventHandler(MultiWindowTierMap map) {
+  public MultiMapMouseHandler(MultiWindowTierMap map) {
     main_map = map;
   }
   public void mouseEntered(MouseEvent evt) { main_map.transformMouseEvent(evt); }

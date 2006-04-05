@@ -452,6 +452,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     */
     GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
+    GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
+    GraphicsDevice[] devices = genv.getScreenDevices();
+    if (devices.length >= 4) { USE_MULTI_WINDOW_MAP = true; }
+
 
     // force loading of prefs if hasn't happened yet
     // usually since IGB.main() is called first, prefs will have already been loaded

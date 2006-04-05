@@ -203,10 +203,16 @@ public class SeqMapView extends JPanel
   */
   Map gstate2tier = new HashMap();
   Map gname2tier = new HashMap();
+  Map gid2tier = new HashMap();
+  // gid2state to be added later, for sharing of graph states between multiple GraphSyms
+  //     on different seqs but with same graph id
+  //     (or maybe this should go in GenericGraphGlyphFactory?)
+  //  Map gid2state = new HashMap();
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
   Map graf2factory = new HashMap();   // hash of graph syms to graph factories
+  Map grafid2factory = new HashMap();
 
   //  Color[] tier_colors = { Color.black, almost_black };
   GlyphEdgeMatcher edge_matcher = null;
@@ -273,6 +279,7 @@ public class SeqMapView extends JPanel
    */
   public SeqMapView(boolean add_popups, boolean split_win) {
     SPLIT_WINDOWS = split_win;
+    if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
 
     if (SPLIT_WINDOWS) {
       seqmap = new MultiWindowTierMap(false, false);
@@ -501,8 +508,10 @@ public class SeqMapView extends JPanel
   /** A Map of GraphState to TierGlyph */
   public Map getGraphStateTierHash() { return gstate2tier; }
   public Map getGraphFactoryHash() { return graf2factory; }
+  public Map getGraphIdFactoryHash() { return grafid2factory; }
 
   public Map getGraphNameTierHash() { return gname2tier; }
+  public Map getGraphIdTierHash() { return gid2tier; }
 
   TransformTierGlyph axis_tier;
 
@@ -599,9 +608,9 @@ public class SeqMapView extends JPanel
 	  int compcount = compsym.getChildCount();
 	  for (int i=0; i<compcount; i++) {
             // Make glyphs for contigs
-	    SeqSymmetry childcomp = compsym.getChild(i);
-	    SeqSpan childspan = childcomp.getSpan(viewseq);
-	    SeqSpan ospan = SeqUtils.getOtherSpan(childcomp, childspan);
+	    SeqSymmetry childsym = compsym.getChild(i);
+	    SeqSpan childspan = childsym.getSpan(viewseq);
+	    SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
 
 	    GlyphI cgl;
 	    if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
@@ -616,11 +625,22 @@ public class SeqMapView extends JPanel
 		String label = ospan.getBioSeq().getID();
 		if (label.startsWith("chr")) { label = label.substring(3); }
 		((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
+		cgl.setColor(Color.black);
+	      }
+	      else if (viewseq.getID().equals(QuickLoadView2.ENCODE_REGIONS_ID)) {
+                cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+                // cgl = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
+		String label = childsym.getID();
+		if (label != null) {
+		  ((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
+		  // ((com.affymetrix.genoviz.glyph.LabelledRectGlyph)cgl).setText(label);
+		}
+		cgl.setColor(Color.black);
 	      }
 	      else {
 		cgl = new OutlineRectGlyph();
+		cgl.setColor(Color.lightGray);
 	      }
-	      cgl.setColor(Color.lightGray);
 	    }
 	    //	    cgl.setCoords(childspan.getMin(), 0,
 	    //			  childspan.getMax()-childspan.getMin(), 10);
@@ -632,7 +652,7 @@ public class SeqMapView extends JPanel
             //   allows easily selecting sequence for contig
             //   allows slicing on contig
             //   Slicing may require lots of memory, so this may be a bad idea.
-            //cgl.setInfo(childcomp);
+            //cgl.setInfo(childsym);
 
             // also note that "Load residues in view" produces additional
             // contig-like glyphs that can partially hide these glyphs.
@@ -661,6 +681,7 @@ public class SeqMapView extends JPanel
     method2ftier = new HashMap();
     gstate2tier = new HashMap();
     gname2tier = new HashMap();
+    gid2tier = new HashMap();
     match_glyphs = new Vector();
     seqmap.updateWidget();
     GenericGraphGlyphFactory.clear();
@@ -819,6 +840,7 @@ public class SeqMapView extends JPanel
       method2ftier = new HashMap();
       gstate2tier = new HashMap();
       gname2tier = new HashMap();
+      gid2tier = new HashMap();
     }
 
     seqmap.clearWidget();
@@ -1228,10 +1250,12 @@ public class SeqMapView extends JPanel
     MapViewGlyphFactoryI factory = null;
     String meth = null;
     if (annotSym instanceof GraphSym) {
-      factory =	(MapViewGlyphFactoryI)graf2factory.get(annotSym);
+      //      factory =	(MapViewGlyphFactoryI)getGraphFactoryHash().get(annotSym);
+      factory = (MapViewGlyphFactoryI)getGraphIdFactoryHash().get(annotSym.getID());
       if (factory == null) {
 	factory = new GenericGraphGlyphFactory(this);
-	graf2factory.put(annotSym, factory);
+        getGraphFactoryHash().put(annotSym, factory);
+        getGraphIdFactoryHash().put(annotSym.getID(), factory);
       }
     }
     else {
@@ -1364,6 +1388,7 @@ public class SeqMapView extends JPanel
     collectGraphs(rootglyph, glyphlist);
     // convert graph glyphs to GraphSyms via glyphsToSyms
     java.util.List symlist = glyphsToSyms(glyphlist);
+    //    System.out.println("called SeqMapView.selectAllGraphs(), select count: " + symlist.size());
     // call select(list) on list of graph syms
     select(symlist, false, true, true);
   }
@@ -1448,10 +1473,29 @@ public class SeqMapView extends JPanel
    */
   protected java.util.List glyphsToSyms(java.util.List glyphs) {
     java.util.List syms = new ArrayList(glyphs.size());
-    if (glyphs.size() > 0)  {
-      for (int i=0; i<glyphs.size(); i++) {
-        SeqSymmetry sym = glyphToSym((GlyphI) glyphs.get(i));
-        if (sym != null) syms.add(sym);
+    if (glyphs.size() > 0) {
+      // if some syms are represented by multiple glyphs, then want to make sure glyphsToSyms()
+      //    doesn't return the same sym multiple times, so have to do a bit more work
+      if (seqmap.hasMultiGlyphsPerModel()) {
+	//	System.out.println("#########    in SeqMapView.glyphsToSyms(), possible multiple glyphs per sym");
+	HashMap symhash = new HashMap();
+	for (int i=0; i<glyphs.size(); i++) {
+	  GlyphI gl = (GlyphI)glyphs.get(i);
+	  SeqSymmetry sym = glyphToSym(gl);
+	  if (sym != null) { symhash.put(sym, sym); }
+	}
+	Iterator iter = symhash.values().iterator();
+	while (iter.hasNext()) {
+	  syms.add(iter.next());
+	}
+      }
+      else {
+	//  no syms represented by multiple glyphs, so can use more efficient way of collecting syms
+	for (int i=0; i<glyphs.size(); i++) {
+	  GlyphI gl = (GlyphI)glyphs.get(i);
+	  SeqSymmetry sym = glyphToSym(gl);
+	  if (sym != null) syms.add(sym);
+	}
       }
     }
     return syms;
@@ -1466,7 +1510,6 @@ public class SeqMapView extends JPanel
     Vector selected_glyphs = seqmap.getSelected();
     java.util.List selected_syms = glyphsToSyms(selected_glyphs);
     // Note that seq_selected_sym (the selected residues) is not included in selected_syms
-
     gmodel.setSelectedSymmetries(selected_syms, this);
   }
 

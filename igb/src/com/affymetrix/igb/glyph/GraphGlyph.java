@@ -361,12 +361,12 @@ public class GraphGlyph extends Glyph {
       double pix_height = max_ypix - min_ypix;
       double spacing = pix_height / axis_bins;
       double mark_ypix = min_ypix;
-      g.setColor(Color.gray);
+      g.setColor(Color.white);
       for (int i=0; i<=axis_bins; i++) {
 	g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
 	mark_ypix += spacing;
       }
-      g.setColor(Color.gray);
+      g.setColor(Color.white);
       g.setFont(axis_font);
       g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
       g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);

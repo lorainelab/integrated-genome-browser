@@ -28,6 +28,7 @@ import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.FloatTransformer;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -179,7 +180,8 @@ implements SeqSelectionListener, SymSelectionListener {
     height_slider.addChangeListener(new GraphHeightSetter());
 
     Box butbox = Box.createHorizontalBox();
-    butbox.add(Box.createHorizontalGlue());
+    //butbox.add(Box.createHorizontalGlue());
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(selectAllB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     //butbox.add(resetB);
@@ -219,14 +221,15 @@ implements SeqSelectionListener, SymSelectionListener {
     //label_box.setAlignmentX(0.0f);
     //this.add(Box.createRigidArea(new Dimension(1,5)));
     //this.add(label_box);
+    
+    this.add(Box.createRigidArea(new Dimension(1,5)));
+    this.add(butbox);
     this.add(Box.createRigidArea(new Dimension(1,5)));
     row1.setAlignmentX(0.0f);
     this.add(row1);
     butbox.setAlignmentX(0.0f);
     butbox.setAlignmentY(1.0f);
-    this.add(Box.createRigidArea(new Dimension(1,5)));
     this.add(Box.createVerticalGlue());
-    this.add(butbox);
 
     setSeqMapView(this.gviewer); // called for the side-effects
 
@@ -439,6 +442,9 @@ implements SeqSelectionListener, SymSelectionListener {
     saveB.setEnabled(grafs.size() == 1);
     deleteB.setEnabled(b);
     cloneB.setEnabled(b);
+    
+    combineB.setEnabled(grafs.size() >= 2);
+    splitB.setEnabled(grafs.size() >= 2);
 
     is_listening = true; // turn back on GUI events
   }
@@ -674,17 +680,17 @@ implements SeqSelectionListener, SymSelectionListener {
       advanced_button_box.setAlignmentX(0.0f);
       decoration_row.setAlignmentX(0.0f);
       advanced_panel.add(decoration_row);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
       //
       advanced_panel.add(advanced_button_box);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
 
       advanced_panel.add(scale_type_label);
       scaleCB_box.setAlignmentX(0.0f);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
+      //advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
       advanced_panel.add(scaleCB_box);
       grouping_box.setAlignmentX(0.0f);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,10)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
       advanced_panel.add(grouping_box);
 
       saveB.addActionListener(new ActionListener() {
@@ -742,13 +748,15 @@ implements SeqSelectionListener, SymSelectionListener {
 
     /**
      *  Currently combineGraphs() puts all selected graphs in the same tier.
-     *     and does not support floating the combined graphs
+     *     Does not support floating the combined graphs
      */
     void combineGraphs() {
-      System.out.println("trying to combine graphs");
+      //System.out.println("trying to combine graphs");
       // add to tier of first graph
-      TierGlyph tier = null;
       int gcount = glyphs.size();
+      
+      // if any of the graphs is already in a tier, use the first tier as the shared tier
+      TierGlyph tier = null;
       for (int i=0; i<gcount; i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
 	if (gl.getParent() instanceof TierGlyph) {
@@ -756,15 +764,11 @@ implements SeqSelectionListener, SymSelectionListener {
 	  break;
 	}
       }
-      int start = 0;
-      if (tier == null && gcount > 0) {
-	GraphGlyph gl = (GraphGlyph)glyphs.get(start);
-	tier = GraphGlyphUtils.attachGraph(gl, gviewer, null);
-	start++;
-      }
-      for (int i=start; i<gcount; i++) {
+      
+      // first time through loop tier may be null, but that is ok.
+      for (int i=0; i<gcount; i++) {
 	GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-	GraphGlyphUtils.attachGraph(gl, gviewer, tier);
+	tier = GraphGlyphUtils.attachGraph(gl, gviewer, tier);
       }
     }
 
@@ -772,18 +776,19 @@ implements SeqSelectionListener, SymSelectionListener {
      *  Currently splitGraphs() puts all selected graphs in separate tiers.
      */
     void splitGraphs() {
-      System.out.println("trying to split graphs");
+      //System.out.println("trying to split graphs");
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-	GlyphI parent = gl.getParent();
-	// only move graph to new tier if not currently the only graph in a tier
-	if (! ( (parent instanceof TierGlyph)  &&
-		(parent.getChildCount() == 1)) ) {
-	  GraphGlyphUtils.attachGraph(gl, gviewer, null);
-	}
-	else {
-	  //	  System.out.println("only glyph in tier, so not moving: " + gl);
-	}
+        GlyphI parent = gl.getParent();
+        
+        if (parent instanceof TierGlyph) {
+          TierGlyph parent_tier = (TierGlyph) parent;
+          // Create a new tier for each glyph *except* the one that has the same
+          // IAnnotStyle object.
+          if (! (parent_tier.getAnnotStyle() == (IAnnotStyle) gl.getGraphState())) {
+            GraphGlyphUtils.attachGraph(gl, gviewer, null);
+          }
+        }
       }
     }
 
@@ -825,8 +830,11 @@ implements SeqSelectionListener, SymSelectionListener {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
         boolean is_floating = gl.getGraphState().getFloatGraph();
         if (do_float && (! is_floating)) {
+          // TODO: When floating a graph, do we need to get rid of the old entry in
+          // SeqMapView.getGraphIdTierHash() ?
           GraphGlyphUtils.floatGraph(gl, gviewer);
         } else if ( (! do_float) && is_floating) {
+          // TODO: Should we check for an entry in SeqMapView.getGraphIdTierHash() ?
           GraphGlyphUtils.attachGraph(gl, gviewer);
         }
       }

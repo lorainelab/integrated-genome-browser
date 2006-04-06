@@ -1728,7 +1728,7 @@ public class SeqMapView extends JPanel
    *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
    */
   public void sliceAndDice(SeqSymmetry sym) {
-    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
+    //    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
     if (! slicing_in_effect) {
       //   only redo viewspan_before_slicing if slicing is not already in effect, because
       //   if (slicing_in_effect) and slicing again, probably just adjusting slice buffer

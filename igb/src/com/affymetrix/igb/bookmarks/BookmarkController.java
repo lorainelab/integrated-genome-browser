@@ -235,7 +235,6 @@ public abstract class BookmarkController {
             graf.setGraphName(graph_name);
 	    if (graph_style_num != null)  {
               graf.getGraphState().setGraphStyle(graph_style_num.intValue());
-              // graf.setProperty(GraphSym.PROP_INITIAL_GRAPH_STYLE, graph_style_num);
 	    }
             if (heatmap_name != null) {
               HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);

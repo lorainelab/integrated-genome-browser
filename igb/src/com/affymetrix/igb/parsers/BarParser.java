@@ -244,6 +244,7 @@ public class BarParser implements AnnotationWriter  {
       //      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
       //      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
 
+      checkSeqLength(aseq, graph_xcoords);
       // don't need a unique id for this GraphSym, since slices are not added directly as annotations
       //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
       graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
@@ -412,7 +413,7 @@ public class BarParser implements AnnotationWriter  {
   }
 
   /** Parse a file in BAR format. */
-  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name,
+  public static List parse(InputStream istr, AnnotatedSeqGroup default_seq_group, String stream_name,
 			   boolean ensure_unique_id)
     throws IOException {
 
@@ -444,10 +445,11 @@ public class BarParser implements AnnotationWriter  {
       graph_id += ":" + (String)file_tagvals.get("file_type");
     }
     for (int k=0; k<total_seqs; k++) {
-      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, bar_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, default_seq_group, bar_header);
       int total_points = seq_header.data_point_count;
       Map seq_tagvals = seq_header.tagvals;
-      MutableAnnotatedBioSeq seq = seq_header.aseq;
+      //      MutableAnnotatedBioSeq seq = seq_header.aseq;
+      SmartAnnotBioSeq seq = (SmartAnnotBioSeq)seq_header.aseq;
       if (vals_per_point == 1) {
         throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
       }
@@ -476,8 +478,13 @@ public class BarParser implements AnnotationWriter  {
               System.out.println("Data[" + i + "]:\t" + col0 + "\t" + col1);
             }
           }
-	  System.out.println("in BarParser, creating GraphSym, graph id: " + graph_id);
+	  if (DEBUG_READ)  {
+	    System.out.println("^^^ creating GraphSym in BarParser, group = " + seq.getSeqGroup().getID() +
+			       ", seq = " + seq.getID());
+	    System.out.println("      graph id: " + graph_id);
+	  }
 	  if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, seq); }
+	  checkSeqLength(seq, xcoords);
           GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);
@@ -518,6 +525,7 @@ public class BarParser implements AnnotationWriter  {
 	    pm_name = GraphSymUtils.getUniqueGraphID(pm_name, seq);
 	    mm_name = GraphSymUtils.getUniqueGraphID(mm_name, seq);
 	  }
+	  checkSeqLength(seq, xcoords);
           GraphSym pm_graf =
             new GraphSym(xcoords, ycoords, pm_name, seq);
           GraphSym mm_graf =
@@ -633,7 +641,7 @@ public class BarParser implements AnnotationWriter  {
     }
   }
 
-  public static BarSeqHeader parseSeqHeader(DataInput dis, AnnotatedSeqGroup seq_group, BarFileHeader file_header)  throws IOException {
+  public static BarSeqHeader parseSeqHeader(DataInput dis, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
       int namelength = dis.readInt();
       //      String
       byte[] barray = new byte[namelength];
@@ -681,7 +689,9 @@ public class BarParser implements AnnotationWriter  {
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
 
+      AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, default_seq_group);
       // trying standard AnnotatedSeqGroup seq id resolution first
+
       seq = seq_group.getSeq(seqname);
       if (seq == null) { seq = seq_group.getSeq(orig_seqname); }
 
@@ -728,12 +738,53 @@ public class BarParser implements AnnotationWriter  {
 	  seqversion = groupname + ":" + seqversion;
 	}
 	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
-        seq = seq_group.addSeq(seqname, 500000000);
+	//        seq = seq_group.addSeq(seqname, 500000000);
+        seq = seq_group.addSeq(seqname, 1000);
       }
       if (DEBUG_READ)  { System.out.println("seq: " + seq); }
       BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);
       return seq_header;
   }
+
+  /**
+   *  if group and version are null/blank, assume default_seq_group is correct.
+   *  otherwise try an match with an existing AnnotatedSeqGroup
+   *  if existing AnnotatedSeqGroup can't be found, create a new one?
+   */
+  public static AnnotatedSeqGroup getSeqGroup(String groupname, String version, AnnotatedSeqGroup default_seq_group) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = null;
+    if (((version == null)  || version.equals("")) && 
+	((groupname == null) || groupname.equals("") )) {
+      group = default_seq_group;
+    }
+    else {
+      if (groupname != null && version != null) {
+	group = gmodel.getSeqGroup(groupname + ":" + version);
+      }
+      if (group == null && groupname != null) {
+	group = gmodel.getSeqGroup(groupname); 
+      }
+      if (group == null && version != null) {
+	group = gmodel.getSeqGroup(version); 
+      }
+      // no group found, so create a new one
+      if (group == null)  {
+	String new_group_name;
+	if (groupname != null && groupname.length()>0 && version != null && version.length()>0) {
+	  new_group_name = groupname + ":" + version;
+	}
+	else if (version == null || version.length()==0) {
+	  new_group_name = groupname;
+	}
+	else { new_group_name = version; }
+	System.out.println("group not found, creating new seq group: " + new_group_name);
+	group = gmodel.addSeqGroup(new_group_name);
+      }
+    }
+    return group;
+  }
+
 
 
   /**
@@ -803,6 +854,16 @@ public class BarParser implements AnnotationWriter  {
   }
 
   public String getMimeType() { return "binary/bar"; }
+
+  public static void checkSeqLength(BioSeq seq, int[] xcoords) {
+    if (seq instanceof MutableAnnotatedBioSeq) {
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq;
+      int xcount = xcoords.length;
+      if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {
+	aseq.setLength(xcoords[xcount-1]);
+      }
+    }
+  }
 
 
 }

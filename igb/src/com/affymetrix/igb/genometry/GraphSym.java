@@ -30,6 +30,13 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   BioSeq graph_original_seq;
   GraphState state;
   String gid;
+  /**
+   *  id_locked is a temporary fix to allow graph id to be changed after construction, 
+   *  but then lock once lockID() is called.
+   *  Really want to forbid setting id except in constructor, but currently some code 
+   *    needs to modify this after construction, but before adding as annotation to graph_original_seq
+   */
+  boolean id_locked = false;
 
  /** Property name that can be used to set/get the strand this graph corresponds to.
    *  The property value should be a Character, equal to '+', '-' or '.'.
@@ -64,6 +71,10 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
     //    setGraphName(name);
   }
 
+  public void lockID() {
+    id_locked = true;
+  }
+
   public void setGraphName(String name) {
     //    System.out.println("called GraphSym.setGraphName(): " + name);
     state.setLabel(name);
@@ -89,7 +100,17 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
    *  Not allowed to call GraphSym.setID(), id
    */
   public void setID(String id) {
-    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
+    if (id_locked) {
+      System.out.println("%%%%%%% WARNING: called GraphSym.setID(), not allowed!");
+      //      SmartAnnotBioSeq sab = (SmartAnnotBioSeq)getGraphSeq();
+      //      System.out.println("   seq = " + sab.getID() + ", group = " + sab.getSeqGroup().getID());
+      System.out.println("    old id: " + this.getID());
+      System.out.println("    new id: " + id);
+    }
+    else {
+      gid = id;
+    }
+    //    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
   }
 
   public int getPointCount() {

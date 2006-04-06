@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -99,9 +99,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   *     second with x = max of child's span, y = 0
   *</pre>
   *
-  *  The returned GraphSym will have some properties set by default:
+  *  The returned GraphSym will have this property set by default:
   *  <ol>
-  *  <li>GraphSym.PROP_INITIAL_GRAPH_STYLE will be Integer(GraphGlyph.STAIRSTEP_GRAPH)
   *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Character.
   *  </ol>
   *

@@ -309,40 +309,18 @@ public class GraphSymUtils {
         GraphSym gsym = (GraphSym)grafs.get(i);
         BioSeq gseq = gsym.getGraphSeq();
         if (gseq instanceof SmartAnnotBioSeq) {
-	  SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)gseq;
-	  int prevcount = 0;
 	  String gid = gsym.getID();
-	  String gname = gsym.getGraphName();
-	  String newid = gid;
-	  String newname = gname;
-
-	  // if id already in use by another GraphSym, uniquify id
-	  if (gid != null) {
-	    SeqSymmetry prevsym = aseq.getAnnotation(gid);
-	    while (prevsym != null) {
-	      prevcount++;
-	      newid = gid + "." + prevcount;
-	      prevsym = aseq.getAnnotation(newid);
-	    }
-	    if (prevcount > 0) { gsym.setID(newid); }
+	  String newid = getUniqueGraphID(gid, gseq);
+	  if (newid != gid) {
+	    gsym.setID(newid);
 	  }
-	  else if (gname != null) {
-	    SeqSymmetry prevsym = aseq.getAnnotation(gname);
-	    while (prevsym != null) {
-	      prevcount++;
-	      newname = gname + "." + prevcount;
-	      prevsym = aseq.getAnnotation(newname);
-	    }
-	    if (prevcount > 0) { gsym.setGraphName(newname); }
-
-	  }
-          aseq.addAnnotation(gsym);
         }
-
+	gsym.lockID();
+	if (gseq instanceof MutableAnnotatedBioSeq)   {
+	  ((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
+	}
         if (gsym != null)  {
           gsym.setProperty("source_url", original_stream_name);
-	  //	  System.out.println("in GraphSymUtils.processGraphSyms(), setting name = " + graph_name);
-          gsym.setGraphName(graph_name);
         }
         if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
           gsym = GraphSymUtils.convertTransFragGraph(gsym);

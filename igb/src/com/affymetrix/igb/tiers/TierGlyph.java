@@ -110,10 +110,6 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     setStyle(style);
   }
 
-  public TierGlyph(String name) {
-    this(AnnotStyle.getInstance(name));
-  }
-
   /** Constructor for the case where AnnotStyle is null. */
   public TierGlyph() {
     this(AnnotStyle.NULL_INSTANCE);
@@ -141,6 +137,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
         setState(TierGlyph.HIDDEN);
       }
       setMaxExpandDepth(style.getMaxDepth());
+      setLabel(style.getHumanName());
     } else {
       setState(TierGlyph.EXPANDED);
     }

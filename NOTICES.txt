@@ -23,7 +23,21 @@ B)   This product includes portions of the Jetty package
      The files from the Jetty project included with this product include: 
      org.mortbay.jetty.jar, javax.servlet.jar
 
-C)   This product may include the Java look and feel Graphics Repository
+
+C)   This product includes a slightly modified copy of the
+     Fusion SDK from Affymetrix, Inc. (pure Java version).
+     http://www.affymetrix.com/support/developer/fusion/index.affx
+     
+     The Fusion SDK is covered by the GNU Lesser General Public License,
+     Version 2.1, February 1999.
+     http://www.gnu.org/copyleft/lesser.html#TOC1
+     
+     The GenoViz project disclaims all copyright interest in the "Fusion SDK".
+     
+     This copy of the fusion sdk is stored in the file affx_fusion.jar
+
+
+D)   This product may include the Java look and feel Graphics Repository
      Copyright 1994-2006 Sun Microsystems, Inc.
      http://java.sun.com/developer/techDocs/hi/repository/
      

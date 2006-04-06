@@ -134,7 +134,7 @@ public class GraphGlyphUtils {
     Rectangle2D coordbox = null;
     if (new_tier) {
       if (DEBUG)  { System.out.println("  making new tier: " + graf.getGraphName()); }
-      tglyph = new TierGlyph(graf.getGraphName());
+      tglyph = new TierGlyph(graf.getGraphState());
       tglyph.setState(TierGlyph.COLLAPSED);
       PackerI pack = tglyph.getPacker();
       if (pack instanceof CollapsePacker) { ((CollapsePacker)pack).setParentSpacer(0); }
@@ -188,13 +188,13 @@ public class GraphGlyphUtils {
     IAnnotStyle style = tglyph.getAnnotStyle();
     if (style != null) { tglyph.setLabel(style.getHumanName()); }
     else { tglyph.setLabel("unknown"); }
+    
     //      tglyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
     if (new_tier)  {
       map.addTier(tglyph, true);
     }
     gviewer.getGraphStateTierHash().put(gl.getGraphState(), tglyph);
     gviewer.getGraphNameTierHash().put(gl.getLabel(), tglyph);
-    //    gviewer.getGraphIdTierHash().put(gl.getID(), tglyph);
     gviewer.getGraphIdTierHash().put(graf.getID(), tglyph);
 
     gl.getGraphState().setFloatGraph(false);

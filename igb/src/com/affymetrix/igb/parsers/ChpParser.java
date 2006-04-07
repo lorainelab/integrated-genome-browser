@@ -144,9 +144,6 @@ public class ChpParser {
       Iterator fiter = file_prop_hash.entrySet().iterator();
       while (fiter.hasNext()) {
         Map.Entry ent = (Map.Entry)fiter.next();
-        System.out.println("Property: " + ent.getKey());
-        System.out.println("Value class: " + ent.getValue().getClass());
-        System.out.println("Value string: " + ent.getValue().toString());
         gsym.setProperty((String)ent.getKey(), ent.getValue());
       }
 

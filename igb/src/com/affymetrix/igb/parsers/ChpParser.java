@@ -18,7 +18,7 @@ public class ChpParser {
   //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {
   // }
 
-  public static List parse(String file_name) {
+  public static List parse(String file_name) throws IOException {
     List results = null;
     if (! (reader_registered)) {
       //    FusionCHPLegacyData.registerReader();
@@ -28,18 +28,16 @@ public class ChpParser {
     }
 
     File testfil = new File(file_name);
-    System.out.println("file exists: " + testfil.exists());
-    System.out.println("reading in CHP file: " + file_name);
+    System.out.println("Parsing CHP file: " + file_name);
 
     FusionCHPData chp = FusionCHPDataReg.read(file_name);
     AffymetrixGuidType chp_type =  chp.getFileTypeIdentifier();
     String chp_type_name = chp_type.getGuid();
-    System.out.println("chp: " + chp);
-    System.out.println("chp type: " + chp_type_name);
+    System.out.println("Array type: " + chp_type_name);
 
     if (chp_type_name.equals(CHPTilingData.CHP_TILING_TYPE)) {
       FusionCHPTilingData tile_chp = FusionCHPTilingData.fromBase(chp);
-      System.out.println("tilechp: " + tile_chp);
+      //System.out.println("tilechp: " + tile_chp);
       results = parseTilingChp(tile_chp);
     }
     else {
@@ -54,7 +52,8 @@ public class ChpParser {
 
   public static List parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq) {
     return parseTilingChp(tchp, annotate_seq, true);
-      }
+  }
+  
   public static List parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     ArrayList results = new ArrayList();
@@ -70,10 +69,15 @@ public class ChpParser {
       ParameterNameValue param = (ParameterNameValue) alg_params.get(i);
       String pname = param.getName();
       String pval = param.getValueText();
+      // unfortunately, param.getValueText() is NOT Ascii text, as it is supposed to be.
+      // the character encoding is unknown, so the text looks like garbage (at least on Unix).
       //      System.out.println("   param:  name = " + pname + ", val = " + pval);
       file_prop_hash.put(pname, pval);
     }
 
+    AnnotatedSeqGroup group = null;
+    MutableAnnotatedBioSeq aseq = null;
+    
     for (int i=0; i<seq_count; i++) {
       tchp.openTilingSequenceDataSet(i);
       TilingSequenceData seq = tchp.getTilingSequenceData();
@@ -94,7 +98,7 @@ public class ChpParser {
       // 2. just seq_group_name
       // 3. just seq_vers
       String groupid = seq_group_name + ":" + seq_vers;
-      AnnotatedSeqGroup group = gmodel.getSeqGroup(groupid);
+      group = gmodel.getSeqGroup(groupid);
       if (group == null) {
 	group = gmodel.getSeqGroup(seq_group_name);
       }
@@ -103,11 +107,17 @@ public class ChpParser {
       }
       // if no AnnotatedSeqGroup matches found, create a new one
       if (group == null) {
-	System.out.println("adding new seq group to genometry model: " + groupid);
+	System.out.println("adding new seq group: " + groupid);
 	group = gmodel.addSeqGroup(groupid);
       }
-
-      MutableAnnotatedBioSeq aseq = group.getSeq(seq_name);
+      
+      if (gmodel.getSelectedSeqGroup() != group) {
+        // This is necessary to make sure new groups get added to the DataLoadView.
+        // maybe need a SeqGroupModifiedEvent class instead.
+        gmodel.setSelectedSeqGroup(group);
+      }
+      
+      aseq = group.getSeq(seq_name);
       if (aseq == null) {
 	System.out.println("adding new seq: id = " + seq_name + ", group = " + group.getID());
 	aseq = group.addSeq(seq_name, 0);
@@ -134,6 +144,9 @@ public class ChpParser {
       Iterator fiter = file_prop_hash.entrySet().iterator();
       while (fiter.hasNext()) {
         Map.Entry ent = (Map.Entry)fiter.next();
+        System.out.println("Property: " + ent.getKey());
+        System.out.println("Value class: " + ent.getValue().getClass());
+        System.out.println("Value string: " + ent.getValue().toString());
         gsym.setProperty((String)ent.getKey(), ent.getValue());
       }
 
@@ -152,10 +165,13 @@ public class ChpParser {
 	aseq.addAnnotation(gsym);
       }
     }
+    
+    gmodel.setSelectedSeqGroup(group);
+    gmodel.setSelectedSeq(aseq);
     return results;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
     List results = ChpParser.parse(infile);
     System.out.println("graphs parsed: " + results.size());

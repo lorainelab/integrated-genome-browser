@@ -193,6 +193,18 @@ public class LoadFileAction {
     MutableAnnotatedBioSeq aseq = null;
     InputStream fistr = null;
     try {
+      // need to handle CHP files as a special case, because ChpParser currently only has
+      //    a parse() method that takes the file name as an argument, no method to parse from
+      //    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
+      //
+      // Also cannot handle compressed chp files, so don't bother with the Streamer class.
+      if (annotfile.getName().toLowerCase().endsWith("chp")) {
+        //System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
+        java.util.List results = ChpParser.parse(annotfile.getPath());
+        aseq = getLastSeq(results);
+      }
+      else {
+      
       int file_length = (int)annotfile.length();
       //fistr = new FileInputStream(annotfile);
       StringBuffer sb = new StringBuffer();
@@ -201,15 +213,8 @@ public class LoadFileAction {
       int pindex = stripped_name.lastIndexOf(".");
       String suffix = null;
       if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
-      // need to handle CHP files as a special case, because ChpParser currently only has
-      //    a parse() method that takes the file name as an argument, no method to parse from
-      //    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-      if (suffix.equalsIgnoreCase("chp"))  {
-        fistr.close();
-        System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
-        ChpParser.parse(annotfile.getPath());
-      }
-      else if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+
+      if (GraphSymUtils.isAGraphFilename(stripped_name)) {
         AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
         if (seq_group == null) {
           ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
@@ -221,6 +226,8 @@ public class LoadFileAction {
       }
       else {
         aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
+      }
+      
       }
     }
     catch (Exception ex) {
@@ -498,6 +505,17 @@ public class LoadFileAction {
       first_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
     }
     return first_seq;
+  }
+  
+  /** Returns the first BioSeq on the last SeqSymmetry in the given list, or null. */
+  private static MutableAnnotatedBioSeq getLastSeq(java.util.List syms) {
+    MutableAnnotatedBioSeq last_seq = null;
+    if (syms != null && ! syms.isEmpty()) {
+      SeqSymmetry fsym = (SeqSymmetry) syms.get(syms.size() - 1);
+      SeqSpan fspan = fsym.getSpan(0);
+      last_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
+    }
+    return last_seq;
   }
 
   /** A JFileChooser that has a checkbox for whether you want to merge annotations.

@@ -24,9 +24,10 @@ public class Das2Discovery {
   static {
     name2url.put("biopackage", "http://das.biopackages.net/codesprint/sequence");
     //    name2url.put("localhost", "http://localhost:9092/das2/sequence");
-    name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");  
+    //name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");  
+    //name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");  
+    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sequence");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
-    //    name2url.put("netaffx", "http://netaffxdas.affymetrix.com/das2");
     //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");
     //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");

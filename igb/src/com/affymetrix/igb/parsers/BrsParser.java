@@ -98,7 +98,7 @@ public class BrsParser implements AnnotationWriter  {
   }
 
   /**
-   *  @param blength, buffer length, if unknown use -1;
+   *  @param blength  buffer length, if unknown use -1;
    */
   public java.util.List parse(InputStream istr, String annot_type,
                               AnnotatedSeqGroup seq_group, long blength) 

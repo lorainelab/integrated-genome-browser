@@ -316,7 +316,7 @@ public class Das2VersionedSource  {
 
 
   /**
-   *  use the name feature filter in DAS/2 to retrieve features by name/id/(alias?)
+   *  Use the name feature filter in DAS/2 to retrieve features by name or id (maybe alias).
    *  this method should also add any feature retrieved to the appropriate seq(s) in the AnnotatedSeqGroup
    *      (should they be added directly or indirectly?  For range-based queries the returned features are
    *       wrapped in a Das2FeatureRequestSym -- should there be a wrapper sym for name-based queries also,

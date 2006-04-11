@@ -161,16 +161,16 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   Map id2sym = new HashMap();
 
   /**
-   *  Need mapping of parent sym to map of child ids to connect parents and children
+   *  Mapping of parent sym to map of child ids to connect parents and children.
    */
   Map parent2parts = new HashMap();
 
-  /**
+  /*
    *  need mapping of parent id to child count for efficiently figuring out when
    *    symmetry is fully populated with children
    */
 
-  /**
+  /*
    *   setBaseURI should only be used when writing out DAS2XML
    *   (maybe should force specification of base URI in constructor?
    *      then wuoldn't need extra url argument in parse() method...)
@@ -243,21 +243,21 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   /**
-   *  implementing sax content handler interface
+   *  implementing sax content handler interface.
    */
   public void startDocument() {
     System.out.println("Das2FeaturesSaxParser.startDocument() called");
   }
 
   /**
-   *  implementing sax content handler interface
+   *  implementing sax content handler interface.
    */
   public void endDocument() {
     //    System.out.println("Das2FeaturesSaxParser.endDocument() called");
   }
 
   /**
-   *  implementing sax content handler interface
+   *  implementing sax content handler interface.
    */
   public void startElement(String uri, String localName, String qname, Attributes atts) {
     // to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
@@ -391,7 +391,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
   /**
-   *  implementing sax content handler interface
+   *  implementing sax content handler interface.
    */
   public void endElement(String uri, String name, String qname)  {
     if (DEBUG)  { System.out.println("end element: " + name); }
@@ -436,7 +436,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
     /**
-     *  implementing sax handler interface
+     *  implementing sax handler interface.
      */
   public void characters(char[] ch, int start, int length) {
     // used to need to collect characters for property CDATA
@@ -625,8 +625,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
     /**
-     *  Write out a SeqSymmetry in DAS2FEATURE format.p
-     *  Recursively descends to write out all descendants
+     *  Write out a SeqSymmetry in DAS2FEATURE format.
+     *  Recursively descends to write out all descendants.
      */
     public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
 				String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
@@ -802,6 +802,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
 
   /**
+   *  A temporary hack.
    *  This is a very temporary fix!!!
    *  Need to move to using full URI references to identify sequences,
    *      and optional name property to present to users

@@ -252,7 +252,7 @@ public class AnnotatedSeqGroup {
     }
   }
 
-  /** Call this method if you alter the Map returned by {@link #getSymHash}.
+  /** Call this method if you alter the Map of IDs to SeqSymmetries.
    *  @param source  The source responsible for the change, used in constructing
    *    the {@link SymMapChangeEvent}.
    */

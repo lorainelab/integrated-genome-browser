@@ -41,7 +41,7 @@ public class SeqSymSummarizer {
    *</pre>
    *  @param syms a List of SeqSymmetry's
    *  @param seq the sequence you want the summary computed for
-   *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean)}
+   *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean, String)}
    */
   public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
     int symcount = syms.size();

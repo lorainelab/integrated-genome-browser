@@ -14,12 +14,13 @@ import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.event.VirtualRubberBandEvent;
 
 /**
- *  trying to split a tiered map across multiple windows on multiple screens
- *  maybe have one parent master map and others use it as root?
- *
- *  Any methods that only affect scene should not need to be propagated to child windows,
- *     since scene is shared by parent and all children
+ *  Splits a tiered map across multiple windows on multiple screens.
  */
+//   maybe have one parent master map and others use it as root?
+// 
+//   Any methods that only affect scene should not need to be propagated to child windows,
+//      since scene is shared by parent and all children
+// 
 public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, NeoRubberBandListener {
   //  Frame, Window, JFrame, JWindow
   boolean USE_SWING = true;

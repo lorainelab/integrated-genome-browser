@@ -31,7 +31,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
- *  {@link AnnotatedSeqGroup#getSymHash()}.  When the user selects an item,
+ *  {@link AnnotatedSeqGroup#getSymmetryIDs()}.  When the user selects an item,
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
@@ -151,7 +151,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
     model.setDataVector(rows, col_headings);
   }
 
-  /** Causes a call to {@link #showSymHash(Map)}.
+  /** Causes a call to {@link #showSymHash(AnnotatedSeqGroup)}.
    *  Normally, this occurs as a result of a call to
    *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
    */

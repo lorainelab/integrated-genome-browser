@@ -84,7 +84,13 @@ public abstract class MenuUtil {
   public static ImageIcon getIcon(String resource_name) {
     ImageIcon icon = null;
     try {
-      java.net.URL url = ClassLoader.getSystemResource(resource_name);
+      // Note: MenuUtil.class.getResource(resource_name) does not work;
+      // ClassLoader.getSystemResource(resource_name) works locally, but not with WebStart;
+      //
+      // Both of these work locally and with WebStart:
+      //  MenuUtil.class.getClassLoader().getResource(resource_name)
+      //  Thread.currentThread().getContextClassLoader().getResource(resource_name)
+      java.net.URL url = Thread.currentThread().getContextClassLoader().getResource(resource_name);      
       if (url != null) {
         icon = new ImageIcon(url);
       }

@@ -789,7 +789,6 @@ public class SeqMapView extends JPanel
     }
 
     com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
-    com.affymetrix.genoviz.util.Memer mem = new com.affymetrix.genoviz.util.Memer();
     tim.start();
 
     boolean same_seq = ((seq == this.aseq) && (seq != null));

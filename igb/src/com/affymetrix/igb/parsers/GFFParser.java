@@ -97,7 +97,6 @@ public class GFFParser implements AnnotationWriter  {
   boolean USE_FILTER = true;
   boolean USE_GROUPING = true;
 
-  boolean default_create_container_annot = false;
   boolean use_standard_filters = false;
   boolean gff_base1 = true;
 
@@ -264,6 +263,7 @@ public class GFFParser implements AnnotationWriter  {
     int line_count = 0;
     int sym_count = 0;
     int group_count = 0;
+    number_of_duplicate_warnings = 0;
 
     Map seq2meths = new HashMap(); // see getContainer()
     Map group_hash = new HashMap();
@@ -714,6 +714,7 @@ public class GFFParser implements AnnotationWriter  {
     addFeatureFilter("cluster");
     addFeatureFilter("psr");
     addFeatureFilter("link");
+    
     if (gff_version == GFF3)  {
       System.out.println("group tag: " + GFF3_PARENT);
       // NEED TO FIX SOON TO HANDLE > 2 LEVELS OF FEATURE HIERARCHY!!
@@ -736,7 +737,10 @@ public class GFFParser implements AnnotationWriter  {
     setUseStandardFilters(use_standard_filters);
   }
 
+  static final Integer TWO = new Integer(2);
 
+  int number_of_duplicate_warnings = 0;
+  
   public String hackGff3GroupId(String atts) {
     String groupid = null;
     String featid = null;
@@ -753,10 +757,12 @@ public class GFFParser implements AnnotationWriter  {
       else if (tag.equals(GFF3_ID)) {
 	featid = val;
 	Object obj = gff3_id_hash.get(featid);
-	if (obj == null) { gff3_id_hash.put(featid, featid); }
+	if (obj == null) { 
+          gff3_id_hash.put(featid, featid);
+        }
 	else {
 	  if (obj instanceof String) {
-	    gff3_id_hash.put(featid, new Integer(2));
+	    gff3_id_hash.put(featid, TWO);
 	    featid = featid + "_1";
 	  }
 	  else if (obj instanceof Integer) {
@@ -765,7 +771,12 @@ public class GFFParser implements AnnotationWriter  {
 	    gff3_id_hash.put(featid, new Integer(fcount+1));
 	    featid = featid + "_" + iobj.toString();
 	  }
-	  System.out.println("duplicate feature id, new id: " + featid);
+          if (number_of_duplicate_warnings++ <= 10) {
+	    System.out.println("duplicate feature id, new id: " + featid);
+            if (number_of_duplicate_warnings == 10) {
+              System.out.println("(Suppressing further warnings about duplicate ids");
+            }
+          }
 	}
       }
     }
@@ -822,15 +833,8 @@ public class GFFParser implements AnnotationWriter  {
       System.exit(0);
     }
     */
-    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.sang.gff3";
-    //    output_file_name = "c:/data/pombe_annots/pombe_sanger_2006-03-01.gff";
-    //    output_file_name = "c:/data/yeast2_chip/test2.gff";
-    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109-peps-mapping.EXONERATE.gff3";
-    //    output_file_name = "c:/data/pombe_annots/exonerate.gff";
-    //    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109.Rfam.gff3";
-    //    output_file_name = "c:/data/pombe_annots/Rfam.gff";
-    input_file_name  = "c:/data/pombe_annots/schizosaccharomyces_pombe.20040109.tRNA.gff3";
-    output_file_name = "c:/data/pombe_annots/tRNA.gff";
+    input_file_name  = "in.gff3";
+    output_file_name = "out.gff";
 
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
@@ -929,9 +933,9 @@ public class GFFParser implements AnnotationWriter  {
       wr.write('\t');
 
       // frame
-      String frame = null;
-      if (cwp != null)  { frame = (String)cwp.getProperty("frame"); }
-      if (frame != null) { wr.write(frame); }
+      Object frame = null;
+      if (cwp != null)  { frame = cwp.getProperty("frame"); }
+      if (frame != null) { wr.write(frame.toString()); }
       else {  wr.write('.'); }
       wr.write('\t');  // frame
 

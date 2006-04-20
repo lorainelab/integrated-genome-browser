@@ -202,7 +202,7 @@ public class Bprobe1Parser {
       GFFParser gff_parser = new GFFParser();
       BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
       Map seqs = new LinkedHashMap();
-      List annots = gff_parser.parse(bis, seq_group, gff_parser.default_create_container_annot);
+      List annots = gff_parser.parse(bis, seq_group, false);
       bis.close();
       int total_annot_count = annots.size();
       int seq_count = seqs.size();

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -1158,8 +1159,7 @@ public class SeqMapView extends JPanel
     if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {
       min = Math.max(0, min-100);
       max = Math.min(aseq.getLength(), max+100);
-      SimpleSeqSpan span = new SimpleSeqSpan(min, max, aseq);
-      return span;
+      return new SimpleSeqSpan(min, max, aseq);
     }
     else {
       return null;
@@ -1262,7 +1262,7 @@ public class SeqMapView extends JPanel
       if (meth != null) {
         factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
         if (factory == null) {
-          Vector keyset = new Vector(regex2factory.keySet());
+          java.util.List keyset = new ArrayList(regex2factory.keySet());
 
           // Look for a matching pattern, going backwards, so that the
           // patterns from the last preferences read take precedence over the
@@ -1493,7 +1493,7 @@ public class SeqMapView extends JPanel
 	for (int i=0; i<glyphs.size(); i++) {
 	  GlyphI gl = (GlyphI)glyphs.get(i);
 	  SeqSymmetry sym = glyphToSym(gl);
-	  if (sym != null) syms.add(sym);
+	  if (sym != null) { syms.add(sym); }
 	}
       }
     }
@@ -1665,8 +1665,7 @@ public class SeqMapView extends JPanel
    */
   public java.util.List getSelectedSyms() {
     Vector glyphs = seqmap.getSelected();
-    java.util.List syms = glyphsToSyms(glyphs);
-    return syms;
+    return glyphsToSyms(glyphs);
   }
 
   /**
@@ -1813,7 +1812,9 @@ public class SeqMapView extends JPanel
 	  grid_glyph.setGridSpacing(bases);
 	  grid_glyph.setVisibility(true);  // making sure grid visibility is on
 	}
-	catch (Exception ex) { ex.printStackTrace(); }
+	catch (Exception ex) {
+          ErrorHandler.errorPanel("Error setting grid spacing to '"+str+"'", ex);
+        }
       }
       seqmap.updateWidget();
     }
@@ -1938,7 +1939,7 @@ public class SeqMapView extends JPanel
     final double coords_to_scroll = (double)pix_to_scroll / pix_per_coord;
 
     Rectangle2D cbox = seqmap.getViewBounds();
-    Rectangle pbox = seqmap.getView().getPixelBox();
+    //Rectangle pbox = seqmap.getView().getPixelBox();
     double start = (int)cbox.x;
 
     seqmap.zoom(NeoWidgetI.X, pix_per_coord);
@@ -2007,14 +2008,14 @@ public class SeqMapView extends JPanel
   /** Returns a rectangle containing all the current selections.
    *  @return null if the vector of glyphs is empty
    */
-  public Rectangle2D getRegionForGlyphs(Vector glyphs) {
+  public Rectangle2D getRegionForGlyphs(java.util.List glyphs) {
     int size = glyphs.size();
     if (size>0) {
       Rectangle2D rect = new Rectangle2D();
-      GlyphI g0 = (GlyphI) glyphs.elementAt(0);
+      GlyphI g0 = (GlyphI) glyphs.get(0);
       rect.copyRect(g0.getCoordBox());
       for (int i=1; i<size; i++) {
-        GlyphI g = (GlyphI) glyphs.elementAt(i);
+        GlyphI g = (GlyphI) glyphs.get(i);
         rect.add(g.getCoordBox());
       }
       return rect;
@@ -2153,7 +2154,7 @@ public class SeqMapView extends JPanel
 
     if (match_query_count <= max_for_matching) {
       match_glyphs = new Vector();
-      Vector target_glyphs = new Vector();
+      ArrayList target_glyphs = new ArrayList();
       target_glyphs.add(seqmap.getScene().getGlyph());
       double fuzz = getEdgeMatcher().getFuzziness();
       if (fuzz==0.0) {
@@ -2326,9 +2327,8 @@ public class SeqMapView extends JPanel
       }
     }
 
-    Vector selected_glyphs = seqmap.getSelected();
     if (show_edge_matches)  {
-      doEdgeMatching(selected_glyphs, false);
+      doEdgeMatching(seqmap.getSelected(), false);
     }
     seqmap.updateWidget();
     postSelections();
@@ -2453,22 +2453,26 @@ public class SeqMapView extends JPanel
   }
 
   // sets the text on the JLabel based on the current selection
-  private void setPopupMenuTitle(JLabel label, Vector selected_glyphs) {
+  private void setPopupMenuTitle(JLabel label, java.util.List selected_glyphs) {
     String title = getSelectionTitle(selected_glyphs);
+    // limit the popup title to 30 characters because big popup-menus don't work well
+    if (title != null && title.length() > 30) {
+      title = title.substring(0, 30) + " ...";
+    }
     label.setText(title);
   }
 
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
   // should be similar in both places, or else users could get confused.
-  private String getSelectionTitle(Vector selected_glyphs) {
+  private String getSelectionTitle(java.util.List selected_glyphs) {
     String id = null;
     if (selected_glyphs.isEmpty()) {
       id = "No selection";
     }
     else {
       if (selected_glyphs.size() == 1) {
-        GlyphI topgl = (GlyphI) selected_glyphs.elementAt(0);
+        GlyphI topgl = (GlyphI) selected_glyphs.get(0);
         Object info = topgl.getInfo();
         SeqSymmetry sym = null;
         if (info instanceof SeqSymmetry) {
@@ -2495,7 +2499,7 @@ public class SeqMapView extends JPanel
           // If ID of item is null, check recursively for parent ID, or parent of that...
           GlyphI pglyph = topgl.getParent();
           if (pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-            Vector v = new Vector(1);
+            ArrayList v = new ArrayList(1);
             v.add(pglyph);
             // Add one ">" symbol for each level of getParent()
             id = "> "+getSelectionTitle(v);
@@ -2520,7 +2524,7 @@ public class SeqMapView extends JPanel
     sym_popup.setVisible(false); // in case already showing
     sym_popup.removeAll();
 
-    Vector selected_glyphs = seqmap.getSelected();
+    java.util.List selected_glyphs = seqmap.getSelected();
 
     setPopupMenuTitle(sym_info, selected_glyphs);
     sym_popup.add(sym_info);

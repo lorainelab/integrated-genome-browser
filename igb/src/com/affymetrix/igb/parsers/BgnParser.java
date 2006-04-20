@@ -344,10 +344,10 @@ public class BgnParser implements AnnotationWriter  {
 	String name = fields[0];
 	//	name_hash.put(name, null);
 	String chrom = fields[1];
-	if (seq_group.getSeq(chrom) == null) {
-	  System.out.println("sequence not recognized, ignoring: " + chrom);
-	  continue;
-	}
+    if (seq_group != null && seq_group.getSeq(chrom) == null) {
+        System.out.println("sequence not recognized, ignoring: " + chrom);
+        continue;
+     }
 	String strand = fields[2];
 	String txStart = fields[3];  // min base of transcript on genome
 	String txEnd = fields[4];  // max base of transcript on genome

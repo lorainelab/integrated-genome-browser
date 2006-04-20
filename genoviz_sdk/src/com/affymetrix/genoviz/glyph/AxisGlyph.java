@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -60,7 +60,7 @@ public class AxisGlyph extends Glyph {
   protected boolean hitable = true;
 
   /**
-   * sets the "precision" of the labels.
+   * Sets the "precision" of the labels.
    * Each label is divided by this scale.
    *
    * @deprecated This is not helpful when zoomed all the way in.
@@ -88,7 +88,7 @@ public class AxisGlyph extends Glyph {
   protected Font label_font;
 
   /**
-   * sets the font in which labels will be rendered.
+   * Sets the font in which labels will be rendered.
    *
    * @param f the font to use
    */
@@ -105,7 +105,7 @@ public class AxisGlyph extends Glyph {
   }
 
   /**
-   * sets the font in which labels will be rendered.
+   * Sets the font in which labels will be rendered.
    *
    * @param fnt a new matching font will be created
    * and used internally.
@@ -124,7 +124,7 @@ public class AxisGlyph extends Glyph {
   }
 
   /**
-   * sets the color in which the axis is rendered.
+   * Sets the color in which the axis is rendered.
    *
    * <p><em>Note that the super class, Glyph,
    * sets the background color in setColor.
@@ -193,7 +193,7 @@ public class AxisGlyph extends Glyph {
   protected int tickPlacement = ABOVE;
 
   /**
-   * places the axis ticks relative to the center line.
+   * Places the axis ticks relative to the center line.
    *
    * @param thePlacement ABOVE or BELOW for HORIZONTAL axes,
    *                     RIGHT or LEFT for VERTICAL axes.
@@ -252,7 +252,7 @@ public class AxisGlyph extends Glyph {
   protected int labelThickness;
 
   /**
-   * places the axis labels relative to the center line and ticks.
+   * Places the axis labels relative to the center line and ticks.
    *
    * <p> Bug: When placed to the LEFT labels are still left justified.
    * This leaves an unsightly gap with small numbers.
@@ -298,7 +298,7 @@ public class AxisGlyph extends Glyph {
   }
 
   /**
-   * creates an axis.
+   * Creates an axis.
    *
    * @param orientation HORIZONTAL or VERTICAL
    */
@@ -320,7 +320,7 @@ public class AxisGlyph extends Glyph {
   }
 
   /**
-   * creates a horizontal axis.
+   * Creates a horizontal axis.
    */
   public AxisGlyph() {
     this(HORIZONTAL);
@@ -341,7 +341,7 @@ public class AxisGlyph extends Glyph {
   private Rectangle2D lastCoordBox = null;
 
   /**
-   * centers the center_line within this axis' coordbox.
+   * Centers the center_line within this axis' coordbox.
    */
   protected void setCenter() {
     if (orient == VERTICAL) {
@@ -354,7 +354,7 @@ public class AxisGlyph extends Glyph {
   }
 
   /**
-   * places the center_line inside the coordbox.
+   * Places the center_line inside the coordbox.
    * This should only be called when the coordbox has moved.
    */
   private void placeCenter(ViewI theView) {
@@ -383,7 +383,8 @@ public class AxisGlyph extends Glyph {
       theView.transformToPixels(coordbox, pixelbox);
       Rectangle centralBox = new Rectangle();
       theView.transformToPixels(centralLine, centralBox);
-
+      
+      
       // Adjust the pixel box to shrink wrap the axis.
       if (VERTICAL == this.orient) {
         centralBox.x -= MAJORTICKHEIGHT;
@@ -407,10 +408,24 @@ public class AxisGlyph extends Glyph {
           centralBox.height += labelThickness;
         }
       }
-
+       
+      Rectangle2D temp_rect = new Rectangle2D(coordbox.x, coordbox.y,
+        coordbox.width, coordbox.height);
       // Readjust the coord box to match the new pixel box.
-      theView.transformToCoords(centralBox, this.coordbox);
+      theView.transformToCoords(centralBox, temp_rect);
 
+      if (HORIZONTAL == orient) {
+        coordbox.y = temp_rect.y;
+        coordbox.height = temp_rect.height;
+        // leave coordbox.x and coordbox.width alone
+        // (temp_rect.width will be pretty close to coordbox.width, but round-off errors in
+        // the transformations can result in problems that manifest as the right
+        // edge of the axis not being drawn when the zoom level is very high)
+      } else if (VERTICAL == orient) {
+        coordbox.x = temp_rect.x;
+        coordbox.width = temp_rect.width;
+        // leave the y and height coords alone
+      }      
     }
 
     else {
@@ -461,7 +476,7 @@ public class AxisGlyph extends Glyph {
   private final Rectangle select_pix = new Rectangle();
   private final Rectangle2D scratchcoords = new Rectangle2D();
   private final Rectangle scratchpixels = new Rectangle();
-
+      
   public void draw(ViewI view) {
     String label = null;
     int axis_loc;
@@ -628,6 +643,7 @@ public class AxisGlyph extends Glyph {
       else  {
         map_loc = view.transformToCoords(pixelbox, scratchcoords).x;
       }
+      
       if (pixelbox.x+pixelbox.width > clipbox.x+clipbox.width)  {
         view.transformToCoords(clipbox, scratchcoords);
         max_map = scratchcoords.x + scratchcoords.width;
@@ -690,9 +706,9 @@ public class AxisGlyph extends Glyph {
     // Draw the major tick marks including labels.
 
     int canvas_loc;   // location in canvas coordinates
-
+    
     if ( !reversed ) {
-      for( ; tick_loc <= max_map; tick_loc += tick_increment, tick_scaled_loc += tick_scaled_increment)  {
+      for( ; tick_loc <= max_map ; tick_loc += tick_increment, tick_scaled_loc += tick_scaled_increment)  {
         canvas_loc = (int)tick_scaled_loc;
 
         // Don't draw things which are off the screen

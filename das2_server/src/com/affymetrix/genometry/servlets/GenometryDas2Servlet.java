@@ -765,26 +765,28 @@ public class GenometryDas2Servlet extends HttpServlet  {
     while (seqiter.hasNext()) {
       MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq)seqiter.next();
       if (mseq instanceof SmartAnnotBioSeq) {
-	SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)mseq;
-	Map seq_types = aseq.getTypes();
-	Iterator titer = seq_types.keySet().iterator();
-	while (titer.hasNext()) {
-	  String type = (String)titer.next();
-	  java.util.List flist = Collections.EMPTY_LIST;
-	  if (genome_types.get(type) == null) {
-	    SymWithProps tannot = aseq.getAnnotation(type);
-	    //	    System.out.println("type: " + type + ", format info: " +
-	    //			       tannot.getProperty("preferred_formats"));
-	    SymWithProps first_child = (SymWithProps)tannot.getChild(0);
-	    if (first_child != null) {
-	      java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
-	      //	      System.out.println("   child count: " + tannot.getChildCount() +
-	      //				 ", format info: " + formats);
-              if (formats != null) { flist = formats; }
-	    }
-	    genome_types.put(type, flist);
-	  }
-	}
+        SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)mseq;
+        Map seq_types = aseq.getTypes();
+        if (seq_types != null) {
+          Iterator titer = seq_types.keySet().iterator();
+          while (titer.hasNext()) {
+            String type = (String)titer.next();
+            java.util.List flist = Collections.EMPTY_LIST;
+            if (genome_types.get(type) == null) {
+              SymWithProps tannot = aseq.getAnnotation(type);
+              //	    System.out.println("type: " + type + ", format info: " +
+              //			       tannot.getProperty("preferred_formats"));
+              SymWithProps first_child = (SymWithProps)tannot.getChild(0);
+              if (first_child != null) {
+                java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
+                //	      System.out.println("   child count: " + tannot.getChildCount() +
+                //				 ", format info: " + formats);
+                if (formats != null) { flist = formats; }
+              }
+              genome_types.put(type, flist);
+            }
+          }
+        }
       }
       else {
 	System.out.println("in DAS2 servlet getTypes(), found a seq that is _not_ a SmartAnnotSeq: " + mseq);

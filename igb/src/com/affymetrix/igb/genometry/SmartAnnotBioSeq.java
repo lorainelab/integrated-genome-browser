@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -62,8 +62,29 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
-  // not sure if should expose type2sym like this, maybe return just a list of type strings instead?
-  public Map getTypes() { return type2sym; }
+  /**
+   *  Returns the set of type id String's that can be used in 
+   * {@link #getAnnotation(String)}.
+   */
+  public Set getTypeIds() {
+    if (type2sym == null) {
+      return Collections.EMPTY_SET;
+    } else {
+      return Collections.unmodifiableSet(type2sym.keySet());
+    }
+  }
+  
+  /**
+   * Returns an unmodifiable view of the map from type id String's to SymWithProp's.
+   * @deprecated  Use {#getTypeIds()} instead.
+   */
+  public Map getTypes() { 
+    if (type2sym == null) {
+      return Collections.EMPTY_MAP;
+    } else {
+      return Collections.unmodifiableMap(type2sym);
+    }
+  }
 
   /**
    *  Returns a top-level symmetry or null.

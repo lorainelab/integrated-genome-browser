@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,16 +14,9 @@
 package com.affymetrix.igb.prefs;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
-import java.util.prefs.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
-import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
@@ -60,16 +53,9 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     //main_box.add(Box.createVerticalStrut(5));
 
 
-    JPanel misc_box = new JPanel();
+    Box misc_box = Box.createVerticalBox();
     boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
-    if (is_unix) {
-      misc_box.setLayout(new GridLayout(6,1));
-    } else {
-      misc_box.setLayout(new GridLayout(4,1));
-    }
-    // The BoxLayout would seem to make sense for misc_box, but it oddly causes
-    // side-effects in the *other* boxes on this panel.
-    //misc_box.setLayout(new BoxLayout(misc_box, BoxLayout.Y_AXIS));
+
     misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
       UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
@@ -77,6 +63,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
 
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Place horizontal zoomer at top", UnibrowPrefsUtil.getTopNode(),
+      SeqMapView.PREF_X_ZOOMER_ABOVE, SeqMapView.default_x_zoomer_above));
+    
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Place vertical zoomer at left", UnibrowPrefsUtil.getTopNode(),
+      SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));
+    
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored intervals",
 						 UnibrowPrefsUtil.getTopNode(),
 						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
@@ -92,8 +84,9 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
       misc_box.add(new JLabel("Browser command: "));
       // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
       // force the WebBrowserControl to issue a warning.
-      misc_box.add(UnibrowPrefsUtil.createTextField(
+      JTextField tf = (JTextField) misc_box.add(UnibrowPrefsUtil.createTextField(
         UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, ""));
+      tf.setMaximumSize(new Dimension(10000, 1000));
     }
 
     /*
@@ -161,7 +154,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
                                                   SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
-
+    
+    axis_box.setAlignmentX(0.0f);
+    edge_match_box.setAlignmentX(0.0f);
+    orf_box.setAlignmentX(0.0f);
+    misc_box.setAlignmentX(0.0f);
+    
     //main_box.add(customizer_box);
     main_box.add(axis_box);
     main_box.add(edge_match_box);

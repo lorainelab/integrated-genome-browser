@@ -130,7 +130,6 @@ public class SeqMapView extends JPanel
    */
   boolean NEO_XZOOMER = false;
   boolean NEO_YZOOMER = false;
-  String XZOOMER_LOCATION = "North";
   boolean INTERNAL_XSCROLLER = true;
   boolean INTERNAL_YSCROLLER = true;
   boolean XZOOMER_IN_MAP_CONTAINER = false;
@@ -182,6 +181,12 @@ public class SeqMapView extends JPanel
   /** Name of a boolean preference for whether the hairline lable should be on. */
   public static final String PREF_HAIRLINE_LABELED = "Hairline Label On";
 
+  /** Name of a boolean preference for whether the horizontal zoom slider is above the map. */
+  public static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
+  
+  /** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
+  public static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
+
   public static final Color default_axis_color = Color.BLACK;
   public static final Color default_axis_background = Color.WHITE;
   public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;
@@ -189,6 +194,8 @@ public class SeqMapView extends JPanel
   //public static final Color default_default_background_color = Color.BLACK;
   public static final Color default_edge_match_color = Color.WHITE;
   public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
+  public static final boolean default_x_zoomer_above = true;
+  public static final boolean default_y_zoomer_left = true;
 
   static NumberFormat nformat = new DecimalFormat();
 
@@ -253,6 +260,9 @@ public class SeqMapView extends JPanel
   TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
+  
+  Box xzoombox;
+  Box yzoombox;
 
   /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
    *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
@@ -349,7 +359,7 @@ public class SeqMapView extends JPanel
     setupPopups();
     this.setLayout(new BorderLayout());
 
-    Box xzoombox = Box.createHorizontalBox();
+    xzoombox = Box.createHorizontalBox();
     //    xzoombox.add(new SeqComboBoxView());
 
     xzoombox.add(new JLabel("bases per pixel:"));
@@ -371,10 +381,22 @@ public class SeqMapView extends JPanel
 	}
       } );
     xzoombox.add(bases_in_viewTF);
-    xzoombox.add((Component)xzoomer);
-    this.add(XZOOMER_LOCATION, xzoombox);
+    xzoombox.add((Component) xzoomer);
+    boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+    if (x_above) {
+      this.add(BorderLayout.NORTH, xzoombox);
+    } else {
+      this.add(BorderLayout.SOUTH, xzoombox);      
+    }
 
-    this.add("East", (Component)yzoomer);
+    yzoombox = Box.createVerticalBox();
+    yzoombox.add((Component) yzoomer);
+    boolean y_left = UnibrowPrefsUtil.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+    if (y_left) {
+      this.add(BorderLayout.WEST, yzoombox);
+    } else {
+      this.add(BorderLayout.EAST, yzoombox);
+    }
 
     // experimenting with transcriptarium split windows
     if (SPLIT_WINDOWS) {
@@ -465,6 +487,28 @@ public class SeqMapView extends JPanel
           if (show_edge_matches)  {
             doEdgeMatching(seqmap.getSelected(), true);
           }
+        }
+        
+        else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
+          boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+          SeqMapView.this.remove(xzoombox);
+          if (b) {
+            SeqMapView.this.add(BorderLayout.NORTH, xzoombox);
+          } else {
+            SeqMapView.this.add(BorderLayout.SOUTH, xzoombox);
+          }
+          SeqMapView.this.invalidate();
+        }
+        
+        else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
+          boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
+          SeqMapView.this.remove(yzoombox);
+          if (b) {
+            SeqMapView.this.add(BorderLayout.WEST, yzoombox);
+          } else {
+            SeqMapView.this.add(BorderLayout.EAST, yzoombox);
+          }
+          SeqMapView.this.invalidate();
         }
       }
   };

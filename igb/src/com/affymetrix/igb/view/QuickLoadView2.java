@@ -182,7 +182,6 @@ public class QuickLoadView2 extends JComponent
     /* handles residues loading based on partial or full sequence load buttons */
     if (src == partial_residuesB) {
       if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); return; }
-      String seq_name = current_seq.getID();
       SeqSpan viewspan = gviewer.getVisibleSpan();
       if (viewspan.getBioSeq() != current_seq) {
         System.err.println("Error in QuickLoaderView: " +
@@ -326,7 +325,7 @@ public class QuickLoadView2 extends JComponent
 
 //          if (filename == null || filename.equals(""))  { continue; }
           boolean prev_loaded = QuickLoadServerModel.getLoadState(group, filename);
-          int pindex = filename.indexOf(".");
+          int pindex = filename.indexOf('.');
           if (pindex < 0)  { continue; }
           String annot_name = filename.substring(0, pindex);
           JCheckBox cb = new JCheckBox(annot_name);
@@ -367,7 +366,7 @@ public class QuickLoadView2 extends JComponent
       Iterator genome_names = current_server.getGenomeNames().iterator();
       while (genome_names.hasNext()) {
         String genome_name = (String) genome_names.next();
-        AnnotatedSeqGroup group = current_server.getSeqGroup(genome_name);
+        //AnnotatedSeqGroup group = current_server.getSeqGroup(genome_name);
         genomeCB.addItem(genome_name);
       }
     }
@@ -945,11 +944,16 @@ class QuickLoadServerModel {
   double default_genome_min = -2100200300;
   boolean DEBUG_VIRTUAL_GENOME = false;
   public void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
+    int seq_count = group.getSeqCount();
+    if (seq_count <= 1) {
+      // no need to make a virtual "genome" seq if there is only a single chromosome
+      return;
+    }
+    
     System.out.println("$$$$$ adding virtual genome seq to seq group");
     if (QuickLoadView2.build_virtual_genome &&
 	(group.getSeq(QuickLoadView2.GENOME_SEQ_ID) == null) ) {
       SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
-      int seq_count = group.getSeqCount();
       for (int i=0; i<seq_count; i++) {
 	BioSeq seq = group.getSeq(i);
 	if (seq != genome_seq) {

@@ -101,14 +101,20 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener  
       if (o instanceof java.util.List) {
         // For now, only display the first match of the list
         java.util.List sym_list = (java.util.List) o;
-        sym = (SeqSymmetry) sym_list.get(0);
-        num_matches = sym_list.size();
+        if (sym_list.isEmpty()) {
+          // this should never happen, but I'm playing it safe
+          num_matches = 0;
+          sym = null;
+        } else {
+          sym = (SeqSymmetry) sym_list.get(0);
+          num_matches = sym_list.size();
+        }
       } else {
         sym = (SeqSymmetry) o;
         num_matches = 1;
       }
       
-      if (num_matches != 1) {
+      if (num_matches != 1 || sym == null) {
         rows[j][1] = new Integer(0);
         rows[j][2] = new Integer(0);
         rows[j][3] = "" + num_matches + " matches";

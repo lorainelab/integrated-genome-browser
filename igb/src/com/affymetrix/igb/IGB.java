@@ -791,11 +791,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       return;
     }
 
-    Icon icon = null;
+    ImageIcon icon = null;
 
     if (plugin instanceof IPlugin) {
       IPlugin plugin_view = (IPlugin) plugin;
-      icon = (Icon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      icon = (ImageIcon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
 
       plugin_view.putPluginProperty(IPlugin.TEXT_KEY_IGB, this);
       plugin_view.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, map_view);
@@ -1131,7 +1131,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Image temp_icon = null;
     if (comp instanceof IPlugin) {
       IPlugin pv = (IPlugin) comp;
-      temp_icon = (Image) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      if (image_icon != null) temp_icon = image_icon.getImage();
     }
     if (temp_icon==null) { temp_icon = getIcon(); }
 

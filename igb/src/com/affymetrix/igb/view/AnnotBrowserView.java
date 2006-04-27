@@ -38,7 +38,7 @@ import com.affymetrix.swing.IntegerTableCellRenderer;
  *  the {@link SeqMapView} will zoom to it.
  */
 public class AnnotBrowserView extends JPanel
-implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, IPlugin  {
+implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
@@ -96,7 +96,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
     model.setDataVector(new Vector(0), col_headings_vector);
 
     lsm = table.getSelectionModel();
-    lsm.addListSelectionListener(this);
+    lsm.addListSelectionListener(list_selection_listener);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
     TableSorter2 sort_model = new TableSorter2(model);
@@ -218,7 +218,6 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
     showSymHash(evt.getSelectedGroup());
   }
   
-  
   // Redraws the table in response to events in the text fields and buttons.
   ActionListener text_action_listener = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
@@ -236,24 +235,26 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
   /** This is called when the user selects a row of the table;
    *  It calls {@link AnnotatedSeqGroup#findSyms(String)}.
    */
-  public void valueChanged(ListSelectionEvent evt) {
-    boolean old_way = true;
-    if (evt.getSource()==lsm && ! evt.getValueIsAdjusting() && model.getRowCount() > 0) {
-      int srow = table.getSelectedRow();
-      if (srow >= 0) {
-        String id = (String) table.getModel().getValueAt(srow, 0);
-        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-        AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-        java.util.List syms = group.findSyms(id);
-        gmodel.setSelectedSymmetriesAndSeq(syms, this);
+  ListSelectionListener list_selection_listener = new ListSelectionListener() {
+    public void valueChanged(ListSelectionEvent evt) {
+      boolean old_way = true;
+      if (evt.getSource()==lsm && ! evt.getValueIsAdjusting() && model.getRowCount() > 0) {
+        int srow = table.getSelectedRow();
+        if (srow >= 0) {
+          String id = (String) table.getModel().getValueAt(srow, 0);
+          SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+          AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+          java.util.List syms = group.findSyms(id);
+          gmodel.setSelectedSymmetriesAndSeq(syms, this);
+        }
       }
     }
-  }
+  };
 
   public void destroy() {
     removeAll();
     AnnotatedSeqGroup.removeSymMapChangeListener(this);
-    if (lsm != null) {lsm.removeListSelectionListener(this);}
+    if (lsm != null) {lsm.removeListSelectionListener(list_selection_listener);}
   }
   
   /** Main method for testing visual layout. */

@@ -30,6 +30,7 @@ import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.IPlugin;
+import com.affymetrix.swing.IntegerTableCellRenderer;
 
 /**
  *  A panel that shows the hashtable of symmetry items from
@@ -104,6 +105,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
     table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
+    table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
 
     //    table.setCellSelectionEnabled(true);
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);

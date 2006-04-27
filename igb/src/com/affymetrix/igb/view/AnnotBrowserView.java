@@ -41,10 +41,15 @@ public class AnnotBrowserView extends JPanel
 implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   private final JTable table = new JTable();
+  
+  // The second column in the table contains an object of type SeqSymmetry
+  // but we use a special TableCellRenderer so that what is actually displayed
+  // is a String representing the Tier
   private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
-  private final static Class[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class};
+  private final static Class[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
   private final static Vector col_headings_vector = new Vector(Arrays.asList(col_headings));
   static final int NUM_COLUMNS = 5;
+
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
 
@@ -107,6 +112,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
     table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
+    table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
 
     //    table.setCellSelectionEnabled(true);
     //    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
@@ -140,24 +146,15 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     java.util.List entries = new ArrayList(sym_ids);
     int num_rows = entries.size();
     Vector rows = new Vector(num_rows, num_rows/10);
-    java.util.List the_list;
     for (int j = 0 ; j < num_rows ; j++) {
       String key = (String) entries.get(j);
-      Object o = seq_group.findSyms(key);
-      
-      if (o instanceof java.util.List) {
-        the_list = (java.util.List) o;
-      } else {
-        the_list = new ArrayList(1);
-        the_list.set(0, (SeqSymmetry) o);
-      }
-      
+      java.util.List the_list = seq_group.findSyms(key);
+            
       for (int k=0; k<the_list.size(); k++) {
         Vector a_row = new Vector(NUM_COLUMNS);
         a_row.add(key);
         SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
-        String method = SeqMapView.determineMethod(sym);
-        a_row.add(method);
+        a_row.add(sym);
 
         int span_count = sym.getSpanCount();
         SeqSpan first_span_in_group = null; // first span with a BioSeq in this SeqGroup
@@ -185,6 +182,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     return rows;
   }
 
+  
   /** 
    * Re-populates the table with the given AnnotatedSeqGroup.
    */
@@ -241,10 +239,10 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       if (evt.getSource()==lsm && ! evt.getValueIsAdjusting() && model.getRowCount() > 0) {
         int srow = table.getSelectedRow();
         if (srow >= 0) {
-          String id = (String) table.getModel().getValueAt(srow, 0);
+          Object o = table.getModel().getValueAt(srow, 0);
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-          AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-          java.util.List syms = group.findSyms(id);
+          java.util.List syms = new ArrayList(1);
+          syms.add((SeqSymmetry) table.getModel().getValueAt(srow, 1));
           gmodel.setSelectedSymmetriesAndSeq(syms, this);
         }
       }
@@ -281,5 +279,16 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       return com.affymetrix.igb.menuitem.MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif");
     }
     return null;
+  }
+  
+  public static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
+    public SeqSymmetryTableCellRenderer() {
+      super();
+    }
+    
+    protected void setValue(Object value) {
+      SeqSymmetry sym = (SeqSymmetry) value;
+      super.setValue(SeqMapView.determineMethod(sym));
+    }
   }
 }

@@ -43,6 +43,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
   private final static Class[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class};
+  private final static Vector col_headings_vector = new Vector(Arrays.asList(col_headings));
   static final int NUM_COLUMNS = 5;
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
@@ -92,7 +93,7 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
         fireTableChanged(new javax.swing.event.TableModelEvent(this));
       }
     };
-    model.setDataVector(new Object[0][0], col_headings);
+    model.setDataVector(new Vector(0), col_headings_vector);
 
     lsm = table.getSelectionModel();
     lsm.addListSelectionListener(this);
@@ -120,9 +121,9 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
     to_tf.addFocusListener(text_focus_listener);
   }
 
-  protected Object[][] buildRows(AnnotatedSeqGroup seq_group, String start, String end) {
+  protected Vector buildRows(AnnotatedSeqGroup seq_group, String start, String end) {
     if (seq_group == null) {
-      return new Object[0][NUM_COLUMNS];
+      return new Vector(0);
     }
 
     Set sym_ids;
@@ -136,64 +137,48 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
     }
     java.util.List seq_list = seq_group.getSeqList();
     
-    ArrayList entries = new ArrayList(sym_ids);
+    java.util.List entries = new ArrayList(sym_ids);
     int num_rows = entries.size();
-    Object[][] rows = new Object[num_rows][NUM_COLUMNS];
+    Vector rows = new Vector(num_rows, num_rows/10);
+    java.util.List the_list;
     for (int j = 0 ; j < num_rows ; j++) {
       String key = (String) entries.get(j);
-      rows[j][0]= key;
       Object o = seq_group.findSyms(key);
       
-      SeqSymmetry sym;
-      int num_matches = 1;
       if (o instanceof java.util.List) {
-        // For now, only display the first match of the list
-        java.util.List sym_list = (java.util.List) o;
-        if (sym_list.isEmpty()) {
-          // this should never happen, but I'm playing it safe
-          num_matches = 0;
-          sym = null;
-        } else {
-          sym = (SeqSymmetry) sym_list.get(0);
-          num_matches = sym_list.size();
-        }
+        the_list = (java.util.List) o;
       } else {
-        sym = (SeqSymmetry) o;
-        num_matches = 1;
+        the_list = new ArrayList(1);
+        the_list.set(0, (SeqSymmetry) o);
       }
       
-      if (num_matches != 1 || sym == null) {
-        rows[j][1] = "";
-        rows[j][2] = new Integer(0);
-        rows[j][3] = new Integer(0);
-        rows[j][4] = "" + num_matches + " matches";
-
-      } else {
+      for (int k=0; k<the_list.size(); k++) {
+        Vector a_row = new Vector(NUM_COLUMNS);
+        a_row.add(key);
+        SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
         String method = SeqMapView.determineMethod(sym);
-        rows[j][1] = method;
-        
+        a_row.add(method);
+
         int span_count = sym.getSpanCount();
         SeqSpan first_span_in_group = null; // first span with a BioSeq in this SeqGroup
         for (int i=0; i<span_count; i++) {
           SeqSpan span = sym.getSpan(i);
           if (span == null) continue;
-          
+
           BioSeq seq = span.getBioSeq();
           if (seq_list.contains(seq)) {
             first_span_in_group = span;
             break;
           }
         }
-        
+
         if (first_span_in_group != null) {
-          rows[j][2]= new Integer(first_span_in_group.getStart());
-          rows[j][3]= new Integer(first_span_in_group.getEnd());
-          rows[j][4]= first_span_in_group.getBioSeq().getID() + (first_span_in_group.isForward() ? "+" : "-");
-        } else {
-          rows[j][2] = new Integer(0);
-          rows[j][3] = new Integer(0);
-          rows[j][4] = "?";
-        }        
+          a_row.add(new Integer(first_span_in_group.getStart()));
+          a_row.add(new Integer(first_span_in_group.getEnd()));
+          String s = first_span_in_group.getBioSeq().getID() + (first_span_in_group.isForward() ? "+" : "-");
+          a_row.add(s);
+          rows.add(a_row);
+        }
       }
     }
     
@@ -204,10 +189,21 @@ implements ListSelectionListener, SymMapChangeListener, GroupSelectionListener, 
    * Re-populates the table with the given AnnotatedSeqGroup.
    */
   public void showSymHash(AnnotatedSeqGroup seq_group) {
-    String start = from_tf.getText().trim().toLowerCase();
-    String end = to_tf.getText().trim().toLowerCase();
-    Object[][] rows = buildRows(seq_group, start, end);
-    model.setDataVector(rows, col_headings);
+    final AnnotatedSeqGroup final_seq_group = seq_group;
+    final String start = from_tf.getText().trim().toLowerCase();
+    final String end = to_tf.getText().trim().toLowerCase();
+    Thread thread = new Thread() {
+      public void run() {    
+        final Vector rows = buildRows(final_seq_group, start, end);
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            model.setDataVector(rows, col_headings_vector);
+          }
+        });
+      }
+    };
+
+    thread.start();
   }
 
   /** Causes a call to {@link #showSymHash(AnnotatedSeqGroup)}.

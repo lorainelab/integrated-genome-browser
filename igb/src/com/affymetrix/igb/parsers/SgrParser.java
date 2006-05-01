@@ -39,8 +39,11 @@ public class SgrParser {
   public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
                     boolean annotate_seq, boolean ensure_unique_id)
       throws IOException {
-    System.out.println("trying to parse with SgrParser: " + stream_name);
+    System.out.println("Parsing with SgrParser: " + stream_name);
+    
     ArrayList results = new ArrayList();
+    
+    try {
     InputStreamReader isr = new InputStreamReader(istr);
     BufferedReader br = new BufferedReader(isr);
 
@@ -100,6 +103,14 @@ public class SgrParser {
       results.add(graf);
     }
 
+    } catch (Exception e) {
+      if (! (e instanceof IOException)) {
+        IOException ioe = new IOException("Trouble reading SGR file: " + stream_name);
+        ioe.initCause(e);
+        throw ioe;
+      }
+    }
+    
     return results;
   }
 
@@ -157,7 +168,6 @@ public class SgrParser {
 
   public static void main(String[] args) {
     String test_file = System.getProperty("user.dir") + "/testdata/graph/test1.sgr";
-    Map testhash = new HashMap();
     SgrParser test = new SgrParser();
 
     try {

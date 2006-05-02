@@ -193,7 +193,7 @@ public class GraphGlyph extends Glyph {
       else if (zero_point.y > pbox_yheight) {
 	zero_point.y = pbox_yheight;
       }
-      else if (show_zero_line) {
+      else if (show_zero_line && graph_style != HEAT_MAP) {
 	g.setColor(Color.gray);
  	g.drawLine( pixelbox.x, zero_point.y, ( pixelbox.x + pixelbox.width ), zero_point.y );
       }

@@ -163,7 +163,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 		  (int)(prev_max_per * sliders_per_percent));
     min_val_slider = new JSlider(JSlider.HORIZONTAL);
     max_val_slider = new JSlider(JSlider.HORIZONTAL);
-
+    
     min_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     max_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     min_perT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
@@ -244,17 +244,13 @@ public class GraphVisibleBoundsSetter extends JPanel
     turnOnListening();
   }
 
+  /**
+   * Show either the value-based sliders or the percent-based sliders.
+   * @param b  if true, show the percent-based sliders.
+   */
   public void switchView(boolean b) {
-    if (b) {
-      valP.setVisible(false);
-      perP.setVisible(true);
-    } else {
-      valP.setVisible(true);
-      perP.setVisible(false);
-    }
-//    this.doLayout();
-//    this.invalidate(); // redraw the display
-//    this.repaint();
+    valP.setVisible(!b);
+    perP.setVisible(b);
   }
   
   /**
@@ -456,93 +452,50 @@ public class GraphVisibleBoundsSetter extends JPanel
     prev_min_per = avg_of_vismins;
     prev_max_per = avg_of_vismaxes;
   }
- 
 
-  /*
-   *  WARNING -- GAH 2-6-2004
-   *  There appears to be a bug in Swing's JSlider that ends up throwing
-   *    NullPointerExceptions when forcing a JSlider to change it's value
-   *    on the Event thread when propagation of an event on that JSlider is what
-   *    is currently running on the Event thread?  At least in certain situations,
-   *    like resetting the value but then trying to click in the gutter to the left
-   *    of where the value was reset to -- appears to be trying to check bounds
-   *    against the thumb's rectangle bounds, but those bounds have somehow been
-   *    nulled out.  Here's the chunk of code from Sun's jdk1.4, BasicSliderUI class:
-   *
-            Rectangle r = thumbRect;
-            if ( !r.contains(currentMouseX, currentMouseY) ) {
-                if ( shouldScroll(direction) ) {
-                    scrollTimer.stop();
-                    scrollListener.setDirection(direction);
-                    scrollTimer.start();
-                }
-            }
-   *    NullPointerException is thrown when try and call method r.contains()...
-   *
-   *    For now, just noting that it's happening -- although it throws an exception,
-   *    doesn't seem to mess up anything else in the app.
-   */
+  private void setSlider(final JSlider slider, final int value) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        //turnOffListening();
+        slider.setValue(value);
+        slider.updateUI();
+        //turnOnListening();
+      }
+    });
+  }
+
   public void stateChanged(ChangeEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
-
+    
     if (src == max_percent_slider) {
-      float max_per = (max_percent_slider.getValue()/sliders_per_percent);
-      if (max_per <= prev_min_per) {
-	max_per = prev_min_per + per_offset;
-	max_percent_slider.removeChangeListener(this);
-	max_percent_slider.setValue((int)(max_per * sliders_per_percent));
-	max_percent_slider.updateUI();
-	max_percent_slider.addChangeListener(this);
+      if (max_percent_slider.getValue() < min_percent_slider.getValue() + 1) {
+        setSlider(max_percent_slider, min_percent_slider.getValue() + 1);
+        return;
       }
-      if (max_per != prev_max_per) {
-	setVisibleMaxPercent(max_per);
-	//	if (sync_min_max) {  // synchronize min_percent  }
+      setVisibleMaxPercent(max_percent_slider.getValue()/sliders_per_percent);
+    } else if (src == min_percent_slider) {
+      if (min_percent_slider.getValue() > max_percent_slider.getValue() - 1) {
+        setSlider(min_percent_slider, max_percent_slider.getValue() - 1);
+        return;
       }
+      setVisibleMinPercent(min_percent_slider.getValue()/sliders_per_percent);
+    } else if (src == max_val_slider) {
+      if (max_val_slider.getValue() < min_val_slider.getValue() + 1) {
+        setSlider(max_val_slider, min_val_slider.getValue() + 1);
+        return;
+      }
+      setVisibleMaxValue(max_val_slider.getValue()/sliders_per_val);
+    } else if (src == min_val_slider) {
+      if (min_val_slider.getValue() > max_val_slider.getValue() - 1) {
+        setSlider(min_val_slider, max_val_slider.getValue() - 1);
+        return;
+      }
+      setVisibleMinValue(min_val_slider.getValue()/sliders_per_val);
     }
-    else if (src == min_percent_slider) {
-      float min_per = (min_percent_slider.getValue()/sliders_per_percent);;
-      if (min_per >= prev_max_per) {
-	min_per = prev_max_per - per_offset;
-	min_percent_slider.removeChangeListener(this);
-	min_percent_slider.setValue((int)(min_per * sliders_per_percent));
-	min_percent_slider.updateUI();
-	min_percent_slider.addChangeListener(this);
-      }
-      if (min_per != prev_min_per) {
-	setVisibleMinPercent(min_per);
-	//	if (sync_min_max) {  // synchronize max_percent }
-      }
-    }
-    else if (src == max_val_slider) {
-      float max_val = (max_val_slider.getValue()/sliders_per_val);
-      if (max_val <= prev_min_val) {
-	max_val = prev_min_val + val_offset;
-	max_val_slider.removeChangeListener(this);
-	max_val_slider.setValue((int)(max_val * sliders_per_val));
-	max_val_slider.updateUI();
-	max_val_slider.addChangeListener(this);
-      }
-      if (max_val != prev_max_val) {
-	setVisibleMaxValue(max_val);
-      }
-    }
-    else if (src == min_val_slider) {
-      float min_val = (min_val_slider.getValue()/sliders_per_val);
-      if (min_val >= prev_max_val) {
-	min_val = prev_max_val - val_offset;
-	min_val_slider.removeChangeListener(this);
-	min_val_slider.setValue((int)(min_val * sliders_per_val));
-	min_val_slider.updateUI();
-	min_val_slider.addChangeListener(this);
-      }
-      if (min_val != prev_min_val) {
-	setVisibleMinValue(min_val);
-      }
-    }
-
   }
-
+  
+  
   public void actionPerformed(ActionEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
@@ -550,10 +503,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     if (src == min_valT) {
       try {
 	float minval = Float.parseFloat(min_valT.getText());
-	if (minval > prev_max_val) { minval = prev_max_val - val_offset; }
+	if (minval > prev_max_val - val_offset) { minval = prev_max_val - val_offset; }
 	else if (minval < abs_min_val) { minval = abs_min_val; }
-	//	min_val_slider.setValue((int)(minval * sliders_per_val));
-	//	System.out.println("minval: " + minval);
 	setVisibleMinValue(minval);
       }
       catch (NumberFormatException ex) {
@@ -563,7 +514,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     else if (src == max_valT) {
       try {
 	float maxval = Float.parseFloat(max_valT.getText());
-	if (maxval < prev_min_val) { maxval = prev_min_val + val_offset; }
+	if (maxval < prev_min_val + val_offset) { maxval = prev_min_val + val_offset; }
 	else if (maxval > abs_max_val) { maxval = abs_max_val; }
 	setVisibleMaxValue(maxval);
       }
@@ -576,7 +527,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       try {
 	float min_per = GraphAdjusterView.parsePercent(min_perT.getText());
 	if (min_per < 0)  { min_per = 0; }
-	else if (min_per > prev_max_per) { min_per = prev_max_per - per_offset; }
+	else if (min_per > prev_max_per - per_offset) { min_per = prev_max_per - per_offset; }
 	setVisibleMinPercent(min_per);  // resets min_perT text also
       }
       catch (NumberFormatException ex) {
@@ -587,7 +538,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     else if (src == max_perT) {
       try {
         float max_per = GraphAdjusterView.parsePercent(max_perT.getText());
-	if (max_per < prev_min_per) { max_per = prev_min_per + per_offset; }
+	if (max_per < prev_min_per + per_offset) { max_per = prev_min_per + per_offset; }
 	else if (max_per > 100) { max_per = 100; }
 	setVisibleMaxPercent(max_per);  // resets max_perT text also
       }
@@ -696,7 +647,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
       turnOffListening();
 
-      if (percent > prev_max_per) {
+      if (percent > prev_max_per - per_offset) {
 	percent = prev_max_per - per_offset;
       }
 
@@ -750,7 +701,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     if (gcount > 0 && (percent != prev_max_per)) {
       turnOffListening();
 
-      if (percent < prev_min_per) {
+      if (percent < prev_min_per + per_offset) {
 	percent = prev_min_per + per_offset;
       }
       max_perT.setText(per_format.format(percent));

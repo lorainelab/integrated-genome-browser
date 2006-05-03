@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -48,6 +47,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.CharIterator;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -469,16 +469,7 @@ public class SeqMapView extends JPanel
             if (children.get(i) instanceof AxisGlyph) {ag = (AxisGlyph) children.get(i);}
           }
           if (ag != null) {
-            if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
-              ag.setLabelFormat(AxisGlyph.COMMA);
-            } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
-              ag.setLabelFormat(AxisGlyph.FULL);
-            } else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format))  {
-	      ag.setLabelFormat(AxisGlyph.NO_LABELS);
-	    }
-	    else {
-              ag.setLabelFormat(AxisGlyph.ABBREV);
-            }
+            setAxisFormatFromPrefs(ag);
           }
           seqmap.updateWidget();
         }
@@ -565,8 +556,18 @@ public class SeqMapView extends JPanel
     //public void setShow(boolean b) {}
     public void setSeparate(boolean b) { /* do nothing */ }
     public void setCollapsed(boolean b) { /* do nothing */ }
-    public void setColor(Color c) {}
-    public void setBackground(Color c) {}
+    public void setColor(Color c) {
+      UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
+    }
+    public Color getColor() {
+      return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
+    }
+    public void setBackground(Color c) {
+      UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, c);
+    }
+    public Color getBackground() {
+      return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
+    }
     public void setHumanName(String s) {}
     public void setLabelField(String s) {}
     public void setMaxDepth(int i) {}
@@ -590,22 +591,12 @@ public class SeqMapView extends JPanel
     Color axis_bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
     Color axis_fg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
 
-    String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
-
     axis.setBackgroundColor(axis_bg);
     axis_tier.setBackgroundColor(axis_bg);
     axis_tier.setFillColor(axis_bg);
     axis.setForegroundColor(axis_fg);
     axis_tier.setForegroundColor(axis_fg);
-    if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
-      axis.setLabelFormat(AxisGlyph.COMMA);
-    } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
-      axis.setLabelFormat(AxisGlyph.FULL);
-    } else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
-      axis.setLabelFormat(AxisGlyph.NO_LABELS);
-    } else {
-      axis.setLabelFormat(AxisGlyph.ABBREV);
-    }
+    setAxisFormatFromPrefs(axis);
 
     axis_tier.addChild(axis);
 
@@ -658,35 +649,30 @@ public class SeqMapView extends JPanel
 	    SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
 
 	    GlyphI cgl;
-	    if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
-	      cgl = new FillRectGlyph();
-	      cgl.setColor(Color.lightGray);
-	    }
-	    else {
-	      if (viewseq.getID().equals(QuickLoadView2.GENOME_SEQ_ID)) {
-		// hide axis numbering
-		axis.setLabelFormat(AxisGlyph.NO_LABELS);
-		cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-		String label = ospan.getBioSeq().getID();
-		if (label.startsWith("chr")) { label = label.substring(3); }
-		((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
-		cgl.setColor(Color.black);
-	      }
-	      else if (viewseq.getID().equals(QuickLoadView2.ENCODE_REGIONS_ID)) {
+            if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
+              cgl = new FillRectGlyph();
+              cgl.setColor(axis.getForegroundColor());
+            } else {
+              if (viewseq.getID().equals(QuickLoadView2.GENOME_SEQ_ID)) {
+                // hide axis numbering
+                axis.setLabelFormat(AxisGlyph.NO_LABELS);
                 cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-                // cgl = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-		String label = childsym.getID();
-		if (label != null) {
-		  ((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
-		  // ((com.affymetrix.genoviz.glyph.LabelledRectGlyph)cgl).setText(label);
-		}
-		cgl.setColor(Color.black);
-	      }
-	      else {
-		cgl = new OutlineRectGlyph();
-		cgl.setColor(Color.lightGray);
-	      }
-	    }
+                String label = ospan.getBioSeq().getID();
+                if (label.toLowerCase().startsWith("chr")) { label = label.substring(3); }
+                ((com.affymetrix.igb.glyph.LabelledRectGlyph)cgl).setLabel(label);
+                cgl.setColor(axis.getForegroundColor());
+              } else if (viewseq.getID().equals(QuickLoadView2.ENCODE_REGIONS_ID)) {
+                cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+                String label = childsym.getID();
+                if (label != null) {
+                  ((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+                }
+                cgl.setColor(axis.getForegroundColor());
+              } else {
+                cgl = new OutlineRectGlyph();
+                cgl.setColor(axis.getForegroundColor());
+              }
+            }
 	    //	    cgl.setCoords(childspan.getMin(), 0,
 	    //			  childspan.getMax()-childspan.getMin(), 10);
 	    cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
@@ -709,6 +695,20 @@ public class SeqMapView extends JPanel
     return axis_tier;
   }
 
+  /** Sets the axis label format from the value in the persistent preferences. */
+  public static void setAxisFormatFromPrefs(AxisGlyph axis) {
+    // It might be good to move this to AffyTieredMap
+    String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
+    if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
+      axis.setLabelFormat(AxisGlyph.COMMA);
+    } else if (VALUE_AXIS_LABEL_FORMAT_FULL.equalsIgnoreCase(axis_format)) {
+      axis.setLabelFormat(AxisGlyph.FULL);
+    } else if (VALUE_AXIS_LABEL_FORMAT_NO_LABELS.equalsIgnoreCase(axis_format)) {
+      axis.setLabelFormat(AxisGlyph.NO_LABELS);
+    } else {
+      axis.setLabelFormat(AxisGlyph.ABBREV);
+    }
+  }  
 
   public void reverseComplement() {
     // still need to deal with residues?
@@ -1489,6 +1489,7 @@ public class SeqMapView extends JPanel
   }
 
   protected void clearSelection() {
+    sym_used_for_title = null;
     seqmap.clearSelected();
     setSelectedRegion(null, false);
     //  clear match_glyphs?
@@ -2506,11 +2507,14 @@ public class SeqMapView extends JPanel
     label.setText(title);
   }
 
+  private SeqSymmetry sym_used_for_title = null;
+  
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
   // should be similar in both places, or else users could get confused.
   private String getSelectionTitle(java.util.List selected_glyphs) {
     String id = null;
+    sym_used_for_title = null;
     if (selected_glyphs.isEmpty()) {
       id = "No selection";
     }
@@ -2524,11 +2528,13 @@ public class SeqMapView extends JPanel
         }
         if (sym instanceof SymWithProps) {
           id = (String) ((SymWithProps) sym).getProperty("id");
+          sym_used_for_title = sym;
         }
         if (id == null && sym instanceof DerivedSeqSymmetry) {
           SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
           if (original instanceof Propertied) {
             id = (String) ((Propertied) original).getProperty("id");
+            sym_used_for_title = original;
           }
         }
         if (id == null && topgl instanceof GraphGlyph) {
@@ -2538,6 +2544,7 @@ public class SeqMapView extends JPanel
           } else {
             id = "Graph Selected";
           }
+          sym_used_for_title = null;
         }
         if (id == null) {
           // If ID of item is null, check recursively for parent ID, or parent of that...
@@ -2550,6 +2557,7 @@ public class SeqMapView extends JPanel
           }
           else {
             id = "Unknown Selection";
+            sym_used_for_title = null;
           }
         }
       } else {
@@ -2584,7 +2592,7 @@ public class SeqMapView extends JPanel
 
     for (int i=0; i<popup_listeners.size(); i++) {
       ContextualPopupListener listener = (ContextualPopupListener)popup_listeners.get(i);
-      listener.popupNotify(sym_popup, selected_syms);
+      listener.popupNotify(sym_popup, selected_syms, sym_used_for_title);
     }
     if (sym_popup.getComponentCount() > 0) {
       //      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);

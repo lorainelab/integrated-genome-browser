@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.swing.SixWaySplitPane;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -24,6 +23,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.swing.SixWaySplitPane;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which
@@ -119,7 +120,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     //this.windowPane.addNorthWest( northWestMap );
     this.windowPane.addNorthWest( nwpan );
     this.windowPane.addNorthEast( this.nepan );
-    this.windowPane.setDividerLocations(50, 50, 100);
+    this.windowPane.setDividerLocations(50, 50, 150);
 
     this.setLayout(new BorderLayout());
     add( this.windowPane, BorderLayout.CENTER );
@@ -264,11 +265,8 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public double getExtraMapInset() { return extramap_inset; }
 
 
-  /**
-   * New to replace northern map with a seq map view.
-   */
-  public void setNorthMap( AffyTieredMap theNewMap ) {
-    this.northMap = theNewMap;
+  public AffyTieredMap getNorthMap() {
+    return this.northMap;
   }
 
 
@@ -276,15 +274,15 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     return this.northEastMap;
   }
 
-  public void addNorthEastGlyph( SolidGlyph theGlyph ) {
-    int[] offset = this.northEastMap.getMapOffset();
-    int[] range = this.northEastMap.getMapRange();
-    Rectangle2D r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
-    theGlyph.setCoordBox( r );
-    theGlyph.setCoords(0, 0, 100, 100);
-    this.northEastMap.addItem( theGlyph );
-    this.northEastMap.updateWidget();
-  }
+//  public void addNorthEastGlyph( SolidGlyph theGlyph ) {
+//    int[] offset = this.northEastMap.getMapOffset();
+//    int[] range = this.northEastMap.getMapRange();
+//    Rectangle2D r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
+//    theGlyph.setCoordBox( r );
+//    theGlyph.setCoords(0, 0, 100, 100);
+//    this.northEastMap.addItem( theGlyph );
+//    this.northEastMap.updateWidget();
+//  }
 
 
   public void addNorthEastTier( TierGlyph theTier ) {
@@ -318,6 +316,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
   public void setFloatBounds(int axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
+    //? should the following two lines refer to labelmap or extramap?
     if (axis == Y && labelmap != null) {
       extramap.setFloatBounds(axis, start, end);
     }
@@ -391,6 +390,9 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public void updateWidget() {
     super.updateWidget();
     this.extramap.updateWidget();
+    this.northMap.updateWidget();
+    if (northEastMap != null) {this.northEastMap.updateWidget();}
+    if (northWestMap != null) {this.northWestMap.updateWidget();}
     zoom( Y, this.getZoom( Y ) ); // This seems a bit artificial.
   }
 
@@ -405,10 +407,13 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   /**
    * Put the axis on the north map.
    */
-  public AxisGlyph addAxis( int theOffset ) {
-   // Maybe we shouldn't do this.
-   // Perhaps we need an addHeaderAxis() method instead. -- without offset?
-    return this.northMap.addAxis( 100 );
+  public AxisGlyph addHeaderAxis() {
+    northMap.setMapOffset(0, 20);
+    AxisGlyph ag = this.northMap.addAxis( 10 );    
+    SeqMapView.setAxisFormatFromPrefs(ag);
+    northMap.stretchToFit(true, true);
+    northMap.updateWidget(true);
+    return ag;
   }
 
   public void setMapRange( int theStart, int theEnd ) {
@@ -432,7 +437,14 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
   private VerticalTierComparator extraMapSorter = new VerticalTierComparator();
 
-
+  public void setBackground(Color col) {
+    super.setBackground(col);
+    this.northEastMap.setBackground(col);
+    this.northMap.setBackground(col);
+    if (northWestMap != null) {this.northWestMap.setBackground(col);}
+    if (extramap != null) {this.extramap.setBackground(col);}
+  }
+  
   /**
    *  Main for testing.
    */

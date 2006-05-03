@@ -17,6 +17,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -27,29 +30,36 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.parsers.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class ExperimentPivotView extends JComponent
       implements SymSelectionListener, ActionListener, AnnotatedSeqViewer, SeqSelectionListener
 {
 
   static String BLANK = "";
-  static String LINE = "Line";
-  static String STAIRSTEP = "Bar";  // really stairstep for now...
-  static String HEATMAP = "Heat Map";
-  static String HEATMAP1 = "Violet Heat Map";
-  static String HEATMAP2 = "Blue/Yellow Heat Map";
-  static String HEATMAP3 = "Red/Green Heat Map";
-  static String HEATMAP4 = "Blue/Yellow Heat Map2";
-  static String TOTAL_MIN_MAX = "Total Min/Max";
-  static String ROW_MIN_MAX = "Row Min/Max";
-  static String COLUMN_MIN_MAX = "Column Min/Max";
+
+  // styles
+  final static String LINE = "Line";
+  final static String STAIRSTEP = "Bar";  // really stairstep for now...
+  final static String HEATMAP1 = "Violet Heat Map";
+  final static String HEATMAP2 = "Blue/Yellow Heat Map";
+  final static String HEATMAP3 = "Red/Green Heat Map";
+  final static String HEATMAP4 = "Blue/Yellow Heat Map2";
+
+  /** Maps style strings to objects, sometimes Integer's, sometimes HeatMap's. */
   static Map string2style;
+
+  // scalings
+  final static String TOTAL_MIN_MAX = "Total Min/Max";
+  final static String ROW_MIN_MAX = "Row Min/Max";
+  final static String COLUMN_MIN_MAX = "Column Min/Max";
+
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   int numscores = 0;
@@ -63,22 +73,32 @@ public class ExperimentPivotView extends JComponent
   TierLabelManager tier_manager;  
   AnnotatedBioSeq currentSeq;  // current annotated seq
   java.util.List experiment_graphs = new ArrayList();
-  //  int experiment_style = GraphGlyph.LINE_GRAPH;
-  //  int experiment_style = GraphGlyph.STAIRSTEP_GRAPH;
-  int experiment_style = GraphGlyph.HEAT_MAP;
-  String experiment_scaling = TOTAL_MIN_MAX;
-
+  
   JComboBox styleCB = new JComboBox();
   JComboBox scaleCB = new JComboBox();
+  
+  Preferences pref_node = UnibrowPrefsUtil.getTopNode().node("Pivot View");
+  
+  static final String PREF_BG_COLOR = "Pivot View BG Color";
+  static final String PREF_FG_COLOR = "Pivot View FG Color";
+  static final String PREF_STYLE = "Pivot View Graph Style";
+  static final String PREF_SCALE = "Pivot View Graph Scale";
 
-  Color[] tcolors = { (new Color(0, 0, 0)), new Color(20, 20, 20) };
-
+  static final Color def_bg_color = Color.BLACK;
+  static final Color def_fg_color = Color.YELLOW;
+  static final String def_style = HEATMAP1;
+  static final String def_scale = TOTAL_MIN_MAX;
+  
+  int experiment_style_int; // should correspond to def_style String value
+  String experiment_scaling = def_scale;
+  
+  java.util.List current_syms = Collections.EMPTY_LIST;
+  
   static {
     string2style = new HashMap();
     string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
     string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
 
-    //string2style.put(HEATMAP, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0));
     string2style.put(HEATMAP1, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_1));
     string2style.put(HEATMAP2, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_2));
     string2style.put(HEATMAP4, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_4));
@@ -88,41 +108,70 @@ public class ExperimentPivotView extends JComponent
 
   public ExperimentPivotView() {
     super();
-    //    styleCB.addItem(HEATMAP);
     styleCB.addItem(HEATMAP1);
     styleCB.addItem(HEATMAP2);
     styleCB.addItem(HEATMAP4);
     styleCB.addItem(HEATMAP3);
     styleCB.addItem(STAIRSTEP);
     styleCB.addItem(LINE);
-    JPanel style_pan = new JPanel();
-    style_pan.setLayout(new GridLayout(1, 2));
-    style_pan.add(new JLabel("Graph Style: ", JLabel.RIGHT));
+    if (styleCB.getItemCount() > 0) {
+      styleCB.setSelectedItem(pref_node.get(PREF_STYLE, (String) styleCB.getItemAt(0)));
+    }
+    experiment_style_int = experimentStyleToInt((String) styleCB.getSelectedItem());
+    
+    Box style_pan = Box.createHorizontalBox();
+    style_pan.add(new JLabel("Style:", JLabel.RIGHT));
+    style_pan.add(Box.createHorizontalStrut(6));
     style_pan.add(styleCB);
 
     scaleCB.addItem(TOTAL_MIN_MAX);
     scaleCB.addItem(ROW_MIN_MAX);
 //    scaleCB.addItem(COLUMN_MIN_MAX);    NOT YET IMPLEMENTED
-    JPanel scale_pan = new JPanel();
-    scale_pan.setLayout(new GridLayout(1, 2));
-    scale_pan.add(new JLabel("Graph Scaling: ", JLabel.RIGHT));
-    scale_pan.add(scaleCB);
 
-    JButton b = new JButton( new PivotViewExporter( this ) );
-    JPanel optionsP = new JPanel();
+    Box scale_pan = Box.createHorizontalBox();
+    scale_pan.add(new JLabel("Scaling:", JLabel.RIGHT));
+    scale_pan.add(Box.createHorizontalStrut(6));
+    scale_pan.add(scaleCB);
+    if (scaleCB.getItemCount() > 0) {
+      scaleCB.setSelectedItem(pref_node.get(PREF_SCALE, (String) scaleCB.getItemAt(0)));
+    }
+
+    JButton fg_button = UnibrowPrefsUtil.createColorButton("fg", pref_node, PREF_FG_COLOR, def_fg_color);
+    JButton bg_button = UnibrowPrefsUtil.createColorButton("bg", pref_node, PREF_BG_COLOR, def_bg_color);
+    PreferenceChangeListener pcl = new PreferenceChangeListener() {
+      public void preferenceChange(PreferenceChangeEvent evt) {
+        if (evt.getNode() == pref_node) {
+          if (PREF_FG_COLOR.equals(evt.getKey()) || PREF_BG_COLOR.equals(evt.getKey())) {
+            resetThisWidget(current_syms);
+          }
+        }
+      }
+    };
+    pref_node.addPreferenceChangeListener(pcl);
+    
+    Box colors_pan = Box.createHorizontalBox();
+    colors_pan.add(fg_button);
+    colors_pan.add(Box.createHorizontalStrut(5));
+    colors_pan.add(bg_button);
+
+    JButton export_b = new JButton( new PivotViewExporter( this ) );
+    Box optionsP = Box.createHorizontalBox();
+    //optionsP.add(Box.createHorizontalGlue());
     optionsP.add(style_pan);
+    optionsP.add(Box.createRigidArea(new Dimension(10,0)));
     optionsP.add(scale_pan);
-    optionsP.add( b );
+    optionsP.add(Box.createRigidArea(new Dimension(10,0)));
+    optionsP.add(export_b);
+    optionsP.add(Box.createRigidArea(new Dimension(10,0)));
+    optionsP.add(colors_pan);
+    optionsP.add(Box.createHorizontalGlue());
 
     map = new AffyTieredMultiMap();
-    map.setBackground(Color.black);
-    AffyTieredMap expmap = map.getExtraMap();
-    expmap.setBackground(Color.black);
-    NeoMap labelmap = map.getLabelMap();
-    labelmap.setBackground(Color.black);
+    //AffyTieredMap expmap = map.getExtraMap();
+    //NeoMap labelmap = map.getLabelMap();
     //map.addScroller( map.VERTICAL, map.NORTH ); // for testing...
     map.addScroller( map.HORIZONTAL, map.EAST );
-
+        
     tier_manager = new TierLabelManager(map);
     ExperimentPivotView.PivotViewPopup pvp = new ExperimentPivotView.PivotViewPopup();
     tier_manager.addPopupListener(pvp);
@@ -136,25 +185,46 @@ public class ExperimentPivotView extends JComponent
     // setView(Unibrow.getSingletonUnibrow().getMapView());
     gmodel.addSeqSelectionListener(this);
     gmodel.addSymSelectionListener(this);
+    
+    Color pivot_bg = UnibrowPrefsUtil.getColor(pref_node, PREF_BG_COLOR, def_bg_color);
+    map.setBackground(pivot_bg);
   }
-
-  public void setExperimentStyle(int style)  {
-    setExperimentStyle(style, true);
+  
+  int experimentStyleToInt(String selection) {
+    int style = -1;
+    Object obj = string2style.get(selection);
+    if (obj instanceof Integer) {
+      style = ((Integer)string2style.get(selection)).intValue();
+    } else if (obj instanceof HeatMap) {
+      style = GraphGlyph.HEAT_MAP;
+    }
+    return style;
   }
-
-  public void setExperimentStyle(int style, boolean update_widget) {
-    experiment_style = style;
+  
+  void setExperimentStyle(String selection) {
+    pref_node.put(PREF_STYLE, selection);
+    int ee = experimentStyleToInt(selection);
+    if (ee == GraphGlyph.HEAT_MAP) {
+      setHeatMap((HeatMap) string2style.get(selection), false);      
+    }
+    setExperimentStyle(ee, true);
+  }
+    
+  void setExperimentStyle(int style, boolean update_widget) {
+    experiment_style_int = style;
     int graph_count = experiment_graphs.size();
     for (int i=0; i<graph_count; i++) {
       GraphGlyph gl = (GraphGlyph)experiment_graphs.get(i);
-      gl.setGraphStyle(experiment_style);
+      gl.setGraphStyle(experiment_style_int);
+      Color pivot_fg = UnibrowPrefsUtil.getColor(pref_node, PREF_FG_COLOR, def_fg_color);
+      gl.setColor(pivot_fg);
     }
     // need to adjust "extra map" insets (which in turn determine size of experiment graphs
     //    relative to size of extramap tiers), because for rendering graph as a heat map
     //    want the graph to fill the tier it's contained in, but for rendering graph as
     //    a line graph or bar graph then want some spacing between the graphs, so need
     //    graphs to be smaller than the tiers they are contained in
-    if (experiment_style == GraphGlyph.HEAT_MAP) {
+    if (experiment_style_int == GraphGlyph.HEAT_MAP) {
       map.setExtraMapInset(0);
     }
     else {
@@ -190,22 +260,22 @@ public class ExperimentPivotView extends JComponent
     return this.currentSeq;
   }
 
-  private SeqMapView originalView = null;
-  private SeqMapView bigPicture;
+//  private SeqMapView originalView = null;
+//  private SeqMapView bigPicture;
 
-  /**
-   * Points to the big picture.
-   */
-  protected void setView(SeqMapView theView) {
-    assert null != theView;
-    this.originalView = theView;
-    this.bigPicture = new SeqMapView(false);
-    this.bigPicture.setFrame( this.originalView.getFrame() );
-    //    this.bigPicture.setGraphStateHash( this.originalView.getGraphStateHash() );
-    AffyTieredMap m = this.bigPicture.getSeqMap();
-    this.map.setNorthMap( m );
-    this.map.updateWidget();
-  }
+//  /**
+//   * Points to the big picture.
+//   */
+//  protected void setView(SeqMapView theView) {
+//    assert null != theView;
+//    this.originalView = theView;
+//    this.bigPicture = new SeqMapView(false);
+//    this.bigPicture.setFrame( this.originalView.getFrame() );
+//    //    this.bigPicture.setGraphStateHash( this.originalView.getGraphStateHash() );
+//    AffyTieredMap m = this.bigPicture.getSeqMap();
+//    this.map.setNorthMap( m );
+//    this.map.updateWidget();
+//  }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
     if (IGB.DEBUG_EVENTS)  {
@@ -217,13 +287,15 @@ public class ExperimentPivotView extends JComponent
     }
     setAnnotatedSeq(newseq);
   }
-
+  
   private void resetThisWidget( java.util.List theSyms ) {
     if (this.currentSeq == null) {
       System.err.println("ERROR: ExperimentPivotView.resetThisWidget() called, "  +
 			 "but no current annotated seq: " + this.currentSeq );
+      current_syms = Collections.EMPTY_LIST;
       return;
     }
+    this.current_syms = theSyms;
     int symcount = theSyms.size();
     map.clearWidget();
     // assume that all syms are on same seq...
@@ -244,13 +316,19 @@ public class ExperimentPivotView extends JComponent
       }
     }
 
+    Color pivot_bg = UnibrowPrefsUtil.getColor(pref_node, PREF_BG_COLOR, def_bg_color);
+    Color pivot_fg = UnibrowPrefsUtil.getColor(pref_node, PREF_FG_COLOR, def_fg_color);
+    map.setBackground(pivot_bg);
 
     //AffyTieredMap extramap = map.getExtraMap();
     //extramap.setMapRange(0, (numscores * score_spacing));
     map.setExtraMapRange(0, (numscores * score_spacing));
     VerticalGraphLabels extra_labels = new VerticalGraphLabels();
-    extra_labels.setForegroundColor(Color.black);
+    extra_labels.setForegroundColor(pivot_fg);
+    extra_labels.setBackgroundColor(pivot_bg);
     TierGlyph headerTier = new TierGlyph();
+    headerTier.setBackgroundColor(pivot_bg);
+    headerTier.setForegroundColor(pivot_fg);
     headerTier.setLabel( "score names" );
     headerTier.addChild( extra_labels );
     map.addNorthEastTier( headerTier );
@@ -263,7 +341,7 @@ public class ExperimentPivotView extends JComponent
       }
       extra_labels.setInfo( scoreNames );
     }
-    headerTier.setCoords( 0, 0, ( numscores * score_spacing + 1 ), 11 );
+    headerTier.setCoords( 0, 0, ( numscores * score_spacing /* + 1 */ ), 11 );
     extra_labels.setCoords( 0, 0, ( numscores * score_spacing ), 10 ); // does something, but what?
     
     overall_score_min = Float.POSITIVE_INFINITY;
@@ -273,8 +351,8 @@ public class ExperimentPivotView extends JComponent
 
     for (int i=0; i<symcount; i++) {
       TierGlyph mtg = new TierGlyph();
-      mtg.setFillColor(tcolors[i % tcolors.length]);
-      mtg.setForegroundColor(Color.yellow);
+      mtg.setFillColor(pivot_bg);
+      mtg.setForegroundColor(pivot_fg);
       SeqSymmetry sym = (SeqSymmetry)theSyms.get(i);
       SeqSpan span = sym.getSpan(this.currentSeq);
       if ( null != span ) {
@@ -285,7 +363,7 @@ public class ExperimentPivotView extends JComponent
         mtg.setLabel((String)((SymWithProps)sym).getProperty("id"));
       }
       map.addTier(mtg);
-      addAnnotGlyph(sym, this.currentSeq, mtg);
+      GlyphI gl = addAnnotGlyph(sym, this.currentSeq, mtg, pivot_fg);
       GraphGlyph gr = addGraph(sym, mtg);
       if (gr != null) {
         overall_score_min = Math.min(overall_score_min, gr.getGraphMinY());
@@ -293,14 +371,22 @@ public class ExperimentPivotView extends JComponent
       }
     }
 
+    this.experiment_scaling = pref_node.get(PREF_SCALE, def_scale);
     setExperimentScaling(experiment_scaling, false);
-    setExperimentStyle(experiment_style, true); // setting the flag to false has weird 
+    String style_string = pref_node.get(PREF_STYLE, def_style);
+    setExperimentStyle(style_string); // setting the flag to false has weird 
     // This is done in clampToSpan: map.stretchToFit();
-    SeqSpan select_span = new SimpleSeqSpan((int)xmin, (int)xmax, this.currentSeq);
+    //SeqSpan select_span = new SimpleSeqSpan((int)xmin, (int)xmax, this.currentSeq);
     int length = (int)(xmax - xmin);
     SeqSpan zoomto_span = new SimpleSeqSpan((int)(xmin - (0.02 * length)),
                                             (int)(xmax + (0.02 * length)), this.currentSeq);
+    
+    //AxisGlyph the_axis = map.addHeaderAxis();
+    //the_axis.setForegroundColor(pivot_fg);
+    //the_axis.setBackgroundColor(pivot_bg);
+    
     zoomTo(zoomto_span);
+    //TODO: clampToSpan is currently broken
     clampToSpan(zoomto_span);
   }
 
@@ -310,8 +396,11 @@ public class ExperimentPivotView extends JComponent
       resetThisWidget( syms );
     }
   }
+  
+  void setExperimentScaling(String scaling, boolean update_widget) {
+    pref_node.put(PREF_SCALE, experiment_scaling);
+    experiment_scaling = scaling;
 
-  public void setExperimentScaling(String scaling, boolean update_widget) {
     int graph_count = experiment_graphs.size();
     for (int i=0; i<graph_count; i++) {
       GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
@@ -365,7 +454,7 @@ public class ExperimentPivotView extends JComponent
       ycoords[point_count] = 0;
       gl = new GraphGlyph(xcoords, ycoords);
       gl.setHeatMap(current_heatmap);
-      gl.setGraphStyle(experiment_style);
+      gl.setGraphStyle(experiment_style_int);
       gl.setShowHandle(false);
       gl.setShowBounds(false);
       gl.setShowLabel(false);
@@ -380,51 +469,42 @@ public class ExperimentPivotView extends JComponent
     return gl;
   }
 
-  public GlyphI addAnnotGlyph(SeqSymmetry sym, BioSeq theSeq, GlyphI parent)  {
+  GlyphI addAnnotGlyph(SeqSymmetry sym, BioSeq theSeq, GlyphI parent, Color c)  {
     int child_count = sym.getChildCount();
     SeqSpan span = sym.getSpan(theSeq);
     if (span == null)  { return null; }
     GlyphI gl = null;
     if (child_count <= 0) {
       gl = new FillRectGlyph();
-      gl.setColor(Color.yellow);
+      gl.setColor(c);
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);
       parent.addChild(gl);
     }
-    else if (span != null)  {
+    else if (span != null) {
       gl = new EfficientLineContGlyph();
-      gl.setColor(Color.yellow);
+      gl.setColor(c);
       gl.setCoords(span.getMin(), 0, span.getMax() - span.getMin(), 20);
       parent.addChild(gl);
       for (int i=0; i<child_count; i++) {
 	SeqSymmetry child = sym.getChild(i);
-	addAnnotGlyph(child, theSeq, gl);
+	addAnnotGlyph(child, theSeq, gl, c);
       }
     }
     return gl;
   }
-
+  
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == styleCB) {
-      String selection = (String)((JComboBox)styleCB).getSelectedItem();
+      String selection = (String) styleCB.getSelectedItem();
       if (selection != BLANK) {
-	Object obj = string2style.get(selection);
-	if (obj instanceof Integer) {
-	  int style = ((Integer)string2style.get(selection)).intValue();
-	  setExperimentStyle(style);
-	} else if (obj instanceof HeatMap) {
-          setHeatMap((HeatMap) obj, false);
-          setExperimentStyle(GraphGlyph.HEAT_MAP);
-        }
+        setExperimentStyle(selection);
       }
     }
     else if (src == scaleCB) {
-      String selection = (String)((JComboBox)scaleCB).getSelectedItem();
+      String selection = (String) scaleCB.getSelectedItem();
       if (selection != BLANK) {
-	System.out.println("selected for scaling: " + selection);
-	experiment_scaling = selection;
-	setExperimentScaling(experiment_scaling, true);
+        setExperimentScaling(selection, true);
       }
     }
   }
@@ -511,9 +591,7 @@ public class ExperimentPivotView extends JComponent
     AbstractTableModel answer = new DefaultTableModel( data, cols );
     return answer;
   }
-  
-  
-  
+    
   /**
    *  main for testing.
    */
@@ -521,26 +599,25 @@ public class ExperimentPivotView extends JComponent
     //    String testgff = System.getProperty("user.dir") + "/exptest.gff";
     String testgff = "c:/data/igb_testdata/exptest.gff";
     MutableAnnotatedBioSeq testseq = null;
-    FileInputStream fis = new FileInputStream(new File(testgff));
+//    FileInputStream fis = new FileInputStream(new File(testgff));
     GFFParser parser = new GFFParser();
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
     
-    java.util.List syms = parser.parse(fis, seq_group, false);
-    SeqSymmetry first_sym = (SeqSymmetry) syms.get(0);
-    testseq = (MutableAnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
+//    java.util.List syms = parser.parse(fis, seq_group, false);
+//    SeqSymmetry first_sym = (SeqSymmetry) syms.get(0);
+//    testseq = (MutableAnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
 
     JFrame frm = new JFrame( "ExperimentPivotView Test" );
     frm.setDefaultCloseOperation( frm.EXIT_ON_CLOSE );
 
     Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
+    //cpane.setLayout(new BorderLayout());
     ExperimentPivotView epview = new ExperimentPivotView();
-    cpane.add("Center", epview);
+    cpane.add(epview);
 
     frm.setSize(600, 400);
     frm.show();
-
     ArrayList symlist = new ArrayList();
     int acount = testseq.getAnnotationCount();
 
@@ -554,7 +631,7 @@ public class ExperimentPivotView extends JComponent
     for (int i=0; i<acount; i++) {
       SeqSymmetry sym = testseq.getAnnotation(i);
       { // Put IndexedSyms in the sym list instead of the ones from testseq:
-        SimpleSymWithProps psym = (SimpleSymWithProps) sym;
+        //SimpleSymWithProps psym = (SimpleSymWithProps) sym;
         int spansIncluded = sym.getSpanCount();
         if ( 0 < spansIncluded ) {
           SeqSpan span = sym.getSpan( spansIncluded - 1 );

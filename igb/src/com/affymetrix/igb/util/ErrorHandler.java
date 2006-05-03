@@ -15,6 +15,7 @@ package com.affymetrix.igb.util;
 
 import java.awt.Component;
 import java.awt.Toolkit;
+import java.io.FileNotFoundException;
 import javax.swing.*;
 
 /**
@@ -82,15 +83,25 @@ public abstract class ErrorHandler {
     System.err.flush();
     System.err.println();
     System.err.println("-------------------------------------------------------");
-    System.err.println(title+": "+message);
     if (e != null) {
-      if (print_stack_traces) {e.printStackTrace(System.err);}
       String error_message = e.toString();
       message = message + "\n" + error_message;
       Throwable cause = e.getCause();
       while (cause != null) {
         message += "\n\nCaused by:\n" + cause.toString();
         cause = cause.getCause();
+      }
+    }
+    System.err.println(title+": "+message);
+    if (e != null) {
+      if (print_stack_traces) {
+        if (e instanceof FileNotFoundException) {
+          // do nothing.  Error already printed above, stack trace not usually useful
+          //System.err.println("FileNotFoundException: " + e.getMessage());
+        }
+        else {
+          e.printStackTrace(System.err);
+        }
       }
     }
 

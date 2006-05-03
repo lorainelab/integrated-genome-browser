@@ -259,6 +259,11 @@ public class GraphState implements IAnnotStyle {
   public Color getBackground() {
     return AnnotStyle.getDefaultInstance().getBackground();
   }
+  
+  /** Has no effect. */
+  public void setBackground(Color c) {
+    return;
+  }
 
   // Always returns false, since graphs can't be collapsed.
   /**

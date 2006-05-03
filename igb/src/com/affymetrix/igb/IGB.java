@@ -23,6 +23,7 @@ import java.util.*;
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
@@ -71,6 +72,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
+  Map comp2menu_item = new HashMap(); // Component -> JCheckBoxMenuItem
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -818,6 +820,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       JComponent comp = (JComponent) plugin;
       boolean in_a_window = (UnibrowPrefsUtil.getComponentState(title).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
       //boolean in_a_window = PluginInfo.PLACEMENT_WINDOW.equals(pi.getPlacement());
+      addToPopupWindows(comp, title);
+      JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+      menu_item.setSelected(in_a_window);
       if (in_a_window) {
         //openCompInWindow(comp, title, tool_tip, null, tab_pane);
         openCompInWindow(comp, tab_pane);
@@ -825,7 +830,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       else {
         tab_pane.addTab(title, icon, comp, tool_tip);
       }
-      addToPopupWindows(comp, title);
     }
 
     if (plugin instanceof DataLoadView) {
@@ -1169,6 +1173,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	    tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
             UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
             //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
+            JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+            if (menu_item != null) {
+              menu_item.setSelected(false);
+            }
 	  }
 	});
     }
@@ -1179,21 +1187,30 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
-
-  public void popupNotify(JPopupMenu popup,  java.util.List selected_items) {
+  
+  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SeqSymmetry primary_sym) {
     popup.add(popup_windowsM);
   }
 
   void addToPopupWindows(final JComponent comp, final String title) {
-    JMenuItem popupMI = new JMenuItem(title);
+    JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
     popup_windowsM.add(popupMI);
     popupMI.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent evt) {
-	  Object src = evt.getSource();
+	  JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
 	  //openCompInWindow(comp, title, tool_tip, null, tab_pane);
-          openCompInWindow(comp, tab_pane);
+          Frame frame = (Frame) comp2window.get(comp);
+          if (frame == null) {
+            openCompInWindow(comp, tab_pane);
+            src.setSelected(true);
+          } else {
+            // would like to move window back into tab, but needs some work
+            //src.setSelected(false);
+          }
 	}
       } );
+    comp2menu_item.put(comp, popupMI);
+    popup_windowsM.add(new JCheckBoxMenuItem("foo"));
   }
 
   /**

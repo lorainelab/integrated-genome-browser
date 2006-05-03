@@ -34,7 +34,7 @@ public class IntegerTableCellRenderer extends DefaultTableCellRenderer {
   }
 
   protected void setValue(Object value) {
-    if (value instanceof Integer) {
+    if (value instanceof Number) { // handles Integer, Double, etc.
       super.setValue(nf.format(value));
     } else {
       super.setValue(value);

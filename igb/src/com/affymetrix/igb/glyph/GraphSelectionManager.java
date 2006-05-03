@@ -993,7 +993,7 @@ public class GraphSelectionManager
     return result;
   }
 
-  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms) {
+  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SeqSymmetry primary_sym) {
     Vector selected_graph_glyphs = new Vector(0);
     current_graph = null;
     second_current_graph = null;

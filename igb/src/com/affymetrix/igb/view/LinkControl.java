@@ -35,7 +35,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
 
   public LinkControl() { }
 
-  public void popupNotify(JPopupMenu popup, List selected_syms) {
+  public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
     menu2url.clear();
     if (selected_syms.size() == 1) {
       SeqSymmetry sym = (SeqSymmetry)selected_syms.get(0);

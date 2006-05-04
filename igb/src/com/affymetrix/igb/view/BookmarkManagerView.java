@@ -104,11 +104,11 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
 
     setUpMenuBar();
     ImageIcon test_icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif");
-//    if (test_icon != null) {
-//      // Only use the toolbar if the icons are available.
-//      // Otherwise the toolbar just looks stupid.
-//      setUpToolBar();
-//    }
+    if (test_icon != null) {
+      // Only use the toolbar if the icons are available.
+      // Otherwise the toolbar just looks stupid.
+      setUpToolBar();
+    }
     setUpPopupMenu();
 
     // Start with an empty bookmark list.
@@ -499,7 +499,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
 
   void setUpToolBar() {
-    JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
+    JToolBar tool_bar = new JToolBar(JToolBar.VERTICAL);
     tool_bar.setFloatable(false);
     //tool_bar.add(refresh_action);
     tool_bar.add(add_folder_action);
@@ -513,7 +513,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     tool_bar.addSeparator();
     tool_bar.add(import_action);
     tool_bar.add(export_action);
-    this.add(tool_bar, BorderLayout.NORTH);
+    this.add(tool_bar, BorderLayout.WEST);
   }
 
   Action makeRefreshAction() {

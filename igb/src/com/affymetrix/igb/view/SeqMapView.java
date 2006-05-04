@@ -2507,16 +2507,16 @@ public class SeqMapView extends JPanel
     label.setText(title);
   }
 
-  private SeqSymmetry sym_used_for_title = null;
+  private SymWithProps sym_used_for_title = null;
   
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
   // should be similar in both places, or else users could get confused.
   private String getSelectionTitle(java.util.List selected_glyphs) {
     String id = null;
-    sym_used_for_title = null;
     if (selected_glyphs.isEmpty()) {
       id = "No selection";
+      sym_used_for_title = null;
     }
     else {
       if (selected_glyphs.size() == 1) {
@@ -2528,13 +2528,13 @@ public class SeqMapView extends JPanel
         }
         if (sym instanceof SymWithProps) {
           id = (String) ((SymWithProps) sym).getProperty("id");
-          sym_used_for_title = sym;
+          sym_used_for_title = (SymWithProps) sym;
         }
         if (id == null && sym instanceof DerivedSeqSymmetry) {
           SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-          if (original instanceof Propertied) {
-            id = (String) ((Propertied) original).getProperty("id");
-            sym_used_for_title = original;
+          if (original instanceof SymWithProps) {
+            id = (String) ((SymWithProps) original).getProperty("id");
+            sym_used_for_title = (SymWithProps) original;
           }
         }
         if (id == null && topgl instanceof GraphGlyph) {
@@ -2553,6 +2553,7 @@ public class SeqMapView extends JPanel
             ArrayList v = new ArrayList(1);
             v.add(pglyph);
             // Add one ">" symbol for each level of getParent()
+            sym_used_for_title = null; // may be re-set in the recursive call
             id = "> "+getSelectionTitle(v);
           }
           else {
@@ -2561,10 +2562,14 @@ public class SeqMapView extends JPanel
           }
         }
       } else {
+        sym_used_for_title = null;
         id = "" + selected_glyphs.size() + " Selections";
       }
     }
-    if (id == null) { id = ""; }
+    if (id == null) { 
+      id = "";
+      sym_used_for_title = null;
+    }
     return id;
   }
 

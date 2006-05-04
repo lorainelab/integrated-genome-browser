@@ -193,17 +193,19 @@ public class OrfAnalyzer2 extends JComponent
     }
 
     fortier = new TransformTierGlyph();
-    fortier.setLabel("Stop Codons (+)");
+    fortier.setLabel("Stop Codons");
     fortier.setFixedPixelHeight(true);
     fortier.setFixedPixHeight(25);
     fortier.setFillColor(Color.darkGray);
+    fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
     map.addTier(fortier, true);  // put forward tier above axis
 
     revtier = new TransformTierGlyph();
-    revtier.setLabel("Stop Codons (-)");
+    revtier.setLabel("Stop Codons");
     revtier.setFixedPixelHeight(true);
     revtier.setFixedPixHeight(25);
     revtier.setFillColor(Color.darkGray);
+    revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
     map.addTier(revtier, false);  // put reverse tier below axis
 
     Color pointcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);

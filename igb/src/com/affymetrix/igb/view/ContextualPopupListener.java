@@ -15,8 +15,8 @@ package com.affymetrix.igb.view;
 
 import javax.swing.JPopupMenu;
 import java.util.List;
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.igb.genometry.SymWithProps;
 
 public interface ContextualPopupListener {
-  public void popupNotify(JPopupMenu popup, List selected_items, SeqSymmetry primary_sym);
+  public void popupNotify(JPopupMenu popup, List selected_items, SymWithProps primary_sym);
 }

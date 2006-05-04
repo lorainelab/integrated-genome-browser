@@ -35,20 +35,25 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
 
   public LinkControl() { }
 
-  public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu popup, List selected_syms, SymWithProps primary_sym) {
     menu2url.clear();
     if (selected_syms.size() == 1) {
-      SeqSymmetry sym = (SeqSymmetry)selected_syms.get(0);
+      SymWithProps proper;
+      if (primary_sym == null) {
+        SeqSymmetry sym = (SeqSymmetry)selected_syms.get(0);
 
-      SymWithProps proper = null;
-      if (sym instanceof SymWithProps) {
-	proper = (SymWithProps) sym;
-      }
-      else if (sym instanceof DerivedSeqSymmetry) {
-        SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-        if (original instanceof SymWithProps) {
-          proper = (SymWithProps) original;
+        proper = null;
+        if (sym instanceof SymWithProps) {
+          proper = (SymWithProps) sym;
         }
+        else if (sym instanceof DerivedSeqSymmetry) {
+          SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
+          if (original instanceof SymWithProps) {
+            proper = (SymWithProps) original;
+          }
+        }
+      } else {
+        proper = primary_sym;
       }
 
       if (proper != null) {

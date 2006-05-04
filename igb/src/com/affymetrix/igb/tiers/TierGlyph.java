@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.util.Timer;
  *  directly to the map.
  *
  */
-public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
+public class TierGlyph extends SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
   boolean DEBUG_SEARCH = false;
   boolean sorted = true;
@@ -59,10 +59,6 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
   protected int state = FIXED_COORD_HEIGHT;
   protected int stateBeforeHidden = FIXED_COORD_HEIGHT;
   protected double spacer = 2;
-
-  // for now ignoring background color, foreground color
-  //   inherited from Glyph (as a style)
-  protected Color fill_color = null;
 
   /*
    * other_fill_color is derived from fill_color whenever setFillColor() is called.
@@ -110,9 +106,9 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     setStyle(style);
   }
 
-  /** Constructor for the case where AnnotStyle is null. */
+  /** Constructor that generates a default IAnnotStyle. */
   public TierGlyph() {
-    this(AnnotStyle.NULL_INSTANCE);
+    this(new DefaultIAnnotStyle());
   }
 
   public void setStyle(IAnnotStyle style) {
@@ -338,8 +334,8 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     pixelbox = GeometryUtils.intersection(vbox, pixelbox, pixelbox);
 
     if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
-      if (fill_color != null) {
-	g.setColor(fill_color);
+      if (style.getBackground() != null) {
+	g.setColor(style.getBackground());
 	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
       }
     }
@@ -360,7 +356,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
       GlyphI mglyph = (GlyphI)middle_glyphs.get(i);
       Rectangle2D mbox = mglyph.getCoordBox();
       mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
-      mglyph.setColor(fill_color);
+      mglyph.setColor(style.getBackground());
       mglyph.drawTraversal(view);
     }
     if (outline_color != null) {
@@ -507,7 +503,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
    *  @param col  A color, or null if no background color is desired.
    */
   public void setFillColor(Color col) {
-    fill_color = col;
+    style.setBackground(col);
 
     // Now set the "middleground" color based on the fill color
     if (col == null) {
@@ -520,12 +516,44 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     }
   }
 
+  
+  // very, very deprecated
+  public Color getColor() {
+    return getForegroundColor();
+  }
+  
+  // very, very deprecated
+  public void setColor(Color c) {
+    setForegroundColor(c);
+  }
+  
+  
   /** Returns the color used to draw the tier background, or null
       if there is no background. */
   public Color getFillColor() {
-    return fill_color;
+    return style.getBackground();
   }
 
+  public void setForegroundColor(Color color) {
+    style.setColor(color);
+    //super.setForegroundColor(color);
+    //super.setColor(color); // NO: super.setColor calls setBackgroundColor()
+  }
+
+  public Color getForegroundColor() {
+    return style.getColor();
+  }
+  
+  public void setBackgroundColor(Color color) {
+    //super.setBackgroundColor(color);
+    setFillColor(color);
+  }
+  
+  public Color getBackgroundColor() {
+    //return super.getBackgroundColor();
+    return getFillColor();
+  }
+  
   /** Set whether or not the tier wants to allow itself to be hidden;
    *  The state of this flag has no effect on whether setState(HIDDEN)
    *  will work or not.
@@ -589,5 +617,14 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     else if (astate == FIXED_COORD_HEIGHT) { return "FIXED_COORD_HEIGHT"; }
     else { return "UNKNOWN"; }
   }
+  
+  /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+  protected void drawSelectedFill(ViewI view) {
+    this.drawSelectedOutline(view);
+  }
 
+  /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+  protected void drawSelectedReverse(ViewI view) {
+    this.drawSelectedOutline(view);
+  }
 }

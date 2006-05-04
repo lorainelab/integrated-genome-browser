@@ -23,7 +23,6 @@ import java.util.*;
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
@@ -1188,7 +1187,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
   
-  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
     popup.add(popup_windowsM);
   }
 

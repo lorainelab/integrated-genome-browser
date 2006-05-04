@@ -36,7 +36,7 @@ public class TierGlyph extends SolidGlyph {
   boolean ready_for_searching = false;
   static Comparator child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
-  //int direction = DIRECTION_FORWARD;
+  int direction = DIRECTION_NONE;
 
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 
@@ -52,9 +52,10 @@ public class TierGlyph extends SolidGlyph {
   public static final int FIXED_COORD_HEIGHT = 103;
   //  public static final int SUMMARIZED = 104;
 
-  //public static final int DIRECTION_FORWARD = +1;
-  //public static final int DIRECTION_NONE = 0;
-  //public static final int DIRECTION_REVERSE = -1;
+  public static final int DIRECTION_FORWARD = +1;
+  public static final int DIRECTION_NONE = 0;
+  public static final int DIRECTION_REVERSE = -1;
+  public static final int DIRECTION_BOTH = 2;
 
   protected int state = FIXED_COORD_HEIGHT;
   protected int stateBeforeHidden = FIXED_COORD_HEIGHT;
@@ -138,7 +139,7 @@ public class TierGlyph extends SolidGlyph {
       setState(TierGlyph.EXPANDED);
     }
   }
-
+    
   public IAnnotStyle getAnnotStyle() {
     return style;
   }
@@ -293,6 +294,7 @@ public class TierGlyph extends SolidGlyph {
     return sorted;
   }
 
+  
   public void setLabel(String str) {
     label = str;
   }
@@ -576,20 +578,20 @@ public class TierGlyph extends SolidGlyph {
     return getStateString(getState());
   }
 
-//  public int getDirection() {
-//    return direction;
-//  }
-//
-//  /**
-//   *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
-//   *  or DIRECTION_NONE.
-//   */
-//  public void setDirection(int d) {
-//    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) && (d != DIRECTION_REVERSE)) {
-//      throw new IllegalArgumentException();
-//    }
-//    this.direction = d;
-//  }
+  public int getDirection() {
+    return direction;
+  }
+
+  /**
+   *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
+   *  DIRECTION_BOTH or DIRECTION_NONE.
+   */
+  public void setDirection(int d) {
+    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH)) {
+      throw new IllegalArgumentException();
+    }
+    this.direction = d;
+  }
 
 
   /** Changes the maximum depth of the expanded packer.

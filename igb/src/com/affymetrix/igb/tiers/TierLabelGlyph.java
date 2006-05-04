@@ -73,13 +73,31 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return (TierGlyph) getInfo();
   }
     
+ String getDirectionString(TierGlyph tg) {
+    switch (tg.direction) {
+      case TierGlyph.DIRECTION_FORWARD:
+        return "(+)";
+      case TierGlyph.DIRECTION_REVERSE:
+        return "(-)";
+      case TierGlyph.DIRECTION_BOTH:
+        return "(+/-)";
+      default: // DIRECTION_NONE
+        return "";
+    }
+  }
+      
   /** Returns the label of the reference tier, or some default string if there isn't one. */
   String getLabelString() {
     TierGlyph reference_tier = getReferenceTier();
     if (reference_tier == null || reference_tier.getLabel() == null) {
       return ".......";
     } else {
-      return reference_tier.getLabel();
+      String direction_str = getDirectionString(reference_tier);
+      if ("".equals(direction_str)) {
+        return reference_tier.getLabel();
+      } else {
+        return reference_tier.getLabel() + " " + direction_str;
+      }
     }
   }
   

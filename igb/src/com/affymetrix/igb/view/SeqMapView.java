@@ -584,6 +584,7 @@ public class SeqMapView extends JPanel
     axis_tier.setLabel("Coordinates");
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
+    axis_tier.setDirection(TierGlyph.DIRECTION_NONE);
     //    axis_tier.setFixedPixelHeight(false);
     AxisGlyph axis = seqmap.addAxis(0);
     axis.setHitable(false);
@@ -2698,23 +2699,18 @@ public class SeqMapView extends JPanel
         setUpTierPacker(fortier, true);
         method2ftier.put(meth.toLowerCase(), fortier);
       }
-      if (fortier != null) {
-        String label;
-        if (style instanceof AnnotStyle) {
-          if (((AnnotStyle) style).getSeparate()) {
-            //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
-            label = style.getHumanName() + " (+)";
-          } else {
-            //fortier.setDirection(TierGlyph.DIRECTION_NONE);
-            label = style.getHumanName() + " (+/-)";
-          }
-        } else { // may be an instance of graph annot style
-          //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
-          //label = meth + " (+)";
-          label = meth;
+      if (style instanceof AnnotStyle) {
+        if (((AnnotStyle) style).getSeparate()) {
+          fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+        } else {
+          fortier.setDirection(TierGlyph.DIRECTION_NONE);
         }
-        fortier.setLabel(label);
+        fortier.setLabel(((AnnotStyle) style).getHumanName());
+      } else { // may be an instance of graph annot style
+        fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+        fortier.setLabel(meth);
       }
+        
       if (map.getTierIndex(fortier) == -1) {
         if (next_to_axis)  {
           int axis_index = map.getTierIndex(axis_tier);
@@ -2725,17 +2721,16 @@ public class SeqMapView extends JPanel
 
       if (revtier == null)  {
         revtier = new TierGlyph(style);
-        //revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
+        revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
         setUpTierPacker(revtier, false);
         method2rtier.put(meth.toLowerCase(), revtier);
       }
-      if (revtier != null) {
-        if (style instanceof AnnotStyle) {
-          revtier.setLabel(style.getHumanName() + " (-)");
-        } else { // style is a graph style or is null (this may not even be possible)
-          revtier.setLabel(meth + " (-)");
-        }
+      if (style instanceof AnnotStyle) {
+        revtier.setLabel(style.getHumanName());
+      } else { // style is a graph style or is null (this may not even be possible)
+        revtier.setLabel(meth);
       }
+
       if (map.getTierIndex(revtier) == -1) {
         if (next_to_axis)  {
           int axis_index = map.getTierIndex(axis_tier);

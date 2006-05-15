@@ -31,12 +31,12 @@ import com.affymetrix.igb.util.ErrorHandler;
  *
  */
 
-public class Das2AssaySource extends Das2Source {
+public class Das2AssaySource extends com.affymetrix.igb.das2.Das2Source {
 
   boolean init;
 
     /** Creates a new instance of Das2AssaySource */
-    public Das2AssaySource(Das2AssayServerInfo source_server, URI source_uri, boolean init) {
+    public Das2AssaySource(Das2ServerInfo source_server, URI source_uri, boolean init) {
         super(source_server, source_uri, null, null, null, null);
         this.init = init;
     }

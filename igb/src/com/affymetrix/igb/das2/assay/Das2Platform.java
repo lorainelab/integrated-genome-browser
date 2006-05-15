@@ -8,7 +8,9 @@
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package com.affymetrix.igb.das2;
+package com.affymetrix.igb.das2.assay;
+
+import com.affymetrix.igb.das2.*;
 
 /**
  *
@@ -18,15 +20,15 @@ package com.affymetrix.igb.das2;
  */
 
 public class Das2Platform {
-    Das2VersionedSourcePlus versioned_source;
+    Das2AssayVersionedSource versioned_source;
     String platform;
 
     /** Creates a new instance of Das2Platform */
-    public Das2Platform(Das2VersionedSourcePlus _version, String _platform) {
+    public Das2Platform(Das2AssayVersionedSource _version, String _platform) {
         this.versioned_source = _version;
         this.platform = _platform;
     }
 
-    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
+    public Das2AssayVersionedSource getVersionedSource() { return versioned_source; }
     public String getPlatform(){ return platform; }
 }

@@ -48,6 +48,8 @@ public class Das2ServerInfo  {
    */
   public Das2ServerInfo(String url, String name, boolean init) {
     String root_string = url;
+    // FIXME: if you remove the trailing slash then relative URI resolution doesn't work
+    // on the das.biopackages.net server!
     // all trailing "/" chars are stripped off the end if present
     while (root_string.endsWith("/")) {
       root_string = root_string.substring(0, root_string.length()-1);
@@ -69,29 +71,23 @@ public class Das2ServerInfo  {
   /** Returns the root URL String.  Will not have any trailing "/" at the end. */
   public URI getURI() { return server_uri; }
   public String getID() { return server_uri.toString(); }
-
   public String getName() {
     return name;
   }
-
   public String getDasVersion() {
     if (!initialized) { initialize(); }
     return das_version;
   }
-
   public Map getSources() {
     if (!initialized) { initialize(); }
     return sources;
   }
-
   protected void setDasVersion(String version) {
     das_version = version;
   }
-
   protected void addDataSource(Das2Source ds) {
     sources.put(ds.getID(), ds);
   }
-
 
   /**
    *  assumes there is only one versioned source for each AnnotatedSeqGroup
@@ -143,10 +139,15 @@ public class Das2ServerInfo  {
       URL das_request = new URL(das_query);
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
-      String das_version = request_con.getHeaderField("X-DAS-Version");
-      String das_status = request_con.getHeaderField("X-DAS-Status");
-      //  String das_capabilities = request_con.getHeaderField("X-DAS-Capabilities");
+      String content_type = request_con.getHeaderField("Content-Type");
+      String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
+      String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
 
+      //HACK: Affy das server barfs w/ a trailing slash, URI resolution
+      //      doesn't work without trailing slash, so adding it back in
+      //      here.
+      das_query = das_query+"/";
+      
       setDasVersion(das_version);
 
       System.out.println("DAS server version: " + das_version + ", status: " + das_status);
@@ -159,65 +160,64 @@ public class Das2ServerInfo  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute(URID);
-	if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
-	String source_name = source.getAttribute(TITLE);
-	if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
-	System.out.println("title: " + source_name + ",  length: " + source_name.length());
-	if (source_name == null || source_name.length() == 0) {
-	  source_name = source_id;
-	}
-	System.out.println("source_name: " + source_name);
+	    if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
+	    String source_name = source.getAttribute(TITLE);
+	    if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
+	    System.out.println("title: " + source_name + ",  length: " + source_name.length());
+	    if (source_name == null || source_name.length() == 0) { source_name = source_id; }
+	    System.out.println("source_name: " + source_name);
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxid");
 
-	URI source_uri = getBaseURI(das_query, source).resolve(source_id);
+      URI source_uri = getBaseURI(das_query, source).resolve(source_id);
 
-	Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
-					      source_taxon, source_description);
-	this.addDataSource(dasSource);
-	NodeList slist = source.getChildNodes();
-	for (int k=0; k < slist.getLength(); k++) {
-	  if (slist.item(k).getNodeName().equals("VERSION"))  {
-	    Element version = (Element)slist.item(k);
-	    String version_id = version.getAttribute(URID);
-	    if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
-	    String version_name = version.getAttribute(TITLE);
-	    if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
-	    if (version_name.length() == 0) { version_name = version_id; }
-	    System.out.println("version_name: " + version_name);
+      Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
+                            source_taxon, source_description);
+      this.addDataSource(dasSource);
+      NodeList slist = source.getChildNodes();
+      for (int k=0; k < slist.getLength(); k++) {
+        if (slist.item(k).getNodeName().equals("VERSION"))  {
+          Element version = (Element)slist.item(k);
+          String version_id = version.getAttribute(URID);
+          if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
+          String version_name = version.getAttribute(TITLE);
+          if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
+          if (version_name.length() == 0) { version_name = version_id; }
+          System.out.println("version_name: " + version_name);
 
-	    String version_desc = version.getAttribute("description");
-	    String version_info_url = version.getAttribute("doc_href");
-	    //	    setDasVersionedSource(dasSource, version_id, false);
-	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
-	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
-	    System.out.println("version URI: " + version_uri.toString());
-	    //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
-	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
-								  version_desc, version_info_url, false);
-	    dasSource.addVersion(vsource);
+          String version_desc = version.getAttribute("description");
+          String version_info_url = version.getAttribute("doc_href");
+          //	    setDasVersionedSource(dasSource, version_id, false);
+          URI version_uri = getBaseURI(das_query, version).resolve(version_id);
+          System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+          System.out.println("version URI: " + version_uri.toString());
+          //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
+          
+          Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
+                                    version_desc, version_info_url, false);
+          dasSource.addVersion(vsource);
 
 
-	    NodeList vlist = version.getChildNodes();
-	    for (int j=0; j<vlist.getLength(); j++) {
-	      String nodename = vlist.item(j).getNodeName();
-	      // was CATEGORY, renamed CAPABILITY
-	      if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
-		Element capel = (Element)vlist.item(j);
-		String captype = capel.getAttribute(TYPE);
-		String query_id = capel.getAttribute(QUERY_URI);
-		if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
-		URI base_uri = getBaseURI(das_query, capel);
-		URI cap_root = base_uri.resolve(query_id);
-		System.out.println("Capability: " + captype + ", URI: " + cap_root);
-		// for now don't worry about format subelements
-		Das2Capability cap = new Das2Capability(captype, cap_root, null);
-		vsource.addCapability(cap);
-	      }
-	    }
-	  }
-	}
+          NodeList vlist = version.getChildNodes();
+          for (int j=0; j<vlist.getLength(); j++) {
+            String nodename = vlist.item(j).getNodeName();
+            // was CATEGORY, renamed CAPABILITY
+            if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
+              Element capel = (Element)vlist.item(j);
+              String captype = capel.getAttribute(TYPE);
+              String query_id = capel.getAttribute(QUERY_URI);
+              if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
+              URI base_uri = getBaseURI(das_query, capel);
+              URI cap_root = base_uri.resolve(query_id);
+              System.out.println("Capability: " + captype + ", URI: " + cap_root);
+              // for now don't worry about format subelements
+              Das2Capability cap = new Das2Capability(captype, cap_root, null);
+              vsource.addCapability(cap);
+              }
+            }
+          }
+        }
       }
     }
     catch (Exception ex) {
@@ -237,7 +237,7 @@ public class Das2ServerInfo  {
       if (pnode instanceof Element) {
 	Element el = (Element)pnode;
 	String xbase = el.getAttribute("xml:base");
-	if (xbase != null) { xml_bases.push(xbase); }
+	if (xbase != null && !xbase.equals("")) { xml_bases.push(xbase); }
       }
       pnode = pnode.getParentNode();
     }
@@ -257,76 +257,12 @@ public class Das2ServerInfo  {
     return base_uri;
   }
 
-
   /**
    *  For testing.
    */
   public static void main(String[] args) {
-    // String test_url = "file:/C:/data/das2_responses/alan_server/sources.xml";
-    String test_url = "http://das.ev.affymetrix.com/das/genome";
-
-    // DEBUG: The first is a squid proxy that greatly increases response time
-    // email me if you want access <boconnor@ucla.edu>
-    //String test_url = "http://radius.genomics.ctrl.ucla.edu/das/genome";
-    //String test_url = "http://das.biopackages.net/das/genome";
-
-    Das2ServerInfo test = new Das2ServerInfo(test_url, "name unknown", true);
-    System.out.println("***** DAS Server Info *****");
-    System.out.println("  root URL: " + test.getID());
-    System.out.println("  DAS version: " + test.getDasVersion());
-
-    Iterator sources = test.getSources().values().iterator();
-    System.out.println("  data sources: ");
-    while (sources.hasNext()) {
-      Das2Source source = (Das2Source)sources.next();
-      System.out.println("     id = " + source.getID() +
-                         ", description = " + source.getDescription() +
-			 ", info_url = " + source.getInfoUrl() +
-                         ", taxon = " + source.getTaxon());
-      Iterator versions = source.getVersions().values().iterator();
-      while (versions.hasNext()) {
-	Das2VersionedSource version = (Das2VersionedSource)versions.next();
-	System.out.println("          version id = " + version.getID());
-	System.out.println("AnnotatedSeqGroup: " + version.getGenome().getID());
-	Map regions = version.getRegions();
-	Iterator riter = regions.values().iterator();
-	while (riter.hasNext()) {
-	  Das2Region region = (Das2Region)riter.next();
-	  MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
-	}
-      }
+    System.out.println("This is deprecated, use the JUnit test for Das2ServerInfo instead");
     }
-    /*
-       sources = test.getDataSources().values().iterator();
-        DasSource first_source = (DasSource)sources.next();
-    //    first_source.initialize();
-    Map entryhash = first_source.getEntryPoints();
-    Iterator entries = entryhash.values().iterator();
-    while (entries.hasNext()) {
-      DasEntryPoint entry_point = (DasEntryPoint)entries.next();
-      System.out.println("entry point:  id = " + entry_point.getID());
-      AnnotatedBioSeq seq = (AnnotatedBioSeq)entry_point.getAnnotatedSeq();
-      System.out.println("seq: " + seq.getID() + ", length = " + seq.getLength());
-    }
-    Map typehash = first_source.getTypes();
-    Iterator types = typehash.values().iterator();
-    while (types.hasNext()) {
-      DasType type = (DasType)types.next();
-      System.out.println("type:  id = " + type.getID());
-    }
-
-    AnnotatedSeqGroup genome = first_source.getGenome();
-    System.out.println("current genome: " + genome);
-
-    Iterator iter = genome.getSeqs().values().iterator();
-    while (iter.hasNext()) {
-      AnnotatedBioSeq seq = (AnnotatedBioSeq)iter.next();
-      System.out.println("seq: " + seq.getID() + ", length = " + seq.getLength());
-    }
-   */
-
-   System.out.println("**************************");
-  }
 }
 
 

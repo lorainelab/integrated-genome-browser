@@ -29,131 +29,96 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 
 /**
  *
  * @author Marc Carlson
  *
  */
-public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
+public class Das2OntologyVersionedSource extends com.affymetrix.igb.das2.Das2VersionedSource {
 
     /** Creates a new instance of Das2OntologyVersionedSource */
-    public Das2OntologyVersionedSource(Das2OntologySource das_source, URI vers_uri, boolean init) {
-        super(das_source, vers_uri, init);
+    public Das2OntologyVersionedSource(Das2Source das_source, URI vers_uri, boolean init) {
+        super((Das2Source)das_source, vers_uri, vers_uri.toString(), null, null, init);
     }
 
     // get annotation types from das server
     protected void initTypes(String filter) {
-    this.types_filter = filter;
-    this.clearTypes();
+      this.types_filter = filter;
+      this.clearTypes();
 
-    //ontology_types_request should look like:
-    //String ontologyRequest = "http://das.biopackages.net/das/ontology/obo/1/ontology/";
-    String ontologyTypesRequest = getSource().getID();
+      //ontology_types_request should look like:
+      //String ontologyRequest = "http://das.biopackages.net/das/ontology/obo/1/ontology/";
+      String ontologyTypesRequest = this.getID();
 
-    if (filter != null) {
-      //next I need a string like:
-      //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA
-      ontologyTypesRequest = ontologyTypesRequest+"/"+filter;
-    }
-
-    try {
-      System.out.println("Das Ontology Request: " + ontologyTypesRequest);
-      Document doc = DasLoader.getDocument(ontologyTypesRequest);
-      Element top_element = doc.getDocumentElement();
-      NodeList typeList = doc.getElementsByTagName("TERM");
-      System.out.println("Count of all Ontology Terms: " + typeList.getLength());
-
-      HashMap curOntology = new HashMap();
-      HashMap parentHoldingHash = new HashMap();
-
-      //this is for tracking whether or not a node has been included in the list of nodes to draw/use later on...
-      HashMap uberTrackingHash = new HashMap();
-      String ontoRootNodeId = new String() ;
-      int typeCounter = 0;
-
-      //Loop through the entire ontology and put the relevant reationships into this map
-      for (int m=0; m< typeList.getLength(); m++)  {
-        Element typeNode = (Element)typeList.item(m);
-        String termID = typeNode.getAttribute("id");
-
-        // temporary workaround for getting type ending, rather than full URI
-        if (termID.startsWith("./")) { termID = termID.substring(2); }
-
-        //the pattern to look for gets compiled in here
-        Pattern p1 = Pattern.compile("/");
-        //init the matcher object
-        Matcher m1 = p1.matcher("");
-        //reset the matcher with the string in question
-        m1.reset(termID);
-        //Replace found characters with an empty string.
-        termID = m1.replaceAll(":");
-
-        String ontid = typeNode.getAttribute("ontology");
-	String type_source = typeNode.getAttribute("source");
-	String href = typeNode.getAttribute("doc_href");
-        String type_name = typeNode.getAttribute("name");
-
-	NodeList flist = typeNode.getElementsByTagName("FORMAT");
-	LinkedHashMap formats = new LinkedHashMap();
-	HashMap props = new HashMap();
-	for (int k=0; k<flist.getLength(); k++) {
-	  Element fnode = (Element)flist.item(k);
-	  String formatid = fnode.getAttribute("id");
-	  String mimetype = fnode.getAttribute("mimetype");
-	  if (mimetype == null || mimetype.equals("")) { mimetype = "unknown"; }
-          //	  System.out.println("alternative format for annot type " + typeid +
-          //": format = " + formatid + ", mimetype = " + mimetype);
-          formats.put(formatid, mimetype);
-	}
-
-	NodeList plist = typeNode.getElementsByTagName("PROP");
-	for (int k=0; k<plist.getLength(); k++) {
-	  Element pnode = (Element)plist.item(k);
-	  String key = pnode.getAttribute("key");
-	  String val = pnode.getAttribute("value");
-	  props.put(key, val);
-	}
-
-        HashMap parents = new HashMap();
-
-        //do not assign real vals to these
-        NodeList parentsList = typeNode.getElementsByTagName("PARENT");
-        for (int l=0; l<parentsList.getLength(); l++) {
-           Element pnode = (Element)parentsList.item(l);
-           String key = pnode.getAttribute("id");
-
-           //the pattern to look for gets compiled in here
-           Pattern p2 = Pattern.compile("/");
-           //init the matcher object
-           Matcher m2 = p2.matcher("");
-           //reset the matcher with the string in question
-           m2.reset(key);
-           //Replace found characters with an empty string.
-           key = m2.replaceAll(":");
-
-           parents.put(key, key);
-        }
-
-        try  {
-          //add each node as you ID them and their parents
-          Das2Type type = new Das2Type(this, new URI(termID), type_name, ontid, type_source, href, formats,
-                                       props, parents);
-          this.addType(type);
-        }
-        catch (Exception ex)  { ex.printStackTrace(); }
-
-
-        typeCounter++;
+      if (filter != null) {
+        //next I need a string like:
+        //example of onto request:  http://das.biopackages.net/das/ontology/obo/1/ontology/MA
+        //FIXME: this is making an assumption about the URL structure
+        ontologyTypesRequest = ontologyTypesRequest+"/ontology/"+filter;
       }
 
+      try {
+        System.out.println("Das Ontology Request: " + ontologyTypesRequest);
+        Document doc = DasLoader.getDocument(ontologyTypesRequest);
+        Element top_element = doc.getDocumentElement();
+        NodeList typeList = doc.getElementsByTagName("term");
+        System.out.println("Count of all Ontology Terms: " + typeList.getLength());
+
+        for (int m=0; m< typeList.getLength(); m++)  {
+          Element typeNode = (Element)typeList.item(m);
+          String termURI = typeNode.getAttribute("id");
+          
+          String termAccession = termURI; //FIXME: can get rid of this variable
+          
+          String termName = "";
+          String termDef = "";
+          try { 
+          if (typeNode.getElementsByTagName("name").getLength() > 0) { termName = ((Element)typeNode.getElementsByTagName("name").item(0)).getFirstChild().getNodeValue(); }
+          if (typeNode.getElementsByTagName("def").getLength() > 0) { termDef = ((Element)typeNode.getElementsByTagName("def").item(0)).getFirstChild().getNodeValue(); }
+          } catch (Exception ignored) {}
+          
+          Map parents = new HashMap();
+          
+          // for "is_a" relationships
+          NodeList parentList = typeNode.getElementsByTagName("is_a");
+          for(int i=0; i<parentList.getLength(); i++) {
+            Element parentNode = (Element)parentList.item(i);
+            String parentURI = parentNode.getFirstChild().getNodeValue();
+            parents.put(parentURI, parentURI);
+          }
+          
+          //for "part_of" relationships
+          parentList = typeNode.getElementsByTagName("part_of");
+          for(int i=0; i<parentList.getLength(); i++) {
+            Element parentNode = (Element)parentList.item(i);
+            String parentURI = parentNode.getFirstChild().getNodeValue();
+            parents.put(parentURI, parentURI);
+          }
+
+          //add each node as you ID them and their parents
+          //Das2OntologyType type = new Das2OntologyType(this, new URI(ontologyTypesRequest).resolve(termURI),
+          //                        termName, filter, termAccession, termDef, parents);
+          Das2OntologyType type = new Das2OntologyType(this, new URI(termURI),
+                                  termName, filter, termAccession, termDef, parents);
+
+          this.addType(type);
+        }
+      }
+      catch (Exception ex) {
+          ErrorHandler.errorPanel("Error initializing DAS types for\n"+ontologyTypesRequest, ex);
+      }
+      //TODO should types_initialized be true after an exception?
+      this.types_initialized = true;
     }
-    catch (Exception ex) {
-        ErrorHandler.errorPanel("Error initializing DAS types for\n"+ontologyTypesRequest, ex);
+     
+  public Map getTypes(String filter) {
+     if (! types_initialized || !filter.equals(types_filter)) {
+       initTypes(filter);
     }
-    //TODO should types_initialized be true after an exception?
-        this.types_initialized = true;
-    }
+    return types;
+  }
 
     /**
      *  initRegions() is to remove the need for this function to HAVE to do
@@ -164,5 +129,4 @@ public class Das2OntologyVersionedSource extends Das2VersionedSourcePlus {
     protected void initRegions() {
         this.regions_initialized = true;
     }
-
 }

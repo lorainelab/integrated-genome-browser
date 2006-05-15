@@ -8,9 +8,10 @@
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package com.affymetrix.igb.das2;
+package com.affymetrix.igb.das2.assay;
 
 import java.util.*;
+import com.affymetrix.igb.das2.*;
 
 /**
  *
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class Das2Result {
 
-    Das2VersionedSourcePlus versioned_source;
+    Das2VersionedSource versioned_source;
     String id;
     String assayId;
     String imageId;
@@ -29,7 +30,7 @@ public class Das2Result {
         //nothing
     }
 
-    public Das2Result(Das2VersionedSourcePlus version, String id, String assayId, String imageId, String protocolId) {
+    public Das2Result(Das2VersionedSource version, String id, String assayId, String imageId, String protocolId) {
       this.versioned_source = version;
       this.id = id;
       this.assayId = assayId;
@@ -37,7 +38,7 @@ public class Das2Result {
       this.protocolId = protocolId;
     }
 
-    public Das2VersionedSourcePlus getVersionedSource() { return versioned_source; }
+    public Das2VersionedSource getVersionedSource() { return versioned_source; }
     public String getID() { return id; }
     public String getAssayId() { return assayId; }
     public String getImageId() { return imageId; }

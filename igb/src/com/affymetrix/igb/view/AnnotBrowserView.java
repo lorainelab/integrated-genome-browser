@@ -30,6 +30,7 @@ import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.IPlugin;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
 /**
@@ -63,7 +64,13 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         return getPreferredSize();
       }
   };
+  JButton go_b = new JButton("Find");
 
+  JLabel status_bar = new JLabel("0 results");
+  
+  // Helps to figure out when the selected group has changed
+  int current_group_hash_number = 0;
+  
   public AnnotBrowserView() {
     super();
     this.setLayout(new BorderLayout());
@@ -80,10 +87,17 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     top_row.add(Box.createRigidArea(new Dimension(10, 30)));
     top_row.add(to_tf);
     top_row.add(Box.createHorizontalGlue());
+    top_row.add(go_b);
+    top_row.add(Box.createRigidArea(new Dimension(6, 30)));
         
     JScrollPane scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
+    
+    Box bottom_row = Box.createHorizontalBox();
+    this.add(bottom_row, BorderLayout.SOUTH);
 
+    bottom_row.add(status_bar);
+    
     model = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {return false;}
       public Class getColumnClass(int column) {
@@ -107,6 +121,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     TableSorter2 sort_model = new TableSorter2(model);
     //sort_model.addMouseListenerToHeaderInTable(table); // for TableSorter version 1
     sort_model.setTableHeader(table.getTableHeader()); // for TableSorter2
+    sort_model.setColumnComparator(SeqSymmetry.class, new SeqSymmetryMethodComparator());
 
     table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
@@ -121,12 +136,17 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     AnnotatedSeqGroup.addSymMapChangeListener(this);
     SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
     
+    go_b.addActionListener(text_action_listener);
     from_tf.addActionListener(text_action_listener);
     to_tf.addActionListener(text_action_listener);
-    from_tf.addFocusListener(text_focus_listener);
-    to_tf.addFocusListener(text_focus_listener);
+    
+    // Focus listeners are a bad idea here.  They create too many updates.
+    //from_tf.addFocusListener(text_focus_listener);
+    //to_tf.addFocusListener(text_focus_listener);
   }
 
+  int THE_LIMIT = Integer.MAX_VALUE;
+  
   protected Vector buildRows(AnnotatedSeqGroup seq_group, String start, String end) {
     if (seq_group == null) {
       return new Vector(0);
@@ -145,16 +165,14 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     
     java.util.List entries = new ArrayList(sym_ids);
     int num_rows = entries.size();
+    
     Vector rows = new Vector(num_rows, num_rows/10);
-    for (int j = 0 ; j < num_rows ; j++) {
+    for (int j = 0 ; j < num_rows && rows.size() < THE_LIMIT ; j++) {
       String key = (String) entries.get(j);
       java.util.List the_list = seq_group.findSyms(key);
-            
+      
       for (int k=0; k<the_list.size(); k++) {
-        Vector a_row = new Vector(NUM_COLUMNS);
-        a_row.add(key);
         SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
-        a_row.add(sym);
 
         int span_count = sym.getSpanCount();
         SeqSpan first_span_in_group = null; // first span with a BioSeq in this SeqGroup
@@ -168,8 +186,11 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
             break;
           }
         }
-
+        
         if (first_span_in_group != null) {
+          Vector a_row = new Vector(NUM_COLUMNS);
+          a_row.add(key);
+          a_row.add(sym);
           a_row.add(new Integer(first_span_in_group.getStart()));
           a_row.add(new Integer(first_span_in_group.getEnd()));
           String s = first_span_in_group.getBioSeq().getID() + (first_span_in_group.isForward() ? "+" : "-");
@@ -182,20 +203,37 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     return rows;
   }
 
-  
+  // Clear the table (using invokeLater)
+  void clearTable(final String text) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        model.setDataVector(new Vector(0), col_headings_vector);
+        status_bar.setText(text);
+      }
+    });
+  }
+    
   /** 
    * Re-populates the table with the given AnnotatedSeqGroup.
    */
   public void showSymHash(AnnotatedSeqGroup seq_group) {
     final AnnotatedSeqGroup final_seq_group = seq_group;
+    current_group_hash_number = (seq_group == null ? 0 : seq_group.hashCode());
     final String start = from_tf.getText().trim().toLowerCase();
     final String end = to_tf.getText().trim().toLowerCase();
     Thread thread = new Thread() {
-      public void run() {    
+      public void run() {
+        clearTable("Working...");
         final Vector rows = buildRows(final_seq_group, start, end);
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             model.setDataVector(rows, col_headings_vector);
+            int num_results = rows.size();
+            if (rows.size() >= THE_LIMIT) {
+              status_bar.setText("More than " + THE_LIMIT + " results");
+            } else {
+              status_bar.setText("" + rows.size() + " results");
+            }
           }
         });
       }
@@ -204,16 +242,36 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     thread.start();
   }
 
+  void dataModified(final String text) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        status_bar.setText(text);
+      }
+    });
+  }
+
   /** Causes a call to {@link #showSymHash(AnnotatedSeqGroup)}.
+   * }
    *  Normally, this occurs as a result of a call to
    *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
    */
   public void symMapModified(SymMapChangeEvent evt) {
-    showSymHash(evt.getSeqGroup());
+    //showSymHash(evt.getSeqGroup());
+    dataModified("Data modified, search again");
   }
   
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    showSymHash(evt.getSelectedGroup());
+    //showSymHash(evt.getSelectedGroup());
+    
+    int hash_number = (evt.getSelectedGroup() == null ? 0 : evt.getSelectedGroup().hashCode());
+    if (model.getDataVector().size() > 0) {
+      if (hash_number != current_group_hash_number) {
+        clearTable("Data modified, search again");
+      } else {
+        dataModified("Data modified, search again");
+      }
+    }
+    current_group_hash_number = hash_number;
   }
   
   // Redraws the table in response to events in the text fields and buttons.
@@ -230,12 +288,9 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     }          
   };
   
-  /** This is called when the user selects a row of the table;
-   *  It calls {@link AnnotatedSeqGroup#findSyms(String)}.
-   */
+  /** This is called when the user selects a row of the table. */
   ListSelectionListener list_selection_listener = new ListSelectionListener() {
     public void valueChanged(ListSelectionEvent evt) {
-      boolean old_way = true;
       if (evt.getSource()==lsm && ! evt.getValueIsAdjusting() && model.getRowCount() > 0) {
         int srow = table.getSelectedRow();
         if (srow >= 0) {
@@ -276,11 +331,13 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   // implementation of IPlugin
   public Object getPluginProperty(Object o) {
     if (IPlugin.TEXT_KEY_ICON.equals(o)) {
-      return com.affymetrix.igb.menuitem.MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif");
+      //return com.affymetrix.igb.menuitem.MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif");
+      return null; // suppress the icon until more of the plugins are using icons
     }
     return null;
   }
   
+  /** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
   public static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
     public SeqSymmetryTableCellRenderer() {
       super();
@@ -289,6 +346,15 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     protected void setValue(Object value) {
       SeqSymmetry sym = (SeqSymmetry) value;
       super.setValue(SeqMapView.determineMethod(sym));
+    }
+  }
+
+  /** A Comparator that compares based on {@link SeqMapView#determineMethod(SeqSymmetry)}. */
+  public static class SeqSymmetryMethodComparator implements Comparator {
+    public int compare(Object o1, Object o2) {
+      SeqSymmetry s1 = (SeqSymmetry) o1;
+      SeqSymmetry s2 = (SeqSymmetry) o2;
+      return SeqMapView.determineMethod(s1).compareTo(SeqMapView.determineMethod(s2));
     }
   }
 }

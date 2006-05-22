@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,8 +18,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 
@@ -122,8 +122,8 @@ public class ConsoleView {
   static JFrame createFrame() {
     final JFrame frame = new JFrame(TITLE);
 
-    java.awt.Image icon = IGB.getIcon();
-    if (icon != null) { frame.setIconImage(icon); }
+    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif");
+    if (icon != null) { frame.setIconImage(icon.getImage()); }
 
     frame.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {

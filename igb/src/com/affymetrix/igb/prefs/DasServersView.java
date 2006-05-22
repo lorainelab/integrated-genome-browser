@@ -240,6 +240,12 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     sb.append("You can re-enable the server if you change your mind.  ");
     sb.append("</p>\n");
     
+    sb.append("<p>\n");
+    sb.append("Use this panel only for servers implementing the DAS/1 specification.  \n");
+    sb.append("Do not enter the URL of any DAS/2 server here.  ");
+    sb.append("For details of these DAS specifications, please see biodas.org  \n");
+    sb.append("</p>\n");
+    
     sb.append("<h2>Deleting vs Disabling</h2>\n");
     sb.append("<p>\n");
     sb.append("The program will discover the URLs of some DAS servers automatically.  ");

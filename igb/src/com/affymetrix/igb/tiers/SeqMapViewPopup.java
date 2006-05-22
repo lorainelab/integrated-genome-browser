@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
@@ -15,7 +28,6 @@ import com.affymetrix.igb.parsers.BedParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
-import java.awt.Color;
 
 public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -25,7 +37,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;
 
-  Action rename_action = new AbstractAction("Change Label") {
+  Action rename_action = new AbstractAction("Change Display Name") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
@@ -78,9 +90,15 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  Action change_color_action = new AbstractAction("Change Color") {
+  Action change_color_action = new AbstractAction("Change FG Color") {
     public void actionPerformed(ActionEvent e) {
-      changeColor(handler.getSelectedTierLabels());
+      changeColor(handler.getSelectedTierLabels(), true);
+    }
+  };
+
+  Action change_bg_color_action = new AbstractAction("Change BG Color") {
+    public void actionPerformed(ActionEvent e) {
+      changeColor(handler.getSelectedTierLabels(), false);
     }
   };
 
@@ -126,20 +144,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
+  JMenu showMenu = new JMenu("Show...");
+  JMenu changeMenu = new JMenu("Change...");
 
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
     this.handler = handler;
     this.gviewer = gviewer;
   }
 
-
   void showCustomizer() {
-    // The old way:
-    //TierPrefsView.showFrame();
-
-    // The new way:
     PreferencesPanel pv = PreferencesPanel.getSingleton();
-    pv.setTab(0);
+    pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
     JFrame f = pv.getFrame();
     f.show();
   }
@@ -235,6 +250,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         tier.restoreState();
       }
     }
+    showMenu.removeAll();
     refreshMap(true);
   }
 
@@ -242,9 +258,28 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
    *  Does not re-pack the given tier, or any other tiers.
    */
   protected void hideOneTier(final TierGlyph tier) {
-    IAnnotStyle style = tier.getAnnotStyle();
+    final IAnnotStyle style = tier.getAnnotStyle();
     if (style != null) {
       style.setShow(false);
+      final JMenuItem show_tier = new JMenuItem() {
+        // override getText() because the HumanName of the style might change
+        public String getText() {
+          String name = style.getHumanName();
+          if (name == null) { name = "<unnamed>"; }
+          if (name.length() > 30) {
+            name = name.substring(0,30) + "...";
+          }
+          return name;
+        }
+      };
+      show_tier.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          style.setShow(true);
+          showMenu.remove(show_tier);
+          refreshMap(false);
+        }
+      });
+      showMenu.add(show_tier);
     }
     if (! style.getShow()) {
       tier.setState(TierGlyph.HIDDEN);
@@ -270,7 +305,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   // although this will work on a list of selected tier labels, it is
   // probably more intuitive if its use is restricted to a single tier.
-  public void changeColor(final java.util.List tier_label_glyphs) {
+  public void changeColor(final java.util.List tier_label_glyphs, final boolean fg) {
     if (tier_label_glyphs.isEmpty()) {
       return;
     }
@@ -281,7 +316,11 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
     IAnnotStyle style_0 = tier_0.getAnnotStyle();
     if (style_0 != null) {
-      chooser.setColor(style_0.getColor());
+      if (fg) {
+        chooser.setColor(style_0.getColor());
+      } else {
+        chooser.setColor(style_0.getBackground());        
+      }
     }
 
     ActionListener al = new ActionListener() {
@@ -291,7 +330,14 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
           TierGlyph tier = (TierGlyph) tlg.getInfo();
           IAnnotStyle style = tier.getAnnotStyle();
 
-          if (style != null) { style.setColor(chooser.getColor()); }
+          if (style != null) { 
+            //System.out.println("Setting color of " + style.getHumanName() + ", " + style);
+            if (fg) {
+              style.setColor(chooser.getColor());
+            } else {
+              style.setBackground(chooser.getColor());
+            }
+          }
         }
       }
     };
@@ -462,6 +508,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     collapse_all_action.setEnabled(not_empty);
     expand_all_action.setEnabled(not_empty);
     change_expand_max_all_action.setEnabled(not_empty);
+    showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
     save_bed_action.setEnabled(num_selections == 1);
 
@@ -477,14 +524,21 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       sym_summarize_action.setEnabled(num_selections == 1);
       coverage_action.setEnabled(num_selections == 1);
     }
+    
+    changeMenu.removeAll();
+    changeMenu.add(change_color_action);
+    changeMenu.add(change_bg_color_action);
+    changeMenu.add(rename_action);
 
     popup.add(customize_action);
     popup.add(new JSeparator());
     popup.add(hide_action);
+    popup.add(showMenu);
     popup.add(show_all_action);
     popup.add(new JSeparator());
-    popup.add(rename_action);
-    popup.add(change_color_action);
+    popup.add(changeMenu);
+    //popup.add(rename_action);
+    //popup.add(change_color_action);
     popup.add(new JSeparator());
     popup.add(collapse_action);
     popup.add(expand_action);

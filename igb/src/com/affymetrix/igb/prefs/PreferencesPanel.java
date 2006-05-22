@@ -171,7 +171,7 @@ public class PreferencesPanel extends JPanel {
   JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu prefs_menu = new JMenu("Preferences");
-    prefs_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
+    //prefs_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     prefs_menu.setMnemonic('P');
 
     prefs_menu.add(getExportAction());
@@ -182,7 +182,7 @@ public class PreferencesPanel extends JPanel {
     menu_bar.add(prefs_menu);
     
     JMenu help_menu = new JMenu("Help");
-    help_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
+    //help_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
     help_menu.setMnemonic('H');
     menu_bar.add(help_menu);
     help_menu.add(getHelpAction());

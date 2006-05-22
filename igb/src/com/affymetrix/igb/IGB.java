@@ -81,7 +81,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuBar mbar;
   JMenu file_menu;
   JMenu view_menu;
+  //JMenu navigation_menu;
   JMenu bookmark_menu;
+  //JMenu tools_menu;
   JMenu help_menu;
   JTabbedPane tab_pane;
 
@@ -488,6 +490,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     bookmark_menu.setMnemonic('B');
     mbar.add(bookmark_menu);
 
+//    tools_menu = new JMenu("Tools");
+//    tools_menu.setMnemonic('T');
+//    mbar.add(tools_menu);
+    
     help_menu = new JMenu("Help");
     help_menu.setMnemonic('H');
     mbar.add(help_menu);
@@ -513,7 +519,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
     map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);
-
+    
+//    navigation_menu = map_view.getNavigationMenu("Go");
+//    navigation_menu.setMnemonic('G');
+//    navigation_menu.add(new JMenu("Genome..."));
+//    mbar.add( navigation_menu, 2);
+    
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
     gmodel.addSymSelectionListener(map_view);
@@ -599,13 +610,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, unclamp_item);
     MenuUtil.addToMenu(view_menu, shrink_wrap_item);
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
-    MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
+    MenuUtil.addToMenu(view_menu, move_tab_to_window_item);    
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
     about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
     console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
+    console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
 
     MenuUtil.addToMenu(help_menu, about_item);
     MenuUtil.addToMenu(help_menu, console_item);

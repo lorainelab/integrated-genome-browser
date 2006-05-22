@@ -214,13 +214,27 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("<h2>Keep hairline in view</h2>\n");
     sb.append("Whether to automtatically prevent the hairline from moving ");
     sb.append("outside the view as you scroll.  ");
+    sb.append("Recommend: true.");
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
+    sb.append("<h2>Place horizontal zoomer at top</h2>\n");
+    sb.append("Whether to place the slider used for horizontal zooming above the map ");
+    sb.append("instead of below.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
+    sb.append("<h2>Place vertical zoomer at left</h2>\n");
+    sb.append("Whether to place the slider used for vertical zooming to the left of ");
+    sb.append("the map instead of to the right.  ");
+    sb.append("</p>\n");
+
+    sb.append("<p>\n");
     sb.append("<h2>Make graphs from scored intervals</h2>\n");
     sb.append("Whether to automatically create graphs from data in ");
-    sb.append("scored interval ('.sin') files.  ");
+    sb.append("scored interval ('.sin') and expression graph ('.egr') files.  ");
+    sb.append("Recommend: true.");
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
     
@@ -229,6 +243,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");
     sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
     //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("Recommend: false.");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
@@ -237,7 +252,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("Depending on your configuration, you may use something like ");
     sb.append("'firefox' or 'netscape', but you may need a full path like '/usr/bin/firefox'.  ");
     sb.append("<br><br>The command must accept the web address as a single argument on the command line.  ");
-    sb.append("If you need to do something more sophisticated, you may define your own command script ");
+    sb.append("If you need to do something more sophisticated, you may define your own command script, ");
     sb.append("for example '/home/user/openBrowser.sh'.  ");
     sb.append("<br><br><b>Macintosh OS X</b>: This option is hidden and the 'open' command is used to open your default browser.  ");
     sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");

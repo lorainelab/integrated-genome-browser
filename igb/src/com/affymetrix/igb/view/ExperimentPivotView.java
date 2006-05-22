@@ -90,7 +90,7 @@ public class ExperimentPivotView extends JComponent
   static final String def_scale = TOTAL_MIN_MAX;
   
   int experiment_style_int; // should correspond to def_style String value
-  String experiment_scaling = def_scale;
+  String experiment_scaling;
   
   java.util.List current_syms = Collections.EMPTY_LIST;
   
@@ -132,8 +132,10 @@ public class ExperimentPivotView extends JComponent
     scale_pan.add(new JLabel("Scaling:", JLabel.RIGHT));
     scale_pan.add(Box.createHorizontalStrut(6));
     scale_pan.add(scaleCB);
+    
+    experiment_scaling = pref_node.get(PREF_SCALE, (String) scaleCB.getItemAt(0));
     if (scaleCB.getItemCount() > 0) {
-      scaleCB.setSelectedItem(pref_node.get(PREF_SCALE, (String) scaleCB.getItemAt(0)));
+      scaleCB.setSelectedItem(experiment_scaling);
     }
 
     JButton fg_button = UnibrowPrefsUtil.createColorButton("fg", pref_node, PREF_FG_COLOR, def_fg_color);
@@ -187,7 +189,7 @@ public class ExperimentPivotView extends JComponent
     gmodel.addSymSelectionListener(this);
     
     Color pivot_bg = UnibrowPrefsUtil.getColor(pref_node, PREF_BG_COLOR, def_bg_color);
-    map.setBackground(pivot_bg);
+    map.setBackground(pivot_bg);    
   }
   
   int experimentStyleToInt(String selection) {
@@ -289,6 +291,9 @@ public class ExperimentPivotView extends JComponent
   }
   
   private void resetThisWidget( java.util.List theSyms ) {
+    String style_string = pref_node.get(PREF_STYLE, def_style);
+    this.experiment_scaling = pref_node.get(PREF_SCALE, def_scale);
+    
     if (this.currentSeq == null) {
       System.err.println("ERROR: ExperimentPivotView.resetThisWidget() called, "  +
 			 "but no current annotated seq: " + this.currentSeq );
@@ -371,10 +376,8 @@ public class ExperimentPivotView extends JComponent
       }
     }
 
-    this.experiment_scaling = pref_node.get(PREF_SCALE, def_scale);
+    setExperimentStyle(style_string);
     setExperimentScaling(experiment_scaling, false);
-    String style_string = pref_node.get(PREF_STYLE, def_style);
-    setExperimentStyle(style_string); // setting the flag to false has weird 
     // This is done in clampToSpan: map.stretchToFit();
     //SeqSpan select_span = new SimpleSeqSpan((int)xmin, (int)xmax, this.currentSeq);
     int length = (int)(xmax - xmin);
@@ -386,8 +389,8 @@ public class ExperimentPivotView extends JComponent
     //the_axis.setBackgroundColor(pivot_bg);
     
     zoomTo(zoomto_span);
-    //TODO: clampToSpan is currently broken
     clampToSpan(zoomto_span);
+    map.updateWidget();
   }
 
   public void symSelectionChanged( SymSelectionEvent theEvent ) {
@@ -397,24 +400,25 @@ public class ExperimentPivotView extends JComponent
     }
   }
   
-  void setExperimentScaling(String scaling, boolean update_widget) {
-    pref_node.put(PREF_SCALE, experiment_scaling);
+  void setExperimentScaling(final String scaling, boolean update_widget) {
     experiment_scaling = scaling;
-
+    pref_node.put(PREF_SCALE, experiment_scaling);
+        
     int graph_count = experiment_graphs.size();
-    for (int i=0; i<graph_count; i++) {
-      GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
-      if (scaling == TOTAL_MIN_MAX) {
-	gr.setVisibleMinY(overall_score_min);
-	gr.setVisibleMaxY(overall_score_max);
+    if (TOTAL_MIN_MAX.equals(scaling)) {
+      for (int i=0; i<graph_count; i++) {
+        GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
+        gr.setVisibleMinY(overall_score_min);
+        gr.setVisibleMaxY(overall_score_max);
       }
-      else if (scaling == ROW_MIN_MAX) {
-	gr.setVisibleMinY(gr.getGraphMinY());
-	gr.setVisibleMaxY(gr.getGraphMaxY());
+    } else if (ROW_MIN_MAX.equals(scaling)) {
+      for (int i=0; i<graph_count; i++) {
+        GraphGlyph gr = (GraphGlyph)experiment_graphs.get(i);
+        gr.setVisibleMinY(gr.getGraphMinY());
+        gr.setVisibleMaxY(gr.getGraphMaxY());
       }
-      else if (scaling == COLUMN_MIN_MAX) {
-        // NOT YET IMPLEMENTED
-      }
+    } else if (COLUMN_MIN_MAX.equals(scaling)) {
+      // NOT YET IMPLEMENTED
     }
     if (update_widget) {
       map.updateWidget();

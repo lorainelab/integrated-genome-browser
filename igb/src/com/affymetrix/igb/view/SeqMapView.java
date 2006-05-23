@@ -69,8 +69,7 @@ import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
-	     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener,
-	     ActionListener
+     SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener
 {
 
   static final boolean DIAGNOSTICS = false;
@@ -197,7 +196,7 @@ public class SeqMapView extends JPanel
   public static final boolean default_x_zoomer_above = true;
   public static final boolean default_y_zoomer_left = true;
 
-  static NumberFormat nformat = new DecimalFormat();
+  static NumberFormat nformat = NumberFormat.getIntegerInstance();
 
   //Color default_annot_color = default_default_annot_color;
 
@@ -229,7 +228,7 @@ public class SeqMapView extends JPanel
   JMenu sym_menu;
   JLabel sym_info;
 
-  JTextField bases_per_pixelTF = new JTextField(10);
+//  JTextField bases_per_pixelTF = new JTextField(10);
   JTextField bases_in_viewTF = new JTextField(10);
 
   // A fake menu item, prevents null pointer exceptions in actionPerformed()
@@ -249,7 +248,7 @@ public class SeqMapView extends JPanel
   // for right-click on background
   JMenuItem renumberMI = empty_menu_item;
 
-  private final ActionListener action_listener;
+  private final SeqMapViewActionListener action_listener;
   private final SeqMapViewMouseListener mouse_listener;
 
   CharSeqGlyph seq_glyph = null;
@@ -267,7 +266,7 @@ public class SeqMapView extends JPanel
   /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
    *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
    */
-  boolean remember_tiers = true;
+  boolean remember_tiers = true;  
 
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
@@ -362,25 +361,28 @@ public class SeqMapView extends JPanel
     xzoombox = Box.createHorizontalBox();
     //    xzoombox.add(new SeqComboBoxView());
 
-    xzoombox.add(new JLabel("bases per pixel:"));
-    bases_per_pixelTF.setMaximumSize(new Dimension(10, 20));
-    bases_per_pixelTF.addActionListener(this);
-    xzoombox.add(bases_per_pixelTF);
+    //xzoombox.add(new JLabel("bases per pixel:"));
+    //bases_per_pixelTF.setMaximumSize(new Dimension(10, 20));
+    //bases_per_pixelTF.addActionListener(this);
+    //xzoombox.add(bases_per_pixelTF);
     xzoombox.add(new JLabel("bases in view:"));
+    xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
     bases_in_viewTF.setMaximumSize(new Dimension(10, 20));
-    bases_in_viewTF.addActionListener(this);
+    bases_in_viewTF.setEditable(false);
+    //bases_in_viewTF.addActionListener(this);
     seqmap.addViewBoxListener(new NeoViewBoxListener() {
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 	  Rectangle2D vbox = evt.getCoordBox();
 	  double bases_in_view = vbox.width;
 	  //	  System.out.println("map coord width: " + seqmap.getScene().getCoordBox().width + ", view width: " + vbox.width);
 	  bases_in_viewTF.setText(nformat.format(bases_in_view));
-	  int pixel_width = seqmap.getView().getPixelBox().width;
-	  double bases_per_pixel = (double)bases_in_view / (double)pixel_width;
-	  bases_per_pixelTF.setText(nformat.format(bases_per_pixel));
+	  //int pixel_width = seqmap.getView().getPixelBox().width;
+	  //double bases_per_pixel = (double)bases_in_view / (double)pixel_width;
+	  //bases_per_pixelTF.setText(nformat.format(bases_per_pixel));
 	}
       } );
     xzoombox.add(bases_in_viewTF);
+    xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
     xzoombox.add((Component) xzoomer);
     boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
     if (x_above) {
@@ -552,10 +554,11 @@ public class SeqMapView extends JPanel
   TransformTierGlyph axis_tier;
 
   /** An un-collapsible instance.  It is hideable, though. */
-  AnnotStyle axis_annot_style = new AnnotStyle() {
-    //public void setShow(boolean b) {}
-    public void setSeparate(boolean b) { /* do nothing */ }
-    public void setCollapsed(boolean b) { /* do nothing */ }
+  IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates") {
+    /** Do nothing. */
+    public void setSeparate(boolean b) {}
+    /** Do nothing. */
+    public void setCollapsed(boolean b) {}
     public void setColor(Color c) {
       UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
     }
@@ -568,9 +571,6 @@ public class SeqMapView extends JPanel
     public Color getBackground() {
       return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
     }
-    public void setHumanName(String s) {}
-    public void setLabelField(String s) {}
-    public void setMaxDepth(int i) {}
   };
 
   public TransformTierGlyph getAxisTier() { return axis_tier; }
@@ -954,12 +954,14 @@ public class SeqMapView extends JPanel
 	  System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
 	}
         // Reset tier properties: this is mainly needed to reset the background color
-        if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
+        if (tg.getAnnotStyle() != null) {
+          tg.setStyle(tg.getAnnotStyle());
+        }
 
         seqmap.addTier(tg);
       }
+      temp_tiers.clear(); // redundant hint to garbage collection
     }
-    temp_tiers.clear(); // redundant hint to garbage collection
 
     TransformTierGlyph at = addAxisTier(axis_index);
     if (axis_was_hidden) {at.setState(TierGlyph.HIDDEN);}
@@ -1046,7 +1048,7 @@ public class SeqMapView extends JPanel
     seqmap.updateWidget();
     if (DIAGNOSTICS) {
       System.out.println("Time to convert models to display: " + tim.read()/1000f);
-    }
+    }    
   }
 
 
@@ -2404,16 +2406,93 @@ public class SeqMapView extends JPanel
     return result;
   }
 
-  private class SeqMapViewActionListener implements ActionListener {
+  final String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
 
+  final String ZOOM_OUT_X = "ZOOM_OUT_X";
+  final String ZOOM_IN_X = "ZOOM_IN_X";
+
+  final String ZOOM_OUT_Y = "ZOOM_OUT_Y";
+  final String ZOOM_IN_Y = "ZOOM_IN_Y";
+  
+  final String SCROLL_UP = "SCROLL_UP";
+  final String SCROLL_DOWN = "SCROLL_DOWN";
+  final String SCROLL_LEFT = "SCROLL_LEFT";
+  final String SCROLL_RIGHT = "SCROLL_RIGHT";
+  final String ZOOM_TO_SELECTED = "Zoom to selected";
+  
+  private class SeqMapViewActionListener implements ActionListener {
+    String[] commands = { ZOOM_OUT_FULLY,
+      ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
+      SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
+    
+    Action zoom_out_fully_action;
+    Action zoom_out_x_action;
+    Action zoom_in_x_action;
+    Action zoom_out_y_action;
+    Action zoom_in_y_action;
+    
+    Action zoom_to_selected_action;
+    
     public SeqMapViewActionListener() {
       //super(true);
-    }
+      zoom_out_x_action = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_OUT_X);
+        }
+      };
+      zoom_in_x_action = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_IN_X);
+        }
+      };
+      zoom_out_y_action = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_OUT_Y);
+        }
+      };
+      zoom_in_y_action = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_IN_Y);
+        }
+      };
+      zoom_out_fully_action = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_OUT_FULLY);
+        }
+      };
 
+      Icon icon0 = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
+      zoom_to_selected_action = new AbstractAction(ZOOM_TO_SELECTED, icon0) {
+        public void actionPerformed(ActionEvent e) {
+          action_listener.doAction(ZOOM_TO_SELECTED);
+        }        
+      };
+      
+      Icon icon1 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomOut16.gif");
+      zoom_out_y_action.putValue(Action.NAME, "Zoom out vertically");
+      zoom_out_y_action.putValue(Action.SMALL_ICON, icon1);
+      zoom_out_x_action.putValue(Action.NAME, "Zoom out horizontally");
+      zoom_out_x_action.putValue(Action.SMALL_ICON, icon1);
+
+      Icon icon2 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomIn16.gif");
+      zoom_in_y_action.putValue(Action.NAME, "Zoom in vertically");
+      zoom_in_y_action.putValue(Action.SMALL_ICON, icon2);
+      zoom_in_x_action.putValue(Action.NAME, "Zoom in horizontally");
+      zoom_in_x_action.putValue(Action.SMALL_ICON, icon2);
+      
+      Icon icon3 = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Home16.gif");
+      zoom_out_fully_action.putValue(Action.SHORT_DESCRIPTION, "Zoom out fully");
+      zoom_out_fully_action.putValue(Action.NAME, "Home Position");
+      zoom_out_fully_action.putValue(Action.SMALL_ICON, icon3);
+    }
+    
     public void actionPerformed(ActionEvent evt) {
       String command = evt.getActionCommand();
       //System.out.println("SeqMapView received action event "+command);
+      doAction(command);
+    }
 
+    public void doAction(String command) {
       if (command.equals(zoomtoMI.getText())) {
         zoomToSelections();
       }
@@ -2448,49 +2527,49 @@ public class SeqMapView extends JPanel
       else if (command.equals(slicendiceMI)) {
         sliceBySelection();
       }
-      else if (command.equals("ZOOM_OUT_FULLY")) {
+      else if (command.equals(ZOOM_OUT_FULLY)) {
         Adjustable adj = seqmap.getZoomer(NeoMap.X);
         adj.setValue(adj.getMinimum());
         adj = seqmap.getZoomer(NeoMap.Y);
         adj.setValue(adj.getMinimum());
         //map.updateWidget();
       }
-      else if (command.equals("ZOOM_OUT_X")) {
+      else if (command.equals(ZOOM_OUT_X)) {
         Adjustable adj = seqmap.getZoomer(NeoMap.X);
         adj.setValue(adj.getValue()- (adj.getMaximum()-adj.getMinimum())/20);
         //map.updateWidget();
       }
-      else if (command.equals("ZOOM_IN_X")) {
+      else if (command.equals(ZOOM_IN_X)) {
         Adjustable adj = seqmap.getZoomer(NeoMap.X);
         adj.setValue(adj.getValue()+ (adj.getMaximum()-adj.getMinimum())/20);
         //map.updateWidget();
       }
-      else if (command.equals("ZOOM_OUT_Y")) {
+      else if (command.equals(ZOOM_OUT_Y)) {
         Adjustable adj = seqmap.getZoomer(NeoMap.Y);
         adj.setValue(adj.getValue()- (adj.getMaximum()-adj.getMinimum())/20);
         //map.updateWidget();
       }
-      else if (command.equals("ZOOM_IN_Y")) {
+      else if (command.equals(ZOOM_IN_Y)) {
         Adjustable adj = seqmap.getZoomer(NeoMap.Y);
         adj.setValue(adj.getValue()+ (adj.getMaximum()-adj.getMinimum())/20);
         //map.updateWidget();
       }
-      else if (command.equals("SCROLL_LEFT")) {
+      else if (command.equals(SCROLL_LEFT)) {
         int[] visible =  seqmap.getVisibleRange();
         seqmap.scroll(NeoWidgetI.X, visible[0]+ (visible[1]-visible[0])/10 );
         seqmap.updateWidget();
       }
-      else if (command.equals("SCROLL_RIGHT")) {
+      else if (command.equals(SCROLL_RIGHT)) {
         int[] visible =  seqmap.getVisibleRange();
         seqmap.scroll(NeoWidgetI.X, visible[0]- (visible[1]-visible[0])/10 );
         seqmap.updateWidget();
       }
-      else if (command.equals("SCROLL_UP")) {
+      else if (command.equals(SCROLL_UP)) {
         int[] visible =  seqmap.getVisibleOffset();
         seqmap.scroll(NeoWidgetI.Y, visible[0]+ (visible[1]-visible[0])/10 );
         seqmap.updateWidget();
       }
-      else if (command.equals("SCROLL_DOWN")) {
+      else if (command.equals(SCROLL_DOWN)) {
         int[] visible =  seqmap.getVisibleOffset();
         seqmap.scroll(NeoWidgetI.Y, visible[0]- (visible[1]-visible[0])/10 );
         seqmap.updateWidget();
@@ -2794,25 +2873,41 @@ public class SeqMapView extends JPanel
     }
   }
 
-  public void actionPerformed(ActionEvent evt)  {
-    Object src = evt.getSource();
-    if (src == bases_per_pixelTF)  {
-      System.out.println("action received on bases_per_pixel text field");
-      try {
-	float bases_per_pixel = Float.parseFloat(bases_per_pixelTF.getText());
-	float pixels_per_base = 1.0f/bases_per_pixel;
-	seqmap.zoom(NeoWidgetI.X, pixels_per_base);
-	seqmap.updateWidget();
-      }
-      catch (Exception ex) {
-	bases_per_pixelTF.setText("");
-      }
-    }
-    else if (src == bases_in_viewTF)  {
+//  public void actionPerformed(ActionEvent evt)  {
+//    Object src = evt.getSource();
+//    if (src == bases_per_pixelTF)  {
+//      System.out.println("action received on bases_per_pixel text field");
+//      try {
+//	float bases_per_pixel = Float.parseFloat(bases_per_pixelTF.getText());
+//	float pixels_per_base = 1.0f/bases_per_pixel;
+//	seqmap.zoom(NeoWidgetI.X, pixels_per_base);
+//	seqmap.updateWidget();
+//      }
+//      catch (Exception ex) {
+//	bases_per_pixelTF.setText("");
+//      }
+//    }
+//    else if (src == bases_in_viewTF)  {
+//
+//    }
+//  }
 
+  JMenu navigation_menu = null;
+  
+  public JMenu getNavigationMenu(String menu_name) {
+    if (navigation_menu == null) {
+      navigation_menu = new JMenu(menu_name);
+      navigation_menu.add(new JMenuItem(action_listener.zoom_out_fully_action));
+      navigation_menu.add(new JSeparator());
+      navigation_menu.add(new JMenuItem(action_listener.zoom_to_selected_action));
+      navigation_menu.add(new JMenuItem(action_listener.zoom_in_x_action));
+      navigation_menu.add(new JMenuItem(action_listener.zoom_out_x_action));
+      navigation_menu.add(new JSeparator());
+      navigation_menu.add(new JMenuItem(action_listener.zoom_in_y_action));
+      navigation_menu.add(new JMenuItem(action_listener.zoom_out_y_action));
     }
+    return navigation_menu;
   }
-
-
+  
 }
 

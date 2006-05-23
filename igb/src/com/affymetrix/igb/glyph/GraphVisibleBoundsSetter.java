@@ -504,7 +504,10 @@ public class GraphVisibleBoundsSetter extends JPanel
       try {
 	float minval = Float.parseFloat(min_valT.getText());
 	if (minval > prev_max_val - val_offset) { minval = prev_max_val - val_offset; }
-	else if (minval < abs_min_val) { minval = abs_min_val; }
+        // do not enforce an absolute minimum in the text field.
+        // let the user enter any value to get the desired scaling.
+        // this flexibility was requested on SourceForge.
+	//else if (minval < abs_min_val) { minval = abs_min_val; }
 	setVisibleMinValue(minval);
       }
       catch (NumberFormatException ex) {
@@ -515,7 +518,9 @@ public class GraphVisibleBoundsSetter extends JPanel
       try {
 	float maxval = Float.parseFloat(max_valT.getText());
 	if (maxval < prev_min_val + val_offset) { maxval = prev_min_val + val_offset; }
-	else if (maxval > abs_max_val) { maxval = abs_max_val; }
+        // do not enforce an absolute maximum in the text field.
+        // let the user enter any value to get the desired scaling
+	//else if (maxval > abs_max_val) { maxval = abs_max_val; }
 	setVisibleMaxValue(maxval);
       }
       catch (NumberFormatException ex) {

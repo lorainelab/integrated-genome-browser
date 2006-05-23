@@ -183,7 +183,7 @@ public class GraphGlyph extends Glyph {
 
     if (getShowGraph() && xcoords != null && ycoords != null)  {
       int beg_index = 0;
-      int end_index = xcoords.length-1;
+      //int end_index = xcoords.length-1;
 
       coord.y = offset - ((0 - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, zero_point);
@@ -325,7 +325,7 @@ public class GraphGlyph extends Glyph {
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
-      g.setColor(Color.lightGray);
+      g.setColor(this.getColor());
       g.setFont(default_font);
       FontMetrics fm = g.getFontMetrics();
       g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
@@ -361,12 +361,12 @@ public class GraphGlyph extends Glyph {
       double pix_height = max_ypix - min_ypix;
       double spacing = pix_height / axis_bins;
       double mark_ypix = min_ypix;
-      g.setColor(Color.white);
+      g.setColor(this.getColor());
       for (int i=0; i<=axis_bins; i++) {
 	g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
 	mark_ypix += spacing;
       }
-      g.setColor(Color.white);
+      g.setColor(this.getColor());
       g.setFont(axis_font);
       g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
       g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
@@ -619,7 +619,6 @@ public class GraphGlyph extends Glyph {
 
   //  public double getInternalYScale(ViewI view) {
   protected void getInternalLinearTransform(ViewI view, LinearTransform lt) {
-    Graphics g = view.getGraphics();
     double top_ycoord_inset = getUpperYCoordInset(view);
     double bottom_ycoord_inset = getLowerYCoordInset(view);
     //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));

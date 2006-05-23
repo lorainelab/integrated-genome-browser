@@ -457,8 +457,12 @@ public class GraphScoreThreshSetter extends JPanel
     if (src == score_valT) {
       try {
 	float thresh = Float.parseFloat(score_valT.getText());
-	if (thresh < abs_min_val) { thresh = abs_min_val; }
-	else if (thresh > abs_max_val) { thresh = abs_max_val; }
+        // Do not limit the threshold to just the total range of this graph.
+        // The user may set the thresholds of a set of graphs (on the same or
+        // different chromosomes) to the same value even if the absolute 
+        // minimum or maximum values of those graphs differ.
+	//if (thresh < abs_min_val) { thresh = abs_min_val; }
+	//else if (thresh > abs_max_val) { thresh = abs_max_val; }
         setScoreThreshold(thresh);  // also sets prev_thresh_val          
       }
       catch (NumberFormatException ex) { // couldn't parse, keep same...

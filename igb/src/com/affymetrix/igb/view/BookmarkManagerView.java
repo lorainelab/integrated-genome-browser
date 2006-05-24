@@ -383,6 +383,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
       
       a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Properties16.gif"));
       a.putValue(Action.SHORT_DESCRIPTION, "Properties");
+      a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_P));
       setAccelerator(a);
       return a;
     }
@@ -404,6 +405,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
       };
       a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/media/Play16.gif"));
       a.putValue(Action.SHORT_DESCRIPTION, "Go To Bookmark");
+      a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
       setAccelerator(a);
       return a;
     }
@@ -446,11 +448,12 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         return menu_item;
       }
     };
+    bookmarks_menu.setMnemonic('B');
 
     //bookmarks_menu.add(refresh_action);
+    bookmarks_menu.add(add_bookmark_action);
     bookmarks_menu.add(add_folder_action);
     bookmarks_menu.add(add_separator_action);
-    bookmarks_menu.add(add_bookmark_action);
     bookmarks_menu.addSeparator();
     bookmarks_menu.add(thing.getPropertiesAction());
     bookmarks_menu.add(thing.getGoToAction());
@@ -472,9 +475,9 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
         return menu_item;
       }
     };
+    popup.add(add_bookmark_action);
     popup.add(add_folder_action);
     popup.add(add_separator_action);
-    popup.add(add_bookmark_action);
     popup.addSeparator();
     popup.add(thing.getPropertiesAction());
     popup.add(thing.getGoToAction());
@@ -524,6 +527,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Refresh16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Refresh");
+    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_R));
     setAccelerator(a);
     return a;
   }
@@ -538,6 +542,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Import Bookmarks");
+    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
     setAccelerator(a);
     return a;
   }
@@ -551,6 +556,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Export Bookmarks");
+    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
     setAccelerator(a);
     return a;
   }
@@ -579,6 +585,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     };
     a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Delete16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Delete Selected Bookmark(s)");
+    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_D));
     setAccelerator(a);
     return a;
   }
@@ -587,22 +594,27 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     String title;
     ImageIcon icon = null;
     String tool_tip = null;
+    int mnemonic = 0;
     if (type==0) {
       title = "New Separator";
       // "RowDelete" looks vaguely like a separator...
       icon = MenuUtil.getIcon("toolbarButtonGraphics/table/RowDelete16.gif");
       tool_tip = "New Separator";
+      mnemonic = KeyEvent.VK_S;
     } else if (type==1) {
       title = "New Folder";
       // the "Open" icon looks like a folder...
       icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif");
       tool_tip = "New Folder";
+      mnemonic = KeyEvent.VK_F;
     } else if (type==2) {
       title = "New Bookmark";
       icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Bookmarks16.gif");
       tool_tip = "New Bookmark";
+      mnemonic = KeyEvent.VK_N;
     } else {
       title = "New ???";
+      mnemonic = KeyEvent.VK_EXCLAMATION_MARK;
     }
 
     Action a = new AbstractAction(title) {
@@ -634,6 +646,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     };
     a.putValue(Action.SMALL_ICON, icon);
     a.putValue(Action.SHORT_DESCRIPTION, tool_tip);
+    a.putValue(Action.MNEMONIC_KEY, new Integer(mnemonic));
     setAccelerator(a);
     return a;
   }

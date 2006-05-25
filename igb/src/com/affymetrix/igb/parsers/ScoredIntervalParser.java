@@ -143,8 +143,12 @@ public class ScoredIntervalParser {
 	  String tag = match.group(1);
 	  String val = match.group(2);
 	  if (tag.startsWith("score")) {
-	    int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
-	    index2id.put(new Integer(score_index), val);
+            try {
+  	      int score_index = Integer.parseInt(tag.substring(tag.indexOf("score") + 5));
+	      index2id.put(new Integer(score_index), val);
+            } catch (NumberFormatException nfe) {
+              throw new IOException("Tag '"+tag+"' is not in the format score# where # = 0,1,2,....");
+            }
 	  }
 	  else {
 	    props.put(tag, val);
@@ -380,7 +384,7 @@ public class ScoredIntervalParser {
 
     }
     catch (Exception ex) {
-      IOException ioe = new IOException("Error while reading '.sin' file from: '"+stream_name+"'");
+      IOException ioe = new IOException("Error while reading '.egr' or '.sin' file from: '"+stream_name+"'");
       ioe.initCause(ex);
       throw ioe;
     }

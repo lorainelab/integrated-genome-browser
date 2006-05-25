@@ -17,10 +17,10 @@ import com.affymetrix.igb.event.VirtualRubberBandEvent;
  *  Splits a tiered map across multiple windows on multiple screens.
  */
 //   maybe have one parent master map and others use it as root?
-// 
+//
 //   Any methods that only affect scene should not need to be propagated to child windows,
 //      since scene is shared by parent and all children
-// 
+//
 public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, NeoRubberBandListener {
   //  Frame, Window, JFrame, JWindow
   boolean USE_SWING = true;
@@ -127,6 +127,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
     int ywindows_per_screen = 1;
 
     Map bounds2config = new LinkedHashMap();
+    Map config2devnum = new HashMap();
     for (int i=0; i<devices.length; i++)  {
       GraphicsDevice dev = devices[i];
       String id = dev.getIDstring();
@@ -135,6 +136,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	GraphicsConfiguration gconfig = dev.getDefaultConfiguration();
 	Rectangle config_bounds = gconfig.getBounds();
 	bounds2config.put(config_bounds, gconfig);
+	config2devnum.put(gconfig, new Integer(i));
 	boolean fullscreen = dev.isFullScreenSupported();
 	boolean change = dev.isDisplayChangeSupported();
 	int avail_accelmem = dev.getAvailableAcceleratedMemory() / 1000000;
@@ -151,6 +153,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	System.out.println("   display change support: " + change);
       }
     }
+    System.out.println("#######  Allocating multiple windows for MultiWindowTierMap:");
     for (int x=0; x<tile_columns; x++) {
       for (int y=0; y<tile_rows; y++) {
 	Point topleft = new Point((x * tile_width) + xbump, (y * tile_height) + ybump);
@@ -173,6 +176,10 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	    }
 	    win.setLocation(win_bounds.x, win_bounds.y);
 	    win.setSize(win_bounds.width, win_bounds.height);
+	    System.out.println("   MultiWindow " + x + ", " + y +
+			       ": bounds = " + win_bounds);
+	    System.out.println("         Graphics device #: " + config2devnum.get(gconfig) +
+			       ", id = " + gconfig.getDevice().getIDstring());
 	    NeoMap newmap = new NeoMap(false, false);
 	    newmap.setRoot(this);
 	    if (USE_SWING) {  // win is a JWindow or JFrame
@@ -203,14 +210,14 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	    //	    newmap.addMouseListener(graph_manager);
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
             child_maps[x][y] = newmap;
-            System.out.println("added map : " + child_maps[x][y]);
+	    //            System.out.println("added map : " + child_maps[x][y]);
 	    win.show();
 	    break;
 	  }
 	}
       }
     }
-
+    System.out.println("#######  Done allocating multiple windows");
     System.out.println("*******************************************");
   }
 

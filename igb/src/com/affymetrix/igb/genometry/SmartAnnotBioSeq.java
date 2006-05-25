@@ -63,7 +63,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   }
 
   /**
-   *  Returns the set of type id String's that can be used in 
+   *  Returns the set of type id String's that can be used in
    * {@link #getAnnotation(String)}.
    */
   public Set getTypeIds() {
@@ -73,12 +73,12 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       return Collections.unmodifiableSet(type2sym.keySet());
     }
   }
-  
+
   /**
    * Returns an unmodifiable view of the map from type id String's to SymWithProp's.
    * @deprecated  Use {#getTypeIds()} instead.
    */
-  public Map getTypes() { 
+  public Map getTypes() {
     if (type2sym == null) {
       return Collections.EMPTY_MAP;
     } else {
@@ -253,27 +253,31 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     if (annot instanceof GraphSym) {
       super.removeAnnotation(annot);
       notifyModified();
-      return;
+      //      return;
     }
     else if (annot instanceof SymWithProps) {
-      if (type2sym != null) {
-        // TODO: addAnnotation and removeAnnotation use different method to get "method" !??
-	String type = (String)(((SymWithProps)annot).getProperty("method"));
-	if (type != null) {
-	  if (type2sym.get(type) == annot) {
-	    //	    type2sym.remove(annot);
-	    type2sym.remove(type);
-	    super.removeAnnotation(annot);
-	    notifyModified();
-	    return;
-	  }
+      // TODO: addAnnotation and removeAnnotation use different method to get "method" !??
+      String type = (String)(((SymWithProps)annot).getProperty("method"));
+      if ((type != null) && (getAnnotation(type) != null)) {
+	MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
+	if (container == annot) {
+	  type2sym.remove(type);
+	  super.removeAnnotation(annot);
+	  notifyModified();
+	  //	  return;
+	}
+	else {
+	  container.removeChild(annot);
+          notifyModified();
 	}
       }
     }
+    /*
     throw new RuntimeException("SmartAnnotBioSeq.removeAnnotation(sym) not yet allowed " +
 			       "except when sym is top-level annotation " +
 			       "(container or graph)" );
-  }
+    */
+ }
 
   public void removeAnnotation(int index) {
     SeqSymmetry annot = getAnnotation(index);

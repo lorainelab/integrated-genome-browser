@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,6 +21,9 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.Timer;
+
+import com.affymetrix.genometry.*;
+
 
 import java.util.*;
 
@@ -42,6 +45,11 @@ public class AffyTieredMap extends NeoMap {
 
   public AffyTieredMap() {
     super();
+  }
+
+  public AffyTieredMap(AffyTieredMap rootmap) {
+    super(rootmap);
+    this.tiers = rootmap.tiers;
   }
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
@@ -81,6 +89,9 @@ public class AffyTieredMap extends NeoMap {
     return null;
   }
 
+  /** Returns the index of the requested TierGlyph in the map,
+   *  or -1 if it isn't included. The test is based on "==", not equals().
+   */
   public int getTierIndex(TierGlyph tg) {
     int tindex = -1;
     for (int i=0; i<tiers.size(); i++) {
@@ -125,7 +136,7 @@ public class AffyTieredMap extends NeoMap {
    *
    * if tier has no children, won't be considered in packing
    *
-   * Protected because outside of subclasses of AffyTieredMap, all calls should 
+   * Protected because outside of subclasses of AffyTieredMap, all calls should
    *   go through packTiers(boolean, boolean, boolean)
    */
   protected void packTiers(boolean full_repack, boolean stretch_map) {
@@ -152,7 +163,7 @@ public class AffyTieredMap extends NeoMap {
     for (int i=0; i<tiers.size(); i++) {
       mtg = (TierGlyph) tiers.elementAt(i);
       // don't make room if tier is'nt visible, or if it's hidden
-      if ( (! mtg.isVisible()) || 
+      if ( (! mtg.isVisible()) ||
 	   ((mtg.getState() == TierGlyph.HIDDEN))) {
 	//	System.out.println("hiding tier: " + mtg.getLabel());
         continue;
@@ -185,16 +196,16 @@ public class AffyTieredMap extends NeoMap {
 
       for (int i=0; i<tiers.size(); i++) {
         mtg = (TierGlyph) tiers.elementAt(i);
-	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {  
+	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {
 	  //	  System.out.println("still trying to hide tier: " + mtg.getLabel());
-	  continue; 
+	  continue;
 	}
 	else if ( newbox == null ) {
 	  newbox = new Rectangle2D();
 	  newbox.reshape(pbox.x, mtg.getCoordBox().y,
 			 pbox.width, mtg.getCoordBox().height);
 	}
-	else { 
+	else {
 	  GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
 	}
       }
@@ -216,7 +227,7 @@ public class AffyTieredMap extends NeoMap {
 
   public void clearWidget() {
     super.clearWidget();
-    tiers = new Vector();
+    tiers.clear();
   }
 
   /**
@@ -240,8 +251,8 @@ public class AffyTieredMap extends NeoMap {
     if (gl.getChildren() != null) {
       Vector children = gl.getChildren();
       int childCount = children.size();
-      /* remove from end of child Vector instead of beginning! -- that way, won't 
-       *   get issues with trying to access elements off end of Vector as 
+      /* remove from end of child Vector instead of beginning! -- that way, won't
+       *   get issues with trying to access elements off end of Vector as
        *   Vector shrinks during removal...
        */
       for (int i=childCount-1; i>=0; i--) {
@@ -363,7 +374,7 @@ public class AffyTieredMap extends NeoMap {
       fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
       //      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
     }
-    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired 
+    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired
     //   _coord_ of a glyph that needs to stay fixed in pixel-space may change.
     //   therefore need a better way of dealing with this...
     else if (zoom_behavior[id] == CONSTRAIN_COORD) {
@@ -445,12 +456,38 @@ public class AffyTieredMap extends NeoMap {
     //	System.out.println("SceneCoordBox: " + scene.getCoordBox());
     //	System.out.println("ViewCoordBox:  " + view.getCoordBox());
   }
+  
+  /**
+   *  Repacks tiers.  Should be called after hiding or showing tiers or
+   *  changing their heights.
+   */
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    packTiers(full_repack, true, false);
+    stretchToFit(true, stretch_vertically);
+    // apply a hack to make sure strechToFit worked
+    if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
+      stretchToFit(false, true);
+    }
+    updateWidget();
+  }
 
   /** Prints this component. */
   public void print() throws java.awt.print.PrinterException {
     ComponentPagePrinter cpp = new ComponentPagePrinter(this);
     cpp.print();
     cpp = null; // for garbage collection
+  }
+
+  /** Sets the data model to the given SeqSymmetry, unless it is a
+   *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used.
+   */
+  public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
+    if (sym instanceof DerivedSeqSymmetry)  {
+      super.setDataModel(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
+    }
+    else {
+      super.setDataModel(g, sym);
+    }
   }
 
     // if fixed tiers, then pack first

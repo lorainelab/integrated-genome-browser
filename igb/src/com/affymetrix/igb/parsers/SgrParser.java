@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -10,14 +23,22 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.Point2DComparator;
-
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class SgrParser {
   static boolean DEBUG = false;
   static Comparator pointcomp = new Point2DComparator(true, true);
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-  public List parse(InputStream istr, Map seqhash, boolean annotate_seq, String stream_name) {
+  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+                    boolean annotate_seq)
+        throws IOException {
+      return parse(istr, stream_name, seq_group, annotate_seq, true);
+    }
+
+  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+                    boolean annotate_seq, boolean ensure_unique_id)
+      throws IOException {
     System.out.println("trying to parse with SgrParser: " + stream_name);
     ArrayList results = new ArrayList();
     InputStreamReader isr = new InputStreamReader(istr);
@@ -26,8 +47,6 @@ public class SgrParser {
     String line;
     Map xhash = new HashMap();
     Map yhash = new HashMap();
-
-    try {
 
     while ((line = br.readLine()) != null) {
       if (line.startsWith("#")) { continue; }
@@ -53,9 +72,6 @@ public class SgrParser {
       ylist.add(y);
     }
 
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
-
     // after populating all xlists, now make sure sorted
     sortAll(xhash, yhash);
 
@@ -63,20 +79,24 @@ public class SgrParser {
     while (iter.hasNext()) {
       Map.Entry keyval = (Map.Entry)iter.next();
       String seqid = (String)keyval.getKey();
-      BioSeq aseq = (BioSeq)seqhash.get(seqid);
+      BioSeq aseq = seq_group.getSeq(seqid);
       IntList xlist = (IntList)keyval.getValue();
       FloatList ylist = (FloatList)yhash.get(seqid);
 
       if (aseq == null) {
-	aseq = new SmartAnnotBioSeq(seqid, "unknown_version", xlist.get(xlist.size()-1));
-	seqhash.put(seqid, aseq);
+        aseq = seq_group.addSeq(seqid, xlist.get(xlist.size()-1));
       }
 
       int[] xcoords = xlist.copyToArray();
       xlist = null;
       float[] ycoords = ylist.copyToArray();
       ylist = null;
-      GraphSym graf = new GraphSym(xcoords, ycoords, stream_name, aseq);
+
+      String gid = stream_name;
+      if (ensure_unique_id)  {
+        gid = GraphSymUtils.getUniqueGraphID(gid, aseq);
+      }
+      GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
       results.add(graf);
     }
 
@@ -97,7 +117,7 @@ public class SgrParser {
       int prevx = Integer.MIN_VALUE;
       for (int i=0; i<xcount; i++) {
 	int x = xlist.get(i);
-	if (x < prevx) { 
+	if (x < prevx) {
 	  sorted = false;
 	  break;
 	}
@@ -111,7 +131,7 @@ public class SgrParser {
 
 
   protected static void pointSort(String seqid, Map xhash, Map yhash) {
-    System.out.println("points aren't sorted for seq = " + seqid + ", sorting now");
+    // System.out.println("points aren't sorted for seq = " + seqid + ", sorting now");
     IntList xlist = (IntList)xhash.get(seqid);
     FloatList ylist = (FloatList)yhash.get(seqid);
     int graph_length = xlist.size();
@@ -133,7 +153,7 @@ public class SgrParser {
     xhash.put(seqid, new_xlist);
     yhash.put(seqid, new_ylist);
   }
-    
+
 
   public static void main(String[] args) {
     String test_file = System.getProperty("user.dir") + "/testdata/graph/test1.sgr";
@@ -142,7 +162,8 @@ public class SgrParser {
 
     try {
       FileInputStream fis = new FileInputStream(new File(test_file));
-      test.parse(fis, testhash, true, test_file);
+      AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("New Group");
+      test.parse(fis, test_file, seq_group, true);
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }

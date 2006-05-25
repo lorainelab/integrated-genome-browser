@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,7 +27,7 @@ public class PropertyKeys {
   /**
    * Orders for keys.  Properties name-value pairs are
    *    listed in the order defined here.
-   * If properties are present with names _not_ defined here, they are 
+   * If properties are present with names _not_ defined here, they are
    *    listed last.
    */
   public void setKeyOrder(String[] keys) {
@@ -52,20 +52,18 @@ public class PropertyKeys {
     for (int i = 0; i < props.length; i++) {
       //      System.out.println(i);
       //      System.out.println(props[i]);
-      if (props[i] == null) { 
-	continue; 
+      if (props[i] == null) {
+	continue;
       }
       Iterator names_iter = props[i].keySet().iterator();
       while (names_iter.hasNext()) {
 	Object obj = names_iter.next();
-	String name;
-	if (obj instanceof String) {
-	  name = (String)obj;
-	}
-	else {
-	  name = obj.toString();
-	}
-        String[] name_value = (String[])rows_thus_far.get(name);
+	String name = null;
+        String name_value[] = null;
+        if (obj != null)  {
+          name = obj.toString();
+          name_value = (String[])rows_thus_far.get(name);
+        }
         if (name_value != null) continue;
         else {
           name_value = new String[num_props+1];
@@ -76,6 +74,8 @@ public class PropertyKeys {
 	      val = props[j].get(name);
 	    }
             val = (val == null ? "ND" : val);
+	    // if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.]
+	    //   string representation
             name_value[j+1] = val.toString();
           }
           rows_thus_far.put(name,name_value);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -37,8 +37,8 @@ public class GraphGlyphUtils {
    *   else #3
    */
 
-  public static boolean DEBUG = false;
-  
+  public static final boolean DEBUG = false;
+
   /** Name of a preference for deciding what height to give a graph when converting
    *  it from a floating graph to an attached graph.
    */
@@ -54,6 +54,12 @@ public class GraphGlyphUtils {
   public static final String PREF_ATTACHED_COORD_HEIGHT = "default attached graph coord height";
   public static final String PREF_FLOATING_PIXEL_HEIGHT = "default floating graph pixel height";
 
+  /** Pref for whether newly-constructed graph glyphs should only show a
+   *  limited range of values.
+   */
+  public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
+  public static final boolean default_apply_percentage_filter = true;
+
   /** Whether to use a TransformTierGlyph to maintain a fixed pixel height for attached graphs. */
   static final boolean use_fixed_pixel_height = false;
 
@@ -61,17 +67,24 @@ public class GraphGlyphUtils {
   public static final String default_attach_mode = USE_CURRENT_HEIGHT;  // default mode if not specified in prefs
 
   public static final int default_pix_height = 60;
-  public static final double default_coord_height = 100;
+
+  /** Default value for height of attached (non-floating) graphs.  Although
+   *  the height will ultimately have to be expressed as a double rather than
+   *  an integer, there is no good reason to bother the users with that detail,
+   *  so the default should be treated as an integer.
+   */
+  public static final int default_coord_height = 100;
   public static final boolean default_use_floating_graphs = false;
 
-  public static final Color[] default_graph_colors = 
-    new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
+  public static final Color[] default_graph_colors =
+      new Color[] {Color.CYAN, Color.PINK, Color.ORANGE, Color.YELLOW, Color.RED, Color.GREEN};
 
   /** The names of preferences for storing default graph colors can be
    *  constructed from this prefix by adding "0", "1", etc., up to
    *  default_graph_colors.length - 1.
    */
   public static final String PREF_GRAPH_COLOR_PREFIX = "graph color ";
+
 
   public static void toggleFloating(GraphGlyph gl, SeqMapView gviewer) {
     boolean is_floating = hasFloatingAncestor(gl);
@@ -88,109 +101,113 @@ public class GraphGlyphUtils {
   }
 
   public static TierGlyph attachGraph(GraphGlyph gl, SeqMapView gviewer, TierGlyph tglyph) {
-    String attach2float_mode = getGraphPrefsNode().get(PREF_ATTACH_HEIGHT_MODE, default_attach_mode);
-
-    boolean use_fixed_coord_height = attach2float_mode.equals(USE_DEFAULT_HEIGHT);
-    
+    if (DEBUG)  {
+      System.out.println("called GraphGlyphUtils.attachGraph()");
+      System.out.println("     graph glyph: " + gl.getLabel());
+      System.out.println("     tier glyph:  " + (tglyph == null ? "null" : tglyph.getLabel()) + ", " + tglyph);
+    }
+    //    boolean use_fixed_coord_height = false;
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     GlyphI parentgl = gl.getParent();
     GraphSym graf = (GraphSym)gl.getInfo();
     Rectangle2D mapbox = map.getCoordBounds();
+    if (tglyph != null && parentgl == tglyph) { return tglyph; }
 
-      // try to map floating graph coord bounds (which are in pixels) to coords
-      //   to keep same size
+    parentgl.removeChild(gl);
+    int child_count = parentgl.getChildCount();
+    if (DEBUG)  { System.out.println("old graph parent child count: " + child_count); }
+    if (parentgl.getChildCount() <= 0) {
+      if (parentgl instanceof TierGlyph) {
+	TierGlyph pgl = (TierGlyph)parentgl;
+        if (DEBUG) { System.out.println("removing tier: " + pgl.getLabel()); }
+	map.removeTier((TierGlyph)parentgl);
+      }
+      else  {
+        if (DEBUG) { System.out.println("removing non-tier parent: " + parentgl); }
+        map.removeItem(parentgl); }
+    }
+    else  {
+      if (DEBUG)  { System.out.println("  first child: " + parentgl.getChild(0)); }
+    }
 
-
-    Rectangle2D tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
-    Rectangle pixbox = new Rectangle((int)tempbox.x,
-				       (int)tempbox.y,
-				       (int)tempbox.width,
-				       (int)tempbox.height);
-      Rectangle2D coordbox = new Rectangle2D();
-      map.getView().transformToCoords(pixbox, coordbox);
-      // System.out.println("switching to attached graph");
-      // System.out.println("graph pixbox:   " + pixbox);
-      // System.out.println("graph coordbox: " + coordbox);
-      // actually, setting y won't matter since will get reset when tiers are packed,
-      //    but setting height will matter
-      double yheight = coordbox.height;
-      if (use_fixed_coord_height) {
-        yheight = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, default_coord_height);
-      }
-
-      gl.setCoords(tempbox.x, coordbox.y, tempbox.width, yheight);
-
-      // remove PixelFloaterGlyph, create new tier for graph, figure out coord size
-      // that corresponds to float graph pixel size, resize graph, place graph in tier
-      parentgl.removeChild(gl);
-      // maybe should do recursive search of ancestors for removal???
-      if (parentgl instanceof PixelFloaterGlyph) {
-	map.removeItem(parentgl);
-      }
-      //      TierGlyph tglyph = new TierGlyph();
-      boolean new_tier = (tglyph == null);
-      if (new_tier) {
-	// System.out.println("making new tier");
-	if (use_fixed_pixel_height)  {
-	  TransformTierGlyph tempgl = new TransformTierGlyph();
-	  tempgl.setFixedPixelHeight(true);
-          int h = getGraphPrefsNode().getInt(PREF_FLOATING_PIXEL_HEIGHT, default_pix_height);
-          tempgl.setFixedPixHeight(h);
-	  tglyph = tempgl;
-	}
-	else { tglyph = new TierGlyph(); }
-        tglyph.setFillColor(Color.black);
-	tglyph.setForegroundColor(gl.getColor());
-      }
-      else {
-	//	System.out.println("using existing tier");
-	GlyphI old_parent = tglyph.getParent();
-	if (old_parent != null &&
-	    old_parent instanceof TierGlyph &&
-	    (old_parent != tglyph)) {
-	  //	gviewer.removeTier((TierGlyph)old_parent);
-	  map.removeTier((TierGlyph)old_parent);
-	}
-      }
-      tglyph.addChild(gl);
-      for (int i=0; i<tglyph.getChildCount(); i++) {
-	GlyphI child = tglyph.getChild(i);
-	if (child instanceof GraphGlyph) {
-	  Rectangle2D childbox = child.getCoordBox();
-	  //	  child.setCoords(childbox.x, coordbox.y, childbox.width, coordbox.height);
-	  child.setCoords(childbox.x, coordbox.y, childbox.width, yheight);
-	  //	  System.out.println("child " + i + ": " + gl.getCoordBox());
-	}
-      }
-
-      if (graf != null) {
-	tglyph.setLabel(graf.getGraphName());
-      }
-      else {
-	tglyph.setLabel("unknown");
-      }
-      //      tglyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
-      if (new_tier)  {
-	map.addTier(tglyph, true);
-	gviewer.getGraphStateTierHash().put(gl.getGraphState(), tglyph);
-      }
+    boolean new_tier = (tglyph == null);
+    Rectangle2D coordbox = null;
+    if (new_tier) {
+      if (DEBUG)  { System.out.println("  making new tier: " + graf.getGraphName()); }
+      tglyph = new TierGlyph(graf.getGraphState());
       tglyph.setState(TierGlyph.COLLAPSED);
-      tglyph.pack(map.getView());
-      // Hmm, even though map.packTiers() is called in tiered map stretchToFit(),
-      //  still seem to need to call it _before_ stretchToFit() to get proper
-      //  zoom scroller behavior
-      map.packTiers(false, true, false);
-      //      map.adjustZoomer(map.Y);
-      //      map.updateWidget();
-      //      for (int i=0; i<tglyph.getChildCount(); i++) {
-      //	GlyphI child = tglyph.getChild(i);
-      //	System.out.println("child " + i + ": " + child.getCoordBox());
-      //      }
+      PackerI pack = tglyph.getPacker();
+      if (pack instanceof CollapsePacker) { ((CollapsePacker)pack).setParentSpacer(0); }
+      tglyph.setFillColor(Color.black);
+      tglyph.setForegroundColor(gl.getColor());
+    }
+    else {
+      coordbox = tglyph.getCoordBox();
+    }
 
-      map.stretchToFit(false, false);
-      map.updateWidget();
-      gl.getGraphState().setFloatGraph(false);
-      return tglyph;
+    // figure out, is graph currently a descendant of a TierGlyph, a PixelFloaterGlyph, or neither?
+    if (parentgl instanceof TierGlyph) {
+      if (coordbox == null) { coordbox = parentgl.getCoordBox(); }
+      gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+      gviewer.getGraphNameTierHash().remove(gl.getLabel());
+      //      gviewer.getGraphIdTierHash().remove(gl.getID());
+      gviewer.getGraphIdTierHash().remove(graf.getID());
+    }
+    else if (parentgl instanceof PixelFloaterGlyph) {
+      // moving glyph from floating to tier
+      // if new tier, figure out coord size that corresponds to float graph pixel size
+      if (coordbox == null) {
+	Rectangle2D tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
+	Rectangle pixbox = new Rectangle((int)tempbox.x, (int)tempbox.y, (int)tempbox.width, (int)tempbox.height);
+	coordbox = new Rectangle2D();
+	map.getView().transformToCoords(pixbox, coordbox);
+	String attach2float_mode = getGraphPrefsNode().get(PREF_ATTACH_HEIGHT_MODE, default_attach_mode);
+	if (attach2float_mode.equals(USE_DEFAULT_HEIGHT))  {
+	  coordbox.height = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, (double) default_coord_height);
+	}
+      }
+    }
+    else {
+      // not sure if this will ever happen -- tier parent should be  either TierGlyph or PixelFloaterGlyph
+      System.out.println("WARNING: parent of graph glyph is not a tier or a PixelFloaterGlyph");
+      if (coordbox == null) {
+	SeqSpan grafspan = graf.getSpan(graf.getGraphSeq());
+	double height = getGraphPrefsNode().getDouble(PREF_ATTACHED_COORD_HEIGHT, (double) default_coord_height);
+	coordbox = new Rectangle2D(grafspan.getMin(), 0,
+				   (double)grafspan.getMax() - (double)grafspan.getMin(),  height);
+      }
+    }
+    tglyph.addChild(gl);
+    for (int i=0; i<tglyph.getChildCount(); i++) {
+      GlyphI child = tglyph.getChild(i);
+      if (child instanceof GraphGlyph) {
+	Rectangle2D childbox = child.getCoordBox();
+	child.setCoords(childbox.x, coordbox.y, childbox.width, coordbox.height);
+      }
+    }
+    IAnnotStyle style = tglyph.getAnnotStyle();
+    if (style != null) { tglyph.setLabel(style.getHumanName()); }
+    else { tglyph.setLabel("unknown"); }
+    
+    //      tglyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
+    if (new_tier)  {
+      map.addTier(tglyph, true);
+    }
+    gviewer.getGraphStateTierHash().put(gl.getGraphState(), tglyph);
+    gviewer.getGraphNameTierHash().put(gl.getLabel(), tglyph);
+    gviewer.getGraphIdTierHash().put(graf.getID(), tglyph);
+
+    gl.getGraphState().setFloatGraph(false);
+    tglyph.setState(TierGlyph.COLLAPSED);
+    if (DEBUG)  { System.out.println("  old parent scene: " + parentgl.getScene()); }
+    if (DEBUG)  { System.out.println("  new parent scene: " + tglyph.getScene()); }
+
+    tglyph.pack(map.getView());
+    map.packTiers(false, true, false);
+    map.stretchToFit(false, true);
+    map.updateWidget();
+    return tglyph;
+
   }
 
   public static void floatGraph(GraphGlyph gl, SeqMapView gviewer) {
@@ -205,15 +222,19 @@ public class GraphGlyphUtils {
       Rectangle2D coordbox = gl.getCoordBox();
       Rectangle pixbox = new Rectangle();
       map.getView().transformToPixels(coordbox, pixbox);
-      //      System.out.println("switching to floating graph");
-      //      System.out.println("graph coordbox: " + coordbox);
-      //      System.out.println("graph pixbox:   " + pixbox);
+      if (DEBUG)  {
+	System.out.println("switching to floating graph");
+	System.out.println("graph coordbox: " + coordbox);
+	System.out.println("graph pixbox:   " + pixbox);
+      }
       gl.setCoords(coordbox.x, pixbox.y, coordbox.width, pixbox.height);
 
       parentgl.removeChild(gl);
       if (parentgl instanceof TierGlyph) {
 	map.removeTier((TierGlyph)parentgl);
 	gviewer.getGraphStateTierHash().remove(gl.getGraphState());
+        gviewer.getGraphNameTierHash().remove(gl.getLabel());
+        gviewer.getGraphIdTierHash().remove(graf.getID());
       }
 
       PixelFloaterGlyph floater = new PixelFloaterGlyph();
@@ -223,11 +244,10 @@ public class GraphGlyphUtils {
       floater.setCoords(mapbox.x, 0, mapbox.width, 0);
       //      gl.setCoords(mapbox.x, 0, mapbox.width, 0);
       map.packTiers(false, true, false);
-      map.stretchToFit(false, false);
+      map.stretchToFit(false, true);
       // make sure graph is still within map's pixel bounds after switch to floating pixel layer
       checkPixelBounds(gl, gviewer);
       map.updateWidget();
-    //    map.setDataModel(gl, graf);
   }
 
   /**
@@ -241,8 +261,6 @@ public class GraphGlyphUtils {
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
     Rectangle mapbox = map.getView().getPixelBox();
     Rectangle2D gbox = gl.getCoordBox();
-    //    System.out.println("in checkPixelBounds, mapbox:   " + mapbox);
-    //    System.out.println("in checkPixelBounds, graphbox: " + gbox);
     if (gbox.y < mapbox.y) {
       gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
       //      System.out.println("adjusting graph coords + : " + gl.getCoordBox());
@@ -283,15 +301,15 @@ public class GraphGlyphUtils {
 
     for (int i=0; i<grafs.size(); i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph();
-      graph_glyph.setFasterDraw(true);
-      graph_glyph.setCalcCache(true);
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setFasterDraw(true);
+      // graph_glyph.setCalcCache(true);
       graph_glyph.setSelectable(false);
       graph_glyph.setLabel(graf.getGraphName());
       graph_glyph.setXPixelOffset(i);
 
       BioSeq graph_seq = graf.getGraphSeq();
-      graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
+      // graph_glyph.setPointCoords(graf.getGraphXCoords(), graf.getGraphYCoords());
 
       System.out.println("graf name: " + graf.getGraphName());
       graph_glyph.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
@@ -325,11 +343,15 @@ public class GraphGlyphUtils {
   public static Preferences getGraphPrefsNode() {
     return UnibrowPrefsUtil.getTopNode().node("graphs");
   }
-  
+
+  /**
+   * @deprecated
+   */
   public static Color getDefaultGraphColor(int i) {
     int index = (i % default_graph_colors.length);
     String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;
     Color col = UnibrowPrefsUtil.getColor(getGraphPrefsNode(), color_pref_name, default_graph_colors[index]);
     return col;
   }
+
 }

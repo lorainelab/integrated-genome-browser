@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -55,7 +55,7 @@ public class AxisGlyph extends Glyph {
   protected double label_scale = 1;
 
   protected Vector selected_regions;
-  
+
   // default to true for backward compatability
   protected boolean hitable = true;
 
@@ -150,6 +150,7 @@ public class AxisGlyph extends Glyph {
   public static final int FULL = 0;
   public static final int ABBREV = FULL+1;
   public static final int COMMA = ABBREV+1;
+  public static final int NO_LABELS = COMMA+1;
   protected int labelFormat = FULL;
 
   /**
@@ -162,9 +163,9 @@ public class AxisGlyph extends Glyph {
    * @param theFormat {@link #FULL} or {@link #ABBREV} or {@link #COMMA}.
    */
   public void setLabelFormat(int theFormat) {
-    if (theFormat != FULL && theFormat != ABBREV && theFormat != COMMA) {
+    if (theFormat != FULL && theFormat != ABBREV && theFormat != COMMA && theFormat != NO_LABELS) {
       throw new IllegalArgumentException(
-        "Label format must be FULL, ABBREV, or COMMA.");
+        "Label format must be FULL, ABBREV, COMMA, or NO_LABELS.");
     }
     this.labelFormat = theFormat;
   }
@@ -462,7 +463,7 @@ public class AxisGlyph extends Glyph {
   private final Rectangle scratchpixels = new Rectangle();
 
   public void draw(ViewI view) {
-    String label;
+    String label = null;
     int axis_loc;
     TransformI cumulative;
     int axis_length;
@@ -708,23 +709,29 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        label = stringRepresentation((double)tick_loc, (double)tick_increment);
+        if (labelFormat != NO_LABELS)  { 
+	  label = stringRepresentation((double)tick_loc, (double)tick_increment); 
+	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (tick_loc >= scene_start && tick_loc <= scene_end) {
           if (orient == VERTICAL) {
-            if (LEFT == this.labelPlacement) {
-              int x = fm.stringWidth(label);
-              g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-            }
-            else {
-              g.drawString(label, center_line_start+labelShift, canvas_loc);
-            }
+	    if (labelFormat != NO_LABELS) {
+	      if (LEFT == this.labelPlacement) {
+		int x = fm.stringWidth(label);
+		g.drawString(label, center_line_start-labelGap-x, canvas_loc);
+	      }
+	      else {
+		g.drawString(label, center_line_start+labelShift, canvas_loc);
+	      }
+	    }
             g.fillRect(center_line_start-2, canvas_loc,
                        centerLineThickness+4, 2);
           }
           else {
-            g.drawString(label, canvas_loc, center_line_start-labelShift);
+            if (labelFormat != NO_LABELS)  {
+	      g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    }
             g.fillRect(canvas_loc, center_line_start-2,
                        2, centerLineThickness+4);
           }
@@ -755,23 +762,29 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
+        if (labelFormat != NO_LABELS)  { 
+	  label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
+	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (rev_tick_loc >= scene_start && rev_tick_loc <= scene_end) {
           if (orient == VERTICAL) {
-            if (LEFT == this.labelPlacement) {
-              int x = fm.stringWidth(label);
-              g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-            }
-            else {
-              g.drawString(label, center_line_start+labelShift, canvas_loc);
-            }
+	    if (labelFormat != NO_LABELS)  { 
+	      if (LEFT == this.labelPlacement) {
+		int x = fm.stringWidth(label);
+		g.drawString(label, center_line_start-labelGap-x, canvas_loc);
+	      }
+	      else {
+		g.drawString(label, center_line_start+labelShift, canvas_loc);
+	      }
+	    }
             g.fillRect(center_line_start-2, canvas_loc,
                        centerLineThickness+4, 2);
           }
           else {
-            g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    if (labelFormat != NO_LABELS)  { 
+	      g.drawString(label, canvas_loc, center_line_start-labelShift);
+	    }
             g.fillRect(canvas_loc, center_line_start-2,
                         2, centerLineThickness+4);
           }
@@ -942,6 +955,13 @@ public class AxisGlyph extends Glyph {
       } else if (COMMA == this.labelFormat) {
         return comma_format.format(int_label);
       }
+      else if (this.labelFormat == FULL)  {
+        String str = Integer.toString(int_label);
+        if (str.endsWith("000")) {
+          str = str.substring(0, str.length()-3) + "kb";
+        }
+        return str;
+      }
       return String.valueOf(int_label);
     }
   }
@@ -971,6 +991,10 @@ public class AxisGlyph extends Glyph {
     else  {
       remainder = theUnitsPerPixel;
 
+      // The COMMA format requires 25% more space to accomodate "," characters
+      // The ABBREV format is hard to predict, so give it extra space as well
+      if (labelFormat != FULL) { remainder *= 1.25; }
+
       while (remainder >= 10)  {
         remainder /= 10;
         increment *= 10;
@@ -986,9 +1010,7 @@ public class AxisGlyph extends Glyph {
       }
       result = (increment * 200);
     }
-    // The COMMA format requires 25% more space to accomodate "," characters
-    // The ABBREV format is hard to predict, so give it extra space as well
-    if (labelFormat != FULL) { result *= 1.25; }
+    
     return result;
   }
 

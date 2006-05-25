@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -20,10 +20,11 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener  {
@@ -39,10 +40,16 @@ public class GraphVisibleBoundsSetter extends JPanel
   JTextField max_perT;
   JTextField min_valT;
   JTextField max_valT;
+  
+  JRadioButton by_valRB = new JRadioButton("By Value");
+  JRadioButton by_percentileRB = new JRadioButton("By Percentile");
+  
+  JPanel valP = new JPanel();  // for adjust-by-value controls
+  JPanel perP = new JPanel();  // for adjust-by-percent controls
 
   JCheckBox syncCB;
   boolean sync_min_max;
-  int max_chars = 15;
+  int max_chars = 8;
   int max_pix_per_char = 6;
   int tf_min_xpix = max_chars * max_pix_per_char;
   int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
@@ -84,12 +91,11 @@ public class GraphVisibleBoundsSetter extends JPanel
   Map info2pscores = new HashMap();
   java.util.List graphs = new ArrayList();
 
-  /**
+  /*
    *  Now trying to map slider values to percentages, such that each slider
    *  unit = 0.1 percent (or in other words slider units per percent = 10)
    */
-  float sliders_per_percent = 10.0f;
-  float percents_per_slider = 1.0f / sliders_per_percent;
+  static float sliders_per_percent = 10.0f;
   float abs_min_percent = 0.0f;
   float abs_max_percent = 100.0f;
   float prev_min_per = 0;
@@ -108,6 +114,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   Dimension textbox_sizepref = new Dimension(400, 15);
   boolean set_slider_sizepref = false;
   boolean set_textbox_sizepref = false;
+  boolean show_min_and_max = false;
 
   static GraphVisibleBoundsSetter showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
@@ -131,7 +138,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     frm.show();
     return thresher;
   }
-
+  
   public GraphVisibleBoundsSetter(NeoWidgetI w) {
     super();
 
@@ -157,11 +164,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     min_val_slider = new JSlider(JSlider.HORIZONTAL);
     max_val_slider = new JSlider(JSlider.HORIZONTAL);
 
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-    JPanel valP = new JPanel();  // for adjust-by-value controls
-    JPanel perP = new JPanel();  // for adjust-by-percent controls
-
     min_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     max_valT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
     min_perT.setMinimumSize(new Dimension(tf_min_xpix, tf_min_ypix));
@@ -172,8 +174,8 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
     valP.setLayout(new BoxLayout(valP, BoxLayout.X_AXIS));
     perP.setLayout(new BoxLayout(perP, BoxLayout.X_AXIS));
-    valP.setBorder(new TitledBorder("By Value"));
-    perP.setBorder(new TitledBorder("By Percentile"));
+    //valP.setBorder(new TitledBorder("By Value"));
+    //perP.setBorder(new TitledBorder("By Percentile"));
 
     JPanel labP2 = new JPanel();
     JPanel textP2 = new JPanel();
@@ -207,43 +209,121 @@ public class GraphVisibleBoundsSetter extends JPanel
     perP.add(textP);
     perP.add(slideP);
 
+    Box by_val_box = Box.createHorizontalBox();
+    ButtonGroup by_val_group = new ButtonGroup();
+    by_val_group.add(by_valRB);
+    by_val_group.add(by_percentileRB);
+    by_valRB.setSelected(true);
+    by_percentileRB.setSelected(false);
+    by_valRB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switchView(false);
+      }
+    });
+    by_percentileRB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switchView(true);
+      }
+    });
+    by_val_box.add(by_valRB);
+    by_val_box.add(by_percentileRB);
+    by_val_box.add(Box.createHorizontalGlue());
+
+    this.setBorder(new TitledBorder("Y-Axis Scale"));
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(Box.createRigidArea(new Dimension(5,5)));
+    this.add(by_val_box);
+    this.add(Box.createRigidArea(new Dimension(5,5)));
     this.add(valP);
     this.add(perP);
-
-    syncCB = new JCheckBox("Sync Min/Max");
+    valP.setVisible(true);
+    perP.setVisible(false);
+    
+    syncCB = new JCheckBox("Sync Min/Max"); // not actually used
 
     turnOnListening();
   }
 
+  public void switchView(boolean b) {
+    if (b) {
+      valP.setVisible(false);
+      perP.setVisible(true);
+    } else {
+      valP.setVisible(true);
+      perP.setVisible(false);
+    }
+//    this.doLayout();
+//    this.invalidate(); // redraw the display
+//    this.repaint();
+  }
+  
+  /**
+   *  Set the set of graphs to the given List of GraphGlyph objects.
+   */
   public void setGraphs(java.util.List newgraphs) {
     turnOffListening();
     graphs.clear();
     int gcount = newgraphs.size();
     for (int i=0; i<gcount; i++) {
-      GraphGlyph gl = (GraphGlyph)newgraphs.get(i);
-      graphs.add(gl);
+      GraphGlyph gl = (GraphGlyph) newgraphs.get(i);
+      if (gl instanceof SmartGraphGlyph) {
+	graphs.add(gl);
+      }
     }
+    
     initPercents();
     initValues();
+    setEnabled(! graphs.isEmpty());    
     turnOnListening();
   }
 
-  protected void initValues() {
-    int gcount = graphs.size();
-    if (gcount > 0) {
-      float min_of_mins = Float.POSITIVE_INFINITY;
-      float max_of_mins = Float.NEGATIVE_INFINITY;
-      float min_of_maxes = Float.POSITIVE_INFINITY;
-      float max_of_maxes = Float.NEGATIVE_INFINITY;
-      float avg_of_mins = 0;
-      float avg_of_maxes = 0;
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    min_valT.setEnabled(b);
+    max_valT.setEnabled(b);
+    min_perT.setEnabled(b);
+    max_perT.setEnabled(b);
+    min_percent_slider.setEnabled(b);
+    max_percent_slider.setEnabled(b);
+    min_val_slider.setEnabled(b);
+    max_val_slider.setEnabled(b);
+  }
 
-      float min_of_vismins = Float.POSITIVE_INFINITY;
-      float max_of_vismins = Float.NEGATIVE_INFINITY;
-      float min_of_vismaxes = Float.POSITIVE_INFINITY;
-      float max_of_vismaxes = Float.NEGATIVE_INFINITY;
-      float avg_of_vismins = 0;
-      float avg_of_vismaxes = 0;
+  /**
+   *  When there are multiple graphs selected, you can show the minimum and
+   *  maximum values in the text boxes like "min : max", or the text boxes
+   *  can be set to blank values.
+   *  @param b set to true if you want to show the range as "min : max"
+   */
+  public void setShowMinAndMax(boolean b) {
+    show_min_and_max = b;
+  }
+
+  protected void initValues() {
+    float min_of_mins = Float.POSITIVE_INFINITY;
+    float max_of_mins = Float.NEGATIVE_INFINITY;
+    float min_of_maxes = Float.POSITIVE_INFINITY;
+    float max_of_maxes = Float.NEGATIVE_INFINITY;
+    float avg_of_mins = 0;
+    float avg_of_maxes = 0;
+
+    float min_of_vismins = Float.POSITIVE_INFINITY;
+    float max_of_vismins = Float.NEGATIVE_INFINITY;
+    float min_of_vismaxes = Float.POSITIVE_INFINITY;
+    float max_of_vismaxes = Float.NEGATIVE_INFINITY;
+    float avg_of_vismins = 0;
+    float avg_of_vismaxes = 0;
+    int gcount = graphs.size();
+
+    if (gcount == 0) {
+      min_of_mins = max_of_mins = 0;
+      min_of_maxes = max_of_maxes = 0;
+      avg_of_mins = avg_of_maxes = 0;
+      min_of_vismins = max_of_vismins = 0;
+      min_of_vismaxes = max_of_vismaxes = 0;
+      avg_of_vismins = avg_of_vismaxes = 0;
+
+    } else {
 
       for (int i=0; i<gcount; i++) {
 	SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
@@ -267,29 +347,37 @@ public class GraphVisibleBoundsSetter extends JPanel
 	avg_of_vismins += vismin;
 	avg_of_vismaxes += vismax;
       }
+
       avg_of_mins = avg_of_mins / gcount;
       avg_of_maxes = avg_of_maxes / gcount;
       avg_of_vismins = avg_of_vismins / gcount;
       avg_of_vismaxes = avg_of_vismaxes / gcount;
+    }
 
 
       sliders_per_val = (total_val_sliders) / (max_of_maxes - min_of_mins);
       vals_per_slider = 1.0f / sliders_per_val;
 
-      
+
       if (min_of_vismins == max_of_vismins) {
-	min_valT.setText(val_format.format(min_of_vismins));
-      }
-      else {
-	min_valT.setText(val_format.format(min_of_vismins) +
-			 " : " + val_format.format(max_of_vismins));
+        min_valT.setText(val_format.format(min_of_vismins));
+      } else {
+        if (show_min_and_max) {
+          min_valT.setText(val_format.format(min_of_vismins) +
+            " : " + val_format.format(max_of_vismins));
+        } else {
+          min_valT.setText("");
+        }
       }
       if (min_of_vismaxes == max_of_vismaxes) {
-	max_valT.setText(val_format.format(max_of_vismaxes));
-      }
-      else {
-	max_valT.setText(val_format.format(min_of_vismaxes) +
-			 " : " + val_format.format(max_of_vismaxes));
+        max_valT.setText(val_format.format(max_of_vismaxes));
+      } else {
+        if (show_min_and_max) {
+          max_valT.setText(val_format.format(min_of_vismaxes) +
+            " : " + val_format.format(max_of_vismaxes));
+        } else {
+          max_valT.setText("");
+        }
       }
 
       min_val_slider.setMinimum((int)(min_of_mins * sliders_per_val));
@@ -304,29 +392,25 @@ public class GraphVisibleBoundsSetter extends JPanel
       prev_max_val = avg_of_vismaxes;
       abs_min_val = min_of_mins;
       abs_max_val = max_of_maxes;
-    }
   }
-
+  
   // assumes listening has already been turned off
   protected void initPercents() {
-    int gcount = graphs.size();
-    if (gcount > 0) {
-      float min_of_vismins = Float.POSITIVE_INFINITY;
-      float max_of_vismins = Float.NEGATIVE_INFINITY;
-      float min_of_vismaxes = Float.POSITIVE_INFINITY;
-      float max_of_vismaxes = Float.NEGATIVE_INFINITY;
-      float avg_of_vismins = 0;
-      float avg_of_vismaxes = 0;
+    float min_of_vismins = Float.POSITIVE_INFINITY;
+    float max_of_vismins = Float.NEGATIVE_INFINITY;
+    float min_of_vismaxes = Float.POSITIVE_INFINITY;
+    float max_of_vismaxes = Float.NEGATIVE_INFINITY;
+    float avg_of_vismins = 0;
+    float avg_of_vismaxes = 0;
 
+    int gcount = graphs.size();
+    if (gcount == 0) {
+        min_of_vismins = max_of_vismins = 0;
+        min_of_vismaxes = max_of_vismaxes = 0;
+        avg_of_vismins = avg_of_vismaxes = 0;
+    } else {
       for (int i=0; i<gcount; i++) {
 	GraphGlyph gl = (GraphGlyph)graphs.get(i);
-	Object info = gl.getInfo();
-	if (info == null) { System.err.println("Graph has no info! " + gl); }
-	float[] p2score = (float[])info2pscores.get(info);
-	if (p2score == null) {
-	  p2score = calcPercents2Scores(gl);
-	  info2pscores.put(info, p2score);
-	}
 	float vismin_val = gl.getVisibleMinY();
 	float vismax_val = gl.getVisibleMaxY();
 	float vismin_per = getPercentForValue(gl, vismin_val);
@@ -340,57 +424,39 @@ public class GraphVisibleBoundsSetter extends JPanel
 	avg_of_vismins += vismin_per;
 	avg_of_vismaxes += vismax_per;
       }
-
-      avg_of_vismins = avg_of_vismins / gcount;
-      avg_of_vismaxes = avg_of_vismaxes / gcount;
-
-      if (min_of_vismins == max_of_vismins) {
-	min_perT.setText(per_format.format(min_of_vismins));
-      }
-      else {
-	min_perT.setText(per_format.format(min_of_vismins) + " : " + per_format.format(max_of_vismins));
-      }
-      if (min_of_vismaxes == max_of_vismaxes) {
-	max_perT.setText(per_format.format(max_of_vismaxes));
-      }
-      else {
-	max_perT.setText(per_format.format(min_of_vismaxes) + " : " + per_format.format(max_of_vismaxes));
-      }
-
-      min_percent_slider.setValue((int)(avg_of_vismins * sliders_per_percent));
-      max_val_slider.setValue((int)(avg_of_vismaxes * sliders_per_percent));
-
-      prev_min_per = avg_of_vismins;
-      prev_max_per = avg_of_vismaxes;
     }
-  }
 
-  protected float[] calcPercents2Scores(GraphGlyph sgg) {
-    // System.out.println("calculating percentages for graph: " + sgg);
-    float[] scores = sgg.getYCoords();
-    int num_scores = scores.length;
-    //    int num_percents = max_percent - min_percent + 1;
-    int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
-    //    System.out.println("num_percents: " + num_percents);
-    float[] ordered_scores = new float[num_scores];
-    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
-    //    System.out.println("score array copied");
-    Arrays.sort(ordered_scores);
-    //    System.out.println("scores sorted");
-    float[] percent2score = new float[num_percents];
+    avg_of_vismins = avg_of_vismins / gcount;
+    avg_of_vismaxes = avg_of_vismaxes / gcount;
 
-    float scores_per_percent = ordered_scores.length / 100.0f;
-    for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_slider) {
-      int score_index = (int)(percent * scores_per_percent);
-      if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-      //      System.out.println("percent: " + percent + ", score_index: " + score_index
-      //			 + ", percent_index: " + (percent * sliders_per_percent));
-      percent2score[(int)Math.round(percent * sliders_per_percent)] = ordered_scores[score_index];
+    if (min_of_vismins == max_of_vismins) {
+      min_perT.setText(per_format.format(min_of_vismins));
     }
-    // just making sure max 100% is really 100%...
-    percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
-    return percent2score;
+    else {
+      if (show_min_and_max) {
+        min_perT.setText(per_format.format(min_of_vismins) + " : " + per_format.format(max_of_vismins));
+      } else {
+        min_perT.setText("");
+      }
+    }
+    if (min_of_vismaxes == max_of_vismaxes) {
+      max_perT.setText(per_format.format(max_of_vismaxes));
+    }
+    else {
+      if (show_min_and_max) {
+        max_perT.setText(per_format.format(min_of_vismaxes) + " : " + per_format.format(max_of_vismaxes));
+      } else {
+        max_perT.setText("");
+      }
+    }
+
+    min_percent_slider.setValue((int)(avg_of_vismins * sliders_per_percent));
+    max_val_slider.setValue((int)(avg_of_vismaxes * sliders_per_percent));
+
+    prev_min_per = avg_of_vismins;
+    prev_max_per = avg_of_vismaxes;
   }
+ 
 
   /*
    *  WARNING -- GAH 2-6-2004
@@ -508,7 +574,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == min_perT)  {
       try {
-	float min_per = Float.parseFloat(min_perT.getText());
+	float min_per = GraphAdjusterView.parsePercent(min_perT.getText());
 	if (min_per < 0)  { min_per = 0; }
 	else if (min_per > prev_max_per) { min_per = prev_max_per - per_offset; }
 	setVisibleMinPercent(min_per);  // resets min_perT text also
@@ -520,7 +586,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     else if (src == max_perT) {
       try {
-	float max_per = Float.parseFloat(max_perT.getText());
+        float max_per = GraphAdjusterView.parsePercent(max_perT.getText());
 	if (max_per < prev_min_per) { max_per = prev_min_per + per_offset; }
 	else if (max_per > 100) { max_per = 100; }
 	setVisibleMaxPercent(max_per);  // resets max_perT text also
@@ -535,7 +601,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
 
   }
-
 
   public void setVisibleMinValue(float val) {
     int gcount = graphs.size();
@@ -555,7 +620,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	gl.setVisibleMinY(val);
       }
       avg_of_mins = avg_of_mins / gcount;
-      widg.updateWidget();
+      if (widg != null) { widg.updateWidget(); }
 
       // set values
       min_valT.setText(val_format.format(val));
@@ -563,10 +628,14 @@ public class GraphVisibleBoundsSetter extends JPanel
 
       // then set percentages
       if (min_of_mins == max_of_mins) {
-	min_perT.setText(per_format.format(min_of_mins));
+        min_perT.setText(per_format.format(min_of_mins));
       }
       else {
-	min_perT.setText(per_format.format(min_of_mins) + " : " + per_format.format(max_of_mins));
+        if (show_min_and_max) {
+          min_perT.setText(per_format.format(min_of_mins) + " : " + per_format.format(max_of_mins));
+        } else {
+          min_perT.setText("");
+        }
       }
       min_percent_slider.setValue((int)(avg_of_mins * sliders_per_percent));
 
@@ -593,16 +662,20 @@ public class GraphVisibleBoundsSetter extends JPanel
 	gl.setVisibleMaxY(val);
       }
       avg_of_maxes = avg_of_maxes / gcount;
-      widg.updateWidget();
+      if (widg != null) { widg.updateWidget(); }
 
       max_valT.setText(val_format.format(val));
       max_val_slider.setValue((int)(val * sliders_per_val));
 
       if (min_of_maxes == max_of_maxes) {
-	max_perT.setText(per_format.format(min_of_maxes));
+        max_perT.setText(per_format.format(min_of_maxes));
       }
       else {
-	max_perT.setText(per_format.format(min_of_maxes) + " : " + per_format.format(max_of_maxes));
+        if (show_min_and_max) {
+          max_perT.setText(per_format.format(min_of_maxes) + " : " + per_format.format(max_of_maxes));
+        } else {
+          max_perT.setText("");
+        }
       }
       max_percent_slider.setValue((int)(avg_of_maxes * sliders_per_percent));
 
@@ -640,7 +713,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	gl.setVisibleMinY(min_val);
       }
       avg_of_mins = avg_of_mins / gcount;
-      widg.updateWidget();
+      if (widg != null) { widg.updateWidget(); }
 
       // set percents
       min_perT.setText(per_format.format(percent));
@@ -648,10 +721,14 @@ public class GraphVisibleBoundsSetter extends JPanel
 
       // then set values
       if (min_of_mins == max_of_mins) {
-	min_valT.setText(val_format.format(min_of_mins));
+        min_valT.setText(val_format.format(min_of_mins));
       }
       else {
-	min_valT.setText(val_format.format(min_of_mins) + " : " + val_format.format(max_of_mins));
+        if (show_min_and_max) {
+          min_valT.setText(val_format.format(min_of_mins) + " : " + val_format.format(max_of_mins));
+        } else {
+          min_valT.setText("");          
+        }
       }
       min_val_slider.setValue((int)(avg_of_mins * sliders_per_val));
 
@@ -691,13 +768,16 @@ public class GraphVisibleBoundsSetter extends JPanel
 	gl.setVisibleMaxY(max_val);
       }
       avg_of_maxes = avg_of_maxes / gcount;
-      widg.updateWidget();
+      if (widg != null) { widg.updateWidget(); }
 
       if (min_of_maxes == max_of_maxes) {
-	max_valT.setText(val_format.format(min_of_maxes));
-      }
-      else {
-	max_valT.setText(val_format.format(min_of_maxes) + " : " + val_format.format(max_of_maxes));
+        max_valT.setText(val_format.format(min_of_maxes));
+      } else {
+        if (show_min_and_max) {
+          max_valT.setText(val_format.format(min_of_maxes) + " : " + val_format.format(max_of_maxes));
+        } else {
+          max_valT.setText("");
+        }
       }
       max_val_slider.setValue((int)(avg_of_maxes * sliders_per_val));
 
@@ -707,17 +787,37 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
   }
 
-  public float getValueForPercent(GraphGlyph gl, float percent) {
+  /**
+   *  Gets the percents2scores array for the given graph, creating the array
+   *  if necessary.
+   */
+  float[] getPercents2Scores(GraphGlyph gl) {
     Object info = gl.getInfo();
-    float[] percent2score = (float[])info2pscores.get(info);
-    float value = percent2score[(int)Math.round(percent * sliders_per_percent)];
+    if (info == null) { System.err.println("Graph has no info! " + gl); }
+    float[] p2score = (float[]) info2pscores.get(info);
+    if (p2score == null) {
+      p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
+      info2pscores.put(info, p2score);
+    }
+    return p2score;
+  }
+  
+  public float getValueForPercent(GraphGlyph gl, float percent) {
+    float[] percent2score = getPercents2Scores(gl);
+    int index = (int)Math.round(percent * sliders_per_percent);
+
+    // I have actually seen a case where index was calculated as -1,
+    // and an exception was thrown. That is why I added this check. (Ed)
+    if (index < 0) {index = 0;}
+    else if (index >= percent2score.length) { index = percent2score.length - 1; }
+
+    float value = percent2score[index];
     return value;
   }
 
   public float getPercentForValue(GraphGlyph gl, float value) {
     float percent = Float.NEGATIVE_INFINITY;
-    Object info = gl.getInfo();
-    float[] percent2score = (float[])info2pscores.get(info);
+    float[] percent2score = getPercents2Scores(gl);
     // do a binary search through percent2score array to find percent bin closest to value
     int index = Arrays.binarySearch(percent2score, value);
     if (index < 0) { index = -index - 2; }
@@ -766,5 +866,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     setGraphs(graphs);
   }
 
-
+  public static void main(String[] args) {
+    com.affymetrix.igb.view.SimpleGraphTab.main(args);
+  }
 }

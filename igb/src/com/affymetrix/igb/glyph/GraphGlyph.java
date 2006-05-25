@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,10 +18,11 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
 
 /**
- *  A new implementation of graphs for NeoMaps.
+ *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
@@ -37,21 +38,19 @@ public class GraphGlyph extends Glyph {
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
+  static HeatMap default_heatmap = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
 
-  public static int LINE_GRAPH = 1;
-  public static int BAR_GRAPH = 2;
-  public static int DOT_GRAPH = 3;
-  public static int STAIRSTEP_GRAPH = 5;
-  public static int SPAN_GRAPH = 6;
-  public static int HEAT_MAP = 7;
+  public static final int LINE_GRAPH = 1;
+  public static final int BAR_GRAPH = 2;
+  public static final int DOT_GRAPH = 3;
+  public static final int STAIRSTEP_GRAPH = 5;
+  public static final int HEAT_MAP = 7;
 
   int xpix_offset = 0;
   Point zero_point = new Point(0,0);
   Point2D coord = new Point2D(0,0);
   Point curr_point = new Point(0,0);
   Point prev_point = new Point(0,0);
-  Color[] heatmap_colors = null;
-  int heatmap_bins = 256;
 
   Rectangle2D label_coord_box = new Rectangle2D();
   Rectangle label_pix_box = new Rectangle();
@@ -61,15 +60,14 @@ public class GraphGlyph extends Glyph {
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
   boolean hide_zero_points = true;
-  String label = null;
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
    *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
    *     be modified (except for resetting the points by calling setPointCoords() again)
    */
-  float point_max_ycoord;
-  float point_min_ycoord;
+  float point_max_ycoord = Float.NEGATIVE_INFINITY;
+  float point_min_ycoord = Float.POSITIVE_INFINITY;
 
   // assumes sorted points, each x corresponding to y
   int xcoords[];
@@ -81,16 +79,69 @@ public class GraphGlyph extends Glyph {
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 
-  GraphState state = new GraphState();
+  GraphState state;
   LinearTransform scratch_trans = new LinearTransform();
 
-  public void setGraphState(GraphState gs) {
-    state = gs;
+  public GraphGlyph(int[] xcoords, float[] ycoords)  {
+    this(xcoords, ycoords, new GraphState());
+  }
+
+  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    super();
+    state = gstate;
+    if (state == null) {
+      throw new NullPointerException();
+    }
     setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
-    //    System.out.println("graph state: " + state);
     setColor(state.getColor());
     setGraphStyle(state.getGraphStyle());
-    setShowLabel(state.getShowLabel());
+
+    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    this.xcoords = xcoords;
+    this.ycoords = ycoords;
+    point_min_ycoord = Float.POSITIVE_INFINITY;
+    point_max_ycoord = Float.NEGATIVE_INFINITY;
+    for (int i=0; i<ycoords.length; i++) {
+      if (ycoords[i] < point_min_ycoord) { point_min_ycoord = ycoords[i]; }
+      if (ycoords[i] > point_max_ycoord) { point_max_ycoord = ycoords[i]; }
+    }
+    if (point_max_ycoord == point_min_ycoord) {
+      point_min_ycoord = point_max_ycoord - 1;
+    }
+    //    System.out.println("min: " + min_ycoord + ", max: " + getVisibleMaxY());
+    //    auto_adjust_visible = false;
+    checkVisibleBoundsY();
+  }
+
+  protected void checkVisibleBoundsY() {
+    if (getVisibleMinY() == Float.POSITIVE_INFINITY ||
+	getVisibleMinY() == Float.NEGATIVE_INFINITY ||
+	getVisibleMaxY() == Float.POSITIVE_INFINITY ||
+	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
+      setVisibleMaxY(point_max_ycoord);
+      setVisibleMinY(point_min_ycoord);
+    }
+  }
+
+  /*
+ public void setGraphState(GraphState gs) {
+    state = gs;
+    setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
+    setColor(state.getColor());
+    setGraphStyle(state.getGraphStyle());
+  }
+  */
+
+  public String getID() {
+    Object mod = this.getInfo();
+    String ident = null;
+    if (mod instanceof SeqSymmetry) {
+      ident = ((SeqSymmetry)mod).getID();
+    }
+    if (ident == null) {
+      ident = state.getLabel();
+    }
+    return null;
   }
 
   public GraphState getGraphState() { return state; }
@@ -118,14 +169,19 @@ public class GraphGlyph extends Glyph {
     //     so y = m(x-xmin)
 
     // calculate slope (m)
-    double heatmap_scaling = (double)(heatmap_bins-1) / (getVisibleMaxY() - getVisibleMinY());
+    Color[] heatmap_colors = null;
+    double heatmap_scaling = 1;
+    if (state.getHeatMap() != null) {
+      heatmap_colors = state.getHeatMap().getColors();
+      heatmap_scaling = (double)(heatmap_colors.length - 1) / (getVisibleMaxY() - getVisibleMinY());
+    }
 
     //    Rectangle view_pixbox = view.getPixelBox();
     Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
-    if (getShowGraph())  {
+    if (getShowGraph() && xcoords != null && ycoords != null)  {
       int beg_index = 0;
       int end_index = xcoords.length-1;
 
@@ -166,11 +222,11 @@ public class GraphGlyph extends Glyph {
 	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
-      
+
       if (draw_end_index >= xcoords.length) {
         // There may be a better way to included this check in earlier logic,
         // but this check is definitely needed at some point.
-        draw_end_index = xcoords.length - 1; 
+        draw_end_index = xcoords.length - 1;
       }
 
       float ytemp;
@@ -206,23 +262,22 @@ public class GraphGlyph extends Glyph {
 	  double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
 	  if (heatmap_index < 0) { heatmap_index = 0; }
 	  else if (heatmap_index > 255) { heatmap_index = 255; }
-	    g.setColor(heatmap_colors[(int)heatmap_index]);
-	    g.fillRect(prev_point.x, pixelbox.y,
-		       curr_point.x - prev_point.x, pixelbox.height);
-	    //	  }
+	  g.setColor(heatmap_colors[(int)heatmap_index]);
+	  g.fillRect(prev_point.x, pixelbox.y,
+		     curr_point.x - prev_point.x, pixelbox.height);
 	}
-	else if (graph_style == SPAN_GRAPH) {
-	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
-	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
-	  if ((i % 2) != 0) {
-	    int xpixend = curr_point.x;
-	    coord.x = xcoords[i-1];
-	    view.transformToPixels(coord, curr_point);
-	    int xpixbeg = curr_point.x;
-	    g.fillRect(xpixbeg, pixelbox.y+pixelbox.height/2,
-		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
-	  }
-	}
+//	else if (graph_style == SPAN_GRAPH) {
+//	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
+//	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
+//	  if ((i % 2) != 0) {
+//	    int xpixend = curr_point.x;
+//	    coord.x = xcoords[i-1];
+//	    view.transformToPixels(coord, curr_point);
+//	    int xpixbeg = curr_point.x;
+//	    g.fillRect(xpixbeg, pixelbox.y+pixelbox.height/2,
+//		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
+//	  }
+//	}
 	else if (graph_style == STAIRSTEP_GRAPH) {
 	  if (i<=0 || (!(hide_zero_points && ycoords[i-1] == 0))) {
 	    int stairwidth = curr_point.x - prev_point.x;
@@ -266,50 +321,56 @@ public class GraphGlyph extends Glyph {
   }
 
   public void drawLabel(ViewI view) {
-    if (label == null) { return; }
+    if (getLabel() == null) { return; }
     Rectangle hpix = calcHandlePix(view);
-    Graphics g = view.getGraphics();
-    g.setColor(Color.lightGray);
-    g.setFont(default_font);
-    FontMetrics fm = g.getFontMetrics();
-    g.drawString(label, (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(Color.lightGray);
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    }
   }
 
   public void drawHandle(ViewI view) {
     Rectangle hpix = calcHandlePix(view);
-    Graphics g = view.getGraphics();
-    g.setColor(this.getColor());
-    g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
-    g.setColor(Color.gray);
-    g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(this.getColor());
+      g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
+      g.setColor(Color.gray);
+      g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    }
   }
 
   public void drawAxisLabel(ViewI view) {
     Graphics g = view.getGraphics();
     Rectangle hpix = calcHandlePix(view);
 
-    getInternalLinearTransform(view, scratch_trans);
-    double yscale = scratch_trans.getScaleY();
-    double yoffset = scratch_trans.getOffsetY();
+    if (hpix != null) {
+      getInternalLinearTransform(view, scratch_trans);
+      double yscale = scratch_trans.getScaleY();
+      double yoffset = scratch_trans.getOffsetY();
 
-    coord.y = yoffset;
-    view.transformToPixels(coord, curr_point);
-    double max_ypix = curr_point.y;
-    coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-    view.transformToPixels(coord, curr_point);
-    double min_ypix = curr_point.y;
-    double pix_height = max_ypix - min_ypix;
-    double spacing = pix_height / axis_bins;
-    double mark_ypix = min_ypix;
-    g.setColor(Color.gray);
-    for (int i=0; i<=axis_bins; i++) {
-      g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
-      mark_ypix += spacing;
+      coord.y = yoffset;
+      view.transformToPixels(coord, curr_point);
+      double max_ypix = curr_point.y;
+      coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+      view.transformToPixels(coord, curr_point);
+      double min_ypix = curr_point.y;
+      double pix_height = max_ypix - min_ypix;
+      double spacing = pix_height / axis_bins;
+      double mark_ypix = min_ypix;
+      g.setColor(Color.white);
+      for (int i=0; i<=axis_bins; i++) {
+	g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
+	mark_ypix += spacing;
+      }
+      g.setColor(Color.white);
+      g.setFont(axis_font);
+      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
+      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
     }
-    g.setColor(Color.gray);
-    g.setFont(axis_font);
-    g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
-    g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
   }
 
   /** Draws the outline in a way that looks good for tiers.  With other glyphs,
@@ -366,7 +427,7 @@ public class GraphGlyph extends Glyph {
       // overlapping handle ?  (need to do this one in pixel space?)
       view.transformToPixels(coord_hitbox, pixel_hitbox);
       Rectangle hpix = calcHandlePix(view);
-      if (hpix.intersects(pixel_hitbox)) { return true; }
+      if (hpix != null && (hpix.intersects(pixel_hitbox))) { return true; }
     }
     return false;
   }
@@ -376,6 +437,14 @@ public class GraphGlyph extends Glyph {
     //    have multiple views on same scene / glyph hierarchy
     // therefore reconstructing handle pixel bounds here... (although reusing same object to
     //    cut down on object creation)
+    //    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
+    //		       ", view cbox.x: " + view.getCoordBox().x);
+
+    // if full view differs from current view, and current view doesn't left align with full view,
+    //   don't draw handle (only want handle at left side of full view)
+    if (view.getFullView().getCoordBox().x != view.getCoordBox().x)  {
+      return null;
+    }
       view.transformToPixels(coordbox, pixelbox);
       Rectangle view_pixbox = view.getPixelBox();
       int xbeg = Math.max(view_pixbox.x, pixelbox.x);
@@ -393,6 +462,7 @@ public class GraphGlyph extends Glyph {
    *  This will replace any previous setting of maxy and miny!
    *
    */
+  /*
   public void setPointCoords(int xcoords[], float ycoords[]) {
     this.xcoords = xcoords;
     this.ycoords = ycoords;
@@ -415,6 +485,7 @@ public class GraphGlyph extends Glyph {
       setVisibleMinY(point_min_ycoord);
     }
   }
+  */
 
   /**
    *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.
@@ -456,12 +527,13 @@ public class GraphGlyph extends Glyph {
     state.setColor(c);
   }
 
-  public void setLabel(String str) {
-    this.label = str;
-  }
-
-  public String getLabel() {
-    return label;
+  public String getLabel() { 
+    String lab = state.getLabel();
+    if (lab == null) {
+      // if no label was set, try using ID
+      lab = getID();
+    }
+    return lab;
   }
 
   public boolean getShowGraph() { return state.getShowGraph(); }
@@ -471,6 +543,7 @@ public class GraphGlyph extends Glyph {
   public boolean getShowAxis() { return state.getShowAxis(); }
   public int getXPixelOffset() { return xpix_offset; }
 
+  public void setLabel(String str) { state.setLabel(str); }
   public void setShowGraph(boolean show) { state.setShowGraph(show); }
   public void setShowHandle(boolean show) { state.setShowHandle(show); }
   public void setShowBounds(boolean show) { state.setShowBounds(show); }
@@ -480,8 +553,8 @@ public class GraphGlyph extends Glyph {
 
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
-    if (type == HEAT_MAP && heatmap_colors == null) {
-      initHeatMap();
+    if (type == HEAT_MAP) {
+      setHeatMap(state.getHeatMap());
     }
   }
   public int getGraphStyle() { return state.getGraphStyle(); }
@@ -494,15 +567,12 @@ public class GraphGlyph extends Glyph {
     else { return xcoords.length; }
   }
 
-  public void initHeatMap() {
-    heatmap_colors = new Color[heatmap_bins];
-    for (int i=0; i<heatmap_bins; i++) {
-      heatmap_colors[i] = new Color(i, 0, i);
-    }
+  public void setHeatMap(HeatMap hmap) {
+    state.setHeatMap(hmap);
   }
 
-  public void initHeatMap(Color[] colors) {
-    heatmap_colors = colors;
+  public HeatMap getHeatMap() {
+    return state.getHeatMap();
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {
@@ -532,11 +602,19 @@ public class GraphGlyph extends Glyph {
       view.transformToCoords(label_pix_box, label_coord_box);
       top_ycoord_inset = label_coord_box.height;
     }
+    /*
+    else {  // GAH 3-21-2005
+      label_pix_box.height = 4;
+      view.transformToCoords(label_pix_box, label_coord_box);
+      top_ycoord_inset = label_coord_box.height;
+    }
+    */
     return top_ycoord_inset;
   }
 
   protected double getLowerYCoordInset(ViewI view) {
-    return 0;
+    //    return 0;
+    return 5;  // GAH 3-21-2005
   }
 
   //  public double getInternalYScale(ViewI view) {
@@ -544,7 +622,13 @@ public class GraphGlyph extends Glyph {
     Graphics g = view.getGraphics();
     double top_ycoord_inset = getUpperYCoordInset(view);
     double bottom_ycoord_inset = getLowerYCoordInset(view);
-    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    double num = getVisibleMaxY() - getVisibleMinY();
+    // if 
+    if (num <= 0) { num = 0.1; } // if scale is 0 or negative, set to a small default instead
+
+    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
     double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
     lt.setScaleY(yscale);
     lt.setOffsetY(yoffset);

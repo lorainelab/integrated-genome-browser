@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -27,9 +27,21 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.util.ErrorHandler;
 
 
+/**
+ *  Curation Control is temporarily disabled and temporarily deprecated.
+ *
+ *  This needs to be re-written to work with the TierLabelManager.PopupListener,
+ *  and with the AnnotStyle system.  Among other things, it needs to get the
+ *  tiers from the SeqMapView.getTiers() method rather than the AffyTieredMap.getTier()
+ *  method, and there have to be AnnotStyle objects for each curation type.
+ *  (Remember that users can create new annotation types.)
+ *  There are also bugs that pre-date the AnnotStyle changes.
+ *
+ *  @deprecated
+ */
 public class CurationControl implements ActionListener, ContextualPopupListener  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -125,7 +137,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       current_type = (String)prev_curation.getProperty("method");
     }
     else {
-      IGB.errorPanel("Must select curation first");
+      ErrorHandler.errorPanel("Must select curation first");
       return;
     }
   }
@@ -138,7 +150,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       current_type = (String)prev_curation.getProperty("method");
     }
     else {
-      IGB.errorPanel("Must select curation first");
+      ErrorHandler.errorPanel("Must select curation first");
       return;
     }
   }
@@ -157,13 +169,13 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     MutableAnnotatedBioSeq aseq =
       (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
     if (aseq == null) {
-      IGB.errorPanel("Nothing selected");
+      ErrorHandler.errorPanel("Nothing selected");
       return;
     }
     SeqSymmetry annot_sym = gviewer.getSelectedSymmetry();
     SeqSymmetry region_sym = gviewer.getSelectedRegion();
     if (annot_sym == null && region_sym == null) {
-      IGB.errorPanel("No selected symmetry in map view, so nothing to add to curation");
+      ErrorHandler.errorPanel("No selected symmetry in map view, so nothing to add to curation");
       return;
     }
     else {
@@ -190,6 +202,8 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       tgl.pack(tmap.getView());
       tmap.packTiers(false, true, false);
       tmap.updateWidget();
+      //TODO: convert to using TierLabelManager.PopupListener
+      /*
       java.util.List tier_menu_list = tier_manager.getMenuList(tgl);
       boolean tier_initialized = false;
       for (int i=0; i<tier_menu_list.size(); i++) {
@@ -199,6 +213,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       if (! tier_initialized) {
 	tier_menu_list.add(saveJM);
       }
+       */
 
       prev_curation = curation_sym;
     }
@@ -209,11 +224,11 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     SeqSymmetry annot_sym = gviewer.getSelectedSymmetry();
     SeqSymmetry region_sym = gviewer.getSelectedRegion();
     if (annot_sym == null && region_sym == null) {
-      IGB.errorPanel("No selected symmetry in map view, so nothing to add to curation");
+      ErrorHandler.errorPanel("No selected symmetry in map view, so nothing to add to curation");
       return;
     }
     else if (prev_curation == null) {
-      IGB.errorPanel("No previous curation chosen, so can't add to it");
+      ErrorHandler.errorPanel("No previous curation chosen, so can't add to it");
       return;
     }
     else {
@@ -246,11 +261,11 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     SeqSymmetry annot_sym = gviewer.getSelectedSymmetry();
     SeqSymmetry region_sym = gviewer.getSelectedRegion();
     if (annot_sym == null && region_sym == null) {
-      IGB.errorPanel("No selected symmetry in map view, so nothing to delete from curation");
+      ErrorHandler.errorPanel("No selected symmetry in map view, so nothing to delete from curation");
       return;
     }
     else if (prev_curation == null) {
-      IGB.errorPanel("No previous curation chosen, so can't delete from it");
+      ErrorHandler.errorPanel("No previous curation chosen, so can't delete from it");
       return;
     }
     else {

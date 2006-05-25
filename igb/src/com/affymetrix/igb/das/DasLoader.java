@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,17 +24,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-
-import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.DasFeat2GenometrySaxParser;
-import com.affymetrix.igb.parsers.PSLParser;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 /**
  * A class to help load and parse documents from a DAS server.
@@ -118,10 +111,9 @@ public abstract class DasLoader {
   
   /**
    *  Returns a Map where keys are String labels and values are SeqSpan's.
-   *  Looks for <gff><segment id="..."> where the id's are in the given seqhash.
-   *  @param seqhash  a Map of id's to BioSeq's
+   *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
    */
-  public static Map parseTermQuery(Document doc, Map seqhash) {
+  public static Map parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
     if (DEBUG) System.out.println("========= Parsing term query");
     Map segment_hash = new HashMap();
 
@@ -140,7 +132,7 @@ public abstract class DasLoader {
             Element seg_elem = (Element)gff_child;
             String id = seg_elem.getAttribute("id");
             if (id != null) {
-              BioSeq segmentseq = (BioSeq)seqhash.get(id);
+              BioSeq segmentseq = seq_group.getSeq(id);
               if (segmentseq != null) {
                 int start = Integer.parseInt(seg_elem.getAttribute("start"));
                 int end = Integer.parseInt(seg_elem.getAttribute("end"));
@@ -221,37 +213,4 @@ public abstract class DasLoader {
     }
     return ids;
   }
-
-  /**
-   *  Opens a text input stream from the given url, parses it has a
-   *  PSL file, and then adds the resulting data to the given BioSeq,
-   *  using the parser {@link PSLParser}.
-   *
-   *  Note: This method might belong in the PSLParser class.
-   */
-  static MutableAnnotatedBioSeq parsePSL(SeqMapView gviewer, URLConnection feat_request_con, MutableAnnotatedBioSeq current_seq, String type)
-  throws IOException {
-    //TODO: Move this method to PSLParser
-    MutableAnnotatedBioSeq new_seq = null;
-    InputStream result_stream = null;
-    BufferedInputStream bis = null;
-    try {
-      result_stream = feat_request_con.getInputStream();
-      bis = new BufferedInputStream(result_stream);
-      Map seqhash = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup().getSeqs();
-      PSLParser parser = new PSLParser();
-      parser.enableSharedQueryTarget(true);
-      if (seqhash == null) {
-        new_seq = parser.parse(bis, current_seq, type);
-      }
-      else {
-        parser.parse(bis, type, null, seqhash, false, true);
-        new_seq = current_seq;
-      }
-    } finally {
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
-    }
-    return new_seq;
-  }  
 }

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -19,27 +19,23 @@ import java.util.regex.*;
 import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscGeneSym;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
-import com.affymetrix.igb.parsers.LiftParser;
-import com.affymetrix.igb.parsers.AnnotationWriter;
+import com.affymetrix.igb.genometry.SupportsCdsSpan;
 
 /**
  *  Just like refFlat table format, except no geneName field (just name field).
  */
 public class BgnParser implements AnnotationWriter  {
-  boolean use_lift_file = false;
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".bgn");
+    pref_list.add("bgn");
   }
 
   static String default_annot_type = "genepred";
@@ -49,10 +45,6 @@ public class BgnParser implements AnnotationWriter  {
   // mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
   //   that all random, etc. bits are at bottom
 
-  static String chrom_file = user_dir + "/moredata/Drosophila_Jan_2003/mod_chromInfo.txt";
-  static String lift_file = user_dir + "/moredata/Drosophila_Jan_2003/liftAll.lft";
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
 
   // .bin1:
   //         name UTF8
@@ -72,39 +64,37 @@ public class BgnParser implements AnnotationWriter  {
 
   ArrayList chromosomes = new ArrayList();
 
-  public List parse(String file_name, String annot_type, Map seq_hash) {
+  public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
     System.out.println("loading file: " + file_name);
-    List result = null;
+    File fil = new File(file_name);
+    long blength = fil.length();
+    FileInputStream fis = null;
+    List result;
     try {
-      File fil = new File(file_name);
-      long blength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_hash, blength);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
+      fis = new FileInputStream(fil);
+      result = parse(fis, annot_type, seq_group, blength, true);
+    } finally {
+      if (fis != null) try {fis.close();} catch (Exception e) {}
     }
     return result;
   }
-
+    
   /**
-   *  @param blength  Byte Buffer Length.
-   *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
-   */
-  public List parse(InputStream istr, String annot_type, Map seq_hash, long blength) {
-    return parse(istr, annot_type, seq_hash, null, blength);
-  }
-
-  /**
+   *  The main parsing routine.
+   *  @param seq_group  must not be null.
    *  @param blength  Byte Buffer Length.
    *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
    */
   public List parse(InputStream istr, String annot_type,
-			    Map seq_hash, Map id2sym_hash, long blength) {
+                    AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq) throws IOException {
+                              
+    if (seq_group == null) {
+      throw new IllegalArgumentException("BgnParser called with seq_group null.");
+    }
     Timer tim = new Timer();
     tim.start();
 
-    // annots is list of top-level parent syms (max 1 per seq in seq_hash) that get
+    // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
     //    added as annotations to the annotated BioSeqs -- their children
     //    are then actual transcript annotations
     ArrayList annots = new ArrayList();
@@ -120,6 +110,7 @@ public class BgnParser implements AnnotationWriter  {
     int same_count = 0;
     BufferedInputStream bis = new BufferedInputStream(istr);
     DataInputStream dis = null;
+    boolean reached_EOF = false;
 
     try {
       //      BufferedInputStream bis = new BufferedInputStream(fis, 16384);
@@ -132,7 +123,7 @@ public class BgnParser implements AnnotationWriter  {
       }
       else {
 	dis = new DataInputStream(bis);
-      }
+      }      
       if (true) {
 	/*
 	 *  "while (dis.available() > 0)" loop is not a good alternative
@@ -149,15 +140,13 @@ public class BgnParser implements AnnotationWriter  {
 	 *  can't call close() on the inputstream(s)...
 	 *
 	 */
-	// just keep looping till hitting end-of-file throws an
-	while (true) {
+        // Loop will usually be ended by EOFException, but
+        // can also be interrupted by Thread.interrupt()
+        Thread thread = Thread.currentThread();
+        while (! thread.isInterrupted()) {
 	  //
 	  String name = dis.readUTF();
 	  String chrom_name = dis.readUTF();
-	  MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)seq_hash.get(chrom_name);
-	  if (chromseq == null) {
-	    System.out.println("chromseq is null!!! chrom_name = " + chrom_name);
-	  }
 	  String strand = dis.readUTF();
 	  boolean forward = (strand.equals("+") || (strand.equals("++")));
 	  int tmin = dis.readInt();
@@ -175,60 +164,103 @@ public class BgnParser implements AnnotationWriter  {
 	  for (int i=0; i<ecount; i++) {
 	    emaxs[i] = dis.readInt();
 	  }
-	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-	  if (parent_sym == null) {
-	    parent_sym = new SimpleSymWithProps();
-	    parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-	    parent_sym.setProperty("method", annot_type);
-	    //	    System.out.println("adding preferred_formats, " + chromseq.getID());
-	    parent_sym.setProperty("preferred_formats", pref_list);
-	    //	    parent_sym.setProperty("format", ".bgn");
-	    //	    chromseq.addAnnotation(parent_sym);
-	    annots.add(parent_sym);
-	    chrom2sym.put(chrom_name, parent_sym);
-	  }
+
+          MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
+          
+          if (chromseq == null) {
+            chromseq = seq_group.addSeq(chrom_name, 0);
+          }
+
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
 					    tmin, tmax, cmin, cmax, emins, emaxs);
-	  //	  name_hash.put(name, null);
-	  if (id2sym_hash != null) {
-	    id2sym_hash.put(name, sym);
+
+          seq_group.addToIndex(name, sym);
+          results.add(sym);
+              
+          if (tmax > chromseq.getLength()) {              
+              chromseq.setLength(tmax);
+          }
+
+	  if (annotate_seq)  {
+	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+	    if (parent_sym == null) {
+	      parent_sym = new SimpleSymWithProps();
+	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+	      parent_sym.setProperty("method", annot_type);
+	      parent_sym.setProperty("preferred_formats", pref_list);
+	      annots.add(parent_sym);
+	      chrom2sym.put(chrom_name, parent_sym);
+	    }
+            //TODO: Make sure parent_sym is long enough to encompas all its children
+	    parent_sym.addChild(sym);
 	  }
-	  parent_sym.addChild(sym);
-	  results.add(sym);
 	  total_exon_count += ecount;
 	  count++;
 	}
-	//	dis.close();
-	//	bis.close();
       }
     }
     catch (EOFException ex) {
       // System.out.println("end of file reached, file successfully loaded");
+      reached_EOF = true;
     }
-    catch (IOException ex) {
-      ex.printStackTrace();
-      System.err.println("problem with loading file");
+    catch (IOException ioe) {
+      throw ioe;
+    }
+    catch (Exception ex) {
+      String message = "Problem processing BGN file";
+      String m1 = ex.getMessage();
+      if (m1 != null && m1.length() > 0) {
+        message += ": "+m1;
+      }
+      IOException ioe = new IOException(message);
+      ioe.initCause(ex);
+      throw ioe;
     }
 
-    for (int i=0; i<annots.size(); i++) {
-      SeqSymmetry annot = (SeqSymmetry)annots.get(i);
-      MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
-      chromseq.addAnnotation(annot);
+    if (annotate_seq) {
+      for (int i=0; i<annots.size(); i++) {
+	SeqSymmetry annot = (SeqSymmetry)annots.get(i);
+	MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+	chromseq.addAnnotation(annot);
+      }
     }
-    System.out.println("load time: " + tim.read()/1000f);
+    System.out.println("bgn file load time: " + tim.read()/1000f);
     System.out.println("transcript count = " + count);
     System.out.println("exon count = " + total_exon_count);
     System.out.println("average exons / transcript = " +
 		       ((double)total_exon_count/(double)count));
+    if (! reached_EOF) {
+      System.out.println("File loading was terminated early.");
+    }
     return results;
   }
 
-
-  public void outputBgnFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
+  /**
+   *  Writes a single SeqSymmetry to the output stream in BGN format.
+   *  If the SeqSymmetry implements SupportsCdsSpan, then the CDS
+   *  span information will be written.  If not, then the BGN format is
+   *  probably not the best format to use, but since that can still be useful,
+   *  this routine will treat the entire span as the CDS.
+   */
+  public void outputBgnFormat(SeqSymmetry gsym, DataOutputStream dos) throws IOException {
     SeqSpan tspan = gsym.getSpan(0);
-    SeqSpan cspan = gsym.getCdsSpan();
+    SeqSpan cspan;
+    String name;
+    if (gsym instanceof UcscGeneSym) {
+      UcscGeneSym ugs = (UcscGeneSym) gsym;
+      cspan = ugs.getCdsSpan();
+      name = ugs.getName();
+    } 
+    else if (gsym instanceof SupportsCdsSpan) {
+      cspan = ((SupportsCdsSpan) gsym).getCdsSpan();
+      name = gsym.getID();
+    }
+    else {
+      cspan = tspan;
+      name = gsym.getID();
+    }
     BioSeq seq = tspan.getBioSeq();
-    dos.writeUTF(gsym.getName());
+    dos.writeUTF(name);
     dos.writeUTF(seq.getID());
     if (tspan.isForward()) { dos.writeUTF("+"); }
     else { dos.writeUTF("-"); }
@@ -248,23 +280,27 @@ public class BgnParser implements AnnotationWriter  {
     }
   }
 
-  public void writeBinary(String file_name, List annots) {
+  /**
+   *  Writes a list of annotations to a file in BGN format.
+   *  @param annots  a List of SeqSymmetry objects, preferably implementing SupportsCdsSpan
+   */
+  public void writeBinary(String file_name, List annots) throws IOException {
+    DataOutputStream dos = null;
     try {
-      DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
+      dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
       int acount = annots.size();
       for (int i=0; i<acount; i++) {
-	UcscGeneSym gsym = (UcscGeneSym)annots.get(i);
+	SeqSymmetry gsym = (SeqSymmetry) annots.get(i);
 	outputBgnFormat(gsym, dos);
       }
-      dos.close();
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      try {dos.close();} catch (Exception e) {}
     }
   }
 
-  public void readTextTest(String file_name, Map seq_hash) {
-    System.out.println("loading file: " + file_name);
+  public void convertTextToBinary(String text_file, String bin_file, AnnotatedSeqGroup seq_group) {
+    System.out.println("loading file: " + text_file);
     int count = 0;
     long flength = 0;
     //    int bread = 0;
@@ -278,7 +314,7 @@ public class BgnParser implements AnnotationWriter  {
     Timer tim = new Timer();
     tim.start();
     try {
-      File fil = new File(file_name);
+      File fil = new File(text_file);
       flength = fil.length();
       FileInputStream fis = new FileInputStream(fil);
       BufferedInputStream bis = new BufferedInputStream(fis);
@@ -308,7 +344,7 @@ public class BgnParser implements AnnotationWriter  {
 	String name = fields[0];
 	//	name_hash.put(name, null);
 	String chrom = fields[1];
-	if ((seq_hash != null)  && (seq_hash.get(chrom) == null)) {
+	if (seq_group.getSeq(chrom) == null) {
 	  System.out.println("sequence not recognized, ignoring: " + chrom);
 	  continue;
 	}
@@ -382,13 +418,24 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("spliced transcripts > 65000: " + big_spliced);
   }
 
+
+  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
+  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
+
   /** For testing. */
   public static void main(String[] args) {
-    if (args.length == 1) {
+    String text_file = null;
+    String bin_file = null;
+    if (args.length == 2) {
       text_file = args[0];
+      bin_file = args[1];
+    } else {
+      System.out.println("Usage:  java ... BgnParser <text infile> <binary outfile>");
+      System.exit(1);
     }
     BgnParser test = new BgnParser();
-    test.readTextTest(text_file, null);
+    //    test.readTextTest(text_file, null);
+    test.convertTextToBinary(text_file, bin_file, null);
   }
 
 

@@ -140,12 +140,7 @@ public class BookmarkListEditor {
     frame.doLayout();
     frame.repaint();
     
-    if ((frame.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-      // de-iconify it while leaving the maximized/minimized state flags alone
-      frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);
-    }
-    if (! frame.isShowing()) { frame.show(); }
-    frame.toFront();
+    com.affymetrix.swing.DisplayUtils.bringFrameToFront(frame);
   }
 
   boolean using_ucb_editor = true;

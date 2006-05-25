@@ -23,7 +23,7 @@ public class CollapsePacker implements PaddedPackerI {
   public static int ALIGN_CENTER = 1002;
   
   int alignment = ALIGN_CENTER;
-  double maxHeight = 0;
+  //  double maxHeight = 0;
   protected double parent_spacer = 2;
   protected double spacing = 2;
 
@@ -31,19 +31,19 @@ public class CollapsePacker implements PaddedPackerI {
     Rectangle2D pbox = parent.getCoordBox();
     parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
     Vector children = parent.getChildren();
-    if (children == null) { maxHeight = 0;  }
-    else  { 
+    double maxHeight = 0;
+
+    if (children != null) { 
       GlyphI child;
       double height;
-    //        double maxHeight = 0;
       for (int i=0; i<children.size(); i++) {
 	child = (GlyphI)children.elementAt(i);
 	height = child.getCoordBox().height;
 	maxHeight = (height > maxHeight) ? height : maxHeight;
       }
     }
-    //    System.out.println(maxHeight);
-    adjustHeight(parent);
+
+    adjustHeight(parent, maxHeight);
     moveAllChildren(parent);
 
     Rectangle2D newbox = new Rectangle2D();
@@ -55,18 +55,16 @@ public class CollapsePacker implements PaddedPackerI {
       LinearTransform tier_transform = transtier.getTransform();
       tier_transform.transform(newbox, newbox);
     }
-
     parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
     //    System.out.println("packed tier, coords are: " + parent.getCoordBox());
-
-
     return null;
   }
 
-  protected void adjustHeight(GlyphI parent) {
+  protected void adjustHeight(GlyphI parent, double max_child_height) {
     Rectangle2D pbox = parent.getCoordBox();
     //    parent.getCoordBox().height = maxHeight + (2 * parent_spacer);
-    parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
+    //    parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
+    parent.setCoords(pbox.x, pbox.y, pbox.width, max_child_height + (2 * parent_spacer));
   }
 
   

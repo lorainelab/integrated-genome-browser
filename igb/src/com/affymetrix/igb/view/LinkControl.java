@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.WebBrowserControl;
 
@@ -38,7 +39,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
     menu2url.clear();
     if (selected_syms.size() == 1) {
       SeqSymmetry sym = (SeqSymmetry)selected_syms.get(0);
-      
+
       SymWithProps proper = null;
       if (sym instanceof SymWithProps) {
 	proper = (SymWithProps) sym;
@@ -101,7 +102,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
 	}
 	else if (id != null) {
           String url_pattern = (String) proper.getProperty("url");
-          
+
           if (url_pattern == null) {
             String meth = SeqMapView.determineMethod(proper);
             url_pattern = XmlPrefsParser.getLinkURL(IGB.getIGBPrefs(), meth);
@@ -112,10 +113,11 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
             String encoded_id = URLEncoder.encode(id);
             weburl = DOUBLE_DOLLAR_PATTERN.matcher(url_pattern).replaceAll(encoded_id);
           }
-          
+
 	}
 	if (weburl != null) {
 	  JMenuItem browserMI = new JMenuItem("Get more info");
+          browserMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
 	  browserMI.addActionListener(this);
 	  menu2url.put(browserMI, weburl);
 	  popup.add(browserMI);

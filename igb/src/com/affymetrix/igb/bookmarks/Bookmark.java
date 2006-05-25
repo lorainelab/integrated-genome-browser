@@ -211,7 +211,8 @@ public class Bookmark implements Serializable {
     URL url = getURL();
     String host = url.getHost();
     String path = url.getPath();
-    return ("localhost".equals(host) && path.equals("/"+UnibrowControlServer.SERVLET_NAME));
+    return (("localhost".equals(host) || "127.0.0.1".equals(host)) 
+      && path.equals("/"+UnibrowControlServer.SERVLET_NAME));
   }
 
   public String toString() {

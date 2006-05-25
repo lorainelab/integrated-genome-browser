@@ -119,7 +119,6 @@ public class AffyTieredMap extends NeoMap {
 
   /**
    *  @param stretch_includes_nontiers doesn't do _anything_ yet
-   *  @deprecated
    */
   public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers) {
     packTiers(full_repack, stretch_map);
@@ -159,6 +158,7 @@ public class AffyTieredMap extends NeoMap {
     //   com.affymetrix.genoviz. widget. TieredNeoMap
     double offset = 0;
     double height = mbox.height;
+    //    System.out.println("in packTiers(), bounding coordbox: " + mbox);
     TierGlyph mtg;
     for (int i=0; i<tiers.size(); i++) {
       mtg = (TierGlyph) tiers.elementAt(i);
@@ -182,7 +182,8 @@ public class AffyTieredMap extends NeoMap {
       // need to call moveAbsolute to trigger recursive move of
       //   all children
       //      System.out.println("moving tier absolute, yoffset = " + offset);
-      mtg.moveAbsolute(mbox.x, offset);
+      //      mtg.moveAbsolute(mbox.x, offset);
+      mtg.moveAbsolute(mtg.getCoordBox().x, offset);
       //      mtg.setCoords(mbox.x, offset, mbox.width, height);
       offset = offset + height;
     }
@@ -283,7 +284,6 @@ public class AffyTieredMap extends NeoMap {
     }
     return false;
   }
-
 
 
   public void stretchToFit(boolean fitx, boolean fity) {
@@ -456,7 +456,7 @@ public class AffyTieredMap extends NeoMap {
     //	System.out.println("SceneCoordBox: " + scene.getCoordBox());
     //	System.out.println("ViewCoordBox:  " + view.getCoordBox());
   }
-  
+
   /**
    *  Repacks tiers.  Should be called after hiding or showing tiers or
    *  changing their heights.

@@ -303,6 +303,20 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
+  boolean containsGraphs(java.util.List tier_label_glyphs) {
+    boolean result = false;
+    for (int i=0; i<tier_label_glyphs.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+      TierGlyph tier = (TierGlyph) tlg.getInfo();
+      IAnnotStyle style = tier.getAnnotStyle();
+      if (style instanceof GraphState) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  }
+  
   // although this will work on a list of selected tier labels, it is
   // probably more intuitive if its use is restricted to a single tier.
   public void changeColor(final java.util.List tier_label_glyphs, final boolean fg) {
@@ -349,8 +363,15 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
                                         al,  //OK button handler
                                         null); //no CANCEL button handler
     dialog.show();
-
-    refreshMap(false);
+    
+    if (containsGraphs(tier_label_glyphs)) {
+      refreshMap(false);
+      ErrorHandler.errorPanel("WARNING", "Graphs have a transparent background.  " +
+        "To change the BG color of a graph, change the BG color " +
+        "of the *default* tier in the tier customizer.");
+    } else {
+      refreshMap(false);      
+    }
   }
 
   public void renameTier(final TierGlyph tier) {
@@ -521,8 +542,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       sym_summarize_action.setEnabled(is_annotation_type);
       coverage_action.setEnabled(is_annotation_type);
     } else {
-      sym_summarize_action.setEnabled(num_selections == 1);
-      coverage_action.setEnabled(num_selections == 1);
+      sym_summarize_action.setEnabled(false);
+      coverage_action.setEnabled(false);
     }
     
     changeMenu.removeAll();

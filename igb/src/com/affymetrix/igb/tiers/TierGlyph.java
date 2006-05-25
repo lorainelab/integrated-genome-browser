@@ -629,4 +629,12 @@ public class TierGlyph extends SolidGlyph {
   protected void drawSelectedReverse(ViewI view) {
     this.drawSelectedOutline(view);
   }
+
+  /*
+  public void moveAbsolute(double x, double y) {
+    System.out.println("move absolute: " + label + ", " + x + ", " + y);
+    super.moveAbsolute(x, y);
+  }
+  */
+
 }

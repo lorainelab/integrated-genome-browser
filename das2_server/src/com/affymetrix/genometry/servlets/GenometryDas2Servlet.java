@@ -129,6 +129,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   String date_init_string = null;
   Map graph_name2file = new LinkedHashMap();
   ArrayList graph_formats = new ArrayList();
+  String xml_base = null;
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
@@ -593,13 +594,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
     setContentType(response, SOURCES_CONTENT_TYPE);
     addDasHeaders(response);
     PrintWriter pw = response.getWriter();
-    String xml_base = request.getRequestURL().toString();
-    //    static String xml_base = request.getRequestUri();
+    //    String xbase = request.getRequestURL().toString();
+    //    static String xbase = request.getRequestUri();
+    String xbase = getXmlBase(request);
     printXmlDeclaration(pw);
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SOURCES");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-    pw.println("    xml:base=\"" + xml_base + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" >");
     if (maintainer_email != null && maintainer_email.length() > 0) {
       pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
     }
@@ -662,11 +664,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
     addDasHeaders(response);
     PrintWriter pw = response.getWriter();
     printXmlDeclaration(pw);
-    String xml_base = request.getRequestURL().toString();
+    //    String xbase = request.getRequestURL().toString();
+    String xbase = getXmlBase(request);
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SEGMENTS ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
+    //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" >");
 
     List seq_list = genome.getSeqList();
     Iterator siter = seq_list.iterator();
@@ -703,12 +707,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
     PrintWriter pw = response.getWriter();
 
     printXmlDeclaration(pw);
-    String xml_base = request.getRequestURL().toString();
+    //    String xbase = request.getRequestURL().toString();
+    String xbase = getXmlBase(request);
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
     pw.println("<TYPES ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
+    //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" >");
 
     Map types_hash = getTypes(genome);
     //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
@@ -1068,8 +1074,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
       else {
 	AnnotationWriter writer = (AnnotationWriter)writerclass.newInstance();
 	String mime_type = writer.getMimeType();
+	//	String xbase = request.getRequestURL().toString();
+	String xbase = getXmlBase(request);
 	if (writer instanceof Das2FeatureSaxParser) {
-	  ((Das2FeatureSaxParser)writer).setBaseURI(new URI(request.getRequestURL().toString()) );
+	  ((Das2FeatureSaxParser)writer).setBaseURI(new URI(xbase));
 	  setContentType(response, mime_type);
 	}
 	else {
@@ -1135,6 +1143,16 @@ public class GenometryDas2Servlet extends HttpServlet  {
     else {
       response.setContentType(ctype);
     }
+  }
+
+  public void setXmlBase(String xbase) {
+    xml_base = xbase;
+  }
+
+  public String getXmlBase(HttpServletRequest request) {
+    if (xml_base != null) { return xml_base; }
+    else { return request.getRequestURL().toString(); }
+    //    else { return request.getRequestURI(); }
   }
 
 

@@ -84,6 +84,10 @@ public class GenometryDas2Server {
     GenometryDas2Servlet das_servlet = (GenometryDas2Servlet)das_holder.getServlet();
     //    das_servlet.addCommandPlugin("psd_query", "com.affymetrix.genometry.servlets.ProbeSetDisplayPlugin");
     //    das_servlet.addCommandPlugin("proximity", "com.affymetrix.genometry.servlets.ProximityQueryPlugin");
+    if (args.length > 3) {
+      String xml_base = args[3];
+      das_servlet.setXmlBase(xml_base);
+    }
 
   }
 }

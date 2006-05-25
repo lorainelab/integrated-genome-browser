@@ -182,7 +182,7 @@ public class SeqMapView extends JPanel
 
   /** Name of a boolean preference for whether the horizontal zoom slider is above the map. */
   public static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
-  
+
   /** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
   public static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
 
@@ -259,7 +259,7 @@ public class SeqMapView extends JPanel
   TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
-  
+
   Box xzoombox;
   Box yzoombox;
 
@@ -388,7 +388,7 @@ public class SeqMapView extends JPanel
     if (x_above) {
       this.add(BorderLayout.NORTH, xzoombox);
     } else {
-      this.add(BorderLayout.SOUTH, xzoombox);      
+      this.add(BorderLayout.SOUTH, xzoombox);
     }
 
     yzoombox = Box.createVerticalBox();
@@ -481,7 +481,7 @@ public class SeqMapView extends JPanel
             doEdgeMatching(seqmap.getSelected(), true);
           }
         }
-        
+
         else if (pce.getKey().equals(PREF_X_ZOOMER_ABOVE)) {
           boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
           SeqMapView.this.remove(xzoombox);
@@ -492,7 +492,7 @@ public class SeqMapView extends JPanel
           }
           SeqMapView.this.invalidate();
         }
-        
+
         else if (pce.getKey().equals(PREF_Y_ZOOMER_LEFT)) {
           boolean b = UnibrowPrefsUtil.getBooleanParam(PREF_Y_ZOOMER_LEFT, default_y_zoomer_left);
           SeqMapView.this.remove(yzoombox);
@@ -709,7 +709,7 @@ public class SeqMapView extends JPanel
     } else {
       axis.setLabelFormat(AxisGlyph.ABBREV);
     }
-  }  
+  }
 
   public void reverseComplement() {
     // still need to deal with residues?
@@ -2111,6 +2111,7 @@ public class SeqMapView extends JPanel
     System.out.println("clamping, xmin = " + (int)vbox.x + ", xmax = " + (int)(vbox.x + vbox.width));
     seqmap.setMapRange((int)(vbox.x), (int)(vbox.x+vbox.width));
     seqmap.stretchToFit(false, false);
+    //    seqmap.packTiers(false, true, false);  // already called in stretchToFit()
     seqmap.updateWidget();
   }
 
@@ -2588,7 +2589,7 @@ public class SeqMapView extends JPanel
   }
 
   private SymWithProps sym_used_for_title = null;
-  
+
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
   // should be similar in both places, or else users could get confused.
@@ -2646,7 +2647,7 @@ public class SeqMapView extends JPanel
         id = "" + selected_glyphs.size() + " Selections";
       }
     }
-    if (id == null) { 
+    if (id == null) {
       id = "";
       sym_used_for_title = null;
     }
@@ -2789,7 +2790,7 @@ public class SeqMapView extends JPanel
         fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
         fortier.setLabel(meth);
       }
-        
+
       if (map.getTierIndex(fortier) == -1) {
         if (next_to_axis)  {
           int axis_index = map.getTierIndex(axis_tier);

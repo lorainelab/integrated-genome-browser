@@ -22,8 +22,8 @@ See http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx
 
 IGB uses other open source software packages that may be distributed 
 with the IGB source code release, including Xerces from Apache, 
-and Jetty from Mortbay Consulting.  Those are covered by their own 
-open source licenses.
+Jetty from Mortbay Consulting, and Fusion from Affymetrix.  
+Those packages are covered by their own open source licenses.
 
 IGB is Copyright (c) 2000-2006 Affymetrix, Inc.  
 Research and development of IGB is supported in part by NIH grant R01HG003040.
@@ -79,6 +79,15 @@ If you wish to use the provided 'build.xml' file, you will need to obtain
 and install Apache Ant from http://ant.apache.org
 
 The provided build.xml file was tested with Apache Ant version 1.5.2.
+
+
+This distribution may include the Java look and feel Graphics Repository
+Copyright 1994-2006 Sun Microsystems, Inc.
+http://java.sun.com/developer/techDocs/hi/repository/
+
+The file, if present, will be named jlfgr-1_0.jar, in the "ext" directory.
+The license file is included in the "ext" directory.
+IGB can be used with or without this jar file.
 
 
 ----------------- COMPILING IGB ----------------------------

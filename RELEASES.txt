@@ -1,6 +1,44 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+IGB-4.34
+
+  + The "Graph Adjuster" tab is easier to use and has additional functions
+  ++ Graph heights may now be adjusted
+  ++ Several new heat-maps are available, including transparent ones
+  ++ Graphs may now be re-named (right-click on the tier label)
+  ++ Graph Thresholding is performed in a separate window (press "Thresholding")
+  ++ It is possible to combine multiple graphs in one tier (press "Combine")
+
+  + All IGB file types can be opened with File->Open
+  ++ If "merge" is selected, data will be added to the current genome
+  ++ If "merge" is *not* selected, a new temporary genome will be created
+
+  + It is now possible to open Affymetrix "CHP" files for "tiling" arrays
+  ++ It is *not* possible to open "CHP" files for "expression" arrays
+
+  + You may now access any previously-loaded genome and sequence with the
+  ++ controls on the left-hand side of the "Data Access" tab
+
+  + IDs of data from all file types is now indexed so that
+  ++ the IDs appear in the "Annotation Browser" tab
+  ++ the search-by-ID function works for all data file types
+  
+  + Multiple items can now be indexed with the same ID
+  ++ Searching for an ID will result in all matching items being selected
+  ++ Search is no longer case-sensitive
+    
+  + The DAS/2 data transfer specification continues to evolve (see biodas.org)
+  ++ This version of IGB is up-to-date with the current public servers
+  ++ Older DAS/2 versions are out-of-date and may no longer be used with IGB
+
+  + The interface for data loading from DAS/2 servers has been improved
+
+  + It is now possible to load graph data via DAS/2 from compatible servers
+  
+  + The "Bookmark Manager" is now opened with "Bookmarks->Manage Bookmarks"
+
+
 IGB-4.12
   + Fixed bug that QuickLoad das_servers.txt files were not being read
   + Fixed bug where keyboard shortcut list wasn't kept up-to-date 

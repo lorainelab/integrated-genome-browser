@@ -172,6 +172,7 @@ public class SeqMapView extends JPanel
 
   public static final String PREF_AXIS_COLOR = "Axis color";
   public static final String PREF_AXIS_BACKGROUND = "Axis background";
+  public static final String PREF_AXIS_NAME = "Axis name";
   public static final String PREF_DEFAULT_ANNOT_COLOR = "Default annotation color";
   public static final String PREF_DEFAULT_BACKGROUND_COLOR = "Default background color";
   public static final String PREF_EDGE_MATCH_COLOR = "Edge match color";
@@ -554,7 +555,7 @@ public class SeqMapView extends JPanel
   TransformTierGlyph axis_tier;
 
   /** An un-collapsible instance.  It is hideable, though. */
-  IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates") {
+  public static IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates") {
     /** Do nothing. */
     public void setSeparate(boolean b) {}
     /** Do nothing. */
@@ -571,6 +572,17 @@ public class SeqMapView extends JPanel
     public Color getBackground() {
       return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
     }
+    
+    public void setHumanName(String s) {
+      //UnibrowPrefsUtil.getTopNode().put(PREF_AXIS_NAME, s);
+      super.setHumanName(s);
+    }
+    
+    public String getHumanName() {
+      //return UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_NAME, "Coordinates");
+      return super.getHumanName();
+    }
+    
   };
 
   public TransformTierGlyph getAxisTier() { return axis_tier; }
@@ -581,7 +593,6 @@ public class SeqMapView extends JPanel
     IAnnotStyle blank_style = axis_annot_style;
 
     axis_tier = new TransformTierGlyph(blank_style);
-    axis_tier.setLabel("Coordinates");
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
     axis_tier.setDirection(TierGlyph.DIRECTION_NONE);

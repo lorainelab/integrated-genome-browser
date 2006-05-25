@@ -260,7 +260,9 @@ public class Das2VersionedSource  {
 	//    unfortunately this can mess up XML Base resolution when the id is an absolute URI
 	//    (because URI-encoding will replace any colons, but those are used by URI resolution...)
 	//    real fix needs to be on server(s), not client!!
-	typeid = URLEncoder.encode(typeid, "UTF-8");
+
+	//	typeid = URLEncoder.encode(typeid, "UTF-8");
+
 	//	typeid = "./" + typeid;
 	//        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
         //FIXME: quick hack to get the type IDs to be kind of right (for now)

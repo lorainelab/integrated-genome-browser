@@ -208,15 +208,17 @@ public class Das2LoadView extends JComponent
 	  java.util.List type_states = 	(java.util.List)version2typestates.get(current_version);
 	  if (type_states == null) {
 	    type_states = new ArrayList();
-	    Iterator iter = types.values().iterator();
-	    while (iter.hasNext()) {
-	      // need a map of Das2Type to Das2TypeState that persists for entire session,
-	      //    and reuse Das2TypeStates when possible (because no guarantee that
-	      //    Das2TypeState backing store has been updated during session)
-	      Das2Type dtype = (Das2Type)iter.next();
-	      Das2TypeState tstate = new Das2TypeState(dtype);
-	      type_states.add(tstate);
-	    }
+            if (types != null) {
+              Iterator iter = types.values().iterator();
+              while (iter.hasNext()) {
+                // need a map of Das2Type to Das2TypeState that persists for entire session,
+                //    and reuse Das2TypeStates when possible (because no guarantee that
+                //    Das2TypeState backing store has been updated during session)
+                Das2Type dtype = (Das2Type)iter.next();
+                Das2TypeState tstate = new Das2TypeState(dtype);
+                type_states.add(tstate);
+              }
+            }
 	    version2typestates.put(current_version, type_states);
 	  }
 	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_states);

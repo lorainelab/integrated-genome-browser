@@ -155,7 +155,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       //      Rectangle2D gbox = graph_glyph.getCoordBox();
       //      graph_glyph.setCoords(span_on_vseq.getMin(), gbox.y, span_on_vseq.getLength(), gbox.height);
     }
-    if (newgraf.getGraphXCoords() == null || newgraf.getGraphYCoords() == null) {
+    if (newgraf == null || newgraf.getGraphXCoords() == null || newgraf.getGraphYCoords() == null) {
       return null;
     } else if (newgraf.getGraphXCoords().length == 0 || newgraf.getGraphYCoords().length == 0) {
       return null;

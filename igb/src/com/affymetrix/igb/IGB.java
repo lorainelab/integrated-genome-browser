@@ -124,7 +124,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   SeqMapView map_view;
   //  SeqMapView overview;
   OverView overview;
-  
+
   //QuickLoaderView quickload_view;
 
   CurationControl curation_control;
@@ -1198,7 +1198,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
-  
+
   public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
     popup.add(popup_windowsM);
   }

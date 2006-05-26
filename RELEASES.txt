@@ -1,6 +1,31 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+IGB-4.38
+
+  + The "Annotation Browser" tab is easier to use and has additional functions
+  ++ You can filter the results to show a subset of the annotations,
+     making it easier to scroll through the results.
+  ++ All annotations with the same ID are shown separately
+  ++ You can sort the results along multiple columns
+  
+  + The "Get more info" menu can be opened without first doing "Select Parent"
+
+  + The "Pivot View" tab has been improved.
+  ++ You can change the foreground and background colors
+  ++ Chosen colors, scaling, and style will be remembered between sessions
+  
+  + Hidden tiers can be shown individually, not just with the "Show All" menu
+  
+  + Colors and labels of tiers can be changed by right-clicking the label
+    and choosing the "Change..." menu.
+  
+  + The horizontal and vertical zoomers can be moved to whichever sides
+    of the map you prefer.  Use File->Preferences->Other Options.
+  
+  + A bug with the "Clamp To View" function has been fixed
+  + Various bugs have been fixed.
+  
 IGB-4.34
 
   + The "Graph Adjuster" tab is easier to use and has additional functions

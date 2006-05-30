@@ -1,0 +1,90 @@
+/**
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+package com.affymetrix.igb.das2;
+
+import java.net.URI;
+import java.util.*;
+import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.TypedSym;
+
+public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
+  String id;
+  //  URI feat_uri;
+  String type;  // eventually replace with Das2Type
+  String name;
+  String created;
+  String modified;
+  String doc_href;
+  // need to change this, since
+  String parent_id;  // problem here, DAS2XML features can have multiple parents
+  //  List parents; // DAS2XML now allows features to have multiple parents
+  List notes;  // or should these just be folded into properties?
+  List xids;   // or should these just be folded into properties?
+
+  // public SimpleDas2Feature(URI furi, String feat_type, String feat_name, String feat_parent_id,
+  public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
+			   String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
+    id = feat_id;
+    //    feat_uri = furi;
+    type = feat_type;
+    name = feat_name;
+    parent_id = feat_parent_id;
+    created = feat_created;
+    modified = feat_modified;
+    doc_href = feat_doc_href;
+    setProperties(feat_props);   // feat_props should be null if the feature XML had no <PROP> elements
+  }
+
+  //  public URI getURI() { return feat_uri; }
+  //  public String getID() { return feat_uri.toString(); }
+  public String getID() { return id; }
+  public String getName() { return name; }
+  /** implementing TypedSym interface */
+  public String getType() { return type; }
+
+  public Object getProperty(String prop) {
+      //    if (prop.equals("id")) { return feat_uri.toString(); }
+    if (prop.equals("id")) { return id; }
+    else if (prop.equals("name")) { return name; }
+    else if (prop.equals("type")) { return type; }
+    else if (prop.equals("link")) { return doc_href; }
+    else if (prop.equals("created")) { return created; }
+    else if (prop.equals("modified")) { return modified; }
+    else { return super.getProperty(prop); }
+  }
+
+  public boolean setProperty(String tag, Object val) {
+    if (tag == null)  { return false; }
+    return super.setProperty(tag, val);
+  }
+
+  public Map cloneProperties() {
+    Map cprops = super.cloneProperties();
+    if (cprops == null) {
+      cprops = new LinkedHashMap();
+    }
+    //    cprops.put("id", feat_uri.toString());
+    cprops.put("id", id);
+    if (name != null)  { cprops.put("name", name); }
+    if (type != null)  { cprops.put("type", type); }  // should never be null though
+    if (doc_href != null) { cprops.put("link", doc_href); }
+    if (created != null) { cprops.put("created", created); }
+    if (modified != null) { cprops.put("modified", modified); }
+    return cprops;
+  }
+
+  public Map getProperties() {
+    return cloneProperties();
+  }
+
+}

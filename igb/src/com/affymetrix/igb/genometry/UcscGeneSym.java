@@ -88,8 +88,12 @@ public class UcscGeneSym
   public String getName() { return name; }
   public String getType() { return type; }
 
-  public boolean hasCdsSpan() { return true; }
+  public boolean hasCdsSpan() {
+    return (cdsMin >= 0 && cdsMax >= 0);
+  } 
+
   public SeqSpan getCdsSpan() {
+    if (! hasCdsSpan())  { return null; }
     if (forward) { return new SimpleSeqSpan(cdsMin, cdsMax, seq); }
     else { return new SimpleSeqSpan(cdsMax, cdsMin, seq); }
   }

@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.DoubleList;
 
 /**
@@ -111,7 +110,20 @@ public class FasterExpandPacker extends EfficientExpandPacker
   int max_slots_allowed = 1000;
 
   public int getMaxSlots() { return max_slots_allowed; }
-  public void setMaxSlots(int slotnum) {  max_slots_allowed = slotnum; }
+  
+  /**
+   *  Sets the maximum depth of glyphs to pack in the tier.
+   *  @param slotnum  a positive integer or zero; zero implies there is no
+   *  limit to the depth of packing.  If a negative number is given, it is
+   *  reset to zero.
+   */
+  public void setMaxSlots(int slotnum) {
+    if (slotnum >= 0 ) {
+      max_slots_allowed = slotnum;
+    } else {
+      slotnum = 0;
+    }
+  }
 
   // PackerI interface (via inheritance from PaddedPackerI
   public Rectangle pack(GlyphI parent, ViewI view) {
@@ -203,7 +215,7 @@ public class FasterExpandPacker extends EfficientExpandPacker
 	double new_ycoord;
 	// make new slot for child (unless already have max number of slots allowed,
 	//   in which case layer at top/bottom depending on movetype
-	if (slot_maxes.size() >= max_slots_allowed) {
+	if ((max_slots_allowed > 0) && slot_maxes.size() >= max_slots_allowed) {
           child.setVisibility(true);
 	  if (this.getMoveType() == NeoConstants.UP) {
 	    new_ycoord = - (((slot_maxes.size()-1) * slot_height) + spacing +

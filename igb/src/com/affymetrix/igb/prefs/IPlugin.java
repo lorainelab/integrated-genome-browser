@@ -56,7 +56,7 @@ public interface IPlugin {
    *  IGB plugins.  In all cases, it is acceptable for the return value to be null.
    *  Special text keys:
    *  <ul>
-   *   <li> {@link #TEXT_KEY_ICON}: null or an {@link java.awt.Image} icon that could be used in a tab pane or a Frame.
+   *   <li> {@link #TEXT_KEY_ICON}: null or an {@link javax.swing.ImageIcon} icon that could be used in a tab pane or a Frame.
    *   <li> {@link #TEXT_KEY_HTML_HELP}: null or help text in HTML format.
    *   <li> {@link #TEXT_KEY_DESCRIPTION}: null or textual descriptive text.
    *   <li> {@link #TEXT_KEY_INFO_URL}: null or a String containing a URL to find more information.

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -42,7 +42,7 @@ import com.affymetrix.igb.util.RevCompNibbleIterator;
  *     just make pass-through calls for most SearchableCharIterator methods...
  * </pre>
  */
-public class NibbleBioSeq extends SimpleCompAnnotBioSeq 
+public class NibbleBioSeq extends SimpleCompAnnotBioSeq
   implements SearchableCharIterator, Versioned {
 
   String version;
@@ -89,7 +89,7 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
 
 
   /** Gets residues.
-   *  @param fillchar  Character to use for missing residues; 
+   *  @param fillchar  Character to use for missing residues;
    *     warning: this parameter is used only if {@link #getResiduesProvider()} is null.
    */
   public String getResidues(int start, int end, char fillchar) {
@@ -97,7 +97,7 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
     //    which takes, start, end (-1) argument
     //    return residues_provider.substring(start, end);
     String result = null;
-    if (residues_provider == null)  { 
+    if (residues_provider == null)  {
       // fall back on SimpleCompAnnotSeq (which will try both residues var and composition to provide residues)
       //      result = super.getResidues(start, end, fillchar);
       result = super.getResidues(start, end, '-');
@@ -133,7 +133,7 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
 
   public String substring(int offset) {
     System.out.println("called NibbleBioSeq.substring(offset)");
-    return substring(offset, this.length);
+    return substring(offset, getLength());
   }
 
   public String substring(int offset, int length) {
@@ -146,12 +146,8 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
   }
 
   public int indexOf(String str, int fromIndex) {
-    // TODO: this will fail if residues_provider is null
+    // TODO: this will fail if residues_provider is null, so may need to call inside try/catch clause
     return residues_provider.indexOf(str, fromIndex);
-  }
-
-  public int getLength() {
-    return length;
   }
 
   /*

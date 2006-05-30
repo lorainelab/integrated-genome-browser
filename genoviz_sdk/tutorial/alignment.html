@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>        Displaying an Alignment
+</title>
+<link rel="stylesheet"
+        type="text/css" 
+        href="simple.css"
+        title="Simple Style"
+>
+</head>
+
+<body>
+
+<h1>        Displaying an Multisequence Alignment
+</h1>
+<p>     Use the NeoAssembler widget to display an aligment
+        of multiple sequences.
+        Here we parse an input file
+        that looks suspiciously like ClustalW output.
+        The <a href="../tutorial/genoviz/TutorialAssmblr.java">source</a>
+        is a bit longer than the earlier programs
+        in this tutorial. 
+
+<form>
+<textarea name="config" cols="60" rows="10">
+cons :AAAAAAACCCCCCCCTTTTTTACGTTGCATGCAGACTGAACGTCA----ACGACYACTGACGTACGTACGTACACAGYACYGCAYGAC\n
+one :AAAAAAACCCCCCCCTTTTTTACGTTGCATGCAGACTGAACGTCA----ACGACYACTGACGTACGTACGTACACAGYACYGCAYGAC\n
+two :AAAAAAACCCCCCCCTTTTTTACGTTGCATTAAGACTGAACGTCAACTGACGAACTGACGTACG-----ACACAGYACYGCAYGAC\n
+three :AAAAAAACCCCCCCCTTTTTTACGTTGCATTAAGACTGAACGTCAACTGACGAACTGACGTACG-----ACACAGYACYGCAYGAC\n
+</textarea><br>
+<input        type="button" value="Display Aligment"
+        onClick="document.applets[0].parseInputString(config.value)"
+>
+</form>
+
+<div class="applet">
+<applet
+    codebase=".."
+    archive="genoviz.jar"
+    code="tutorial.genoviz.TutorialAssmblr"
+        height="150"
+        width="570"
+>
+<param name="assembly" value="
+cons :AAAAAAACCCCCCCCTTTTTTACGTTGCATGCAGACTGAACGTCA----ACGACYACTGACGTACGTACGTACACAGYACYGCAYGAC\n
+one :AAAAAAACCCCCCCCTTTTTTACGTTGCATGCAGACTGAACGTCA----ACGACYACTGACGTACGTACGTACACAGYACYGCAYGAC\n
+two :AAAAAAACCCCCCCCTTTTTTACGTTGCATTAAGACTGAACGTCAACTGACGAACTGACGTACG-----ACACAGYACYGCAYGAC\n
+three :AAAAAAACCCCCCCCTTTTTTACGTTGCATTAAGACTGAACGTCAACTGACGAACTGACGTACG-----ACACAGYACYGCAYGAC\n">
+</applet>
+</div class="applet">
+
+<h2>         Exercises
+</h2>
+<ol>
+<li>    Type in more and longer sequences
+        to see how the scroller and zoomer work.
+</li>
+<li>    Specialize this program for DNA alignments
+        using AlignedDNAGlyph instead of AlignedResidueGlyph.
+</li>
+<li>    Specialize this program for protein alignments
+        using AlignedProteinGlyph instead of AlignedResidueGlyph.
+</li>
+</ol>
+
+<h2>        Next: <a href="assembler.html">Displaying an Assembly</a>
+</h2>
+
+</body>
+</html>

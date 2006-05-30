@@ -38,6 +38,8 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   protected Hashtable glyph_hash = new Hashtable();
   protected Hashtable model_hash = new Hashtable();
+  
+  protected boolean models_have_multiple_glyphs = false;
 
   protected static Hashtable colormap = GeneralUtils.getColorMap();
 
@@ -45,6 +47,15 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   // a list of selected glyphs
   protected Vector selected = new Vector();
+
+  /**
+   *  whether any models are represented by multiple glyphs
+   *  WARNING: once one model is represented by multiple glyphs, this flag will only 
+   *     be reset to false when clearWidget() is called
+  */
+  public boolean hasMultiGlyphsPerModel() {
+    return models_have_multiple_glyphs;
+  }
 
   public void setDataModel(GlyphI gl, Object datamodel) {
     // glyph to datamodel must be one-to-one
@@ -61,6 +72,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
       model_hash.put(datamodel, gl);
     }
     else {
+      models_have_multiple_glyphs = true;
       if (previous instanceof Vector) {
         ((Vector)previous).addElement(gl);
       }
@@ -154,7 +166,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
   }
 
 
-  /** Subclasses should implement this. Default does nothing. */
+  /** Subclasses should implement this. Default does nothing. 
+   *  Implementations should add selections to the Vector 'selected',
+   *  in addition to any other tasks specific to those classes.
+   */
   public void select(GlyphI g) {
     // Implement in subclasses
   }
@@ -168,6 +183,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     }
   }
 
+  /**
+   *  Clears all selections by actaually calling {@link #deselect(GlyphI)}
+   *  on each one as well as removing them from the vector of selections.
+   */
   public void clearSelected() {
     while (selected.size() > 0) {
       // selected.size() shrinks because deselect(glyph)
@@ -181,7 +200,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     selected.removeAllElements();
   }
 
-  /** Subclasses should implement this. Default does nothing. */
+  /** Subclasses should implement this. Default does nothing.
+   *  Implementations should remove selections from the Vector 'selected',
+   *  in addition to any other tasks specific to those classes.
+   */
   public void deselect(GlyphI gl) {}
 
   public void deselect(Vector vec) {
@@ -201,6 +223,27 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   public Vector getSelected() {
     return selected;
+  }
+  
+  /** Clears all graphs from the widget.
+   *  This default implementation simply removes all elements from the
+   *  list of selections.  (It does this without calling clearSelected(),
+   *  because it is faster to skip an explict call to deselect(GlyphI)
+   *  for each Glyph.)
+   *  Subclasses should call this method during their own implementation.
+   *  Subclasses may choose to call clearSelected() before calling this
+   *  method if they require an explicit call to deselect(GlyphI) for
+   *  each Glyph.
+   */
+  public void clearWidget() {
+    selected.removeAllElements();
+    // reset glyph_hash
+    glyph_hash = new Hashtable();
+
+    // reset model_hash
+    model_hash = new Hashtable();
+
+    models_have_multiple_glyphs = false;
   }
 
 

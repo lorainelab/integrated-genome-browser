@@ -22,7 +22,8 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.util.DNAUtils;
 
 public class SimpleCompAnnotBioSeq
-  extends SimpleCompositeBioSeq 
+  //  extends SimpleCompositeBioSeq 
+  extends CompositeNegSeq 
   implements CompositeBioSeq, MutableAnnotatedBioSeq, MutableBioSeq {
 
   boolean DEBUG = false;
@@ -114,7 +115,9 @@ public class SimpleCompAnnotBioSeq
   //-----------------------------------------------------
   public void setID(String id) { this.id = id; }
   public void setLength(int length) { 
-    this.length = length; 
+    //    this.length = length; 
+    setBounds(0, length);  // sets start, end, bounds 
+    
     // if length does not agree with length of residues, null out residues
     if ((residues != null) && (residues.length() != length)) {
       System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() + 

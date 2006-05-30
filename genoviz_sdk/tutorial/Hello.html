@@ -1,0 +1,66 @@
+<html>
+<head>
+<title>        Using the GenoViz SDK
+</title>
+<link rel="stylesheet"
+        type="text/css" 
+        href="simple.css"
+        title="Simple Style"
+>
+</head>
+<body>
+
+<h1>        Hello - A First Use of a NeoMap
+</h1>
+<p>        The most basic widget is the NeoMap.
+        The other widgets are made up of NeoMaps
+        specialized for a particular problem.
+        Let's build as short a program as we can
+        with a NeoMap.
+</p>
+
+<pre>
+package tutorial.genoviz;
+
+import com.affymetrix.genoviz.widget.NeoMap;
+import java.awt.Frame;
+
+public class HelloMap {
+
+  public static void main (String argv[]) {
+    NeoMap m = new NeoMap();
+    Frame f = new Frame( "HelloMap" );
+    f.add("Center", m);
+    f.setBounds(20, 40, 300, 100);
+    f.setVisible(true);
+  }
+
+}
+</pre>
+
+<p>        When you run this program
+        you should see something
+        like what you see below.
+        The map is empty,
+        but the nice pale blue color and the scroll bars let us know
+        that it is there.
+        Pale blue is the default background color
+        for a NeoMap.
+</p>
+<img        src="firstHello.gif">
+
+<h2>         Exercises
+</h2>
+<ol>
+<li>        Change the background color of the map with a call
+                to the NeoMap's setMapColor() method.
+<li>        Create a window listener for the frame
+                and call System.exit() when the window is closed.
+</ol>
+
+<h2>        Next: <a href="HelloAgain.html">Hello Again</a>
+        - Adding a Glyph
+</h2>
+
+</body>
+</html>

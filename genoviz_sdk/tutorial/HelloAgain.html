@@ -1,0 +1,73 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.6 (Macintosh; U; PPC) [Netscape]">
+   <title>        Hello Again
+</title>
+<link rel="stylesheet"
+        type="text/css" 
+        href="simple.css"
+        title="Simple Style"
+>
+</head>
+<body>
+
+<h1>
+Hello Again - Adding a Glyph</h1>
+Now let's flesh this out a bit with the help of a few more GenoViz classes.
+<p>Look at the <a href="../tutorial/genoviz/HelloMap.java">source</a>.
+<p>
+In the first few lines,
+we introduce a few methods for setting parameters of the map:
+<pre>
+map.setMapRange(1, 100);
+map.setMapOffset(0, 50);
+map.addAxis(10);
+</pre>
+We set
+the horizontal range of the map and the vertical offsets the map will handle.
+Range numbers increase from left to right. Offset numbers increase from
+top to bottom. We also specify that we want an axis drawn near the top
+of the map (offset 10 from the top).
+
+<p>The next thing we do is add a glyph to the map. GenoViz supplies
+a number of glyphs you can use. Here we use a StringGlyph so we can present
+a message. To use a glyph, the map is configured for a particular type
+of glyph. Then a glyph is added at a particular stretch of the map:
+<pre>
+map.configure(
+         "-offset 25 -color black " +                      
+         "-glyphtype com.affymetrix.genoviz.glyph.StringGlyph -width 9");
+StringGlyph sg = (StringGlyph) map.addItem(45, 54);
+sg.setString("Hello Map");
+</pre>
+The options to map.configure() are explained on the 
+<a href="SimpleMap.html">next page</a> of the tutorial. You
+could add several glyphs all of the same type to the map in different horizontal
+locations without reconfiguring. Some of the glyphs can take other properties.
+The StringGlyph is one of these. This is why the glyph is returned by the
+addItem method. Here we set a text string for the StringGlyph. A SequenceGlyph
+can have a string of residues set.
+<p>NeoPanel is a heavyweight panel that overrides update() and paint()
+to avoid flicker. It ensures that no background is drawn (except occasionally
+in peers in some JVMs). Lightweight components can thus be placed in a
+NeoBlankPanel to prevent flickering when lightweights are painting. This
+is needed because lightweight painting forces painting of heavyweight (containment)
+ancestors.
+<br>&nbsp;
+<p>Here's how it looks running as an Applet.
+<p><applet 
+    codebase=".."
+    archive="genoviz.jar"
+        code="tutorial.genoviz.HelloMap"
+        height=150
+        width=300
+></applet>
+<p>Here's how it looks running as an application.
+<br><img SRC="helloMap.gif" >
+<h2>
+Next: <a href="SimpleMap.html">Simple Map</a></h2>
+
+</body>
+</html>

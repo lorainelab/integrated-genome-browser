@@ -17,69 +17,26 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
 import java.util.*;
 
 /**
  * A symmetry containing only a single span.
- * i.e. it has a "breadth" of one.
+ * In other words, it has a "breadth" of one.
  */
-public class SingletonSeqSymmetry extends SimpleMutableSeqSpan implements SeqSymmetry {
+public class SingletonSeqSymmetry extends LeafSingletonSymmetry  implements SeqSymmetry {
 
   protected java.util.List children;
-  protected static int count = 1;
 
   public SingletonSeqSymmetry(SeqSpan span) {
-    start = span.getStart();
-    end = span.getEnd();
-    seq = span.getBioSeq();
+    super(span);
   }
 
   public SingletonSeqSymmetry(int start, int end, BioSeq seq) {
     super(start, end, seq);
   }
   
-  public SeqSpan getSpan(BioSeq seq) {
-    if (this.getBioSeq() == seq) { return this; }
-    else { return null; }
-  }
-
-  public int getSpanCount() {
-    return count;
-  }
-
-  public SeqSpan getSpan(int i) {
-    if (i == 0) { return this; }
-    else { return null; }
-  }
-
-  public BioSeq getSpanSeq(int i) {
-    if (i == 0) { return seq; }
-    else { return null; }
-  }
-
-  public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
-    if (this.getBioSeq() == seq) {
-      span.setStart(this.getStart());
-      span.setEnd(this.getEnd());
-      span.setBioSeq(this.getBioSeq());
-      return true;
-    }
-    return false;
-  }
-
-  public boolean getSpan(int index, MutableSeqSpan span) {
-    if (index == 0) {
-      span.setStart(this.getStart());
-      span.setEnd(this.getEnd());
-      span.setBioSeq(this.getBioSeq());
-      return true;
-    }
-    return false;
-  }
-
   public int getChildCount() {
     if (null != children)
       return children.size();
@@ -93,7 +50,5 @@ public class SingletonSeqSymmetry extends SimpleMutableSeqSpan implements SeqSym
     else
       return null;
   }
-
-  public String getID() { return null; }
 
 }

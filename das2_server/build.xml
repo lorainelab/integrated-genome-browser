@@ -68,30 +68,6 @@ in this directory, execute:
     <property name="genometry.jar" value="../genometry/genometry.jar"/>
     <property name="igb.jar" value="../igb.jar"/>
 
-    <condition property="all.jars.present">
-      <and>
-       <available file="${lib.dir}/javax.servlet.jar"/>
-       <available file="${lib.dir}/org.mortbay.jetty.jar"/>
-       <available file="${lib.dir}/xercesImpl.jar"/>
-       <available file="${lib.dir}/xml-apis.jar"/>
-       <available file="${genoviz.jar}"/>
-       <available file="${genometry.jar}"/>
-       <available file="${igb.jar}"/>
-      </and>
-    </condition>
-    <fail unless="all.jars.present" message="*** Cannot find one or more needed jars"/>
-
-
-  <path id="project.class.path">
-    <pathelement location="${genoviz.jar}"/>
-    <pathelement location="${genometry.jar}"/>
-    <pathelement location="${igb.jar}" />
-    <fileset dir="${lib.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-
-
   </target>
 
   <!-- =================================================================== -->
@@ -123,6 +99,29 @@ in this directory, execute:
     <fail unless="igb_found">Cannot find the IGB classes</fail>
 -->
 
+    <condition property="all.jars.present">
+      <and>
+       <available file="${lib.dir}/javax.servlet.jar"/>
+       <available file="${lib.dir}/org.mortbay.jetty.jar"/>
+       <available file="${lib.dir}/xercesImpl.jar"/>
+       <available file="${lib.dir}/xml-apis.jar"/>
+       <available file="${genoviz.jar}"/>
+       <available file="${genometry.jar}"/>
+       <available file="${igb.jar}"/>
+      </and>
+    </condition>
+    <fail unless="all.jars.present" message="*** Cannot find one or more needed jars"/>
+
+
+  <path id="project.class.path">
+    <pathelement location="${genoviz.jar}"/>
+    <pathelement location="${genometry.jar}"/>
+    <pathelement location="${igb.jar}" />
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
   </target>
 
 

@@ -36,6 +36,7 @@ Make sure that the 'ext' directory exists and includes
     <property name="genometry.src.dir" value="${genometry.dir}/src"/>
     <property name="igb.dir" value="${root.dir}/igb"/>
     <property name="igb.src.dir" value="${igb.dir}/src"/>
+    <property name="das2_server.dir" value="${root.dir}/das2_server"/>
 
     <!-- Define the source build directories -->
     <!--   (The source and class directories are the same)  -->
@@ -202,6 +203,7 @@ Make sure that the 'ext' directory exists and includes
     description="Restores distribution to its original state">
     <ant dir="${genoviz.dir}" target="clean" inheritAll="false"/>
     <ant dir="${genometry.dir}" target="clean" inheritAll="false"/>
+    <ant dir="${das2_server.dir}" target="clean" inheritAll="false"/>
     <delete file="${igb.jar}"/>
     <delete file="${igb_exe.jar}"/>
     <delete dir="${api-docs.dir}"/>

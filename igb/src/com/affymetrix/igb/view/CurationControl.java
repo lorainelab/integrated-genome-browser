@@ -40,12 +40,14 @@ import com.affymetrix.igb.util.ErrorHandler;
  *  (Remember that users can create new annotation types.)
  *  There are also bugs that pre-date the AnnotStyle changes.
  *
- *  @deprecated
  */
 public class CurationControl implements ActionListener, ContextualPopupListener  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean KEEP_PREVIOUS_CURATION = false;
+  
+  public static final String PREF_ENABLE_CURATIONS = "Enable Curations";
+  public static final boolean default_enable_curations = false;
 
   SeqMapView gviewer;
   CurationSym prev_curation;

@@ -19,6 +19,7 @@ import javax.swing.*;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
+import com.affymetrix.igb.view.CurationControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -76,6 +77,9 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Enable Curation Testing (requires restart)", UnibrowPrefsUtil.getTopNode(),
+      CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations));
 
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
@@ -243,6 +247,13 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");
     sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
     //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("Recommend: false.");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Enable Curation Testing</h2>\n");
+    sb.append("Intended for advanced users, for alpha-testing of curation functions.  ");
+    sb.append("Changes require re-start.  ");
     sb.append("Recommend: false.");
     sb.append("</p>\n");
     

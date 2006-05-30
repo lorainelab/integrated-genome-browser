@@ -57,7 +57,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
-  public static boolean CURATION_ENABLED = false; // disable for now, see comments inside CurationControl.java
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
@@ -535,7 +534,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
     align_control = new AlignControl(this, map_view);
-    if (CURATION_ENABLED) {
+    if (UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations)) {
       curation_control = new CurationControl(map_view);
     }
 

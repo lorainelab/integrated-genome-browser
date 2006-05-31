@@ -142,7 +142,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
-    //if (SUPPRESS_GLYPHS) { return; }
     setMapView(smv);
     AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);
@@ -155,7 +154,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       glyph_depth = style.getGlyphDepth();
       label_field = style.getLabelField();
 
-//      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, true, state.getColor(), default_tier_color);
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       if (style.getSeparate()) {
         addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
@@ -194,7 +192,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       System.out.println("############## in GenericAnnotGlyphFactory, should never get here???");
     }
     else {  // depth == desired_leaf_depth
-      addToTier(sym, ftier, rtier);
+      addToTier(sym, ftier, rtier, (depth >= 2));
     }
   }
 
@@ -203,9 +201,17 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   int standard_transform_call_count = 0;
   int cds_transform_call_count = 0;
   int cds_transform_direct_count = 0;
+  
+  /**
+   *  @param parent_and_child  Whether to draw this sym as a parent and 
+   *    also draw its children, or to just draw the sym itself 
+   *   (using the child glyph style).  If this is set to true, then
+   *    the symmetry must have a depth of at least 2.
+   */
   public GlyphI addToTier(SeqSymmetry insym,
                           TierGlyph forward_tier,
-                          TierGlyph reverse_tier) {
+                          TierGlyph reverse_tier, 
+                          boolean parent_and_child) {
 
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
@@ -234,7 +240,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
 
-    if (SeqUtils.getDepth(sym) >= 2) {
+    if (parent_and_child) {
       try  {
         if (use_label) {
           LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();

@@ -48,15 +48,15 @@ public class WTAGlyphFactory extends GenericAnnotGlyphFactory {
     this.label_field = null;
     if (type.startsWith("transcript")) { 
       // parent is transcript_cluster, child is exon_cluster
-      addToTier(sym, ftier, rtier);
+      addToTier(sym, ftier, rtier, true);
     }
     else if (type.startsWith("exon") || type.startsWith("intron")) { 
       // parent is exon_cluster or intron_cluster, child is psr
-      addToTier(sym, ftier, rtier);
+      addToTier(sym, ftier, rtier, true);
     }
     else if ("probeset".equals(type) || "probe-set".equals(type)) {
       //parent is probeset, child is probe
-      addToTier(sym, ftier, rtier);
+      addToTier(sym, ftier, rtier, true);
     }
     
     if (! type.startsWith("probe")) {

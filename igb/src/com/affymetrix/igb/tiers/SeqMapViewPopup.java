@@ -364,7 +364,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
                                         null); //no CANCEL button handler
     dialog.show();
     
-    if (containsGraphs(tier_label_glyphs)) {
+    if (!fg && containsGraphs(tier_label_glyphs)) {
       refreshMap(false);
       ErrorHandler.errorPanel("WARNING", "Graphs have a transparent background.  " +
         "To change the BG color of a graph, change the BG color " +

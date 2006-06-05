@@ -250,8 +250,6 @@ public abstract class DasLoader {
       //System.out.println("AGE: "+age);
     }
     
-    //System.out.println("DATE!!!!!!!!!!!!: "+date+" CacheDate: "+cacheDate);
-    
     // If the server doesn't report a lastModified then flush the cache every 48 hours
     if (cacheDate < date || cacheDate == 0 || (date == 0 && new Date().getTime() - cacheDate > 2*86400000)) {
       BufferedReader in = new BufferedReader(
@@ -268,7 +266,7 @@ public abstract class DasLoader {
     }
     
     // Finally, set the mod time of the cache file if the server reports it
-    if (date > 0) cacheFile.setLastModified(date);
+    //if (date > 0) cacheFile.setLastModified(date);
     
     return("file://"+cacheFile.getAbsolutePath());
   }

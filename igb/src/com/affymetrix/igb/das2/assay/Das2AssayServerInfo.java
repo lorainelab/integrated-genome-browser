@@ -100,9 +100,9 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
           //DEBUG!!! FIXME!!!!!
           //The docs returned for celsius are too large and don't fit in
           //memory so I skip these while I'm testing
-          if (source_uri.toString().indexOf("celsius") < 0 && source_uri.toString().indexOf("mouse") < 0) {
+          //if (source_uri.toString().indexOf("celsius") < 0 && source_uri.toString().indexOf("mouse") < 0) {
           //if (source_uri.toString().indexOf("human") > -1 && source_uri.toString().indexOf("mogdie") < 0) {
-          //if(true) {
+          if(true) {
           Das2AssaySource dasSource = new Das2AssaySource(this, source_uri, true);
 
           this.addDataSource(dasSource);

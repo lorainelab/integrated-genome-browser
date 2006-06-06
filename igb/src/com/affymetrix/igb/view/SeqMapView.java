@@ -1810,10 +1810,14 @@ public class SeqMapView extends JPanel
 
     slice_symmetry = sym;
     viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
+    viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
+    
     // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
     //    mapped to viewseq
     int prev_max = 0;
     int slice_offset = 0;
+    MutableSeqSpan prev_seq_slice = null;
+    MutableSeqSpan prev_view_slice = null;
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = sym.getChild(i);
       SeqSpan exact_span = child.getSpan(aseq);
@@ -1825,16 +1829,28 @@ public class SeqMapView extends JPanel
       else {
 	next_min = sym.getChild(i+1).getSpan(aseq).getMin();
       }
+      
       int slice_min = (int)Math.max(prev_max, (exact_span.getMin() - slice_buffer));
       int slice_max = (int)Math.min(next_min, (exact_span.getMax() + slice_buffer));
-      SeqSpan seq_slice_span = new SimpleSeqSpan(slice_min, slice_max, aseq);
+      MutableSeqSpan seq_slice_span = new SimpleMutableSeqSpan(slice_min, slice_max, aseq);
 
       int slice_length = seq_slice_span.getLength();
-      SeqSpan view_slice_span = new SimpleSeqSpan(slice_offset, slice_offset + slice_length, viewseq);
-      MutableSeqSymmetry slice_sym = new SimpleMutableSeqSymmetry();
-      slice_sym.addSpan(seq_slice_span);
-      slice_sym.addSpan(view_slice_span);
-      seq2viewSym.addChild(slice_sym);
+      MutableSeqSpan view_slice_span = 
+        new SimpleMutableSeqSpan(slice_offset, slice_offset + slice_length, viewseq);
+
+      if (prev_seq_slice != null && SeqUtils.looseOverlap(prev_seq_slice, seq_slice_span)) {
+        // if new seq slice span abuts the old one, then just
+        // lengthen existing spans (seq and view) rather than adding new ones
+        SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
+        SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);        
+      } else {
+        MutableSeqSymmetry slice_sym = new SimpleMutableSeqSymmetry();
+        slice_sym.addSpan(seq_slice_span);
+        slice_sym.addSpan(view_slice_span);
+        seq2viewSym.addChild(slice_sym);
+        prev_seq_slice = seq_slice_span;
+        prev_view_slice = view_slice_span;        
+      }
       slice_offset += slice_length;
       prev_max = slice_max;
     }
@@ -1848,6 +1864,7 @@ public class SeqMapView extends JPanel
     transform_path = new SeqSymmetry[1];
     transform_path[0] = seq2viewSym;
     slicing_in_effect = true;
+    
     setAnnotatedSeq(aseq);
   }
 

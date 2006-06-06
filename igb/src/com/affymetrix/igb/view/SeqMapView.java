@@ -1180,7 +1180,7 @@ public class SeqMapView extends JPanel
 
 
   /**
-   *  find min and max of annotations along AnnotatedBioSeq aseq.
+   *  Find min and max of annotations along AnnotatedBioSeq aseq.
    *<p>
    *  takes a boolean argument for whether to excludes GraphSym bounds
    *    (actual bounds of GraphSyms are currently problematic, but if (!exclude_graphs) then
@@ -1199,19 +1199,23 @@ public class SeqMapView extends JPanel
       // all_gene_searches, all_repeat_searches, etc.
       SeqSymmetry annotSym = aseq.getAnnotation(i);
       if (annotSym instanceof GraphSym) {
-	if (! exclude_graphs) {
-	  GraphSym graf = (GraphSym)annotSym;
-	  int[] xcoords = graf.getGraphXCoords();
-	  min = (int)Math.min(xcoords[0], min);
-	  max = (int)Math.max(xcoords[xcoords.length-1], max);
-	}
-      }
-      else {
-	SeqSpan span = annotSym.getSpan(aseq);
-	if (span != null) {
-	  min = Math.min(span.getMin(), min);
-	  max = Math.max(span.getMax(), max);
-	}
+        if (! exclude_graphs) {
+          GraphSym graf = (GraphSym)annotSym;
+          int[] xcoords = graf.getGraphXCoords();
+          min = (int)Math.min(xcoords[0], min);
+          max = (int)Math.max(xcoords[xcoords.length-1], max);
+        }
+      } else if (annotSym instanceof TypeContainerAnnot) {
+        TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
+        int[] sub_bounds = tca.getAnnotationBounds(aseq, exclude_graphs, min, max);
+        min = sub_bounds[0];
+        max = sub_bounds[1];
+      } else { // this shouldn't happen: should only be TypeContainerAnnots
+        SeqSpan span = annotSym.getSpan(aseq);
+        if (span != null) {
+          min = Math.min(span.getMin(), min);
+          max = Math.max(span.getMax(), max);
+        }
       }
     }
     if (min != Integer.MAX_VALUE && max != Integer.MIN_VALUE) {

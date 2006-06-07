@@ -654,6 +654,16 @@ public class SeqMapView extends JPanel
 	SeqSymmetry compsym = ((CompositeBioSeq)viewseq).getComposition();
 	if (compsym != null) {
 	  int compcount = compsym.getChildCount();
+          
+          // create a color, c3, inbetween the foreground and background colors
+          Color c1 = axis.getForegroundColor();
+          Color c2 = axis.getBackgroundColor();
+          Color c3 = new Color(
+            (c1.getRed()  +2*c2.getRed())/3,
+            (c1.getGreen()+2*c2.getGreen())/3,
+            (c1.getBlue() +2*c2.getBlue())/3
+          );
+
 	  for (int i=0; i<compcount; i++) {
             // Make glyphs for contigs
 	    SeqSymmetry childsym = compsym.getChild(i);
@@ -663,7 +673,7 @@ public class SeqMapView extends JPanel
 	    GlyphI cgl;
             if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
               cgl = new FillRectGlyph();
-              cgl.setColor(axis.getForegroundColor());
+              cgl.setColor(c3);
             } else {
               if (viewseq.getID().equals(QuickLoadView2.GENOME_SEQ_ID)) {
                 // hide axis numbering
@@ -1191,7 +1201,6 @@ public class SeqMapView extends JPanel
    *      that aseq might be composed of to factor in bounds of annotations on those sequences
    */
   public SeqSpan getAnnotationBounds(boolean exclude_graphs) {
-  //  public SeqSpan getAnnotationBounds(Vector graphs) {
     int annotCount = aseq.getAnnotationCount();
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;

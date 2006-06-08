@@ -1,6 +1,15 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+IGB-4.38.01
+  + Fixes several minor bugs in version 4.38
+  ++ When using the feature "Load Residues in View", the
+     partial residues were not visible because they were drawn in
+     the same color as their background.
+  ++ The "Shrink to fit" menu item was not functioning correctly
+  ++ When using "Change FG Color" on a graph, an incorrect warning
+     message was printed.
+
 IGB-4.38
 
   + The "Annotation Browser" tab is easier to use and has additional functions

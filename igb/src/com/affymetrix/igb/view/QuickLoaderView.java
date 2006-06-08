@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,14 +16,11 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
-
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
@@ -56,13 +53,15 @@ public class QuickLoaderView extends JComponent
 
   public static final String PREF_QUICKLOAD_URL = "QuickLoad URL";
   public static final String PREF_DAS_DNA_SERVER_URL = "DAS DNA Server URL";
-  public static final String PREF_QUICKLOAD_CACHE_USAGE = "quickload_cache_usage";
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
 
+  /** When unknown or artificial seq groups get created to hold the contents
+   *  of a file, prefix the group name with this String.
+   */
+
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final String SELECT_A_GENOME = "Select a genome to load";
-  static int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
   static boolean LOAD_DEFAULT_ANNOTS = true;
@@ -72,7 +71,7 @@ public class QuickLoaderView extends JComponent
   static Map cache_name2usage;
   static Map cache_usage2name;
   static Map usage2str;
-  
+
   static {
     String norm = "Normal Usage";
     String ignore = "Ignore Cache";
@@ -95,7 +94,7 @@ public class QuickLoaderView extends JComponent
   String default_annot_name  = "refseq";
 
   int cache_usage =
-    UnibrowPrefsUtil.getIntParam(PREF_QUICKLOAD_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    UnibrowPrefsUtil.getIntParam(LocalUrlCacher.PREF_CACHE_USAGE, LocalUrlCacher.CACHE_USAGE_DEFAULT);
   boolean cache_residues =
     UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
   boolean cache_annots =
@@ -134,16 +133,15 @@ public class QuickLoaderView extends JComponent
   SeqMapView gviewer;
   Map checkbox2url = new HashMap();  // maps JCheckBox for type to url for data of that type
   Map checkbox2filename = new HashMap();  // maps JCheckBox for type to file name (end of url) for data of that type
-  Map group2name  = new HashMap();  // maps AnnotatedSeqGroup to genome "name" from quickload contents.txt file
   Map name2group = new HashMap();  // maps genome "name" from quickload contents.txt file to AnnotatedSeqGroup
 
   // genome2types is map of genome version id to list of JCheckBoxes for available annotation types
   Map genome2cbs = new HashMap();
   Map default_types = new HashMap();
-  
+
   /** Returns a QuickLoad URL, as set in the preferences, but guaranteed to end with "/". */
   public static String getQuickLoadUrl() {
-      String quick_load_url = UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);    
+      String quick_load_url = UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
       if (quick_load_url.indexOf(DEFUNCT_SERVER) >= 0) {
         System.out.println("");
         System.out.println("WARNING:");
@@ -158,41 +156,52 @@ public class QuickLoaderView extends JComponent
       }
     return quick_load_url;
   }
-  
+
+  void clearGenometryModel() {
+    // Re-initialize the genometry model
+    SingletonGenometryModel model = SingletonGenometryModel.getGenometryModel();
+    model.setSelectedSeq(null);
+    model.setSelectedSeqGroup(null);
+    Vector seq_groups = new Vector(model.getSeqGroups().values());
+    Iterator iter = seq_groups.iterator();
+    while (iter.hasNext()) {
+      model.removeSeqGroup((AnnotatedSeqGroup) iter.next());
+    }
+  }
+
+  void clearGUI() {
+    // reinitialize the GUI
+    genome2cbs.clear();
+    seqtable.setModel(new DefaultTableModel());
+    checklist.removeAll();
+    checklist.repaint();
+  }
+
   protected void setQuickLoadURL(String url) {
-    System.out.println("Setting QuickLoad location: " + http_root);
+
+    if (! url.equals(this.http_root)) {
+      clearGenometryModel();
+      clearGUI();
+    }
+
     this.http_root = url;
-    
-    genome_selector.setSelectedItem(SELECT_A_GENOME);
-    genome_selector.removeItemListener(this);
-    genome_selector.removeAllItems();
-    
-    genome_selector.addItem(SELECT_A_GENOME);
+    System.out.println("Setting QuickLoad URL: " + http_root);
 
     java.util.List genome_list = loadGenomeNames();
-    if (genome_list != null) {
-      for (int i=0; i<genome_list.size(); i++) {
-	String genome_name = (String)genome_list.get(i);
-	genome_selector.addItem(genome_name);
-      }
-    }
-    genome_selector.addItemListener(this);
-    genome_selector.setSelectedItem(SELECT_A_GENOME);
-    //    System.out.println("loaded available genome info into QuickLoad");
+    refreshGenomeSelector();
 
     this.processDasServersList();
     //TODO: should process synonym list now as well
   }
-  
+
   public QuickLoaderView() {
     //gviewer = IGB.getSingletonIGB().getMapView(); // now this gets set when IGB calls putPluginProperty()
 
-    cache_usage = UnibrowPrefsUtil.getIntParam("quickload_cache_usage", CACHE_USAGE_DEFAULT);
+    cache_usage = UnibrowPrefsUtil.getIntParam("quickload_cache_usage", LocalUrlCacher.CACHE_USAGE_DEFAULT);
     cache_residues = UnibrowPrefsUtil.getBooleanParam("quickload_cache_residues", CACHE_RESIDUES_DEFAULT);
     cache_annots = UnibrowPrefsUtil.getBooleanParam("quickload_cache_annots", CACHE_ANNOTS_DEFAULT);
 
     genome_selector = new JComboBox();
-    setQuickLoadURL(getQuickLoadUrl());
 
     initOptionsDialog();
 
@@ -239,8 +248,8 @@ public class QuickLoaderView extends JComponent
 
     gmodel.addSeqSelectionListener(this);
     gmodel.addGroupSelectionListener(this);
-    
-    this.processDasServersList();
+
+    setQuickLoadURL(getQuickLoadUrl());
   }
 
   /** Adds the DAS servers from the file on the quickload server to the
@@ -256,7 +265,31 @@ public class QuickLoaderView extends JComponent
       +server_loc_list+"'\n"+ex.toString(), gviewer);
     }
   }
-  
+
+  void refreshGenomeSelector() {
+    name2group.clear();
+
+    genome_selector.setSelectedItem(SELECT_A_GENOME);
+    genome_selector.removeItemListener(this);
+    genome_selector.removeAllItems();
+
+    genome_selector.addItem(SELECT_A_GENOME);
+
+    SingletonGenometryModel model = SingletonGenometryModel.getGenometryModel();
+    Map groups = model.getSeqGroups();
+    Iterator group_names = model.getSeqGroups().keySet().iterator();
+    while (group_names.hasNext()) {
+      String genome_name = (String) group_names.next();
+      AnnotatedSeqGroup group = (AnnotatedSeqGroup) groups.get(genome_name);
+      name2group.put(genome_name, group);
+      genome_selector.addItem(genome_name);
+    }
+
+    genome_selector.addItemListener(this);
+    genome_selector.setSelectedItem(SELECT_A_GENOME);
+  }
+
+
   /**
    *  Also adds genomes loaded as AnnotatedSeqGroups to the
    *    SingletonGenometryModel.
@@ -271,7 +304,7 @@ public class QuickLoaderView extends JComponent
         istr = null; // dealt with below
       }
       if (istr == null) {
-        System.out.println("Could not load DAS contents.txt file from\n" + http_root + "contents.txt");
+        System.out.println("Could not load contents.txt file from\n" + http_root + "contents.txt");
         return Collections.EMPTY_LIST;
       }
       InputStreamReader ireader = new InputStreamReader(istr);
@@ -285,7 +318,6 @@ public class QuickLoaderView extends JComponent
 	  String genome_name = fields[0];
 	  glist.add(genome_name);
 	  group = gmodel.addSeqGroup(genome_name);
-	  group2name.put(group, genome_name);
 	  name2group.put(genome_name, group);
 	  // System.out.println("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
 	}
@@ -298,7 +330,8 @@ public class QuickLoaderView extends JComponent
       br.close();
     }
     catch (Exception ex) {
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Error loading genome names", gviewer, ex);
+      //ex.printStackTrace();
     }
     return glist;
   }
@@ -306,17 +339,17 @@ public class QuickLoaderView extends JComponent
 
   /**
    *  Return list of available annotation files for a given genome.
-   *  assumes genome_root has already been correctly set
-   *    (looks for ~genome_dir/annots.txt file which lists annotation files
+   *  assumes genome_root has already been correctly set.
+   *  Looks for ~genome_dir/annots.txt file which lists annotation files
    *     available in same directory.  If found, returns the list.  If no
-   *     annots.txt file is found, returns "default" annotation files that
-   *     are expected to be present)
+   *     annots.txt file is found, returns an empty list.
    */
   java.util.List loadAnnotationNames() {
-    ArrayList alist = null;
+    ArrayList alist = new ArrayList();
+    String filename = current_genome_root + "annots.txt";
     try {
       InputStream istr =
-	LocalUrlCacher.getInputStream(current_genome_root + "annots.txt", cache_usage, cache_annots);
+	LocalUrlCacher.getInputStream(filename, cache_usage, cache_annots);
       InputStreamReader ireader = new InputStreamReader(istr);
       BufferedReader br = new BufferedReader(ireader);
       String line;
@@ -330,8 +363,9 @@ public class QuickLoaderView extends JComponent
       br.close();
     }
     catch (Exception ex) {
-      System.out.println("couldn't find annots.txt file listing annotation files");
-      ex.printStackTrace();
+      ErrorHandler.errorPanel("ERROR", "Could not load annotation names from file:\n" + filename, gviewer, ex);
+      //System.out.println("Couldn't find file "+filename);
+      //ex.printStackTrace();
     }
     return alist;
   }
@@ -346,23 +380,23 @@ public class QuickLoaderView extends JComponent
    *        available (and loaded) for selected seq group
    */
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
-    //  public void seqGroupSelected(AnnotatedSeqGroup group) {
-    java.util.List glist = evt.getSelectedGroups();
-    AnnotatedSeqGroup group = null;
-    if (glist.size() > 0)  {
-      group = (AnnotatedSeqGroup)glist.get(0);
-      if (IGB.DEBUG_EVENTS)  {
+    AnnotatedSeqGroup group = evt.getSelectedGroup();
+    if (IGB.DEBUG_EVENTS) {
+      if (group == null) {
+        System.out.println("QuickLoaderView received seqGroupSelected() call, but group = null");
+      } else {
         System.out.println("QuickLoaderView received seqGroupSelected() call: " + group.getID() + ",  " + group);
       }
     }
-    else {
-      if (IGB.DEBUG_EVENTS)  { System.out.println("QuickLoaderView received seqGroupSelected() call, but group = null"); }
-    }
     if (group == null)  { return; }
 
+    // refresh the genome list, mainly because LoadFileAction, or something else,
+    // may have added new genomes, such as "Unknown Genome 1"
+    refreshGenomeSelector();
+
     if (! group.isSynonymous(current_genome_name)) {
-      String name = (String)group2name.get(group);
-      if (name == null)  {
+      String name = group.getID();
+      if (name == null || ! name2group.containsValue(group))  {
         System.out.println("Quickload could not find group: " + group.getID());
       }
       else {
@@ -370,19 +404,15 @@ public class QuickLoaderView extends JComponent
         //    prevent event bounce...
         String current_item = (String) genome_selector.getSelectedItem();
         if (!group.isSynonymous(current_item)) {
-          System.out.println("calling genome_selector.setSelected() item");
+	  //          System.out.println("calling genome_selector.setSelected() item");
           genome_selector.removeItemListener(this);
           genome_selector.setSelectedItem(name);
           genome_selector.addItemListener(this);
-          System.out.println("done calling genome_selector.setSelected() item");
+	  //          System.out.println("done calling genome_selector.setSelected() item");
         }
         current_item = (String) genome_selector.getSelectedItem();
-        System.out.println("name: " + current_item + ", index: " +
-                           genome_selector.getSelectedIndex());
-        //      System.out.println(genome_selector);
-        //      int count = genome_selector.getItemCount();
-        //      for (int i=0; i<count; i++)  { System.out.println(genome_selector.getItemAt(i)); }
-
+	//        System.out.println("name: " + current_item + ", index: " +
+	//                           genome_selector.getSelectedIndex());
         loadGenome(current_item);
       }
     }
@@ -395,7 +425,6 @@ public class QuickLoaderView extends JComponent
    *        reflect new selection
    */
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    //  public void seqSelected(SmartAnnotBioSeq seq) {
     if (IGB.DEBUG_EVENTS)  {
       System.out.println("QuickLoaderView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
@@ -403,11 +432,8 @@ public class QuickLoaderView extends JComponent
     AnnotatedBioSeq seq = null;
     if ((slist.size() > 0) && (slist.get(0) != null))  {
       seq = (MutableAnnotatedBioSeq)slist.get(0);
-//      System.out.println("QuickLoaderView received seqSelected() call: " + seq.getID() + ",  " + seq);
     }
-    else {
-//      System.out.println("QuickLoaderView received seqSelected() call, but seq = null");
-    }
+
     if (current_seq == seq) {
       return;
     }
@@ -444,10 +470,13 @@ public class QuickLoaderView extends JComponent
     java.util.List checkboxes = (java.util.List)genome2cbs.get(current_genome_name);
     java.util.List defaults_to_load = new ArrayList();
     boolean prev_loaded = (checkboxes != null);
-    // GAH 8-27-2004
-    // IGB.clearSymHash() will cause problems if revisit previously loaded genome!
-    //    need to move sym hash stuff out of Unibrow, make it genome-specific...
-    IGB.clearSymHash();
+
+    //TODO: This clearing of sym hash causes problems if you go back and
+    // revisit a previously-loaded genome (because the annotations will still be there,
+    // but will not be in the sym hash anymore.)  This also happens when
+    // loading a file with "merge" un-checked, which causes the creation of a
+    // new "genome".
+    //IGB.clearSymHash();
 
     if (! prev_loaded) {
       checkboxes = new ArrayList();
@@ -474,7 +503,9 @@ public class QuickLoaderView extends JComponent
       genome2cbs.put(current_genome_name, checkboxes);
     }
 
-    if (checkboxes != null) {
+    if (checkboxes == null || checkboxes.size() == 0) {
+      checklist.add(new JLabel("No QuickLoad Files"));
+    } else {
       int checkcount = checkboxes.size();
       for (int i=0; i<checkcount; i++) {
 	JCheckBox cb = (JCheckBox)checkboxes.get(i);
@@ -505,36 +536,36 @@ public class QuickLoaderView extends JComponent
 	  }
 	  catch (Exception ex) {
 	    System.err.println("ERROR: could find neither liftAll.txt nor mod_chromInfo.txt files");
-	    return;
+            cinfo_stream = null;
 	  }
 	}
 
-	LiftParser lift_loader = new LiftParser();
-	ChromInfoParser chrominfo_loader = new ChromInfoParser();
 	boolean annot_contigs = false;
 	if (lift_stream != null) {
-	  group = lift_loader.parseGroup(lift_stream, genome_name, annot_contigs);
+  	  LiftParser lift_loader = new LiftParser();
+	  group = lift_loader.parse(lift_stream, genome_name, annot_contigs);
 	}
-	else  {
-	  group = chrominfo_loader.parseGroup(cinfo_stream, genome_name);
+	else if (cinfo_stream != null) {
+  	  ChromInfoParser chrominfo_loader = new ChromInfoParser();
+	  group = chrominfo_loader.parse(cinfo_stream, genome_name);
 	}
-	System.out.println("group: " + group.getID() + ", " + group);
+	System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
 	//      gmodel.setSelectedSeqGroup(group);
 
 	if (lift_stream != null)  { lift_stream.close(); }
 	if (cinfo_stream != null) { cinfo_stream.close(); }
       }
       catch (Exception ex) {
-	ErrorHandler.errorPanel("Error", "Error loading data:\n"+ex.toString(), gviewer);
-	ex.printStackTrace();
+	ErrorHandler.errorPanel("Error", "Error loading data:\n"+ex.toString(), gviewer, ex);
+	//ex.printStackTrace();
       }
     }
 
-    Iterator iter = group.getSeqs().values().iterator();
-    /**  turning off listening to table selections while table is being repopulated */
+    Iterator iter = group.getSeqList().iterator();
+    /*  turning off listening to table selections while table is being repopulated */
     seqtable_model.removeListSelectionListener(this);
     populateSeqTable(group);
-    /**  turning back on listening to table selections */
+    /*  turning back on listening to table selections */
     seqtable_model.addListSelectionListener(this);
 
     current_seq = null;
@@ -553,12 +584,11 @@ public class QuickLoaderView extends JComponent
 
 
   protected void populateSeqTable(AnnotatedSeqGroup group) {
-    Collection seqs = group.getSeqs().values();
+    Collection seqs = group.getSeqList();
     Iterator iter = seqs.iterator();
     Vector allrows = new Vector();
     while (iter.hasNext()) {
       MutableAnnotatedBioSeq curseq = (MutableAnnotatedBioSeq)iter.next();
-      //      System.out.println(curseq.getID());
       Vector seqrow = new Vector();
       seqrow.add(curseq.getID());
       seqrow.add(new Integer(curseq.getLength()));
@@ -618,7 +648,9 @@ public class QuickLoaderView extends JComponent
 		} );
 	    }
 	    catch (Exception ex) {
-	      System.out.println("coulnd't find requested file: " + url_path);
+              ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + url_path, gviewer, ex);
+	      //System.out.println("problem loading requested url: " + url_path);
+	      //ex.printStackTrace();
 	    }
 	    monitor.closeDialogEventually();
 	    monitor = null;
@@ -654,7 +686,7 @@ public class QuickLoaderView extends JComponent
 	    //	    System.out.println("##### genome_selector event triggering loadGenome without new group selection");
 	    loadGenome(genome_name);
 	  }
-          genome_selector.removeItem(SELECT_A_GENOME);
+          //genome_selector.removeItem(SELECT_A_GENOME);
 	}
       }
     }
@@ -670,7 +702,13 @@ public class QuickLoaderView extends JComponent
     Object src = evt.getSource();
     if (src == seqtable_model && (! evt.getValueIsAdjusting())) {
       int srow = seqtable.getSelectedRow();
-      String chrom_name = (String)seqtable.getModel().getValueAt(srow, 0);
+      String chrom_name = null;
+      if (srow>=0) {
+        chrom_name = (String)seqtable.getModel().getValueAt(srow, 0);
+      } else {
+        chrom_name = null;
+      }
+
       if (chrom_name != null) {
 	AnnotatedBioSeq temp = gmodel.getSelectedSeqGroup().getSeq(chrom_name);
         if (temp == null) {
@@ -700,6 +738,7 @@ public class QuickLoaderView extends JComponent
    */
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
+
     if (src == clear_cacheB) {
       System.out.println("clearing local cache");
       LocalUrlCacher.clearCache();
@@ -739,9 +778,9 @@ public class QuickLoaderView extends JComponent
     }
   }
 
-  JButton reset_das_dna_serverB = new JButton("Reset");      
-  JButton reset_quickload_urlB = new JButton("Reset");      
-  
+  JButton reset_das_dna_serverB = new JButton("Reset");
+  JButton reset_quickload_urlB = new JButton("Reset");
+
   public void initOptionsDialog() {
     //    System.out.println("showing quickload options");
     if (optionsP == null) {
@@ -756,7 +795,7 @@ public class QuickLoaderView extends JComponent
       reset_quickload_urlB.addActionListener(this);
       optionsP.add(url_box);
       optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-      
+
       Box server_box = new Box(BoxLayout.X_AXIS);
       server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
       JTextField das_dna_server_TF = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
@@ -765,12 +804,12 @@ public class QuickLoaderView extends JComponent
       reset_das_dna_serverB.addActionListener(this);
       optionsP.add(server_box);
       optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-      
+
       JPanel cache_options_box = new JPanel();
       cache_options_box.setBorder(new javax.swing.border.TitledBorder(""));
       cache_options_box.setLayout(new GridLayout(4, 1));
       optionsP.add(cache_options_box);
-      
+
       cache_annotsCB = new JCheckBox("Cache Annotations", cache_annots);
       cache_residuesCB = new JCheckBox("Cache DNA Residues", cache_residues);
       clear_cacheB = new JButton("Clear Cache");
@@ -803,28 +842,26 @@ public class QuickLoaderView extends JComponent
     qlv.showOptions();
     System.exit(0);
   }
-  
+
   public void showOptions() {
     //TODO: before showing the options dialog, need to reset its GUI to actual current values
     JOptionPane.showMessageDialog(this, optionsP, "Quickload Options", JOptionPane.PLAIN_MESSAGE);
-    
+
     //TODO: Give the user a "Cancel" options as well as "OK"
     //int option = JOptionPane.showConfirmDialog(this, optionsP, "Quickload Options", JOptionPane.OK_CANCEL_OPTION);
     //if (option == JOptionPane.OK_OPTION) {
         String usage_str = (String)cache_usage_selector.getSelectedItem();
 	int usage = ((Integer)cache_usage_options.get(usage_str)).intValue();
         setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-        
+
         // Note that the preferred DAS_DNA_SERVER_URL gets set immediately when the JTextBox is changed
         // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
         //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
-        
-        setQuickLoadURL(UnibrowPrefsUtil.getLocation(PREF_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL));
+
         setQuickLoadURL(getQuickLoadUrl());
-        
     //}
   }
-    
+
   /**
    *  Load sequence residues for a span along a sequence.
    *  Access residues via DAS reference server
@@ -867,7 +904,7 @@ public class QuickLoaderView extends JComponent
 	System.out.println("DAS DNA response length: " + residues.length());
       }
       catch (Exception ex) {
-	ex.printStackTrace();
+        ErrorHandler.errorPanel("Error", "Couldn't access sequence residues via DAS", gviewer, ex);
       }
 
       if (residues != null) {
@@ -922,13 +959,12 @@ public class QuickLoaderView extends JComponent
 	InputStream istr = LocalUrlCacher.getInputStream(url_path, cache_usage, cache_residues);
 	//	istr = (new URL(url_path)).openStream();
 	// NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-	current_seq = NibbleResiduesParser.parse(istr, (NibbleBioSeq)current_seq);
+	current_seq = NibbleResiduesParser.parse(istr, gmodel.getSelectedSeqGroup());
 	istr.close();
       }
       catch(Exception ex) {
-	ex.printStackTrace();
 	ErrorHandler.errorPanel("Error", "cannot access sequence for seq = " + seq_name +
-			   ", version = " + current_genome_name, gviewer);
+			   ", version = " + current_genome_name, gviewer, ex);
       }
       gviewer.setAnnotatedSeq(current_seq, true, true);
     }
@@ -957,17 +993,17 @@ public class QuickLoaderView extends JComponent
       gviewer = (SeqMapView) value;
     }
   }
-  
+
   public Object getPluginProperty(Object key) {
     if (IPlugin.TEXT_KEY_SEQ_MAP_VIEW.equals(key)) {
       return gviewer;
     }
     else return null;
   }
-  
+
   public void destroy() {
     gviewer = null;
   }
-  
+
 }
 

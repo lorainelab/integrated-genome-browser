@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,31 +13,27 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
+
 import com.affymetrix.genoviz.util.Timer;
 
-import java.util.Comparator;
-
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.UcscPslComparator;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
-import com.affymetrix.igb.parsers.PSLParser;
-import com.affymetrix.igb.parsers.AnnotationWriter;
 
 public class BpsParser implements AnnotationWriter  {
 
   static java.util.List pref_list = new ArrayList();
   static {
-    pref_list.add(".bps");
-    pref_list.add(".psl");
+    pref_list.add("bps");
+    pref_list.add("psl");
   }
 
   static boolean main_batch_mode = false; // main() should run in batch mode (processing PSL files in psl_input_dir)
@@ -46,14 +42,10 @@ public class BpsParser implements AnnotationWriter  {
   static boolean use_byte_buffer = true;
   static boolean REPORT_LOAD_STATS = true;
 
-  // mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
-  //   that all random, etc. bits are at bottom
   static String user_dir = System.getProperty("user.dir");
 
   // .bps is for "binary PSL format"
   static String default_annot_type = "spliced_EST";
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/all_pseudoobscura_nets.psl";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/pseudo_synteny_net.bps";
 
   /*
    *  new alternative
@@ -94,7 +86,7 @@ public class BpsParser implements AnnotationWriter  {
 
   static int estimated_count = 80000;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     //    BpsParser test = new BpsParser();
     if (write_from_text) {
       if (main_batch_mode) {
@@ -122,15 +114,21 @@ public class BpsParser implements AnnotationWriter  {
       }
       else {
 	if (args.length == 2) {
-	  text_file = args[0];
-	  bin_file = args[1];
+	  String text_file = args[0];
+	  String bin_file = args[1];
+	  convertPslToBps(text_file, bin_file);
 	}
-	convertPslToBps(text_file, bin_file);
+	else {
+	  System.out.println("Usage:  java ... BpsParser <text infile> <binary outfile>");
+	  System.exit(1);
+	}
       }
     }
     if (read_from_bps) {
-      Map chrom_hash = new HashMap();
-      java.util.List syms = parse(bin_file, default_annot_type, chrom_hash);
+      AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Group");
+      
+      String bin_file = args[0];
+      java.util.List syms = parse(bin_file, default_annot_type, seq_group);
       int symcount = syms.size();
       System.out.println("total sym count: " + symcount);
       int[] blockcount = new int[100];
@@ -159,19 +157,17 @@ public class BpsParser implements AnnotationWriter  {
   }
 
 
-  /**
-   *  @param target_hash  a HashMap of target (chromosome) names to MutableAnnotatedBioSeqs
-   *    that represent the targets (chromosomes)
-   */
-  public static java.util.List parse(String file_name, String annot_type, Map target_hash) {
+  public static java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
+  throws IOException {
     System.out.println("loading file: " + file_name);
+    java.util.List results = null;
+    FileInputStream fis = null;
+    DataInputStream dis = null;
     try {
       File fil = new File(file_name);
       long flength = fil.length();
-      FileInputStream fis = new FileInputStream(fil);
-      //      BufferedInputStream bis = new BufferedInputStream(fis, 16384);
+      fis = new FileInputStream(fil);
       BufferedInputStream bis = new BufferedInputStream(fis);
-      DataInputStream dis = null;
 
       if (use_byte_buffer) {
 	byte[] bytebuf = new byte[(int)flength];
@@ -183,28 +179,34 @@ public class BpsParser implements AnnotationWriter  {
       else {
 	dis = new DataInputStream(bis);
       }
-      return parse(dis, annot_type, target_hash);
+      results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+      if (dis != null) try { dis.close(); } catch (Exception e) {}
+      if (fis != null) try { fis.close(); } catch (Exception e) {}
     }
-    return null;
+    return results;
   }
-
-  public static java.util.List parse(DataInputStream dis, String annot_type, Map target_hash) {
-    return parse(dis, annot_type, null, target_hash, false, true);
-  }
-
+    
   /** Reads binary PSL data from the given stream.  Note that this method <b>can</b>
    *  be interrupted early by Thread.interrupt().  The input stream will always be closed
    *  before exiting this method.
    */
   public static java.util.List parse(DataInputStream dis, String annot_type,
-				      Map qhash, Map thash, boolean annot_query, boolean annot_target) {
-    Map query_hash = qhash;
-    Map target_hash = thash;
-    if (query_hash == null) { query_hash = new HashMap(); }
-    if (target_hash == null) { target_hash = new HashMap(); }
+    AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, 
+    boolean annot_query, boolean annot_target) 
+  throws IOException {
+    
+    // make temporary seq groups to avoid null pointers later
+    if (query_group == null) { 
+      query_group = new AnnotatedSeqGroup("Query"); 
+      query_group.setUseSynonyms(false);
+    }
+    if (target_group == null) { 
+      target_group = new AnnotatedSeqGroup("Target");
+      target_group.setUseSynonyms(false);
+    }
+    
     int total_block_count = 0;
     HashMap target2sym = new HashMap(); // maps target chrom name to top-level symmetry
     HashMap query2sym = new HashMap(); // maps query chrom name to top-level symmetry
@@ -232,21 +234,24 @@ public class BpsParser implements AnnotationWriter  {
 	int qsize = dis.readInt();
 	int qmin = dis.readInt();
 	int qmax = dis.readInt();
-	BioSeq queryseq = (BioSeq)query_hash.get(qname);
+        
+        MutableAnnotatedBioSeq queryseq = query_group.getSeq(qname);
 	if (queryseq == null)  {
-	  queryseq = new SimpleAnnotatedBioSeq(qname, qsize);
-	  query_hash.put(qname, queryseq);
+          queryseq = query_group.addSeq(qname, qsize);
 	}
+        if (queryseq.getLength() < qsize) { queryseq.setLength(qsize); }
 
 	String tname = dis.readUTF();
 	int tsize = dis.readInt();
 	int tmin = dis.readInt();
 	int tmax = dis.readInt();
-	BioSeq targetseq = (BioSeq)target_hash.get(tname);
+        
+        
+	MutableAnnotatedBioSeq targetseq = target_group.getSeq(tname);
 	if (targetseq == null) {
-	  targetseq = new SimpleAnnotatedBioSeq(tname, tsize);
-	  target_hash.put(tname, targetseq);
+          targetseq = target_group.addSeq(tname, tsize);
 	}
+        if (targetseq.getLength() < tsize) { targetseq.setLength(tsize); }
 
 	int blockcount = dis.readInt();
 	int[] blockSizes = new int[blockcount];
@@ -270,39 +275,39 @@ public class BpsParser implements AnnotationWriter  {
 			 queryseq, qmin, qmax, targetseq, tmin, tmax,
 			 blockcount, blockSizes, qmins, tmins);
 	results.add(sym);
+        
 
-	if (annot_query && (queryseq instanceof MutableAnnotatedBioSeq)) {
+        if (annot_query) {
 	  SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
 	  if (query_parent_sym == null) {
 	    query_parent_sym = new SimpleSymWithProps();
 	    query_parent_sym.addSpan(new SimpleSeqSpan(0, queryseq.getLength(), queryseq));
 	    query_parent_sym.setProperty("method", annot_type);
 	    query_parent_sym.setProperty("preferred_formats", pref_list);
-	    ((MutableAnnotatedBioSeq)queryseq).addAnnotation(query_parent_sym);
+	    queryseq.addAnnotation(query_parent_sym);
 	    query2sym.put(qname, query_parent_sym);
 	  }
+          query_group.addToIndex(sym.getID(), sym);
 	  query_parent_sym.addChild(sym);
 	}
 
-	if (annot_target && (targetseq instanceof MutableAnnotatedBioSeq)) {
+	if (annot_target) {
 	  SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)target2sym.get(tname);
 	  if (target_parent_sym == null) {
 	    target_parent_sym = new SimpleSymWithProps();
 	    target_parent_sym.addSpan(new SimpleSeqSpan(0, targetseq.getLength(), targetseq));
 	    target_parent_sym.setProperty("method", annot_type);
 	    target_parent_sym.setProperty("preferred_formats", pref_list);
-	    ((MutableAnnotatedBioSeq)targetseq).addAnnotation(target_parent_sym);
+	    targetseq.addAnnotation(target_parent_sym);
 	    target2sym.put(tname, target_parent_sym);
 	  }
 	  target_parent_sym.addChild(sym);
+          target_group.addToIndex(sym.getID(), sym);
 	}
       }
     }
     catch (EOFException ex) {
       reached_EOF = true;
-    }
-    catch (IOException ex) {
-      ex.printStackTrace();
     }
     finally {try { dis.close(); } catch (Exception ex) {}}
 

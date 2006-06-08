@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -103,8 +103,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
   protected Hashtable arrowhash = new Hashtable();
   // hash of alignment glyphs to alignment Mappings
   //  Hashtable alignhash = new Hashtable();
-  // hash of alignment glyphs to alignment Sequences
-  //  Hashtable seqhash = new Hashtable();
 
   // locations for scrollbars, consensus, and labels
   protected int vscroll_loc, hscroll_loc, cons_loc, label_loc;

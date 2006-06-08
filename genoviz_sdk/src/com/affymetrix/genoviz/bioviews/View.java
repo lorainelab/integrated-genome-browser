@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -90,6 +90,14 @@ public class View implements ViewI, NeoPaintListener,
   private static final boolean optscroll_checkNoDamage = true;
 
   protected Rectangle pixelbox;
+
+  // GAH 2006-03-28  for experimental multiscreen support
+  // View may actually be a "subview" (for example when trying to farm single NeoMap out to multiple
+  //    NeoMap children, or during scroll optimizations), in which case glyphs may want
+  //    to know bounds, etc. of full virtual "parent" view.
+  // If this is not a subviwe, then full_view = this view
+  protected ViewI full_view = null;
+
   // View currently requires specific Scene implementation to
   //    handle optimization method calls
   protected Scene scene;
@@ -156,7 +164,7 @@ public class View implements ViewI, NeoPaintListener,
   protected Rectangle2D scene_coordbox;
 
   public View()  {
-
+    full_view = this;
     // transforms initialized to Identity transform
     transform = new LinearTransform();
     timecheck = new com.affymetrix.genoviz.util.Timer();
@@ -855,6 +863,14 @@ public class View implements ViewI, NeoPaintListener,
     return this.coordbox;
   }
 
+  public void setFullView(ViewI full_view) {
+    this.full_view = full_view;
+  }
+
+  public ViewI getFullView() {
+    return full_view;
+  }
+
   public void setGraphics(Graphics g)  {
     graphics = g;
   }
@@ -908,7 +924,6 @@ public class View implements ViewI, NeoPaintListener,
   public Rectangle2D calcCoordBox() {
     return transformToCoords(pixelbox, coordbox);
   }
-
 
   //  Standard methods to implement the event source for event listeners
 

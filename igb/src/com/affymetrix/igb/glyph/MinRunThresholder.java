@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,7 +22,7 @@ import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.widget.*;
 
-public class MinRunThresholder extends JPanel 
+public class MinRunThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static int frm_width = 400;
@@ -32,8 +32,10 @@ public class MinRunThresholder extends JPanel
   NeoWidgetI widg;
   JSlider tslider;
   JTextField minrunTF;
-  int thresh_min = 0;
-  int thresh_max = 250;
+  int default_thresh_min = 0;
+  int default_thresh_max = 250;
+  int thresh_min = default_thresh_min;
+  int thresh_max = default_thresh_max;
   int minrun_thresh = 0;
 
   int max_chars = 9;
@@ -51,7 +53,7 @@ public class MinRunThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { 
+      public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
 	w.dispose();
@@ -78,7 +80,7 @@ public class MinRunThresholder extends JPanel
     minrunTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.add(new JLabel("Min Run: "));
+    this.add(new JLabel("Min Run > "));
     this.add(minrunTF);
     this.add(tslider);
 
@@ -91,23 +93,41 @@ public class MinRunThresholder extends JPanel
     tslider.removeChangeListener(this);
     minrunTF.removeActionListener(this);
 
+    int first_min_run = 0;
+    boolean all_have_same_min_run = false;
+    boolean all_have_thresh_on = false;
+    
     int gcount = newgraphs.size();
     if (gcount > 0) {
       int newthresh = 0;
       for (int i=0; i<gcount; i++) {
 	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
 	graphs.add(gl);
-	newthresh += (int)gl.getMinRunThreshold();
+        int this_min_run = (int) gl.getMinRunThreshold();
+	newthresh += this_min_run;
+        if (i==0) {
+          first_min_run = this_min_run;
+          all_have_same_min_run = true;
+          all_have_thresh_on = gl.getShowThreshold();
+        } else {
+          all_have_same_min_run &= (this_min_run == first_min_run);
+          all_have_thresh_on &= gl.getShowThreshold();
+        }
       }
       minrun_thresh = newthresh / gcount;
       tslider.setMinimum(thresh_min);
       tslider.setMaximum(thresh_max);
       tslider.setValue(minrun_thresh);
-      minrunTF.setText(Integer.toString(minrun_thresh));
+      if (all_have_same_min_run) {
+        minrunTF.setText(Integer.toString(minrun_thresh));
+      } else {
+        minrunTF.setText("");
+      }
     }
 
     tslider.addChangeListener(this);
     minrunTF.addActionListener(this);
+    setEnabled(all_have_thresh_on);
   }
 
 
@@ -115,6 +135,12 @@ public class MinRunThresholder extends JPanel
     java.util.List newgraphs = new ArrayList();
     newgraphs.add(gl);
     setGraphs(newgraphs);
+  }
+  
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    tslider.setEnabled(b);
+    minrunTF.setEnabled(b);
   }
 
   public void stateChanged(ChangeEvent evt) {
@@ -139,10 +165,12 @@ public class MinRunThresholder extends JPanel
   public void actionPerformed(ActionEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
-    if (src == minrunTF) {
+    if (src == minrunTF) try {
       int new_thresh = Integer.parseInt(minrunTF.getText());
       if (new_thresh != minrun_thresh) {
-	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+	boolean new_thresh_max = (new_thresh > thresh_max);
+	//	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+	if (new_thresh < thresh_min) {
 	  // new threshold outside of min/max possible, so keep current threshold instead
 	  minrunTF.setText(Integer.toString(minrun_thresh));
 	}
@@ -153,17 +181,27 @@ public class MinRunThresholder extends JPanel
 	    sgg.setMinRunThreshold(minrun_thresh);
 	  }
 	  tslider.removeChangeListener(this);
-	  tslider.setValue(minrun_thresh);
+	  if (new_thresh_max) {
+	    thresh_max = minrun_thresh;
+	    tslider.setMaximum(thresh_max);
+	  }
+	  else if (minrun_thresh <= default_thresh_max) {
+	    thresh_max = default_thresh_max;
+	    tslider.setMaximum(thresh_max);
+	  }
+          tslider.setValue(minrun_thresh);
 	  tslider.addChangeListener(this);
 	  widg.updateWidget();
 	}
       }
+    } catch (NumberFormatException nfe) {
+      setGraphs(new ArrayList(graphs));
     }
   }
 
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
-    setGraphs(graphs);
+    setGraphs(new ArrayList(graphs));
   }
 
 

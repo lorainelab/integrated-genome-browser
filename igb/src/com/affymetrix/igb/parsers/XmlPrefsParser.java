@@ -67,6 +67,7 @@ Example:
     <annotation_style annot_type="abc" factory="com.affymetrix.igb.glyph.GenericSymGlyphFactory" />
 
 Optionally specifying color:
+(Colors <b>IGNORED</b> by all standard glyph factories starting with IGB version 4.01)
 Method 1: specify single color for this annot type by adding red, green, blue attributes:
    <annotation_style annot_type="test" red="200" green="0" blue="200" />
 Method 2: specify multiple colors to be used for this annot type by adding <color> sub-elements
@@ -96,27 +97,9 @@ Example:
     parent_glyph="com.affymetrix.igb.glyph.EfficientOutlineContGlyph"
     child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 
-"glyph_depth": This attribute specifies which symmetries in a symmetry hierarchy
-   should be rendered into glyphs.  For annotations like transcripts or alignments,
-   it is usually "2", indicating that the leaf symmetry nodes (for example, exons
-   or alignment blocks) should be rendered with objects of class "child_glyph",
-   and that the nodes just above the leaves (for example, the genomic span of the
-   transcript or alignment) should be rendered with objects of class "parent_glyph".
-   If it is "1", then only the leaf nodes are rendered as glyphs, as objects of
-   class "child_glyph" (good for repeats and SNPs, for example).  There _might_ be
-   reasons to use glyph_depth > 2 (which would imply that leaf nodes might not be
-   rendered), but I'd suggest sticking with 1 or 2 for now.  The default is 2.
+"glyph_depth": 
+   <b>IGNORED</b> starting with IGB 4.01.
 
-Color names that GenericAnnotGlyphFactory currently recognizes;
-   "color":  if no "parent_color" or "child_color", uses this for both
-   "parent_color":  the color used for parent glyphs
-   "child_color":  the color used for child glyphs
-
-Other attributes that GenericAnnotGlyphFactory should recognize in the near future:
-     glyph_height="15"
-     tier_name="Aligned RefSeqs"
-     tier_start_state="EXPAND"
-     tier_expand_max="10"
 *</pre>
 */
 public class XmlPrefsParser {
@@ -405,19 +388,23 @@ public class XmlPrefsParser {
    */
   public static String getLinkURL(Map prefs_hash, String method) {
     // This is not terribly fast, but it is not called in places where speed matters
+    // Loop through the regular expressions in reverse order, so that ones added
+    // at the end of the user's prefs file will be tested AFTER those at
+    // the beginning of the default prefs file.
+    
     String url = null;
     if (method != null) {
       Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-      Iterator iter = regex2url.entrySet().iterator();
-      while (iter.hasNext()) {
-        Map.Entry entry = (Map.Entry) iter.next();
-        Pattern regex = (Pattern) entry.getKey();
+      Vector keyset = new Vector(regex2url.keySet());
+      for (int j=keyset.size()-1 ; j >= 0 ; j--) {
+        Pattern regex = (Pattern) keyset.get(j);
         if (regex.matcher(method).matches()) {
-          url = (String) entry.getValue();
+          url = (String) regex2url.get(regex);
           break;
         }
       }
     }
+
     return url;
   }
 

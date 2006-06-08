@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,24 +21,24 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class PluginInfo {
-  
+
   public static final String NODE_PLUGINS = "plugins";
-  
+
   public static final String KEY_PLACEMENT = "placement";
   public static final String KEY_LOAD = "load";
   public static final String KEY_CLASS = "class";
   public static final String KEY_DISPLAY_NAME = "display name";
-  
+
   public static final String PLACEMENT_TAB = "tab";
   public static final String PLACEMENT_WINDOW = "window";
-  
+
   String class_name;// required
   String plugin_name;// required
   boolean load;// required
 
   String placement = PLACEMENT_TAB;
   String display_name = null; // display name is optional
-  
+
   public PluginInfo(String class_name, String plugin_name, boolean load) {
     this.class_name = class_name;
     this.plugin_name = plugin_name;
@@ -65,11 +65,11 @@ public class PluginInfo {
   public String getClassName() { return class_name; }
   public String getPluginName() { return plugin_name; }
   public boolean shouldLoad() { return load; }
-  
+
   /** Returns either {@link #PLACEMENT_WINDOW} or {@link #PLACEMENT_TAB}. */
   public String getPlacement() { return placement; }
 
-  /** Set to either {@link #PLACEMENT_WINDOW} or {@link #PLACEMENT_TAB}. 
+  /** Set to either {@link #PLACEMENT_WINDOW} or {@link #PLACEMENT_TAB}.
    *  @throws IllegalArgumentException if not one of the acceptable choices
    */
   public void setPlacement(String s) {
@@ -81,11 +81,11 @@ public class PluginInfo {
   }
 
   /** It is possible to set a display name that is different from the real name. */
-  public void setDisplayName(String s) { 
+  public void setDisplayName(String s) {
     this.display_name = s;
   }
 
-  public String getDisplayName() { 
+  public String getDisplayName() {
     if (this.display_name == null || this.display_name.trim().length() == 0) {
       return this.plugin_name;
     } else {
@@ -96,10 +96,10 @@ public class PluginInfo {
   public static String[] getAllPluginNames() throws BackingStoreException {
     createStandardPlugins();
     String[] names = UnibrowPrefsUtil.getTopNode().node(NODE_PLUGINS).childrenNames();
-    
+
     return names;
   }
-  
+
   /** Returns a List of PluginInfo's. */
   public static List getAllPlugins() throws BackingStoreException {
     String[] names = getAllPluginNames();
@@ -118,16 +118,16 @@ public class PluginInfo {
         return 0;
       }
     };
-    
+
     Collections.sort(list, comp);
     return list;
   }
-  
+
   public static Preferences getNodeForName(String name) {
     Preferences node = UnibrowPrefsUtil.getTopNode().node(NODE_PLUGINS).node(name);
     return node;
   }
-  
+
   public static PluginInfo getPluginInfoForName(String name) {
     Preferences node = getNodeForName(name);
     return getPluginInfoFromNode(node);
@@ -137,7 +137,7 @@ public class PluginInfo {
     String plugin_name = node.name();
     String class_name = node.get(KEY_CLASS, null);
     boolean load = node.getBoolean(KEY_LOAD, (class_name != null));
-    
+
     PluginInfo info = new PluginInfo(class_name, plugin_name, load);
 
     String placement = node.get(KEY_PLACEMENT, PLACEMENT_TAB);
@@ -150,9 +150,9 @@ public class PluginInfo {
   public Object instantiatePlugin() {
     return instantiatePlugin(this.class_name);
   }
-  
+
   public static Object instantiatePlugin(String class_name) {
-    
+
     Object plugin = null;
     try {
       plugin = ObjectUtils.classForName(class_name).newInstance();
@@ -162,13 +162,13 @@ public class PluginInfo {
     }
     return plugin;
   }
-  
+
   public void persist() {
     if ((this.plugin_name == null) || (this.class_name == null)) {
       System.out.println("Cannot persist PluginInfo with null name or class name: "+this.toString());
       return;
     }
-    
+
     Preferences node = getNodeForName(this.plugin_name);
     node.put(KEY_CLASS, this.class_name);
     node.putBoolean(KEY_LOAD, this.load);
@@ -179,7 +179,7 @@ public class PluginInfo {
       node.put(KEY_DISPLAY_NAME, this.display_name);
     }
   }
-   
+
   // Creates preference nodes for all the standard plugins.
   // In addition to saving the user from having to type these in,
   // it makes sure that necessary plugins are always present
@@ -187,15 +187,15 @@ public class PluginInfo {
      // The "QuickLoad" plugin is absolutely required, so always force "load" to "true"
      PluginInfo.getNodeForName("QuickLoad").put(KEY_CLASS, QuickLoaderView.class.getName());
      PluginInfo.getNodeForName("QuickLoad").putBoolean(KEY_LOAD, true);
-     
+
      PluginInfo.getNodeForName("Selection Info").put(KEY_CLASS, SymTableView.class.getName());
-     
+
      PluginInfo.getNodeForName("Sliced View").put(KEY_CLASS, AltSpliceView.class.getName());
-     PluginInfo.getNodeForName("Graph Adjuster").put(KEY_CLASS, GraphAdjusterView.class.getName());
+     PluginInfo.getNodeForName("Graph Adjuster").put(KEY_CLASS, SimpleGraphTab.class.getName());
      PluginInfo.getNodeForName("Pattern Search").put(KEY_CLASS, SeqSearchView.class.getName());
      PluginInfo.getNodeForName("Bookmarks").put(KEY_CLASS, BookmarkManagerView.class.getName());
      PluginInfo.getNodeForName("Pivot View").put(KEY_CLASS, ExperimentPivotView.class.getName());
      PluginInfo.getNodeForName("Annotation Browser").put(KEY_CLASS, AnnotBrowserView.class.getName());
-     PluginInfo.getNodeForName("Restriction Sites").put(KEY_CLASS, RestrictionControlView.class.getName());  
+     PluginInfo.getNodeForName("Restriction Sites").put(KEY_CLASS, RestrictionControlView.class.getName());
   }
 }

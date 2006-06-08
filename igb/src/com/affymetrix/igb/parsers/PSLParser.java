@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,31 +21,30 @@ import java.util.regex.Pattern;
 import com.affymetrix.genoviz.util.Memer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.view.SeqMapView;
 
 public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 
   static java.util.List psl_pref_list = new ArrayList();
   static java.util.List psl3_pref_list = new ArrayList();
   static {
-    psl_pref_list.add(".bps");
-    psl_pref_list.add(".psl");
-
-    psl3_pref_list.add(".psl3");
-    psl3_pref_list.add(".bps");
-    psl3_pref_list.add(".psl");
+    psl_pref_list.add("bps");
+    psl_pref_list.add("psl");
+    
+    psl3_pref_list.add("psl3");
+    psl3_pref_list.add("bps");
+    psl3_pref_list.add("psl");
   }
 
-  boolean LOOK_FOR_TARGETS_IN_QUERYHASH = false;
+  boolean look_for_targets_in_query_group = false;
+  boolean create_container_annot = false;
+  boolean is_link_psl = false;
   public boolean DEBUG = false;
 
   static Pattern line_regex  = Pattern.compile("\t");
@@ -57,108 +56,80 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     super();
   }
 
-  public PSLParser(SeqMapView gv) {
-    super(gv);
-  }
-
   public void enableSharedQueryTarget(boolean b) {
-    LOOK_FOR_TARGETS_IN_QUERYHASH = b;
+    look_for_targets_in_query_group = b;
   }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
-    return parse(istr, null, "psl");
+  
+  public void setCreateContainerAnnot(boolean b) {
+    create_container_annot = b;
   }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
-    throws IOException {
-    return parse(istr, aseq, "psl");
-  }
-
+  
   /**
-   *  @param aseq should be target seq.
-   *  if aseq == null, then try and  return a seq based on contents of PSL file by:
-   *    feeding and empty hash for target seqs to other parse() method, which will
-   *    populate it with AnnotatedBioSeqs, then return first one that can be retrieved
-   *    from the hash
+   *  Whether or not to add new seqs from the file to the target AnnotatedSeqGroup.
+   *  Normally true; set this to false for "link.psl" files.
    */
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, String meth)
-    throws IOException {
-    return parse(istr, aseq, meth, false, true);
+  public void setIsLinkPsl(boolean b) {
+    is_link_psl = b;
   }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, String meth,
-				      boolean annotate_query, boolean annotate_target)
-    throws IOException{
-    Map target_hash = new HashMap();
-    if (aseq != null) {
-      target_hash.put(aseq.getID(), aseq);
-    }
-    parse(istr, meth, null, target_hash, annotate_query, annotate_target);
-    if (aseq == null) {
-      Iterator iter = target_hash.values().iterator();
-      if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
-      else { return null; }
-    }
-    else {
-      return aseq;
-    }
-  }
-
 
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash,
+			      AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
 			      boolean annotate_query, boolean annotate_target)  throws IOException  {
-    return parse(istr, annot_type, qhash, thash, null,
-		 annotate_query, annotate_target, false);
+    return parse(istr, annot_type, query_group, target_group, null, 
+      annotate_query, annotate_target, false);
   }
 
   /**
    *  Parse.
-   *  For convenience parse() methods that end up calling down to this parse(), the default is:
+   *  The most common parameters are:
    *     annotate_query = false;
-   *     annotate_target = true.
+   *     annotate_target = true;
+   *     annotate_other = false.
    *
+   *  @param istr             An input stream
+   *  @param annot_type       The method name for the annotation to load from the file, if the track line is missing;
+   *                          if there is a track line in the file, the name from the track line will be used instead.
+   *  @param query_group      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
+   *                          Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.
+   *  @param target_group      An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
+   *  @param other_group      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
+   *                          This parameter is ignored if the file is not in psl3 format.
    *  @param annotate_query   if true, then alignment SeqSymmetries are added to query seq as annotations
    *  @param annotate_target  if true, then alignment SeqSymmetries are added to target seq as annotations
+   *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
    *
    */
   public java.util.List parse(InputStream istr, String annot_type,
-			      Map qhash, Map thash,  Map ohash,
-			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
+    AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
+    boolean annotate_query, boolean annotate_target, boolean annotate_other)
     throws IOException {
-    return parse(istr, annot_type, false,
-		 qhash, thash, ohash,
-		 annotate_query, annotate_target, annotate_other);
-  }
-
-  public java.util.List parse(InputStream istr, String annot_type,  boolean create_container_annot,
-			      Map qhash, Map thash,  Map ohash,
-			      boolean annotate_query, boolean annotate_target, boolean annotate_other)
-    throws IOException {
+    
     System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
     ArrayList results = new ArrayList();
 
-    // added target2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (target2types) from
-    //    target seq to another hash (usually referred to as type2csym) of types to container sym
+    // Make temporary seq groups for any unspecified group.
+    // These temporary groups do not require synonym matching, because they should
+    // only refer to sequences from a single file.
+    if (query_group == null) {
+      query_group = new AnnotatedSeqGroup("Query");
+      query_group.setUseSynonyms(false);
+    }
+    if (target_group == null) {
+      target_group = new AnnotatedSeqGroup("Target"); 
+      target_group.setUseSynonyms(false);
+    }
+    if (other_group == null) {
+      other_group = new AnnotatedSeqGroup("Other");
+      other_group.setUseSynonyms(false);
+    }
+    
+    boolean in_bottom_of_link_psl = false;
+    
+    // the three xxx2types Maps accomodate using create_container_annot and psl with track lines.
     HashMap target2types = new HashMap();
-
-    // added query2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (query2types) from
-    //    query seq to another hash (usually referred to as type2csym) of types to container sym
     HashMap query2types = new HashMap();
-
-    // added other2types to accomodate using both container syms and psl with track lines,
-    //    because then if using a container sym need to first hash (other2types) from
-    //    other seq to another hash (usually referred to as type2csym) of types to container sym
     HashMap other2types = new HashMap();
 
-    Map query_hash = qhash;
-    if (query_hash == null) { query_hash = new HashMap(); }
-    Map target_hash = thash;
-    if (target_hash == null) { target_hash = new HashMap(); }
-    Map other_hash = ohash;
-    if (other_hash == null) { other_hash = new HashMap(); }
     int line_count = 0;
     //    MutableAnnotatedBioSeq seq = aseq;
     //    Hashtable query_seq_hash = new Hashtable();
@@ -168,16 +139,24 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
     int total_annot_count = 0;
     int total_child_count = 0;
     String[] block_size_array = null;
+    Thread thread = Thread.currentThread();
     try {
-      while ((line = br.readLine()) != null) {
+      while ((line = br.readLine()) != null && (! thread.isInterrupted())) {
 	line_count++;
         // Ignore psl header lines
-	if (line.trim().equals("") || line.startsWith("#") || 
-            line.startsWith("match\t") || line.startsWith("-------")) { 
-          continue; 
+	if (line.trim().equals("") || line.startsWith("#") ||
+            line.startsWith("match\t") || line.startsWith("-------")) {
+          continue;
         }
 	else if (line.startsWith("track")) {
-	  setTrackProperties(line);
+	  Map track_props = setTrackProperties(line);
+          if (is_link_psl) {
+            String track_name = (String) track_props.get("name");
+            if (track_name != null && track_name.endsWith("probesets")) {
+              in_bottom_of_link_psl = true;
+            }
+          }
+          // You can later get the track properties with getCurrentTrackHash();
 	  continue;
 	}
 	String[] fields = line_regex.split(line);
@@ -267,32 +246,40 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	  System.err.println(line);
 	  continue;
 	}
-
-	MutableAnnotatedBioSeq qseq = (MutableAnnotatedBioSeq)query_hash.get(qname);
+        
+        MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
 	if (qseq == null)  {
 	  // Doing a new String() here gives a > 4X reduction in
 	  //    memory requirements!  Possible reason: Regex machinery when it splits a String into
 	  //    an array of Strings may use same underlying character array, so essentially
 	  //    end up holding a pointer to a character array containing the whole input file ???
 	  //
-	  String new_qname = new String(qname);
-	  qseq = new SimpleAnnotatedBioSeq(new_qname, qsize);
-	  query_hash.put(new_qname, qseq);
+          qseq = query_group.addSeq(new String(qname), qsize);
 	}
 	if (qseq.getLength() < qsize) { qseq.setLength(qsize); }
 
-	MutableAnnotatedBioSeq tseq = (MutableAnnotatedBioSeq)target_hash.get(tname);
+
+ 	MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
 	if (tseq == null) {
-	  if (LOOK_FOR_TARGETS_IN_QUERYHASH && (query_hash.get(tname) != null))  {
-	    tseq = (MutableAnnotatedBioSeq)query_hash.get(tname);
+	  if (look_for_targets_in_query_group && (query_group.getSeq(tname) != null))  {
+	    tseq = query_group.getSeq(tname);
 	  }
 	  else {
-	    String new_tname = new String(tname);
-	    tseq = new SimpleAnnotatedBioSeq(new_tname, tsize);
-	    target_hash.put(new_tname, tseq);
+            if (look_for_targets_in_query_group && is_link_psl) {
+              // If we are in the bottom section of a ".link.psl" file,
+              // then add sequences only to the query sequence, never the target sequence.
+              if (in_bottom_of_link_psl) {
+                tseq = query_group.addSeq(new String(tname), qsize);
+              } else {
+                tseq = target_group.addSeq(new String(tname), qsize);                
+              }
+            } else {
+              tseq = target_group.addSeq(new String(tname), qsize);              
+            }
 	  }
 	}
 	if (tseq.getLength() < tsize)  { tseq.setLength(tsize); }
+          
 
 	java.util.List child_arrays = calcChildren(qseq, tseq, qforward, tforward,
 						   block_size_array, q_start_array, t_start_array);
@@ -314,6 +301,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	if (fields.length > findex &&
 	    (fields[findex].equals("+") || fields[findex].equals("-")) ) {
 	  // a "+" or "-" in first field after tmins indicates that it's a Psl3 format
+	  is_psl3 = true;
+          
 	  String otherstrand_string = fields[findex++];
 	  boolean other_same_orientation = otherstrand_string.equals("+");
 	  String oname = fields[findex++];
@@ -326,10 +315,9 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	    omins[i] = Integer.parseInt(o_min_array[i]);
 	  }
 
-	  MutableAnnotatedBioSeq oseq = (MutableAnnotatedBioSeq)other_hash.get(oname);
+	  MutableAnnotatedBioSeq oseq = other_group.getSeq(oname);
 	  if (oseq == null)  {
-	    oseq = new SimpleAnnotatedBioSeq(oname, osize);
-	    other_hash.put(oname, oseq);
+            oseq = other_group.addSeq(new String(oname), osize);
 	  }
 	  if (oseq.getLength() < osize) { oseq.setLength(osize); }
 
@@ -338,32 +326,15 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 			    same_orientation, other_same_orientation,
 			    qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax,
 			    blockcount, blocksizes, qmins, tmins, omins);
-	  is_psl3 = true;
-	  //	  System.out.println("making PSL3 sym");
-	  if (annotate_other) {
-	    if (create_container_annot) {
-	      Map type2csym = (Map)other2types.get(oseq);
-	      if (type2csym == null) {
-		type2csym = new HashMap();
-		other2types.put(oseq, type2csym);
-	      }
-	      //	      SimpleSymWithProps other_parent_sym = (SimpleSymWithProps)other2sym.get(tname);
-	      SimpleSymWithProps other_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	      if (other_parent_sym == null) {
-		other_parent_sym = new SimpleSymWithProps();
-		other_parent_sym.addSpan(new SimpleSeqSpan(0, oseq.getLength(), oseq));
-		other_parent_sym.setProperty("method", type);
-		other_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-		oseq.addAnnotation(other_parent_sym);
-		//		other2sym.put(tname, other_parent_sym);
-		type2csym.put(type, other_parent_sym);
-	      }
-	      other_parent_sym.addChild(sym);
-	    }
-	    else {
-	      oseq.addAnnotation(sym);
-	    }
-	  }
+
+          if (annotate_other) {
+            if (create_container_annot) {
+              createContainerAnnot(other2types, oseq, type, sym, is_psl3);
+            } else {
+              oseq.addAnnotation(sym);
+            }          
+            other_group.addToIndex(sym.getID(), sym);
+          }
 	}
 	else {
 	  sym = new UcscPslSym(type, match, mismatch, repmatch, n_count,
@@ -372,8 +343,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 			       qseq, qmin, qmax, tseq, tmin, tmax,
 			       blockcount, blocksizes, qmins, tmins);
 	}
-	//	System.out.println("looking for extra tagval fields");
-
+        
 	// looking for extra tag-value fields at end of line
 	if (fields.length > findex) {
 	  for (int i=findex; i<fields.length; i++) {
@@ -382,79 +352,36 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	    if (tagval.length >= 2) {
 	      String tag = tagval[0];
 	      String val = tagval[1];
-	      //	      System.out.println("setting property: " + tag + ", " + val);
 	      sym.setProperty(tag, val);
 	    }
 	  }
 	}
 
-	if (annotate_query) {
-	  if (create_container_annot) {
-	    Map type2csym = (Map)query2types.get(qseq);
-	    if (type2csym == null) {
-	      type2csym = new HashMap();
-	      query2types.put(qseq, type2csym);
-	    }
-	    //	    SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
-	    SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	    if (query_parent_sym == null) {
-	      query_parent_sym = new SimpleSymWithProps();
-	      query_parent_sym.addSpan(new SimpleSeqSpan(0, qseq.getLength(), qseq));
-	      query_parent_sym.setProperty("method", type);
-	      if (is_psl3) {
-		query_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-	      }
-	      else {
-		query_parent_sym.setProperty("preferred_formats", psl_pref_list);
-	      }
-	      qseq.addAnnotation(query_parent_sym);
-	      //	      query2sym.put(qname, query_parent_sym);
-	      type2csym.put(type, query_parent_sym);
-	    }
-	    query_parent_sym.addChild(sym);
-	  }
-	  else {
-	    qseq.addAnnotation(sym); // GAH commenting out for memory testing 8-20-2003
-	  }
-	}
+        if (annotate_query) {
+          if (create_container_annot) {
+            createContainerAnnot(query2types,qseq,type,sym,is_psl3);
+          } else {
+            qseq.addAnnotation(sym);
+          }
+          query_group.addToIndex(sym.getID(), sym);
+        }
 
 	if (annotate_target) {
-
-	  // need to work on adding a top-level symmetry X here which is itself added
-	  // (just once, then hashed to keep track of it) to the tseq, and add psl syms as
-	  //    children of X (rather than directly to tseq)
-	  // and similarly with qseq...
-	  //	  System.out.println("annotating target: ");
-	  //	  SeqUtils.printSymmetry(sym);
 	  if (create_container_annot) {
-	    Map type2csym = (Map)target2types.get(tseq);
-	    if (type2csym == null) {
-	      type2csym = new HashMap();
-	      target2types.put(tseq, type2csym);
-	    }
-	    SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	    if (target_parent_sym == null) {
-	      target_parent_sym = new SimpleSymWithProps();
-	      target_parent_sym.addSpan(new SimpleSeqSpan(0, tseq.getLength(), tseq));
-	      target_parent_sym.setProperty("method", type);
-	      if (is_psl3) {
-		target_parent_sym.setProperty("preferred_formats", psl3_pref_list);
-	      }
-	      else {
-		target_parent_sym.setProperty("preferred_formats", psl_pref_list);
-	      }
-	      tseq.addAnnotation(target_parent_sym);
-	      type2csym.put(type, target_parent_sym);
-	    }
-	    target_parent_sym.addChild(sym);
+            createContainerAnnot(target2types, tseq, type, sym, is_psl3);
 	  }
 	  else {
 	    tseq.addAnnotation(sym);
 	  }
+          if (! in_bottom_of_link_psl) {
+            target_group.addToIndex(sym.getID(), sym);
+          }
 	}
-	total_annot_count++;
+
+        total_annot_count++;
 	total_child_count += sym.getChildCount();
 	results.add(sym);
+
 	if (total_annot_count % 5000 == 0) {
 	  System.out.println("current annot count: " + total_annot_count);
 	}
@@ -467,14 +394,39 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       if (block_size_array != null && block_size_array.length != 0) {
         sb.append("block_size first element: **" + block_size_array[0] + "**\n");
       }
-      IGB.errorPanel(sb.toString(), e);
-
+      IOException ioe = new IOException(sb.toString());
+      ioe.initCause(e);
+      throw ioe;
     } finally {
       br.close();
     }
     System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 		       ", child count: " + total_child_count);
     return results;
+  }
+    
+  static void createContainerAnnot(Map seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3) {
+    //    If using a container sym, need to first hash (seq2types) from
+    //    seq to another hash (type2csym) of types to container sym
+    Map type2csym = (Map) seq2types.get(seq);
+    if (type2csym == null) {
+      type2csym = new HashMap();
+      seq2types.put(seq, type2csym);
+    }
+    SimpleSymWithProps parent_sym = (SimpleSymWithProps)type2csym.get(type);
+    if (parent_sym == null) {
+      parent_sym = new SimpleSymWithProps();
+      parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+      parent_sym.setProperty("method", type);
+      if (is_psl3) {
+        parent_sym.setProperty("preferred_formats", psl3_pref_list);
+      } else {
+        parent_sym.setProperty("preferred_formats", psl_pref_list);
+      }
+      seq.addAnnotation(parent_sym);
+      type2csym.put(type, parent_sym);
+    }
+    parent_sym.addChild(sym);
   }
 
 
@@ -695,17 +647,19 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
       Memer mem = new Memer();
       mem.printMemory();
       java.util.List results = null;
-      Map query_hash = new HashMap();
-      Map target_hash = new HashMap();
+      AnnotatedSeqGroup query_seq_group = new AnnotatedSeqGroup("Query");
+      AnnotatedSeqGroup target_seq_group = new AnnotatedSeqGroup("Target");
+      
       try {
 	File fl = new File(file_name);
 	FileInputStream fistr = new FileInputStream(fl);
-	//      seq = test.parse(fistr, null);
-	//	results = test.parse(fistr, "psl_test", query_hash, target_hash, true, true);
-	// trying with containers...
-	results = test.parse(fistr, "psl_test", true,
-			     query_hash, target_hash, null, true, true, false);
-	fistr.close();
+        test.setCreateContainerAnnot(true);
+
+        results = test.parse(fistr, "psl_test",
+          query_seq_group, target_seq_group, null, 
+          true, true, false);
+
+        fistr.close();
 	int acount = results.size();
 	System.out.println("Results: annotation count = " + acount);
 	for (int i=0; i<acount; i++) {

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -41,7 +41,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
   //  double end;
 
   /**
-   *  assume start < end
+   *  Constructor. Requires that min < max.
    */
   public CompositeNegSeq(String id, int min, int max) {
     this(id);
@@ -92,7 +92,8 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
   }
 
   /**
-   *  overriding getResidues() to include residues where position < 0
+   *  Returns the complete residues in a String.
+   *  Overrided to include residues where position < 0.
    */
   public String getResidues() {
     return getResidues(start, end);
@@ -102,20 +103,14 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     SeqSpan residue_span = new SimpleSeqSpan(res_start, res_end, this);
     int reslength = Math.abs(res_end - res_start);
     char[] char_array = new char[reslength];
-    // start with all spaces
-    for (int i=0; i<reslength; i++) {
-      char_array[i] = fillchar;
-    }
+    java.util.Arrays.fill(char_array, fillchar);
     SeqSymmetry rootsym = this.getComposition();
     if (rootsym == null)  { return null; }
     // adjusting index into array to compensate for possible seq start < 0
     int array_offset = -start;
     getResidues(residue_span, fillchar, rootsym, char_array, array_offset);
+    // Note that new String(char[]) causes the allocation of a second char array
     String res = new String(char_array);
     return res;
   }
-
-
 }
-
-

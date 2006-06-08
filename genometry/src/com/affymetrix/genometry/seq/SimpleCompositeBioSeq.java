@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -59,10 +59,6 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
 
   public String getID() { return id; }
 
-  /**
-   *  TODO: Need to implement calculation of length in constructors
-   *  (or else change constructors to specifically take length as an argument)
-   */
   public int getLength() {
     if (length > Integer.MAX_VALUE)  { return Integer.MAX_VALUE - 1; }
     else  { return (int)length; }
@@ -75,7 +71,6 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   public String getResidues() {
     // may want to do a caching strategy at some point, in case there are repeated
     //   getResidues calls...
-//    return getResidues(0, length);
         return getResidues(0, getLength());
   }
 
@@ -91,9 +86,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
       int reslength = Math.abs(end - start);
       char[] char_array = new char[reslength];
       // start with all spaces
-      for (int i=0; i<reslength; i++) {
-	char_array[i] = fillchar;
-      }
+      java.util.Arrays.fill(char_array, fillchar);
       SeqSymmetry rootsym = this.getComposition();
       getResidues(residue_span, fillchar, rootsym, char_array, 0);
       result = new String(char_array);

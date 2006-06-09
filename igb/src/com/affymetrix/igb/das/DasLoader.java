@@ -16,6 +16,7 @@ package com.affymetrix.igb.das;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.regex.*;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.xml.sax.*;
@@ -233,7 +234,7 @@ public abstract class DasLoader {
     
     // find and create cache dir
     String home = System.getProperty("user.home");
-    String sep = System.getProperty("file.separator");
+    String sep = System.getProperty("file.separator");   
     String cacheDir = home+sep+".igb"+sep+"cache";
     new File(cacheDir).mkdirs();
     File cacheFile = new File(cacheDir+sep+hashcode+".cache");
@@ -268,6 +269,17 @@ public abstract class DasLoader {
     // Finally, set the mod time of the cache file if the server reports it
     //if (date > 0) cacheFile.setLastModified(date);
     
-    return("file://"+cacheFile.getAbsolutePath());
+    String returnString = "file:///"+cacheFile.getAbsolutePath();
+    //the following is needed on Windows to make the path a URL (instead of a Windows path)
+    try {
+        Pattern p = Pattern.compile("\\\\");    
+        Matcher m = p.matcher(returnString);
+        returnString = m.replaceAll("/");
+    }
+    catch(PatternSyntaxException e){
+        System.out.println(e.getMessage());
+    }
+    return returnString;
+    
   }
 }

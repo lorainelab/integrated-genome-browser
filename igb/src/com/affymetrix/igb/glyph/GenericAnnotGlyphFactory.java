@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -29,12 +29,22 @@ import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
-  //static boolean SUPPRESS_GLYPHS = false;
   static boolean USE_EFFICIENT_GLYPHS = true;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;
   static boolean ADD_CHILDREN = true;
   static boolean OPTIMIZE_CHILD_MODEL = false;
+  
+  /** Set to true if the we can assume the container SeqSymmetry being passed
+   *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
+   */
+  static final boolean ASSUME_CONSTANT_DEPTH = true;
+  
+  /**
+   * Set to true to draw glyphs at locations of deletions.
+   */
+  static final boolean DRAW_DELETION_GLYPHS = true;
+  
 
   static Color default_annot_color = Color.GREEN;
   static Color default_tier_color = Color.BLACK;
@@ -122,23 +132,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 	SeqUtils.printSymmetry(comp);
       }
     }
-    standard_transform_call_count = 0;
-    cds_transform_call_count = 0;
-    cds_transform_direct_count = 0;
-    SeqUtils.unsuccessful_count = 0;
-    //    return createGlyph(sym, smv, false);
     createGlyph(sym, smv, false);
-    if (SeqMapView.DEBUG_COMP)  {
-      System.out.println("   transform calls:  standard = " + standard_transform_call_count +
-			 ", cds = " + cds_transform_call_count +
-			 ", cds direct = " + cds_transform_direct_count + 
-			 ", unsuccessful = " + SeqUtils.unsuccessful_count);
-      System.out.println("");
-    }
-    standard_transform_call_count = 0;
-    cds_transform_call_count = 0;
-    cds_transform_direct_count = 0;
-    SeqUtils.unsuccessful_count = 0;
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
@@ -166,7 +160,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       int childCount = sym.getChildCount();
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childSym = sym.getChild(i);
-        //        addAnnotationTiers(childSym);
         createGlyph(childSym, gviewer, false);
 	//        createGlyph(childSym, gviewer, next_to_axis);
       }
@@ -178,10 +171,24 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     gviewer = smv;
   }
 
+  int getDepth(SeqSymmetry sym) {
+    int depth = 1;
+    SeqSymmetry current = sym;
+    if (ASSUME_CONSTANT_DEPTH) {
+      while (current.getChildCount() != 0) {
+        current = current.getChild(0);
+        depth++;
+      }
+    } else {
+      depth = SeqUtils.getDepth(sym);
+    }
+    return depth;
+  }
+
   public void addLeafsToTier(SeqSymmetry sym,
                              TierGlyph ftier, TierGlyph rtier,
                              int desired_leaf_depth) {
-    int depth = SeqUtils.getDepth(sym);
+    int depth = getDepth(sym);
     if (depth > desired_leaf_depth) {
       for (int i=0; i<sym.getChildCount(); i++) {
         SeqSymmetry child = sym.getChild(i);
@@ -195,12 +202,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       addToTier(sym, ftier, rtier, (depth >= 2));
     }
   }
-
-  int optimized_child_count = 0;
-
-  int standard_transform_call_count = 0;
-  int cds_transform_call_count = 0;
-  int cds_transform_direct_count = 0;
   
   /**
    *  @param parent_and_child  Whether to draw this sym as a parent and 
@@ -218,8 +219,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     BioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
     if (annotseq != coordseq) {
-      sym = gviewer.transformForViewSeq(insym);
-      standard_transform_call_count++;
+      sym = gviewer.transformForViewSeq(insym, annotseq);
     }
 
     SeqSpan pspan = sym.getSpan(coordseq);
@@ -227,6 +227,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       return null;
     }  // if no span corresponding to seq, then return;
 
+    // Find boundaries of the splices.  Used to draw glyphs for deletions.
+    int[][] boundaries = null;
+    if (DRAW_DELETION_GLYPHS && annotseq != coordseq && ADD_CHILDREN && sym.getChildCount() > 0) {
+      boundaries = determineBoundaries(annotseq, coordseq);
+    }
+    
     boolean forward = pspan.isForward();
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
 
@@ -273,34 +279,51 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
         tempsym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
         if (annotseq != coordseq) {
-          SeqSymmetry[] transform_path = gviewer.getTransformPath();
-          SeqUtils.transformSymmetry(tempsym, transform_path);
-	  cds_transform_direct_count++;
+          SeqUtils.transformSymmetry(tempsym, gviewer.getTransformPath());
           cdsSpan = tempsym.getSpan(coordseq);
         }
         cds_sym = tempsym;
       }
-
+      
       if (ADD_CHILDREN) {
         int childCount = sym.getChildCount();
+        int j = 0;
         for (int i=0; i<childCount; i++) {
           SeqSymmetry child = null;
           SeqSpan cspan = null;
-          if (OPTIMIZE_CHILD_MODEL && (sym instanceof UcscPslSym)) {
-            optimized_child_count++;
-            //            if (optimized_child_count % 10000 == 0) {
-            //              System.out.println("optimized child count: " + optimized_child_count);
-            //            }
-            UcscPslSym psym = (UcscPslSym)sym;
-            psym.getChildSpan(i, coordseq, model_span);
-            cspan = model_span;
-            child = placeholder;
+          child = sym.getChild(i);
+          cspan = child.getSpan(coordseq);
+
+          if (cspan == null) {
+            
+            if (DRAW_DELETION_GLYPHS && annotseq != coordseq) {
+              // There is a missing child, so indicate it with a little glyph.
+              
+              int annot_span_min = child.getSpan(annotseq).getMin();
+              while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
+                j++;
+              }
+              int gap_location = boundaries[j][1];
+              
+              EfficientFillRectGlyph boundary_glyph = new EfficientFillRectGlyph();
+              boundary_glyph.setCoords(gap_location, -2, 1, DEFAULT_THICK_HEIGHT+4);
+              boundary_glyph.setColor(child_color);
+              boundary_glyph.setHitable(false);
+              pglyph.addChild(boundary_glyph);
+              
+              Rectangle2D cb = pglyph.getCoordBox();
+              if (cb.x > gap_location) {
+                double end = cb.x + cb.width;
+                cb.x = gap_location;
+                cb.width = end - cb.x;
+              } else if (cb.x + cb.width < gap_location) {
+                cb.width = gap_location - cb.x;
+              }
+            }            
+            
+            continue;
           }
-          else {
-            child = sym.getChild(i);
-            cspan = child.getSpan(coordseq);
-          }
-          if (cspan == null) { continue; }
+          
           GlyphI cglyph = null;
 
           try  { cglyph = (GlyphI)child_glyph_class.newInstance(); }
@@ -315,8 +338,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 		SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
 		SeqSymmetry cds_sym_3 = cds_sym_2;
 		if (annotseq != coordseq) {
-		  cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2);
-		  cds_transform_call_count++;
+		  cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
 		}
 		//SeqSpan cds_span = SeqUtils.intersection(cdsSpan, cspan);
 		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
@@ -338,7 +360,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           pglyph.addChild(cglyph);
           if (SET_CHILD_INFO) {
             map.setDataModelFromOriginalSym(cglyph, child);
-          }
+          }                    
         }
       }
     }
@@ -374,4 +396,31 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     return pglyph;
   }
 
+  // a helper function used in drawing the "deletion" glyphs
+  int[][] determineBoundaries(BioSeq annotseq, BioSeq coordseq) {
+    int[][] boundaries = null;
+    if (annotseq != coordseq) {
+      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
+      simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
+      SeqSymmetry bounds_sym = gviewer.transformForViewSeq(simple_sym, annotseq);
+      
+      boundaries = new int[bounds_sym.getChildCount()+1][];
+      
+      SeqSymmetry child = bounds_sym.getChild(0);
+
+      boundaries[0] = new int[2];
+      boundaries[0][0] = Integer.MIN_VALUE;
+      boundaries[0][1] = child.getSpan(coordseq).getMin();
+      for (int qq = 1 ; qq < boundaries.length; qq++) {
+        child = bounds_sym.getChild(qq-1);
+        SeqSpan annot_span = child.getSpan(annotseq);
+        SeqSpan coord_span = child.getSpan(coordseq);
+        
+        boundaries[qq] = new int[2];
+        boundaries[qq][0] = annot_span.getMax();
+        boundaries[qq][1] = coord_span.getMax();
+      }
+    }
+    return boundaries;    
+  }
 }

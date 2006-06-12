@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,12 +18,10 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -57,14 +55,14 @@ giving PS_x_(CSym_x_View), you cannot predict at what depth to find
 the probeset, probe and pieces of probes
 */  
   
-  
+  static final boolean DEBUG = false;
+    
   /** Any method name (track-line name) ending with this is taken as a poly_a_site. */
   public static final String POLY_A_SITE_METHOD = "netaffx poly_a_sites";
   /** Any method name (track-line name) ending with this is taken as a poly_a_stack. */
   public static final String POLY_A_STACK_METHOD = "netaffx poly_a_stacks";
   /** Any method name (track-line name) ending with this is taken as a consensus/exemplar sequence. */
   public static final String NETAFFX_CONSENSUS = " netaffx consensus";
-
 
   static Color ps_color = Color.PINK;
   static Color ps_s_color = Color.GREEN;
@@ -150,7 +148,6 @@ the probeset, probe and pieces of probes
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    AffyTieredMap map = gviewer.getSeqMap();
     String meth = SeqMapView.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
@@ -159,13 +156,11 @@ the probeset, probe and pieces of probes
       if (n>0) meth = meth.substring(0, n);
     }
     if (meth != null) {
-      boolean use_fast_packers = false; // Glyphs in tier may have varying heights
       AnnotStyle style = AnnotStyle.getInstance(meth);
       consensus_color = style.getColor();
       label_field = style.getLabelField();
       
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
-      BioSeq seq = gviewer.getAnnotatedSeq();
       addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
     }
   }
@@ -373,11 +368,13 @@ the probeset, probe and pieces of probes
    */
   void drawConsensusAnnotation(SeqSymmetry probeset, SeqSymmetry consensus_sym, 
     GlyphI parent_glyph, double y, double height) {
-     int consensus_depth = SeqUtils.getDepth(consensus_sym);
-     if (consensus_depth != 2) {
-       System.out.println("***************** ERROR: consensus_depth is not 2, but is "+consensus_depth);
-       return;
-     }
+    if (DEBUG) {
+      int consensus_depth = SeqUtils.getDepth(consensus_sym);
+      if (consensus_depth != 2) {
+        System.out.println("***************** ERROR: consensus_depth is not 2, but is "+consensus_depth);
+        return;
+      }
+    }
     String meth = SeqMapView.determineMethod(probeset);
     DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
     SeqUtils.transformSymmetry(probeset_sym, consensus_sym);

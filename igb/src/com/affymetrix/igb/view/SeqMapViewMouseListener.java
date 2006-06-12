@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.*;
-import javax.swing.*;
 
 /**
  *  A MouseListener for the SeqMapView.
@@ -394,9 +393,13 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       }
       map.select(glyphs);
     } else {
-      something_changed = true;
-      smv.clearSelection();
-      map.select(glyphs);
+      if (glyphs.isEmpty() && map.getSelected().isEmpty()) {
+        something_changed = false;
+      } else {
+        something_changed = true;
+        smv.clearSelection();
+        map.select(glyphs);
+      }
     }
     if (smv.show_edge_matches && something_changed) {
       smv.doEdgeMatching(map.getSelected(), false);

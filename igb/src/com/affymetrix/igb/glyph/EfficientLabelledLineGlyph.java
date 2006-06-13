@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,9 +16,6 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.igb.IGB;
 
 /** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
@@ -30,33 +27,22 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
 
   public void draw(ViewI view) {
     //    super.draw(view);
-    Rectangle pixelbox = view.getScratchPixBox();
     Rectangle2D full_view_cbox = view.getFullView().getCoordBox();
     Graphics g = view.getGraphics();
-    //    view.transformToPixels(this, pixelbox);
-    Rectangle2D trimmed_cbox;
-    if ((this.x < full_view_cbox.x) || 
-	((this.x + this.width) > (full_view_cbox.x + full_view_cbox.width)) ) {
-      // intersection() returns intersection in scratch_cbox (which trimmed_cbox is then set to)
-      trimmed_cbox = GeometryUtils.intersection(full_view_cbox, this.getCoordBox(), scratch_cbox);
-    }
-    else {
-      trimmed_cbox = this.getCoordBox();
-    }
-    view.transformToPixels(trimmed_cbox, pixelbox);
+
+    // intersection() returns intersection in scratch_cbox (which trimmed_cbox is then set to)      
+    scratch_cbox.x = Math.max(this.x, full_view_cbox.x);
+    scratch_cbox.width = Math.min(this.x + this.width, full_view_cbox.x + full_view_cbox.width) - scratch_cbox.x;
+    scratch_cbox.y = this.y;
+    scratch_cbox.height = this.height;
+
+    Rectangle pixelbox = view.getScratchPixBox();
+    view.transformToPixels(scratch_cbox, pixelbox);
 
     int original_pix_width = pixelbox.width;
     if (pixelbox.width == 0) { pixelbox.width = 1; }
     if (pixelbox.height == 0) { pixelbox.height = 1; }
 
-    /*
-    //    Rectangle compbox = view.getComponentSizeRect();  // this should probably just be view.getPixelBox()
-    Rectangle full_pixbox = view.getFullView().getPixelBox();
-    if ((pixelbox.x < full_pixbox.x) ||
-        ((pixelbox.x + pixelbox.width) > (full_pixbox.x + full_pixbox.width))) {
-      pixelbox = GeometryUtils.intersection(full_pixbox, pixelbox, pixelbox);
-    }
-    */
     // We use fillRect instead of drawLine, because it may be faster.
     g.setColor(getBackgroundColor());
     if (show_label) {

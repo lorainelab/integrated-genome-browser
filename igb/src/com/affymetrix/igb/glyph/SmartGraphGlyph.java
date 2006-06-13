@@ -87,7 +87,8 @@ public class SmartGraphGlyph extends GraphGlyph {
   //  GraphCache graph_cache;
   //  GraphCache2 graph_cache;
   ArrayList caches = new ArrayList();  // the hiearchy of graph caches (well really just one for now...)
-  int compression_level = 100;  // average # of points per entry in flat graph compression cache
+  //  int compression_level = 100;  // average # of points per entry in flat graph compression cache
+  int compression_level = 20;  // average # of points per entry in flat graph compression cache
 
   /*
    *  Want to eventually support many drawing options:
@@ -331,16 +332,10 @@ public class SmartGraphGlyph extends GraphGlyph {
     //    double avg_points_per_pixel = avg_coords_per_point / coords_per_pixel;
     double avg_points_per_pixel = avg_points_per_coord * coords_per_pixel;
     /*
-    System.out.println("avg coords between points: " + avg_coords_between_points);
-    */
-    //    System.out.println("coords per pixel: " + coords_per_pixel);
-    //    System.out.println("avg points per pixel: " + avg_points_per_pixel);
-
-    /*
      *  first implementation of graph compression caching, just using a flat caching
      *      (one level of compression / summation)
      */
-    if (USE_GRAPH_CACHE && (avg_points_per_pixel > compression_level)) {
+    if ((avg_points_per_pixel > compression_level) && USE_GRAPH_CACHE) {
       int draw_beg_index;
       int draw_end_index;
 
@@ -364,14 +359,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	else if (draw_end_index >= graph_cache.xmin.length) { draw_end_index = graph_cache.xmin.length - 1; }
 	if (draw_end_index < (graph_cache.xmin.length-1)) { draw_end_index++; }
       }
-      /*
-      System.out.println("searching cache for min near: " + xmin + ", graph cache begin index: " +
-			 draw_beg_index + ", " + graph_cache.xmin[draw_beg_index]);
-      System.out.println("searching cache for max near: " + xmax + ", graph cache end index: " +
-			 draw_end_index + ", " + graph_cache.xmax[draw_end_index]);
-      */
       coord.x = graph_cache.xmin[draw_beg_index];
-      coord.y = offset - (graph_cache.yavg[draw_beg_index] * yscale);
+      //      coord.y = offset - (graph_cache.yavg[draw_beg_index] * yscale);
+      coord.y = offset - ((graph_cache.ymin[draw_beg_index] - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
 
       int ymin_pixel = prev_point.y;;
@@ -412,11 +402,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
       else {  // using cache, but still collecting values per pixel...
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	  //	  coord.x = (graph_cache.xmin[i] + graph_cache.xmax[i]) / 2.0f;
-	  //	  coord.x = (graph_cache.xmin[i]/2) + (graph_cache.xmax[i]/2);
 	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
-
-	  //	  coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
 	  view.transformToPixels(coord, curr_point);
 	  // flipping -- hmm...
@@ -438,7 +424,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    //    the same x pixel
 	    ymin_pixel = Math.min(ymin_pixel, temp_ymin_pixel);
 	    ymax_pixel = Math.max(ymax_pixel, temp_ymax_pixel);
-	    //	    ysum += curr_point.y;
 	    ysum += temp_ysum;
 	    points_in_pixel++;
 	  }
@@ -453,9 +438,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
 	    yavg_pixel = ysum / points_in_pixel;
 	    if (AVGLINE) {
-	      // draw average line
-	      //	      g.setColor(lighter);
-	      //	      g.drawLine(last_xavg,  last_yavg, prev_point.x, yavg_pixel);
 	      // cache for drawing later
 	      if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 		pixel_cache[prev_point.x] =
@@ -464,9 +446,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
 	    last_xavg = prev_point.x;
 	    last_yavg = yavg_pixel;
-	    //	    ymin_pixel = curr_point.y;
-	    //	    ymax_pixel = curr_point.y;
-	    //	    ysum = curr_point.y;
 	    ymin_pixel = temp_ymin_pixel;
 	    ymax_pixel = temp_ymax_pixel;
 	    ysum = temp_ysum;
@@ -475,7 +454,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    prev_point.x = curr_point.x;
 	    prev_point.y = curr_point.y;
 	  }
-	  //	g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 	}
       }
       if (SHOW_CACHE_INDICATOR) {
@@ -483,6 +461,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	g.fillRect(20, ymin_pixel-5, 25, 10);
       }
     }
+    // not using graph "cache", because zoomed too far in (but not far enough to switch to bars)
     else  { // not using graph cache...
       // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
@@ -511,10 +490,9 @@ public class SmartGraphGlyph extends GraphGlyph {
         draw_end_index = xcoords.length - 1;
       }
 
-      //      System.out.println("start index = " + draw_beg_index + ", val = " + xcoords[draw_beg_index]);
-      //      System.out.println("end index = " + draw_end_index + ", val = " + xcoords[draw_end_index]);
       coord.x = xcoords[draw_beg_index];
-      coord.y = offset - (ycoords[draw_beg_index] * yscale);
+      //      coord.y = offset - (ycoords[draw_beg_index] * yscale);
+      coord.y = offset - ((ycoords[draw_beg_index] - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
 
       int ymin_pixel = prev_point.y;;
@@ -523,10 +501,6 @@ public class SmartGraphGlyph extends GraphGlyph {
       int ysum = prev_point.y;
       int points_in_pixel = 1;
       int draw_count = 0;
-      int last_xavg = 0;
-      int last_yavg = 0;
-      int last_ymin = 0;
-      int last_ymax = 0;
 
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
@@ -542,7 +516,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
 
 	else {  // draw previous pixel position
-	  if ((graph_style == MINMAXAVG) && MINMAXBAR) {
+	  if ((graph_style == MINMAXAVG) && MINMAXBAR)  {
 	    g.setColor(darker);
 	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
 		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
@@ -550,18 +524,12 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  }
 	  yavg_pixel = ysum / points_in_pixel;
 	  if (AVGLINE) {
-	    // draw average line
-	    //	      g.setColor(lighter);
-	    //	      g.drawLine(last_xavg,  last_yavg, prev_point.x, yavg_pixel);
 	    // cache for drawing later
 	    if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-	      //	      pixel_cache[prev_point.x] = yavg_pixel;
 	      pixel_cache[prev_point.x] =
 		  Math.min(Math.max(yavg_pixel, pixelbox.y), pbox_yheight);
 	    }
 	  }
-	  last_xavg = prev_point.x;
-	  last_yavg = yavg_pixel;
 	  ymin_pixel = curr_point.y;
 	  ymax_pixel = curr_point.y;
 	  ysum = curr_point.y;
@@ -569,10 +537,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  prev_point.x = curr_point.x;
 	  prev_point.y = curr_point.y;
 	}
-	//	g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
       }
-      //     System.out.println("points in view: " + (draw_end_index - draw_beg_index + 1));
-      //     System.out.println("  draw count: " + draw_count);
       // can only show threshold if xy coords are also being shown (show_graph = true)
     }
     if (AVGLINE) {

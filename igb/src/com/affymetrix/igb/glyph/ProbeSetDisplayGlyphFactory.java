@@ -253,6 +253,13 @@ the probeset, probe and pieces of probes
       return null;
     }
     AffyTieredMap map = gviewer.getSeqMap();
+
+    // Find boundaries of the splices.  Used to draw glyphs for deletions.
+    int[][] boundaries = null;
+    if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
+      boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq, coordseq);
+    }
+    
     boolean forward = pspan.isForward();
 
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
@@ -291,11 +298,37 @@ the probeset, probe and pieces of probes
     map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
     int childCount = transformed_consensus_sym.getChildCount();
-        
+    int j=0;
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = transformed_consensus_sym.getChild(i);
       SeqSpan cspan = child.getSpan(coordseq);
-      if (cspan == null) { continue; }
+      if (cspan == null) {
+        if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq) {
+          // There is a missing child, so indicate it with a little glyph.
+          
+          int annot_span_min = child.getSpan(annotseq).getMin();
+          while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
+            j++;
+          }
+          int gap_location = boundaries[j][1];
+          
+          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
+          boundary_glyph.setCoords((double) gap_location, child_y + child_height/4, 1.0, child_height/2);
+          boundary_glyph.setColor(consensus_color);
+          //boundary_glyph.setHitable(false);
+          pglyph.addChild(boundary_glyph);
+          
+          // strecth the parent to be wide enough for this glyph
+          Rectangle2D cb = pglyph.getCoordBox();
+          if (cb.x > gap_location) {
+            cb.width += cb.x - gap_location;
+            cb.x = gap_location;
+          } else if (cb.x + cb.width < gap_location) {
+            cb.width = gap_location - cb.x;
+          }
+        }
+        continue;
+     }
       EfficientOutlinedRectGlyph cglyph = new EfficientOutlinedRectGlyph();
       
       cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);

@@ -30,7 +30,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     Rectangle2D full_view_cbox = view.getFullView().getCoordBox();
     Graphics g = view.getGraphics();
 
-    // intersection() returns intersection in scratch_cbox (which trimmed_cbox is then set to)      
+    // perform an intersection of the view and this glyph, in the X axis only.
     scratch_cbox.x = Math.max(this.x, full_view_cbox.x);
     scratch_cbox.width = Math.min(this.x + this.width, full_view_cbox.x + full_view_cbox.width) - scratch_cbox.x;
     scratch_cbox.y = this.y;

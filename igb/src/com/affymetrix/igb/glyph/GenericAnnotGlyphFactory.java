@@ -230,7 +230,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
     if (DRAW_DELETION_GLYPHS && annotseq != coordseq && ADD_CHILDREN && sym.getChildCount() > 0) {
-      boundaries = determineBoundaries(annotseq, coordseq);
+      boundaries = determineBoundaries(gviewer, annotseq, coordseq);
     }
     
     boolean forward = pspan.isForward();
@@ -305,17 +305,17 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               }
               int gap_location = boundaries[j][1];
               
-              EfficientFillRectGlyph boundary_glyph = new EfficientFillRectGlyph();
-              boundary_glyph.setCoords(gap_location, -2, 1, DEFAULT_THICK_HEIGHT+4);
+              DeletionGlyph boundary_glyph = new DeletionGlyph();
+              boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) DEFAULT_THIN_HEIGHT);
               boundary_glyph.setColor(child_color);
-              boundary_glyph.setHitable(false);
+              //boundary_glyph.setHitable(false);
               pglyph.addChild(boundary_glyph);
               
+              // Now stretch the parent glyph so that it includes this glyph.
               Rectangle2D cb = pglyph.getCoordBox();
               if (cb.x > gap_location) {
-                double end = cb.x + cb.width;
+                cb.width += cb.x - gap_location;
                 cb.x = gap_location;
-                cb.width = end - cb.x;
               } else if (cb.x + cb.width < gap_location) {
                 cb.width = gap_location - cb.x;
               }
@@ -397,7 +397,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   // a helper function used in drawing the "deletion" glyphs
-  int[][] determineBoundaries(BioSeq annotseq, BioSeq coordseq) {
+  static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq, BioSeq coordseq) {
     int[][] boundaries = null;
     if (annotseq != coordseq) {
       MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
@@ -422,5 +422,45 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
     }
     return boundaries;    
+  }
+
+  /** A small x-shaped glyph that can be used to indicate a deleted exon 
+   * in the slice view. 
+   */
+  public static class DeletionGlyph extends SolidGlyph {
+
+    /** Draws a small "X". */
+    public void draw(ViewI view) {
+      Rectangle pixelbox = view.getScratchPixBox();
+      view.transformToPixels(this.coordbox, pixelbox);
+      Graphics g = view.getGraphics();
+      
+      // Unlikely this will ever be big enough to need the fix.
+      //EfficientSolidGlyph.fixAWTBigRectBug(view, pixelbox);
+      
+      //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
+      pixelbox.height = Math.max( pixelbox.height, min_pixels_height );
+      
+      final int half_height = pixelbox.height/2;
+      final int h = Math.min(half_height, 4);
+      
+      final int x1 = pixelbox.x - h;
+      final int x2 = pixelbox.x + h;
+
+      final int y1 = pixelbox.y + half_height - h;
+      final int y2 = pixelbox.y + half_height + h;
+
+      g.setColor(getBackgroundColor()); // this is the tier foreground color
+
+      g.drawLine(x1, y1, x2, y2);
+      g.drawLine(x1, y2, x2, y1);
+    
+      super.draw(view);
+    }
+    
+    /** Overridden to always return false. */
+    public boolean isHitable() {
+      return false;
+    }
   }
 }

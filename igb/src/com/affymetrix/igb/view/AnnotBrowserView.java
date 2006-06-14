@@ -30,7 +30,6 @@ import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
 /**
@@ -74,6 +73,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   public AnnotBrowserView() {
     super();
     this.setLayout(new BorderLayout());
+    this.setBorder(BorderFactory.createEtchedBorder());
 
     Box top_row = Box.createHorizontalBox();
     this.add(top_row, BorderLayout.NORTH);
@@ -294,7 +294,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       if (evt.getSource()==lsm && ! evt.getValueIsAdjusting() && model.getRowCount() > 0) {
         int srow = table.getSelectedRow();
         if (srow >= 0) {
-          Object o = table.getModel().getValueAt(srow, 0);
+          //Object o = table.getModel().getValueAt(srow, 0);
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
           java.util.List syms = new ArrayList(1);
           syms.add((SeqSymmetry) table.getModel().getValueAt(srow, 1));

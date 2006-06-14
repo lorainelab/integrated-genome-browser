@@ -155,7 +155,7 @@ implements SeqSelectionListener, SymSelectionListener {
     stylegroup.add(mmavgB);
     stylegroup.add(sstepB);
     stylegroup.add(hidden_styleB); // invisible button
-    stylebox.setBorder(new TitledBorder("Style"));
+    stylebox.setBorder(BorderFactory.createTitledBorder("Style"));
 
     hidden_styleB.setSelected(true); // deselect all visible radio buttons
 
@@ -168,7 +168,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
 
     //Box height_and_color_box = Box.createHorizontalBox();
-    height_slider.setBorder(new TitledBorder("Height"));
+    height_slider.setBorder(BorderFactory.createTitledBorder("Height"));
     //height_and_color_box.add(height_slider);
 
     Box scalebox = Box.createVerticalBox();
@@ -231,6 +231,8 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.setAlignmentY(1.0f);
     this.add(Box.createVerticalGlue());
 
+    this.setBorder(BorderFactory.createEtchedBorder());
+    
     setSeqMapView(this.gviewer); // called for the side-effects
 
     gmodel = SingletonGenometryModel.getGenometryModel();
@@ -661,7 +663,7 @@ implements SeqSelectionListener, SymSelectionListener {
       grouping_box.add(Box.createRigidArea(new Dimension(5,5)));
 
       Box decoration_row = Box.createHorizontalBox();
-      //decoration_row.setBorder(new EtchedBorder());
+      //decoration_row.setBorder(BorderFactory.createEtchedBorder());
       decoration_row.add(labelCB);
       decoration_row.add(yaxisCB);
       decoration_row.add(floatCB);
@@ -676,7 +678,7 @@ implements SeqSelectionListener, SymSelectionListener {
       scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
 
 
-      advanced_panel.setBorder(new TitledBorder("Advanced"));
+      advanced_panel.setBorder(BorderFactory.createTitledBorder("Advanced"));
       advanced_button_box.setAlignmentX(0.0f);
       decoration_row.setAlignmentX(0.0f);
       advanced_panel.add(decoration_row);

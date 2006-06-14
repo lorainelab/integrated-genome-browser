@@ -15,12 +15,12 @@ package com.affymetrix.igb.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.table.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -167,6 +167,7 @@ public class ExperimentPivotView extends JComponent
     optionsP.add(Box.createRigidArea(new Dimension(10,0)));
     optionsP.add(colors_pan);
     optionsP.add(Box.createHorizontalGlue());
+    optionsP.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));    
 
     map = new AffyTieredMultiMap();
     //AffyTieredMap expmap = map.getExtraMap();
@@ -178,10 +179,16 @@ public class ExperimentPivotView extends JComponent
     ExperimentPivotView.PivotViewPopup pvp = new ExperimentPivotView.PivotViewPopup();
     tier_manager.addPopupListener(pvp);
 
-    this.setLayout(new BorderLayout());
-    add("Center", map);
-    add("North", optionsP);
+    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    
+    JPanel main_panel = new JPanel();
+    main_panel.setLayout(new BorderLayout());
+    main_panel.add("Center", map);
+    main_panel.add("North", optionsP);
+    main_panel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
+    this.add(main_panel);
+    
     styleCB.addActionListener(this);
     scaleCB.addActionListener(this);
     // setView(Unibrow.getSingletonUnibrow().getMapView());

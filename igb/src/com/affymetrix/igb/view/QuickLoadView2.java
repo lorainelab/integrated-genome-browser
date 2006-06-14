@@ -162,6 +162,7 @@ public class QuickLoadView2 extends JComponent
     this.add("North", choice_panel);
     this.add("Center", new JScrollPane(types_panel));
     this.add("South", buttonP);
+    this.setBorder(BorderFactory.createEtchedBorder());
 
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);

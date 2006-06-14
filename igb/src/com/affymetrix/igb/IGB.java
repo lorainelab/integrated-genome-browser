@@ -160,6 +160,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static void main(String[] args) {
     try {
 
+    // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+    System.setProperty("swing.aatext", "true");
+
     try {
       // It this is Windows, then use the Windows look and feel.
       LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();

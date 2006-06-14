@@ -10,25 +10,26 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.igb.view;
 
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
 
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
-import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.swing.DisplayUtils;
 
-public class DataLoadView extends JComponent  {
+public class DataLoadView extends JComponent implements NeoViewBoxListener  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean USE_QUICKLOAD = true;
@@ -40,31 +41,43 @@ public class DataLoadView extends JComponent  {
   public DataLoadView() {
     das2_view = new Das2LoadView();
     das1_view = new DasLoadView();
-    if (USE_QUICKLOAD)  { quick_view = new QuickLoadView2(); }
     group_view = new SeqGroupView();
     
+    //gmodel.addModelChangeListener(group_view);
+
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     
     JPanel main_panel = new JPanel();
     this.add(main_panel);
+    this.setBorder(BorderFactory.createEtchedBorder());
     
     main_panel.setLayout(new BorderLayout());
     main_panel.add("West", group_view);
     
     JTabbedPane tpane = new JTabbedPane();
     main_panel.add("Center", tpane);
-    if (USE_QUICKLOAD)  { tpane.addTab("QuickLoad", quick_view); }
+    if (USE_QUICKLOAD)  { 
+      quick_view = new QuickLoadView2();
+      quick_view.setBorder(BorderFactory.createEtchedBorder());
+      tpane.addTab("QuickLoad", quick_view); 
+    }
     tpane.addTab("DAS/2", das2_view);
   }
 
   public void initialize() {
     if (USE_QUICKLOAD)  { quick_view.initialize(); }
   }
+
+  public void viewBoxChanged(NeoViewBoxChangeEvent e) {
+    if (group_view != null) {
+      group_view.range_box.viewBoxChanged(e);
+    }
+  }
 }
 
 class SeqGroupView extends JComponent
   implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener,
-  ItemListener {
+  ItemListener /*, GenometryModelChangeListener */ {
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -75,6 +88,7 @@ class SeqGroupView extends JComponent
   ListSelectionModel lsm;
   //JLabel genomeL;
   JComboBox genomeCB;
+  MapRangeBox range_box = new MapRangeBox();
 
   public SeqGroupView() {
     seqtable = new JTable();
@@ -82,12 +96,21 @@ class SeqGroupView extends JComponent
     //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     genomeCB = new JComboBox();
+    genomeCB.setBorder(BorderFactory.createEmptyBorder(3,2,3,2));
 
-    this.setLayout(new BorderLayout());
-    this.add("Center", new JScrollPane(seqtable));
-    //this.add("North", genomeL);
-    this.add("North", genomeCB);
-    this.setBorder(new TitledBorder("Current Genome"));
+    JScrollPane scroller = new JScrollPane(seqtable);
+    scroller.setBorder(BorderFactory.createCompoundBorder(
+      scroller.getBorder(),
+      BorderFactory.createEmptyBorder(0,2,0,2)));
+
+    range_box.setBorder(BorderFactory.createEmptyBorder(3,2,3,2));
+    
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(genomeCB);
+    this.add(scroller);
+    this.add(range_box);
+    
+    this.setBorder(BorderFactory.createTitledBorder("Current Genome"));
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
     lsm = seqtable.getSelectionModel();
@@ -121,9 +144,9 @@ class SeqGroupView extends JComponent
     selected_seq = null;
     seqtable.setModel(mod);
     seqtable.validate();
-    seqtable.repaint();
+    seqtable.repaint();  
   }
-
+  
   // add an item to a combo box iff it isn't already included
   void addItemToComboBox(JComboBox cb, Object item) {
     for (int i=0; i<cb.getItemCount(); i++) {
@@ -187,6 +210,36 @@ class SeqGroupView extends JComponent
     }
   }
 
+//  public void genometryModelChanged(GenometryModelChangeEvent evt) {
+//    AnnotatedSeqGroup group = evt.getSeqGroup();
+//    if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_ADDED)) {
+//      genomeCB.addItem(group.getID());
+//    } else if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_REMOVED)) {
+//      genomeCB.removeItem(group.getID()); 
+//    }
+//  }
+
+}
+
+/** A Text Box for displaying, and maybe setting, the range of a NeoMap. */
+class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
+  JTextField range_box = new JTextField("");
+  static final NumberFormat nformat = NumberFormat.getIntegerInstance();  
+
+  public MapRangeBox() {
+    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(range_box);
+    range_box.setEditable(false);
+  }
+  
+  public void viewBoxChanged(NeoViewBoxChangeEvent e) {
+    com.affymetrix.genoviz.bioviews.Rectangle2D vbox = e.getCoordBox();
+    range_box.setText(nformat.format(vbox.x) + " : " + nformat.format(vbox.width+vbox.x));
+  }
+
+  public void groupSelectionChanged(GroupSelectionEvent evt) {
+    range_box.setText("");
+  }
 }
 
 class SeqGroupTableModel extends AbstractTableModel  {
@@ -199,7 +252,7 @@ class SeqGroupTableModel extends AbstractTableModel  {
   public int getRowCount() { return (group == null ? 0 : group.getSeqCount()); }
 
   public int getColumnCount() { return 2; }
-
+  
   public Object getValueAt(int row, int col) {
     if (group != null) {
       MutableAnnotatedBioSeq seq = group.getSeq(row);
@@ -207,7 +260,7 @@ class SeqGroupTableModel extends AbstractTableModel  {
         return seq.getID();
       }
       else if (col == 1) {
-	if (seq instanceof CompositeNegSeq) { 
+	if (seq instanceof CompositeNegSeq) {
 	  return Long.toString((long)((CompositeNegSeq)seq).getLengthDouble()); 
 	}
 	else {

@@ -847,6 +847,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     if (plugin instanceof DataLoadView) {
       data_load_view = (DataLoadView) plugin;
+      getMapView().getSeqMap().addViewBoxListener(data_load_view);
     }
   }
 

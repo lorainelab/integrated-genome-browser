@@ -42,14 +42,19 @@ public class DataLoadView extends JComponent  {
     das1_view = new DasLoadView();
     if (USE_QUICKLOAD)  { quick_view = new QuickLoadView2(); }
     group_view = new SeqGroupView();
-
-    this.setLayout(new BorderLayout());
+    
+    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    
+    JPanel main_panel = new JPanel();
+    this.add(main_panel);
+    
+    main_panel.setLayout(new BorderLayout());
+    main_panel.add("West", group_view);
+    
     JTabbedPane tpane = new JTabbedPane();
-    this.add("Center", tpane);
+    main_panel.add("Center", tpane);
     if (USE_QUICKLOAD)  { tpane.addTab("QuickLoad", quick_view); }
     tpane.addTab("DAS/2", das2_view);
-    //tpane.addTab("DAS/1", das1_view);
-    this.add("West", group_view);
   }
 
   public void initialize() {

@@ -308,12 +308,6 @@ public class SmartGraphGlyph extends GraphGlyph {
       g.setColor(Color.gray);
       g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
     }
-
-
-    if (show_zero_line) {
-      g.setColor(Color.gray);
-      g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
-    }
     g.setColor(darker);
 
     /*
@@ -381,6 +375,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       int last_ymax = 0;
       // trying first with just min/max drawing...
       if (CACHE_DIRECT_DRAW) {
+	g.setColor(darker);
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	  coord.x = (graph_cache.xmin[i] + graph_cache.xmax[i]) / 2.0f;
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
@@ -395,12 +390,12 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  //	ymax_pixel = curr_point.y;
 	  ymin_pixel = curr_point.y;
 
-	  g.setColor(darker);
 	  g.fillRect(curr_point.x, ymin_pixel, 1, (ymax_pixel - ymin_pixel + 1));
 	  draw_count++;
 	}
       }
       else {  // using cache, but still collecting values per pixel...
+	g.setColor(darker);
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
@@ -430,10 +425,11 @@ public class SmartGraphGlyph extends GraphGlyph {
 
 	  else {  // draw previous pixel position
 	    if ((graph_style == MINMAXAVG) && MINMAXBAR) {
-	      g.setColor(darker);
-	      g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
-			 prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
-
+	      int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
+	      int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
+	      g.fillRect(prev_point.x, ystart, 1, yheight);
+	      //	      g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
+	      //			 prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
 	      draw_count++;
 	    }
 	    yavg_pixel = ysum / points_in_pixel;
@@ -502,6 +498,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       int points_in_pixel = 1;
       int draw_count = 0;
 
+      g.setColor(darker);
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
 	coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
@@ -514,12 +511,13 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  ysum += curr_point.y;
 	  points_in_pixel++;
 	}
-
 	else {  // draw previous pixel position
 	  if ((graph_style == MINMAXAVG) && MINMAXBAR)  {
-	    g.setColor(darker);
-	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
-		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
+	    int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
+	    int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
+	    g.fillRect(prev_point.x, ystart, 1, yheight);
+	    //	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
+	    //		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
 	    draw_count++;
 	  }
 	  yavg_pixel = ysum / points_in_pixel;
@@ -540,6 +538,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
       // can only show threshold if xy coords are also being shown (show_graph = true)
     }
+
     if (AVGLINE) {
       g.setColor(lighter);
       int prev_index = 0;
@@ -555,7 +554,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    if (pixel_cache[i-1] == Integer.MIN_VALUE &&
 		coords_per_pixel > 30) {
 	      // last pixel had no datapoints, so just draw a point at current pixel
-	      //		g.drawLine(i, yval, i, yval);
+	      g.drawLine(i, yval, i, yval);
 	    }
 	    else {
 	      // last pixel had at least one datapoint, so connect with line
@@ -566,9 +565,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
       }
     }
-    //    if (getShowThreshold()) {
-    //      drawThresholdedRegions(view);
-    //    }
   }
 
   /**

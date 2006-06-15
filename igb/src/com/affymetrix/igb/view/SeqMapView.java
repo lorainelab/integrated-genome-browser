@@ -267,7 +267,7 @@ public class SeqMapView extends JPanel
   /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
    *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
    */
-  boolean remember_tiers = true;  
+  boolean remember_tiers = true;
 
 
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
@@ -1069,7 +1069,7 @@ public class SeqMapView extends JPanel
     seqmap.updateWidget();
     if (DIAGNOSTICS) {
       System.out.println("Time to convert models to display: " + tim.read()/1000f);
-    }    
+    }
   }
 
 
@@ -1927,8 +1927,10 @@ public class SeqMapView extends JPanel
   ActionListener map_auto_scroller = null;
   javax.swing.Timer swing_timer = null;
   int as_bases_per_pix = 75;
-  int as_pix_to_scroll = 3;
+  int as_pix_to_scroll = 4;
   int as_time_interval = 20;
+  int as_start_pos = 0;
+  int as_end_pos;
   int modcount = 0;
 
   public void toggleAutoScroll() {
@@ -1936,7 +1938,11 @@ public class SeqMapView extends JPanel
       //      toggleAutoScroll(
       JPanel pan = new JPanel();
 
-      int bases_in_view = (int) seqmap.getView().getCoordBox().width;
+      Rectangle2D cbox = seqmap.getViewBounds();
+      //      int bases_in_view = (int) seqmap.getView().getCoordBox().width;
+      int bases_in_view = (int)cbox.width;
+      as_start_pos = (int)cbox.x;
+      as_end_pos = this.getViewSeq().getLength();
       int pixel_width = seqmap.getView().getPixelBox().width;
       as_bases_per_pix = bases_in_view / pixel_width;
 
@@ -1948,6 +1954,9 @@ public class SeqMapView extends JPanel
       final JTextField bases_per_pixTF = new JTextField("" + as_bases_per_pix);
       final JTextField pix_to_scrollTF = new JTextField("" + as_pix_to_scroll);
       final JTextField time_intervalTF = new JTextField("" + as_time_interval);
+      final JTextField start_posTF = new JTextField("" + as_start_pos);
+      final JTextField end_posTF = new JTextField("" + as_end_pos);
+
       float bases_per_minute = (float)
 	// 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
 	(1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
@@ -1956,11 +1965,15 @@ public class SeqMapView extends JPanel
       final JLabel bases_per_minuteL = new JLabel("" + (bases_per_minute/1000000));
       final JLabel minutes_per_seqL = new JLabel("" + (minutes_per_seq));
 
-      pan.setLayout(new GridLayout(5,2));
+      pan.setLayout(new GridLayout(7,2));
       pan.add(new JLabel("Resolution (bases per pixel)"));
       pan.add(bases_per_pixTF);
       pan.add(new JLabel("Scroll increment (pixels)"));
       pan.add(pix_to_scrollTF);
+      pan.add(new JLabel("Starting base position"));
+      pan.add(start_posTF);
+      pan.add(new JLabel("Ending base position"));
+      pan.add(end_posTF);
       pan.add(new JLabel("Time interval (milliseconds)"));
       pan.add(time_intervalTF);
       pan.add(new JLabel("Megabases per minute:  "));
@@ -1973,12 +1986,15 @@ public class SeqMapView extends JPanel
           as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
           as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
           as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
+	  as_end_pos = normalizeTF(end_posTF, as_end_pos, 1, getViewSeq().getLength());
+	  as_start_pos = normalizeTF(start_posTF, as_start_pos, 0, as_end_pos);
 
           float bases_per_minute = (float)
             // 1000 ==> ms/s , 60 ==> s/minute, as_time_interval ==> ms/scroll
             (1.0 * as_bases_per_pix * as_pix_to_scroll * 1000 * 60 / as_time_interval);
           bases_per_minute = Math.abs(bases_per_minute);
-          float minutes_per_seq = viewseq.getLength() / bases_per_minute;
+	  //          float minutes_per_seq = viewseq.getLength() / bases_per_minute;
+	  float minutes_per_seq = (as_end_pos - as_start_pos) / bases_per_minute;
           bases_per_minuteL.setText("" + (bases_per_minute/1000000));
           minutes_per_seqL.setText("" + (minutes_per_seq));
         }
@@ -1987,6 +2003,8 @@ public class SeqMapView extends JPanel
       bases_per_pixTF.addActionListener(al);
       pix_to_scrollTF.addActionListener(al);
       time_intervalTF.addActionListener(al);
+      start_posTF.addActionListener(al);
+      end_posTF.addActionListener(al);
 
       int val = JOptionPane.showOptionDialog(this, pan, "AutoScroll Parameters",
 					     JOptionPane.OK_CANCEL_OPTION,
@@ -1996,7 +2014,7 @@ public class SeqMapView extends JPanel
         as_bases_per_pix = normalizeTF(bases_per_pixTF, as_bases_per_pix, 1, Integer.MAX_VALUE);
         as_pix_to_scroll = normalizeTF(pix_to_scrollTF, as_pix_to_scroll, -1000, 1000);
         as_time_interval = normalizeTF(time_intervalTF, as_time_interval, 1, 1000);
-        toggleAutoScroll(as_bases_per_pix, as_pix_to_scroll, as_time_interval);
+        toggleAutoScroll(as_bases_per_pix, as_pix_to_scroll, as_time_interval, as_start_pos, as_end_pos, true);
       }
     }
     else {
@@ -2023,28 +2041,36 @@ public class SeqMapView extends JPanel
   }
 
   public void toggleAutoScroll(int bases_per_pixel, int pix_to_scroll,
-			       int timer_interval) {
+			       int timer_interval, final int start_coord, final int end_coord, final boolean cycle) {
     double pix_per_coord = 1.0 / (double)bases_per_pixel;
     final double coords_to_scroll = (double)pix_to_scroll / pix_per_coord;
 
-    Rectangle2D cbox = seqmap.getViewBounds();
+    //    Rectangle2D cbox = seqmap.getViewBounds();
     //Rectangle pbox = seqmap.getView().getPixelBox();
-    double start = (int)cbox.x;
+    //    double start = (int)cbox.x;
+    //    double start = start_coord;
 
     seqmap.zoom(NeoWidgetI.X, pix_per_coord);
-    seqmap.scroll(NeoWidgetI.X, start);
+    seqmap.scroll(NeoWidgetI.X, start_coord);
 
     if (map_auto_scroller == null) {
       map_auto_scroller = new ActionListener() {
 	  public void actionPerformed(ActionEvent evt) {
 	    Rectangle2D vbox = seqmap.getViewBounds();
-	    Rectangle2D mbox = seqmap.getCoordBounds();
+	    //	    Rectangle2D mbox = seqmap.getCoordBounds();
 	    int scrollpos = (int)(vbox.x + coords_to_scroll);
-	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width)) {
-	      // end of sequence reached, so stop scrolling
-	      swing_timer.stop();
-	      swing_timer = null;
-	      map_auto_scroller = null;
+	    //	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width))  {
+	    if ((scrollpos + vbox.width) > end_coord) {
+	      if (cycle)  {
+		seqmap.scroll(NeoWidgetI.X, start_coord);
+		seqmap.updateWidget();
+	      }
+	      else {
+		// end of sequence reached, so stop scrolling
+		swing_timer.stop();
+		swing_timer = null;
+		map_auto_scroller = null;
+	      }
 	    }
 	    else {
 	      seqmap.scroll(NeoWidgetI.X, scrollpos);
@@ -2455,26 +2481,26 @@ public class SeqMapView extends JPanel
 
   final String ZOOM_OUT_Y = "ZOOM_OUT_Y";
   final String ZOOM_IN_Y = "ZOOM_IN_Y";
-  
+
   final String SCROLL_UP = "SCROLL_UP";
   final String SCROLL_DOWN = "SCROLL_DOWN";
   final String SCROLL_LEFT = "SCROLL_LEFT";
   final String SCROLL_RIGHT = "SCROLL_RIGHT";
   final String ZOOM_TO_SELECTED = "Zoom to selected";
-  
+
   private class SeqMapViewActionListener implements ActionListener {
     String[] commands = { ZOOM_OUT_FULLY,
       ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
       SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
-    
+
     Action zoom_out_fully_action;
     Action zoom_out_x_action;
     Action zoom_in_x_action;
     Action zoom_out_y_action;
     Action zoom_in_y_action;
-    
+
     Action zoom_to_selected_action;
-    
+
     public SeqMapViewActionListener() {
       //super(true);
       zoom_out_x_action = new AbstractAction() {
@@ -2507,9 +2533,9 @@ public class SeqMapView extends JPanel
       zoom_to_selected_action = new AbstractAction(ZOOM_TO_SELECTED, icon0) {
         public void actionPerformed(ActionEvent e) {
           action_listener.doAction(ZOOM_TO_SELECTED);
-        }        
+        }
       };
-      
+
       Icon icon1 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomOut16.gif");
       zoom_out_y_action.putValue(Action.NAME, "Zoom out vertically");
       zoom_out_y_action.putValue(Action.SMALL_ICON, icon1);
@@ -2521,13 +2547,13 @@ public class SeqMapView extends JPanel
       zoom_in_y_action.putValue(Action.SMALL_ICON, icon2);
       zoom_in_x_action.putValue(Action.NAME, "Zoom in horizontally");
       zoom_in_x_action.putValue(Action.SMALL_ICON, icon2);
-      
+
       Icon icon3 = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Home16.gif");
       zoom_out_fully_action.putValue(Action.SHORT_DESCRIPTION, "Zoom out fully");
       zoom_out_fully_action.putValue(Action.NAME, "Home Position");
       zoom_out_fully_action.putValue(Action.SMALL_ICON, icon3);
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
       String command = evt.getActionCommand();
       //System.out.println("SeqMapView received action event "+command);
@@ -2935,7 +2961,7 @@ public class SeqMapView extends JPanel
 //  }
 
   JMenu navigation_menu = null;
-  
+
   public JMenu getNavigationMenu(String menu_name) {
     if (navigation_menu == null) {
       navigation_menu = new JMenu(menu_name);
@@ -2950,6 +2976,6 @@ public class SeqMapView extends JPanel
     }
     return navigation_menu;
   }
-  
+
 }
 

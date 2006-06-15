@@ -64,6 +64,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
   public SeqSearchView() {
     super();
     gviewer = IGB.getSingletonIGB().getMapView();
+    
     this.setLayout(new BorderLayout());
     JPanel pan1 = new JPanel();
     if (IGB.isSequenceAccessible()) {
@@ -104,6 +105,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
       pan1.add(regexHitCountL);
     }
     this.add("North", pan1);
+    this.add("Center", new JPanel());// a blank panel: improves appearance in JDK1.5
 
     coordsearchTF.addActionListener(this);
     idsearchTF.addActionListener(this);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -43,11 +43,27 @@ public class AltSpliceView extends JComponent
   boolean pending_selection_change = false;
   boolean slice_by_selection_on = true;
 
+  class AltSpliceSeqMapView extends SeqMapView {
+    public AltSpliceSeqMapView(boolean b) {
+      super(b);
+    }
+
+    public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+      if (coord_shift) {
+        super.setAnnotatedSeq(seq, preserve_selection, preserve_view);
+      } else {
+        this.clear();
+        this.aseq = seq;
+        this.viewseq = seq;
+      }
+    }
+  };
+  
   public AltSpliceView() {
     original_view = IGB.getSingletonIGB().getMapView();
     Rectangle frmbounds = SwingUtilities.getWindowAncestor(original_view).getBounds();
     this.setLayout(new BorderLayout());
-    spliced_view = new SeqMapView(false);
+    spliced_view = new AltSpliceSeqMapView(false);
     spliced_view.SUBSELECT_SEQUENCE = false;
     orf_analyzer = new OrfAnalyzer2(spliced_view, CONTROLS_ON_SIDE);
     buffer_sizeTF = new JTextField(4);
@@ -173,7 +189,7 @@ public class AltSpliceView extends JComponent
   }
 
   public void sliceAndDice(java.util.List syms) {
-    //    System.out.println("called AltSpliceView.sliceAndDice()");
+    //    System.out.println("called AltSpliceView.sliceAndDice() " + syms.size());
     if (syms.size() > 0) {
 
       // recreating the spliced views graf2factory hash with each new sliceAndDice,
@@ -209,7 +225,7 @@ public class AltSpliceView extends JComponent
   // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
   java.util.List removeGraphs(java.util.List syms) {
     int symcount = syms.size();
-    Vector v = new Vector(syms.size());
+    ArrayList v = new ArrayList(syms.size());
     for (int i=0; i<symcount; i++) {
       Object sym = syms.get(i);
       if (! (sym instanceof GraphSym)) {

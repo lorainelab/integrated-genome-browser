@@ -383,8 +383,8 @@ public class AxisGlyph extends Glyph {
       theView.transformToPixels(coordbox, pixelbox);
       Rectangle centralBox = new Rectangle();
       theView.transformToPixels(centralLine, centralBox);
-      
-      
+
+
       // Adjust the pixel box to shrink wrap the axis.
       if (VERTICAL == this.orient) {
         centralBox.x -= MAJORTICKHEIGHT;
@@ -408,7 +408,7 @@ public class AxisGlyph extends Glyph {
           centralBox.height += labelThickness;
         }
       }
-       
+
       Rectangle2D temp_rect = new Rectangle2D(coordbox.x, coordbox.y,
         coordbox.width, coordbox.height);
       // Readjust the coord box to match the new pixel box.
@@ -425,7 +425,7 @@ public class AxisGlyph extends Glyph {
         coordbox.x = temp_rect.x;
         coordbox.width = temp_rect.width;
         // leave the y and height coords alone
-      }      
+      }
     }
 
     else {
@@ -476,7 +476,7 @@ public class AxisGlyph extends Glyph {
   private final Rectangle select_pix = new Rectangle();
   private final Rectangle2D scratchcoords = new Rectangle2D();
   private final Rectangle scratchpixels = new Rectangle();
-      
+
   public void draw(ViewI view) {
     String label = null;
     int axis_loc;
@@ -643,7 +643,7 @@ public class AxisGlyph extends Glyph {
       else  {
         map_loc = view.transformToCoords(pixelbox, scratchcoords).x;
       }
-      
+
       if (pixelbox.x+pixelbox.width > clipbox.x+clipbox.width)  {
         view.transformToCoords(clipbox, scratchcoords);
         max_map = scratchcoords.x + scratchcoords.width;
@@ -706,13 +706,24 @@ public class AxisGlyph extends Glyph {
     // Draw the major tick marks including labels.
 
     int canvas_loc;   // location in canvas coordinates
-    
+    int less_count = 0;
+    int greater_count = 0;
+    int string_draw_count = 0;
+    int init_tick_loc = (int)tick_loc;
+
     if ( !reversed ) {
       for( ; tick_loc <= max_map ; tick_loc += tick_increment, tick_scaled_loc += tick_scaled_increment)  {
         canvas_loc = (int)tick_scaled_loc;
 
         // Don't draw things which are off the screen
-        if (canvas_loc < clipbox.x || canvas_loc > clipbox.x+clipbox.width) continue;
+	//        if (canvas_loc < clipbox.x || canvas_loc > clipbox.x+clipbox.width) continue;
+	/*
+        if (canvas_loc < clipbox.x || canvas_loc > clipbox.x+clipbox.width) {
+	  if (canvas_loc < clipbox.x) { less_count++; }
+	  else { greater_count++; }
+	  continue;
+	}
+	*/
 
         if ( selected_regions != null ) {
           g.setColor ( getForegroundColor() );
@@ -725,8 +736,8 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        if (labelFormat != NO_LABELS)  { 
-	  label = stringRepresentation((double)tick_loc, (double)tick_increment); 
+        if (labelFormat != NO_LABELS)  {
+	  label = stringRepresentation((double)tick_loc, (double)tick_increment);
 	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
@@ -747,6 +758,7 @@ public class AxisGlyph extends Glyph {
           else {
             if (labelFormat != NO_LABELS)  {
 	      g.drawString(label, canvas_loc, center_line_start-labelShift);
+	      string_draw_count++;
 	    }
             g.fillRect(canvas_loc, center_line_start-2,
                        2, centerLineThickness+4);
@@ -754,6 +766,8 @@ public class AxisGlyph extends Glyph {
           i++;
         }
       }
+      //      System.out.println("initial loc: " + init_tick_loc + ", less_count: "+ less_count + ", greater_count: " + greater_count +
+      //			 "string_draw_count: " + string_draw_count);
     }
     else { //reversed axis, major axis ticks and numbering
       for( ; rev_tick_loc > 0; rev_tick_loc -= tick_increment, rev_tick_scaled_loc -= tick_scaled_increment)  {
@@ -778,14 +792,14 @@ public class AxisGlyph extends Glyph {
               g.setColor ( getBackgroundColor() );
           }
         }
-        if (labelFormat != NO_LABELS)  { 
+        if (labelFormat != NO_LABELS)  {
 	  label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
 	}
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (rev_tick_loc >= scene_start && rev_tick_loc <= scene_end) {
           if (orient == VERTICAL) {
-	    if (labelFormat != NO_LABELS)  { 
+	    if (labelFormat != NO_LABELS)  {
 	      if (LEFT == this.labelPlacement) {
 		int x = fm.stringWidth(label);
 		g.drawString(label, center_line_start-labelGap-x, canvas_loc);
@@ -798,7 +812,7 @@ public class AxisGlyph extends Glyph {
                        centerLineThickness+4, 2);
           }
           else {
-	    if (labelFormat != NO_LABELS)  { 
+	    if (labelFormat != NO_LABELS)  {
 	      g.drawString(label, canvas_loc, center_line_start-labelShift);
 	    }
             g.fillRect(canvas_loc, center_line_start-2,
@@ -1026,7 +1040,7 @@ public class AxisGlyph extends Glyph {
       }
       result = (increment * 200);
     }
-    
+
     return result;
   }
 

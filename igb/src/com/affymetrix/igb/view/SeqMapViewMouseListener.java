@@ -86,14 +86,21 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
 
     // process selections in mousePressed() or mouseReleased()
-    if (SELECT_ON_MOUSE_PRESSED) processSelections(evt);
+    if (SELECT_ON_MOUSE_PRESSED) processSelections(evt, true);
   }
 
   public void mouseReleased(MouseEvent evt) {
     // process selections in mousePressed() or mouseReleased()
-    if (! SELECT_ON_MOUSE_PRESSED) processSelections(evt);
+    if (! SELECT_ON_MOUSE_PRESSED) {
+      // if rubber-banding is going on, don't post selections now,
+      // because that will be handled in rubberBandChanged().
+      // Still need to call processSelections, though, to set
+      // the zoom point and to select the items under the current mouse point.
+      processSelections(evt, rubber_band_start == null);
+    }
 
-    //  do popup in mouseReleased() so it doesn't interfere with rubber band
+    //  do popup in mouseReleased(), never in mousePressed(),
+    //  so it doesn't interfere with rubber band
     if (isOurPopupTrigger(evt)) {
       smv.showPopup((NeoMouseEvent) evt);
     }
@@ -104,8 +111,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     // now we let ONLY this class trigger the pop-up.
   }
 
-  void processSelections(MouseEvent evt) {
-    
+  void processSelections(MouseEvent evt, boolean post_selections) {
+        
     if (! (evt instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
@@ -186,7 +193,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     boolean nothing_changed = (preserve_selections && (topgl == null));
     boolean selections_changed = ! nothing_changed;
-        
+    
     if (smv.show_edge_matches && selections_changed)  {
       smv.doEdgeMatching(map.getSelected(), false);
     }
@@ -195,7 +202,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     map.updateWidget(); 
 
-    if (selections_changed) {
+    if (selections_changed && post_selections) {
       smv.postSelections();
     }
   }

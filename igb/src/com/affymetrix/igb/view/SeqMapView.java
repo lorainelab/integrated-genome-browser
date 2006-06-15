@@ -229,9 +229,6 @@ public class SeqMapView extends JPanel
   JMenu sym_menu;
   JLabel sym_info;
 
-//  JTextField bases_per_pixelTF = new JTextField(10);
-  JTextField bases_in_viewTF = new JTextField(10);
-
   // A fake menu item, prevents null pointer exceptions in actionPerformed()
   // for menu items whose real definitions are commented-out in the code
   private static final JMenuItem empty_menu_item = new JMenuItem("");
@@ -361,28 +358,10 @@ public class SeqMapView extends JPanel
 
     xzoombox = Box.createHorizontalBox();
     //    xzoombox.add(new SeqComboBoxView());
-
-    //xzoombox.add(new JLabel("bases per pixel:"));
-    //bases_per_pixelTF.setMaximumSize(new Dimension(10, 20));
-    //bases_per_pixelTF.addActionListener(this);
-    //xzoombox.add(bases_per_pixelTF);
-    xzoombox.add(new JLabel("bases in view:"));
-    xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
-    bases_in_viewTF.setMaximumSize(new Dimension(10, 20));
-    bases_in_viewTF.setEditable(false);
-    //bases_in_viewTF.addActionListener(this);
-    seqmap.addViewBoxListener(new NeoViewBoxListener() {
-	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
-	  Rectangle2D vbox = evt.getCoordBox();
-	  double bases_in_view = vbox.width;
-	  //	  System.out.println("map coord width: " + seqmap.getScene().getCoordBox().width + ", view width: " + vbox.width);
-	  bases_in_viewTF.setText(nformat.format(bases_in_view));
-	  //int pixel_width = seqmap.getView().getPixelBox().width;
-	  //double bases_per_pixel = (double)bases_in_view / (double)pixel_width;
-	  //bases_per_pixelTF.setText(nformat.format(bases_per_pixel));
-	}
-      } );
-    xzoombox.add(bases_in_viewTF);
+    
+    MapRangeBox map_range_box = new MapRangeBox(this);
+    xzoombox.add(map_range_box.range_box);
+    
     xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
     xzoombox.add((Component) xzoomer);
     boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
@@ -741,6 +720,7 @@ public class SeqMapView extends JPanel
 
 
   public void clear() {
+    stopSlicingThread();
     seqmap.clearWidget();
     aseq = null;
     clearSelection();
@@ -817,6 +797,7 @@ public class SeqMapView extends JPanel
    *   @param preserve_view  if true, then try and keep same scroll and zoom / scale and offset...
    */
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+    stopSlicingThread();
     RepaintManager rm = RepaintManager.currentManager(this);
     Image bufimg = rm.getOffscreenBuffer(this,
 					 this.getSize().width,
@@ -1783,21 +1764,58 @@ public class SeqMapView extends JPanel
     setAnnotatedSeq(aseq, true, true);
   }
 
-  public void sliceAndDice(java.util.List syms) {
+  public void sliceAndDice(final java.util.List syms) {
+    stopSlicingThread();
+    
+    slice_thread = new Thread() {
+      public void run() {
+        sliceAndDiceNow(syms);
+      }
+    };
+    
+    slice_thread.start();
+  }
+  
+  void sliceAndDiceNow(java.util.List syms) {
     SimpleSymWithProps unionSym = new SimpleSymWithProps();
     SeqUtils.union(syms, unionSym, aseq);
-    sliceAndDice(unionSym);
+    sliceAndDiceNow(unionSym);
   }
 
   public SeqSymmetry getSliceSymmetry() {
     return slice_symmetry;
   }
 
+  Thread slice_thread = null;
+  
+  public void sliceAndDice(final SeqSymmetry sym) {
+    stopSlicingThread();
+    
+    slice_thread = new Thread() {
+      public void run() {
+        sliceAndDiceNow(sym);
+      }
+    };
+    
+    slice_thread.start();
+  }
+  
+  void stopSlicingThread() {
+    if (slice_thread == Thread.currentThread()) {
+      //System.out.println("Current thread is the slicer!");
+    }
+    else if (slice_thread != null && slice_thread.isAlive()) {
+      //System.out.println("Stopping a thread!");
+      slice_thread.stop(); // TODO: Deprecated, but seems OK here.  Maybe fix later.
+      slice_thread = null;
+    }
+  }
+  
   /**
    *  Performs a genometry-based slice-and-dice.
    *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
    */
-  public void sliceAndDice(SeqSymmetry sym) {
+  void sliceAndDiceNow(SeqSymmetry sym) {
     //    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
     if (! slicing_in_effect) {
       //   only redo viewspan_before_slicing if slicing is not already in effect, because
@@ -2092,12 +2110,13 @@ public class SeqMapView extends JPanel
     }
   }
 
-
   public void zoomTo(SeqSpan span) {
-    int smin = span.getMin();
-    int smax = span.getMax();
-    float coord_width = smax - smin;
-    float pixel_width = seqmap.getView().getPixelBox().width;
+    zoomTo(span.getMin(), span.getMax());
+  }
+
+  public void zoomTo(double smin, double smax) {
+    double coord_width = smax - smin;
+    double pixel_width = seqmap.getView().getPixelBox().width;
     double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that
     pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoWidgetI.X));
     seqmap.zoom(NeoWidgetI.X, pixels_per_coord);
@@ -2941,24 +2960,6 @@ public class SeqMapView extends JPanel
     }
   }
 
-//  public void actionPerformed(ActionEvent evt)  {
-//    Object src = evt.getSource();
-//    if (src == bases_per_pixelTF)  {
-//      System.out.println("action received on bases_per_pixel text field");
-//      try {
-//	float bases_per_pixel = Float.parseFloat(bases_per_pixelTF.getText());
-//	float pixels_per_base = 1.0f/bases_per_pixel;
-//	seqmap.zoom(NeoWidgetI.X, pixels_per_base);
-//	seqmap.updateWidget();
-//      }
-//      catch (Exception ex) {
-//	bases_per_pixelTF.setText("");
-//      }
-//    }
-//    else if (src == bases_in_viewTF)  {
-//
-//    }
-//  }
 
   JMenu navigation_menu = null;
 

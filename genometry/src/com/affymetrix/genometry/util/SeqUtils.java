@@ -820,7 +820,10 @@ public abstract class SeqUtils {
           //        spanX and the spanY
           //    if no intersection, keep looping
           //    if intersection exists, then add to child_resultSym
-          int spanCount = map_child_sym.getSpanCount();
+          int spanCount = 0;
+          if (map_child_sym != null) {
+            spanCount = map_child_sym.getSpanCount();
+          }
 
           // WARNING: still need to switch to using mutable SeqSpan args for efficiency
           for (int spandex=0; spandex < spanCount; spandex++) {

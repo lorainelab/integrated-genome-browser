@@ -15,21 +15,17 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.NumberFormat;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import javax.swing.border.*;
 
-import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
-import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.swing.DisplayUtils;
 
-public class DataLoadView extends JComponent implements NeoViewBoxListener  {
+public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean USE_QUICKLOAD = true;
@@ -67,12 +63,6 @@ public class DataLoadView extends JComponent implements NeoViewBoxListener  {
   public void initialize() {
     if (USE_QUICKLOAD)  { quick_view.initialize(); }
   }
-
-  public void viewBoxChanged(NeoViewBoxChangeEvent e) {
-    if (group_view != null) {
-      group_view.range_box.viewBoxChanged(e);
-    }
-  }
 }
 
 class SeqGroupView extends JComponent
@@ -88,7 +78,6 @@ class SeqGroupView extends JComponent
   ListSelectionModel lsm;
   //JLabel genomeL;
   JComboBox genomeCB;
-  MapRangeBox range_box = new MapRangeBox();
 
   public SeqGroupView() {
     seqtable = new JTable();
@@ -103,12 +92,9 @@ class SeqGroupView extends JComponent
       scroller.getBorder(),
       BorderFactory.createEmptyBorder(0,2,0,2)));
 
-    range_box.setBorder(BorderFactory.createEmptyBorder(3,2,3,2));
-    
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(genomeCB);
     this.add(scroller);
-    this.add(range_box);
     
     this.setBorder(BorderFactory.createTitledBorder("Current Genome"));
     gmodel.addGroupSelectionListener(this);
@@ -221,26 +207,6 @@ class SeqGroupView extends JComponent
 
 }
 
-/** A Text Box for displaying, and maybe setting, the range of a NeoMap. */
-class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
-  JTextField range_box = new JTextField("");
-  static final NumberFormat nformat = NumberFormat.getIntegerInstance();  
-
-  public MapRangeBox() {
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    this.add(range_box);
-    range_box.setEditable(false);
-  }
-  
-  public void viewBoxChanged(NeoViewBoxChangeEvent e) {
-    com.affymetrix.genoviz.bioviews.Rectangle2D vbox = e.getCoordBox();
-    range_box.setText(nformat.format(vbox.x) + " : " + nformat.format(vbox.width+vbox.x));
-  }
-
-  public void groupSelectionChanged(GroupSelectionEvent evt) {
-    range_box.setText("");
-  }
-}
 
 class SeqGroupTableModel extends AbstractTableModel  {
   AnnotatedSeqGroup group;

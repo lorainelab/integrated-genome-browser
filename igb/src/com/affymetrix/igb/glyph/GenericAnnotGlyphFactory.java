@@ -296,7 +296,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
           if (cspan == null) {
             
-            if (DRAW_DELETION_GLYPHS && annotseq != coordseq) {
+            if (DRAW_DELETION_GLYPHS && annotseq != coordseq && boundaries != null) {
               // There is a missing child, so indicate it with a little glyph.
               
               int annot_span_min = child.getSpan(annotseq).getMin();
@@ -340,16 +340,16 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 		if (annotseq != coordseq) {
 		  cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
 		}
-		//SeqSpan cds_span = SeqUtils.intersection(cdsSpan, cspan);
 		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
-		GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
-		cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
-		cds_glyph.setColor(parent_color);
-		pglyph.addChild(cds_glyph);
-		if (SET_CHILD_INFO) {
-		  map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
-		}
-
+                if (cds_span != null) {
+                  GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
+                  cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
+                  cds_glyph.setColor(parent_color);
+                  pglyph.addChild(cds_glyph);
+                  if (SET_CHILD_INFO) {
+                    map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
+                  }
+                }
               } catch (Exception e) {
                 e.printStackTrace();
               }
@@ -403,8 +403,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
       simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
       SeqSymmetry bounds_sym = gviewer.transformForViewSeq(simple_sym, annotseq);
+
+      int child_count = bounds_sym.getChildCount();
+      if (child_count == 0) {
+        return null;
+      }
       
-      boundaries = new int[bounds_sym.getChildCount()+1][];
+      boundaries = new int[child_count+1][];
       
       SeqSymmetry child = bounds_sym.getChild(0);
 

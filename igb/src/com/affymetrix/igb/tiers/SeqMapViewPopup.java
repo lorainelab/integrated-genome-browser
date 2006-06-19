@@ -25,6 +25,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.parsers.BedParser;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
@@ -130,6 +131,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       saveAsBedFile(current_tier);
+    }
+  };
+
+  Action save_das_action = new AbstractAction("Save tier to DAS/2") {
+    public void actionPerformed(ActionEvent e) {
+      java.util.List current_tiers = handler.getSelectedTiers();
+      if (current_tiers.size() > 1) {
+        ErrorHandler.errorPanel("Must select only one tier");
+      }
+      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      saveToDas2(current_tier);
     }
   };
 
@@ -316,7 +328,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
     return result;
   }
-  
+
   // although this will work on a list of selected tier labels, it is
   // probably more intuitive if its use is restricted to a single tier.
   public void changeColor(final java.util.List tier_label_glyphs, final boolean fg) {
@@ -333,7 +345,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       if (fg) {
         chooser.setColor(style_0.getColor());
       } else {
-        chooser.setColor(style_0.getBackground());        
+        chooser.setColor(style_0.getBackground());
       }
     }
 
@@ -344,7 +356,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
           TierGlyph tier = (TierGlyph) tlg.getInfo();
           IAnnotStyle style = tier.getAnnotStyle();
 
-          if (style != null) { 
+          if (style != null) {
             //System.out.println("Setting color of " + style.getHumanName() + ", " + style);
             if (fg) {
               style.setColor(chooser.getColor());
@@ -363,14 +375,14 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
                                         al,  //OK button handler
                                         null); //no CANCEL button handler
     dialog.show();
-    
+
     if (!fg && containsGraphs(tier_label_glyphs)) {
       refreshMap(false);
       ErrorHandler.errorPanel("WARNING", "Graphs have a transparent background.  " +
         "To change the BG color of a graph, change the BG color " +
         "of the *default* tier in the tier customizer.");
     } else {
-      refreshMap(false);      
+      refreshMap(false);
     }
   }
 
@@ -387,6 +399,41 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
+  public void saveToDas2(TierGlyph atier) {
+    String annot_type = atier.getLabel();
+    int childcount= atier.getChildCount();
+    java.util.List syms = new ArrayList(childcount);
+    for (int i=0; i<childcount; i++) {
+      GlyphI child = atier.getChild(i);
+      if (child.getInfo() instanceof SeqSymmetry) {
+	syms.add(child.getInfo());
+      }
+    }
+    System.out.println("Saving symmetries to DAS/2: "+ syms.size());
+
+    JFileChooser chooser = UniFileChooser.getFileChooser("DAS/2 file (*.das2xml)", "das2xml");
+    chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+
+    int option = chooser.showSaveDialog(null);
+    if (option == JFileChooser.APPROVE_OPTION) {
+      FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+      BufferedWriter bw = null;
+      try {
+	File fil = chooser.getSelectedFile();
+	FileOutputStream fos = new FileOutputStream(fil);
+	Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
+	das_parser.writeAnnotations(syms, aseq, annot_type, fos);
+        fos.close();
+      }
+      catch (Exception ex) {
+	ErrorHandler.errorPanel("Problem saving file", ex);
+      } finally {
+        if (bw != null) try {bw.close();} catch (IOException ioe) {}
+      }
+    }
+  }
+
   public void saveAsBedFile(TierGlyph atier) {
     int childcount= atier.getChildCount();
     java.util.List syms = new ArrayList(childcount);
@@ -396,7 +443,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	syms.add(child.getInfo());
       }
     }
-    System.out.println("Saving symmetries: "+ syms.size());
+    System.out.println("Saving symmetries as BED file: "+ syms.size());
 //    com.affymetrix.genometry.util.SeqUtils.printSymmetry((SeqSymmetry) syms.get(0));
 
     JFileChooser chooser = UniFileChooser.getFileChooser("Bed file (*.bed)", "bed");
@@ -532,6 +579,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
     save_bed_action.setEnabled(num_selections == 1);
+    save_das_action.setEnabled(num_selections == 1);
 
     if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
@@ -545,7 +593,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       sym_summarize_action.setEnabled(false);
       coverage_action.setEnabled(false);
     }
-    
+
     changeMenu.removeAll();
     changeMenu.add(change_color_action);
     changeMenu.add(change_bg_color_action);
@@ -569,6 +617,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(change_expand_max_all_action);
     popup.add(new JSeparator());
     popup.add(save_bed_action);
+    popup.add(save_das_action);
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
     popup.add(coverage_action);

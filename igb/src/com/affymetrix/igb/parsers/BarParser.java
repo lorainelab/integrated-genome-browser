@@ -841,7 +841,7 @@ public class BarParser implements AnnotationWriter  {
 	dos.writeInt(xcoords[i]);
 	dos.writeFloat(ycoords[i]);
       }
-      dos.close();  // or should responsibility for closting stream be left to the caller??
+      dos.close();  // or should responsibility for closing stream be left to the caller??
       success = true;
     }
     catch (Exception ex) {

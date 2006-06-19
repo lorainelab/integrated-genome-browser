@@ -45,6 +45,13 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean KEEP_PREVIOUS_CURATION = false;
+
+  /**
+  *   Used to assign curation syms an id unique to this session
+  *   (If curation is persisted, may need to change this id later based 
+  *     on id assigment from persistent store)
+  */
+  static int curation_id_count = 0;
   
   public static final String PREF_ENABLE_CURATIONS = "Enable Curations";
   public static final boolean default_enable_curations = false;
@@ -169,6 +176,8 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       CurationSym curation_sym = new CurationSym();
       curation_sym.setProperty("method", current_type);
       SeqUtils.copyToMutable(annot_sym, curation_sym);
+      curation_sym.setID(current_type + "." + curation_id_count);
+      curation_id_count++;
       aseq.addAnnotation(curation_sym);
 
       // place annotation tiers next to axis...

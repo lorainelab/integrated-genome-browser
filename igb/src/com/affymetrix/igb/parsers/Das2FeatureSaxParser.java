@@ -604,6 +604,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	if (getBaseURI() != null) {
 	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
 	}
+	else {
+	  pw.println(" >");
+	}
 
 	MutableSeqSpan mspan = new SimpleMutableSeqSpan();
 	Iterator iterator = syms.iterator();
@@ -727,11 +730,12 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
 
-
     protected String getChildID(SeqSymmetry child, String parent_id, int parent_index)  {
-      String feat_id = null;
-      if (child instanceof Propertied) {
-	feat_id = (String)((Propertied)child).getProperty("id");
+      String feat_id = child.getID();
+      if (feat_id == null)  {
+	if (child instanceof Propertied) {
+	  feat_id = (String)((Propertied)child).getProperty("id");
+	}
       }
       if (feat_id == null) {
 	if (parent_id != null) {

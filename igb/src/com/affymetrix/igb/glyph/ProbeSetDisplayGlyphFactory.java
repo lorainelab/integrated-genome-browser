@@ -257,7 +257,7 @@ the probeset, probe and pieces of probes
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
     if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
-      boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq, coordseq);
+      boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq);
     }
     
     boolean forward = pspan.isForward();

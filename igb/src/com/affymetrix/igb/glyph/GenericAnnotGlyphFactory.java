@@ -230,7 +230,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
     if (DRAW_DELETION_GLYPHS && annotseq != coordseq && ADD_CHILDREN && sym.getChildCount() > 0) {
-      boundaries = determineBoundaries(gviewer, annotseq, coordseq);
+      boundaries = determineBoundaries(gviewer, annotseq);
     }
     
     boolean forward = pspan.isForward();
@@ -395,14 +395,31 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
   }
-
+  
   // a helper function used in drawing the "deletion" glyphs
-  static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq, BioSeq coordseq) {
+  static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq) {
     int[][] boundaries = null;
-    if (annotseq != coordseq) {
+    if (annotseq != gviewer.getViewSeq()) {
       MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
       simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
       SeqSymmetry bounds_sym = gviewer.transformForViewSeq(simple_sym, annotseq);
+      
+      boundaries = determineBoundaries(bounds_sym, annotseq, gviewer.getViewSeq());
+    }
+    return boundaries;
+  }
+
+  // a helper function used in drawing the "deletion" glyphs
+  // Returns an int array of size [n][2] where [n][0] is the boundary in terms of seq0
+  // and [n][1] is the corresponding boundary in terms of seq1.
+  // Value [0][0] = Integer.MIN_VALUE and [0][1] = minimum of first span in seq1.
+  // For all other [n][0] and [n][1] it is the value of the Maximum of the boundary
+  // span in the seq0 or seq1.
+  static int[][] determineBoundaries(SeqSymmetry bounds_sym, BioSeq seq0, BioSeq seq1) {
+    int[][] boundaries = null;
+    if (seq0 != seq1) {
+      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
+      simple_sym.addSpan(new SimpleMutableSeqSpan(0, seq0.getLength(), seq0));
 
       int child_count = bounds_sym.getChildCount();
       if (child_count == 0) {
@@ -415,11 +432,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
       boundaries[0] = new int[2];
       boundaries[0][0] = Integer.MIN_VALUE;
-      boundaries[0][1] = child.getSpan(coordseq).getMin();
+      boundaries[0][1] = child.getSpan(seq1).getMin();
       for (int qq = 1 ; qq < boundaries.length; qq++) {
         child = bounds_sym.getChild(qq-1);
-        SeqSpan annot_span = child.getSpan(annotseq);
-        SeqSpan coord_span = child.getSpan(coordseq);
+        SeqSpan annot_span = child.getSpan(seq0);
+        SeqSpan coord_span = child.getSpan(seq1);
         
         boundaries[qq] = new int[2];
         boundaries[qq][0] = annot_span.getMax();

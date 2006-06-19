@@ -228,8 +228,10 @@ public class GraphGlyph extends Glyph {
         // but this check is definitely needed at some point.
         draw_end_index = xcoords.length - 1;
       }
-
+      int draw_count = 0;
       float ytemp;
+      int ymin_pixel = zero_point.y;
+      int ymax_pixel = zero_point.y;
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	// flipping about yaxis... should probably make this optional
 	// also offsetting to place within glyph bounds
@@ -248,7 +250,24 @@ public class GraphGlyph extends Glyph {
 	  g.drawLine(prev_point.x + xpix_offset, prev_point.y, curr_point.x + xpix_offset, curr_point.y);
 	}
 	else if (graph_style == BAR_GRAPH) {
-	  g.drawLine(curr_point.x + xpix_offset, zero_point.y, curr_point.x + xpix_offset, curr_point.y);
+	  // collect ymin, ymax, for all coord points that transform to
+	  if (prev_point.x != curr_point.x) {
+	    //	    g.drawLine(curr_point.x + xpix_offset, zero_point.y, curr_point.x + xpix_offset, curr_point.y);
+	    //	    g.drawLine(curr_point.x + xpix_offset, ymin_pixel, curr_point.x + xpix_offset, ymax_pixel);
+	    //	    g.drawLine(prev_point.x + xpix_offset, ymin_pixel, prev_point.x + xpix_offset, ymax_pixel);
+	    //	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, ymax_pixel - ymin_pixel);
+	    int yheight_pixel = ymax_pixel - ymin_pixel;
+	    if (yheight_pixel < 1) { yheight_pixel = 1; }
+	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, yheight_pixel);
+	    draw_count++;
+	    ymin_pixel = curr_point.y < zero_point.y ? curr_point.y : zero_point.y; 
+	    ymax_pixel = curr_point.y > zero_point.y ? curr_point.y : zero_point.y;
+	  }
+	  else {
+	    // inlining Math.min(ymin_pixel, curr_point.y) and Math.max(ymax_pixel, curr_point.y);
+	    ymin_pixel = curr_point.y < ymin_pixel ? curr_point.y : ymin_pixel; 
+	    ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
+	  }
 	}
 	else if (graph_style == DOT_GRAPH) {
 	  g.fillRect(curr_point.x + xpix_offset, curr_point.y, 1, 1);
@@ -296,6 +315,7 @@ public class GraphGlyph extends Glyph {
 	prev_point.y = curr_point.y;
 	prev_ytemp = ytemp;
       }
+      //      System.out.println("draw count: " + draw_count);
 
     }
 

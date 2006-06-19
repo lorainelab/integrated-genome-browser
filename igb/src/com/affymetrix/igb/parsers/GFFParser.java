@@ -145,6 +145,8 @@ public class GFFParser implements AnnotationWriter  {
   String group_id_field_name = null;
   String id_tag = null;
 
+  TrackLineParser track_line_parser = new TrackLineParser();
+  
   /** Whether to convert group_id field value to lower case.
    *  Beginning with source forge version 1.5 of this file, we started always
    *  doing this, but the reason has been forgotten.  Unless we can remember
@@ -285,6 +287,12 @@ public class GFFParser implements AnnotationWriter  {
         if (line == null) { continue; }
         if (line.startsWith("##")) { processDirective(line); continue; }
         if (line.startsWith("#")) { continue; }
+        if (line.startsWith("track")) {
+          // in GFF files, the color will only be applied from track lines 
+          // iff the "source" name matches the track line name.
+          track_line_parser.setTrackProperties(line);
+          continue;
+        }
         String fields[] = line_regex.split(line);
 
         if (fields != null && fields.length >= 8) {

@@ -37,9 +37,6 @@ import javax.swing.event.*;  // temporary visualization till hooked into IGB
 
 public class Das2LoadView extends JComponent
   implements ActionListener, TableModelListener,
-	     // ItemListener,
-             // ComponentListener,  turned off pending change mechanism for now
-	     //  TreeExpansionListener  {  // TreeWillExpandListener  {
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
@@ -104,11 +101,17 @@ public class Das2LoadView extends JComponent
     tree = new JTree(top);
 
     load_featuresB = new JButton("Load Features");
+    load_featuresB.setToolTipText("Load selected feature types for this region.");
+    load_featuresB.setEnabled(false);
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
     for (int i=1; i<load_states.length; i++) {
       typestateCB.addItem(load_states[i]);
     }
+    JComponent load_features_box = Box.createHorizontalBox();
+    load_features_box.add(Box.createHorizontalGlue());
+    load_features_box.add(load_featuresB);
+    load_features_box.add(Box.createHorizontalGlue());
 
     types_table = new JTable();
     types_table.setModel(empty_table_model);
@@ -127,7 +130,7 @@ public class Das2LoadView extends JComponent
 
     //    types_panel.add("North", namesearchP);
     types_panel.add("Center", table_scroller);
-    types_panel.add("South", load_featuresB);
+    types_panel.add("South", load_features_box);
 
 
     JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -229,7 +232,9 @@ public class Das2LoadView extends JComponent
 
 	  types_table.validate();
 	  types_table.repaint();
-	  load_featuresB.setEnabled(true);
+          if (gviewer != null) {
+            load_featuresB.setEnabled(true);
+          }
 	  // need to do this here within finished(), otherwise may get threading issues where
 	  //    GroupSelectionEvents are being generated before group gets populated with seqs
 	  System.out.println("gmodel selected group:  " + gmodel.getSelectedSeqGroup());
@@ -286,20 +291,27 @@ public class Das2LoadView extends JComponent
     //    if per-seq, then should already be loaded?
     // maybe add a fully_loaded flag so know which ones to skip because they're done?
 
-    java.util.List type_states = (java.util.List)version2typestates.get(current_version);
-    Iterator titer = type_states.iterator();
+    java.util.List type_states = (java.util.List) version2typestates.get(current_version);
     ArrayList requests = new ArrayList();
-    while (titer.hasNext()) {
-      Das2TypeState tstate = (Das2TypeState)titer.next();
-      Das2Type dtype = tstate.getDas2Type();
-      if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
-	System.out.println("type to load for visible range: " + dtype.getID());
-	Das2FeatureRequestSym request_sym =
-	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	requests.add(request_sym);
+    if (type_states != null) {
+      Iterator titer = type_states.iterator();
+      while (titer.hasNext()) {
+        Das2TypeState tstate = (Das2TypeState)titer.next();
+        Das2Type dtype = tstate.getDas2Type();
+        if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
+          System.out.println("type to load for visible range: " + dtype.getID());
+          Das2FeatureRequestSym request_sym =
+            new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+          requests.add(request_sym);
+        }
       }
     }
-    if (requests.size() > 0) {
+    if (requests.size() == 0) {
+      ErrorHandler.errorPanel("Select some data", "You must first zoom in to " +
+        "your area of interest and then select some data types "
+        +"from the table above before pressing the \"Load\" button."); 
+    }
+    else {
       processFeatureRequests(requests, true);
     }
   }

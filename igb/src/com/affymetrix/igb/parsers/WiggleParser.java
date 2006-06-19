@@ -22,13 +22,13 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
 
-public class WiggleParser extends TrackLineParser {
+public class WiggleParser {
 
   /**
-   *  wiggle subformats
+   *  Wiggle subformats:
    *    BED4
    *    VARSTEP
-   *    FIXEDSTEP
+   *    FIXEDSTEP.
    */
   static int UNKNOWN = 0;
   static int BED4 = 1;
@@ -37,6 +37,12 @@ public class WiggleParser extends TrackLineParser {
 
   static Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
 
+  TrackLineParser track_line_parser;
+
+  public WiggleParser() {
+    track_line_parser = new TrackLineParser();
+  }
+  
   /**
    * NOR YET IMPLEMENTED.
    *  Currently only reading one particular wiggle format:
@@ -68,7 +74,7 @@ public class WiggleParser extends TrackLineParser {
       if (line.startsWith("#")) { continue; }
       else if (line.startsWith("%")) { continue; }
       else if (line.startsWith("track")) {
-	setTrackProperties(line);
+	track_line_parser.setTrackProperties(line);
 	continue;
       }
       else if (line.startsWith("variableStep")) {

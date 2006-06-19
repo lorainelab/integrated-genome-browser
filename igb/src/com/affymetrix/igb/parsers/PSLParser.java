@@ -29,7 +29,7 @@ import com.affymetrix.igb.genometry.UcscPslSym;
 import com.affymetrix.igb.genometry.Psl3Sym;
 import com.affymetrix.igb.genometry.SeqSymmetryConverter;
 
-public class PSLParser extends TrackLineParser implements AnnotationWriter  {
+public class PSLParser implements AnnotationWriter  {
 
   static java.util.List psl_pref_list = new ArrayList();
   static java.util.List psl3_pref_list = new ArrayList();
@@ -52,6 +52,8 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
   static Pattern tagval_regex = Pattern.compile("=");
   static Pattern non_digit = Pattern.compile("[^0-9-]");
 
+  TrackLineParser track_line_parser = new TrackLineParser();
+  
   public PSLParser() {
     super();
   }
@@ -149,7 +151,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
           continue;
         }
 	else if (line.startsWith("track")) {
-	  Map track_props = setTrackProperties(line);
+	  Map track_props = track_line_parser.setTrackProperties(line);
           if (is_link_psl) {
             String track_name = (String) track_props.get("name");
             if (track_name != null && track_name.endsWith("probesets")) {
@@ -288,7 +290,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	int[] qmins = (int[])child_arrays.get(1);
 	int[] tmins = (int[])child_arrays.get(2);
 
-	String type = (String)getCurrentTrackHash().get("name");
+	String type = (String) track_line_parser.getCurrentTrackHash().get("name");
 	if (type == null) { type = annot_type; }
 
 	UcscPslSym sym = null;
@@ -538,7 +540,7 @@ public class PSLParser extends TrackLineParser implements AnnotationWriter  {
 	SeqSymmetry sym = (SeqSymmetry)iterator.next();
 	if (! (sym instanceof UcscPslSym)) {
 	  int spancount = sym.getSpanCount();
-	  if (sym.getSpanCount() == 1) {
+	  if (spancount == 1) {
 	    sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq);
 	  }
 	  else {

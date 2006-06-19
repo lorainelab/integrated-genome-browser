@@ -75,7 +75,7 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *
  * </pre>
  */
-public class BedParser extends TrackLineParser implements AnnotationWriter, StreamingParser, ParserListener  {
+public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
   static final boolean DEBUG = false;
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
   static Pattern comma_regex = Pattern.compile(",");
@@ -93,6 +93,8 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
   static Integer int1 = new Integer(1);
   java.util.List parse_listeners = new ArrayList();
 
+  TrackLineParser track_line_parser = new TrackLineParser();
+  
   public BedParser() {
     super();
   }
@@ -147,16 +149,15 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
      throws IOException  {
     System.out.println("called BedParser.parseWithEvents()");
     String line;
-    boolean some_children = false;
 
     Thread thread = Thread.currentThread();
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
     while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-      if (line.startsWith("#") || line.equals("")) {  // skip comment lines
+      if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
 	continue;
       }
       else if (line.startsWith("track")) {
-	setTrackProperties(line);
+	track_line_parser.setTrackProperties(line);
 	continue;
       }
       else if (line.startsWith("browser")) {
@@ -181,7 +182,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	int[] blockMaxs = null;
 
 	//	String type = (String)track_hash.get("name");
-	String type = (String)getCurrentTrackHash().get("name");
+	String type = (String) track_line_parser.getCurrentTrackHash().get("name");
 	if (type == null) { type = default_type; }
 	if (fields != null && field_count >= 3) {
 	  boolean includes_bin_field = (field_count > 6 &&
@@ -192,11 +193,11 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	  if (includes_bin_field) { findex++; }
 	  seq_name = fields[findex++]; // seq id field
 	  MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
-	  if ((seq == null) && (seq_name.indexOf(";") > -1)) {
+	  if ((seq == null) && (seq_name.indexOf(';') > -1)) {
 	    // if no seq found, try and split up seq_name by ";", in case it is in format
 	    //    "seqid;genome_version"
-	    String seqid = seq_name.substring(0, seq_name.indexOf(";"));
-	    String version = seq_name.substring(seq_name.indexOf(";")+1);
+	    String seqid = seq_name.substring(0, seq_name.indexOf(';'));
+	    String version = seq_name.substring(seq_name.indexOf(';')+1);
 	    //	    System.out.println("    seq = " + seqid + ", version = " + version);
 	    if ((gmodel.getSeqGroup(version) == seq_group) ||
 		seq_group.getID().equals(version)) {
@@ -250,7 +251,6 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	    blockStarts = parseIntArray(fields[findex++]); // blockStarts field
 	    blockMins = makeBlockMins(min, blockStarts);
 	    blockMaxs = makeBlockMaxs(blockSizes, blockMins);
-	    some_children = true;
 	  }
 	  else {
 	    /*
@@ -318,7 +318,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     if (annotate_seq) {
       MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
       if (create_container_annot) {
-        String type = (String)getCurrentTrackHash().get("name");
+        String type = (String) track_line_parser.getCurrentTrackHash().get("name");
         if (type == null) { type = default_type; }
         Map type2csym = (Map)seq2types.get(seq);
         if (type2csym == null) {

@@ -514,8 +514,11 @@ public class SmartGraphGlyph extends GraphGlyph {
 	else {  // draw previous pixel position
 	  if ((graph_style == MINMAXAVG) && MINMAXBAR)  {
 	    int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
-	    int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
+	    int yend = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight);
+	    int yheight = yend - ystart;
 	    g.fillRect(prev_point.x, ystart, 1, yheight);
+	    //	    g.fillRect(prev_point.x, ystart, 1, 1);
+	    //	    g.fillRect(prev_point.x, yend, 1, 1);
 	    //	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
 	    //		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
 	    draw_count++;

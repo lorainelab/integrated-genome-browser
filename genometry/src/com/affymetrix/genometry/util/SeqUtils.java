@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,7 +15,6 @@ package com.affymetrix.genometry.util;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 
@@ -50,9 +49,10 @@ public abstract class SeqUtils {
     if (child_count == 0) { return current_depth; }
     int max_child_depth = current_depth;
     // descend down into children to find max depth
-    for (int i=0; i<child_count; i++) {
+    int next_depth = current_depth + 1;
+    for (int i=child_count-1; i>=0; i--) {
       SeqSymmetry child = sym.getChild(i);
-      int current_child_depth = getDepth(child, current_depth+1);
+      int current_child_depth = getDepth(child, next_depth);
       max_child_depth = Math.max(max_child_depth, current_child_depth);
     }
     return max_child_depth;
@@ -340,8 +340,7 @@ public abstract class SeqUtils {
     SeqSymmetry unionAB = union(symA, symB, seq);
     SeqSymmetry interAB = intersection(symA, symB, seq);
     SeqSymmetry inverseInterAB = inverse(interAB, seq);
-    SeqSymmetry xorAB = intersection( unionAB, inverseInterAB, seq);
-    return xorAB;
+    return intersection( unionAB, inverseInterAB, seq);
   }
 
   /**
@@ -350,9 +349,8 @@ public abstract class SeqUtils {
    *     are not covered by symB.
    */
   public static SeqSymmetry exclusive(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
-    SeqSymmetry xorSym = SeqUtils.xor(symA, symB, seq);
-    SeqSymmetry a_not_b = SeqUtils.intersection(symA, xorSym, seq);
-    return a_not_b;
+    SeqSymmetry xorSym = xor(symA, symB, seq);
+    return SeqUtils.intersection(symA, xorSym, seq);
   }
 
 
@@ -498,12 +496,11 @@ public abstract class SeqUtils {
     // will probably be smaller, but specifying an initial capacity
     //   that won't be exceeded can be more efficient
     ArrayList merged_spans = new ArrayList(spans.size());
-    int loopcount = 0;
+
     while ((index = getFirstNonNull(spans)) > -1) {
       MutableSeqSpan span = mergeHelp(spans, index);
 
       merged_spans.add(span);
-      loopcount++;
     }
     Collections.sort(merged_spans, new SeqUtils.StartSorter());
     for (int i=0; i<merged_spans.size(); i++) {
@@ -638,10 +635,8 @@ public abstract class SeqUtils {
     // merge children
     // if all children merge, should child "collapse" into parent?
     int childcount = symset.getChildCount();
-    SeqSymmetry prev;
     for (int cindex = 0; cindex < childcount; cindex++) {
       SeqSymmetry current = symset.getChild(cindex);
-      prev = current;
     }
     return false;
   }
@@ -873,7 +868,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
                   }
                 }
                 childResult.addSpan(interSpan);
-              }
+              }              
             }
           }
           if (childResult == null) {
@@ -1448,30 +1443,53 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
   /**
    *  Return true if input spans overlap;
    *    orientation of spans is ignored.
+   *    Loose means that abutment is considered overlap.
    *    WARNING: assumes both are on same sequence
-   *    GAH 10-2-2002 -- WARNING: currently abutment is considered overlap -- should probably change that
    */
   public static boolean looseOverlap(SeqSpan spanA, SeqSpan spanB) {
     // should (overlap() should also check to make sure they are the same seq?)
-    return (((spanA.getMinDouble() >= spanB.getMinDouble()) &&
-             (spanA.getMinDouble() <= spanB.getMaxDouble()))
-            ||
-            ((spanB.getMinDouble() >= spanA.getMinDouble()) &&
-             (spanB.getMinDouble() <= spanA.getMaxDouble())) );
+    double AMin = spanA.getMinDouble();
+    double BMin = spanB.getMinDouble();
+    if (AMin >= BMin) {
+      double BMax = spanB.getMaxDouble();
+      return AMin <= BMax;
+    } else {
+      double AMax = spanA.getMaxDouble();
+      return BMin <= AMax;
+    }
   }
 
+  static boolean looseOverlap(double AMin, double AMax, double BMin, double BMax) {
+    if (AMin >= BMin) {
+      return AMin <= BMax;
+    } else {
+      return BMin <= AMax;
+    }
+  }
+  
   /**
    *    Exactly like looseOverlap(spanA, spanB), except exact abutment is not considered overlap.
    *    (&gt; and &lt; rather than &gt;= and &lt;= used for comparisons...).
    */
   public static boolean strictOverlap(SeqSpan spanA, SeqSpan spanB) {
-    return (((spanA.getMinDouble() >= spanB.getMinDouble()) &&
-             (spanA.getMinDouble() < spanB.getMaxDouble()))
-            ||
-            ((spanB.getMinDouble() >= spanA.getMinDouble()) &&
-             (spanB.getMinDouble() < spanA.getMaxDouble())) );
+    double AMin = spanA.getMinDouble();
+    double BMin = spanB.getMinDouble();
+    if (AMin >= BMin) {
+      double BMax = spanB.getMaxDouble();
+      return AMin < BMax;
+    } else {
+      double AMax = spanA.getMaxDouble();
+      return BMin < AMax;
+    }
   }
 
+  static boolean strictOverlap(double AMin, double AMax, double BMin, double BMax) {
+    if (AMin >= BMin) {
+      return AMin < BMax;
+    } else {
+      return BMin < AMax;
+    }    
+  }
 
   /**
    *  Returns true if the extent of spanB is contained within spanA.
@@ -1542,7 +1560,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       return null;
     }
   }
-
+  
   /**
    *  More efficient method to retrieve intersection of two spans.
    *  returns the resulting span in dstSpan, and returns true if
@@ -1558,53 +1576,26 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     if (spanA.getBioSeq() != spanB.getBioSeq()) { return false; }
     if (! overlap(spanA, spanB)) { return false; }
 
-    /*
-    int imin, imax, start, end;
-    imin = Math.max(spanA.getMin(), spanB.getMin());
-    imax = Math.min(spanA.getMax(), spanB.getMax());
-    if (spanA.isForward() && spanB.isForward()) {
-      start = imin;
-      end = imax;
+    boolean AForward = spanA.isForward();
+    boolean BForward = spanB.isForward();
+    double start, end;
+    if (AForward && BForward) {
+      start = Math.max(spanA.getStartDouble(), spanB.getStartDouble());
+      end = Math.min(spanA.getEndDouble(), spanB.getEndDouble());
     }
-    else if ((!spanA.isForward()) && (!spanB.isForward())) {
-      start = imax;
-      end = imin;
-    }
-    else {
-      // for now, give priority to spanA...
-      if (spanA.isForward()) {
-        start = imin;
-        end = imax;
-      }
-      else {
-        start = imax;
-        end = imin;
-      }
-    }
-    dstSpan.setStart(start);
-    dstSpan.setEnd(end);
-    */
-
-    double dmin, dmax, start, end;
-    dmin = Math.max(spanA.getMinDouble(), spanB.getMinDouble());
-    dmax = Math.min(spanA.getMaxDouble(), spanB.getMaxDouble());
-    if (spanA.isForward() && spanB.isForward()) {
-      start = dmin;
-      end = dmax;
-    }
-    else if ((!spanA.isForward()) && (!spanB.isForward())) {
-      start = dmax;
-      end = dmin;
+    else if ((! AForward) && (! BForward)) {
+      start = Math.min(spanA.getStartDouble(), spanB.getStartDouble());
+      end = Math.max(spanA.getEndDouble(), spanB.getEndDouble());
     }
     else {
       // for now, give priority to spanA...
-      if (spanA.isForward()) {
-        start = dmin;
-        end = dmax;
+      if (AForward) {
+        start = Math.max(spanA.getStartDouble(), spanB.getEndDouble());
+        end = Math.min(spanA.getEndDouble(), spanB.getStartDouble());
       }
       else {
-        start = dmax;
-        end = dmin;
+        start = Math.min(spanA.getStartDouble(), spanB.getEndDouble());
+        end = Math.max(spanA.getEndDouble(), spanB.getStartDouble());
       }
     }
     dstSpan.setStartDouble(start);
@@ -1673,16 +1664,32 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
   public static boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan,
                               boolean use_strict_overlap) {
     if (spanA.getBioSeq() != spanB.getBioSeq()) { return false; }
+    boolean AForward = spanA.isForward();
+    boolean BForward = spanB.isForward();
+    double AMin, AMax, BMin, BMax;
+    if (AForward) {
+      AMin = spanA.getStartDouble();
+      AMax = spanA.getEndDouble();
+    } else {
+      AMin = spanA.getEndDouble();
+      AMax = spanA.getStartDouble();
+    }
+    
+    if (BForward) {
+      BMin = spanB.getStartDouble();
+      BMax = spanB.getEndDouble();
+    } else {
+      BMin = spanB.getEndDouble();
+      BMax = spanB.getStartDouble();      
+    }
+        
     if (use_strict_overlap) {
-      if (! strictOverlap(spanA, spanB)) { return false; }
+      if (! strictOverlap(AMin, AMax, BMin, BMax)) { return false; }
     }
     else {
-      if (! looseOverlap(spanA, spanB)) { return false; }
+      if (! looseOverlap(AMin, AMax, BMin, BMax)) { return false; }
     }
-    //    if (! overlap(spanA, spanB)) { return false; }
-    //    if (! strictOverlap(spanA, spanB)) { return false; }
-    //    if (! looseOverlap(spanA, spanB)) { return false; }
-    return encompass(spanA, spanB, dstSpan);
+    return encompass(AForward, BForward, AMin, AMax, BMin, BMax, spanA.getBioSeq(), dstSpan);
   }
 
   /**
@@ -1697,8 +1704,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    *  Performance issues:
    *    new MutableSeqSpan creation -- to avoid, use encompass(span, span, mutspan) instead
    */
-  public static SeqSpan encompass(SeqSpan spanA, SeqSpan spanB){
-    //    MutableSeqSpan dstSpan = new SimpleMutableSeqSpan();
+  public static SeqSpan encompass(SeqSpan spanA, SeqSpan spanB) {
     MutableSeqSpan dstSpan = new MutableDoubleSeqSpan();
     if (encompass(spanA, spanB, dstSpan)) {
       return dstSpan;
@@ -1720,26 +1726,26 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    */
   public static boolean encompass(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan) {
     if (spanA.getBioSeq() != spanB.getBioSeq()) { return false; }
-    double dmin, dmax, start, end;
-    dmin = Math.min(spanA.getMinDouble(), spanB.getMinDouble());
-    dmax = Math.max(spanA.getMaxDouble(), spanB.getMaxDouble());
-    if (spanA.isForward() && spanB.isForward()) {
-      start = dmin;
-      end = dmax;
+    double start, end;
+    final boolean AForward = spanA.isForward();
+    final boolean BForward = spanB.isForward();
+    if (AForward && BForward) {
+      start = Math.min(spanA.getStartDouble(), spanB.getStartDouble());
+      end = Math.max(spanA.getEndDouble(), spanB.getEndDouble());
     }
-    else if ((!spanA.isForward()) && (!spanB.isForward())) {
-      start = dmax;
-      end = dmin;
+    else if ((! AForward ) && (! BForward )) {
+      start = Math.max(spanA.getStartDouble(), spanB.getStartDouble());
+      end = Math.min(spanA.getEndDouble(), spanB.getEndDouble());
     }
     else {
       // for now, give priority to spanA...
-      if (spanA.isForward()) {
-        start = dmin;
-        end = dmax;
+      if (AForward) {
+        start = Math.min(spanA.getStartDouble(), spanB.getEndDouble());
+        end = Math.max(spanA.getEndDouble(), spanB.getStartDouble());
       }
       else {
-        start = dmax;
-        end = dmin;
+        start = Math.max(spanA.getStartDouble(), spanB.getEndDouble());
+        end = Math.min(spanA.getEndDouble(), spanB.getStartDouble());
       }
     }
     dstSpan.setStartDouble(start);
@@ -1748,6 +1754,24 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     return true;
   }
 
+  public static boolean encompass(boolean AForward, boolean BForward, 
+    double AMin, double AMax, double BMin, double BMax,
+    BioSeq seq, MutableSeqSpan dstSpan) {
+
+    double start, end;
+    if (AForward) {
+      start = Math.min(AMin, BMin);
+      end = Math.max(AMax, BMax);
+    }
+    else {
+      start = Math.max(AMax, BMax);
+      end = Math.min(AMin, BMin);
+    }
+    dstSpan.setStartDouble(start);
+    dstSpan.setEndDouble(end);
+    dstSpan.setBioSeq(seq);
+    return true;
+  }
 
   /** NOT YET TESTED */
   public static MutableSeqSymmetry copyToMutable(SeqSymmetry sym) {
@@ -1902,7 +1926,10 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    */
   public static String symToString(SeqSymmetry sym) {
     String result = "";
-    if (USE_SHORT_FORMAT_FOR_SYMS) {
+    if (sym == null) {
+      result = "SeqSymmetry == null";
+    }
+    else if (USE_SHORT_FORMAT_FOR_SYMS) {
       String sym_class = sym.getClass().getName();
       int n = sym_class.lastIndexOf('.');
       if (n>0 && n<sym_class.length()) sym_class = sym_class.substring(n+1);

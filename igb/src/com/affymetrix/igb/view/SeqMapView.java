@@ -344,6 +344,9 @@ public class SeqMapView extends JPanel
     }
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     seqmap.addMouseListener(mouse_listener);
+    
+    // A "Smart" rubber band is necessary becaus we don't want our attempts
+    // to drag the graph handles to also cause rubber-banding
     SmartRubberBand srb = new SmartRubberBand(seqmap);
     seqmap.setRubberBand(srb);
     seqmap.addRubberBandListener(mouse_listener);

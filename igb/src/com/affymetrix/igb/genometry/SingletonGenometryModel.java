@@ -18,12 +18,7 @@ import java.util.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.igb.event.GroupSelectionListener;
-import com.affymetrix.igb.event.SeqSelectionListener;
-import com.affymetrix.igb.event.SymSelectionListener;
-import com.affymetrix.igb.event.GroupSelectionEvent;
-import com.affymetrix.igb.event.SeqSelectionEvent;
-import com.affymetrix.igb.event.SymSelectionEvent;
+import com.affymetrix.igb.event.*;
 
 public class SingletonGenometryModel {
   static public boolean DEBUG = false;
@@ -38,6 +33,7 @@ public class SingletonGenometryModel {
   List seq_selection_listeners = new ArrayList();
   List group_selection_listeners = new ArrayList();
   List sym_selection_listeners = new ArrayList();
+  //List model_change_listeners = new ArrayList();
 
   AnnotatedSeqGroup selected_group = null;
   MutableAnnotatedBioSeq selected_seq = null;
@@ -80,6 +76,7 @@ public class SingletonGenometryModel {
       //      System.out.println("  adding new seq group: " + group_id);
       group = new AnnotatedSeqGroup(group_id);
       seq_groups.put(group.getID(), group);
+      //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
     }
     else {
       //      System.out.println("  already have seq group: " + group_id + ", actual id = " + group.getID());
@@ -89,10 +86,12 @@ public class SingletonGenometryModel {
 
   protected void addSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.put(group.getID(), group);
+    //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
   }
 
   public void removeSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.remove(group.getID());
+    //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
 
   public AnnotatedSeqGroup getSelectedSeqGroup() {
@@ -125,7 +124,6 @@ public class SingletonGenometryModel {
   
   void fireGroupSelectionEvent(Object src, List glist) {
     GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
-    Iterator iter = group_selection_listeners.iterator();
     for (int i=group_selection_listeners.size()-1; i>=0; i--) {
       GroupSelectionListener listener = (GroupSelectionListener) group_selection_listeners.get(i);
       listener.groupSelectionChanged(evt);
@@ -166,7 +164,6 @@ public class SingletonGenometryModel {
 
   void fireSeqSelectionEvent(Object src, List slist) {
     SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
-    Iterator iter = seq_selection_listeners.iterator();
     for (int i=seq_selection_listeners.size()-1; i>=0; i--) {
       SeqSelectionListener listener = (SeqSelectionListener) seq_selection_listeners.get(i);
       listener.seqSelectionChanged(evt);
@@ -329,8 +326,21 @@ public class SingletonGenometryModel {
    *  Get the list of selected symmetries on the currently selected sequence.
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
-  public List getSelectedSymmetries() {
+  public List getSelectedSymmetriesOnCurrentSeq() {
     return getSelectedSymmetries(selected_seq);
+  }
+  
+  /**
+   *  Get the list of selected symmetries on the currently selected sequence.
+   *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
+   */
+  public List getSelectedSymmetriesOnAllSeqs() {
+    List result = new ArrayList();
+    Iterator iter = seq2selectedSymsHash.values().iterator();
+    while (iter.hasNext()) {
+      result.addAll((List) iter.next());
+    }
+    return result;
   }
 
   /**
@@ -364,5 +374,26 @@ public class SingletonGenometryModel {
       List list = (List) i.next();
       list.clear();
     }
-  }  
+  }
+
+//  public void addModelChangeListener(GenometryModelChangeListener listener) {
+//    model_change_listeners.add(listener);
+//  }
+//
+//  public void removeModelChangeListener(GenometryModelChangeListener listener) {
+//    model_change_listeners.remove(listener);
+//  }
+//
+//  public List getModelChangeListeners() {
+//    return model_change_listeners;
+//  }
+//
+//  void fireModelChangeEvent(GenometryModelChangeEvent.EventType type, AnnotatedSeqGroup group) {
+//    GenometryModelChangeEvent event = new GenometryModelChangeEvent(this, type, group);
+//    for (int i=model_change_listeners.size()-1; i>=0; i--) {
+//      GenometryModelChangeListener listener = (GenometryModelChangeListener) model_change_listeners.get(i);
+//      listener.genometryModelChanged(event);
+//    }
+//  }  
+
 }

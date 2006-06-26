@@ -77,6 +77,13 @@ public class ParserController {
 	//	String annot_type = "das_" + stream_name.substring(0, stream_name.lastIndexOf(".brs"));
 	results = refseq_reader.parse(str, annot_type, seq_group, -1);
       }
+      else if (stream_name.endsWith(".bp1")) {
+	System.out.println("loading via Bprobe1Parser: " + stream_name);
+	Bprobe1Parser bp1_reader = new Bprobe1Parser();
+	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bp1"));
+        bp1_reader.parse(str, seq_group, true, annot_type);
+//        results = bp1_reader.parse(str, seq_group, true, annot_type);
+      }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
 	// assume it's GFF1, GFF2, or GTF format
 	System.out.println("loading via GFFParser: " + stream_name);

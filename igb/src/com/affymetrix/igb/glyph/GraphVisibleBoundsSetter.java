@@ -27,7 +27,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
 
 public class GraphVisibleBoundsSetter extends JPanel
-  implements ChangeListener, ActionListener  {
+  implements ChangeListener, ActionListener, FocusListener  {
 
   static DecimalFormat val_format;
   static DecimalFormat per_format;
@@ -495,10 +495,24 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
   }
   
+  /** When a JTextField gains focus, do nothing special. */
+  public void focusGained(FocusEvent e) {
+  }
+
+  /** When a JTextField loses focus, process its value. */
+  public void focusLost(FocusEvent e) {
+    Object src = e.getSource();
+    if (src instanceof JTextField) {
+      doAction(src);
+    }
+  }
   
   public void actionPerformed(ActionEvent evt) {
+    doAction(evt.getSource());
+  }
+  
+  void doAction(Object src) {
     if (graphs.size() <= 0) { return; }
-    Object src = evt.getSource();
 
     if (src == min_valT) {
       try {
@@ -767,8 +781,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     if (index < 0) {index = 0;}
     else if (index >= percent2score.length) { index = percent2score.length - 1; }
 
-    float value = percent2score[index];
-    return value;
+    return percent2score[index];
   }
 
   public float getPercentForValue(GraphGlyph gl, float value) {
@@ -810,6 +823,11 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.addActionListener(this);
     min_valT.addActionListener(this);
     max_valT.addActionListener(this);
+    min_perT.addFocusListener(this);
+    max_perT.addFocusListener(this);
+    min_valT.addFocusListener(this);
+    max_valT.addFocusListener(this);
+    
     syncCB.addActionListener(this);
   }
 

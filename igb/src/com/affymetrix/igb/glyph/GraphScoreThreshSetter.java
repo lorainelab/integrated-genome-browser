@@ -36,7 +36,7 @@ import java.util.*;
 
 
 public class GraphScoreThreshSetter extends JPanel
-  implements ChangeListener, ActionListener  {
+  implements ChangeListener, ActionListener, FocusListener  {
 
   SeqMapView gviewer = null;
   
@@ -452,8 +452,12 @@ public class GraphScoreThreshSetter extends JPanel
   }
 
   public void actionPerformed(ActionEvent evt) {
+    doAction(evt.getSource());
+  }
+  
+  void doAction(Object src) {
     if (graphs.size() <= 0) { return; }
-    Object src = evt.getSource();    
+
     if (src == score_valT) {
       try {
 	float thresh = Float.parseFloat(score_valT.getText());
@@ -522,7 +526,6 @@ public class GraphScoreThreshSetter extends JPanel
     else if (src == threshCB) {
       String selection = (String)((JComboBox)threshCB).getSelectedItem();
       boolean thresh_on = (selection == ON);
-      boolean thresh_off = (selection == OFF);
       int gcount = graphs.size();
       for (int i=0; i<gcount; i++) {
         SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
@@ -559,6 +562,10 @@ public class GraphScoreThreshSetter extends JPanel
     tier_threshB.addActionListener(this);
     shift_startTF.addActionListener(this);
     shift_endTF.addActionListener(this);
+    score_perT.addFocusListener(this);
+    score_valT.addFocusListener(this);
+    shift_startTF.addFocusListener(this);
+    shift_endTF.addFocusListener(this);
   }
   
   void setScoreThreshold(float thresh) {
@@ -738,24 +745,15 @@ public class GraphScoreThreshSetter extends JPanel
     gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
   }
 
-  /*
-   static float[] flipArray(float[] forward) {
-    int length = forward.length;
-    float[] reverse = new float[length];
-    for (int i=0; i<length; i++) {
-      reverse[i] = forward[length-i-1];
+  /** When a JTextField gains focus, do nothing special. */
+  public void focusGained(FocusEvent e) {
+  }
+
+  /** When a JTextField loses focus, process its value. */
+  public void focusLost(FocusEvent e) {
+    Object src = e.getSource();
+    if (src instanceof JTextField) {
+      doAction(src);
     }
-    return reverse;
   }
-  */
-
-  public void deleteGraph(GraphGlyph gl) {
-    Object info = gl.getInfo();
-    graphs.remove(gl);
-    // done in setGraphs? max_gap_thresher.deleteGraph(gl);
-    //  min_run_thresher.deleteGraph(gl);
-    setGraphs(graphs);
-  }
-
-
 }

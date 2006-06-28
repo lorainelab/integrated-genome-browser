@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -154,7 +154,7 @@ public class PluginEditor extends JPanel {
     }
     else if (this.original_node == null) {
       System.out.println("Adding a new plugin with name: "+name_string);
-//      try {
+      try {
         Object plugin = PluginInfo.instantiatePlugin(class_string);
         if (plugin != null) {
           Preferences node = PluginInfo.getNodeForName(name_string);
@@ -163,9 +163,9 @@ public class PluginEditor extends JPanel {
           //node.put(PluginInfo.KEY_PLACEMENT, (String) this.placement_chooser.getSelectedItem());
           ok = true;
         }
-//      } catch (Exception e) {
-//        ErrorHandler.errorPanel("ERROR", "Could not apply changes", this, e);
-//      }
+      } catch (Exception e) {
+        ErrorHandler.errorPanel("ERROR", "Could not apply changes", this, e);
+      }
     } else {
       //this.original_node.put(PluginInfo.KEY_CLASS, name_string);
       this.original_node.putBoolean(PluginInfo.KEY_LOAD, this.enabled_box.isSelected());

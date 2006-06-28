@@ -796,12 +796,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       return;
     }
 
-    Object plugin = pi.instantiatePlugin(class_name);
+    Object plugin = null;
+    Throwable t = null;
+    try {
+      plugin = pi.instantiatePlugin(class_name);
+    } catch (InstantiationException e) {
+      plugin = null;
+      t = e;
+    }
 
     if (plugin == null) {
       ErrorHandler.errorPanel("Bad Plugin",
         "Could not create plugin '"+pi.getPluginName()+"'.",
-        this.frm);
+        this.frm, t);
       PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
       return;
     }

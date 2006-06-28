@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.util.*;
@@ -103,7 +102,7 @@ public class PluginInfo {
   /** Returns a List of PluginInfo's. */
   public static List getAllPlugins() throws BackingStoreException {
     String[] names = getAllPluginNames();
-    Vector list = new Vector(names.length);
+    ArrayList list = new ArrayList(names.length);
     for (int i=0; i<names.length; i++) {
       PluginInfo pi = getPluginInfoForName(names[i]);
       list.add(pi);
@@ -124,8 +123,7 @@ public class PluginInfo {
   }
 
   public static Preferences getNodeForName(String name) {
-    Preferences node = UnibrowPrefsUtil.getTopNode().node(NODE_PLUGINS).node(name);
-    return node;
+    return UnibrowPrefsUtil.getTopNode().node(NODE_PLUGINS).node(name);
   }
 
   public static PluginInfo getPluginInfoForName(String name) {
@@ -147,18 +145,22 @@ public class PluginInfo {
     return info;
   }
 
-  public Object instantiatePlugin() {
+  public Object instantiatePlugin() throws InstantiationException {
     return instantiatePlugin(this.class_name);
   }
 
-  public static Object instantiatePlugin(String class_name) {
+  public static Object instantiatePlugin(String class_name) throws InstantiationException {
 
     Object plugin = null;
     try {
       plugin = ObjectUtils.classForName(class_name).newInstance();
-    } catch (Exception e) {
-      ErrorHandler.errorPanel("Could not instantiate plugin\n"+
-       "class name: '"+class_name+"'\n", e);
+    } catch (Throwable t) {
+      // catches things like NoClassDefFoundError
+      String msg = "Could not instantiate plugin\n"+
+        "class name: '"+class_name+"'\n";
+      InstantiationException e = new InstantiationException(msg);
+      e.initCause(t);
+      throw e;
     }
     return plugin;
   }

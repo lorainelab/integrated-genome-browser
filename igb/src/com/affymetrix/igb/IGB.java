@@ -316,7 +316,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     StringTokenizer st = new StringTokenizer(files, ";");
     Set result = new HashSet();
     result.add(st.nextToken());
-    for (int i=0; st.hasMoreTokens(); i++) {
+    while (st.hasMoreTokens()) {
       result.add(st.nextToken());
     }
     return (String[]) result.toArray(new String[result.size()]);
@@ -690,6 +690,31 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else {
       cpane.add("Center", splitpane);
     }
+    
+    // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
+    // pop-up menu (or any other mouse listener) on the tab handles.
+    // (A pop-up with "Open tab in a new window" would be nice.)
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
+    tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    tab_pane.setMinimumSize(new Dimension(0,0));
+
+    status_bar = new StatusBar();
+    status_bar.setStatus(IGBConstants.APP_NAME);
+    if (USE_STATUS_BAR) {
+      cpane.add(status_bar, BorderLayout.SOUTH);
+    }
+
+    // Show the frame before loading the plugins.  Thus any error panel
+    // that is created by an exception during plugin set-up will appear
+    // on top of the main frame, not hidden by it.
+    
+    frm.addWindowListener( new WindowAdapter() {
+	public void windowClosing(WindowEvent evt) {exit();}
+      });
+    //    frm.resize(1000, 750);
+    frm.show();
+    
 
     ArrayList plugin_list = new ArrayList(16);
     if (USE_QUICKLOAD) {
@@ -721,26 +746,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         setUpPlugIn(pi);
       }
     }
-
-    // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
-    // pop-up menu (or any other mouse listener) on the tab handles.
-    // (A pop-up with "Open tab in a new window" would be nice.)
-    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
-    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
-    tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-    tab_pane.setMinimumSize(new Dimension(0,0));
-
-    status_bar = new StatusBar();
-    status_bar.setStatus(IGBConstants.APP_NAME);
-    if (USE_STATUS_BAR) {
-      cpane.add(status_bar, BorderLayout.SOUTH);
-    }
-
-    frm.addWindowListener( new WindowAdapter() {
-	public void windowClosing(WindowEvent evt) {exit();}
-      });
-    //    frm.resize(1000, 750);
-    frm.show();
 
     // We need to let the QuickLoad system get started-up before starting
     // the control server that listens to ping requests.
@@ -1070,9 +1075,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
   }
-
-  /* Determines whether stack traces will be printed by the errorPanel routine. */
-  private static final boolean print_stack_traces = true;
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent.

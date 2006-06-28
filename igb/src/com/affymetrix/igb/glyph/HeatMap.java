@@ -28,7 +28,7 @@ public class HeatMap {
   public static final String HEATMAP_2 = "Blue/Yellow";
 
   /** Name of the Red/Green Standard HeatMap. */
-  public static final String HEATMAP_3 = "Red/Green";
+  public static final String HEATMAP_3 = "Red/Black/Green";
 
   /** Name of the second Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_4 = "Blue/Yellow 2";
@@ -96,9 +96,12 @@ public class HeatMap {
           cc[i] = new Color(r++, g++, b--);
         }
       } else if (HEATMAP_3.equals(name)) {
-        r=255; g=0; b=0;
+        // red-black-green colormap
         for (int i=0; i<bins; i++) {
-          cc[i] = new Color(r--, g++, b);
+          r = Math.max(255 - 2*i, 0);
+          g = Math.min(Math.max(2 * (i-128), 0), 255);
+          b = 0;
+          cc[i] = new Color(r, g, b);
         }
       } else if (HEATMAP_4.equals(name)) {
         r=0; g=0; b=128;

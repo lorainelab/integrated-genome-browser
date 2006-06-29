@@ -276,7 +276,7 @@ public class AnnotatedSeqGroup {
     sym_map_change_listeners.remove(l);
   }
 
-  public class ListmakingHashMap extends TreeMap {
+  public static class ListmakingHashMap extends TreeMap {
     public Object put(Object key, Object value) {
       Object x = this.get(key);
       if (x == value) {

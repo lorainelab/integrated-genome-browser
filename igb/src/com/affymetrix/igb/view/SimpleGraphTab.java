@@ -38,7 +38,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 
 
@@ -259,11 +258,11 @@ implements SeqSelectionListener, SymSelectionListener {
   HeatMap getCommonHeatMap() {
     // Take the first glyph in the list as a prototype
     SmartGraphGlyph first_glyph = null;
-    int graph_style = -1;
+    //int graph_style = -1;
     HeatMap hm = null;
     if (! glyphs.isEmpty()) {
       first_glyph = (SmartGraphGlyph) glyphs.get(0);
-      graph_style = first_glyph.getGraphStyle();
+      //graph_style = first_glyph.getGraphStyle();
       hm = first_glyph.getHeatMap();
     }
 
@@ -272,9 +271,9 @@ implements SeqSelectionListener, SymSelectionListener {
     int num_glyphs = glyphs.size();
     for (int i=1; i < num_glyphs; i++) {
       SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
-      if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
-        graph_style = -1;
-      }
+      //if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
+        //graph_style = -1;
+      //}
       if (first_glyph.getHeatMap() != gl.getHeatMap()) {
         hm = null;
       }
@@ -287,25 +286,32 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public void symSelectionChanged(SymSelectionEvent evt) {
     java.util.List selected_syms = evt.getSelectedSyms();
-    int symcount = selected_syms.size();
     //    System.out.println("in SimpleGraphTab.symSelectionChanged(), selected syms: " + symcount);
 
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
+
     if (src == this) {
       //      System.out.println("SimpleGraphTab received it's own sym selection event, ignoring");
       return;
     }
+    if (src != gviewer) {
+      // Only pay attention to selections in the main view, not the sliced view.
+      return;
+    }
+    
     resetSelectedGraphGlyphs(selected_syms);
   }
 
   public void resetSelectedGraphGlyphs(java.util.List selected_syms) {
     int symcount = selected_syms.size();
     is_listening = false; // turn off propagation of events from the GUI while we modify the settings
-    // in certain cases selected_syms arg and grafs list may be same, for example when method is being
-    //     called to catch changes in glyphs representing selected sym, not the syms themselves)
-    //     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
-    if (grafs != selected_syms)   { grafs.clear(); }
+    if (grafs != selected_syms)   { 
+      // in certain cases selected_syms arg and grafs list may be same, for example when method is being
+      //     called to catch changes in glyphs representing selected sym, not the syms themselves)
+      //     therefore don't want to change grafs list if same as selected_syms (especially don't want to clear it!)
+      grafs.clear(); 
+    }
     glyphs.clear();
 
     // First loop through and collect graphs and glyphs
@@ -471,7 +477,7 @@ implements SeqSelectionListener, SymSelectionListener {
     Container cpan = fr.getContentPane();
     cpan.add(graph_tab);
     fr.pack();
-    fr.show();
+    fr.setVisible(true);
   }
 
   class GraphStyleSetter implements ActionListener {
@@ -788,7 +794,7 @@ implements SeqSelectionListener, SymSelectionListener {
           // Create a new tier for each glyph *except* the one that has the same
           // IAnnotStyle object.
           if (! (parent_tier.getAnnotStyle() == (IAnnotStyle) gl.getGraphState())) {
-            GraphGlyphUtils.attachGraph(gl, gviewer, null);
+            GraphGlyphUtils.attachGraph(gl, gviewer);
           }
         }
       }

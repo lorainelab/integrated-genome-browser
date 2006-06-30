@@ -286,13 +286,13 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public void symSelectionChanged(SymSelectionEvent evt) {
     java.util.List selected_syms = evt.getSelectedSyms();
-    //    System.out.println("in SimpleGraphTab.symSelectionChanged(), selected syms: " + symcount);
+    //System.out.println("in SimpleGraphTab.symSelectionChanged(), selected syms: " + selected_syms.size());
 
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
 
     if (src == this) {
-      //      System.out.println("SimpleGraphTab received it's own sym selection event, ignoring");
+      //System.out.println("SimpleGraphTab received it's own sym selection event, ignoring");
       return;
     }
     if (src != gviewer) {
@@ -461,13 +461,8 @@ implements SeqSelectionListener, SymSelectionListener {
     if (DEBUG_EVENTS)  {
       System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " recieved by " + this.getClass().getName());
     }
-    AnnotatedBioSeq newseq = evt.getSelectedSeq();
-    if (newseq != current_seq) {
-      current_seq = newseq;
-      java.util.List selected_syms = gviewer.getSelectedSyms();
-      SymSelectionEvent newevt = new SymSelectionEvent(gviewer, selected_syms);
-      symSelectionChanged(newevt);
-    }
+    current_seq = evt.getSelectedSeq();
+    resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
   }
 
   public static void main(String[] args) {

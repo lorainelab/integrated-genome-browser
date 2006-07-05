@@ -41,12 +41,13 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *  -------------------------
  *  Format
  *  Header:
- *     Format (UTF-8)  "bprobe1"
+ *     Format (UTF-8)  "bp1"  OR "bp2"
  *     Format version (int)
  *     Genome name (UTF-8)  [ need to deal with case where name and version are combined into one string?]
  *     Genome version (UTF-8)
  *     Annotation type (UTF-8)  -- need way of deciding whether to use this or extract from file name...
  *     Probe length (int)
+ *     [if format="bp2", then here is UTF-8 of prefix for ids in files -- combined with probeset id int, get full id ]
  *     Number of seqs (int)
  *     for each seq
  *        seq name (UTF-8)
@@ -68,15 +69,16 @@ public class Bprobe1Parser {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static boolean DEBUG = true;
 
-  public AnnotatedSeqGroup parse(InputStream istr, AnnotatedSeqGroup group, 
+  public AnnotatedSeqGroup parse(InputStream istr, AnnotatedSeqGroup group,
     boolean annotate_seq, String default_type) throws IOException {
-    
+
     BufferedInputStream bis;
     AnnotatedSeqGroup seqs = null;
     Map tagvals = new LinkedHashMap();
     Map seq2syms = new LinkedHashMap();
     Map seq2lengths = new LinkedHashMap();
     DataInputStream dis = null;
+    String id_prefix = "";
     try  {
       if (istr instanceof BufferedInputStream) {
         bis = (BufferedInputStream) istr;
@@ -87,6 +89,8 @@ public class Bprobe1Parser {
       dis = new DataInputStream(bis);
       String format = dis.readUTF();
       int format_version = dis.readInt();
+      boolean version2 = (format.equals("bp2"));
+      System.out.println("is bp2: " + version2);
       String seq_group_name = dis.readUTF(); // genome name
       String seq_group_version = dis.readUTF(); // genome version
       // combining genome and version to get seq group id
@@ -110,12 +114,16 @@ public class Bprobe1Parser {
         annot_type = specified_type;
       }
       int probe_length = dis.readInt();
+      if (version2) {
+	id_prefix = dis.readUTF();
+      }
       int seq_count = dis.readInt();
       if (DEBUG) {
 	System.out.println("format: " + format + ", format_version: " + format_version);
 	System.out.println("seq_group_name: " + seq_group_name + ", seq_group_version: " + seq_group_version);
 	System.out.println("type: " + specified_type);
 	System.out.println("probe_length: " + probe_length);
+	System.out.println("id_prefix: " + id_prefix);
 	System.out.println("seq_count: " + seq_count);
       }
 
@@ -151,27 +159,27 @@ public class Bprobe1Parser {
 
 
         for (int i = 0; i < probeset_count; i++) {
-          int probeset_id = dis.readInt();
+          int nid = dis.readInt();
           int b = (int) dis.readByte();
           int probe_count = Math.abs(b);
           boolean forward = (b >= 0);
           if (probe_count == 0) {
             // EfficientProbesetSymA does not allow probe sets with 0 probes
-            throw new IOException("Probe_count is zero for '"+probeset_id+"'");
+            throw new IOException("Probe_count is zero for '"+ nid+ "'");
           }
 	  int[] cmins = new int[probe_count];
           for (int k = 0; k < probe_count; k++) {
             int min = dis.readInt();
 	    cmins[k] = min;
           }
-	  syms[i] = new EfficientProbesetSymA(cmins, probe_length, forward, probeset_id, aseq);
+	  syms[i] = new EfficientProbesetSymA(cmins, probe_length, forward, id_prefix, nid, aseq);
 	  container_sym.addChild(syms[i]);
         }
 	if (annotate_seq) {
 	  aseq.addAnnotation(container_sym);
 	}
       }
-      System.out.println("finished parsing bp1 file");
+      System.out.println("finished parsing probeset file");
     }
 
     finally {
@@ -187,44 +195,49 @@ public class Bprobe1Parser {
    *     25-mer probes (for now)
    */
   public static void convertGff(String gff_file, String output_file,
-      AnnotatedSeqGroup seq_group, String version_id, String annot_type) 
+      AnnotatedSeqGroup seq_group, String version_id, String annot_type, String id_prefix)
     throws IOException {
 
     int probe_length = 25;
     Map tagvals = new HashMap();
     tagvals.put("tagval_test_1", "testing1");
     tagvals.put("tagval_test_2", "testing2");
-    
+
     BufferedOutputStream bos = null;
     DataOutputStream dos = null;
     try {
       System.out.println("parsing gff file: " + gff_file);
       GFFParser gff_parser = new GFFParser();
       BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
-      Map seqs = new LinkedHashMap();
       List annots = gff_parser.parse(bis, seq_group, false);
       bis.close();
       int total_annot_count = annots.size();
-      int seq_count = seqs.size();
+      int seq_count = seq_group.getSeqCount();
+
       System.out.println("done parsing, seq count = " + seq_count + ", total annot count = " + total_annot_count);
 
       bos = new BufferedOutputStream( new FileOutputStream( new File( output_file) ) );
       dos = new DataOutputStream(bos);
 
-      dos.writeUTF("bp1");
+      dos.writeUTF("bp2");
       dos.writeInt(1);
       dos.writeUTF(seq_group.getID());
       dos.writeUTF(version_id);
       dos.writeUTF(annot_type);
       dos.writeInt(probe_length);
+      dos.writeUTF(id_prefix);
       dos.writeInt(seq_count);
-      Iterator iter = seqs.entrySet().iterator();
+      Iterator iter = seq_group.getSeqList().iterator();
       while (iter.hasNext()) {
-        Map.Entry ent = (Map.Entry)iter.next();
-	AnnotatedBioSeq aseq = (AnnotatedBioSeq)ent.getValue();
+	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
 	String seqid = aseq.getID();
 	int seq_length = aseq.getLength();
-	int annot_count = aseq.getAnnotationCount();
+	int container_count = aseq.getAnnotationCount();
+	int annot_count = 0;
+	for (int i=0; i<container_count; i++) {
+	  SeqSymmetry cont = aseq.getAnnotation(i);
+	  annot_count += cont.getChildCount();
+	}
 	System.out.println("seqid: " + seqid + ", annot count: " + annot_count );
 	dos.writeUTF(seqid);
 	dos.writeInt(seq_length);
@@ -240,26 +253,30 @@ public class Bprobe1Parser {
 	dos.writeUTF(tag);
 	dos.writeUTF(val);
       }
-      iter = seqs.entrySet().iterator();
+      iter = seq_group.getSeqList().iterator();
       while (iter.hasNext()) {
-        Map.Entry ent = (Map.Entry)iter.next();
-	AnnotatedBioSeq aseq = (AnnotatedBioSeq)ent.getValue();
-	int annot_count = aseq.getAnnotationCount();
-	System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
-	for (int i=0; i<annot_count; i++) {
-	  SeqSymmetry psym = aseq.getAnnotation(i);
-          SeqSpan pspan = psym.getSpan(aseq);
-	  int child_count = psym.getChildCount();
-	  String symid = psym.getID();
-	  //          System.out.println("probeset_id: " + symid);
-	  int symint = Integer.parseInt(symid);
-	  dos.writeInt(symint);  // probeset id representated as an integer
-	  // sign of strnad_and_count indicates forward (+) or reverse (-) strand
-	  byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
-	  dos.writeByte(strand_and_count);
-	  for (int k=0; k<child_count; k++) {
-	    SeqSymmetry csym = psym.getChild(k);
-	    dos.writeInt(csym.getSpan(aseq).getMin());
+	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+	int container_count = aseq.getAnnotationCount();
+	//	System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
+	for (int i=0; i<container_count; i++) {
+	  SeqSymmetry cont = aseq.getAnnotation(i);
+	  int annot_count = cont.getChildCount();
+	  for (int k=0; k<annot_count; k++) {
+	    SeqSymmetry psym = cont.getChild(k);
+	    SeqSpan pspan = psym.getSpan(aseq);
+	    int child_count = psym.getChildCount();
+	    String symid = psym.getID();
+	    //          System.out.println("probeset_id: " + symid);
+	    int symint = Integer.parseInt(symid);
+	    //	    int symint = psym.getIntID();
+	    dos.writeInt(symint);  // probeset id representated as an integer
+	    // sign of strnad_and_count indicates forward (+) or reverse (-) strand
+	    byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
+	    dos.writeByte(strand_and_count);
+	    for (int m=0; m<child_count; m++) {
+	      SeqSymmetry csym = psym.getChild(m);
+	      dos.writeInt(csym.getSpan(aseq).getMin());
+	    }
 	  }
 	}
       }
@@ -276,7 +293,8 @@ public class Bprobe1Parser {
    *  The input gff file of genome-based probesets must meet these criteria:
    *    a) all probes are same length
    *    b) all probes align to a contiguous genome interval (no split probes)
-   *    c) probeset ids can be represented numerically
+   *    c) each probeset id can be represented with unique integer root within the set 
+   *          and a String prefix shared among all probesets in the file
    *    d) all probes within a probeset are on same strand
    *    e) less than 128 probes per probeset
    *          (but can be different number of probes in each probeset)
@@ -293,31 +311,33 @@ public class Bprobe1Parser {
   public static void main(String[] args) throws IOException {
     String in_file = "";
     String out_file = "";
+    String id_prefix = "";
     String genomeid= "";
     String versionid = "";
     String annot_type = "";
 
-    if (args.length == 4 || args.length == 5) {
+    if (args.length == 5 || args.length == 6) {
       in_file = args[0];
       out_file = args[1];
-      annot_type = args[2];
-      genomeid = args[3];
-      if (args.length == 5) { versionid = args[4]; }
+      id_prefix = args[2];
+      annot_type = args[3];
+      genomeid = args[4];
+      if (args.length == 6) { versionid = args[5]; }
     } else {
-      System.out.println("Usage:  java ... Bprobe1Parser <GFF infile> <BP1 outfile> <annot type> <genomeid> [<version>]");
-      System.out.println("Example:  java ... Bprobe1Parser foo.gff foo.bp1 HuEx-1_0-st-Probes H_sapiens_Jul_2003");
+      System.out.println("Usage:  java ... Bprobe1Parser <GFF infile> <BP1 outfile> <id_prefix> <annot type> <genomeid> [<version>]");
+      System.out.println("Example:  java ... Bprobe1Parser foo.gff foo.bp1 HuEx HuEx-1_0-st-Probes H_sapiens_Jul_2003");
       System.exit(1);
     }
 
-    
+
     System.out.println("Creating a '.bp1' format file: ");
     System.out.println("Input '"+in_file+"'");
     System.out.println("Output '"+out_file+"'");
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genomeid);
-    convertGff(in_file, out_file, seq_group, versionid, annot_type);
+    convertGff(in_file, out_file, seq_group, versionid, annot_type, id_prefix);
     System.out.println("DONE!  Finished converting GFF file to BP1 file.");
     System.out.println("");
-    
+
     /*
     // After creating the file, parses it (for testing)
     try  {

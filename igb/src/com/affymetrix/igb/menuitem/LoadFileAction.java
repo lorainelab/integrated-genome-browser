@@ -61,7 +61,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1"},
+        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2"},
         "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf", "gff3"},
@@ -420,9 +420,9 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (lcname.endsWith(".bp1")) {
+      else if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
         Bprobe1Parser parser = new Bprobe1Parser();
-        String annot_type = stream_name.substring(0, stream_name.indexOf(".bp1"));
+        String annot_type = stream_name.substring(0, stream_name.indexOf(".bp"));
         parser.parse(str, selected_group, true, annot_type);
         aseq = input_seq;
         parser = null;

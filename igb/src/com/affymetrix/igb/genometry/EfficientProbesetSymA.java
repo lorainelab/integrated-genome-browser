@@ -35,6 +35,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
   boolean forward;
   int nid;
   int[] child_mins;
+  String id_prefix;
 
   /**
    * Constructor.
@@ -47,12 +48,14 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    * @param nid  an integer to be used as the ID
    * @param seq  the BioSeq
    */
-  public EfficientProbesetSymA(int[] cmins, int probe_length, boolean forward, int nid, BioSeq seq) {
+  public EfficientProbesetSymA(int[] cmins, int probe_length, boolean forward,
+			       String prefix, int nid, BioSeq seq) {
     this.child_mins = cmins;
     this.probe_length = probe_length;
     this.forward = forward;
     this.nid = nid;
     this.seq = seq;
+    this.id_prefix = prefix;
 
     java.util.Arrays.sort(this.child_mins);
   }
@@ -113,9 +116,19 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     }
   }
 
+  public int getIntID() {
+    return nid;
+  }
+
   /** The integer id converted to String representation. */
   public String getID() {
-    return Integer.toString(nid);
+    String rootid = Integer.toString(getIntID());
+    if (id_prefix == null) {
+      return rootid;
+    }
+    else {
+      return (id_prefix + rootid);
+    }
   }
 
   /* SeqSpan implementation */
@@ -132,14 +145,14 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     else { return child_mins[0]; }
   }
 
-  public int getMin() { 
+  public int getMin() {
     // assumes child_mins has been sorted in ascending order
-    return child_mins[0]; 
+    return child_mins[0];
   }
 
-  public int getMax() { 
+  public int getMax() {
     // assumes child_mins has been sorted in ascending order
-    return (child_mins[child_mins.length-1] + probe_length); 
+    return (child_mins[child_mins.length-1] + probe_length);
   }
 
   public int getLength() { return (getMax() - getMin()); }
@@ -151,8 +164,8 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
   public double getMaxDouble() { return (double)getMax(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
-  
-  /** 
+
+  /**
    *  WARNING: The implementation of the Propertied (SymWithProps) interface in this class
    *  is incomplete and is very likely to change or be removed in future implementations.
    *  Returns a new Map instance with only two values:
@@ -164,22 +177,22 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     properties.put("id", "" + this.getID());
     return properties;
   }
-  
+
   /** Has no effect, and returns false. */
   public boolean setProperty(String key, Object val) {
     return false;
   }
-  
+
   /** See getProperties(). */
   public Object getProperty(String key) {
     if ("method".equals(key)) return "HuEx-1_0-st-Probes";
     else if ("id".equals(key)) return this.getID();
     else return null;
   }
-  
+
   /** Returns a clone of the Map from getProperties(). */
   public Map cloneProperties() {
     return getProperties();
   }
-  
+
 }

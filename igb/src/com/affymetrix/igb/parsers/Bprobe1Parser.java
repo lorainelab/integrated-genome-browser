@@ -65,20 +65,20 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *                 min genome position (int, zero interbase)
  *</pre>
  */
-public class Bprobe1Parser {
+public class Bprobe1Parser implements AnnotationWriter {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static boolean DEBUG = true;
 
-  public AnnotatedSeqGroup parse(InputStream istr, AnnotatedSeqGroup group,
+  public List parse(InputStream istr, AnnotatedSeqGroup group,
     boolean annotate_seq, String default_type) throws IOException {
 
     BufferedInputStream bis;
-    AnnotatedSeqGroup seqs = null;
     Map tagvals = new LinkedHashMap();
     Map seq2syms = new LinkedHashMap();
     Map seq2lengths = new LinkedHashMap();
     DataInputStream dis = null;
     String id_prefix = "";
+    List results = new ArrayList();
     try  {
       if (istr instanceof BufferedInputStream) {
         bis = (BufferedInputStream) istr;
@@ -99,10 +99,9 @@ public class Bprobe1Parser {
 	System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
 	return null;
       }
-      seqs = gmodel.addSeqGroup(seq_group_id);
-      if (group != null && group != seqs) {
+      if (! group.isSynonymous(seq_group_id)) {
 	System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + group.getID() +
-			   " and group name+version in bprobe1 file: " + seqs.getID());
+			   " and group name+version in bprobe1 file: " + seq_group_id);
 	return null;
       }
       String specified_type = dis.readUTF();
@@ -148,10 +147,10 @@ public class Bprobe1Parser {
         int probeset_count = syms.length;
 	System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
 
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seqs.getSeq(seqid);
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)group.getSeq(seqid);
         if (aseq == null) {
 	  int seqlength = ((Integer)seq2lengths.get(seqid)).intValue();
-	  aseq = seqs.addSeq(seqid, seqlength);
+	  aseq = group.addSeq(seqid, seqlength);
 	}
 	SimpleSymWithProps container_sym = new SimpleSymWithProps(probeset_count);
 	container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq) );
@@ -174,6 +173,7 @@ public class Bprobe1Parser {
           }
 	  syms[i] = new EfficientProbesetSymA(cmins, probe_length, forward, id_prefix, nid, aseq);
 	  container_sym.addChild(syms[i]);
+	  results.add(syms[i]);
         }
 	if (annotate_seq) {
 	  aseq.addAnnotation(container_sym);
@@ -185,8 +185,18 @@ public class Bprobe1Parser {
     finally {
       if (dis != null) try { dis.close(); } catch (Exception e) {}
     }
-    return seqs;
+    return results;
   }
+
+
+  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq, 
+				  String type, OutputStream outstream) 
+    throws IOException {
+    boolean success = false;
+    return success;
+  }
+
+  public String getMimeType() { return "binary/bp2"; }
 
   /**
    *  Converts a "GFF" file into a "bp1" file.

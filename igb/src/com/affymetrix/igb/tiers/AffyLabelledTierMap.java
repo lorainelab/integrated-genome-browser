@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,7 +20,6 @@ import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -203,6 +202,13 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     cpp = null; // for garbage collection
   }
   
+  /** Returns the JSplitPane that contains the label map and the tier map.
+   *  This is mostly useful for printing.
+   */
+  public JSplitPane getSplitPane() {
+    return mapsplitter;
+  }
+  
   /**
    *  main for testing AffyLabelledTierMap
    */
@@ -240,7 +246,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 	System.exit(0);
       }
     } );
-    frm.show();
+    frm.setVisible(true);
   }
 
 }

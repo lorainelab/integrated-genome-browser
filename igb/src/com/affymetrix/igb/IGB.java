@@ -10,7 +10,6 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.igb;
 
 import java.awt.*;
@@ -33,6 +32,8 @@ import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.util.EPSWriter;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -79,6 +80,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JFrame frm;
   JMenuBar mbar;
   JMenu file_menu;
+  JMenu export_to_file_menu;
   JMenu view_menu;
   //JMenu navigation_menu;
   JMenu bookmark_menu;
@@ -102,6 +104,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem load_das_item;
   JMenuItem print_item;
   JMenuItem print_frame_item;
+  JMenuItem export_map_item;
+  JMenuItem export_labelled_map_item;
+  //JMenuItem export_slice_item;
   JMenuItem preferences_item;
   JMenuItem exit_item;
 
@@ -129,6 +134,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   CurationControl curation_control;
   AlignControl align_control;
   DataLoadView data_load_view = null;
+  AltSpliceView slice_view = null;
 
   java.util.List plugin_list;
 
@@ -163,7 +169,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
     System.setProperty("swing.aatext", "true");
 
-    try {
+    // Let the look-and-feel determine the window decorations.
+    // This allows exporting the whole frame, including decorations, to an eps file
+    JFrame.setDefaultLookAndFeelDecorated(true);
+    
+   try {
       // It this is Windows, then use the Windows look and feel.
       LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
       if (look_and_feel.isSupportedLookAndFeel()) {
@@ -552,6 +562,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
+    export_to_file_menu = new JMenu("Print to EPS File");
+    export_to_file_menu.setMnemonic('T');
+    export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
+    export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
+    //export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
 
     exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
@@ -593,7 +608,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(file_menu, clear_graphs_item);
     file_menu.addSeparator();
     MenuUtil.addToMenu(file_menu, print_item);
-    MenuUtil.addToMenu(file_menu, print_frame_item);
+    file_menu.add(export_to_file_menu);
+    MenuUtil.addToMenu(export_to_file_menu, export_map_item);
+    MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
+    //MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
     file_menu.addSeparator();
     MenuUtil.addToMenu(file_menu, preferences_item);
 
@@ -638,6 +656,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     load_das_item.addActionListener(this);
     print_item.addActionListener(this);
     print_frame_item.addActionListener(this);
+    export_map_item.addActionListener(this);
+    export_labelled_map_item.addActionListener(this);
+    //export_slice_item.addActionListener(this);
     exit_item.addActionListener(this);
 
     toggle_edge_matching_item.addActionListener(this);
@@ -713,7 +734,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	public void windowClosing(WindowEvent evt) {exit();}
       });
     //    frm.resize(1000, 750);
-    frm.show();
+    frm.setVisible(true);
     
 
     ArrayList plugin_list = new ArrayList(16);
@@ -860,6 +881,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (plugin instanceof DataLoadView) {
       data_load_view = (DataLoadView) plugin;
     }
+    if (plugin instanceof AltSpliceView) {
+      slice_view = (AltSpliceView) plugin;
+    }
   }
 
   public void actionPerformed(ActionEvent evt) {
@@ -879,7 +903,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
     else if (src == print_frame_item) {
-      ComponentPagePrinter cprinter = new ComponentPagePrinter(frm);
+      ComponentPagePrinter cprinter = new ComponentPagePrinter(getFrame());
       try {
         cprinter.print();
       }
@@ -887,6 +911,29 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         errorPanel("Problem trying to print.", ex);
       }
     }
+    else if (src == export_map_item) {
+      try {
+        EPSWriter.outputToFile(map_view.getSeqMap().getNeoCanvas());
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
+      }
+    }
+    else if (src == export_labelled_map_item) {
+      try {
+        AffyLabelledTierMap tm = (AffyLabelledTierMap) map_view.getSeqMap();
+        EPSWriter.outputToFile(tm.getSplitPane());
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
+      }
+    }
+//    else if (src == export_slice_item) {
+//      try {
+//        AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.spliced_view.getSeqMap();
+//        EPSWriter.outputToFile(tm.getSplitPane());
+//      } catch (Exception ex) {
+//        errorPanel("Problem during output.", ex);
+//      }
+//    }
     else if (src == clear_item) {
       if (confirmPanel("Really clear entire view?")) {
         map_view.clear();
@@ -957,7 +1004,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     } else if (src == preferences_item) {
       PreferencesPanel pv = PreferencesPanel.getSingleton();
       JFrame f = pv.getFrame();
-      f.show();
+      f.setVisible(true);
     }
   }
 
@@ -1024,7 +1071,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
      JOptionPane.DEFAULT_OPTION);
     final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
     //dialog.setResizable(true);
-    dialog.show();
+    dialog.setVisible(true);
   }
 
 
@@ -1182,7 +1229,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
-      frame.show();
+      frame.setVisible(true);
       frame.addWindowListener( new WindowAdapter() {
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window

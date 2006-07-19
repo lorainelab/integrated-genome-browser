@@ -386,6 +386,24 @@ public class PreferencesPanel extends JPanel {
     return help_for_tab_action;
   }
   
+  /** A simple method for testing an IPrefEditorComponent, which MUST also
+   *  be a JComponent, by simply bringing it up in a JDialog.
+   */
+  public static void testPanel(IPrefEditorComponent p) {
+    JDialog d = new JDialog();
+    d.setTitle(p.getName());
+    d.getContentPane().add((JComponent) p);
+    d.pack();
+    
+    d.setVisible(true);
+    d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    d.addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosing(java.awt.event.WindowEvent e) {
+        System.exit(0);
+      }
+    });    
+  }
+  
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {
     PreferencesPanel pp = getSingleton();

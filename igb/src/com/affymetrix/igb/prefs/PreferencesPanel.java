@@ -70,11 +70,11 @@ public class PreferencesPanel extends JPanel {
           singleton.tpv.applyChanges();
         }
       });
-
+      
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
       
       TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
-      
+
       TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
 
       //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
@@ -395,6 +395,6 @@ public class PreferencesPanel extends JPanel {
         System.exit(0);
       }
     });
-    f.show();
+    f.setVisible(true);
   }
 }

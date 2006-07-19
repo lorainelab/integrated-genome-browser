@@ -89,7 +89,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (SELECT_ON_MOUSE_PRESSED) processSelections(evt, true);
   }
 
+  int num_last_selections = 0;
+  
   public void mouseReleased(MouseEvent evt) {
+    num_last_selections = map.getSelected().size();
+    
     // process selections in mousePressed() or mouseReleased()
     if (! SELECT_ON_MOUSE_PRESSED) {
       // if rubber-banding is going on, don't post selections now,
@@ -400,7 +404,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       }
       map.select(glyphs);
     } else {
-      if (glyphs.isEmpty() && map.getSelected().isEmpty()) {
+      if (glyphs.isEmpty() && num_last_selections==0) {
         something_changed = false;
       } else {
         something_changed = true;

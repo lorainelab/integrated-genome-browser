@@ -16,7 +16,7 @@ package com.affymetrix.igb.util;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.DateFormat;
+import javax.swing.*;
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
@@ -35,11 +35,133 @@ public class LocalUrlCacher {
     return getInputStream(url, getPreferredCacheUsage(), true);
   }
 
+  /** Determines whether the given URL string represents a file URL. */
+  public static boolean isFile(String url) {
+    return (url.substring(0,5).compareToIgnoreCase("file:") == 0);
+  }
+    
+  /** Returns the local File object for the given URL;
+   *  you must check File.exists() to determine if the file exists in the cache.
+   */
+  static File getCacheFileForURL(String url) {
+    String encoded_url = UrlToFileName.encode(url);
+    String cache_file_name = cache_root + "/" + encoded_url;
+    File cache_file = new File(cache_file_name);
+    return cache_file;
+  }
+  
+  /** Returns the cache directory, creating it if necessary. */
+  static File getCacheDirectory() {
+    File fil = new File(cache_root);
+    if (! fil.exists()) {
+      System.out.println("creating new cache directory: " + fil.getAbsolutePath());
+      fil.mkdirs();
+      // It is possible that mkdirs() will fail.  Do what then?
+    }
+    return fil;
+  }
+  
+  public static final String TYPE_FILE = "File";
+  public static final String TYPE_CACHED = "Cached";
+  public static final String TYPE_STALE_CACHE = "Stale Cache";
+  public static final String TYPE_NOT_CACHED = "Not in cache";
+  public static final String TYPE_UNREACHABLE = "Unreachable";
+  
+  
+  /**
+   *  Returns the accesibility of the file represented by the URL.
+   *  Will be one of {@link #TYPE_FILE}, {@link #TYPE_CACHED},
+   *  {@link #TYPE_STALE_CACHE}, {@link #TYPE_NOT_CACHED},
+   *  {@link #TYPE_UNREACHABLE}.
+   */
+  public static String getLoadType(String url, int cache_option) {
+
+    // if url is a file url, and not caching files, then just directly return stream
+    if (isFile(url)) {
+      try {
+        URI file_url = new URI(url);
+        File f = new File(file_url);
+        System.out.println("Checking for existence of: " + f.getPath());
+        if (f.exists()) {
+          return TYPE_FILE;
+        } else {
+          return TYPE_UNREACHABLE;
+        }
+      } catch (URISyntaxException use) {
+        System.out.println("URISyntaxException: " + url);
+        return TYPE_FILE;
+      }
+    }
+    
+    File cache_dir = getCacheDirectory(); // Make sure cache directory exists. Maybe not needed.
+
+    File cache_file = getCacheFileForURL(url);
+    boolean cached = cache_file.exists();
+
+    if (cache_option == ONLY_CACHE) {
+      if (cached) return TYPE_CACHED;
+      else return TYPE_NOT_CACHED;
+    }
+    
+    URLConnection conn = null;
+
+    long remote_timestamp = 0;
+    int content_length = -1;
+    String content_type = null;
+    boolean url_reachable = false;
+    boolean has_timestamp = false;
+    // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
+    
+    try {
+      URL theurl = new URL(url);
+      conn = theurl.openConnection();
+      // adding a conn.connect() call here to force throwing of error here if can't open connection
+      //    because some method calls on URLConnection like those below don't always throw errors
+      //    when connection can't be opened -- which would end up allowing url_reachable to be set to true
+      ///   even when there's no connection
+      conn.connect();
+      if (DEBUG_CONNECTION) {
+        reportHeaders(conn);
+      }
+      remote_timestamp = conn.getLastModified();
+      has_timestamp = (remote_timestamp > 0);
+      content_type = conn.getContentType();
+      content_length = conn.getContentLength();
+      url_reachable = true;
+    }
+    catch (IOException ioe) {
+      url_reachable = false;
+    }
+    conn = null; // there is no close() method for URLConnection
+
+    if (! url_reachable) {
+      if (cached && cache_option != IGNORE_CACHE) {
+        return TYPE_CACHED;
+      } else {
+        return TYPE_UNREACHABLE;
+      }
+    }
+    
+    // We have normal cache usage and the remote file is reachable.
+    if (cached) {
+      long local_timestamp = cache_file.lastModified();
+      if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
+        return TYPE_CACHED;
+      }
+      else {
+        return TYPE_STALE_CACHE;
+      }
+    } else {
+      return TYPE_NOT_CACHED;
+    }
+  }
+
+  
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
 
     // if url is a file url, and not caching files, then just directly return stream
-    if ((! CACHE_FILE_URLS) && (url.startsWith("file:"))) {
+    if ((! CACHE_FILE_URLS) && isFile(url)) {
       InputStream fstr = null;
       URL furl = new URL(url);
       fstr = furl.openConnection().getInputStream();
@@ -59,9 +181,7 @@ public class LocalUrlCacher {
     //    just reading headers
     InputStream result_stream = null;
 
-    String encoded_url = UrlToFileName.encode(url);
-    String cache_file_name = cache_root + "/" + encoded_url;
-    File cache_file = new File(cache_file_name);
+    File cache_file = getCacheFileForURL(url);
     boolean cached = cache_file.exists();
     URLConnection conn = null;
 
@@ -77,7 +197,7 @@ public class LocalUrlCacher {
 	conn = theurl.openConnection();
 	// adding a conn.connect() call here to force throwing of error here if can't open connection
 	//    because some method calls on URLConnection like those below don't always throw errors
-	//    when connection can't be opened -- which woule end up allowing url_reachable to be set to true
+	//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
 	///   even when there's no connection
 	conn.connect();
 	if (DEBUG_CONNECTION) {
@@ -184,7 +304,7 @@ public class LocalUrlCacher {
       bis.close();
       connstr.close();
       if (write_to_cache) {
-	System.out.println("writing to cache: " + encoded_url);
+	System.out.println("writing to cache: " + cache_file.getPath());
 	// write data from URL into a File
 	BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
 	// no API for returning number of bytes successfully written, so write all in one shot...
@@ -210,6 +330,73 @@ public class LocalUrlCacher {
     return result_stream;
   }
 
+  /**
+   *  Similar to {@link #getInputStream()}, but asks the user before 
+   *  downloading anything over the network.
+   *  @return returns an InputStream or null if the user cancelled or the file
+   *  is unreachable.
+   */
+  public static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param) 
+  throws IOException {
+    String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
+
+    if (LocalUrlCacher.TYPE_FILE.equals(cache_type)) { 
+      // just go ahead and load it
+      return LocalUrlCacher.getInputStream(filename, cache_usage_param, cache_annots_param);
+    }
+    
+    else if (LocalUrlCacher.TYPE_CACHED.equals(cache_type) && ! (cache_usage_param == LocalUrlCacher.IGNORE_CACHE)) {
+      // just go ahead and load from cache
+      return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
+    }
+    
+    else if (LocalUrlCacher.TYPE_UNREACHABLE.equals(cache_type)) {
+      ErrorHandler.errorPanel("File Unreachable",
+        "The requested file can not be found:\n" + filename);
+      return null;
+    }
+    
+    else if (LocalUrlCacher.TYPE_STALE_CACHE.equals(cache_type)) {
+      String[] options = { "Load remote file", "Use local cache", "Cancel" };
+      String message = "The remote file is more recent than the local copy.";
+
+      int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+            null, options, options[0]);
+
+      if (choice == 0) {
+        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
+      } else if (choice == 1) {
+        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.ONLY_CACHE, cache_annots_param);
+      } else if (choice == 2) {
+        return null;
+      }
+    }
+    
+    else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
+    
+      String[] options = { "OK", "Cancel" };
+      String short_filename = "selected file";
+      int index = filename.lastIndexOf('/');
+      if (index > 0) {
+        short_filename = "\"" + filename.substring(index+1) + "\"";
+      }
+      String message = "Load " + short_filename + " from the remote server?";
+
+      int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+            null, options, options[0]);
+
+      if (choice == JOptionPane.OK_OPTION) {
+        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, true);
+      } else {
+        return null;
+      }
+    }
+    
+    return null;
+  }
+  
   /**
    *  Forces flushing of entire cache.
    *  Simply removes all cached files.
@@ -254,5 +441,4 @@ public class LocalUrlCacher {
     }
     catch (Exception ex)  { ex.printStackTrace(); }
   }
-
 }

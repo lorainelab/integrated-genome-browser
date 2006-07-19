@@ -84,8 +84,13 @@ class SeqGroupView extends JComponent
     //genomeL = new JLabel(NO_GENOME);
     //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    genomeCB = new JComboBox();
-    genomeCB.setBorder(BorderFactory.createEmptyBorder(3,2,3,2));
+    genomeCB = new JComboBox() {
+      public Dimension getMaximumSize() {
+        return new Dimension(
+          super.getMaximumSize().width,
+          getPreferredSize().height);
+      }
+    };
 
     JScrollPane scroller = new JScrollPane(seqtable);
     scroller.setBorder(BorderFactory.createCompoundBorder(
@@ -94,6 +99,7 @@ class SeqGroupView extends JComponent
 
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(genomeCB);
+    this.add(Box.createRigidArea(new Dimension(0, 5)));
     this.add(scroller);
     
     this.setBorder(BorderFactory.createTitledBorder("Current Genome"));

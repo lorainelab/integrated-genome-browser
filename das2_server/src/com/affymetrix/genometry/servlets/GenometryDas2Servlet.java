@@ -163,6 +163,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       output_registry.put("bar", BarParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE, Das2FeatureSaxParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, Das2FeatureSaxParser.class);
+      output_registry.put("bp2", Bprobe1Parser.class);
 
       graph_formats.add("bar");
 
@@ -1067,7 +1068,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       // or should this be done by class:
       Class writerclass = (Class)output_registry.get(format);
       if (writerclass == null) {
-	System.out.println("no AnnotationWriter found for format: " + format);
+	log.add("no AnnotationWriter found for format: " + format);
         response.setStatus(response.SC_BAD_REQUEST);
 	success = false;
       }
@@ -1083,7 +1084,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	else {
 	  response.setContentType(mime_type);
 	}
-	System.out.println("return mime type: " + mime_type);
+	log.add("return mime type: " + mime_type);
 	OutputStream outstream = response.getOutputStream();
 	// need to test and see if creating a new BufferedOutputStream in the
 	//   AnnotationWriter.writeAnnotations implementations is necessary

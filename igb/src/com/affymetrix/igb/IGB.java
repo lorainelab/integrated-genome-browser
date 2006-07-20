@@ -106,7 +106,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem print_frame_item;
   JMenuItem export_map_item;
   JMenuItem export_labelled_map_item;
-  //JMenuItem export_slice_item;
+  JMenuItem export_slice_item;
   JMenuItem preferences_item;
   JMenuItem exit_item;
 
@@ -569,7 +569,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     export_to_file_menu.setMnemonic('T');
     export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
     export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
-    //export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
+    export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
 
     exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
@@ -614,7 +614,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     file_menu.add(export_to_file_menu);
     MenuUtil.addToMenu(export_to_file_menu, export_map_item);
     MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
-    //MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
     file_menu.addSeparator();
     MenuUtil.addToMenu(file_menu, preferences_item);
 
@@ -661,7 +660,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     print_frame_item.addActionListener(this);
     export_map_item.addActionListener(this);
     export_labelled_map_item.addActionListener(this);
-    //export_slice_item.addActionListener(this);
+    export_slice_item.addActionListener(this);
     exit_item.addActionListener(this);
 
     toggle_edge_matching_item.addActionListener(this);
@@ -777,9 +776,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       data_load_view.initialize();
     }
 
+    if (slice_view != null) {
+      MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
+      export_slice_item.setEnabled(true);
+    }
+    
     // Start listining for http requests only after all set-up is done.
     startControlServer();
-
+    
     initialized = true;
   }
 
@@ -929,14 +933,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         errorPanel("Problem during output.", ex);
       }
     }
-//    else if (src == export_slice_item) {
-//      try {
-//        AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.spliced_view.getSeqMap();
-//        EPSWriter.outputToFile(tm.getSplitPane());
-//      } catch (Exception ex) {
-//        errorPanel("Problem during output.", ex);
-//      }
-//    }
+    else if (src == export_slice_item) {
+      try {
+        if (slice_view != null) {
+          AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();
+          EPSWriter.outputToFile(tm.getSplitPane());
+        }
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
+      }
+    }
     else if (src == clear_item) {
       if (confirmPanel("Really clear entire view?")) {
         map_view.clear();
@@ -1348,7 +1354,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Iterator iter = other_plugins.values().iterator();
     while (iter.hasNext()) {
       PluginInfo pi = (PluginInfo) iter.next();
-      plugin_list.add(pi);
+      if ("com.affymetrix.igb.plugin.menu.EpsOutputAction".equals(pi.getClassName())) {
+        System.out.println("This plugin is obsolete, not using: " + pi.getClassName());
+      } else {
+        plugin_list.add(pi);
+      }
     }
 
     return plugin_list;

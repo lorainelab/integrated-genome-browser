@@ -22,7 +22,7 @@ import java.util.*;
  *   <pre>
  *       a) all probes are same length
  *       b) all probes align to a contiguous genome interval (no split probes)
- *       c) probeset ids can be represented numerically
+ *       c) probeset ids can be represented numerically (with an optional prefix string)
  *       d) all probes within a probeset are on same strand
  *       e) probeset must have at least one probe
  *   </pre>
@@ -116,9 +116,9 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     }
   }
 
-  public int getIntID() {
-    return nid;
-  }
+  public int getIntID() { return nid; }
+  public int getProbeLength() { return probe_length; }
+  public String getPrefixID() { return id_prefix; }
 
   /** The integer id converted to String representation. */
   public String getID() {

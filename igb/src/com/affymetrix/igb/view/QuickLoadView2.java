@@ -16,7 +16,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.*;
 import javax.swing.*;
+import java.net.URL;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
@@ -35,7 +37,7 @@ import com.affymetrix.igb.parsers.ChromInfoParser;
 import com.affymetrix.igb.parsers.BedParser;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.parsers.NibbleResiduesParser;
-import java.net.URL;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class QuickLoadView2 extends JComponent
          implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener  {
@@ -60,17 +62,16 @@ public class QuickLoadView2 extends JComponent
   static final String SERVER_NAME_FROM_IGB_PREFS_FILE = "Auxiliary";
 
   // constants for remembering state
-  static final String PREF_LAST_QUICKLOAD_URL = "QuickLoad: Last URL";
-  static final String PREF_LAST_SERVER_NAME = "QuickLoad: Last Server";
-  static final String PREF_LAST_GENOME = "QuickLoad: Last Genome";
-  static final String PREF_LAST_SEQ = "QuickLoad: Last Seq Name";
+  public static final String PREF_LAST_QUICKLOAD_URL = "QuickLoad: Last URL";
+  public static final String PREF_LAST_SERVER_NAME = "QuickLoad: Last Server";
+  public static final String PREF_LAST_GENOME = "QuickLoad: Last Genome";
+  public static final String PREF_LAST_SEQ = "QuickLoad: Last Seq Name";
 
-  static final String PREF_USER_DEFINED_QUICKLOAD_URL = "QuickLoad URL";
+  public static final String PREF_USER_DEFINED_QUICKLOAD_URL = "QuickLoad URL";
 
   public static final String PREF_DAS_DNA_SERVER_URL = "DAS DNA Server URL";
   public static final String DEFAULT_DAS_DNA_SERVER = "http://genome.cse.ucsc.edu/cgi-bin/das";
-  static Map cache_usage_options;
-  static Map usage2str;
+
   static boolean LOAD_DEFAULT_ANNOTS = true;
   static Map default_types = new HashMap();
   static String default_annot_name  = "refseq";
@@ -88,45 +89,30 @@ public class QuickLoadView2 extends JComponent
   JButton all_residuesB;
   JButton partial_residuesB;
   JButton optionsB;
-
-  // components for options dialog
-  JPanel optionsP;
-  JButton clear_cacheB;
-  JCheckBox cache_annotsCB;
-  JCheckBox cache_residuesCB;
-  JComboBox cache_usage_selector;
-  JButton reset_das_dna_serverB = new JButton("Reset");
-  //JButton reset_quickload_urlB = new JButton("Reset");
+  DataLoadPrefsView optionsP;
+  
+  int pref_tab_number = -1;
 
   static {
     default_types.put(default_annot_name, default_annot_name);
-    String norm = "Normal Usage";
-    String ignore = "Ignore Cache";
-    String only = "Use Only Cache";
-    Integer normal = new Integer(LocalUrlCacher.NORMAL_CACHE);
-    Integer ignore_cache = new Integer(LocalUrlCacher.IGNORE_CACHE);
-    Integer cache_only = new Integer(LocalUrlCacher.ONLY_CACHE);
-    cache_usage_options = new LinkedHashMap();
-    cache_usage_options.put(norm, normal);
-    cache_usage_options.put(ignore, ignore_cache);
-    cache_usage_options.put(only, cache_only);
-    usage2str = new LinkedHashMap();
-    usage2str.put(normal, norm);
-    usage2str.put(ignore_cache, ignore);
-    usage2str.put(cache_only, only);
   }
 
   public QuickLoadView2() {
 
-    initOptionsDialog();
+    PreferencesPanel pp = PreferencesPanel.getSingleton();
+    pref_tab_number = pp.addPrefEditorComponent(new DataLoadPrefsView());
+    UnibrowPrefsUtil.getLocationsNode().addPreferenceChangeListener(preferemce_change_listener);
 
-    gviewer = IGB.getSingletonIGB().getMapView();
+    if (IGB.getSingletonIGB() != null) {
+      gviewer = IGB.getSingletonIGB().getMapView();
+    }
     this.setLayout(new BorderLayout());
     types_panel = new JPanel();
     types_panel.setLayout(new BoxLayout(types_panel, BoxLayout.Y_AXIS));
 
     JPanel choice_panel = new JPanel();
     choice_panel.setLayout(new BoxLayout(choice_panel, BoxLayout.X_AXIS));
+    choice_panel.setBorder(BorderFactory.createEmptyBorder(2,4,4,4));
 
     serverCB = new JComboBox();
     choice_panel.add(new JLabel("Server:"));
@@ -153,10 +139,12 @@ public class QuickLoadView2 extends JComponent
       }
     }
     else {
+    buttonP.add(Box.createRigidArea(new Dimension(5,0)));
       buttonP.add(new JLabel("No sequence available", JLabel.CENTER));
     }
     optionsB = new JButton("QuickLoad Options");
     buttonP.add(optionsB);
+    buttonP.setBorder(BorderFactory.createEmptyBorder(4,2,2,2));
     optionsB.addActionListener(this);
 
     this.add("North", choice_panel);
@@ -199,12 +187,6 @@ public class QuickLoadView2 extends JComponent
     else if (src == optionsB) {
       showOptions();
     }
-    else if (src == reset_das_dna_serverB) {
-      UnibrowPrefsUtil.getLocationsNode().put(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
-    }
-    else if (src == clear_cacheB) {
-      LocalUrlCacher.clearCache();
-    }
     else if (src instanceof JCheckBox) {  // must put this after cache modification branch, since some of those are JCheckBoxes
       if (DEBUG_EVENTS)  { System.out.println("QuickLoadView2 received annotation load action"); }
       JCheckBox cbox = (JCheckBox)src;
@@ -214,8 +196,10 @@ public class QuickLoadView2 extends JComponent
       if (selected)  {
         current_server.loadAnnotations(current_group, filename);
         gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-        cbox.setEnabled(! current_server.getLoadState(current_group, filename));
-        cbox.setSelected(current_server.getLoadState(current_group, filename));
+        boolean loaded = QuickLoadServerModel.getLoadState(current_group, filename);
+        cbox.setEnabled(! loaded);
+        cbox.setSelected(loaded);
+        cbox.setText(getCheckboxTitle(loaded, filename));
       }
       else {
         // never happens.  We don't allow the checkbox to be un-selected
@@ -277,7 +261,26 @@ public class QuickLoadView2 extends JComponent
       }
     }
   }
-
+  
+  public String getCheckboxTitle(boolean prev_loaded, String filename) {
+    String checkbox_title;
+    String annot_name = getAnnotName(filename);
+    if (prev_loaded) {
+      checkbox_title = annot_name + " [Loaded]";
+    } else {
+      String full_name = current_server.root_url + current_genome_name + "/" + filename;      
+      String load_type = LocalUrlCacher.getLoadType(full_name, LocalUrlCacher.getPreferredCacheUsage());
+      checkbox_title = annot_name + " [" + load_type + "]";
+    }
+    return checkbox_title;
+  }
+  
+  String getAnnotName(String filename) {
+    int pindex = filename.indexOf('.');
+    if (pindex < 0)  { return filename; }
+    return filename.substring(0, pindex);
+  }
+  
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     // Implementation of GroupSelectionListener
     //  This gets called when something external, such as a bookmark, causes
@@ -324,25 +327,49 @@ public class QuickLoadView2 extends JComponent
         while (iter.hasNext()) {
           String filename = (String) iter.next();
 
-//          if (filename == null || filename.equals(""))  { continue; }
+          if (filename == null || filename.equals(""))  { continue; }
           boolean prev_loaded = QuickLoadServerModel.getLoadState(group, filename);
-          int pindex = filename.indexOf('.');
-          if (pindex < 0)  { continue; }
-          String annot_name = filename.substring(0, pindex);
-          JCheckBox cb = new JCheckBox(annot_name);
+          
+          String checkbox_title = getCheckboxTitle(prev_loaded, filename);
+          JCheckBox cb = new JCheckBox(checkbox_title);
+          
           cb2filename.put(cb, filename);
           cb.setSelected(prev_loaded);
           cb.setEnabled(! prev_loaded);
           cb.addActionListener(this);
-          if ((! prev_loaded) && LOAD_DEFAULT_ANNOTS && (default_types.get(annot_name) != null)) {
-            //            cb.setSelected(true);  // rely on checkbox selection event to trigger loading...
-            current_server.loadAnnotations(current_group, filename);
-            cb.setSelected(true); // change the appearance of the checkbox
-            cb.setEnabled(false);
-            gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-          }
           types_panel.add(cb);
         }
+
+        if (LOAD_DEFAULT_ANNOTS) {
+          // if any of the checkboxes correspond to default types, then try to load them
+          Iterator cbiter = cb2filename.keySet().iterator();
+          while (cbiter.hasNext()) {
+            JCheckBox cb = (JCheckBox) cbiter.next();
+            String filename = (String) cb2filename.get(cb);
+
+            boolean prev_loaded = QuickLoadServerModel.getLoadState(group, filename);
+            boolean is_a_default_type = (default_types.get(getAnnotName(filename)) != null);
+
+            if ((! prev_loaded) && is_a_default_type) {
+              //            cb.setSelected(true);  // rely on checkbox selection event to trigger loading...
+              current_server.loadAnnotations(current_group, filename);
+              boolean loaded = QuickLoadServerModel.getLoadState(current_group, filename);
+              cb.setEnabled(! loaded);
+              cb.setSelected(loaded);
+              cb.setText(getCheckboxTitle(loaded, filename));
+              
+              // Now force display of the current seq (or the first seq in the group)
+              AnnotatedBioSeq seq = gmodel.getSelectedSeq();
+              if (seq == null && current_group.getSeqCount() > 0) { 
+                seq =  current_group.getSeq(0); 
+              }
+              if (seq != null) {
+                gviewer.setAnnotatedSeq(seq, true, true);
+              }
+            }
+          }
+        }
+      
       }
     }
     types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)
@@ -354,6 +381,16 @@ public class QuickLoadView2 extends JComponent
     current_seq = evt.getSelectedSeq();
     if (current_seq != null) {
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_SEQ, current_seq.getID());
+    }
+    if (current_seq != null 
+        && ! ENCODE_REGIONS_ID.equals(current_seq.getID())
+        && ! GENOME_SEQ_ID.equals(current_seq.getID())) {
+      all_residuesB.setEnabled(true);
+      partial_residuesB.setEnabled(true);
+    }
+    else {
+      all_residuesB.setEnabled(false);
+      partial_residuesB.setEnabled(false);
     }
   }
 
@@ -574,7 +611,7 @@ public class QuickLoadView2 extends JComponent
         String url_path = http_root + current_genome_name + "/" + seq_name + ".bnib";
         System.out.println("location of bnib file: " + url_path);
         System.out.println("current seq: id = " + current_seq.getID() + ", " + current_seq);
-        istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.cache_usage, QuickLoadServerModel.cache_residues);
+        istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.getCacheResidues());
         //        istr = (new URL(url_path)).openStream();
         // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
         current_seq = NibbleResiduesParser.parse(istr, gmodel.getSelectedSeqGroup());
@@ -594,86 +631,24 @@ public class QuickLoadView2 extends JComponent
     }
   }
 
-
-
-  public void initOptionsDialog() {
-    //    System.out.println("showing quickload options");
+  public DataLoadPrefsView getOptionsPanel() {
     if (optionsP == null) {
-      optionsP = new JPanel();
-      optionsP.setLayout(new BoxLayout(optionsP, BoxLayout.Y_AXIS));
-
-      Box url_box = new Box(BoxLayout.X_AXIS);
-      url_box.setBorder(new javax.swing.border.TitledBorder("Personal QuickLoad URL"));
-      JTextField quickload_url_TF = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_USER_DEFINED_QUICKLOAD_URL, "");
-      url_box.add(quickload_url_TF);
-      //url_box.add(reset_quickload_urlB);
-      //reset_quickload_urlB.addActionListener(this);
-      optionsP.add(url_box);
-      optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-
-      Box server_box = new Box(BoxLayout.X_AXIS);
-      server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
-      JTextField das_dna_server_TF = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
-      server_box.add(das_dna_server_TF);
-      server_box.add(reset_das_dna_serverB);
-      reset_das_dna_serverB.addActionListener(this);
-      optionsP.add(server_box);
-      optionsP.add(Box.createRigidArea(new Dimension(0, 5)));
-
-      JPanel cache_options_box = new JPanel();
-      cache_options_box.setBorder(new javax.swing.border.TitledBorder(""));
-      cache_options_box.setLayout(new GridLayout(4, 1));
-      optionsP.add(cache_options_box);
-
-      cache_annotsCB = new JCheckBox("Cache Annotations", QuickLoadServerModel.cache_annots);
-      cache_residuesCB = new JCheckBox("Cache DNA Residues", QuickLoadServerModel.cache_residues);
-      clear_cacheB = new JButton("Clear Cache");
-      cache_usage_selector = new JComboBox();
-      Iterator iter = cache_usage_options.keySet().iterator();
-      while (iter.hasNext()) {
-        String str = (String)iter.next();
-        cache_usage_selector.addItem(str);
-      }
-      cache_usage_selector.setSelectedItem(usage2str.get(new Integer(QuickLoadServerModel.cache_usage)));
-
-      cache_options_box.add(cache_annotsCB);
-      cache_options_box.add(cache_residuesCB);
-      JPanel usageP = new JPanel();
-      usageP.setLayout(new GridLayout(1,2));
-      usageP.add(new JLabel("Cache Usage"));
-      usageP.add(cache_usage_selector);
-      cache_options_box.add(usageP);
-      cache_options_box.add(clear_cacheB);
-
-      //      cache_annotsCB.addActionListener(this);
-      //      cache_residuesCB.addActionListener(this);
-      //      cache_usage_selector.addItemListener(this);
-      clear_cacheB.addActionListener(this);
+      optionsP = new DataLoadPrefsView();
     }
+    return optionsP;
   }
 
-
   public void showOptions() {
-    String old_QL = getUrlFromPersistentPrefs();
-
-    //TODO: before showing the options dialog, need to reset its GUI to actual current values
-    JOptionPane.showMessageDialog(this, optionsP, "QuickLoad Options", JOptionPane.PLAIN_MESSAGE);
-
-    //TODO: Give the user a "Cancel" options as well as "OK"
-    //int option = JOptionPane.showConfirmDialog(this, optionsP, "QuickLoad Options", JOptionPane.OK_
-    //if (option == JOptionPane.OK_OPTION) {
-
-    // could handle cache_usage_selector, cache_annotsCB, cache_residuesCB in event handlers, but was getting too spread out
-    // so for now always reset cache options, even if same as before (doesn't really cost anything if they don't change)
-      String usage_str = (String)cache_usage_selector.getSelectedItem();
-      int usage = ((Integer)cache_usage_options.get(usage_str)).intValue();
-      QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-      // Note that the preferred DAS_DNA_SERVER_URL gets set immediately when the JTextBox is changed
-      // Note that the preferred QUICK_LOAD_URL gets set immediately when the JTextBox is changed
-      //  ... but we have to update the GUI in response to changes in QUICK_LOAD_URL
-      //        setQuickLoadURL(getQuickLoadUrl());
-
-      if (! getUrlFromPersistentPrefs().equals(old_QL)) {
+    PreferencesPanel pv = PreferencesPanel.getSingleton();
+    pv.setTab(pref_tab_number);
+    JFrame f = pv.getFrame();
+    f.setVisible(true);
+  }
+  
+  PreferenceChangeListener preferemce_change_listener = new PreferenceChangeListener() {
+    public void preferenceChange(PreferenceChangeEvent evt) {
+      String value = evt.getNewValue();
+      if (evt.getKey().equals(PREF_USER_DEFINED_QUICKLOAD_URL)) {
         // If the user is currently looking at the user-defined QL server, must force it to reload
         if (SERVER_NAME_USER_DEFINED.equals(serverCB.getSelectedItem())) {
           SwingUtilities.invokeLater(new Runnable() {
@@ -684,8 +659,8 @@ public class QuickLoadView2 extends JComponent
           });
         }
       }
-    //}
-  }
+    }
+  };
 
   /** Adds the DAS servers from the file on the quickload server to the
    *  persistent list managed by DasDiscovery.  If the file doesn't exist,
@@ -748,15 +723,8 @@ class QuickLoadServerModel {
   static boolean CACHE_ANNOTS_DEFAULT = true;
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static int cache_usage =
-    UnibrowPrefsUtil.getIntParam(LocalUrlCacher.PREF_CACHE_USAGE, LocalUrlCacher.CACHE_USAGE_DEFAULT);
-  static boolean cache_residues =
-    UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
-  static boolean cache_annots =
-    UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
 
   static Pattern tab_regex = Pattern.compile("\t");
-
 
   String root_url;
   java.util.List genome_names = new ArrayList();
@@ -802,24 +770,13 @@ class QuickLoadServerModel {
     return ql_server;
   }
 
-  protected static void setCacheBehavior(int behavior, boolean annots, boolean residues) {
-    if (behavior != cache_usage) {
-      cache_usage = behavior;
-      UnibrowPrefsUtil.saveIntParam("quickload_cache_usage", cache_usage);
-      //System.out.println("storing cache_usage behavior: " + cache_usage);
-    }
-    if (residues != cache_residues) {
-      cache_residues = residues;
-      UnibrowPrefsUtil.saveBooleanParam("quickload_cache_residues", cache_residues);
-      //System.out.println("storing cache_residues behavior: " + cache_residues);
-    }
-    if (annots != cache_annots) {
-      cache_annots = annots;
-      UnibrowPrefsUtil.saveBooleanParam("quickload_cache_annots", cache_annots);
-      //System.out.println("storing cache_annots behavior: " + cache_annots);
-    }
+  static boolean getCacheResidues() {
+    return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
   }
-
+  
+  static boolean getCacheAnnots() {
+    return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
+  }
 
   public String getRootUrl() { return root_url; }
   public java.util.List getGenomeNames() { return genome_names; }
@@ -866,7 +823,7 @@ class QuickLoadServerModel {
     if (boo == null) { return false; }
     else { return boo.booleanValue(); }
   }
-
+  
   public static void setLoadState(AnnotatedSeqGroup group, String file_name, boolean loaded) {
     Map load_states = (Map) group2states.get(group);
     if (load_states == null) {
@@ -906,7 +863,7 @@ class QuickLoadServerModel {
     InputStream istr = null;
     BufferedReader br = null;
     try {
-      istr = LocalUrlCacher.getInputStream(filename, cache_usage, cache_annots);
+      istr = LocalUrlCacher.getInputStream(filename, getCacheAnnots());
       br = new BufferedReader(new InputStreamReader(istr));
       String line;
       while ((line = br.readLine()) != null) {
@@ -1004,7 +961,7 @@ class QuickLoadServerModel {
     // assume it's a bed file...
     BedParser parser = new BedParser();
     try {
-      InputStream istr= LocalUrlCacher.getInputStream(urlpath, cache_usage, cache_annots);
+      InputStream istr= LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
       //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
       java.util.List regions = parser.parse(istr, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
       int rcount = regions.size();
@@ -1050,7 +1007,7 @@ class QuickLoadServerModel {
       String lift_path = genome_root + "liftAll.lft";
       String cinfo_path = genome_root + "mod_chromInfo.txt";
       try {
-        lift_stream = LocalUrlCacher.getInputStream(lift_path, cache_usage, cache_annots);
+        lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots());
       }
       catch (Exception ex) {
         System.out.println("couldn't find lift file, looking instead for mod_chromInfo file");
@@ -1058,7 +1015,7 @@ class QuickLoadServerModel {
       }
       if (lift_stream == null) {
         try {
-          cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path, cache_usage, cache_annots);
+          cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path,  getCacheAnnots());
         }
         catch (Exception ex) {
           System.err.println("ERROR: could find neither liftAll.txt nor mod_chromInfo.txt files");
@@ -1096,7 +1053,7 @@ class QuickLoadServerModel {
     try {
       InputStream istr = null;
       try {
-        istr = LocalUrlCacher.getInputStream(root_url + "contents.txt", cache_usage, cache_annots);
+        istr = LocalUrlCacher.getInputStream(root_url + "contents.txt", getCacheAnnots());
       } catch (Exception e) {
         System.out.println("ERROR: Couldn't open '"+root_url+"contents.txt\n:  "+e.toString());
         istr = null; // dealt with below
@@ -1134,7 +1091,7 @@ class QuickLoadServerModel {
     }
     return glist;
   }
-
+  
   public void loadAnnotations(AnnotatedSeqGroup current_group, String filename) {
     boolean loaded = getLoadState(current_group, filename);
     if (loaded) {
@@ -1145,11 +1102,10 @@ class QuickLoadServerModel {
       System.out.println("need to load: " + annot_url);
       InputStream istr = null;
       BufferedInputStream bis = null;
+      
       try {
-        istr = LocalUrlCacher.getInputStream(annot_url, cache_usage, cache_annots);
-        if (istr == null) { // will not happen
-          throw new IOException("File not found: " + annot_url);
-        } else {
+        istr = LocalUrlCacher.askAndGetInputStream(annot_url, getCacheAnnots());
+        if (istr != null) {
           bis = new BufferedInputStream(istr);
           // really should remove LoadFileAction's requirement for SeqMapView argument...
           LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
@@ -1161,14 +1117,14 @@ class QuickLoadServerModel {
         ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + annot_url, ex);
         // keep load state false so we can load this annotation from a different server
         setLoadState(current_group, filename, false);
+      } finally {
+        if (bis != null) try {bis.close();} catch (Exception e) {}
+        if (istr != null) try {istr.close();} catch (Exception e) {}
       }
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (istr != null) try {istr.close();} catch (Exception e) {}
     }
   }
-
+  
   public String toString() {
     return "QuickLoadServerModel: url='" + getRootUrl() + "'";
   }
-
 }

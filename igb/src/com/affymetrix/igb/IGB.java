@@ -173,7 +173,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // This allows exporting the whole frame, including decorations, to an eps file
     JFrame.setDefaultLookAndFeelDecorated(true);
     
-   try {
+    String laf = System.getProperty("swing.defaultlaf");
+    // if laf != null, then the user-requested l-and-f has already been applied
+    // if laf == null, then apply the windows look and feel
+    if (laf == null) try {
       // It this is Windows, then use the Windows look and feel.
       LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
       if (look_and_feel.isSupportedLookAndFeel()) {

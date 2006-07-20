@@ -401,6 +401,12 @@ public class Das2ClientOptimizer {
 	  System.out.println("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
 	  feats = BarParser.parse(bis, seq_group, type.getName(), false);
 	}
+	else if (content_subtype.equals("bp2")) {
+	  System.out.println("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
+	  Bprobe1Parser bp1_reader = new Bprobe1Parser();
+	  //	  String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bp"));
+	  feats = bp1_reader.parse(bis, seq_group, false, type.getName());
+	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  success = false;

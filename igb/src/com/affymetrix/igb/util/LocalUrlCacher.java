@@ -61,12 +61,11 @@ public class LocalUrlCacher {
     return fil;
   }
   
-  public static final String TYPE_FILE = "File";
+  public static final String TYPE_FILE = "In Filesystem";
   public static final String TYPE_CACHED = "Cached";
   public static final String TYPE_STALE_CACHE = "Stale Cache";
-  public static final String TYPE_NOT_CACHED = "Not in cache";
-  public static final String TYPE_UNREACHABLE = "Unreachable";
-  
+  public static final String TYPE_NOT_CACHED = "Remote File";
+  public static final String TYPE_UNREACHABLE = "Not Available?";
   
   /**
    *  Returns the accesibility of the file represented by the URL.
@@ -156,10 +155,14 @@ public class LocalUrlCacher {
     }
   }
 
+  public static InputStream getInputStream(String url, boolean write_to_cache)
+       throws IOException {
+    return getInputStream(url, getPreferredCacheUsage(), write_to_cache);
+  }
   
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
-
+    
     // if url is a file url, and not caching files, then just directly return stream
     if ((! CACHE_FILE_URLS) && isFile(url)) {
       InputStream fstr = null;
@@ -329,7 +332,12 @@ public class LocalUrlCacher {
     //    System.out.println("returning stream: " + result_stream);
     return result_stream;
   }
-
+  
+  public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
+  throws IOException {
+    return askAndGetInputStream(filename, getPreferredCacheUsage(), cache_annots_param);
+  }
+  
   /**
    *  Similar to {@link #getInputStream()}, but asks the user before 
    *  downloading anything over the network.
@@ -339,6 +347,12 @@ public class LocalUrlCacher {
   public static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param) 
   throws IOException {
     String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
+
+    String short_filename = "selected file";
+    int index = filename.lastIndexOf('/');
+    if (index > 0) {
+      short_filename = filename.substring(index+1);
+    }
 
     if (LocalUrlCacher.TYPE_FILE.equals(cache_type)) { 
       // just go ahead and load it
@@ -358,7 +372,8 @@ public class LocalUrlCacher {
     
     else if (LocalUrlCacher.TYPE_STALE_CACHE.equals(cache_type)) {
       String[] options = { "Load remote file", "Use local cache", "Cancel" };
-      String message = "The remote file is more recent than the local copy.";
+      String message = "The remote file \"" + short_filename + 
+          "\"is more recent than the local copy.";
 
       int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
             JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
@@ -376,11 +391,6 @@ public class LocalUrlCacher {
     else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
     
       String[] options = { "OK", "Cancel" };
-      String short_filename = "selected file";
-      int index = filename.lastIndexOf('/');
-      if (index > 0) {
-        short_filename = "\"" + filename.substring(index+1) + "\"";
-      }
       String message = "Load " + short_filename + " from the remote server?";
 
       int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
@@ -388,7 +398,7 @@ public class LocalUrlCacher {
             null, options, options[0]);
 
       if (choice == JOptionPane.OK_OPTION) {
-        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, true);
+        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
       } else {
         return null;
       }

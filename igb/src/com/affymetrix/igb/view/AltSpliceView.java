@@ -339,4 +339,8 @@ public class AltSpliceView extends JComponent
     //popup.add(show_all_action);
     popup.add(restore_all_action);
   }
+  
+  public SeqMapView getSplicedView() {
+    return spliced_view;
+  }
 }

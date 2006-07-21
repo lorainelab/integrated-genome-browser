@@ -263,8 +263,10 @@ public class QuickLoadView2 extends JComponent
   }
   
   public String getCheckboxTitle(boolean prev_loaded, String filename) {
-    String checkbox_title;
     String annot_name = getAnnotName(filename);
+    String checkbox_title = annot_name;
+    /*
+    // unfortunately, this code slows things down too much....
     if (prev_loaded) {
       checkbox_title = annot_name + " [Loaded]";
     } else {
@@ -272,6 +274,7 @@ public class QuickLoadView2 extends JComponent
       String load_type = LocalUrlCacher.getLoadType(full_name, LocalUrlCacher.getPreferredCacheUsage());
       checkbox_title = annot_name + " [" + load_type + "]";
     }
+    */
     return checkbox_title;
   }
   

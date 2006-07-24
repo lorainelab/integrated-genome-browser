@@ -80,6 +80,10 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
 
   public void mousePressed(MouseEvent evt) {
+    if (map instanceof AffyLabelledTierMap) {
+      ((AffyLabelledTierMap) map).getLabelMap().clearSelected();
+    }
+    
     // turn OFF autoscrol in mousePressed()
     if (smv.map_auto_scroller != null) {
       smv.toggleAutoScroll();

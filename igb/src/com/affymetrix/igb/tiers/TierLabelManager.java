@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,16 +20,24 @@ import javax.swing.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.glyph.GraphGlyph;
 
 public class TierLabelManager {
 
   AffyLabelledTierMap tiermap;
-  NeoMap labelmap;
+  AffyTieredMap labelmap;
   JPopupMenu popup;
 
   int xoffset_pop = 10;
   int yoffset_pop = 0;
 
+  /**
+   *  Determines whether selecting a tier label of a tier that contains only
+   *  GraphGlyphs should cause the graphs in that tier to become selected.
+   */
+  boolean do_graph_selections = false;
+  
   public TierLabelManager(AffyLabelledTierMap map) {
     tiermap = map;
     popup = new JPopupMenu();
@@ -70,12 +78,64 @@ public class TierLabelManager {
     java.util.List labels = getAllTierLabels();
     int tiercount = labels.size();
     for (int i=0; i<tiercount; i++) {
-      GlyphI tierlabel = (GlyphI)labels.get(i);
+      TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(i);
       labelmap.select(tierlabel);
     }
-    labelmap.updateWidget();
+    doGraphSelections(labelmap);
+    //labelmap.updateWidget();
+    tiermap.updateWidget(); // make sure selections becomes visible
   }
+  
+  /**
+   *  Determines whether selecting a tier label of a tier that contains only
+   *  GraphGlyphs should cause the graphs in that tier to become selected.
+   */
+  public void setDoGraphSelections(boolean b) {
+    do_graph_selections = b;
+  }
+  
+  void doGraphSelections(AffyTieredMap labelmap) {
+    if (! do_graph_selections) {
+      return;
+    }
 
+    java.util.List labels = getAllTierLabels();
+    int tiercount = labels.size();
+    boolean selections_changed = false;
+    
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    
+    ArrayList symmetries = new ArrayList();
+    symmetries.addAll(gmodel.getSelectedSymmetriesOnAllSeqs());
+
+    for (int j = 0; j<getAllTierLabels().size(); j++) {
+      TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(j);
+      TierGlyph tg = tierlabel.getReferenceTier();
+      int child_count = tg.getChildCount();
+      if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
+        // Assume that if first child is a GraphGlyph, then so are all others
+        for (int i=0; i<child_count; i++) {
+          GraphGlyph child = (GraphGlyph) tg.getChild(i);
+          Object sym = child.getInfo();
+          // sym will be a GraphSym, but we don't need to cast it
+          if (tierlabel.isSelected()) {
+            if (! symmetries.contains(sym)) {
+              symmetries.add(sym);
+              selections_changed = true;
+            }
+          } else if (symmetries.contains(sym)) {
+            symmetries.remove(sym);
+            selections_changed = true;
+          }
+        }
+      }
+    }
+
+    if (selections_changed) {
+      gmodel.setSelectedSymmetries(symmetries, tiermap);
+    }
+  }
+  
   /** Gets the index of a given tier. Note that is a TierGlyph, not a TierLabelGlyph. */
   public int getTierIndex(TierGlyph atier) {
     return tiermap.getTierIndex(atier);
@@ -219,9 +279,9 @@ public class TierLabelManager {
     if (popup.getComponentCount() > 0) {
       popup.show(labelmap, e.getX() + xoffset_pop, e.getY() + yoffset_pop);
     }
-  }
+  }  
   
-  
+
   /** An interface that lets listeners modify the popup menu before it is shown. */
   public interface PopupListener {
     
@@ -278,7 +338,9 @@ public class TierLabelManager {
         }
         Vector selected = nevt.getItems();
         labelmap.select(selected);
-        labelmap.updateWidget(); // make sure selections becomes visible
+        doGraphSelections(labelmap);
+//        labelmap.updateWidget();
+        tiermap.updateWidget(); // make sure selections becomes visible
         if ( isOurPopupTrigger(evt)  ) {
           doPopup(evt);
         }

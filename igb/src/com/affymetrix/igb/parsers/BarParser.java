@@ -25,6 +25,8 @@ import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
+ * Parser for files in BAR format.
+ * <pre>
    Bar format definition:
 
    1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
@@ -62,6 +64,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
    21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
    22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
    23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
+ *</pre>
 */
 public class BarParser implements AnnotationWriter  {
   static boolean DEBUG_READ = false;
@@ -103,7 +106,8 @@ public class BarParser implements AnnotationWriter  {
   protected static Map coordset2seqs = new HashMap();
 
   /**
-   *
+   *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
+   *  be used only inside a CompositeGraphSym.
    */
   public static GraphSym getSlice(String file_name, SeqSpan span) throws IOException {
     Timer tim = new Timer();
@@ -174,7 +178,7 @@ public class BarParser implements AnnotationWriter  {
     //    int points_to_skip = min_index * points_per_index;
     //    int start_point
     //    int point_count =
-    Map seqs = new HashMap();
+
     DataInput dis = null;
     try {
       if (USE_RANDOM_ACCESS) {
@@ -246,7 +250,7 @@ public class BarParser implements AnnotationWriter  {
 
       checkSeqLength(aseq, graph_xcoords);
       // don't need a unique id for this GraphSym, since slices are not added directly as annotations
-      //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
+      //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...      
       graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
       graf.removeSpan(graf.getSpan(aseq));
       graf.addSpan(span);
@@ -269,7 +273,7 @@ public class BarParser implements AnnotationWriter  {
       test_file = args[0];
     }
     //    testFullRead(test_file);
-    Map seqs = new HashMap();
+
     AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
     buildIndex(test_file, test_file, seq_group);
     BioSeq testseq = new SimpleBioSeq("test", 150200300);
@@ -667,7 +671,7 @@ public class BarParser implements AnnotationWriter  {
 
       // hack to extract seq version and seq name from seqname field for bar files that were made
       //   with the version and name concatenated (with ";" separator) into the seqname field
-      int sc_pos = seqname.lastIndexOf(";");
+      int sc_pos = seqname.lastIndexOf(';');
       String orig_seqname = seqname;
       if (sc_pos >= 0) {
         seqversion = seqname.substring(0, sc_pos);
@@ -780,6 +784,9 @@ public class BarParser implements AnnotationWriter  {
 	else { new_group_name = version; }
 	System.out.println("group not found, creating new seq group: " + new_group_name);
 	group = gmodel.addSeqGroup(new_group_name);
+
+        // select the new group: forces DataLoaderView to notice new group
+        gmodel.setSelectedSeqGroup(group);
       }
     }
     return group;

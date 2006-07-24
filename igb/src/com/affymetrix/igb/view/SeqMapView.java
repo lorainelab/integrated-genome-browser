@@ -336,6 +336,7 @@ public class SeqMapView extends JPanel
 
     if (LABEL_TIERMAP)  {
       tier_manager = new TierLabelManager((AffyLabelledTierMap)seqmap);
+      tier_manager.setDoGraphSelections(true);
       if (add_popups) {
         tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
@@ -2385,7 +2386,11 @@ public class SeqMapView extends JPanel
       //   call_listeners ==> false
       //   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
       select(symlist, false, false, false);
-      zoomToSelections();
+      // Zoom to selections, unless the selection was caused by the TierLabelManager
+      // (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
+      if (src != getSeqMap()) {
+        zoomToSelections();
+      }
       String title = getSelectionTitle(seqmap.getSelected());
       IGB.getSingletonIGB().setStatus(title, false);
     }
@@ -2762,7 +2767,12 @@ public class SeqMapView extends JPanel
     java.util.List selected_syms = getSelectedSyms();
     if (selected_syms.size() > 0) {
       sym_popup.add(selectParentMI);
-      sym_popup.add(printSymmetryMI);
+    }
+    if (selected_syms.size() == 1) {
+      SeqSymmetry sym0 = (SeqSymmetry) selected_syms.get(0);
+      if (! (sym0 instanceof GraphSym)) {
+        sym_popup.add(printSymmetryMI);
+      }
     }
 
     for (int i=0; i<popup_listeners.size(); i++) {

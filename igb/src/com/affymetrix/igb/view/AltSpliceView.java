@@ -46,6 +46,9 @@ public class AltSpliceView extends JComponent
   class AltSpliceSeqMapView extends SeqMapView {
     public AltSpliceSeqMapView(boolean b) {
       super(b);
+      if (tier_manager != null) {
+        tier_manager.setDoGraphSelections(false);
+      }
     }
 
     public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
@@ -56,6 +59,13 @@ public class AltSpliceView extends JComponent
         this.aseq = seq;
         this.viewseq = seq;
       }
+    }
+
+    void postSelections() {
+      // someday, we might want to think about not posting selections from the
+      // alt splice view.  The only thing that makes sense for hearing these
+      // selections is the property table.
+      super.postSelections();
     }
   };
   
@@ -293,15 +303,7 @@ public class AltSpliceView extends JComponent
       }
     };
 
-//    Action show_all_action = new AbstractAction("Show All") {
-//      // This form of "Show All" will show all the tiers, regardless of
-//      // whether AnnotStyle.getShow() is true
-//      public void actionPerformed(ActionEvent e) {
-//        handler.showTiers(handler.getAllTierLabels(), true, true);
-//      }
-//    };
-
-    Action restore_all_action = new AbstractAction("Show Same Tiers as Main View") {
+    Action restore_all_action = new AbstractAction("Show All") {
       public void actionPerformed(ActionEvent e) {
         java.util.List list = handler.getAllTierLabels();
         Iterator iter = list.iterator();

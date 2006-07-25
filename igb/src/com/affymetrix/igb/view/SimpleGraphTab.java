@@ -288,18 +288,14 @@ implements SeqSelectionListener, SymSelectionListener {
     java.util.List selected_syms = evt.getSelectedSyms();
     //System.out.println("in SimpleGraphTab.symSelectionChanged(), selected syms: " + selected_syms.size());
 
-    Object src = evt.getSource();
-    // if selection event originally came from here, then ignore it...
-
-    if (src == this) {
-      //System.out.println("SimpleGraphTab received it's own sym selection event, ignoring");
-      return;
-    }
-    if (src != gviewer) {
-      // Only pay attention to selections in the main view, not the sliced view.
-      return;
-    }
+    // Only pay attention to selections from the main SeqMapView or its map.
+    // Ignore the splice view as well as events coming from this class itself.
     
+    Object src = evt.getSource();
+    if (src != gviewer && src != gviewer.getSeqMap()) {
+      return;
+    }
+      
     resetSelectedGraphGlyphs(selected_syms);
   }
 

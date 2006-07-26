@@ -100,11 +100,11 @@ public class CollapsePacker implements PaddedPackerI {
       double center = pbox.y + pbox.height / 2;
       child.moveAbsolute(cbox.x, center - cbox.height/2);
     } else if (alignment == ALIGN_TOP) {
-      child.moveAbsolute(cbox.x, parent_spacer);
+      child.moveAbsolute(cbox.x, pbox.y + parent_spacer);
     } else if (alignment == ALIGN_BOTTOM) {
-      child.moveAbsolute(cbox.x, pbox.height - cbox.height - parent_spacer);
+      child.moveAbsolute(cbox.x, pbox.y + parent_spacer + pbox.height - cbox.height );
     } else if (alignment == ALIGN_STRETCH) {
-      child.getCoordBox().reshape(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height - parent_spacer);
+      child.getCoordBox().reshape(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
     }
     return null;
   }

@@ -135,7 +135,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     } );
     //    frm.setSize(frm_width, frm_height);
     frm.pack();
-    frm.show();
+    frm.setVisible(true);
     return thresher;
   }
   
@@ -231,7 +231,6 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     this.setBorder(new TitledBorder("Y-Axis Scale"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    this.add(Box.createRigidArea(new Dimension(5,5)));
     this.add(by_val_box);
     this.add(Box.createRigidArea(new Dimension(5,5)));
     this.add(valP);

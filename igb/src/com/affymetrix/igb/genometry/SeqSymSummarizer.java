@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -50,7 +50,11 @@ public class SeqSymSummarizer {
       SeqSymmetry sym = (SeqSymmetry)syms.get(i);
       SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
     }
-    return getSpanSummary(leaf_spans, binary_depth, id);
+    if (leaf_spans.isEmpty()) {
+      return null;
+    } else {
+      return getSpanSummary(leaf_spans, binary_depth, id);
+    }
   }
 
 
@@ -67,7 +71,7 @@ public class SeqSymSummarizer {
     //    System.out.println("SeqSymSummarizer: starting to summarize syms");
     //    System.out.println("binary depth: " + binary_depth);
     BioSeq seq = ((SeqSpan)spans.get(0)).getBioSeq();
-    int spancount = spans.size();
+    //int spancount = spans.size();
     int span_num = spans.size();
     int[] starts = new int[span_num];
     int[] stops = new int[span_num];
@@ -86,7 +90,7 @@ public class SeqSymSummarizer {
     //   needed, though likely won't fill it
     IntList transition_xpos = new IntList(span_num * 2);
     FloatList transition_ypos = new FloatList(span_num * 2);
-    int transitions = 0;
+    int transitions = 0; // the value of this variable is never used for anything
     int prev_depth = 0;
     while ((starts_index < span_num) && (stops_index < span_num)) {
       // figure out whether next position is a start, stop, or both
@@ -278,8 +282,11 @@ public class SeqSymSummarizer {
     // first get the landscape as a GraphSym
     GraphSym landscape = getSymmetrySummary(syms, seq, true, null);
     // now just flatten it
-    SeqSymmetry union = projectLandscape(landscape);
-    return union;
+    if (landscape != null) {
+      return projectLandscape(landscape);
+    } else {
+      return null;
+    }
   }
 
 

@@ -369,7 +369,6 @@ public class BookMarkAction implements ActionListener, MenuListener {
    *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
    */
   public static void importBookmarks(BookmarkList bookmark_list, JFrame frame) {
-    boolean parse_error = false;
     JFileChooser chooser = getJFileChooser();
     chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
     int option = chooser.showOpenDialog(frame);
@@ -441,16 +440,11 @@ public class BookMarkAction implements ActionListener, MenuListener {
       uni.errorPanel("Error", "Nothing to bookmark");
     } else {
       Rectangle2D vbox = map.getView().getCoordBox();
-      SimpleSymWithProps mark_sym = new SimpleSymWithProps();
+      SimpleSymWithProps mark_sym = new BookmarkSymmetry();
       SeqSpan mark_span = new SimpleSeqSpan((int)vbox.x,
                                             (int)(vbox.x+vbox.width),
                                             aseq);
       mark_sym.addSpan(mark_span);
-      if (include_graphs) {
-	//        java.util.List graphs = BookmarkController.collectGraphs(gviewer.getSeqMap());
-        java.util.List graphs = gviewer.collectGraphs();
-        BookmarkController.addGraphProperties(mark_sym, graphs);
-      }
 
       String version = "unknown";
       if (aseq instanceof NibbleBioSeq) {
@@ -463,6 +457,13 @@ public class BookMarkAction implements ActionListener, MenuListener {
       mark_sym.setProperty("seqid", aseq.getID());
       mark_sym.setProperty("start", new Integer(mark_span.getMin()));
       mark_sym.setProperty("end", new Integer(mark_span.getMax()));
+      
+      if (include_graphs) {
+	//        java.util.List graphs = BookmarkController.collectGraphs(gviewer.getSeqMap());
+        java.util.List graphs = gviewer.collectGraphs();
+        BookmarkController.addGraphProperties(mark_sym, graphs);
+      }
+      
       String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
         "Enter name for bookmark", "Input",
         JOptionPane.PLAIN_MESSAGE, null, null, default_name);
@@ -520,7 +521,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(bookmark_manager_frame, pos);
       }
-      bookmark_manager_frame.show();
+      bookmark_manager_frame.setVisible(true);
       bookmark_manager_frame.addWindowListener( new WindowAdapter() {
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window
@@ -535,4 +536,14 @@ public class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
+  /** A simple extension of SimpleSymWithProps that uses a LinkedHashMap to
+   *  store the properties.  This ensures the bookmark properties will be
+   *  listed in a predictable order.
+   */
+  static class BookmarkSymmetry extends SimpleSymWithProps {
+    public BookmarkSymmetry() {
+      super();
+      props = new LinkedHashMap();
+    }
+  }  
 }

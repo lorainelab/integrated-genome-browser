@@ -238,11 +238,18 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     GlyphI pglyph = null;
 
+    double thick_height = DEFAULT_THICK_HEIGHT;
+    double thin_height = DEFAULT_THIN_HEIGHT;
+    
+    //IAnnotStyle the_style = the_tier.getAnnotStyle();
+    //double thick_height = the_style.getHeight();
+    //double thin_height = the_style.getHeight() * 3.0/5.0;
+    
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
-    double pheight = DEFAULT_THICK_HEIGHT + 0.0001;
+    double pheight = thick_height + 0.0001;
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
 
@@ -306,7 +313,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               int gap_location = boundaries[j][1];
               
               DeletionGlyph boundary_glyph = new DeletionGlyph();
-              boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) DEFAULT_THIN_HEIGHT);
+              boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) thin_height);
               boundary_glyph.setColor(child_color);
               //boundary_glyph.setHitable(false);
               pglyph.addChild(boundary_glyph);
@@ -329,10 +336,10 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           try  { cglyph = (GlyphI)child_glyph_class.newInstance(); }
           catch (Exception ex) { ex.printStackTrace(); }
 
-          int cheight = DEFAULT_THICK_HEIGHT;
+          double cheight = thick_height;
           if (cdsSpan != null) {
-            cheight = DEFAULT_THIN_HEIGHT;
-            if (SeqUtils.contains(cdsSpan, cspan)) { cheight = DEFAULT_THICK_HEIGHT; }
+            cheight = thin_height;
+            if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; }
             else if (SeqUtils.overlap(cdsSpan, cspan)) {
               try {
 		SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
@@ -343,7 +350,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
                 if (cds_span != null) {
                   GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
-                  cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), DEFAULT_THICK_HEIGHT);
+                  cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
                   cds_glyph.setColor(parent_color);
                   pglyph.addChild(cds_glyph);
                   if (SET_CHILD_INFO) {

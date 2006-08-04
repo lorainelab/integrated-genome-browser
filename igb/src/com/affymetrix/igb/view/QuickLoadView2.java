@@ -266,19 +266,19 @@ public class QuickLoadView2 extends JComponent
     String annot_name = getAnnotName(filename);
     String checkbox_title = annot_name;
     
-    // unfortunately, this code slows things down too much....
-    if (prev_loaded) {
-      checkbox_title = annot_name + " [Loaded]";
-    } else {
-      String full_name = current_server.root_url + current_genome_name + "/" + filename;
-      // We would like to use the LocalUrlCacher.getPreferredCacheUsage(), but
-      // that would slow down the startup considerably.
-      // Using ONLY_CACHE still lets us tell the difference between a cached file
-      // and a local one, but doesn't know if the cache is stale or if the remote
-      // file is unavailable
-      String load_type = LocalUrlCacher.getLoadType(full_name, LocalUrlCacher.ONLY_CACHE);
-      checkbox_title = annot_name + " [" + load_type + "]";
-    }
+//    // unfortunately, this code slows things down too much....
+//    if (prev_loaded) {
+//      checkbox_title = annot_name + " [Loaded]";
+//    } else {
+//      String full_name = current_server.root_url + current_genome_name + "/" + filename;
+//      // We would like to use the LocalUrlCacher.getPreferredCacheUsage(), but
+//      // that would slow down the startup considerably.
+//      // Using ONLY_CACHE still lets us tell the difference between a cached file
+//      // and a local one, but doesn't know if the cache is stale or if the remote
+//      // file is unavailable
+//      String load_type = LocalUrlCacher.getLoadType(full_name, LocalUrlCacher.ONLY_CACHE);
+//      checkbox_title = annot_name + " [" + load_type + "]";
+//    }
     
     return checkbox_title;
   }

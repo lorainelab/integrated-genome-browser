@@ -17,6 +17,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.CurationControl;
@@ -57,33 +58,41 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     Box misc_box = Box.createVerticalBox();
     boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
 
-    misc_box.setBorder(new javax.swing.border.EtchedBorder());
+    //misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
       UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
 
+    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place horizontal zoomer at top", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_X_ZOOMER_ABOVE, SeqMapView.default_x_zoomer_above));
     
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place vertical zoomer at left", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));
     
+    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored intervals",
 						 UnibrowPrefsUtil.getTopNode(),
 						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 						 ScoredIntervalParser.default_attach_graphs));
+    
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use floating graphs by default", GraphGlyphUtils.getGraphPrefsNode(),
+      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
+    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
 
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Enable Curation Testing (requires restart)", UnibrowPrefsUtil.getTopNode(),
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Enable Curation Testing (requires restart)", UnibrowPrefsUtil.getTopNode(),
       CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations));
 
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
+    
+    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     if ( is_unix ) {
       misc_box.add(new JLabel("Browser command: "));
       // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
@@ -168,6 +177,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     main_box.add(axis_box);
     main_box.add(edge_match_box);
     main_box.add(orf_box);
+    main_box.add(Box.createRigidArea(new Dimension(0,5)));
     main_box.add(misc_box);
 
     validate();
@@ -241,7 +251,15 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("Recommend: true.");
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
-    
+
+    sb.append("<p>\n");
+    sb.append("<h2>Use floating graphs by default</h2>\n");
+    sb.append("Whether new graphs should be floating by defualt. ");
+    sb.append("Has no effect on graphs loaded through bookmarks since they explicitly specify floating or not-floating.  ");
+    sb.append("Recommend: false.");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+
     sb.append("<p>\n");
     sb.append("<h2>Show DAS query genometry</h2>\n");
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");

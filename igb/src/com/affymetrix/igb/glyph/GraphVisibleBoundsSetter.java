@@ -116,7 +116,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   boolean set_textbox_sizepref = false;
   boolean show_min_and_max = false;
 
-  static GraphVisibleBoundsSetter showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
+  static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
     GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
     java.util.List glist = new ArrayList();
@@ -261,9 +261,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     int gcount = newgraphs.size();
     for (int i=0; i<gcount; i++) {
       GraphGlyph gl = (GraphGlyph) newgraphs.get(i);
-      if (gl instanceof SmartGraphGlyph) {
-	graphs.add(gl);
-      }
+      graphs.add(gl);
     }
     
     initPercents();
@@ -321,7 +319,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     } else {
 
       for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
+	GraphGlyph gl = (GraphGlyph)graphs.get(i);
 	float min = gl.getGraphMinY();
 	float max = gl.getGraphMaxY();
 	float vismin = gl.getVisibleMinY();
@@ -581,7 +579,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float avg_of_mins = 0;
       // set values
       for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
+	GraphGlyph gl = (GraphGlyph)graphs.get(i);
 	float min_per = getPercentForValue(gl, val);
 	min_of_mins = Math.min(min_per, min_of_mins);
 	max_of_mins = Math.max(min_per, max_of_mins);
@@ -623,7 +621,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float max_of_maxes = Float.NEGATIVE_INFINITY;
       float avg_of_maxes = 0;
       for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph gl = (SmartGraphGlyph)graphs.get(i);
+	GraphGlyph gl = (GraphGlyph)graphs.get(i);
 	float max_per = getPercentForValue(gl, val);
 	min_of_maxes = Math.min(max_per, min_of_maxes);
 	max_of_maxes = Math.max(max_per, max_of_maxes);

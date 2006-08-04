@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,18 +14,12 @@
 package com.affymetrix.igb.prefs;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
-import java.util.prefs.*;
 import javax.swing.*;
-
-import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
- *  A panel that shows the preferences for particular special URLs and file locations. 
+ *  A panel that shows the preferences for graph properties.
  */
 public class GraphsView extends JPanel implements IPrefEditorComponent  {
     
@@ -52,37 +46,38 @@ public class GraphsView extends JPanel implements IPrefEditorComponent  {
     
     graphs_box.add(Box.createVerticalStrut(5));
 
-    JLabel graph_height_label = new JLabel("Floating graph default pixel height: ");
-    JTextField graph_height_field = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, Integer.toString(GraphGlyphUtils.default_pix_height), Integer.class);
-    Box height_box = new Box(BoxLayout.Y_AXIS);
-    height_box.add(graph_height_label);
-    height_box.add(Box.createHorizontalStrut(5));
-    height_box.add(graph_height_field);
-    height_box.add(Box.createHorizontalGlue());
-    graphs_box.add(height_box);
+//    JLabel graph_height_label = new JLabel("Floating graph default pixel height: ");
+//    JTextField graph_height_field = UnibrowPrefsUtil.createNumberTextField(
+//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, Integer.toString(GraphGlyphUtils.default_pix_height), Integer.class);
+//    Box height_box = new Box(BoxLayout.Y_AXIS);
+//    height_box.add(graph_height_label);
+//    height_box.add(Box.createHorizontalStrut(5));
+//    height_box.add(graph_height_field);
+//    height_box.add(Box.createHorizontalGlue());
+//    graphs_box.add(height_box);
 
-    JLabel graph_height_label2 = new JLabel("Tiered graph default coord height: ");
-    JTextField graph_height_field2 = UnibrowPrefsUtil.createNumberTextField(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
-    Box height_box2 = new Box(BoxLayout.Y_AXIS);
-    height_box2.add(graph_height_label2);
-    height_box2.add(Box.createHorizontalStrut(5));
-    height_box2.add(graph_height_field2);
-    height_box2.add(Box.createHorizontalGlue());
-    graphs_box.add(height_box2);
+//    JLabel graph_height_label2 = new JLabel("Tiered graph default coord height: ");
+//    JLabel graph_height_label2 = new JLabel("Graph default coord height: ");
+//    JTextField graph_height_field2 = UnibrowPrefsUtil.createNumberTextField(
+//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
+//    Box height_box2 = new Box(BoxLayout.Y_AXIS);
+//    height_box2.add(graph_height_label2);
+//    height_box2.add(Box.createHorizontalStrut(5));
+//    height_box2.add(graph_height_field2);
+//    height_box2.add(Box.createHorizontalGlue());
+//    graphs_box.add(height_box2);
 
-    graphs_box.add(Box.createVerticalStrut(5));
+//    graphs_box.add(Box.createVerticalStrut(5));
 
-    Box defpan5 = new Box(BoxLayout.Y_AXIS);
-    defpan5.add(new JLabel("When making a tier from a floating graph, use: "));
-    String[] combo_options = new String[] {GraphGlyphUtils.USE_CURRENT_HEIGHT, GraphGlyphUtils.USE_DEFAULT_HEIGHT};
-    JComboBox float2attachCB = UnibrowPrefsUtil.createComboBox(
-      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACH_HEIGHT_MODE, combo_options, GraphGlyphUtils.default_attach_mode);
-    defpan5.add(float2attachCB);
-    graphs_box.add(defpan5);
+//    Box defpan5 = new Box(BoxLayout.Y_AXIS);
+//    defpan5.add(new JLabel("When making a tier from a floating graph, use: "));
+//    String[] combo_options = new String[] {GraphGlyphUtils.USE_CURRENT_HEIGHT, GraphGlyphUtils.USE_DEFAULT_HEIGHT};
+//    JComboBox float2attachCB = UnibrowPrefsUtil.createComboBox(
+//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACH_HEIGHT_MODE, combo_options, GraphGlyphUtils.default_attach_mode);
+//    defpan5.add(float2attachCB);
+//    graphs_box.add(defpan5);
 
-    graphs_box.add(Box.createVerticalStrut(5));
+//    graphs_box.add(Box.createVerticalStrut(5));
         
     validate();
   }

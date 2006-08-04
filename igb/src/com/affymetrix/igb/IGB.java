@@ -169,9 +169,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
     System.setProperty("swing.aatext", "true");
 
-    // Let the look-and-feel determine the window decorations.
-    // This allows exporting the whole frame, including decorations, to an eps file
-    JFrame.setDefaultLookAndFeelDecorated(true);
+    // Letting the look-and-feel determine the window decorations would
+    // allow exporting the whole frame, including decorations, to an eps file.
+    // But it also may take away some things, like resizing buttons, that the
+    // user is used to in their operating system, so leave as false.
+    JFrame.setDefaultLookAndFeelDecorated(false);
     
     String laf = System.getProperty("swing.defaultlaf");
     // if laf != null, then the user-requested l-and-f has already been applied

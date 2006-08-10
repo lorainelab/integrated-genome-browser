@@ -71,6 +71,7 @@ public class GraphGlyph extends Glyph {
 
   // assumes sorted points, each x corresponding to y
   int xcoords[];
+  int wcoords[];
   float ycoords[];
   //  FillRectGlyph handle;
   int handle_width = 10;  // width of handle in pixels
@@ -82,22 +83,27 @@ public class GraphGlyph extends Glyph {
   GraphState state;
   LinearTransform scratch_trans = new LinearTransform();
 
-  public GraphGlyph(int[] xcoords, float[] ycoords)  {
-    this(xcoords, ycoords, new GraphState());
+  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+    this(xcoords, null, ycoords, gstate);
   }
 
-  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+  public GraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphState gstate) {
     super();
     state = gstate;
     if (state == null) {
       throw new NullPointerException();
     }
-    setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
-    setColor(state.getColor());
+
+    setCoords(coordbox.x, state.getTierStyle().getY(), coordbox.width, state.getTierStyle().getHeight());
+    setColor(state.getTierStyle().getColor());
     setGraphStyle(state.getGraphStyle());
 
     if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    if (wcoords != null) {
+      if (wcoords.length != xcoords.length || wcoords.length != ycoords.length) { return; }
+    }
     this.xcoords = xcoords;
+    this.wcoords = wcoords;
     this.ycoords = ycoords;
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
@@ -123,15 +129,6 @@ public class GraphGlyph extends Glyph {
     }
   }
 
-  /*
- public void setGraphState(GraphState gs) {
-    state = gs;
-    setCoords(coordbox.x, state.getGraphYPos(), coordbox.width, state.getGraphHeight());
-    setColor(state.getColor());
-    setGraphStyle(state.getGraphStyle());
-  }
-  */
-
   public String getID() {
     Object mod = this.getInfo();
     String ident = null;
@@ -139,13 +136,16 @@ public class GraphGlyph extends Glyph {
       ident = ((SeqSymmetry)mod).getID();
     }
     if (ident == null) {
-      ident = state.getLabel();
+      ident = state.getTierStyle().getHumanName();
     }
     return null;
   }
 
   public GraphState getGraphState() { return state; }
 
+  // temporary variables used in draw()
+  Point2D x_plus_width2D = new Point2D(0,0);
+  Point curr_x_plus_width = new Point(0,0);
 
   public void draw(ViewI view) {
     if (TIME_DRAWING) { tim.start(); }
@@ -153,7 +153,6 @@ public class GraphGlyph extends Glyph {
     view.transformToPixels(coordbox, pixelbox);
     int pbox_yheight = pixelbox.y + pixelbox.height;
     Graphics g = view.getGraphics();
-
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
     double offset = scratch_trans.getOffsetY();
@@ -206,6 +205,9 @@ public class GraphGlyph extends Glyph {
       view.transformToPixels(coord, prev_point);
       float prev_ytemp = ycoords[beg_index];
 
+      //Point max_x_plus_width = new Point(zero_point.x, zero_point.y);
+      Point max_x_plus_width = new Point(0,0);
+
       int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
       int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
       if (draw_beg_index < 0) {
@@ -223,68 +225,112 @@ public class GraphGlyph extends Glyph {
 	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
       }
 
+      // figure out what is the last x index value for the loop
       if (draw_end_index >= xcoords.length) {
-        // There may be a better way to included this check in earlier logic,
-        // but this check is definitely needed at some point.
-        draw_end_index = xcoords.length - 1;
+        if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
+          draw_end_index = xcoords.length;
+        } else {
+          draw_end_index = xcoords.length - 1;
+        }
       }
-      int draw_count = 0;
+
       float ytemp;
       int ymin_pixel = zero_point.y;
       int ymax_pixel = zero_point.y;
+      
+      // START OF BIG LOOP:
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	// flipping about yaxis... should probably make this optional
-	// also offsetting to place within glyph bounds
-	coord.x = xcoords[i];
-	ytemp = ycoords[i];
-	// flattening any points > getVisibleMaxY() or < getVisibleMinY()...
-	if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); }
-	else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }
-	//	coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
-	coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
-	view.transformToPixels(coord, curr_point);
-
-        g.setColor(this.getColor());
-
-	if (graph_style == LINE_GRAPH) {
-	  g.drawLine(prev_point.x + xpix_offset, prev_point.y, curr_point.x + xpix_offset, curr_point.y);
-	}
-	else if (graph_style == BAR_GRAPH) {
-	  // collect ymin, ymax, for all coord points that transform to
-	  if (prev_point.x != curr_point.x) {
-	    //	    g.drawLine(curr_point.x + xpix_offset, zero_point.y, curr_point.x + xpix_offset, curr_point.y);
-	    //	    g.drawLine(curr_point.x + xpix_offset, ymin_pixel, curr_point.x + xpix_offset, ymax_pixel);
-	    //	    g.drawLine(prev_point.x + xpix_offset, ymin_pixel, prev_point.x + xpix_offset, ymax_pixel);
-	    //	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, ymax_pixel - ymin_pixel);
-	    int yheight_pixel = ymax_pixel - ymin_pixel;
-	    if (yheight_pixel < 1) { yheight_pixel = 1; }
-	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, yheight_pixel);
-	    draw_count++;
-	    ymin_pixel = curr_point.y < zero_point.y ? curr_point.y : zero_point.y; 
-	    ymax_pixel = curr_point.y > zero_point.y ? curr_point.y : zero_point.y;
-	  }
-	  else {
-	    // inlining Math.min(ymin_pixel, curr_point.y) and Math.max(ymax_pixel, curr_point.y);
-	    ymin_pixel = curr_point.y < ymin_pixel ? curr_point.y : ymin_pixel; 
-	    ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
-	  }
-	}
-	else if (graph_style == DOT_GRAPH) {
-	  g.fillRect(curr_point.x + xpix_offset, curr_point.y, 1, 1);
-	}
-	else if (graph_style == HEAT_MAP) {
-	  //       y = m(x-xmin) + ymin;
-	  //   and for heatmap bins, ymin = 0,
-	  //     so y = m(x-xmin)
-	  //	  int heatmap_index = (int)(heatmap_scaling * (ytemp - getVisibleMinY()));
-	  //	  double heatmap_index = heatmap_scaling * (ytemp - getVisibleMinY());
-	  double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
-	  if (heatmap_index < 0) { heatmap_index = 0; }
-	  else if (heatmap_index > 255) { heatmap_index = 255; }
-	  g.setColor(heatmap_colors[(int)heatmap_index]);
-	  g.fillRect(prev_point.x, pixelbox.y,
-		     curr_point.x - prev_point.x, pixelbox.height);
-	}
+        // flipping about yaxis... should probably make this optional
+        // also offsetting to place within glyph bounds
+        coord.x = xcoords[i];
+        ytemp = ycoords[i];
+        // flattening any points > getVisibleMaxY() or < getVisibleMinY()...
+        if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); } else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }
+        //	coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
+        coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
+        view.transformToPixels(coord, curr_point);
+        
+        if (wcoords != null) {
+          x_plus_width2D.x = xcoords[i] + wcoords[i];
+          x_plus_width2D.y = coord.y;
+          view.transformToPixels(x_plus_width2D, curr_x_plus_width);
+        }
+        
+        // g.setColor(this.getColor()); Don't keep resetting color!
+        
+        if (graph_style == LINE_GRAPH) {
+          if (wcoords == null) {
+            g.drawLine(prev_point.x + xpix_offset, prev_point.y,
+                curr_point.x + xpix_offset, curr_point.y);
+          } else {
+            // Draw a line representing the width: (x,y) to (x + width,y)
+            g.drawLine(curr_point.x + xpix_offset, curr_point.y,
+                curr_x_plus_width.x + xpix_offset, curr_x_plus_width.y);
+            
+            // Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
+            // are overlapping spans, only do this from the largest previous (x+width) value
+            // to an xA that is larger than that.
+            if (curr_point.x > max_x_plus_width.x) {
+              if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
+                g.drawLine(max_x_plus_width.x + xpix_offset, max_x_plus_width.y,
+                    curr_point.x + xpix_offset, curr_point.y);
+              }
+              max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
+            }
+            // Yes: the y-part is intentionally outside the if() statement
+            max_x_plus_width.y = curr_x_plus_width.y; // yB
+          }
+        } else if (graph_style == BAR_GRAPH) {
+          // collect ymin, ymax, for all coord points that transform to
+          if (prev_point.x != curr_point.x) {
+            //	    g.drawLine(curr_point.x + xpix_offset, zero_point.y, curr_point.x + xpix_offset, curr_point.y);
+            //	    g.drawLine(curr_point.x + xpix_offset, ymin_pixel, curr_point.x + xpix_offset, ymax_pixel);
+            //	    g.drawLine(prev_point.x + xpix_offset, ymin_pixel, prev_point.x + xpix_offset, ymax_pixel);
+            //	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, ymax_pixel - ymin_pixel);
+            int yheight_pixel = ymax_pixel - ymin_pixel;
+            if (yheight_pixel < 1) { yheight_pixel = 1; }
+            
+            if (wcoords == null) {
+              // when using fillRect, we should add 1 to the height
+              g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, yheight_pixel + 1);
+            } else {
+              if (curr_point.y > zero_point.y) {
+                g.drawRect(curr_point.x + xpix_offset, zero_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), curr_point.y - zero_point.y);
+              } else {
+                g.drawRect(curr_point.x + xpix_offset, curr_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), zero_point.y - curr_point.y);
+              }
+            }
+            
+            ymin_pixel = curr_point.y < zero_point.y ? curr_point.y : zero_point.y;
+            ymax_pixel = curr_point.y > zero_point.y ? curr_point.y : zero_point.y;
+          } else {
+            // inlining Math.min(ymin_pixel, curr_point.y) and Math.max(ymax_pixel, curr_point.y);
+            ymin_pixel = curr_point.y < ymin_pixel ? curr_point.y : ymin_pixel;
+            ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
+          }
+        } else if (graph_style == DOT_GRAPH) {
+          g.fillRect(curr_point.x + xpix_offset, curr_point.y, 1, 1);
+          if (wcoords != null) {
+            g.fillRect(curr_x_plus_width.x + xpix_offset, curr_point.y, 1, 1);
+          }
+        } else if (graph_style == HEAT_MAP) {
+          //       y = m(x-xmin) + ymin;
+          //   and for heatmap bins, ymin = 0,
+          //     so y = m(x-xmin)
+          //	  int heatmap_index = (int)(heatmap_scaling * (ytemp - getVisibleMinY()));
+          //	  double heatmap_index = heatmap_scaling * (ytemp - getVisibleMinY());
+          double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
+          if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
+          g.setColor(heatmap_colors[(int)heatmap_index]);
+          if (wcoords == null) {
+            // with fillRect(), need to add one to the height
+            g.fillRect(prev_point.x, pixelbox.y,
+                curr_point.x - prev_point.x, pixelbox.height+1);
+          } else {
+            g.fillRect(curr_point.x, pixelbox.y,
+                curr_x_plus_width.x - curr_point.x, pixelbox.height+1);
+          }
+        }
 //	else if (graph_style == SPAN_GRAPH) {
 //	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
 //	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
@@ -297,23 +343,23 @@ public class GraphGlyph extends Glyph {
 //		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
 //	  }
 //	}
-	else if (graph_style == STAIRSTEP_GRAPH) {
-	  if (i<=0 || (!(hide_zero_points && ycoords[i-1] == 0))) {
-	    int stairwidth = curr_point.x - prev_point.x;
-	    //	    if ((stairwidth < 0) || (stairwidth > (view.getPixelBox().width-5))) {
-	    if ((stairwidth < 0) || (stairwidth > 10000)) {
-	      // skip drawing if width > 10000?  testing fix for linux problem
-	    }
-	    else {
-	      g.fillRect(prev_point.x, Math.min(zero_point.y, prev_point.y),
-			 Math.max(1, (curr_point.x - prev_point.x)),
-			 Math.max(1, (Math.abs(prev_point.y - zero_point.y))) );
-	    }
-	  }
-	}
-	prev_point.x = curr_point.x;
-	prev_point.y = curr_point.y;
-	prev_ytemp = ytemp;
+        else if (graph_style == STAIRSTEP_GRAPH) {
+          if (i<=0 || (!(hide_zero_points && ycoords[i-1] == 0))) {
+            int stairwidth = curr_point.x - prev_point.x;
+            //	    if ((stairwidth < 0) || (stairwidth > (view.getPixelBox().width-5))) {
+            if ((stairwidth < 0) || (stairwidth > 10000)) {
+              // skip drawing if width > 10000?  testing fix for linux problem
+            } else {
+              // draw the same regardless of whether wcoords == null
+              g.fillRect(prev_point.x, Math.min(zero_point.y, prev_point.y),
+                  Math.max(1, (curr_point.x - prev_point.x)),
+                  Math.max(1, (Math.abs(prev_point.y - zero_point.y))) );
+            }
+          }
+        }
+        prev_point.x = curr_point.x;
+        prev_point.y = curr_point.y;
+        prev_ytemp = ytemp;
       }
       //      System.out.println("draw count: " + draw_count);
 
@@ -420,8 +466,8 @@ public class GraphGlyph extends Glyph {
   boolean mutable_xcoords = true;
   public void moveRelative(double xdelta, double ydelta) {
     super.moveRelative(xdelta, ydelta);
-    state.setGraphHeight(coordbox.height);
-    state.setGraphYPos(coordbox.y);
+    state.getTierStyle().setHeight(coordbox.height);
+    state.getTierStyle().setY(coordbox.y);
     if (xcoords != null && mutable_xcoords && xdelta != 0.0f) {
       int maxi = xcoords.length;
       for (int i=0; i<maxi; i++) {
@@ -432,8 +478,8 @@ public class GraphGlyph extends Glyph {
 
   public void setCoords(double newx, double newy, double newwidth, double newheight) {
     super.setCoords(newx, newy, newwidth, newheight);
-    state.setGraphHeight(newheight);
-    state.setGraphYPos(newy);
+    state.getTierStyle().setHeight(newheight);
+    state.getTierStyle().setY(newy);
   }
 
   /**
@@ -544,11 +590,16 @@ public class GraphGlyph extends Glyph {
   public void setColor( Color c ) {
     setBackgroundColor( c );
     setForegroundColor( c );
-    state.setColor(c);
+    state.getTierStyle().setColor(c);
   }
 
   public String getLabel() { 
-    String lab = state.getLabel();
+    String lab = state.getTierStyle().getHumanName();
+    // If it has a combo style and that is collapsed, then only use the label
+    // from the combo style.  Otherwise use the individual tier style.
+    if (state.getComboStyle() != null && state.getComboStyle().getCollapsed()) {
+      lab = state.getComboStyle().getHumanName();
+    }
     if (lab == null) {
       // if no label was set, try using ID
       lab = getID();
@@ -563,7 +614,7 @@ public class GraphGlyph extends Glyph {
   public boolean getShowAxis() { return state.getShowAxis(); }
   public int getXPixelOffset() { return xpix_offset; }
 
-  public void setLabel(String str) { state.setLabel(str); }
+//  public void setLabel(String str) { state.setLabel(str); }
   public void setShowGraph(boolean show) { state.setShowGraph(show); }
   public void setShowHandle(boolean show) { state.setShowHandle(show); }
   public void setShowBounds(boolean show) { state.setShowBounds(show); }
@@ -637,16 +688,13 @@ public class GraphGlyph extends Glyph {
     return 5;  // GAH 3-21-2005
   }
 
-  //  public double getInternalYScale(ViewI view) {
   protected void getInternalLinearTransform(ViewI view, LinearTransform lt) {
     double top_ycoord_inset = getUpperYCoordInset(view);
     double bottom_ycoord_inset = getLowerYCoordInset(view);
-    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
+
     double num = getVisibleMaxY() - getVisibleMinY();
-    // if 
     if (num <= 0) { num = 0.1; } // if scale is 0 or negative, set to a small default instead
 
-    //    double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / (getVisibleMaxY() - Math.min(0, getVisibleMinY()));
     double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
     double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
     lt.setScaleY(yscale);

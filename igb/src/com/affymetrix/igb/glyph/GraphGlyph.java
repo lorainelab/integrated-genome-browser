@@ -237,6 +237,9 @@ public class GraphGlyph extends Glyph {
       float ytemp;
       int ymin_pixel = zero_point.y;
       int ymax_pixel = zero_point.y;
+
+
+      g.translate(xpix_offset, 0);
       
       // START OF BIG LOOP:
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
@@ -260,20 +263,20 @@ public class GraphGlyph extends Glyph {
         
         if (graph_style == LINE_GRAPH) {
           if (wcoords == null) {
-            g.drawLine(prev_point.x + xpix_offset, prev_point.y,
-                curr_point.x + xpix_offset, curr_point.y);
+            g.drawLine(prev_point.x, prev_point.y,
+                curr_point.x, curr_point.y);
           } else {
             // Draw a line representing the width: (x,y) to (x + width,y)
-            g.drawLine(curr_point.x + xpix_offset, curr_point.y,
-                curr_x_plus_width.x + xpix_offset, curr_x_plus_width.y);
+            g.drawLine(curr_point.x, curr_point.y,
+                curr_x_plus_width.x, curr_x_plus_width.y);
             
             // Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
             // are overlapping spans, only do this from the largest previous (x+width) value
             // to an xA that is larger than that.
             if (curr_point.x > max_x_plus_width.x) {
               if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
-                g.drawLine(max_x_plus_width.x + xpix_offset, max_x_plus_width.y,
-                    curr_point.x + xpix_offset, curr_point.y);
+                g.drawLine(max_x_plus_width.x, max_x_plus_width.y,
+                    curr_point.x, curr_point.y);
               }
               max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
             }
@@ -283,21 +286,21 @@ public class GraphGlyph extends Glyph {
         } else if (graph_style == BAR_GRAPH) {
           // collect ymin, ymax, for all coord points that transform to
           if (prev_point.x != curr_point.x) {
-            //	    g.drawLine(curr_point.x + xpix_offset, zero_point.y, curr_point.x + xpix_offset, curr_point.y);
-            //	    g.drawLine(curr_point.x + xpix_offset, ymin_pixel, curr_point.x + xpix_offset, ymax_pixel);
-            //	    g.drawLine(prev_point.x + xpix_offset, ymin_pixel, prev_point.x + xpix_offset, ymax_pixel);
-            //	    g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, ymax_pixel - ymin_pixel);
+            //	    g.drawLine(curr_point.x, zero_point.y, curr_point.x, curr_point.y);
+            //	    g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymax_pixel);
+            //	    g.drawLine(prev_point.x, ymin_pixel, prev_point.x, ymax_pixel);
+            //	    g.fillRect(prev_point.x, ymin_pixel, 1, ymax_pixel - ymin_pixel);
             int yheight_pixel = ymax_pixel - ymin_pixel;
             if (yheight_pixel < 1) { yheight_pixel = 1; }
             
             if (wcoords == null) {
               // when using fillRect, we should add 1 to the height
-              g.fillRect(prev_point.x + xpix_offset, ymin_pixel, 1, yheight_pixel + 1);
+              g.fillRect(prev_point.x, ymin_pixel, 1, yheight_pixel + 1);
             } else {
               if (curr_point.y > zero_point.y) {
-                g.drawRect(curr_point.x + xpix_offset, zero_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), curr_point.y - zero_point.y);
+                g.drawRect(curr_point.x, zero_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), curr_point.y - zero_point.y);
               } else {
-                g.drawRect(curr_point.x + xpix_offset, curr_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), zero_point.y - curr_point.y);
+                g.drawRect(curr_point.x, curr_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), zero_point.y - curr_point.y);
               }
             }
             
@@ -309,9 +312,9 @@ public class GraphGlyph extends Glyph {
             ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
           }
         } else if (graph_style == DOT_GRAPH) {
-          g.fillRect(curr_point.x + xpix_offset, curr_point.y, 1, 1);
+          g.fillRect(curr_point.x, curr_point.y, 1, 1);
           if (wcoords != null) {
-            g.fillRect(curr_x_plus_width.x + xpix_offset, curr_point.y, 1, 1);
+            g.fillRect(curr_x_plus_width.x, curr_point.y, 1, 1);
           }
         } else if (graph_style == HEAT_MAP) {
           //       y = m(x-xmin) + ymin;
@@ -361,6 +364,10 @@ public class GraphGlyph extends Glyph {
         prev_point.y = curr_point.y;
         prev_ytemp = ytemp;
       }
+      // END: big loop
+
+      g.translate(-xpix_offset, 0);
+
       //      System.out.println("draw count: " + draw_count);
 
     }
@@ -673,13 +680,6 @@ public class GraphGlyph extends Glyph {
       view.transformToCoords(label_pix_box, label_coord_box);
       top_ycoord_inset = label_coord_box.height;
     }
-    /*
-    else {  // GAH 3-21-2005
-      label_pix_box.height = 4;
-      view.transformToCoords(label_pix_box, label_coord_box);
-      top_ycoord_inset = label_coord_box.height;
-    }
-    */
     return top_ycoord_inset;
   }
 

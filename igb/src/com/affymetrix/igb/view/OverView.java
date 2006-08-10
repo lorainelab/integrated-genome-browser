@@ -14,43 +14,25 @@
 package com.affymetrix.igb.view;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
-import com.affymetrix.igb.genometry.Versioned;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.util.CharIterator;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.UnibrowControlUtils;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SeqSymStartComparator;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
@@ -182,7 +164,7 @@ public class OverView extends JPanel
     method2ftier = new HashMap();
     gstate2tier = new HashMap();
     seqmap.updateWidget();
-    GenericGraphGlyphFactory.clear();
+    //GenericGraphGlyphFactory.clear();
   }
 
   /**
@@ -388,8 +370,8 @@ public class OverView extends JPanel
     if (annotSym instanceof GraphSym) {
       factory =	(MapViewGlyphFactoryI)graf2factory.get(annotSym);
       if (factory == null) {
-	//	factory = new GenericGraphGlyphFactory(this);
-	factory = new GenericGraphGlyphFactory(this.getSeqMap());
+	factory = new GenericGraphGlyphFactory();
+	//factory = new GenericGraphGlyphFactory(this.getSeqMap());
 	graf2factory.put(annotSym, factory);
       }
     }

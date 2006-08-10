@@ -318,7 +318,12 @@ public abstract class BookmarkController {
     // that are actually book-markable (thus i <= j)
     int i = -1;
     for (int j=0; j<max; j++) {
-      SmartGraphGlyph gr = (SmartGraphGlyph)graphs.get(j);
+      Object graph_object = graphs.get(j);
+      if (!(graph_object instanceof SmartGraphGlyph)) {
+        System.out.println("Cannot bookmark graphs that do not implement SmartGraphGlyph.");
+        continue;
+      }
+      SmartGraphGlyph gr = (SmartGraphGlyph) graph_object;
       GraphSym graf = (GraphSym)gr.getInfo();
       if (DEBUG) {
         System.out.println("graph sym, points = " + graf.getPointCount() + ": " + graf);

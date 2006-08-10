@@ -14,22 +14,27 @@
 package com.affymetrix.igb.genometry;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public class GraphSym extends SimpleSymWithProps implements Cloneable {
+public class GraphSym extends SimpleSymWithProps {
+
+  /** A property that can optionally be set to give a hint about the graph strand for display. */
+  public static final String PROP_GRAPH_STRAND = "Graph Strand";
+  public static final Integer GRAPH_STRAND_PLUS = new Integer(1);
+  public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
+  public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
+  public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
+  
   int xcoords[];
   float ycoords[];
   BioSeq graph_original_seq;
-  GraphState state;
   String gid;
+
   /**
    *  id_locked is a temporary fix to allow graph id to be changed after construction, 
    *  but then lock once lockID() is called.
@@ -38,21 +43,7 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
    */
   boolean id_locked = false;
 
- /** Property name that can be used to set/get the strand this graph corresponds to.
-   *  The property value should be a Character, equal to '+', '-' or '.'.
-   */
-  public static final String PROP_GRAPH_STRAND = "Graph Strand";
-
-  public Object clone() throws CloneNotSupportedException {
-    GraphSym newsym = (GraphSym)super.clone();
-    newsym.setGraphName(this.getGraphName() + ":clone");
-    //    newsym.setID(this.getID() + ":clone");
-    newsym.gid = GraphSymUtils.getUniqueGraphID(this.getID() + ":clone", (AnnotatedBioSeq)this.getGraphSeq());
-    newsym.setGraphState(new GraphState(state));
-    return newsym;
-  }
-
-  /** add a constructor to explicitly set span? */
+  ///** add a constructor to explicitly set span? */
   //  this would be for slices, which need a span that expresses the bounds of the slice
   //     (which will often be slightly bigger than the xcoord min and max)
   //  public GraphSym(int[] x, float[] y, String name, BioSeq seq, SeqSpan span) {
@@ -60,15 +51,12 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
   public GraphSym(int[] x, float[] y, String id, BioSeq seq) {
     super();
     this.graph_original_seq = seq;
-    this.state = new GraphState();
+
     SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
     this.addSpan(span);
     this.xcoords = x;
     this.ycoords = y;
     this.gid = id;
-    //    System.out.println("GraphSym created, id = " + gid);
-    //    setID(id);
-    //    setGraphName(name);
   }
 
   public void lockID() {
@@ -77,17 +65,18 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
 
   public void setGraphName(String name) {
     //    System.out.println("called GraphSym.setGraphName(): " + name);
-    state.setLabel(name);
+    GraphState state = GraphState.getGraphState(this.gid);
+    state.getTierStyle().setHumanName(name);
     setProperty("name", name);
   }
 
   public String getGraphName() {
     //    System.out.println("called GraphSym.getGraphName()");
-    String gname = state.getLabel();
+    GraphState state = GraphState.getGraphState(this.gid);
+    String gname = state.getTierStyle().getHumanName();
     if (gname == null) {
       gname = this.getID();
     }
-    //    return state.getLabel();
     return gname;
   }
 
@@ -137,17 +126,8 @@ public class GraphSym extends SimpleSymWithProps implements Cloneable {
    *  Returns the graph state.  Will never be null.
    */
   public GraphState getGraphState() {
+    GraphState state = GraphState.getGraphState(this.gid);
     return state;
-  }
-
-  /** Sets the graph state.  This will get rid of any previous state settings,
-   *  including the name.
-   */
-  public void setGraphState(GraphState state) {
-    if (state == null) {
-      throw new NullPointerException();
-    }
-    this.state = state;
   }
 
   /**

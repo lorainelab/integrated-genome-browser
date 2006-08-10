@@ -1,3 +1,16 @@
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+
 package com.affymetrix.igb.tiers;
 
 import java.util.*;
@@ -13,7 +26,7 @@ import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
 /**
  *  A PopupListener that adds the ability to create "union", "intersection", etc.,
- *  tiers based on selected tiers.
+ *  tiers based on selected annotation tiers.  Is not used on graph tiers.
  */
 public class TierArithmetic implements TierLabelManager.PopupListener {
   
@@ -54,13 +67,11 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
 
   public void addUnionTier() {
     java.util.List selected = handler.getSelectedTiers();
-    if (selected.size() == 2) {
-      TierGlyph tierA = (TierGlyph) selected.get(0);
-      TierGlyph tierB = (TierGlyph) selected.get(1);
-      addUnionTier(tierA, tierB);
+    if (selected.size() >= 1) {
+      addUnionTier(selected);
     }
     else {
-      ErrorHandler.errorPanel("Must select two and only two tiers for union");
+      ErrorHandler.errorPanel("Must select one or more annotation tiers for union");
     }
   }
 
@@ -117,7 +128,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   public void addNotTier(TierGlyph tierA) {
     int index = handler.getTierIndex(tierA);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
-    wrapperSym.setProperty("method", ("not: " + tierA.getLabel()));
+    String method = "not: " + tierA.getLabel();
     //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
@@ -131,14 +142,19 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       }
     }
     if (DEBUG) {
-    System.out.println("listA children: " + listA.size());
+      System.out.println("listA children: " + listA.size());
+    }
+    if (listA.isEmpty()) {
+      ErrorHandler.errorPanel("Illegal Operation", 
+          "Cannot perform this operation on this tier.");
+      return;
     }
     //    listA.add(symA);
     //    SeqSymmetry inverse_sym = SeqUtils.inverse(symA, aseq);
     SeqSymmetry inverse_sym = SeqSymSummarizer.getNot(listA, aseq);
     if (DEBUG) {System.out.println("inverseSym children: " + inverse_sym.getChildCount());}
 
-    makeNonPersistentStyle(wrapperSym);
+    makeNonPersistentStyle(wrapperSym, method);
     wrapperSym.addChild(inverse_sym);
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -148,11 +164,12 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   public void addExclusiveTier(TierGlyph tierA, TierGlyph tierB, boolean exclusiveA) {
     int index = handler.getTierIndex(tierB);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    String method;
     if (exclusiveA) {
-      wrapperSym.setProperty("method", ("A not B:" + tierA.getLabel() + ", " + tierB.getLabel()) );
+      method = "A not B:" + tierA.getLabel() + ", " + tierB.getLabel();
     }
     else {
-      wrapperSym.setProperty("method", ("B not A:" + tierB.getLabel() + ", " + tierA.getLabel()) );
+      method = "B not A:" + tierB.getLabel() + ", " + tierA.getLabel();
     }
 
     //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
@@ -200,7 +217,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     System.out.println("exclusive_sym children: " + exclusive_sym.getChildCount());
     }
 
-    makeNonPersistentStyle(wrapperSym);
+    makeNonPersistentStyle(wrapperSym, method);
     wrapperSym.addChild(exclusive_sym);
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -213,7 +230,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   public void addXorTier(TierGlyph tierA, TierGlyph tierB) {
     int index = handler.getTierIndex(tierB);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
-    wrapperSym.setProperty("method", ("xor: " + tierA.getLabel() + ", " + tierB.getLabel()) );
+    String method = "xor: " + tierA.getLabel() + ", " + tierB.getLabel();
     //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
     //    MutableSeqSymmetry symB = new SimpleMutableSeqSymmetry();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
@@ -252,38 +269,35 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     System.out.println("xorSym children: " + xor_sym.getChildCount());
     }
     
-    makeNonPersistentStyle(wrapperSym);
+    makeNonPersistentStyle(wrapperSym, method);
     wrapperSym.addChild(xor_sym);
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
 
-  public void addUnionTier(TierGlyph tierA, TierGlyph tierB) {
+  public void addUnionTier(java.util.List tiers) {
     if (DEBUG) {System.out.println("making new union tier");}
-    int index = handler.getTierIndex(tierB);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
-    wrapperSym.setProperty("method", ("union: " + tierA.getLabel() + ", " + tierB.getLabel()) );
 
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     java.util.List syms = new ArrayList();
-    for (int i=0; i<tierA.getChildCount(); i++) {
-      GlyphI child = tierA.getChild(i);
-      SeqSymmetry csym = (SeqSymmetry)child.getInfo();
-      if (csym != null) { syms.add(csym); }
+    for (int t=0; t<tiers.size(); t++) {
+      TierGlyph tier = (TierGlyph) tiers.get(t);
+      for (int i=0; i<tier.getChildCount(); i++) {
+        GlyphI child = tier.getChild(i);
+        SeqSymmetry csym = (SeqSymmetry)child.getInfo();
+        if (csym != null) { syms.add(csym); }
+      }
     }
-    for (int i=0; i<tierB.getChildCount(); i++) {
-      GlyphI child = tierB.getChild(i);
-      SeqSymmetry csym = (SeqSymmetry)child.getInfo();
-      if (csym != null) { syms.add(csym); }
-    }
-    //    SeqSymmetry union_sym = SeqUtils.union(symA, symB, aseq);
     SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
 
-    makeNonPersistentStyle(wrapperSym);
-    wrapperSym.addChild(union_sym);
-    aseq.addAnnotation(wrapperSym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
+    if (union_sym != null) {
+      makeNonPersistentStyle(wrapperSym, "union");
+      wrapperSym.addChild(union_sym);
+      aseq.addAnnotation(wrapperSym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
+    }
   }
 
 
@@ -295,7 +309,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   public void addIntersectTier(TierGlyph tierA, TierGlyph tierB) {
     int index = handler.getTierIndex(tierB);
     SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
-    wrapperSym.setProperty("method", ("intersect: " + tierA.getLabel() + ", " + tierB.getLabel()) );
+    String method = "intersect: " + tierA.getLabel() + ", " + tierB.getLabel();
 
     // this is how it should work, but right now tier info isn't set correctly
     //    SeqSymmetry symA = (SeqSymmetry)tierA.getInfo();
@@ -334,7 +348,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     //    SeqUtils.printSymmetry(intersect_sym);
     SeqSymmetry intersect_sym = SeqSymSummarizer.getIntersection(listA, listB, aseq);
 
-    makeNonPersistentStyle(wrapperSym);
+    makeNonPersistentStyle(wrapperSym, method);
     wrapperSym.addChild(intersect_sym);
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -347,23 +361,40 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     if (handler != this.handler) {
       throw new RuntimeException("");
     }
-    int num_selected = handler.getSelectedTierLabels().size();
+    java.util.List labels = handler.getSelectedTierLabels();
+    int num_selected = labels.size();
     
-    intersectMI.setEnabled(num_selected==2);
-    unionMI.setEnabled(num_selected==2);
-    a_not_b_MI.setEnabled(num_selected==2);
-    b_not_a_MI.setEnabled(num_selected==2);
-    notMI.setEnabled(num_selected==1);
-    xorMI.setEnabled(num_selected==2);
-    combineMenu.setEnabled(num_selected==1 || num_selected==2);
+    boolean all_are_annotations = true;
+    for (int i=0; i<num_selected; i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) labels.get(i);
+      if (tlg.getReferenceTier().getAnnotStyle().isGraphTier()) {
+        all_are_annotations = false;
+        break;
+      }
+    }
     
-    popup.add(combineMenu);
+    intersectMI.setEnabled(all_are_annotations && num_selected==2);
+    unionMI.setEnabled(all_are_annotations && num_selected > 0);
+    a_not_b_MI.setEnabled(all_are_annotations && num_selected==2);
+    b_not_a_MI.setEnabled(all_are_annotations && num_selected==2);
+    notMI.setEnabled(all_are_annotations && num_selected==1);
+    xorMI.setEnabled(all_are_annotations && num_selected==2);
+    combineMenu.setEnabled(all_are_annotations && num_selected > 0);
+    
+    popup.add(combineMenu);    
   }  
   
-  void makeNonPersistentStyle(SymWithProps sym) {
-    String method = (String) com.affymetrix.igb.view.SeqMapView.determineMethod(sym);    
-    AnnotStyle style = AnnotStyle.getInstance(method, false);
+  public static AnnotStyle makeNonPersistentStyle(SymWithProps sym, String human_name) {
+    // Needs a unique name so that if any later tier is produced with the same
+    // human name, it will not automatically get the same color, etc.
+    String unique_name = AnnotStyle.getUniqueName(human_name);
+    sym.setProperty("method", unique_name);
+    AnnotStyle style = AnnotStyle.getInstance(unique_name, false);
+    style.setHumanName(human_name);
     style.setGlyphDepth(1);
+    style.setSeparate(false); // there are not separate (+) and (-) strands
+    style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+    return style;
   }
 
   ActionListener action_listener = new ActionListener() {  

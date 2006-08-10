@@ -1,6 +1,18 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+
+IGB-???
+  + In the graph adjuster and graph threshold setter, it is no longer necessary
+    to press Enter after typing a value in a text field.
+  + Added deletion glyphs to the Sliced View
+  + Slicing takes place on a separate thread
+  + Red/Green color map replaced with more standard Red/Black/Green
+  + Added the coordinate entry box
+
+IGB-4.39
+  + Special release for a trade show.  Not released to public.
+
 IGB-4.38.01
   + Fixes several minor bugs in version 4.38
   ++ When using the feature "Load Residues in View", the

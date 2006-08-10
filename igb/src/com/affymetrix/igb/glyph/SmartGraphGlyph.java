@@ -121,12 +121,12 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph(int[] xcoords, float[] ycoords)  {
-    this(xcoords, ycoords, null);
-  }
-
   public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
-    super(xcoords, ycoords, gstate);
+    this(xcoords, null, ycoords, gstate);
+  }
+  
+  public SmartGraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphState gstate) {
+    super(xcoords, wcoords, ycoords, gstate);
     setDrawOrder(Glyph.DRAW_SELF_FIRST);
 
     //    thresh_glyph = new ThreshGlyph();
@@ -202,7 +202,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	graph_style == DOT_GRAPH ||
 	graph_style == STAIRSTEP_GRAPH ||
 	graph_style == HEAT_MAP) {
-      super.draw(view);
+        super.draw(view);
     }
     else if (graph_style == MINMAXAVG) {
       double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();

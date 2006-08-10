@@ -21,15 +21,27 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   Color bg = Color.BLACK;
   boolean show = true;
   boolean collapsed = false;
+  boolean expandable = true;
   int max_depth = 0;
   String name = "";
+  double height = 60;
+  double y = 0.0f;
+  boolean is_graph = false;
   
   public DefaultIAnnotStyle() {
     super();
+    this.fg = AnnotStyle.getDefaultInstance().getColor();
+    this.bg = AnnotStyle.getDefaultInstance().getBackground();
   }
   
-  public DefaultIAnnotStyle(String name) {
+  public DefaultIAnnotStyle(String name, boolean graph) {
+    this();
     this.name = name;
+    this.is_graph = graph;
+  }
+  
+  public boolean isGraphTier() {
+    return is_graph;
   }
   
   public Color getColor() { return fg; }
@@ -49,4 +61,25 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   
   public int getMaxDepth() { return max_depth; }
   public void setMaxDepth(int m) { max_depth = m; }
+      
+  public void setHeight(double h) { height = h; }
+  public double getHeight() { return height; }
+
+  public void setY(double yval) { y = yval; }
+  public double getY() { return y; }
+
+  public void setExpandable(boolean b) { this.expandable = b; }
+  public boolean getExpandable() { return expandable; }
+  
+  public void copyPropertiesFrom(IAnnotStyle g) {
+    setColor(g.getColor());
+    setShow(g.getShow());
+    setHumanName(g.getHumanName());
+    setBackground(g.getBackground());
+    setCollapsed(g.getCollapsed());
+    setMaxDepth(g.getMaxDepth());
+    setHeight(g.getHeight());
+    setY(g.getY());
+    setExpandable(g.getExpandable());
+  }
 }

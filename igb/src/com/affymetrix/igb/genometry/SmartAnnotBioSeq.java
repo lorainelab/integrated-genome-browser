@@ -202,13 +202,11 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *       3. Transcript syms
    *       4. Exon syms
    *
-   *  GraphSym's are added directly, not in containers.
+   *  GraphSym's and ScoredContainerSym's are added directly, not in containers.
    *  </pre>
    */
   public void addAnnotation(SeqSymmetry sym) {
-    // add graphs directly as annotations
-    // GAH 3-20-2006  now adding graphs to type2sym hash also, with id of graph used as type
-    if (sym instanceof GraphSym) {
+    if (! needsContainer(sym)) {
       if (type2sym == null) { type2sym = new HashMap(); }
       String id = sym.getID();
       if (id == null) {
@@ -249,8 +247,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   }
 
   public void removeAnnotation(SeqSymmetry annot) {
-    // special handling for GraphSyms
-    if (annot instanceof GraphSym) {
+    if (! needsContainer(annot)) {
       super.removeAnnotation(annot);
       notifyModified();
       //      return;
@@ -284,5 +281,16 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     removeAnnotation(annot);  // this will handle super call, removal from type2sym, notification, etc.
   }
 
+  /**
+   * Returns true if the sym is of a type needs to be wrapped in a TypedContainerSym.
+   * GraphSym's and ScoredContainerSym's are added directly, not in containers.
+   */
+  public boolean needsContainer(SeqSymmetry sym) {
+    if (sym instanceof GraphSym || sym instanceof ScoredContainerSym) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
 }

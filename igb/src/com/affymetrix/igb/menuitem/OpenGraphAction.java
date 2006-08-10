@@ -154,7 +154,7 @@ public class OpenGraphAction extends AbstractAction {
     Vector graphs = new Vector();
     InputStream fis = null;
     try {
-      String name = furl.getPath();
+      String path = furl.getPath();
       if (IGB.CACHE_GRAPHS)  {
         String graph_url = furl.toExternalForm();
         System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
@@ -164,11 +164,26 @@ public class OpenGraphAction extends AbstractAction {
         fis = furl.openStream();
       }
 
-      if (GraphSymUtils.isAGraphFilename(name)) {
+      if (GraphSymUtils.isAGraphFilename(path)) {
         java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
         graphs.addAll(multigraphs);
+        for (int i=0; i<graphs.size(); i++) {
+          com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
+          String name = furl.getFile();
+          int index = name.lastIndexOf('/');
+          if (index > 0) {
+            String last_name = name.substring(index+1);
+            if (last_name.length()>0) { 
+              name = URLDecoder.decode(last_name); 
+            }
+          }
+          if (graphs.size() > 1) {
+            name = name + " " + (i+1);
+          }
+          gg.getGraphState().getTierStyle().setHumanName(name);
+        }
       } else {
-        throw new IOException("Filename does not match any known type of graph:\n" + name);
+        throw new IOException("Filename does not match any known type of graph:\n" + path);
       }
     } finally {
       if (fis != null) try { fis.close(); } catch (IOException ioe) {}

@@ -463,7 +463,9 @@ public class ExperimentPivotView extends JComponent
       }
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
-      gl = new GraphGlyph(xcoords, ycoords);
+      // Each graph has its own, un-named, GraphState object
+      // (so they can have different minima and maxima)
+      gl = new GraphGlyph(xcoords, ycoords, GraphState.getTemporaryGraphState());
       gl.setHeatMap(current_heatmap);
       gl.setGraphStyle(experiment_style_int);
       gl.setShowHandle(false);
@@ -628,7 +630,7 @@ public class ExperimentPivotView extends JComponent
     cpane.add(epview);
 
     frm.setSize(600, 400);
-    frm.show();
+    frm.setVisible(true);
     ArrayList symlist = new ArrayList();
     int acount = testseq.getAnnotationCount();
 

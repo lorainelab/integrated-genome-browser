@@ -86,9 +86,12 @@ public class MultiGraph extends SmartGraphGlyph {
       max_ycoords[i] = ymax;
     }
 
-    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_ycoords);
-    min_graph = new SmartGraphGlyph(shared_xcoords, min_ycoords);
-    max_graph = new SmartGraphGlyph(shared_xcoords, max_ycoords);
+    GraphState avg_gstate = GraphState.getTemporaryGraphState();
+    GraphState min_gstate = GraphState.getTemporaryGraphState();
+    GraphState max_gstate = GraphState.getTemporaryGraphState();
+    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_ycoords, avg_gstate);
+    min_graph = new SmartGraphGlyph(shared_xcoords, min_ycoords, min_gstate);
+    max_graph = new SmartGraphGlyph(shared_xcoords, max_ycoords, max_gstate);
     stat_graphs.add(avg_graph);
     stat_graphs.add(min_graph);
     stat_graphs.add(max_graph);
@@ -193,8 +196,8 @@ public class MultiGraph extends SmartGraphGlyph {
 	}
       }
     }
-    state.setGraphHeight(coordbox.height);
-    state.setGraphYPos(coordbox.y);
+    state.getTierStyle().setHeight(coordbox.height);
+    state.getTierStyle().setY(coordbox.y);
     if (xcoords != null && mutable_xcoords && diffx != 0.0f) {
       int maxi = xcoords.length;
       for (int i=0; i<maxi; i++) {

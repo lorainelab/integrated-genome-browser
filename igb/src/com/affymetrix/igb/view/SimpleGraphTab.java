@@ -14,8 +14,8 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.SeqSelectionListener;
@@ -25,14 +25,15 @@ import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
+import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
-import com.affymetrix.igb.util.FloatTransformer;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.util.FloatTransformer;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -45,6 +46,7 @@ public class SimpleGraphTab extends JPanel
 implements SeqSelectionListener, SymSelectionListener {
 
   SeqMapView gviewer = null;
+  
   AnnotatedBioSeq current_seq;
   SingletonGenometryModel gmodel;
 
@@ -76,7 +78,8 @@ implements SeqSelectionListener, SymSelectionListener {
   JButton saveB = new JButton("Save...");
   JButton deleteB = new JButton("Delete");
   JButton threshB = new JButton("Thresholding...");
-  JButton combineB = new JButton("Combine");
+
+  JButton combineB = new JButton("Join");
   JButton splitB = new JButton("Split");
 
   JLabel heat_map_label = new JLabel("Heat Map:");
@@ -140,12 +143,12 @@ implements SeqSelectionListener, SymSelectionListener {
     heat_mapCB_box.setAlignmentX(0.0f);
     stylebox.add(heat_mapCB_box);
 
-    barB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.BAR_GRAPH));
-    dotB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.DOT_GRAPH));
-    hmapB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.HEAT_MAP));
-    lineB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.LINE_GRAPH));
+    barB.addActionListener(new GraphStyleSetter(GraphGlyph.BAR_GRAPH));
+    dotB.addActionListener(new GraphStyleSetter(GraphGlyph.DOT_GRAPH));
+    hmapB.addActionListener(new GraphStyleSetter(GraphGlyph.HEAT_MAP));
+    lineB.addActionListener(new GraphStyleSetter(GraphGlyph.LINE_GRAPH));
     mmavgB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.MINMAXAVG));
-    sstepB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.STAIRSTEP_GRAPH));
+    sstepB.addActionListener(new GraphStyleSetter(GraphGlyph.STAIRSTEP_GRAPH));
 
     stylegroup.add(barB);
     stylegroup.add(dotB);
@@ -191,9 +194,23 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(Box.createHorizontalGlue());
 
+    Box first_two_columns = Box.createHorizontalBox();
+    stylebox.setAlignmentY(0.0f);
+    first_two_columns.add(stylebox);
+    scalebox.setAlignmentY(0.0f);
+    first_two_columns.add(scalebox);
+    Box megabox = Box.createVerticalBox();
+    butbox.setAlignmentX(0.0f);
+    megabox.add(butbox);
+    megabox.add(Box.createRigidArea(new Dimension(1,5)));
+    first_two_columns.setAlignmentX(0.0f);
+    megabox.add(first_two_columns);
+
     selectAllB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (gviewer != null) { gviewer.selectAllGraphs(); }
+        if (gviewer != null) { 
+          gviewer.selectAllGraphs();
+        }
       }
     });
 
@@ -202,12 +219,14 @@ implements SeqSelectionListener, SymSelectionListener {
     label_box.add(Box.createHorizontalGlue());
 
     Box row1 = Box.createHorizontalBox();
-    stylebox.setAlignmentY(0.0f);
-    row1.add(stylebox);
-    scalebox.setAlignmentY(0.0f);
-    row1.add(scalebox);
+//    stylebox.setAlignmentY(0.0f);
+//    row1.add(stylebox);
+//    scalebox.setAlignmentY(0.0f);
+//    row1.add(scalebox);
+    megabox.setAlignmentY(0.5f);
+    row1.add(megabox);
     advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
-    advanced_panel.setAlignmentY(0.0f);
+    advanced_panel.setAlignmentY(0.5f);
     row1.add(advanced_panel);
 
     colorB.addActionListener(new ActionListener() {
@@ -221,15 +240,15 @@ implements SeqSelectionListener, SymSelectionListener {
     //this.add(Box.createRigidArea(new Dimension(1,5)));
     //this.add(label_box);
     
-    this.add(Box.createRigidArea(new Dimension(1,5)));
-    this.add(butbox);
+    //this.add(Box.createRigidArea(new Dimension(1,5)));
+    //this.add(butbox);
     this.add(Box.createRigidArea(new Dimension(1,5)));
     row1.setAlignmentX(0.0f);
     this.add(row1);
     butbox.setAlignmentX(0.0f);
     butbox.setAlignmentY(1.0f);
     this.add(Box.createVerticalGlue());
-
+    
     this.setBorder(BorderFactory.createEtchedBorder());
     
     setSeqMapView(this.gviewer); // called for the side-effects
@@ -257,11 +276,11 @@ implements SeqSelectionListener, SymSelectionListener {
 
   HeatMap getCommonHeatMap() {
     // Take the first glyph in the list as a prototype
-    SmartGraphGlyph first_glyph = null;
+    GraphGlyph first_glyph = null;
     //int graph_style = -1;
     HeatMap hm = null;
     if (! glyphs.isEmpty()) {
-      first_glyph = (SmartGraphGlyph) glyphs.get(0);
+      first_glyph = (GraphGlyph) glyphs.get(0);
       //graph_style = first_glyph.getGraphStyle();
       hm = first_glyph.getHeatMap();
     }
@@ -270,7 +289,7 @@ implements SeqSelectionListener, SymSelectionListener {
     // and see if the graph_style and heatmap are the same in all selections
     int num_glyphs = glyphs.size();
     for (int i=1; i < num_glyphs; i++) {
-      SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+      GraphGlyph gl = (GraphGlyph) glyphs.get(i);
       //if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
         //graph_style = -1;
       //}
@@ -286,8 +305,6 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public void symSelectionChanged(SymSelectionEvent evt) {
     java.util.List selected_syms = evt.getSelectedSyms();
-    //System.out.println("in SimpleGraphTab.symSelectionChanged(), selected syms: " + selected_syms.size());
-
     // Only pay attention to selections from the main SeqMapView or its map.
     // Ignore the splice view as well as events coming from this class itself.
     
@@ -298,7 +315,7 @@ implements SeqSelectionListener, SymSelectionListener {
       
     resetSelectedGraphGlyphs(selected_syms);
   }
-
+  
   public void resetSelectedGraphGlyphs(java.util.List selected_syms) {
     int symcount = selected_syms.size();
     is_listening = false; // turn off propagation of events from the GUI while we modify the settings
@@ -338,31 +355,45 @@ implements SeqSelectionListener, SymSelectionListener {
     boolean all_are_floating = false;
     boolean all_show_axis = false;
     boolean all_show_label = false;
+    boolean any_are_combined = false; // are any selections inside a combined tier
+    boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
+    boolean any_are_not_combined = false; // are any selections not inside a combined tier
+    boolean all_are_smart_glyphs = false; // all implement SmartGraphGlyph
 
     // Take the first glyph in the list as a prototype
-    SmartGraphGlyph first_glyph = null;
+    GraphGlyph first_glyph = null;
     int graph_style = -1;
     HeatMap hm = null;
     if (! glyphs.isEmpty()) {
-      first_glyph = (SmartGraphGlyph) glyphs.get(0);
+      first_glyph = (GraphGlyph) glyphs.get(0);
       graph_style = first_glyph.getGraphStyle();
       if (graph_style == GraphGlyph.HEAT_MAP) {
         hm = first_glyph.getHeatMap();
       }
-      the_height = first_glyph.getGraphState().getGraphHeight();
+      the_height = first_glyph.getGraphState().getTierStyle().getHeight();
       all_are_floating = first_glyph.getGraphState().getFloatGraph();
       all_show_axis = first_glyph.getGraphState().getShowAxis();
       all_show_label = first_glyph.getGraphState().getShowLabel();
+      boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
+      any_are_combined = this_one_is_combined;
+      all_are_combined = this_one_is_combined;
+      any_are_not_combined = ! this_one_is_combined;
+      all_are_smart_glyphs = (first_glyph instanceof SmartGraphGlyph);
     }
 
     // Now loop through other glyphs if there are more than one
     // and see if the graph_style and heatmap are the same in all selections
     for (int i=1; i < num_glyphs; i++) {
-      SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+      GraphGlyph gl = (GraphGlyph) glyphs.get(i);
 
       all_are_floating &= gl.getGraphState().getFloatGraph();
       all_show_axis &= gl.getGraphState().getShowAxis();
       all_show_label &= gl.getGraphState().getShowLabel();
+      boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
+      any_are_combined |= this_one_is_combined;
+      all_are_combined &= this_one_is_combined;
+      any_are_not_combined |=  ! this_one_is_combined;
+      all_are_smart_glyphs &= (first_glyph instanceof SmartGraphGlyph);
 
       if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
         graph_style = -1;
@@ -436,8 +467,9 @@ implements SeqSelectionListener, SymSelectionListener {
     height_slider.setEnabled(b);
     resetB.setEnabled(false);
     //advB.setEnabled(true);
-    threshB.setEnabled(true);
+    threshB.setEnabled(b);
     enableButtons(stylegroup, b);
+    mmavgB.setEnabled(all_are_smart_glyphs);
     floatCB.setEnabled(b);
     yaxisCB.setEnabled(b);
     labelCB.setEnabled(b);
@@ -446,10 +478,14 @@ implements SeqSelectionListener, SymSelectionListener {
     saveB.setEnabled(grafs.size() == 1);
     deleteB.setEnabled(b);
     cloneB.setEnabled(b);
-    
-    combineB.setEnabled(grafs.size() >= 2);
-    splitB.setEnabled(grafs.size() >= 2);
+    scaleCB.setEnabled(cloneB.isEnabled());
 
+    //combineB.setSelected(all_are_combined);
+    //splitB.setSelected(any_are_not_combined);
+    
+    combineB.setEnabled(any_are_not_combined && grafs.size() >= 2);
+    splitB.setEnabled(any_are_combined);
+    
     is_listening = true; // turn back on GUI events
   }
 
@@ -489,15 +525,15 @@ implements SeqSelectionListener, SymSelectionListener {
 
       Runnable r = new Runnable() {
         public void run() {
-          SmartGraphGlyph first_glyph = (SmartGraphGlyph) glyphs.get(0);
+          GraphGlyph first_glyph = (GraphGlyph) glyphs.get(0);
           if (style == GraphGlyph.HEAT_MAP) {
             // set to heat map FIRST so that getHeatMap() below will return default map instead of null
             first_glyph.setGraphStyle(GraphGlyph.HEAT_MAP);
           }
-          HeatMap hm = ((SmartGraphGlyph) glyphs.get(0)).getHeatMap();
+          HeatMap hm = ((GraphGlyph) glyphs.get(0)).getHeatMap();
 	  //          for (int i=0; i<grafs.size(); i++) {
           for (int i=0; i<glyphs.size(); i++) {
-            SmartGraphGlyph sggl = (SmartGraphGlyph) glyphs.get(i);
+            GraphGlyph sggl = (GraphGlyph) glyphs.get(i);
             sggl.setShowGraph(true);
             sggl.setGraphStyle(style); // leave the heat map whatever it was
             if ((style == GraphGlyph.HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -525,10 +561,13 @@ implements SeqSelectionListener, SymSelectionListener {
 
   void updateViewer() {
     final SeqMapView current_viewer = gviewer;
+    final java.util.List previous_graph_syms = new ArrayList(grafs);
+    // set selections to empty so that options get turned off
+    resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         current_viewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-	resetSelectedGraphGlyphs(grafs);
+	resetSelectedGraphGlyphs(previous_graph_syms);
       }
     });
   }
@@ -573,12 +612,11 @@ implements SeqSelectionListener, SymSelectionListener {
       if (gviewer == null) {
         return; // for testing
       }
-      //      System.out.println("changing graph heights, new height: " + height);
 
       AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
 
       for (int i=0; i<glyphs.size(); i++) {
-        SmartGraphGlyph gl = (SmartGraphGlyph) glyphs.get(i);
+        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
 	//        gl.getGraphState().setGraphHeight(height);
 	Rectangle2D cbox= gl.getCoordBox();
 	gl.setCoords(cbox.x, cbox.y, cbox.width, height);
@@ -592,10 +630,6 @@ implements SeqSelectionListener, SymSelectionListener {
       map.packTiers(false, true, false);
       map.stretchToFit(false, true);
       map.updateWidget();
-      //      gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-      // calling resetSelectedGraphGlyphs() because setAnnotatedSeq() call has probably
-      //    made new glyphs for the selected GraphSyms
-      //      resetSelectedGraphGlyphs(grafs);
     }
   }
 
@@ -621,7 +655,7 @@ implements SeqSelectionListener, SymSelectionListener {
     name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
   }
 
-  JButton cloneB = new JButton("Copy/Transform");
+  JButton cloneB = new JButton("Go");
   JLabel scale_type_label = new JLabel("Transformation:");
   JComboBox scaleCB = new JComboBox();
 
@@ -645,22 +679,22 @@ implements SeqSelectionListener, SymSelectionListener {
       }
 
       Box advanced_button_box = Box.createHorizontalBox();
-      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      advanced_button_box.add(cloneB);
-      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+      advanced_button_box.add(Box.createRigidArea(new Dimension(6,5)));
+//      advanced_button_box.add(cloneB);
+//      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
       advanced_button_box.add(threshB);
       advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      //advanced_button_box.add(Box.createHorizontalGlue());
 
       Box grouping_box = Box.createHorizontalBox();
-      grouping_box.add(Box.createRigidArea(new Dimension(5,5)));
+      grouping_box.add(Box.createRigidArea(new Dimension(6,0)));
       grouping_box.add(combineB);
-      grouping_box.add(Box.createRigidArea(new Dimension(5,5)));
+      grouping_box.add(Box.createRigidArea(new Dimension(5,0)));
       grouping_box.add(splitB);
-      grouping_box.add(Box.createRigidArea(new Dimension(5,5)));
+      grouping_box.add(Box.createRigidArea(new Dimension(5,0)));
 
       Box decoration_row = Box.createHorizontalBox();
       //decoration_row.setBorder(BorderFactory.createEtchedBorder());
+      decoration_row.add(Box.createRigidArea(new Dimension(6,5)));
       decoration_row.add(labelCB);
       decoration_row.add(yaxisCB);
       decoration_row.add(floatCB);
@@ -669,8 +703,11 @@ implements SeqSelectionListener, SymSelectionListener {
       // A box to contain the scaleCB JComboBox, to help get the alignment right
       Box scaleCB_box = Box.createHorizontalBox();
       scaleCB_box.setAlignmentX(0.0f);
-      scaleCB_box.add(Box.createRigidArea(new Dimension(16,5)));
+      scaleCB_box.add(Box.createRigidArea(new Dimension(6,5)));
       scaleCB_box.add(scaleCB);
+      scaleCB_box.add(Box.createRigidArea(new Dimension(5,5)));
+      scaleCB_box.add(cloneB);
+      scaleCB_box.add(Box.createRigidArea(new Dimension(5,5)));
       //scaleCB_box.add(Box.createHorizontalGlue());
       scaleCB_box.setMaximumSize(scaleCB_box.getPreferredSize());
 
@@ -679,18 +716,33 @@ implements SeqSelectionListener, SymSelectionListener {
       advanced_button_box.setAlignmentX(0.0f);
       decoration_row.setAlignmentX(0.0f);
       advanced_panel.add(decoration_row);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       //
       advanced_panel.add(advanced_button_box);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
 
       advanced_panel.add(scale_type_label);
       scaleCB_box.setAlignmentX(0.0f);
-      //advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
+      //advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       advanced_panel.add(scaleCB_box);
+
       grouping_box.setAlignmentX(0.0f);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,8)));
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       advanced_panel.add(grouping_box);
+
+//      String[] math = new String[] {"add", "subtract", "ratio", "product"};
+//      JRadioButton addB = new JRadioButton("A+B");
+//      JRadioButton subB = new JRadioButton("A-B");
+//      JRadioButton mulB = new JRadioButton("A*B");
+//      JRadioButton divB = new JRadioButton("A/B");
+//      Box math_box = Box.createHorizontalBox();
+//      math_box.add(new JLabel("Combine:"));
+//      math_box.add(addB);
+//      math_box.add(subB);
+//      math_box.add(mulB);
+//      math_box.add(divB);
+//      math_box.setAlignmentX(0.0f);
+//      advanced_panel.add(math_box);
 
       saveB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -746,57 +798,67 @@ implements SeqSelectionListener, SymSelectionListener {
     }
 
     /**
-     *  Currently combineGraphs() puts all selected graphs in the same tier.
-     *     Does not support floating the combined graphs
+     *  Puts all selected graphs in the same tier.
+     *  Current glyph factories do not support floating the combined graphs.
      */
     void combineGraphs() {
-      //System.out.println("trying to combine graphs");
-      // add to tier of first graph
-      int gcount = glyphs.size();
+      int gcount = grafs.size();
+
+      // Note that the combo_style does not implement IFloatableTierStyle
+      // because the glyph factory doesn't support floating combo graphs anyway.
+      IAnnotStyle combo_style = null;
       
-      // if any of the graphs is already in a tier, use the first tier as the shared tier
-      TierGlyph tier = null;
-      for (int i=0; i<gcount; i++) {
-        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-	if (gl.getParent() instanceof TierGlyph) {
-	  tier = (TierGlyph)gl.getParent();
-	  break;
-	}
+      // If any of them already has a combo style, use that one
+      for (int i=0; i<gcount && combo_style == null; i++) {
+        GraphSym gsym = (GraphSym) grafs.get(i);
+        combo_style = gsym.getGraphState().getComboStyle();
       }
+      // otherwise, construct a new combo style
+      if (combo_style == null) {
+        combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
+        combo_style.setHumanName("Joined Graphs");
+        combo_style.setExpandable(true);
+        combo_style.setCollapsed(true);
+      }
+      //combo_style.setHeight(5); // just use the default height
       
-      // first time through loop tier may be null, but that is ok.
+      // Now apply that combo style to all the selected graphs
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-	tier = GraphGlyphUtils.attachGraph(gl, gviewer, tier);
+        GraphSym gsym = (GraphSym) grafs.get(i);
+        GraphState gstate = gsym.getGraphState();
+        gstate.setComboStyle(combo_style);
+        gstate.getTierStyle().setHeight(combo_style.getHeight());
+        gstate.setFloatGraph(false); // ignored since combo_style is set
       }
+      updateViewer();
     }
 
     /**
-     *  Currently splitGraphs() puts all selected graphs in separate tiers.
+     *  Puts all selected graphs in separate tiers by setting the
+     *  combo state of each graph's state to null.
      */
     void splitGraphs() {
-      //System.out.println("trying to split graphs");
-      for (int i=0; i<glyphs.size(); i++) {
-        GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-        GlyphI parent = gl.getParent();
-        
-        if (parent instanceof TierGlyph) {
-          TierGlyph parent_tier = (TierGlyph) parent;
-          // Create a new tier for each glyph *except* the one that has the same
-          // IAnnotStyle object.
-          if (! (parent_tier.getAnnotStyle() == (IAnnotStyle) gl.getGraphState())) {
-            GraphGlyphUtils.attachGraph(gl, gviewer);
-          }
-        }
+      int gcount = grafs.size();
+      
+      if (gcount == 0) return;
+      
+      for (int i=0; i<gcount; i++) {
+        GraphSym gsym = (GraphSym) grafs.get(i);
+        GraphState gstate = gsym.getGraphState();
+
+        gstate.setComboStyle(null);
+
+        // For simplicity, set the floating state of all new tiers to false.
+        // Otherwise, have to calculate valid, non-overlapping y-positions and heights.
+        gstate.setFloatGraph(false); // for simplicity
       }
+      updateViewer();
     }
 
     void setShowAxis(boolean b) {
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-        if (gl instanceof SmartGraphGlyph) {
-          ((SmartGraphGlyph)gl).setShowAxis(b);
-        }
+        gl.setShowAxis(b);
       }
       gviewer.getSeqMap().updateWidget();
     }
@@ -804,9 +866,7 @@ implements SeqSelectionListener, SymSelectionListener {
     void setShowLabels(boolean b) {
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-        if (gl instanceof SmartGraphGlyph) {
-          ((SmartGraphGlyph)gl).setShowLabel(b);
-        }
+        gl.setShowLabel(b);
       }
       gviewer.getSeqMap().updateWidget();
     }
@@ -820,23 +880,50 @@ implements SeqSelectionListener, SymSelectionListener {
       java.util.List newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
       System.out.println("time to transform graph: " + tim.read()/1000f);
       if (! newgrafs.isEmpty() )  {
-        GraphAdjusterView.updateViewer(gviewer);
+        updateViewer();
       }
     }
 
     void floatGraphs(boolean do_float) {
+      boolean something_changed = false;
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-        boolean is_floating = gl.getGraphState().getFloatGraph();
-        if (do_float && (! is_floating)) {
-          // TODO: When floating a graph, do we need to get rid of the old entry in
-          // SeqMapView.getGraphIdTierHash() ?
-          GraphGlyphUtils.floatGraph(gl, gviewer);
-        } else if ( (! do_float) && is_floating) {
-          // TODO: Should we check for an entry in SeqMapView.getGraphIdTierHash() ?
-          GraphGlyphUtils.attachGraph(gl, gviewer);
+        GraphState gstate = gl.getGraphState();
+        if (gstate.getComboStyle() != null) {
+          gstate.setComboStyle(null);
+          something_changed = true;
         }
+        boolean is_floating = gstate.getFloatGraph();
+        if (do_float && (! is_floating)) {
+          //GraphGlyphUtils.floatGraph(gl, gviewer);
+          
+          // figure out correct height
+          Rectangle2D coordbox = gl.getCoordBox();
+          Rectangle pixbox = new Rectangle();
+          gviewer.getSeqMap().getView().transformToPixels(coordbox, pixbox);
+          gstate.getTierStyle().setY(pixbox.y);
+          gstate.getTierStyle().setHeight(pixbox.height);
+
+          gstate.setFloatGraph(true);
+          something_changed = true;
+        } else if ( (! do_float) && is_floating) {
+          //GraphGlyphUtils.attachGraph(gl, gviewer);
+          
+          // figure out correct height
+          Rectangle2D tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
+          Rectangle pixbox = new Rectangle((int)tempbox.x, (int)tempbox.y, (int)tempbox.width, (int)tempbox.height);
+          Rectangle2D coordbox = new Rectangle2D(); 
+          gviewer.getSeqMap().getView().transformToCoords(pixbox, coordbox);
+          gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
+          gstate.getTierStyle().setHeight(coordbox.height);
+  
+          gstate.setFloatGraph(false);
+          something_changed = true;
+        }
+      }
+      if (something_changed) {
+        updateViewer();
       }
     }
   }
- }
+}

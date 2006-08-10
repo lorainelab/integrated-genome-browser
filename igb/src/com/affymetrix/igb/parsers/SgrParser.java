@@ -51,6 +51,13 @@ public class SgrParser {
     Map xhash = new HashMap();
     Map yhash = new HashMap();
 
+    String gid = stream_name;
+    if (ensure_unique_id)  {
+      // Making sure the ID is unique on the whole genome, not just this seq
+      // will make sure the GraphState is also unique on the whole genome.
+      gid = GraphSymUtils.getUniqueGraphID(gid, seq_group);
+    }
+    
     while ((line = br.readLine()) != null) {
       if (line.startsWith("#")) { continue; }
       if (line.startsWith("%")) { continue; }
@@ -95,10 +102,6 @@ public class SgrParser {
       float[] ycoords = ylist.copyToArray();
       ylist = null;
 
-      String gid = stream_name;
-      if (ensure_unique_id)  {
-        gid = GraphSymUtils.getUniqueGraphID(gid, aseq);
-      }
       GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
       results.add(graf);
     }

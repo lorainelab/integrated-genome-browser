@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -40,15 +40,19 @@ public class AnnotStyle implements IAnnotStyle {
   static final String PREF_HUMAN_NAME = "Human Name";
   static final String PREF_LABEL_FIELD = "Label Field";
   static final String PREF_GLYPH_DEPTH = "Glyph Depth";
+  static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
 
   static final boolean default_show = true;
   static final boolean default_separate = true;
   static final boolean default_collapsed = false;
+  static final boolean default_expandable = true;
   static final int default_max_depth = 0;
   static final Color default_color = Color.GREEN;
   static final Color default_background = Color.BLACK;
   static final String default_label_field = "";
-  static final int default_glyph_depth = 2;  
+  static final int default_glyph_depth = 2;
+  static final double default_height = 20.0;
+  static final double default_y = 0.0;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
   
   // whether to create and use a java Preferences node object for this instance
@@ -57,12 +61,15 @@ public class AnnotStyle implements IAnnotStyle {
   boolean show = default_show;
   boolean separate = default_separate;
   boolean collapsed = default_collapsed;
+  boolean expandable = default_expandable;
   int max_depth = default_max_depth;
   Color color = default_color;
   Color background = default_background;
   String label_field = default_label_field;
-  int glyph_depth = default_glyph_depth;  
-  
+  int glyph_depth = default_glyph_depth;
+  double height = default_height;
+  double y = default_y;
+    
   String unique_name;
   String human_name;
   
@@ -70,17 +77,19 @@ public class AnnotStyle implements IAnnotStyle {
 
   static Map static_map = new LinkedHashMap();
 
-  /** An immutable instance with default properties. */
-  public static AnnotStyle IMMUTABLE_INSTANCE = new AnnotStyle() {
-    public void setShow() { /* do nothing */ }
-    public void setSeparate() { /* do nothing */ }
-    public void setCollaped() { /* do nothing */ }
-    public void setColor() {}
-    public void setBackground() {}
-    public void setHumanName() {}
-    public void setLabelField(String s) {}
-    public void setMaxDepth() {}
-  };
+//  /** An immutable instance with default properties. */
+//  public static AnnotStyle IMMUTABLE_INSTANCE = new AnnotStyle() {
+//    public void setShow() { /* do nothing */ }
+//    public void setSeparate() { /* do nothing */ }
+//    public void setCollaped() { /* do nothing */ }
+//    public void setColor() {}
+//    public void setBackground() {}
+//    public void setHumanName() {}
+//    public void setLabelField(String s) {}
+//    public void setMaxDepth() {}
+//    public void setHeight() {}
+//    public void setY() {}
+//  };
   
   /** A mutable instance with default properties. */
   public static AnnotStyle NULL_INSTANCE = new AnnotStyle();
@@ -93,17 +102,29 @@ public class AnnotStyle implements IAnnotStyle {
     AnnotStyle style = (AnnotStyle) static_map.get(unique_name.toLowerCase());
     if (style == null) {
       AnnotStyle template = getDefaultInstance();
-      static_map.put(template.getUniqueName(), template);
       style = new AnnotStyle(unique_name, persistent, template);
     }
     static_map.put(unique_name.toLowerCase(), style);
     return style;
   }
-  
+
+  /** Returns all (persistent and temporary) instances of AnnotStyle. */
   public static java.util.List getAllLoadedInstances() {
     return new ArrayList(static_map.values());
   }
-    
+  
+  /** If there is no AnnotStyle with the given name, just returns the given name;
+   * else modifies the name such that there are no instances that are currently 
+   * using it.
+   */
+  public static String getUniqueName(String name) {
+    String result = name.toLowerCase();
+    while (static_map.get(result) != null) {
+      result = name.toLowerCase() + "." + System.currentTimeMillis();
+    }
+    return result;
+  }
+  
   /** Gets the parent preference node in which all the tier preferences are stored. */
   public static Preferences getTiersRootNode() {
     return tiers_root_node;
@@ -257,9 +278,6 @@ public class AnnotStyle implements IAnnotStyle {
   /** Sets whether the tier is shown or hidden; this is a non-persistent setting. */
   public void setShow(boolean b) {
     this.show = b;
-//    if (getNode() != null) {
-//      getNode().putBoolean(PREF_SHOW, b);
-//    }
   }
   
   
@@ -273,6 +291,10 @@ public class AnnotStyle implements IAnnotStyle {
     if (getNode() != null) {
       getNode().putBoolean(PREF_SEPARATE, b);
     }
+  }
+   
+  public boolean getCustomizable() {
+    return customizable;
   }
   
   /** Whether tier is collapsed. */
@@ -353,11 +375,80 @@ public class AnnotStyle implements IAnnotStyle {
     }
   }
   
+  public double getHeight() {
+    return height;
+  }
+
+  public void setHeight(double h) {
+    height = h;
+    if (getNode() != null) {
+      getNode().putDouble(PREF_HEIGHT, h);
+    }
+  }
+
+  /** Currently not used, but could be used to remember tier positions. */
+  public void setY(double y) {
+    this.y = y; 
+  }
+
+  /** Currently not used, but could be used to remember tier positions. */
+  public double getY() { 
+    return y; 
+  }
+
   public boolean getPersistent() {
     return (is_persistent && getNode() != null);
   }
   
-  public String toString() {
+  public boolean getExpandable() {
+    return expandable;
+  }
+
+  public void setExpandable(boolean b) {
+    // currently there is no need to make this property persistent.
+    // there is rarly any reason to change it from the defualt value for
+    // annotation tiers, only for graph tiers, which don't use this class
+    expandable = b;
+  }
+
+  /** Always returns false.  This class is only intended for annotation tiers,
+   *  not graph tiers.
+   */
+  public boolean isGraphTier() {
+    return false;
+  }
+  
+  public void copyPropertiesFrom(IAnnotStyle g) {
+    setColor(g.getColor());
+    setShow(g.getShow());
+    setHumanName(g.getHumanName());
+    setBackground(g.getBackground());
+    setCollapsed(g.getCollapsed());
+    setMaxDepth(g.getMaxDepth());
+    setHeight(g.getHeight());
+    setY(g.getY());
+    
+    setExpandable(g.getExpandable());
+    if (g instanceof AnnotStyle) {
+      setCustomizable(((AnnotStyle) g).getCustomizable());
+    }
+  }
+    
+   boolean customizable = true;
+
+    /** Whether this style should be customizable in a preferences panel.
+     *  Sometimes there are temporary styles created where some of the options
+     *  simply don't make sense and shouldn't be shown to the user in the
+     *  customization panel.
+     */
+    public void setCustomizable(boolean b) {
+      // Another option instead of a single set/getCustomizable flag would be
+      // to have a bunch of individual flags: getSeparable(), getHumanNamable(),
+      // getHasMaxDepth(), etc....
+      customizable = b;
+    }
+
+   public String toString() {
     String s = "AnnotStyle: (" + Integer.toHexString(this.hashCode()) + ")"
       + " '"+unique_name+"' ('"+human_name+"') "
       + " persistent: " + is_persistent

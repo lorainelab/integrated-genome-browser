@@ -239,7 +239,9 @@ public class LoadFileAction {
     return aseq;
   }
 
-  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, MutableAnnotatedBioSeq input_seq) {
+  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, MutableAnnotatedBioSeq input_seq) 
+  throws IOException {
+    IOException ioe = null;
     MutableAnnotatedBioSeq result = null;
     InputStream istr = null;
     try {
@@ -247,16 +249,22 @@ public class LoadFileAction {
       istr = new BufferedInputStream(loadurl.openStream());
       result = load(gviewer, istr, url_name, input_seq);
     }
-    catch (Exception ex) {
-      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
+    catch (IOException ex) {
+      ioe = ex;
     } finally {
       if (istr != null) try {istr.close();} catch (Exception e) {}
     }
+    
+    if (ioe != null) {
+      throw ioe;
+    }
+
     return result;
   }
 
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr, String stream_name,
-                                     MutableAnnotatedBioSeq input_seq) {
+                                     MutableAnnotatedBioSeq input_seq) 
+  throws IOException {
     return load(gviewer, instr, stream_name, input_seq, -1);
   }
 
@@ -267,8 +275,10 @@ public class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
-        String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length) {
+        String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length) 
+  throws IOException {
 
+    Exception the_exception = null;
     MutableAnnotatedBioSeq aseq = null;
     InputStream str = null;
 
@@ -311,7 +321,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".map"))  {
         ScoredMapParser parser = new ScoredMapParser();
-        parser.parse(str, stream_name, input_seq);
+        parser.parse(str, stream_name, input_seq, selected_group);
         aseq = input_seq;
         parser = null;
       }
@@ -472,7 +482,8 @@ public class LoadFileAction {
       System.gc();
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
+      the_exception = ex;
+      //ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
     } finally {
       if (str != null) try {str.close();} catch (Exception e) {}
     }
@@ -486,6 +497,15 @@ public class LoadFileAction {
     // called from inside this class or in loading a bookmark, etc.
     gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 
+    if (the_exception != null) {
+      if (the_exception instanceof IOException) {
+        throw (IOException) the_exception;
+      } else {
+        IOException new_exception = new IOException();
+        new_exception.initCause(the_exception);
+        throw new_exception;
+      }
+    }
     return aseq;
   }
 

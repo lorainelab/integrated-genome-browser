@@ -18,8 +18,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
 
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genoviz.event.*;
@@ -27,10 +25,8 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -42,7 +38,7 @@ import com.affymetrix.igb.view.ContextualPopupListener;
 
 public class GraphSelectionManager
   implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
-  ContextualPopupListener {
+  ContextualPopupListener, TierLabelManager.PopupListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   /**
@@ -93,7 +89,7 @@ public class GraphSelectionManager
   JMenu decor = new JMenu("Decorations");
   //JMenu thresh = new JMenu("Thresholding");
   JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
-  JMenu combine = new JMenu("Combine Graphs");
+  JMenu combine = new JMenu("Combine 2 Graphs");
   JMenuItem span_graph;
 
   JMenuItem bar_graph;
@@ -379,8 +375,10 @@ public class GraphSelectionManager
       else if (src == toggle_floating) {
         if (DEBUG) System.out.println("selected toggle floating, currently floating: " +
                            !(current_graph.getParent() instanceof TierGlyph));
-        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
+        //        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
+        // toggle_floating is currently unused, so don't worry that the code is commented out
       }
+      
       else if (src == diff_graphs) {
         if (DEBUG) System.out.println("trying to create diff graph");
         if (current_graph == null || second_current_graph == null) {
@@ -448,8 +446,6 @@ public class GraphSelectionManager
     GraphSym gsym = null;
     if (info instanceof GraphSym) {
       gsym = (GraphSym) info;
-      gviewer.getGraphFactoryHash().remove(gsym);
-      gviewer.getGraphIdFactoryHash().remove(gsym.getID());
       AnnotatedBioSeq aseq = (AnnotatedBioSeq) gsym.getGraphSeq();
       if (aseq instanceof MutableAnnotatedBioSeq) {
         MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
@@ -466,10 +462,6 @@ public class GraphSelectionManager
       parentgl.removeChild(gl);
       if (parentgl instanceof TierGlyph) {
         map.removeTier((TierGlyph)parentgl);
-        gviewer.getGraphStateTierHash().remove(gl.getGraphState());
-        gviewer.getGraphNameTierHash().remove(gl.getLabel());
-        if (gsym != null)  { gviewer.getGraphIdTierHash().remove(gsym.getID()); }
-        else  { gviewer.getGraphIdTierHash().remove(gl.getID()); }
         map.packTiers(false, true, false);
         map.stretchToFit(false, false);
       }
@@ -498,8 +490,7 @@ public class GraphSelectionManager
       }
     } );
     frm.pack();
-    frm.show();
-
+    frm.setVisible(true);
   }
 
   static JFileChooser graph_file_chooser = null;
@@ -691,30 +682,6 @@ public class GraphSelectionManager
     return true;
   }
 
-//  static NumberFormat nformat = new DecimalFormat();
-//  int pickle_count = 0;
-//  public void pickleThreshold(SmartGraphGlyph sgg) {
-//    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-//    SimpleSymWithProps psym = new SimpleSymWithProps();
-//    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-//    //    String meth = "graph pickle " + pickle_count;
-//    String meth =
-//      "threshold, s:" + nformat.format(sgg.getMinScoreThreshold()) +
-//      ", d:" + (int)sgg.getMaxGapThreshold();
-//    pickle_count++;
-//    psym.setProperty("method", meth);
-//    ViewI view = gviewer.getSeqMap().getView();
-//    sgg.drawThresholdedRegions(view, psym, aseq);
-//    aseq.addAnnotation(psym);
-//    Color col = sgg.getColor();
-//    if (DEBUG) System.out.println("setting new tier color: " + col);
-//    gviewer.addTierInfo(meth, col);
-//    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
-//    //    gviewer.setAnnotatedSeq(aseq);
-//
-//    gviewer.setAnnotatedSeq(aseq, true, true);
-//  }
-
   /**
    *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
    *  that could cause conflicts with the other pop-up menu which is opened
@@ -723,111 +690,7 @@ public class GraphSelectionManager
    *  provided by the interface ContextualPopupListener to add to the pop-up
    *  menu which the SeqMapView itself constructs.
    */
-  public void mouseClicked(MouseEvent evt) {
-    /*
-    int mods = evt.getModifiers();
-
-    //TODO: Proper thing here is to check isPopupTrigger() in *both* mousePressed() and mouseReleased(),
-    // but this is OK for now
-    if ((evt instanceof NeoMouseEvent) &&
-        (evt.isMetaDown() ||
-         evt.isControlDown() ||
-         ((mods & InputEvent.BUTTON3_MASK) != 0 )) ) {
-           showPopup(evt, current_source.getSelected());
-    }
-    */
-  }
-
-  void showPopup(MouseEvent evt, Vector selected) {
-      graphlist.clear();
-      current_graph = null;
-      second_current_graph = null;
-
-      // searching starting at end of selected vec, to find _top_ graph
-      // (will be closest to end of pick vec)
-      for (int i=selected.size()-1; i >=0; i--) {
-        if (selected.get(i) instanceof GraphGlyph) {
-          graphlist.add(selected.get(i));
-        }
-      }
-      int num_selected_graphs = graphlist.size();
-      //      System.out.println("trying to show graph popup, selected graphs: " + num_selected_graphs);
-
-      if (num_selected_graphs > 0) {
-        current_graph = (GraphGlyph)graphlist.get(0);
-        if (num_selected_graphs > 1) {
-          current_graph = (GraphGlyph)graphlist.get(1);
-          second_current_graph = (GraphGlyph)graphlist.get(0);
-        }
-
-        toggle_floating.setEnabled(num_selected_graphs == 1);
-        change_color.setEnabled(num_selected_graphs == 1);
-        delete_graph.setEnabled(num_selected_graphs == 1);
-        graph_style.setEnabled(num_selected_graphs == 1);
-        decor.setEnabled(num_selected_graphs == 1);
-        //thresh.setEnabled(num_selected_graphs == 1);
-        //          bounds.setEnabled(num_selected_graphs == 1);
-        bounds.setEnabled(num_selected_graphs > 0);
-
-        combine.setEnabled(num_selected_graphs == 2);
-        diff_graphs.setEnabled(num_selected_graphs == 2);
-        sum_graphs.setEnabled(num_selected_graphs == 2);
-        ratio_graphs.setEnabled(num_selected_graphs == 2);
-        product_graphs.setEnabled(num_selected_graphs == 2);
-        save_graph.setEnabled(num_selected_graphs == 1);
-
-        String current_label = current_graph.getLabel();
-        if (current_label == null)  { current_label = "no label"; }
-        if (current_label.length() > max_label_length) {
-          current_label = current_label.substring(0, max_label_length);
-        }
-        graph_info.setText(current_label);
-
-        if (num_selected_graphs>=1) {
-          if (num_selected_graphs==2) {
-            graph_info.setText("A: "+getGraphLabel(current_graph));
-            graph_info2.setText("B: "+getGraphLabel(second_current_graph));
-          } else if (num_selected_graphs==1) {
-            graph_info.setText(getGraphLabel(current_graph));
-            graph_info2.setText("");
-          } else {
-            graph_info.setText("Multiple graphs selected");
-            graph_info2.setText("");
-          }
-        }
-
-        if (current_graph.getParent() instanceof TierGlyph) {
-          toggle_floating.setText("Float graph");
-        }
-        else {
-          toggle_floating.setText("Attach graph");
-        }
-        // remove previous stored threshold menu selections
-        /*
-        Iterator iter = threshMI_2_thresh.keySet().iterator();
-        while (iter.hasNext()) {
-          JMenuItem item = (JMenuItem)iter.next();
-          thresh.remove(item);
-        }
-        threshMI_2_thresh.clear();
-        GraphSym current_sym = (GraphSym)current_graph.getInfo();
-        if (current_sym != null) {
-          int stored_thresh_count = current_sym.getStoredThreshCount();
-          for (int k=0; k<stored_thresh_count; k++) {
-            String name = current_sym.getStoredThreshName(k);
-            float val = current_sym.getStoredThreshValue(k);
-            JMenuItem item = new JMenuItem(name + " (score = " + val + ")");
-            thresh.add(item);
-            item.addActionListener(this);
-            threshMI_2_thresh.put(item, new Float(val));
-          }
-        }
-       */
-        popup.show((Component) evt.getSource(),
-          evt.getX()+xoffset_pop,
-          evt.getY()+yoffset_pop);
-      }
-  }
+  public void mouseClicked(MouseEvent evt) {}
 
   public void mouseEntered(MouseEvent evt) { }
   public void mouseExited(MouseEvent evt) { }
@@ -976,6 +839,11 @@ public class GraphSelectionManager
     }
     else if (id == evt.DRAG_ENDED) {
       dragger.removeGlyphDragListener(this);
+
+      GlyphI gl = evt.getGlyph();
+      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
+        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+      }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
     //   since this class called dragger.dragStart to begin with...
@@ -1030,6 +898,28 @@ public class GraphSelectionManager
 
     the_popup.add(combine);
   }
+  
+    public void popupNotify(JPopupMenu popup, TierLabelManager handler) {
+      // This class was orignially written to implement ContextualPopupListener
+      // for left-click on the tier handles.
+      // This routine adapts it to also work as a TierLabelManager.PopupListener
+      // for left-click on the TierLabelGlyph's
+      
+      java.util.List labels = handler.getSelectedTierLabels();
+      java.util.List graph_glyphs = handler.getContainedGraphs(labels);
+      
+      java.util.List graph_syms = new ArrayList(graph_glyphs.size());
+      for (int i=0; i<graph_glyphs.size(); i++) {
+        GraphGlyph glyph = (GraphGlyph) graph_glyphs.get(i);
+        graph_syms.add(glyph.getInfo()); // It will be a GraphSym object
+      }
+      GraphSym primary_sym = null;
+      if (! graph_syms.isEmpty()) {
+        primary_sym = (GraphSym) graph_syms.get(0);
+      }
+      
+      this.popupNotify(popup, graph_syms, primary_sym);
+    }    
 }
 
 

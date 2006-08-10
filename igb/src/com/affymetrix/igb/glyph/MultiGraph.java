@@ -37,7 +37,7 @@ public class MultiGraph extends SmartGraphGlyph {
   Rectangle2D childbox = new Rectangle2D();
 
   public MultiGraph() {
-    super(null, null, null);
+    super(null, null, GraphState.getTemporaryGraphState());
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
   }

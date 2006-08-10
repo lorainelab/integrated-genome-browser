@@ -181,11 +181,22 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       //       is handled by BedParser)
       //      return new SingletonSeqSymmetry(blockMins[index],
       //      				      blockMins[index] + blockSizes[index], seq);
-      return new SingletonSeqSymmetry(blockMins[index], blockMaxs[index], seq);
+      return new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
     }
     else {
-      return new SingletonSeqSymmetry(blockMaxs[index], blockMins[index], seq);
+      return new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
     }
+  }
+  
+  class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps {
+    public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
+      super(start, end, seq);
+    }
+
+    public Map getProperties() {return UcscBedSym.this.getProperties();}
+    public Map cloneProperties() {return UcscBedSym.this.cloneProperties();}
+    public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}
+    public boolean setProperty(String key, Object val) {return UcscBedSym.this.setProperty(key, val);}
   }
   
   // SeqSpan implementation

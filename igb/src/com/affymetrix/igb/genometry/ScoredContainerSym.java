@@ -16,9 +16,12 @@ package com.affymetrix.igb.genometry;
 import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.HeatMap;
+import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
+import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -26,10 +29,14 @@ import com.affymetrix.igb.util.GraphSymUtils;
  *  Assumes that ScoredContainerSym has only one SeqSpan
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
+  // none of these hashmap's should be static
   Map name2scores = new HashMap();
+  Map name2id = new HashMap(); // Maps score names to unique graph ids
+  Map name2id_plus = new HashMap();
+  Map name2id_minus = new HashMap();
   java.util.List scorevals = new ArrayList();
   java.util.List scorenames = new ArrayList();
-
+  
   /**
    *  Adds scores.
    *  Assumes all child syms have already been added, and span has already been set.
@@ -40,13 +47,13 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     scorevals.add(scores);
     scorenames.add(name);
   }
-
+  
   public int getScoreCount() { return scorevals.size(); }
 
   public float[] getScores(String name) {
     return (float[])name2scores.get(name);
-  }
-
+  }  
+  
   public float[] getScores(int index) {
     return (float[])scorevals.get(index);
   }
@@ -88,25 +95,21 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       System.err.println("ERROR: cannot add a child to ScoredContainerSym unless it is an IndexedSym");
     }
   }
-
-
+  
+  
  /**
-  *  Creates a GraphSym.
+  *  Creates a GraphIntervalSym.
   *  Assumes all child syms have already been added, and span has already been set.
-  *<pre>
-  *  Resultant graph sym has two data points for each child sym,
-  *     first  with x = min of child's span, y = score at child's index in "name" float array
-  *     second with x = max of child's span, y = 0
-  *</pre>
+  *  Resultant graph sym has x, width, and y data points for each child sym.
   *
   *  The returned GraphSym will have this property set by default:
   *  <ol>
-  *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Character.
+  *  <li>GraphSym.PROP_GRAPH_STRAND will be the correct strand Integer.
   *  </ol>
   *
   * @return a GraphSym or null if there was an error condition
    */
-  public GraphSym makeGraphSym(String name, boolean ensure_unique_id)  {
+  public GraphIntervalSym makeGraphSym(String name, AnnotatedSeqGroup seq_group)  {
     float[] scores = getScores(name);
     SeqSpan pspan = this.getSpan(0);
     if (scores == null) {
@@ -119,26 +122,29 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     BioSeq aseq = pspan.getBioSeq();
     int score_count = scores.length;
-    int[] xcoords = new int[2 * score_count];
-    float[] ycoords = new float[2 * score_count];
+    int[] xcoords = new int[score_count];
+    int[] wcoords = new int[score_count];
+    float[] ycoords = new float[score_count];
     for (int i=0; i<score_count; i++) {
-      IndexedSym isym = (IndexedSym)this.getChild(i);
+      IndexedSym isym = (IndexedSym) this.getChild(i);
       if (isym.getIndex() != i) {
 	System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
 			   "child.getIndex() not same as child's index in parent child list: " +
 			   isym.getIndex() + ", " + i);
       }
       SeqSpan cspan = isym.getSpan(aseq);
-      xcoords[i*2] = cspan.getMin();
-      ycoords[i*2] = scores[i];
-      xcoords[(i*2)+1] = cspan.getMax();
-      ycoords[(i*2)+1] = 0;
+      xcoords[i] = cspan.getMin();
+      wcoords[i] = cspan.getLength();
+      ycoords[i] = scores[i];
     }
 
-    if (ensure_unique_id)  { name = GraphSymUtils.getUniqueGraphID(name, aseq); }
-    GraphSym gsym = new GraphSym(xcoords, ycoords, name, aseq);
-    gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
-    gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character('.'));
+    if (xcoords.length == 0) {
+      return null;
+    }
+
+    String id = getGraphID(name, '.');
+    GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
+    gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
     return gsym;
   }
 
@@ -147,7 +153,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
    *  @param orientation  true for forward strand intervals.
    *  @see #makeGraphSym(String,boolean)
    */
-  public GraphSym makeGraphSym(String name, boolean ensure_unique_id, boolean orientation)  {
+  public GraphIntervalSym makeGraphSym(String name, boolean orientation, AnnotatedSeqGroup seq_group) {
     float[] scores = getScores(name);
     SeqSpan pspan = this.getSpan(0);
     if (scores == null) {
@@ -162,6 +168,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     int score_count = scores.length;
 
     IntList xlist = new IntList(score_count);
+    IntList wlist = new IntList(score_count);
     FloatList ylist = new FloatList(score_count);
     int correct_strand_count = 0;
     for (int i=0; i<score_count; i++) {
@@ -174,25 +181,104 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       SeqSpan cspan = isym.getSpan(aseq);
       if (cspan.isForward() == orientation) {
 	xlist.add(cspan.getMin());
-	xlist.add(cspan.getMax());
+	wlist.add(cspan.getLength());
 	ylist.add(scores[i]);
-	ylist.add(0);
 	correct_strand_count++;
       }
     }
-    int[] xcoords = xlist.copyToArray();
-    float[] ycoords = ylist.copyToArray();
-    if (xcoords.length <= 0) {
+
+    if (xlist.size() <= 0) {
       return null;
     }
     else {
-      String name_with_strand = name + (orientation ? " (+)" : " (-)" );
-      if (ensure_unique_id)  {  name_with_strand = GraphSymUtils.getUniqueGraphID(name_with_strand, aseq); }
-      GraphSym gsym = new GraphSym(xcoords, ycoords, name_with_strand, aseq);
-      gsym.getGraphState().setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
-      gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, new Character(orientation ? '+' : '-'));
+      String id;
+      if (orientation) {
+        id = getGraphID(name, '+');
+      } else {
+        id = getGraphID(name, '-');
+      }
+      int[] xcoords = xlist.copyToArray();
+      int[] wcoords = wlist.copyToArray();
+      float[] ycoords = ylist.copyToArray();
+      GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
+      if (orientation) {
+        gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+      } else {
+        gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+      }
       return gsym;
     }
   }
-
+  
+  static Map id2gstate = new HashMap();
+  
+  // Returns the unique graph ID associated with the score name;
+  // this score will map to this same graph ID for all other
+  // ScoredContainerSym's that have the same ID, even if they
+  // are on other BioSeq's.
+  public String getGraphID(String score_name, char strand) {
+    // I'm just assuming that this combination will be unique
+    String id = getID() + ":" + strand + ":" + score_name;
+    if (id2gstate.get(id) == null) {
+      GraphState gs = initializeGraphState(id, score_name, strand);
+      id2gstate.put(id, gs);
+    }
+    return id;
+  }
+  
+  GraphState initializeGraphState(String id, String score_name, char strand) {
+    GraphState gs = GraphState.getGraphState(id);
+    gs.setFloatGraph(false);
+    gs.setGraphStyle(GraphGlyph.HEAT_MAP);
+    gs.setHeatMap(HeatMap.getStandardHeatMap(HeatMap.HEATMAP_3));
+    gs.getTierStyle().setHumanName(score_name);
+    gs.setComboStyle(getContainerStyle(strand));
+    return gs;
+  }
+  
+  static Map id2combo_style_plus = new HashMap();
+  static Map id2combo_style_minus = new HashMap();
+  static Map id2combo_style_neutral = new HashMap();
+    
+  IAnnotStyle getContainerStyle(char strand) {
+    // There are separate combo style items for +, - and +/-.
+    // They are shared by all scores with the same ID on different seqs.
+    // They do not need a "+" or "-" as part of their name, because the glyph
+    // factory will do that.
+    IAnnotStyle style;
+    String name = (String) this.getProperty("method");
+    if (name == null) {
+     name = "Scores";
+    } else {
+      name = "Scores " + name;
+    }
+    
+    if (strand == '+') {
+      style = (IAnnotStyle) id2combo_style_plus.get(getID());
+      if (style == null) {
+        style = newComboStyle(name);
+        id2combo_style_plus.put(getID(), style);
+      }
+    } else if (strand == '-') {
+      style = (IAnnotStyle) id2combo_style_minus.get(getID());
+      if (style == null) {
+        style = newComboStyle(name);
+        id2combo_style_minus.put(getID(), style);
+      }
+    } else {
+      style = (IAnnotStyle) id2combo_style_neutral.get(getID());
+      if (style == null) {
+        style = newComboStyle(name);
+        id2combo_style_neutral.put(getID(), style);
+      }
+    }
+    return style;
+  }
+  
+  static IAnnotStyle newComboStyle(String name) {
+    IAnnotStyle style = new DefaultIAnnotStyle(name, true);
+    style.setExpandable(true);
+    style.setCollapsed(false);
+    return style;
+  }
 }

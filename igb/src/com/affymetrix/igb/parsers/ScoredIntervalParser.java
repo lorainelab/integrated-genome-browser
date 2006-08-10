@@ -22,7 +22,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
  *  Parses "sin" file format into genometry model of ScoredContainerSyms
@@ -100,19 +99,21 @@ public class ScoredIntervalParser {
    *  If false, will construct the container glyphs only if there is MORE than
    *  one score field in the file.
    */
-  static public final String PREF_ALWAYS_ADD_CONTAINER_GLYPHS = "Always add container glyphs";
-  static public final boolean default_always_add_container_glyphs = false;
+  //static public final String PREF_ALWAYS_ADD_CONTAINER_GLYPHS = "Always add container glyphs";
+  //static public final boolean default_always_add_container_glyphs = false;
 
   /**
    *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
    *      each array of scores is converted to a GraphSym and also added as annotation to seq.
    */
-  boolean attach_graphs = default_attach_graphs;
+//  boolean attach_graphs = default_attach_graphs;
 
 
   public void parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group)
   throws IOException {
-    attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
+    //boolean attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
+    String unique_container_name = com.affymetrix.igb.util.GraphSymUtils.getUniqueGraphID(stream_name, seq_group);
+    
     BufferedReader br= null;
     try {
       br = new BufferedReader(new InputStreamReader(istr));
@@ -355,23 +356,25 @@ public class ScoredIntervalParser {
 	    SinEntry sentry = (SinEntry)entry_list.get(k);
 	    score_column[k] = sentry.scores[i];
 	  }
-	  container.addScores(score_name, score_column);
+          container.addScores(score_name, score_column);
 	}
 
-        boolean always_add_container_glyphs = UnibrowPrefsUtil.getBooleanParam(PREF_ALWAYS_ADD_CONTAINER_GLYPHS, default_always_add_container_glyphs);
+        //boolean always_add_container_glyphs = UnibrowPrefsUtil.getBooleanParam(PREF_ALWAYS_ADD_CONTAINER_GLYPHS, default_always_add_container_glyphs);
+        //boolean always_add_container_glyphs = default_always_add_container_glyphs;
 
-        // if not sin3, then add container as annotation to seq
-	// if sin3, then already have corresponding annotations on seq, only need to attach graphs
-	// NO, CAN"T DO THIS YET -- right now need to able to select to get indexed scores to show up in PivotView
-        if (always_add_container_glyphs || score_count > 1) {
-	//	if (! all_sin3) {
-  	aseq.addAnnotation(container);
-	//	}
-        }
-	System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
-	if (attach_graphs) {
-	  attachGraphs(container);
-	}
+        // always add the container as an annotation, and
+        // do not attach any graphs
+        // ScoredContainerGlyph factory will then draw container syms, or graphs, or both
+        
+        container.setID(unique_container_name);
+        
+        //if (always_add_container_glyphs || score_count > 1) {
+          aseq.addAnnotation(container);
+        //}
+        //System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
+        //if (attach_graphs) {
+        //  attachGraphs(container, aseq);
+        //}
       }
 
       System.out.println("data lines in .sin file: " + line_count);
@@ -413,32 +416,64 @@ public class ScoredIntervalParser {
   }
 
 
-  /**
-   *  Make a GraphSym for each scores column, and add as an annotation to aseq.
-   */
-  protected void attachGraphs(ScoredContainerSym container) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)container.getSpan(0).getBioSeq();
-    int score_count = container.getScoreCount();
-    for (int i=0; i<score_count; i++) {
-      String score_name = container.getScoreName(i);
-      if (separate_by_strand)  {
-	GraphSym forward_gsym = container.makeGraphSym(score_name, true, true);
-	GraphSym reverse_gsym = container.makeGraphSym(score_name, true, false);
-	if (forward_gsym != null) {
-	  aseq.addAnnotation(forward_gsym);
-	}
-	if (reverse_gsym != null) {
-	  aseq.addAnnotation(reverse_gsym);
-	}
-      }
-      else {
-	GraphSym gsym = container.makeGraphSym(score_name, true);
-	if (gsym != null) {
-	  aseq.addAnnotation(gsym);
-	}
-      }
-    }
-  }
+//  /**
+//   *  Make a GraphSym for each scores column, and add as an annotation to aseq.
+//   */
+//  static protected void attachGraphs(ScoredContainerSym container, MutableAnnotatedBioSeq aseq) {
+//    GraphIntervalSym[] graphs = makeGraphs(container);
+//    for (int i=0; i<graphs.length; i++) {
+//      aseq.addAnnotation(graphs[i]);
+//    }
+//  }
+//
+//  static public GraphIntervalSym[] makeGraphs(ScoredContainerSym container) {
+//    //TODO: deal with uniquifying the styles?
+//    // May not be needed, because the styles are created here and never
+//    // applied to anything else anyway
+//    
+//    IAnnotStyle combo_f = new DefaultIAnnotStyle("Scores (+)", true);
+//    combo_f.setExpandable(true);
+//    combo_f.setCollapsed(false);
+//    IAnnotStyle combo_r = new DefaultIAnnotStyle("Scores (-)", true);
+//    combo_r.setExpandable(true);
+//    combo_r.setCollapsed(false);
+//    IAnnotStyle combo = new DefaultIAnnotStyle("Scores", true);
+//    combo.setExpandable(true);
+//    combo.setCollapsed(false);
+//
+//    int score_count = container.getScoreCount();
+//    ArrayList results = new ArrayList(score_count * 2);
+//
+//    for (int i=0; i<score_count; i++) {
+//      String score_name = container.getScoreName(i);
+//      if (separate_by_strand)  {
+//	GraphIntervalSym forward_gsym = container.makeGraphSym(score_name, true, true);        
+//	GraphIntervalSym reverse_gsym = container.makeGraphSym(score_name, true, false);
+//	if (forward_gsym != null) {
+//          forward_gsym.getGraphState().setFloatGraph(false);
+//          forward_gsym.getGraphState().setComboStyle(combo_f);
+//          forward_gsym.getGraphState().getTierStyle().setHumanName(score_name);
+//          results.add(forward_gsym);
+//	}
+//	if (reverse_gsym != null) {
+//          reverse_gsym.getGraphState().setFloatGraph(false);
+//          reverse_gsym.getGraphState().setComboStyle(combo_r);
+//          reverse_gsym.getGraphState().getTierStyle().setHumanName(score_name);
+//          results.add(reverse_gsym);
+//	}
+//      }
+//      else {
+//	GraphSym gsym = container.makeGraphSym(score_name, true);
+//	if (gsym != null) {
+//          gsym.getGraphState().setFloatGraph(false);
+//          gsym.getGraphState().setComboStyle(combo);
+//          gsym.getGraphState().getTierStyle().setHumanName(score_name);
+//          results.add(gsym);
+//	}
+//      }
+//    }
+//    return (GraphIntervalSym[]) results.toArray(new GraphIntervalSym[results.size()]);
+//  }
 
 
   protected List initScoreNames(int score_count, Map index2id, String stream_name) {

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,7 +22,7 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  *  This class (and file format) have been replaced by ScoredIntervalParser (and sin file format)
@@ -31,16 +31,18 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 public class ScoredMapParser {
 
   static Pattern line_regex  = Pattern.compile("\t");
-  boolean attach_graphs = ScoredIntervalParser.default_attach_graphs;
+  //boolean attach_graphs = ScoredIntervalParser.default_attach_graphs;
 
-  public void parse(InputStream istr, String stream_name, MutableAnnotatedBioSeq aseq) {
-    attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-						     ScoredIntervalParser.default_attach_graphs);
+  public void parse(InputStream istr, String stream_name, MutableAnnotatedBioSeq aseq, AnnotatedSeqGroup seq_group) {
+    //attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
+	//					     ScoredIntervalParser.default_attach_graphs);
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
 
+      String unique_container_name = GraphSymUtils.getUniqueGraphID(stream_name, seq_group);
       ScoredContainerSym parent = new ScoredContainerSym();
+      parent.setID(unique_container_name);
       parent.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
       parent.setProperty("method", stream_name);
 
@@ -82,15 +84,15 @@ public class ScoredMapParser {
 	parent.addScores(score_name, scores);
       }
       aseq.addAnnotation(parent);
-      if (attach_graphs) {
-	// make a GraphSym for each scores column, and add as an annotation to aseq
-	for (int i=0; i<score_count; i++) {
-	  String score_name = parent.getScoreName(i);
-	  GraphSym gsym = parent.makeGraphSym(score_name, true);
-	  aseq.addAnnotation(gsym);
-	}
-	// System.out.println("finished attaching graphs");
-      }
+//      if (attach_graphs) {
+//	// make a GraphSym for each scores column, and add as an annotation to aseq
+//	for (int i=0; i<score_count; i++) {
+//	  String score_name = parent.getScoreName(i);
+//	  GraphSym gsym = parent.makeGraphSym(score_name, true);
+//	  aseq.addAnnotation(gsym);
+//	}
+//	// System.out.println("finished attaching graphs");
+//      }
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }
@@ -100,10 +102,11 @@ public class ScoredMapParser {
     String test_name = "tau0_test";
     System.out.println("testing ScoredMapParser, parsing file: " + test_file);
     ScoredMapParser tester = new ScoredMapParser();
+    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
     MutableAnnotatedBioSeq aseq = new SimpleAnnotatedBioSeq("test_seq", 50000000);
     try {
       FileInputStream fis = new FileInputStream(new File(test_file));
-      tester.parse(fis, test_name, aseq);
+      tester.parse(fis, test_name, aseq, seq_group);
     }
     catch (Exception ex) { ex.printStackTrace(); }
     System.out.println("done testing ScoredMapParser");

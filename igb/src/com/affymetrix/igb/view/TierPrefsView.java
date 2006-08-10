@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -205,7 +205,14 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   
   void refreshList() {
     java.util.List styles = AnnotStyle.getAllLoadedInstances();
-    this.setStyleList(styles);
+    ArrayList customizables = new ArrayList(styles.size());
+    for (int i=0; i<styles.size(); i++) {
+      AnnotStyle the_style = (AnnotStyle) styles.get(i);
+      if (the_style.getCustomizable()) {
+        customizables.add(the_style);
+      }
+    }
+    this.setStyleList(customizables);
   }
   
   // Copy the background color from the default style to all loaded styles.
@@ -416,7 +423,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     static_instance.refreshList();
     
     
-    static_frame.show();
+    static_frame.setVisible(true);
     return static_frame;
   }
   
@@ -444,7 +451,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     f.pack();
     
     f.setSize(800, 800);
-    f.show();
+    f.setVisible(true);
   }
   
   public String getName() {

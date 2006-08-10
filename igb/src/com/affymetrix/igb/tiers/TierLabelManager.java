@@ -74,12 +74,15 @@ public class TierLabelManager {
     return tiermap.getTierLabels();
   }
 
+  /** Selects all non-hidden tiers. */
   public void selectAllTiers()  {
     java.util.List labels = getAllTierLabels();
     int tiercount = labels.size();
     for (int i=0; i<tiercount; i++) {
       TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(i);
-      labelmap.select(tierlabel);
+      if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
+        labelmap.select(tierlabel);
+      }
     }
     doGraphSelections(labelmap);
     //labelmap.updateWidget();
@@ -134,6 +137,30 @@ public class TierLabelManager {
     if (selections_changed) {
       gmodel.setSelectedSymmetries(symmetries, tiermap);
     }
+  }
+
+  /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
+  public static java.util.List getContainedGraphs(java.util.List tier_label_glyphs) {
+    java.util.List result = new ArrayList();
+    for (int i=0; i<tier_label_glyphs.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+      result.addAll(getContainedGraphs(tlg));
+    }
+    return result;
+  }
+  
+  /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
+  public static java.util.List getContainedGraphs(TierLabelGlyph tlg) {
+    ArrayList result = new ArrayList();
+    TierGlyph tier = (TierGlyph) tlg.getInfo();
+    IAnnotStyle style = tier.getAnnotStyle();
+    int child_count = tier.getChildCount();
+    if ( child_count > 0 && tier.getChild(0) instanceof GraphGlyph) {
+      for (int j=0; j<child_count; j++) {
+        result.add(tier.getChild(j));
+      }
+    }
+    return result;
   }
   
   /** Gets the index of a given tier. Note that is a TierGlyph, not a TierLabelGlyph. */

@@ -14,24 +14,20 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import java.awt.Color;
 import java.util.*;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public class GraphState implements IAnnotStyle {
+public class GraphState {
 
   String graph_path;
-  String graph_label;
+  String unique_id;
   int graph_style = SmartGraphGlyph.MINMAXAVG;
-  Color graph_col = Color.pink;
-
-  double graph_ypos = 20;
-  double graph_height = 60;
 
   /**
    *  The minimum score the ycoord of a point must be >= in order to be counted
@@ -84,14 +80,15 @@ public class GraphState implements IAnnotStyle {
   boolean float_graph = true;
   boolean show_threshold = false;
   boolean show_axis = false;
-  boolean show = true; // whether to show or hide the graph. (Usually true.)
 
   boolean show_handle = true;
   boolean show_graph = true;
   boolean show_bounds = false;
   boolean show_label = true;
-
+  
   HeatMap heat_map = GraphGlyph.default_heatmap;
+  IAnnotStyle tier_style;
+  IAnnotStyle combo_tier_style = null;  
   
   public static Map gstyle2num = new HashMap();
   public static Map num2gstyle = new HashMap();
@@ -114,54 +111,78 @@ public class GraphState implements IAnnotStyle {
     }
   }
 
+  /** Convert a graph type name such as "line", "bar", "dot", etc., to an Integer,
+   *  or null if no such style.
+   */
   public static Integer getStyleNumber(String style_name) {
     return (Integer)gstyle2num.get(style_name.toLowerCase());
   }
   
+  /** Convert a graph type name such as "line", "bar", "dot", etc., to an integer,
+   *  or -1 if no such style.
+   */
   public static int getStyleInt(String style_name) {
     Integer num = getStyleNumber(style_name);
     if (num == null) { return -1; }
     else { return num.intValue(); }
   }
 
+  /** Returns a simple name identifying a graph type, such as "line", "bar", "dot", etc. */
   public static String getStyleName(int style_int) {
     return (String)num2gstyle.get(new Integer(style_int));
   }
 
-
-  public GraphState() { 
-    super();
-    
-    // Now set some defaults.
-    // (This used to be done in the GenericGraphGlyphFactory.)
-
-    boolean use_floating_graphs = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
-      setFloatGraph(use_floating_graphs);
-
-    // graph height is in coords if graph is attached, and in pixels if graph is floating
-    if (getFloatGraph()) {
-      int pix_height = GraphGlyphUtils.getGraphPrefsNode().getInt(
-        GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, GraphGlyphUtils.default_pix_height);
-      setGraphHeight(pix_height);
+  static Map id2state = new HashMap();
+  
+  public static GraphState getGraphState(String id) {
+    GraphState state = (GraphState) id2state.get(id);
+    if (state == null) {
+      state = new GraphState(id);
+      id2state.put(id, state);
     }
-    else {
-      double coord_height = GraphGlyphUtils.getGraphPrefsNode().getDouble(
-        GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, GraphGlyphUtils.default_coord_height);
-      setGraphHeight(coord_height);
-    }
+    return state;
+  }
+  
+  static int temp_state_count = 0;
 
-    setColor(AnnotStyle.getDefaultInstance().getColor());    
+  public static GraphState getTemporaryGraphState() {
+    return new GraphState("temporary:" + (temp_state_count++));
   }
 
-  public GraphState(GraphState ostate) {
-    this();
+  GraphState(String id) {
+    super();
+    this.unique_id = id;
+    
+    tier_style = new DefaultIAnnotStyle(id, true);
+    
+    // Graph Tiers with a single graph in them are not collapsible/expandible
+    tier_style.setExpandable(false);
+    //tier_style.setHumanName(id);
+    
+    boolean use_floating_graphs = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
+    setFloatGraph(use_floating_graphs);
+
+    
+    // graph height is in coords if graph is attached, 
+    // but must be converted to pixels if graph is floating
+    double coord_height = GraphGlyphUtils.default_coord_height;
+    if (getFloatGraph()) {
+      double pix_height = coord_height; //TODO:
+      tier_style.setHeight(pix_height);
+    }
+    else {
+      tier_style.setHeight(coord_height);
+    }
+
+    tier_style.setColor(AnnotStyle.getDefaultInstance().getColor());
+  }
+
+  /** Copy all the properties, except ID and label, of the given state into this state. */
+  public void copyProperties(GraphState ostate) {
     setUrl(ostate.getUrl());
-    setLabel(ostate.getLabel());
     setGraphStyle(ostate.getGraphStyle());
-    setColor(ostate.getColor());
-    setGraphYPos(ostate.getGraphYPos());
-    setGraphHeight(ostate.getGraphHeight());
+//    setColor(ostate.getColor());
     setVisibleMinY(ostate.getVisibleMinY());
     setVisibleMaxY(ostate.getVisibleMaxY());
     setFloatGraph(ostate.getFloatGraph());
@@ -179,21 +200,18 @@ public class GraphState implements IAnnotStyle {
     setThreshStartShift(ostate.getThreshStartShift());
     setThreshEndShift(ostate.getThreshEndShift());
     setHeatMap(ostate.getHeatMap());
+    
+    getTierStyle().copyPropertiesFrom(ostate.getTierStyle());
   }
 
 
   public final String getUrl() { return graph_path; }
-  public final String getLabel() { return graph_label; }
   public final int getGraphStyle() { return graph_style; }
   public final HeatMap getHeatMap() { return heat_map; }
-  public final Color getColor() { return graph_col; }
-
-  public final double getGraphYPos() { return graph_ypos; }
-  public final double getGraphHeight() { return graph_height; }
   public final float getVisibleMinY() { return graph_visible_min; }
   public final float getVisibleMaxY() { return graph_visible_max; }
 
-  public final boolean getFloatGraph() { return float_graph; }
+  public final boolean getFloatGraph() { return  float_graph; }
   public final boolean getShowThreshold() { return show_threshold; }
   public final boolean getShowAxis() { return show_axis; }
 
@@ -201,7 +219,6 @@ public class GraphState implements IAnnotStyle {
   public final boolean getShowGraph() { return show_graph; }
   public final boolean getShowBounds() { return show_bounds; }
   public final boolean getShowLabel() { return show_label; }
-  public final boolean getShow() { return show; }
 
   public float getMinScoreThreshold() { return min_score_threshold; }
   public float getMaxScoreThreshold() { return max_score_threshold; }
@@ -218,30 +235,24 @@ public class GraphState implements IAnnotStyle {
   public int getThresholdDirection() { return threshold_direction; }
 
   public final void setUrl(String url) { graph_path = url; }
-  public final void setLabel(String name) { graph_label = name; }
   public final void setFloatGraph(boolean b) { float_graph = b; }
-  public final void setGraphYPos(double ypos) { graph_ypos = ypos; }
-  public final void setGraphHeight(double height) { graph_height = height; }
+  public final void setGraphStyle(int style) { graph_style = style;} 
+  public final void setHeatMap(HeatMap hmap) { heat_map = hmap;}
+  public final void setVisibleMinY(float vminy) { graph_visible_min = vminy;}  // check
+  public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy;}  // check
+  public final void setShowThreshold(boolean b) { show_threshold = b;} // check
+  public final void setShowAxis(boolean b) { show_axis = b;} // check
+  public final void setShowHandle(boolean b) { show_handle = b;}  // check
+  public final void setShowGraph(boolean b) { show_graph = b;}    // check
+  public final void setShowBounds(boolean b) { show_bounds = b;}  // check
+  public final void setShowLabel(boolean b) { show_label = b;}    // check
 
-  public final void setGraphStyle(int style) { graph_style = style; } 
-  public final void setHeatMap(HeatMap hmap) { heat_map = hmap; }
-  public final void setColor(Color col) { graph_col = col; }  // check
-  public final void setVisibleMinY(float vminy) { graph_visible_min = vminy; }  // check
-  public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy; }  // check
-  public final void setShowThreshold(boolean b) { show_threshold = b; } // check
-  public final void setShowAxis(boolean b) { show_axis = b; } // check
-  public final void setShowHandle(boolean b) { show_handle = b; }  // check
-  public final void setShowGraph(boolean b) { show_graph = b; }    // check
-  public final void setShowBounds(boolean b) { show_bounds = b; }  // check
-  public final void setShowLabel(boolean b) { show_label = b; }    // check
-  public final void setShow(boolean b) { show = b; }
-
-  public void setMinScoreThreshold(float thresh) { min_score_threshold = thresh; }
-  public void setMaxScoreThreshold(float thresh) { max_score_threshold = thresh; }
-  public void setMaxGapThreshold(int thresh) { max_gap_threshold = thresh; }
-  public void setMinRunThreshold(int thresh) { min_run_threshold = thresh; }
-  public void setThreshStartShift(double d) { span_start_shift = d; }
-  public void setThreshEndShift(double d) { span_end_shift = d; }
+  public void setMinScoreThreshold(float thresh) { min_score_threshold = thresh;}
+  public void setMaxScoreThreshold(float thresh) { max_score_threshold = thresh;}
+  public void setMaxGapThreshold(int thresh) { max_gap_threshold = thresh;}
+  public void setMinRunThreshold(int thresh) { min_run_threshold = thresh;}
+  public void setThreshStartShift(double d) { span_start_shift = d;}
+  public void setThreshEndShift(double d) { span_end_shift = d;}
   
   /**
    *  Set to either {@link #THRESHOLD_DIRECTION_GREATER} or
@@ -255,37 +266,15 @@ public class GraphState implements IAnnotStyle {
     threshold_direction = d;
   }
 
-  /** Simply returns the background color of the default AnnotStyle. */
-  public Color getBackground() {
-    return AnnotStyle.getDefaultInstance().getBackground();
+  public IAnnotStyle getTierStyle() {
+      return tier_style;
   }
   
-  /** Has no effect. */
-  public void setBackground(Color c) {
-    return;
+  public IAnnotStyle getComboStyle() {
+    return combo_tier_style;
   }
 
-  // Always returns false, since graphs can't be collapsed.
-  /**
-   *  Always returns true, to allow for multiple graphs overlaid on same tier?
-   */
-  public boolean getCollapsed() {
-    //    return false;
-    return true;
-  }
-
-  /** Returns the same thing as getLabel(). */
-  public String getHumanName() {
-    return getLabel();
-  }
-  
-  /** Same as setLabel(String). */
-  public void setHumanName(String s) {
-    setLabel(s);
-  }
-
-  /** Always returns zero, since graphs have no idea of max depth. */
-  public int getMaxDepth() {
-    return 0;
+  public void setComboStyle(IAnnotStyle s) {
+    this.combo_tier_style = s;
   }
 }

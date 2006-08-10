@@ -14,6 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
@@ -239,7 +240,18 @@ public class GraphGlyph extends Glyph {
       int ymax_pixel = zero_point.y;
 
 
+      
+      
       g.translate(xpix_offset, 0);
+      
+      RenderingHints original_render_hints = null;
+      if (g instanceof Graphics2D) {
+        Graphics2D g2 = (Graphics2D) g;
+        original_render_hints = g2.getRenderingHints();
+        Map my_render_hints = new HashMap();
+        my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.addRenderingHints(my_render_hints);
+      }
       
       // START OF BIG LOOP:
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
@@ -367,6 +379,12 @@ public class GraphGlyph extends Glyph {
       // END: big loop
 
       g.translate(-xpix_offset, 0);
+      if (g instanceof Graphics2D) {
+        Graphics2D g2 = (Graphics2D) g;
+        if (original_render_hints != null) {
+          g2.setRenderingHints(original_render_hints);
+        }
+      }
 
       //      System.out.println("draw count: " + draw_count);
 

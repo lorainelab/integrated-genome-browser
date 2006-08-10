@@ -13,10 +13,9 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.genometry.GraphIntervalSym;
 import java.io.*;
 import java.util.*;
-
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
@@ -34,6 +33,7 @@ public class GraphSymUtils {
   static Comparator pointcomp = new Point2DComparator(true, true);
   static boolean DEBUG_READ = false;
   static boolean DEBUG_DATA = false;
+  static int MAX_INITCAP = 1024*1024;
 
   /** 8-byte floating-point.  Names of the other data-type constants can be interpreted similarly. */
   public static int BYTE8_FLOAT = 0;
@@ -49,7 +49,7 @@ public class GraphSymUtils {
   { "BYTE8_FLOAT", "BYTE4_FLOAT",
     "BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
     "BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
-
+  
   /**
    *  Transforms a GraphSym based on a SeqSymmetry.
    *  This is _not_ a general algorithm for transforming GraphSyms with an arbitrary mapping sym --
@@ -69,19 +69,31 @@ public class GraphSymUtils {
     GraphSym new_graf = null;
     if (fromseq != null && fromspan != null) {
       BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
+      
       SeqSpan tospan = mapsym.getSpan(toseq);
+      int tospan_end = tospan.getEnd();
       if (toseq != null && fromseq != null) {
 	int[] xcoords = original_graf.getGraphXCoords();
 	float[] ycoords = original_graf.getGraphYCoords();
+        int[] wcoords = null;
+        if (original_graf instanceof GraphIntervalSym) {
+          wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
+        }
 	if (xcoords != null && ycoords != null) {
 	  double graf_base_length = xcoords[xcoords.length-1] - xcoords[0];
 	  // calculating graf length from xcoords, since graf's span
 	  //    is (usually) incorrectly set to start = 0, end = seq.getLength();
 	  double points_per_base = (double)xcoords.length / (double)graf_base_length;
 	  int initcap = (int)(points_per_base * toseq.getLength() * 1.5);
-	  //    System.out.println("initial capacity for new_xcoords DoubleList: " + initcap);
+          if (initcap > MAX_INITCAP) {
+            initcap = MAX_INITCAP;
+          }
 	  IntList new_xcoords = new IntList(initcap);
 	  FloatList new_ycoords = new FloatList(initcap);
+          IntList new_wcoords = null;
+          if (wcoords != null) {
+            new_wcoords = new IntList(initcap);
+          }
 	  List leaf_syms = SeqUtils.getLeafSyms(mapsym);
 	  for (int i=0; i<leaf_syms.size(); i++) {
 	    SeqSymmetry leafsym = (SeqSymmetry)leaf_syms.get(i);
@@ -91,8 +103,8 @@ public class GraphSymUtils {
 	    boolean opposite_spans = fspan.isForward() ^ tspan.isForward();
 	    int ostart = fspan.getStart();
 	    int oend = fspan.getEnd();
-	    int tstart = tspan.getStart();
-	    int tend = tspan.getEnd();
+	    //int tstart = tspan.getStart();
+	    //int tend = tspan.getEnd();
 	    double scale = tspan.getLengthDouble() / fspan.getLengthDouble();
 	    if (opposite_spans) { scale = -scale; }
 	    double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
@@ -115,12 +127,26 @@ public class GraphSymUtils {
 	      int new_xcoord = (int)((scale * old_xcoord) + offset);
 	      new_xcoords.add(new_xcoord);
 	      new_ycoords.add(ycoords[k]);
+              if (wcoords != null) {
+                int new_wcoord = (int) (scale * wcoords[k]);
+                if (new_xcoord + new_wcoord >= tospan_end) {
+                  //todo: make sure new x + width is within the correct range
+                }
+                new_wcoords.add(new_wcoord);
+              }
 	    }
 	  }
           String newid = original_graf.getID();
           if (ensure_unique_id)  { newid = GraphSymUtils.getUniqueGraphID(newid, toseq); }
-	  new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
-				  original_graf.getGraphName(), toseq);
+          
+          if (new_wcoords == null) {
+            new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+                newid, toseq);
+          } else {
+            new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
+                new_ycoords.copyToArray(), newid, toseq);
+          }
+          new_graf.setGraphName(original_graf.getGraphName());
 	}
       }
     }
@@ -207,10 +233,27 @@ public class GraphSymUtils {
   }
 
   /**
+   *  Returns input id if no GraphSyms on any seq in the given seq group 
+   *  are already using that id.
+   *  Otherwise uses id to build a new unique id.
+   *  The id returned is unique for GraphSyms on all seqs in the given group.
+   */
+  public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+    String result = id;
+    Iterator iter = seq_group.getSeqList().iterator();
+    while (iter.hasNext()) {
+      AnnotatedBioSeq seq = (AnnotatedBioSeq) iter.next();
+      result = getUniqueGraphID(result, seq);
+    }
+    System.out.println("----" + id + " ----> " + seq_group.getID() + " ----> " + result);
+    return result;
+  }
+  
+  /**
    *  Returns input id if no GraphSyms on seq with given id.
    *  Otherwise uses id to build a new id that is not used by a GraphSym (or top-level container sym )
-   *     currently on the seq
-   *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs
+   *     currently on the seq.
+   *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
    */
   public static String getUniqueGraphID(String id, BioSeq seq) {
     if (id == null) { return null; }
@@ -243,16 +286,17 @@ public class GraphSymUtils {
 	      hit = true;
 	      break;
 	  }
-	}
-
+        }
       }
     }
     else {
-      // BioSeq is not an AnnotatedBioSeq, so just punt and return input
+      // if not an AnnotatedBioSeq, just return original ID for now.
+      newid = id;
     }
+        
     return newid;
   }
-
+  
   /** This is a wrapper around readGraphs() for the case where you expect to
    *  have a single GraphSym returned.  This will return only the first graph
    *  from the list returned by readGraphs(), or null.
@@ -308,9 +352,10 @@ public class GraphSymUtils {
       for (int i=0; i<grafs.size(); i++) {
         GraphSym gsym = (GraphSym)grafs.get(i);
         BioSeq gseq = gsym.getGraphSeq();
-        if (gseq instanceof SmartAnnotBioSeq) {
+        if (gseq instanceof BioSeq) {
 	  String gid = gsym.getID();
 	  String newid = getUniqueGraphID(gid, gseq);
+          //TODO: Instead of re-setting the graph ID, a unique ID should have been used in the constructor
 	  if (newid != gid) {
 	    gsym.setID(newid);
 	  }
@@ -343,9 +388,9 @@ public class GraphSymUtils {
       rcypos[i] = ypos[ypos.length - i -1];
     }
     String newid = "rev_comp ( " + gsym.getID() + " )";
-    newid = GraphSymUtils.getUniqueGraphID(newid, revcomp_symseq);
-    GraphSym revcomp_gsym =
-      new GraphSym(rcxpos, rcypos, newid, revcomp_symseq);
+    String unique_newid = GraphSymUtils.getUniqueGraphID(newid, revcomp_symseq);
+    GraphSym revcomp_gsym = new GraphSym(rcxpos, rcypos, unique_newid, revcomp_symseq);
+    revcomp_gsym.setGraphName(newid);
     return revcomp_gsym;
   }
 
@@ -414,7 +459,7 @@ public class GraphSymUtils {
    *    Plan to change this to a sampling strategy if scores.length greater than some cutoff (maybe 100,000 ?)
    */
   public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
-    Timer tim = new Timer();
+    //Timer tim = new Timer();
     boolean USE_SAMPLING = true;
     int max_sample_size = 100000;
     float abs_max_percent = 100.0f;
@@ -429,7 +474,7 @@ public class GraphSymUtils {
     // in performance comparisons of System.arraycopy() vs. piecewise loop,
     //     piecewise takes about twice as long for copying same number of elements,
     //     but this 2x performance hit should be overwhelmed by time taken for larger array sort
-    tim.start();
+    //tim.start();
     if (USE_SAMPLING && (num_scores > (2 * max_sample_size)) ) {
       int sample_step = num_scores / max_sample_size;
       int sample_index = 0;
@@ -457,7 +502,7 @@ public class GraphSymUtils {
     }
     // just making sure max 100% is really 100%...
     percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
-    long t = tim.read();
+    //long t = tim.read();
     //    System.out.println("time taken for GraphSymUtils.calcPercents2Scores(): " + (t/1000f));
     return percent2score;
   }

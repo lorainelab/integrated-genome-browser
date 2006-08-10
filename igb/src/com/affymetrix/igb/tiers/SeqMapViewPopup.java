@@ -38,6 +38,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;
 
+  Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
+    public void actionPerformed(ActionEvent e) {
+      handler.selectAllTiers();
+    }
+  };
+  
   Action rename_action = new AbstractAction("Change Display Name") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTiers();
@@ -102,8 +108,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       changeColor(handler.getSelectedTierLabels(), false);
     }
   };
+  
+  //TODO: make a change_height_action
+  //Action change_height_action = ....
 
-  Action sym_summarize_action = new AbstractAction("Make Annotation Depth Track") {
+
+  Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -168,7 +178,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     PreferencesPanel pv = PreferencesPanel.getSingleton();
     pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
     JFrame f = pv.getFrame();
-    f.show();
+    f.setVisible(true);
   }
 
   java.util.List getStyles(java.util.List tier_label_glyphs) {
@@ -188,13 +198,25 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   void setTiersCollapsed(java.util.List tier_labels, boolean collapsed) {
-    java.util.List styles = getStyles(tier_labels);
-    for (int i=0; i<styles.size(); i++) {
-      IAnnotStyle style = (IAnnotStyle) styles.get(i);
-      if (style instanceof AnnotStyle) {
-        ((AnnotStyle) style).setCollapsed(collapsed);
-      } // else if it is a graph style, collapsed has no meaning
+    for (int i=0; i<tier_labels.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
+      IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+      if (style.getExpandable()) {
+        style.setCollapsed(collapsed);
+        
+        // When collapsing, make them all be the same height as the tier.
+        // (this is for simplicity in figuring out how to draw things.)
+        if (collapsed) {
+          java.util.List graphs = handler.getContainedGraphs(tlg);
+          double tier_height = style.getHeight();
+          for (int j=0; j<graphs.size(); j++) {
+            GraphGlyph graph = (GraphGlyph) graphs.get(j);
+            graph.getGraphState().getTierStyle().setHeight(tier_height);
+          }
+        }
+      }
     }
+
     refreshMap(false);
   }
 
@@ -239,15 +261,28 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = (TierGlyph) tlg.getInfo();
       IAnnotStyle style = tier.getAnnotStyle();
-
-      if (style instanceof AnnotStyle) {
-        ((AnnotStyle) style).setMaxDepth(max);
-      } // else if a graph style, max depth has no meaning
+      style.setMaxDepth(max);
       tier.setMaxExpandDepth(max);
     }
     refreshMap(false);
   }
 
+//  void changeHeight(java.util.List tier_label_glyphs, double height) {
+//    if (gviewer instanceof SeqMapView) {
+//    AffyTieredMap map = ((SeqMapView) gviewer).getSeqMap();
+//    for (int i=0; i<tier_label_glyphs.size(); i++) {
+//      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+//      TierGlyph tier = (TierGlyph) tlg.getInfo();
+//      IAnnotStyle style = tier.getAnnotStyle();
+//      style.setHeight(???);
+//      tier.pack(map.getView());
+//    } 
+//    map.packTiers(false, true, false);
+//    map.stretchToFit(false, true);
+//    map.updateWidget();
+//    }
+//  }
+  
   public void showAllTiers() {
     java.util.List tiervec = handler.getAllTierLabels();
 
@@ -271,7 +306,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
    */
   protected void hideOneTier(final TierGlyph tier) {
     final IAnnotStyle style = tier.getAnnotStyle();
-    if (style != null) {
+    // if style.getShow() is already false, there is likely a bug somewhere!
+    if (style != null && style.getShow()) {
       style.setShow(false);
       final JMenuItem show_tier = new JMenuItem() {
         // override getText() because the HumanName of the style might change
@@ -315,22 +351,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  boolean containsGraphs(java.util.List tier_label_glyphs) {
-    boolean result = false;
-    for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
-      TierGlyph tier = (TierGlyph) tlg.getInfo();
-      IAnnotStyle style = tier.getAnnotStyle();
-      if (style instanceof GraphState) {
-        result = true;
-        break;
-      }
-    }
-    return result;
-  }
-
-  // although this will work on a list of selected tier labels, it is
-  // probably more intuitive if its use is restricted to a single tier.
   public void changeColor(final java.util.List tier_label_glyphs, final boolean fg) {
     if (tier_label_glyphs.isEmpty()) {
       return;
@@ -364,6 +384,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
               style.setBackground(chooser.getColor());
             }
           }
+          Iterator graphs_iter = handler.getContainedGraphs(tier_label_glyphs).iterator();
+          while (graphs_iter.hasNext()) {
+            GraphGlyph gg =(GraphGlyph) graphs_iter.next();
+            if (fg) {
+              gg.setColor(chooser.getColor());
+              gg.getGraphState().getTierStyle().setColor(chooser.getColor());
+            } else {
+              //gg.setBackgroundColor(chooser.getColor()); // this wouldn't really work
+              gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
+            }
+          }
         }
       }
     };
@@ -374,16 +405,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
                                         chooser,
                                         al,  //OK button handler
                                         null); //no CANCEL button handler
-    dialog.show();
+    dialog.setVisible(true);
 
-    if (!fg && containsGraphs(tier_label_glyphs)) {
-      refreshMap(false);
-      ErrorHandler.errorPanel("WARNING", "Graphs have a transparent background.  " +
-        "To change the BG color of a graph, change the BG color " +
-        "of the *default* tier in the tier customizer.");
-    } else {
-      refreshMap(false);
-    }
+    refreshMap(false);
   }
 
   public void renameTier(final TierGlyph tier) {
@@ -507,11 +531,20 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
 
-    String method = "coverage: " + atier.getLabel();
-    wrapperSym.setProperty("method", method);
+    String human_name = "coverage: " + atier.getLabel();
+    //wrapperSym.setProperty("method", method);
 
-    // Generate a non-persistent style.  Factory should be CoverageSummarizerFactory
-    AnnotStyle style = AnnotStyle.getInstance(method, false);
+    // Generate a non-persistent style.  
+    // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
+
+    String unique_name = AnnotStyle.getUniqueName(human_name);
+    wrapperSym.setProperty("method", unique_name);
+    AnnotStyle style = AnnotStyle.getInstance(unique_name, false);
+    style.setHumanName(human_name);
+    style.setGlyphDepth(1);
+    style.setSeparate(false); // there are not separate (+) and (-) strands
+    style.setExpandable(false); // cannot expand and collapse
+    style.setCustomizable(false); // the user can change the color, but not much else is meaningful
 
     aseq.addAnnotation(wrapperSym);
     gviewer.setAnnotatedSeq(aseq, true, true);
@@ -561,42 +594,62 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
 
+    boolean any_are_collapsed = false;
+    boolean any_are_expanded = false;
+    for (int i=0; i<labels.size(); i++) {
+      TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
+      TierGlyph glyph = (TierGlyph) label.getInfo();
+      IAnnotStyle style = glyph.getAnnotStyle();
+      if (style.getExpandable()) {
+        any_are_collapsed |= style.getCollapsed();
+        any_are_expanded |= ! style.getCollapsed();
+      }
+    }
 
+    select_all_tiers_action.setEnabled(true);
     customize_action.setEnabled(true);
 
     hide_action.setEnabled(num_selections > 0);
     show_all_action.setEnabled(not_empty);
 
     change_color_action.setEnabled(num_selections > 0);
+    change_bg_color_action.setEnabled(num_selections > 0);
+    //change_height_action.setEnabled(num_selections > 0);
     rename_action.setEnabled(num_selections == 1);
 
-    collapse_action.setEnabled(num_selections > 0);
-    expand_action.setEnabled(num_selections > 0);
-    change_expand_max_action.setEnabled(num_selections > 0);
+    collapse_action.setEnabled(any_are_expanded);
+    expand_action.setEnabled(any_are_collapsed);
+    change_expand_max_action.setEnabled(any_are_expanded);
     collapse_all_action.setEnabled(not_empty);
     expand_all_action.setEnabled(not_empty);
     change_expand_max_all_action.setEnabled(not_empty);
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
-    save_bed_action.setEnabled(num_selections == 1);
-    save_das_action.setEnabled(num_selections == 1);
+    JMenu save_menu = new JMenu("Save Annotations");
 
     if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
       TierLabelGlyph label = (TierLabelGlyph) labels.get(0);
       TierGlyph glyph = (TierGlyph) label.getInfo();
       IAnnotStyle style = glyph.getAnnotStyle();
-      boolean is_annotation_type = (style instanceof AnnotStyle);
+      boolean is_annotation_type = ! style.isGraphTier();
       sym_summarize_action.setEnabled(is_annotation_type);
       coverage_action.setEnabled(is_annotation_type);
+      save_menu.setEnabled(is_annotation_type);
+      save_bed_action.setEnabled(is_annotation_type);
+      save_das_action.setEnabled(is_annotation_type);
     } else {
       sym_summarize_action.setEnabled(false);
       coverage_action.setEnabled(false);
+      save_menu.setEnabled(false);
+      save_bed_action.setEnabled(false);
+      save_das_action.setEnabled(false);
     }
 
     changeMenu.removeAll();
     changeMenu.add(change_color_action);
     changeMenu.add(change_bg_color_action);
+    //changeMenu.add(change_height_action);
     changeMenu.add(rename_action);
 
     popup.add(customize_action);
@@ -605,6 +658,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(showMenu);
     popup.add(show_all_action);
     popup.add(new JSeparator());
+    popup.add(select_all_tiers_action);
     popup.add(changeMenu);
     //popup.add(rename_action);
     //popup.add(change_color_action);
@@ -612,12 +666,13 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(collapse_action);
     popup.add(expand_action);
     popup.add(change_expand_max_action);
-    popup.add(collapse_all_action);
-    popup.add(expand_all_action);
-    popup.add(change_expand_max_all_action);
+    //popup.add(collapse_all_action);
+    //popup.add(expand_all_action);
+    //popup.add(change_expand_max_all_action);
     popup.add(new JSeparator());
-    popup.add(save_bed_action);
-    popup.add(save_das_action);
+    popup.add(save_menu);
+    save_menu.add(save_bed_action);
+    save_menu.add(save_das_action);
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
     popup.add(coverage_action);

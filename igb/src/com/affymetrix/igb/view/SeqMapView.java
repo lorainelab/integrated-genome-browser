@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -66,6 +67,7 @@ import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.genometry.ScoredContainerSym;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -157,8 +159,6 @@ public class SeqMapView extends JPanel
   Adjustable xzoomer;
   Adjustable yzoomer;
 
-  //static Color almost_black = new Color(20, 20, 20);
-
   public static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
 
   /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
@@ -199,30 +199,20 @@ public class SeqMapView extends JPanel
 
   static NumberFormat nformat = NumberFormat.getIntegerInstance();
 
-  //Color default_annot_color = default_default_annot_color;
-
-
   /** Hash of method names (lower case) to forward tiers */
   Map method2ftier = new HashMap();
   /** Hash of method names (lower case) to reverse tiers */
   Map method2rtier = new HashMap();
-  /** hash of GraphStates to TierGlyphs,
-      ( for those GraphStates where state.getFloatGraph() = false))
-  */
-  Map gstate2tier = new HashMap();
-  Map gname2tier = new HashMap();
-  Map gid2tier = new HashMap();
-  // gid2state to be added later, for sharing of graph states between multiple GraphSyms
-  //     on different seqs but with same graph id
-  //     (or maybe this should go in GenericGraphGlyphFactory?)
-  //  Map gid2state = new HashMap();
+
+  /** Hash of GraphStates to TierGlyphs. */
+  Map gstyle2tier = new HashMap();
+  //Map gstyle2floatTier = new HashMap();
+  
+  PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
-  Map graf2factory = new HashMap();   // hash of graph syms to graph factories
-  Map grafid2factory = new HashMap();
 
-  //  Color[] tier_colors = { Color.black, almost_black };
   GlyphEdgeMatcher edge_matcher = null;
 
   JPopupMenu sym_popup;
@@ -278,6 +268,22 @@ public class SeqMapView extends JPanel
     this(add_popups, false);
   }
 
+  class SeqMapViewComponentListener extends ComponentAdapter {
+    // When the map is resized, make sure the graphs are still visible.
+    public void componentResized(ComponentEvent e) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+         java.util.List graphs = collectGraphs();
+          boolean b = false;
+          for (int i=0; i<graphs.size(); i++) {
+            b |= GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+          }
+          if (b) getSeqMap().updateWidget();
+        }
+      });
+    }
+  };
+  
   /**
    * Constructor.
    * @param add_popups  Whether to add some popup menus to the tier label manager
@@ -300,6 +306,8 @@ public class SeqMapView extends JPanel
     else {
       seqmap = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
     }
+    
+    seqmap.addComponentListener(new SeqMapViewComponentListener());
 
     //Color bg = default_default_background_color;
     //Color bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DEFAULT_BACKGROUND_COLOR, default_default_background_color);
@@ -338,6 +346,10 @@ public class SeqMapView extends JPanel
       tier_manager = new TierLabelManager((AffyLabelledTierMap)seqmap);
       tier_manager.setDoGraphSelections(true);
       if (add_popups) {
+        //NOTE: popup listeners are called in reverse of the order that they are added
+        // Must use separate instances of GraphSelectioManager if we want to use
+        // one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
+        //tier_manager.addPopupListener(new GraphSelectionManager(this));
         tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
         tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
@@ -347,6 +359,7 @@ public class SeqMapView extends JPanel
     seqmap.addMouseListener(mouse_listener);
     
     // A "Smart" rubber band is necessary becaus we don't want our attempts
+      tier_manager.setDoGraphSelections(true);
     // to drag the graph handles to also cause rubber-banding
     SmartRubberBand srb = new SmartRubberBand(seqmap);
     seqmap.setRubberBand(srb);
@@ -356,7 +369,7 @@ public class SeqMapView extends JPanel
     GraphSelectionManager graph_manager = new GraphSelectionManager(this);
     seqmap.addMouseListener(graph_manager);
     this.addPopupListener(graph_manager);
-
+    
     setupPopups();
     this.setLayout(new BorderLayout());
 
@@ -523,26 +536,13 @@ public class SeqMapView extends JPanel
 
   public JPopupMenu getSelectionPopup() { return sym_popup; }
 
-  Map getFactoryHash() { return meth2factory; }
-  Map getForwardTierHash() { return method2ftier; }
-  Map getReverseTierHash() { return method2rtier; }
-
-  /** A Map of GraphState to TierGlyph */
-  public Map getGraphStateTierHash() { return gstate2tier; }
-  public Map getGraphFactoryHash() { return graf2factory; }
-  public Map getGraphIdFactoryHash() { return grafid2factory; }
-
-  public Map getGraphNameTierHash() { return gname2tier; }
-  public Map getGraphIdTierHash() { return gid2tier; }
-
   TransformTierGlyph axis_tier;
 
   /** An un-collapsible instance.  It is hideable, though. */
-  public static IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates") {
-    /** Do nothing. */
-    public void setSeparate(boolean b) {}
-    /** Do nothing. */
-    public void setCollapsed(boolean b) {}
+  public static IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates", false) {
+    public boolean getSeparate() { return false; }
+    public boolean getCollapsed() { return false; }
+    public boolean getExpandable() { return false; }
     public void setColor(Color c) {
       UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
     }
@@ -565,7 +565,9 @@ public class SeqMapView extends JPanel
       //return UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_NAME, "Coordinates");
       return super.getHumanName();
     }
-    
+    public void setShow(boolean b) {
+      super.setShow(b);
+    }
   };
 
   public TransformTierGlyph getAxisTier() { return axis_tier; }
@@ -730,12 +732,10 @@ public class SeqMapView extends JPanel
     clearSelection();
     method2rtier = new HashMap();
     method2ftier = new HashMap();
-    gstate2tier = new HashMap();
-    gname2tier = new HashMap();
-    gid2tier = new HashMap();
+    gstyle2tier = new HashMap();
+    //gstyle2floatTier = new HashMap();
     match_glyphs = new Vector();
     seqmap.updateWidget();
-    GenericGraphGlyphFactory.clear();
   }
 
   /* //TODO
@@ -774,7 +774,12 @@ public class SeqMapView extends JPanel
 
   /** Sets the sequence; if null, has the same effect as calling clear(). */
   public void setAnnotatedSeq(AnnotatedBioSeq seq) {
-    setAnnotatedSeq(seq, false, false);
+    if ((seq == this.aseq) && (seq != null)) {
+      // if the seq is not changing, try to preserve current view
+      setAnnotatedSeq(seq, false, true);
+    } else {
+      setAnnotatedSeq(seq, false, false);
+    }
   }
 
   /**
@@ -847,7 +852,6 @@ public class SeqMapView extends JPanel
 
     ArrayList temp_tiers = null;
     int axis_index = 0;
-    boolean axis_was_hidden = false;
     match_glyphs = new Vector();
     java.util.List old_selections = Collections.EMPTY_LIST;
     double old_zoom_spot_x = seqmap.getZoomCoord(seqmap.X);
@@ -862,8 +866,6 @@ public class SeqMapView extends JPanel
       }
     }
 
-    if (same_seq || remember_tiers) {
-
       // stash annotation tiers for proper state restoration after resetting for same seq
       //    (but presumably added / deleted / modified annotations...)
 
@@ -877,7 +879,6 @@ public class SeqMapView extends JPanel
         if (tg == axis_tier) {
           if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
           axis_index = i;
-          axis_was_hidden = (axis_tier.getState() == TierGlyph.HIDDEN);
         }
         else {
           tg.removeAllChildren();
@@ -886,16 +887,13 @@ public class SeqMapView extends JPanel
           seqmap.removeTier(tg);
         }
       }
-    } else {
-      method2rtier = new HashMap();
-      method2ftier = new HashMap();
-      gstate2tier = new HashMap();
-      gname2tier = new HashMap();
-      gid2tier = new HashMap();
-    }
 
     seqmap.clearWidget();
     seqmap.clearSelected(); // may already be done by map.clearWidget()
+
+    pixel_floater_glyph.removeAllChildren();
+    pixel_floater_glyph.setParent(null);
+    seqmap.addItem(pixel_floater_glyph);
 
     aseq = seq;
 
@@ -970,7 +968,6 @@ public class SeqMapView extends JPanel
     }
 
     TransformTierGlyph at = addAxisTier(axis_index);
-    if (axis_was_hidden) {at.setState(TierGlyph.HIDDEN);}
     addAnnotationTiers();
     removeEmptyTiers();
     //map.sortTiers();
@@ -1090,85 +1087,13 @@ public class SeqMapView extends JPanel
   }
 
   void removeEmptyTiers() {
-    // synchronizing on method2ftier to ensure (hopefully) that entries Set of Map.Entries
-    //   will not change out from under the iterator
-    ArrayList keys_to_remove = new ArrayList();
-    synchronized (method2ftier) {
-      Set entries = method2ftier.entrySet();
-      Iterator iter = entries.iterator();
-      while (iter.hasNext()) {
-	Map.Entry ent = (Map.Entry)iter.next();
-	String key = (String)ent.getKey();
-	TierGlyph tg = (TierGlyph)ent.getValue();
-	if (tg.getChildCount() <= 0) {
-	  if (DEBUG_TIERS)  {
-	    System.out.println("in removeEmptyTiers(), removing tier: " + tg.getLabel());
-	  }
-
-          if (remember_tiers) {
-            tg.setState(TierGlyph.HIDDEN);
-          } else {
-            seqmap.removeTier(tg);
-            keys_to_remove.add(key);
-          }
-	} else {
-          //doesn't work: tg.restoreState(); // doesn't take into account AnnotStyle.getShow()
-          if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
-        }
-      }
-    }
-
-    for (int i=0; i<keys_to_remove.size(); i++) {
-      method2ftier.remove(keys_to_remove.get(i));
-    }
-
-    keys_to_remove = new ArrayList();
-    // synchronizing on method2rtier to ensure (hopefully) that entries Set of Map.Entries
-    //   will not change out from under the iterator
-    synchronized (method2rtier) {
-      Set entries = method2rtier.entrySet();
-      Iterator iter = entries.iterator();
-      while (iter.hasNext()) {
-	Map.Entry ent = (Map.Entry)iter.next();
-	String key = (String)ent.getKey();
-	TierGlyph tg = (TierGlyph)ent.getValue();
-	if (tg.getChildCount() <= 0) {
-	  if (DEBUG_TIERS)  {
-	    System.out.println("in removeEmptyTiers(), removing tier: " + tg.getLabel());
-	  }
-          if (remember_tiers) {
-            tg.setState(TierGlyph.HIDDEN);
-          } else {
-            seqmap.removeTier(tg);
-            keys_to_remove.add(key);
-          }
-	} else {
-          //doesn't work: tg.restoreState(); // doesn't take into account AnnotStyle.getShow()
-          if (tg.getAnnotStyle() != null) {tg.setStyle(tg.getAnnotStyle());}
-	}
-      }
-    }
-    for (int i=0; i<keys_to_remove.size(); i++) {
-      method2rtier.remove(keys_to_remove.get(i));
-    }
-
-    // now make sure getting rid of any empty tiers that weren't present in
-    // method2ftier or method2rtier (graph tiers, for instance)
-    // really should replace above with just this, and something within this loop to
-    //   ensure that ftier/rtier hashes get entries removed as well...
+    // Hides all empty tiers.  Doesn't really remove them.
     java.util.List tiers = seqmap.getTiers();
     int tiercount = tiers.size();
     for (int i=tiercount-1; i>=0; i--) {
-      TierGlyph tg = (TierGlyph)tiers.get(i);
+      TierGlyph tg = (TierGlyph) tiers.get(i);
       if (tg.getChildCount() <= 0) {
-        if (DEBUG_TIERS)  {
-          System.out.println("in removeEmptyTiers() part 2, removing tier: " + tg.getLabel());
-        }
-        if (remember_tiers) {
-          tg.setState(TierGlyph.HIDDEN);
-        } else {
-          seqmap.removeTier(tg);
-        }
+        tg.setState(TierGlyph.HIDDEN);
       }
     }
   }
@@ -1300,47 +1225,73 @@ public class SeqMapView extends JPanel
     return meth;
   }
 
+  // We only need a single GraphGlyphFactory because all graph properties 
+  // are in the GraphState object.
+  GenericGraphGlyphFactory graph_factory = null;
+  
+  public GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
+    if (graph_factory == null) {
+      graph_factory = new GenericGraphGlyphFactory();
+    }
+    return graph_factory;
+  }
+  
+  // We only need a single ScoredContainerGlyphFactory because all graph properties 
+  // are in the GraphState object.
+  ScoredContainerGlyphFactory container_factory = null;
+  
+  public ScoredContainerGlyphFactory getScoredContainerGlyphFactory() {
+    if (container_factory == null) {
+      container_factory = new ScoredContainerGlyphFactory();
+    }
+    return container_factory;
+  }
+  
+  public MapViewGlyphFactoryI getAnnotationGlyphFactory(String meth) {
+    if (meth == null) {
+      return null;
+    }
+    MapViewGlyphFactoryI factory;
+    factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
+    if (factory == null) {
+      java.util.List keyset = new ArrayList(regex2factory.keySet());
+      
+      // Look for a matching pattern, going backwards, so that the
+      // patterns from the last preferences read take precedence over the
+      // first ones read (such as the default prefs).  Within a single
+      // file, the last matching pattern will trump any earlier ones.
+      for (int j=keyset.size()-1 ; j >= 0 && factory == null; j--) {
+        java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
+        if (regex.matcher(meth).find()) {
+          factory = (MapViewGlyphFactoryI) regex2factory.get(regex);
+          // Put (a clone of?) the factory in meth2factory to speed things up next time through.
+          // (A clone would let us later modify the color, etc. of that copy)
+          meth2factory.put(meth, factory);
+        }
+      }
+    }
+    if (factory == null) {
+      factory = default_glyph_factory;
+      // Again, a clone might be better.
+      meth2factory.put(meth, default_glyph_factory);
+    }
+    return factory;
+  }
+  
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
     String meth = null;
-    if (annotSym instanceof GraphSym) {
-      //      factory =	(MapViewGlyphFactoryI)getGraphFactoryHash().get(annotSym);
-      factory = (MapViewGlyphFactoryI)getGraphIdFactoryHash().get(annotSym.getID());
-      if (factory == null) {
-	factory = new GenericGraphGlyphFactory(this);
-        getGraphFactoryHash().put(annotSym, factory);
-        getGraphIdFactoryHash().put(annotSym.getID(), factory);
-      }
+    
+    if (annotSym instanceof ScoredContainerSym) {
+      factory = getScoredContainerGlyphFactory();
+    }
+    else if (annotSym instanceof GraphSym) {
+      factory = getGenericGraphGlyphFactory();
     }
     else {
       meth = determineMethod(annotSym);
-      if (meth != null) {
-        factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
-        if (factory == null) {
-          java.util.List keyset = new ArrayList(regex2factory.keySet());
-
-          // Look for a matching pattern, going backwards, so that the
-          // patterns from the last preferences read take precedence over the
-          // first ones read (such as the default prefs).  Within a single
-          // file, the last matching pattern will trump any earlier ones.
-          for (int j=keyset.size()-1 ; j >= 0 && factory == null; j--) {
-            java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
-            if (regex.matcher(meth).find()) {
-              factory = (MapViewGlyphFactoryI) regex2factory.get(regex);
-              // Put (a clone of?) the factory in meth2factory to speed things up next time through.
-              // (A clone would let us later modify the color, etc. of that copy)
-              meth2factory.put(meth, factory);
-            }
-          }
-
-        }
-        if (factory == null) {
-          factory = default_glyph_factory;
-          // Again, a clone might be better.
-          meth2factory.put(meth, default_glyph_factory);
-        }
-      }
+      factory = getAnnotationGlyphFactory(meth);
     }
     if (factory == null) { factory = default_glyph_factory; }
 
@@ -1351,6 +1302,11 @@ public class SeqMapView extends JPanel
       }
     }
     factory.createGlyph(annotSym, this);
+    
+    doMiddlegroundShading(annotSym, meth);
+  }
+  
+  void doMiddlegroundShading(SeqSymmetry annotSym, String meth) {
 
     // do "middleground" shading for tracks loaded via DAS/2
     if ((meth != null) &&
@@ -1358,8 +1314,8 @@ public class SeqMapView extends JPanel
 	(annotSym.getChildCount() > 0)  &&
 	(annotSym.getChild(0) instanceof Das2FeatureRequestSym) ) {
       int child_count = annotSym.getChildCount();
-      TierGlyph fortier = (TierGlyph) getForwardTierHash().get(meth.toLowerCase());
-      TierGlyph revtier = (TierGlyph) getReverseTierHash().get(meth.toLowerCase());
+      TierGlyph fortier = (TierGlyph) method2ftier.get(meth.toLowerCase());
+      TierGlyph revtier = (TierGlyph) method2rtier.get(meth.toLowerCase());
       for (int i=0; i<child_count; i++) {
 	SeqSymmetry csym = annotSym.getChild(i);
 	if (csym instanceof Das2FeatureRequestSym) {
@@ -1442,6 +1398,12 @@ public class SeqMapView extends JPanel
     GlyphI rootglyph = seqmap.getScene().getGlyph();
     collectGraphs(rootglyph, glyphlist);
     // convert graph glyphs to GraphSyms via glyphsToSyms
+    
+    // Bring them all into the visual area
+    for (int i=0; i<glyphlist.size(); i++) {
+      GraphGlyphUtils.checkPixelBounds((GraphGlyph) glyphlist.get(i), getSeqMap());
+    }
+    
     java.util.List symlist = glyphsToSyms(glyphlist);
     //    System.out.println("called SeqMapView.selectAllGraphs(), select count: " + symlist.size());
     // call select(list) on list of graph syms
@@ -2167,8 +2129,9 @@ public class SeqMapView extends JPanel
    */
   public void zoomToRectangle(Rectangle2D rect) {
     if (rect != null ) {
+      double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);            
       seqmap.zoom ( NeoWidgetI.X, Math.min(
-        seqmap.getView().getPixelBox().width / (rect.width * 1.1f),
+        seqmap.getView().getPixelBox().width / desired_width,
         seqmap.getMaxZoom(NeoWidgetI.X)
         ));
       seqmap.scroll ( NeoWidgetI.X,  - ( seqmap.getVisibleRange()[0] ) );
@@ -2482,7 +2445,6 @@ public class SeqMapView extends JPanel
    *  will return the original GlyphI instead.
    *  @param top_level if true, will recurse up to the top-level parent, with
    *  certain restrictions: recursion will stop before reaching a TierGlyph
-   *  or RootGlyph or a glyph that isn't hitable.
    */
   public GlyphI getParent(GlyphI g, boolean top_level) {
     GlyphI result = g;
@@ -2612,9 +2574,14 @@ public class SeqMapView extends JPanel
       }
       else if (command.equals(printSymmetryMI.getText())) {
         SeqSymmetry sym = getSelectedSymmetry();
-        //TODO: Why not print ALL selections?
         if (sym == null) {
           IGB.errorPanel("No symmetry selected");
+        } else if (sym instanceof GraphSym) {
+          System.out.println("Graph Sym Selected");
+          GraphSym gs = (GraphSym) sym;
+          GraphState gstate = gs.getGraphState();
+          IAnnotStyle style = gstate.getTierStyle();
+          System.out.println("> " + gs.getGraphName() + ", " + gstate.hashCode() + ", " + style.hashCode());
         } else {
           SeqUtils.printSymmetry(sym);
         }
@@ -2770,9 +2737,9 @@ public class SeqMapView extends JPanel
     }
     if (selected_syms.size() == 1) {
       SeqSymmetry sym0 = (SeqSymmetry) selected_syms.get(0);
-      if (! (sym0 instanceof GraphSym)) {
+//      if (! (sym0 instanceof GraphSym)) {
         sym_popup.add(printSymmetryMI);
-      }
+//      }
     }
 
     for (int i=0; i<popup_listeners.size(); i++) {
@@ -2837,8 +2804,69 @@ public class SeqMapView extends JPanel
       }
     }
   }
+  
+  public GlyphI getPixelFloaterGlyph() {
+      PixelFloaterGlyph floater = pixel_floater_glyph;
+      Rectangle2D cbox = getSeqMap().getCoordBounds();
+      floater.setCoords(cbox.x, 0, cbox.width, 0);
 
+      return floater;
+  }
+  
+  /**
+   *  Returns a tier for the given IAnnotStyle, creating the tier if necessary.
+   *  Generally called by a Graph Glyph Factory.
+   *  @param tier_direction use {@link TierGlyph#DIRECTION_REVERSE} if you want
+   *  the tier to go below the axis. Other values have no effect.
+   */
+  public TierGlyph getGraphTier(IAnnotStyle style, int tier_direction) {
+    if (style == null) {
+      throw new NullPointerException();
+    }
+    
+    TierGlyph tier = (TierGlyph) gstyle2tier.get(style);
+    if (tier == null) {
+      tier = new TierGlyph(style);
+      setUpTierPacker(tier, true);
+      gstyle2tier.put(style, tier);
+    }
 
+    PackerI pack = tier.getPacker();
+    if (pack instanceof CollapsePacker) {
+      CollapsePacker cp = (CollapsePacker) pack;
+      cp.setParentSpacer(0); // fill tier to the top and bottom edges
+      cp.setAlignment(CollapsePacker.ALIGN_CENTER);
+    }
+    
+    tier.setDirection(tier_direction);
+    tier.setLabel(style.getHumanName());
+    tier.setFillColor(style.getBackground());
+    tier.setForegroundColor(style.getColor());
+    
+    if (getSeqMap().getTierIndex(tier) == -1) {
+      boolean above_axis = true;
+      if (tier_direction == TierGlyph.DIRECTION_REVERSE) {
+        above_axis = false;
+      } else {
+        above_axis = true;
+      }
+      getSeqMap().addTier(tier, above_axis);
+    }
+    return tier;
+  }
+  
+  /**
+   *  Hides a tier, but does not really remove it.  
+   *  Could be used in future to clean-up all references to the given
+   *  graph state and any tiers created for it.
+   */
+  public void removeTier(TierGlyph tier) {
+    //getSeqMap().removeTier(tier);
+    tier.removeAllChildren();
+    tier.setState(TierGlyph.HIDDEN);
+    // does nothing.
+  }
+  
   /**
    *  Returns a forward and reverse tier for the given method, creating them if they don't
    *  already exist.
@@ -2853,22 +2881,13 @@ public class SeqMapView extends JPanel
    *    If you want to treat the first one as mixed-direction, then place all
    *    the glyphs in it; the second tier will not be displayed if it remains empty.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyle style) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
       if (style == null) {
         throw new NullPointerException();
       }
-
-      // Always returns two tiers.  Could change to return only one tier if
-      // that is what the style suggests.
-
       AffyTieredMap map = this.getSeqMap();
 
-      // try to match up method with tier...
-      // have meth2forward, meth2reverse hashtables to map
-      //    method name to forward and reverse tier hashtables
-      Map method2ftier = this.getForwardTierHash();
-      Map method2rtier = this.getReverseTierHash();
-
+      // try to match up method with tiers...
       TierGlyph fortier = (TierGlyph)method2ftier.get(meth.toLowerCase());
       TierGlyph revtier = (TierGlyph)method2rtier.get(meth.toLowerCase());
 
@@ -2878,17 +2897,13 @@ public class SeqMapView extends JPanel
         setUpTierPacker(fortier, true);
         method2ftier.put(meth.toLowerCase(), fortier);
       }
-      if (style instanceof AnnotStyle) {
-        if (((AnnotStyle) style).getSeparate()) {
-          fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
-        } else {
-          fortier.setDirection(TierGlyph.DIRECTION_NONE);
-        }
-        fortier.setLabel(((AnnotStyle) style).getHumanName());
-      } else { // may be an instance of graph annot style
+
+      if (style.getSeparate()) {
         fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
-        fortier.setLabel(meth);
+      } else {
+        fortier.setDirection(TierGlyph.DIRECTION_NONE);
       }
+      fortier.setLabel(style.getHumanName());
 
       if (map.getTierIndex(fortier) == -1) {
         if (next_to_axis)  {
@@ -2904,11 +2919,7 @@ public class SeqMapView extends JPanel
         setUpTierPacker(revtier, false);
         method2rtier.put(meth.toLowerCase(), revtier);
       }
-      if (style instanceof AnnotStyle) {
-        revtier.setLabel(style.getHumanName());
-      } else { // style is a graph style or is null (this may not even be possible)
-        revtier.setLabel(meth);
-      }
+      revtier.setLabel(style.getHumanName());
 
       if (map.getTierIndex(revtier) == -1) {
         if (next_to_axis)  {
@@ -2918,12 +2929,17 @@ public class SeqMapView extends JPanel
         else { map.addTier(revtier, false); }
       }
 
-      TierGlyph[] tiers = {fortier, revtier};
-      return tiers;
+      return new TierGlyph[] {fortier, revtier};
   }
 
   void setUpTierPacker(TierGlyph tg, boolean above_axis) {
-    ExpandPacker ep = new FasterExpandPacker();
+    ExpandPacker ep = null;
+    if (tg.getAnnotStyle().isGraphTier()) {
+      ep = new ExpandPacker(); // this one doesn't assume constant heights
+      // slow in general, but fine for tiers with only graphs in them.
+    } else {
+      ep = new FasterExpandPacker(); // assumes constant heights
+    }
     if (above_axis) {
       ep.setMoveType(ExpandPacker.UP);
     } else {
@@ -2935,11 +2951,13 @@ public class SeqMapView extends JPanel
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     AnnotatedSeqGroup group = evt.getSelectedGroup();
-    if (IGB.DEBUG_EVENTS)  {
-      System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
-    }
-    else {
-      if (IGB.DEBUG_EVENTS)  { System.out.println("SeqMapView received seqGroupSelected() call, but group = null"); }
+    if (IGB.DEBUG_EVENTS) {
+      if (group != null) {
+        System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
+      }
+      else {
+        System.out.println("SeqMapView received seqGroupSelected() call, but group = null");
+      }
     }
 
     if ((aseq != null) && (aseq instanceof SmartAnnotBioSeq) &&
@@ -2990,6 +3008,5 @@ public class SeqMapView extends JPanel
     }
     return navigation_menu;
   }
-
 }
 

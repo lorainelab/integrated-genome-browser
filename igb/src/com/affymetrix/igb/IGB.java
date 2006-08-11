@@ -95,6 +95,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem gc_item;
   JMenuItem memory_item;
   JMenuItem about_item;
+  JMenuItem documentation_item;
   JMenuItem console_item;
 
   JMenuItem clear_item;
@@ -642,8 +643,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
     console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
     console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
+    documentation_item = new JMenuItem("Documentation...", KeyEvent.VK_D);
+    documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
 
     MenuUtil.addToMenu(help_menu, about_item);
+    MenuUtil.addToMenu(help_menu, documentation_item);
     MenuUtil.addToMenu(help_menu, console_item);
     if (ADD_DIAGNOSTICS) {
       MenuUtil.addToMenu(help_menu, gc_item);
@@ -653,6 +657,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
     about_item.addActionListener(this);
+    documentation_item.addActionListener(this);
     console_item.addActionListener(this);
     clear_item.addActionListener(this);
     clear_graphs_item.addActionListener(this);
@@ -1009,6 +1014,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == about_item) {
       showAboutDialog();
+    } else if (src == documentation_item) {
+      showDocumentationDialog();
     }
     else if (src == console_item) {
       ConsoleView.showConsole();
@@ -1097,6 +1104,40 @@ public class IGB implements ActionListener, ContextualPopupListener  {
      JOptionPane.DEFAULT_OPTION);
     final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
     //dialog.setResizable(true);
+    dialog.setVisible(true);
+  }
+
+  public void showDocumentationDialog() {
+    JPanel message_pane = new JPanel();
+    message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+    JTextArea about_text = new JTextArea();
+    about_text.append(DocumentationView.getDocumentationText());
+    message_pane.add(new JScrollPane(about_text));
+    
+    JButton affyB = new JButton("Go To IGB at Affymetrix");
+    JButton sfB = new JButton("Go To IGB at SourceForge");
+    affyB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/download_igb.affx");
+        }
+      } );
+    sfB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://sourceforge.net/projects/genoviz/");
+        }
+      } );
+    Box buttonP = Box.createHorizontalBox();
+    buttonP.add(Box.createHorizontalGlue());
+    buttonP.add(affyB);
+    buttonP.add(Box.createHorizontalGlue());
+    buttonP.add(sfB);
+    buttonP.add(Box.createHorizontalGlue());
+    message_pane.add(buttonP);
+
+    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+     JOptionPane.DEFAULT_OPTION);
+    final JDialog dialog = pane.createDialog(frm, "Documentation");
+    dialog.setResizable(true);
     dialog.setVisible(true);
   }
 

@@ -207,7 +207,7 @@ public class GraphGlyph extends Glyph {
       float prev_ytemp = ycoords[beg_index];
 
       //Point max_x_plus_width = new Point(zero_point.x, zero_point.y);
-      Point max_x_plus_width = new Point(0,0);
+      Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
       int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
       int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
@@ -286,10 +286,10 @@ public class GraphGlyph extends Glyph {
             // are overlapping spans, only do this from the largest previous (x+width) value
             // to an xA that is larger than that.
             if (curr_point.x >= max_x_plus_width.x) {
-              if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
+             // if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
                 g.drawLine(max_x_plus_width.x, max_x_plus_width.y,
                     curr_point.x, curr_point.y);
-              }
+             // }
             }
             if (curr_x_plus_width.x >= max_x_plus_width.x) {
               max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB

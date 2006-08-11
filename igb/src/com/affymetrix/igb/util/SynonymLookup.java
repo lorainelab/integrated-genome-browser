@@ -59,20 +59,15 @@ public class SynonymLookup {
     }
   }
 
-  public void loadSynonyms(InputStream istream) {
-    try {
-      InputStreamReader ireader = new InputStreamReader(istream);
-      BufferedReader br = new BufferedReader(ireader);
-      String line;
-      while ((line = br.readLine()) != null) {
-        String[] fields = line_regex.split(line);
-        if (fields.length > 0) {
-          addSynonyms(fields);
-        }
+  public void loadSynonyms(InputStream istream) throws IOException {
+    InputStreamReader ireader = new InputStreamReader(istream);
+    BufferedReader br = new BufferedReader(ireader);
+    String line;
+    while ((line = br.readLine()) != null) {
+      String[] fields = line_regex.split(line);
+      if (fields.length > 0) {
+        addSynonyms(fields);
       }
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
     }
   }
 

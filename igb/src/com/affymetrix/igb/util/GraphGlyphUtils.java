@@ -58,10 +58,9 @@ public class GraphGlyphUtils {
 
 
   /**
-   *  Return true if graph coords were changed, false otherwise.
-   *
-   *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
-   *   the glyph's coord box is also it's pixel box.
+   *  Checks to make sure the the boundaries of a floating glyph are
+   *  inside the map view.
+   *  See {@link checkPixelBounds(GraphGlyph, AffyTieredMap)}.
    */
   public static boolean checkPixelBounds(GraphGlyph gl, SeqMapView gviewer) {
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
@@ -69,24 +68,29 @@ public class GraphGlyphUtils {
   }
 
   /**
+   *  Checks to make sure the the boundaries of a floating glyph are
+   *  inside the map view.
    *  Return true if graph coords were changed, false otherwise.
-   *
+   *  If the glyph is not a floating glyph, this will have no effect on it
+   *  and will return false.
    *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
    *   the glyph's coord box is also it's pixel box.
    */
   public static boolean checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
     boolean changed_coords = false;
-    Rectangle mapbox = map.getView().getPixelBox();
-    Rectangle2D gbox = gl.getCoordBox();
-    if (gbox.y < mapbox.y) {
-      gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
-      //      System.out.println("adjusting graph coords + : " + gl.getCoordBox());
-      changed_coords = true;
-    }
-    else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
-      gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
-      //      System.out.println("adjusting graph coords - : " + gl.getCoordBox());
-      changed_coords = true;
+    if (gl.getGraphState().getFloatGraph() == true) {
+      Rectangle mapbox = map.getView().getPixelBox();
+      Rectangle2D gbox = gl.getCoordBox();
+      if (gbox.y < mapbox.y) {
+        gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
+        //      System.out.println("adjusting graph coords + : " + gl.getCoordBox());
+        changed_coords = true;
+      }
+      else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
+        gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
+        //      System.out.println("adjusting graph coords - : " + gl.getCoordBox());
+        changed_coords = true;
+      }
     }
     return changed_coords;
   }

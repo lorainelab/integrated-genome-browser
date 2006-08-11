@@ -17,12 +17,9 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.igb.util.LocalUrlCacher;
-
 /**
  *  A way of mapping synonyms to each other.
  */
-
 public class SynonymLookup {
   static boolean DEBUG = false;
   static final Pattern line_regex = Pattern.compile("\t");
@@ -162,6 +159,15 @@ public class SynonymLookup {
     }
     if (! list1.contains(str2)) {
       list1.add(str2);
+      // Make sure each synonym in the list maps to the complete list of synonyms.
+      // (Copy the arraylist to avoid ConcurrentModificationException's)
+      Iterator list1_iter = (new ArrayList(list1)).iterator();
+      while (list1_iter.hasNext()) {
+        String x = (String) list1_iter.next();
+        if (x != str1 && x != str2) {
+          addSynonym(x, str2);
+        }
+      }
     }
 
     ArrayList list2 = (ArrayList)lookup_hash.get(str2);
@@ -172,6 +178,13 @@ public class SynonymLookup {
     }
     if (! list2.contains(str1)) {
       list2.add(str1);
+      Iterator list2_iter = (new ArrayList(list2)).iterator();
+      while (list2_iter.hasNext()) {
+        String x = (String) list2_iter.next();
+        if (x != str1 && x != str2) {
+          addSynonym(x, str1);
+        }
+      }
     }
 
   }
@@ -216,5 +229,20 @@ public class SynonymLookup {
       }
     }
     return result;
+  }
+  
+  /** For debugging, prints all synonyms to stdout. */
+  public void printAllSynonyms() {
+    Iterator iter = lookup_hash.keySet().iterator();
+    while (iter.hasNext()) {
+      String key = (String) iter.next();
+      ArrayList syns = (ArrayList) lookup_hash.get(key);
+      System.out.println("KEY:  " + key);
+      System.out.println("SYNONYMS:  ");
+      for (int i=0; i<syns.size(); i++) {
+        System.out.println("  '" + syns.get(i) + "'");
+      }
+      System.out.println("");
+    }
   }
 }

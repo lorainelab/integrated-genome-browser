@@ -109,7 +109,7 @@ public class TierLabelManager {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     
     ArrayList symmetries = new ArrayList();
-    symmetries.addAll(gmodel.getSelectedSymmetriesOnAllSeqs());
+    symmetries.addAll(gmodel.getSelectedSymmetriesOnCurrentSeq());
 
     for (int j = 0; j<getAllTierLabels().size(); j++) {
       TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(j);
@@ -134,9 +134,9 @@ public class TierLabelManager {
       }
     }
 
-    if (selections_changed) {
+    //if (selections_changed) {
       gmodel.setSelectedSymmetries(symmetries, tiermap);
-    }
+    //}
   }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
@@ -364,6 +364,7 @@ public class TierLabelManager {
           labelmap.clearSelected();
         }
         Vector selected = nevt.getItems();
+        System.out.println("Clear selections here!");
         labelmap.select(selected);
         doGraphSelections(labelmap);
 //        labelmap.updateWidget();
@@ -388,6 +389,8 @@ public class TierLabelManager {
         finishDragging(dragging_label);
         dragging_label = null;
       }
+      
+      System.out.println("This many items selected: " + SingletonGenometryModel.getGenometryModel().getSelectedSymmetriesOnAllSeqs());
     }
 
     void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {

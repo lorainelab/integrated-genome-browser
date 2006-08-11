@@ -229,9 +229,9 @@ public class GraphGlyph extends Glyph {
       // figure out what is the last x index value for the loop
       if (draw_end_index >= xcoords.length) {
         if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
-          draw_end_index = xcoords.length;
-        } else {
           draw_end_index = xcoords.length - 1;
+        } else {
+          draw_end_index = xcoords.length - 2;
         }
       }
 
@@ -286,10 +286,8 @@ public class GraphGlyph extends Glyph {
             // are overlapping spans, only do this from the largest previous (x+width) value
             // to an xA that is larger than that.
             if (curr_point.x >= max_x_plus_width.x) {
-             // if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
-                g.drawLine(max_x_plus_width.x, max_x_plus_width.y,
-                    curr_point.x, curr_point.y);
-             // }
+              g.drawLine(max_x_plus_width.x, max_x_plus_width.y,
+                  curr_point.x, curr_point.y);
             }
             if (curr_x_plus_width.x >= max_x_plus_width.x) {
               max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
@@ -325,9 +323,11 @@ public class GraphGlyph extends Glyph {
             ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
           }
         } else if (graph_style == DOT_GRAPH) {
-          g.fillRect(curr_point.x, curr_point.y, 1, 1);
-          if (wcoords != null) {
-            g.fillRect(curr_x_plus_width.x, curr_point.y, 1, 1);
+          if (wcoords == null) {
+            g.fillRect(curr_point.x, curr_point.y, 1, 1);
+          }
+          else {
+            g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
           }
         } else if (graph_style == HEAT_MAP) {
           //       y = m(x-xmin) + ymin;

@@ -32,7 +32,7 @@ public class LabelledRectGlyph extends FillRectGlyph {
     if (label != null) {
       view.transformToPixels(coordbox, pixelbox);
       Graphics g = view.getGraphics();
-      g.setFont(fnt);
+      if (fnt != null) {g.setFont(fnt);}
       g.setColor(getBackgroundColor());
       FontMetrics fm = g.getFontMetrics();
       int text_width = fm.stringWidth(label);

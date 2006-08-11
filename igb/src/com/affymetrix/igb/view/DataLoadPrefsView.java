@@ -12,16 +12,23 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.prefs.*;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+
 import java.awt.Dimension;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
 
 public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
+  
+  static final String PREF_SYN_FILE_URL = "Synonyms File URL";
   
   static Map cache_usage_options;
   static Map usage2str;
@@ -31,6 +38,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
   JCheckBox cache_residuesCB;
   JComboBox cache_usage_selector;
   JButton reset_das_dna_serverB = new JButton("Reset");
+  JTextField syn_file_TF;
 
   static {
     String norm = "Normal Usage";
@@ -73,12 +81,47 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     das_dna_server_TF.setMaximumSize(new Dimension(das_dna_server_TF.getMaximumSize().width,
         das_dna_server_TF.getPreferredSize().height));
     server_box.add(das_dna_server_TF);
+    server_box.add(Box.createRigidArea(new Dimension(6,0)));
     JButton reset_das_dna_serverB = new JButton("Reset");
     server_box.add(reset_das_dna_serverB);
+    server_box.add(Box.createRigidArea(new Dimension(2,0)));
     reset_das_dna_serverB.addActionListener(reset_das_dna_server_al);
     server_box.setAlignmentX(0.0f);
     this.add(server_box);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
+    
+
+    Box syn_box = Box.createVerticalBox();
+    syn_box.setBorder(new javax.swing.border.TitledBorder("Personal Synonyms File"));
+    syn_file_TF = 
+        UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), 
+        PREF_SYN_FILE_URL, "");
+    syn_file_TF.setMaximumSize(new Dimension(syn_file_TF.getMaximumSize().width,
+        syn_file_TF.getPreferredSize().height));
+    JButton browse_for_syn_fileB = new JButton("Browse");
+    browse_for_syn_fileB.addActionListener(browse_for_syn_file_al);
+    syn_file_TF.setAlignmentX(0.0f);
+    syn_box.add(syn_file_TF);
+    
+    Box syn_box_line2 = new Box(BoxLayout.X_AXIS);
+    syn_box_line2.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    syn_box_line2.add(browse_for_syn_fileB);
+    syn_box_line2.add(Box.createRigidArea(new Dimension(10,0)));
+    JButton load_synonymsB = new JButton("Load Synonyms");
+    syn_box_line2.add(load_synonymsB);
+    syn_box_line2.setAlignmentX(0.0f);
+    syn_box.add(syn_box_line2);
+
+    syn_box.setAlignmentX(0.0f);
+    this.add(syn_box);
+    this.add(Box.createRigidArea(new Dimension(0, 5)));
+    
+    load_synonymsB.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        processSynFile();
+      }
+    });
+    
     
     cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
         UnibrowPrefsUtil.getTopNode(),
@@ -121,7 +164,8 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     
     Box clear_cache_box = Box.createHorizontalBox();
     clear_cache_box.setBorder(BorderFactory.createEmptyBorder(3,0,3,0));
-    clear_cache_box.add(Box.createHorizontalGlue());
+    //clear_cache_box.add(Box.createHorizontalGlue());
+    clear_cache_box.add(Box.createRigidArea(new Dimension(5,0)));
     clear_cache_box.add(clear_cacheB);
     clear_cache_box.add(Box.createHorizontalGlue());
     clear_cache_box.setAlignmentX(0.0f);
@@ -131,6 +175,30 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     clear_cacheB.addActionListener(clear_cache_al);
     
     this.add(Box.createVerticalGlue());
+
+    
+
+    // Load the personal synonyms file, if one is specified.
+    // It isn't crucial that this be run with SwingUtilities, but it doesn't hurt.
+    Runnable r = new Runnable() {
+      public void run() {
+        String second_synonym_path = UnibrowPrefsUtil.getLocationsNode().get(PREF_SYN_FILE_URL, "");
+        if (! second_synonym_path.trim().equals("")) {
+          File f = new File(second_synonym_path);
+          if (f.exists()) try {
+            System.out.println("Loading personal synonyms from: " + second_synonym_path);
+            FileInputStream fis = new FileInputStream(f);
+            SynonymLookup.getDefaultLookup().loadSynonyms(fis);
+          } catch (IOException ioe) {
+            System.out.println("Error trying to read synonyms from: "+second_synonym_path);
+            System.out.println("" + ioe.toString());
+          }
+        }
+      }
+    };
+  
+    SwingUtilities.invokeLater(r);
+    
   } 
  
   ActionListener clear_cache_al = new ActionListener() {
@@ -145,6 +213,25 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
           QuickLoadView2.DEFAULT_DAS_DNA_SERVER);
     }
   };
+
+  JFileChooser chooser = null;
+  
+  ActionListener browse_for_syn_file_al = new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+      if (chooser == null) {
+        chooser = new JFileChooser();
+      }
+      chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+      chooser.rescanCurrentDirectory();
+      
+      int option = chooser.showOpenDialog(DataLoadPrefsView.this);
+      
+      if (option == JFileChooser.APPROVE_OPTION) {
+        File f = chooser.getSelectedFile();
+        UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, f.getPath());
+      }
+    }
+  };
   
   // the cache_usage_selector will probably go away later
   ItemListener cache_usage_al = new ItemListener() {
@@ -155,6 +242,30 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
       UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
     }
   };
+  
+  void processSynFile() {
+    String path = syn_file_TF.getText();
+    try {
+      UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, path);
+      File f = new File(path);
+      if (! f.exists()) {
+        ErrorHandler.errorPanel("File Not Found",
+            "Synonyms file not found at the specified path\n" + path, this);
+        return;
+      } else {
+        FileInputStream fis = new FileInputStream(f);
+        SynonymLookup.getDefaultLookup().loadSynonyms(fis);
+        
+        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(), 
+            "Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
+      }
+    } catch (IOException ioe) {
+      ErrorHandler.errorPanel("ERROR",
+          "Exception while reading from file\n" + path,
+          this, ioe);
+    }
+  }
+  
   
   public String getName() {
     return "Data Sources";

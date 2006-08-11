@@ -285,15 +285,16 @@ public class GraphGlyph extends Glyph {
             // Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
             // are overlapping spans, only do this from the largest previous (x+width) value
             // to an xA that is larger than that.
-            if (curr_point.x > max_x_plus_width.x) {
+            if (curr_point.x >= max_x_plus_width.x) {
               if (max_x_plus_width.x > 0) { // don't draw a line leading to the first point
                 g.drawLine(max_x_plus_width.x, max_x_plus_width.y,
                     curr_point.x, curr_point.y);
               }
-              max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
             }
-            // Yes: the y-part is intentionally outside the if() statement
-            max_x_plus_width.y = curr_x_plus_width.y; // yB
+            if (curr_x_plus_width.x >= max_x_plus_width.x) {
+              max_x_plus_width.x = curr_x_plus_width.x; // xB + widthB
+              max_x_plus_width.y = curr_x_plus_width.y; // yB
+            }
           }
         } else if (graph_style == BAR_GRAPH) {
           // collect ymin, ymax, for all coord points that transform to

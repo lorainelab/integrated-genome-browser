@@ -176,7 +176,8 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       CurationSym curation_sym = new CurationSym();
       curation_sym.setProperty("method", current_type);
       SeqUtils.copyToMutable(annot_sym, curation_sym);
-      curation_sym.setID(current_type + "." + curation_id_count);
+      //      curation_sym.setID(current_type + "." + curation_id_count);
+      curation_sym.setID("das-private:" + current_type + "." + curation_id_count);
       curation_id_count++;
       aseq.addAnnotation(curation_sym);
 

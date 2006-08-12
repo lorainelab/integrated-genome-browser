@@ -117,6 +117,7 @@ public class LoadFileAction {
       chooser.merge_button.setSelected(true);
       chooser.merge_button.setEnabled(true);
     }
+    chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " +(unknown_group_count++));
 
     int option = chooser.showOpenDialog(gviewer.getFrame());
 
@@ -129,7 +130,8 @@ public class LoadFileAction {
 
       if (! chooser.merge_button.isSelected()) {
         // Not merging, so create a new Seq Group
-        AnnotatedSeqGroup new_group = getNewGroup();
+        String new_name = chooser.genome_name_TF.getText();
+        AnnotatedSeqGroup new_group = gmodel.addSeqGroup(new_name);
         gmodel.setSelectedSeqGroup(new_group);
       }
 
@@ -509,12 +511,12 @@ public class LoadFileAction {
     return aseq;
   }
 
-  private static AnnotatedSeqGroup getNewGroup() {
-    unknown_group_count++;
-    String new_name = UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
-    AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
-    return new_group;
-  }
+//  private static AnnotatedSeqGroup getNewGroup() {
+//    unknown_group_count++;
+//    String new_name = UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
+//    AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
+//    return new_group;
+//  }
 
   /** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
   private static MutableAnnotatedBioSeq getFirstSeq(java.util.List syms) {
@@ -545,14 +547,39 @@ public class LoadFileAction {
    *  dialog.
    */
   public static class MergeOptionFileChooser extends JFileChooser {
-    public JCheckBox merge_button = new JCheckBox("Merge with currently-loaded data", true);
+    public JRadioButton merge_button = new JRadioButton("Merge with currently-loaded data", true);
+    public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);
+    public JTextField genome_name_TF = new JTextField("Unknown Genome");
+    ButtonGroup bgroup = new ButtonGroup();
+    
+    
     protected JDialog createDialog(Component parent) throws HeadlessException {
       JDialog dialog = super.createDialog(parent);
+      bgroup.add((AbstractButton) merge_button);
+
+      bgroup.add(merge_button);
+      bgroup.add(no_merge_button);
+      merge_button.setSelected(true);
+
+      merge_button.setSelected(true);
+      genome_name_TF.setEnabled(no_merge_button.isSelected());
+      
+      no_merge_button.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          genome_name_TF.setEnabled(no_merge_button.isSelected());
+        }
+      });
+      
       Box box = new Box(BoxLayout.X_AXIS);
+      box.setBorder(BorderFactory.createEmptyBorder(5,5,8,5));
       box.add(Box.createHorizontalStrut(5));
       box.add(merge_button);
+      box.add(no_merge_button);
+      box.add(Box.createRigidArea(new Dimension(5,0)));
+      box.add(genome_name_TF);
       dialog.getContentPane().add(box, BorderLayout.SOUTH);
       merge_button.setMnemonic('M');
+      no_merge_button.setMnemonic('C');
       return dialog;
     }
   }

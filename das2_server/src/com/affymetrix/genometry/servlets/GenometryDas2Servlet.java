@@ -234,7 +234,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
       try {
 	lookup.loadSynonyms(new FileInputStream(synfile));
-      } catch (FileNotFoundException ex) {
+      } catch (Exception ex) {
 	ex.printStackTrace();
       }
     }

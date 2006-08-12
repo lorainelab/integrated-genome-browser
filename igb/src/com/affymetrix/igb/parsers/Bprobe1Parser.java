@@ -69,7 +69,6 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 public class Bprobe1Parser implements AnnotationWriter {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static boolean DEBUG = true;
-
   static java.util.List pref_list = new ArrayList();
   static {
     pref_list.add("bp2");

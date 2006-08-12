@@ -90,6 +90,10 @@ public class UnibrowControlServer {
         ServletHolder sholder = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME+"/*",
 						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
 	sholder.setInitOrder(1);
+
+	ServletHolder writeback_test_servlet = servlets.addServlet("Das2WritebackTester", "/Das2WritebackTester/*",
+						    "com.affymetrix.igb.servlets.Das2WritebackDevel");
+
         server.addContext(context);
 
         // Start the http server

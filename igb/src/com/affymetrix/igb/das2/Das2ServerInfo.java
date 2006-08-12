@@ -16,6 +16,7 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.regex.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
@@ -140,6 +141,7 @@ public class Das2ServerInfo  {
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");
+      System.out.println("Das Response content type: " + content_type);
       String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
       String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
 
@@ -147,7 +149,7 @@ public class Das2ServerInfo  {
       //      doesn't work without trailing slash, so adding it back in
       //      here.
       das_query = das_query+"/";
-      
+
       setDasVersion(das_version);
 
       System.out.println("DAS server version: " + das_version + ", status: " + das_status);
@@ -160,64 +162,64 @@ public class Das2ServerInfo  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
         String source_id = source.getAttribute(URID);
-	    if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
-	    String source_name = source.getAttribute(TITLE);
-	    if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
-	    System.out.println("title: " + source_name + ",  length: " + source_name.length());
-	    if (source_name == null || source_name.length() == 0) { source_name = source_id; }
-	    System.out.println("source_name: " + source_name);
+	if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
+	String source_name = source.getAttribute(TITLE);
+	if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
+	System.out.println("title: " + source_name + ",  length: " + source_name.length());
+	if (source_name == null || source_name.length() == 0) { source_name = source_id; }
+	System.out.println("source_name: " + source_name);
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxid");
 
-      URI source_uri = getBaseURI(das_query, source).resolve(source_id);
+	URI source_uri = getBaseURI(das_query, source).resolve(source_id);
 
-      Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
-                            source_taxon, source_description);
-      this.addDataSource(dasSource);
-      NodeList slist = source.getChildNodes();
-      for (int k=0; k < slist.getLength(); k++) {
-        if (slist.item(k).getNodeName().equals("VERSION"))  {
-          Element version = (Element)slist.item(k);
-          String version_id = version.getAttribute(URID);
-          if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
-          String version_name = version.getAttribute(TITLE);
-          if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
-          if (version_name.length() == 0) { version_name = version_id; }
-          System.out.println("version_name: " + version_name);
+	Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
+					      source_taxon, source_description);
+	this.addDataSource(dasSource);
+	NodeList slist = source.getChildNodes();
+	for (int k=0; k < slist.getLength(); k++) {
+	  if (slist.item(k).getNodeName().equals("VERSION"))  {
+	    Element version = (Element)slist.item(k);
+	    String version_id = version.getAttribute(URID);
+	    if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
+	    String version_name = version.getAttribute(TITLE);
+	    if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
+	    if (version_name.length() == 0) { version_name = version_id; }
+	    System.out.println("version_name: " + version_name);
 
-          String version_desc = version.getAttribute("description");
-          String version_info_url = version.getAttribute("doc_href");
-          //	    setDasVersionedSource(dasSource, version_id, false);
-          URI version_uri = getBaseURI(das_query, version).resolve(version_id);
-          System.out.println("base URI for version element: " + getBaseURI(das_query, version));
-          System.out.println("version URI: " + version_uri.toString());
-          //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
-          
-          Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
-                                    version_desc, version_info_url, false);
-          dasSource.addVersion(vsource);
+	    String version_desc = version.getAttribute("description");
+	    String version_info_url = version.getAttribute("doc_href");
+	    //	    setDasVersionedSource(dasSource, version_id, false);
+	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
+	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+	    System.out.println("version URI: " + version_uri.toString());
 
+	    //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
 
-          NodeList vlist = version.getChildNodes();
-          for (int j=0; j<vlist.getLength(); j++) {
-            String nodename = vlist.item(j).getNodeName();
-            // was CATEGORY, renamed CAPABILITY
-            if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
-              Element capel = (Element)vlist.item(j);
-              String captype = capel.getAttribute(TYPE);
-              String query_id = capel.getAttribute(QUERY_URI);
-              if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
-              URI base_uri = getBaseURI(das_query, capel);
-              URI cap_root = base_uri.resolve(query_id);
-              System.out.println("Capability: " + captype + ", URI: " + cap_root);
-              // for now don't worry about format subelements
-              Das2Capability cap = new Das2Capability(captype, cap_root, null);
-              vsource.addCapability(cap);
-              }
-            }
-          }
-        }
+	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
+								  version_desc, version_info_url, false);
+	    dasSource.addVersion(vsource);
+
+	    NodeList vlist = version.getChildNodes();
+	    for (int j=0; j<vlist.getLength(); j++) {
+	      String nodename = vlist.item(j).getNodeName();
+	      // was CATEGORY, renamed CAPABILITY
+	      if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
+		Element capel = (Element)vlist.item(j);
+		String captype = capel.getAttribute(TYPE);
+		String query_id = capel.getAttribute(QUERY_URI);
+		if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
+		URI base_uri = getBaseURI(das_query, capel);
+		URI cap_root = base_uri.resolve(query_id);
+		System.out.println("Capability: " + captype + ", URI: " + cap_root);
+		// for now don't worry about format subelements
+		Das2Capability cap = new Das2Capability(captype, cap_root, null);
+		vsource.addCapability(cap);
+	      }
+	    }
+	  }
+	}
       }
     }
     catch (Exception ex) {
@@ -226,6 +228,33 @@ public class Das2ServerInfo  {
     initialized = true;
     return initialized;
   }
+
+  /**
+	    static boolean TEST_WRITEBACK_SERVER = false;
+
+	    // hardwired hack to see test writeback server (which has version_id "yeast/S228C-writeback");
+	    Das2VersionedSource write_hack_src = null;
+	    boolean add_writeback_hack = false;
+	    if (TEST_WRITEBACK_SERVER && version_id.endsWith("yeast/S228C")) {
+	      System.out.println("adding writeback source hack");
+	      add_writeback_hack = true;
+	      URI hack_uri = new URI(version_uri.toString() + "-writeback");
+	      write_hack_src = new Das2VersionedSource(dasSource, hack_uri, version_name + "-writeback",
+						       null, null, false);
+	      dasSource.addVersion(write_hack_src);
+	    }
+
+		// hardwired hack to see test writeback server (which has version_id "yeast/S228C-writeback");
+		if (add_writeback_hack) {
+		  System.out.println("adding writeback capability hack");
+		  Pattern pat = Pattern.compile("yeast/S228C");
+		  Matcher mat = pat.matcher(cap_root.toString());
+		  String hack_root = mat.replaceAll("yeast/S228C-writeback");
+		  Das2Capability write_cap = new Das2Capability(captype, new URI(hack_root), null);
+		  write_hack_src.addCapability(write_cap);
+		}
+  */
+
 
   /**
    * Attempt to retrieve base URI for an Element from a DOM-level2 model

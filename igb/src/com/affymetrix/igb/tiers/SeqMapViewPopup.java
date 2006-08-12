@@ -15,6 +15,7 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
 import java.io.*;
+import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -152,6 +153,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
       saveToDas2(current_tier);
+    }
+  };
+
+  Action write_das_action = new AbstractAction("Test writing to DAS/2 server") {
+    public void actionPerformed(ActionEvent e) {
+      java.util.List current_tiers = handler.getSelectedTiers();
+      if (current_tiers.size() > 1) {
+        ErrorHandler.errorPanel("Must select only one tier");
+      }
+      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      testDas2Writeback(current_tier);
     }
   };
 
@@ -423,6 +435,138 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
+  public void testDas2Writeback(TierGlyph atier) {
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    String annot_type = atier.getLabel();
+    int childcount= atier.getChildCount();
+    java.util.List syms = new ArrayList(childcount);
+    int MAX_SYMS = 3;
+    for (int i=0; i<childcount; i++) {
+      GlyphI child = atier.getChild(i);
+      if (child.getInfo() instanceof SeqSymmetry) {
+	syms.add(child.getInfo());
+      }
+      if (i>=MAX_SYMS) { break; }
+    }
+
+    Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
+    System.out.println("writeback doc:");
+    das_parser.writeBackAnnotations(syms, aseq, "type/SO:region", System.out); // diagnostic
+    try {
+      System.out.println("Testing DAS/2 writeback: "+ syms.size());
+
+      //      URL writeback_url = new URL("http://localhost:7085/Das2WritebackTester/write");
+      URL writeback_url = new URL("http://genomics.ctrl.ucla.edu/~allenday/cgi-bin/das2xml-parser/stable1.pl");
+      URLConnection con = writeback_url.openConnection();
+      con.setDoInput(true);
+      con.setDoOutput(true);
+
+      OutputStream conos = con.getOutputStream();
+      BufferedOutputStream bos = new BufferedOutputStream(conos);
+      //      outputWritebackTestFile(bos);
+
+      //      das_parser.writeBackAnnotations(syms, aseq, annot_type, bos);
+      das_parser.writeBackAnnotations(syms, aseq, "type/SO:region", bos);
+
+      bos.flush();
+      bos.close();
+      InputStream istr = con.getInputStream();
+      System.out.println("****** Response from writeback server: ");
+
+      //  for now just need to change ids to match ids from writeback server
+      //  eventually want to completely replace syms with given ids with those from server (if they differ...)
+      BufferedReader reader = new BufferedReader(new InputStreamReader(istr));
+      String line;
+      while ((line = reader.readLine()) != null) {
+	System.out.println(line);
+      }
+      istr.close();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    System.out.println("finished test writeback");
+  }
+
+  public void outputWritebackTestFile(OutputStream ostr) {
+    String test_writeback_file = "C:/data/das2_testing/writeback_test5.xml";
+    // String test_writeback_file = "C:/data/das2_testing/allen_writeback_doc.xml";
+    try {
+      BufferedReader reader =
+	new BufferedReader(new InputStreamReader(new FileInputStream(new File(test_writeback_file))));
+      PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(ostr)));
+      String line;
+      while ((line = reader.readLine()) != null) {
+	writer.println(line);
+        System.out.println(line);
+      }
+      writer.flush();
+    }
+    catch (Exception ex) { ex.printStackTrace(); }
+  }
+
+  /*
+  public void saveCurationTier() {
+    System.out.println("trying to save tier back to DAS server");
+    TierGlyph atier = tier_manager.getCurrentTier();
+    if (atier==null) {
+      IGB.errorPanel("No curation tier to save");
+      return;
+    }
+    String tier_label = atier.getLabel();
+    if (tier_label.indexOf(" (+)") > 0) {
+      tier_label = tier_label.substring(0, tier_label.indexOf(" (+)"));
+    }
+    tier_label = tier_label + "_saved";
+    System.out.println("tier label = " + tier_label + ", tier info = " + atier.getInfo());
+    //    ArrayList leaves = new ArrayList();
+    AnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    String seqid = aseq.getID();
+    //    ArrayList syms_to_save = new ArrayList();
+    // collect symmetries to write out as DAS <FEATURE> elements
+    SeqSpan fullspan = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+    int sym_count = 0;
+
+    try {
+      String das_servlet_root = (String)IGB.getIGBPrefs().get("DasStashServletUrl");
+      if (das_servlet_root == null) {
+	das_servlet_root =   default_das_root;
+      }
+      String das_submit_url = das_servlet_root + "/das/Human_Apr_2003/submit_features";
+      URL das_submit_server = new URL(das_submit_url);
+      URLConnection con = das_submit_server.openConnection();
+      con.setDoInput(true);
+      con.setDoOutput(true);
+
+      OutputStream conos = con.getOutputStream();
+      BufferedOutputStream bos = new BufferedOutputStream(conos);
+      PrintWriter pw = new PrintWriter(bos);
+      das_parser.writeDasFeatHeader(fullspan, pw);
+      for (int i=0; i<atier.getChildCount(); i++) {
+	if (atier.getChild(i).getInfo() instanceof SeqSymmetry) {
+	  SeqSymmetry sym = (SeqSymmetry)(atier.getChild(i).getInfo());
+	  //	  das_parser.writeDasFeature(sym, aseq, "test", pw);
+	  das_parser.writeDasFeature(sym, aseq, tier_label, pw);
+	  sym_count++;
+	}
+      }
+      das_parser.writeDasFeatFooter(pw);
+      pw.flush();
+      pw.close();
+      //      conos.close();
+
+      InputStream istr = con.getInputStream();
+      istr.close();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    //    System.out.println("syms to save count: " + syms_to_save.size());
+    System.out.println("syms to save count: " + sym_count);
+  }
+  */
+
+
   public void saveToDas2(TierGlyph atier) {
     String annot_type = atier.getLabel();
     int childcount= atier.getChildCount();
@@ -625,6 +769,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     change_expand_max_all_action.setEnabled(not_empty);
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
+    save_bed_action.setEnabled(num_selections == 1);
+    save_das_action.setEnabled(num_selections == 1);
+    write_das_action.setEnabled(num_selections == 1);
     JMenu save_menu = new JMenu("Save Annotations");
 
     if (num_selections == 1) {
@@ -670,9 +817,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //popup.add(expand_all_action);
     //popup.add(change_expand_max_all_action);
     popup.add(new JSeparator());
+
     popup.add(save_menu);
     save_menu.add(save_bed_action);
     save_menu.add(save_das_action);
+    //    save_menu.add(write_das_action);
+
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
     popup.add(coverage_action);

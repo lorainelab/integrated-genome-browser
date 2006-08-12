@@ -286,7 +286,56 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
   }
   
   public String getHelpTextHTML() {
-    return null;
+    StringBuffer sb = new StringBuffer();
+
+    sb.append("<h1>" + this.getName() + "</h1>\n");
+    sb.append("<p>\n");
+    sb.append("This panel allows you to change settings for data sources.  ");
+    sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Personal QuickLoad URL</h2>\n");
+    sb.append("Optional, generally left blank.  You can put the URL of a local or remote directory ");
+    sb.append("that contains QuickLoad data for species that are of interest to you. ");
+    sb.append("Documentation for the QuickLoad directory structure can be found here: ");
+    sb.append("<pre>\nhttp://sourceforge.net/docman/?group_id=129420\n</pre>");
+    sb.append("It is possible to use a personal server and the NetAffx server in the same session. ");
+    sb.append("Use the pull-down selector in the 'Data Access' 'QuickLoad' tab to switch between them. ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Das DNA Server URL</h2>\n");
+    sb.append("Optional. Specifies the DAS server where you wish to download DNA residues. ");
+    sb.append("This server is used when you press 'Load Sequence in View'. ");
+    sb.append("(The current QuickLoad server is used when you press 'Load All Sequence'). ");
+    sb.append("The most common value here is <pre>http://genome.cse.ucsc.edu/cgi-bin/das</pre> ");
+    sb.append("but that server doesn't include data for all species.");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Personal Synonyms File</h2>\n");
+    sb.append("Optional.  The location of a synonyms file to use to help resolve cases where ");
+    sb.append("different data files refer to the same genome or chromosome by different names. ");
+    sb.append("For instance 'hg16' = 'ncbi.v34' and 'chrM' = 'chrMT' and 'chr1' = 'CHR1'. ");
+    sb.append("This is simply a tab-delimited file where entries on the same row are all synonymous. ");
+    sb.append("Synonyms will be <b>merged</b> from the NetAffx QuickLoad server, your personal QuickLoad server, and the file listed here. ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("<h2>Cache</h2>\n");
+    sb.append("IGB stores files downloaded over the network in a local cache. ");
+    sb.append("Files loaded from a local filesystem or network filesystem are not cached. ");
+    sb.append("We recommend that you leave the 'Cache Usage' setting on 'Normal' and ");
+    sb.append("that you choose true for both 'Cache Annotations' and 'Cache DNA Residues'.");
+    sb.append("If disk storage space is a problem, you can press the 'Clear Cache' button. ");
+    sb.append("You may also choose to turn the cache off, though performance will degrade. ");
+    sb.append("Some, but not all, users find it necessary to turn off the cache when they ");
+    sb.append("are not connected to the internet.  For most users, this is not necessary as ");
+    sb.append("long as the cache already contains a few essential files. ");
+    sb.append("</p>\n");
+        
+    return sb.toString();
   }
   
   public String getInfoURL() {

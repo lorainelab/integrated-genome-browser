@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -36,7 +36,7 @@ public class DasUtils {
    *  String you request.
    *  @return a matching source on the server, or null.
    */
-  public static String findDasSource(String das_server, String source_synonym) 
+  public static String findDasSource(String das_server, String source_synonym)
   throws IOException, SAXException {
     String result = null;
     //      System.out.println("in DasUtils.findDasSource()");
@@ -56,7 +56,7 @@ public class DasUtils {
    *  String you request.
    *  @return a matching sequence id on the server, or null.
    */
-  public static String findDasSeqID(String das_server, String das_source, String seqid_synonym) 
+  public static String findDasSeqID(String das_server, String das_source, String seqid_synonym)
   throws IOException, SAXException {
     String result = null;
     //      System.out.println("in DasUtils.findDasSeqID()");
@@ -67,7 +67,7 @@ public class DasUtils {
     Document doc = DasLoader.getDocument(request_str);
     java.util.List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
 
-    result = lookup.findMatchingSynonym(segments,  seqid_synonym);      
+    result = lookup.findMatchingSynonym(segments,  seqid_synonym);
     return result;
   }
 
@@ -78,7 +78,7 @@ public class DasUtils {
    *  (min+1)/max before passing to DAS server
    */
   public static String getDasResidues(String das_server, String das_source, String das_seqid,
-				      int min, int max) 
+				      int min, int max)
   throws IOException, SAXException {
     String residues = null;
     String request = das_server + "/" +
@@ -92,7 +92,7 @@ public class DasUtils {
     return residues;
   }
 
-  public static String parseDasResidues(InputStream das_dna_result) 
+  public static String parseDasResidues(InputStream das_dna_result)
   throws IOException, SAXException {
     String residues = null;
 
@@ -134,7 +134,7 @@ public class DasUtils {
 
     return residues;
   }
-  
+
   /**
    *  A thin wrapper around {@link DasLoader#getDocument(InputStream)}.
    */
@@ -142,5 +142,5 @@ public class DasUtils {
     Document doc = DasLoader.getDocument(istr);
     return doc;
   }
-  
+
 }

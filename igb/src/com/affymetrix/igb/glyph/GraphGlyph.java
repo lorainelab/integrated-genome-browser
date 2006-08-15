@@ -295,11 +295,7 @@ public class GraphGlyph extends Glyph {
           }
         } else if (graph_style == BAR_GRAPH) {
           // collect ymin, ymax, for all coord points that transform to
-          if (prev_point.x != curr_point.x) {
-            //	    g.drawLine(curr_point.x, zero_point.y, curr_point.x, curr_point.y);
-            //	    g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymax_pixel);
-            //	    g.drawLine(prev_point.x, ymin_pixel, prev_point.x, ymax_pixel);
-            //	    g.fillRect(prev_point.x, ymin_pixel, 1, ymax_pixel - ymin_pixel);
+          if (prev_point.x != curr_point.x || wcoords != null) {
             int yheight_pixel = ymax_pixel - ymin_pixel;
             if (yheight_pixel < 1) { yheight_pixel = 1; }
             

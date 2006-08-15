@@ -14,7 +14,6 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
@@ -74,7 +73,7 @@ public class GraphGlyph extends Glyph {
   int xcoords[];
   int wcoords[];
   float ycoords[];
-  //  FillRectGlyph handle;
+
   int handle_width = 10;  // width of handle in pixels
   int handle_height = 5;  // height of handle in pixels
 
@@ -330,14 +329,12 @@ public class GraphGlyph extends Glyph {
             g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
           }
         } else if (graph_style == HEAT_MAP) {
-          //       y = m(x-xmin) + ymin;
-          //   and for heatmap bins, ymin = 0,
-          //     so y = m(x-xmin)
-          //	  int heatmap_index = (int)(heatmap_scaling * (ytemp - getVisibleMinY()));
-          //	  double heatmap_index = heatmap_scaling * (ytemp - getVisibleMinY());
-          double heatmap_index = heatmap_scaling * (prev_ytemp - getVisibleMinY());
+
+          float the_y = (wcoords == null) ? prev_ytemp : ytemp;
+          int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
           if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
           g.setColor(heatmap_colors[(int)heatmap_index]);
+          
           if (wcoords == null) {
             // with fillRect(), need to add one to the height
             g.fillRect(prev_point.x, pixelbox.y,

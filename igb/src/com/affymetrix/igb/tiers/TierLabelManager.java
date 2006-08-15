@@ -103,7 +103,6 @@ public class TierLabelManager {
     }
 
     java.util.List labels = getAllTierLabels();
-    int tiercount = labels.size();
     boolean selections_changed = false;
     
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -364,7 +363,6 @@ public class TierLabelManager {
           labelmap.clearSelected();
         }
         Vector selected = nevt.getItems();
-        System.out.println("Clear selections here!");
         labelmap.select(selected);
         doGraphSelections(labelmap);
 //        labelmap.updateWidget();
@@ -388,9 +386,7 @@ public class TierLabelManager {
       if (evt.getSource() == labelmap && dragging_label != null) {
         finishDragging(dragging_label);
         dragging_label = null;
-      }
-      
-      System.out.println("This many items selected: " + SingletonGenometryModel.getGenometryModel().getSelectedSymmetriesOnAllSeqs());
+      }      
     }
 
     void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {

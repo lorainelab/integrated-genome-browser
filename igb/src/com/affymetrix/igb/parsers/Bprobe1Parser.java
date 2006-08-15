@@ -32,7 +32,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *  the probeset ids, and making some assumptions that I'm pretty sure the exon probes meet:
  *    a) all probes are same length
  *    b) all probes align to a contiguous genome interval (no split probes)
- *    c) probeset ids can be represented numerically
+ *    c) probeset ids (minus a prefix) can be represented numerically
  *    d) all probes within a probeset are on same strand
  *
  *  This "microformat" averages out to about 5.3 bytes/probe
@@ -76,6 +76,11 @@ public class Bprobe1Parser implements AnnotationWriter {
 
   public List parse(InputStream istr, AnnotatedSeqGroup group,
     boolean annotate_seq, String default_type) throws IOException {
+    return parse(istr, group, annotate_seq, default_type, false);
+  }
+
+  public List parse(InputStream istr, AnnotatedSeqGroup group,
+    boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
 
     BufferedInputStream bis;
     Map tagvals = new LinkedHashMap();
@@ -176,9 +181,13 @@ public class Bprobe1Parser implements AnnotationWriter {
             int min = dis.readInt();
 	    cmins[k] = min;
           }
-	  syms[i] = new EfficientProbesetSymA(cmins, probe_length, forward, id_prefix, nid, aseq);
-	  container_sym.addChild(syms[i]);
-	  results.add(syms[i]);
+	  SeqSymmetry psym = new EfficientProbesetSymA(cmins, probe_length, forward, id_prefix, nid, aseq);
+	  syms[i]  = psym;
+	  container_sym.addChild(psym);
+	  results.add(psym);
+	  if (populate_id_hash) {
+	    group.addToIndex(psym.getID(), psym);
+	  }
         }
 	if (annotate_seq) {
 	  aseq.addAnnotation(container_sym);
@@ -241,7 +250,8 @@ public class Bprobe1Parser implements AnnotationWriter {
       dos.writeInt(0);  // no tagval properties...
       Iterator siter = syms.iterator();
       while (siter.hasNext())  {
-	EfficientProbesetSymA psym  = (EfficientProbesetSymA)siter.next();
+	//	EfficientProbesetSymA psym  = (EfficientProbesetSymA)siter.next();
+	SeqSymmetry psym = (SeqSymmetry)siter.next();
 	writeProbeset(psym, aseq, dos);
       }
       dos.flush();
@@ -327,7 +337,8 @@ public class Bprobe1Parser implements AnnotationWriter {
 	  SeqSymmetry cont = aseq.getAnnotation(i);
 	  int annot_count = cont.getChildCount();
 	  for (int k=0; k<annot_count; k++) {
-	    EfficientProbesetSymA psym = (EfficientProbesetSymA)cont.getChild(k);
+	    //	    EfficientProbesetSymA psym = (EfficientProbesetSymA)cont.getChild(k);
+	    SeqSymmetry psym = (SeqSymmetry)cont.getChild(k);
 	    writeProbeset(psym, aseq, dos);
 	  }
 	  /*
@@ -359,10 +370,17 @@ public class Bprobe1Parser implements AnnotationWriter {
   }
 
 
-  protected static void writeProbeset(EfficientProbesetSymA psym, BioSeq aseq, DataOutputStream dos) throws IOException {
+  //  protected static void writeProbeset(EfficientPrebesetSymA psym, BioSeq aseq, DataOutputStream dos) throws IOException {
+  protected static void writeProbeset(SeqSymmetry psym, BioSeq aseq, DataOutputStream dos) throws IOException {
     SeqSpan pspan = psym.getSpan(aseq);
     int child_count = psym.getChildCount();
-    int intid = psym.getIntID();
+    int intid;
+    if (psym instanceof EfficientProbesetSymA) {
+      intid = ((EfficientProbesetSymA)psym).getIntID();
+    }
+    else {
+      intid = Integer.parseInt(psym.getID());
+    }
     dos.writeInt(intid);  // probeset id representated as an integer
     // sign of strnad_and_count indicates forward (+) or reverse (-) strand
     byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);

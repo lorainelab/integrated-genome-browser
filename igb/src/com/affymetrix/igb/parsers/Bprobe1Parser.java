@@ -125,6 +125,9 @@ public class Bprobe1Parser implements AnnotationWriter {
       int probe_length = dis.readInt();
       if (version2) {
 	id_prefix = dis.readUTF();
+	if (! id_prefix.endsWith(":")) {
+	  id_prefix += ":";
+	}
       }
       int seq_count = dis.readInt();
       if (DEBUG) {

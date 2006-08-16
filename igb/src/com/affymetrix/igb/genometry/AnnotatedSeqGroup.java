@@ -208,6 +208,53 @@ public class AnnotatedSeqGroup {
   }
 
   /**
+   *  any syms found are appended to results list -- it is responsibility of
+   *   calling code to clear out results list before calling findSyms() if desired.
+   */
+  public boolean findSyms(String id, java.util.List results) {
+    return findSyms(id, results, true);
+  }
+  public boolean findSyms(String id, java.util.List results, boolean try_appended_id) {
+    boolean success = false;
+    if (id != null) {
+      String lid = id.toLowerCase();
+      Object obj = id2sym_hash.get(lid);
+      if (obj instanceof SeqSymmetry) {
+        results.add(obj);
+        success = true;
+      }
+      else if (obj instanceof java.util.List) {
+        java.util.List syms = (java.util.List) obj;
+        int scount = syms.size();
+        for (int i = 0; i < scount; i++) {
+          results.add(syms.get(i));
+          success = true;
+        }
+      }
+      // try id appended with ":n" where n is 0, 1, etc. till there is no match
+      else if (obj == null && try_appended_id) {
+        int postfix = 0;
+        Object appendobj;
+        while ( (appendobj = id2sym_hash.get(lid + "." + postfix)) != null) {
+          if (appendobj instanceof SeqSymmetry) {
+            results.add(appendobj);
+            success = true;
+          }
+          else if (appendobj instanceof java.util.List) {
+            java.util.List syms = (java.util.List) appendobj;
+            int scount = syms.size();
+            for (int i = 0; i < scount; i++) {
+              results.add(syms.get(i));
+              success = true;
+            }
+          }
+        }
+        postfix++;
+      }
+    }
+    return success;
+  }
+  /**
    *  Assosicates a symmetry with a case-insensitive ID.  You can later retrieve the
    *  list of all matching symmetries for a given ID by calling findSyms(String).
    *  Niether argument should be null.

@@ -27,7 +27,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *  is too small for you to see the children.
  */
 public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
-
+  Color bgcolor = Color.white;
+  
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -39,10 +40,12 @@ public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
     pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
     pixelbox.height = Math.max ( pixelbox.height, min_pixels_height );
     
-    g.setColor(getBackgroundColor());
+    //    g.setColor(getBackgroundColor());
+    g.setColor(getColor());
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
     if (pixelbox.width > 2 && pixelbox.height > 2) {
-      g.setColor(getBackgroundColor().darker());
+      //      g.setColor(getBackgroundColor().darker());
+      g.setColor(bgcolor);
       g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-2, pixelbox.height-2);
     }
 
@@ -54,5 +57,6 @@ public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
    */
   public void setColor(Color c) {
     super.setColor(c);
+    bgcolor = c.darker();
   }
 }

@@ -206,7 +206,7 @@ public class LoadFileAction {
         aseq = getLastSeq(results);
       }
       else {
-      
+
       int file_length = (int)annotfile.length();
       //fistr = new FileInputStream(annotfile);
       StringBuffer sb = new StringBuffer();
@@ -229,7 +229,7 @@ public class LoadFileAction {
       else {
         aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
       }
-      
+
       }
     }
     catch (Exception ex) {
@@ -241,7 +241,7 @@ public class LoadFileAction {
     return aseq;
   }
 
-  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, MutableAnnotatedBioSeq input_seq) 
+  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     IOException ioe = null;
     MutableAnnotatedBioSeq result = null;
@@ -256,7 +256,7 @@ public class LoadFileAction {
     } finally {
       if (istr != null) try {istr.close();} catch (Exception e) {}
     }
-    
+
     if (ioe != null) {
       throw ioe;
     }
@@ -265,7 +265,7 @@ public class LoadFileAction {
   }
 
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr, String stream_name,
-                                     MutableAnnotatedBioSeq input_seq) 
+                                     MutableAnnotatedBioSeq input_seq)
   throws IOException {
     return load(gviewer, instr, stream_name, input_seq, -1);
   }
@@ -277,8 +277,9 @@ public class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
-        String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length) 
+        String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length)
   throws IOException {
+    System.out.println("loading file: " + stream_name);
 
     Exception the_exception = null;
     MutableAnnotatedBioSeq aseq = null;
@@ -435,7 +436,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
         Bprobe1Parser parser = new Bprobe1Parser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bp"));
-        parser.parse(str, selected_group, true, annot_type);
+        parser.parse(str, selected_group, true, annot_type, true);
         aseq = input_seq;
         parser = null;
       }
@@ -528,7 +529,7 @@ public class LoadFileAction {
     }
     return first_seq;
   }
-  
+
   /** Returns the first BioSeq on the last SeqSymmetry in the given list, or null. */
   private static MutableAnnotatedBioSeq getLastSeq(java.util.List syms) {
     MutableAnnotatedBioSeq last_seq = null;
@@ -551,8 +552,8 @@ public class LoadFileAction {
     public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);
     public JTextField genome_name_TF = new JTextField("Unknown Genome");
     ButtonGroup bgroup = new ButtonGroup();
-    
-    
+
+
     protected JDialog createDialog(Component parent) throws HeadlessException {
       JDialog dialog = super.createDialog(parent);
       bgroup.add((AbstractButton) merge_button);
@@ -563,13 +564,13 @@ public class LoadFileAction {
 
       merge_button.setSelected(true);
       genome_name_TF.setEnabled(no_merge_button.isSelected());
-      
+
       no_merge_button.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           genome_name_TF.setEnabled(no_merge_button.isSelected());
         }
       });
-      
+
       Box box = new Box(BoxLayout.X_AXIS);
       box.setBorder(BorderFactory.createEmptyBorder(5,5,8,5));
       box.add(Box.createHorizontalStrut(5));

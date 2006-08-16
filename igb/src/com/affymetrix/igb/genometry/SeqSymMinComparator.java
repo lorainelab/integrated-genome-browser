@@ -43,18 +43,20 @@ public class SeqSymMinComparator implements Comparator {
   public int compare(Object obj1, Object obj2) {
     SeqSymmetry sym1 = (SeqSymmetry)obj1;
     SeqSymmetry sym2 = (SeqSymmetry)obj2;
+    SeqSpan span1 = sym1.getSpan(seq);
+    SeqSpan span2 = sym2.getSpan(seq);
     if (ascending) {
-      if (sym1.getSpan(seq).getMin() < sym2.getSpan(seq).getMin()) { return -1; }
-      else if (sym1.getSpan(seq).getMin() > sym2.getSpan(seq).getMin()) { return 1; }
-      else if (sym1.getSpan(seq).getMax() < sym2.getSpan(seq).getMax()) { return -1; }
-      else if (sym1.getSpan(seq).getMax() > sym2.getSpan(seq).getMax()) { return 1; }
+      if (span1.getMin() < span2.getMin()) { return -1; }
+      else if (span1.getMin() > span2.getMin()) { return 1; }
+      else if (span1.getMax() < span2.getMax()) { return -1; }
+      else if (span1.getMax() > span2.getMax()) { return 1; }
       else { return 0; }
     }
     else {
-      if (sym1.getSpan(seq).getMin() > sym2.getSpan(seq).getMin()) { return -1; }
-      else if (sym1.getSpan(seq).getMin() < sym2.getSpan(seq).getMin()) { return 1; }
-      else if (sym1.getSpan(seq).getMax() > sym2.getSpan(seq).getMax()) { return -1; }
-      else if (sym1.getSpan(seq).getMax() < sym2.getSpan(seq).getMax()) { return 1; }
+      if (span1.getMin() > span2.getMin()) { return -1; }
+      else if (span1.getMin() < span2.getMin()) { return 1; }
+      else if (span1.getMax() > span2.getMax()) { return -1; }
+      else if (span1.getMax() < span2.getMax()) { return 1; }
       else { return 0; }
     }
   }

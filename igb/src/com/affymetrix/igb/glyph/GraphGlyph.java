@@ -59,7 +59,6 @@ public class GraphGlyph extends Glyph {
 
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
-  boolean hide_zero_points = true;
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -235,11 +234,7 @@ public class GraphGlyph extends Glyph {
       }
 
       float ytemp;
-      int ymin_pixel = zero_point.y;
-      int ymax_pixel = zero_point.y;
-
-
-      
+      int ymin_pixel, yheight_pixel;
       
       g.translate(xpix_offset, 0);
       
@@ -294,29 +289,23 @@ public class GraphGlyph extends Glyph {
             }
           }
         } else if (graph_style == BAR_GRAPH) {
-          // collect ymin, ymax, for all coord points that transform to
-          if (prev_point.x != curr_point.x || wcoords != null) {
-            int yheight_pixel = ymax_pixel - ymin_pixel;
-            if (yheight_pixel < 1) { yheight_pixel = 1; }
-            
-            if (wcoords == null) {
-              // when using fillRect, we should add 1 to the height
-              g.fillRect(prev_point.x, ymin_pixel, 1, yheight_pixel + 1);
-            } else {
-              if (curr_point.y > zero_point.y) {
-                g.drawRect(curr_point.x, zero_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), curr_point.y - zero_point.y);
-              } else {
-                g.drawRect(curr_point.x, curr_point.y, Math.max(1, curr_x_plus_width.x-curr_point.x), zero_point.y - curr_point.y);
-              }
-            }
-            
-            ymin_pixel = curr_point.y < zero_point.y ? curr_point.y : zero_point.y;
-            ymax_pixel = curr_point.y > zero_point.y ? curr_point.y : zero_point.y;
+          
+          if (curr_point.y > zero_point.y) {
+            ymin_pixel = zero_point.y;
+            yheight_pixel = curr_point.y - zero_point.y;
           } else {
-            // inlining Math.min(ymin_pixel, curr_point.y) and Math.max(ymax_pixel, curr_point.y);
-            ymin_pixel = curr_point.y < ymin_pixel ? curr_point.y : ymin_pixel;
-            ymax_pixel = curr_point.y > ymax_pixel ? curr_point.y : ymax_pixel;
+            ymin_pixel = curr_point.y;
+            yheight_pixel = zero_point.y - curr_point.y;
           }
+          if (yheight_pixel < 1) { yheight_pixel = 1; }
+          
+          if (wcoords == null) {
+            g.fillRect(curr_point.x, ymin_pixel, 1, yheight_pixel + 1);
+          } else {
+            final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
+            g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
+          }
+          
         } else if (graph_style == DOT_GRAPH) {
           if (wcoords == null) {
             g.fillRect(curr_point.x, curr_point.y, 1, 1);
@@ -353,17 +342,23 @@ public class GraphGlyph extends Glyph {
 //	  }
 //	}
         else if (graph_style == STAIRSTEP_GRAPH) {
-          if (i<=0 || (!(hide_zero_points && ycoords[i-1] == 0))) {
+          if (i<=0 || (ycoords[i-1] != 0)) {
             int stairwidth = curr_point.x - prev_point.x;
-            //	    if ((stairwidth < 0) || (stairwidth > (view.getPixelBox().width-5))) {
             if ((stairwidth < 0) || (stairwidth > 10000)) {
               // skip drawing if width > 10000?  testing fix for linux problem
             } else {
               // draw the same regardless of whether wcoords == null
               g.fillRect(prev_point.x, Math.min(zero_point.y, prev_point.y),
-                  Math.max(1, (curr_point.x - prev_point.x)),
+                  Math.max(1, stairwidth),
                   Math.max(1, (Math.abs(prev_point.y - zero_point.y))) );
             }
+          }
+          // If this is the very last point, special rules apply
+          if (i == draw_end_index) {
+            int stairwidth = (wcoords == null) ? 1 : curr_x_plus_width.x - curr_point.x;
+            g.fillRect(curr_point.x, Math.min(zero_point.y, curr_point.y),
+                Math.max(1, stairwidth),
+                Math.max(1, (Math.abs(curr_point.y - zero_point.y))) );
           }
         }
         prev_point.x = curr_point.x;

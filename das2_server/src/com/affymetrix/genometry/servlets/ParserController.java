@@ -81,8 +81,9 @@ public class ParserController {
 	System.out.println("loading via Bprobe1Parser: " + stream_name);
 	Bprobe1Parser bp1_reader = new Bprobe1Parser();
 	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bp"));
-	//        bp1_reader.parse(str, seq_group, true, annot_type);
-	results = bp1_reader.parse(str, seq_group, true, annot_type);
+        // parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
+        //   (to save memory)
+	results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 	System.out.println("done loading via Bprobe1Parser: " + stream_name);
       }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {

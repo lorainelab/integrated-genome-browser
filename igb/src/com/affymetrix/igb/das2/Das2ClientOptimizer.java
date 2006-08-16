@@ -106,7 +106,7 @@ public class Das2ClientOptimizer {
       MutableSeqSymmetry cont_sym;
       // this should work even for graphs, now that graphs are added to SmartAnnotBioSeq's type hash (with id as type)
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
-      // little hack fro GraphSyms, need to resolve when to use id vs. name vs. type      
+      // little hack fro GraphSyms, need to resolve when to use id vs. name vs. type
       if (cont_sym == null && typeid.endsWith(".bar")) {
 	System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
 	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
@@ -404,8 +404,8 @@ public class Das2ClientOptimizer {
 	else if (content_subtype.equals("bp2")) {
 	  System.out.println("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Bprobe1Parser bp1_reader = new Bprobe1Parser();
-	  //	  String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bp"));
-	  feats = bp1_reader.parse(bis, seq_group, false, type.getName());
+          // parsing probesets in bp2 format, also adding probeset ids
+	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), true);
 	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
@@ -459,7 +459,7 @@ public class Das2ClientOptimizer {
 
   /**
    *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it
-   *     
+   *
    *  Assumes ids of parent graphs are unique among annotations on seq
    *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
    */
@@ -481,9 +481,9 @@ public class Das2ClientOptimizer {
       pgraf.setGraphName(id);
       aseq.addAnnotation(pgraf);
     }
-    // since GraphSyms get a span automatically set to the whole seq when constructed, need to first 
+    // since GraphSyms get a span automatically set to the whole seq when constructed, need to first
     //    remove that span, then add overlap span from Das2FeatureRequestSym
-    //    could instead create new span based on start and end xcoord, but for better integration with 
+    //    could instead create new span based on start and end xcoord, but for better integration with
     //    rest of Das2ClientOptimizer span of request is preferred
     cgraf.removeSpan(cgraf.getSpan(aseq));
     cgraf.addSpan(request_sym.getOverlapSpan());

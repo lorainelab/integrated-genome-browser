@@ -22,7 +22,10 @@ import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
 
 public class ChpParser {
@@ -106,20 +109,117 @@ public class ChpParser {
   }
 
   public static List parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     ArrayList results = new ArrayList();
+
+    String file_name = chp.getFileName();
+    String algName = chp.getAlgName();
+    String algVersion = chp.getAlgVersion();
+    String array_type = chp.getArrayType();
+    int ps_count = chp.getEntryCount();
+    System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
+    System.out.println("probeset count: " + ps_count);
+    ProbeSetQuantificationDetectionData psqData;
+    boolean is_exon_chp = false;
+    if (ps_count>0) {
+      psqData = chp.getQuantificationDetectionEntry(0);
+      String name = psqData.getName();
+      // if name property is empty, then it's a CHP file for exon array results
+      //    otherwise it's a CHP file for 3' IVT array results
+      if (name == null || name.equals("")) {
+	is_exon_chp = true;
+	System.out.println("Exon CHP file");
+      }
+      else {
+	System.out.println("3' IVT CHP file");
+      }
+    }
+    Map seq2entries = new HashMap();
+
+    if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
+      ArrayList syms = new ArrayList();
+      for (int i=0; i<ps_count; i++) {
+	psqData = chp.getQuantificationDetectionEntry(i);
+	float quant = psqData.getQuantification();
+	float pval = psqData.getPValue();
+	int nid = psqData.getId();
+	String id = array_type + ":" + nid;
+	if (i<10 || i>=(ps_count-10))  {
+	  System.out.println("full id: " + id + ", probeset id: " + nid + ", quant: " + quant + ", pval: " + pval);
+	}
+	// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
+	group.findSyms(id, syms, false);
+	if (syms.size() > 0) {
+	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
+	  System.out.println("found a match for id: " + id);
+	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
+	  SeqSpan span = prev_sym.getSpan(0);
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
+	  isym.setID(id);
+	  TwoScoreEntry sentry = new TwoScoreEntry(isym, quant, pval);
+	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	  if (sentries == null) {
+	    sentries = new ArrayList();
+	    seq2entries.put(aseq, sentries);
+	  }
+	  sentries.add(sentry);
+	}
+	syms.clear();
+      }
+
+      // now for each sequence seen, sort the SinEntry list by span min/max
+      ScoreEntryComparator comp = new ScoreEntryComparator();
+      Iterator ents  = seq2entries.entrySet().iterator();
+      while (ents.hasNext()) {
+	Map.Entry ent = (Map.Entry)ents.next();
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
+	java.util.List entry_list = (java.util.List)ent.getValue();
+	Collections.sort(entry_list, comp);
+
+	// now make the container syms
+	ScoredContainerSym container = new ScoredContainerSym();
+	container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	container.setProperty("method", file_name);
+
+        // Force the AnnotStyle for the container to have glyph depth of 1
+        AnnotStyle style = AnnotStyle.getInstance(file_name);
+        style.setGlyphDepth(1);
+	int entry_count = entry_list.size();
+	float[] quants = new float[entry_count];
+	float[] pvals = new float[entry_count];
+	System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
+	for (int k=0; k<entry_count; k++) {
+	  TwoScoreEntry sentry = (TwoScoreEntry)entry_list.get(k);
+	  container.addChild(sentry.sym);
+	  quants[k] = sentry.quant;
+	  pvals[k] = sentry.pval;
+	}
+	container.addScores("probeset quanfication: " + file_name, quants);
+	container.addScores("probeset pval: " + file_name, pvals);
+        container.setID(file_name);
+	aseq.addAnnotation(container);
+      }
+    }  // end (is_exon_chp) conditional
+
+    System.out.println("done parsing quantification data CHP file");
     return results;
   }
 
   /**
-   * 
-   *  The FusionCHPQuantificationData class provides parsing capabilities for both 3' IVT (RMA and PLIER) 
-   *  CHP files and Exon CHP files. The difference between the two are that the probe set result (ProbeSetQuantificationData 
-   *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be 
+   *
+   *  The FusionCHPQuantificationData class provides parsing capabilities for both 3' IVT (RMA and PLIER)
+   *  CHP files and Exon CHP files. The difference between the two are that the probe set result (ProbeSetQuantificationData
+   *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be
    *  empty for Exon results.
    */
   public static List parseQuantChp(FusionCHPQuantificationData chp) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     ArrayList results = new ArrayList();
 
+    String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
@@ -131,6 +231,8 @@ public class ChpParser {
     if (ps_count>0) {
       psqData = chp.getQuantificationEntry(0);
       String name = psqData.getName();
+      // if name property is empty, then it's a CHP file for exon array results
+      //    otherwise it's a CHP file for 3' IVT array results
       if (name == null || name.equals("")) {
 	is_exon_chp = true;
 	System.out.println("Exon CHP file");
@@ -139,29 +241,116 @@ public class ChpParser {
 	System.out.println("3' IVT CHP file");
       }
     }
+    Map seq2entries = new HashMap();
+    int match_count = 0;
+
     if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
-      float[] vals = new float[ps_count];
+      ArrayList syms = new ArrayList();
       for (int i=0; i<ps_count; i++) {
 	psqData = chp.getQuantificationEntry(i);
-	vals[i] = psqData.getQuantification();
-	int id = psqData.getId();
-	if (i<10)  { System.out.println("probeset id: " + id + ", val: " + vals[i]); }
-	// try to match up id to one previously seen
+	float val = psqData.getQuantification();
+	int nid = psqData.getId();
+	String id = array_type + ":" + nid;
+	if (i<5 || i>=(ps_count-5))  {
+	  System.out.println("full id: " + id + ", probeset id: " + nid + ", val: " + val);
+	}
+	// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
+	group.findSyms(id, syms, false);
+	if (syms.size() > 0) {
+	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
+	  match_count++;
+	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
+	  SeqSpan span = prev_sym.getSpan(0);
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
+	  isym.setID(id);
+	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
+	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	  if (sentries == null) {
+	    sentries = new ArrayList();
+	    seq2entries.put(aseq, sentries);
+	  }
+	  sentries.add(sentry);
+	}
+	syms.clear();
       }
     }
     else {  // 3' IVT results, so try to match up names of probesets with ids already seen
-      float[] vals = new float[ps_count];
+      ArrayList syms = new ArrayList();
       for (int i=0; i<ps_count; i++) {
 	psqData = chp.getQuantificationEntry(i);
-	vals[i] = psqData.getQuantification();
-	String name = psqData.getName();
-	if (i<10)  { System.out.println("probeset name: " + name + ", val: " + vals[i]); }
+	float val = psqData.getQuantification();
+	String id = psqData.getName();
+	// try just name as id, if no match, try full id (array_type:probeset_name)
+	if (i<10 || i>=(ps_count-10))  {
+	  System.out.println("probeset name: " + id + ", val: " + val);
+	}
 	// try to match up id to one previously seen
+	// must deal with possibility that sym ids used ".n" postfixing to uniquify
+	group.findSyms(id, syms, true); // not sure if should allow match to name, or always require full id match
+	if (syms.size() == 0)  {
+	  // couldn't find match with just name, so trying full id
+	  id = array_type + ":" + id;
+	  group.findSyms(id, syms, true);
+	}
+	int scount = syms.size();
+	if (scount > 0) {
+	  match_count++;
+	  for (int k=0; k<scount; k++) {
+	    SeqSymmetry prev_sym = (SeqSymmetry)syms.get(k);
+	    SeqSpan span = prev_sym.getSpan(0);
+	    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
+	    isym.setID(id);
+	    OneScoreEntry sentry = new OneScoreEntry(isym, val);
+	    java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	    if (sentries == null) {
+	      sentries = new ArrayList();
+	      seq2entries.put(aseq, sentries);
+	    }
+	    sentries.add(sentry);
+	  }
+	}
+	syms.clear();
       }
+    }  // end 3' IVT conditional  (! is_exon_chp)
+
+    System.out.println("matching probeset ids found: " + match_count);
+
+    // now for each sequence seen, sort the SinEntry list by span min/max
+    ScoreEntryComparator comp = new ScoreEntryComparator();
+    Iterator ents  = seq2entries.entrySet().iterator();
+    while (ents.hasNext()) {
+      Map.Entry ent = (Map.Entry)ents.next();
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
+      java.util.List entry_list = (java.util.List)ent.getValue();
+      Collections.sort(entry_list, comp);
+
+      // now make the container syms
+      ScoredContainerSym container = new ScoredContainerSym();
+      container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+      container.setProperty("method", file_name);
+
+      // Force the AnnotStyle for the container to have glyph depth of 1
+      AnnotStyle style = AnnotStyle.getInstance(file_name);
+      style.setGlyphDepth(1);
+      int entry_count = entry_list.size();
+      float[] scores = new float[entry_count];
+      System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
+      for (int k=0; k<entry_count; k++) {
+	OneScoreEntry sentry = (OneScoreEntry)entry_list.get(k);
+	container.addChild(sentry.sym);
+	scores[k] = sentry.score;
+      }
+      container.addScores("probeset scores: " + file_name, scores);
+      container.setID(file_name);
+      aseq.addAnnotation(container);
     }
+
     System.out.println("done parsing quantification data CHP file");
     return results;
   }
+
 
   public static List parseLegacyChp(FusionCHPLegacyData chp) {
       ArrayList results = new ArrayList();
@@ -186,65 +375,9 @@ public class ChpParser {
       chp.getExpressionResults(i, exp);
       pvals[i] = exp.getDetectionPValue();
       signals[i] = exp.getSignal();
-      /**
-      assertEquals(exp.getDetectionPValue(), (float)(0.05 - (i / 1000.0)), 0.00001f);
-      assertEquals(exp.getSignal(), (float)(1.1 + i), 0.00001f);
-      assertEquals(exp.getNumPairs(), 3 + i);
-      assertEquals(exp.getNumUsedPairs(), 2 + i);
-      assertEquals(exp.getDetection(), (i % 4));
-      switch (exp.getDetection())
-	{
-	case (FusionExpressionProbeSetResults.ABS_PRESENT_CALL):
-	  assertEquals(exp.getDetectionString(), "P");
-	  break;
-	case (FusionExpressionProbeSetResults.ABS_MARGINAL_CALL):
-	  assertEquals(exp.getDetectionString(), "M");
-	  break;
-	case (FusionExpressionProbeSetResults.ABS_ABSENT_CALL):
-	  assertEquals(exp.getDetectionString(), "A");
-	  break;
-	case (FusionExpressionProbeSetResults.ABS_NO_CALL):
-	  assertEquals(exp.getDetectionString(), "No Call");
-	  break;
-	default:
-	  assertEquals(exp.getDetectionString(), "");
-	  break;
-	}
-      assertEquals(exp.hasCompResults(), true);
-      assertEquals(exp.getChangePValue(), (float)(0.04 - (i / 1000.0)), 0.0000001f);
-      assertEquals(exp.getSignalLogRatio(), (float)(1.1 + i), 0.0000001f);
-      assertEquals(exp.getSignalLogRatioLow(), (float)(-1.1 + i), 0.0000001f);
-      assertEquals(exp.getSignalLogRatioHigh(), (float)(10.1 + i), 0.0000001f);
-      assertEquals(exp.getNumCommonPairs(), 2 + i);
-      assertEquals(exp.getChange(), (i % 6 + 1));
-      switch (exp.getChange())
-	{
-	case (FusionExpressionProbeSetResults.COMP_INCREASE_CALL):
-	  assertEquals(exp.getChangeString(), "I");
-	  break;
-	case (FusionExpressionProbeSetResults.COMP_DECREASE_CALL):
-	  assertEquals(exp.getChangeString(), "D");
-	  break;
-	case (FusionExpressionProbeSetResults.COMP_MOD_INCREASE_CALL):
-	  assertEquals(exp.getChangeString(), "MI");
-	  break;
-	case (FusionExpressionProbeSetResults.COMP_MOD_DECREASE_CALL):
-	  assertEquals(exp.getChangeString(), "MD");
-	  break;
-	case (FusionExpressionProbeSetResults.COMP_NO_CHANGE_CALL):
-	  assertEquals(exp.getChangeString(), "NC");
-	  break;
-	case (FusionExpressionProbeSetResults.COMP_NO_CALL):
-	  assertEquals(exp.getChangeString(), "No Call");
-	  break;
-	default:
-	  assertEquals(exp.getChangeString(), "");
-	  break;
-	}
-      */
       exp.clear();
     }
-    System.out.println("done parsing legacy CHP data");
+    System.out.println("Stopped loading, parsing Legacy CHP data only partially implemented!");
     return results;
   }
 
@@ -373,3 +506,42 @@ public class ChpParser {
   }
 
 }
+/** For sorting single-score probeset entries */
+
+  abstract class ScoreEntry {
+    SeqSymmetry sym;
+  }
+
+  class OneScoreEntry extends ScoreEntry {
+    float score;
+    public OneScoreEntry(SeqSymmetry sym, float score) {
+      this.sym = sym;
+      this.score = score;
+    }
+  }
+
+  class TwoScoreEntry extends ScoreEntry {
+    float quant;
+    float pval;
+    public TwoScoreEntry(SeqSymmetry sym, float quant, float pval) {
+      this.sym = sym;
+      this.quant = quant;
+      this.pval = pval;
+    }
+  }
+
+  /** For sorting single-score probeset entries */
+class ScoreEntryComparator implements Comparator  {
+  public int compare(Object objA, Object objB) {
+    SeqSpan symA = ((ScoreEntry)objA).sym.getSpan(0);
+    SeqSpan symB = ((ScoreEntry)objB).sym.getSpan(0);
+    if (symA.getMin() < symB.getMin()) { return -1; }
+    else if (symA.getMin() > symB.getMin()) { return 1; }
+    else {  // mins are equal, try maxes
+      if (symA.getMax() < symB.getMax()) { return -1; }
+      else if (symA.getMax() > symB.getMax()) { return 1; }
+      else { return 0; }  // mins are equal and maxes are equal, so consider them equal
+    }
+  }
+}
+

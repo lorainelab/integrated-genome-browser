@@ -61,6 +61,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *  (additional commands may be recognized by command plugins)
    */
   static String sources_query = "sequence";
+  static String sources_query_slash = "sequence/";
   static String segments_query = "segments";
   static String types_query = "types";
   static String features_query = "features";
@@ -510,7 +511,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       log.add("Unknown or missing DAS command");
       response.setStatus(response.SC_BAD_REQUEST);
     }
-    else if (path_info.endsWith(sources_query)) {
+    else if (path_info.endsWith(sources_query) || path_info.endsWith(sources_query_slash))  {
       handleSourcesRequest(request, response);
     }
     else {

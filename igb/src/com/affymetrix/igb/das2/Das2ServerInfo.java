@@ -145,7 +145,8 @@ public class Das2ServerInfo  {
       String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
       String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
 
-      //HACK: Affy das server barfs w/ a trailing slash, URI resolution
+      //GAH March 2006:
+      //   HACK: Affy das server barfs w/ a trailing slash, URI resolution
       //      doesn't work without trailing slash, so adding it back in
       //      here.
       das_query = das_query+"/";

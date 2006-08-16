@@ -2577,11 +2577,17 @@ public class SeqMapView extends JPanel
         if (sym == null) {
           IGB.errorPanel("No symmetry selected");
         } else if (sym instanceof GraphSym) {
-          System.out.println("Graph Sym Selected");
           GraphSym gs = (GraphSym) sym;
           GraphState gstate = gs.getGraphState();
           IAnnotStyle style = gstate.getTierStyle();
-          System.out.println("> " + gs.getGraphName() + ", " + gstate.hashCode() + ", " + style.hashCode());
+          System.out.println("Graph: " + gs.getGraphName());
+          Map m = gs.getProperties();
+          Set keys = m.keySet();
+          Iterator iter = keys.iterator();
+          while (iter.hasNext()) {
+            String key = (String)iter.next();
+            System.out.println(key + " --> " + m.get(key));
+          }
         } else {
           SeqUtils.printSymmetry(sym);
         }

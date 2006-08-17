@@ -16,16 +16,10 @@ package com.affymetrix.igb.genometry;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.event.SymMapChangeEvent;
 import com.affymetrix.igb.event.SymMapChangeListener;
-import com.affymetrix.genometry.util.SeqUtils;
 
 public class AnnotatedSeqGroup {
 
@@ -207,13 +201,22 @@ public class AnnotatedSeqGroup {
     return sym_list;
   }
 
-  /**
-   *  any syms found are appended to results list -- it is responsibility of
-   *   calling code to clear out results list before calling findSyms() if desired.
+  /** Finds all symmetries with the given case-insensitive ID and add them to
+   *  the given list.  Also looks for id + ".1", id + ".2", etc.
    */
   public boolean findSyms(String id, java.util.List results) {
     return findSyms(id, results, true);
   }
+
+  /** Finds all symmetries with the given case-insensitive ID and add them to
+   *  the given list.
+   *  @param id  a case-insensitive id.
+   *  @param results  the list to which entries will be appended. It is responsibility of
+   *   calling code to clear out results list before calling this, if desired.
+   *  @param try_appended_id whether to also search for ids of the form
+   *   id + ".1", id + ".2", etc.
+   *  @return true if any symmetries were added to the list.
+   */
   public boolean findSyms(String id, java.util.List results, boolean try_appended_id) {
     boolean success = false;
     if (id != null) {
@@ -225,13 +228,10 @@ public class AnnotatedSeqGroup {
       }
       else if (obj instanceof java.util.List) {
         java.util.List syms = (java.util.List) obj;
-        int scount = syms.size();
-        for (int i = 0; i < scount; i++) {
-          results.add(syms.get(i));
-          success = true;
-        }
+        results.addAll(syms);
+        success = true;
       }
-      // try id appended with ":n" where n is 0, 1, etc. till there is no match
+      // try id appended with ".n" where n is 0, 1, etc. till there is no match
       else if (obj == null && try_appended_id) {
         int postfix = 0;
         Object appendobj;
@@ -242,11 +242,8 @@ public class AnnotatedSeqGroup {
           }
           else if (appendobj instanceof java.util.List) {
             java.util.List syms = (java.util.List) appendobj;
-            int scount = syms.size();
-            for (int i = 0; i < scount; i++) {
-              results.add(syms.get(i));
-              success = true;
-            }
+            results.addAll(syms);
+            success = true;
           }
         }
         postfix++;
@@ -254,6 +251,7 @@ public class AnnotatedSeqGroup {
     }
     return success;
   }
+
   /**
    *  Assosicates a symmetry with a case-insensitive ID.  You can later retrieve the
    *  list of all matching symmetries for a given ID by calling findSyms(String).

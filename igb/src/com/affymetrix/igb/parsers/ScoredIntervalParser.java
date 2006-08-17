@@ -525,11 +525,15 @@ public class ScoredIntervalParser {
     public int compare(Object objA, Object objB) {
       SeqSpan symA = ((SinEntry)objA).sym.getSpan(0);
       SeqSpan symB = ((SinEntry)objB).sym.getSpan(0);
-      if (symA.getMin() < symB.getMin()) { return -1; }
-      else if (symA.getMin() > symB.getMin()) { return 1; }
+      final int minA = symA.getMin();
+      final int minB = symB.getMin();
+      if (minA < minB) { return -1; }
+      else if (minA > minB) { return 1; }
       else {  // mins are equal, try maxes
-	if (symA.getMax() < symB.getMax()) { return -1; }
-	else if (symA.getMax() > symB.getMax()) { return 1; }
+        final int maxA = symA.getMax();
+        final int maxB = symB.getMax();
+	if (maxA < maxB) { return -1; }
+	else if (maxA > maxB) { return 1; }
 	else { return 0; }  // mins are equal and maxes are equal, so consider them equal
       }
     }

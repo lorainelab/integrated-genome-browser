@@ -77,7 +77,9 @@ public class SeqMapView extends JPanel
   static final boolean DIAGNOSTICS = false;
   static final boolean DEBUG_TIERS = false;
   public static boolean DEBUG_COMP = false;
-  boolean LABEL_TIERMAP = true;
+
+  boolean LABEL_TIERMAP = false;
+
   boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;
@@ -358,8 +360,10 @@ public class SeqMapView extends JPanel
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     seqmap.addMouseListener(mouse_listener);
     
-    // A "Smart" rubber band is necessary becaus we don't want our attempts
+    if (LABEL_TIERMAP) {
       tier_manager.setDoGraphSelections(true);
+    }
+    // A "Smart" rubber band is necessary becaus we don't want our attempts
     // to drag the graph handles to also cause rubber-banding
     SmartRubberBand srb = new SmartRubberBand(seqmap);
     seqmap.setRubberBand(srb);
@@ -408,12 +412,12 @@ public class SeqMapView extends JPanel
       seqmap.setOffsetScroller(yscroller);
       JPanel scrollP = new JPanel();
       scrollP.setLayout(new BorderLayout());
-      scrollP.add("South", xscroller);
-      scrollP.add("West", yscroller);
-      this.add("Center", scrollP);
+      scrollP.add(BorderLayout.SOUTH, xscroller);
+      scrollP.add(BorderLayout.WEST, yscroller);
+      this.add(BorderLayout.CENTER, scrollP);
     }
     else {
-      this.add("Center", seqmap);
+      this.add(BorderLayout.CENTER, seqmap);
     }
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);

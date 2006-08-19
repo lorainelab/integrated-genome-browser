@@ -175,7 +175,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // But it also may take away some things, like resizing buttons, that the
     // user is used to in their operating system, so leave as false.
     JFrame.setDefaultLookAndFeelDecorated(false);
-    
+
     String laf = System.getProperty("swing.defaultlaf");
     // if laf != null, then the user-requested l-and-f has already been applied
     // if laf == null, then apply the windows look and feel
@@ -281,6 +281,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public SeqMapView getMapView() {
     return map_view;
+  }
+
+  public CurationControl getCurationControl() {
+    return curation_control;
   }
 
   // currently not needed
@@ -511,7 +515,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 //    tools_menu = new JMenu("Tools");
 //    tools_menu.setMnemonic('T');
 //    mbar.add(tools_menu);
-    
+
     help_menu = new JMenu("Help");
     help_menu.setMnemonic('H');
     mbar.add(help_menu);
@@ -537,12 +541,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
     map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);
-    
+
 //    navigation_menu = map_view.getNavigationMenu("Go");
 //    navigation_menu.setMnemonic('G');
 //    navigation_menu.add(new JMenu("Genome..."));
 //    mbar.add( navigation_menu, 2);
-    
+
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
     gmodel.addSymSelectionListener(map_view);
@@ -635,7 +639,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, unclamp_item);
     MenuUtil.addToMenu(view_menu, shrink_wrap_item);
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
-    MenuUtil.addToMenu(view_menu, move_tab_to_window_item);    
+    MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
@@ -720,7 +724,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else {
       cpane.add("Center", splitpane);
     }
-    
+
     // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
     // pop-up menu (or any other mouse listener) on the tab handles.
     // (A pop-up with "Open tab in a new window" would be nice.)
@@ -738,13 +742,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // Show the frame before loading the plugins.  Thus any error panel
     // that is created by an exception during plugin set-up will appear
     // on top of the main frame, not hidden by it.
-    
+
     frm.addWindowListener( new WindowAdapter() {
 	public void windowClosing(WindowEvent evt) {exit();}
       });
     //    frm.resize(1000, 750);
     frm.setVisible(true);
-    
+
 
     ArrayList plugin_list = new ArrayList(16);
     if (USE_QUICKLOAD) {
@@ -787,10 +791,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
       export_slice_item.setEnabled(true);
     }
-    
+
     // Start listining for http requests only after all set-up is done.
     startControlServer();
-    
+
     initialized = true;
   }
 
@@ -1113,7 +1117,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     JTextArea about_text = new JTextArea();
     about_text.append(DocumentationView.getDocumentationText());
     message_pane.add(new JScrollPane(about_text));
-    
+
     JButton affyB = new JButton("Go To IGB at Affymetrix");
     JButton sfB = new JButton("Go To IGB at SourceForge");
     affyB.addActionListener(new ActionListener() {

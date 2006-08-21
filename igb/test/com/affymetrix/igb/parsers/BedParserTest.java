@@ -30,6 +30,39 @@ public class BedParserTest extends TestCase {
     return suite;
   }
 
+  public void testParseFromFile() throws IOException {
+    
+    String filename = "test_files/bed_01.bed";
+    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);   
+    
+    AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+    boolean annot_seq = true;
+    String stream_name = "test_file";
+    boolean create_container = true;
+    
+    BedParser parser = new BedParser();
+    List result = parser.parse(istr, group, annot_seq, stream_name, create_container);
+
+    assertEquals(result.size(), 6);    
+        
+    UcscBedSym sym = (UcscBedSym) result.get(2);
+    assertEquals(1, sym.getSpanCount());
+    SeqSpan span = sym.getSpan(0);
+    assertEquals(1790361, span.getMax());
+    assertEquals(1789140, span.getMin());
+    assertEquals(false, span.isForward());
+    assertEquals(false, sym.hasCdsSpan());
+    assertEquals(null, sym.getCdsSpan());
+    assertEquals(2, sym.getChildCount());
+    
+    sym = (UcscBedSym) result.get(5);
+    assertEquals(sym.hasCdsSpan(), true);
+    SeqSpan cds = sym.getCdsSpan();
+    assertEquals(1965425, cds.getMin());
+    assertEquals(1965460, cds.getMax());
+    assertEquals(new Float(0), ((Float) sym.getProperty("score")));
+  }
+  
   /**
    * Test of parse method, of class com.affymetrix.igb.parsers.BedParser.
    */

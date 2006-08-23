@@ -234,6 +234,7 @@ public class GraphGlyph extends Glyph {
 
       float ytemp;
       int ymin_pixel, yheight_pixel;
+      int curr_max_index = 0; // used for heatmaps
       
       g.translate(xpix_offset, 0);
       
@@ -314,16 +315,26 @@ public class GraphGlyph extends Glyph {
           }
         } else if (graph_style == HEAT_MAP) {
 
-          float the_y = (wcoords == null) ? prev_ytemp : ytemp;
-          int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
-          if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
-          g.setColor(heatmap_colors[(int)heatmap_index]);
           
-          if (wcoords == null) {
-            // with fillRect(), need to add one to the height
-            g.fillRect(prev_point.x, pixelbox.y,
-                curr_point.x - prev_point.x, pixelbox.height+1);
-          } else {
+          if (wcoords == null) { // there are no wcoords, so bars go from previous x to current x (like stairstep graphs)
+            // When multiple coords map to one pixel, use the color corresponding to the max value.
+            float the_y = prev_ytemp;
+            int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
+            if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
+            if (heatmap_index > curr_max_index) { curr_max_index = heatmap_index; }
+            
+            if (curr_point.x != prev_point.x) {
+              g.setColor(heatmap_colors[curr_max_index]);
+              g.fillRect(prev_point.x, pixelbox.y,
+                  curr_point.x - prev_point.x, pixelbox.height+1);
+              curr_max_index = 0;
+            }
+          } 
+          else { // the wcoords are not null, so the bars have width
+            float the_y = ytemp;
+            int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
+            if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
+            g.setColor(heatmap_colors[heatmap_index]);
             g.fillRect(curr_point.x, pixelbox.y,
                 curr_x_plus_width.x - curr_point.x, pixelbox.height+1);
           }

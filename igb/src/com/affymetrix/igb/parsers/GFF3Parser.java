@@ -61,12 +61,24 @@ public class GFF3Parser {
   public GFF3Parser() {
   }
 
-
   /**
    *  Parses GFF3 format and adds annotations to the appropriate seqs on the
    *  given seq group.
    */
   public List parse(InputStream istr, AnnotatedSeqGroup seq_group)
+    throws IOException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+    
+    // Note that the parse(BufferedReader) method will call br.close(), so
+    // don't worry about it.
+    return parse(br, seq_group);
+  }
+  
+  /**
+   *  Parses GFF3 format and adds annotations to the appropriate seqs on the
+   *  given seq group.
+   */
+  public List parse(BufferedReader br, AnnotatedSeqGroup seq_group)
     throws IOException {
     System.out.println("starting GFF3 parse.");
 
@@ -75,7 +87,6 @@ public class GFF3Parser {
     gff3_id_hash = new HashMap();
     java.util.List results = new ArrayList();
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line = null;
 
     Map id2sym = new HashMap();

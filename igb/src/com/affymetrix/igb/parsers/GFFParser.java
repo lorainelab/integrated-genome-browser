@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -21,16 +20,19 @@ import java.util.regex.*;
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.SeqSymStartComparator;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.SeqSymStartComparator;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SingletonSymWithProps;
 import com.affymetrix.igb.genometry.UcscGffSym;
 
 /**
- *  GFF parser.
+ *  GFF parser.  For GFF Version 3, you can use the class GFF3Parser directly, or
+ *  this parser will call it for you behind the scenes.
  * <pre>
  *  Trying to parse three different forms of GFF:
  *    GFF Version 1.0
@@ -285,7 +287,20 @@ public class GFFParser implements AnnotationWriter  {
       //      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) && (line_count < 100)) {
       while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
         if (line == null) { continue; }
-        if (line.startsWith("##")) { processDirective(line); continue; }
+        if (line.startsWith("##")) { 
+          processDirective(line);
+          if (gff_version == 3) {
+            if (line_count > 0) {
+              throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
+            } else {
+              // The "#gff-version 3" pragma is *required* to be on the first line.
+              GFF3Parser gff3_parser = new GFF3Parser();
+              return gff3_parser.parse(br, seq_group);
+            }
+          } else {
+            continue;
+          }
+        }
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {
           // in GFF files, the color will only be applied from track lines 
@@ -457,7 +472,7 @@ public class GFFParser implements AnnotationWriter  {
 
           ((SingletonSymWithProps) sym).setCoords(pspan.getStart(), pspan.getEnd());
 
-          resortChildren((MutableSeqSymmetry) sym, seq);
+          resortChildren((MutableSingletonSeqSymmetry) sym, seq);
         }
 
         if (create_container_annot) {
@@ -512,14 +527,14 @@ public class GFFParser implements AnnotationWriter  {
    *   sym's span on sortseq is forward, or descending if sym's span on sortseq is reverse,
    *   based on child sym's span's start position on BioSeq sortseq.
    */
-  public void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq)  {
+  public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq)  {
     SeqSpan pspan = psym.getSpan(sortseq);
     boolean ascending = pspan.isForward();
     //    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
     //    System.out.println("sortseq: " + sortseq.getID());
     //    SeqUtils.printSymmetry(psym);
-    if (psym.getChildCount() > 0) {
-      int child_count = psym.getChildCount();
+    int child_count = psym.getChildCount();
+    if (child_count > 0) {
       java.util.List child_list = new ArrayList(child_count);
       for (int i=0; i<child_count; i++) {
         SeqSymmetry csym = psym.getChild(i);
@@ -723,26 +738,16 @@ public class GFFParser implements AnnotationWriter  {
     addFeatureFilter("psr");
     addFeatureFilter("link");
     
-    if (gff_version == GFF3)  {
-      System.out.println("group tag: " + GFF3_PARENT);
-      // NEED TO FIX SOON TO HANDLE > 2 LEVELS OF FEATURE HIERARCHY!!
-      // hacking for now to handle two-level hierarchy by removing top levels (transcript, gene, etc.)
-      //    and just using gff2/gtf grouping mechanism with "Parent" id used for group id
-      setGroupTag(GFF3_PARENT);
-      //      setIdTag("ID");
-    }
-    else {
-      System.out.println("group tag: transcript_id");
-      setGroupTag("transcript_id");
-    }
-
-
+    System.out.println("group tag: transcript_id");
+    setGroupTag("transcript_id");
   }
 
   public void setGffVersion(int version) {
     // is use_standard_filters, then reset filters whenever gff version is set
     gff_version = version;
-    setUseStandardFilters(use_standard_filters);
+    if (gff_version != 3) {
+      setUseStandardFilters(use_standard_filters);
+    }
   }
 
   static final Integer TWO = new Integer(2);

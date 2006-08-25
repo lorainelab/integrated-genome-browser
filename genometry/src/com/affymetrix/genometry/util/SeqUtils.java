@@ -469,13 +469,22 @@ public abstract class SeqUtils {
 
   /** Inner class helper for inverse() method. */
   static class StartSorter implements Comparator {
-      public int compare(Object objA, Object objB) {
-        SeqSpan spanA = (SeqSpan)objA;
-        SeqSpan spanB = (SeqSpan)objB;
-        if (spanA.getMin() < spanB.getMin()) { return -1; }
-        else if (spanA.getMin() > spanB.getMin()) { return 1; }
-        else { return 0; }  // equal
+    static StartSorter static_instance = null;
+    
+    public static StartSorter getInstance() {
+      if (static_instance == null) {
+        static_instance = new StartSorter();
       }
+      return static_instance;
+    }
+    
+    public int compare(Object objA, Object objB) {
+      SeqSpan spanA = (SeqSpan)objA;
+      SeqSpan spanB = (SeqSpan)objB;
+      int minA = spanA.getMin();
+      int minB = spanB.getMin();
+      if (minA < minB) { return -1; } else if (minA > minB) { return 1; } else { return 0; }  // equal
+    }
   }
 
   protected static MutableSeqSymmetry spanMerger(List spans) {
@@ -502,7 +511,7 @@ public abstract class SeqUtils {
 
       merged_spans.add(span);
     }
-    Collections.sort(merged_spans, new SeqUtils.StartSorter());
+    Collections.sort(merged_spans, SeqUtils.StartSorter.getInstance());
     for (int i=0; i<merged_spans.size(); i++) {
       SeqSpan span = (SeqSpan)merged_spans.get(i);
       MutableSingletonSeqSymmetry childSym =
@@ -2140,11 +2149,3 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
   }
 
 }
-
-
-
-
-
-
-
-

@@ -87,7 +87,7 @@ public class OpenGraphAction extends AbstractAction {
           this,
           false, false);
         monitor.showDialogEventually();
-        Vector graphs = null;
+        List graphs = null;
         try {
           AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
           graphs = loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
@@ -128,34 +128,36 @@ public class OpenGraphAction extends AbstractAction {
   }
 
   /** Loads graphs from a set of files.
-   *  The return Vector will contain all sucessfully loaded GraphSym objects;
+   *  The return List will contain all sucessfully loaded GraphSym objects;
    *  there may be more or fewer graphs than given files.
-   *  @param aseq  a BioSeq. If null, this routine will return an empty Vector
+   *  @param aseq  a BioSeq. If null, this routine will return an empty List
    *  @param update_viewer  If true, this will call {@link #updateViewer(SeqMapView)} after
    *   each graph file is loaded.
    *  @throws OutOfMemoryError  Any routine can throw an OutOfMemoryError, but
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static Vector loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  static List loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
-    Vector graphs = new Vector();
+    List graphs = Collections.EMPTY_LIST;
     if (aseq != null) {
       for (int i=0; i<files.length; i++) {
         if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+files[i].getPath());}
-        Vector v = loadGraphFile(files[i], seq_group, aseq);
-        graphs.addAll(v);
-        if (update_viewer && ! v.isEmpty()) {updateViewer(gviewer);}
+        graphs = loadGraphFile(files[i], seq_group, aseq);
+        if (update_viewer && ! graphs.isEmpty()) {updateViewer(gviewer);}
       }
     }
     return graphs;
   }
 
-  static Vector loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
-    Vector graphs = new Vector();
+  public static List loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
+    List graphs = Collections.EMPTY_LIST;
     InputStream fis = null;
     try {
       String path = furl.getPath();
+      if (! GraphSymUtils.isAGraphFilename(path)) {
+        throw new IOException("Filename does not match any known type of graph:\n" + path);
+      }
       if (IGB.CACHE_GRAPHS)  {
         String graph_url = furl.toExternalForm();
         System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
@@ -165,44 +167,45 @@ public class OpenGraphAction extends AbstractAction {
         fis = furl.openStream();
       }
 
-      if (GraphSymUtils.isAGraphFilename(path)) {
-        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
-        graphs.addAll(multigraphs);
+      graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
 
-        // Now set the graph names (either the URL or the filename, possibly with an integer appended)
-        for (int i=0; i<graphs.size(); i++) {
-          com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
-          String name;
-          
-          boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-              GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
-          if (use_full_url) {
-            name = furl.toExternalForm();
-          } else { // use only the filename, not the whole url
-            name = furl.getFile();
-            int index = name.lastIndexOf('/');
-            if (index > 0) {
-              String last_name = name.substring(index+1);
-              if (last_name.length()>0) { 
-                name = URLDecoder.decode(last_name); 
-              }
-            }
-          }
+      String graph_name = getGraphNameForURL(furl);
+      // Now set the graph names (either the URL or the filename, possibly with an integer appended)
+      for (int i=0; i<graphs.size(); i++) {
+        com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
 
-          if (graphs.size() > 1) {
-            name = name + " " + (i+1);
-          }
-          gg.getGraphState().getTierStyle().setHumanName(name);
+        String name = graph_name;
+        if (graphs.size() > 1) {
+          name = name + " " + (i+1);
         }
-      } else {
-        throw new IOException("Filename does not match any known type of graph:\n" + path);
-      }
+        gg.getGraphState().getTierStyle().setHumanName(name);
+      }      
+      
     } finally {
       if (fis != null) try { fis.close(); } catch (IOException ioe) {}
     }
     return graphs;
   }
 
+  public static String getGraphNameForURL(URL furl) {
+    String name;
+    boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+        GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
+    if (use_full_url) {
+      name = furl.toExternalForm();
+    } else { // use only the filename, not the whole url
+      name = furl.getFile();
+      int index = name.lastIndexOf('/');
+      if (index > 0) {
+        String last_name = name.substring(index+1);
+        if (last_name.length()>0) { 
+          name = URLDecoder.decode(last_name); 
+        }
+      }
+    }
+    return name;
+  }
+  
   static JFileChooser chooser = null;
 
   static JFileChooser getFileChooser() {

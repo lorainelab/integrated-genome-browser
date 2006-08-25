@@ -36,6 +36,7 @@ import com.affymetrix.igb.parsers.LiftParser;
 import com.affymetrix.igb.parsers.ChromInfoParser;
 import com.affymetrix.igb.parsers.BedParser;
 import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
@@ -1117,7 +1118,20 @@ class QuickLoadServerModel {
           bis = new BufferedInputStream(istr);
           // really should remove LoadFileAction's requirement for SeqMapView argument...
           LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
-          lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
+          
+          if (GraphSymUtils.isAGraphFilename(filename)) {
+            URL url = new URL(annot_url);
+            java.util.List graphs = OpenGraphAction.loadGraphFile(url, current_group, gmodel.getSelectedSeq());
+            if (graphs != null) {
+              // Reset the selected Seq Group to make sure that the DataLoadView knows
+              // about any new chromosomes that were added.
+              gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+            }
+          }
+          else {
+            lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
+          }
+                    
           setLoadState(current_group, filename, true);
         }
       }

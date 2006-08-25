@@ -62,6 +62,8 @@ public class GFF3SymTest extends TestCase {
     assertEquals(null, GFF3Sym.getIdFromGFF3Attributes("test1;test2=foo;NotTheID=this is not the id;animals=cow,dog,rat"));
     assertEquals(null, GFF3Sym.getIdFromGFF3Attributes("test1;test2=foo;animals=cow,dog,rat"));
     assertEquals("This has&some special$characters", GFF3Sym.getIdFromGFF3Attributes("test1;ID=This%20has%26some+special%24characters;foo=bar"));
+    String example = "ID=NC_000964.2:yaaA:unknown_transcript_1;Parent=NC_000964.2:yaaA;locus_tag=BSU00030;function=unknown;transl_table=11;product=hypothetical%20protein;protein_id=NP_387884.1;db_xref=GOA:P05650;db_xref=UniProtKB%2FSwiss-Prot:P05650;db_xref=GI:16077071;db_xref=GeneID:939444;exon_number=1";
+    assertEquals("NC_000964.2:yaaA:unknown_transcript_1", GFF3Sym.getIdFromGFF3Attributes(example)); 
   }
 
   public void testAddAllAttributesFromGFF3() {

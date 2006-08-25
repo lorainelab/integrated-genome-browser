@@ -35,6 +35,9 @@ public class GraphGlyphUtils {
   public static final String PREF_APPLY_PERCENTAGE_FILTER = "apply graph percentage filter";
   public static final boolean default_apply_percentage_filter = true;
 
+  public static final String PREF_USE_URL_AS_NAME = "Use complete URL as graph name";
+  public static final boolean default_use_url_as_name = false;
+  
   /** Whether to use a TransformTierGlyph to maintain a fixed pixel height for attached graphs. */
   static final boolean use_fixed_pixel_height = false;
 

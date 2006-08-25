@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.menuitem.LoadFileAction;
 import java.awt.*;
 import javax.swing.*;
 
@@ -80,6 +81,9 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Use floating graphs by default", GraphGlyphUtils.getGraphPrefsNode(),
       GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs));
+    
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use file URL as graph name", GraphGlyphUtils.getGraphPrefsNode(),
+      GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name));
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
@@ -260,6 +264,16 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
 
+    sb.append("<p>\n");
+    sb.append("<h2>Use file URL as graph name</h2>\n");
+    sb.append("Whether to use the complete URL for the name of newly-loaded graphs.  ");
+    sb.append("True uses the complete URL 'file:///home/graph.gr';  ");
+    sb.append("False uses the shorter filename 'graph.gr'.  ");
+    sb.append("Has no effect on graphs loaded through bookmarks if they explicitly set a graph name.  ");
+    sb.append("Recommend: false.");
+    //sb.append("<br><br>Changes do not require re-start.  ");
+    sb.append("</p>\n");
+    
     sb.append("<p>\n");
     sb.append("<h2>Show DAS query genometry</h2>\n");
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");

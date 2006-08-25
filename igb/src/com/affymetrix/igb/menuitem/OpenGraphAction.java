@@ -31,6 +31,7 @@ import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class OpenGraphAction extends AbstractAction {
@@ -167,16 +168,27 @@ public class OpenGraphAction extends AbstractAction {
       if (GraphSymUtils.isAGraphFilename(path)) {
         java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
         graphs.addAll(multigraphs);
+
+        // Now set the graph names (either the URL or the filename, possibly with an integer appended)
         for (int i=0; i<graphs.size(); i++) {
           com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
-          String name = furl.getFile();
-          int index = name.lastIndexOf('/');
-          if (index > 0) {
-            String last_name = name.substring(index+1);
-            if (last_name.length()>0) { 
-              name = URLDecoder.decode(last_name); 
+          String name;
+          
+          boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+              GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
+          if (use_full_url) {
+            name = furl.toExternalForm();
+          } else { // use only the filename, not the whole url
+            name = furl.getFile();
+            int index = name.lastIndexOf('/');
+            if (index > 0) {
+              String last_name = name.substring(index+1);
+              if (last_name.length()>0) { 
+                name = URLDecoder.decode(last_name); 
+              }
             }
           }
+
           if (graphs.size() > 1) {
             name = name + " " + (i+1);
           }
@@ -197,11 +209,8 @@ public class OpenGraphAction extends AbstractAction {
     if (chooser == null) {
       chooser = new JFileChooser();
       chooser.setMultiSelectionEnabled(true);
-      // set directory later // chooser.setCurrentDirectory(new File((String) System.getProperties().get("user.dir")));
-            chooser.addChoosableFileFilter(new UniFileFilter("bar"));
-//      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
+      chooser.addChoosableFileFilter(new UniFileFilter("bar"));
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
-//      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
       chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
       chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();

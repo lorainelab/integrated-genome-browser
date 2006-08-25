@@ -245,7 +245,6 @@ public class GraphSymUtils {
       AnnotatedBioSeq seq = (AnnotatedBioSeq) iter.next();
       result = getUniqueGraphID(result, seq);
     }
-    System.out.println("----" + id + " ----> " + seq_group.getID() + " ----> " + result);
     return result;
   }
   
@@ -297,36 +296,36 @@ public class GraphSymUtils {
     return newid;
   }
   
-  /** This is a wrapper around readGraphs() for the case where you expect to
-   *  have a single GraphSym returned.  This will return only the first graph
-   *  from the list returned by readGraphs(), or null.
-   */
-  public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
-    //TODO: Maybe this should throw an exception if the file contains more than one graph?
-    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
-    if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
-      MutableAnnotatedBioSeq gseq = seq_group.getSeq(seq.getID());
-      if (gseq == null)  { seq_group.addSeq( (MutableAnnotatedBioSeq) seq); }
-      else if (gseq != seq)  {
-        throw new RuntimeException("ERROR! graph seq with id: " + seq.getID() +
-                                   " is not same as seq found in group with id: " + gseq.getID() +
-                                   " that matches via group.getSeq(id)");
-      }
-      // if seq is already part of AnnotatedSeqGroup, don't need to add to group
-    }
-    List grafs = readGraphs(istr, stream_name, seq_group, seq);
-    GraphSym graf = null;
-    if (grafs.size() > 0) {
-      graf = (GraphSym) grafs.get(0);
-      if (graph_name != null) {
-	System.out.println("in GraphSymUtils.readGraph(), renaming graph");
-	System.out.println("   old name: " + graf.getGraphName());
-	System.out.println("   new name: " + graph_name);
-        graf.setGraphName(graph_name);
-      }
-    }
-    return graf;
-  }
+//  /** This is a wrapper around readGraphs() for the case where you expect to
+//   *  have a single GraphSym returned.  This will return only the first graph
+//   *  from the list returned by readGraphs(), or null.
+//   */
+//  public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
+//    //TODO: Maybe this should throw an exception if the file contains more than one graph?
+//    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+//    if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
+//      MutableAnnotatedBioSeq gseq = seq_group.getSeq(seq.getID());
+//      if (gseq == null)  { seq_group.addSeq( (MutableAnnotatedBioSeq) seq); }
+//      else if (gseq != seq)  {
+//        throw new RuntimeException("ERROR! graph seq with id: " + seq.getID() +
+//                                   " is not same as seq found in group with id: " + gseq.getID() +
+//                                   " that matches via group.getSeq(id)");
+//      }
+//      // if seq is already part of AnnotatedSeqGroup, don't need to add to group
+//    }
+//    List grafs = readGraphs(istr, stream_name, seq_group, seq);
+//    GraphSym graf = null;
+//    if (grafs.size() > 0) {
+//      graf = (GraphSym) grafs.get(0);
+//      if (graph_name != null) {
+//	System.out.println("in GraphSymUtils.readGraph(), renaming graph");
+//	System.out.println("   old name: " + graf.getGraphName());
+//	System.out.println("   new name: " + graph_name);
+//        graf.setGraphName(graph_name);
+//      }
+//    }
+//    return graf;
+//  }
 
 
   static List wrapInList(GraphSym gsym) {

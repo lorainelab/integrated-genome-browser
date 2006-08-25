@@ -35,7 +35,7 @@ public class LoadFileAction {
   static String user_dir = System.getProperty("user.dir");
   SeqMapView gviewer;
   FileTracker load_dir_tracker;
-  static int unknown_group_count = 0;
+  static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
 

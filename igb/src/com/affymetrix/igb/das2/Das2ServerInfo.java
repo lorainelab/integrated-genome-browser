@@ -196,13 +196,8 @@ public class Das2ServerInfo  {
 	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
 	    System.out.println("version URI: " + version_uri.toString());
 
-	    //	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, false);
-
-	    Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
-								  version_desc, version_info_url, false);
-	    dasSource.addVersion(vsource);
-
 	    NodeList vlist = version.getChildNodes();
+	    HashMap caps = new HashMap();
 	    for (int j=0; j<vlist.getLength(); j++) {
 	      String nodename = vlist.item(j).getNodeName();
 	      // was CATEGORY, renamed CAPABILITY
@@ -216,9 +211,25 @@ public class Das2ServerInfo  {
 		System.out.println("Capability: " + captype + ", URI: " + cap_root);
 		// for now don't worry about format subelements
 		Das2Capability cap = new Das2Capability(captype, cap_root, null);
-		vsource.addCapability(cap);
+		//		vsource.addCapability(cap);
+		caps.put(captype, cap);
 	      }
 	    }
+	    Das2VersionedSource vsource;
+	    if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
+	      vsource = new Das2WritebackVersionedSource(dasSource, version_uri, version_name,
+							 version_desc, version_info_url, false);
+	    }
+	    else {
+	      vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
+						version_desc, version_info_url, false);
+	    }
+	    Iterator capiter = caps.values().iterator();
+	    while (capiter.hasNext()) {
+	      Das2Capability cap = (Das2Capability)capiter.next();
+	      vsource.addCapability(cap);
+	    }
+	    dasSource.addVersion(vsource);
 	  }
 	}
       }

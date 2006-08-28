@@ -63,7 +63,7 @@ public class MaxGapThresholder extends JPanel
       }
     } );
     frm.pack();
-    frm.show();
+    frm.setVisible(true);
     return dthresher;
   }
 
@@ -83,6 +83,7 @@ public class MaxGapThresholder extends JPanel
     maxgapTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    this.add(Box.createRigidArea(new Dimension(6,0)));
     this.add(new JLabel("Max Gap <= "));
     this.add(maxgapTF);
     this.add(tslider);

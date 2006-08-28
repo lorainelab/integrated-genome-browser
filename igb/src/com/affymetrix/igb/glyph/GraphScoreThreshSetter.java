@@ -152,10 +152,11 @@ public class GraphScoreThreshSetter extends JPanel
     thresh_aboveB.setSelected(false);
     thresh_belowB.setSelected(false);
     thresh_unknownB.setSelected(true);
-    JPanel directionP = new JPanel();
-    directionP.setLayout(new GridLayout(1, 3));
+    Box directionP = Box.createHorizontalBox();
     directionP.add(new JLabel("Direction: "));
+    directionP.add(Box.createRigidArea(new Dimension(6,0)));
     directionP.add(thresh_aboveB);
+    directionP.add(Box.createRigidArea(new Dimension(6,0)));
     directionP.add(thresh_belowB);
 
     labP.add(new JLabel("By Value:"));
@@ -167,9 +168,11 @@ public class GraphScoreThreshSetter extends JPanel
     
     JPanel cbox = new JPanel();
     cbox.setLayout(new BoxLayout(cbox, BoxLayout.X_AXIS));
+    cbox.add(Box.createRigidArea(new Dimension(6,0)));
     cbox.add(labP);
     cbox.add(textP);
     cbox.add(slideP);
+    cbox.add(Box.createRigidArea(new Dimension(6,0)));
 
     JPanel thresh_toggle_pan = new JPanel();
     thresh_toggle_pan.setLayout(new GridLayout(1, 2));
@@ -183,6 +186,7 @@ public class GraphScoreThreshSetter extends JPanel
     thresh_butP.setLayout(new BoxLayout(thresh_butP, BoxLayout.X_AXIS));
     thresh_butP.add(new JLabel("Visibility  "));
     thresh_butP.add(threshCB);
+    thresh_butP.add(Box.createRigidArea(new Dimension(6,0)));
     thresh_butP.add(tier_threshB);
 
     JPanel thresh_shiftP = new JPanel();
@@ -198,17 +202,26 @@ public class GraphScoreThreshSetter extends JPanel
     min_run_thresher = new MinRunThresholder(gviewer.getSeqMap());
     max_gap_thresher = new MaxGapThresholder(gviewer.getSeqMap());
         
-    JPanel center_panel = new JPanel();    
-    center_panel.setLayout(new BorderLayout());
-    center_panel.add("South", directionP);
-    center_panel.add("Center", cbox);
+    Box center_panel = Box.createVerticalBox();    
+    //directionP.setAlignmentX(0.0f);
+    center_panel.add(directionP);
+    //cbox.setAlignmentX(0.0f);
+    center_panel.add(cbox);
+    center_panel.setAlignmentX(0.5f);
 
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    this.add(Box.createRigidArea(new Dimension(0,6)));
     this.add(thresh_butP);
+    this.add(Box.createRigidArea(new Dimension(0,12)));
     this.add(center_panel);
+    this.add(Box.createRigidArea(new Dimension(0,12)));
     this.add(thresh_shiftP);
+    this.add(Box.createRigidArea(new Dimension(0,12)));
     this.add(max_gap_thresher);
-    this.add(min_run_thresher);    
+    this.add(Box.createRigidArea(new Dimension(0,4)));
+    this.add(min_run_thresher);
+    this.add(Box.createRigidArea(new Dimension(0,6)));
+    this.add(Box.createVerticalGlue());
   }
   
   JFrame thresh_setter_frame = null;
@@ -229,7 +242,7 @@ public class GraphScoreThreshSetter extends JPanel
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(thresh_setter_frame, pos);
       }
-      thresh_setter_frame.show();
+      thresh_setter_frame.setVisible(true);
       thresh_setter_frame.addWindowListener( new WindowAdapter() {
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window

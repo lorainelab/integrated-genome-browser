@@ -289,17 +289,17 @@ public class GFFParser implements AnnotationWriter  {
         if (line == null) { continue; }
         if (line.startsWith("##")) { 
           processDirective(line);
-          if (gff_version == 3) {
-            if (line_count > 0) {
-              throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
-            } else {
-              // The "#gff-version 3" pragma is *required* to be on the first line.
-              GFF3Parser gff3_parser = new GFF3Parser();
-              return gff3_parser.parse(br, seq_group);
-            }
-          } else {
-            continue;
-          }
+//          if (gff_version == 3) {
+//            if (line_count > 0) {
+//              throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
+//            } else {
+//              // The "#gff-version 3" pragma is *required* to be on the first line.
+//              GFF3Parser gff3_parser = new GFF3Parser();
+//              return gff3_parser.parse(br, seq_group);
+//            }
+//          } else {
+//            continue;
+//          }
         }
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {

@@ -55,6 +55,10 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
     this.map = gview.getSeqMap();
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
+    range_box.setToolTipText("<html>Enter a coordinate range here.<br>" +
+      "Use the format 'start : end' or 'start + width' or 'center'.<html>");
+    ToolTipManager.sharedInstance().registerComponent(range_box);
+    
     this.add(range_box);
 
     range_box.setEditable(true);

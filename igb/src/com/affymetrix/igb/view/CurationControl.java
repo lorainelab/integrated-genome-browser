@@ -20,14 +20,18 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
+import org.xml.sax.InputSource;
+
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 
 /**
@@ -48,11 +52,18 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
 
   /**
   *   Used to assign curation syms an id unique to this session
-  *   (If curation is persisted, may need to change this id later based 
+  *   (If curation is persisted, may need to change this id later based
   *     on id assigment from persistent store)
   */
   static int curation_id_count = 0;
-  
+
+  /**
+   *  The prefix to use for all curation ids,
+   *   (If curation is persisted, may need to change this id later based
+   *     on id assigment from persistent store)
+   */
+  static String curation_id_root = "das-private:";
+
   public static final String PREF_ENABLE_CURATIONS = "Enable Curations";
   public static final boolean default_enable_curations = false;
 
@@ -173,12 +184,8 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     }
     else {
       if (annot_sym == null) { annot_sym = region_sym; }
-      CurationSym curation_sym = new CurationSym();
+      CurationSym curation_sym = copyToCuration(annot_sym);
       curation_sym.setProperty("method", current_type);
-      SeqUtils.copyToMutable(annot_sym, curation_sym);
-      //      curation_sym.setID(current_type + "." + curation_id_count);
-      curation_sym.setID("das-private:" + current_type + "." + curation_id_count);
-      curation_id_count++;
       aseq.addAnnotation(curation_sym);
 
       // place annotation tiers next to axis...
@@ -209,11 +216,13 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     else {
       System.out.println("adding to curation");
       if (annot_sym == null) { annot_sym = region_sym; }
-      CurationSym curation_sym = new CurationSym();
+      //      CurationSym curation_sym = new CurationSym();
+      SeqSymmetry union_sym = SeqUtils.union(prev_curation, annot_sym, aseq);
+      CurationSym curation_sym = copyToCuration(union_sym);
       curation_sym.setPredecessor(prev_curation);
       prev_curation.setSuccessor(curation_sym);
       curation_sym.setProperty("method", current_type);
-      SeqUtils.union(prev_curation, annot_sym, curation_sym, aseq);
+      //      SeqUtils.union(prev_curation, annot_sym, curation_sym, aseq);
       aseq.addAnnotation(curation_sym);
       gviewer.addAnnotationGlyphs(curation_sym);
 
@@ -249,16 +258,19 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     else {
       System.out.println("deleting from curation");
       if (annot_sym == null) { annot_sym = region_sym; }
-      CurationSym curation_sym = new CurationSym();
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
-      TierGlyph tgl = (prev_curation.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
-
+      //      CurationSym curation_sym = new CurationSym();
+      SeqSymmetry inverted_annot = SeqUtils.inverse(annot_sym, aseq, true);
+      MutableSeqSymmetry intersect_sym = SeqUtils.intersection(prev_curation, inverted_annot, aseq);
+      symCleanupHack(intersect_sym, aseq);
+      CurationSym curation_sym = copyToCuration(intersect_sym);
       curation_sym.setPredecessor(prev_curation);
       prev_curation.setSuccessor(curation_sym);
       curation_sym.setProperty("method", current_type);
-      SeqSymmetry inverted_annot = SeqUtils.inverse(annot_sym, aseq, true);
-      SeqUtils.intersection(prev_curation, inverted_annot, curation_sym, aseq);
-      symCleanupHack(curation_sym, aseq);
+
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph tgl = (prev_curation.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
+
+      //      SeqUtils.intersection(prev_curation, inverted_annot, curation_sym, aseq);
       //      SeqUtils.printSymmetry(curation_sym);
       // if entire prev_curation is deleted, then don't want to add new curation
       //     if prev_curation is deleted, curation_sym will be empty, so check based on presence of aseq span in curation_sym
@@ -285,28 +297,59 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     }
   }
 
-  protected void symCleanupHack(CurationSym curation_sym, AnnotatedBioSeq aseq) {
+  protected CurationSym copyToCuration(SeqSymmetry sym) {
+    CurationSym cur = new CurationSym();
+    String curation_id = (curation_id_root + current_type + "." + curation_id_count);
+    curation_id_count++;
+    boolean success = copyToCuration(sym, cur, curation_id);
+    if (success) { return cur; }
+    else { return null; }
+  }
+
+  protected boolean copyToCuration(SeqSymmetry sym, CurationSym cur, String curation_id) {
+    cur.clear();
+    cur.setID(curation_id);
+    int spanCount = sym.getSpanCount();
+    for (int i=0; i<spanCount; i++) {
+      SeqSpan span = sym.getSpan(i);
+      SeqSpan newspan = new SimpleMutableSeqSpan(span);
+      cur.addSpan(newspan);
+    }
+    int childCount = sym.getChildCount();
+    for (int i=0; i<childCount; i++) {
+      SeqSymmetry child = sym.getChild(i);
+      CurationSym newchild = new CurationSym();
+      String child_id = curation_id + "." + i;
+      copyToCuration(child, newchild, child_id);
+      cur.addChild(newchild);
+    }
+    return true;
+  }
+
+
+  //  protected void symCleanupHack(CurationSym curation_sym, AnnotatedBioSeq aseq) {
+  protected void symCleanupHack(MutableSeqSymmetry psym, AnnotatedBioSeq aseq) {
       // little hack to clean up, because intersection() ends up creating 0-length
       //   symmetries if two compared spans abut --
       //   (which is why genometry implementation needs to be fixed so that
       //    abutment isn't considered intersection)
       ArrayList clist = new ArrayList();
-      for (int i=0; i<curation_sym.getChildCount(); i++) {
-	clist.add(curation_sym.getChild(i));
+      for (int i=0; i<psym.getChildCount(); i++) {
+	clist.add(psym.getChild(i));
       }
       boolean fix_parent = false;
       for (int i=0; i<clist.size(); i++) {
 	SeqSymmetry csym = (SeqSymmetry)clist.get(i);
 	SeqSpan cspan = csym.getSpan(aseq);
 	if (cspan.getLength() == 0) {
-	  curation_sym.removeChild(csym);
+	  psym.removeChild(csym);
 	  fix_parent = true;
 	}
       }
       if (fix_parent) {
-	curation_sym.removeSpan(curation_sym.getSpan(aseq));
-	SeqSpan new_pspan = SeqUtils.getChildBounds(curation_sym, aseq);
-	curation_sym.addSpan(new_pspan);
+	psym.removeSpan(psym.getSpan(aseq));
+	SeqSpan new_pspan = SeqUtils.getChildBounds(psym, aseq);
+	psym.addSpan(new_pspan);
       }
       // end zero-length workaround hack
   }
@@ -361,6 +404,79 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       //      tmap.packTiers(false, true, false);  // already called in tmap.stretchToFit()
       tmap.updateWidget();
     }
+  }
+
+
+  long prev_writeback_time = System.currentTimeMillis();
+  /**
+   *  commitCurations() posts curation changes to DAS/2 writeback server
+   *  only sends server data for curations that have changed since last commit
+   *  For now assuming all commits are on same genome (but can be on different chromosomes)
+   *  For now, assuming all curation commits go to UCLA DAS/2 writeback server
+   */
+  public boolean commitCurations(TierGlyph atier) {
+    boolean success = false;
+    // probably want to save all changes across all chromosomes and all curation types????
+    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    String annot_type = atier.getLabel();
+    // should probably do this via aseq.getAnnotation(annot_type);
+    int childcount= atier.getChildCount();
+    java.util.List syms = new ArrayList(childcount);
+    for (int i=0; i<childcount; i++) {
+      GlyphI child = atier.getChild(i);
+      if (child.getInfo() instanceof SeqSymmetry) {
+	//      if (child.getInfo() instanceof CurationSym) {
+	syms.add(child.getInfo());
+      }
+    }
+    Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
+    System.out.println("writeback doc:");
+    das_parser.writeBackAnnotations(syms, aseq, "type/SO:region", System.out); // diagnostic
+    prev_writeback_time = System.currentTimeMillis();
+    try {
+      System.out.println("Testing DAS/2 writeback: "+ syms.size());
+      String writeback_loc = "http://genomics.ctrl.ucla.edu/~allenday/cgi-bin/das2xml-parser/stable4.pl";
+      URL writeback_url = new URL(writeback_loc);
+      URLConnection con = writeback_url.openConnection();
+      con.setDoInput(true);
+      con.setDoOutput(true);
+
+      OutputStream conos = con.getOutputStream();
+      BufferedOutputStream bos = new BufferedOutputStream(conos);
+      //      das_parser.writeBackAnnotations(syms, aseq, annot_type, bos);
+      das_parser.writeBackAnnotations(syms, aseq, "type/SO:region", bos);
+      bos.flush();
+      bos.close();
+
+      InputStream istr = con.getInputStream();
+      //  for now just need to change ids to match ids from writeback server
+      //  eventually want to completely replace syms with given ids with those from server (if they differ...)
+      StringBuffer sbuf = new StringBuffer();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(istr));
+      System.out.println("****** Response from writeback server: ");
+      String line;
+      while ((line = reader.readLine()) != null) {
+	System.out.println(line);
+	sbuf.append(line);
+	sbuf.append("\n");
+      }
+      istr.close();
+      String return_contents = sbuf.toString();
+      InputSource isrc = new InputSource(new StringReader(return_contents));
+      Das2FeatureSaxParser return_parser = new Das2FeatureSaxParser();
+      // read return document as new annotations for now...
+      java.util.List results = return_parser.parse(isrc, writeback_loc, group, true);
+      System.out.println("results returned: " + results.size());
+      success = true;
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+      success = false;
+    }
+    gviewer.setAnnotatedSeq(aseq, true, true);
+    System.out.println("finished test writeback");
+    return success;
   }
 
 

@@ -3,6 +3,7 @@
 <head>
 <title>IGB 4 Release Notes.</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Language" content="en-US" />
 <link rel="stylesheet" type="text/css" media="screen" href="/stylesheet.css" />
 <link rel="icon" href="/favicon.ico" />
 </head>
@@ -12,12 +13,156 @@
 <br>
 <h1>IGB 4 release notes.</h1>
 <br>
-We are pleased to announce the release version <b>4.38</b> of IGB, the Integrated Genome Browser.
+We are pleased to announce the release version <b>4.46</b> of IGB, the Integrated Genome Browser.
 <br>
 <br>
 
 Highlights:
 <ul>
+
+<li><b>Version 4.46</b>  
+<ul>
+
+<li>You can output the display to an ".eps" Encapsulated PostScript file.
+This allows you to produce high-quality figures for use in publications.
+These files can be printed by most laser printers, and can be viewed
+with various software, some of which is free.
+<br><br><img src="images/print_to_eps.gif">
+<br>Figure: Print to an eps file.<br><br>
+</li>
+
+<li>The preferences panel for graphs has been removed.  There remain only
+a few preferences that can be set by the user and these are in the
+"Other Options" panel.
+<br><br><img src="images/other_prefs_for_graphs.gif">
+<br>Figure: Graph options in the "Other Options" panel.<br><br>
+</li>
+
+<li>The splice view now works on a background thread and thus
+doesn't slow-down your work in the main view.
+
+<li>The splice view now shows a small "x" mark to indicate where
+an exon in some transcript is not being displayed because it occurs
+in the intron region of your selected transcript.
+<br><br><img src="images/slice_view_with_deletions.gif">
+<br>Figure: Slice view showing small "x" marks to indicate missing exons.
+Here it was the top transcript that was selected in the main view; it does
+not contain exons at the indicated points where the lower transcripts
+do contain exons.<br><br>
+</li>
+
+<li>In the QuickLoad panel, you are warned before any annotation file
+is downloaded over the network.  This helps you avoid downloading
+a large file when it is not convenient.
+
+<li>More types of CHP files can be read.....
+
+<li>There is now a "Select All Tiers" menu item in the label map
+so that you can apply the same properties to
+all selections, such as background color, or collapsed/expanded.
+<br><br><img src="images/select_all_tiers.gif">
+<br>Figure: Select all tiers to change their properties.<br><br>
+</li>
+
+<li>Preferences for QuickLoad and other data access are now available
+through the "File->Preferences" menu.
+
+<li>Several features were added to help users who use
+genomes other than the ones supported on the NetAffx Quickload
+site.
+<ul>
+<li>You can  provide a name for the genome that is created
+when you open a file in a new genome.  For example, you could
+load a ".gff" file with the RefSeq data for your genome.
+If you later open a graph file that refers to the same genome,
+the data will be merged.
+<br><br><img src="images/open_dialog.gif">
+<br>Figure: Naming a genome during import.<br><br>
+</li>
+<li>You can specify your own synonyms file.  This is not needed
+by most users, but can help when two files refer to the same
+genome or chromosome, but use different names for it, such
+as "chr1" vs. "Chromosome 1".  Your personal synonyms file
+will be merged with any synonyms files that have already been
+read, such as the one on the NetAffx QuickLoad server
+<a href="http://netaffxdas.affymetrix.com/quickload_data">here</a>, and/or your
+own QuickLoad server.  The format is a simple tab-delimited file.
+<br><br><img src="images/data_sources_prefs.gif">
+<br>Figure: The "data sources" preferences, including the ability
+to load a supplementary synonyms file.<br><br>
+</li>
+</ul>  
+
+<li>There is now a text field that displays the current visible
+range of the graph.  You can also quickly go to a region of interest
+by typing it into this box.  
+Enter coordinates as "start : end", or "start + width" or "center".
+<br><br><img src="images/range_box.gif">
+<br>Figure: The range box for viewing and going to a specific range.<br><br>
+</li>
+
+<li>The autoscroll function now allows the entry of start and end
+coordinates.  This is useful when setting-up a background display
+for a conference presentation.
+
+
+
+
+
+
+<li>Settings and positioning of graphs are now shared across all chromosomes.
+For example, if you change the color or range of a graph on chromosome 2, the same
+graph on chromosome 3 will also have its color or range changed.
+
+<li>You can now select graphs by selecting either the <em>graph
+handle</em> (as in previous versions of IGB) or by selecting the <em>graph
+tier label</em>. The graph handle is the small rectangle at the left-edge of
+the graph.  The graph tier label is the textual label in the label map
+on the left-hand side of the screen.  For non-floating graphs,
+the graph tier label is also used to drag the graph tier up or down.  
+Floating graphs have no tier label but can
+be dragged up and down using the graph handle.
+
+<li>By default, graph labels will now use the short filename rather than
+the complete path to the file.  You can change this default through
+the preferences panel.
+
+<li>Graph drawing has been improved, including a significant
+speed-up in drawing heat-map and bar style graphs.
+
+<li>Graphs for scored-region data, such as expression levels from ".egr" files,
+is now drawn in a region-based way which is easier to understand.
+
+<li>Graphs can be joined into a group.  
+<ul>
+<li>Use the "Join" and "Split" buttons in the "Graph Adjuster" panel.
+<li>Grouped graphs can be moved as a unit.  
+<li>The group can be "expanded" to show each graph
+on a separate line, or "collapsed" to show all graphs printed
+on top of each other.
+<li>The group can be given a name that differs from the names of individual graphs.
+<li>Individual graphs in a group can be manipulated by
+by selecting their individual handles.  The group as a whole will
+be selected when you select the label in the left-hand label map.
+<li>When a graph bookmark is created, the fact that several graphs are
+grouped together will be remembered.
+</ul>
+
+<li>When an ".egr" file contains multiple scores per region, the
+scores will be shown in separate tiers, but those tiers will be
+grouped together with a single label in the left-hand label map.
+(You can separate these into distinct tiers, if you wish, by using
+the "Split" button in the Graph Adjuster tab.)  As with previous
+versions of IGB, it is still not yet possible to create a bookmark of
+the graphs made from an ".egr" file.
+
+<li>You can change the background color of a graph tier.  
+("Floating" graph tiers still have a transparent background.)
+
+  
+</ul>
+  
+  
 <li><b>Version 4.38</b>
 
 <ul>

@@ -2,7 +2,7 @@ Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
 
-IGB-???
+IGB-4.46
   + In the graph adjuster and graph threshold setter, it is no longer necessary
     to press Enter after typing a value in a text field.
   + Added deletion glyphs to the Sliced View

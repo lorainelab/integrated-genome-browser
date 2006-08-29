@@ -17,13 +17,16 @@ import java.util.*;
 import com.affymetrix.genometry.BioSeq;
 
 /**
- *  Trying to order chromosomes in a sensible way based on ids
+ *  Trying to order chromosomes in a sensible way based on ids.
  */
 public class ChromComparator implements Comparator  {
 
+  /** Objects must be of type String. */
   public int compare(Object obj1, Object obj2) {
-    String str1 = ((BioSeq)obj1).getID();
-    String str2 = ((BioSeq)obj2).getID();
+    return compare((String) obj1, (String) obj2);
+  }
+  
+  public int compare(String str1, String str2) {
     if (str1.length() < str2.length()) {
       return -1;
     }
@@ -34,5 +37,4 @@ public class ChromComparator implements Comparator  {
       return str1.compareTo(str2);
     }
   }
-
 }

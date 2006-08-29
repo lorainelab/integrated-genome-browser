@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,7 +23,7 @@ import javax.swing.filechooser.FileFilter;
  * This is also suitable for filtering file names for a JFileChooser.
  * @author  Eric Blossom
  */
-public abstract class TableFilter extends FileFilter {
+public abstract class TableFilter extends javax.swing.filechooser.FileFilter {
 
   protected Set validSuffixes = new HashSet();
   protected String description = "";

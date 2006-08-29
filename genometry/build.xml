@@ -44,10 +44,10 @@ in this directory, execute:
     <property name="genometry.src.dir" value="${root.dir}/src"/>
 
     <!-- Define the source build directories -->
-    <property name="doc.dir" value="${root.dir}/docs/api"/>
-    <property name="build.dir" value="${root.dir}/build"/>
-    <property name="build.genometry.src" value="${root.dir}/build/genometry/src"/>
-    <property name="build.genometry.dest" value="${root.dir}/build/genometry/classes"/>
+    <!--   (The source and class directories are the same)  -->
+    <property name="classes.dir" value="${root.dir}/src"/>
+
+    <property name="doc.dir" value="${root.dir}/docs"/>
 
     <!-- Define the jar files -->
     <property name="genometry.jar" value="genometry.jar"/>
@@ -55,12 +55,11 @@ in this directory, execute:
 
     <filter token="Copyright" value="Copyright (C) ${year} by Affymetrix, Inc, USA All rights reserved."/> 
     <filter token="year" value="${year}"/>
-    <filter token="version" value="${version}"/>
     <filter token="date" value="${TODAY}"/>
 
 
 <!-- If DNAUtils.class is found in genoviz.jar, set genoviz.classes to genoviz.jar  -->
-    <property name="genoviz.jar" value="../genoviz/genoviz.jar"/>
+    <property name="genoviz.jar" value="../genoviz_sdk/genoviz.jar"/>
     <available classname="com.affymetrix.genoviz.util.DNAUtils" property="genoviz.classes" value="${genoviz.jar}">
       <classpath>
         <pathelement location="${genoviz.jar}"/>
@@ -69,8 +68,8 @@ in this directory, execute:
 
     <!-- 
      If DNAUtils.class is found in genoviz.classes set "genoviz_found" to true.
-     This check is only necessary because the user could re-define the value 
-     of genoviz.classes on the command line using "jar -Dgenoviz.classes=foo"  
+     This check permits the user to re-define the value of genoviz.classes 
+     on the command line using "jar -Dgenoviz.classes=foo"  
      -->
     <available classname="com.affymetrix.genoviz.util.DNAUtils" property="genoviz_found">
       <classpath>
@@ -101,40 +100,19 @@ in this directory, execute:
     <echo message=""/>
   </target>
 
-  <!-- =================================================================== -->
-  <!-- Prepares the build directory                                        -->
-  <!-- =================================================================== -->
   <target name="prepare" depends="init">
-    <mkdir dir="${build.dir}"/>
 
     <fail unless="genoviz_found">Cannot find the GenoViz classes</fail>
 
   </target>
 
-  <!-- =================================================================== -->
-  <!-- Prepares the genometry code                                         -->
-  <!-- =================================================================== -->
-  <target name="prepare-genometry" depends="prepare">
-    <mkdir dir="${build.genometry.src}"/>
-    <mkdir dir="${build.genometry.dest}"/>
-
-    <copy todir="${build.genometry.src}" filtering="true">
-      <fileset dir="${genometry.src.dir}" includes="**/*.java"/>
-    </copy>
-
-  </target>
 
   <!-- =================================================================== -->
   <!-- Compiles the genometry directory                                    -->
   <!-- =================================================================== -->
-  <target name="compile-genometry" depends="prepare-genometry">
-    <!-- copy resource files -->
-    <copy todir="${build.genometry.dest}">
-      <fileset dir="${build.genometry.src}" excludes="**/*.java"/>
-    </copy>
-
-    <javac srcdir="${build.genometry.src}"
-           destdir="${build.genometry.dest}"
+  <target name="compile-genometry" depends="prepare">
+    <javac srcdir="${genometry.src.dir}"
+           destdir="${classes.dir}"
            debug="${debug}"
            deprecation="${deprecation}" 
            optimize="${optimize}">
@@ -145,19 +123,23 @@ in this directory, execute:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Creates the genometry.jar in ./build                                -->
+  <!-- Creates the genometry.jar                                           -->
   <!-- =================================================================== -->
-  <target name="genometry" depends="compile-genometry">
-    <jar jarfile="${build.dir}/${genometry.jar}"
-         basedir="${build.genometry.dest}"
-         includes="**"/>
+  <target name="genometry-jar" depends="compile-genometry">
+    <jar jarfile="${genometry.jar}" update="false">
+      <fileset dir="${classes.dir}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/.*"/>
+      </fileset>
+    </jar>
   </target>
 
 
   <!-- =================================================================== -->
-  <!-- Build all jars in ./build                                           -->
+  <!-- Build all jars                                                      -->
   <!-- =================================================================== -->
-  <target name="all" depends="genometry"
+  <target name="all" depends="genometry-jar"
     description="builds all the jars in ./build"/>
 
 
@@ -166,7 +148,13 @@ in this directory, execute:
   <!-- =================================================================== -->
   <target name="clean" depends="init"
     description="restores distribution to original state">
-    <delete dir="${build.dir}"/>
+    <delete file="${genometry.jar}"/>
+    <delete dir="${doc.dir}"/>
+    <delete>
+      <fileset dir="${root.dir}">
+        <include name="**/*.class"/>
+      </fileset>
+    </delete>
   </target>
 
   <target name="docs" depends="init" description="builds javadocs">
@@ -186,7 +174,7 @@ in this directory, execute:
         <pathelement location="${genoviz.classes}"/>
       </classpath>
       <packageset dir="${genometry.src.dir}"/>
-      <doctitle><![CDATA[<h1>${Name} API (${version})</h1>]]></doctitle>
+      <doctitle><![CDATA[<h1>${Name} API</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; ${year} Affymetrix, Inc., USA. All Rights Reserved.</i>]]></bottom>
     </javadoc>
   </target>

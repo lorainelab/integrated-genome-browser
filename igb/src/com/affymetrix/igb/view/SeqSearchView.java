@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -64,6 +64,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
   public SeqSearchView() {
     super();
     gviewer = IGB.getSingletonIGB().getMapView();
+    
     this.setLayout(new BorderLayout());
     JPanel pan1 = new JPanel();
     if (IGB.isSequenceAccessible()) {
@@ -104,6 +105,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
       pan1.add(regexHitCountL);
     }
     this.add("North", pan1);
+    this.add("Center", new JPanel());// a blank panel: improves appearance in JDK1.5
 
     coordsearchTF.addActionListener(this);
     idsearchTF.addActionListener(this);
@@ -114,32 +116,45 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
   private void clearAll() {
     NeoMap map = gviewer.getSeqMap();
+    coordsearchTF.setText("");
     idsearchTF.setText("");
     entryTF.setText("");
     regexTF.setText("");
     idHitCountL.setText(" No hits");
     hitCountL.setText(" No hits ");
     regexHitCountL.setText(" No hits");
-    // NOTE: map.removeItem(Vector) is VERY slow!
-    if (glyphs.size()>0) { map.removeItem(glyphs); }
-    glyphs.clear();
+    clearResults();
     map.updateWidget();
   }
 
+  // remove the previous search results from the map.
+  private void clearResults() {
+    if (glyphs.size()>0) {
+      // NOTE: map.removeItem(Vector) is VERY slow!
+      //NeoMap map = gviewer.getSeqMap();
+      //map.removeItem(glyphs); 
+
+      // Simply re-drawing the SeqMapView is faster in cases where there
+      // are lots of results to erase, and not too slow to use all the time.
+      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
+    }
+    glyphs.clear();
+  }
+  
   public void actionPerformed(ActionEvent evt) {
     //    System.out.println("SeqSearchView received action event: " + evt);
     Object src = evt.getSource();
     NeoMap map = gviewer.getSeqMap();
     BioSeq vseq = gviewer.getViewSeq();
 
-    TransformTierGlyph axis_tier = gviewer.getAxisTier();
     if (src==clear_button) {
       clearAll();
     }
     else if (src == coordsearchTF && coordsearchTF.getText().trim().length()>0) {
       try {
         int pos = Integer.parseInt(coordsearchTF.getText());
-        if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
+       //  if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
+        if (vseq != null && pos >= 0 && pos <= vseq.getLength()) {
           Rectangle2D vbox = map.getViewBounds();
           double map_start = pos - vbox.width/2;
           map.scroll(map.X, map_start);
@@ -154,10 +169,17 @@ public class SeqSearchView extends JComponent implements ActionListener  {
       }
     }
     else if (src == entryTF || src == regexTF) {
+      clearResults();
+      
       Timer tim = new Timer();
       GlyphI seq_glyph = null;
       //    AnnotatedBioSeq vseq = gviewer.getSeq();
       if (vseq==null || ! vseq.isComplete()) {
+        if (src == entryTF) {
+          hitCountL.setText(" No hits");
+        } else if (src == regexTF) {
+          regexHitCountL.setText(" No hits");
+        }
         IGB.errorPanel("Residues for seq not available, search aborted");
         return;
       }
@@ -165,16 +187,15 @@ public class SeqSearchView extends JComponent implements ActionListener  {
       if (vseq instanceof CompositeNegSeq) {
         residue_offset = ((CompositeNegSeq)vseq).getMin();
       }
+      TransformTierGlyph axis_tier = gviewer.getAxisTier();
       //      IntList positions = new IntList(1000);
       // find the sequence glyph on axis tier...
       for (int i=0; i<axis_tier.getChildCount(); i++) {
-        if (axis_tier.getChild(i) instanceof SequenceGlyph) {
+        if (axis_tier.getChild(i) instanceof AbstractResiduesGlyph) {
           seq_glyph = axis_tier.getChild(i);
           break;
         }
       }
-      if (glyphs.size()>0) {map.removeItem(glyphs);}
-      glyphs.clear();
 
       if (src == entryTF) {
         String searchstring = entryTF.getText();
@@ -192,21 +213,27 @@ public class SeqSearchView extends JComponent implements ActionListener  {
         boolean use_nibseq = (vseq instanceof NibbleBioSeq);
         NibbleBioSeq nibseq = null;
         String residues = null;
-        int res_index;
-        if (use_nibseq) {
-          System.out.println("searching NibbleBioSeq for ocurrences of \"" +
-                             searchstring + "\" in sequence");
-          System.out.flush();
-	  searchstring = searchstring.toUpperCase();
-          nibseq = (NibbleBioSeq)vseq;
-          res_index = nibseq.indexOf(searchstring, 0);
-        }
-        else {
-          System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
-          System.out.flush();
-          residues = vseq.getResidues();
-          res_index = residues.indexOf(searchstring, 0);
-        }
+        int res_index = -1;
+	try {
+	  if (use_nibseq) {
+	    System.out.flush();
+	    searchstring = searchstring.toUpperCase();
+	    System.out.println("searching NibbleBioSeq for ocurrences of \"" +
+			       searchstring + "\" in sequence");
+	    nibseq = (NibbleBioSeq)vseq;
+	    res_index = nibseq.indexOf(searchstring, 0);
+	  }
+	  else {
+	    System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
+	    System.out.flush();
+	    residues = vseq.getResidues();
+	    res_index = residues.indexOf(searchstring, 0);
+	  }
+	}
+	catch (Exception ex) {
+	  IGB.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
+	  return;
+	}
 
         int seq_index;
         int length = searchstring.length();
@@ -220,6 +247,8 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           if (seq_glyph != null) {
             gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height);
             seq_glyph.addChild(gl);
+            // when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+            gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height/2);
           } else {
             gl.setCoords(seq_index, 10, length, 10);
             axis_tier.addChild(gl);
@@ -239,11 +268,11 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 	//   flip searchstring around, and redo nibseq search...
 	String rev_searchstring = DNAUtils.reverseComplement(searchstring);
         if (use_nibseq) {
-          System.out.println("searching NibbleBioSeq for ocurrences of \"" + searchstring + "\" in sequence");
+          System.out.println("searching NibbleBioSeq for ocurrences of \"" + rev_searchstring + "\" in sequence");
           res_index = nibseq.indexOf(rev_searchstring, 0);
         }
         else {
-          System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
+          System.out.println("searching for ocurrences of \"" + rev_searchstring + "\" in residues");
           res_index = residues.indexOf(rev_searchstring, 0);
         }
 
@@ -254,6 +283,8 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           if (seq_glyph != null) {
             gl.setCoords(seq_index, seq_glyph.getCoordBox().y + 5, length, seq_glyph.getCoordBox().height);
             seq_glyph.addChild(gl);
+            // when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+            gl.setCoords(seq_index, seq_glyph.getCoordBox().y + seq_glyph.getCoordBox().height/2, length, seq_glyph.getCoordBox().height/2);
           } else {
             gl.setCoords(seq_index, 15, length, 10);
             axis_tier.addChild(gl);
@@ -350,55 +381,19 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
   public void findSym(String id)  {
     if (id == null) { return; }
-    System.out.println("looking for id: " + id);
-    Map id2sym_hash = IGB.getSymHash();
-    NeoMap seqmap = gviewer.getSeqMap();
-    SeqSymmetry hitsym = (SeqSymmetry)id2sym_hash.get(id);
-    int hitcount = 0;
-    int symcount = 0;
-    if (hitsym == null) {
-      Hashtable modelhash = seqmap.getModelMapping();
-      Enumeration enum = modelhash.keys();
-      Vector syms = new Vector();
-      while (enum.hasMoreElements()) {
-	Object obj = enum.nextElement();
-	if (obj instanceof SymWithProps) {
-	  SymWithProps swp = (SymWithProps)obj;
-	  String swpid = (String)swp.getProperty("id");
-	  if (swpid == null) { swpid = (String)swp.getProperty("transcript_id"); }
-	  // slower, but no assumptions of string interning
-	  if ((swpid != null) && (swpid.equals(id)))  {
-	    hitsym = swp;
-	    break;
-	  }
-	}
-      }
-    }
-    if (hitsym != null) {
-      findSym(hitsym);
-      idHitCountL.setText(" match found");
+    //System.out.println("looking for id: " + id);
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    
+    java.util.List sym_list = group.findSyms(id);
+    
+    if (sym_list != null && ! sym_list.isEmpty()) {
+      idHitCountL.setText(sym_list.size() + " matches found");
+      gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
     }
     else  {
       idHitCountL.setText(" no matches");
     }
   }
-
-  public boolean findSym(SeqSymmetry hitsym) {
-    boolean found = false;
-    if (hitsym != null) {
-      MutableAnnotatedBioSeq seq = gmodel.getSelectedSeqGroup().getSeq(hitsym);
-      if (seq != null) {
-	gmodel.setSelectedSeq(seq);  // event propagation will trigger gviewer to focus on sequence
-	ArrayList symlist = new ArrayList(1);
-	symlist.add(hitsym);
-	gmodel.setSelectedSymmetries(symlist, this);
-	//	gviewer.select(hitsym, false, true, true);
-	//	gviewer.zoomToSelections();
-	found = true;
-      }
-    }
-    return found;
-  }
-
 }
 

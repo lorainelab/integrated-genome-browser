@@ -70,9 +70,9 @@ public class AlignmentDataAdapter implements DataAdapter {
 
   private void doIt() {
 
-    Enumeration enum = this.alignment.sequenceNames();
-    while (enum.hasMoreElements()) {
-      Object o = enum.nextElement();
+    Enumeration numer = this.alignment.sequenceNames();
+    while (numer.hasMoreElements()) {
+      Object o = numer.nextElement();
       String key = (String)o;
       String seq = this.alignment.getResidues(key);
       addSequence(key, seq);

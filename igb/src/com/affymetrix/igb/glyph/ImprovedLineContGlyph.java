@@ -35,8 +35,8 @@ import java.awt.*;
  *
  */
 public class ImprovedLineContGlyph extends Glyph  {
-  boolean optimize_child_draw = true;
-  boolean DEBUG_OPTIMIZED_FILL = false;
+  static final boolean optimize_child_draw = true;
+  static final boolean DEBUG_OPTIMIZED_FILL = false;
   boolean move_children = true;
 
   public void drawTraversal(ViewI view)  {

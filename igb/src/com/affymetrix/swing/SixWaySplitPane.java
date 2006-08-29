@@ -78,6 +78,22 @@ public class SixWaySplitPane extends JComponent {
     this.vSplitTwo.setDividerSize( w );
   }
   
+  
+  /**
+   *  Set the locations of the split-pane dividers.
+   *  @param v location, in pixels, of the vertical split-pane divider
+   *  @param h1 location, in pixels, of the left-most horizontal split-pane divider
+   *  @param h2 location, in pixels, of the second horizontal split-pane divider;
+   *    h2 should be greater than or equal to h1.
+   */
+  public void setDividerLocations(int v, int h1, int h2) {
+    westernRegion.setDividerLocation(v);
+    centralRegion.setDividerLocation(v);
+    easternRegion.setDividerLocation(v);
+    vSplitOne.setDividerLocation(h1);
+    vSplitTwo.setDividerLocation(h2);
+  }
+  
 public void addNorthWest( Component theCandidate ) {
     assert null == this.interiorPanel[0];
     this.interiorPanel[0] = theCandidate;

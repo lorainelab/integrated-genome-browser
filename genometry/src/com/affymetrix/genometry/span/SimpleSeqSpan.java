@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -49,7 +49,7 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
    *                         T = base 3)
    */
   public int getLength() {
-    return (getMax() - getMin());
+    return (end > start ? end-start : start-end);
   }
 
   public BioSeq getBioSeq() {

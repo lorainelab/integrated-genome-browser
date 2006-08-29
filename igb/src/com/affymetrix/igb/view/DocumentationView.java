@@ -35,7 +35,7 @@ public class DocumentationView {
     sb.append("\n");
     sb.append("Main: http://www.affymetrix.com/support/developer/tools/download_igb.affx\n");
     sb.append("User's Guide (PDF): \n  http://www.affymetrix.com/support/developer/tools/IGB_User_Guide.pdf\n");    
-    sb.append("Release Notes: \n  http://www.affymetrix.com/support/developer/tools/igb/release_notes/igb_release_4.html");
+    sb.append("Release Notes: \n  http://genoviz.sourceforge.net/release_notes/igb_release.html");
     sb.append("\n");
     sb.append("\n");
     sb.append("IGB AT SOURCEFORGE\n");

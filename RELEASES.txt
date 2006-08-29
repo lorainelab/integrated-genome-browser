@@ -1,14 +1,17 @@
 Integrated Genome Browser - Versions
 -------------------------------------------------------------------
 
+See also
+http://genoviz.sourceforge.net/release_notes/igb_release.html
+
 
 IGB-4.46
-  + In the graph adjuster and graph threshold setter, it is no longer necessary
-    to press Enter after typing a value in a text field.
-  + Added deletion glyphs to the Sliced View
-  + Slicing takes place on a separate thread
-  + Red/Green color map replaced with more standard Red/Black/Green
-  + Added the coordinate entry box
+  + Many improvements to the graphing functions.
+  + More types of Affymetrix ".chp" files can be read.
+  + You can output the display to ".eps" Encapsulated PostScript
+  + The spliced view has better performance and shows positions
+    of deleted exons.
+  + Details at http://genoviz.sourceforge.net/release_notes/igb_release.html
 
 IGB-4.39
   + Special release for a trade show.  Not released to public.

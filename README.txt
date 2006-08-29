@@ -22,7 +22,8 @@ See http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx
 
 IGB uses other open source software packages that may be distributed 
 with the IGB source code release, including Xerces from Apache, 
-Jetty from Mortbay Consulting, and Fusion from Affymetrix.  
+Jetty from Mortbay Consulting, Vector Graphics from FreeHEP
+and Fusion from Affymetrix.  
 Those packages are covered by their own open source licenses.
 
 IGB is Copyright (c) 2000-2006 Affymetrix, Inc.  
@@ -34,7 +35,10 @@ http://sourceforge.net/projects/genoviz
 
 ----------------- DOCUMENTATION ----------------------------
 
-An IGB user's manual is located in the 'documentation' directory.
+An IGB user's manual is located in the 'documentation' directory
+of the source-file release.  It is not distributed with the
+jar-file release, but is available here:
+http://www.affymetrix.com/support/developer/tools/IGB_User_Guide.pdf
 
 There are demos and tutorials for the GenoViz code inside
 the genoviz_sdk directory.  These are described later below.
@@ -53,7 +57,8 @@ IGB requires the Java 2 Platform, Standard Edition (J2SE),
 
 
 IGB requires several additional resources.  These are included 
-in the 'ext' directory, and you do not need to download them.
+in the 'ext' directory, and you do not need to download them
+separately.
 
 org.mortbay.jetty.jar  
   Version 4.1 or higher
@@ -68,6 +73,9 @@ xerces.jar
   Version 1.3 or higher, but NOT Version 2.0 or higher.
   http://xml.apache.org/xerces-j/
 
+freehep-*.jar
+  Several files from the FreeHEP Vector Graphics library
+  which allow the printing of EPS files.
 
 ----------------- OPTIONAL RESOURCES -----------------------
 

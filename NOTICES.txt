@@ -22,8 +22,8 @@ B)   This product includes portions of the Jetty package
      org.mortbay.jetty.jar, javax.servlet.jar
 
 
-C)   This product includes a slightly modified copy of the
-     Fusion SDK from Affymetrix, Inc. (pure Java version).
+C)   This product includes a copy of the Fusion SDK from 
+     Affymetrix, Inc. (pure Java version).
      http://www.affymetrix.com/support/developer/fusion/index.affx
      
      The Fusion SDK is covered by the GNU Lesser General Public License,

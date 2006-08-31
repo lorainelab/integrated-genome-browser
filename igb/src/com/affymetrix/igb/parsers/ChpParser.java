@@ -118,6 +118,7 @@ public class ChpParser {
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
     int ps_count = chp.getEntryCount();
+    int match_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
     System.out.println("probeset count: " + ps_count);
     ProbeSetQuantificationDetectionData psqData;
@@ -152,7 +153,8 @@ public class ChpParser {
 	group.findSyms(id, syms, false);
 	if (syms.size() > 0) {
 	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
-	  System.out.println("found a match for id: " + id);
+	  // System.out.println("found a match for id: " + id); 
+	  match_count++;
 	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
 	  SeqSpan span = prev_sym.getSpan(0);
 	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
@@ -169,6 +171,7 @@ public class ChpParser {
 	syms.clear();
       }
 
+      System.out.println("matching probeset ids found: " + match_count);
       // now for each sequence seen, sort the SinEntry list by span min/max
       ScoreEntryComparator comp = new ScoreEntryComparator();
       Iterator ents  = seq2entries.entrySet().iterator();

@@ -43,7 +43,7 @@ public class GraphAdjusterView {
 
       float[] old_ycoords = graf.getGraphYCoords();
       float[] new_ycoords;
-
+      
       if (transformer instanceof IdentityTransform) {
         new_ycoords = old_ycoords;
       } else {
@@ -58,8 +58,15 @@ public class GraphAdjusterView {
      // Transforming on this one seq only, not the whole genome
       String newid = trans_name + " (" + graf.getID() + ") ";
       newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
-      GraphSym newgraf =
-        new GraphSym(graf.getGraphXCoords(), new_ycoords, newid, graf.getGraphSeq());
+      GraphSym newgraf;
+      if (graf instanceof GraphIntervalSym) {
+        newgraf = new GraphIntervalSym(graf.getGraphXCoords(), 
+          ((GraphIntervalSym) graf).getGraphWidthCoords(),
+          new_ycoords, newid, graf.getGraphSeq());
+      } else {
+        newgraf = new GraphSym(graf.getGraphXCoords(), 
+          new_ycoords, newid, graf.getGraphSeq());
+      }
       
       GraphState newstate = newgraf.getGraphState();
       newstate.copyProperties(graf.getGraphState());
@@ -69,47 +76,6 @@ public class GraphAdjusterView {
       newgrafs.add(newgraf);
     }
     return newgrafs;
-  }
-
-  public static void cloneGraphs(SeqMapView gviewer, java.util.List grafs) {
-    //System.out.println("cloning graphs");
-    int gcount = grafs.size();
-    try  {
-      for (int i=0; i<gcount; i++) {
-        GraphSym oldsym = (GraphSym)grafs.get(i);
-        
-        String newid = "Clone (" + oldsym.getID() + ") ";
-        newid = GraphSymUtils.getUniqueGraphID(newid, oldsym.getGraphSeq());
-      
-        GraphSym newsym = new GraphSym(oldsym.getGraphXCoords(), oldsym.getGraphYCoords(),
-          newid, oldsym.getGraphSeq());
-
-        newsym.getGraphState().copyProperties(oldsym.getGraphState());
-        String newname = "Clone (" + oldsym.getGraphName() + ") ";
-        newsym.setGraphName(newname);
-
-        AnnotatedBioSeq aseq = (AnnotatedBioSeq)newsym.getGraphSeq();
-        if (aseq instanceof MutableAnnotatedBioSeq) {
-          MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
-          mut.addAnnotation(newsym);
-        }
-      }
-    }
-    catch (Exception ex)  {
-      ErrorHandler.errorPanel("ERROR", "Error while trying to clone graphs", gviewer.getSeqMap(), ex);
-    }
-    updateViewer(gviewer);
-    //    nwidg.updateWidget();
-  }
-
-  static void updateViewer(SeqMapView gviewer)  {
-    final SeqMapView current_viewer = gviewer;
-    final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        current_viewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
-      }
-    });
   }
 
   public static void deleteGraphs(SingletonGenometryModel gmodel, SeqMapView gviewer, java.util.List grafs) {
@@ -215,7 +181,7 @@ public class GraphAdjusterView {
 	      //   (which in turn triggers change in color for TierLabelGlyph...)
 	      if (gl.getParent() instanceof TierGlyph) {
 		gl.getParent().setForegroundColor(col);
-                Vector views = gl.getParent().getScene().getViews();
+                java.util.List views = gl.getParent().getScene().getViews();
                 for (int qq=0; qq<views.size(); qq++) {
                   ViewI v = (ViewI) views.get(qq);
                   if (gl.withinView(v)) {
@@ -237,8 +203,7 @@ public class GraphAdjusterView {
       text = text.substring(0, text.length()-1);
     }
 
-    float f = Float.parseFloat(text);
-    return f;
+    return Float.parseFloat(text);
   }
 }
 

@@ -334,9 +334,11 @@ public class GraphGlyph extends Glyph {
             float the_y = ytemp;
             int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
             if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
+            int pixel_width = curr_x_plus_width.x - curr_point.x;
+            if (pixel_width < 1) { pixel_width = 1; }
             g.setColor(heatmap_colors[heatmap_index]);
             g.fillRect(curr_point.x, pixelbox.y,
-                curr_x_plus_width.x - curr_point.x, pixelbox.height+1);
+                pixel_width, pixelbox.height+1);
           }
         }
 //	else if (graph_style == SPAN_GRAPH) {

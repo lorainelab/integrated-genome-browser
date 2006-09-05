@@ -32,11 +32,11 @@ public class SynonymLookupTest extends TestCase {
     
     sl.addSynonyms(new String[] {"1", "chr1", "CHR1"}); // Add upper and lower case by hand in this test
     sl.addSynonyms(new String[] {"1", "one"});
-    // NOTE that "one" and "chr1" are NOT currently considered synonyms 
-    // because they are listed on separate lines.  We may want to change this
+    // NOTE that "one" and "chr1" are NOW currently considered synonyms 
+    // even though they are listed on separate lines.  (This was not true prior to IGB 4.46)
     
-    sl.addSynonyms(new String[] {"chr2", "2"});
-    sl.addSynonyms(new String[] {"chr3", "3", "chrIII"});
+    sl.addSynonyms(new String[] {"chr2", "", "2"});
+    sl.addSynonyms(new String[] {"chr3", "", null, "3", "chrIII"});
     sl.addSynonyms(new String[] {"chr3_random", "3_random"});
     sl.addSynonyms(new String[] {"chrM", "M", "chrMT", "mitochondria", "mitochondrion"});
     sl.addSynonyms(new String[] {"R_norvegicus_Jan_2003", "Rat_Jan_2003", "Rat jan2003", "rn2", "rn:Jan_2003", "Rn:Jan_2003"});
@@ -57,8 +57,8 @@ public class SynonymLookupTest extends TestCase {
     assertTrue(sl.isSynonym("CHR1", "chr1"));
     assertTrue(sl.isSynonym("CHR1", "1"));
         
-    // This tests that two things defined on separate lines are not considered synonyms
-    assertFalse(sl.isSynonym("CHR1", "one"));
+    // This tests transitivity: that two things defined on separate lines ARE considered synonyms
+    assertTrue(sl.isSynonym("CHR1", "one"));
     
     assertFalse(sl.isSynonym("1", "chr2"));
 
@@ -69,6 +69,10 @@ public class SynonymLookupTest extends TestCase {
     List list2 = sl.getSynonyms("chrM");
     assertEquals(list1.size(), list2.size());    
 
+    // This tests that the null and empty strings were ignored in the input
+    // (If they were not ignored, then "chr2" == "" == "chr3" due to transitivity)
+    assertFalse(sl.isSynonym("chr2", "chr3"));
+    
     // The elements in list1 and list2 should be the same, other than ordering
     Set set1 = new HashSet(list1);
     Set set2 = new HashSet(list2);

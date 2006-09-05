@@ -150,43 +150,50 @@ public class SynonymLookup {
     }
   }
 
+  ArrayList getSharedList(String str1, String str2) {
+    ArrayList result = null;
+    
+    // We want both synonyms to map to the *identical* List object
+    ArrayList list1 = (ArrayList) lookup_hash.get(str1);
+    ArrayList list2 = (ArrayList) lookup_hash.get(str2);
+    
+    if (list1 != null && list2 != null) {
+      if (list1 == list2) {
+        // great, they are already the same object
+        result = list1;
+      } else {
+        // If the two strings map to different lists, then merge them into one
+        result = new ArrayList(list1);
+        result.addAll(list2);
+      }
+    }
+    else if (list1 != null && list2 == null) {
+      result = list1;
+    } 
+    else if (list1 == null && list2 != null) {
+      result = list2;
+    } 
+    else if (list1 == null && list2 == null) {
+      result = new ArrayList();
+    }
+
+    lookup_hash.put(str1, result);
+    lookup_hash.put(str2, result);
+    return result;    
+  }
+  
+  
   public void addSynonym(String str1, String str2) {
-    ArrayList list1 = (ArrayList)lookup_hash.get(str1);
-    if (list1 == null) {
-      list1 = new ArrayList();
-      lookup_hash.put(str1, list1);
-      list1.add(str1);  // now including self as synonym -- GAH 10-28-2002
+    if (str1 == null || str2 == null || "".equals(str1.trim()) || "".equals(str2.trim())) {
+      return;
     }
-    if (! list1.contains(str2)) {
-      list1.add(str2);
-      // Make sure each synonym in the list maps to the complete list of synonyms.
-      // (Copy the arraylist to avoid ConcurrentModificationException's)
-      Iterator list1_iter = (new ArrayList(list1)).iterator();
-      while (list1_iter.hasNext()) {
-        String x = (String) list1_iter.next();
-        if (x != str1 && x != str2) {
-          addSynonym(x, str2);
-        }
-      }
+    ArrayList list = getSharedList(str1, str2);
+    if (! list.contains(str1)) {
+      list.add(str1);
     }
-
-    ArrayList list2 = (ArrayList)lookup_hash.get(str2);
-    if (list2 == null) {
-      list2 = new ArrayList();
-      lookup_hash.put(str2, list2);
-      list2.add(str2);  // now including self as synonym -- GAH 10-28-2002
+    if (! list.contains(str2)) {
+      list.add(str2);
     }
-    if (! list2.contains(str1)) {
-      list2.add(str1);
-      Iterator list2_iter = (new ArrayList(list2)).iterator();
-      while (list2_iter.hasNext()) {
-        String x = (String) list2_iter.next();
-        if (x != str1 && x != str2) {
-          addSynonym(x, str1);
-        }
-      }
-    }
-
   }
 
   /** Returns all known synonyms for a given string.
@@ -238,7 +245,7 @@ public class SynonymLookup {
       String key = (String) iter.next();
       ArrayList syns = (ArrayList) lookup_hash.get(key);
       System.out.println("KEY:  " + key);
-      System.out.println("SYNONYMS:  ");
+      System.out.println("SYNONYMS:  (" + Integer.toHexString(syns.hashCode()) + ")");
       for (int i=0; i<syns.size(); i++) {
         System.out.println("  '" + syns.get(i) + "'");
       }

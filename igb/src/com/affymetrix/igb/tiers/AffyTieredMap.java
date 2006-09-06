@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,14 +13,11 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.event.*;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.genometry.*;
 
@@ -285,10 +282,15 @@ public class AffyTieredMap extends NeoMap {
     return false;
   }
 
-
   public void stretchToFit(boolean fitx, boolean fity) {
+    this.stretchToFit(fitx, fity, true);
+  }
+
+  public void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
     super.stretchToFit(fitx, fity);
-    packTiers(false, true, false);
+    if (packTiers) {
+      packTiers(false, true, false);
+    }
   }
 
   /**  Called within NeoMap.stretchToFit(), subclassing here to customize calculation
@@ -351,14 +353,14 @@ public class AffyTieredMap extends NeoMap {
     if (id == X) { super.zoom(id, zoom_scale); return; }
     //    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
     if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
-	zoom_scale == Float.NaN) {
+	! Double.isNaN(zoom_scale)) {
       return;
     }
     // should be able to replace many variables calculation here with
     //    access to view coordbox fields...
     Rectangle2D prev_view_coords = view.calcCoordBox();
     double prev_pixels_per_coord = pixels_per_coord[id]; // should be same as trans.getScale()
-    double prev_coords_per_pixel = 1/prev_pixels_per_coord;
+    //double prev_coords_per_pixel = 1/prev_pixels_per_coord;
     pixels_per_coord[id] = zoom_scale;
     coords_per_pixel[id] = 1/zoom_scale;
     if (pixels_per_coord[id] == prev_pixels_per_coord) {
@@ -463,10 +465,10 @@ public class AffyTieredMap extends NeoMap {
    */
   public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
     packTiers(full_repack, true, false);
-    stretchToFit(true, stretch_vertically);
+    stretchToFit(true, stretch_vertically, false);
     // apply a hack to make sure strechToFit worked
     if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
-      stretchToFit(false, true);
+      stretchToFit(false, true, false);
     }
     updateWidget();
   }

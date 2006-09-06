@@ -353,7 +353,7 @@ public class AffyTieredMap extends NeoMap {
     if (id == X) { super.zoom(id, zoom_scale); return; }
     //    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
     if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
-	! Double.isNaN(zoom_scale)) {
+	Double.isNaN(zoom_scale)) {
       return;
     }
     // should be able to replace many variables calculation here with

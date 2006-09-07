@@ -297,6 +297,9 @@ public class SeqMapView extends JPanel
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
 
+    seqmap.setReshapeBehavior(seqmap.X, seqmap.NONE);
+    seqmap.setReshapeBehavior(seqmap.Y, seqmap.NONE);
+    
     if (SPLIT_WINDOWS) {
       seqmap = new MultiWindowTierMap(false, false);
     }
@@ -304,6 +307,7 @@ public class SeqMapView extends JPanel
       seqmap = new AffyLabelledTierMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
       NeoMap label_map = ((AffyLabelledTierMap)seqmap).getLabelMap();
       label_map.setSelectionAppearance( SceneI.SELECT_OUTLINE );
+      label_map.setReshapeBehavior(NeoWidgetI.Y, seqmap.getReshapeBehavior(NeoWidgetI.Y));
     }
     else {
       seqmap = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
@@ -328,7 +332,6 @@ public class SeqMapView extends JPanel
     seqmap.getNeoCanvas().setDoubleBuffered(false);
     //    map.getLabelMap().getNeoCanvas().setDoubleBuffered(false);
 
-    seqmap.setReshapeBehavior(seqmap.X, seqmap.NONE);
     seqmap.setScrollIncrementBehavior(seqmap.X, seqmap.AUTO_SCROLL_HALF_PAGE);
 
     if (NEO_XZOOMER) {
@@ -881,7 +884,6 @@ public class SeqMapView extends JPanel
       for (int i=0; i<cur_tiers.size(); i++) {
         TierGlyph tg = (TierGlyph)cur_tiers.get(i);
         if (tg == axis_tier) {
-          if (DEBUG_TIERS)  { System.out.println("removing axis tier from temp_tiers"); }
           axis_index = i;
         }
         else {
@@ -953,9 +955,6 @@ public class SeqMapView extends JPanel
 
     // add back in previous annotation tiers (with all children removed)
     if (temp_tiers != null) {
-      if (DEBUG_TIERS)  {
-	System.out.println("same seq, trying to add back old tiers (after removing children)");
-      }
       for (int i=0; i<temp_tiers.size(); i++) {
 	TierGlyph tg = (TierGlyph)temp_tiers.get(i);
 	if (DEBUG_TIERS)  {
@@ -1043,8 +1042,10 @@ public class SeqMapView extends JPanel
       seqmap.toFront(layer_glyph);
     }
     // notifyPlugins();
-    if (same_seq && preserve_view) {
-      seqmap.stretchToFit(false, true);
+        
+    // Ignore preserve_view if seq has changed
+    if (preserve_view && same_seq) {
+      seqmap.stretchToFit(false, false);
     }
     else {
       seqmap.stretchToFit(true, true);
@@ -1055,9 +1056,8 @@ public class SeqMapView extends JPanel
     seqmap.updateWidget();
     if (DIAGNOSTICS) {
       System.out.println("Time to convert models to display: " + tim.read()/1000f);
-    }
+    }    
   }
-
 
   protected String getVersionInfo(BioSeq seq) {
     String version_info = null;

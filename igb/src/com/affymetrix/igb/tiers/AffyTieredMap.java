@@ -13,14 +13,12 @@
 
 package com.affymetrix.igb.tiers;
 
-
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genometry.*;
-
 
 import java.util.*;
 
@@ -291,6 +289,32 @@ public class AffyTieredMap extends NeoMap {
     if (packTiers) {
       packTiers(false, true, false);
     }
+    if (!fity) { 
+      doZoomFix(NeoMap.Y); 
+    }
+  }
+
+  /**
+   *  A hack.  Sometimes after a stretchToFit() where fity is false it can happen
+   *  that a portion of the area that should be filled by map tiers is empty.
+   *  (Perhaps because some tiers were just hidden and the remaining ones don't
+   *  fill up all the space.)  As soon as the user touches the Y-zoomer, 
+   *  the map snaps to fill the given space.  This hack makes that happen automatically
+   *  without the user having to touch the zoomer.
+   */
+  void doZoomFix(int id) {
+    if (zoomtrans[id] == null) {
+      return;
+    }
+    zoomer_scale[id] = zoomtrans[id].transform(id, zoomer_value[id]);
+    if (scale_constraint[id] == INTEGRAL_PIXELS ||
+        scale_constraint[id] == INTEGRAL_ALL) {
+      if (zoomer_scale[id] >= 1)  {
+        zoomer_scale[id] = (int)(zoomer_scale[id] +.0001);
+      }
+    }
+    zoom(id, zoomer_scale[id]);
+    // updateWidget(); // usually something else will call updateWidget() later
   }
 
   /**  Called within NeoMap.stretchToFit(), subclassing here to customize calculation
@@ -519,7 +543,6 @@ public class AffyTieredMap extends NeoMap {
     //     can interleave manipulations happening in packTiers() and zoom(),
     //     so that zoom is done with the right scene size, and pack is done with the
     //     appropriate scaling factor
-
 }
 
 

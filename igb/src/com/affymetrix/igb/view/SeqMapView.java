@@ -297,14 +297,16 @@ public class SeqMapView extends JPanel
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
 
-    seqmap.setReshapeBehavior(seqmap.X, seqmap.NONE);
-    seqmap.setReshapeBehavior(seqmap.Y, seqmap.NONE);
     
     if (SPLIT_WINDOWS) {
       seqmap = new MultiWindowTierMap(false, false);
+      seqmap.setReshapeBehavior(seqmap.X, seqmap.NONE);
+      seqmap.setReshapeBehavior(seqmap.Y, seqmap.NONE);
     }
     else if (LABEL_TIERMAP) {
       seqmap = new AffyLabelledTierMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
+      seqmap.setReshapeBehavior(seqmap.X, seqmap.NONE);
+      seqmap.setReshapeBehavior(seqmap.Y, seqmap.NONE);
       NeoMap label_map = ((AffyLabelledTierMap)seqmap).getLabelMap();
       label_map.setSelectionAppearance( SceneI.SELECT_OUTLINE );
       label_map.setReshapeBehavior(NeoWidgetI.Y, seqmap.getReshapeBehavior(NeoWidgetI.Y));

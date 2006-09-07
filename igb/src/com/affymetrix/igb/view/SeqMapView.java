@@ -13,10 +13,8 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
@@ -49,6 +47,7 @@ import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.CharIterator;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -59,15 +58,9 @@ import com.affymetrix.igb.genometry.SeqSymStartComparator;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
-import com.affymetrix.igb.event.SeqSelectionListener;
-import com.affymetrix.igb.event.GroupSelectionListener;
-import com.affymetrix.igb.event.SeqModifiedListener;
-import com.affymetrix.igb.event.SeqSelectionEvent;
-import com.affymetrix.igb.event.GroupSelectionEvent;
-import com.affymetrix.igb.event.SeqModifiedEvent;
+import com.affymetrix.igb.genometry.ScoredContainerSym;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.genometry.ScoredContainerSym;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -449,29 +442,7 @@ public class SeqMapView extends JPanel
         TransformTierGlyph axis_tier = getAxisTier();
         Vector children = axis_tier.getChildren();
 
-        /*  Reseting axis tier color isn't ready for prime time yet.
-        if (pce.getKey().equals(PREF_AXIS_BACKGROUND)) {
-          Color c = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
-          axis_tier.setBackgroundColor(c);
-          for (int i=0; i<children.size(); i++) {
-            ((Glyph) children.get(i)).setBackgroundColor(c);
-          }
-          map.updateWidget();
-          //System.out.println("Setting axis background: "+c);
-        }
-        else if (pce.getKey().equals(PREF_AXIS_COLOR)) {
-          Color c = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
-          axis_tier.setForegroundColor(c);
-          for (int i=0; i<children.size(); i++) {
-            ((Glyph) children.get(i)).setForegroundColor(c);
-          }
-          map.updateWidget();
-          //System.out.println("Setting axis color: "+c);
-        }
-        */
-
         if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
-          String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, default_axis_label_format);
           AxisGlyph ag = null;
           for (int i=0; i<children.size(); i++) {
             if (children.get(i) instanceof AxisGlyph) {ag = (AxisGlyph) children.get(i);}
@@ -816,37 +787,18 @@ public class SeqMapView extends JPanel
    */
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
     stopSlicingThread();
-    RepaintManager rm = RepaintManager.currentManager(this);
-    Image bufimg = rm.getOffscreenBuffer(this,
-					 this.getSize().width,
-					 this.getSize().height);
-    VolatileImage vbufimg = (VolatileImage)rm.getVolatileOffscreenBuffer(this,
-						  this.getSize().width,
-						  this.getSize().height);
-
-    if (DIAGNOSTICS) {
-      System.out.println("RepaintManager offscreen buffer: " + bufimg);
-      System.out.println("RepaintManager volatile offscreen buffer: " + vbufimg);
-      System.out.println("offscreen buffer is VolatileImage: " +
-			 (bufimg instanceof VolatileImage));
-      System.out.println("volatile offscreen buffer is VolatileImage: " +
-			 (vbufimg instanceof VolatileImage));
-    }
 
     if (frm != null) {
-      String title = null;
-      if (seq == null) {
-        title = IGB.APP_NAME;
-      } else {
+      StringBuffer title = new StringBuffer(128);
+      title.append(IGB.APP_NAME);
+      if (seq != null) {
+        title.append(":      ").append(seq.getID());
         String version_info = getVersionInfo(seq);
-        if (version_info == null) {
-          title = IGB.APP_NAME + ":      " + seq.getID();
-        }
-        else {
-          title = IGB.APP_NAME + ":      " + seq.getID() + "  (" + version_info + ")";
+        if (version_info != null) {
+          title.append("  (").append(version_info).append(')');
         }
       }
-      frm.setTitle(title);
+      frm.setTitle(title.toString());
     }
 
     if (seq == null) {
@@ -875,26 +827,26 @@ public class SeqMapView extends JPanel
       }
     }
 
-      // stash annotation tiers for proper state restoration after resetting for same seq
-      //    (but presumably added / deleted / modified annotations...)
+    // stash annotation tiers for proper state restoration after resetting for same seq
+    //    (but presumably added / deleted / modified annotations...)
 
-      temp_tiers = new ArrayList();
-      // copying map tiers to separate list to avoid problems when removing tiers
-      //   (and thus modifying map.getTiers() list -- could probably deal with this
-      //    via iterators, but feels safer this way...)
-      ArrayList cur_tiers = new ArrayList(seqmap.getTiers());
-      for (int i=0; i<cur_tiers.size(); i++) {
-        TierGlyph tg = (TierGlyph)cur_tiers.get(i);
-        if (tg == axis_tier) {
-          axis_index = i;
-        }
-        else {
-          tg.removeAllChildren();
-          temp_tiers.add(tg);
-          if (DEBUG_TIERS)  { System.out.println("removing tier from map: " + tg.getLabel()); }
-          seqmap.removeTier(tg);
-        }
+    temp_tiers = new ArrayList();
+    // copying map tiers to separate list to avoid problems when removing tiers
+    //   (and thus modifying map.getTiers() list -- could probably deal with this
+    //    via iterators, but feels safer this way...)
+    ArrayList cur_tiers = new ArrayList(seqmap.getTiers());
+    for (int i=0; i<cur_tiers.size(); i++) {
+      TierGlyph tg = (TierGlyph)cur_tiers.get(i);
+      if (tg == axis_tier) {
+        axis_index = i;
       }
+      else {
+        tg.removeAllChildren();
+        temp_tiers.add(tg);
+        if (DEBUG_TIERS)  { System.out.println("removing tier from map: " + tg.getLabel()); }
+        seqmap.removeTier(tg);
+      }
+    }
 
     seqmap.clearWidget();
     seqmap.clearSelected(); // may already be done by map.clearWidget()
@@ -936,18 +888,13 @@ public class SeqMapView extends JPanel
         transform_path = null;
       }
     }
-    int seq_min;
-    int seq_max;
     if (viewseq instanceof CompositeNegSeq) {
-      seq_min = ((CompositeNegSeq)viewseq).getMin();
-      seq_max = ((CompositeNegSeq)viewseq).getMax();
+      CompositeNegSeq compnegseq = (CompositeNegSeq) viewseq;
+      seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
     }
     else {
-      seq_min = 0;
-      seq_max = viewseq.getLength();
+      seqmap.setMapRange(0, viewseq.getLength());
     }
-
-    seqmap.setMapRange(seq_min, seq_max);
 
     // The hairline needs to be among the first glyphs added,
     // to keep it from interfering with selection of other glyphs.
@@ -975,7 +922,6 @@ public class SeqMapView extends JPanel
     TransformTierGlyph at = addAxisTier(axis_index);
     addAnnotationTiers();
     removeEmptyTiers();
-    //map.sortTiers();
 
     seqmap.repack();
 
@@ -2748,10 +2694,7 @@ public class SeqMapView extends JPanel
       sym_popup.add(selectParentMI);
     }
     if (selected_syms.size() == 1) {
-      SeqSymmetry sym0 = (SeqSymmetry) selected_syms.get(0);
-//      if (! (sym0 instanceof GraphSym)) {
-        sym_popup.add(printSymmetryMI);
-//      }
+      sym_popup.add(printSymmetryMI);
     }
 
     for (int i=0; i<popup_listeners.size(); i++) {

@@ -728,6 +728,7 @@ public class SeqMapView extends JPanel
    *     PixelFloaterGlyphs and TierGlyphs), but also should remove GraphSyms from
    *     AnnotatedBioSeq, which currently I'm not doing
    */
+
   /**
    *  Clears the graphs, and reclaims some memory.
    */
@@ -763,28 +764,31 @@ public class SeqMapView extends JPanel
 
   /**
    *   Sets the sequence.  If null, has the same effect as calling clear().
-   *<pre>
-   *   want to optimize for several situations:
-   *       a) merging newly loaded data with existing data (adding more annotations to
-   *           existing AnnotatedBioSeq) -- would like to avoid recreation and repacking
-   *           of already glyphified annotations
-   *       b) reverse complementing existing AnnotatedBioSeq
-   *       c) coord shifting existing AnnotatedBioSeq
-   *   in all these cases:
-   *       "new" AnnotatedBioSeq == old AnnotatedBioSeq
-   *       existing glyphs could be reused (in (b) they'd have to be "flipped")
-   *       should preserve selection
-   *       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
-   *   only some of the above optimization/preservation are implemented yet
-   *   WARNING: currently graphs are not properly displayed when reverse complementing,
-   *               need to "genometrize" them
-   *            currently sequence is not properly displayed when reverse complementing
-   *
-   *</pre>
-   *   @param preserve_selection  if true, then try and keep same selection
-   *   @param preserve_view  if true, then try and keep same scroll and zoom / scale and offset...
+   *   @param preserve_selection  if true, then try and keep same selections
+   *   @param preserve_view  if true, then try and keep same scroll and zoom / scale and offset in
+   *  both x and y direction.
    */
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
+  }
+  
+  public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
+   //   want to optimize for several situations:
+   //       a) merging newly loaded data with existing data (adding more annotations to
+   //           existing AnnotatedBioSeq) -- would like to avoid recreation and repacking
+   //           of already glyphified annotations
+   //       b) reverse complementing existing AnnotatedBioSeq
+   //       c) coord shifting existing AnnotatedBioSeq
+   //   in all these cases:
+   //       "new" AnnotatedBioSeq == old AnnotatedBioSeq
+   //       existing glyphs could be reused (in (b) they'd have to be "flipped")
+   //       should preserve selection
+   //       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
+   //   only some of the above optimization/preservation are implemented yet
+   //   WARNING: currently graphs are not properly displayed when reverse complementing,
+   //               need to "genometrize" them
+   //            currently sequence is not properly displayed when reverse complementing
+   //
     stopSlicingThread();
 
     if (frm != null) {
@@ -991,8 +995,8 @@ public class SeqMapView extends JPanel
     // notifyPlugins();
         
     // Ignore preserve_view if seq has changed
-    if (preserve_view && same_seq) {
-      seqmap.stretchToFit(false, false);
+    if ((preserve_view_x || preserve_view_y) && same_seq) {
+      seqmap.stretchToFit(! preserve_view_x, ! preserve_view_y);
     }
     else {
       seqmap.stretchToFit(true, true);

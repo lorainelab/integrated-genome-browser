@@ -293,7 +293,9 @@ public abstract class BookmarkController {
 //      gviewer.getSeqMap().updateWidget(true);
       
       // Because of combo graphs, have to completely re-draw the display
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
+      // Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
+      // especially if the graphs are attached graphs.
+      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
       
     } catch (Exception ex) {
       ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error while loading graphs", ex);

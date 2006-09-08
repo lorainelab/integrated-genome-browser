@@ -196,7 +196,7 @@ public class QuickLoadView2 extends JComponent
       // probably need to make this threaded (see QuickLoaderView)
       if (selected)  {
         current_server.loadAnnotations(current_group, filename);
-        gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
+        gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true, false);
         boolean loaded = QuickLoadServerModel.getLoadState(current_group, filename);
         cbox.setEnabled(! loaded);
         cbox.setSelected(loaded);
@@ -373,7 +373,7 @@ public class QuickLoadView2 extends JComponent
                 seq =  current_group.getSeq(0); 
               }
               if (seq != null) {
-                gviewer.setAnnotatedSeq(seq, true, true);
+                gviewer.setAnnotatedSeq(seq, true, true, false);
               }
             }
           }
@@ -596,7 +596,7 @@ public class QuickLoadView2 extends JComponent
           compsym.addSpan(new_compspan);
           //        System.out.println("adding to composition: " );
           //        SeqUtils.printSymmetry(compsym);
-          gviewer.setAnnotatedSeq(aseq, true, true);
+          gviewer.setAnnotatedSeq(aseq, true, true, true);
         }
       }
     }
@@ -636,7 +636,7 @@ public class QuickLoadView2 extends JComponent
         try { istr.close(); } catch (Exception e) {}
       }
 
-      gviewer.setAnnotatedSeq(current_seq, true, true);
+      gviewer.setAnnotatedSeq(current_seq, true, true, true);
     }
   }
 
@@ -1116,8 +1116,6 @@ class QuickLoadServerModel {
         istr = LocalUrlCacher.askAndGetInputStream(annot_url, getCacheAnnots());
         if (istr != null) {
           bis = new BufferedInputStream(istr);
-          // really should remove LoadFileAction's requirement for SeqMapView argument...
-          LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
           
           if (GraphSymUtils.isAGraphFilename(filename)) {
             URL url = new URL(annot_url);
@@ -1129,6 +1127,8 @@ class QuickLoadServerModel {
             }
           }
           else {
+            // really should remove LoadFileAction's requirement for SeqMapView argument...
+            LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
             lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
           }
                     

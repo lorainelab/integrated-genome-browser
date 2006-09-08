@@ -602,8 +602,7 @@ implements SeqSelectionListener, SymSelectionListener {
         return;
       }
 
-      JSlider source = (JSlider) e.getSource();
-      if (source.getValueIsAdjusting()) {
+      if (e.getSource() == height_slider) {
         setTheHeights((double) height_slider.getValue());
       }
     }
@@ -621,6 +620,7 @@ implements SeqSelectionListener, SymSelectionListener {
 	Rectangle2D cbox= gl.getCoordBox();
 	gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
+        // If a graph is joined with others in a combo tier, repack that tier.
 	GlyphI parentgl = gl.getParent();
 	if (parentgl instanceof TierGlyph) {
 	  //	  System.out.println("Glyph: " + gl.getLabel() + ", packer: " + parentgl.getPacker());

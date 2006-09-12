@@ -416,23 +416,28 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         }
       }
       
+      // If a particular web prefs file was specified, then load it.
+      // Otherwise try to load the web-based-default prefs file. (But
+      // only load it if it is cached, then later update the cache on
+      // a background thread.)
       String def_prefs_url = get_default_prefs_url(main_args);
       if (def_prefs_url == null) {
-        def_prefs_url = WEB_PREFS_URL;
+        loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
       }
-      if (def_prefs_url != null) {
+      else {
 	InputStream default_prefs_url_str = null;
 	try {
-          default_prefs_url_str = LocalUrlCacher.getInputStream(def_prefs_url, true);
-	  System.out.println("loading default prefs from url: " + def_prefs_url);
+          default_prefs_url_str = LocalUrlCacher.getInputStream(def_prefs_url);
+	  System.out.println("loading prefs from url: " + def_prefs_url);
 	  prefs_parser.parse(default_prefs_url_str, def_prefs_url, prefs_hash);
-	} catch (Exception ex) {
+	} catch (IOException ex) {
 	  System.out.println("Problem parsing prefs from url: " + def_prefs_url);
-	  ex.printStackTrace();
+          System.out.println("Caused by: " + ex.toString());          
 	} finally {
 	  try {default_prefs_url_str.close();} catch (Exception e) {}
 	}
       }
+
       String[] prefs_files = get_prefs_files(main_args);
       if (prefs_files.length > 0) {
 	prefs_parser = new XmlPrefsParser();
@@ -465,6 +470,43 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return prefs_hash;
   }
 
+  /**
+   *  Attempts to load the web-based XML default preferences file from the
+   *  local cache.  If this file is not in the cache, will skip 
+   *  it and will NOT try to read it from the web.  (This is to prevent slowing
+   *  down the start-up process.)  Regardless of whether the file was actualy read,
+   *  will then spawn a background thread that will try to create or update
+   *  the local cached copy of this preferences file so it will be available
+   *  the next time the program runs.  
+   *
+   */
+  static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
+    String web_prefs_url = WEB_PREFS_URL;
+    InputStream is = null;
+    try {
+      is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
+    } catch (IOException ioe) {
+      System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
+      is = null;
+    }
+
+    if (is == null) {
+      System.out.println("Thinking about updating in bg.");
+      LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
+    }
+    else {
+      try {
+        prefs_parser.parse(is, web_prefs_url, prefs_hash);
+        System.out.println("Loading default prefs from url: " + web_prefs_url);
+      } catch (Exception ex) {
+         System.out.println("Problem parsing prefs from url: " + web_prefs_url);
+         System.out.println("Caused by: " + ex.toString());          
+      } finally {
+        try {is.close();} catch (Exception e) {}
+      }
+    }
+  }
+  
   protected void init() {
     frm = new JFrame(APP_NAME);
     RepaintManager rm = RepaintManager.currentManager(frm);

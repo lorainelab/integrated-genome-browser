@@ -435,6 +435,32 @@ public class LocalUrlCacher {
     return cache_usage;
   }
 
+  public static void updateCacheUrlInBackground(final String url) {
+    Runnable r = new Runnable() {
+      public void run() {
+        try {
+          updateCacheUrlAndWait(url);
+        } catch (IOException ioe) {
+          // Don't worry about these exceptions.  It only means the cache will remain stale.
+          //System.out.println("Problem while trying to update cache for: " + url);
+          //System.out.println("Caused by: " + ioe.toString());
+        }
+      }
+    };
+    Thread t = new Thread(r);
+    t.start();
+  }
+  
+  static void updateCacheUrlAndWait(String url) throws IOException {
+    InputStream is = null; 
+    try {
+      getInputStream(url, NORMAL_CACHE, true);
+      System.out.println("Updated cache for: " + url);
+    } finally {
+      if (is != null) try { is.close(); } catch (IOException ioe) {}
+    }
+  }
+  
   public static void reportHeaders(URLConnection query_con) {
     try {
       System.out.println("URL: " + query_con.getURL().toString());

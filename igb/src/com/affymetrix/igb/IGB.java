@@ -34,6 +34,7 @@ import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.util.EPSWriter;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -150,6 +151,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
+  static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
+  
   static String default_prefs_resource = "/igb_default_prefs.xml";
   public static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
   static String default_user_prefs_files =
@@ -390,39 +393,39 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (prefs_hash != null)  { return prefs_hash; }
     else {
       prefs_hash = new HashMap();
+      XmlPrefsParser prefs_parser = new XmlPrefsParser();
 
       /**  first load default prefs from jar */
       InputStream default_prefs_stream = null;
-      XmlPrefsParser prefs_parser = new XmlPrefsParser();
       try {
-	default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
-	System.out.println("loading default prefs from: " + default_prefs_resource);
-	prefs_parser.parse(default_prefs_stream, "", prefs_hash);
+        default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
+        System.out.println("loading default prefs from: " + default_prefs_resource);
+        prefs_parser.parse(default_prefs_stream, "", prefs_hash);
       } catch (Exception ex) {
-	System.out.println("Problem parsing prefs from: " + default_prefs_resource);
-	ex.printStackTrace();
+        System.out.println("Problem parsing prefs from: " + default_prefs_resource);
+        ex.printStackTrace();
       } finally {
-	try {default_prefs_stream.close();} catch (Exception e) {}
+        try {default_prefs_stream.close();} catch (Exception e) {}
       }
-      System.out.println("after resource loading prefs attempt, before url loading prefs attempt");
-
+      
       String deploy_type = get_deployment_type(main_args);
       if (deploy_type != null) {
-	if (deploy_type.equals("webstart")) {
-	  System.out.println("*****" + deploy_type + " deployment********");
-	  downloadPrefsFile();
-	}
+        if (deploy_type.equals("webstart")) {
+          System.out.println("*****" + deploy_type + " deployment********");
+          downloadPrefsFile();
+        }
       }
-
+      
       String def_prefs_url = get_default_prefs_url(main_args);
-      System.out.println("def_prefs_url: " + def_prefs_url);
+      if (def_prefs_url == null) {
+        def_prefs_url = WEB_PREFS_URL;
+      }
       if (def_prefs_url != null) {
 	InputStream default_prefs_url_str = null;
 	try {
-	  URL prefs_url = new URL(def_prefs_url);
-	  default_prefs_url_str = prefs_url.openStream();
+          default_prefs_url_str = LocalUrlCacher.getInputStream(def_prefs_url, true);
 	  System.out.println("loading default prefs from url: " + def_prefs_url);
-	  new XmlPrefsParser().parse(default_prefs_url_str, def_prefs_url, prefs_hash);
+	  prefs_parser.parse(default_prefs_url_str, def_prefs_url, prefs_hash);
 	} catch (Exception ex) {
 	  System.out.println("Problem parsing prefs from url: " + def_prefs_url);
 	  ex.printStackTrace();

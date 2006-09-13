@@ -48,8 +48,13 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     if (show_label) {
       if (getChildCount() <= 0) {
         //        fillDraw(view);
-        g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
-                   pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+        if (label_loc == NORTH) {
+          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
+                     pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+        } else {
+          g.fillRect(pixelbox.x, pixelbox.y,
+                     pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+        }
       }
       else {
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half

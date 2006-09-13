@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -57,9 +56,6 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    AffyTieredMap map = gviewer.getSeqMap();
-    int symcount = 0;
-    symcount++;
 
     String meth = SeqMapView.determineMethod(sym);
     if (meth == null && sym.getChildCount() <= 0) {
@@ -97,14 +93,8 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
     GlyphI gl = new OutlineRectGlyph();
     gl.setColor(col);
 
-    // hack for 0-sized parent, because for some reason
-    //  0-width glyph is not being displayed (nor are its children...)
-    if (span.getMin() <= 0 && span.getMax() <= 0) {
-      gl.setCoords(0, 0, gviewer.getViewSeq().getLength(), glyph_height);
-    }
-    else {
-      gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
-    }
+    gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
+    
     if (parent_glyph == null) {
       map.addItem(gl);        // if no parent glyph, add directly to map (or tier...)
     }

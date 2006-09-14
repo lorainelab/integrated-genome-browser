@@ -106,9 +106,10 @@ public class LoadFileAction {
 
     MergeOptionFileChooser chooser = getFileChooser();
     chooser.setCurrentDirectory(load_dir_tracker.getFile());
-    chooser.rescanCurrentDirectory();
+    chooser.rescanCurrentDirectory();    
     if (gmodel.getSelectedSeqGroup() == null) {
-      chooser.merge_button.setSelected(false);
+      chooser.no_merge_button.setEnabled(true);
+      chooser.no_merge_button.setSelected(true);
       chooser.merge_button.setEnabled(false);
     }
     else {
@@ -117,6 +118,7 @@ public class LoadFileAction {
       chooser.merge_button.setSelected(true);
       chooser.merge_button.setEnabled(true);
     }
+    chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
     chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " +(unknown_group_count++));
 
     int option = chooser.showOpenDialog(gviewer.getFrame());
@@ -288,7 +290,7 @@ public class LoadFileAction {
     AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
     if (selected_group == null) {
       // this should never happen
-      ErrorHandler.errorPanel("ERROR", "Must select a genome before loading a file", gviewer.getFrame());
+      throw new IOException("Must select a genome before loading a file");
     }
 
     try {
@@ -548,21 +550,19 @@ public class LoadFileAction {
    *  dialog.
    */
   public static class MergeOptionFileChooser extends JFileChooser {
+    ButtonGroup bgroup = new ButtonGroup();
     public JRadioButton merge_button = new JRadioButton("Merge with currently-loaded data", true);
     public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);
     public JTextField genome_name_TF = new JTextField("Unknown Genome");
-    ButtonGroup bgroup = new ButtonGroup();
+    
+    Box box = null;
 
-
-    protected JDialog createDialog(Component parent) throws HeadlessException {
-      JDialog dialog = super.createDialog(parent);
-      bgroup.add((AbstractButton) merge_button);
-
-      bgroup.add(merge_button);
+    public MergeOptionFileChooser() {
+      super();
       bgroup.add(no_merge_button);
+      bgroup.add(merge_button);
       merge_button.setSelected(true);
 
-      merge_button.setSelected(true);
       genome_name_TF.setEnabled(no_merge_button.isSelected());
 
       no_merge_button.addActionListener(new ActionListener() {
@@ -571,16 +571,23 @@ public class LoadFileAction {
         }
       });
 
-      Box box = new Box(BoxLayout.X_AXIS);
+      box = new Box(BoxLayout.X_AXIS);
       box.setBorder(BorderFactory.createEmptyBorder(5,5,8,5));
       box.add(Box.createHorizontalStrut(5));
       box.add(merge_button);
       box.add(no_merge_button);
       box.add(Box.createRigidArea(new Dimension(5,0)));
       box.add(genome_name_TF);
-      dialog.getContentPane().add(box, BorderLayout.SOUTH);
+
       merge_button.setMnemonic('M');
       no_merge_button.setMnemonic('C');
+    }
+    
+    
+    protected JDialog createDialog(Component parent) throws HeadlessException {
+      JDialog dialog = super.createDialog(parent);
+
+      dialog.getContentPane().add(box, BorderLayout.SOUTH);
       return dialog;
     }
   }

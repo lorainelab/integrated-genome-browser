@@ -12,6 +12,7 @@
 */
 
 package com.affymetrix.igb.view;
+// hello
 
 import java.awt.*;
 import java.awt.event.*;
@@ -202,7 +203,7 @@ public class SeqMapView extends JPanel
   /** Hash of GraphStates to TierGlyphs. */
   Map gstyle2tier = new HashMap();
   //Map gstyle2floatTier = new HashMap();
-  
+
   PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
@@ -278,7 +279,7 @@ public class SeqMapView extends JPanel
       });
     }
   };
-  
+
   /**
    * Constructor.
    * @param add_popups  Whether to add some popup menus to the tier label manager
@@ -290,7 +291,7 @@ public class SeqMapView extends JPanel
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
 
-    
+
     if (SPLIT_WINDOWS) {
       seqmap = new MultiWindowTierMap(false, false);
     }
@@ -303,10 +304,10 @@ public class SeqMapView extends JPanel
     else {
       seqmap = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
     }
-    
+
     seqmap.setReshapeBehavior(NeoWidgetI.X, NeoWidgetI.NONE);
     seqmap.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
-    
+
     seqmap.addComponentListener(new SeqMapViewComponentListener());
 
     //Color bg = default_default_background_color;
@@ -356,7 +357,7 @@ public class SeqMapView extends JPanel
     }
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     seqmap.addMouseListener(mouse_listener);
-    
+
     if (LABEL_TIERMAP) {
       tier_manager.setDoGraphSelections(true);
     }
@@ -370,16 +371,16 @@ public class SeqMapView extends JPanel
     GraphSelectionManager graph_manager = new GraphSelectionManager(this);
     seqmap.addMouseListener(graph_manager);
     this.addPopupListener(graph_manager);
-    
+
     setupPopups();
     this.setLayout(new BorderLayout());
 
     xzoombox = Box.createHorizontalBox();
     //    xzoombox.add(new SeqComboBoxView());
-    
+
     MapRangeBox map_range_box = new MapRangeBox(this);
     xzoombox.add(map_range_box.range_box);
-    
+
     xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
     xzoombox.add((Component) xzoomer);
     boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
@@ -534,12 +535,12 @@ public class SeqMapView extends JPanel
     public Color getBackground() {
       return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
     }
-    
+
     public void setHumanName(String s) {
       //UnibrowPrefsUtil.getTopNode().put(PREF_AXIS_NAME, s);
       super.setHumanName(s);
     }
-    
+
     public String getHumanName() {
       //return UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_NAME, "Coordinates");
       return super.getHumanName();
@@ -618,7 +619,7 @@ public class SeqMapView extends JPanel
 	SeqSymmetry compsym = ((CompositeBioSeq)viewseq).getComposition();
 	if (compsym != null) {
 	  int compcount = compsym.getChildCount();
-          
+
           // create a color, c3, inbetween the foreground and background colors
           Color c1 = axis.getForegroundColor();
           Color c2 = axis.getBackgroundColor();
@@ -771,7 +772,7 @@ public class SeqMapView extends JPanel
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
     setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
   }
-  
+
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
    //   want to optimize for several situations:
    //       a) merging newly loaded data with existing data (adding more annotations to
@@ -993,7 +994,7 @@ public class SeqMapView extends JPanel
       seqmap.toFront(layer_glyph);
     }
     // notifyPlugins();
-        
+
     // Ignore preserve_view if seq has changed
     if ((preserve_view_x || preserve_view_y) && same_seq) {
       seqmap.stretchToFit(! preserve_view_x, ! preserve_view_y);
@@ -1007,7 +1008,7 @@ public class SeqMapView extends JPanel
     seqmap.updateWidget();
     if (DIAGNOSTICS) {
       System.out.println("Time to convert models to display: " + tim.read()/1000f);
-    }    
+    }
   }
 
   protected String getVersionInfo(BioSeq seq) {
@@ -1180,28 +1181,28 @@ public class SeqMapView extends JPanel
     return meth;
   }
 
-  // We only need a single GraphGlyphFactory because all graph properties 
+  // We only need a single GraphGlyphFactory because all graph properties
   // are in the GraphState object.
   GenericGraphGlyphFactory graph_factory = null;
-  
+
   public GenericGraphGlyphFactory getGenericGraphGlyphFactory() {
     if (graph_factory == null) {
       graph_factory = new GenericGraphGlyphFactory();
     }
     return graph_factory;
   }
-  
-  // We only need a single ScoredContainerGlyphFactory because all graph properties 
+
+  // We only need a single ScoredContainerGlyphFactory because all graph properties
   // are in the GraphState object.
   ScoredContainerGlyphFactory container_factory = null;
-  
+
   public ScoredContainerGlyphFactory getScoredContainerGlyphFactory() {
     if (container_factory == null) {
       container_factory = new ScoredContainerGlyphFactory();
     }
     return container_factory;
   }
-  
+
   public MapViewGlyphFactoryI getAnnotationGlyphFactory(String meth) {
     if (meth == null) {
       return null;
@@ -1210,7 +1211,7 @@ public class SeqMapView extends JPanel
     factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
     if (factory == null) {
       java.util.List keyset = new ArrayList(regex2factory.keySet());
-      
+
       // Look for a matching pattern, going backwards, so that the
       // patterns from the last preferences read take precedence over the
       // first ones read (such as the default prefs).  Within a single
@@ -1232,12 +1233,12 @@ public class SeqMapView extends JPanel
     }
     return factory;
   }
-  
+
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
     String meth = null;
-    
+
     if (annotSym instanceof ScoredContainerSym) {
       factory = getScoredContainerGlyphFactory();
     }
@@ -1257,10 +1258,10 @@ public class SeqMapView extends JPanel
       }
     }
     factory.createGlyph(annotSym, this);
-    
+
     doMiddlegroundShading(annotSym, meth);
   }
-  
+
   void doMiddlegroundShading(SeqSymmetry annotSym, String meth) {
 
     // do "middleground" shading for tracks loaded via DAS/2
@@ -1353,12 +1354,12 @@ public class SeqMapView extends JPanel
     GlyphI rootglyph = seqmap.getScene().getGlyph();
     collectGraphs(rootglyph, glyphlist);
     // convert graph glyphs to GraphSyms via glyphsToSyms
-    
+
     // Bring them all into the visual area
     for (int i=0; i<glyphlist.size(); i++) {
       GraphGlyphUtils.checkPixelBounds((GraphGlyph) glyphlist.get(i), getSeqMap());
     }
-    
+
     java.util.List symlist = glyphsToSyms(glyphlist);
     //    System.out.println("called SeqMapView.selectAllGraphs(), select count: " + symlist.size());
     // call select(list) on list of graph syms
@@ -1687,16 +1688,16 @@ public class SeqMapView extends JPanel
 
   public void sliceAndDice(final java.util.List syms) {
     stopSlicingThread();
-    
+
     slice_thread = new Thread() {
       public void run() {
         sliceAndDiceNow(syms);
       }
     };
-    
+
     slice_thread.start();
   }
-  
+
   void sliceAndDiceNow(java.util.List syms) {
     SimpleSymWithProps unionSym = new SimpleSymWithProps();
     SeqUtils.union(syms, unionSym, aseq);
@@ -1708,19 +1709,19 @@ public class SeqMapView extends JPanel
   }
 
   Thread slice_thread = null;
-  
+
   public void sliceAndDice(final SeqSymmetry sym) {
     stopSlicingThread();
-    
+
     slice_thread = new Thread() {
       public void run() {
         sliceAndDiceNow(sym);
       }
     };
-    
+
     slice_thread.start();
   }
-  
+
   void stopSlicingThread() {
     if (slice_thread == Thread.currentThread()) {
       //System.out.println("Current thread is the slicer!");
@@ -1731,7 +1732,7 @@ public class SeqMapView extends JPanel
       slice_thread = null;
     }
   }
-  
+
   /**
    *  Performs a genometry-based slice-and-dice.
    *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
@@ -1759,7 +1760,7 @@ public class SeqMapView extends JPanel
     slice_symmetry = sym;
     viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
     viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
-    
+
     // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
     //    mapped to viewseq
     int prev_max = 0;
@@ -1777,27 +1778,27 @@ public class SeqMapView extends JPanel
       else {
 	next_min = sym.getChild(i+1).getSpan(aseq).getMin();
       }
-      
+
       int slice_min = (int)Math.max(prev_max, (exact_span.getMin() - slice_buffer));
       int slice_max = (int)Math.min(next_min, (exact_span.getMax() + slice_buffer));
       MutableSeqSpan seq_slice_span = new SimpleMutableSeqSpan(slice_min, slice_max, aseq);
 
       int slice_length = seq_slice_span.getLength();
-      MutableSeqSpan view_slice_span = 
+      MutableSeqSpan view_slice_span =
         new SimpleMutableSeqSpan(slice_offset, slice_offset + slice_length, viewseq);
 
       if (prev_seq_slice != null && SeqUtils.looseOverlap(prev_seq_slice, seq_slice_span)) {
         // if new seq slice span abuts the old one, then just
         // lengthen existing spans (seq and view) rather than adding new ones
         SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
-        SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);        
+        SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);
       } else {
         MutableSeqSymmetry slice_sym = new SimpleMutableSeqSymmetry();
         slice_sym.addSpan(seq_slice_span);
         slice_sym.addSpan(view_slice_span);
         seq2viewSym.addChild(slice_sym);
         prev_seq_slice = seq_slice_span;
-        prev_view_slice = view_slice_span;        
+        prev_view_slice = view_slice_span;
       }
       slice_offset += slice_length;
       prev_max = slice_max;
@@ -1812,7 +1813,7 @@ public class SeqMapView extends JPanel
     transform_path = new SeqSymmetry[1];
     transform_path[0] = seq2viewSym;
     slicing_in_effect = true;
-    
+
     setAnnotatedSeq(aseq);
   }
 
@@ -2084,7 +2085,7 @@ public class SeqMapView extends JPanel
    */
   public void zoomToRectangle(Rectangle2D rect) {
     if (rect != null ) {
-      double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);            
+      double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);
       seqmap.zoom ( NeoWidgetI.X, Math.min(
         seqmap.getView().getPixelBox().width / desired_width,
         seqmap.getMaxZoom(NeoWidgetI.X)
@@ -2762,7 +2763,7 @@ public class SeqMapView extends JPanel
       }
     }
   }
-  
+
   public GlyphI getPixelFloaterGlyph() {
       PixelFloaterGlyph floater = pixel_floater_glyph;
       Rectangle2D cbox = getSeqMap().getCoordBounds();
@@ -2770,7 +2771,7 @@ public class SeqMapView extends JPanel
 
       return floater;
   }
-  
+
   /**
    *  Returns a tier for the given IAnnotStyle, creating the tier if necessary.
    *  Generally called by a Graph Glyph Factory.
@@ -2781,7 +2782,7 @@ public class SeqMapView extends JPanel
     if (style == null) {
       throw new NullPointerException();
     }
-    
+
     TierGlyph tier = (TierGlyph) gstyle2tier.get(style);
     if (tier == null) {
       tier = new TierGlyph(style);
@@ -2795,12 +2796,12 @@ public class SeqMapView extends JPanel
       cp.setParentSpacer(0); // fill tier to the top and bottom edges
       cp.setAlignment(CollapsePacker.ALIGN_CENTER);
     }
-    
+
     tier.setDirection(tier_direction);
     tier.setLabel(style.getHumanName());
     tier.setFillColor(style.getBackground());
     tier.setForegroundColor(style.getColor());
-    
+
     if (getSeqMap().getTierIndex(tier) == -1) {
       boolean above_axis = true;
       if (tier_direction == TierGlyph.DIRECTION_REVERSE) {
@@ -2812,9 +2813,9 @@ public class SeqMapView extends JPanel
     }
     return tier;
   }
-  
+
   /**
-   *  Hides a tier, but does not really remove it.  
+   *  Hides a tier, but does not really remove it.
    *  Could be used in future to clean-up all references to the given
    *  graph state and any tiers created for it.
    */
@@ -2824,7 +2825,7 @@ public class SeqMapView extends JPanel
     tier.setState(TierGlyph.HIDDEN);
     // does nothing.
   }
-  
+
   /**
    *  Returns a forward and reverse tier for the given method, creating them if they don't
    *  already exist.

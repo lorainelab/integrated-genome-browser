@@ -260,7 +260,12 @@ public class GFFParser implements AnnotationWriter  {
     id_tag = tag;
   }
 
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot) 
+  throws IOException {
+    return this.parse(istr, ".", seq_group, create_container_annot);
+  }
+
+  public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
 
@@ -289,17 +294,17 @@ public class GFFParser implements AnnotationWriter  {
         if (line == null) { continue; }
         if (line.startsWith("##")) { 
           processDirective(line);
-//          if (gff_version == 3) {
-//            if (line_count > 0) {
-//              throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
-//            } else {
-//              // The "#gff-version 3" pragma is *required* to be on the first line.
-//              GFF3Parser gff3_parser = new GFF3Parser();
-//              return gff3_parser.parse(br, seq_group);
-//            }
-//          } else {
-//            continue;
-//          }
+          if (gff_version == 3) {
+            if (line_count > 0) {
+              throw new IOException("You can only use the '##gff-version' parameter at the beginning of the file");
+            } else {
+              // The "#gff-version 3" pragma is *required* to be on the first line.
+              GFF3Parser gff3_parser = new GFF3Parser();
+              return gff3_parser.parse(br, default_source, seq_group);
+            }
+          } else {
+            continue;
+          }
         }
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {
@@ -322,6 +327,9 @@ public class GFFParser implements AnnotationWriter  {
 
           String seq_name = fields[0].intern();
           String source = fields[1].intern();
+          if (".".equals(source)) {
+            source = default_source;
+          }
           int coord_a = Integer.parseInt(fields[3]);
           int coord_b = Integer.parseInt(fields[4]);
           String score_str = fields[5];

@@ -446,7 +446,15 @@ public class LoadFileAction {
         // assume it's GFF1, GFF2, GTF, or GFF3 format
         GFFParser parser = new GFFParser();
         parser.setUseStandardFilters(true);
-        parser.parse(str, selected_group, false);
+        int index = stream_name.indexOf(".gff");
+        if (index < 0) {
+          index = stream_name.indexOf(".gtf");
+        }
+        String annot_type = stream_name;
+        if (index > 0) {
+          annot_type = stream_name.substring(0, index);
+        }
+        parser.parse(str, annot_type, selected_group, false);
         aseq = input_seq;
         parser = null;
       }

@@ -14,6 +14,9 @@ import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.GFF3Sym;
 
+/**
+ * Tests of class {@link com.affymetrix.igb.parsers.GFF3Parser}.
+ */
 public class GFF3ParserTest extends TestCase {
   
   public GFF3ParserTest(String testName) {
@@ -33,19 +36,22 @@ public class GFF3ParserTest extends TestCase {
   }
 
   /**
-   * Test of parse method, of class com.affymetrix.igb.parsers.GFF3Parser.
+   * Test of parse method using a canonical example.
    */
-  public void testParse() throws Exception {
+  public void testParseCanonical() throws Exception {
     System.out.println("parse");
     
     String filename = "test_files/GFF3_canonical_example.gff3";
     InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-    GFF3Parser instance = new GFF3Parser();
+
+    GFFParser instance = new GFFParser(); // the parser should be able to recognized
+    // that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
+    
     
     List expResult = null;
-    List result = instance.parse(istr, seq_group);
+    List result = instance.parse(istr, seq_group, true);
     
     for (int i=0; i<result.size(); i++) {
       SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
@@ -68,6 +74,18 @@ public class GFF3ParserTest extends TestCase {
     assertEquals(4+1, mRNA1.getChildCount()); // 4 exons, 1 CDS
     assertEquals(3+1, mRNA2.getChildCount()); // 3 exons, 1 CDS
     assertEquals(4+2, mRNA3.getChildCount()); // 4 exons, 2 CDS
+
+    GFF3Sym exon1 = (GFF3Sym) mRNA1.getChild(0);
+    assertEquals(GFF3Sym.FEATURE_TYPE_EXON, exon1.getFeatureType());
+
+    GFF3Sym cds_group1 = (GFF3Sym) mRNA1.getChild(4);
+    assertEquals(GFF3Parser.GROUP_FEATURE_TYPE, cds_group1.getFeatureType());
+    assertEquals(cds_group1.getChildCount(), 4);
+
+    GFF3Sym cds1 = (GFF3Sym) cds_group1.getChild(0);
+    assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds1.getFeatureType());
+    
+    istr.close();
   }
 
   /**
@@ -79,6 +97,7 @@ public class GFF3ParserTest extends TestCase {
     GFF3Parser instance = new GFF3Parser();
     
     instance.processDirective("##gff-version 3");
+    assertEquals(3, instance.gff_version);
     
     // Setting to gff-version 2 should throw an exception
     Exception e = null;

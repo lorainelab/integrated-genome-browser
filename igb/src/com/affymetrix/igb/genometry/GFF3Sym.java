@@ -31,11 +31,11 @@ public class GFF3Sym extends SingletonSymWithProps {
   public static final String UNKNOWN_SOURCE = ".";
   
   // Assuming that these feature types are not case-sensitive
-  public static final String FEATURE_TYPE_GENE = "mrna";
+  public static final String FEATURE_TYPE_GENE = "gene";
   public static final String FEATURE_TYPE_MRNA = "mrna";
   public static final String FEATURE_TYPE_EXON = "exon";
   public static final String FEATURE_TYPE_CDS = "cds";
-  
+    
   // Assuming that these ontology types are not case-sensitive
   public static final String SOFA_GENE = "SO:0000704";
   public static final String SOFA_MRNA = "SO:0000234";
@@ -89,9 +89,18 @@ public class GFF3Sym extends SingletonSymWithProps {
     String[] possible_names = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_NAME, attributes);
     if (possible_names.length > 0) {
       this.id = possible_names[0];
+    } else {
+      this.id = null;
     }
   }
-    
+  
+  public String getID() { 
+    // This is overridden because we only want to check the value of this.id,
+    // we do NOT want to check for a property named "id".  This is because GFF3
+    // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
+    // only has meaning while processing the file and should be ignored later.
+    return this.id; 
+  }
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }
   public float getScore()  { return score; }
@@ -235,5 +244,56 @@ public class GFF3Sym extends SingletonSymWithProps {
       results[i] = URLDecoder.decode(results[i]);
     }
     return results;
+  }
+  
+  /**
+   *  Converts feature types that IGB understands into one of the constant strings:
+   *  {@link #FEATURE_TYPE_GENE}, etc.  Invalid ones, and valid ones that
+   *  IGB doesn't understand are transformed into
+   *  {@link #FEATURE_TYPE_OTHER}.  As a special case, to help processing files
+   *  from RefSeq, "start_codon" and "stop_codon" are converted to
+   *  {@link #FEATURE_TYPE_CDS}.
+   */
+  public static String normalizeFeatureType(String s) {
+    
+    if (FEATURE_TYPE_GENE.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_GENE;
+    }
+    if (FEATURE_TYPE_EXON.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_EXON;
+    }
+    if (FEATURE_TYPE_MRNA.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_MRNA;
+    }
+    if (FEATURE_TYPE_CDS.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_CDS;
+    }
+    
+    // This is a sort-of a hack.  "start_codon" and "stop_codon" are not valid
+    // feature types in GFF3, but they are ubiquitous in RefSeq's so-called GFF3 files.
+    // Sometimes they share ID's with CDS's, so I'll just treat them as such.
+    if ("start_codon".equalsIgnoreCase(s) || "stop_codon".equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_CDS;
+    }
+    
+    if (SOFA_GENE.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_GENE;
+    }
+    if (SOFA_EXON.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_EXON;
+    }
+    if (SOFA_MRNA.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_MRNA;
+    }
+    if (SOFA_CDS.equalsIgnoreCase(s)) {
+      return FEATURE_TYPE_CDS;
+    }
+   
+    return s.intern();
+  }
+  
+  public String toString() {
+    return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
+        + " children=" + getChildCount();
   }
 }

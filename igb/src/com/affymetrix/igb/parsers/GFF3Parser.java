@@ -13,10 +13,9 @@
 
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.genometry.GFF3Sym;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.GFF3Sym;
 
 import java.io.*;
 import java.util.*;
@@ -65,20 +64,20 @@ public class GFF3Parser {
    *  Parses GFF3 format and adds annotations to the appropriate seqs on the
    *  given seq group.
    */
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group)
+  public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
     throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     
     // Note that the parse(BufferedReader) method will call br.close(), so
     // don't worry about it.
-    return parse(br, seq_group);
+    return parse(br, default_source, seq_group);
   }
   
   /**
    *  Parses GFF3 format and adds annotations to the appropriate seqs on the
    *  given seq group.
    */
-  public List parse(BufferedReader br, AnnotatedSeqGroup seq_group)
+  public List parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
     throws IOException {
     System.out.println("starting GFF3 parse.");
 
@@ -90,7 +89,7 @@ public class GFF3Parser {
     String line = null;
 
     Map id2sym = new HashMap();
-    List all_syms = new ArrayList();
+    ArrayList all_syms = new ArrayList();
     
     try {
       Thread thread = Thread.currentThread();
@@ -116,8 +115,13 @@ public class GFF3Parser {
           if ((line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
 
           String seq_name = fields[0].intern();
-          String source = fields[1].intern();
-          String feature_type = fields[2].intern();
+          String source;
+          if (".".equals(fields[1])) {
+            source = default_source;
+          } else {
+            source = fields[1].intern();
+          }
+          String feature_type = GFF3Sym.normalizeFeatureType(fields[2]);
           int coord_a = Integer.parseInt(fields[3]);
           int coord_b = Integer.parseInt(fields[4]);
           String score_str = fields[5];
@@ -126,7 +130,7 @@ public class GFF3Parser {
           String attributes_field = null;
           // last_field is "attributes" in both GFF2 and GFF3, but uses different format.
           if (fields.length>=9) { attributes_field = new String(fields[8]); } // creating a new String saves memory
-
+          
           float score = GFF3Sym.UNKNOWN_SCORE;
           if (! ".".equals(score_str)) { score = Float.parseFloat(score_str); }
 
@@ -149,8 +153,11 @@ public class GFF3Parser {
            or for those that span multiple lines.  The IDs do not have meaning outside 
            the file in which they reside.
            */
-          String the_id = GFF3Sym.getIdFromGFF3Attributes(attributes_field);
+          Object the_id = sym.getProperty(GFF3_ID); // NOT: sym.getID()
           if (the_id == null) {
+            all_syms.add(sym);
+          } else if (the_id.equals("null")) {
+            // probably never happens, but just being safe.....
             all_syms.add(sym);
           } else {
             // put it in the id2sym hash, or merge it with an existing item already in the hash
@@ -160,8 +167,18 @@ public class GFF3Parser {
               id2sym.put(the_id, sym);
               all_syms.add(sym);
             } else {
-              id2sym.put(the_id, mergeSyms(old_sym, sym));
-              // old_sym is already in the list all_syms, and this new one should be discarded
+              if (GROUP_FEATURE_TYPE.equals(old_sym.getFeatureType())) {
+                // if a group symmetry with the same ID already exists,
+                // just add this as a child of it.
+                old_sym.addChild(sym);
+              } else {
+                // Create a group symmetry, with the both existing symmetries as children
+                GFF3Sym group_sym = groupSyms((String) the_id, old_sym, sym);
+                // Put the group symmetry in the id2sym hash, and also
+                // put the group symmetry in the all_syms list, replacing the one that was there.
+                id2sym.put(the_id, group_sym);
+                all_syms.set(all_syms.indexOf(old_sym), group_sym);
+              }
             }
           }
         }
@@ -174,7 +191,7 @@ public class GFF3Parser {
     while (iter.hasNext()) {
       GFF3Sym sym = (GFF3Sym) iter.next();
       String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
-      
+            
       if (parent_ids.length == 0) {
         // If no parents, then it is top-level
         results.add(sym);
@@ -199,7 +216,7 @@ public class GFF3Parser {
 
     //Loop over the top-level annotations and add them to the bioseq.
     // (this can't be done in the loop above if we also want to resort children)
-      
+
     Iterator iter2 = results.iterator();
     while (iter2.hasNext()) {
       GFF3Sym s = (GFF3Sym) iter2.next();
@@ -233,34 +250,25 @@ public class GFF3Parser {
       return;
     }
   }
-
+  
+  
+  static final String GROUP_FEATURE_TYPE = "group";
+  
   /**
-   *  Utility to merge GFF3 features that were specified on several lines with the same ID.
+   *  Utility to group GFF3 features that were specified on several lines with the same ID.
    *  Lines with the same ID are supposed to represent different parts of the same feature.
-   *  CDS features are usually expressed this way.  For a truly-general
-   *  GFF3 parser, we might want to create a parent-child relationship for the
-   *  CDS and the CDS-Pieces.  (The CDS-pieces often have different values for
-   *  'frame'; other properties might possibly vary.)
-   *  For the purposes of IGB, just merge the CDS into one symmetry covering 
-   *  the full extent of the CDS, and throw away the individual pieces.
-   *  (The different 'frame' values are irrelevant to IGB.)
-   *  Currently the only information that gets modified in the 'to_keep' symmetry
-   *  are the start and end.
-   *  @param to_keep  The symmetry that you want to expand.
-   *  @param to_add   The ammount you want to extend the range of the first sym.
-   *  @return  The modified sym to_keep is returned.
+   *  CDS features are usually expressed this way. 
+   *  In Genometry, we need to create a parent symmetry to hold the individual
+   *  pieces.  This parent symmetry will be a GFF3Sym with type {@link #GROUP_FEATURE_TYPE},
+   *  and the two given sym's will become its children.
    */
-  static GFF3Sym mergeSyms(GFF3Sym to_keep, GFF3Sym to_add) {
-    if (! to_keep.getFeatureType().equals(to_add.getFeatureType())) {
-      System.out.println("WARNING: Merging GFF3 Lines of different feature types: ID="+to_keep.getID());
-    }
-    if (! to_keep.getSource().equals(to_add.getSource())) {
-      System.out.println("WARNING: Merging GFF3 lines of different sources: ID=" + to_keep.getID());
-    }
-    //Maybe also merge all attribute properties from second sym into first one?  May not be needed.
-
-    // Here I make use of the fact that a GFF3Sym is a type of SeqSpan
-    SeqUtils.encompass(to_keep, to_add, to_keep);    
-    return to_keep;
+  static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
+    GFF3Sym parent = new GFF3Sym(sym1.getBioSeq(), sym1.getSource(), GROUP_FEATURE_TYPE,
+        Math.min(sym1.getMin(), sym2.getMin()), Math.max(sym1.getMax(), sym2.getMax()),
+        GFF3Sym.UNKNOWN_SCORE, '.', GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
+    parent.addChild(sym1);
+    parent.addChild(sym2);
+    
+    return parent;
   }
 }

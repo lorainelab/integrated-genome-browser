@@ -14,6 +14,7 @@
 package com.affymetrix.igb.parsers;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.GFF3Sym;
 
@@ -171,6 +172,7 @@ public class GFF3Parser {
                 // if a group symmetry with the same ID already exists,
                 // just add this as a child of it.
                 old_sym.addChild(sym);
+                SeqUtils.encompass(old_sym, sym, old_sym);
               } else {
                 // Create a group symmetry, with the both existing symmetries as children
                 GFF3Sym group_sym = groupSyms((String) the_id, old_sym, sym);
@@ -192,6 +194,12 @@ public class GFF3Parser {
       GFF3Sym sym = (GFF3Sym) iter.next();
       String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
             
+      
+      String id = sym.getID();
+      if (id != null) {
+        seq_group.addToIndex(id, sym);
+      }
+      
       if (parent_ids.length == 0) {
         // If no parents, then it is top-level
         results.add(sym);
@@ -207,6 +215,11 @@ public class GFF3Parser {
             throw new IOException("Parent and child are the same for ID: " + parent_id);
           } else {
             parent_sym.addChild(sym);
+
+            // I'm not sure about this.
+            // In Genometry, parent span usually encompasses spans of all children.
+            // In GFF3, that isn't really required.
+            //SeqUtils.encompass(parent_sym, sym, parent_sym); 
           }
         }
       }
@@ -252,7 +265,7 @@ public class GFF3Parser {
   }
   
   
-  static final String GROUP_FEATURE_TYPE = "group";
+  public static final String GROUP_FEATURE_TYPE = "group";
   
   /**
    *  Utility to group GFF3 features that were specified on several lines with the same ID.

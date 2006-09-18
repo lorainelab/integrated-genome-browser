@@ -1691,7 +1691,9 @@ public class SeqMapView extends JPanel
 
     slice_thread = new Thread() {
       public void run() {
+        enableSeqMap(false);
         sliceAndDiceNow(syms);
+        enableSeqMap(true);
       }
     };
 
@@ -1709,13 +1711,27 @@ public class SeqMapView extends JPanel
   }
 
   Thread slice_thread = null;
-
+  
+  void enableSeqMap(boolean b) {
+    seqmap.setVisible(b);
+    Component[] comps = xzoombox.getComponents();
+    for (int i=0; i<comps.length; i++) {
+      comps[i].setEnabled(b);
+    }
+    comps = yzoombox.getComponents();
+    for (int i=0; i<comps.length; i++) {
+      comps[i].setEnabled(b);
+    }
+  }
+  
   public void sliceAndDice(final SeqSymmetry sym) {
     stopSlicingThread();
 
     slice_thread = new Thread() {
       public void run() {
+        enableSeqMap(false);
         sliceAndDiceNow(sym);
+        enableSeqMap(true);
       }
     };
 
@@ -1730,6 +1746,7 @@ public class SeqMapView extends JPanel
       //System.out.println("Stopping a thread!");
       slice_thread.stop(); // TODO: Deprecated, but seems OK here.  Maybe fix later.
       slice_thread = null;
+      enableSeqMap(true);
     }
   }
 

@@ -274,32 +274,6 @@ implements SeqSelectionListener, SymSelectionListener {
     }
   }
 
-  HeatMap getCommonHeatMap() {
-    // Take the first glyph in the list as a prototype
-    GraphGlyph first_glyph = null;
-    //int graph_style = -1;
-    HeatMap hm = null;
-    if (! glyphs.isEmpty()) {
-      first_glyph = (GraphGlyph) glyphs.get(0);
-      //graph_style = first_glyph.getGraphStyle();
-      hm = first_glyph.getHeatMap();
-    }
-
-    // Now loop through other glyphs if there are more than one
-    // and see if the graph_style and heatmap are the same in all selections
-    int num_glyphs = glyphs.size();
-    for (int i=1; i < num_glyphs; i++) {
-      GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-      //if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
-        //graph_style = -1;
-      //}
-      if (first_glyph.getHeatMap() != gl.getHeatMap()) {
-        hm = null;
-      }
-    }
-    return hm;
-  }
-
   java.util.List grafs = new ArrayList();
   java.util.List glyphs = new ArrayList();
 

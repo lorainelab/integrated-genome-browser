@@ -1209,7 +1209,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   private void exit() {
-    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING, false);
+    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING, 
+        UnibrowPrefsUtil.default_ask_before_exiting);
     String message = "Really exit?";
     if ( (! ask_before_exit) || confirmPanel(message)) {
       if (bmark_action != null) {

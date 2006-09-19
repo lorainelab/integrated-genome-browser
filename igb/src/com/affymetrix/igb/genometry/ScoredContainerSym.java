@@ -230,7 +230,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     GraphState gs = GraphState.getGraphState(id);
     gs.setFloatGraph(false);
     gs.setGraphStyle(GraphGlyph.HEAT_MAP);
-    gs.setHeatMap(HeatMap.getStandardHeatMap(HeatMap.HEATMAP_3));
+    gs.setHeatMap(HeatMap.getDefaultHeatmap());
     gs.getTierStyle().setHumanName(score_name);
     gs.setComboStyle(getContainerStyle(strand));
     return gs;

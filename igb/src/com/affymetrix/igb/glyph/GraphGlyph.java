@@ -38,7 +38,6 @@ public class GraphGlyph extends Glyph {
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
-  static HeatMap default_heatmap = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
 
   public static final int LINE_GRAPH = 1;
   public static final int BAR_GRAPH = 2;

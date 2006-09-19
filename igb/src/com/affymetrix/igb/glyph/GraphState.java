@@ -86,7 +86,7 @@ public class GraphState {
   boolean show_bounds = false;
   boolean show_label = true;
   
-  HeatMap heat_map = GraphGlyph.default_heatmap;
+  HeatMap heat_map;
   IAnnotStyle tier_style;
   IAnnotStyle combo_tier_style = null;  
   
@@ -207,7 +207,15 @@ public class GraphState {
 
   public final String getUrl() { return graph_path; }
   public final int getGraphStyle() { return graph_style; }
-  public final HeatMap getHeatMap() { return heat_map; }
+  public final HeatMap getHeatMap() { 
+    if (heat_map == null) {
+      heat_map = HeatMap.getDefaultHeatmap();
+    }
+    if (heat_map == null) {
+      heat_map = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
+    }
+    return heat_map; 
+  }
   public final float getVisibleMinY() { return graph_visible_min; }
   public final float getVisibleMaxY() { return graph_visible_max; }
 

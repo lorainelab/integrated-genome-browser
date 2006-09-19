@@ -665,6 +665,9 @@ public class GraphVisibleBoundsSetter extends JPanel
       if (percent > prev_max_per - per_offset) {
 	percent = prev_max_per - per_offset;
       }
+      if (percent < 0) {
+        percent = 0;
+      }
 
       float min_of_mins = Float.POSITIVE_INFINITY;
       float max_of_mins = Float.NEGATIVE_INFINITY;
@@ -719,6 +722,10 @@ public class GraphVisibleBoundsSetter extends JPanel
       if (percent < prev_min_per + per_offset) {
 	percent = prev_min_per + per_offset;
       }
+      if (percent > 100) {
+        percent = 100;
+      }
+      
       max_perT.setText(per_format.format(percent));
       max_percent_slider.setValue((int)(percent * sliders_per_percent));
 

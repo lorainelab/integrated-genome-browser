@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Color;
 import java.util.*;
 
@@ -45,10 +46,12 @@ public class HeatMap {
   /** Name of the Transparent Red/Green Standard HeatMap. */
   public static final String HEATMAP_T_3 = "Transparent Green";
 
-  
-  static String[] HEATMAP_NAMES = {
+  public static final String PREF_HEATMAP_NAME = "Default Heatmap";
+  public static final String def_heatmap_name = HEATMAP_2;
+    
+  public static String[] HEATMAP_NAMES = {
     HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4,
-    HEATMAP_T_0, HEATMAP_T_1, HEATMAP_T_2, HEATMAP_T_3
+    HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1
   };
   
   static Map name_to_color_array = new HashMap();  
@@ -143,5 +146,15 @@ public class HeatMap {
     }
     
     return hm;
-  } 
+  }
+    
+  public static HeatMap getDefaultHeatmap() {
+    String name = UnibrowPrefsUtil.getTopNode().get(PREF_HEATMAP_NAME, def_heatmap_name);
+    
+    HeatMap result = getStandardHeatMap(name);
+    if (result == null) {
+      result = getStandardHeatMap(def_heatmap_name);
+    }
+    return result;
+  }  
 }

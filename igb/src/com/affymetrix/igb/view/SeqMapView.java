@@ -246,6 +246,7 @@ public class SeqMapView extends JPanel
 
   Box xzoombox;
   Box yzoombox;
+  MapRangeBox map_range_box;
 
   /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
    *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
@@ -378,7 +379,7 @@ public class SeqMapView extends JPanel
     xzoombox = Box.createHorizontalBox();
     //    xzoombox.add(new SeqComboBoxView());
 
-    MapRangeBox map_range_box = new MapRangeBox(this);
+    map_range_box = new MapRangeBox(this);
     xzoombox.add(map_range_box.range_box);
 
     xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
@@ -1712,8 +1713,14 @@ public class SeqMapView extends JPanel
 
   Thread slice_thread = null;
   
+  // disables the sliced view while the slicing thread works
   void enableSeqMap(boolean b) {
     seqmap.setVisible(b);
+    if (map_range_box != null) {
+      if (!b) {
+        map_range_box.range_box.setText("Working...");
+      }
+    }
     Component[] comps = xzoombox.getComponents();
     for (int i=0; i<comps.length; i++) {
       comps[i].setEnabled(b);

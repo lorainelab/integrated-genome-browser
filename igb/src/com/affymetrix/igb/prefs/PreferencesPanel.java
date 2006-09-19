@@ -79,7 +79,7 @@ public class PreferencesPanel extends JPanel {
 
       //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
 
-      //TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
+      TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
 
       TAB_NUM_MISC_OPTIONS = singleton.addPrefEditorComponent(new OptionsView());
     }

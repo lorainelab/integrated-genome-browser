@@ -13,19 +13,16 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.menuitem.LoadFileAction;
 import java.awt.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.CurationControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
-import com.affymetrix.igb.parsers.ScoredIntervalParser;
 
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
@@ -61,7 +58,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     //misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
-      UnibrowPrefsUtil.ASK_BEFORE_EXITING, true));
+      UnibrowPrefsUtil.ASK_BEFORE_EXITING, UnibrowPrefsUtil.default_ask_before_exiting));
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
@@ -73,17 +70,6 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place vertical zoomer at left", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));
     
-    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Make graphs from scored intervals",
-						 UnibrowPrefsUtil.getTopNode(),
-						 ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-						 ScoredIntervalParser.default_attach_graphs));
-    
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use floating graphs by default", GraphGlyphUtils.getGraphPrefsNode(),
-      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs));
-    
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Use file URL as graph name", GraphGlyphUtils.getGraphPrefsNode(),
-      GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name));
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
@@ -248,32 +234,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     sb.append("the map instead of to the right.  ");
     sb.append("</p>\n");
 
-    sb.append("<p>\n");
-    sb.append("<h2>Make graphs from scored intervals</h2>\n");
-    sb.append("Whether to automatically create graphs from data in ");
-    sb.append("scored interval ('.sin') and expression graph ('.egr') files.  ");
-    sb.append("Recommend: true.");
-    //sb.append("<br><br>Changes do not require re-start.  ");
-    sb.append("</p>\n");
 
-    sb.append("<p>\n");
-    sb.append("<h2>Use floating graphs by default</h2>\n");
-    sb.append("Whether new graphs should be floating by defualt. ");
-    sb.append("Has no effect on graphs loaded through bookmarks since they explicitly specify floating or not-floating.  ");
-    sb.append("Recommend: false.");
-    //sb.append("<br><br>Changes do not require re-start.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>Use file URL as graph name</h2>\n");
-    sb.append("Whether to use the complete URL for the name of newly-loaded graphs.  ");
-    sb.append("True uses the complete URL 'file:///home/graph.gr';  ");
-    sb.append("False uses the shorter filename 'graph.gr'.  ");
-    sb.append("Has no effect on graphs loaded through bookmarks if they explicitly set a graph name.  ");
-    sb.append("Recommend: false.");
-    //sb.append("<br><br>Changes do not require re-start.  ");
-    sb.append("</p>\n");
-    
     sb.append("<p>\n");
     sb.append("<h2>Show DAS query genometry</h2>\n");
     sb.append("Intended for advanced users, for debugging of DAS servers.  ");

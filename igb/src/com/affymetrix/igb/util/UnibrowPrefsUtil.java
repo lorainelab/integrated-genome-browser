@@ -42,6 +42,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 
   /** The name of a boolean preference. */
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
+  public static final boolean default_ask_before_exiting = false;
   
   private static Vector FILENAMES;
   static {

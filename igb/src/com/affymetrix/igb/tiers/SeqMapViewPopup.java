@@ -315,7 +315,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
     showMenu.removeAll();
-    refreshMap(true);
+    refreshMap(false);
   }
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -617,7 +617,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (gviewer != null) {
       // if an AnnotatedSeqViewer is being used, ask it to update itself.
       // later this can be made more specific to just update the tiers that changed
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
+      boolean preserve_view = ! stretch_vertically;
+      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view);
+//      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, false, preserve_view);
     } else {
       // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
       handler.repackTheTiers(false, stretch_vertically);

@@ -50,6 +50,7 @@ public class GraphGlyph extends Glyph {
   Point2D coord = new Point2D(0,0);
   Point curr_point = new Point(0,0);
   Point prev_point = new Point(0,0);
+  Point scratch_point = new Point(0,0);
 
   Rectangle2D label_coord_box = new Rectangle2D();
   Rectangle label_pix_box = new Rectangle();
@@ -185,13 +186,14 @@ public class GraphGlyph extends Glyph {
       //int end_index = xcoords.length-1;
 
       if (show_min_max) {
-	Point scratch_point = new Point();
+	//	Point scratch_point = new Point();
 	coord.y = offset;  // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
 	view.transformToPixels(coord, scratch_point);
 	g.setColor(Color.yellow);
  	g.drawLine( pixelbox.x, scratch_point.y, ( pixelbox.x + pixelbox.width ), scratch_point.y );
 	coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
 	view.transformToPixels(coord, scratch_point);
+	g.setColor(Color.blue);
  	g.drawLine( pixelbox.x, scratch_point.y, ( pixelbox.x + pixelbox.width ), scratch_point.y );
       }
       
@@ -494,8 +496,6 @@ public class GraphGlyph extends Glyph {
    **/
   protected void drawSelectedOutline(ViewI view) {
     draw(view);
-
-/*
     Rectangle view_pixbox = view.getPixelBox();
     Graphics g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
@@ -506,7 +506,6 @@ public class GraphGlyph extends Glyph {
       g.drawRect(view_pixbox.x+1, pixelbox.y+1,
                view_pixbox.width-3, pixelbox.height-3);
     }
- */
   }
 
 

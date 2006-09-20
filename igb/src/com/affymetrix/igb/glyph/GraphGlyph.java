@@ -58,6 +58,7 @@ public class GraphGlyph extends Glyph {
 
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
+  boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -154,6 +155,7 @@ public class GraphGlyph extends Glyph {
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
     double offset = scratch_trans.getOffsetY();
+    //    System.out.println("offset: " + offset);
 
     // using same principles as in genometry span transformations:
     //   y = m(x)+b    // well, here x is actually ycoord of graph, and y is bin index
@@ -182,15 +184,29 @@ public class GraphGlyph extends Glyph {
       int beg_index = 0;
       //int end_index = xcoords.length-1;
 
-      coord.y = offset - ((0 - getVisibleMinY()) * yscale);
+      if (show_min_max) {
+	Point scratch_point = new Point();
+	coord.y = offset;  // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
+	view.transformToPixels(coord, scratch_point);
+	g.setColor(Color.yellow);
+ 	g.drawLine( pixelbox.x, scratch_point.y, ( pixelbox.x + pixelbox.width ), scratch_point.y );
+	coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+	view.transformToPixels(coord, scratch_point);
+ 	g.drawLine( pixelbox.x, scratch_point.y, ( pixelbox.x + pixelbox.width ), scratch_point.y );
+      }
+      
+      float yzero = 0;
+      if (getVisibleMinY() > yzero) { yzero = getVisibleMinY(); }
+      else if (getVisibleMaxY() < yzero) { yzero = getVisibleMaxY(); }
+      //      coord.y = offset - ((0 - getVisibleMinY()) * yscale);
+      coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, zero_point);
-      if (zero_point.y < pixelbox.y)  {
-	zero_point.y = pixelbox.y;
-      }
-      else if (zero_point.y > pbox_yheight) {
-	zero_point.y = pbox_yheight;
-      }
-      else if (show_zero_line && graph_style != HEAT_MAP) {
+      //      if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
+      //      else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
+      //      else if (show_zero_line && graph_style != HEAT_MAP) {
+      if (show_zero_line && 
+	  graph_style != HEAT_MAP && 
+	  yzero == 0)  {// zero_point within min/max, so draw
 	g.setColor(Color.gray);
  	g.drawLine( pixelbox.x, zero_point.y, ( pixelbox.x + pixelbox.width ), zero_point.y );
       }
@@ -234,9 +250,9 @@ public class GraphGlyph extends Glyph {
       float ytemp;
       int ymin_pixel, yheight_pixel;
       int curr_max_index = 0; // used for heatmaps
-      
+
       g.translate(xpix_offset, 0);
-      
+
       RenderingHints original_render_hints = null;
       if (g instanceof Graphics2D) {
         Graphics2D g2 = (Graphics2D) g;
@@ -245,7 +261,7 @@ public class GraphGlyph extends Glyph {
         my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         g2.addRenderingHints(my_render_hints);
       }
-      
+
       // START OF BIG LOOP:
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
         // flipping about yaxis... should probably make this optional
@@ -253,19 +269,23 @@ public class GraphGlyph extends Glyph {
         coord.x = xcoords[i];
         ytemp = ycoords[i];
         // flattening any points > getVisibleMaxY() or < getVisibleMinY()...
-        if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); } else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }
-        //	coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
+	if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); } 
+	else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }
         coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
         view.transformToPixels(coord, curr_point);
-        
+	//	if (curr_point.y > pbox_yheight) { curr_point.y = pbox_yheight; }
+	//	else if (curr_point.y < pixelbox.y) { curr_point.y = pixelbox.y; }
+
         if (wcoords != null) {
           x_plus_width2D.x = xcoords[i] + wcoords[i];
           x_plus_width2D.y = coord.y;
           view.transformToPixels(x_plus_width2D, curr_x_plus_width);
+	  //	  if (curr_x_plus_width.y > pbox_yheight) { curr_x_plus_width.y = pbox_yheight; }
+	  //	  else if (curr_x_plus_width.y < pixelbox.y) { curr_x_plus_width.y = pixelbox.y; }
         }
-        
+
         // g.setColor(this.getColor()); Don't keep resetting color!
-        
+
         if (graph_style == LINE_GRAPH) {
           if (wcoords == null) {
             g.drawLine(prev_point.x, prev_point.y,
@@ -274,7 +294,7 @@ public class GraphGlyph extends Glyph {
             // Draw a line representing the width: (x,y) to (x + width,y)
             g.drawLine(curr_point.x, curr_point.y,
                 curr_x_plus_width.x, curr_x_plus_width.y);
-            
+
             // Usually draw a line from (xA + widthA,yA) to next (xB,yB), but when there
             // are overlapping spans, only do this from the largest previous (x+width) value
             // to an xA that is larger than that.
@@ -288,7 +308,7 @@ public class GraphGlyph extends Glyph {
             }
           }
         } else if (graph_style == BAR_GRAPH) {
-          
+
           if (curr_point.y > zero_point.y) {
             ymin_pixel = zero_point.y;
             yheight_pixel = curr_point.y - zero_point.y;
@@ -297,14 +317,14 @@ public class GraphGlyph extends Glyph {
             yheight_pixel = zero_point.y - curr_point.y;
           }
           if (yheight_pixel < 1) { yheight_pixel = 1; }
-          
+
           if (wcoords == null) {
             g.fillRect(curr_point.x, ymin_pixel, 1, yheight_pixel + 1);
           } else {
             final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
             g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
           }
-          
+
         } else if (graph_style == DOT_GRAPH) {
           if (wcoords == null) {
             g.fillRect(curr_point.x, curr_point.y, 1, 1);
@@ -314,21 +334,21 @@ public class GraphGlyph extends Glyph {
           }
         } else if (graph_style == HEAT_MAP) {
 
-          
+
           if (wcoords == null) { // there are no wcoords, so bars go from previous x to current x (like stairstep graphs)
             // When multiple coords map to one pixel, use the color corresponding to the max value.
             float the_y = prev_ytemp;
             int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
             if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
             if (heatmap_index > curr_max_index) { curr_max_index = heatmap_index; }
-            
+
             if (curr_point.x != prev_point.x) {
               g.setColor(heatmap_colors[curr_max_index]);
               g.fillRect(prev_point.x, pixelbox.y,
                   curr_point.x - prev_point.x, pixelbox.height+1);
               curr_max_index = 0;
             }
-          } 
+          }
           else { // the wcoords are not null, so the bars have width
             float the_y = ytemp;
             int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
@@ -475,6 +495,7 @@ public class GraphGlyph extends Glyph {
   protected void drawSelectedOutline(ViewI view) {
     draw(view);
 
+/*
     Rectangle view_pixbox = view.getPixelBox();
     Graphics g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
@@ -485,6 +506,7 @@ public class GraphGlyph extends Glyph {
       g.drawRect(view_pixbox.x+1, pixelbox.y+1,
                view_pixbox.width-3, pixelbox.height-3);
     }
+ */
   }
 
 
@@ -618,7 +640,7 @@ public class GraphGlyph extends Glyph {
     state.getTierStyle().setColor(c);
   }
 
-  public String getLabel() { 
+  public String getLabel() {
     String lab = state.getTierStyle().getHumanName();
     // If it has a combo style and that is collapsed, then only use the label
     // from the combo style.  Otherwise use the individual tier style.

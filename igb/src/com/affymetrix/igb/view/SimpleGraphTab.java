@@ -16,15 +16,18 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.SeqSelectionListener;
 import com.affymetrix.igb.event.SymSelectionEvent;
 import com.affymetrix.igb.event.SymSelectionListener;
+import com.affymetrix.igb.genometry.GraphIntervalSym;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
+import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
@@ -33,7 +36,9 @@ import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -81,6 +86,10 @@ implements SeqSelectionListener, SymSelectionListener {
 
   JButton combineB = new JButton("Join");
   JButton splitB = new JButton("Split");
+  JButton addB;
+  JButton subB;
+  JButton mulB;
+  JButton divB;
 
   JLabel heat_map_label = new JLabel("Heat Map:");
   JComboBox heat_mapCB;
@@ -193,6 +202,8 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(deleteB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(Box.createHorizontalGlue());
+    butbox.add(threshB);
+    butbox.add(Box.createRigidArea(new Dimension(5,5)));
 
     Box first_two_columns = Box.createHorizontalBox();
     stylebox.setAlignmentY(0.0f);
@@ -223,10 +234,10 @@ implements SeqSelectionListener, SymSelectionListener {
 //    row1.add(stylebox);
 //    scalebox.setAlignmentY(0.0f);
 //    row1.add(scalebox);
-    megabox.setAlignmentY(0.5f);
+    megabox.setAlignmentY(0.0f);
     row1.add(megabox);
     advanced_panel = new SimpleGraphTab.AdvancedGraphPanel();
-    advanced_panel.setAlignmentY(0.5f);
+    advanced_panel.setAlignmentY(0.0f);
     row1.add(advanced_panel);
 
     colorB.addActionListener(new ActionListener() {
@@ -453,12 +464,16 @@ implements SeqSelectionListener, SymSelectionListener {
     deleteB.setEnabled(b);
     cloneB.setEnabled(b);
     scaleCB.setEnabled(cloneB.isEnabled());
-
+    
     //combineB.setSelected(all_are_combined);
     //splitB.setSelected(any_are_not_combined);
     
     combineB.setEnabled(any_are_not_combined && grafs.size() >= 2);
     splitB.setEnabled(any_are_combined);
+    addB.setEnabled(grafs.size()==2);
+    subB.setEnabled(grafs.size()==2);
+    mulB.setEnabled(grafs.size()==2);
+    divB.setEnabled(grafs.size()==2);
     
     is_listening = true; // turn back on GUI events
   }
@@ -652,12 +667,12 @@ implements SeqSelectionListener, SymSelectionListener {
         scaleCB.addItem(name);
       }
 
-      Box advanced_button_box = Box.createHorizontalBox();
-      advanced_button_box.add(Box.createRigidArea(new Dimension(6,5)));
-//      advanced_button_box.add(cloneB);
+//      Box advanced_button_box = Box.createHorizontalBox();
+//      advanced_button_box.add(Box.createRigidArea(new Dimension(6,5)));
+////      advanced_button_box.add(cloneB);
+////      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
+//      advanced_button_box.add(threshB);
 //      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
-      advanced_button_box.add(threshB);
-      advanced_button_box.add(Box.createRigidArea(new Dimension(5,5)));
 
       Box grouping_box = Box.createHorizontalBox();
       grouping_box.add(Box.createRigidArea(new Dimension(6,0)));
@@ -687,13 +702,13 @@ implements SeqSelectionListener, SymSelectionListener {
 
 
       advanced_panel.setBorder(BorderFactory.createTitledBorder("Advanced"));
-      advanced_button_box.setAlignmentX(0.0f);
+      //advanced_button_box.setAlignmentX(0.0f);
       decoration_row.setAlignmentX(0.0f);
       advanced_panel.add(decoration_row);
       advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       //
-      advanced_panel.add(advanced_button_box);
-      advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
+      //advanced_panel.add(advanced_button_box);
+      //advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
 
       advanced_panel.add(scale_type_label);
       scaleCB_box.setAlignmentX(0.0f);
@@ -704,19 +719,28 @@ implements SeqSelectionListener, SymSelectionListener {
       advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       advanced_panel.add(grouping_box);
 
-//      String[] math = new String[] {"add", "subtract", "ratio", "product"};
-//      JRadioButton addB = new JRadioButton("A+B");
-//      JRadioButton subB = new JRadioButton("A-B");
-//      JRadioButton mulB = new JRadioButton("A*B");
-//      JRadioButton divB = new JRadioButton("A/B");
-//      Box math_box = Box.createHorizontalBox();
-//      math_box.add(new JLabel("Combine:"));
-//      math_box.add(addB);
-//      math_box.add(subB);
-//      math_box.add(mulB);
-//      math_box.add(divB);
-//      math_box.setAlignmentX(0.0f);
-//      advanced_panel.add(math_box);
+      //char division_symbol = (char) 0x00f7;
+      addB = new JButton("A + B");
+      subB = new JButton("A - B");
+      mulB = new JButton("A * B");
+      divB = new JButton("A / B");
+      addB.setMargin(new Insets(2,2,2,2));
+      subB.setMargin(new Insets(2,2,2,2));
+      mulB.setMargin(new Insets(2,2,2,2));
+      divB.setMargin(new Insets(2,2,2,2));
+      Box math_box = Box.createHorizontalBox();
+      math_box.add(new JLabel("Combine:"));
+      math_box.add(Box.createRigidArea(new Dimension(6,0)));
+      math_box.add(addB);
+      math_box.add(Box.createRigidArea(new Dimension(4,0)));
+      math_box.add(subB);
+      math_box.add(Box.createRigidArea(new Dimension(4,0)));
+      math_box.add(mulB);
+      math_box.add(Box.createRigidArea(new Dimension(4,0)));
+      math_box.add(divB);
+      math_box.setAlignmentX(0.0f);
+      advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
+      advanced_panel.add(math_box);
 
       saveB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -767,6 +791,27 @@ implements SeqSelectionListener, SymSelectionListener {
       splitB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
 	  splitGraphs();
+        }
+      });
+
+      addB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          graphArithmetic(math[0], Color.RED);
+        }
+      });
+      subB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          graphArithmetic(math[1], Color.BLUE);
+        }
+      });
+      mulB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          graphArithmetic(math[2], Color.GREEN);
+        }
+      });
+      divB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          graphArithmetic(math[3], Color.YELLOW);
         }
       });
     }
@@ -829,6 +874,77 @@ implements SeqSelectionListener, SymSelectionListener {
       updateViewer();
     }
 
+    String[] math = new String[] {"sum", "diff", "product", "ratio"};
+    
+    public void graphArithmetic(String operation, Color col) {
+      if (glyphs.size() == 2) {
+        graphArithmetic((GraphGlyph) glyphs.get(0),(GraphGlyph) glyphs.get(1), operation);
+      } else {
+        ErrorHandler.errorPanel("ERROR", "Must choose exactly 2 graphs", this);
+      }
+    }
+
+    public void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+      if (GraphSelectionManager.graphsAreComparable(graphA, graphB)) {
+        int numpoints = graphA.getPointCount();
+        float[] yA = graphA.getYCoords();
+        float[] yB = graphB.getYCoords();
+        float newY[] = new float[numpoints];
+        
+        String symbol = ",";
+        if (math[0].equals(operation)) {
+          for (int i=0; i<numpoints; i++) {
+            newY[i] = yA[i] + yB[i];
+          }
+          symbol = "+";
+        } else if (math[1].equals(operation)) {
+          for (int i=0; i<numpoints; i++) {
+            newY[i] = yA[i] - yB[i];
+          }
+          symbol = "-";
+        } else if (math[2].equals(operation)) {
+          for (int i=0; i<numpoints; i++) {
+            newY[i] = yA[i] * yB[i];
+          }
+          symbol = "*";
+        } else if (math[3].equals(operation)) {
+          for (int i=0; i<numpoints; i++) {
+            if (yB[i] == 0) {
+              newY[i] = 0; // hack to avoid infinities
+            } else {
+              newY[i] = yA[i] / yB[i];
+            }
+            if (Float.isInfinite(newY[i]) || Float.isNaN(newY[i])) {
+              newY[i] = 0.0f;
+            }
+          }
+          symbol = "/";
+        }
+
+        String newname = operation + ": (" + graphA.getLabel() + ") " +
+            symbol + " (" + graphB.getLabel() + ")";
+        
+        MutableAnnotatedBioSeq aseq =
+            (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+        newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+        GraphSym newsym;
+        if (graphA.getWCoords() == null) {
+          newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+        } else {
+          newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);
+        }
+        
+        //newsym.getGraphState().copyProperties(graphA.getGraphState());
+        
+        newsym.setGraphName(newname);
+        aseq.addAnnotation(newsym);
+        gviewer.setAnnotatedSeq(aseq, true, true);
+        GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
+
+        updateViewer();
+      }
+    }
+    
     void setShowAxis(boolean b) {
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);

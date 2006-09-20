@@ -937,6 +937,9 @@ implements SeqSelectionListener, SymSelectionListener {
         //newsym.getGraphState().copyProperties(graphA.getGraphState());
         
         newsym.setGraphName(newname);
+        newsym.getGraphState().setGraphStyle(graphA.getGraphState().getGraphStyle());
+        newsym.getGraphState().setHeatMap(graphA.getGraphState().getHeatMap());
+        
         aseq.addAnnotation(newsym);
         gviewer.setAnnotatedSeq(aseq, true, true);
         GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);

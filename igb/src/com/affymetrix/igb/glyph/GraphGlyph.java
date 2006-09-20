@@ -679,7 +679,10 @@ public class GraphGlyph extends Glyph {
 
   public int[] getXCoords() { return xcoords; };
   public float[] getYCoords() { return ycoords; }
-
+  
+  /** Returns the width coordinate array or null. */
+  public int[] getWCoords() { return wcoords; }
+  
   public int getPointCount() {
     if (xcoords == null) { return 0; }
     else { return xcoords.length; }

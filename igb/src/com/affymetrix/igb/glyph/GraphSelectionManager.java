@@ -33,6 +33,7 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileChooser;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.ContextualPopupListener;
 
@@ -649,22 +650,21 @@ public class GraphSelectionManager
    *  another for operations like diff, ratio, etc.
    *  (Graphs must have exact same x positions.)
    */
-  public boolean graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
+  public static boolean graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
     // checking that both graphs are non-null
     if (graphA == null || graphB == null) {
-      JOptionPane.showMessageDialog(null,
-                                    "must select two graphs to diff",
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE);
+      ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs");
       return false;
     }
     int numpoints = graphA.getPointCount();
     // checking that both graph have same number of points
     if (numpoints != graphB.getPointCount()) {
-      JOptionPane.showMessageDialog(null,
-                                    "graphs must have same x points",
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE);
+        ErrorHandler.errorPanel("ERROR", "Graphs must have the same X points");
+      return false;
+    }
+    if ((graphA.getWCoords() == null) != (graphB.getWCoords() == null)) {
+      // one has width coords, the other doesn't.
+      ErrorHandler.errorPanel("ERROR", "Must select two graphs of the same type");
       return false;
     }
     int[] xcoordsA = graphA.getXCoords();
@@ -672,10 +672,7 @@ public class GraphSelectionManager
     // checking that both graphs have same x points
     for (int i=0; i<numpoints; i++) {
       if (xcoordsA[i] != xcoordsB[i]) {
-        JOptionPane.showMessageDialog(null,
-                                      "graphs must have same x points",
-                                      "Error",
-                                      JOptionPane.ERROR_MESSAGE);
+        ErrorHandler.errorPanel("ERROR", "Graphs must have the same X points");
         return false;
       }
     }

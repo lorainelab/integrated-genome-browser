@@ -298,12 +298,8 @@ public class SmartGraphGlyph extends GraphGlyph {
     int beg_index = 0;
     int end_index = xcoords.length-1;
 
-    if (zero_point.y < pixelbox.y)  {
-      zero_point.y = pixelbox.y;
-    }
-    else if (zero_point.y > pbox_yheight) {
-      zero_point.y = pbox_yheight;
-    }
+    if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
+    else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
     else if (show_zero_line) {
       g.setColor(Color.gray);
       g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);

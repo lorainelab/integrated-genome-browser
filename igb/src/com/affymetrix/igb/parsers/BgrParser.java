@@ -55,13 +55,20 @@ public class BgrParser {
     int[] xcoords = graf.getGraphXCoords();
     float[] ycoords = graf.getGraphYCoords();
     int total_points = xcoords.length;
-    Map headers = graf.getProperties();
 
-    if (headers == null) {  // then write eight null entries in a row
-      for (int i=0; i<8; i++) { dos.writeUTF("null"); }
+    Map headers = graf.getProperties();
+  
+    if (headers == null) {
+      headers = new HashMap(); // use an empty map
     }
     else {
-      if (headers.get("seq_name") == null) { dos.writeUTF("null"); }
+      if (headers.get("seq_name") == null) { 
+        if (graf.getGraphSeq() == null) {
+          dos.writeUTF("null"); 
+        } else {
+          dos.writeUTF(graf.getGraphSeq().getID());
+        }
+      }
       else { dos.writeUTF((String)headers.get("seq_name")); }
       if (headers.get("release_name") == null)  {dos.writeUTF("null"); }
       else  { dos.writeUTF((String)headers.get("release_name")); }

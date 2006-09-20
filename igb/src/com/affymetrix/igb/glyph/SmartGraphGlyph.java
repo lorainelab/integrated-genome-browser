@@ -291,16 +291,48 @@ public class SmartGraphGlyph extends GraphGlyph {
     Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
-
-    coord.y = offset - ((0 - getVisibleMinY()) * yscale);
-    view.transformToPixels(coord, zero_point);
-
     int beg_index = 0;
     int end_index = xcoords.length-1;
 
-    if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
-    else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
-    else if (show_zero_line) {
+    // plot_top_ypixel and plot_bottom_ypixel are replacements for pixelbox.y and pbox_yheight in many 
+    //   (but not all) calculations, they take into account an internal transform to shrink the graph rendering 
+    //   if necessary to allow space for the graph label and thresholded regions 
+    // plot_top_ypixel is "top" y pixel position allocated to plot rendering
+    // plot_bottom_ypixel is "bottom" y pixel position allocated to plot rendering
+    // since y pixel addressing in Graphics is numbered in increasing order from top, 
+    //         plot_top_ypixel < plot_bottom_ypixel
+    //    this is a little confusing because it means as graph values decrease, pixel position increases
+    //    a better way to think of this is:
+    //        plot_top_ypixel = pixel position of graph.getVisibleMaxY()
+    //        plot_bottom_ypixel = pixel position of graph.getVisibleMinY();
+    coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+    view.transformToPixels(coord, scratch_point);
+    int plot_top_ypixel = scratch_point.y;  // replaces pixelbox.y
+
+    coord.y = offset; // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
+    view.transformToPixels(coord, scratch_point);
+    int plot_bottom_ypixel = scratch_point.y; // replaces pbox_yheight
+
+    float yzero = 0;
+    if (getVisibleMinY() > yzero) { yzero = getVisibleMinY(); }
+    else if (getVisibleMaxY() < yzero) { yzero = getVisibleMaxY(); }
+    coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
+    view.transformToPixels(coord, zero_point);
+
+    if (show_min_max) {
+      g.setColor(Color.yellow);
+      g.drawLine(pixelbox.x, plot_bottom_ypixel, pixelbox.width, plot_bottom_ypixel);
+      g.setColor(Color.blue);
+      g.drawLine(pixelbox.x, plot_top_ypixel, pixelbox.width, plot_top_ypixel);
+    }
+
+    //    if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
+    //    else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
+    //    else if (show_zero_line) {
+    //      g.setColor(Color.gray);
+    //      g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
+    //    }
+    if (show_zero_line && yzero == 0) {
       g.setColor(Color.gray);
       g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
     }
@@ -421,8 +453,10 @@ public class SmartGraphGlyph extends GraphGlyph {
 
 	  else {  // draw previous pixel position
 	    if ((graph_style == MINMAXAVG) && MINMAXBAR) {
-	      int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
-	      int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
+	      //	      int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
+	      //	      int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
+	      int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+	      int yheight = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel) - ystart;
 	      g.fillRect(prev_point.x, ystart, 1, yheight);
 	      //	      g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
 	      //			 prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
@@ -433,7 +467,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	      // cache for drawing later
 	      if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 		pixel_cache[prev_point.x] =
-		  Math.min(Math.max(yavg_pixel, pixelbox.y), pbox_yheight);
+		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	      }
 	    }
 	    last_xavg = prev_point.x;
@@ -509,8 +543,8 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
 	else {  // draw previous pixel position
 	  if ((graph_style == MINMAXAVG) && MINMAXBAR)  {
-	    int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
-	    int yend = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight);
+	    int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+	    int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	    int yheight = yend - ystart;
 	    g.fillRect(prev_point.x, ystart, 1, yheight);
 	    //	    g.fillRect(prev_point.x, ystart, 1, 1);
@@ -524,7 +558,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    // cache for drawing later
 	    if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 	      pixel_cache[prev_point.x] =
-		  Math.min(Math.max(yavg_pixel, pixelbox.y), pbox_yheight);
+		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	    }
 	  }
 	  ymin_pixel = curr_point.y;

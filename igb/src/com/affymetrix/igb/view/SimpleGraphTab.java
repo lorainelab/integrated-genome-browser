@@ -22,12 +22,10 @@ import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.SeqSelectionListener;
 import com.affymetrix.igb.event.SymSelectionEvent;
 import com.affymetrix.igb.event.SymSelectionListener;
-import com.affymetrix.igb.genometry.GraphIntervalSym;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
-import com.affymetrix.igb.glyph.GraphSelectionManager;
 import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
@@ -38,7 +36,7 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
-import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -796,22 +794,22 @@ implements SeqSelectionListener, SymSelectionListener {
 
       addB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          graphArithmetic(math[0], Color.RED);
+          graphArithmetic(GraphGlyphUtils.MATH_SUM);
         }
       });
       subB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          graphArithmetic(math[1], Color.BLUE);
+          graphArithmetic(GraphGlyphUtils.MATH_DIFFERENCE);
         }
       });
       mulB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          graphArithmetic(math[2], Color.GREEN);
+          graphArithmetic(GraphGlyphUtils.MATH_PRODUCT);
         }
       });
       divB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          graphArithmetic(math[3], Color.YELLOW);
+          graphArithmetic(GraphGlyphUtils.MATH_RATIO);
         }
       });
     }
@@ -874,77 +872,21 @@ implements SeqSelectionListener, SymSelectionListener {
       updateViewer();
     }
 
-    String[] math = new String[] {"sum", "diff", "product", "ratio"};
     
-    public void graphArithmetic(String operation, Color col) {
+    public void graphArithmetic(String operation) {
       if (glyphs.size() == 2) {
-        graphArithmetic((GraphGlyph) glyphs.get(0),(GraphGlyph) glyphs.get(1), operation);
-      } else {
-        ErrorHandler.errorPanel("ERROR", "Must choose exactly 2 graphs", this);
-      }
-    }
-
-    public void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
-      if (GraphSelectionManager.graphsAreComparable(graphA, graphB)) {
-        int numpoints = graphA.getPointCount();
-        float[] yA = graphA.getYCoords();
-        float[] yB = graphB.getYCoords();
-        float newY[] = new float[numpoints];
+        GraphGlyph graphA = (GraphGlyph) glyphs.get(0);
+        GraphGlyph graphB = (GraphGlyph) glyphs.get(1);
+        GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, GraphGlyphUtils.MATH_DIFFERENCE);
         
-        String symbol = ",";
-        if (math[0].equals(operation)) {
-          for (int i=0; i<numpoints; i++) {
-            newY[i] = yA[i] + yB[i];
-          }
-          symbol = "+";
-        } else if (math[1].equals(operation)) {
-          for (int i=0; i<numpoints; i++) {
-            newY[i] = yA[i] - yB[i];
-          }
-          symbol = "-";
-        } else if (math[2].equals(operation)) {
-          for (int i=0; i<numpoints; i++) {
-            newY[i] = yA[i] * yB[i];
-          }
-          symbol = "*";
-        } else if (math[3].equals(operation)) {
-          for (int i=0; i<numpoints; i++) {
-            if (yB[i] == 0) {
-              newY[i] = 0; // hack to avoid infinities
-            } else {
-              newY[i] = yA[i] / yB[i];
-            }
-            if (Float.isInfinite(newY[i]) || Float.isNaN(newY[i])) {
-              newY[i] = 0.0f;
-            }
-          }
-          symbol = "/";
-        }
-
-        String newname = operation + ": (" + graphA.getLabel() + ") " +
-            symbol + " (" + graphB.getLabel() + ")";
-        
-        MutableAnnotatedBioSeq aseq =
-            (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-        newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-        GraphSym newsym;
-        if (graphA.getWCoords() == null) {
-          newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-        } else {
-          newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);
-        }
-        
-        //newsym.getGraphState().copyProperties(graphA.getGraphState());
-        
-        newsym.setGraphName(newname);
-        newsym.getGraphState().setGraphStyle(graphA.getGraphState().getGraphStyle());
-        newsym.getGraphState().setHeatMap(graphA.getGraphState().getHeatMap());
-        
+        MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
         aseq.addAnnotation(newsym);
         gviewer.setAnnotatedSeq(aseq, true, true);
         GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
 
         updateViewer();
+      } else {
+        ErrorHandler.errorPanel("ERROR", "Must choose exactly 2 graphs", this);
       }
     }
     

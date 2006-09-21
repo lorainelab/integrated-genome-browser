@@ -170,6 +170,115 @@ public class GraphGlyphUtils {
   }
 
   /**
+   *  Checks to make sure that two graphs can be compared with one
+   *  another for operations like diff, ratio, etc.
+   *  (Graphs must have exact same x positions, and if one has width coords,
+   *   the other must also.)
+   *  @return null if the graphs are comparable, or an explanation string if they are not.
+   */
+  public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
+    // checking that both graphs are non-null
+    if (graphA == null || graphB == null) {
+      return "Must select exactly two graphs";
+    }
+    int numpoints = graphA.getPointCount();
+    // checking that both graph have same number of points
+    if (numpoints != graphB.getPointCount()) {
+      return "Graphs must have the same X points";
+    }
+    if ((graphA.getWCoords() == null) != (graphB.getWCoords() == null)) {
+      // one has width coords, the other doesn't.
+      return "Must select two graphs of the same type";
+    }
+
+    int[] xcoordsA = graphA.getXCoords();
+    int[] xcoordsB = graphB.getXCoords();
+    // checking that both graphs have same x points
+    for (int i=0; i<numpoints; i++) {
+      if (xcoordsA[i] != xcoordsB[i]) {
+        return "Graphs must have the same X points";
+      }
+    }
+
+    return null;
+  }
+  
+  public static final String MATH_SUM = "sum";
+  public static final String MATH_DIFFERENCE = "diff";
+  public static final String MATH_PRODUCT = "product";
+  public static final String MATH_RATIO = "ratio";
+  public static final String[] math = new String[] {MATH_SUM, MATH_DIFFERENCE, MATH_PRODUCT, MATH_RATIO};
+  
+  /**
+   *  Combines two graphs by the given arithmetical operation.
+   *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable()}.
+   *  During division, indefinite values are replaced by zero.
+   */
+  public static GraphSym graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+    String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
+    
+    if (error != null) {
+      ErrorHandler.errorPanel("ERROR", error);
+      return null;
+    }
+    
+    int numpoints = graphA.getPointCount();
+    float[] yA = graphA.getYCoords();
+    float[] yB = graphB.getYCoords();
+    float newY[] = new float[numpoints];
+    
+    String symbol = ",";
+    if (MATH_SUM.equals(operation)) {
+      for (int i=0; i<numpoints; i++) {
+        newY[i] = yA[i] + yB[i];
+      }
+      symbol = "+";
+    } else if (MATH_DIFFERENCE.equals(operation)) {
+      for (int i=0; i<numpoints; i++) {
+        newY[i] = yA[i] - yB[i];
+      }
+      symbol = "-";
+    } else if (MATH_PRODUCT.equals(operation)) {
+      for (int i=0; i<numpoints; i++) {
+        newY[i] = yA[i] * yB[i];
+      }
+      symbol = "*";
+    } else if (MATH_RATIO.equals(operation)) {
+      for (int i=0; i<numpoints; i++) {
+        if (yB[i] == 0) {
+          newY[i] = 0; // hack to avoid infinities
+        } else {
+          newY[i] = yA[i] / yB[i];
+        }
+        if (Float.isInfinite(newY[i]) || Float.isNaN(newY[i])) {
+          newY[i] = 0.0f;
+        }
+      }
+      symbol = "/";
+    }
+    
+    String newname = operation + ": (" + graphA.getLabel() + ") " +
+        symbol + " (" + graphB.getLabel() + ")";
+    
+    MutableAnnotatedBioSeq aseq =
+        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+    newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
+    GraphSym newsym;
+    if (graphA.getWCoords() == null) {
+      newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+    } else {
+      newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);
+    }
+    
+    //newsym.getGraphState().copyProperties(graphA.getGraphState());
+    
+    newsym.setGraphName(newname);
+    newsym.getGraphState().setGraphStyle(graphA.getGraphState().getGraphStyle());
+    newsym.getGraphState().setHeatMap(graphA.getGraphState().getHeatMap());
+    return newsym;
+  }
+
+  /**
    * @deprecated
    */
   public static Color getDefaultGraphColor(int i) {

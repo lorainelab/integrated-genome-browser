@@ -25,7 +25,6 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -277,7 +276,7 @@ public class GraphSelectionManager
       else if (src == thresh_graph) {
         if (current_graph instanceof SmartGraphGlyph) {
           if (second_current_graph != null || current_graph == null) {
-            IGB.errorPanel("Must select exactly one graph.");
+            ErrorHandler.errorPanel("ERROR", "Must select exactly one graph", gviewer.getSeqMap());
           } else {
             SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
             boolean show = ! sgg.getShowThreshold();
@@ -381,36 +380,16 @@ public class GraphSelectionManager
       }
       
       else if (src == diff_graphs) {
-        if (DEBUG) System.out.println("trying to create diff graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createDiffGraph(current_graph, second_current_graph, Color.yellow);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
       }
       else if (src == sum_graphs) {
-        if (DEBUG) System.out.println("trying to create diff graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createSumGraph(current_graph, second_current_graph, Color.yellow);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_SUM);
       }
       else if (src == ratio_graphs) {
-        if (DEBUG) System.out.println("trying to create ratio graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createRatioGraph(current_graph, second_current_graph, Color.red);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_RATIO);
       }
       else if (src == product_graphs) {
-        if (DEBUG) System.out.println("trying to create product graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createProductGraph(current_graph, second_current_graph, Color.red);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_PRODUCT);
       }
       else if (src == save_graph) {
         saveGraph(current_graph);
@@ -521,163 +500,34 @@ public class GraphSelectionManager
         }
       }
       catch (Exception ex) {
-        IGB.errorPanel("Error saving graph", ex);
+         ErrorHandler.errorPanel("ERROR", "Error saving graph", gviewer.getSeqMap(), ex);
       } finally {
         if (ostr != null) try { ostr.close(); } catch (IOException ioe) {}
       }
     }
     else {
-      IGB.errorPanel("graph does not have associated GraphSym data model, can't save");
+      ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model",
+        gviewer.getSeqMap());
     }
   }
 
-  public void createDiffGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A-B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] - yB[i];
-      }
-      String newname = "diff: (" + graphA.getLabel() + ") - (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      newsym.setGraphName(newname);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  public void createSumGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A+B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] + yB[i];
-      }
-      String newname = "sum: (" + graphA.getLabel() + ") + (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      newsym.setGraphName(newname);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  /**
-   *  Creates a graph that is a ratio of two other graphs.
-   *  if two graphs are comparable (each graph has same xcoords), then
-   *     creates graphC where for each coord index i in graphA and graphB,
-   *     graphC.y[i] = graphA.y[i] / graphB.y[i]
-   *  To avoid division by 0, if graphB.y[i] == 0,
-   *     then the point at index i is not included in graphC
-   */
-  public void createRatioGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A/B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      int[] xA = graphA.getXCoords();
-      int no_zero_points = 0;
-      for (int i=0; i<numpoints; i++) {
-        if (yB[i] != 0) { no_zero_points++; }
-      }
-      int newX[] = new int[no_zero_points];
-      float newY[] = new float[no_zero_points];
-      int newindex = 0;
-
-      for (int i=0; i<numpoints; i++) {
-        if (yB[i] == 0) { continue; }
-        newX[newindex] = xA[i];
-        newY[newindex] = yA[i] / yB[i];
-        newindex++;
-      }
-
-      String newname = "ratio: (" + graphA.getLabel() +
-        ") / (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-      GraphSym newsym = new GraphSym(newX, newY, newname, aseq);
-      newsym.setGraphName(newname);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  public void createProductGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A*B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] * yB[i];
-      }
-      String newname = "product: (" + graphA.getLabel() +
-        ") * (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      newsym.setGraphName(newname);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  /**
-   *  Checks to make sure that two graphs can be compared with one
-   *  another for operations like diff, ratio, etc.
-   *  (Graphs must have exact same x positions.)
-   */
-  public static boolean graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
-    // checking that both graphs are non-null
+  void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
     if (graphA == null || graphB == null) {
-      ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs");
-      return false;
+      // This error condition is likely never triggered
+      ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs.", gviewer.getSeqMap());
     }
-    int numpoints = graphA.getPointCount();
-    // checking that both graph have same number of points
-    if (numpoints != graphB.getPointCount()) {
-        ErrorHandler.errorPanel("ERROR", "Graphs must have the same X points");
-      return false;
+    if (GraphGlyphUtils.graphsAreComparable(graphA, graphB) == null) {
+      GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
+      
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+      aseq.addAnnotation(newsym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
+      //GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
     }
-    if ((graphA.getWCoords() == null) != (graphB.getWCoords() == null)) {
-      // one has width coords, the other doesn't.
-      ErrorHandler.errorPanel("ERROR", "Must select two graphs of the same type");
-      return false;
-    }
-    int[] xcoordsA = graphA.getXCoords();
-    int[] xcoordsB = graphB.getXCoords();
-    // checking that both graphs have same x points
-    for (int i=0; i<numpoints; i++) {
-      if (xcoordsA[i] != xcoordsB[i]) {
-        ErrorHandler.errorPanel("ERROR", "Graphs must have the same X points");
-        return false;
-      }
-    }
-    return true;
   }
+
+
+
 
   /**
    *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but

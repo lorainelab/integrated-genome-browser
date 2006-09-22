@@ -168,6 +168,31 @@ public class SgrParser {
     yhash.put(seqid, new_ylist);
   }
 
+  public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
+    BioSeq seq = graf.getGraphSeq();
+    if (seq == null) {
+      throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
+    }
+    String seq_id = seq.getID();
+    
+    int xpos[] = graf.getGraphXCoords();
+    float ypos[] = graf.getGraphYCoords();
+      
+    BufferedOutputStream bos = null;
+    DataOutputStream dos = null;
+    try {
+      bos = new BufferedOutputStream(ostr);
+      dos = new DataOutputStream(bos);
+      
+      for (int i=0; i<xpos.length; i++) {
+        dos.writeBytes(seq_id + "\t" + xpos[i] + "\t" + ypos[i] + "\n");
+      }
+      dos.flush();
+    } finally {
+      dos.close();
+    }
+    return true;
+  }
 
   public static void main(String[] args) {
     String test_file = System.getProperty("user.dir") + "/testdata/graph/test1.sgr";

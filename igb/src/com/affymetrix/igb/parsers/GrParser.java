@@ -1,3 +1,15 @@
+/**
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*    
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.  
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
@@ -15,13 +27,18 @@ public class GrParser {
   public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
     int xpos[] = graf.getGraphXCoords();
     float ypos[] = graf.getGraphYCoords();
-    BufferedOutputStream bos = new BufferedOutputStream(ostr);
-    DataOutputStream dos = new DataOutputStream(bos);
-    for (int i=0; i<xpos.length; i++) {
-      dos.writeBytes("" + (int)xpos[i] + "\t" + ypos[i] + "\n");
+    BufferedOutputStream bos = null;
+    DataOutputStream dos = null;
+    try {
+      bos = new BufferedOutputStream(ostr);
+      dos = new DataOutputStream(bos);
+      for (int i=0; i<xpos.length; i++) {
+        dos.writeBytes("" + xpos[i] + "\t" + ypos[i] + "\n");
+      }
+      dos.flush();
+    } finally {
+      dos.close();
     }
-    dos.flush();
-    dos.close();
     return true;
   }
 

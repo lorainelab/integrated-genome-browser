@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.genometry.GraphIntervalSym;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometry.*;
@@ -22,6 +21,8 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.GraphIntervalSym;
+import com.affymetrix.igb.parsers.ScoredIntervalParser;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.parsers.SgrParser;
 import com.affymetrix.igb.parsers.BarParser;
@@ -394,27 +395,42 @@ public class GraphSymUtils {
     return revcomp_gsym;
   }
 
-  /** Passes to {@link com.affymetrix.igb.parsers.BgrParser#writeBgrFormat(GraphSym, OutputStream)}
-   *  or {@link com.affymetrix.igb.parsers.GrParser#writeGrFormat(GraphSym, OutputStream)} depending
+  /** Writes out in a variety of possible formats depending
    *  on the suffix of the filename.
+   *  Formats include ".gr", ".sgr", ".sin" == ".egr", ".bgr".
    *  @return true if the file was written sucessfully
    */
   public static boolean writeGraphFile(GraphSym gsym, String file_name) throws IOException {
     boolean result = false;
     BufferedOutputStream bos = null;
     try {
-      if (file_name.endsWith(".bgr") || file_name.endsWith(".gr")) {
+      
+      if (file_name.endsWith(".bgr")) {
         bos = new BufferedOutputStream(new FileOutputStream(file_name));
-        if (file_name.endsWith(".bgr")) { result =  BgrParser.writeBgrFormat(gsym, bos); }
-        else if (file_name.endsWith(".gr")) { result = GrParser.writeGrFormat(gsym, bos); }
-        //    else if (filename.endsWith(".sbar")){ result = writeSbarFormat(gsym, bos); }
+        result =  BgrParser.writeBgrFormat(gsym, bos);
+      } else if (file_name.endsWith(".gr")) {
+        bos = new BufferedOutputStream(new FileOutputStream(file_name));
+        result = GrParser.writeGrFormat(gsym, bos);
+      } else if (file_name.endsWith(".sgr")) {
+        bos = new BufferedOutputStream(new FileOutputStream(file_name));
+        result = SgrParser.writeSgrFormat(gsym, bos);
+      } else if (file_name.endsWith(".egr") || file_name.endsWith(".sin")) {
+        if (gsym instanceof GraphIntervalSym) {
+          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+          String genome_name = null;
+          if (seq_group != null) {
+            genome_name = seq_group.getID();
+          }
+          bos = new BufferedOutputStream(new FileOutputStream(file_name));
+          result = ScoredIntervalParser.writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);
+        } else {
+          throw new IOException("Not the correct graph type for the '.egr' format.");
+        }
+      } else {
+        throw new IOException("Graph file name does not have the correct extension");
+        //result = false;
       }
-      else {
-        ErrorHandler.errorPanel("Graph file name must end in .gr or .bgr suffix");
-        result = false;
-      }
-    }
-    finally {
+    } finally {
       if (bos != null) try { bos.close(); } catch (IOException ioe) {}
     }
     return result;

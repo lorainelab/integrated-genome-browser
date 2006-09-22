@@ -496,6 +496,43 @@ public class ScoredIntervalParser {
     return names;
   }
 
+  /** Writes the given GraphIntervalSym in egr format (version 1).  
+   *  Also writes a header. 
+   */
+  public static boolean writeEgrFormat(GraphIntervalSym graf, String genome_version, OutputStream ostr) throws IOException {    
+    int xpos[] = graf.getGraphXCoords();
+    int widths[] = graf.getGraphWidthCoords();
+    float ypos[] = graf.getGraphYCoords();
+    BufferedOutputStream bos = null;
+    DataOutputStream dos = null;
+    
+    try {
+      bos = new BufferedOutputStream(ostr);
+      dos = new DataOutputStream(bos);
+      
+      BioSeq seq = graf.getGraphSeq();
+      String seq_id = (seq == null ? "." : seq.getID());
+
+      String human_name = graf.getGraphState().getTierStyle().getHumanName();
+      
+      if (genome_version != null) {
+        dos.writeBytes("# genome_version = " + genome_version + '\n');
+      }
+      dos.writeBytes("# score0 = " + human_name + '\n');
+     
+      
+      for (int i=0; i<xpos.length; i++) {
+        int x2 = xpos[i] + widths[i];
+        char strand = widths[i] >= 0 ? '+' : '-';
+        dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand + '\t' + ypos[i] + '\n');
+      }
+      dos.flush();
+    } finally {
+      dos.close();
+    }
+    return true;
+  }
+
   public static void main(String[] args) {
     String test_file = System.getProperty("user.dir") + "/testdata/sin/test1.sin";
     String test_name = "name_testing";

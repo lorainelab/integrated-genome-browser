@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -83,7 +83,7 @@ public class UniFileFilter extends FileFilter {
       String base_name = stripCompressionEndings(f.getName().toLowerCase());
       Iterator iter = filters.iterator();
       while (iter.hasNext()) {
-        String ending = (String) iter.next();
+        String ending = "." + (String) iter.next();
         if (base_name.endsWith(ending)) {
           return true;
         }
@@ -92,7 +92,7 @@ public class UniFileFilter extends FileFilter {
     return false;
   }
 
-  Vector compression_endings = new Vector(4);
+  List compression_endings = new ArrayList(4);
 
   /** Adds a file extension that will be considered to represent
    *  compression types that the filter should

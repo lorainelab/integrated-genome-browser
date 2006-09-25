@@ -115,6 +115,17 @@ public class ScoredIntervalParser {
     String unique_container_name = com.affymetrix.igb.util.GraphSymUtils.getUniqueGraphID(stream_name, seq_group);
     
     BufferedReader br= null;
+    int line_count = 0;
+    int score_count = 0;
+    int hit_count = 0;
+    int mod_hit_count = 0;
+    int total_mod_hit_count = 0;
+    int miss_count = 0;
+    boolean sin1 = false;
+    boolean sin2 = false;
+    boolean sin3 = false;
+    boolean all_sin3 = true;
+
     try {
       br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
@@ -157,18 +168,7 @@ public class ScoredIntervalParser {
 	}
       }
 
-      int line_count = 0;
-      int score_count = 0;
-      int hit_count = 0;
-      int mod_hit_count = 0;
-      int total_mod_hit_count = 0;
-      int miss_count = 0;
-
       Matcher strand_matcher = strand_regex.matcher("");
-      boolean sin1 = false;
-      boolean sin2 = false;
-      boolean sin3 = false;
-      boolean all_sin3 = true;
       java.util.List isyms = new ArrayList();
 
       // There should already be a non-header line in the 'line' variable.
@@ -383,7 +383,7 @@ public class ScoredIntervalParser {
 	System.out.println("sin3 exact id hit count: " + hit_count);
       }
       if (mod_hit_count > 0)  {System.out.println("sin3 extended id hit count: " + mod_hit_count); }
-      if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + mod_hit_count); }
+      if (total_mod_hit_count > 0)  { System.out.println("sin3 total extended id hit count: " + total_mod_hit_count); }
 
     }
     catch (Exception ex) {
@@ -393,6 +393,10 @@ public class ScoredIntervalParser {
     }
     finally {
       if (br != null) try { br.close(); } catch (Exception e) {}
+    }
+
+    if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {
+      throw new IOException("No data loaded. The ID's in the file did not match any ID's from data that has already been loaded.");
     }
   }
 
@@ -519,12 +523,24 @@ public class ScoredIntervalParser {
         dos.writeBytes("# genome_version = " + genome_version + '\n');
       }
       dos.writeBytes("# score0 = " + human_name + '\n');
-     
+
+      Object strand_property = graf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+      char strand_char = '.';
+      if (GraphSym.GRAPH_STRAND_PLUS.equals(strand_property)) {
+        strand_char = '+';
+      }
+      else if (GraphSym.GRAPH_STRAND_MINUS.equals(strand_property)) {
+        strand_char = '-';
+      }
+      else if (GraphSym.GRAPH_STRAND_BOTH.equals(strand_property)) {
+        // the GraphIntervalSym does NOT keep track of the strand of each
+        // individual region inside it.
+        strand_char = '.';
+      }
       
       for (int i=0; i<xpos.length; i++) {
         int x2 = xpos[i] + widths[i];
-        char strand = widths[i] >= 0 ? '+' : '-';
-        dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand + '\t' + ypos[i] + '\n');
+        dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand_char + '\t' + ypos[i] + '\n');
       }
       dos.flush();
     } finally {

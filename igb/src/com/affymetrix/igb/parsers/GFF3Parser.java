@@ -101,6 +101,9 @@ public class GFF3Parser {
           // But there is not much benefit in doing so.
           continue;
         }
+        if ("##FASTA".equals(line)) {
+          break;
+        }
         if (line.startsWith("##")) { processDirective(line); continue; }
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {
@@ -157,7 +160,7 @@ public class GFF3Parser {
           Object the_id = sym.getProperty(GFF3_ID); // NOT: sym.getID()
           if (the_id == null) {
             all_syms.add(sym);
-          } else if (the_id.equals("null")) {
+          } else if (the_id.equals("null") || "-".equals(the_id)) {
             // probably never happens, but just being safe.....
             all_syms.add(sym);
           } else {
@@ -196,7 +199,7 @@ public class GFF3Parser {
             
       
       String id = sym.getID();
-      if (id != null) {
+      if (id != null && ! "-".equals(id)) {
         seq_group.addToIndex(id, sym);
       }
       
@@ -208,6 +211,9 @@ public class GFF3Parser {
         // It is an error if the parent doesn't exist.
         for (int i=0; i<parent_ids.length; i++) {
           String parent_id = parent_ids[i];
+          if (parent_id == "-") {
+            throw new IOException("Parent ID cannot be '-'");
+          }
           GFF3Sym parent_sym = (GFF3Sym) id2sym.get(parent_id);
           if (parent_sym == null) {
             throw new IOException("No parent found with ID: " + parent_id);
@@ -276,9 +282,15 @@ public class GFF3Parser {
    *  and the two given sym's will become its children.
    */
   static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
+    char strand = '.';
+    if (sym1.isForward()) {
+      strand = '+';
+    } else {
+      strand = '-';
+    }
     GFF3Sym parent = new GFF3Sym(sym1.getBioSeq(), sym1.getSource(), GROUP_FEATURE_TYPE,
         Math.min(sym1.getMin(), sym2.getMin()), Math.max(sym1.getMax(), sym2.getMax()),
-        GFF3Sym.UNKNOWN_SCORE, '.', GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
+        GFF3Sym.UNKNOWN_SCORE, strand, GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
     parent.addChild(sym1);
     parent.addChild(sym2);
     

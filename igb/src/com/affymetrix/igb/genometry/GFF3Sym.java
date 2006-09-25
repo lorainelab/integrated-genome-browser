@@ -269,12 +269,12 @@ public class GFF3Sym extends SingletonSymWithProps {
       return FEATURE_TYPE_CDS;
     }
     
-    // This is a sort-of a hack.  "start_codon" and "stop_codon" are not valid
-    // feature types in GFF3, but they are ubiquitous in RefSeq's so-called GFF3 files.
-    // Sometimes they share ID's with CDS's, so I'll just treat them as such.
-    if ("start_codon".equalsIgnoreCase(s) || "stop_codon".equalsIgnoreCase(s)) {
-      return FEATURE_TYPE_CDS;
-    }
+//    // This is a sort-of a hack.  "start_codon" and "stop_codon" are not valid
+//    // feature types in GFF3, but they are ubiquitous in RefSeq's so-called GFF3 files.
+//    // Sometimes they share ID's with CDS's, so I'll just treat them as such.
+//    if ("start_codon".equalsIgnoreCase(s) || "stop_codon".equalsIgnoreCase(s)) {
+//      return FEATURE_TYPE_CDS;
+//    }
     
     if (SOFA_GENE.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_GENE;

@@ -444,7 +444,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     }
 
     min_percent_slider.setValue((int)(avg_of_vismins * sliders_per_percent));
-    max_val_slider.setValue((int)(avg_of_vismaxes * sliders_per_percent));
+    max_percent_slider.setValue((int)(avg_of_vismaxes * sliders_per_percent));
 
     prev_min_per = avg_of_vismins;
     prev_max_per = avg_of_vismaxes;

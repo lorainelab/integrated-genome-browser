@@ -29,6 +29,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.FloatTransformer;
+import com.affymetrix.igb.util.GraphSaverFileChooser;
 import com.affymetrix.igb.util.GraphSymUtils;
 
 public class GraphAdjusterView {
@@ -68,9 +69,17 @@ public class GraphAdjusterView {
           new_ycoords, newid, graf.getGraphSeq());
       }
       
+      newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
+      
+      
       GraphState newstate = newgraf.getGraphState();
       newstate.copyProperties(graf.getGraphState());
       newstate.getTierStyle().setHumanName(newname); // this is redundant
+      if (! (transformer instanceof IdentityTransform)) {
+        // unless this is an identity transform, do not copy the min-max range
+        newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);
+        newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
+      }
 
       ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
       newgrafs.add(newgraf);
@@ -142,10 +151,10 @@ public class GraphAdjusterView {
     else if (gcount == 1) {
       GraphSym gsym = (GraphSym)grafs.get(0);
       try {
-        JFileChooser chooser = new JFileChooser();
+        GraphSaverFileChooser chooser = new GraphSaverFileChooser(gsym);
         chooser.setCurrentDirectory(load_dir_tracker.getFile());
         int option = chooser.showSaveDialog(gviewer.getFrame());
-        if (option == JFileChooser.APPROVE_OPTION) {
+        if (option == JFileChooser.APPROVE_OPTION) {          
           load_dir_tracker.setFile(chooser.getCurrentDirectory());
           File fil = chooser.getSelectedFile();
           GraphSymUtils.writeGraphFile(gsym, fil.getAbsolutePath());

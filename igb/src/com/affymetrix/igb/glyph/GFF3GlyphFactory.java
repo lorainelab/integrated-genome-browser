@@ -14,13 +14,15 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.genometry.GFF3Sym;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
+import com.affymetrix.igb.parsers.GFF3Parser;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.Color;
 import java.util.*;
 
 
@@ -29,8 +31,16 @@ import java.util.*;
  */
 public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
   SeqMapView gviewer;
-  int glyph_height = 10;
 
+  static GFF3GlyphFactory static_instance = null;
+  
+  public static GFF3GlyphFactory getInstance() {
+    if (static_instance == null) {
+      static_instance = new GFF3GlyphFactory();
+    }
+    return static_instance;
+  }
+  
   public GFF3GlyphFactory() {
   }
 
@@ -69,57 +79,174 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
     else { // meth != null
       AnnotStyle style = AnnotStyle.getInstance(meth);
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
-      glyphifySymmetry(sym, style, tiers[0], tiers[1], 0, glyph_height);
+      glyphifySymmetry(sym, style, tiers[0], tiers[1]);
     }
   }
   
-  GlyphI glyphifySymmetry(SeqSymmetry insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier,
-			       int depth, int glyph_height) {
+  double thick_height = GenericAnnotGlyphFactory.DEFAULT_THICK_HEIGHT;
+  double thin_height = GenericAnnotGlyphFactory.DEFAULT_THIN_HEIGHT;
+  
+  GlyphI glyphifySymmetry(SeqSymmetry insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier) {
+    return glyphifySymmetry((GFF3Sym) insym, style, ftier, rtier, null);
+  }
+  
+  GlyphI glyphifySymmetry(GFF3Sym insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier, GlyphI parent_glyph) {
 
     if (insym == null) { return null; }
-    
+
     SeqSymmetry transformed_sym = gviewer.transformForViewSeq(insym);
 
     SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
-    if (span == null) { return null; }
+    if (span == null) { 
+      return null; 
+    }
     boolean forward = span.isForward();
 
     String label_field = style.getLabelField();
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
 
-    use_label = false; // labelling needs some improvement before I turn it on.
+    if (parent_glyph != null) {
+      // if parent_glyph != null, then new glyph should not get labelled
+      // only the parent can have a label. (mRNA has a label, but not its Exons,
+      // but a free-floating Exon can have a label.)
+      use_label = false;
+    }
+
+// For the initial version, all labels are forced to be OFF
+use_label = false;
+
+    String label = null;
+    if (use_label) {
+      Object property = insym.getProperty(label_field);
+      label = (property == null) ? "" : property.toString();
+    }
     
     GlyphI gl = null;
-    if (! use_label) {
+    GlyphI new_parent = null;
+    double glyph_height = thick_height;
+    Color c = style.getColor();
+
+    if (GFF3Sym.FEATURE_TYPE_GENE.equalsIgnoreCase(insym.getFeatureType())) {
+      //gl = new com.affymetrix.igb.glyph.DoublePointedGlyph();
+      gl = makeSimpleGlyph(span, forward, label, style);
+      new_parent = gl;
+      glyph_height = thick_height + 0.0001;
+    } else if (GFF3Sym.FEATURE_TYPE_MRNA.equalsIgnoreCase(insym.getFeatureType())) {
+      if (insym.getChildCount() > 0) {
+        gl = makeGroupGlyph(span, forward, label, style);
+      } else {
+        gl = makeSimpleGlyph(span, forward, label, style);
+      }
+      new_parent = gl;
+      glyph_height = thick_height + 0.0001;
+    }
+    else if (GFF3Parser.GROUP_FEATURE_TYPE.equalsIgnoreCase(insym.getFeatureType())) {
+      if (insym.getChildCount() > 0) {
+        gl = makeGroupGlyph(span, forward, label, style);
+      } else {
+        gl = makeSimpleGlyph(span, forward, label, style);
+      }
+      new_parent = gl;
+      glyph_height = thick_height + 0.0003;
+    } else if (GFF3Sym.FEATURE_TYPE_EXON.equalsIgnoreCase(insym.getFeatureType())) {
+      // Exons with a parent are thin (to contrast with CDS's)
+      // Exons without a parent are thick (to avoid problems with Efficient packer)
+      gl = makeSimpleGlyph(span, forward, label, style);
+      new_parent = null;
+      //if (parent_glyph == null) {
+        glyph_height = thick_height + 0.0002; 
+      //} else {
+      //  glyph_height = thin_height + 0.0002;
+      //}
+    }
+    else {
+      gl = makeSimpleGlyph(span,forward,label,style);
+      new_parent = null;
+      if (GFF3Sym.FEATURE_TYPE_CDS.equalsIgnoreCase(insym.getFeatureType())) {
+        glyph_height = thick_height;
+      } else {
+        glyph_height = thick_height;
+      }
+    }
+    gl.setColor(c);
+    gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
+    gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
+    //gviewer.getSeqMap().setDataModel(gl, insym);
+
+    
+    if (! "source".equalsIgnoreCase(insym.getFeatureType())) {
+      // draw ever featuer except "source" features, because they are ridiculously long
+      
+      if (parent_glyph != null) {
+        parent_glyph.addChild(gl);
+      } else {
+        if (forward) {
+          ftier.addChild(gl);
+        } else {
+          rtier.addChild(gl);
+        }
+      }
+      
+      gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
+    }
+    
+    int childCount = insym.getChildCount();
+    if (childCount > 0) {
+      // now recursively call glyphifySymmetry on children
+      for (int i=0; i<childCount; i++) {
+	GFF3Sym childsym = (GFF3Sym) insym.getChild(i);
+        if (GFF3Parser.GROUP_FEATURE_TYPE.equalsIgnoreCase(insym.getFeatureType())) {
+           glyphifySymmetry(childsym, style, ftier, rtier, new_parent);
+        }
+        if (GFF3Sym.FEATURE_TYPE_MRNA.equalsIgnoreCase(insym.getFeatureType()) &&
+            GFF3Sym.FEATURE_TYPE_EXON.equalsIgnoreCase(childsym.getFeatureType())) {
+           glyphifySymmetry(childsym, style, ftier, rtier, new_parent);
+        } else {
+          //Only MRNA's and CDS-Groups are allowed to be parents.
+          //(Multi-level nesting might make sense, but it is really hard to
+          //visualize an mRNA that has two or more different CDS-groups as children.
+          //So just make each CDS-Group be a different glyph.)
+           glyphifySymmetry(childsym, style, ftier, rtier, null);          
+        }
+      }
+    }
+    return gl;
+  }
+  
+  GlyphI makeGeneGlyph(SeqSpan span, boolean forward, AnnotStyle style) {
+    GlyphI gl;
+    gl = new com.affymetrix.igb.glyph.DoublePointedGlyph();
+    return gl;
+  }
+  
+  GlyphI makeSimpleGlyph(SeqSpan span, boolean forward, String label, AnnotStyle style) {
+    GlyphI gl;
+    if (label == null) {
       gl = new EfficientFillRectGlyph();
     } else {
       EfficientLabelledGlyph lglyph = new EfficientLabelledLineGlyph();
       gl = lglyph;
-      Object property = ((SymWithProps)insym).getProperty(label_field);
-      String label = (property == null) ? "" : property.toString();
       if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
       else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
-      //          System.out.println("using label: " + label);
       lglyph.setLabel(label);
     }
-    gl.setColor(style.getColor());
-    gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
+    return gl;
+  }
+  
+  GlyphI makeGroupGlyph(SeqSpan span, boolean forward, String label, AnnotStyle style) {
+    GlyphI gl = null;
 
-    if (forward) {
-      ftier.addChild(gl);
+    if (label == null) {
+      gl = new ImprovedLineContGlyph();
     } else {
-      rtier.addChild(gl);
+      EfficientLabelledGlyph lglyph = new EfficientLabelledLineGlyph();
+      gl = lglyph;
+      //Object property = ((SymWithProps)insym).getProperty(label_field);
+      //String label = (property == null) ? "" : property.toString();
+      if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
+      else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
+      lglyph.setLabel(label);
     }
-
-    int childCount = transformed_sym.getChildCount();
-    if (childCount > 0) {
-      // now recursively call glyphifySymmetry on children
-      for (int i=0; i<childCount; i++) {
-	SeqSymmetry childsym = insym.getChild(i); // should this be insym or transformed_sym ??
-	glyphifySymmetry(childsym, style, ftier, rtier, depth+1, glyph_height);
-      }
-    }
-    gl.setInfo(insym);
     return gl;
   }
 

@@ -250,9 +250,7 @@ public class GFF3Sym extends SingletonSymWithProps {
    *  Converts feature types that IGB understands into one of the constant strings:
    *  {@link #FEATURE_TYPE_GENE}, etc.  Invalid ones, and valid ones that
    *  IGB doesn't understand are transformed into
-   *  {@link #FEATURE_TYPE_OTHER}.  As a special case, to help processing files
-   *  from RefSeq, "start_codon" and "stop_codon" are converted to
-   *  {@link #FEATURE_TYPE_CDS}.
+   *  {@link #FEATURE_TYPE_OTHER}.
    */
   public static String normalizeFeatureType(String s) {
     
@@ -268,14 +266,7 @@ public class GFF3Sym extends SingletonSymWithProps {
     if (FEATURE_TYPE_CDS.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_CDS;
     }
-    
-//    // This is a sort-of a hack.  "start_codon" and "stop_codon" are not valid
-//    // feature types in GFF3, but they are ubiquitous in RefSeq's so-called GFF3 files.
-//    // Sometimes they share ID's with CDS's, so I'll just treat them as such.
-//    if ("start_codon".equalsIgnoreCase(s) || "stop_codon".equalsIgnoreCase(s)) {
-//      return FEATURE_TYPE_CDS;
-//    }
-    
+        
     if (SOFA_GENE.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_GENE;
     }

@@ -106,7 +106,7 @@ public class LoadFileAction {
 
     MergeOptionFileChooser chooser = getFileChooser();
     chooser.setCurrentDirectory(load_dir_tracker.getFile());
-    chooser.rescanCurrentDirectory();    
+    chooser.rescanCurrentDirectory();
     if (gmodel.getSelectedSeqGroup() == null) {
       chooser.no_merge_button.setEnabled(true);
       chooser.no_merge_button.setSelected(true);
@@ -170,25 +170,31 @@ public class LoadFileAction {
         // the seq group has not changed, is to make sure that
         // the DataLoadView and the AnnotBrowserView update their displays.
         // (Because the contents of the seq group may have changed.)
-        gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+        gmodel.setSelectedSeqGroup(group);
 
-        // Setting the selected Seq, even if it hasn't changed identity, is to
-        // make the SeqMapView update itself.  (It's contents may have changed.)
-	if (new_seq == null) {
-	  gmodel.setSelectedSeq(previous_seq);
-	}
-	else if (group.getSeqList().contains(new_seq)) {
-          gmodel.setSelectedSeq(new_seq);
-	}
-	else if (group.getSeqCount() > 0) {
-	  gmodel.setSelectedSeq(group.getSeq(0));
-	}
+        if (group != previous_seq_group) {
+          if (new_seq != null && group.getSeqList().contains(new_seq)) {
+            gmodel.setSelectedSeq(new_seq);
+          } else if (group.getSeqCount() > 0) {
+            gmodel.setSelectedSeq(group.getSeq(0));
+          }
+        }
+        else {
+          // the seq_group has not changed, but the seq might have
+          if (new_seq != null && group.getSeqList().contains(new_seq)) {
+            gmodel.setSelectedSeq(new_seq);
+          } else if (previous_seq != null) {
+            // Setting the selected Seq, even if it hasn't changed identity, is to
+            // make the SeqMapView update itself.  (It's contents may have changed.)
+            gmodel.setSelectedSeq(previous_seq);
+          }
+        }        
       }
     }
 
     return gmodel.getSelectedSeq();
   }
-
+  
   public MutableAnnotatedBioSeq load(File annotfile) {
     return load(gviewer, annotfile, gmodel.getSelectedSeq());
   }
@@ -455,7 +461,6 @@ public class LoadFileAction {
           annot_type = stream_name.substring(0, index);
         }
         parser.parse(str, annot_type, selected_group, false);
-        aseq = input_seq;
         parser = null;
       }
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {

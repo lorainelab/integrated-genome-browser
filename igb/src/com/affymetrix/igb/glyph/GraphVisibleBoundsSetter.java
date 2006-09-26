@@ -660,7 +660,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     //    System.out.println("setting min percent: " + percent + ", previous: " + prev_min_per);
     int gcount = graphs.size();
     if (gcount > 0 /*&& (percent != prev_min_per) */) {
-      System.out.println("Minnie: " + percent);
       turnOffListening();
 
       if (percent > prev_max_per - per_offset) {

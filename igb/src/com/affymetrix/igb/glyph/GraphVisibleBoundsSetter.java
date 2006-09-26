@@ -659,7 +659,8 @@ public class GraphVisibleBoundsSetter extends JPanel
   public void setVisibleMinPercent(float percent) {
     //    System.out.println("setting min percent: " + percent + ", previous: " + prev_min_per);
     int gcount = graphs.size();
-    if (gcount > 0 && (percent != prev_min_per)) {      
+    if (gcount > 0 /*&& (percent != prev_min_per) */) {
+      System.out.println("Minnie: " + percent);
       turnOffListening();
 
       if (percent > prev_max_per - per_offset) {
@@ -716,7 +717,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     //    System.out.println("setting max percent: " + percent + ", previous: " + prev_max_per);
     int gcount = graphs.size();
 
-    if (gcount > 0 && (percent != prev_max_per)) {
+    if (gcount > 0 /*&& (percent != prev_max_per)*/) {
       turnOffListening();
 
       if (percent < prev_min_per + per_offset) {
@@ -814,6 +815,10 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.removeActionListener(this);
     min_valT.removeActionListener(this);
     max_valT.removeActionListener(this);
+    min_perT.removeFocusListener(this);
+    max_perT.removeFocusListener(this);
+    min_valT.removeFocusListener(this);
+    max_valT.removeFocusListener(this);
     syncCB.removeActionListener(this);
   }
 

@@ -134,13 +134,18 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     createGlyph(sym, smv, false);
   }
-
+  
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
     AffyTieredMap map = gviewer.getSeqMap();
     String meth = gviewer.determineMethod(sym);
     // System.out.println("method: " + meth);
 
+    if (sym instanceof GFF3Sym) {
+      GFF3GlyphFactory.getInstance().createGlyph(sym, smv, next_to_axis);
+      return;
+    }
+    
     if (meth != null) {
       AnnotStyle style = AnnotStyle.getInstance(meth);
       parent_color = style.getColor();
@@ -188,8 +193,14 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   public void addLeafsToTier(SeqSymmetry sym,
                              TierGlyph ftier, TierGlyph rtier,
                              int desired_leaf_depth) {
+
+    if (sym instanceof GFF3Sym) {
+      GFF3GlyphFactory.getInstance().createGlyph(sym, gviewer);
+      return;
+    }
+
     int depth = getDepth(sym);
-    if (depth > desired_leaf_depth) {
+    if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
       for (int i=0; i<sym.getChildCount(); i++) {
         SeqSymmetry child = sym.getChild(i);
         addLeafsToTier(child, ftier, rtier, desired_leaf_depth);

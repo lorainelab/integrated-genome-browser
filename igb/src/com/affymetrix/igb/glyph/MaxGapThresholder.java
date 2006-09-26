@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,20 +21,24 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.NeoWidgetI;
 
-public class MaxGapThresholder extends JPanel 
+
+public class MaxGapThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static int frm_width = 400;
   static int frm_height = 200;
-  //  SmartGraphGlyph sgg;
+
   java.util.List graphs = new ArrayList();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField maxgapTF;
-  int thresh_min = 0;
-  int thresh_max = 250;
+  int default_thresh_max = 250;
+  int default_thresh_min = 0;
+  int thresh_max = default_thresh_max;
+  int thresh_min = default_thresh_min;
+
   int maxgap_thresh = 0;
 
   int max_chars = 9;
@@ -52,14 +56,14 @@ public class MaxGapThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { 
+      public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
 	w.dispose();
       }
     } );
     frm.pack();
-    frm.show();
+    frm.setVisible(true);
     return dthresher;
   }
 
@@ -79,7 +83,8 @@ public class MaxGapThresholder extends JPanel
     maxgapTF.setMaximumSize(new Dimension(tf_max_xpix, tf_max_ypix));
 
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    this.add(new JLabel("Max Gap: "));
+    this.add(Box.createRigidArea(new Dimension(6,0)));
+    this.add(new JLabel("Max Gap <= "));
     this.add(maxgapTF);
     this.add(tslider);
 
@@ -93,23 +98,41 @@ public class MaxGapThresholder extends JPanel
     tslider.removeChangeListener(this);
     maxgapTF.removeActionListener(this);
 
+    int first_thresh = 0;
+    boolean all_have_same_thresh = false;
+    boolean all_have_thresh_on = false;
+    
     int gcount = newgraphs.size();
     if (gcount > 0) {
       int newthresh = 0;
       for (int i=0; i<gcount; i++) {
 	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
 	graphs.add(gl);
-	newthresh += (int)gl.getMaxGapThreshold();
+        int this_thresh = (int) gl.getMaxGapThreshold();
+	newthresh += this_thresh;
+        if (i==0) {
+          first_thresh = this_thresh;
+          all_have_same_thresh = true;
+          all_have_thresh_on = gl.getShowThreshold();
+        } else {
+          all_have_same_thresh = all_have_same_thresh && (this_thresh == first_thresh);
+          all_have_thresh_on &= gl.getShowThreshold();
+        }
       }
       maxgap_thresh = newthresh / gcount;
       tslider.setMinimum(thresh_min);
       tslider.setMaximum(thresh_max);
       tslider.setValue(maxgap_thresh);
-      maxgapTF.setText(Integer.toString(maxgap_thresh));
+      if (all_have_same_thresh) {
+        maxgapTF.setText(Integer.toString(maxgap_thresh));
+      } else {
+        maxgapTF.setText("");
+      }
     }
 
     tslider.addChangeListener(this);
     maxgapTF.addActionListener(this);
+    setEnabled(all_have_thresh_on);
   }
 
   public void setGraph(SmartGraphGlyph gl) {
@@ -118,6 +141,12 @@ public class MaxGapThresholder extends JPanel
     setGraphs(newgraphs);
   }
 
+  public void setEnabled(boolean b) {
+    super.setEnabled(b);
+    tslider.setEnabled(b);
+    maxgapTF.setEnabled(b);
+  }
+  
   public void stateChanged(ChangeEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
@@ -140,10 +169,12 @@ public class MaxGapThresholder extends JPanel
   public void actionPerformed(ActionEvent evt) {
     if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
-    if (src == maxgapTF) {
+    if (src == maxgapTF) try {
       int new_thresh = Integer.parseInt(maxgapTF.getText());
       if (new_thresh != maxgap_thresh) {
-	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+        boolean new_thresh_max = (new_thresh > thresh_max);
+//	if ((new_thresh < thresh_min) || (new_thresh > thresh_max)) {
+        if (new_thresh < thresh_min)  {
 	  // new threshold outside of min/max possible, so keep current threshold instead
 	  maxgapTF.setText(Integer.toString(maxgap_thresh));
 	}
@@ -154,17 +185,27 @@ public class MaxGapThresholder extends JPanel
 	    sgg.setMaxGapThreshold(maxgap_thresh);
 	  }
 	  tslider.removeChangeListener(this);
+          if (new_thresh_max)  {
+            thresh_max = maxgap_thresh;
+            tslider.setMaximum(thresh_max);
+          }
+          else if (maxgap_thresh <= default_thresh_max)  {
+            thresh_max = default_thresh_max;
+            tslider.setMaximum(thresh_max);
+          }
 	  tslider.setValue(maxgap_thresh);
 	  tslider.addChangeListener(this);
 	  widg.updateWidget();
 	}
       }
+    } catch (NumberFormatException nfe) {
+      setGraphs(new ArrayList(graphs));
     }
   }
 
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
-    setGraphs(graphs);
+    setGraphs(new ArrayList(graphs));
   }
 
 

@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2001-2004 Affymetrix, Inc.
+ *   Copyright (c) 2001-2006 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -13,7 +13,10 @@
 
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.view.TierPrefsView;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -21,6 +24,7 @@ import javax.swing.*;
 public class PreferencesPanel extends JPanel {
   
   static final String WINDOW_NAME = "Preferences Window";
+  static final String HELP_WINDOW_NAME = "Preferences Help Window";
   
   JFrame frame = null;
   static PreferencesPanel singleton = null;
@@ -29,21 +33,27 @@ public class PreferencesPanel extends JPanel {
 
   Action export_action;
   Action import_action;
-  Action clear_action;
+  //Action clear_action;
   Action help_action;
   Action help_for_tab_action;
-  
+    
   protected PreferencesPanel() {
     this.setLayout(new BorderLayout());
     tab_pane = new JTabbedPane();
     
     this.add(tab_pane, BorderLayout.CENTER);
     
-    tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
-    // Do we need to register the tool-tip component?
-    //ToolTipManager.sharedInstance().registerComponent(this);
+    // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
+    //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
   }
+  
+  public static int TAB_NUM_TIERS = -1;
+  public static int TAB_NUM_DAS = -1;
+  public static int TAB_NUM_KEY_STROKES = -1;
+  public static int TAB_NUM_MISC_OPTIONS = -1;
+  public static int TAB_NUM_GRAPHS_VIEW = -1;
+  
+  TierPrefsView tpv = null;
   
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
@@ -53,22 +63,55 @@ public class PreferencesPanel extends JPanel {
   public static PreferencesPanel getSingleton() {
     if (singleton == null) {
       singleton = new PreferencesPanel();
-      singleton.addPrefEditorComponent(new DasServersView());
-      singleton.addPrefEditorComponent(new KeyStrokesView());
-      //singleton.addPrefEditorComponent(new PluginsView());
-      singleton.addPrefEditorComponent(new GraphsView());
-      singleton.addPrefEditorComponent(new OptionsView());
+
+      singleton.tpv = new TierPrefsView(false, true);
+      singleton.tpv.addComponentListener(new ComponentAdapter() {
+        public void componentHidden(ComponentEvent e) {
+          singleton.tpv.applyChanges();
+        }
+      });
+      
+      TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
+      
+      TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
+
+      TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
+
+      //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
+
+      TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
+
+      TAB_NUM_MISC_OPTIONS = singleton.addPrefEditorComponent(new OptionsView());
     }
     return singleton;
   }
   
+  /** Set the tab pane to the given index. */
+  public void setTab(int i) {
+    if (i < 0 || i >= tab_pane.getComponentCount()) {
+      return;
+    }
+    tab_pane.setSelectedIndex(i);
+    Component c = tab_pane.getComponentAt(i);
+    if (c instanceof IPrefEditorComponent) {
+      IPrefEditorComponent p = (IPrefEditorComponent) c;
+      p.refresh();
+    }
+  }
   
   /** Adds the given component as a panel to the tab pane of preference editors.
    *  @param pec  An implementation of PrefEditorComponent that must also be an
    *              instance of java.awt.Component.
+   *  @return the index of the added tab in the tab pane.
    */
-  public void addPrefEditorComponent(IPrefEditorComponent pec) {
+  public int addPrefEditorComponent(final IPrefEditorComponent pec) {
     tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());    
+    ((Component) pec).addComponentListener(new ComponentAdapter() {
+      public void componentShown(ComponentEvent e) {
+        pec.refresh();
+      }
+    });
+    return tab_pane.indexOfComponent((Component) pec);
   }
   
   public IPrefEditorComponent[] getPrefEditorComponents() {
@@ -105,26 +148,41 @@ public class PreferencesPanel extends JPanel {
           // save the current size into the preferences, so the window
           // will re-open with this size next time
           UnibrowPrefsUtil.saveWindowLocation(frame, WINDOW_NAME);
+          // if the TierPrefsView is being displayed, the apply any changes from it.
+          // if it is not being displayed, then it's changes have already been applied in componentHidden()
+          if (singleton.tpv != null) {
+            if (singleton.tab_pane.getSelectedComponent() == singleton.tpv) {
+              singleton.tpv.applyChanges();
+            }
+          }
           frame.dispose();
         }
       });
     }
+    
+    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
+    if (icon != null) {
+      frame.setIconImage(icon.getImage());
+    }
+    
     return frame;
   }
   
   JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu prefs_menu = new JMenu("Preferences");
+    //prefs_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     prefs_menu.setMnemonic('P');
 
     prefs_menu.add(getExportAction());
     prefs_menu.add(getImportAction());
-    prefs_menu.addSeparator();
-    prefs_menu.add(getClearAction());
+    //prefs_menu.addSeparator();
+    //prefs_menu.add(getClearAction());
     
     menu_bar.add(prefs_menu);
     
     JMenu help_menu = new JMenu("Help");
+    //help_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
     help_menu.setMnemonic('H');
     menu_bar.add(help_menu);
     help_menu.add(getHelpAction());
@@ -160,7 +218,23 @@ public class PreferencesPanel extends JPanel {
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     
-    dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    //ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
+    //if (icon != null) {
+      // It is impossible to set an image for a dialog window, but I wish I could.
+      // dialog.setIconImage(icon.getImage());
+    //}
+
+    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(HELP_WINDOW_NAME, new Rectangle(400, 400));
+    if (pos != null) {
+      UnibrowPrefsUtil.setWindowSize(dialog, pos);
+    }
+    dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    dialog.addWindowListener( new WindowAdapter() {
+      public void windowClosing(WindowEvent evt) {
+        UnibrowPrefsUtil.saveWindowLocation(dialog, HELP_WINDOW_NAME);
+        dialog.dispose();
+      }
+    });
     
     dialog.setVisible(true);
   }
@@ -181,19 +255,20 @@ public class PreferencesPanel extends JPanel {
     sb.append("<p>\n");
     sb.append("<b>Export</b> allows you to save all the persistent preferences in the program to an XML file.  ");
     sb.append("A file chooser will open allowing you to choose the location to save the XML file.  ");
-    sb.append("All preferences under the 'com.affymetrix.igb' node will be saved.  ");
+    sb.append("All preferences set by the user will be saved.  ");
     sb.append("</p>\n");
     sb.append("<h2>Import</h2>\n");
     sb.append("<p>\n");
     sb.append("<b>Import</b> allows you to load persistent preferences from an XML file.  ");
     sb.append("A file chooser will open allowing you to choose the file.  ");
-    sb.append("Use this to load a file previously saved with <b>Export</b>, ");
+    sb.append("Use this to load an XML file previously saved with <b>Export</b>, ");
     sb.append("or to load a preference file provided by Affymetrix or another user.  ");
     sb.append("All loaded preferences are <em>merged</em> with your existing preferences.  ");
-    sb.append("WARNING: be sure you trust the provider of the file.  ");
-    sb.append("It is impossible to limit the effects of import to preferences specific to this program.  ");
-    sb.append("If the file contains preferences designed to affect other programs, they will be loaded as well.  ");
+    sb.append("Be sure you trust the provider of the file.  ");
+//    sb.append("It is impossible to limit the effects of import to preferences specific to this program.  ");
+//    sb.append("If the file contains preferences designed to affect other programs, they will be loaded as well.  ");
     sb.append("</p>\n");
+    /*
     sb.append("<h2>Clear</h2>\n");
     sb.append("<p>\n");
     sb.append("Choosing to <b>Clear</b> the preferences should be performed only as a last resort.  ");
@@ -202,6 +277,7 @@ public class PreferencesPanel extends JPanel {
     sb.append("Since important components of the program are affected, you should <b>exit the program</b> immediately afterwards.  ");
     sb.append("Note that some default preferences and markers of system-state are automatically created and will regenerate themselves if deleted.  ");
     sb.append("</p>\n");
+    */
     sb.append("\n");
     sb.append("\n");
     return sb.toString();
@@ -224,7 +300,7 @@ public class PreferencesPanel extends JPanel {
 
   public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
   public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";
-  public final static String CLEAR_ACTION_COMMAND  = WINDOW_NAME + " / Clear";
+  //public final static String CLEAR_ACTION_COMMAND  = WINDOW_NAME + " / Clear";
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / Help";
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / Help for current tab";
 
@@ -238,6 +314,8 @@ public class PreferencesPanel extends JPanel {
       export_action.putValue(Action.ACTION_COMMAND_KEY, EXPORT_ACTION_COMMAND);
       export_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
       export_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(EXPORT_ACTION_COMMAND));
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Export16.gif");
+      export_action.putValue(Action.SMALL_ICON, icon);
     }
     return export_action;
   }
@@ -256,23 +334,25 @@ public class PreferencesPanel extends JPanel {
       import_action.putValue(Action.ACTION_COMMAND_KEY, IMPORT_ACTION_COMMAND);
       import_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_I));
       import_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(IMPORT_ACTION_COMMAND));
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif");
+      import_action.putValue(Action.SMALL_ICON, icon);
     }
     return import_action;
   }
     
-  private Action getClearAction() {
-    if (clear_action == null) {
-      clear_action = new AbstractAction("Clear Preferences ...") {
-        public void actionPerformed(ActionEvent ae) {
-          UnibrowPrefsUtil.clearPreferences(PreferencesPanel.this);
-        }
-      };
-      clear_action.putValue(Action.ACTION_COMMAND_KEY, CLEAR_ACTION_COMMAND);
-      clear_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
-      clear_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(CLEAR_ACTION_COMMAND));
-    }
-    return clear_action;
-  }
+//  private Action getClearAction() {
+//    if (clear_action == null) {
+//      clear_action = new AbstractAction("Clear Preferences ...") {
+//        public void actionPerformed(ActionEvent ae) {
+//          UnibrowPrefsUtil.clearPreferences(PreferencesPanel.this);
+//        }
+//      };
+//      clear_action.putValue(Action.ACTION_COMMAND_KEY, CLEAR_ACTION_COMMAND);
+//      clear_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
+//      clear_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(CLEAR_ACTION_COMMAND));
+//    }
+//    return clear_action;
+//  }
   
   private Action getHelpAction() {
     if (help_action == null) {
@@ -284,7 +364,9 @@ public class PreferencesPanel extends JPanel {
       help_action.putValue(Action.ACTION_COMMAND_KEY, HELP_ACTION_COMMAND);
       help_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_G));
       help_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_ACTION_COMMAND));
-    }
+      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
+      help_action.putValue(Action.SMALL_ICON, icon);
+    }    
     return help_action;
   }
   
@@ -298,8 +380,28 @@ public class PreferencesPanel extends JPanel {
       help_for_tab_action.putValue(Action.ACTION_COMMAND_KEY, HELP_TAB_ACTION_COMMAND);
       help_for_tab_action.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_C));
       help_for_tab_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_TAB_ACTION_COMMAND));
+      Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/ContextualHelp16.gif");
+      help_for_tab_action.putValue(Action.SMALL_ICON, icon);
     }
     return help_for_tab_action;
+  }
+  
+  /** A simple method for testing an IPrefEditorComponent, which MUST also
+   *  be a JComponent, by simply bringing it up in a JDialog.
+   */
+  public static void testPanel(IPrefEditorComponent p) {
+    JDialog d = new JDialog();
+    d.setTitle(p.getName());
+    d.getContentPane().add((JComponent) p);
+    d.pack();
+    
+    d.setVisible(true);
+    d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    d.addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosing(java.awt.event.WindowEvent e) {
+        System.exit(0);
+      }
+    });    
   }
   
   /** A main method for testing. */
@@ -311,6 +413,6 @@ public class PreferencesPanel extends JPanel {
         System.exit(0);
       }
     });
-    f.show();
+    f.setVisible(true);
   }
 }

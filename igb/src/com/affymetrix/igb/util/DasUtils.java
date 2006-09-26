@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -36,19 +36,18 @@ public class DasUtils {
    *  String you request.
    *  @return a matching source on the server, or null.
    */
-  public static String findDasSource(String das_server, String source_synonym) {
+  public static String findDasSource(String das_server, String source_synonym)
+  throws IOException, SAXException {
     String result = null;
-    try {
-      //      System.out.println("in DasUtils.findDasSource()");
-      String request_str = das_server + "/dsn";
-      System.out.println("Das Request: " + request_str);
+    //      System.out.println("in DasUtils.findDasSource()");
+    String request_str = das_server + "/dsn";
+    System.out.println("Das Request: " + request_str);
 
-      Document doc = DasLoader.getDocument(request_str);
-      java.util.List sources = DasLoader.parseSourceList(doc);
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      result = lookup.findMatchingSynonym(sources, source_synonym);
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
+    Document doc = DasLoader.getDocument(request_str);
+    java.util.List sources = DasLoader.parseSourceList(doc);
+    SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+
+    result = lookup.findMatchingSynonym(sources, source_synonym);
     return result;
   }
 
@@ -57,19 +56,18 @@ public class DasUtils {
    *  String you request.
    *  @return a matching sequence id on the server, or null.
    */
-  public static String findDasSeqID(String das_server, String das_source, String seqid_synonym) {
+  public static String findDasSeqID(String das_server, String das_source, String seqid_synonym)
+  throws IOException, SAXException {
     String result = null;
-    try {
-      //      System.out.println("in DasUtils.findDasSeqID()");
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      String request_str = das_server + "/" + das_source + "/entry_points";
-      System.out.println("Das Request: " + request_str);
+    //      System.out.println("in DasUtils.findDasSeqID()");
+    SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+    String request_str = das_server + "/" + das_source + "/entry_points";
+    System.out.println("Das Request: " + request_str);
 
-      Document doc = DasLoader.getDocument(request_str);
-      java.util.List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
-      result = lookup.findMatchingSynonym(segments,  seqid_synonym);      
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
+    Document doc = DasLoader.getDocument(request_str);
+    java.util.List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
+
+    result = lookup.findMatchingSynonym(segments,  seqid_synonym);
     return result;
   }
 
@@ -80,25 +78,24 @@ public class DasUtils {
    *  (min+1)/max before passing to DAS server
    */
   public static String getDasResidues(String das_server, String das_source, String das_seqid,
-				      int min, int max) {
+				      int min, int max)
+  throws IOException, SAXException {
     String residues = null;
     String request = das_server + "/" +
-      das_source + "/dna?segment=" +
-      das_seqid + ":" + (min+1) + "," + max;
-    try {
-      URL request_url = new URL(request);
-      System.out.println("DAS request: " + request);
-      URLConnection request_con = request_url.openConnection();
-      InputStream result_stream = request_con.getInputStream();
-      residues = parseDasResidues(new BufferedInputStream(result_stream));
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
+    das_source + "/dna?segment=" +
+    das_seqid + ":" + (min+1) + "," + max;
+    URL request_url = new URL(request);
+    System.out.println("DAS request: " + request);
+    URLConnection request_con = request_url.openConnection();
+    InputStream result_stream = request_con.getInputStream();
+    residues = parseDasResidues(new BufferedInputStream(result_stream));
     return residues;
   }
 
-  public static String parseDasResidues(InputStream das_dna_result) {
+  public static String parseDasResidues(InputStream das_dna_result)
+  throws IOException, SAXException {
     String residues = null;
-    try {
+
     InputSource isrc = new InputSource(das_dna_result);
     DOMParser parser = DasLoader.nonValidatingParser();
     parser.parse(isrc);
@@ -134,24 +131,16 @@ public class DasUtils {
 	}
       }
     }
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
+
     return residues;
   }
-  
+
   /**
    *  A thin wrapper around {@link DasLoader#getDocument(InputStream)}.
    */
-  public static Document getDocument(InputStream istr) {
-    Document doc = null;
-    try {
-      doc = DasLoader.getDocument(istr);
-    } catch (Exception e) {
-      e.printStackTrace(System.err);
-    }
+  public static Document getDocument(InputStream istr) throws IOException, SAXException {
+    Document doc = DasLoader.getDocument(istr);
     return doc;
   }
-  
+
 }

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -19,6 +19,13 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
+/**
+ *  A graph that holds a set of graphs and contains average, min, and max for the whole set.
+ *  This assumes that all graphs in the multigraph have the same xcoords!
+ *
+ *  For building "composite" graphs from graph slices, see CompositeGraphSym
+ *       and CompositeGraphGlyph instead
+ */
 public class MultiGraph extends SmartGraphGlyph {
   java.util.List graphs = new ArrayList();
   boolean all_graphs_added = false;
@@ -30,13 +37,14 @@ public class MultiGraph extends SmartGraphGlyph {
   Rectangle2D childbox = new Rectangle2D();
 
   public MultiGraph() {
+    super(null, null, GraphState.getTemporaryGraphState());
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
   }
 
   public void addGraph(GraphGlyph gl) {
     if (all_graphs_added) {
-      throw new RuntimeException("Cannot add more graphs to MultiGraph after doneAddingGraphs() is called!");
+      throw new RuntimeException("Cannot add more graphs to MultiGraph after prepMultiGraph() is called!");
     }
     else {
       addChild(gl);
@@ -78,17 +86,20 @@ public class MultiGraph extends SmartGraphGlyph {
       max_ycoords[i] = ymax;
     }
 
-    avg_graph = new SmartGraphGlyph();
-    min_graph = new SmartGraphGlyph();
-    max_graph = new SmartGraphGlyph();
+    GraphState avg_gstate = GraphState.getTemporaryGraphState();
+    GraphState min_gstate = GraphState.getTemporaryGraphState();
+    GraphState max_gstate = GraphState.getTemporaryGraphState();
+    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_ycoords, avg_gstate);
+    min_graph = new SmartGraphGlyph(shared_xcoords, min_ycoords, min_gstate);
+    max_graph = new SmartGraphGlyph(shared_xcoords, max_ycoords, max_gstate);
     stat_graphs.add(avg_graph);
     stat_graphs.add(min_graph);
     stat_graphs.add(max_graph);
 
     for (int i=0; i<stat_graphs.size(); i++) {
       SmartGraphGlyph sgg = (SmartGraphGlyph)stat_graphs.get(i);
-      sgg.setFasterDraw(true);
-      sgg.setCalcCache(true);
+      // sgg.setFasterDraw(true);
+      // sgg.setCalcCache(true);
       sgg.setSelectable(false);
 
       sgg.setGraphStyle(SmartGraphGlyph.LINE_GRAPH);
@@ -97,9 +108,9 @@ public class MultiGraph extends SmartGraphGlyph {
       sgg.setCoords(coordbox.x, coordbox.y, coordbox.width, coordbox.height);
     }
 
-    avg_graph.setPointCoords(shared_xcoords, avg_ycoords);
-    min_graph.setPointCoords(shared_xcoords, min_ycoords);
-    max_graph.setPointCoords(shared_xcoords, max_ycoords);
+//    avg_graph.setPointCoords(shared_xcoords, avg_ycoords);
+//  min_graph.setPointCoords(shared_xcoords, min_ycoords);
+//    max_graph.setPointCoords(shared_xcoords, max_ycoords);
 
     avg_graph.setColor(Color.black);
     min_graph.setColor(Color.black);
@@ -185,8 +196,8 @@ public class MultiGraph extends SmartGraphGlyph {
 	}
       }
     }
-    state.setGraphHeight(coordbox.height);
-    state.setGraphYPos(coordbox.y);
+    state.getTierStyle().setHeight(coordbox.height);
+    state.getTierStyle().setY(coordbox.y);
     if (xcoords != null && mutable_xcoords && diffx != 0.0f) {
       int maxi = xcoords.length;
       for (int i=0; i<maxi; i++) {
@@ -215,7 +226,7 @@ public class MultiGraph extends SmartGraphGlyph {
   }
 
   /**
-   *  Temporarily changing view's transform for drawing children --
+   *  Temporarily changing view's transform for drawing children.
    *  if child is itself a graph, then it can handle it's own transformations
    *  if child is not a graph, then use modified transform.
    */

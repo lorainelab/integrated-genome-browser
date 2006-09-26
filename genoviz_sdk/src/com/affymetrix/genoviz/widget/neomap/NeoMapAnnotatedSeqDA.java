@@ -140,9 +140,9 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
     int featureOffset = 3;
     int FEATURE_HEIGHT = 7;
 
-    Enumeration enum = this.annotatedSequence.features();
-    while (enum.hasMoreElements()) {
-      Object o = enum.nextElement();
+    Enumeration numer = this.annotatedSequence.features();
+    while (numer.hasMoreElements()) {
+      Object o = numer.nextElement();
       SeqFeatureI f = (SeqFeatureI)o;
       String type = f.getType();
       if (!type.equals("source")) {

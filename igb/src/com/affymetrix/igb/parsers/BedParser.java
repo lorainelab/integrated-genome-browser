@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,16 +13,14 @@
 
 package com.affymetrix.igb.parsers;
 
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.UcscBedSym;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
@@ -37,6 +35,10 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *  in an annotation track. BED lines have three required fields and nine additional
  *  optional fields. The number of fields per line must be consistent throughout
  *  any single set of data in an annotation track.
+ *
+ * Some BED files from UCSC contain an initial column *before* the chromosome name.
+ * We simply ignore this column; we recognize that it is there by the fact that
+ * the strand is given in (zero-based-)column 6 rather than 5.
  *
  * The first three required BED fields are:
  *    [0] chrom - The name of the chromosome (e.g. chr3, chrY, chr2_random) or contig (e.g. ctgY1).
@@ -56,6 +58,7 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *          the start codon in gene displays).
  *    [7] thickEnd - The ending position at which the feature is drawn thickly (for example,
  *          the stop codon in gene displays).
+ *        If thickStart = thickEnd, that should be interpreted as the absence of a thick region
  *    [8] reserved - This should always be set to zero.
  *    [9] blockCount - The number of blocks (exons) in the BED line.
  *    [10] blockSizes - A comma-separated list of the block sizes. The number of items in this list
@@ -70,18 +73,14 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *  chr22 1000 5000 cloneA 960 + 1000 5000 0 2 567,488, 0,3512
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  *
- *  GAH 8-18-2004 update
- *  BedParser can now be used as a StreamingParser
- *  BedParser is both a StreamingParser and a ParserListener -- older parse() methods are
- *     being reimplemented to use parseWithEvents() call, with BedParser registered to listen
- *     to itself as a ParserListener
  * </pre>
  */
-public class BedParser extends TrackLineParser implements AnnotationWriter, StreamingParser, ParserListener  {
+public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
   static final boolean DEBUG = false;
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
   static Pattern comma_regex = Pattern.compile(",");
-  static Pattern tagval_regex = Pattern.compile("=");;
+  static Pattern tagval_regex = Pattern.compile("=");
+  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   protected Map name_counts = new HashMap();
   java.util.List symlist = new ArrayList();
@@ -94,6 +93,8 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
   static Integer int1 = new Integer(1);
   java.util.List parse_listeners = new ArrayList();
 
+  TrackLineParser track_line_parser = new TrackLineParser();
+  
   public BedParser() {
     super();
   }
@@ -106,67 +107,11 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     parse_listeners.remove(listener);
   }
 
-  public BedParser(SeqMapView gv) {
-    super(gv);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
-    MutableAnnotatedBioSeq aseq = null;
-    return parse(istr, aseq);
-  }
-
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq)
-    throws IOException {
-    return parse(istr, aseq, true);
-  }
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq, boolean annotate_seq)
-    throws IOException {
-    return parse(istr, aseq, annotate_seq, "user track");
-  }
-
-
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
-				      boolean annotate_seq, String stream_name)
-    throws IOException {
-    Map seqhash = new HashMap();
-    if (aseq != null) {
-      seqhash.put(aseq.getID(), aseq);
-    }
-    parse(istr, seqhash, annotate_seq, stream_name);
-    if (aseq == null) {
-      Iterator iter = seqhash.values().iterator();
-      if (iter.hasNext()) { return (MutableAnnotatedBioSeq)iter.next(); }
-      else { return null; }
-    }
-    else {
-      return aseq;
-    }
-  }
-
-  public java.util.List parse(InputStream istr, Map seqhash)
-    throws IOException {
-    return parse(istr, seqhash, true);
-  }
-
-  public java.util.List parse(InputStream istr, Map seqhash, boolean annotate_seq)
-    throws IOException  {
-    return parse(istr, seqhash, annotate_seq, "user track");
-  }
-
-  public java.util.List parse(InputStream istr, Map seqhash, boolean annotate_seq, String stream_name)
-    throws IOException  {
-    return parse(istr, seqhash, annotate_seq, stream_name, false);
-  }
-
-  // reimplemtation of parse(), but layered on top of parseWithEvents() and
-  //    callbacks to annotationParsed()
-  public java.util.List parse(InputStream istr, Map seqhash, boolean annot_seq,
-  			      String stream_name, boolean create_container)
+  public java.util.List parse(InputStream istr, AnnotatedSeqGroup group, boolean annot_seq,
+			      String stream_name, boolean create_container)
     throws IOException {
     System.out.println("BED parser called, annotate seq: " + annotate_seq +
-		       ", create_container_annot: " + create_container_annot);
+		       ", create_container_annot: " + create_container);
     /*
      *  seq2types is hash for making container syms (if create_container_annot == true)
      *  each entry in hash is: BioSeq ==> type2psym hash
@@ -179,7 +124,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     symlist = new ArrayList();
     name_counts = new HashMap();
     annotate_seq = annot_seq;
-    create_container_annot = create_container;
+    this.create_container_annot = create_container;
     default_type = stream_name;
 
     if (stream_name.endsWith(".bed")) {
@@ -194,29 +139,29 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     }
     DataInputStream dis = new DataInputStream(bis);
     addParserListener(this);
-    parseWithEvents(dis, seqhash, default_type);
+    parseWithEvents(dis, group, default_type);
     removeParserListener(this);
     System.out.println("BED annot count: " + symlist.size());
     return symlist;
   }
 
-
-  public void parseWithEvents(DataInputStream dis, Map seqhash, String default_type)
+  public void parseWithEvents(DataInputStream dis, AnnotatedSeqGroup seq_group, String default_type)
      throws IOException  {
     System.out.println("called BedParser.parseWithEvents()");
     String line;
-    boolean some_children = false;
 
-    while ((line = dis.readLine()) != null) {
-      if (line.startsWith("#") || line.equals("")) {  // skip comment lines
+    Thread thread = Thread.currentThread();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+      if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
 	continue;
       }
       else if (line.startsWith("track")) {
-	setTrackProperties(line);
+	track_line_parser.setTrackProperties(line);
 	continue;
       }
       else if (line.startsWith("browser")) {
-	// currently take now action for browser lines
+	// currently take no action for browser lines
       }
       else {
 	if (DEBUG) {
@@ -237,7 +182,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	int[] blockMaxs = null;
 
 	//	String type = (String)track_hash.get("name");
-	String type = (String)getCurrentTrackHash().get("name");
+	String type = (String) track_line_parser.getCurrentTrackHash().get("name");
 	if (type == null) { type = default_type; }
 	if (fields != null && field_count >= 3) {
 	  boolean includes_bin_field = (field_count > 6 &&
@@ -247,10 +192,34 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	  int findex = 0;
 	  if (includes_bin_field) { findex++; }
 	  seq_name = fields[findex++]; // seq id field
-	  MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqhash.get(seq_name);
+	  MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+	  if ((seq == null) && (seq_name.indexOf(';') > -1)) {
+	    // if no seq found, try and split up seq_name by ";", in case it is in format
+	    //    "seqid;genome_version"
+	    String seqid = seq_name.substring(0, seq_name.indexOf(';'));
+	    String version = seq_name.substring(seq_name.indexOf(';')+1);
+	    //	    System.out.println("    seq = " + seqid + ", version = " + version);
+	    if ((gmodel.getSeqGroup(version) == seq_group) ||
+		seq_group.getID().equals(version)) {
+	      // for format [chrom_name];[genome_version]
+	      seq = seq_group.getSeq(seqid);
+	      if (seq != null) { seq_name = seqid; }
+	    }
+	    // try flipping seqid and version around
+	    else if ((gmodel.getSeqGroup(seqid) == seq_group) ||
+		seq_group.getID().equals(seqid)) {
+	      // for format [genome_version];[chrom_name]
+	      String temp = seqid;
+	      seqid = version;
+	      version = temp;
+	      seq = seq_group.getSeq(seqid);
+	      if (seq != null) { seq_name = seqid; }
+	    }
+	  }
+
 	  if (seq == null) {
-	    seq = new SimpleAnnotatedBioSeq(seq_name, 0);
-	    seqhash.put(seq_name, seq);
+	    System.out.println("seq not recognized, creating new seq: " + seq_name);
+	    seq = seq_group.addSeq(seq_name, 0);
 	  }
 	  int beg = Integer.parseInt(fields[findex++]);  // start field
 	  int end = Integer.parseInt(fields[findex++]);  // stop field
@@ -282,15 +251,15 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	    blockStarts = parseIntArray(fields[findex++]); // blockStarts field
 	    blockMins = makeBlockMins(min, blockStarts);
 	    blockMaxs = makeBlockMaxs(blockSizes, blockMins);
-	    some_children = true;
 	  }
 	  else {
 	    /*
 	     * if no child blocks, make a single child block the same size as the parent
 	     * Very Inefficient, ideally wouldn't do this
-	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to 
-	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children), 
+	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
+	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
 	     *     then factory will create a line container glyph to draw line connecting all the bed annots
+	     * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
 	     */
 	    blockMins = new int[1];
 	    blockMins[0] = min;
@@ -329,6 +298,9 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
 	      listener.annotationParsed(bedline_sym);
 	    }
 	  }
+          if (annot_name != null) {
+            seq_group.addToIndex(annot_name, bedline_sym);
+          }
 	}  // end field_count >= 3
       }  // end of line.startsWith() else
     }   // end of line-reading loop
@@ -346,7 +318,7 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     if (annotate_seq) {
       MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
       if (create_container_annot) {
-        String type = (String)getCurrentTrackHash().get("name");
+        String type = (String) track_line_parser.getCurrentTrackHash().get("name");
         if (type == null) { type = default_type; }
         Map type2csym = (Map)seq2types.get(seq);
         if (type2csym == null) {
@@ -507,10 +479,11 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
       BedParser test = new BedParser();
       File fil = new File(file_name);
       FileInputStream fis = new FileInputStream(fil);
-      MutableAnnotatedBioSeq aseq = null;
-      Map seqhash = new HashMap();
-      //      test.parse(fis, aseq);
-      java.util.List annots = test.parse(fis, seqhash);
+      // Formerly, bookmarks with a seq-group of "unknown" would be interpreted
+      // to mean 'current genome', but that is no longer true.
+      AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
+      
+      java.util.List annots = test.parse(fis, seq_group, true, file_name, true);
       System.out.println("total annots: " + annots.size());
     }
     catch (Exception ex) {
@@ -527,8 +500,6 @@ public class BedParser extends TrackLineParser implements AnnotationWriter, Stre
     System.out.println("in BedParser.writeAnnotations()");
     boolean success = true;
     try {
-      //    response.setContentType("text/psl");
-      //    PrintWriter pw = outstream.getWriter();
       Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {

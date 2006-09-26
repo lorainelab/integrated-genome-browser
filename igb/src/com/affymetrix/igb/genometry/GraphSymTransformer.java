@@ -23,6 +23,9 @@ import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
 
 
+/**
+ *  NO LONGER USED, USE GraphSymUtils.transformGraphSym() instead
+ */
 public class GraphSymTransformer {
 
   //  public GraphSym transformGraphSym(GraphSym osym, SeqSymmetry tsym, BioSeq tseq) {
@@ -37,6 +40,7 @@ public class GraphSymTransformer {
    *    breadth = 2, and that they're "regular" (parent sym and each child sym have seqspans pointing
    *    to same two BioSeqs
    */
+  /*
   public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym) {
     BioSeq fromseq = original_graf.getGraphSeq();
     SeqSpan fromspan = mapsym.getSpan(fromseq);
@@ -90,5 +94,5 @@ public class GraphSymTransformer {
     }
     return new_graf;
   }
-
+  */
 }

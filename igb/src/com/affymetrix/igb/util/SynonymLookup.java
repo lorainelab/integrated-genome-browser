@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,22 +14,17 @@
 package com.affymetrix.igb.util;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.util.regex.*;
-
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.util.LocalUrlCacher;
 
 /**
  *  A way of mapping synonyms to each other.
  */
-
 public class SynonymLookup {
   static boolean DEBUG = false;
   static final Pattern line_regex = Pattern.compile("\t");
   static SynonymLookup default_lookup = new SynonymLookup();
-  HashMap lookup_hash = new HashMap();
+  LinkedHashMap lookup_hash = new LinkedHashMap();
 
   public static void setDefaultLookup(SynonymLookup lookup) {
     default_lookup = lookup;
@@ -37,54 +32,111 @@ public class SynonymLookup {
 
   public void loadSynonyms(String synonym_loc) {
     System.out.println("url to load synonyms from: " + synonym_loc);
+    InputStream syn_stream = null;
     try {
-      InputStream syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
-      if (syn_stream == null) {
-        System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
-      } else {
-        loadSynonyms(syn_stream);
-      }
+      syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
+    } catch (IOException ioe) {
+      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
+      syn_stream = null;
+    } 
+
+    if (syn_stream == null) {
+      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
+      return;
+    }
+
+    try {
+      loadSynonyms(syn_stream);
     }
     catch (Exception ex) {
+      System.out.println("WARNING: Error while loading synonym data from: " + synonym_loc);
       ex.printStackTrace();
+    } finally {
+      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
     }
   }
 
-  public void loadSynonyms(InputStream istream) {
-    try {
-      InputStreamReader ireader = new InputStreamReader(istream);
-      BufferedReader br = new BufferedReader(ireader);
-      String line;
-      while ((line = br.readLine()) != null) {
-	String[] fields = line_regex.split(line);
-	if (fields.length > 0) {
-	  addSynonyms(fields);
-	}
+  public void loadSynonyms(InputStream istream) throws IOException {
+    InputStreamReader ireader = new InputStreamReader(istream);
+    BufferedReader br = new BufferedReader(ireader);
+    String line;
+    while ((line = br.readLine()) != null) {
+      String[] fields = line_regex.split(line);
+      if (fields.length > 0) {
+        addSynonyms(fields);
       }
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
     }
   }
 
   public static SynonymLookup getDefaultLookup() { return default_lookup; }
 
+  boolean caseSensitive = true;
+  
+  /** Set whether tests should be case sensitive or not.
+   *  You can turn this on or off safely before or after loading the synonyms.
+   *  Default is true: case does matter by default.
+   */
+  public void setCaseSensitive(boolean case_sensitive) {
+    this.caseSensitive = case_sensitive;
+  }
+  
+  public boolean isCaseSensitive() { return caseSensitive; }
+  
+  
+  /**
+   * Set this flag to true to automatically take care of synonyms of "_random"
+   * sequence names.  If true, then "XXX_random" is a synonym of "YYY_random"
+   * if "XXX" is a synonym of "YYY" (or if that particular set of synonyms
+   * was explicitly specified.)
+   */
+  public boolean stripRandom = false;
+  
   public boolean isSynonym(String str1, String str2) {
     //    System.out.println("$$$$$ called isSynonym for " + str1 + ", " + str2 + " $$$$$");
     if (str1 == null || str2 == null) { return false; }
     if (str1.equals(str2)) { return true; }
-    ArrayList al = (ArrayList)lookup_hash.get(str1);
+    ArrayList al = getSynonyms(str1);
     if (al != null) {
       int lcount = al.size();
       for (int i=0; i<lcount; i++) {
-	String curstr = (String)al.get(i);
-	//	System.out.println("trying to match " + str1 + " to " + curstr);
-	if (str2.equals(curstr)) {
-	  return true;
-	}
+        String curstr = (String)al.get(i);
+        //        System.out.println("trying to match " + str2 + " to " + curstr);
+        if (isCaseSensitive()) {
+          if (str2.equals(curstr)) {
+            return true;
+          }
+        } else {
+          if (str2.equalsIgnoreCase(curstr)) {
+            return true;
+          }
+        }
+      }
+    }
+    if (stripRandom) {
+      if (str1.toLowerCase().endsWith("_random") && str2.toLowerCase().endsWith("_random")) {
+        return isSynonym(stripRandom(str1), stripRandom(str2));
       }
     }
     return false;
+  }
+  
+  // Strip the word "_random" from the item name
+  // Will not change the case of the input, but if isCaseSensitive is false, will
+  // also strip "_RanDom", etc.
+  String stripRandom(String s) {
+    if (s == null) return null;
+    String s2 = s;
+    if (isCaseSensitive()) {
+      if (s.endsWith("_random")) {
+        s2 = s.substring(0, s.length() - 7);
+      }
+    }
+    else {
+      if (s.toLowerCase().endsWith("_random")) {
+        s2 = s.substring(0, s.length() - 7);
+      }
+    }
+    return s2;
   }
 
   public void addSynonyms(String[] syns) {
@@ -92,33 +144,79 @@ public class SynonymLookup {
       String syn1 = syns[i];
       if (DEBUG)  { System.out.println("adding:" + syn1 + ":"); }
       for (int k=i+1; k<syns.length; k++) {
-	String syn2 = syns[k];
-	addSynonym(syn1, syn2);
+        String syn2 = syns[k];
+        addSynonym(syn1, syn2);
       }
     }
   }
 
+  ArrayList getSharedList(String str1, String str2) {
+    ArrayList result = null;
+    
+    // We want both synonyms to map to the *identical* List object
+    ArrayList list1 = (ArrayList) lookup_hash.get(str1);
+    ArrayList list2 = (ArrayList) lookup_hash.get(str2);
+    
+    if (list1 != null && list2 != null) {
+      if (list1 == list2) {
+        // great, they are already the same object
+        result = list1;
+      } else {
+        // If the two strings map to different lists, then merge them into one
+        result = new ArrayList(list1);
+        result.addAll(list2);
+      }
+    }
+    else if (list1 != null && list2 == null) {
+      result = list1;
+    } 
+    else if (list1 == null && list2 != null) {
+      result = list2;
+    } 
+    else if (list1 == null && list2 == null) {
+      result = new ArrayList();
+    }
+
+    lookup_hash.put(str1, result);
+    lookup_hash.put(str2, result);
+    return result;    
+  }
+  
+  
   public void addSynonym(String str1, String str2) {
-    ArrayList list1 = (ArrayList)lookup_hash.get(str1);
-    if (list1 == null) {
-      list1 = new ArrayList();
-      lookup_hash.put(str1, list1);
-      list1.add(str1);  // now including self as synonym -- GAH 10-28-2002
+    if (str1 == null || str2 == null || "".equals(str1.trim()) || "".equals(str2.trim())) {
+      return;
     }
-    list1.add(str2);
-
-    ArrayList list2 = (ArrayList)lookup_hash.get(str2);
-    if (list2 == null) {
-      list2 = new ArrayList();
-      lookup_hash.put(str2, list2);
-      list2.add(str2);  // now including self as synonym -- GAH 10-28-2002
+    ArrayList list = getSharedList(str1, str2);
+    if (! list.contains(str1)) {
+      list.add(str1);
     }
-    list2.add(str1);
-
+    if (! list.contains(str2)) {
+      list.add(str2);
+    }
   }
 
+  /** Returns all known synonyms for a given string.
+   *  Even if isCaseSensitive() is false, the items in the returned list will still 
+   *  have the same cases as were given in the input, but the lookup to find the
+   *  list of synonyms will be done in a case-insensitive way.
+   */
   public ArrayList getSynonyms(String str) {
-    return (ArrayList)lookup_hash.get(str);
+    if (isCaseSensitive()) {
+      return (ArrayList)lookup_hash.get(str);
+    } else {
+      // If not case-sensitive
+      
+      Object o = lookup_hash.get(str);
+      if (o != null) return (ArrayList) o;
+      
+      Iterator iter = lookup_hash.keySet().iterator();
+      while (iter.hasNext()) {
+        String key = (String) iter.next();
+        if (key.equalsIgnoreCase(str)) { return (ArrayList) lookup_hash.get(key); }
+      }
+    }
+    return null;
   }
   
   /**
@@ -139,9 +237,19 @@ public class SynonymLookup {
     }
     return result;
   }
-
-  public static void main(String[] args) {
-    System.out.println("running SynonymLookup.main() to trigger static method...");
+  
+  /** For debugging, prints all synonyms to stdout. */
+  public void printAllSynonyms() {
+    Iterator iter = lookup_hash.keySet().iterator();
+    while (iter.hasNext()) {
+      String key = (String) iter.next();
+      ArrayList syns = (ArrayList) lookup_hash.get(key);
+      System.out.println("KEY:  " + key);
+      System.out.println("SYNONYMS:  (" + Integer.toHexString(syns.hashCode()) + ")");
+      for (int i=0; i<syns.size(); i++) {
+        System.out.println("  '" + syns.get(i) + "'");
+      }
+      System.out.println("");
+    }
   }
-
 }

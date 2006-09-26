@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,20 +14,25 @@
 package com.affymetrix.igb.parsers;
 
 import java.io.*;
-import java.util.zip.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
 
 import com.affymetrix.genoviz.util.Timer;
 
 import com.affymetrix.igb.util.NibbleIterator;
+import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 public class NibbleResiduesParser {
 
   /**
    *  Parses an input stream.
+   *  The sequence will get added to the existing NibbleBioSeq found by
+   *  seq_group.getSeq(name), where the name comes from data in the file.
+   *  If such a NibbleBioSeq doesn't exist, it will be created, but if a
+   *  BioSeq does exist that is not of the type NibbleBioSeq, an exception
+   *  will be thrown.
    */
-  public static NibbleBioSeq parse(InputStream istr, NibbleBioSeq input_seq)  {
+  public static NibbleBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
     NibbleBioSeq result_seq = null;
     DataInputStream dis = null;
     try {
@@ -49,11 +54,17 @@ public class NibbleResiduesParser {
       //      System.out.println("length: " + num_residues);
       byte[] nibble_array;
 
-      if (input_seq != null && name.equals(input_seq.getID())) {
-	result_seq = input_seq;
+      BioSeq existing_seq = seq_group.getSeq(name);
+      if (existing_seq != null) {
+        if (existing_seq instanceof NibbleBioSeq) {
+	  result_seq = (NibbleBioSeq) existing_seq;
+        }
+        else {
+          throw new IOException("Trouble parsing bnib file, existing bio seq is of wrong type.");
+        }
       }
       else {
-        result_seq = new NibbleBioSeq(name, version, num_residues);
+        result_seq = seq_group.addSeq(name, num_residues);
       }
 
       System.out.println("NibbleBioSeq: " + result_seq);
@@ -70,12 +81,8 @@ public class NibbleResiduesParser {
       NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
       result_seq.setResiduesProvider(residues_provider);
 
-      dis.close();
       float read_time = tim.read()/1000f;
       System.out.println("time to read in bnib residues file: " + read_time);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
     }
     finally {
       if (dis != null) try {dis.close();} catch(Exception e) {}
@@ -83,25 +90,23 @@ public class NibbleResiduesParser {
     return result_seq;
   }
 
-  public static NibbleBioSeq readBinaryFile(String file_name) {
+  public static NibbleBioSeq readBinaryFile(String file_name) throws IOException {
     FileInputStream fis = null;
+    NibbleBioSeq seq = null;
     try {
       File fil = new File(file_name);
       fis = new FileInputStream(fil);
-      NibbleBioSeq seq = parse(fis, null);
-      return seq;
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
+      AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+      seq = parse(fis, seq_group);
     }
     finally {
       if (fis != null) try {fis.close();} catch(Exception e) {}
     }
-    return null;
+    return seq;
   }
 
   public static void writeBinaryFile(String file_name, String seqname, String seqversion,
-				     String residues) {
+				     String residues) throws IOException {
     // binary DNA residues format
     // header:
     //   UTF8-encoded sequence name
@@ -146,9 +151,6 @@ public class NibbleResiduesParser {
       dos.flush();
       dos.close();
       System.out.println("done writing out nibble file");
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
     }
     finally {
       if (dos != null) try {dos.close();} catch(Exception e) {}

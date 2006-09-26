@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -34,42 +34,32 @@ public class ChromInfoParser {
     template_seq = template;
   }
 
-  public Map parse(InputStream istr, String genome_version) throws IOException {
-    AnnotatedSeqGroup grp = parseGroup(istr, genome_version);
-    Map seqhash = grp.getSeqs();
-    return seqhash;
-  }
-
-  public AnnotatedSeqGroup parseGroup(InputStream istr, String genome_version)
+  /**
+   *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
+   *  adds it to the SingletonGenometryModel.
+   */
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version)
     throws IOException {
 
-    AnnotatedSeqGroup group = gmodel.addSeqGroup(genome_version);
+    AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
     BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
     String line;
-    java.util.List seqlist = new ArrayList();
     while ((line = dis.readLine()) != null) {
+      if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
       String[] fields = tab_regex.split(line);
       if (fields.length <= 0) { continue; }
-      String chrName = fields[0];
+      String chrom_name = fields[0];
+
       int chrLength = Integer.parseInt(fields[1]);
-      MutableAnnotatedBioSeq chrSeq = null;
-      try {
-        chrSeq = (MutableAnnotatedBioSeq)template_seq.getClass().newInstance();
-      } catch (Exception ex) { ex.printStackTrace(); }
-      chrSeq.setID(chrName);
-      chrSeq.setLength(chrLength);
-      if (chrSeq instanceof Versioned) {
-        ((Versioned)chrSeq).setVersion(genome_version);
+      MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
+      if (chrom == null) {  // if chrom already in seq group, then don't add to list
+        chrom = seq_group.addSeq(chrom_name, chrLength);
+        if (chrom instanceof Versioned) {
+          ((Versioned)chrom).setVersion(genome_version);
+        }
       }
-      //      group.addSeq(chrSeq);
-      seqlist.add(chrSeq);
     }
-    Collections.sort(seqlist, new ChromComparator());
-    for (int i=0; i<seqlist.size(); i++) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqlist.get(i);
-      group.addSeq(seq);
-    }
-    return group;
+    return seq_group;
   }
 
 }

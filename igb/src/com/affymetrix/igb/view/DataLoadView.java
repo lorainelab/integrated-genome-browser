@@ -154,9 +154,10 @@ class SeqGroupView extends JComponent
     if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
     synchronized (seqtable) {  // or should synchronize on lsm?
       // could also get selected seq from SeqSelectionEvent, but should be the same
-      if (selected_seq != gmodel.getSelectedSeq()) {
+     // if (selected_seq != evt.getSelectedSeq()) {
 	lsm.removeListSelectionListener(this);
-	selected_seq = gmodel.getSelectedSeq();
+	//selected_seq = gmodel.getSelectedSeq();
+        selected_seq = evt.getSelectedSeq();
 	if (selected_seq == null) { seqtable.clearSelection(); }
 	else  {
 	  for (int i=0; i<seqtable.getRowCount(); i++) {
@@ -170,7 +171,7 @@ class SeqGroupView extends JComponent
 	  }
 	}
 	lsm.addListSelectionListener(this);
-      }
+     // }
     }
   }
 

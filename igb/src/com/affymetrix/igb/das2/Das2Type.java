@@ -17,17 +17,14 @@ import java.util.*;
 import java.net.*;
 
 public class Das2Type {
-  Das2VersionedSource versioned_source;
-  //  String id;
-  URI type_uri;
-  String name;
-  String ontology;
-  String derivation;  // in DAS2 XML, this is source attribute
-  String info_url;    // doc_href
-  Map props;
-  Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
-  //  Map parents; // the das2 server will change soon and parent/child relationships will be moved to another ontology namespace
-
+  protected Das2VersionedSource versioned_source;
+  protected URI type_uri;
+  protected String name;
+  protected String ontology;
+  protected String derivation;  // in DAS2 XML, this is source attribute
+  protected String info_url;    // doc_href
+  protected Map props;
+  protected Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
 
   //  public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href, Map formats, Map props, Map parents) {
   public Das2Type(Das2VersionedSource version, URI type_uri, String name, String ontology,

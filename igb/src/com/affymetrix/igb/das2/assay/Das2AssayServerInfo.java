@@ -33,7 +33,7 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
     protected Das2VersionedSource dasVersionedSource;
     
     static String URID = "uri";
-    static String ID = "id";
+    static String ID = "uri";
     static String TITLE = "title";
     static String NAME = "name";
     static String TYPE = "type";
@@ -78,6 +78,7 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
         System.out.println("DAS server version: " + das_version);
         Document doc = DasLoader.getDocument(request_con);
 
+        // FIXME: all these URIs need to be resolved against the base!!
         Element top_element = doc.getDocumentElement();
         NodeList sources= doc.getElementsByTagName("SOURCE");
         System.out.println("source count: " + sources.getLength());

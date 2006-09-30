@@ -31,7 +31,6 @@ public class Das2OntologyType extends Das2Type {
     this.termDef = termDef;
   }
   
-  public Map getParents() {
-    return(parents);
-  }
+  public Map getParents() { return parents; }
+  
 }

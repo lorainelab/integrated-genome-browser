@@ -30,7 +30,8 @@ public class Das2AssayServerInfoTest extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    String[] test_urls = {"http://das.biopackages.net/das/assay"};
+    //String[] test_urls = {"http://das.biopackages.net/das/assay"};
+    String[] test_urls = {"http://humerus.ctrl.ucla.edu:8529/das/assay"};
     serverInfos = new ArrayList();
     for (int i=0; i<test_urls.length; i++) {
       // FIXME: the following uses a hard-coded ontology URL

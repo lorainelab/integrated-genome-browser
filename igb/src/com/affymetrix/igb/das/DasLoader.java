@@ -240,19 +240,29 @@ public abstract class DasLoader {
     File cacheFile = new File(cacheDir+sep+hashcode+".cache");
     long cacheDate = cacheFile.lastModified();
     
-    // FIXME: Allen's DAS2 server doesn't report this
-    long date = request_con.getLastModified();
+    /* HACK: I'm forcing the use of the cache docs 
+     * FIXME: if I to a getLastModified on a non-cached DAS/2 server (biopackages)
+     * it actually causes the complete request to go through!!  So this call takes 
+     * forever and really makes the local caceh pointless.
+     */
+    long date = 0;// HACK: request_con.getLastModified();
     // try "Age" header if it exists
-    if (date == 0) {
+    /*if (date == 0) {
       String age_in_sec = request_con.getHeaderField("Age");
-      long age = Long.parseLong(age_in_sec);
-      age = age * 1000;
-      date = (new Date().getTime()) - age;
-      //System.out.println("AGE: "+age);
+      if (age_in_sec != null) {
+        long age = Long.parseLong(age_in_sec);
+        age = age * 1000;
+        date = (new Date().getTime()) - age;
+        //System.out.println("AGE: "+age);
+      }
     }
+      HACK */
     
-    // If the server doesn't report a lastModified then flush the cache every 48 hours
-    if (cacheDate < date || cacheDate == 0 || (date == 0 && new Date().getTime() - cacheDate > 2*86400000)) {
+    // If the server doesn't report a lastModified then flush the cache every month (86400000 is milliseconds in a day)
+    // FIXME: this should be configurable
+    double cacheAge = new Date().getTime() - cacheDate;
+    double maxAge = 30*8.64e+07;
+    if (cacheDate < date || cacheDate == 0 || (date == 0 && cacheAge > maxAge)) {
       BufferedReader in = new BufferedReader(
                           new InputStreamReader(
                           request_con.getInputStream()));
@@ -260,14 +270,16 @@ public abstract class DasLoader {
                            new OutputStreamWriter(
                            new FileOutputStream(cacheFile)));
       String inputLine;
-      while ((inputLine = in.readLine()) != null) 
+      while ((inputLine = in.readLine()) != null) {
           out.write(inputLine);
+          out.newLine();
+      }
       in.close();
       out.close();
     }
     
     // Finally, set the mod time of the cache file if the server reports it
-    //if (date > 0) cacheFile.setLastModified(date);
+    if (date > 0) cacheFile.setLastModified(date);
     
     String returnString = "file:///"+cacheFile.getAbsolutePath();
     //the following is needed on Windows to make the path a URL (instead of a Windows path)

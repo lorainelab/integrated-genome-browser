@@ -143,6 +143,7 @@ public class Das2AssayVersionedSource extends com.affymetrix.igb.das2.Das2Versio
     try {
       //FIXME: Hack, the affy server can't handle trailing slash but URI resolution won't work with out it
       URI materialsURI = new URI(this.getURI().toString()+"/");
+      //FIXME: the material request is hard coded
       String materials_request = DasLoader.getCachedDocumentURL(materialsURI.resolve("material").toString());
 
       System.out.println("Das Materials Request: " + materials_request);

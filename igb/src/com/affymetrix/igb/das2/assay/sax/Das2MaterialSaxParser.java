@@ -30,6 +30,7 @@ public class Das2MaterialSaxParser extends DefaultHandler {
   String name = "";
   HashMap types = new HashMap();
   HashMap contacts = new HashMap();
+  bool saveMem = true;
   
   /** Creates a new instance of Das2AssaySaxParser */
   public Das2MaterialSaxParser(Das2AssayVersionedSource version) {
@@ -60,12 +61,20 @@ public class Das2MaterialSaxParser extends DefaultHandler {
 
   public void endElement(String uri, String localName, String qName) {
     if (qName.equals("BioSource")) {
-      version.addMaterial(new Das2Material(version, id, name, types, contacts));
+      // FIXME: HACK, I'm throwing away any materials that don't have types
+      // to save memory.  Very large DAS/2 Assay servers will cause the client
+      // to run out of memory (such as das.biopackages.net)
+      if (!saveMem || !types.isEmpty()) 
+        version.addMaterial(new Das2Material(version, id, name, types, contacts));
       id = "";
       name = "";
       types = new HashMap();
       contacts = new HashMap();
     }
+  }
+
+  public void setSaveMem(bool saveMem) {
+    this.saveMem = saveMem;
   }
   
 }

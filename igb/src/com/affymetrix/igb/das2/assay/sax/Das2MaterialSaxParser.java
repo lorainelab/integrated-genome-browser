@@ -1,12 +1,15 @@
-/*
- * Das2AssaySaxParser.java
- *
- * Created on May 2, 2006, 2:20 PM
- *
- * To change this template, choose Tools | Options and locate the template under
- * the Source Creation and Management node. Right-click the template and choose
- * Open. You can then make changes to the template in the Source Editor.
- */
+/**
+*   Copyright (c) 2006 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 
 package com.affymetrix.igb.das2.assay.sax;
 
@@ -30,7 +33,7 @@ public class Das2MaterialSaxParser extends DefaultHandler {
   String name = "";
   HashMap types = new HashMap();
   HashMap contacts = new HashMap();
-  bool saveMem = true;
+  boolean saveMem = true;
   
   /** Creates a new instance of Das2AssaySaxParser */
   public Das2MaterialSaxParser(Das2AssayVersionedSource version) {
@@ -73,7 +76,7 @@ public class Das2MaterialSaxParser extends DefaultHandler {
     }
   }
 
-  public void setSaveMem(bool saveMem) {
+  public void setSaveMem(boolean saveMem) {
     this.saveMem = saveMem;
   }
   

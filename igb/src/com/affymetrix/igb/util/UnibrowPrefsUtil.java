@@ -209,7 +209,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
   /** Gets a static re-usable file chooser that prefers "xml" files. */
   static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
-      static_chooser = new UniFileChooser("XML File (*.xml)", "xml");
+      static_chooser = new UniFileChooser("XML File", "xml");
     }
     static_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     //static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());

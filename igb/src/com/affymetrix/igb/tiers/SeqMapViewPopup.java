@@ -470,7 +470,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
     System.out.println("Saving symmetries to DAS/2: "+ syms.size());
-    JFileChooser chooser = UniFileChooser.getFileChooser("DAS/2 file (*.das2xml)", "das2xml");
+    JFileChooser chooser = UniFileChooser.getFileChooser("DAS/2 file", "das2xml");
     chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
     int option = chooser.showSaveDialog(null);
     if (option == JFileChooser.APPROVE_OPTION) {
@@ -505,7 +505,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     System.out.println("Saving symmetries as BED file: "+ syms.size());
 //    com.affymetrix.genometry.util.SeqUtils.printSymmetry((SeqSymmetry) syms.get(0));
 
-    JFileChooser chooser = UniFileChooser.getFileChooser("Bed file (*.bed)", "bed");
+    JFileChooser chooser = UniFileChooser.getFileChooser("Bed file", "bed");
     chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 
     int option = chooser.showSaveDialog(null);

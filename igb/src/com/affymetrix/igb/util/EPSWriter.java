@@ -134,7 +134,7 @@ public class EPSWriter {
    */
   public static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
-      static_chooser = new UniFileChooser("Eps Files (*.eps)", "eps");
+      static_chooser = new UniFileChooser("Eps Files", "eps");
       if (file_tracker != null) {static_chooser.setCurrentDirectory(file_tracker.getFile());}
     }
     static_chooser.rescanCurrentDirectory();

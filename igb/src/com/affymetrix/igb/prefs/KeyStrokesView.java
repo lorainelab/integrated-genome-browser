@@ -44,7 +44,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
 
     JScrollPane scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
-    this.add(scroll_pane);
 
     model = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {return false;}
@@ -109,7 +108,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   /** This is called when the user selects a row of the table;
    */
   public void valueChanged(ListSelectionEvent evt) {
-    boolean old_way = true;
     if (evt.getSource()==lsm && ! evt.getValueIsAdjusting()) {
       int srow = table.getSelectedRow();
       if (srow >= 0) {

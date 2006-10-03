@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.menuitem.FileTracker;
 import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
@@ -42,20 +43,21 @@ public class UniFileChooser extends JFileChooser {
 
   protected UniFileChooser() {
     // bare constructor.  Allows for subclassing.
-    super(new File((String) System.getProperties().get("user.dir")));
+    super();
   }
   
   /** 
    *  Creates and returns a JFileChooser which accepts only filenames 
-   *  ending in period+extension when creating or writing to a file,
-   *  it also prefers this ending when reading
-   *  files, but will allow you to try to read an existing file
-   *  with a different extension.
+   *  ending in period+extension when creating or writing to a file.
    *
-   *  <p>Example: new UniFileChooser("AXML file (*.axml)", "axml");
+   *  <p>Example: new UniFileChooser("AXML file", "axml");
    */
   public UniFileChooser(String description, String extension) {
     this();
+    File f = FileTracker.OUTPUT_DIR_TRACKER.getFile();
+    if (f != null) {
+      setSelectedFile(f);
+    }
     reinitialize(description, extension);
   }
 
@@ -69,33 +71,24 @@ public class UniFileChooser extends JFileChooser {
   }
 
   /** 
-   *  Reinitializes a singleton JFileChooser to accept only an ".axml"
-   *  filename  when creating a file, and to prefer ".axml" filenames
-   *  when reading files, but will allow you to try to read an existing
-   *  file with a different extension.
+   *  Reinitializes a singleton JFileChooser to accept only an ".axml" filename.
    */
   public static UniFileChooser getAXMLFileChooser() {
-    return getFileChooser("AXML file (*.axml)", "axml");
+    return getFileChooser("AXML file", "axml");
   }
 
   /** 
-   *  Reinitializes a singleton JFileChooser to accept only an ".xml"
-   *  filename  when creating a file, and to prefer ".xml" filenames
-   *  when reading files, but will allow you to try to read an existing
-   *  file with a different extension.
+   *  Reinitializes a singleton JFileChooser to accept only an ".xml" filename.
    */
   public static UniFileChooser getXMLFileChooser() {
-    return getFileChooser("XML file (*.xml)", "xml");
+    return getFileChooser("XML file", "xml");
   }
 
   /** 
    *  Resets such that it will accept only filenames 
-   *  ending in period+extension when creating or writing to a file,
-   *  and will prefer this ending when reading
-   *  files, but will allow opening an existing file
-   *  with a different extension for reading.
+   *  ending in period+extension when creating or writing to a file.
    *
-   *  <p>Example: reinitialize("AXML file (*.axml)", "axml");
+   *  <p>Example: reinitialize("AXML file", "axml");
    */
   protected void reinitialize(final String description, final String extension) {
     if (description==null || extension==null || "".equals(extension)) throw new 
@@ -108,27 +101,21 @@ public class UniFileChooser extends JFileChooser {
       this.description = description;
       this.extension = extension;
 
-      if (current_file_filter != null) {
-        removeChoosableFileFilter(current_file_filter);
+      FileFilter[] filters = getChoosableFileFilters();
+      for (int i=0; i<filters.length; i++) {
+        removeChoosableFileFilter(filters[i]);
       }
-
-      current_file_filter = new FileFilter() {
-        public final boolean accept(File f) {
-          return (f.isDirectory() || f.getName().endsWith("."+extension));
-        }
-        public final String getDescription() {return description;}
-      };
-
+      current_file_filter = new UniFileFilter(extension, description);
+      
       addChoosableFileFilter(current_file_filter);
     }
 
-    addChoosableFileFilter(getAcceptAllFileFilter());
+    //addChoosableFileFilter(getAcceptAllFileFilter());
     setFileFilter(current_file_filter);
     setMultiSelectionEnabled(false);
-    setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    setFileSelectionMode(JFileChooser.FILES_ONLY);
     rescanCurrentDirectory();
     setSelectedFile(null);
-    System.out.println("------------- Reintialized!");
   }
 
 
@@ -144,15 +131,22 @@ public class UniFileChooser extends JFileChooser {
       setCurrentDirectory(f);
       return;
     }
-
+    
     FileFilter filter = getFileFilter();
     UniFileFilter uni_filter = null;
     Set extensions = Collections.EMPTY_SET;
     if (filter instanceof UniFileFilter) {
       uni_filter = (UniFileFilter) filter;
       extensions = uni_filter.getExtensions();
+    } else {
+      // if not a UniFileFilter, defer to the approval mechanism of the filter
+      if (filter.accept(f)) {
+        super.approveSelection();
+      } else {
+        getToolkit().beep();
+        return;
+      }
     }
-    
     if (getDialogType() == OPEN_DIALOG) {
       if (f.exists()) {
         super.approveSelection();

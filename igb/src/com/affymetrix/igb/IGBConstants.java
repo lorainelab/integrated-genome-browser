@@ -23,5 +23,5 @@ public abstract class IGBConstants {
 
   public static String APP_NAME = "Integrated Genome Browser";
   public static String APP_SHORT_NAME = "IGB";
-  public static String IGB_VERSION = "4.48";
+  public static String IGB_VERSION = "4.48.02";
 }

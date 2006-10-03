@@ -25,13 +25,13 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileChooser;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.ContextualPopupListener;
@@ -57,7 +57,7 @@ public class GraphSelectionManager
   boolean DRAG_IN_FRONT = true;
   int max_label_length = 50;
 
-  static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
+  static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
   java.util.List graphlist = new ArrayList();
   GraphGlyph current_graph = null;
@@ -478,8 +478,8 @@ public class GraphSelectionManager
   /** Returns a file chooser that forces the user to use the 'gr' file extension. */
   static JFileChooser getFileChooser() {
     if (graph_file_chooser == null) {
-      graph_file_chooser = UniFileChooser.getFileChooser("Graph File (*.gr)", "gr");
-      graph_file_chooser.setCurrentDirectory(load_dir_tracker.getFile());
+      graph_file_chooser = UniFileChooser.getFileChooser("Graph File", "gr");
+      graph_file_chooser.setCurrentDirectory(output_file_tracker.getFile());
     }
     return graph_file_chooser;
   }
@@ -494,7 +494,7 @@ public class GraphSelectionManager
         //        int option = chooser.showSaveDialog(gviewer.getFrame());
         int option = chooser.showSaveDialog(frm);
         if (option == JFileChooser.APPROVE_OPTION) {
-          load_dir_tracker.setFile(chooser.getCurrentDirectory());
+          output_file_tracker.setFile(chooser.getCurrentDirectory());
           File fil = chooser.getSelectedFile();
           GraphSymUtils.writeGraphFile(gsym, fil.getName());
         }

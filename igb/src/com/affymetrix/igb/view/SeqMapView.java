@@ -2627,7 +2627,13 @@ public class SeqMapView extends JPanel
 
   // sets the text on the JLabel based on the current selection
   private void setPopupMenuTitle(JLabel label, java.util.List selected_glyphs) {
-    String title = getSelectionTitle(selected_glyphs);
+    String title = "";
+    if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
+      GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
+      title = gg.getLabel();
+    } else {
+      title = getSelectionTitle(selected_glyphs);
+    }
     // limit the popup title to 30 characters because big popup-menus don't work well
     if (title != null && title.length() > 30) {
       title = title.substring(0, 30) + " ...";
@@ -2650,7 +2656,7 @@ public class SeqMapView extends JPanel
       if (selected_glyphs.size() == 1) {
         GlyphI topgl = (GlyphI) selected_glyphs.get(0);
         Object info = topgl.getInfo();
-        SeqSymmetry sym = null;
+        SeqSymmetry sym = null;        
         if (info instanceof SeqSymmetry) {
           sym = (SeqSymmetry) info;
         }

@@ -34,5 +34,5 @@ set CLASSPATH=%CLASSPATH%;ext\freehep-graphicsio-ps.jar
 
 
 set MAIN=com.affymetrix.igb.IGB
-java -mx256m -classpath %CLASSPATH% %MAIN%
+java -mx256m -classpath "%CLASSPATH%" "%MAIN%"
 

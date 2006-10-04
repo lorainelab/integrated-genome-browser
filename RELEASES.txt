@@ -4,6 +4,9 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-4.48.02
+  + A bug-fix release that fixes a bug in version 4.48
+
 IGB-4.48
   + A minor release that fixes some minor issues with version 4.46
   + A few new features were added, such as GFF3 parsing.

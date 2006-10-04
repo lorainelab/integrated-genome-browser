@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *  A glyph that is drawn as a solid rectangle.
  */
 public class EfficientFillRectGlyph extends EfficientSolidGlyph  {
-
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -38,4 +37,6 @@ public class EfficientFillRectGlyph extends EfficientSolidGlyph  {
 
     super.draw(view);
   }
+
+
 }

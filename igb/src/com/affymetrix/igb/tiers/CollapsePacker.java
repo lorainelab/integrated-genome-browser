@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,33 +18,33 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 public class CollapsePacker implements PaddedPackerI {
-  public static int ALIGN_TOP = 1000;
-  public static int ALIGN_BOTTOM = 1001;
-  public static int ALIGN_CENTER = 1002;
+  public static final int ALIGN_TOP = 1000;
+  public static final int ALIGN_BOTTOM = 1001;
+  public static final int ALIGN_CENTER = 1002;
+  public static final int ALIGN_STRETCH = 1003;
   
   int alignment = ALIGN_CENTER;
-  double maxHeight = 0;
-  protected double parent_spacer = 2;
-  protected double spacing = 2;
+  protected double parent_spacer = 10;
+  protected double spacing = 0;
 
   public Rectangle pack(GlyphI parent, ViewI view) {
     Rectangle2D pbox = parent.getCoordBox();
-    parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
     Vector children = parent.getChildren();
-    if (children == null) { maxHeight = 0;  }
-    else  { 
+    double maxHeight = 0;
+
+    if (children != null) { 
       GlyphI child;
       double height;
-    //        double maxHeight = 0;
       for (int i=0; i<children.size(); i++) {
 	child = (GlyphI)children.elementAt(i);
 	height = child.getCoordBox().height;
 	maxHeight = (height > maxHeight) ? height : maxHeight;
       }
     }
-    //    System.out.println(maxHeight);
-    adjustHeight(parent);
-    moveAllChildren(parent);
+
+
+    parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
+    moveAllChildren(parent, view);
 
     Rectangle2D newbox = new Rectangle2D();
     newbox.reshape(parent.getCoordBox());
@@ -55,37 +55,23 @@ public class CollapsePacker implements PaddedPackerI {
       LinearTransform tier_transform = transtier.getTransform();
       tier_transform.transform(newbox, newbox);
     }
-
     parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
     //    System.out.println("packed tier, coords are: " + parent.getCoordBox());
-
-
     return null;
   }
 
-  protected void adjustHeight(GlyphI parent) {
-    Rectangle2D pbox = parent.getCoordBox();
-    //    parent.getCoordBox().height = maxHeight + (2 * parent_spacer);
-    parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
+  protected void moveAllChildren(GlyphI parent, ViewI view) {
+    java.util.List children = parent.getChildren();
+    if (children == null) { return; }
+
+    for (int i=0; i<children.size(); i++) {
+      GlyphI child = (GlyphI) children.get(i);
+      pack(parent, child, view);
+    }
   }
 
-  
-  protected void moveAllChildren(GlyphI parent) {
-    Rectangle2D pbox = parent.getCoordBox();
-    Vector children = parent.getChildren();
-    if (children == null) { return; }
-    //	double parent_height = adjustHeight();
-    //	double parent_height = maxHeight + (2 * parent_spacer);
-    //	parent.setCoords(pbox.x, pbox.y, pbox.width, parent_height);
-    double parent_height = parent.getCoordBox().height;
-
-    Rectangle2D cbox;
-    double center = pbox.y + parent_height / 2;
-    for (int i=0; i<children.size(); i++) {
-      GlyphI child = (GlyphI)children.elementAt(i);
-      cbox = child.getCoordBox();
-      child.moveAbsolute(cbox.x, center - cbox.height/2);
-    }
+  public void setAlignment(int val) {
+    alignment = val;
   }
 
   public void setParentSpacer(double spacer) {
@@ -96,19 +82,32 @@ public class CollapsePacker implements PaddedPackerI {
     return parent_spacer;
   }
 
+  /** Spacing has no effect in a CollapsePacker. */
   public void setSpacing(double sp) {
     this.spacing = sp;
   }
 
+  /** Spacing has no effect in a CollapsePacker. */
   public double getSpacing() {
     return spacing;
   }
 
-  public void setAlignment(int val) {
-    alignment = val;
+  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
+    Rectangle2D pbox = parent.getCoordBox();
+    Rectangle2D cbox = child.getCoordBox();
+    
+    if (alignment == ALIGN_CENTER) {
+      double center = pbox.y + pbox.height / 2;
+      child.moveAbsolute(cbox.x, center - cbox.height/2);
+    } else if (alignment == ALIGN_TOP) {
+      child.moveAbsolute(cbox.x, pbox.y + parent_spacer);
+    } else if (alignment == ALIGN_BOTTOM) {
+      child.moveAbsolute(cbox.x, pbox.y + parent_spacer + pbox.height - cbox.height );
+    } else if (alignment == ALIGN_STRETCH) {
+      child.getCoordBox().reshape(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
+    }
+    return null;
   }
-
-  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) { return null; }
 
 }
 

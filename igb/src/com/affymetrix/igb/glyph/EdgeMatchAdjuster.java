@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
   static int frm_width = 400;
@@ -79,11 +80,24 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
     tslider.setPreferredSize(new Dimension(400, 70));
     this.setLayout(new BorderLayout());
     this.add("Center", tslider);
+
+    JPanel edge_match_box = new JPanel();
+    edge_match_box.setLayout(new GridLayout(2,2));
+    edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge match colors"));
+
+    JButton edge_match_colorB = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_COLOR, SeqMapView.default_edge_match_color);
+    edge_match_box.add(new JLabel("Standard: "));
+    edge_match_box.add(edge_match_colorB);
+    JButton fuzzy_edge_match_colorB = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
+    edge_match_box.add(new JLabel("Fuzzy matching: "));
+    edge_match_box.add(fuzzy_edge_match_colorB);    
+    this.add("South", edge_match_box);
   }
 
   public void stateChanged(ChangeEvent evt) {
     Object src = evt.getSource();
-    if (src == tslider) {
+    if (src == tslider && (! tslider.getValueIsAdjusting())) {
+      // EdgeMatching can be very slow, so don't redo it until user stops sliding the slider
       int current_thresh = tslider.getValue();
       if (current_thresh != prev_thresh) { 
         gviewer.adjustEdgeMatching(current_thresh);
@@ -91,5 +105,4 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
       }
     }
   }
-
 }

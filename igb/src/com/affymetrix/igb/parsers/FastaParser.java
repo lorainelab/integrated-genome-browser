@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
+import com.affymetrix.igb.util.SynonymLookup;
 
 /**
  *  Currently only loads the first sequence in a fasta file.
@@ -253,11 +254,11 @@ public class FastaParser {
       //      seq = new SimpleAnnotatedBioSeq(seqid, 31234567);
     }
     else {  // try to merge with existing seq
-      if (seq.getID().equals(seqid)) {
-	seq.setResidues(residues);
+      if (SynonymLookup.getDefaultLookup().isSynonym(seq.getID(), seqid)) {
+          seq.setResidues(residues);
       }
       else {
-	System.out.println("ABORTING MERGE, sequence ids don't match: " +
+	System.out.println("*****  ABORTING MERGE, sequence ids don't match: " +
 			   "old seq id = " + seq.getID() + ", new seq id = " + seqid);
       }
     }

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -26,10 +26,10 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.QuickLoaderView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -59,7 +59,7 @@ public class UnibrowControlServlet extends HttpServlet {
   public void setUnibrowInstance(IGB uni) {
     this.uni = uni;
   }
-
+  
   public void service(HttpServletRequest request, HttpServletResponse response) throws
     ServletException, IOException, NumberFormatException {
     System.out.println("UnibrowControlServlet received request");
@@ -69,6 +69,9 @@ public class UnibrowControlServlet extends HttpServlet {
       System.out.println("received ping request");
       return;
     }
+    
+    //  restore and focus on IGB when a unibrow call is made
+    DisplayUtils.bringFrameToFront(IGB.getSingletonIGB().getFrame());
     goToBookmark(this.uni, request.getParameterMap());
   }
 
@@ -124,13 +127,19 @@ public class UnibrowControlServlet extends HttpServlet {
 
     boolean ok = goToBookmark(uni, seqid, version, start_param, end_param, select_start_param, select_end_param, graph_files);
     if (!ok) { return; /* user cancelled the change of genome, or something like that */}
-    
+
     if (has_graph_source_urls) {
       com.affymetrix.igb.bookmarks.BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
     }
 
     String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
     loadDataFromURLs(uni, data_urls, null);
+    
+    String selectParam = getStringParameter(parameters, "select");
+    if (selectParam != null){
+      performSelection(selectParam);
+    }
+    
   }
 
   public static void loadDataFromURLs(final IGB uni, final String[] das_urls, final String[] tier_names) {
@@ -142,16 +151,18 @@ public class UnibrowControlServlet extends HttpServlet {
         }
         final UrlLoaderThread t = new UrlLoaderThread(uni.getMapView(), urls, tier_names);
         t.runEventually();
+        t.join();
       }
     } catch (MalformedURLException e) {
       IGB.errorPanel("Error loading bookmark\nDAS URL malformed\n", e);
     }
+    catch (InterruptedException ex){}
   }
 
   static boolean goToBookmark(IGB uni, String seqid, String version,
-			   String start_param, String end_param,
-			   String select_start_param, String select_end_param,
-			   final String[] graph_files) throws NumberFormatException {
+                           String start_param, String end_param,
+                           String select_start_param, String select_end_param,
+                           final String[] graph_files) throws NumberFormatException {
 
     int start = 0;
     int end = Integer.MAX_VALUE;
@@ -170,7 +181,7 @@ public class UnibrowControlServlet extends HttpServlet {
     int selstart = -1;
     int selend = -1;
     if (select_start_param != null && select_end_param != null
-	&& select_start_param.length()>0 && select_end_param.length()>0) {
+        && select_start_param.length()>0 && select_end_param.length()>0) {
       selstart = Integer.parseInt(select_start_param);
       selend = Integer.parseInt(select_end_param);
     }
@@ -178,7 +189,7 @@ public class UnibrowControlServlet extends HttpServlet {
   }
 
   static boolean goToBookmark(IGB uni, String seqid, String version, int start, int end,
-			   final String[] graph_files) {
+                           final String[] graph_files) {
     return goToBookmark(uni, seqid, version, start, end, -1, -1, graph_files);
   }
 
@@ -193,8 +204,8 @@ public class UnibrowControlServlet extends HttpServlet {
    *  @return true indicates that the action suceeded
    */
   static boolean goToBookmark(IGB uni, String seqid, String version,
-			   int start, int end, final int selstart, final int selend,
-			   final String[] graph_files) {
+                           int start, int end, final int selstart, final int selend,
+                           final String[] graph_files) {
 
     if (version == null || version.trim().equals("")) {
       IGB.errorPanel("Genome version not specified in bookmark.");
@@ -204,15 +215,21 @@ public class UnibrowControlServlet extends HttpServlet {
       IGB.errorPanel("Sequence id not specified in bookmark.");
       return false; // cancel
     }
-                             
+
     // no longer special-casing for version = "unknown"...
     final SeqMapView gviewer = uni.getMapView();
-    final SingletonGenometryModel gmodel = IGB.getGenometryModel();
+    final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
-    AnnotatedSeqGroup book_group = gmodel.getSeqGroup(version);
+    AnnotatedSeqGroup book_group = null;
+    if ("unknown".equals(version)) {
+      book_group = selected_group;
+    } else {
+      book_group = gmodel.getSeqGroup(version);
+    }
 
     if (book_group == null) {
-      IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.");
+      IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
+        "You may need to choose a different QuickLoad server.");
       return false; // cancel
     }
     System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
@@ -220,8 +237,7 @@ public class UnibrowControlServlet extends HttpServlet {
     if (book_group != null && ! book_group.equals(selected_group)) {
       if (selected_group != null && ! selected_group.equals("null")) {
         if (!uni.confirmPanel("Do you want to switch the Genome version to '" +
-                              version +
-                              "' ?\n Please be aware you will loose your current work")) {
+                              version )) {
           return false; // was cancelled
         }
       }
@@ -233,7 +249,7 @@ public class UnibrowControlServlet extends HttpServlet {
     // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
     //     gviewer is registered as a SeqSelectionListener on gmodel
 
-    // hopefully setting gmodel's selected seq group above triggered population of seqs 
+    // hopefully setting gmodel's selected seq group above triggered population of seqs
     //   for group if not already populated
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     final MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
@@ -249,41 +265,67 @@ public class UnibrowControlServlet extends HttpServlet {
       if (book_seq != selected_seq)  {
         gmodel.setSelectedSeq(book_seq);
       }
-      
+
       final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
       final double middle = (start + end)/2.0;
 //      System.out.println("graph files: " + graph_files);
       SwingUtilities.invokeLater(new Runnable() {
-	  public void run() {
-	    try {
-//	      MutableAnnotatedBioSeq view_seq = (MutableAnnotatedBioSeq)
-//		view_span.getBioSeq();
-//	      if (view_seq != gmodel.getSelectedSeq()) {
-//		gviewer.setAnnotatedSeq(view_seq);
+          public void run() {
+            try {
+//              MutableAnnotatedBioSeq view_seq = (MutableAnnotatedBioSeq)
+//                view_span.getBioSeq();
+//              if (view_seq != gmodel.getSelectedSeq()) {
+//                gviewer.setAnnotatedSeq(view_seq);
 //                gviewer.setAnnotatedSeq(aseq);
-//	      }
+//              }
               gviewer.setZoomSpotX(middle);
-	      gviewer.zoomTo(view_span);
-	      if (selstart >= 0 && selend >= 0) {
-		SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-		gviewer.setSelectedRegion(regionsym);
-	      }
-	      if (graph_files != null) {
-		URL[] graph_urls = new URL[graph_files.length];
-		for (int i = 0; i < graph_files.length; i++) {
-		  graph_urls[i] = new URL(graph_files[i]);
-		}
-		Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
-		  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
-		t.start();
-	      }
-	    }
-	    catch (Exception ex) {
-	      ex.printStackTrace();
-	    }
-	  }
-	});
+              gviewer.zoomTo(view_span);
+              if (selstart >= 0 && selend >= 0) {
+                SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+                gviewer.setSelectedRegion(regionsym, true);
+              }
+              if (graph_files != null) {
+                URL[] graph_urls = new URL[graph_files.length];
+                for (int i = 0; i < graph_files.length; i++) {
+                  graph_urls[i] = new URL(graph_files[i]);
+                }
+                Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
+                  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
+                t.start();
+              }
+            }
+            catch (Exception ex) {
+              ex.printStackTrace();
+            }
+          }
+        });
     }
     return true; // was not cancelled, was sucessful
+  }
+  
+  
+  /**
+   * This handles the "select" API parameter.  The "select" parameter can be followed by one 
+   * or more comma separated IDs in the form: &select=<id_1>,<id_2>,...,<id_n>
+   * Example:  "&select=EPN1,U2AF2,ZNF524" 
+   * Each ID that exists in IGB's ID to symmetry hash will be selected, even if the symmetries 
+   * lie on different sequences.
+   * @param selectParam The select parameter passed in through the API
+   */
+  private static void performSelection(String selectParam) {
+
+    if (selectParam == null){return;}
+    
+    // split the parameter by commas
+    String[] ids = selectParam.split(",");
+    
+    if (selectParam.length() == 0) {return;}
+    
+    List sym_list = new ArrayList(ids.length);
+    for (int i=0; i<ids.length; i++) {
+      sym_list.addAll(gmodel.getSelectedSeqGroup().findSyms(ids[i]));
+    }
+    
+    gmodel.setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);    
   }
 }

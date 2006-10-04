@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -34,9 +34,10 @@ public class LiftParser {
   static int CHROM_LENGTH = 4;
   static int CONTIG_NAME_SUBFIELD = 1;
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
   MutableAnnotatedBioSeq template_seq = default_seq_template;
+
+  boolean SET_COMPOSITION = true;
 
   public LiftParser()  {  }
 
@@ -44,18 +45,20 @@ public class LiftParser {
     template_seq = template;
   }
 
-  public Map loadChroms(String file_name, String genome_version) {
+  public AnnotatedSeqGroup loadChroms(String file_name, String genome_version) 
+  throws IOException {
     System.out.println("trying to load lift file: " + file_name);
+    FileInputStream fistr = null;
+    AnnotatedSeqGroup result = null;
     try {
       File fil = new File(file_name);
-      FileInputStream fistr = new FileInputStream(fil);
-      Map liftmap = this.parse(fistr, genome_version);
-      return liftmap;
+      fistr = new FileInputStream(fil);
+      result = this.parse(fistr, genome_version);
     }
-    catch (Exception ex) {
-      ex.printStackTrace();
+    finally {
+       if (fistr != null) try { fistr.close(); } catch (Exception e) {} 
     }
-    return null;
+    return result;
   }
 
 
@@ -64,38 +67,33 @@ public class LiftParser {
    *  @return  A Map with chromosome ids as keys, and CompositeBioSeqs representing
    *     chromosomes in the lift file as values.
    */
-  public Map parse(InputStream istr, String genome_version) throws IOException {
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version) throws IOException {
     return parse(istr, genome_version, true);
   }
 
-
-  private Map parse(InputStream istr, String genome_version, boolean annotate_seq) throws IOException {
-    AnnotatedSeqGroup grp = parseGroup(istr, genome_version, annotate_seq);
-    Map seqhash = grp.getSeqs();
-    return seqhash;
-  }
-
   /**
-   *  Reads lift-format from the input stream.
+   *  Reads lift-format from the input stream and creates a new AnnotatedSeqGroup.
+   *  The new AnnotatedSeqGroup will be inserted into the SingletonGenometryModel.
    *  @return an AnnotatedSeqGroup containing CompositeBioSeqs representing
    *     chromosomes in the lift file.
    */
-  public AnnotatedSeqGroup parseGroup(InputStream istr, String genome_version, boolean annotate_seq)
+  public AnnotatedSeqGroup parse(InputStream istr, String genome_version, boolean annotate_seq)
     throws IOException {
     System.out.println("parsing in lift file");
     Timer tim = new Timer();
     tim.start();
     int contig_count = 0;
     int chrom_count = 0;
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
 
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-    java.util.List seqlist = new ArrayList();
-    Map temp_seqhash = new HashMap();
 
     try {
       String line;
-      while ((line = br.readLine()) != null)  {
+      Thread thread = Thread.currentThread();
+      while ((line = br.readLine()) != null && (! thread.isInterrupted())) {
+	if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
 	String fields[] = re_tab.split(line);
 	int chrom_start = Integer.parseInt(fields[CHROM_START]);
 	int match_length = Integer.parseInt(fields[MATCH_LENGTH]);
@@ -105,35 +103,29 @@ public class LiftParser {
 	String tempname = fields[COMBO_NAME];
 	String splitname[] = re_name.split(tempname);
 	String contig_name = splitname[CONTIG_NAME_SUBFIELD];
-	MutableAnnotatedBioSeq contig = new SimpleAnnotatedBioSeq(contig_name, match_length);
+	// experimenting with constructing virtual sequences by using chromosomes as contigs
+	MutableAnnotatedBioSeq contig = seq_group.getSeq(contig_name);
+	if (contig == null)  { contig = new SimpleAnnotatedBioSeq(contig_name, match_length); }
 
 	contig_count++;
-	MutableAnnotatedBioSeq chrom = (MutableAnnotatedBioSeq)seq_group.getSeq(chrom_name);
-	if (chrom == null) { chrom = (MutableAnnotatedBioSeq)temp_seqhash.get(chrom_name); }
+	MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
 	if (chrom == null) {
 	  chrom_count++;
-	  try  {
-	    chrom = (MutableAnnotatedBioSeq)template_seq.getClass().newInstance();
-	  } catch (Exception ex) { ex.printStackTrace(); }
-	  chrom.setID(chrom_name);
-	  chrom.setLength(chrom_length);
+          chrom = seq_group.addSeq(chrom_name, chrom_length);
 	  if (chrom instanceof Versioned) {
 	    ((Versioned)chrom).setVersion(genome_version);
 	  }
-	  SymWithProps comp = new SimpleSymWithProps();
-	  comp.setProperty("method", "contigs");
-	  if (chrom instanceof CompositeBioSeq) {
-	    ((CompositeBioSeq)chrom).setComposition(comp);
-	  }
-
-	  if (annotate_seq)  {
-	    chrom.addAnnotation(comp);
-	  }
-	  seqlist.add(chrom);  // adding to seqlist for sorting
-	  temp_seqhash.put(chrom_name, chrom);
 	}
 	if (chrom instanceof CompositeBioSeq) {
 	  MutableSeqSymmetry comp = (MutableSeqSymmetry)(((CompositeBioSeq)chrom).getComposition());
+          if (comp == null)  {
+	    comp = new SimpleSymWithProps();
+	    ((SimpleSymWithProps)comp).setProperty("method", "contigs");
+            if (SET_COMPOSITION)  { ((CompositeBioSeq)chrom).setComposition(comp); }
+	    if (annotate_seq)  {
+	      chrom.addAnnotation(comp);
+	    }
+          }
 	  SimpleSymWithProps csym = new SimpleSymWithProps();
 	  csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
 	  csym.addSpan(new SimpleSeqSpan(0, match_length, contig));
@@ -142,23 +134,20 @@ public class LiftParser {
 	  comp.addChild(csym);
 	}
       }
-      Collections.sort(seqlist, new ChromComparator()); // sorting seqlist before adding seqs to seq group
-      for (int i=0; i<seqlist.size(); i++) {
-	MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)seqlist.get(i);
-	seq_group.addSeq(seq);
-      }
     }
     catch (EOFException ex) {
       System.out.println("reached end of lift file");
     }
 
-    Collection chroms = seq_group.getSeqs().values();
+    Collection chroms = seq_group.getSeqList();
     Iterator iter = chroms.iterator();
     while (iter.hasNext()) {
       CompositeBioSeq chrom = (CompositeBioSeq)iter.next();
       MutableSeqSymmetry comp = (MutableSeqSymmetry)chrom.getComposition();
-      SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
-      comp.addSpan(chromspan);
+      if (comp != null && SET_COMPOSITION) {
+	SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);
+	comp.addSpan(chromspan);
+      }
     }
     System.out.println("chroms loaded, load time = " + tim.read()/1000f);
     System.out.println("contig count: " + contig_count);

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -852,6 +852,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     selected.removeElement(g);
   }
 
+  public void clearWidget() {
+    super.clearWidget();
+  }
 
   /**
    * Scale constraints are currently only considered during
@@ -874,6 +877,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
   public int getZoomBehavior(int axisid) {
     return zoom_behavior[axisid];
+  }
+
+  public double getZoomCoord(int axisid) {
+    return zoom_coord[axisid];
   }
 
   public void setZoomBehavior(int axisid, int constraint, double coord) {
@@ -971,7 +978,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param datamodel being visualized.
    * @return a Vector of all the glyphs tied to the given data model.
    */
-  public Vector getItems(Object datamodel) {
+   public Vector getItems(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;
@@ -984,6 +991,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       return vec;
     }
   }
+
 
   /**
    *  If there is more than one glyph associated with the datamodel,

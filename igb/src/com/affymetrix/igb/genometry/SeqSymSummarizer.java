@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,16 +21,9 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
+import com.affymetrix.igb.util.GraphSymUtils;
 
 public class SeqSymSummarizer {
-
-  /**
-   *  Gets a summary with binary_depth = false.
-   *  @see #getSymmetrySummary(List, BioSeq, boolean)
-   */
-  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq)  {
-    return getSymmetrySummary(syms, seq, false);
-  }
 
   /**
    *  Makes a summary graph of a set the spans of some SeqSymmetries on a given BioSeq.
@@ -48,21 +41,22 @@ public class SeqSymSummarizer {
    *</pre>
    *  @param syms a List of SeqSymmetry's
    *  @param seq the sequence you want the summary computed for
-   *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean)}
+   *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean, String)}
    */
-  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth)  {
+  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
     int symcount = syms.size();
     java.util.List leaf_spans = new ArrayList(symcount);
     for (int i=0; i<symcount; i++) {
       SeqSymmetry sym = (SeqSymmetry)syms.get(i);
       SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
     }
-    return getSpanSummary(leaf_spans, binary_depth);
+    if (leaf_spans.isEmpty()) {
+      return null;
+    } else {
+      return getSpanSummary(leaf_spans, binary_depth, id);
+    }
   }
 
-  public static GraphSym getSpanSummary(java.util.List spans)  {
-    return getSpanSummary(spans, false);
-  }
 
   /**
    *  GetSpanSummary.
@@ -73,11 +67,11 @@ public class SeqSymSummarizer {
    *                  if true, then return a graph with flattened / binary depth information,
    *                  1 for covered, 0 for not covered
    */
-  public static GraphSym getSpanSummary(java.util.List spans, boolean binary_depth) {
+  public static GraphSym getSpanSummary(java.util.List spans, boolean binary_depth, String gid) {
     //    System.out.println("SeqSymSummarizer: starting to summarize syms");
     //    System.out.println("binary depth: " + binary_depth);
     BioSeq seq = ((SeqSpan)spans.get(0)).getBioSeq();
-    int spancount = spans.size();
+    //int spancount = spans.size();
     int span_num = spans.size();
     int[] starts = new int[span_num];
     int[] stops = new int[span_num];
@@ -96,7 +90,7 @@ public class SeqSymSummarizer {
     //   needed, though likely won't fill it
     IntList transition_xpos = new IntList(span_num * 2);
     FloatList transition_ypos = new FloatList(span_num * 2);
-    int transitions = 0;
+    int transitions = 0; // the value of this variable is never used for anything
     int prev_depth = 0;
     while ((starts_index < span_num) && (stops_index < span_num)) {
       // figure out whether next position is a start, stop, or both
@@ -169,11 +163,61 @@ public class SeqSymSummarizer {
       }
     }
 
+    String uid = GraphSymUtils.getUniqueGraphID(gid, seq);
     GraphSym gsym =
-      new GraphSym(transition_xpos.copyToArray(), transition_ypos.copyToArray(),
-		   "summary", seq);
+      new GraphSym(transition_xpos.copyToArray(), transition_ypos.copyToArray(), uid, seq);
     return gsym;
   }
+
+
+  /**
+   *  Assumes all spans refer to same BioSeq
+   */
+  public static java.util.List getMergedSpans(java.util.List spans) {
+    GraphSym landscape = getSpanSummary(spans, true, null);
+    java.util.List merged_spans = projectLandscapeSpans(landscape);
+    return merged_spans;
+  }
+
+  public static java.util.List projectLandscapeSpans(GraphSym landscape) {
+    java.util.List spanlist = new ArrayList();
+    BioSeq seq = landscape.getGraphSeq();
+    int xcoords[] = landscape.getGraphXCoords();
+    float ycoords[] = landscape.getGraphYCoords();
+    int num_points = xcoords.length;
+
+    int current_region_start = 0;
+    int current_region_end = 0;
+    boolean in_region = false;
+    for (int i=0; i<num_points; i++) {
+      int xpos = xcoords[i];
+      float ypos = ycoords[i];
+      if (in_region) {
+	if (ypos <= 0) { // reached end of region, make SeqSpan
+	  in_region = false;
+	  current_region_end = xpos;
+	  SeqSpan newspan = new SimpleSeqSpan(current_region_start, current_region_end, seq);
+	  spanlist.add(newspan);
+	}
+	else {  // still in region, do nothing
+	}
+      }
+      else {  // not already in_region
+	if (ypos > 0) {
+	  in_region = true;
+	  current_region_start = xpos;
+	}
+	else {  // still not in region, so do nothing
+	}
+      }
+    }
+    if (in_region) {  // last point was still in_region, so make a span to end?
+      // pretty sure this won't happen, based on how getSymmetrySummary()/getSpanSummary() work
+      System.err.println("still in a covered region at end of projectLandscapeSpans() loop!");
+    }
+    return spanlist;
+  }
+
 
   public static SymWithProps projectLandscape(GraphSym landscape) {
     BioSeq seq = landscape.getGraphSeq();
@@ -210,7 +254,7 @@ public class SeqSymSummarizer {
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
       // pretty sure this won't happen, based on how getSymmetrySummary()/getSpanSummary() work
-      System.err.println("still in a covered region at end of getUnion() loop!");
+      System.err.println("still in a covered region at end of projectLandscape() loop!");
     }
 
     if (psym.getChildCount() <= 0) {
@@ -230,15 +274,22 @@ public class SeqSymSummarizer {
    *  redoing SeqSymmetry union (to eventually replace SeqUtils.union() method(s))
    *  with a more efficient version.  Really just leveraging off getSymmetrySummary()/getSpanSummary(),
    *  then flattening resulting GraphSym into separate SeqSpans for each region with depth > 0
+   *
+   *  This will merge not only overlapping syms but also abutting syms (where symA.getMax() == symB.getMin())
    */
   public static SeqSymmetry getUnion(java.util.List syms, BioSeq seq)  {
     //    MutableSeqSymmetry psym = new SimpleSymWithProps();
     // first get the landscape as a GraphSym
-    GraphSym landscape = getSymmetrySummary(syms, seq, true);
+    GraphSym landscape = getSymmetrySummary(syms, seq, true, null);
     // now just flatten it
-    SeqSymmetry union = projectLandscape(landscape);
-    return union;
+    if (landscape != null) {
+      return projectLandscape(landscape);
+    } else {
+      return null;
+    }
   }
+
+
 
   /**
    *  redoing SeqSymmetry intersection (to eventually replace SeqUtils.intersection() method(s))
@@ -251,7 +302,7 @@ public class SeqSymSummarizer {
     java.util.List symsAB = new ArrayList();
     symsAB.add(unionA);
     symsAB.add(unionB);
-    GraphSym combo_graph = getSymmetrySummary(symsAB, seq);
+    GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
     // combo_graph should now be landscape where:
     //    no coverage ==> depth = 0;
     //    A not B     ==> depth = 1;
@@ -325,7 +376,7 @@ public class SeqSymSummarizer {
     java.util.List symsAB = new ArrayList();
     symsAB.add(unionA);
     symsAB.add(unionB);
-    GraphSym combo_graph = getSymmetrySummary(symsAB, seq);
+    GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
     // combo_graph should now be landscape where:
     //    no coverage ==> depth = 0;
     //    A not B     ==> depth = 1;
@@ -388,6 +439,8 @@ public class SeqSymSummarizer {
    */
   public static SeqSymmetry getExclusive(java.util.List symsA, java.util.List symsB, BioSeq seq) {
     SeqSymmetry xorSym = getXor(symsA, symsB, seq);
+    //  if no spans for xor, then won't be any for one-sided xor either, so return null;
+    if (xorSym == null)  { return null; }
     java.util.List xorList = new ArrayList();
     xorList.add(xorSym);
     SeqSymmetry a_not_b = getIntersection(symsA, xorList, seq);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -33,7 +33,7 @@ public class UniFileFilter extends FileFilter {
   private boolean useExtensionsInDescription = true;
   
   public UniFileFilter() {
-    this.filters = new HashSet();
+    this.filters = new LinkedHashSet();
   }
   
   public UniFileFilter(String extension) {
@@ -50,7 +50,18 @@ public class UniFileFilter extends FileFilter {
     this(filters, null);
   }
   
-  
+  /**
+   *  This is the full constructor.
+   *  <pre>
+   *  Example 1:
+   *  UniFileFilter uff = new UniFileFilter(new String[] {"gff", "gtf"}, "GFF Files"));
+   *  uff.addCompressionEndings(new String[] {".gz", ".zip"});
+   *
+   *  Example 2:
+   *  UniFileFilter uff = new UniFileFilter(new String[] {"sin", "egr", "egr.txt"}, "Scored Interval Files"));
+   *  uff.addCompressionEndings(new String[] {".gz", ".zip"});
+   *  </pre>
+   */
   public UniFileFilter(String[] filters, String description) {
     this();
     for (int i = 0; i < filters.length; i++) {
@@ -60,21 +71,28 @@ public class UniFileFilter extends FileFilter {
     if(description!=null) setDescription(description);
   }
   
-  
   public boolean accept(File f) {
     if(f != null) {
       if(f.isDirectory()) {
         return true;
       }
-      String extension = getExtension(f);
-      if(extension != null && filters.contains(extension)) {
-        return true;
-      };
+      
+      // We used to use getExtension(f) and check whether filters.contains(extension)
+      // but getExtension(f) can't return compound extensions like ".egr.txt"
+
+      String base_name = stripCompressionEndings(f.getName().toLowerCase());
+      Iterator iter = filters.iterator();
+      while (iter.hasNext()) {
+        String ending = "." + (String) iter.next();
+        if (base_name.endsWith(ending)) {
+          return true;
+        }
+      }
     }
     return false;
   }
 
-  Vector compression_endings = new Vector(4);
+  List compression_endings = new ArrayList(4);
 
   /** Adds a file extension that will be considered to represent
    *  compression types that the filter should
@@ -123,7 +141,8 @@ public class UniFileFilter extends FileFilter {
    *  been called:
    *<ol>
    *<li> "foo.bar" returns "bar".  
-   *<li> "foo.BAR.gz" returns "bar".  
+   *<li> "foo.BAR.gz" returns "bar".
+   *<li> "foo.egr.txt" returns "txt". (NOT "egr.txt" as you might wish)  
    *<li> "foo" returns null. 
    *<li> "foo.gz" returns null.
    *</ol>
@@ -143,7 +162,7 @@ public class UniFileFilter extends FileFilter {
   
   public void addExtension(String extension) {
     if(filters == null) {
-      filters = new HashSet(5);
+      filters = new LinkedHashSet(5);
     }
     filters.add(extension.toLowerCase());
     fullDescription = null;

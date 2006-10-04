@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,9 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.menuitem.FileTracker;
 import java.io.*;
+import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -39,19 +41,23 @@ public class UniFileChooser extends JFileChooser {
 
   private FileFilter current_file_filter;
 
+  protected UniFileChooser() {
+    // bare constructor.  Allows for subclassing.
+    super();
+  }
+  
   /** 
    *  Creates and returns a JFileChooser which accepts only filenames 
-   *  ending in period+extension when creating or writing to a file,
-   *  it also prefers this ending when reading
-   *  files, but will allow you to try to read an existing file
-   *  with a different extension.
+   *  ending in period+extension when creating or writing to a file.
    *
-   *  <p>Example: new UniFileChooser("AXML file (*.axml)", "axml");
+   *  <p>Example: new UniFileChooser("AXML file", "axml");
    */
   public UniFileChooser(String description, String extension) {
-
-    super(new File((String) System.getProperties().get("user.dir")));
-
+    this();
+    File f = FileTracker.OUTPUT_DIR_TRACKER.getFile();
+    if (f != null) {
+      setSelectedFile(f);
+    }
     reinitialize(description, extension);
   }
 
@@ -65,33 +71,24 @@ public class UniFileChooser extends JFileChooser {
   }
 
   /** 
-   *  Reinitializes a singleton JFileChooser to accept only an ".axml"
-   *  filename  when creating a file, and to prefer ".axml" filenames
-   *  when reading files, but will allow you to try to read an existing
-   *  file with a different extension.
+   *  Reinitializes a singleton JFileChooser to accept only an ".axml" filename.
    */
   public static UniFileChooser getAXMLFileChooser() {
-    return getFileChooser("AXML file (*.axml)", "axml");
+    return getFileChooser("AXML file", "axml");
   }
 
   /** 
-   *  Reinitializes a singleton JFileChooser to accept only an ".xml"
-   *  filename  when creating a file, and to prefer ".xml" filenames
-   *  when reading files, but will allow you to try to read an existing
-   *  file with a different extension.
+   *  Reinitializes a singleton JFileChooser to accept only an ".xml" filename.
    */
   public static UniFileChooser getXMLFileChooser() {
-    return getFileChooser("XML file (*.xml)", "xml");
+    return getFileChooser("XML file", "xml");
   }
 
   /** 
    *  Resets such that it will accept only filenames 
-   *  ending in period+extension when creating or writing to a file,
-   *  and will prefer this ending when reading
-   *  files, but will allow opening an existing file
-   *  with a different extension for reading.
+   *  ending in period+extension when creating or writing to a file.
    *
-   *  <p>Example: reinitialize("AXML file (*.axml)", "axml");
+   *  <p>Example: reinitialize("AXML file", "axml");
    */
   protected void reinitialize(final String description, final String extension) {
     if (description==null || extension==null || "".equals(extension)) throw new 
@@ -104,26 +101,21 @@ public class UniFileChooser extends JFileChooser {
       this.description = description;
       this.extension = extension;
 
-      if (current_file_filter != null) {
-        removeChoosableFileFilter(current_file_filter);
+      FileFilter[] filters = getChoosableFileFilters();
+      for (int i=0; i<filters.length; i++) {
+        removeChoosableFileFilter(filters[i]);
       }
-
-      current_file_filter = new FileFilter() {
-        public final boolean accept(File f) {
-          return (f.isDirectory() || f.getName().endsWith("."+extension));
-        }
-        public final String getDescription() {return description;}
-      };
-
+      current_file_filter = new UniFileFilter(extension, description);
+      
       addChoosableFileFilter(current_file_filter);
     }
 
-    addChoosableFileFilter(getAcceptAllFileFilter());
+    //addChoosableFileFilter(getAcceptAllFileFilter());
     setFileFilter(current_file_filter);
     setMultiSelectionEnabled(false);
-    setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    setFileSelectionMode(JFileChooser.FILES_ONLY);
     rescanCurrentDirectory();
-    setSelectedFile(null);  
+    setSelectedFile(null);
   }
 
 
@@ -135,45 +127,78 @@ public class UniFileChooser extends JFileChooser {
     File f = getSelectedFile();
 
     if (f.isDirectory()) {
-      setSelectedFile(null);  
+      setSelectedFile(null);
       setCurrentDirectory(f);
       return;
     }
-
+    
+    FileFilter filter = getFileFilter();
+    UniFileFilter uni_filter = null;
+    Set extensions = Collections.EMPTY_SET;
+    if (filter instanceof UniFileFilter) {
+      uni_filter = (UniFileFilter) filter;
+      extensions = uni_filter.getExtensions();
+    } else {
+      // if not a UniFileFilter, defer to the approval mechanism of the filter
+      if (filter.accept(f)) {
+        super.approveSelection();
+      } else {
+        getToolkit().beep();
+        return;
+      }
+    }
     if (getDialogType() == OPEN_DIALOG) {
       if (f.exists()) {
         super.approveSelection();
       }
-      else { // if a similar filename with "."+extension exists, suggest that
+      else if (! extensions.isEmpty()) { // if a similar filename with "."+extension exists, suggest that
         getToolkit().beep();
-        File file2 = applyExtension(f, extension);
-        if (file2.exists()) setSelectedFile(file2);
+        Iterator iter = extensions.iterator();
+        while (iter.hasNext()) {
+          String extension = (String) iter.next();
+          File file2 = applyExtension(f, extension);
+          if (file2.exists()) {
+            setSelectedFile(file2);
+            return;
+          }
+        }
       }
     }
 
     else if (getDialogType() == SAVE_DIALOG) {
-      if (f.getName().endsWith("."+extension)) {
-        if (! f.exists()) {
-          super.approveSelection();
-        }
-        else { // give the user the choice to overwrite the existing file or not
-          // The option pane used differs from the confirmDialog only in
-          // that "No" is the default choice.
-          getToolkit().beep();
-          String[] options = {"Yes", "No"};
-          if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-            this, "Overwrite Existing File?", "File Exists",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-            options, options[1])) super.approveSelection();
+      Iterator iter = extensions.iterator();
+      while (iter.hasNext()) {
+        String extension = (String) iter.next();
+        if (f.getName().endsWith("."+extension)) {
+          if (! f.exists()) {
+            super.approveSelection();
+            return;
+          }
+          else { // give the user the choice to overwrite the existing file or not
+            // The option pane used differs from the confirmDialog only in
+            // that "No" is the default choice.
+            getToolkit().beep();
+            String[] options = {"Yes", "No"};
+            if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+              this, "Overwrite Existing File?", "File Exists",
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+              options, options[1])) {
+              super.approveSelection();
+              return;
+            }
+            return;
+          }
         }
       }
-      else { // Suggest to the user a new filename ending with "."+extension
+
+      if (! extensions.isEmpty()) { // Suggest to the user a new filename ending with "." + the first extension
         getToolkit().beep();
-        setSelectedFile(applyExtension(f, extension));
+        String first_extension = (String) extensions.iterator().next();
+        setSelectedFile(applyExtension(f, first_extension));
       }
     }
   }
-
+  
   /** Return a new file with the given extension at the end of the name. */
   private File applyExtension(File f, String extension) {
     String name = f.getName();
@@ -187,5 +212,4 @@ public class UniFileChooser extends JFileChooser {
     }
     else return f;
   }
-  
 }

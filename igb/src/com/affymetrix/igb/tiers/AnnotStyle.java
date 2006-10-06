@@ -69,6 +69,7 @@ public class AnnotStyle implements IAnnotStyle {
   int glyph_depth = default_glyph_depth;
   double height = default_height;
   double y = default_y;
+  String url = null;
     
   String unique_name;
   String human_name;
@@ -395,7 +396,17 @@ public class AnnotStyle implements IAnnotStyle {
   public double getY() { 
     return y; 
   }
+  
+  /** A non-persistent property.  Usually set by UCSC browser "track" lines. */
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
+  /** A non-persistent property.  Usually set by UCSC browser "track" lines. Can return null. */
+  public String getUrl() {
+    return this.url;
+  }
+  
   public boolean getPersistent() {
     return (is_persistent && getNode() != null);
   }

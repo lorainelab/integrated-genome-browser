@@ -115,12 +115,21 @@ public class TrackLineParser {
     }
     
     reformatColor(track_hash);
+    
+    String name = (String) track_hash.get("name");
+    String url = (String) track_hash.get("url");
+    
+    if (name != null && url != null) {
+      AnnotStyle style = AnnotStyle.getInstance(name, false);
+      style.setUrl(url);
+    }
+    
     return track_hash;
   }
 
   /** Performs a test of the track-line parsing. */
   public static void main(String[] args) {
-    String str = "track foo=bar this=\"that\" color=123,100,10 nothing=\"\" link=\"http://www.foo.bar?moo=cow&this=$$\"";
+    String str = "track foo=bar this=\"that\" color=123,100,10 nothing=\"\" url=\"http://www.foo.bar?moo=cow&this=$$\"";
     TrackLineParser tlp = new TrackLineParser();
     Map m;
     m = tlp.setTrackProperties(str);

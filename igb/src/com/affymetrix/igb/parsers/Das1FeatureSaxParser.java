@@ -398,7 +398,6 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public void addFeature() {
-    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
     boolean filter = false;
 
     /*

@@ -55,7 +55,7 @@ for more than one per feature)
            <LINK href="http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr22:20012405-20012900&amp;db=hg10">Link to UCSC Browser for the feature</LINK>
            <GROUP id="Em:D87024.C22.12.chr22.20012405">
              <LINK href="http://genome.ucsc.edu/cgi-bin/hgTracks?position=chr22:20012405-20012900&amp;db=hg10">Link to UCSC Browser</LINK>
-             <NOTE>This is a group note<NOTE>
+             <NOTE>This is a group note</NOTE>
            </GROUP>
        </FEATURE>
      </SEGMENT>

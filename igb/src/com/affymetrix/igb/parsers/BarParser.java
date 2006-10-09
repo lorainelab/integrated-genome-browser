@@ -784,8 +784,11 @@ public class BarParser implements AnnotationWriter  {
 	else { new_group_name = version; }
 	System.out.println("group not found, creating new seq group: " + new_group_name);
 	group = gmodel.addSeqGroup(new_group_name);
+      }
 
-        // select the new group: forces DataLoaderView to notice new group
+      if (gmodel.getSelectedSeqGroup() != group) {
+        // This is necessary to make sure new groups get added to the DataLoadView.
+        // maybe need a SeqGroupModifiedEvent class instead.
         gmodel.setSelectedSeqGroup(group);
       }
     }

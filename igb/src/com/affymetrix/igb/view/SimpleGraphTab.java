@@ -877,7 +877,7 @@ implements SeqSelectionListener, SymSelectionListener {
       if (glyphs.size() == 2) {
         GraphGlyph graphA = (GraphGlyph) glyphs.get(0);
         GraphGlyph graphB = (GraphGlyph) glyphs.get(1);
-        GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, GraphGlyphUtils.MATH_DIFFERENCE);
+        GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
         
         MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
         aseq.addAnnotation(newsym);

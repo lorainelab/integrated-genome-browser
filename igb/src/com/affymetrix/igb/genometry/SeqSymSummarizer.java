@@ -31,19 +31,16 @@ public class SeqSymSummarizer {
    *    creating a summary over the leafs.
    *  Currently assumes that spans are integral.
    *<pre>
-   *  Performance: ~ (n^3)(log(n)) ?   where n is number of spans in the syms
+   *  Performance: ~ n log(n) ?   where n is number of spans in the syms
    *      a.) collect leaf spans, ~linear scan (n)
    *      b.) sort span starts and ends, ~(n)(log(n))
    *      c.) get transitions, linear scan (n)
-   *  But given the speed of the code in the linear scans,
-   *     it works a lot better than (n^3)log(n) sounds, at least for the range of
-   *     number of spans we're interested in...
    *</pre>
    *  @param syms a List of SeqSymmetry's
    *  @param seq the sequence you want the summary computed for
    *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean, String)}
    */
-  public static GraphSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
+  public static GraphIntervalSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
     int symcount = syms.size();
     java.util.List leaf_spans = new ArrayList(symcount);
     for (int i=0; i<symcount; i++) {
@@ -67,7 +64,7 @@ public class SeqSymSummarizer {
    *                  if true, then return a graph with flattened / binary depth information,
    *                  1 for covered, 0 for not covered
    */
-  public static GraphSym getSpanSummary(java.util.List spans, boolean binary_depth, String gid) {
+  public static GraphIntervalSym getSpanSummary(java.util.List spans, boolean binary_depth, String gid) {    
     //    System.out.println("SeqSymSummarizer: starting to summarize syms");
     //    System.out.println("binary depth: " + binary_depth);
     BioSeq seq = ((SeqSpan)spans.get(0)).getBioSeq();
@@ -163,9 +160,19 @@ public class SeqSymSummarizer {
       }
     }
 
+    int[] x_positions = transition_xpos.copyToArray();
+    int[] widths = new int[x_positions.length];
+    for (int i=0; i<widths.length-1; i++) {
+      widths[i] = x_positions[i+1] - x_positions[i];
+    }
+    widths[widths.length-1] = 1;
+    
+    // Originally, this returned a GraphSym with just x and y, but now has widths.
+    // Since the x and y values are not changed, all old code that relies on them
+    // does not need to change.
     String uid = GraphSymUtils.getUniqueGraphID(gid, seq);
-    GraphSym gsym =
-      new GraphSym(transition_xpos.copyToArray(), transition_ypos.copyToArray(), uid, seq);
+    GraphIntervalSym gsym =
+      new GraphIntervalSym(x_positions, widths, transition_ypos.copyToArray(), uid, seq);
     return gsym;
   }
 
@@ -271,10 +278,7 @@ public class SeqSymSummarizer {
   }
 
   /**
-   *  redoing SeqSymmetry union (to eventually replace SeqUtils.union() method(s))
-   *  with a more efficient version.  Really just leveraging off getSymmetrySummary()/getSpanSummary(),
-   *  then flattening resulting GraphSym into separate SeqSpans for each region with depth > 0
-   *
+   *  Finds the Union of a List of SeqSymmetries.
    *  This will merge not only overlapping syms but also abutting syms (where symA.getMax() == symB.getMin())
    */
   public static SeqSymmetry getUnion(java.util.List syms, BioSeq seq)  {
@@ -292,8 +296,7 @@ public class SeqSymSummarizer {
 
 
   /**
-   *  redoing SeqSymmetry intersection (to eventually replace SeqUtils.intersection() method(s))
-   *  with a more efficient version.  Really just leveraging off getSymmetrySummary()/getSpanSummary(),
+   *  Finds the Intersection of a List of SeqSymmetries.
    */
   public static SeqSymmetry getIntersection(java.util.List symsA, java.util.List symsB, BioSeq seq)  {
     MutableSeqSymmetry psym = new SimpleSymWithProps();
@@ -357,7 +360,7 @@ public class SeqSymSummarizer {
     }
     return psym;
 
-    //TODO: where does this comment belong?
+    //Where does this comment belong?
     /*
      *  Alternative way to get to combo_graph (should be more efficient, as it avoid
      *     intermediary creation of symsA union syms, and symsB union syms)

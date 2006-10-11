@@ -95,7 +95,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
       Map.Entry entry = (Map.Entry) iter.next();
       String url = (String) entry.getKey();
       String name = (String) entry.getValue();
-      if (name.equals(url)) {
+      if (name == null || name.equals(url)) {
         name = "Get more info";
       }
       JMenuItem mi = makeMenuItem(name, url, id);
@@ -111,7 +111,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
         Map.Entry entry = (Map.Entry) iter.next();
         String url = (String) entry.getKey();        
         String name = (String) entry.getValue();
-        if (name.equals(url)) {
+        if (name == null || name.equals(url)) {
           name = "Unnamed link to web";
         }
         JMenuItem mi = makeMenuItem(name, url, id);

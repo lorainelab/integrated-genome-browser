@@ -24,6 +24,7 @@ import org.xml.sax.InputSource;
 import org.apache.xerces.parsers.DOMParser;
 
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 
@@ -109,11 +110,6 @@ public class XmlPrefsParser {
     com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
 
   private static final String FILENAME_LIST = "FILENAME_LIST";
-
-  /** The name of a Map used to link regular expressions for method names to urls.
-   *  Use with {@link #getNamedMap(Map, String)}.
-   */
-  public static final String REGEX_URLS = "regex_urls";
 
   /** The name of a Map used to link exact names to glyph factories.
    *  Use with {@link #getNamedMap(Map, String)}.
@@ -354,18 +350,22 @@ public class XmlPrefsParser {
     if (url != null && url.trim().length()==0) {
       url = null;
     }
+    String name = (String) attmap.get("name");
     if (annot_type_regex_string != null && url != null) {
      try {
       Pattern regex = null;
-      if ("true".equalsIgnoreCase((String) attmap.get("match_case"))) {
-        regex = Pattern.compile(annot_type_regex_string);
+      WebLink link = new WebLink();
+      link.setName(name);
+      link.setUrl(url);
+      if ("false".equalsIgnoreCase((String) attmap.get("match_case"))) {
+        link.setRegex(annot_type_regex_string);
+        //regex = Pattern.compile(annot_type_regex_string);
       } else {
-        regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
+        link.setRegex("(?i)" + annot_type_regex_string);
+        //regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
       }
-      if (regex != null) {
-        Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-        regex2url.put(regex, url);
-      }
+
+      WebLink.addWebLink(link);
      } catch (PatternSyntaxException pse) {
         System.out.println("ERROR: Regular expression syntax error in preferences\n"+pse.getMessage());
      }
@@ -376,38 +376,7 @@ public class XmlPrefsParser {
         +"'  url='"+url+"'");
     }
   }
-
-  /**
-   *  Returns a URL based on regular-expression matching of the given method name.
-   *  For example, if the preferences file contains:
-   *  <p>
-   *  <code>&gt;annotation_url annot_type_regex="google" ignore_case="true" url="http://www.google.com/search?q=$$" /&lt;</code>
-   *  <p>
-   *  then if method="GooGle", this method will return "http://www.google.com/search?q=$$"
-   *  @return a String or null
-   */
-  public static String getLinkURL(Map prefs_hash, String method) {
-    // This is not terribly fast, but it is not called in places where speed matters
-    // Loop through the regular expressions in reverse order, so that ones added
-    // at the end of the user's prefs file will be tested AFTER those at
-    // the beginning of the default prefs file.
-    
-    String url = null;
-    if (method != null) {
-      Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-      Vector keyset = new Vector(regex2url.keySet());
-      for (int j=keyset.size()-1 ; j >= 0 ; j--) {
-        Pattern regex = (Pattern) keyset.get(j);
-        if (regex.matcher(method).matches()) {
-          url = (String) regex2url.get(regex);
-          break;
-        }
-      }
-    }
-
-    return url;
-  }
-
+  
   public void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
     /*  Builds two hash tables:
      *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI

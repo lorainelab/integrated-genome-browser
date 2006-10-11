@@ -103,27 +103,40 @@ be used (if present).
                             substituted with the item ID when forming links.
   -->
   <annotation_url annot_type_regex="RefSeq\S*"
+    name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
   <annotation_url annot_type_regex="mRNA\S*"
+    name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
   <annotation_url annot_type_regex="TAIR\S*" 
+    name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
   <annotation_url annot_type_regex="EnsGene"
+    name="Ensembl Human ID search"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
   />
+
+  <annotation_url annot_type_regex="EnsGene" 
+     name="Ensembl Human GeneView"
+     url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
+  />
+
   <annotation_url annot_type_regex=".* netaffx consensus"
+    name="NetAffx"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$"
   />
   <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"
+    name="NetAffx Probeset Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
   />
   <annotation_url annot_type_regex="^.*Ex-1_0-st.*Transcripts$"
+    name="NetAffx Transcript Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
-     
-     
+    
+    
 </prefs>
 

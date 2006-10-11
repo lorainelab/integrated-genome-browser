@@ -17,7 +17,7 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 import java.util.*;
 import java.util.regex.*;
 
-public class WebLink {  
+public class WebLink {
   String regex = null;
   String url = null;
   String name = null;
@@ -33,18 +33,22 @@ public class WebLink {
     setUrl(url);
   }  
 
-  static Map regex2weblink = new HashMap();
+  static List weblink_list = new ArrayList();
   
+  /**
+   *  A a WebLink to the static list.  Multiple WebLink's with the same 
+   *  regular expressions are allowed, as long as they have different URLs.
+   */
   public static void addWebLink(WebLink wl) {
-    // use a map rather than a list so that duplicate regex's can't occur
-    WebLink old_one = (WebLink) regex2weblink.get(wl.getRegex());
-    regex2weblink.put(wl.getRegex(), wl);
+    weblink_list.add(wl);
   }
 
   /** Get all web-link patterns for the given method name.
    *  These can come from regular-expression matching from the semi-obsolete
    *  XML-based preferences file, or from UCSC-style track lines in the
-   *  input files.
+   *  input files.  It is entirely possible that some of the WebLinks in the
+   *  array will have the same regular expression or point to the same URL.
+   *  You may want to filter-out such duplicate results.
    */
   public static WebLink[] getWebLinks(String method) {
     ArrayList results = new ArrayList();
@@ -59,7 +63,7 @@ public class WebLink {
 
     if (method != null) {
       // This is not terribly fast, but it is not called in places where speed matters
-      Iterator iter = regex2weblink.values().iterator();
+      Iterator iter = weblink_list.iterator();
       while (iter.hasNext()) {
         WebLink link = (WebLink) iter.next();
         if (link.matches(method) && link.url != null) {
@@ -88,6 +92,9 @@ public class WebLink {
     }
   }
   
+  /** Sets the regular expression that must be matched.
+   *  The special value <b>null</b> is also allowed, and matches every String.
+   */
   public void setRegex(String regex) throws PatternSyntaxException {
     if (regex == null) {
       pattern = null;

@@ -68,9 +68,12 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
           }
         }
       }
-            
+      
+      // Most links come from matching the tier name (i.e. method)
+      // to a regular expression.
       String method = SeqMapView.determineMethod(primary_sym);
       WebLink[] web_links = WebLink.getWebLinks(method);
+      // by using a Map to hold the urls, any duplicated urls will be filtered-out.
       for (int i=0; i<web_links.length; i++) {
         menu_items.put(web_links[i].getUrl(), web_links[i].getName());
       }

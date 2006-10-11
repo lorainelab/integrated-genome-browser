@@ -96,14 +96,14 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
       String url = (String) entry.getKey();
       String name = (String) entry.getValue();
       if (name.equals(url)) {
-        name = "Open web link";
+        name = "Get more info";
       }
       JMenuItem mi = makeMenuItem(name, url, id);
       mi.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
       popup.add(mi);
     }
     else {
-      JMenu linkMenu = new JMenu("Links to web");
+      JMenu linkMenu = new JMenu("Get more info");
       linkMenu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
       popup.add(linkMenu);
       

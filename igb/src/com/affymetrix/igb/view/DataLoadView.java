@@ -111,6 +111,7 @@ class SeqGroupView extends JComponent
     genomeCB.addItemListener(this);
   }
 
+  String most_recent_seq_id = null;
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
@@ -146,7 +147,15 @@ class SeqGroupView extends JComponent
     //seqtable.setModel(sort_model);
     
     seqtable.validate();
-    seqtable.repaint();  
+    seqtable.repaint();
+    
+    if (group != null) {
+      // When changing genomes, try to keep the same chromosome selected when possible
+      MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
+      if (aseq != null) {
+        gmodel.setSelectedSeq(aseq);
+      }
+    }
   }
   
   // add an item to a combo box iff it isn't already included
@@ -163,28 +172,44 @@ class SeqGroupView extends JComponent
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
     synchronized (seqtable) {  // or should synchronize on lsm?
-      // could also get selected seq from SeqSelectionEvent, but should be the same
      // if (selected_seq != evt.getSelectedSeq()) {
 	lsm.removeListSelectionListener(this);
 	//selected_seq = gmodel.getSelectedSeq();
         selected_seq = evt.getSelectedSeq();
-	if (selected_seq == null) { seqtable.clearSelection(); }
-	else  {
-	  for (int i=0; i<seqtable.getRowCount(); i++) {
-	    // should be able to use == here instead of equals(), because table's model really returns seq.getID()
-	    if (selected_seq.getID() ==  seqtable.getValueAt(i, 0)) {
-	      //	    lsm.setSelectionInterval(i, i); // equivalent to seqtable.setRowSelectionInterval()?
-	      seqtable.setRowSelectionInterval(i, i);
-              DisplayUtils.scrollToVisible(seqtable, i, 0);
-	      break;
-	    }
-	  }
-	}
+	if (selected_seq == null) {
+          seqtable.clearSelection(); 
+        }
+        else  {
+          most_recent_seq_id = selected_seq.getID();
+          
+          for (int i=0; i<seqtable.getRowCount(); i++) {
+            // should be able to use == here instead of equals(), because table's model really returns seq.getID()
+            if (most_recent_seq_id ==  seqtable.getValueAt(i, 0)) {
+              if (seqtable.getSelectedRow() != i) {
+                seqtable.setRowSelectionInterval(i, i);
+                scrollTableLater(seqtable, i);
+              }
+              break;
+            }
+          }
+        }
 	lsm.addListSelectionListener(this);
      // }
     }
   }
 
+  // Scroll the table such that the selected row is visible
+  void scrollTableLater(final JTable table, final int i) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        // Check the row count first since this is multi-threaded
+        if (table.getRowCount() >= i) {
+          DisplayUtils.scrollToVisible(table, i, 0);
+        }
+      }
+    });
+  }
+  
   public void valueChanged(ListSelectionEvent evt) {
     Object src = evt.getSource();
     if ((src == lsm) && (! evt.getValueIsAdjusting())) { // ignore extra messages

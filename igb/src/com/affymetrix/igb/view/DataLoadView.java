@@ -23,6 +23,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.DisplayUtils;
 
 public class DataLoadView extends JComponent  {
@@ -135,6 +136,15 @@ class SeqGroupView extends JComponent
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
     selected_seq = null;
     seqtable.setModel(mod);
+
+    // Uncomment this to allow the user to re-sort the table.
+    // It turns out to not work very well since it sorts by String sort order
+    // when something more complex is needed.
+    //
+    //TableSorter2 sort_model = new TableSorter2(mod);
+    //sort_model.setTableHeader(seqtable.getTableHeader());
+    //seqtable.setModel(sort_model);
+    
     seqtable.validate();
     seqtable.repaint();  
   }

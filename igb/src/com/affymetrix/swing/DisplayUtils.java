@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,7 +30,7 @@ public class DisplayUtils {
       // de-iconify it while leaving the maximized/minimized state flags alone
       frame.setExtendedState(frame.getExtendedState() & ~Frame.ICONIFIED);
     }
-    if (! frame.isShowing()) { frame.show(); }
+    if (! frame.isShowing()) { frame.setVisible(true); }
     frame.toFront();
   }
   

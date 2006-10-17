@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,14 +21,15 @@ import java.util.regex.*;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.util.Memer;
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.igb.util.SynonymLookup;
 
 /**
- *  Currently only loads the first sequence in a fasta file.
+ *  Parses a fasta-formatted file.
+ *  The default parse() method only loads the first sequence in a fasta file.
  *  If there are multiple sequences in the file, ignores the rest.
+ *  The parseAll() method will load all sequences listed in the file.
  */
 public class FastaParser {
 
@@ -80,11 +81,22 @@ public class FastaParser {
     return seqlist;
   }
 
+  /**
+   *  Parse an input stream, creating a single new BioSeq.
+   *  @param istr an InputStream that will be read and then closed
+   */
   public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
     return parse(istr, null);
   }
 
 
+  /**
+   *  Parse an input stream into a BioSeq.
+   *  @param istr an InputStream that will be read and then closed
+   *  @param aseq Usually null, but can be an existing seq that you want to load the 
+   *   residues into.  If not null, then the sequence in the file must have a name
+   *   that is synonymous with aseq.
+   */
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
     return parse(istr, aseq, -1);
   }
@@ -96,6 +108,9 @@ public class FastaParser {
    *  the StringBuffer.toString() method to get residues without accidentally
    *  caching an array bigger than needed (see comments in method for more details...)
    *  @param istr an InputStream that will be read and then closed
+   *  @param aseq Usually null, but can be an existing seq that you want to load the 
+   *   residues into.  If not null, then the sequence in the file must have a name
+   *   that is synonymous with aseq.
    */
   public MutableAnnotatedBioSeq oldparse(InputStream istr, MutableAnnotatedBioSeq aseq,
 				      int max_seq_length) {
@@ -113,7 +128,7 @@ public class FastaParser {
     com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
     tim.start();
     MutableAnnotatedBioSeq seq = aseq;
-    String seqid = ("unknown");;
+    String seqid = ("unknown");
     // maybe guesstimate size of buffer needed based on file size???
     StringBuffer buf;
     if (fixed_length_buffer) {
@@ -145,6 +160,10 @@ public class FastaParser {
       while (br.ready()) {
 	String line = br.readLine();
 	if (line == null) { continue; }  // skip null lines
+
+        if (line.startsWith(";")) { continue; } // lines beginning with ";" are comments
+        // see http://en.wikipedia.org/wiki/Fasta_format
+        
 	// end loop if hit header for another sequence --
 	//   currently only parsing first sequence in fasta file
 	if (line.startsWith(">")) {
@@ -410,7 +429,7 @@ public class FastaParser {
 		  w.dispose();
 		  System.exit(0); }
       });
-      frm.show();
+      frm.setVisible(true);
       //      viewer.setPrintSelection(false);
     }
     catch (Exception ex) {
@@ -418,7 +437,7 @@ public class FastaParser {
     }
   }
 
-  public static void printMemory() {
+  static void printMemory() {
     Runtime rt = Runtime.getRuntime();
     long currFreeMem = rt.freeMemory();
     long currTotalMem = rt.totalMemory();
@@ -426,8 +445,6 @@ public class FastaParser {
     System.out.println("memory used = " + currMemUsed/1000000 + " MB  ," +
 		       " total memory = " + currTotalMem/1000000 + " MB");
   }
-
-
 }
 
 

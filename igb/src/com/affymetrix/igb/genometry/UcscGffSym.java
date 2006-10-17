@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,7 +22,7 @@ import java.util.regex.*;
  *  A sym to efficiently store GFF 1.0 annotations. 
  *  See http://genome.ucsc.edu/goldenPath/help/customTrack.html#GTF
  */
-public class UcscGffSym extends SingletonSymWithProps { 
+public class UcscGffSym extends SingletonSymWithProps implements Scored { 
 
   public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
   public static final char UNKNOWN_FRAME = '.';
@@ -40,18 +40,20 @@ public class UcscGffSym extends SingletonSymWithProps {
    *  Examples: 
    *    "AFX382 # here is a comment"  matches.
    *    "AFX382" matches
+   *    "AFX382  " matches (note that the extra white space is ok)
    *    "group_id "foo" ; transcript_id "bar""  does NOT match
    *    Gotchas: 
    *      "AFX382# this is a comment" matches, and the ID does not include the "#" character
    *      "AFX382#" matches, and the ID does include the "#" character
    *</pre>
    */
-  public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\s*#.*)");
+  public static final Pattern gff1_regex = Pattern.compile("^(\\S+)\\s*($|#.*)");
   
   // old, wrong pattern, required a tab before the comment
   //public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
   
   String source;
+  String method;
   String feature_type;
   float score;
   char frame;
@@ -122,7 +124,8 @@ public class UcscGffSym extends SingletonSymWithProps {
   }
 
   public Object getProperty(String name) {
-    if (name.equals("source") || name.equals("method")) { return source; }
+    if (name.equals("method")) { return method; }
+    else if (name.equals("source")) { return source; }
     else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
@@ -163,9 +166,19 @@ public class UcscGffSym extends SingletonSymWithProps {
         return false;
       }
     }
-    if (name.equals("source") || name.equals("method")) {
+    if (name.equals("source")) {
       if (val instanceof String) {
         source = (String) val;
+        return true;
+      }
+      else {
+        //source = null; 
+        return false;
+      }
+    }
+    if (name.equals("method")) {
+      if (val instanceof String) {
+        method = (String) val;
         return true;
       }
       else {
@@ -199,7 +212,7 @@ public class UcscGffSym extends SingletonSymWithProps {
       tprops.put("seqname", getID());
     }
     if (source != null) { tprops.put("source", source); }
-    if (source != null) { tprops.put("method", source); }
+    if (method != null) { tprops.put("method", method); }
     if (feature_type != null) { tprops.put("feature_type", feature_type); }
     if (feature_type != null) { tprops.put("type", feature_type); }
     if (score != UNKNOWN_SCORE) {

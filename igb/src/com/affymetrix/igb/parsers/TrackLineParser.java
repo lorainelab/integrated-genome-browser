@@ -21,9 +21,15 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 
 public class TrackLineParser {
 
-  static Map default_track_hash;
   static Pattern line_regex = Pattern.compile("\t");
   static Pattern comma_regex = Pattern.compile(",");
+
+  public static final String NAME="name";
+  public static final String COLOR="color";
+  public static final String DESCRIPTION="description";
+  public static final String VISIBILITY ="visibility";
+  public static final String USE_SCORE="useScore";
+  public static final String URL="url";
 
   /** A pattern that matches things like   <b>aaa=bbb</b> or <b>aaa="bbb"</b>
    *  or even <b>"aaa"="bbb=ccc"</b>.
@@ -37,34 +43,20 @@ public class TrackLineParser {
       + "(?:\\S+)"        // Any non-whitespace characters
     + ")");               //    ... end of group 2
 
-  Map track_hash = default_track_hash;
-
-  static  {
-    default_track_hash = new TreeMap();
-    //    default_track_hash.put("name", null);
-    default_track_hash.put("description", "User Supplied Track");
-    default_track_hash.put("visibility", new Integer(1));
-    default_track_hash.put("color", Color.gray);  // was black, but that conflicts with background...
-    //default_track_hash.put("altcolor", null);
-    default_track_hash.put("usescore", new Integer(0));
-    //default_track_hash.put("priority", null);  // no default assigned priority...
-    default_track_hash.put("offset", new Integer(0));
-    //default_track_hash.put("url", null);
-  }
+  Map track_hash = new TreeMap();
 
   public TrackLineParser() {}
 
-  public Map getDefaultTrackHash() { return default_track_hash; }
   public Map getCurrentTrackHash() { return track_hash; }
-  
+    
   /**
    *  If the map contains a key named color with a vaule that is a String,
    *  converts the value to a Color object and puts it back in the Map.
    *  If the Map contains a value for "name", then adds that
    *  color association to the named instance of AnnotStyle.
    */
-  public static void reformatColor(Map m) {
-    Object o = m.get("color");
+  static void reformatColor(Map m) {
+    Object o = m.get(COLOR);
     if (o instanceof String) {
       String color_string = (String) o;
       String[] rgb = comma_regex.split(color_string);
@@ -72,9 +64,9 @@ public class TrackLineParser {
       int green = Integer.parseInt(rgb[1]);
       int blue = Integer.parseInt(rgb[2]);
       Color col = new Color(red, green, blue);
-      m.put("color", col);
+      m.put(COLOR, col);
 
-      String name = (String) m.get("name");
+      String name = (String) m.get(NAME);
       if (name != null) {
         AnnotStyle style = AnnotStyle.getInstance(name);
         style.setColor(col);
@@ -96,10 +88,9 @@ public class TrackLineParser {
   /** Parses a track line putting the keys and values into a Map.
    *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
    */
-  public Map setTrackProperties(String track_line) {
-    System.out.println("setting track properties from: "+track_line);
+  public Map setTrackProperties(String track_line, String default_track_name) {
+    //System.out.println("setting track properties from: "+track_line);
     
-    track_hash = new TreeMap(default_track_hash); // default_track_hash.clone();
     Matcher matcher = track_line_parser.matcher(track_line);
     // If performance becomes important, it is possible to save and re-use a Matcher,
     // but it isn't thread-safe
@@ -116,12 +107,45 @@ public class TrackLineParser {
     
     reformatColor(track_hash);
     
-    String name = (String) track_hash.get("name");
-    String url = (String) track_hash.get("url");
-    
-    if (name != null && url != null) {
+    String name = (String) track_hash.get(NAME);
+    if (name == null) {
+      // In UCSC browser, the default is always "User Track"
+      track_hash.put(NAME, default_track_name);
+      name = default_track_name;
+    }
+
+    if (name != null) {
+      String url = (String) track_hash.get(URL);
       AnnotStyle style = AnnotStyle.getInstance(name, false);
-      style.setUrl(url);
+      if (url != null) {
+        style.setUrl(url);      
+      }
+      String description = (String) track_hash.get(DESCRIPTION);
+      if (description != null) {
+        style.setHumanName(description);
+      } else {
+        // Unless we explicitly set the human name, it will be the lower-case
+        // version of the name used in AnnotStyle.getInstance().
+        // Explicitly setting the name keeps the case intact.
+        style.setHumanName(name);
+      }
+      String visibility = (String) track_hash.get(VISIBILITY);
+      
+      java.util.List collapsed_modes = Arrays.asList(new String[] {"1", "dense"});
+      java.util.List expanded_modes = Arrays.asList(new String[] 
+        {"2", "full", "3", "pack", "4", "squish"});
+      
+      if (visibility != null) {
+        // 0 - hide, 1 - dense, 2 - full, 3 - pack, and 4 - squish. 
+        // The numerical values or the words can be used, i.e. full mode may be 
+        // specified by "2" or "full". The default is "1".
+        if (collapsed_modes.contains(visibility)) {
+          style.setCollapsed(true);
+        }
+        else if (expanded_modes.contains(visibility)) {
+          style.setCollapsed(false);
+        }
+      }
     }
     
     return track_hash;
@@ -132,7 +156,7 @@ public class TrackLineParser {
     String str = "track foo=bar this=\"that\" color=123,100,10 nothing=\"\" url=\"http://www.foo.bar?moo=cow&this=$$\"";
     TrackLineParser tlp = new TrackLineParser();
     Map m;
-    m = tlp.setTrackProperties(str);
+    m = tlp.setTrackProperties(str, null);
     
     // Now print that map
     Iterator iter = m.entrySet().iterator();

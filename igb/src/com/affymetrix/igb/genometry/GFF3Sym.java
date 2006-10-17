@@ -24,7 +24,7 @@ import java.util.regex.*;
  *
  *  See http://song.sourceforge.net/gff3.shtml
  */
-public class GFF3Sym extends SingletonSymWithProps { 
+public class GFF3Sym extends SingletonSymWithProps implements Scored { 
 
   public static final float UNKNOWN_SCORE = UcscGffSym.UNKNOWN_SCORE;
   public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;

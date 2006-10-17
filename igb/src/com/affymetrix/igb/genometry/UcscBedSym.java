@@ -65,7 +65,7 @@ import com.affymetrix.genometry.symmetry.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps  {
+public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
   BioSeq seq; // "chrom"
   int txMin; // "chromStart"
   int txMax; // "chromEnd"
@@ -213,6 +213,8 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   public double getMinDouble() { return (double)getMin(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
+  
+  public float getScore() { return score; }
 
   public Map getProperties() {
     return cloneProperties();

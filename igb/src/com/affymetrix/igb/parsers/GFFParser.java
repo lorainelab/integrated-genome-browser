@@ -259,6 +259,8 @@ public class GFFParser implements AnnotationWriter  {
   public void setIdTag(String tag) {
     id_tag = tag;
   }
+  
+  boolean use_track_lines = true;
 
   public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot) 
   throws IOException {
@@ -268,7 +270,7 @@ public class GFFParser implements AnnotationWriter  {
   public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
-
+    
     int line_count = 0;
     int sym_count = 0;
     int group_count = 0;
@@ -286,6 +288,7 @@ public class GFFParser implements AnnotationWriter  {
     UcscGffSym[] hier_parents = null;
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line = null;
+    String track_name = null;
 
     try {
       Thread thread = Thread.currentThread();
@@ -308,9 +311,8 @@ public class GFFParser implements AnnotationWriter  {
         }
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {
-          // in GFF files, the color will only be applied from track lines 
-          // iff the "source" name matches the track line name.
-          track_line_parser.setTrackProperties(line);
+          track_line_parser.setTrackProperties(line, default_source);
+          track_name = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
           continue;
         }
         String fields[] = line_regex.split(line);
@@ -346,7 +348,7 @@ public class GFFParser implements AnnotationWriter  {
           if (seq == null) {
             seq = seq_group.addSeq(seq_name, 0);
           }
-
+          
 	  if (gff_version == GFF3) {
 	    // temporary hack to make GFF3 look like GFF1
 	    last_field = hackGff3GroupId(last_field);
@@ -355,6 +357,12 @@ public class GFFParser implements AnnotationWriter  {
 	  UcscGffSym sym = new UcscGffSym(seq, source, feature_type, coord_a, coord_b,
 					  score, strand_str.charAt(0), frame_str.charAt(0),
 					  last_field, gff_base1);
+
+          if (use_track_lines && track_name != null) {
+            sym.setProperty("method", track_name);
+          } else {
+            sym.setProperty("method", source);
+          }
 
           int max = sym.getMax();
           if (max > seq.getLength()) { seq.setLength(max); }
@@ -427,7 +435,12 @@ public class GFFParser implements AnnotationWriter  {
                   // Setting the "group" property might be needed if you plan to use the
                   // outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
                   groupsym.setProperty("group", group_id);
-                  groupsym.setProperty("method", source);
+                  groupsym.setProperty("source", source);
+                  if (track_name != null) {
+                    groupsym.setProperty("method", track_name);
+                  } else {
+                    groupsym.setProperty("method", source);
+                  }
                 }
                 group_count++;
 
@@ -909,7 +922,7 @@ public class GFFParser implements AnnotationWriter  {
     throws IOException {
   //  public static void outputGffFormat(UcscPslSym psym, BioSeq seq, Writer wr) throws IOException  {
     int childcount = psym.getChildCount();
-    String meth = (String)psym.getProperty("method");
+    String meth = (String)psym.getProperty("source");
     if (meth == null) { meth = (String)psym.getProperty("type"); }
     //    String id = (String)psym.getProperty("id");
     String group = (String)psym.getProperty("group");

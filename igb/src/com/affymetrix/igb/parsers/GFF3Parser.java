@@ -109,7 +109,7 @@ public class GFF3Parser {
         if (line.startsWith("track")) {
           // in GFF files, the color will only be applied from track lines 
           // iff the "source" name matches the track line name.
-          track_line_parser.setTrackProperties(line);
+          track_line_parser.setTrackProperties(line, default_source);
           continue;
         }
         String fields[] = line_regex.split(line);

@@ -151,7 +151,7 @@ public class PSLParser implements AnnotationWriter  {
           continue;
         }
 	else if (line.startsWith("track")) {
-	  Map track_props = track_line_parser.setTrackProperties(line);
+	  Map track_props = track_line_parser.setTrackProperties(line, annot_type);
           if (is_link_psl) {
             String track_name = (String) track_props.get("name");
             if (track_name != null && track_name.endsWith("probesets")) {

@@ -74,7 +74,7 @@ public class WiggleParser {
       if (line.startsWith("#")) { continue; }
       else if (line.startsWith("%")) { continue; }
       else if (line.startsWith("track")) {
-	track_line_parser.setTrackProperties(line);
+	track_line_parser.setTrackProperties(line, graph_id);
 	continue;
       }
       else if (line.startsWith("variableStep")) {

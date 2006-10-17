@@ -157,7 +157,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	continue;
       }
       else if (line.startsWith("track")) {
-	track_line_parser.setTrackProperties(line);
+	track_line_parser.setTrackProperties(line, default_type);
 	continue;
       }
       else if (line.startsWith("browser")) {

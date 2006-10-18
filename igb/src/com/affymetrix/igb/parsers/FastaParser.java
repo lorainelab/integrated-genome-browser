@@ -23,6 +23,8 @@ import javax.swing.*;
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.util.SynonymLookup;
 
 /**
@@ -41,7 +43,15 @@ public class FastaParser {
   public FastaParser() {
   }
 
-  public java.util.List parseAll(InputStream istr) throws IOException {
+  /**
+   * Parses an input stream which can contain one or more sequences in FASTA format.
+   * Will merge the sequences with the given group.
+   * (When necessary, new sequences will be added to the existing group; otherwise
+   * sequence data will be stored in the existing, synonymous BioSeq objects.)
+   * Returns the List of sequences that were read from the file, which will be
+   * a subset of the sequences in the group.
+   */
+  public java.util.List parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
     ArrayList seqlist = new ArrayList();
     int line_count = 0;
     BufferedReader br = null;
@@ -50,28 +60,37 @@ public class FastaParser {
       br = new BufferedReader(new InputStreamReader(istr));
       String header = br.readLine();
       while (br.ready()) {  // loop through lines till find a header line
-	if (header == null) { continue; }  // skip null lines
+        if (header == null) { continue; }  // skip null lines
         matcher.reset(header);
-	boolean matched = matcher.matches();
-	System.out.println("matched: " + matched);
-	if (matched) {
-	  StringBuffer buf = new StringBuffer();
-	  String seqid = matcher.group(1);
-	  while (br.ready()) {
-	    String line = br.readLine();
-	    if (line == null) { continue; }  // skip null lines
-	    // break if hit header for another sequence --
-	    if (line.startsWith(">")) {
-	      header = line;
-	      break;
-	    }
-	    buf.append(line);
-	  }
-	  String residues = buf.toString();
-	  BioSeq seq = new SimpleAnnotatedBioSeq(seqid, residues);
-	  seqlist.add(seq);
-	  System.out.println("length of sequence: " + residues.length());
-	}
+        boolean matched = matcher.matches();
+        
+        if (matched) {
+          StringBuffer buf = new StringBuffer();
+          String seqid = matcher.group(1);
+          while (br.ready()) {
+            String line = br.readLine();
+            if (line == null) { continue; }  // skip null lines
+            
+            if (line.charAt(0) == ';') { continue; } // skip comment lines
+            
+            // break if hit header for another sequence --
+            if (line.startsWith(">")) {
+              header = line;
+              break;
+            }
+            
+            buf.append(line);
+          }
+          String residues = buf.toString();
+          MutableAnnotatedBioSeq seq = group.getSeq(seqid);
+          if (seq == null) {
+            seq = group.addSeq(seqid, residues.length());
+          }
+          seq.setResidues(residues);
+          
+          seqlist.add(seq);
+          System.out.println("length of sequence: " + residues.length());
+        }
       }
     } finally {
       if (br != null) try {br.close();} catch (IOException ioe) {}
@@ -80,7 +99,7 @@ public class FastaParser {
     System.out.println("done loading fasta file");
     return seqlist;
   }
-
+  
   /**
    *  Parse an input stream, creating a single new BioSeq.
    *  @param istr an InputStream that will be read and then closed

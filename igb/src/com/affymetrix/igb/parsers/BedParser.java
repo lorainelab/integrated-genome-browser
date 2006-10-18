@@ -149,6 +149,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
      throws IOException  {
     System.out.println("called BedParser.parseWithEvents()");
     String line;
+    String type = default_type;
 
     Thread thread = Thread.currentThread();
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
@@ -158,6 +159,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       }
       else if (line.startsWith("track")) {
 	track_line_parser.setTrackProperties(line, default_type);
+	type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 	continue;
       }
       else if (line.startsWith("browser")) {
@@ -181,9 +183,6 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	int[] blockMins = null;
 	int[] blockMaxs = null;
 
-	//	String type = (String)track_hash.get("name");
-	String type = (String) track_line_parser.getCurrentTrackHash().get("name");
-	if (type == null) { type = default_type; }
 	if (fields != null && field_count >= 3) {
 	  boolean includes_bin_field = (field_count > 6 &&
 					(fields[6].startsWith("+") ||
@@ -318,7 +317,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     if (annotate_seq) {
       MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
       if (create_container_annot) {
-        String type = (String) track_line_parser.getCurrentTrackHash().get("name");
+        String type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
         if (type == null) { type = default_type; }
         Map type2csym = (Map)seq2types.get(seq);
         if (type2csym == null) {

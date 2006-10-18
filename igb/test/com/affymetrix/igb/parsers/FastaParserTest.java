@@ -21,28 +21,36 @@ public class FastaParserTest extends TestCase {
   public void testParseAll() throws Exception {
     System.out.println("parse");
     
-    String filename = "test_files/FASTA_small_genome.fasta";
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    String filename_1 = "test_files/FASTA_chrQ.fasta";
+    InputStream istr_1 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_1);
+
+    String filename_2 = "test_files/FASTA_small_genome.fasta";
+    InputStream istr_2 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_2);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
     FastaParser instance = new FastaParser();
     
-    java.util.List seqs = instance.parseAll(istr, seq_group);
-    
-    assertEquals(4, seqs.size());
-    assertEquals(4, seq_group.getSeqCount());
+    java.util.List seqs = instance.parseAll(istr_1, seq_group);
+
+    assertEquals(1, seqs.size());
+    assertEquals(1, seq_group.getSeqCount());
     
     BioSeq seq = (BioSeq) seqs.get(0);
     assertEquals("chrQ", seq.getID());
     
-    seq = (BioSeq) seqs.get(1);
+    seqs = instance.parseAll(istr_2, seq_group);
+    
+    assertEquals(3, seqs.size());
+    assertEquals(4, seq_group.getSeqCount());
+        
+    seq = (BioSeq) seqs.get(0);
     assertEquals("gi|5524211|gb|AAD44166.1| cytochrome b [Elephas maximus maximus]", seq.getID());
     
-    seq = (BioSeq) seqs.get(2);
+    seq = (BioSeq) seqs.get(1);
     assertEquals("SEQUENCE_1", seq.getID());
     
-    seq = (BioSeq) seqs.get(3);
+    seq = (BioSeq) seqs.get(2);
     assertEquals("SEQUENCE_2", seq.getID());
     assertEquals("SATV", seq.getResidues(0,4));
   }

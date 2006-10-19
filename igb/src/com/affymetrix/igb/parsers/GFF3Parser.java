@@ -276,10 +276,15 @@ public class GFF3Parser {
   /**
    *  Utility to group GFF3 features that were specified on several lines with the same ID.
    *  Lines with the same ID are supposed to represent different parts of the same feature.
-   *  CDS features are usually expressed this way. 
+   *  CDS features are usually expressed this way.
+   *  All properties specified on separate lines, except start, stop and frame,
+   *  are supposed to be equivalent on all lines. 
    *  In Genometry, we need to create a parent symmetry to hold the individual
    *  pieces.  This parent symmetry will be a GFF3Sym with type {@link #GROUP_FEATURE_TYPE},
    *  and the two given sym's will become its children.
+   *  The attributes of the group symmetry will be taken from the attributes of
+   *  sym1; but the specification requires that all parts of the group have
+   *  identical attributes.
    */
   static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
     char strand = '.';

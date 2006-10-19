@@ -85,11 +85,14 @@ public class TrackLineParser {
     }
   }
   
-  /** Parses a track line putting the keys and values into a Map.
+  /** Parses a track line putting the keys and values into the current value
+   *  of getCurrentTrackHash(), but does not use these properties to change 
+   *  any settings of AnnotStyle, etc.
    *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
+   *  Any old values are cleared from the existing track line hash first.
    */
-  public Map setTrackProperties(String track_line, String default_track_name) {
-    //System.out.println("setting track properties from: "+track_line);
+  public Map parseTrackLine(String track_line) {
+    track_hash.clear();
     
     Matcher matcher = track_line_parser.matcher(track_line);
     // If performance becomes important, it is possible to save and re-use a Matcher,
@@ -104,6 +107,19 @@ public class TrackLineParser {
         System.out.println("Couldn't parse this part of the track line: "+matcher.group(0));
       }
     }
+    
+   return track_hash; 
+  }
+  
+  /** Parses a track line putting the keys and values into a Map.
+   *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
+   *  This method also stores the properties, such as color, in a temporary
+   *  AnnotStyle.
+   */
+  public Map setTrackProperties(String track_line, String default_track_name) {
+    //System.out.println("setting track properties from: "+track_line);
+    
+    track_hash = parseTrackLine(track_line);
     
     reformatColor(track_hash);
     

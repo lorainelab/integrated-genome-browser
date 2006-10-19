@@ -151,12 +151,17 @@ public class PSLParser implements AnnotationWriter  {
           continue;
         }
 	else if (line.startsWith("track")) {
-	  Map track_props = track_line_parser.setTrackProperties(line, annot_type);
+          // Always parse the track line, but
+          // only set the AnnotStyle properties from it
+          // if this is NOT a ".link.psl" file.              
           if (is_link_psl) {
-            String track_name = (String) track_props.get("name");
+            Map track_props = track_line_parser.parseTrackLine(line);
+            String track_name = (String) track_props.get(TrackLineParser.NAME);
             if (track_name != null && track_name.endsWith("probesets")) {
               in_bottom_of_link_psl = true;
             }
+          } else {
+            Map track_props = track_line_parser.setTrackProperties(line, annot_type);
           }
           // You can later get the track properties with getCurrentTrackHash();
 	  continue;
@@ -290,7 +295,7 @@ public class PSLParser implements AnnotationWriter  {
 	int[] qmins = (int[])child_arrays.get(1);
 	int[] tmins = (int[])child_arrays.get(2);
 
-	String type = (String) track_line_parser.getCurrentTrackHash().get("name");
+	String type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 	if (type == null) { type = annot_type; }
 
 	UcscPslSym sym = null;
@@ -404,6 +409,10 @@ public class PSLParser implements AnnotationWriter  {
     }
     System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 		       ", child count: " + total_child_count);
+    if (results.size() == 0) {
+      throw new IOException("The PSL file contianed no annotations.  "+
+          "Check that the file is properly-formatted, using TABs rather than spaces.");
+    }
     return results;
   }
     

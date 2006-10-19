@@ -157,4 +157,20 @@ public class HeatMap {
     }
     return result;
   }  
+  
+  /** Make a HeatMap that interpolates linearly between the two given colors. */
+  public static HeatMap makeLinearHeatmap(String name, Color low, Color high) {
+    Color[] colors = new Color[256];
+    HeatMap heat_map = new HeatMap(name, colors);
+
+    for (int i=0; i<256; i++) {
+      float x = (i*1.0f)/255.0f;
+      int r = (int) ((1.0f - x) * low.getRed() + x * high.getRed());
+      int g = (int) ((1.0f - x) * low.getGreen() + x * high.getGreen());
+      int b = (int) ((1.0f - x) * low.getBlue() + x * high.getBlue());
+      colors[i] = new Color(r, g, b);
+    }
+    
+    return heat_map;
+  }
 }

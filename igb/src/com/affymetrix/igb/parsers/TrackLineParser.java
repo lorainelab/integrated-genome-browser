@@ -28,8 +28,10 @@ public class TrackLineParser {
   public static final String COLOR="color";
   public static final String DESCRIPTION="description";
   public static final String VISIBILITY ="visibility";
-  public static final String USE_SCORE="useScore";
   public static final String URL="url";
+  
+  /** Value will be stored in the IAnnotStyle extended properties. */
+  public static final String USE_SCORE="usescore";
 
   /** A pattern that matches things like   <b>aaa=bbb</b> or <b>aaa="bbb"</b>
    *  or even <b>"aaa"="bbb=ccc"</b>.
@@ -50,27 +52,17 @@ public class TrackLineParser {
   public Map getCurrentTrackHash() { return track_hash; }
     
   /**
-   *  If the map contains a key named color with a vaule that is a String,
-   *  converts the value to a Color object and puts it back in the Map.
-   *  If the Map contains a value for "name", then adds that
-   *  color association to the named instance of AnnotStyle.
+   *  Convert a color in string representation into a Color.
    */
-  static void reformatColor(Map m) {
-    Object o = m.get(COLOR);
-    if (o instanceof String) {
-      String color_string = (String) o;
-      String[] rgb = comma_regex.split(color_string);
+  static Color reformatColor(String color_string) {
+    String[] rgb = comma_regex.split(color_string);
+    if (rgb.length == 3) {
       int red = Integer.parseInt(rgb[0]);
       int green = Integer.parseInt(rgb[1]);
       int blue = Integer.parseInt(rgb[2]);
-      Color col = new Color(red, green, blue);
-      m.put(COLOR, col);
-
-      String name = (String) m.get(NAME);
-      if (name != null) {
-        AnnotStyle style = AnnotStyle.getInstance(name);
-        style.setColor(col);
-      }
+      return new Color(red, green, blue);
+    } else {
+      return null;
     }
   }
   
@@ -114,15 +106,14 @@ public class TrackLineParser {
   /** Parses a track line putting the keys and values into a Map.
    *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
    *  This method also stores the properties, such as color, in a temporary
-   *  AnnotStyle.
+   *  AnnotStyle using either the name property from the track line or the
+   *  default_track_name if there was no name property.
    */
   public Map setTrackProperties(String track_line, String default_track_name) {
     //System.out.println("setting track properties from: "+track_line);
     
     track_hash = parseTrackLine(track_line);
-    
-    reformatColor(track_hash);
-    
+        
     String name = (String) track_hash.get(NAME);
     if (name == null) {
       // In UCSC browser, the default is always "User Track"
@@ -132,7 +123,7 @@ public class TrackLineParser {
 
     if (name != null) {
       String url = (String) track_hash.get(URL);
-      AnnotStyle style = AnnotStyle.getInstance(name, false);
+      AnnotStyle style = AnnotStyle.getInstance(name, false); // should the style be persistent?
       if (url != null) {
         style.setUrl(url);      
       }
@@ -146,6 +137,14 @@ public class TrackLineParser {
         style.setHumanName(name);
       }
       String visibility = (String) track_hash.get(VISIBILITY);
+
+      String color_string = (String) track_hash.get(COLOR);
+      if (color_string != null) {
+        Color color = reformatColor(color_string);
+        if (color != null) {
+          style.setColor(color);
+        }
+      }
       
       java.util.List collapsed_modes = Arrays.asList(new String[] {"1", "dense"});
       java.util.List expanded_modes = Arrays.asList(new String[] 
@@ -162,25 +161,17 @@ public class TrackLineParser {
           style.setCollapsed(false);
         }
       }
+      
+      // Probably shouldn't copy ALL keys to the extended values
+      // since some are already included in the standard values above
+      Iterator iter = track_hash.keySet().iterator();
+      while (iter.hasNext()) {
+        String key = (String) iter.next();
+        Object value = track_hash.get(key);
+        style.getTransientPropertyMap().put(key, value);
+      }
     }
     
     return track_hash;
-  }
-
-  /** Performs a test of the track-line parsing. */
-  public static void main(String[] args) {
-    String str = "track foo=bar this=\"that\" color=123,100,10 nothing=\"\" url=\"http://www.foo.bar?moo=cow&this=$$\"";
-    TrackLineParser tlp = new TrackLineParser();
-    Map m;
-    m = tlp.setTrackProperties(str, null);
-    
-    // Now print that map
-    Iterator iter = m.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry entry = (Map.Entry) iter.next();
-      Object key = entry.getKey();
-      Object value = entry.getValue();
-      System.out.println("" + key + " --> " + value);
-    }
   }
 }

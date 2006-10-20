@@ -14,6 +14,8 @@
 package com.affymetrix.igb.tiers;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Basic implementation of IAnnotStyle. */
 public class DefaultIAnnotStyle implements IAnnotStyle {
@@ -27,6 +29,7 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   double height = 60;
   double y = 0.0f;
   boolean is_graph = false;
+  Map transient_properties = null;
   
   public DefaultIAnnotStyle() {
     super();
@@ -70,7 +73,18 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
 
   public void setExpandable(boolean b) { this.expandable = b; }
   public boolean getExpandable() { return expandable; }
+    
+
+  public Map getTransientPropertyMap() {
+    if (transient_properties == null) {
+      transient_properties = new HashMap();
+    }
+    return transient_properties;
+  }
   
+  /** Copies all properties from the given style into this one, 
+   *  including the transient properties. 
+   */
   public void copyPropertiesFrom(IAnnotStyle g) {
     setColor(g.getColor());
     setShow(g.getShow());
@@ -81,5 +95,6 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
     setHeight(g.getHeight());
     setY(g.getY());
     setExpandable(g.getExpandable());
+    getTransientPropertyMap().putAll(g.getTransientPropertyMap());
   }
 }

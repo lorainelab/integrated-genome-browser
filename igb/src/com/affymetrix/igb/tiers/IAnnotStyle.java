@@ -14,6 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import java.awt.Color;
+import java.util.Map;
 
 /** 
  * Tier style information.  This interface can be used regardless of 
@@ -52,6 +53,14 @@ public interface IAnnotStyle {
   public void setExpandable(boolean b);
   
   public boolean isGraphTier();
+
+  /**
+   *  Gets a reference to a Map that can be used to store any arbitrary 
+   *  extra properties.  This can be used to
+   *  store all the properties of a UCSC track-line, for example.
+   *  (These properties are not persisted in the java prefs system.)
+   */
+  public Map getTransientPropertyMap();
   
   public void copyPropertiesFrom(IAnnotStyle s);
 }

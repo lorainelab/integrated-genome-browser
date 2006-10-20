@@ -411,6 +411,15 @@ public class AnnotStyle implements IAnnotStyle {
   public boolean isGraphTier() {
     return false;
   }
+
+  Map transient_properties;
+  
+  public Map getTransientPropertyMap() {
+    if (transient_properties == null) {
+      transient_properties = new HashMap();
+    }
+    return transient_properties;
+  }
   
   public void copyPropertiesFrom(IAnnotStyle g) {
     setColor(g.getColor());
@@ -426,6 +435,8 @@ public class AnnotStyle implements IAnnotStyle {
     if (g instanceof AnnotStyle) {
       setCustomizable(((AnnotStyle) g).getCustomizable());
     }
+    
+    getTransientPropertyMap().putAll(g.getTransientPropertyMap());
   }
     
    boolean customizable = true;

@@ -133,16 +133,6 @@ public class PreferencesPanel extends JPanel {
       //if (icon != null) { frame.setIconImage(icon); }
       final Container cont = frame.getContentPane();
       frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-      JMenuBar menubar = this.getMenuBar();
-      frame.setJMenuBar(menubar);
-      
-      cont.add(this);
-      frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(400, 400));
-      if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(frame, pos);
-      }
       frame.addWindowListener( new WindowAdapter() {
         public void windowClosing(WindowEvent evt) {
           // save the current size into the preferences, so the window
@@ -158,6 +148,16 @@ public class PreferencesPanel extends JPanel {
           frame.dispose();
         }
       });
+
+      JMenuBar menubar = this.getMenuBar();
+      frame.setJMenuBar(menubar);
+      
+      cont.add(this);
+      frame.pack(); // pack() to set frame to its preferred size
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(400, 400));
+      if (pos != null) {
+        UnibrowPrefsUtil.setWindowSize(frame, pos);
+      }
     }
     
     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");

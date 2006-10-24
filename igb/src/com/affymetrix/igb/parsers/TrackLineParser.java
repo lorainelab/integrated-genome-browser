@@ -162,6 +162,12 @@ public class TrackLineParser {
         }
       }
       
+      if ("1".equals(track_hash.get(USE_SCORE))) {
+        style.setColorByScore(true);
+      } else if (track_hash.get(USE_SCORE) != null) {
+        style.setColorByScore(false);
+      }
+      
       // Probably shouldn't copy ALL keys to the extended values
       // since some are already included in the standard values above
       Iterator iter = track_hash.keySet().iterator();

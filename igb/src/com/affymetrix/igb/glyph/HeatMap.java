@@ -165,12 +165,29 @@ public class HeatMap {
 
     for (int i=0; i<256; i++) {
       float x = (i*1.0f)/255.0f;
-      int r = (int) ((1.0f - x) * low.getRed() + x * high.getRed());
-      int g = (int) ((1.0f - x) * low.getGreen() + x * high.getGreen());
-      int b = (int) ((1.0f - x) * low.getBlue() + x * high.getBlue());
-      colors[i] = new Color(r, g, b);
+      colors[i] = interpolateColor(low, high, x);
     }
     
     return heat_map;
+  }
+  
+  
+  /**
+   *  Creates a new color inbetween c1 and c2.
+   *  @param x  The fraction of the new color (0.00 to 1.00) that
+   *  should be based on color c2, the rest is based on c1.
+   */
+  public static Color interpolateColor(Color c1, Color c2, float x) {
+    if (x <= 0.0f) {
+      return c1;
+    } else if (x >= 1.0f) {
+      return c2;
+    } else {
+      int r = (int) ((1.0f - x) * c1.getRed() + x * c2.getRed());
+      int g = (int) ((1.0f - x) * c1.getGreen() + x * c2.getGreen());
+      int b = (int) ((1.0f - x) * c1.getBlue() + x * c2.getBlue());
+
+      return new Color(r, g, b);
+    }
   }
 }

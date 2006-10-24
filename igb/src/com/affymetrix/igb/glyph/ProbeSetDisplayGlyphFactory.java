@@ -86,50 +86,11 @@ the probeset, probe and pieces of probes
    */
   boolean outline_probes_in_probeset = false;
   
-  /** The name of the property in the consensus seq SeqSymmetry to use to
-   *  construct a label.  Default is "id".  Set to null to turn off labelling. 
-   */
-  String label_field = "id";
-
-  String ps_label_field = null; // no longer used
-
-  /** Color for the consensus sequence glyphs. */
-  Color consensus_color;
-
-  /** Color for the gaps in the consensus sequence alignment. 
-   *  Simply a darker version of the consensus_color.
-   */
-  Color gap_color;
-
   int glyph_depth = 2;
   
+  String label_field = null;
 
-  /** Initializes options based on given Map.
-   *  Special notes: 
-   *    "label_field" and defaults to "id", but you can set
-   *     it to something else, or set to "" if you want to turn off labels.
-   *    "color" sets the color of the consensus sequence glyphs; the colors
-   *    of the probe set and poly_A glyphs are hard-wired.  (Color actually
-   *    sets the color of the consensus glyph outlines: the centers are drawn
-   *    in a darker shade.)
-   */
   public void init(Map options) {
-    //    System.out.println("called AbstractAnnotGlyphFactory.init()");
-    consensus_color = (Color) options.get("color");
-    if (consensus_color == null) { consensus_color = GenericAnnotGlyphFactory.default_annot_color; }
-
-    gap_color = consensus_color.darker();
-
-    label_field = (String)options.get("label_field");
-    if (label_field==null) {label_field="id";}
-    if ("".equals(label_field)) {label_field = null;} // turn off labels
-
-//    ps_label_field = (String)options.get("ps_label_field");
-//    if (ps_label_field==null) {ps_label_field="id";}
-//    if ("".equals(ps_label_field)) {ps_label_field = null;} // turn them off
-    
-    do_independent_probeset_glyphs = setBooleanProperty(options, "probeset_glyphs", do_independent_probeset_glyphs);
-    outline_probes_in_probeset = setBooleanProperty(options, "outline_probes", outline_probes_in_probeset);
   }
 
   // used by init()
@@ -157,7 +118,6 @@ the probeset, probe and pieces of probes
     }
     if (meth != null) {
       AnnotStyle style = AnnotStyle.getInstance(meth);
-      consensus_color = style.getColor();
       label_field = style.getLabelField();
       
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
@@ -269,6 +229,9 @@ the probeset, probe and pieces of probes
     int child_height = GLYPH_HEIGHT; // height of the consensus "exons"
     int parent_y = 100; // irrelevant because packing will move the glyphs around
     int child_y = 100; // relevant relative to parent_y
+
+    IAnnotStyle the_style = the_tier.getAnnotStyle();
+    Color consensus_color = the_style.getColor();
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && 
       (consensus_sym instanceof SymWithProps));
@@ -523,6 +486,8 @@ the probeset, probe and pieces of probes
       double child_y = floating_probeset_y;
       double child_height = floating_probeset_height;
       {
+        String ps_label_field = null; // the AnnotStyle system doesn't have any way to set this property
+          // the "Extended Properties" has could be used if we want to resurrect this
         if (ps_label_field != null) {
           LabelledGlyph lglyph = new EfficientLabelledGlyph();
           if (probeset_id != null) {
@@ -562,7 +527,7 @@ the probeset, probe and pieces of probes
       if (span.isForward()) {
         tiers[0].addChild(another_probeset_glyph);
       } else {
-        tiers[1].addChild(another_probeset_glyph);        
+        tiers[1].addChild(another_probeset_glyph);
       }
       gviewer.getSeqMap().setDataModelFromOriginalSym(another_probeset_glyph, probeset_sym);
     }

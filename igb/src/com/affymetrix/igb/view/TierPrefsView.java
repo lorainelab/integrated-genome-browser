@@ -228,13 +228,36 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     }
   }
 
+  /**
+   *  Call this whenver this component is removed from the view, due to the
+   *  tab pane closing or the window closing.  It will decide whether it is
+   *  necessary to update the SeqMapView in response to changes in settings
+   *  in this panel.
+   */
+  public void removedFromView() {
+    // if autoApplyChanges(), then the changes were already applied,
+    // otherwise apply changes as needed.
+    if (! autoApplyChanges()) {
+      SwingUtilities.invokeLater( new Runnable() {
+        public void run() {
+          applyChanges();
+        }
+      });
+    }
+  }
+  
+  
   /** Whether or not changes to the table should automatically be
    *  applied to the view.
    */
   boolean autoApplyChanges() {
-    boolean auto_apply_changes = UnibrowPrefsUtil.getBooleanParam(
-      PREF_AUTO_REFRESH, default_auto_refresh);
-    if (auto_refresh_CB == null) { auto_apply_changes = true; }
+    boolean auto_apply_changes = true;
+    if (auto_refresh_CB == null) { 
+      auto_apply_changes = true; 
+    } else {
+      auto_apply_changes = UnibrowPrefsUtil.getBooleanParam(
+        PREF_AUTO_REFRESH, default_auto_refresh);
+    }
     return auto_apply_changes;
   }
 

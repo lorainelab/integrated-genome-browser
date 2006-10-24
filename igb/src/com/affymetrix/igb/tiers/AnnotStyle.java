@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
 
+import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class AnnotStyle implements IAnnotStyle {
@@ -70,6 +71,9 @@ public class AnnotStyle implements IAnnotStyle {
   double height = default_height;
   double y = default_y;
   String url = null;
+
+  boolean color_by_score = false;  
+  HeatMap custom_heatmap = null;
     
   String unique_name;
   String human_name;
@@ -318,6 +322,10 @@ public class AnnotStyle implements IAnnotStyle {
   }
 
   public void setColor(Color c) {
+    if (c != this.color) {
+      custom_heatmap = null;
+      // get rid of old heatmap, force it to be re-created when needed
+    }
     this.color = c;
     if (getNode() != null) {
       UnibrowPrefsUtil.putColor(getNode(), PREF_COLOR, c);
@@ -328,8 +336,12 @@ public class AnnotStyle implements IAnnotStyle {
   public Color getBackground() {
     return background;
   }
-
+  
   public void setBackground(Color c) {
+    if (c != this.background) {
+      custom_heatmap = null;
+      // get rid of old heatmap, force it to be re-created when needed
+    }
     this.background = c;
     if (getNode() != null) {
       UnibrowPrefsUtil.putColor(getNode(), PREF_BACKGROUND, c);
@@ -404,7 +416,7 @@ public class AnnotStyle implements IAnnotStyle {
     // annotation tiers, only for graph tiers, which don't use this class
     expandable = b;
   }
-
+  
   /** Always returns false.  This class is only intended for annotation tiers,
    *  not graph tiers.
    */
@@ -420,6 +432,62 @@ public class AnnotStyle implements IAnnotStyle {
     }
     return transient_properties;
   }
+  
+  /**
+   *  Indicates whether the scores of the annotations should be marked by colors.
+   */
+  public void setColorByScore(boolean b) {
+    color_by_score = b;
+  }
+  
+  /**
+   *  Indicates whether the scores of the annotations should be marked by colors.
+   */
+  public boolean getColorByScore() {
+    return color_by_score;
+  }
+
+  /**
+   *  Returns a HeatMap that interpolates between colors based on
+   *  getColor() and getBackgroundColor().  The color at the low
+   *  end of the HeatMap will be slightly different from the background
+   *  color so that it can be distinguished from it.
+   *  This will return a HeatMap even if getColorByScore() is false.
+   */
+  HeatMap getCustomHeatMap() {
+    if (custom_heatmap == null) {
+      // Bottom color is not quite same as background, so it remains visible
+      Color bottom_color = HeatMap.interpolateColor(getBackground(), getColor(), 0.20f);
+      custom_heatmap = HeatMap.makeLinearHeatmap("Custom", bottom_color, getColor());
+    }
+    return custom_heatmap;
+  }
+  
+  /**
+   *  Returns a color that can be used to indicate a score between 1 and 1000.
+   *  This will return a color even if getColorByScore() is false.
+   */
+  public Color getScoreColor(float score) {
+    final float min = 1.0f; // min and max might become variables later...
+    final float max = 1000.0f;
+
+    if (score < min) {score = min;}
+    else if (score > max) { score = max;}
+
+    final float range = max - min;
+    final float norm_score = (score/range);
+    int index = (int) ((score/range) * 255);
+
+    return getCustomHeatMap().getColors()[ index ];
+  }
+    
+  /* (a possibility for later.... EEE)
+  Set source_urls = new TreeSet();
+  
+  public Set getSourceURLs() {
+    return source_urls;
+  }
+  */
   
   public void copyPropertiesFrom(IAnnotStyle g) {
     setColor(g.getColor());
@@ -438,7 +506,7 @@ public class AnnotStyle implements IAnnotStyle {
     
     getTransientPropertyMap().putAll(g.getTransientPropertyMap());
   }
-    
+
    boolean customizable = true;
 
     /** Whether this style should be customizable in a preferences panel.

@@ -67,7 +67,7 @@ public class PreferencesPanel extends JPanel {
       singleton.tpv = new TierPrefsView(false, true);
       singleton.tpv.addComponentListener(new ComponentAdapter() {
         public void componentHidden(ComponentEvent e) {
-          singleton.tpv.applyChanges();
+          singleton.tpv.removedFromView();
         }
       });
       
@@ -142,7 +142,7 @@ public class PreferencesPanel extends JPanel {
           // if it is not being displayed, then it's changes have already been applied in componentHidden()
           if (singleton.tpv != null) {
             if (singleton.tab_pane.getSelectedComponent() == singleton.tpv) {
-              singleton.tpv.applyChanges();
+              singleton.tpv.removedFromView();
             }
           }
           frame.dispose();

@@ -43,6 +43,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   public static final String SOFA_CDS = "SO:0000316";
   
   String source;
+  String method;
   String feature_type;
   float score;
   char frame;
@@ -79,6 +80,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     } else {
       this.source = UNKNOWN_SOURCE;  // Basically equivalent to this.source = source.intern()
     }
+    this.method = null;
     this.feature_type = feature_type;
     this.score = score;
     this.frame = frame;
@@ -108,7 +110,8 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   public String getAttributes() { return attributes; }
   
   public Object getProperty(String name) {
-    if ((name.equals("source") || name.equals("method")) && source != null) { return source; }
+    if (name.equals("source") && source != null) { return source; }
+    else if (name.equals("method")) { return method; }
     else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
@@ -126,7 +129,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   }
   
   static final List bad_prop_names = Arrays.asList(new String[] {
-    "feature_type", "type", "source", "method", "score", "frame"
+    "feature_type", "type", "score", "frame"
   });
   
   /** 
@@ -143,6 +146,26 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       }
       else {
         //id = null;
+        return false;
+      }
+    }
+    if (name.equals("source")) {
+      if (val instanceof String) {
+        source = (String) val;
+        return true;
+      }
+      else {
+        //source = null; 
+        return false;
+      }
+    }
+    if (name.equals("method")) {
+      if (val instanceof String) {
+        method = (String) val;
+        return true;
+      }
+      else {
+        //method = null; 
         return false;
       }
     }
@@ -169,7 +192,9 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     }
     if (source != null) { 
       tprops.put("source", source);
-      tprops.put("method", source); 
+    }
+    if (method != null) {
+      tprops.put("method", method); 
     }
     if (feature_type != null) { 
       tprops.put("feature_type", feature_type); 

@@ -481,8 +481,10 @@ public class TableSorter2 extends AbstractTableModel {
       if (c instanceof JLabel) {
         JLabel l = (JLabel) c;
         l.setHorizontalTextPosition(JLabel.LEFT);
-        int modelColumn = table.convertColumnIndexToModel(column);
-        l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
+        if (column < table.getColumnCount()) {
+          int modelColumn = table.convertColumnIndexToModel(column);
+          l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
+        }
       }
       return c;
     }

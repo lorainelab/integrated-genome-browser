@@ -124,7 +124,7 @@ use_label = false;
     GlyphI gl = null;
     GlyphI new_parent = null;
     double glyph_height = thick_height;
-    Color c = style.getColor();
+    boolean use_score_colors = style.getColorByScore();
 
     if (GFF3Sym.FEATURE_TYPE_GENE.equalsIgnoreCase(insym.getFeatureType())) {
       //gl = new com.affymetrix.igb.glyph.DoublePointedGlyph();
@@ -168,7 +168,11 @@ use_label = false;
         glyph_height = thick_height;
       }
     }
-    gl.setColor(c);
+    if (use_score_colors) {
+      gl.setColor(GenericAnnotGlyphFactory.getScoreColor(insym, style));
+    } else {
+      gl.setColor(style.getColor());
+    }
     gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
     gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
     //gviewer.getSeqMap().setDataModel(gl, insym);

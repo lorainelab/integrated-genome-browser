@@ -45,10 +45,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
    */
   static final boolean DRAW_DELETION_GLYPHS = true;
   
-
-  static Color default_annot_color = Color.GREEN;
-  static Color default_tier_color = Color.BLACK;
-
   static Class default_parent_class = (new ImprovedLineContGlyph()).getClass();
   static Class default_child_class = (new FillRectGlyph()).getClass();
   static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
@@ -60,8 +56,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static int DEFAULT_THIN_HEIGHT = 15;
 
   SeqMapView gviewer;
-  Color parent_color = default_annot_color;
-  Color child_color = default_annot_color;
   String label_field = null;
   int glyph_depth = 2;  // default is depth = 2 (only show leaf nodes and parents of leaf nodes)
 
@@ -105,7 +99,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         parent_glyph_class = ObjectUtils.classForName(parent_glyph_name);
       }
       catch (Exception ex) {
-        System.err.println("Class for parent glyph not found: " + parent_glyph_name);
+        System.err.println();
+        System.err.println("WARNING: Class for parent glyph not found: " + parent_glyph_name);
+        System.err.println();
         parent_glyph_class = default_parent_class;
       }
     }
@@ -115,7 +111,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         child_glyph_class = ObjectUtils.classForName(child_glyph_name);
       }
       catch (Exception ex) {
-        System.err.println("Class for child glyph not found: " + child_glyph_name);
+        System.err.println();
+        System.err.println("WARNING: Class for child glyph not found: " + child_glyph_name);
+        System.err.println();
         child_glyph_class = default_child_class;
       }
     }
@@ -137,22 +135,19 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    AffyTieredMap map = gviewer.getSeqMap();
-    String meth = gviewer.determineMethod(sym);
-    // System.out.println("method: " + meth);
+    //AffyTieredMap map = gviewer.getSeqMap();
 
     if (sym instanceof GFF3Sym) {
       GFF3GlyphFactory.getInstance().createGlyph(sym, smv, next_to_axis);
       return;
     }
     
+    String meth = gviewer.determineMethod(sym);
     if (meth != null) {
       AnnotStyle style = AnnotStyle.getInstance(meth);
-      parent_color = style.getColor();
-      child_color = style.getColor();
       glyph_depth = style.getGlyphDepth();
       label_field = style.getLabelField();
-
+      
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       if (style.getSeparate()) {
         addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
@@ -214,6 +209,25 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
+  static Color getScoreColor(SeqSymmetry sym, AnnotStyle style) {
+    float score = Float.NEGATIVE_INFINITY;
+    
+    Color top_color = style.getColor();
+
+    if (sym instanceof Scored) {
+      score = ((Scored) sym).getScore();
+    } else {
+      return top_color;
+    }
+
+    Color the_color = top_color;
+    
+    if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
+      the_color = style.getScoreColor(score);
+    }
+    return the_color;
+  }
+  
   /**
    *  @param parent_and_child  Whether to draw this sym as a parent and 
    *    also draw its children, or to just draw the sym itself 
@@ -252,9 +266,16 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     double thick_height = DEFAULT_THICK_HEIGHT;
     double thin_height = DEFAULT_THIN_HEIGHT;
     
-    //IAnnotStyle the_style = the_tier.getAnnotStyle();
+    // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
+    AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
+
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;
+    
+    Color parent_color = the_style.getColor();
+    Color child_color = the_style.getColor();
+    
+    boolean use_score_colors = the_style.getColorByScore();
     
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
@@ -263,7 +284,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     double pheight = thick_height + 0.0001;
 
     boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
-
+    
     if (parent_and_child) {
       try  {
         if (use_label) {
@@ -283,8 +304,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
       catch (Exception ex) { ex.printStackTrace(); }
       pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-      //      pglyph.setColor(glyph_col);
-      pglyph.setColor(parent_color);
+      if (use_score_colors) {
+        pglyph.setColor(getScoreColor(insym, the_style));
+      } else {
+        pglyph.setColor(parent_color);
+      }
       if (SET_PARENT_INFO) {
         map.setDataModelFromOriginalSym(pglyph, sym);
       }
@@ -325,7 +349,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               
               DeletionGlyph boundary_glyph = new DeletionGlyph();
               boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) thin_height);
-              boundary_glyph.setColor(child_color);
+              boundary_glyph.setColor(pglyph.getColor());
               //boundary_glyph.setHitable(false);
               pglyph.addChild(boundary_glyph);
               
@@ -362,7 +386,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
                 if (cds_span != null) {
                   GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
                   cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
-                  cds_glyph.setColor(parent_color);
+                  if (use_score_colors) {
+                    cds_glyph.setColor(getScoreColor(cds_sym, the_style));
+                  } else {
+                    cds_glyph.setColor(parent_color);
+                  }
                   pglyph.addChild(cds_glyph);
                   if (SET_CHILD_INFO) {
                     map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
@@ -374,7 +402,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             }
           }
           cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-          cglyph.setColor(child_color);
+          if (use_score_colors) {
+            cglyph.setColor(getScoreColor(child, the_style));
+          } else {
+            cglyph.setColor(child_color);
+          }
           pglyph.addChild(cglyph);
           if (SET_CHILD_INFO) {
             map.setDataModelFromOriginalSym(cglyph, child);
@@ -402,8 +434,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       catch (Exception ex) { ex.printStackTrace(); }
 
       pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-      //      pglyph.setColor(glyph_col);
-      pglyph.setColor(parent_color);
+      if (use_score_colors) {
+        // is the insym or sym?
+        pglyph.setColor(getScoreColor(insym, the_style));
+      } else {
+        pglyph.setColor(parent_color);
+      }
       if (SET_PARENT_INFO) {
         map.setDataModelFromOriginalSym(pglyph, sym);
       }

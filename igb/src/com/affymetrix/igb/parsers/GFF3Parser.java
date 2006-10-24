@@ -74,6 +74,8 @@ public class GFF3Parser {
     return parse(br, default_source, seq_group);
   }
   
+  boolean use_track_lines = true;
+  
   /**
    *  Parses GFF3 format and adds annotations to the appropriate seqs on the
    *  given seq group.
@@ -91,6 +93,7 @@ public class GFF3Parser {
 
     Map id2sym = new HashMap();
     ArrayList all_syms = new ArrayList();
+    String track_name = null;
     
     try {
       Thread thread = Thread.currentThread();
@@ -104,14 +107,13 @@ public class GFF3Parser {
         if ("##FASTA".equals(line)) {
           break;
         }
-        if (line.startsWith("##")) { processDirective(line); continue; }
-        if (line.startsWith("#")) { continue; }
-        if (line.startsWith("track")) {
-          // in GFF files, the color will only be applied from track lines 
-          // iff the "source" name matches the track line name.
-          track_line_parser.setTrackProperties(line, default_source);
+        if (line.startsWith("##track")) {
+          track_line_parser.setTrackProperties(line.substring(2), default_source);
+          track_name = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
           continue;
         }
+        if (line.startsWith("##")) { processDirective(line); continue; }
+        if (line.startsWith("#")) { continue; }
         String fields[] = line_regex.split(line);
 
         if (fields != null && fields.length >= 8) {
@@ -146,6 +148,12 @@ public class GFF3Parser {
 	  GFF3Sym sym = new GFF3Sym(seq, source, feature_type, coord_a, coord_b,
 					  score, strand_char, frame_char,
 					  attributes_field);
+
+          if (use_track_lines && track_name != null) {
+            sym.setProperty("method", track_name);
+          } else {
+            sym.setProperty("method", source);
+          }
 
           int max = sym.getMax();
           if (max > seq.getLength()) { seq.setLength(max); }

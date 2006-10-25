@@ -209,23 +209,20 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
-  static Color getScoreColor(SeqSymmetry sym, AnnotStyle style) {
-    float score = Float.NEGATIVE_INFINITY;
+  static Color getScoreColor(SeqSymmetry insym, AnnotStyle style) {
+    SeqSymmetry sym = insym;
+    if (insym instanceof DerivedSeqSymmetry) {
+      sym = ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
+    }
     
-    Color top_color = style.getColor();
-
     if (sym instanceof Scored) {
-      score = ((Scored) sym).getScore();
-    } else {
-      return top_color;
+      float score = ((Scored) sym).getScore();
+      if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
+        return style.getScoreColor(score);
+      }
     }
 
-    Color the_color = top_color;
-    
-    if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
-      the_color = style.getScoreColor(score);
-    }
-    return the_color;
+    return style.getColor();
   }
   
   /**
@@ -238,7 +235,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
                           TierGlyph forward_tier,
                           TierGlyph reverse_tier, 
                           boolean parent_and_child) {
-
+    
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
@@ -449,6 +446,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     else { reverse_tier.addChild(pglyph); }
     return pglyph;
   }
+  
   
   // a helper function used in drawing the "deletion" glyphs
   static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq) {

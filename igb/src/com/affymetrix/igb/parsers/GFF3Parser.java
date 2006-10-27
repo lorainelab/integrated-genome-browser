@@ -302,7 +302,7 @@ public class GFF3Parser {
       strand = '-';
     }
     GFF3Sym parent = new GFF3Sym(sym1.getBioSeq(), sym1.getSource(), GROUP_FEATURE_TYPE,
-        Math.min(sym1.getMin(), sym2.getMin()), Math.max(sym1.getMax(), sym2.getMax()),
+        Math.min(sym1.getMin(), sym2.getMin()) + 1, Math.max(sym1.getMax(), sym2.getMax()),
         GFF3Sym.UNKNOWN_SCORE, strand, GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
     parent.addChild(sym1);
     parent.addChild(sym2);

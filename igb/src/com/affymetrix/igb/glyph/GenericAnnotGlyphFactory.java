@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.genometry.*;
@@ -56,7 +57,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static int DEFAULT_THIN_HEIGHT = 15;
 
   SeqMapView gviewer;
-  String label_field = null;
   int glyph_depth = 2;  // default is depth = 2 (only show leaf nodes and parents of leaf nodes)
 
   MutableSeqSpan model_span = new SimpleMutableSeqSpan();
@@ -79,14 +79,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void init(Map options) {
-    //parent_color = (Color)options.get("parent_color");
-    //child_color = (Color)options.get("child_color");
-    //if (parent_color == null) { parent_color = (Color)options.get("color"); }
-    //if (child_color == null) { child_color = (Color)options.get("color"); }
-    //if (parent_color == null) { parent_color = default_annot_color; }
-    //if (child_color == null) { child_color = default_annot_color; }
-
-    //label_field = (String)options.get("label_field");
 
     String glyph_depth_string = (String)options.get("glyph_depth");
     if (glyph_depth_string != null) {
@@ -146,7 +138,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (meth != null) {
       AnnotStyle style = AnnotStyle.getInstance(meth);
       glyph_depth = style.getGlyphDepth();
-      label_field = style.getLabelField();
       
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       if (style.getSeparate()) {
@@ -225,6 +216,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     return style.getColor();
   }
   
+  boolean allows_labels = true;
+
   /**
    *  @param parent_and_child  Whether to draw this sym as a parent and 
    *    also draw its children, or to just draw the sym itself 
@@ -236,41 +229,60 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
                           TierGlyph reverse_tier, 
                           boolean parent_and_child) {
     
+    GlyphI g = null;
+    
+    try {
+      if (parent_and_child && insym.getChildCount() > 0) {
+        g = doTwoLevelGlyph(insym, forward_tier, reverse_tier);
+      } else {
+        // depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
+        g = doSingleLevelGlyph(insym, forward_tier, reverse_tier);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return g;
+  }
+  
+  
+  public GlyphI doTwoLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
+  throws java.lang.InstantiationException, java.lang.IllegalAccessException {
+    
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
-    if (annotseq != coordseq) {
+    boolean same_seq = (annotseq == coordseq);
+    
+    if (! same_seq) {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
-
+    
     SeqSpan pspan = sym.getSpan(coordseq);
     if (pspan == null) {
       return null;
     }  // if no span corresponding to seq, then return;
-
+    
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
-    if (DRAW_DELETION_GLYPHS && annotseq != coordseq && ADD_CHILDREN && sym.getChildCount() > 0) {
+    if (DRAW_DELETION_GLYPHS && ! same_seq && ADD_CHILDREN && sym.getChildCount() > 0) {
       boundaries = determineBoundaries(gviewer, annotseq);
     }
     
     boolean forward = pspan.isForward();
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
-
+    
     GlyphI pglyph = null;
-
+    
     double thick_height = DEFAULT_THICK_HEIGHT;
     double thin_height = DEFAULT_THIN_HEIGHT;
     
     // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
     AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
-
+    
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;
-    
-    Color parent_color = the_style.getColor();
-    Color child_color = the_style.getColor();
     
     boolean use_score_colors = the_style.getColorByScore();
     
@@ -279,174 +291,220 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     // in order to look at the properties associated with them.  Otherwise, the method
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
     double pheight = thick_height + 0.0001;
-
-    boolean use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
     
-    if (parent_and_child) {
-      try  {
-        if (use_label) {
-          LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-          Object property = ((SymWithProps)insym).getProperty(label_field);
-          String label = (property == null) ? "" : property.toString();
-          if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
-          else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
-          //          System.out.println("using label: " + label);
-          lglyph.setLabel(label);
-          pheight = 2 * pheight;
-          pglyph = lglyph;
-        }
-        else {
-          pglyph = (GlyphI)parent_glyph_class.newInstance();
-        }
-      }
-      catch (Exception ex) { ex.printStackTrace(); }
-      pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-      if (use_score_colors) {
-        pglyph.setColor(getScoreColor(insym, the_style));
-      } else {
-        pglyph.setColor(parent_color);
-      }
-      if (SET_PARENT_INFO) {
-        map.setDataModelFromOriginalSym(pglyph, sym);
-      }
-
-      SeqSpan cdsSpan = null;
-      SeqSymmetry cds_sym = null;
-
-      if ((insym instanceof SupportsCdsSpan) && ((SupportsCdsSpan)insym).hasCdsSpan() )  {
-        cdsSpan = ((SupportsCdsSpan)insym).getCdsSpan();
-        MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
-        tempsym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
-        if (annotseq != coordseq) {
-          SeqUtils.transformSymmetry(tempsym, gviewer.getTransformPath());
-          cdsSpan = tempsym.getSpan(coordseq);
-        }
-        cds_sym = tempsym;
-      }
+    boolean use_label = false;
+    String label_field = the_style.getLabelField();
+    if (allows_labels) {
+      use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
+    }
       
-      if (ADD_CHILDREN) {
-        int childCount = sym.getChildCount();
-        int j = 0;
-        for (int i=0; i<childCount; i++) {
-          SeqSymmetry child = null;
-          SeqSpan cspan = null;
-          child = sym.getChild(i);
-          cspan = child.getSpan(coordseq);
+    if (use_label) {
+      LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
+      Object property = null;
+      if (insym instanceof DerivedSeqSymmetry) {
+        SymWithProps swp = (SymWithProps) ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
+        property = swp.getProperty(label_field);
+      } else {
+        property = ((SymWithProps) insym).getProperty(label_field);
+      }
+      String label = (property == null) ? "" : property.toString();
+      if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+        lglyph.setLabelLocation(LabelledGlyph.SOUTH);
+      } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
+      //          System.out.println("using label: " + label);
+      lglyph.setLabel(label);
+      pheight = 2 * pheight;
+      pglyph = lglyph;
+    } else {
+      pglyph = (GlyphI)parent_glyph_class.newInstance();
+    }
 
-          if (cspan == null) {
+    pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
+    if (use_score_colors) {
+      pglyph.setColor(getScoreColor(insym, the_style));
+    } else {
+      pglyph.setColor(the_style.getColor());
+    }
+    if (SET_PARENT_INFO) {
+      map.setDataModelFromOriginalSym(pglyph, sym);
+    }
+    
+    SeqSpan cdsSpan = null;
+    SeqSymmetry cds_sym = null;
+    
+    if ((insym instanceof SupportsCdsSpan) && ((SupportsCdsSpan)insym).hasCdsSpan() )  {
+      cdsSpan = ((SupportsCdsSpan)insym).getCdsSpan();
+      MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
+      tempsym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
+      if (! same_seq) {
+        SeqUtils.transformSymmetry(tempsym, gviewer.getTransformPath());
+        cdsSpan = tempsym.getSpan(coordseq);
+      }
+      cds_sym = tempsym;
+    }
+    
+    if (ADD_CHILDREN) {
+      int childCount = sym.getChildCount();
+      int j = 0;
+      for (int i=0; i<childCount; i++) {
+        SeqSymmetry child = null;
+        SeqSpan cspan = null;
+        child = sym.getChild(i);
+        cspan = child.getSpan(coordseq);
+        
+        if (cspan == null) {
+          
+          if (DRAW_DELETION_GLYPHS && ! same_seq && boundaries != null) {
+            // There is a missing child, so indicate it with a little glyph.
             
-            if (DRAW_DELETION_GLYPHS && annotseq != coordseq && boundaries != null) {
-              // There is a missing child, so indicate it with a little glyph.
-              
-              int annot_span_min = child.getSpan(annotseq).getMin();
-              while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
-                j++;
-              }
-              int gap_location = boundaries[j][1];
-              
-              DeletionGlyph boundary_glyph = new DeletionGlyph();
-              boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) thin_height);
-              boundary_glyph.setColor(pglyph.getColor());
-              //boundary_glyph.setHitable(false);
-              pglyph.addChild(boundary_glyph);
-              
-              // Now stretch the parent glyph so that it includes this glyph.
-              Rectangle2D cb = pglyph.getCoordBox();
-              if (cb.x > gap_location) {
-                cb.width += cb.x - gap_location;
-                cb.x = gap_location;
-              } else if (cb.x + cb.width < gap_location) {
-                cb.width = gap_location - cb.x;
-              }
-            }            
+            int annot_span_min = child.getSpan(annotseq).getMin();
+            while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
+              j++;
+            }
+            int gap_location = boundaries[j][1];
             
-            continue;
+            DeletionGlyph boundary_glyph = new DeletionGlyph();
+            boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) thin_height);
+            boundary_glyph.setColor(pglyph.getColor());
+            //boundary_glyph.setHitable(false);
+            pglyph.addChild(boundary_glyph);
+            
+            // Now stretch the parent glyph so that it includes this glyph.
+            Rectangle2D cb = pglyph.getCoordBox();
+            if (cb.x > gap_location) {
+              cb.width += cb.x - gap_location;
+              cb.x = gap_location;
+            } else if (cb.x + cb.width < gap_location) {
+              cb.width = gap_location - cb.x;
+            }
           }
           
-          GlyphI cglyph = null;
-
-          try  { cglyph = (GlyphI)child_glyph_class.newInstance(); }
-          catch (Exception ex) { ex.printStackTrace(); }
-
-          double cheight = thick_height;
-          if (cdsSpan != null) {
-            cheight = thin_height;
-            if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; }
-            else if (SeqUtils.overlap(cdsSpan, cspan)) {
-              try {
-		SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
-		SeqSymmetry cds_sym_3 = cds_sym_2;
-		if (annotseq != coordseq) {
-		  cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
-		}
-		SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
-                if (cds_span != null) {
-                  GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
-                  cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
-                  if (use_score_colors) {
-                    cds_glyph.setColor(getScoreColor(cds_sym, the_style));
-                  } else {
-                    cds_glyph.setColor(parent_color);
-                  }
-                  pglyph.addChild(cds_glyph);
-                  if (SET_CHILD_INFO) {
-                    map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
-                  }
-                }
-              } catch (Exception e) {
-                e.printStackTrace();
+          continue;
+        }
+        
+        GlyphI cglyph = (GlyphI)child_glyph_class.newInstance();
+        
+        double cheight = thick_height;
+        if (cdsSpan != null) {
+          cheight = thin_height;
+          if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } else if (SeqUtils.overlap(cdsSpan, cspan)) {
+            
+            SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
+            SeqSymmetry cds_sym_3 = cds_sym_2;
+            if (! same_seq) {
+              cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
+            }
+            SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
+            if (cds_span != null) {
+              GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
+              cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
+              if (use_score_colors) {
+                cds_glyph.setColor(getScoreColor(cds_sym, the_style));
+              } else {
+                cds_glyph.setColor(the_style.getColor());
+              }
+              pglyph.addChild(cds_glyph);
+              if (SET_CHILD_INFO) {
+                map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
               }
             }
           }
-          cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-          if (use_score_colors) {
-            cglyph.setColor(getScoreColor(child, the_style));
-          } else {
-            cglyph.setColor(child_color);
-          }
-          pglyph.addChild(cglyph);
-          if (SET_CHILD_INFO) {
-            map.setDataModelFromOriginalSym(cglyph, child);
-          }                    
+        }
+        cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
+        if (use_score_colors) {
+          cglyph.setColor(getScoreColor(child, the_style));
+        } else {
+          cglyph.setColor(the_style.getColor());
+        }
+        pglyph.addChild(cglyph);
+        if (SET_CHILD_INFO) {
+          map.setDataModelFromOriginalSym(cglyph, child);
         }
       }
     }
-    else {  // depth !>= 2, so depth <= 1, so _no_ parent, use child glyph instead...
-      try  {
-        if (use_label) {
-          LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-          Object property = ((SymWithProps)insym).getProperty(label_field);
-          String label = (property == null) ? "" : property.toString();
-          if (forward)  { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
-          else { lglyph.setLabelLocation(LabelledGlyph.SOUTH); }
-          //          System.out.println("using label: " + label);
-          lglyph.setLabel(label);
-          pheight = 2 * pheight;
-          pglyph = lglyph;
-        }
-        else {
-          pglyph = (GlyphI)child_glyph_class.newInstance();
-        }
-      }
-      catch (Exception ex) { ex.printStackTrace(); }
+    
+    the_tier.addChild(pglyph);
+    return pglyph;
+  }
 
-      pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-      if (use_score_colors) {
-        // is the insym or sym?
-        pglyph.setColor(getScoreColor(insym, the_style));
+  GlyphI doSingleLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
+    throws java.lang.InstantiationException, java.lang.IllegalAccessException {
+    
+    AffyTieredMap map = gviewer.getSeqMap();
+    BioSeq annotseq = gviewer.getAnnotatedSeq();
+    BioSeq coordseq = gviewer.getViewSeq();
+    SeqSymmetry sym = insym;
+    boolean same_seq = (annotseq == coordseq);
+    
+    if (! same_seq) {
+      sym = gviewer.transformForViewSeq(insym, annotseq);
+    }
+    
+    SeqSpan pspan = sym.getSpan(coordseq);
+    if (pspan == null) {
+      return null;
+    }  // if no span corresponding to seq, then return;
+    
+    boolean forward = pspan.isForward();
+    TierGlyph the_tier = forward ? forward_tier : reverse_tier;
+    
+    GlyphI pglyph = null;
+    
+    // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
+    AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
+    
+    boolean use_score_colors = the_style.getColorByScore();
+    
+    // Note: Setting parent height (pheight) larger than the child height (cheight)
+    // allows the user to select both the parent and the child as separate entities
+    // in order to look at the properties associated with them.  Otherwise, the method
+    // EfficientGlyph.pickTraversal() will only allow one to be chosen.
+    double pheight = DEFAULT_THICK_HEIGHT + 0.0001;
+    
+    boolean use_label = false;
+    String label_field = the_style.getLabelField();
+    if (allows_labels) {
+      use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
+    }
+
+    if (use_label) {
+      LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
+      Object property = null;
+      if (insym instanceof DerivedSeqSymmetry) {
+        SymWithProps swp = (SymWithProps)  ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
+        property = swp.getProperty(label_field);
       } else {
-        pglyph.setColor(parent_color);
+        property = ((SymWithProps)insym).getProperty(label_field);
       }
-      if (SET_PARENT_INFO) {
-        map.setDataModelFromOriginalSym(pglyph, sym);
-      }
+      String label = (property == null) ? "" : property.toString();
+      if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+        lglyph.setLabelLocation(LabelledGlyph.SOUTH);
+      } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
+      lglyph.setLabel(label);
+      pheight = 2 * pheight;
+      pglyph = lglyph;
+    } else {
+      pglyph = (GlyphI)child_glyph_class.newInstance();
     }
-
-    if (forward)  { forward_tier.addChild(pglyph); }
-    else { reverse_tier.addChild(pglyph); }
+    
+    pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
+    if (use_score_colors) {
+      // is the insym or sym?
+      pglyph.setColor(getScoreColor(insym, the_style));
+    } else {
+      pglyph.setColor(the_style.getColor());
+    }
+    if (SET_PARENT_INFO) {
+      map.setDataModelFromOriginalSym(pglyph, sym);
+    }
+    
+    the_tier.addChild(pglyph);
     return pglyph;
   }
   
+  
+  //TODO: Move this to SeqMapView or AltSpliceView, 
+  // so boundaries don't have to be re-computed over and over  
   
   // a helper function used in drawing the "deletion" glyphs
   static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq) {
@@ -496,6 +554,52 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
     }
     return boundaries;    
+  }
+
+  // Copies to a derived SeqSymmetry without copying any of the children.
+  public static DerivedSeqSymmetry copyToDerivedNonRecursive(SeqSymmetry sym) {
+    DerivedSeqSymmetry der = getDerived();
+
+    der.clear(); // redundant, but ok
+
+    if (sym instanceof DerivedSeqSymmetry) {
+      der.setOriginalSymmetry(((DerivedSeqSymmetry)sym).getOriginalSymmetry());
+    }
+    else {
+      der.setOriginalSymmetry(sym);
+    }
+    int spanCount = sym.getSpanCount();
+    for (int i=0; i<spanCount; i++) {
+      // just point to spans rather than copying them.
+      // we can trust that the glyph factories won't modify these spans,
+      // although it may add new spans.
+      SeqSpan span = sym.getSpan(i);
+      der.addSpan(span);
+    }
+    return der;
+  }
+
+  static java.util.Stack derived_stack = new Stack();
+  static final int max_stack_size = 100;
+  
+  static DerivedSeqSymmetry getDerived() {
+    if (derived_stack.isEmpty()) {
+      return new SimpleDerivedSeqSymmetry();
+    } else {
+      return (DerivedSeqSymmetry) derived_stack.pop();
+    }
+  }
+  
+  static void recycleDerived(DerivedSeqSymmetry sym) {
+    for (int i=sym.getChildCount()-1; i>=0; i--) {
+      recycleDerived((DerivedSeqSymmetry) sym.getChild(i));
+    }
+    
+    sym.clear();
+    sym.setOriginalSymmetry(null);
+    if (derived_stack.size() < max_stack_size) {
+      derived_stack.push(sym);
+    }
   }
 
   /** A small x-shaped glyph that can be used to indicate a deleted exon 

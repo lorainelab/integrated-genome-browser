@@ -347,7 +347,11 @@ public class AnnotStyle implements IAnnotStyle {
       UnibrowPrefsUtil.putColor(getNode(), PREF_BACKGROUND, c);
     }
   }
-    
+  
+  
+  /** Returns the field name from which the glyph labels should be taken. 
+   *  This will never return null, but will return "" instead.
+   */
   public String getLabelField() {
     return label_field;
   }

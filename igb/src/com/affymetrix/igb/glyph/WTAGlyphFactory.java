@@ -45,7 +45,7 @@ public class WTAGlyphFactory extends GenericAnnotGlyphFactory {
     
     String type = sym.getFeatureType();    
     
-    this.label_field = null;
+    this.allows_labels = false;
     if (type.startsWith("transcript")) { 
       // parent is transcript_cluster, child is exon_cluster
       addToTier(sym, ftier, rtier, true);

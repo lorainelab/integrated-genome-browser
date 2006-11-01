@@ -26,7 +26,6 @@ import java.util.regex.*;
  */
 public class GFF3Sym extends SingletonSymWithProps implements Scored { 
 
-  public static final float UNKNOWN_SCORE = UcscGffSym.UNKNOWN_SCORE;
   public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;
   public static final String UNKNOWN_SOURCE = ".";
   

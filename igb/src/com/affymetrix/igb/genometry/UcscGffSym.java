@@ -24,7 +24,6 @@ import java.util.regex.*;
  */
 public class UcscGffSym extends SingletonSymWithProps implements Scored { 
 
-  public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
   public static final char UNKNOWN_FRAME = '.';
   
   /** 

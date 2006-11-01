@@ -33,6 +33,10 @@ public abstract class WiggleData {
   Map track_line_map; // = track_line_parser.getCurrentTrackHash();
   AnnotatedSeqGroup seq_group;
   
+  /**
+   *  Creates a GraphSym from the stored data, or returns null if no data
+   *  has been stored yet.
+   */
   public abstract GraphSym createGraph(String graph_id);
 }
 
@@ -49,6 +53,9 @@ class FixedStepWiggleData extends WiggleData {
   }
   
   public GraphSym createGraph(String graph_id) {
+    if (ylist.size() == 0) {
+      return null;
+    }
     String seq_id = WiggleParser.parseFormatLine("chrom", format_line, "unknown");
     int x_start = Integer.parseInt(WiggleParser.parseFormatLine("start", format_line, "1"));
     int x_step = Integer.parseInt(WiggleParser.parseFormatLine("step", format_line, "1"));
@@ -91,7 +98,7 @@ class VariableStepWiggleData extends WiggleData {
   
   public GraphSym createGraph(String graph_id) {
     if (xlist.size() == 0) {
-      System.out.println("The size is zero");
+      return null;
     }
     int[] widths = null;
     
@@ -133,9 +140,12 @@ class BedWiggleData extends WiggleData {
   }
   
   public GraphSym createGraph(String graph_id) {
+    if (xlist.size() == 0) {
+      return null;
+    }
+    
     int largest_x = xlist.get(xlist.size()-1) + wlist.get(wlist.size()-1);
     
-    System.out.println("BED: " + largest_x);
     BioSeq seq = seq_group.addSeq(seq_id, largest_x);
     GraphSym gsym = new GraphIntervalSym(xlist.copyToArray(), wlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
     

@@ -18,5 +18,7 @@ package com.affymetrix.igb.genometry;
  *  For SeqSymmetry's with a score, we may want to display the score somehow.
  */
 public interface Scored {
+  public static final float UNKNOWN_SCORE = Float.NEGATIVE_INFINITY;
+
   public float getScore();
 }

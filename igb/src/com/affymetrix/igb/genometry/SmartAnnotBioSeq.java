@@ -55,7 +55,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   }
 
   public boolean isSynonymous(String synonym) {
-    if (getID().equals(synonym)) { return true; }
+    if (getID() != null && getID().equals(synonym)) { return true; }
     else {
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
       return (lookup.isSynonym(getID(), synonym));

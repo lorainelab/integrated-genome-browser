@@ -147,9 +147,25 @@ public class AnnotatedSeqGroup {
     }
   }
 
+  /**
+   *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
+   *  and increasing its length to the given value if necessary.
+   */
   public SmartAnnotBioSeq addSeq(String seqid, int length) {
-    SmartAnnotBioSeq aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
-    this.addSeq(aseq);
+    if (seqid == null) {
+      throw new NullPointerException();
+    }
+    SmartAnnotBioSeq aseq;
+    aseq = (SmartAnnotBioSeq) getSeq(seqid);
+    if (aseq != null) {
+      if (aseq.getLength() < length) {
+        aseq.setLength(length);
+      }
+    }
+    else {
+      aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+      this.addSeq(aseq);
+    }
     return aseq;
   }
 

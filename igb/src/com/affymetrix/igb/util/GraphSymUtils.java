@@ -28,6 +28,7 @@ import com.affymetrix.igb.parsers.SgrParser;
 import com.affymetrix.igb.parsers.BarParser;
 import com.affymetrix.igb.parsers.GrParser;
 import com.affymetrix.igb.parsers.BgrParser;
+import com.affymetrix.igb.parsers.WiggleParser;
 
 public class GraphSymUtils {
 
@@ -166,7 +167,8 @@ public class GraphSymUtils {
       lc.endsWith(".gr") ||
       lc.endsWith(".bgr") ||
       lc.endsWith(".bar") ||
-      lc.endsWith(".sgr")
+      lc.endsWith(".sgr") ||
+      lc.endsWith(".wig")
       );
   }
 
@@ -221,6 +223,10 @@ public class GraphSymUtils {
     else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();
       grafs = sgr_parser.parse(newstr, stream_name, seq_group, false);
+    }
+    else if (sname.endsWith(".wig")) {
+      WiggleParser wig_parser = new WiggleParser();
+      grafs = wig_parser.parse(newstr, seq_group, false, stream_name);
     } else {
       throw new IOException("Unrecognized filename for a graph file:\n"+stream_name);
     }

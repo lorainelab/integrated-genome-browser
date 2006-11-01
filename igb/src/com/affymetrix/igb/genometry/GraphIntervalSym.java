@@ -15,6 +15,7 @@ package com.affymetrix.igb.genometry;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 
 /**
@@ -31,6 +32,11 @@ public class GraphIntervalSym extends GraphSym {
     if (xcoords.length != ycoords.length || xcoords.length != wcoords.length) {
       throw new IllegalArgumentException("X,W, and Y arrays must have the same length");
     }
+
+    this.removeSpans();
+    int xmin = x[0];
+    int xmax = x[x.length-1] + width[width.length-1];
+    this.addSpan(new SimpleSeqSpan(xmin, xmax, seq));
   }
   
   public int[] getGraphWidthCoords() {
@@ -41,7 +47,11 @@ public class GraphIntervalSym extends GraphSym {
     return xcoords.length;
   }
 
+  /**
+   *  Constructs a temporary SeqSymmetry to represent the graph value of a single span.
+   *  The returned SeqSymmetry will implement the {@link Scored} interface.
+   */
   public SeqSymmetry getChild(int index) {
-    return new SingletonSeqSymmetry(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq);
+    return new ScoredSingletonSym(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq, ycoords[index]);
   }
 }

@@ -879,12 +879,14 @@ implements SeqSelectionListener, SymSelectionListener {
         GraphGlyph graphB = (GraphGlyph) glyphs.get(1);
         GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
         
-        MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
-        aseq.addAnnotation(newsym);
-        gviewer.setAnnotatedSeq(aseq, true, true);
-        GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
+        if (newsym != null) {
+          MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+          aseq.addAnnotation(newsym);
+          gviewer.setAnnotatedSeq(aseq, true, true);
+          GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
 
-        updateViewer();
+          updateViewer();
+        }
       } else {
         ErrorHandler.errorPanel("ERROR", "Must choose exactly 2 graphs", this);
       }

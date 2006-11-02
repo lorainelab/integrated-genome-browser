@@ -516,7 +516,12 @@ public class GraphSelectionManager
       // This error condition is likely never triggered
       ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs.", gviewer.getSeqMap());
     }
-    if (GraphGlyphUtils.graphsAreComparable(graphA, graphB) == null) {
+    String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
+    if (error != null) {
+      ErrorHandler.errorPanel("ERROR", error);
+      return;
+    }
+    else {
       GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
       
       MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();

@@ -161,7 +161,8 @@ public class PSLParser implements AnnotationWriter  {
               in_bottom_of_link_psl = true;
             }
           } else {
-            Map track_props = track_line_parser.setTrackProperties(line, annot_type);
+            track_line_parser.parseTrackLine(line);
+            track_line_parser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), annot_type);
           }
           // You can later get the track properties with getCurrentTrackHash();
 	  continue;

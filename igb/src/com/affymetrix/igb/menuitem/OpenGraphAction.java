@@ -31,6 +31,7 @@ import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
@@ -168,17 +169,24 @@ public class OpenGraphAction extends AbstractAction {
       }
 
       graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
-
+      
       String graph_name = getGraphNameForURL(furl);
       // Now set the graph names (either the URL or the filename, possibly with an integer appended)
       for (int i=0; i<graphs.size(); i++) {
         com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
 
+        IAnnotStyle style = gg.getGraphState().getTierStyle();
+        
         String name = graph_name;
         if (graphs.size() > 1) {
           name = name + " " + (i+1);
         }
-        gg.getGraphState().getTierStyle().setHumanName(name);
+        if (style.getHumanName().equals(gg.getID())) {
+          //Only apply a new graph name it current name is the same as the ID.
+          //(Because the ID is mainly for internal use and if a different name
+          // has already been set by the parser, it is probably a good one.)
+          style.setHumanName(name);
+        }
       }      
       
     } finally {

@@ -32,6 +32,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   private boolean show_outline = false;
 
   static final boolean THICK_OUTLINE = true;
+  static final boolean DRAW_COLLAPSED_EXPANDED_ICONS = false;
 
   public String toString() {
     return ("TierLabelGlyph: label: \""+getLabelString()+"\"  +coordbox: "+coordbox);
@@ -128,6 +129,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     //      setForegroundColor(reftier.getForegroundColor());
     bgcolor = reftier.getFillColor();
     fgcolor = reftier.getForegroundColor();
+    boolean collapsed = reftier.getAnnotStyle().getCollapsed();
     
     Graphics g = view.getGraphics();
     g.setPaintMode();
@@ -164,6 +166,17 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       g.drawRect(pixelbox.x,   pixelbox.y,   pixelbox.width-1, pixelbox.height-1);
       if (THICK_OUTLINE) {
         g.drawRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-3, pixelbox.height-3);
+      }
+    }
+
+    if (reftier.getAnnotStyle().getExpandable()) {
+      if (DRAW_COLLAPSED_EXPANDED_ICONS && collapsed) {
+        g.setColor(fgcolor);
+        g.drawLine(pixelbox.x + pixelbox.width - 13, pixelbox.y + 8, pixelbox.x + pixelbox.width - 5, pixelbox.y + 8);
+        g.drawLine(pixelbox.x + pixelbox.width - 9, pixelbox.y + 4, pixelbox.x + pixelbox.width - 9, pixelbox.y + 12);
+      } else {
+        g.setColor(fgcolor);
+        g.drawLine(pixelbox.x + pixelbox.width - 13, pixelbox.y + 8, pixelbox.x + pixelbox.width - 5, pixelbox.y + 8);
       }
     }
 

@@ -421,10 +421,11 @@ public class SeqMapView extends JPanel
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);
 
+        
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
   }
-
-
+  
+  
 
     // This preference change listener can reset some things, like whether
     // the axis uses comma format or not, in response to changes in the stored
@@ -497,6 +498,21 @@ public class SeqMapView extends JPanel
   public void setupPopups() {
     sym_popup = new JPopupMenu();
     sym_info = new JLabel("");
+    
+//    ActionListener al = new ActionListener() {
+//      public void actionPerformed(ActionEvent ae) {
+//        MouseEvent me = new MouseEvent(SeqMapView.this, 0, 0L, 0,0,0,1, false);
+//        NeoMouseEvent nevt = new NeoMouseEvent(me, SeqMapView.this, 0, 0);
+//        showPopup(null);
+//      }
+//    };
+//
+//    // Register an event for the popup menu to be shown in response to the
+//    // press of the context menu key (on Windows keyboards).
+//    this.registerKeyboardAction(al, "", 
+//       KeyStroke.getKeyStroke(525, 0, false),
+//       JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
     sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
     zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
@@ -2562,11 +2578,13 @@ public class SeqMapView extends JPanel
           IAnnotStyle style = gstate.getTierStyle();
           System.out.println("Graph: " + gs.getGraphName());
           Map m = gs.getProperties();
-          Set keys = m.keySet();
-          Iterator iter = keys.iterator();
-          while (iter.hasNext()) {
-            String key = (String)iter.next();
-            System.out.println(key + " --> " + m.get(key));
+          if (m != null) {
+            Set keys = m.keySet();
+            Iterator iter = keys.iterator();
+            while (iter.hasNext()) {
+              String key = (String)iter.next();
+              System.out.println(key + " --> " + m.get(key));
+            }
           }
         } else {
           SeqUtils.printSymmetry(sym);
@@ -2736,6 +2754,13 @@ public class SeqMapView extends JPanel
       listener.popupNotify(sym_popup, selected_syms, sym_used_for_title);
     }
     if (sym_popup.getComponentCount() > 0) {
+      
+      if (nevt == null) {
+        // this might happen from pressing the Windows context menu key
+        sym_popup.show(seqmap, 15, 15);
+        return;
+      }
+      
       //      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
       // if seqmap is a MultiWindowTierMap, then using seqmap as Component target arg to popup.show()
       //  won't work, since it's component is never actually rendered -- so checking here
@@ -2937,6 +2962,70 @@ public class SeqMapView extends JPanel
     tg.setExpandedPacker(ep);
     tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
   }
+
+//  int[][] the_boundaries = null;
+//  BioSeq last_viewseq = null;
+//  BioSeq last_annotseq = null;
+//  
+//  
+//  // a helper function used in drawing the "deletion" glyphs
+//  public int[][] determineBoundaries() {
+//    BioSeq annotseq = getAnnotatedSeq();
+//    BioSeq viewseq = getViewSeq();
+//    if (annotseq != last_annotseq || viewseq != last_viewseq) {
+//      the_boundaries = null;
+//    }
+//    if (the_boundaries == null) {
+//      int[][] boundaries = null;
+//      if (annotseq != viewseq) {
+//        MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
+//        simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
+//        SeqSymmetry bounds_sym = transformForViewSeq(simple_sym, annotseq);
+//
+//        boundaries = determineBoundaries(bounds_sym, annotseq, viewseq);
+//        last_viewseq = viewseq;
+//        last_annotseq = annotseq;
+//      }
+//    }
+//    return the_boundaries;
+//  }
+//
+//  // a helper function used in drawing the "deletion" glyphs
+//  // Returns an int array of size [n][2] where [n][0] is the boundary in terms of seq0
+//  // and [n][1] is the corresponding boundary in terms of seq1.
+//  // Value [0][0] = Integer.MIN_VALUE and [0][1] = minimum of first span in seq1.
+//  // For all other [n][0] and [n][1] it is the value of the Maximum of the boundary
+//  // span in the seq0 or seq1.
+//  static int[][] determineBoundaries(SeqSymmetry bounds_sym, BioSeq seq0, BioSeq seq1) {
+//    int[][] boundaries = null;
+//    if (seq0 != seq1) {
+//      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
+//      simple_sym.addSpan(new SimpleMutableSeqSpan(0, seq0.getLength(), seq0));
+//
+//      int child_count = bounds_sym.getChildCount();
+//      if (child_count == 0) {
+//        return null;
+//      }
+//      
+//      boundaries = new int[child_count+1][];
+//      
+//      SeqSymmetry child = bounds_sym.getChild(0);
+//
+//      boundaries[0] = new int[2];
+//      boundaries[0][0] = Integer.MIN_VALUE;
+//      boundaries[0][1] = child.getSpan(seq1).getMin();
+//      for (int qq = 1 ; qq < boundaries.length; qq++) {
+//        child = bounds_sym.getChild(qq-1);
+//        SeqSpan annot_span = child.getSpan(seq0);
+//        SeqSpan coord_span = child.getSpan(seq1);
+//        
+//        boundaries[qq] = new int[2];
+//        boundaries[qq][0] = annot_span.getMax();
+//        boundaries[qq][1] = coord_span.getMax();
+//      }
+//    }
+//    return boundaries;    
+//  }
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     AnnotatedSeqGroup group = evt.getSelectedGroup();

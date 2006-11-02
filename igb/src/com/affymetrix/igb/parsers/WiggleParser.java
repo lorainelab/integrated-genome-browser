@@ -57,6 +57,7 @@ public class WiggleParser {
     List grafs = new ArrayList();
     WiggleData current_data = null;
     Map current_datamap = null; // Map: seq_id -> WiggleData
+    boolean previous_line_was_track_line = false;
     
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line;
@@ -77,12 +78,19 @@ public class WiggleParser {
         current_format = BED4; // unless there is a format line next, assume BED4
         current_data = null;
         current_datamap = new HashMap(); // Map: seq_id -> WiggleData
+        previous_line_was_track_line = true;
         continue;
       } else if (line.startsWith("variableStep")) {
+        if (! previous_line_was_track_line) {
+          throw new IOException("Wiggle format error: 'variableStep' line is not preceded by a 'track' line");
+        }
         current_format = VARSTEP;
         current_data = new VariableStepWiggleData(track_line_parser.getCurrentTrackHash(), line, seq_group);
         current_datamap.put("", current_data);
       } else if (line.startsWith("fixedStep")) {
+        if (! previous_line_was_track_line) {
+          throw new IOException("Wiggle format error: 'fixedStep' line is not preceded by a 'track' line");
+        }
         current_format = FIXEDSTEP;
         current_data = new FixedStepWiggleData(track_line_parser.getCurrentTrackHash(), line, seq_group);
         current_datamap.put("", current_data);
@@ -125,6 +133,7 @@ public class WiggleParser {
           throw new RuntimeException("Format undefined");
         }
       }
+      previous_line_was_track_line = false;
     }
     
     grafs.addAll(finishLine(seq_group, current_datamap, stream_name));
@@ -182,11 +191,9 @@ public class WiggleParser {
       String seq_id = (String) iter.next();
       WiggleData wig = (WiggleData) m.get(seq_id);
       GraphSym gsym = wig.createGraph(graph_id);
-  
-      gsym.getGraphState().setGraphStyle(GraphGlyph.BAR_GRAPH);
-      gsym.getGraphState().getTierStyle().setHumanName("Donkey");
-      
+    
       if (gsym != null) {
+        gsym.getGraphState().setGraphStyle(GraphGlyph.BAR_GRAPH);
         grafs.add(gsym);
       }
     }

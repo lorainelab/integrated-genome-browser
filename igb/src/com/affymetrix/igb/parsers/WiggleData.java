@@ -74,7 +74,7 @@ class FixedStepWiggleData extends WiggleData {
     
     BioSeq seq = seq_group.addSeq(seq_id, x_vals[x_vals.length-1] + x_span);
     GraphSym gsym = null;
-    if (x_span == 0) {
+    if (x_span == 0 || x_span == 1) {
       gsym = new GraphSym(x_vals, ylist.copyToArray(), graph_id, seq);
     } else {
       gsym = new GraphIntervalSym(x_vals, w_vals, ylist.copyToArray(), graph_id, seq);

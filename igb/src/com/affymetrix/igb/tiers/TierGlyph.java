@@ -50,15 +50,12 @@ public class TierGlyph extends SolidGlyph {
   public static final int COLLAPSED = 101;
   public static final int EXPANDED = 102;
   public static final int FIXED_COORD_HEIGHT = 103;
-  //  public static final int SUMMARIZED = 104;
 
   public static final int DIRECTION_FORWARD = +1;
   public static final int DIRECTION_NONE = 0;
   public static final int DIRECTION_REVERSE = -1;
   public static final int DIRECTION_BOTH = 2;
 
-  protected int state = FIXED_COORD_HEIGHT;
-  protected int stateBeforeHidden = FIXED_COORD_HEIGHT;
   protected double spacer = 2;
 
   /*
@@ -117,7 +114,7 @@ public class TierGlyph extends SolidGlyph {
       throw new NullPointerException();
     }
     this.style = style;
-    state = 0; // do this so that setState() will work.
+
     if (style != null) {
       // most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
       // the fg color to the TierLabel glyph, which does pay attention to that color.
@@ -125,18 +122,17 @@ public class TierGlyph extends SolidGlyph {
       setFillColor(style.getBackground());
 
       if (style.getCollapsed()) {
-        setState(TierGlyph.COLLAPSED);
+        setPacker(collapse_packer);
       } else {
-        setState(TierGlyph.EXPANDED); // otherwise, the packing MoveType may be ignored
+        setPacker(expand_packer);
       }
-      if (! style.getShow()) {
-        // important to set EXPANDED or COLLAPSED before HIDDEN
-        setState(TierGlyph.HIDDEN);
-      }
+      setVisibility( ! style.getShow() );
       setMaxExpandDepth(style.getMaxDepth());
       setLabel(style.getHumanName());
     } else {
-      setState(TierGlyph.EXPANDED);
+      // if style is null, use defaults
+      setPacker(expand_packer);
+      setVisibility(true);
     }
   }
     
@@ -386,59 +382,47 @@ public class TierGlyph extends SolidGlyph {
     //     so it is not necessary to call setScene(null) on them.
     middle_glyphs.clear();
   }
-
-
+    
   public void setState(int newstate) {
-    // terminate any pingponging if state is already same
-    if (state == newstate) {
-      return;
-    }
-    // if state is unrecognized, do not change state
-    if (! (newstate == COLLAPSED || newstate == EXPANDED ||
-	   newstate == HIDDEN || newstate == FIXED_COORD_HEIGHT  // ||
-	   // 	   newstate == SUMMARIZED
-	   ) ) {
-      System.out.println("state not recognized: " + newstate);
-      return;
-    }
-    if (newstate == HIDDEN)  {
-      stateBeforeHidden = state; // used by restoreState();
-    }
-    state = newstate;
-    if (state == EXPANDED) {
+    if (newstate == EXPANDED) {
       setPacker(expand_packer);
       setVisibility(true);
     }
-    else if (state == COLLAPSED) {
+    else if (newstate == COLLAPSED) {
       setPacker(collapse_packer);
       setVisibility(true);
     }
-    else if (state == HIDDEN) {
+    else if (newstate == FIXED_COORD_HEIGHT)  {
       setPacker(null);
+      setVisibility(true);
+    }
+    else if (newstate == HIDDEN) {
       setVisibility(false);
     }
-    /*
-    else if (state == SUMMARIZED) {
-      System.out.println("setting state to summarize");
-      setPacker(summarize_packer);
-      setVisibility(true);
-    }
-    */
-    else if (state == FIXED_COORD_HEIGHT)  {
-      setPacker(null);
-      setVisibility(true);
+    else {
+      System.out.println("state not recognized: " + newstate);
+      return;
     }
   }
-
-
-  /** If the state==HIDDEN, restore the glyph to the state it was in before
-      it was hidden. Else do nothing. */
+  
+  /** Equivalent to setVisibility(true). */
   public void restoreState() {
-    if (state==HIDDEN) setState(stateBeforeHidden);
+    setVisibility(true);
   }
 
   public int getState() {
-    return state;
+    if (isVisible()) {
+      if (packer == expand_packer) {
+        return EXPANDED;
+      } else if (packer == collapse_packer) {
+        return COLLAPSED;
+      } else if (packer == null) {
+        return FIXED_COORD_HEIGHT;
+      }
+    } else {
+      return HIDDEN;
+    }
+    return -1; // should never happen
   }
 
   public PackerI getExpandedPacker() {
@@ -455,22 +439,13 @@ public class TierGlyph extends SolidGlyph {
   public void setExpandedPacker(PackerI packer) {
     this.expand_packer = packer;
     setSpacer(getSpacer());
-    resetState(getState());
+    setState(getState()); // to make sure the packing direction of the packer gets set
   }
 
   public void setCollapsedPacker(PackerI packer) {
     this.collapse_packer = packer;
     setSpacer(getSpacer());
-    resetState(getState());
-  }
-
-  // A hack.  Call this after changing the packer.  If not, then the
-  // move-type of the packer may be ignored, though the reason is not clear.
-  void resetState(int newstate) {
-    int old_stateBeforeHidden = stateBeforeHidden;
-    state = 0;
-    setState(newstate);
-    stateBeforeHidden = old_stateBeforeHidden;
+    setState(getState()); // to make sure the packing direction of the packer gets set
   }
 
   public void setSpacer(double spacer) {
@@ -572,12 +547,6 @@ public class TierGlyph extends SolidGlyph {
     return this.hideable;
   }
 
-  /** Returns a string representing the state of this object.
-      @see #setState */
-  public String getStateString() {
-    return getStateString(getState());
-  }
-
   public int getDirection() {
     return direction;
   }
@@ -610,14 +579,20 @@ public class TierGlyph extends SolidGlyph {
   }
 
 
-  /** Converts the given state constant into a human-readable string.
+  /** Returns a string representing the state of this object.
       @see #setState */
-  public static String getStateString(int astate) {
-    if (astate == HIDDEN) { return "HIDDEN"; }
-    else if (astate == COLLAPSED) { return "COLLAPSED"; }
-    else if (astate == EXPANDED) { return "EXPANDED"; }
-    else if (astate == FIXED_COORD_HEIGHT) { return "FIXED_COORD_HEIGHT"; }
-    else { return "UNKNOWN"; }
+  public String getStateString() {
+    String str = (this.isVisible ? "VISIBLE" : "HIDDEN") + " | ";
+    if (packer instanceof ExpandPacker) {
+      str += "EXPANDED";
+    } else if (packer instanceof CollapsePacker) {
+      str += "COLLAPSED";
+    } else if (packer == null) {
+      str += "NULL PACKER";
+    } else {
+      str += "PACKER = " + packer.getClass().getName(); 
+    }
+    return str;
   }
   
   /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */

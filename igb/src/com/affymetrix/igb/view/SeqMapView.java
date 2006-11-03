@@ -311,13 +311,7 @@ public class SeqMapView extends JPanel
 
     seqmap.addComponentListener(new SeqMapViewComponentListener());
 
-    //Color bg = default_default_background_color;
-    //Color bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_DEFAULT_BACKGROUND_COLOR, default_default_background_color);
-    //Color bg = AnnotStyle.getDefaultInstance().getBackground();
-    Color bg = Color.BLACK; // the map background needs to be a very dark color, or else the
-      // hairline won't display very well, because it uses XOR based on this color, and
-      // BLACK produces the best contrast for arbitrary tier and annotation colors.
-    seqmap.setMapColor(bg);
+    seqmap.setMapColor(Color.lightGray);
 
     edge_matcher = GlyphEdgeMatcher.getSingleton();
 
@@ -2878,7 +2872,6 @@ public class SeqMapView extends JPanel
     //getSeqMap().removeTier(tier);
     tier.removeAllChildren();
     tier.setState(TierGlyph.HIDDEN);
-    // does nothing.
   }
 
   /**

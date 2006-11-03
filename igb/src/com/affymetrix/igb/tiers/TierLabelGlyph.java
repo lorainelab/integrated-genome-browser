@@ -169,8 +169,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       }
     }
 
-    if (reftier.getAnnotStyle().getExpandable()) {
-      if (DRAW_COLLAPSED_EXPANDED_ICONS && collapsed) {
+    if (DRAW_COLLAPSED_EXPANDED_ICONS && reftier.getAnnotStyle().getExpandable()) {
+      if (collapsed) {
         g.setColor(fgcolor);
         g.drawLine(pixelbox.x + pixelbox.width - 13, pixelbox.y + 8, pixelbox.x + pixelbox.width - 5, pixelbox.y + 8);
         g.drawLine(pixelbox.x + pixelbox.width - 9, pixelbox.y + 4, pixelbox.x + pixelbox.width - 9, pixelbox.y + 12);

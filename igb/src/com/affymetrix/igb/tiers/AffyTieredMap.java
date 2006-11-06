@@ -19,8 +19,10 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genometry.*;
+import java.awt.event.ActionEvent;
 
 import java.util.*;
+import javax.swing.*;
 
 public class AffyTieredMap extends NeoMap {
 
@@ -38,6 +40,29 @@ public class AffyTieredMap extends NeoMap {
   //    (recalculated with every packTiers() call)
   double fixed_coord_height;
 
+  Action show_plus_action = new AbstractAction("Show (+) Tiers") {
+    public void actionPerformed(ActionEvent e) {
+      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      repackTheTiers(false, true);
+    }    
+  };
+  Action show_minus_action = new AbstractAction("Show (-) Tiers") {
+    public void actionPerformed(ActionEvent e) {
+      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      repackTheTiers(false, true);
+    }    
+  };
+  Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
+    public void actionPerformed(ActionEvent e) {
+      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      repackTheTiers(false, true);
+    }    
+  };
+
+  public JCheckBoxMenuItem show_plus_mi = new JCheckBoxMenuItem(show_plus_action);
+  public JCheckBoxMenuItem show_minus_mi = new JCheckBoxMenuItem(show_minus_action);
+  public JCheckBoxMenuItem show_mixed_mi = new JCheckBoxMenuItem(show_mixed_action);
+
   public AffyTieredMap() {
     super();
   }
@@ -49,6 +74,9 @@ public class AffyTieredMap extends NeoMap {
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
+    show_plus_mi.setSelected(true);
+    show_minus_mi.setSelected(true);
+    show_mixed_mi.setSelected(true);
   }
 
   /** Add the given tier to the map, building top-down. */
@@ -144,6 +172,31 @@ public class AffyTieredMap extends NeoMap {
       for (int i=0; i<tiers.size(); i++) {
         TierGlyph mtg = (TierGlyph) tiers.elementAt(i);
         mtg.pack(getView());
+      }
+    }
+
+    // Now hide or show tiers based on which checkboxes are selected
+    for (int i=0; i<tiers.size(); i++) {
+      TierGlyph mtg = (TierGlyph) tiers.elementAt(i);
+      IAnnotStyle style = mtg.getAnnotStyle();
+      
+      if (mtg.getChildCount() <= 0) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_plus_mi.isSelected()) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_minus_mi.isSelected()) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_mixed_mi.isSelected()) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if (mtg.getAnnotStyle().getShow()) {
+        mtg.restoreState();
+      }
+      else {
+        mtg.setState(TierGlyph.HIDDEN);
       }
     }
 
@@ -498,6 +551,10 @@ public class AffyTieredMap extends NeoMap {
       stretchToFit(false, true, false);
     }
     updateWidget();
+    
+    // pack them again!  This clears-up problems with the packing of the axis
+    // tier and getting the labelmap lined-up with the main tier map.
+    packTiers(false,true,false); 
   }
 
   /** Prints this component. */

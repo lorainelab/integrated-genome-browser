@@ -179,7 +179,7 @@ public class TierLabelManager {
       GlyphI g = (GlyphI) iter.next();
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
-        tier.restoreState();
+        tier.getAnnotStyle().setShow(true);
       }
     }
 
@@ -196,7 +196,7 @@ public class TierLabelManager {
       GlyphI g = (GlyphI) iter.next();
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
-        tier.setState(TierGlyph.HIDDEN);
+        tier.getAnnotStyle().setShow(false);
       }
     }
 

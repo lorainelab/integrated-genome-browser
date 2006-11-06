@@ -112,6 +112,18 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
+  Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
+    public void actionPerformed(ActionEvent e) {
+      setColorByScore(handler.getSelectedTierLabels(), true);
+    }
+  };  
+  
+  Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
+    public void actionPerformed(ActionEvent e) {
+      setColorByScore(handler.getSelectedTierLabels(), false);
+    }
+  };  
+  
   //TODO: make a change_height_action
   //Action change_height_action = ....
 
@@ -440,7 +452,21 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
+  void setColorByScore(java.util.List tier_labels, boolean b) {
+    for (int i=0; i<tier_labels.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
+      IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+      if (style instanceof AnnotStyle) {
+        AnnotStyle astyle = (AnnotStyle) style;
+        System.out.println("Setting to: " + b);
+        astyle.setColorByScore(b);
+      }
+    }
 
+    refreshMap(false);
+  }
+
+  
   /*
   public void outputWritebackTestFile(OutputStream ostr) {
     String test_writeback_file = "C:/data/das2_testing/writeback_test5.xml";
@@ -633,10 +659,17 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     boolean any_are_collapsed = false;
     boolean any_are_expanded = false;
+    boolean any_are_color_on = false; // whether any allow setColorByScore()
+    boolean any_are_color_off = false; // whether any allow setColorByScore()
     for (int i=0; i<labels.size(); i++) {
       TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
       TierGlyph glyph = (TierGlyph) label.getInfo();
       IAnnotStyle style = glyph.getAnnotStyle();
+      if (style instanceof AnnotStyle) {
+        AnnotStyle astyle = (AnnotStyle) style;
+        any_are_color_on |= astyle.getColorByScore();
+        any_are_color_off |= (! astyle.getColorByScore());
+      }
       if (style.getExpandable()) {
         any_are_collapsed |= style.getCollapsed();
         any_are_expanded |= ! style.getCollapsed();
@@ -653,6 +686,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     change_bg_color_action.setEnabled(num_selections > 0);
     //change_height_action.setEnabled(num_selections > 0);
     rename_action.setEnabled(num_selections == 1);
+
+    color_by_score_on_action.setEnabled(any_are_color_off);
+    color_by_score_off_action.setEnabled(any_are_color_on);
 
     collapse_action.setEnabled(any_are_expanded);
     expand_action.setEnabled(any_are_collapsed);
@@ -691,6 +727,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(change_bg_color_action);
     //changeMenu.add(change_height_action);
     changeMenu.add(rename_action);
+    changeMenu.add(color_by_score_on_action);
+    changeMenu.add(color_by_score_off_action);
 
     popup.add(customize_action);
     popup.add(new JSeparator());

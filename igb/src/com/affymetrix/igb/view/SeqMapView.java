@@ -2886,9 +2886,9 @@ public class SeqMapView extends JPanel
    *  @param next_to_axis Do you want the Tier as close to the axis as possible?
    *  @param style  a non-null instance of IAnnotStyle; tier label and other properties
    *   are determined by the IAnnotStyle.
-   *  @return an array of two Tiers, one forward (or mixed-direction), one reverse;
-   *    If you want to treat the first one as mixed-direction, then place all
-   *    the glyphs in it; the second tier will not be displayed if it remains empty.
+   *  @return an array of two (not necessarily distinct) tiers, one forward and one reverse.
+   *    The array may instead contain two copies of one mixed-direction tier;
+   *    in this case place glyphs for both forward and revers items into it.
    */
   public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
       if (style == null) {
@@ -2910,7 +2910,7 @@ public class SeqMapView extends JPanel
       if (style.getSeparate()) {
         fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
       } else {
-        fortier.setDirection(TierGlyph.DIRECTION_NONE);
+        fortier.setDirection(TierGlyph.DIRECTION_BOTH);
       }
       fortier.setLabel(style.getHumanName());
 
@@ -2938,7 +2938,12 @@ public class SeqMapView extends JPanel
         else { map.addTier(revtier, false); }
       }
 
-      return new TierGlyph[] {fortier, revtier};
+      if (style.getSeparate()) {
+        return new TierGlyph[] {fortier, revtier};
+      } else {
+        // put everything in a single tier
+        return new TierGlyph[] {fortier, fortier};
+      }
   }
 
   void setUpTierPacker(TierGlyph tg, boolean above_axis) {

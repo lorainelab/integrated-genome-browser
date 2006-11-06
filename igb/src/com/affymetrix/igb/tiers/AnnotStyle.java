@@ -438,6 +438,13 @@ public class AnnotStyle implements IAnnotStyle {
   }
   
   /**
+   *  Key for the transient property map. Indicates whether the annotations 
+   *  might possibly have scores that could be used for coloring.
+   *  Valid values are "true" and "false".
+   */
+  public static final String PROP_HAS_SCORES = "HAS_SCORES";
+  
+  /**
    *  Indicates whether the scores of the annotations should be marked by colors.
    */
   public void setColorByScore(boolean b) {
@@ -450,7 +457,7 @@ public class AnnotStyle implements IAnnotStyle {
   public boolean getColorByScore() {
     return color_by_score;
   }
-
+  
   /**
    *  Returns a HeatMap that interpolates between colors based on
    *  getColor() and getBackgroundColor().  The color at the low

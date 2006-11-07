@@ -734,7 +734,7 @@ public class ExperimentPivotView extends JComponent
       java.util.List all_tiers = tlh.getAllTierLabels();
       Collections.sort(all_tiers, the_comparator);
       tlh.orderTiersByLabels(all_tiers);
-      tlh.repackTheTiers(false, false);
+      tlh.repackTheTiers(false, true);
       tlh = null;
     }
     

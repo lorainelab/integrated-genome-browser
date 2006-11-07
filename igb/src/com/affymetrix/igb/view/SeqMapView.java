@@ -691,7 +691,7 @@ public class SeqMapView extends JPanel
 	  }
 	}
       }
-    seqmap.repack();
+//    seqmap.repack();
     return axis_tier;
   }
 
@@ -2351,11 +2351,16 @@ public class SeqMapView extends JPanel
     }
   }
 
-
+  boolean report_hairline_position_in_status_bar = true;
+  
   /** Sets the hairline position and zoom center to the given spot. Does not call map.updateWidget() */
   public final void setZoomSpotX(double x) {
-    if (hairline != null) {hairline.setSpot(x);}
-    seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, x);
+    int intx = (int) x;
+    if (hairline != null) {hairline.setSpot(intx);}
+    if (report_hairline_position_in_status_bar) {
+      IGB.getSingletonIGB().setStatus(nformat.format(intx), false);
+    }
+    seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, intx);
   }
 
   /** Sets the hairline position to the given spot. Does not call map.updateWidget() */

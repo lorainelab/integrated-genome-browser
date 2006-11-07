@@ -163,7 +163,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String rest_file = "rest_enzymes"; // located in same directory as this class
 
   boolean initialized = false;
-
+  
   /**
    * Start the program.
    */
@@ -565,7 +565,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     help_menu.setMnemonic('H');
     mbar.add(help_menu);
     //    select_broker = new SymSelectionBroker();
-
+    
     String tile_xpixels_arg = get_arg("-tile_width", main_args);
     String tile_ypixels_arg = get_arg("-tile_height", main_args);
     String tile_col_arg = get_arg("-tile_columns", main_args);
@@ -657,6 +657,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
 
+    
     MenuUtil.addToMenu(file_menu, open_file_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
     MenuUtil.addToMenu(file_menu, clear_item);
@@ -673,6 +674,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(file_menu, exit_item);
 
     // rev_comp option currently not working, so disabled
+    JMenu strands_menu = new JMenu("Strands");
+    strands_menu.add(getMapView().getSeqMap().show_plus_mi);
+    strands_menu.add(getMapView().getSeqMap().show_minus_mi);
+    strands_menu.add(getMapView().getSeqMap().show_mixed_mi);
+
+    view_menu.add(strands_menu);
     //    MenuUtil.addToMenu(view_menu, rev_comp_item);
     MenuUtil.addToMenu(view_menu, autoscroll_item);
     MenuUtil.addToMenu(view_menu, res2clip_item);

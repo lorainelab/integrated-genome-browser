@@ -40,21 +40,28 @@ public class AffyTieredMap extends NeoMap {
   //    (recalculated with every packTiers() call)
   double fixed_coord_height;
 
+  static boolean show_plus = true;
+  static boolean show_minus = true;
+  static boolean show_mixed = true;
+  
   Action show_plus_action = new AbstractAction("Show (+) Tiers") {
     public void actionPerformed(ActionEvent e) {
       //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      show_plus = show_plus_mi.isSelected();
       repackTheTiers(false, true);
-    }    
+    }
   };
   Action show_minus_action = new AbstractAction("Show (-) Tiers") {
     public void actionPerformed(ActionEvent e) {
       //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      show_minus = show_minus_mi.isSelected();
       repackTheTiers(false, true);
     }    
   };
   Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
     public void actionPerformed(ActionEvent e) {
       //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
+      show_mixed = show_mixed_mi.isSelected();
       repackTheTiers(false, true);
     }    
   };
@@ -74,9 +81,9 @@ public class AffyTieredMap extends NeoMap {
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
-    show_plus_mi.setSelected(true);
-    show_minus_mi.setSelected(true);
-    show_mixed_mi.setSelected(true);
+    show_plus_mi.setSelected(show_plus);
+    show_minus_mi.setSelected(show_minus);
+    show_mixed_mi.setSelected(show_mixed);
   }
 
   /** Add the given tier to the map, building top-down. */
@@ -183,20 +190,21 @@ public class AffyTieredMap extends NeoMap {
       if (mtg.getChildCount() <= 0) {
         mtg.setState(TierGlyph.HIDDEN);
       }
-      else if ((! show_plus_mi.isSelected()) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
+      else if ((! show_plus) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
         mtg.setState(TierGlyph.HIDDEN);
       }
-      else if ((! show_minus_mi.isSelected()) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+      else if ((! show_minus) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
         mtg.setState(TierGlyph.HIDDEN);
       }
-      else if ((! show_mixed_mi.isSelected()) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
+      else if ((! show_mixed) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
         mtg.setState(TierGlyph.HIDDEN);
-      }
-      else if (mtg.getAnnotStyle().getShow()) {
-        mtg.restoreState();
       }
       else {
-        mtg.setState(TierGlyph.HIDDEN);
+        if (mtg.getAnnotStyle().getShow()) {
+          mtg.restoreState();
+        } else {
+          mtg.setState(TierGlyph.HIDDEN);
+        }
       }
     }
 
@@ -545,7 +553,7 @@ public class AffyTieredMap extends NeoMap {
    */
   public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
     packTiers(full_repack, true, false);
-    stretchToFit(true, stretch_vertically, false);
+    stretchToFit(false, stretch_vertically, false);
     // apply a hack to make sure strechToFit worked
     if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
       stretchToFit(false, true, false);

@@ -154,7 +154,7 @@ public class LoadFileAction {
           System.out.println("Loading from a URL is not currently supported.");
         }
         else {
-          new_seq = load(gviewer, cfil, previous_seq);
+          new_seq = load(gviewer, cfil, gmodel.getSelectedSeq());
         }
       }
 

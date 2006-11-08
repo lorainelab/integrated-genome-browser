@@ -105,6 +105,7 @@ public class SingletonGenometryModel {
     }
 
     selected_group = group;
+    selected_seq = null;
     ArrayList glist = new ArrayList();
     glist.add(selected_group);
     fireGroupSelectionEvent(this, glist);

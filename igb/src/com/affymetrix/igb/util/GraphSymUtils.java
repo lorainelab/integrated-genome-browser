@@ -204,10 +204,24 @@ public class GraphSymUtils {
       grafs = BarParser.parse(newstr, seq_group, stream_name);
     }
     else if (sname.endsWith(".gr")) {
+      // If this is a newly-created seq group, then go ahead and add a new 
+      // unnamed seq to it if necessary.
+      boolean create_new_seq = false;
+      if (seq_group.getSeqCount() == 0) {
+        create_new_seq = true;
+      }
+      if (create_new_seq) {
+        seq = seq_group.addSeq("unnamed", 1000);
+      }
       if (seq == null) {
         throw new IOException("Must select a sequence before loading a graph of type 'gr'");
       }
-      grafs = wrapInList(GrParser.parse(newstr, seq, stream_name));
+      GraphSym graph = GrParser.parse(newstr, seq, stream_name);
+      int[] x_coords = graph.getGraphXCoords();
+      int max_x = x_coords[x_coords.length-1];
+      BioSeq gseq = graph.getGraphSeq();
+      seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
+      grafs = wrapInList(graph);
     }
     /*
     else if (sname.endsWith(".sbar")) {

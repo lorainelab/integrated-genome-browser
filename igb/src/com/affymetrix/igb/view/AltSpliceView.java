@@ -49,6 +49,7 @@ public class AltSpliceView extends JComponent
         tier_manager.setDoGraphSelections(false);
       }
       report_hairline_position_in_status_bar = false;
+      report_status_in_status_bar = false;
     }
 
     public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {

@@ -203,7 +203,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static Color getScoreColor(SeqSymmetry insym, AnnotStyle style) {
     SeqSymmetry sym = insym;
     if (insym instanceof DerivedSeqSymmetry) {
-      sym = ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
+      sym = (SymWithProps)  getMostOriginalSymmetry(insym);
+      //sym = ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
     }
     
     if (sym instanceof Scored) {
@@ -295,18 +296,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     boolean use_label = false;
     String label_field = the_style.getLabelField();
     if (allows_labels) {
-      use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
+      use_label = (label_field != null && (label_field.trim().length()>0));
     }
       
     if (use_label) {
       LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-      Object property = null;
-      if (insym instanceof DerivedSeqSymmetry) {
-        SymWithProps swp = (SymWithProps) ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
-        property = swp.getProperty(label_field);
-      } else {
-        property = ((SymWithProps) insym).getProperty(label_field);
-      }
+      Object property = getTheProperty(insym, label_field);
       String label = (property == null) ? "" : property.toString();
       if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
@@ -427,6 +422,26 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     return pglyph;
   }
 
+  static Object getTheProperty(SeqSymmetry sym, String prop) {
+    if (prop == null || (prop.trim().length()==0)) {
+      return null;
+    }
+    SeqSymmetry original = getMostOriginalSymmetry(sym);
+    
+    if (original instanceof SymWithProps) {
+      return ((SymWithProps) original).getProperty(prop);
+    }
+    return null;
+  }
+
+  
+  static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
+    if (sym instanceof DerivedSeqSymmetry) {
+      return getMostOriginalSymmetry( ((DerivedSeqSymmetry) sym).getOriginalSymmetry() );
+    }
+    else return sym;
+  }
+  
   GlyphI doSingleLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
     throws java.lang.InstantiationException, java.lang.IllegalAccessException {
     
@@ -464,18 +479,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     boolean use_label = false;
     String label_field = the_style.getLabelField();
     if (allows_labels) {
-      use_label = (label_field != null && (label_field.trim().length()>0) && (insym instanceof SymWithProps));
+      use_label = (label_field != null && (label_field.trim().length()>0));
     }
 
     if (use_label) {
       LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
-      Object property = null;
-      if (insym instanceof DerivedSeqSymmetry) {
-        SymWithProps swp = (SymWithProps)  ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
-        property = swp.getProperty(label_field);
-      } else {
-        property = ((SymWithProps)insym).getProperty(label_field);
-      }
+      Object property = getTheProperty(insym, label_field);
       String label = (property == null) ? "" : property.toString();
       if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);

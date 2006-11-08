@@ -966,7 +966,7 @@ public class SeqMapView extends JPanel
       select(symlist,false,false,false);
 
       String title = getSelectionTitle(seqmap.getSelected());
-      IGB.getSingletonIGB().setStatus(title, false);
+      setStatus(title);
 
       doEdgeMatching(seqmap.getSelected(), false);
     }
@@ -1511,7 +1511,7 @@ public class SeqMapView extends JPanel
       else {
         SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
         seq_glyph.select(seq_region.getMin(), seq_region.getMax());
-        IGB.getSingletonIGB().setStatus(SeqUtils.spanToString(seq_region), false);
+        setStatus(SeqUtils.spanToString(seq_region));
       }
       if (update_widget) {
         seqmap.updateWidget();
@@ -1612,7 +1612,7 @@ public class SeqMapView extends JPanel
 	    StringSelection data = new StringSelection(hackstr);
 	    clipboard.setContents(data, null);
             String message = "Copied "+hackstr.length()+" residues" + from + " to clipboard";
-            IGB.getSingletonIGB().setStatus(message);
+            setStatus(message);
 	    success = true;
 	  }
 	  else {
@@ -2261,7 +2261,7 @@ public class SeqMapView extends JPanel
       getEdgeMatcher().matchEdges(seqmap, query_glyphs, target_glyphs, match_glyphs);
     }
     else {
-      IGB.getSingletonIGB().setStatus("Skipping edge matching; too many items selected.");
+      setStatus("Skipping edge matching; too many items selected.");
     }
 
     if (update_map)  { seqmap.updateWidget(); }
@@ -2325,7 +2325,7 @@ public class SeqMapView extends JPanel
     if (src == this) {
       if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from itself: " + src_id);}
       String title = getSelectionTitle(seqmap.getSelected());
-      IGB.getSingletonIGB().setStatus(title, false);
+      setStatus(title);
     }
     // ignore sym selection originating from AltSpliceView, don't want to change internal selection based on this
     else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView))  {
@@ -2347,7 +2347,7 @@ public class SeqMapView extends JPanel
         zoomToSelections();
       }
       String title = getSelectionTitle(seqmap.getSelected());
-      IGB.getSingletonIGB().setStatus(title, false);
+      setStatus(title);
     }
   }
 
@@ -2358,7 +2358,7 @@ public class SeqMapView extends JPanel
     int intx = (int) x;
     if (hairline != null) {hairline.setSpot(intx);}
     if (report_hairline_position_in_status_bar) {
-      IGB.getSingletonIGB().setStatus(nformat.format(intx), false);
+      setStatus("");
     }
     seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, intx);
   }
@@ -2660,6 +2660,23 @@ public class SeqMapView extends JPanel
     label.setText(title);
   }
 
+  boolean report_status_in_status_bar = true;
+  
+  void setStatus(String title) {
+    if (! report_status_in_status_bar) {
+      return;
+    }
+    
+    String status = title;
+    if (report_hairline_position_in_status_bar) {
+      status = " " + nformat.format((int) hairline.getSpot());
+      if (title != null && title.length() > 0) {
+        status = status + "   " + title;
+      }
+    }
+    IGB.getSingletonIGB().setStatus(status, false);
+  }
+  
   private SymWithProps sym_used_for_title = null;
 
   // Compare the code here with SymTableView.selectionChanged()
@@ -2668,7 +2685,8 @@ public class SeqMapView extends JPanel
   private String getSelectionTitle(java.util.List selected_glyphs) {
     String id = null;
     if (selected_glyphs.isEmpty()) {
-      id = "No selection";
+      //id = "No selection";
+      id = "";
       sym_used_for_title = null;
     }
     else {
@@ -2842,6 +2860,7 @@ public class SeqMapView extends JPanel
     TierGlyph tier = (TierGlyph) gstyle2tier.get(style);
     if (tier == null) {
       tier = new TierGlyph(style);
+      tier.setDirection(tier_direction);
       setUpTierPacker(tier, true);
       gstyle2tier.put(style, tier);
     }

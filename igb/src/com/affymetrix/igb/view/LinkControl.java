@@ -74,8 +74,15 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
       String method = SeqMapView.determineMethod(primary_sym);
       WebLink[] web_links = WebLink.getWebLinks(method);
       // by using a Map to hold the urls, any duplicated urls will be filtered-out.
+
       for (int i=0; i<web_links.length; i++) {
-        menu_items.put(web_links[i].getUrl(), web_links[i].getName());
+        // Generally, just let any link replace an existing link that has the same URL.
+        // But, if the new one has no name, and the old one does, then keep the old one.
+        String new_name = web_links[i].getName();
+        String old_name = (String) menu_items.get(web_links[i].getUrl());
+        if (old_name == null || "".equals(old_name)) {
+          menu_items.put(web_links[i].getUrl(), web_links[i].getName());
+        }
       }
       
       //String id = (String) proper.getProperty("id");

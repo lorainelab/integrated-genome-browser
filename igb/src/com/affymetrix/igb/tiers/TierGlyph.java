@@ -110,9 +110,6 @@ public class TierGlyph extends SolidGlyph {
   }
 
   public void setStyle(IAnnotStyle style) {
-    if (style == null) {
-      throw new NullPointerException();
-    }
     this.style = style;
 
     if (style != null) {
@@ -130,9 +127,7 @@ public class TierGlyph extends SolidGlyph {
       setMaxExpandDepth(style.getMaxDepth());
       setLabel(style.getHumanName());
     } else {
-      // if style is null, use defaults
-      setPacker(expand_packer);
-      setVisibility(true);
+      throw new NullPointerException();
     }
   }
     
@@ -439,13 +434,13 @@ public class TierGlyph extends SolidGlyph {
   public void setExpandedPacker(PackerI packer) {
     this.expand_packer = packer;
     setSpacer(getSpacer());
-    setState(getState()); // to make sure the packing direction of the packer gets set
+    setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
   public void setCollapsedPacker(PackerI packer) {
     this.collapse_packer = packer;
     setSpacer(getSpacer());
-    setState(getState()); // to make sure the packing direction of the packer gets set
+    setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
   public void setSpacer(double spacer) {

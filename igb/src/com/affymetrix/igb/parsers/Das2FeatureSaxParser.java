@@ -45,7 +45,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static boolean REPORT_RESULTS = false;
   static boolean REPORT_MULTI_LOC = true;
   static boolean REQUIRE_DAS2_NAMESPACE = false;
-  static boolean ADD_NEW_SEQS_TO_GROUP = false;
+  
+  // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
+  static boolean ADD_NEW_SEQS_TO_GROUP = true;
 
   //   "text/plain";
   //   "text/x-das-feature+xml";
@@ -869,10 +871,15 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       seq = new SimpleBioSeq(seqid, max);
     }
     else  {
-      seq = group.getSeq(seqid);
-      if (seq == null) {
-	if (ADD_NEW_SEQS_TO_GROUP) { seq = group.addSeq(seqid, max); }
-	else { seq = new SimpleBioSeq(seqid, max); }
+      if (ADD_NEW_SEQS_TO_GROUP) {
+        // this will both create the seq and stretch its length if necessary.
+        seq = group.addSeq(seqid, max);
+      }      
+      else {
+        seq = group.getSeq(seqid);
+        if (seq == null) {
+          seq = new SimpleBioSeq(seqid, max);
+        }
       }
     }
     SeqSpan span;

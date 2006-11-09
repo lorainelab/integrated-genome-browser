@@ -128,8 +128,10 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       auto_refresh_CB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           if (refresh_map_B != null) {
-            refreshSeqMapView();
             refresh_map_B.setEnabled(! auto_refresh_CB.isSelected());
+            if (auto_refresh_CB.isSelected()) { 
+              refreshSeqMapView(); 
+            }
           }
         }
       });

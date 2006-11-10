@@ -16,10 +16,10 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.SeqSymmetry;
-import java.util.*;
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
@@ -263,7 +263,7 @@ public class GraphGlyph extends Glyph {
         my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         g2.addRenderingHints(my_render_hints);
       }
-
+      
       // START OF BIG LOOP:
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
         // flipping about yaxis... should probably make this optional
@@ -341,12 +341,20 @@ public class GraphGlyph extends Glyph {
             // When multiple coords map to one pixel, use the color corresponding to the max value.
             float the_y = prev_ytemp;
             int heatmap_index = (int) (heatmap_scaling * (the_y - getVisibleMinY()));
+                        
             if (heatmap_index < 0) { heatmap_index = 0; } else if (heatmap_index > 255) { heatmap_index = 255; }
+            
             if (heatmap_index > curr_max_index) { curr_max_index = heatmap_index; }
 
-            if (curr_point.x != prev_point.x) {
+            if (curr_point.x == prev_point.x) {
               g.setColor(heatmap_colors[curr_max_index]);
               g.fillRect(prev_point.x, pixelbox.y,
+                1, pixelbox.height+1);
+            }
+            else {
+              g.setColor(heatmap_colors[heatmap_index]);
+              // the x+1 start point prevents this from over-writing the last rectangle
+              g.fillRect(prev_point.x + 1, pixelbox.y,
                   curr_point.x - prev_point.x, pixelbox.height+1);
               curr_max_index = 0;
             }
@@ -398,8 +406,8 @@ public class GraphGlyph extends Glyph {
         prev_point.y = curr_point.y;
         prev_ytemp = ytemp;
       }
-      // END: big loop
-
+      // END: big loop      
+      
       g.translate(-xpix_offset, 0);
       if (g instanceof Graphics2D) {
         Graphics2D g2 = (Graphics2D) g;

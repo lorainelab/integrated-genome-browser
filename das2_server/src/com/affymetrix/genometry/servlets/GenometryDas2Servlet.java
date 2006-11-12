@@ -43,7 +43,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
   static String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
   static String TYPES_CONTENT_TYPE = "application/x-das-types+xml";
-  //    FEATURES_CONTENT_TYPE is set in the AnnotationWriter
+  //    FEATURES_CONTENT_TYPE is set in the Das2FeatureSaxParser
   //  static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
 
   // For now server doesn't really understand seqeunce ontology, so just
@@ -60,8 +60,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *  DAS commands recognized by GenometryDas2Servlet
    *  (additional commands may be recognized by command plugins)
    */
-  static String sources_query = "sequence";
-  static String sources_query_slash = "sequence/";
+  //  static String sources_query = "sequence"; // sources query is same as root URL (xml_base) minus trailing slash
+  static String sources_query_with_slash = "";  // set in setXmlBase()
+  static String sources_query_no_slash= ""; // set in setXmlBase();
   static String segments_query = "segments";
   static String types_query = "types";
   static String features_query = "features";
@@ -131,6 +132,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   Map graph_name2file = new LinkedHashMap();
   ArrayList graph_formats = new ArrayList();
   String xml_base = null;
+  String xml_base_trimmed = null;
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
@@ -496,7 +498,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     String query = request.getQueryString();
     String request_url = request.getRequestURL().toString();
     log.add("HttpServletResponse buffer size: " + response.getBufferSize());
-    log.add("path: " + path_info);
+    log.add("path_info: " + path_info);
     log.add("url: " + request_url);
     log.add("query: " + query);
     log.add("path translated = " + request.getPathTranslated());
@@ -511,7 +513,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       log.add("Unknown or missing DAS command");
       response.setStatus(response.SC_BAD_REQUEST);
     }
-    else if (path_info.endsWith(sources_query) || path_info.endsWith(sources_query_slash))  {
+    else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {
       handleSourcesRequest(request, response);
     }
     else {
@@ -710,7 +712,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     printXmlDeclaration(pw);
     //    String xbase = request.getRequestURL().toString();
-    String xbase = getXmlBase(request);
+    //    String xbase = getXmlBase(request);
+    String xbase = getXmlBase(request) + genome.getID() + "/";
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
     pw.println("<TYPES ");
@@ -1149,6 +1152,23 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
   public void setXmlBase(String xbase) {
     xml_base = xbase;
+    String trimmed_xml_base;
+    if (xml_base.endsWith("/")) {
+      trimmed_xml_base = xml_base.substring(0, xml_base.length()-1);
+    }
+    else {
+      trimmed_xml_base = xml_base;
+      xml_base += "/";
+    }
+
+    sources_query_no_slash = trimmed_xml_base.substring(trimmed_xml_base.lastIndexOf("/"));
+    sources_query_with_slash = sources_query_no_slash + "/";
+
+    System.out.println("*** xml_base: " + xml_base);
+    System.out.println("*** trimmed_xml_base: " + trimmed_xml_base);
+    System.out.println("*** sources_query_with_slash: " + sources_query_with_slash);
+    System.out.println("*** sources_query_no_slash: " + sources_query_no_slash);
+
   }
 
   public String getXmlBase(HttpServletRequest request) {

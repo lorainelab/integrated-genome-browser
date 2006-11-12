@@ -12,22 +12,22 @@ import org.mortbay.jetty.servlet.*;
  */
 public class GenometryDas2Server {
 
-  static int default_server_port = 9092;
+  //  static int default_server_port = 9092;
   static boolean SHOW_GUI = false;
 
   public static void main (String[] args) throws Exception {
     final HttpServer server=new HttpServer();
-    int server_port = default_server_port;
-    if (args.length > 0) {
-      server_port = Integer.parseInt(args[0]);
+    //    int server_port = default_server_port;
+    if (args.length < 3) {
+      System.out.println("Usage: ... GenometryDas2Server port data_path admin_email xml_base");
+      System.exit(0);
     }
-    if (args.length > 1) {
-      String data_path = args[1];
-      System.setProperty("das2_genometry_server_dir", data_path);
-    }
-    if (args.length > 2) {
-      System.setProperty("das2_maintainer_email", args[2]);
-    }
+    int server_port = Integer.parseInt(args[0]);
+    String data_path = args[1];
+    String admin_email = args[2];
+    String xml_base = args[3];
+    System.setProperty("das2_genometry_server_dir", data_path);
+    System.setProperty("das2_maintainer_email", admin_email);
 
     if (SHOW_GUI) {
       final JFrame frm = new JFrame("Genometry Server");
@@ -84,11 +84,7 @@ public class GenometryDas2Server {
     GenometryDas2Servlet das_servlet = (GenometryDas2Servlet)das_holder.getServlet();
     //    das_servlet.addCommandPlugin("psd_query", "com.affymetrix.genometry.servlets.ProbeSetDisplayPlugin");
     //    das_servlet.addCommandPlugin("proximity", "com.affymetrix.genometry.servlets.ProximityQueryPlugin");
-    if (args.length > 3) {
-      String xml_base = args[3];
-      das_servlet.setXmlBase(xml_base);
-    }
-
+    das_servlet.setXmlBase(xml_base);
   }
 }
 

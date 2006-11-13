@@ -628,7 +628,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	// may need to extract seqid, seq version, genome for properly setting xml:base...
 	// for now only way to specify xml:base is to explicitly set via this.setXmlBase()
 	//	String seq_id = seq.getID();
-	//	String seq_version = null;
+	//	String seq_version = null;ons
 	//	if (seq instanceof Versioned) {
 	//	  seq_version = ((Versioned)seq).getVersion();
 	//	}
@@ -640,7 +640,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
 	pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 	if (getBaseURI() != null) {
-	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
+	  String genome_id = "";
+	  if (seq instanceof SmartAnnotBioSeq) {
+	    genome_id = ((SmartAnnotBioSeq)seq).getSeqGroup().getID();
+	  }
+	  String xbase = getBaseURI().toString() + genome_id + "/";
+	  //	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
+	  pw.println("   xml:base=\"" + xbase + "\" >");
 	}
 	else {
 	  pw.println(" >");

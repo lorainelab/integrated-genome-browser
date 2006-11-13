@@ -669,12 +669,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
     PrintWriter pw = response.getWriter();
     printXmlDeclaration(pw);
     //    String xbase = request.getRequestURL().toString();
-    String xbase = getXmlBase(request);
+    String xbase = getXmlBase(request) + genome.getID() + "/";
+    String segments_uri = xbase + segments_query;
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SEGMENTS ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
     //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
-    pw.println("    xml:base=\"" + xbase + "\" >");
+    //    pw.println("    xml:base=\"" + xbase + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" "); 
+    pw.println("    " + URID + "=\"" + segments_uri + "\" >");
 
     List seq_list = genome.getSeqList();
     Iterator siter = seq_list.iterator();
@@ -714,12 +717,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    String xbase = request.getRequestURL().toString();
     //    String xbase = getXmlBase(request);
     String xbase = getXmlBase(request) + genome.getID() + "/";
+    String types_uri = xbase + types_query;
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
     pw.println("<TYPES ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
     //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
-    pw.println("    xml:base=\"" + xbase + "\" >");
+    //    pw.println("    xml:base=\"" + xbase + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" "); 
+    pw.println("    " + URID + "=\"" + types_uri + "\" >");
 
     Map types_hash = getTypes(genome);
     //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
@@ -1160,24 +1166,19 @@ public class GenometryDas2Servlet extends HttpServlet  {
       trimmed_xml_base = xml_base;
       xml_base += "/";
     }
-
     sources_query_no_slash = trimmed_xml_base.substring(trimmed_xml_base.lastIndexOf("/"));
     sources_query_with_slash = sources_query_no_slash + "/";
-
     System.out.println("*** xml_base: " + xml_base);
-    System.out.println("*** trimmed_xml_base: " + trimmed_xml_base);
-    System.out.println("*** sources_query_with_slash: " + sources_query_with_slash);
-    System.out.println("*** sources_query_no_slash: " + sources_query_no_slash);
-
   }
 
+  /** getXmlBase() should no longer depend on request, should always be set via setXmlBase() 
+      when servlet starts up -- need to remove request arg soon
+  */
   public String getXmlBase(HttpServletRequest request) {
     if (xml_base != null) { return xml_base; }
     else { return request.getRequestURL().toString(); }
     //    else { return request.getRequestURI(); }
   }
-
-
 
   /**
    *  Start of attempt to add dynamic feature submission / addition to DAS server

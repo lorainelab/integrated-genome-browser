@@ -76,7 +76,7 @@ public class BrsParser implements AnnotationWriter  {
   int max_genes = 50000;  // guesstimate...
   ArrayList chromosomes = new ArrayList();
 
-  public java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
+  public java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
   throws IOException {
     System.out.println("loading file: " + file_name);
     java.util.List result = null;
@@ -92,7 +92,7 @@ public class BrsParser implements AnnotationWriter  {
     return result;
   }
 
-  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group) 
+  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
   throws IOException {
     return parse(istr, annot_type, seq_group, -1);
   }
@@ -101,7 +101,7 @@ public class BrsParser implements AnnotationWriter  {
    *  @param blength  buffer length, if unknown use -1;
    */
   public java.util.List parse(InputStream istr, String annot_type,
-                              AnnotatedSeqGroup seq_group, long blength) 
+                              AnnotatedSeqGroup seq_group, long blength)
   throws IOException {
     Timer tim = new Timer();
     tim.start();
@@ -210,8 +210,10 @@ public class BrsParser implements AnnotationWriter  {
     System.out.println("load time: " + tim.read()/1000f);
     System.out.println("transcript count = " + count);
     System.out.println("exon count = " + total_exon_count);
-    System.out.println("average exons / transcript = " +
-		       ((double)total_exon_count/(double)count));
+    if (count > 0)  {
+        System.out.println("average exons / transcript = " +
+                           ((double) total_exon_count / (double) count));
+    }
     return results;
   }
 

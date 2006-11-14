@@ -78,7 +78,7 @@ public class BgnParser implements AnnotationWriter  {
     }
     return result;
   }
-    
+
   /**
    *  The main parsing routine.
    *  @param seq_group  must not be null.
@@ -87,7 +87,7 @@ public class BgnParser implements AnnotationWriter  {
    */
   public List parse(InputStream istr, String annot_type,
                     AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq) throws IOException {
-                              
+
     if (seq_group == null) {
       throw new IllegalArgumentException("BgnParser called with seq_group null.");
     }
@@ -123,7 +123,7 @@ public class BgnParser implements AnnotationWriter  {
       }
       else {
 	dis = new DataInputStream(bis);
-      }      
+      }
       if (true) {
 	/*
 	 *  "while (dis.available() > 0)" loop is not a good alternative
@@ -166,7 +166,7 @@ public class BgnParser implements AnnotationWriter  {
 	  }
 
           MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
-          
+
           if (chromseq == null) {
             chromseq = seq_group.addSeq(chrom_name, 0);
           }
@@ -176,8 +176,8 @@ public class BgnParser implements AnnotationWriter  {
 
           seq_group.addToIndex(name, sym);
           results.add(sym);
-              
-          if (tmax > chromseq.getLength()) {              
+
+          if (tmax > chromseq.getLength()) {
               chromseq.setLength(tmax);
           }
 
@@ -227,8 +227,10 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("bgn file load time: " + tim.read()/1000f);
     System.out.println("transcript count = " + count);
     System.out.println("exon count = " + total_exon_count);
-    System.out.println("average exons / transcript = " +
-		       ((double)total_exon_count/(double)count));
+    if (count > 0)  {
+        System.out.println("average exons / transcript = " +
+                           ((double) total_exon_count / (double) count));
+    }
     if (! reached_EOF) {
       System.out.println("File loading was terminated early.");
     }
@@ -250,7 +252,7 @@ public class BgnParser implements AnnotationWriter  {
       UcscGeneSym ugs = (UcscGeneSym) gsym;
       cspan = ugs.getCdsSpan();
       name = ugs.getName();
-    } 
+    }
     else if (gsym instanceof SupportsCdsSpan) {
       cspan = ((SupportsCdsSpan) gsym).getCdsSpan();
       name = gsym.getID();

@@ -646,7 +646,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  }
 	  String xbase = getBaseURI().toString() + genome_id + "/";
 	  //	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
-	  pw.println("   xml:base=\"" + xbase + "\" >");
+	  pw.println("   " + XMLBASE + "=\"" + xbase + "\" >");
 	}
 	else {
 	  pw.println(" >");

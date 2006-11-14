@@ -18,6 +18,7 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.igb.das2.Das2Coords;
 
 
 /**
@@ -35,10 +36,29 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
   static boolean MAKE_LANDSCAPES = false;
   static boolean TIME_RESPONSES = true;
-  static boolean ADD_VERSION_TO_CONTENT_TYPE = true;
+  static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
   static boolean USE_CREATED_ATT = true;
 
-  static String DAS2_VERSION = "300";
+  static Map genomeid2coord;
+  static {
+    // GAH 11-2006
+    // for now hardwiring URIs for agreed upon genome assembly coordinates, based on 
+    //    http://www.open-bio.org/wiki/DAS:GlobalSeqIDs
+    // Plan to replace this with a smarter system once coordinates and reference URIs are specified in XML 
+    //     rather than an HTML page (hopefully will be served up as DAS/2 sources & segments XML)
+    genomeid2coord = new HashMap();
+    genomeid2coord.put("H_sapiens_Mar_2006",
+		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B36.1/",
+				    "NCBI", "9606", "36", "Chromosome", null));
+    genomeid2coord.put("H_sapiens_May_2004",
+		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B35.1/",
+				    "NCBI", "9606", "35", "Chromosome", null));
+    genomeid2coord.put("D_melanogaster_Apr_2004",
+		     new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
+				    "BDGP", "7227", "4", "Chromosome", null));
+  }
+
+  static String DAS2_VERSION = "2.0";
   public static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
   static String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
   static String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
@@ -49,12 +69,16 @@ public class GenometryDas2Servlet extends HttpServlet  {
   // For now server doesn't really understand seqeunce ontology, so just
   //    using the topmost term for annotations with sequence locations:
   //    SO:0000110, "located_sequence_feature";
-  static String default_onto_term = "SO:0000110";
-  static String default_onto_uri = default_onto_term;
+  static String default_onto_num = "0000110";
+  static String default_onto_term = "SO:" + default_onto_num;
+  static String default_onto_uri =
+    "http://das.biopackages.net/das/ontology/obo/1/ontology/SO/" + default_onto_num;
+  //  static String default_onto_uri = default_onto_term;
 
   static String URID = "uri";
   static String NAME = "title";
   static String ONTOLOGY = "ontology";
+  static String SO_ACCESSION = "so_accession";
 
   /*
    *  DAS commands recognized by GenometryDas2Servlet
@@ -509,12 +533,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    PrintWriter pw = response.getWriter();
     addDasHeaders(response);
 
-    if (path_info == null || path_info.trim().length() == 0) {
+    if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {
+      handleSourcesRequest(request, response);
+    }
+    else if (path_info == null || path_info.trim().length() == 0) {
       log.add("Unknown or missing DAS command");
       response.setStatus(response.SC_BAD_REQUEST);
-    }
-    else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {
-      handleSourcesRequest(request, response);
     }
     else {
       AnnotatedSeqGroup genome = getGenome(request);
@@ -545,12 +569,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	*/
 	else {
-	  //	  log.add("DAS request not recognized, setting X-Das-Status: "+DAS_STATUS_COMMAND_NOT_RECOGNIZED);
-	  //          response.setHeader("X-Das-Status", DAS_STATUS_COMMAND_NOT_RECOGNIZED);
-	  // should the response status be set to BAD_REQUEST or NOT_IMPLMENTED ???
 	  log.add("DAS request not recognized, setting HTTP status header to 400, BAD_REQUEST");
 	  response.setStatus(response.SC_BAD_REQUEST);
-	  //	  response.setStatus(response.SC_NOT_IMPLEMENTED);
 	}
       }
     }
@@ -624,6 +644,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       Iterator giter = versions.iterator();
       while (giter.hasNext()) {
 	AnnotatedSeqGroup genome = (AnnotatedSeqGroup)giter.next();
+	Das2Coords coords = (Das2Coords)genomeid2coord.get(genome.getID());
 	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
 			   ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
 	//      pw.println("      <VERSION id=\"" + genome.getID() + "\" />" );
@@ -633,6 +654,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	else {
 	  pw.println("      <VERSION uri=\"" + genome.getID() + "\" title=\"" + genome.getID() + "\" >" );
+	}
+	if (coords != null) {
+	  pw.println("           <COORDINATES uri=\"" + coords.getURI() +
+		     "\" authority=\"" + coords.getAuthority() +  
+		     "\" taxid=\"" + coords.getTaxid() + 
+		     "\" version=\"" + coords.getVersion() + 
+		     "\" source=\"" + coords.getSource() + "\" />");
 	}
 	pw.println("           <CAPABILITY type=\"" + segments_query + "\" " + query_att + "=\"" +
 		   genome.getID() + "/" + segments_query + "\" />");
@@ -658,6 +686,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
      throws IOException  {
     log.add("received region query");
     AnnotatedSeqGroup genome = getGenome(request);
+    Das2Coords coords = (Das2Coords)genomeid2coord.get(genome.getID());
+
     if (genome == null) {
       log.add("genome could not be found: " + genome.getID());
       // add error headers?
@@ -674,9 +704,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     pw.println("<SEGMENTS ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-    //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
     //    pw.println("    xml:base=\"" + xbase + "\" >");
-    pw.println("    xml:base=\"" + xbase + "\" "); 
+    pw.println("    xml:base=\"" + xbase + "\" ");
+    // uri attribute is added purely to satisfy DAS 2.0 RelaxNG schema, it points back to this same document
     pw.println("    " + URID + "=\"" + segments_uri + "\" >");
 
     List seq_list = genome.getSeqList();
@@ -685,8 +715,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //      Map.Entry keyval = (Map.Entry)siter.next();
       //      AnnotatedBioSeq aseq = (AnnotatedBioSeq)keyval.getValue();
       AnnotatedBioSeq aseq = (AnnotatedBioSeq)siter.next();
+      String refatt = "";
+      if (coords != null) {
+	// GAH 11-2006
+	// for now guessing at the reference URI, based on assembly URI and typical syntax used 
+	//    at http://www.open-bio.org/wiki/DAS:GlobalSeqIDs for these URIs
+	// Plan to replace this with a smarter system once reference URIs are specified in XML 
+	//     rather than an HTML page (hopefully will be served up as DAS/2 sources & segments XML)
+	String ref = coords.getURI() + "dna/" + aseq.getID();
+	refatt = "reference=\"" + ref + "\"";
+      }
       pw.println("   <SEGMENT " + URID + "=\"" + aseq.getID() + "\" " + NAME + "=\"" + aseq.getID() + "\"" +
-      		 " length=\"" + aseq.getLength() + "\" />");
+      		 " length=\"" + aseq.getLength() + "\" " + refatt + " />");
       //      pw.println("<REGION id=\"" + aseq.getID() +
       //		 "\" start=\"0\" end=\"" + aseq.getLength() + "\" />");
     }
@@ -717,15 +757,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    String xbase = request.getRequestURL().toString();
     //    String xbase = getXmlBase(request);
     String xbase = getXmlBase(request) + genome.getID() + "/";
-    String types_uri = xbase + types_query;
+    //    String types_uri = xbase + types_query;
     //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
     pw.println("<TYPES ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-    //    pw.println("    xml:base=\"" + request.getRequestURI() + "\" >");
-    //    pw.println("    xml:base=\"" + xbase + "\" >");
-    pw.println("    xml:base=\"" + xbase + "\" "); 
-    pw.println("    " + URID + "=\"" + types_uri + "\" >");
+    pw.println("    xml:base=\"" + xbase + "\" >");
+    //    pw.println("    xml:base=\"" + xbase + "\" ");
+    //    pw.println("    " + URID + "=\"" + types_uri + "\" >");
 
     Map types_hash = getTypes(genome);
     //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
@@ -738,7 +777,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
 
       pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type +
-		 "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
+		 "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
       if (! formats.isEmpty()) {
         for (int k=0; k<formats.size(); k++) {
           String format = (String)formats.get(k);
@@ -1171,7 +1210,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     System.out.println("*** xml_base: " + xml_base);
   }
 
-  /** getXmlBase() should no longer depend on request, should always be set via setXmlBase() 
+  /** getXmlBase() should no longer depend on request, should always be set via setXmlBase()
       when servlet starts up -- need to remove request arg soon
   */
   public String getXmlBase(HttpServletRequest request) {

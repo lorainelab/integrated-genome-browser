@@ -759,6 +759,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
 
       // also need to write out any properties (other than type, id, start, end, length, etc.....)
+      //   but may want to leave them out when a compact format is desired rather than more detail
 
       // close this feature element
       pw.println("  </FEATURE>");

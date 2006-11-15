@@ -39,21 +39,55 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
   static boolean USE_CREATED_ATT = true;
 
+  static String SERVER_SYNTAX_EXPLANATION =
+    "The Genometry DAS/2 server always uses a standard URI syntax for DAS/2 query URIs,\n\n" +
+    " and enforces this by specifying URIs in the SOURCES doc according to this standard:\n" +
+    "    das_server_root/genome_name/capability_name[?query_parameters]";
+
+  static String LIMITED_FEATURE_QUERIES_EXPLANATION =
+    "The Genometry DAS/2 server currently does not support the full range of \n" + 
+    "DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" + 
+    "To allow the Genometry DAS/2 server to still comply with the specification, \n" + 
+    "the server considers responses to any feature query it does not support as \n" + 
+    "being 'too large'.  Therefore it responds with an error message with HTTP \n" + 
+    "status code 413 'Request Entity Too Large', which is allowed by the DAS/2 spec \n" + 
+    "when the server considers the response too large.\n\n" + 
+    "Currently for the Genometry server to send a useful response containing features, \n" + 
+    "  the feature query string must contain: \n" + 
+    "     1 type filter \n" +
+    "     1 segment filter \n" + 
+    "     1 overlaps filter \n" + 
+    "     0 or 1 inside filter \n" + 
+    "     0 or 1 format parameter \n" +
+    "     0 other filters/parameters \n";
+
+
   static Map genomeid2coord;
   static {
     // GAH 11-2006
-    // for now hardwiring URIs for agreed upon genome assembly coordinates, based on 
+    // for now hardwiring URIs for agreed upon genome assembly coordinates, based on
     //    http://www.open-bio.org/wiki/DAS:GlobalSeqIDs
-    // Plan to replace this with a smarter system once coordinates and reference URIs are specified in XML 
+    // Plan to replace this with a smarter system once coordinates and reference URIs are specified in XML
     //     rather than an HTML page (hopefully will be served up as DAS/2 sources & segments XML)
+    // covering the two naming schemes currently in use with this server, for example
+    //     "H_sapiens_date" and "Human_date"
     genomeid2coord = new HashMap();
     genomeid2coord.put("H_sapiens_Mar_2006",
+		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B36.1/",
+				    "NCBI", "9606", "36", "Chromosome", null));
+    genomeid2coord.put("Human_Mar_2006",
 		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B36.1/",
 				    "NCBI", "9606", "36", "Chromosome", null));
     genomeid2coord.put("H_sapiens_May_2004",
 		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B35.1/",
 				    "NCBI", "9606", "35", "Chromosome", null));
+    genomeid2coord.put("Human_May_2004",
+		     new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B35.1/",
+				    "NCBI", "9606", "35", "Chromosome", null));
     genomeid2coord.put("D_melanogaster_Apr_2004",
+		     new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
+				    "BDGP", "7227", "4", "Chromosome", null));
+    genomeid2coord.put("Drosophila_Apr_2004",
 		     new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
 				    "BDGP", "7227", "4", "Chromosome", null));
   }
@@ -122,8 +156,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
    */
   Map command2plugin = new HashMap();
 
-  static Pattern format_splitter = Pattern.compile(";");
-  static final Pattern query_splitter = Pattern.compile(";");
+  //  static Pattern format_splitter = Pattern.compile(";");
+  //  static final Pattern query_splitter = Pattern.compile(";");
+  static final Pattern query_splitter = Pattern.compile("[;\\&]");
   static final Pattern tagval_splitter = Pattern.compile("=");
   //  static final Pattern range_splitter = Pattern.compile("/");
   //  static final Pattern interval_splitter = Pattern.compile(":");
@@ -160,6 +195,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
+
+	Date nowdate = new Date();
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	String datestring = formatter.format(nowdate);
+
+
     try {
       super.init();
 
@@ -538,14 +579,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
     else if (path_info == null || path_info.trim().length() == 0) {
       log.add("Unknown or missing DAS command");
-      response.setStatus(response.SC_BAD_REQUEST);
+      response.sendError(response.SC_BAD_REQUEST,
+			 "Query was not recognized.\n\n" + SERVER_SYNTAX_EXPLANATION);
     }
     else {
       AnnotatedSeqGroup genome = getGenome(request);
       // log.add("Genome version: '"+ genome.getID() + "'");
       if (genome == null) {
         log.add("Unknown genome version");
-        response.setStatus(response.SC_BAD_REQUEST);
+	//        response.setStatus(response.SC_BAD_REQUEST);
+	response.sendError(response.SC_BAD_REQUEST,
+			   "Query was not recognized, possibly the genome name is incorrect or missing from path?\n" +
+			   SERVER_SYNTAX_EXPLANATION);
       }
       else {
         String das_command = path_info.substring(path_info.lastIndexOf("/")+1);
@@ -570,7 +615,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	*/
 	else {
 	  log.add("DAS request not recognized, setting HTTP status header to 400, BAD_REQUEST");
-	  response.setStatus(response.SC_BAD_REQUEST);
+	  response.sendError(response.SC_BAD_REQUEST,
+			     "Query was not recognized.\n\n" + SERVER_SYNTAX_EXPLANATION);
 	}
       }
     }
@@ -594,7 +640,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     int last_slash = path_info.lastIndexOf('/');
     int prev_slash = path_info.lastIndexOf('/', last_slash-1);
     //    log.add("last_slash: " + last_slash + ",  prev_slash: " + prev_slash);
-    String genome_name = path_info.substring(prev_slash+1, last_slash);
+    String genome_name= path_info.substring(prev_slash+1, last_slash);
     AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_name);
     if (genome == null)  { log.add("unknown genome version: '" + genome_name + "'"); }
     return genome;
@@ -657,9 +703,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	if (coords != null) {
 	  pw.println("           <COORDINATES uri=\"" + coords.getURI() +
-		     "\" authority=\"" + coords.getAuthority() +  
-		     "\" taxid=\"" + coords.getTaxid() + 
-		     "\" version=\"" + coords.getVersion() + 
+		     "\" authority=\"" + coords.getAuthority() +
+		     "\" taxid=\"" + coords.getTaxid() +
+		     "\" version=\"" + coords.getVersion() +
 		     "\" source=\"" + coords.getSource() + "\" />");
 	}
 	pw.println("           <CAPABILITY type=\"" + segments_query + "\" " + query_att + "=\"" +
@@ -691,6 +737,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     if (genome == null) {
       log.add("genome could not be found: " + genome.getID());
       // add error headers?
+
       return;
     }
     //    response.setContentType(SEGMENTS_CONTENT_TYPE);
@@ -718,9 +765,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
       String refatt = "";
       if (coords != null) {
 	// GAH 11-2006
-	// for now guessing at the reference URI, based on assembly URI and typical syntax used 
+	// for now guessing at the reference URI, based on assembly URI and typical syntax used
 	//    at http://www.open-bio.org/wiki/DAS:GlobalSeqIDs for these URIs
-	// Plan to replace this with a smarter system once reference URIs are specified in XML 
+	// Plan to replace this with a smarter system once reference URIs are specified in XML
 	//     rather than an HTML page (hopefully will be served up as DAS/2 sources & segments XML)
 	String ref = coords.getURI() + "dna/" + aseq.getID();
 	refatt = "reference=\"" + ref + "\"";
@@ -864,11 +911,35 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
   /**
    *  precedence for feature out format:
-   *     specified in query string > specified in header > default
+   *     specified in query string > specified in content-negotiation header > default
    *
-   */
+       *  Would like to change this code to use ServletRequest getParameterValues(tag) instead,
+       *   but getParameterValues() is stricter about the query parameters, so that a non-url-encoded ":"
+       *   in a query parameter can lead to dropping any following parameters.  Which would be okay
+       *   if parameters were always url-encoded like they are supposed to be, but I want the genometry
+       *   server to handle cases where parameters were accidentally not url-encoded.  So this code
+       *   takes the raw query string and handles processing itself.
+      // split query tagval list into format and filters
+      // any tagval where tag = "format" determines format -- should only be one
+      // all other tagvals should be filters
+      //
+      // GAH 4-18-2005 for now only trying to handle region filters and types filters
+      //   currently assumes the following:
+      //                    one "overlap" region filter, no ORing of multiple overlap filters
+      //                    zero or one "inside" region filter, no ORing of multiple inside filters
+      //                    one "type" filter (by typeid), no ORing of multiple type filters
+      *
+       *  New logic for DAS/2 feature request filters:
+       *  If there are multiple occurences of the same filter name in the request, take the union
+       *      of the results of each of these filters individually
+       *  Then take intersection of results of each different filter name
+       *  (OR similar filters, AND different filters)
+       */
   public void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
     log.add("received features request");
+    com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+    long tim;
+
     AnnotatedSeqGroup genome = getGenome(request);
     addDasHeaders(response);
     String path_info = request.getPathInfo();
@@ -881,117 +952,134 @@ public class GenometryDas2Servlet extends HttpServlet  {
     SeqSpan contain_span = null;
     SeqSpan identical_span = null;
 
-    query = URLDecoder.decode(query);
+    List result = null;
+    BioSeq outseq = null;
+
     if (query == null || query.length() == 0) {
-
+      // no query string, so requesting _all_ features for a versioned source
+      //    genometry server does not support this
+      //    so leave result = null and and null test below will trigger sending
+      //    HTTP error message with status 413 "Request Entity Too Large"
     }
-    else {
-      /**
-       *  Should really update this to use ServletRequest getParameterValues(tag) instead
-       *  This would have the added benefit of guaranteeing the values are URL-decoded, so don't
-       *    need to decode query above...
+    else {  // request contains query string
+
+      query = URLDecoder.decode(query);
+      ArrayList formats = new ArrayList();
+      ArrayList types = new ArrayList();
+      ArrayList segments = new ArrayList();
+      ArrayList overlaps = new ArrayList();
+      ArrayList insides = new ArrayList();
+      ArrayList excludes = new ArrayList();
+      ArrayList names = new ArrayList(); 
+      ArrayList coordinates = new ArrayList();
+      ArrayList links = new ArrayList();
+      ArrayList notes = new ArrayList();
+      Map props = new HashMap();
+
+      // genometry server does not currently serve up features with PROPERTY, LINK, or NOTE element,
+      //   so if any of these are encountered and the response is not an error for some other reason,
+      //   the response should be a FEATURES doc with zero features.
+
+      /* support for single name, single format, no other filters
+        else if (names != null  && names.length == 1) {
+	 String name = names[0];
+	 // GAH 11-2006
+	 //   need to enhance this to support multiple name parameters OR'd together
+	 //   need to enhance this to support "*" wild-card search as defined in spec
+	 result = genome.findSyms(name);
+	 }
        */
-      // split query tagval list into format and filters
-      // any tagval where tag = "format" determines format -- should only be one
-      // all other tagvals should be filters
-      //
-      // GAH 4-18-2005 for now only trying to handle region filters and types filters
-      //   currently assumes the following:
-      //                    one "overlap" region filter, no ORing of multiple overlap filters
-      //                    zero or one "inside" region filter, no ORing of multiple inside filters
-      //                    one "type" filter (by typeid), no ORing of multiple type filters
-      /**
-       *  New logic for DAS/2 feature request filters:
-       *  If there are multiple occurences of the same filter name in the request, take the union
-       *      of the results of each of these filters individually
-       *  Then take intersection of results of each different filter name
-       *  (OR similar filters, AND different filters)
-       */
-
-      String[] segments = request.getParameterValues("segment");
-      String[] types = request.getParameterValues("type");
-      String[] overlaps = request.getParameterValues("overlaps");
-      String[] insides = request.getParameterValues("inside");
-      String[] formats = request.getParameterValues("format");
-
-      String[] xids = request.getParameterValues("xid");
-      String[] contains = request.getParameterValues("contains");
-      String[] identicals = request.getParameterValues("identical");
-      String[] names = request.getParameterValues("name");
-      // property-based filters use a hybrid filter name of ("prop-" + prop_key)
-      //  so for example if the property to filter by is "curator" then the parameter name
-      //  will be "prop-curator".  So above approach won't work -- will need to go through
-      //  entire list of parameter names and extract any that start with "prop-"...
-
-      com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
-      long tim;
-      List result = null;
-      BioSeq outseq = null;
-
-      if (names != null && names.length >= 1) {
-	String name = names[0];
-	result = genome.findSyms(name);
-      }
-      else {  // not a name query
-	String[] query_array = query_splitter.split(query);
-	boolean has_segment = false;
-	String seqid = null;
-	for (int i=0; i< query_array.length; i++) {
-	  String tagval = query_array[i];
-	  String[] tagval_array = tagval_splitter.split(tagval);
-	  String tag = tagval_array[0];
-	  String val = tagval_array[1];
-	  log.add("tag = " + tag + ", val = " + val);
-	  if (tag.equals("format")) {
-	    output_format = val;
+      String[] query_array = query_splitter.split(query);
+      boolean has_segment = false;
+      boolean known_query = true;
+      for (int i=0; i< query_array.length; i++) {
+	String tagval = query_array[i];
+	String[] tagval_array = tagval_splitter.split(tagval);
+	String tag = tagval_array[0];
+	String val = tagval_array[1];
+	log.add("tag = " + tag + ", val = " + val);
+	if (tag.equals("format")) { formats.add(val); }
+	else if (tag.equals("type")) { types.add(val); }
+	else if (tag.equals("segment")) { segments.add(val); }
+	else if (tag.equals("overlaps")) { overlaps.add(val); }
+	else if (tag.equals("inside")) { insides.add(val); }
+	else if (tag.equals("excludes")) { excludes.add(val); }
+	else if (tag.equals("name")) { names.add(val); }
+	else if (tag.equals("coordinates")) { coordinates.add(val); }
+	else if (tag.equals("link"))  { links.add(val); }
+	else if (tag.equals("note"))  { notes.add(val); }
+	else if (tag.startsWith("prop-"))  {
+	  // extract prop's key from tag ('prop-key')
+	  // if already seen this key, get list from hash and add to it
+	  // if not already seen, create new list and add to hash with key prop-key
+	  String pkey = tag.substring(5);  // strip off "prop-" to get key
+	  ArrayList vlist = (ArrayList)props.get(pkey);
+	  if (vlist == null) {
+	    vlist = new ArrayList();
+	    props.put(pkey, vlist);
 	  }
-	  else if (tag.equalsIgnoreCase("segment")) {
-	    has_segment = true;
-	    seqid = val;
-	    // hack to extract last part if segment is given as full URI (as it should according to DAS/2 spec v.300)...
-	    int sindex = seqid.lastIndexOf("/");
-	    if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
-	  }
-	  else if (tag.equalsIgnoreCase("type")) {
-	    // only track the last "type" value for now...
-	    query_type = val;
-	    // hack to extract last part if type is given as full URI
-	    //    (as it should according to DAS/2 spec v.300)...
-	    //    special-case exception is when giving "file:" URI for graph
-	    //	    if (! (query_type.startsWith("file:") && query_type.endsWith(".bar"))) {
-	    if (!(query_type.endsWith(".bar"))) {
-	      int sindex = query_type.lastIndexOf("/");
-	      if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
-	    }
-	  }
-	  else if (tag.equalsIgnoreCase("overlaps")) {
-	    if (has_segment) { overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
-	    else  { overlap_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
-	  }
-	  else if (tag.equalsIgnoreCase("inside")) {
-	    if (has_segment) { inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, val, genome); }
-	    else  { inside_span = Das2FeatureSaxParser.getLocationSpan(val, genome); }
-	  }
-	  else if (tag.equalsIgnoreCase("contains")) {
-	    contain_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
-	  }
-	  else if (tag.equalsIgnoreCase("identical")) {
-	    identical_span = Das2FeatureSaxParser.getLocationSpan(val, genome);
-	  }
-	  //	else if (tag.equals("depth")) {
-	  //	  System.out.println("NOT YET IMPLEMENTED, depth = " + val);
-	  //	}
-	  else {
-	    log.add("query tagval not recognized: tag = " + tag + ", value = " + val);
-	  }
+	  vlist.add(val);
 	}
-	if (query_type != null) { log.add("   query type: " + query_type); }
+	else {
+	  known_query = false;  // tag not recognized, so reject whole query
+	}
+      }
+      if (formats.size() > 0) {
+	output_format = (String)formats.get(0);
+      }
+
+      if (! known_query) {
+	// at least one query parameter was not recognized, throw bad request error
+	result = null;
+      }
+      else if (formats.size() > 1) {
+	// can only be zero or one format, otherwise it's a bad request
+	result = null;
+      }
+      // the Genometry DAS/2 server does not return features with LINK, NOTE, or PROP elements,
+      //    so if any of these are queried for the server can return a response with zero features
+      //    in the appropriate format
+      else if (links.size() > 0 ||
+	  notes.size() > 0 ||
+	  props.size() > 0) {
+	result = new ArrayList();
+      }
+      // handling one type, one segment, one overlaps, optionally one inside
+      else if (types.size() == 1 &&      // one and only one type
+	       segments.size() == 1 &&   // one and only one segment
+	       overlaps.size() == 1 &&   // one and only one overlaps
+	       insides.size() <= 1 &&    // zere or one inside
+	       excludes.size() == 0 &&   // zero excludes
+	       names.size() == 0) {
+
+	String seqid = (String)segments.get(0);
+	 // using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
+	int sindex = seqid.lastIndexOf("/");
+	if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
+
+	query_type = (String)types.get(0);
+	// using end of URI for internal typeid if type is given as full URI
+	//    (as it should according to DAS/2 spec)
+	//    special-case exception is when need to know full URL for locating graph data,
+	if (!(query_type.endsWith(".bar"))) {
+	  sindex = query_type.lastIndexOf("/");
+	  if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
+	}
+
+
+	String overlap = (String)overlaps.get(0);
+	System.out.println("overlaps val = " + overlap);
+	overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, overlap, genome);
+
+	if (insides.size() == 1) {
+	  String inside = (String)insides.get(0);
+	  inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, inside, genome);
+	}
+
+	log.add("   query type: " + query_type);
 	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
-	if (contain_span != null) { log.add("  contain_span: " + SeqUtils.spanToString(contain_span)); }
-	if (identical_span != null) { log.add("   identical_span: " + SeqUtils.spanToString(identical_span)); }
-	//	if (query_type != null && query_type.startsWith("file:") && query_type.endsWith(".bar")) {
-	if (query_type != null && query_type.endsWith(".bar")) {
+	if (query_type.endsWith(".bar")) {
 	  handleGraphRequest(request, response, query_type, overlap_span);
 	  return;
 	}
@@ -999,15 +1087,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	BioSeq oseq = overlap_span.getBioSeq();
 	outseq = oseq;
 	timecheck.start();
+
+	/** this is the main call to retrieve symmetries meeting query constraints */
 	result = this.getIntersectedSymmetries(overlap_span, query_type);
+
+
+	if (result == null)  { result = Collections.EMPTY_LIST; }
 	tim = timecheck.read();
 	log.add("  overlapping annotations of type " + query_type + ": " + result.size());
 	log.add("  time for range query: " + tim/1000f);
 
 	// if an inside_span specified, then filter out intersected symmetries based on this:
-	//    don't return symmetries with a min < inside_span.min()  (even if they overlap query interval)
-	//    don't return symmetries with a max > inside_span.max()  (even if they overlap query interval)
-	//    if (hard_min > 0 || hard_max < seqlength) {
+	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)
 	if (inside_span != null) {
 	  int inside_min = inside_span.getMin();
 	  int inside_max = inside_span.getMax();
@@ -1018,7 +1109,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		    iseq.getID() + ", oseq = " + oseq.getID());
 	    // if different seqs, then no feature can pass constraint...
 	    //   hmm, this might not strictly be true based on genometry...
-	    result = null;
+	    result = Collections.EMPTY_LIST;
 	  }
 	  else {
 	    timecheck.start();
@@ -1030,7 +1121,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	      SeqSymmetry sym = (SeqSymmetry)orig_result.get(i);
 	      // fill in testspan with span values for sym (on aseq)
 	      sym.getSpan(iseq, testspan);
-	      //	Ssytem.out.println("testing: " + testspan.getMin() + ", " + testspan.getMax()
 	      if ((testspan.getMin() >= inside_min) &&
 		  (testspan.getMax() <= inside_max)) {
 		result.add(sym);
@@ -1041,32 +1131,47 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    log.add("  time for inside_span filtering: " + tim/1000f);
 	  }
 	}
+
       }
-      timecheck.start();
+      else {
+	// any query combination not recognized above may  be correct based on DAS/2 spec
+	//    but is not currently supported, so leave result = null and and null test below will trigger sending
+	//    HTTP error message with status 413 "Request Entity Too Large"
+	result = null;
+	log.add("  ***** query combination not supported, throwing an error");
+      }
+    }
+    timecheck.start();
 
-      log.add("return format: " + output_format);
+    log.add("return format: " + output_format);
 
-      try {
-	if (DEBUG) {
-	  response.setContentType("text/html");
-	  PrintWriter pw = response.getWriter();
-	  pw.println("overlapping annotations found: " + result.size());
+    try {
+      if (DEBUG) {
+	response.setContentType("text/html");
+	PrintWriter pw = response.getWriter();
+	pw.println("overlapping annotations found: " + result.size());
+      }
+      else {
+	if (result == null) {
+	  response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, LIMITED_FEATURE_QUERIES_EXPLANATION);
 	}
 	else {
 	  outputAnnotations(result, outseq, query_type, request, response, output_format);
-	  tim = timecheck.read();
-	  log.add("  time for buffered output of results: " + tim/1000f);
-	  timecheck.start();
-	  tim = timecheck.read();
-	  log.add("  time for closing output: " + tim/1000f);
 	}
+	tim = timecheck.read();
+	log.add("  time for buffered output of results: " + tim/1000f);
+	timecheck.start();
+	tim = timecheck.read();
+	log.add("  time for closing output: " + tim/1000f);
       }
-      catch (Exception ex) {
-	ex.printStackTrace();
-      }
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
 
-    }  // end (query != null) conditional
+
   }
+
 
   //  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response)  {
   public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response,

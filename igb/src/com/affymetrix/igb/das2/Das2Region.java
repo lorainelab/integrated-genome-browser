@@ -24,9 +24,10 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 public class Das2Region {
-  static public boolean USE_TYPE_URI = false;
-  static public boolean USE_SEGMENT_URI = false;
-  static public  boolean URL_ENCODE_QUERY = false;
+  static public boolean USE_TYPE_URI = true;
+  static public boolean USE_SEGMENT_URI = true;
+  static public  boolean URL_ENCODE_QUERY = true;
+
 
   URI region_uri;
   int length;

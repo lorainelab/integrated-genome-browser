@@ -56,6 +56,8 @@ public class Das2ClientOptimizer {
   static boolean DEBUG_HEADERS = false;
   static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
+  static String UTF8 = "UTF-8";
+
   /**
    *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
    *  out into a separate query field, "segment", that applies to all location-based filters in the query
@@ -258,60 +260,46 @@ public class Das2ClientOptimizer {
     //    String version_url = source.getServerInfo().getRootUrl() + "/" +
     //      versioned_source.getID();
 
-    Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.
-        FEATURES_CAP_QUERY);
+    Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
     String request_root = featcap.getRootURI().toString();
 
     System.out.println("   request root: " + request_root);
     System.out.println("   preferred format: " + format);
 
-    StringBuffer buf = new StringBuffer(200);
-    if (USE_SEGMENT_URI) {
-      buf.append("segment=");
-      buf.append(region.getID());
-      buf.append(";");
-    }
-    buf.append("overlaps=");
-    buf.append(overlap_filter);
-    buf.append(";");
-    if (inside_filter != null) {
-      buf.append("inside=");
-      buf.append(inside_filter);
-      buf.append(";");
-    }
-    buf.append("type=");
-    if (USE_TYPE_URI) {
-      buf.append(type.getID());
-    }
-    else {
-      // GAH temporary hack till biopackages recognition of type URIs and/or names are fixed
-      if (request_root.indexOf("biopackages") >= 0) {
-        buf.append("SO:");
-      }
-      buf.append(type.getName());
-    }
-
-    if (OPTIMIZE_FORMAT && format != null) {
-      buf.append(";");
-      buf.append("format=");
-      buf.append(format);
-    }
-
-    if (format == null) {
-      format = default_format;
-    }
-
     try {
-      String query_part = buf.toString();
-      if (URL_ENCODE_QUERY) {
-        query_part = URLEncoder.encode(query_part, "UTF-8");
-      }
-      String feature_query = request_root + "?" + query_part;
-      System.out.println("feature query:  " + feature_query);
+      StringBuffer buf = new StringBuffer(200);
 
-    /**
-     *  Need to look at content-type of server response
-     */
+      buf.append("segment=");
+      buf.append(URLEncoder.encode(region.getID(), UTF8));
+      buf.append(";");
+      buf.append("overlaps=");
+      buf.append(URLEncoder.encode(overlap_filter, UTF8));
+      buf.append(";");
+      if (inside_filter != null) {
+	buf.append("inside=");
+	buf.append(URLEncoder.encode(inside_filter));
+	buf.append(";");
+      }
+      buf.append("type=");
+      buf.append(URLEncoder.encode(type.getID(), UTF8));
+      if (OPTIMIZE_FORMAT && format != null) {
+	buf.append(";");
+	buf.append("format=");
+	buf.append(URLEncoder.encode(format, UTF8));
+      }
+
+      if (format == null) {
+	format = default_format;
+      }
+
+      String query_part = buf.toString();
+      String feature_query = request_root + "?" + query_part;
+      System.out.println("feature query URL:  " + feature_query);
+      System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+
+      /**
+       *  Need to look at content-type of server response
+       */
       BufferedInputStream bis = null;
       String content_subtype = null;
       // if overlap_span is entire length of sequence, then check for caching
@@ -418,10 +406,10 @@ public class Das2ClientOptimizer {
 	  // better way might be to have request sym's span on aseq be dependent on children, so
 	  //    if no children then no span on aseq (though still an overlap_span and inside_span)
 	  /*
-	  SimpleSymWithProps child = new SimpleSymWithProps();
-	  SimpleSymWithProps grandchild = new SimpleSymWithProps();
-	  child.addChild(grandchild);
-	  request_sym.addChild(child);
+	    SimpleSymWithProps child = new SimpleSymWithProps();
+	    SimpleSymWithProps grandchild = new SimpleSymWithProps();
+	    child.addChild(grandchild);
+	    request_sym.addChild(child);
 	  */
 	}
 	else if (success)  {  // checking success again, could have changed before getting to this point...

@@ -1321,7 +1321,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
   public String getXmlBase(HttpServletRequest request) {
     if (xml_base != null) { return xml_base; }
     else { return request.getRequestURL().toString(); }
-    //    else { return request.getRequestURI(); }
   }
 
   /**

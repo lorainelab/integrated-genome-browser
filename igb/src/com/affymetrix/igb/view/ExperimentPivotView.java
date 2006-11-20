@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.*;
@@ -37,6 +38,8 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 
 public class ExperimentPivotView extends JComponent
       implements SymSelectionListener, ActionListener, AnnotatedSeqViewer, SeqSelectionListener
@@ -604,22 +607,40 @@ public class ExperimentPivotView extends JComponent
     AbstractTableModel answer = new DefaultTableModel( data, cols );
     return answer;
   }
-    
+  
+  static final String test_data_sin1 = 
+      "one\tseq1\t1000\t1020\t+\t100\t200\n"+
+      "two\tseq1\t2000\t2020\t+\t200\t800\n"+
+      "three\tseq1\t3000\t3020\t+\t300\t300\n"+
+      "four\tseq1\t4000\t4020\t+\t400\t600\n"+
+      "five\tseq1\t5000\t5020\t+\t500\t500\n"+
+      "six\tseq1\t6000\t6020\t+\t600\t200\n";
+  
+  
   /**
    *  main for testing.
    */
   public static void main(String[] args) throws Exception {
-    //    String testgff = System.getProperty("user.dir") + "/exptest.gff";
-    String testgff = "c:/data/igb_testdata/exptest.gff";
-    MutableAnnotatedBioSeq testseq = null;
-//    FileInputStream fis = new FileInputStream(new File(testgff));
-    GFFParser parser = new GFFParser();
+    //String filename = "test_files/bed_01.bed";
+    //InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);    
+    
+    InputStream istr = new StringBufferInputStream(test_data_sin1);
+
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+    gmodel.setSelectedSeqGroup(seq_group);
     
-//    java.util.List syms = parser.parse(fis, seq_group, false);
-//    SeqSymmetry first_sym = (SeqSymmetry) syms.get(0);
-//    testseq = (MutableAnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
+    ScoredIntervalParser parser = new ScoredIntervalParser();
+    parser.parse(istr, "foo.sin", seq_group);
+    
+    AnnotatedBioSeq seq = seq_group.getSeq(0);
+    SeqSymmetry first_sym = seq.getAnnotation(0);
+    java.util.List symlist = new ArrayList();
+    for (int i=0; i<first_sym.getChildCount(); i++) {
+      symlist.add(first_sym.getChild(i));
+    }
+    
+    MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
 
     JFrame frm = new JFrame( "ExperimentPivotView Test" );
     frm.setDefaultCloseOperation( frm.EXIT_ON_CLOSE );
@@ -631,48 +652,15 @@ public class ExperimentPivotView extends JComponent
 
     frm.setSize(600, 400);
     frm.setVisible(true);
-    ArrayList symlist = new ArrayList();
-    int acount = testseq.getAnnotationCount();
-
-    // Make up some scores:
-    ScoredContainerSym bucket = new ScoredContainerSym();
-    float[] scrsUp = { 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f };
-    float[] scrsDn = { 5f, 4f, 3f, 2f, 1f, 0f };
-    bucket.addScores( "Ascending", scrsUp );
-    bucket.addScores( "Descending", scrsDn );
-
-    for (int i=0; i<acount; i++) {
-      SeqSymmetry sym = testseq.getAnnotation(i);
-      { // Put IndexedSyms in the sym list instead of the ones from testseq:
-        //SimpleSymWithProps psym = (SimpleSymWithProps) sym;
-        int spansIncluded = sym.getSpanCount();
-        if ( 0 < spansIncluded ) {
-          SeqSpan span = sym.getSpan( spansIncluded - 1 );
-          IndexedSym isym = new IndexedSingletonSym( span.getStart(), span.getEnd(), span.getBioSeq() );
-          bucket.addChild( isym );
-          sym = isym; // Use this new sym instead.
-        }
-      }
-      symlist.add(sym);
-    }
-
-    /*/ More experimentation: Replace the annotations with the new ones in the symlist.
-    for ( int i = acount-1; 0 <= i; i-- ) {
-      testseq.removeAnnotation( i );
-    }
-    Iterator it = symlist.iterator();
-    while ( it.hasNext() ) {
-      Object o = it.next();
-      SeqSymmetry s = ( SeqSymmetry ) o;
-      testseq.addAnnotation( s );
-    }*/
 
     Collections.sort(symlist, new SeqSymMinComparator(testseq, true));
 
+    for (int q=0; q<symlist.size(); q++) {
+      SeqUtils.printSymmetry((SeqSymmetry) symlist.get(0));
+    }
+    
     gmodel.setSelectedSeq( testseq, epview );
-
-    SymSelectionEvent symevt = new SymSelectionEvent(epview, symlist);
-    epview.symSelectionChanged(symevt);
+    gmodel.setSelectedSymmetries(symlist, "");    
   }
 
 

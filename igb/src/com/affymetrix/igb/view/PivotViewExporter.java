@@ -72,6 +72,55 @@ public class PivotViewExporter extends AbstractAction {
     }
   };
 
+  
+  /**
+   * Convert the table to "cdt" format.
+   */
+  private TableFilter cdtFilter = new TableFilter() {
+    {
+      this.validSuffixes.add( "cdt" );
+      this.description = "Clustered Data Table";
+    }
+    /**
+     * Quote the source using Microsoft style quote mark stuffing.
+     */
+
+    public void write( TableModel theTable, PrintWriter theDest ) {
+      int rows = theTable.getRowCount();
+      int cols = theTable.getColumnCount();
+
+      theDest.print("UID\tNAME\tGWEIGHT");
+      for ( int i = 3; i < cols; i++ ) {
+        theDest.print('\t');
+        theDest.print( theTable.getColumnName( i ));
+      }
+      theDest.println();
+      
+      theDest.print("EWEIGHT\t\t");
+      for ( int j = 3; j < cols; j++ ) {
+        theDest.print("\t1");
+      }
+      theDest.println();
+      
+      for ( int i = 0; i < rows; i++ ) {
+        theDest.print(Integer.toString(i));
+        theDest.print('\t');
+        theDest.print(theTable.getValueAt(i, 0));
+        theDest.print('\t');
+        theDest.print('1');
+        for ( int j = 3; j < cols; j++ ) {
+          theDest.print('\t');
+          String cell = "";
+          Object o = theTable.getValueAt( i, j );
+          if ( null != o ) cell = format(o);
+          else cell = "0";
+          theDest.print(cell);
+        }
+        theDest.println();
+      }
+    }
+  };
+
   /**
    * Convert the table to comma separated values.
    */
@@ -186,6 +235,10 @@ public class PivotViewExporter extends AbstractAction {
   {
     dialog.addChoosableFileFilter( tsvFilter );
     dialog.addChoosableFileFilter( csvFilter );
+    /* I created this CDT format exporter, but am not sure yet if it is useful
+     * to add it to IGB.
+    dialog.addChoosableFileFilter( cdtFilter );
+     */
     dialog.addChoosableFileFilter( htmlFilter );
     dialog.setFileFilter( tsvFilter );
   }

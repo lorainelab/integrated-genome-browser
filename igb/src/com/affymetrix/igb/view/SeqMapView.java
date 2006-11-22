@@ -12,7 +12,6 @@
 */
 
 package com.affymetrix.igb.view;
-// hello
 
 import java.awt.*;
 import java.awt.event.*;
@@ -2351,15 +2350,11 @@ public class SeqMapView extends JPanel
     }
   }
 
-  boolean report_hairline_position_in_status_bar = true;
-  
   /** Sets the hairline position and zoom center to the given spot. Does not call map.updateWidget() */
   public final void setZoomSpotX(double x) {
     int intx = (int) x;
     if (hairline != null) {hairline.setSpot(intx);}
-    if (report_hairline_position_in_status_bar) {
-      setStatus("");
-    }
+    showHairlinePositionInStatusBar();
     seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, intx);
   }
 
@@ -2660,21 +2655,24 @@ public class SeqMapView extends JPanel
     label.setText(title);
   }
 
+  boolean report_hairline_position_in_status_bar = true;
+  
+  void showHairlinePositionInStatusBar() {
+    if (! report_hairline_position_in_status_bar) {
+      return;
+    }
+    String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
+    IGB.getSingletonIGB().setStatusBarHairlinePosition(pos);
+  }
+  
   boolean report_status_in_status_bar = true;
   
   void setStatus(String title) {
     if (! report_status_in_status_bar) {
       return;
     }
-    
-    String status = title;
-    if (report_hairline_position_in_status_bar) {
-      status = " " + nformat.format((int) hairline.getSpot());
-      if (title != null && title.length() > 0) {
-        status = status + "   " + title;
-      }
-    }
-    IGB.getSingletonIGB().setStatus(status, false);
+    showHairlinePositionInStatusBar();
+    IGB.getSingletonIGB().setStatus(title, false);
   }
   
   private SymWithProps sym_used_for_title = null;

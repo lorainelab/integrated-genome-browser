@@ -21,6 +21,7 @@ import java.text.DecimalFormat;
 
 public class StatusBar extends JPanel {
   
+  JLabel position_ta;
   JLabel status_ta;
   JLabel memory_ta;
 
@@ -31,11 +32,18 @@ public class StatusBar extends JPanel {
   /** Delay in milliseconds between updates of the status (such as memory usage).  */
   static int timer_delay_ms = 5000;
   
-  public StatusBar() { 
+  public StatusBar() {
+    position_ta = new JLabel("");
     status_ta = new JLabel("");
     memory_ta = new JLabel("");
+    position_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
     status_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
     memory_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
+    
+    position_ta.setToolTipText("Hairline Position");
+    status_ta.setToolTipText("Shows Selected Item, or other Message");
+    memory_ta.setToolTipText("Memory Used / Available");
+    
     //num_format = NumberFormat.getIntegerInstance();
     num_format = new DecimalFormat();
     num_format.setMaximumFractionDigits(1);
@@ -44,6 +52,7 @@ public class StatusBar extends JPanel {
     BorderLayout bl = new BorderLayout();
     setLayout(bl);
     
+    this.add(position_ta, BorderLayout.WEST);
     this.add(status_ta, BorderLayout.CENTER);
     this.add(memory_ta, BorderLayout.EAST);
 
@@ -85,6 +94,17 @@ public class StatusBar extends JPanel {
     
     updateSafely(status_ta, s);
     updateMemory();
+  }
+  
+  /** Sets the String in the position status bar.
+   *  HTML can be used if prefixed with "<html>".
+   *  Can be safely called from any thread.
+   *  @param s  a String, null is ok; null will erase the String.
+   */
+  public void setPosition(String s) {
+    if (s == null) { s = ""; }
+    
+    updateSafely(position_ta, s);
   }
   
   /**

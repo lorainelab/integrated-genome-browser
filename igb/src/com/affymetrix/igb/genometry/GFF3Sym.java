@@ -250,6 +250,9 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   
   /** Returns a non-null String[]. */
   public static String[] getGFF3PropertyFromAttributes(String prop_name, String attributes) {
+    if (attributes == null) {
+      return EMPTY_RESULT;
+    }
     String[] tag_vals = attributes.split(";");
     String prop_with_equals = prop_name + "=";
     String val = null;

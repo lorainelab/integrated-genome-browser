@@ -42,7 +42,8 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
 
   static final NumberFormat nformat = NumberFormat.getIntegerInstance();
   
-  static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:]\\s*([0-9,]+)\\s*$");
+  // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
+  static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
   static final Pattern center_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*\\s*$");
   

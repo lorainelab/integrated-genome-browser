@@ -862,6 +862,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public void setStatus(String s) {
     setStatus(s, true);
   }
+  
+  public void setStatusBarHairlinePosition(String s) {
+    if (USE_STATUS_BAR && status_bar != null) {
+      status_bar.setPosition(s);
+    }
+  }
 
   /** Sets the text in the status bar.
    *  Will optionally echo a copy of the string to System.out.

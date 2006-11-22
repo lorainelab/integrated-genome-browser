@@ -66,7 +66,9 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public void initComponentLayout() {
 
     this.northEastMap = new AffyTieredMap( false, false );
+    this.northEastMap.name = "NorthEast";
     this.northMap = new AffyTieredMap( false, false );
+    this.northMap.name = "North";
     int[] mainRange = this.getMapRange();
     this.northMap.setMapRange( mainRange[0], mainRange[1] );
     //this.northWestMap = new AffyTieredMap( false, false );
@@ -79,6 +81,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
+    labelmap.name = "LabelMap";
 
     this.nwpan = new JPanel( new BorderLayout() );
     this.nepan = new JPanel( new BorderLayout() );
@@ -92,6 +95,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     extramap = new AffyTieredMap(false, false);
     extramap.setBackground(Color.green);
+    extramap.name = "ExtraMap";
     this.epan = new JPanel( new BorderLayout() );
     this.epan.add( extramap, BorderLayout.CENTER );
     this.epan.setPreferredSize( new Dimension( 100, 200 ) );
@@ -133,6 +137,8 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     ZoomLine l = new ZoomLine();
     l.addMap( this );
+    
+    this.name = "AffyTieredMultiMap";
   }
 
   /**
@@ -236,7 +242,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     super.packTiers(full_repack, stretch_map, extra_for_now);
     Rectangle2D lbox = extramap.getCoordBounds();
     for (int i=0; i<extra_glyphs.size(); i++) {
-      GlyphI extra_glyph = (GlyphI)extra_glyphs.get(i);
+      TierGlyph extra_glyph = (TierGlyph) extra_glyphs.get(i);
       TierGlyph tier_glyph = (TierGlyph)extra_glyph.getInfo();
       Rectangle2D tbox = tier_glyph.getCoordBox();
       extra_glyph.setCoords(0, 0, lbox.width, tbox.height);
@@ -246,6 +252,11 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
         child.setCoords(lbox.x, tbox.y + extramap_inset,
                         lbox.width, tbox.height-(2*extramap_inset));
       }
+      
+      // The "extra" tier glyph does not share the same AnnotStyle as the tier glyph,
+      // because it may be drawn as a HeatMap while the other tier is drawn as
+      // an mRNA glyph, but it does need to have the same property for "show".
+      extra_glyph.getAnnotStyle().setShow(tier_glyph.isVisible());
       extra_glyph.setVisibility(tier_glyph.isVisible());
     }
     // The extra map's tiers need to be sorted by y position (top to bottom)
@@ -396,6 +407,15 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     zoom( Y, this.getZoom( Y ) ); // This seems a bit artificial.
   }
 
+  public void updateWidget(boolean b) {
+    super.updateWidget(b);
+    this.extramap.updateWidget(b);
+    this.northMap.updateWidget(b);
+    if (northEastMap != null) {this.northEastMap.updateWidget(b);}
+    if (northWestMap != null) {this.northWestMap.updateWidget(b);}
+    zoom( Y, this.getZoom( Y ) ); // This seems a bit artificial.
+  }
+
   public void stretchToFit(boolean fitx, boolean fity) {
     super.stretchToFit(fitx, fity);
     this.extramap.stretchToFit(fitx, fity);
@@ -404,6 +424,15 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     this.northEastMap.stretchToFit( fitx, fity );
   }
 
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    super.repackTheTiers(full_repack, stretch_vertically);
+    this.extramap.repackTheTiers(full_repack,stretch_vertically);
+    if ( null != this.northWestMap ) this.northWestMap.repackTheTiers(full_repack, stretch_vertically);
+    this.northMap.repackTheTiers(full_repack, stretch_vertically);
+    this.northEastMap.repackTheTiers(full_repack, stretch_vertically);    
+  }
+  
+  
   /**
    * Put the axis on the north map.
    */
@@ -493,7 +522,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
         System.exit(0);
       }
     } );
-    frm.show();
+    frm.setVisible(true);
   }
 
 }

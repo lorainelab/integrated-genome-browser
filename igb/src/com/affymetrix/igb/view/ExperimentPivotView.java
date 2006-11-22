@@ -217,7 +217,7 @@ public class ExperimentPivotView extends JComponent
     pref_node.put(PREF_STYLE, selection);
     int ee = experimentStyleToInt(selection);
     if (ee == GraphGlyph.HEAT_MAP) {
-      setHeatMap((HeatMap) string2style.get(selection), false);      
+      setHeatMap((HeatMap) string2style.get(selection), false);
     }
     setExperimentStyle(ee, true);
   }
@@ -374,8 +374,15 @@ public class ExperimentPivotView extends JComponent
         xmin = Math.min(xmin, span.getMin());
         xmax = Math.max(xmax, span.getMax());
       }
+      String id = null;
       if (sym instanceof SymWithProps) {
-        mtg.setLabel((String)((SymWithProps)sym).getProperty("id"));
+        id = (String)((SymWithProps)sym).getProperty("id");
+      }
+      if (id==null || id.length() == 0 && span != null) {
+        id = SeqUtils.spanToString(span);
+      }
+      if (id != null) {
+        mtg.setLabel(id);
       }
       map.addTier(mtg);
       GlyphI gl = addAnnotGlyph(sym, this.currentSeq, mtg, pivot_fg);
@@ -654,10 +661,6 @@ public class ExperimentPivotView extends JComponent
     frm.setVisible(true);
 
     Collections.sort(symlist, new SeqSymMinComparator(testseq, true));
-
-    for (int q=0; q<symlist.size(); q++) {
-      SeqUtils.printSymmetry((SeqSymmetry) symlist.get(0));
-    }
     
     gmodel.setSelectedSeq( testseq, epview );
     gmodel.setSelectedSymmetries(symlist, "");    

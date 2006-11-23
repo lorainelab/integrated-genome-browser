@@ -94,7 +94,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  Action show_all_action = new AbstractAction("Show All") {
+  Action show_all_action = new AbstractAction("Show All Types") {
     public void actionPerformed(ActionEvent e) {
       showAllTiers();
     }

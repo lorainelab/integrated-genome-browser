@@ -197,6 +197,7 @@ public class LazyChpSym extends ScoredContainerSym {
     //    (YES -- once DAS/2 versioned source is initialized, model doesn't have to
     //       make additional queries to
     Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);
+    System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
 
     // if already retrieved chp_array_type coord annotations for this whole sequence (for example
     //   due to a previously loaded CHP file with same "array_type", then optimizer
@@ -270,8 +271,10 @@ public class LazyChpSym extends ScoredContainerSym {
       //      }
 
     }
-    this.addScores("probeset quantification: " + this.getID(), quants);
-    this.addScores("probeset pval: " + this.getID(), pvals);
+    //    this.addScores("score: " + this.getID(), quants);
+    //    this.addScores("pval: " + this.getID(), pvals);
+    this.addScores("score", quants);
+    this.addScores("pval", pvals);
 
     System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
     coords_loaded = true;

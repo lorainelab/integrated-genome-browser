@@ -81,7 +81,7 @@ public class Bprobe1Parser implements AnnotationWriter {
 
   public List parse(InputStream istr, AnnotatedSeqGroup group,
     boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
-
+    System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
     BufferedInputStream bis;
     Map tagvals = new LinkedHashMap();
     Map seq2syms = new LinkedHashMap();
@@ -233,8 +233,15 @@ public class Bprobe1Parser implements AnnotationWriter {
     DataOutputStream dos = null;
     try {
       if (outstream instanceof DataOutputStream) { dos = (DataOutputStream)outstream; }
-      else if (outstream instanceof BufferedOutputStream) { dos = new DataOutputStream(outstream); }
-      else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
+      else if (outstream instanceof BufferedOutputStream) {
+          dos = new DataOutputStream(outstream);
+      }
+      // Changed to not wrap with a buffered output stream -- this must be handled in the calling code
+      // Wrapping with a buffered output stream was causing EOFExceptions and socket errors in 
+      //     Genometry DAS/2 servlet 
+      //     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
+      else { dos = new DataOutputStream(outstream); }
+      //      else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
       dos.writeUTF("bp2");
       dos.writeInt(1);
       dos.writeUTF(groupid);

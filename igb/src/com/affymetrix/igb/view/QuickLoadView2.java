@@ -91,7 +91,7 @@ public class QuickLoadView2 extends JComponent
   JButton partial_residuesB;
   JButton optionsB;
   DataLoadPrefsView optionsP;
-  
+
   int pref_tab_number = -1;
 
   static {
@@ -262,11 +262,11 @@ public class QuickLoadView2 extends JComponent
       }
     }
   }
-  
+
   public String getCheckboxTitle(boolean prev_loaded, String filename) {
     String annot_name = getAnnotName(filename);
     String checkbox_title = annot_name;
-    
+
 //    // unfortunately, this code slows things down too much....
 //    if (prev_loaded) {
 //      checkbox_title = annot_name + " [Loaded]";
@@ -280,16 +280,16 @@ public class QuickLoadView2 extends JComponent
 //      String load_type = LocalUrlCacher.getLoadType(full_name, LocalUrlCacher.ONLY_CACHE);
 //      checkbox_title = annot_name + " [" + load_type + "]";
 //    }
-    
+
     return checkbox_title;
   }
-  
+
   String getAnnotName(String filename) {
     int pindex = filename.indexOf('.');
     if (pindex < 0)  { return filename; }
     return filename.substring(0, pindex);
   }
-  
+
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     // Implementation of GroupSelectionListener
     //  This gets called when something external, such as a bookmark, causes
@@ -338,10 +338,10 @@ public class QuickLoadView2 extends JComponent
 
           if (filename == null || filename.equals(""))  { continue; }
           boolean prev_loaded = QuickLoadServerModel.getLoadState(group, filename);
-          
+
           String checkbox_title = getCheckboxTitle(prev_loaded, filename);
           JCheckBox cb = new JCheckBox(checkbox_title);
-          
+
           cb2filename.put(cb, filename);
           cb.setSelected(prev_loaded);
           cb.setEnabled(! prev_loaded);
@@ -366,11 +366,11 @@ public class QuickLoadView2 extends JComponent
               cb.setEnabled(! loaded);
               cb.setSelected(loaded);
               cb.setText(getCheckboxTitle(loaded, filename));
-              
+
               // Now force display of the current seq (or the first seq in the group)
               AnnotatedBioSeq seq = gmodel.getSelectedSeq();
-              if (seq == null && current_group.getSeqCount() > 0) { 
-                seq =  current_group.getSeq(0); 
+              if (seq == null && current_group.getSeqCount() > 0) {
+                seq =  current_group.getSeq(0);
               }
               if (seq != null) {
                 gviewer.setAnnotatedSeq(seq, true, true, false);
@@ -378,7 +378,7 @@ public class QuickLoadView2 extends JComponent
             }
           }
         }
-      
+
       }
     }
     types_panel.invalidate(); // make sure display gets updated (even if this is the same group as before.)
@@ -391,7 +391,7 @@ public class QuickLoadView2 extends JComponent
     if (current_seq != null) {
         UnibrowPrefsUtil.getLocationsNode().put(PREF_LAST_SEQ, current_seq.getID());
     }
-    if (current_seq != null 
+    if (current_seq != null
         && ! ENCODE_REGIONS_ID.equals(current_seq.getID())
         && ! GENOME_SEQ_ID.equals(current_seq.getID())) {
       all_residuesB.setEnabled(true);
@@ -653,7 +653,7 @@ public class QuickLoadView2 extends JComponent
     JFrame f = pv.getFrame();
     f.setVisible(true);
   }
-  
+
   PreferenceChangeListener preferemce_change_listener = new PreferenceChangeListener() {
     public void preferenceChange(PreferenceChangeEvent evt) {
       String value = evt.getNewValue();
@@ -782,7 +782,7 @@ class QuickLoadServerModel {
   static boolean getCacheResidues() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
   }
-  
+
   static boolean getCacheAnnots() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
   }
@@ -832,7 +832,7 @@ class QuickLoadServerModel {
     if (boo == null) { return false; }
     else { return boo.booleanValue(); }
   }
-  
+
   public static void setLoadState(AnnotatedSeqGroup group, String file_name, boolean loaded) {
     Map load_states = (Map) group2states.get(group);
     if (load_states == null) {
@@ -916,7 +916,7 @@ class QuickLoadServerModel {
       // no need to make a virtual "genome" seq if there is only a single chromosome
       return;
     }
-    
+
     System.out.println("$$$$$ adding virtual genome seq to seq group");
     if (QuickLoadView2.build_virtual_genome &&
 	(group.getSeq(QuickLoadView2.GENOME_SEQ_ID) == null) ) {
@@ -1100,7 +1100,7 @@ class QuickLoadServerModel {
     }
     return glist;
   }
-  
+
   public void loadAnnotations(AnnotatedSeqGroup current_group, String filename) {
     boolean loaded = getLoadState(current_group, filename);
     if (loaded) {
@@ -1111,12 +1111,12 @@ class QuickLoadServerModel {
       System.out.println("need to load: " + annot_url);
       InputStream istr = null;
       BufferedInputStream bis = null;
-      
+
       try {
         istr = LocalUrlCacher.askAndGetInputStream(annot_url, getCacheAnnots());
         if (istr != null) {
           bis = new BufferedInputStream(istr);
-          
+
           if (GraphSymUtils.isAGraphFilename(filename)) {
             URL url = new URL(annot_url);
             java.util.List graphs = OpenGraphAction.loadGraphFile(url, current_group, gmodel.getSelectedSeq());
@@ -1131,7 +1131,7 @@ class QuickLoadServerModel {
             LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
             lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
           }
-                    
+
           setLoadState(current_group, filename, true);
         }
       }
@@ -1145,7 +1145,7 @@ class QuickLoadServerModel {
       }
     }
   }
-  
+
   public String toString() {
     return "QuickLoadServerModel: url='" + getRootUrl() + "'";
   }

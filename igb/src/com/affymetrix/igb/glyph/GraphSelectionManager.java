@@ -378,7 +378,7 @@ public class GraphSelectionManager
         //        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
         // toggle_floating is currently unused, so don't worry that the code is commented out
       }
-      
+
       else if (src == diff_graphs) {
         graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
       }
@@ -750,16 +750,16 @@ public class GraphSelectionManager
 
     the_popup.add(combine);
   }
-  
+
     public void popupNotify(JPopupMenu popup, TierLabelManager handler) {
       // This class was orignially written to implement ContextualPopupListener
       // for left-click on the tier handles.
       // This routine adapts it to also work as a TierLabelManager.PopupListener
       // for left-click on the TierLabelGlyph's
-      
+
       java.util.List labels = handler.getSelectedTierLabels();
       java.util.List graph_glyphs = handler.getContainedGraphs(labels);
-      
+
       java.util.List graph_syms = new ArrayList(graph_glyphs.size());
       for (int i=0; i<graph_glyphs.size(); i++) {
         GraphGlyph glyph = (GraphGlyph) graph_glyphs.get(i);
@@ -769,9 +769,9 @@ public class GraphSelectionManager
       if (! graph_syms.isEmpty()) {
         primary_sym = (GraphSym) graph_syms.get(0);
       }
-      
+
       this.popupNotify(popup, graph_syms, primary_sym);
-    }    
+    }
 }
 
 

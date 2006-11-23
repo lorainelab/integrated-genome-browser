@@ -43,10 +43,9 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     boolean attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
         ScoredIntervalParser.default_attach_graphs);
-    
     if (sym instanceof ScoredContainerSym) {
       ScoredContainerSym container = (ScoredContainerSym) sym;
-      
+      if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
       // first draw the little rectangle that will go in an annotation tier
       // and be used to select regions for the pivot view
       MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(smv.determineMethod(sym));
@@ -63,18 +62,18 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
       System.err.println("ScoredContainerGlyphFactory.createGlyph() called, but symmetry " +
 			 "passed in is NOT a ScoredContainerSym: " + sym);
     }
+    if (DEBUG)  { System.out.println("&&&&& exiting ScoredContainerGlyphFactory"); }
   }
 
   public void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map)  {
 
     AnnotatedBioSeq aseq = smv.getAnnotatedSeq();
+    if (DEBUG)  { System.out.println("   creating graphs on seq: " + aseq.getID()); }
     BioSeq vseq = smv.getViewSeq();
     AffyTieredMap map = smv.getSeqMap();
-    
     if (original_container.getSpan(aseq) == null) {
       return;
     }
-    
     GraphIntervalSym[] the_graph_syms = null;
     DerivedSeqSymmetry derived_sym = null;      
     if (aseq != vseq) {
@@ -85,7 +84,6 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     else { // aseq == vseq, so no transformation needed
       the_graph_syms = makeGraphs(original_container, SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
     }
-
     Rectangle2D cbox = map.getCoordBounds();
     for (int q=0; q<the_graph_syms.length; q++) {
       GraphIntervalSym gis = the_graph_syms[q];
@@ -116,10 +114,8 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
         if (GraphSym.GRAPH_STRAND_MINUS.equals(gis.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
           tier_direction = TierGlyph.DIRECTION_REVERSE;
         }
-        
         TierGlyph tglyph = smv.getGraphTier(tier_style, tier_direction);
         tglyph.addChild(graph_glyph);
-
         tglyph.pack(map.getView());
       }
     }
@@ -131,7 +127,6 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     if (update_map) {
       map.updateWidget();
     }
-
     return;
   }
   

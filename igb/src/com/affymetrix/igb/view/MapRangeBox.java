@@ -15,10 +15,16 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.*;
 import javax.swing.*;
 
@@ -42,6 +48,10 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
 
   static final NumberFormat nformat = NumberFormat.getIntegerInstance();
   
+  // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
+  // (The chromosome name cannot contain any spaces.)
+  static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+  
   // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
   static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
@@ -57,7 +67,8 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     
     range_box.setToolTipText("<html>Enter a coordinate range here.<br>" +
-      "Use the format 'start : end' or 'start + width' or 'center'.<html>");
+      "Use the format 'start : end' or 'start + width' or 'center',<br>" +
+      "or use the UCSC browser format 'chrom:start-end'.<html>");
     ToolTipManager.sharedInstance().registerComponent(range_box);
     
     this.add(range_box);
@@ -103,11 +114,32 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
       double width = end - start;
       int display_format = FORMAT_START_END;
       try {
+        Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
         Matcher start_end_matcher = start_end_pattern.matcher(range_box.getText());
         Matcher start_width_matcher = start_width_pattern.matcher(range_box.getText());
         Matcher center_matcher = center_pattern.matcher(range_box.getText());
         
-        if (start_end_matcher.matches()) {
+        if (chrom_start_end_matcher.matches()) {
+          String chrom_text = chrom_start_end_matcher.group(1);
+          String start_text = chrom_start_end_matcher.group(2);
+          String end_text = chrom_start_end_matcher.group(3);
+          start = nformat.parse(start_text).doubleValue();
+          end = nformat.parse(end_text).doubleValue();
+
+          SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+          
+          if (gmodel.getSelectedSeqGroup() != null) {
+            Map m = new HashMap();
+            m.put(Bookmark.SEQID, chrom_text);
+            m.put(Bookmark.START, Integer.toString((int) start));
+            m.put(Bookmark.END, Integer.toString((int) end));
+            m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
+            UnibrowControlServlet.goToBookmark(IGB.getSingletonIGB(), m);
+          }
+
+          //gview.zoomTo(start, end);
+        }
+        else if (start_end_matcher.matches()) {
           String start_text = start_end_matcher.group(1);
           String end_text = start_end_matcher.group(2);
           start = nformat.parse(start_text).doubleValue();

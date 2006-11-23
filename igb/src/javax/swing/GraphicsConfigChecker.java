@@ -21,7 +21,7 @@ public class GraphicsConfigChecker {
     System.out.println("max double buffer size: " + rmanager.getDoubleBufferMaximumSize());
     //    rmanager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
     //    System.out.println("new max double buffer size: " + rmanager.getDoubleBufferMaximumSize());
-    System.out.println(".... ");
+    //    System.out.println(".... ");
 
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice default_device = genv.getDefaultScreenDevice();

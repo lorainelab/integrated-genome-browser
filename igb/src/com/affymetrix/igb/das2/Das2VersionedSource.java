@@ -37,6 +37,9 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
  *  started with com.affymetrix.igb.das.DasSource and modified
  */
 public class Das2VersionedSource  {
+  static boolean DEBUG_TYPES_QUERY = false;
+  static boolean DEBUG_SEGMENTS_QUERY = false;
+
   static boolean DO_FILE_TEST = false;
   static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
   static String SEGMENTS_CAP_QUERY = "segments";
@@ -67,6 +70,7 @@ public class Das2VersionedSource  {
 
   AnnotatedSeqGroup genome = null;
   protected Map types = new LinkedHashMap();
+  protected Map name2types = new LinkedHashMap();
   protected boolean regions_initialized = false;
   protected boolean types_initialized = false;
   protected String types_filter = null;
@@ -79,7 +83,7 @@ public class Das2VersionedSource  {
     version_uri = vers_uri;
     source = das_source;
     if (init) {
-      initRegions();
+      initSegments();
       initTypes(null, false);
     }
   }
@@ -125,9 +129,9 @@ public class Das2VersionedSource  {
   void setDescription(String desc) { this.description = desc; }
   void setInfoUrl(String url) { this.info_url = url; }
 
-  public Map getRegions() {
+  public Map getSegments() {
     if (! regions_initialized)  {
-      initRegions();
+      initSegments();
     }
     return regions;
   }
@@ -136,10 +140,10 @@ public class Das2VersionedSource  {
    *  assumes there is only one region for each seq
    *    may want to change this to return a list of regions instead
    **/
-  public Das2Region getRegion(BioSeq seq) {
+  public Das2Region getSegment(BioSeq seq) {
     // should probably make a region2seq hash, but for now can just iterate through regions
     Das2Region result = null;
-    Iterator iter = getRegions().values().iterator();
+    Iterator iter = getSegments().values().iterator();
     while (iter.hasNext()) {
       Das2Region region = (Das2Region)iter.next();
       BioSeq region_seq = region.getAnnotatedSeq();
@@ -157,6 +161,13 @@ public class Das2VersionedSource  {
 
   public void addType(Das2Type type) {
     types.put(type.getID(), type);
+    String name = type.getName();
+    List prevlist = (List)name2types.get(name);
+    if (prevlist == null) {
+      prevlist = new ArrayList();
+      name2types.put(name, prevlist);
+    }
+    prevlist.add(type);
   }
 
   public Map getTypes() {
@@ -164,6 +175,13 @@ public class Das2VersionedSource  {
       initTypes(null, false);
     }
     return types;
+  }
+
+  public List getTypesByName(String name) {
+    if (! types_initialized || types_filter != null) {
+      initTypes(null, false);
+    }
+    return (List)name2types.get(name);
   }
 
   /*
@@ -180,7 +198,7 @@ public class Das2VersionedSource  {
   }
 
   /** Get regions from das server. */
-  protected void initRegions() {
+  protected void initSegments() {
     String region_request;
     if (DO_FILE_TEST)  {
       region_request = test_file;
@@ -194,7 +212,7 @@ public class Das2VersionedSource  {
       Document doc = DasLoader.getDocument(region_request);
       Element top_element = doc.getDocumentElement();
       NodeList regionlist = doc.getElementsByTagName("SEGMENT");
-      System.out.println("regions: " + regionlist.getLength());
+      System.out.println("segments: " + regionlist.getLength());
       for (int i=0; i< regionlist.getLength(); i++)  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute(URID);
@@ -214,7 +232,9 @@ public class Das2VersionedSource  {
 	String description = null;
 	int length = Integer.parseInt(lengthstr);
 	Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
-	System.out.println("region: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
+	if (DEBUG_SEGMENTS_QUERY) {
+	  System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
+	}
 	this.addRegion(region);
       }
     }

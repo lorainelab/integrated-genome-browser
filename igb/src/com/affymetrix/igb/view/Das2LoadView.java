@@ -199,7 +199,7 @@ public class Das2LoadView extends JComponent
 	Map seqs = null;
 	Map types = null;
 	public Object construct() {
-	  seqs = current_version.getRegions();
+	  seqs = current_version.getSegments();
 	  types = current_version.getTypes();
 	  return null;
 	}
@@ -267,10 +267,10 @@ public class Das2LoadView extends JComponent
     //    MutableAnnotatedBioSeq current_seq = current_region.getAnnotatedSeq();
     if (current_version != null) {
       if (current_seq != null) {
-	current_region = current_version.getRegion(current_seq);
+	current_region = current_version.getSegment(current_seq);
       }
       else {
-	current_region = current_version.getRegion(visible_seq);
+	current_region = current_version.getSegment(visible_seq);
       }
     }
 
@@ -309,7 +309,7 @@ public class Das2LoadView extends JComponent
     if (requests.size() == 0) {
       ErrorHandler.errorPanel("Select some data", "You must first zoom in to " +
         "your area of interest and then select some data types "
-        +"from the table above before pressing the \"Load\" button."); 
+        +"from the table above before pressing the \"Load\" button.");
     }
     else {
       processFeatureRequests(requests, true);
@@ -402,7 +402,7 @@ public class Das2LoadView extends JComponent
     if (current_seq == null)  { return; }
     if (current_version != null) {
       SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-      current_region = current_version.getRegion(current_seq);
+      current_region = current_version.getSegment(current_seq);
       java.util.List type_states = (java.util.List)version2typestates.get(current_version);
       Iterator titer = type_states.iterator();
       ArrayList requests = new ArrayList();
@@ -478,7 +478,7 @@ public class Das2LoadView extends JComponent
       //      System.out.println("value of changed table cell: " + val);
 
       SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-      current_region = current_version.getRegion(current_seq);
+      current_region = current_version.getSegment(current_seq);
 
       Das2Type dtype = tstate.getDas2Type();
       if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {

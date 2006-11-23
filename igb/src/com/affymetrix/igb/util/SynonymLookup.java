@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -38,7 +38,7 @@ public class SynonymLookup {
     } catch (IOException ioe) {
       if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
       syn_stream = null;
-    } 
+    }
 
     if (syn_stream == null) {
       System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
@@ -71,7 +71,7 @@ public class SynonymLookup {
   public static SynonymLookup getDefaultLookup() { return default_lookup; }
 
   boolean caseSensitive = true;
-  
+
   /** Set whether tests should be case sensitive or not.
    *  You can turn this on or off safely before or after loading the synonyms.
    *  Default is true: case does matter by default.
@@ -79,10 +79,10 @@ public class SynonymLookup {
   public void setCaseSensitive(boolean case_sensitive) {
     this.caseSensitive = case_sensitive;
   }
-  
+
   public boolean isCaseSensitive() { return caseSensitive; }
-  
-  
+
+
   /**
    * Set this flag to true to automatically take care of synonyms of "_random"
    * sequence names.  If true, then "XXX_random" is a synonym of "YYY_random"
@@ -90,7 +90,7 @@ public class SynonymLookup {
    * was explicitly specified.)
    */
   public boolean stripRandom = false;
-  
+
   public boolean isSynonym(String str1, String str2) {
     //    System.out.println("$$$$$ called isSynonym for " + str1 + ", " + str2 + " $$$$$");
     if (str1 == null || str2 == null) { return false; }
@@ -119,7 +119,7 @@ public class SynonymLookup {
     }
     return false;
   }
-  
+
   // Strip the word "_random" from the item name
   // Will not change the case of the input, but if isCaseSensitive is false, will
   // also strip "_RanDom", etc.
@@ -140,23 +140,26 @@ public class SynonymLookup {
   }
 
   public void addSynonyms(String[] syns) {
+    if (DEBUG)  { System.out.print("adding synonyms :"); }
     for (int i=0; i<syns.length; i++) {
       String syn1 = syns[i];
-      if (DEBUG)  { System.out.println("adding:" + syn1 + ":"); }
+      //      if (DEBUG)  { System.out.println("adding:" + syn1 + ":"); }
+      if (DEBUG)  { System.out.print(syns[i] + ":"); }
       for (int k=i+1; k<syns.length; k++) {
         String syn2 = syns[k];
         addSynonym(syn1, syn2);
       }
     }
+    if (DEBUG) { System.out.println(""); }
   }
 
   ArrayList getSharedList(String str1, String str2) {
     ArrayList result = null;
-    
+
     // We want both synonyms to map to the *identical* List object
     ArrayList list1 = (ArrayList) lookup_hash.get(str1);
     ArrayList list2 = (ArrayList) lookup_hash.get(str2);
-    
+
     if (list1 != null && list2 != null) {
       if (list1 == list2) {
         // great, they are already the same object
@@ -169,20 +172,20 @@ public class SynonymLookup {
     }
     else if (list1 != null && list2 == null) {
       result = list1;
-    } 
+    }
     else if (list1 == null && list2 != null) {
       result = list2;
-    } 
+    }
     else if (list1 == null && list2 == null) {
       result = new ArrayList();
     }
 
     lookup_hash.put(str1, result);
     lookup_hash.put(str2, result);
-    return result;    
+    return result;
   }
-  
-  
+
+
   public void addSynonym(String str1, String str2) {
     if (str1 == null || str2 == null || "".equals(str1.trim()) || "".equals(str2.trim())) {
       return;
@@ -197,7 +200,7 @@ public class SynonymLookup {
   }
 
   /** Returns all known synonyms for a given string.
-   *  Even if isCaseSensitive() is false, the items in the returned list will still 
+   *  Even if isCaseSensitive() is false, the items in the returned list will still
    *  have the same cases as were given in the input, but the lookup to find the
    *  list of synonyms will be done in a case-insensitive way.
    */
@@ -206,10 +209,10 @@ public class SynonymLookup {
       return (ArrayList)lookup_hash.get(str);
     } else {
       // If not case-sensitive
-      
+
       Object o = lookup_hash.get(str);
       if (o != null) return (ArrayList) o;
-      
+
       Iterator iter = lookup_hash.keySet().iterator();
       while (iter.hasNext()) {
         String key = (String) iter.next();
@@ -218,7 +221,7 @@ public class SynonymLookup {
     }
     return null;
   }
-  
+
   /**
    *  Finds the first synonym in a list that matches the given string.
    *  @param choices a list of possible synonyms that might match the given test
@@ -237,7 +240,7 @@ public class SynonymLookup {
     }
     return result;
   }
-  
+
   /** For debugging, prints all synonyms to stdout. */
   public void printAllSynonyms() {
     Iterator iter = lookup_hash.keySet().iterator();

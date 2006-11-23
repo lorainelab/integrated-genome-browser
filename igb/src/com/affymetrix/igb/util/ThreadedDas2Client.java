@@ -154,7 +154,7 @@ public class ThreadedDas2Client extends JComponent
       String region_name = (String)evt.getItem();
       if (region_name != region_filler) {
 	System.out.println("region seq: " + region_name);
-	Map regions = current_version.getRegions();
+	Map regions = current_version.getSegments();
 	current_region = (Das2Region)regions.get(region_name);
       }
     }
@@ -269,7 +269,7 @@ public class ThreadedDas2Client extends JComponent
     //    and two runnables, one for entries and one for types...
     Runnable runner = new Runnable() {
 	public void run() {
-	  final Map seqs = current_version.getRegions();
+	  final Map seqs = current_version.getSegments();
 
 	  SwingUtilities.invokeLater(new Runnable() {
 	      public void run() {

@@ -144,7 +144,7 @@ public class SimpleDas2Client extends JComponent
       String region_name = (String)evt.getItem();
       if (region_name != region_filler) {
 	System.out.println("region seq: " + region_name);
-	Map regions = current_version.getRegions();
+	Map regions = current_version.getSegments();
 	current_region = (Das2Region)regions.get(region_name);
       }
     }
@@ -206,7 +206,7 @@ public class SimpleDas2Client extends JComponent
     types_panel.validate();
     types_panel.repaint();
 
-    Map seqs = current_version.getRegions();
+    Map seqs = current_version.getSegments();
 
     das_regionCB.addItem(region_filler);
     Iterator iter = seqs.values().iterator();

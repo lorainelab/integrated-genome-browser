@@ -33,6 +33,12 @@ public class ChpParser {
   //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {
   // }
 
+  // assumes this points to root of an Affy Genometry DAS/2 server, so
+  //   can construct query URLs for probeset coord annotations
+  //   based on standard Genometry server addressing syntax:
+  //        [root]/[genome_name]/features?segment=[chromid];type=[array_type]
+  static String das2_coord_server = "http://netaffxdas.affymetrix.com/das2";
+
   public static List parse(String file_name) throws IOException {
     List results = null;
     if (! (reader_registered)) {
@@ -69,6 +75,7 @@ public class ChpParser {
     FusionCHPTilingData tilechp;
     FusionCHPLegacyData legchp;
     FusionCHPGenericData genchp;
+    boolean has_coord_data = false;
 
     /** expression CHP file (gene or WTA), without detection */
     if ((qchp = FusionCHPQuantificationData.fromBase(chp))  != null) {
@@ -84,6 +91,7 @@ public class ChpParser {
     else if ((tilechp = FusionCHPTilingData.fromBase(chp)) != null) {
       System.out.println("CHP file is for tiling array: " + tilechp);
       results = parseTilingChp(tilechp);
+      has_coord_data = true;
     }
     /** legacy data */
     else if ((legchp = FusionCHPLegacyData.fromBase(chp)) != null) {
@@ -93,9 +101,16 @@ public class ChpParser {
     else if ((genchp = FusionCHPGenericData.fromBase(chp))  != null) {
       System.out.println("CHP file is generic: " + genchp);
       //      results = parseGenericChp(genchp);
+      System.out.println("WARNING: generic CHP files currently not supported in IGB");
     }
     else {
       System.out.println("WARNING: not parsing file, CHP file type not recognized: " + chp);
+    }
+    if (! has_coord_data) {
+      /**
+       *  make lazy stub annotations for each sequence in genome
+       *
+       */
     }
     return results;
   }
@@ -108,107 +123,102 @@ public class ChpParser {
     return parseTilingChp(tchp, annotate_seq, true);
   }
 
+  /**
+     *  Want to automatically load location data for probesets on chip
+     *
+     *  Needed for:
+     *      3' IVT Expression chips
+     *      Exon chips and other expression that is non-3' IVT
+     *      Genotyping chips
+     *
+     *  Not necessary for tiling array chips
+     *  Probably not necessary for sequencing chips (but those aren't supported yet)
+     *
+     *  Basic strategy is to retrieve probeset id and location data from the main public Affymetrix DAS/2 server,
+     *     and match by id to associate locations with the probeset results.
+     *
+     */
+  protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    List results = new ArrayList();
+    int scount = group.getSeqCount();
+    for (int i=0; i<scount; i++) {
+      SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
+      // LazyChpSym constructor handles adding span to itself for aseq
+      LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
+      chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+      chp_sym.setProperty("method", file_name);
+      chp_sym.setID(file_name);
+      aseq.addAnnotation(chp_sym);
+      results.add(chp_sym);
+    }
+    return results;
+  }
+
+
   public static List parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    ArrayList results = new ArrayList();
-
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
     int ps_count = chp.getEntryCount();
-    int match_count = 0;
+    Map name2data = new HashMap(ps_count);
+    Map id2data = new HashMap(ps_count);
+    int int_id_count = 0;
+    int str_id_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
     System.out.println("probeset count: " + ps_count);
     ProbeSetQuantificationDetectionData psqData;
-    boolean is_exon_chp = false;
-    if (ps_count>0) {
-      psqData = chp.getQuantificationDetectionEntry(0);
-      String name = psqData.getName();
-      // if name property is empty, then it's a CHP file for exon array results
-      //    otherwise it's a CHP file for 3' IVT array results
-      if (name == null || name.equals("")) {
-	is_exon_chp = true;
-	System.out.println("Exon CHP file");
+
+    for (int i=0; i<ps_count; i++) {
+      psqData = chp.getQuantificationDetectionEntry(i);
+      float quant = psqData.getQuantification();
+      float pval = psqData.getPValue();
+      int intid = psqData.getId();
+      String name = null;
+      Integer nid = null;
+      if (i<4 || i>=(ps_count-4))  {
+      	System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
-      else {
-	System.out.println("3' IVT CHP file");
+      if (intid >= 0) {
+	nid = new Integer(intid);
+	psqData.setName(null);
+	id2data.put(nid, psqData);
+	int_id_count++;
+      }
+      else {  // nid < 0, then nid field not being used, so name should be used instead
+	name = psqData.getName();
+	try {
+	  nid = new Integer(name);
+	  intid = nid.intValue();
+	  psqData.setId(intid);
+	  psqData.setName(null);
+	  id2data.put(nid, psqData);
+	  int_id_count++;
+	}
+	catch (Exception ex) {
+	  // can't parse as an integer
+	  name2data.put(name, psqData);
+	  str_id_count++;
+	}
+      }
+      if (i<4 || i>=(ps_count-4))  {
+        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
     }
-    Map seq2entries = new HashMap();
 
-    if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
-      ArrayList syms = new ArrayList();
-      for (int i=0; i<ps_count; i++) {
-	psqData = chp.getQuantificationDetectionEntry(i);
-	float quant = psqData.getQuantification();
-	float pval = psqData.getPValue();
-	int nid = psqData.getId();
-	String id = array_type + ":" + nid;
-	if (i<10 || i>=(ps_count-10))  {
-	  System.out.println("full id: " + id + ", probeset id: " + nid + ", quant: " + quant + ", pval: " + pval);
-	}
-	// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
-	group.findSyms(id, syms, false);
-	if (syms.size() > 0) {
-	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
-	  // System.out.println("found a match for id: " + id); 
-	  match_count++;
-	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
-	  SeqSpan span = prev_sym.getSpan(0);
-	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
-	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
-	  isym.setID(id);
-	  TwoScoreEntry sentry = new TwoScoreEntry(isym, quant, pval);
-	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
-	  if (sentries == null) {
-	    sentries = new ArrayList();
-	    seq2entries.put(aseq, sentries);
-	  }
-	  sentries.add(sentry);
-	}
-	syms.clear();
-      }
-
-      System.out.println("matching probeset ids found: " + match_count);
-      // now for each sequence seen, sort the SinEntry list by span min/max
-      ScoreEntryComparator comp = new ScoreEntryComparator();
-      Iterator ents  = seq2entries.entrySet().iterator();
-      while (ents.hasNext()) {
-	Map.Entry ent = (Map.Entry)ents.next();
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
-	java.util.List entry_list = (java.util.List)ent.getValue();
-	Collections.sort(entry_list, comp);
-
-	// now make the container syms
-	ScoredContainerSym container = new ScoredContainerSym();
-	container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-	container.setProperty("method", file_name);
-
-        // Force the AnnotStyle for the container to have glyph depth of 1
-        AnnotStyle style = AnnotStyle.getInstance(file_name);
-        style.setGlyphDepth(1);
-	int entry_count = entry_list.size();
-	float[] quants = new float[entry_count];
-	float[] pvals = new float[entry_count];
-	System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
-	for (int k=0; k<entry_count; k++) {
-	  TwoScoreEntry sentry = (TwoScoreEntry)entry_list.get(k);
-	  container.addChild(sentry.sym);
-	  quants[k] = sentry.quant;
-	  pvals[k] = sentry.pval;
-	}
-	container.addScores("probeset quanfication: " + file_name, quants);
-	container.addScores("probeset pval: " + file_name, pvals);
-        container.setID(file_name);
-	aseq.addAnnotation(container);
-      }
-    }  // end (is_exon_chp) conditional
-
+    List results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
+    System.out.println("Probsets with integer id: " + int_id_count);
+    System.out.println("Probsets with string id: " + str_id_count);
     System.out.println("done parsing quantification data CHP file");
     return results;
   }
+
+
+
 
   /**
    *
@@ -285,7 +295,7 @@ public class ChpParser {
 	float val = psqData.getQuantification();
 	String id = psqData.getName();
 	// try just name as id, if no match, try full id (array_type:probeset_name)
-	if (i<10 || i>=(ps_count-10))  {
+	if (i<2 || i>=(ps_count-10))  {
 	  System.out.println("probeset name: " + id + ", val: " + val);
 	}
 	// try to match up id to one previously seen

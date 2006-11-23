@@ -24,7 +24,9 @@ import affymetrix.calvin.parameter.ParameterNameValue;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.view.QuickLoadView2;
@@ -60,7 +62,7 @@ public class ChpParser {
 
     AffymetrixGuidType chp_type =  chp.getFileTypeIdentifier();
     String chp_type_name = chp_type.getGuid();
-    System.out.println("Array type: " + chp_type_name);
+    System.out.println("CHP type: " + chp_type_name);
 
 
     // The following function will determine if the CHP file read contains "legacy" format data. This
@@ -103,9 +105,11 @@ public class ChpParser {
       System.out.println("CHP file is generic: " + genchp);
       //      results = parseGenericChp(genchp);
       System.out.println("WARNING: generic CHP files currently not supported in IGB");
+      IGB.errorPanel("CHP file is in generic format, cannot be loaded");
     }
     else {
       System.out.println("WARNING: not parsing file, CHP file type not recognized: " + chp);
+      IGB.errorPanel("CHP file type not recognized, cannot be loaded");
     }
     if (! has_coord_data) {
       /**
@@ -142,37 +146,59 @@ public class ChpParser {
   protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+
+    Map das_servers = Das2Discovery.getDas2Servers();
+    Das2ServerInfo server = (Das2ServerInfo)das_servers.get(LazyChpSym.PROBESET_SERVER_NAME);
+    // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
+    if (server == null) {
+      IGB.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+      return null;
+    }
+    Das2VersionedSource vsource = server.getVersionedSource(group);
+    if (vsource == null) {
+      IGB.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
+      return null;
+    }
+
     List results = new ArrayList();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
       SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
       String seqid = aseq.getID();
+      // Don't make LazyChpSym if can't find sequence on DAS/2 server
+      Das2Region das_segment = vsource.getSegment(aseq);
       // hack to get around problems with LazyChpSyms on virtual genome seq (and potentially encode regions as well)
-      if (seqid.equals(QuickLoadView2.GENOME_SEQ_ID) || 
-	  seqid.equals(QuickLoadView2.ENCODE_REGIONS_ID) ) {
-	continue;
+      // I think above test for presence of sequence on server will handle skipping the genome and encode regions
+      //  (at least as long as the DAS/2 coord server does not serve virtual seqs for these)
+      //      if (seqid.equals(QuickLoadView2.GENOME_SEQ_ID) ||
+      //	  seqid.equals(QuickLoadView2.ENCODE_REGIONS_ID) ) {
+      //	continue;
+      //      }
+      if (das_segment != null) {
+	// LazyChpSym constructor handles adding span to itself for aseq
+	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
+	chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	chp_sym.setProperty("method", file_name);
+	chp_sym.setID(file_name);
+	aseq.addAnnotation(chp_sym);
+	results.add(chp_sym);
       }
-      // LazyChpSym constructor handles adding span to itself for aseq
-      LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
-      chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-      chp_sym.setProperty("method", file_name);
-      chp_sym.setID(file_name);
-      aseq.addAnnotation(chp_sym);
-      results.add(chp_sym);
     }
     return results;
   }
 
 
+  /** same as parseQuantChp, but adding detection/pval */
   public static List parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    List results = null;
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
     int ps_count = chp.getEntryCount();
-    Map name2data = new HashMap(ps_count);
+    //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
     int int_id_count = 0;
     int str_id_count = 0;
@@ -208,7 +234,7 @@ public class ChpParser {
 	}
 	catch (Exception ex) {
 	  // can't parse as an integer
-	  name2data.put(name, psqData);
+	  //	  name2data.put(name, psqData);
 	  str_id_count++;
 	}
       }
@@ -216,11 +242,85 @@ public class ChpParser {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
     }
+    if (int_id_count > 0) {
+      //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
+      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
+      System.out.println("Probsets with integer id: " + int_id_count);
+      System.out.println("Probsets with string id: " + str_id_count);
+      System.out.println("done parsing quantification + detection CHP file");
+    }
+    else {
+      System.out.println("CHP quantification/detection data is not for exon chip, " +
+			 "falling back on older method for handling expression CHP files");
+      results = oldParseQuantDetectChp(chp);
+    }
+    return results;
+  }
 
-    List results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
-    System.out.println("Probsets with integer id: " + int_id_count);
-    System.out.println("Probsets with string id: " + str_id_count);
-    System.out.println("done parsing quantification data CHP file");
+
+  public static List parseQuantChp(FusionCHPQuantificationData chp) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    List results = null;
+    String file_name = chp.getFileName();
+    String algName = chp.getAlgName();
+    String algVersion = chp.getAlgVersion();
+    String array_type = chp.getArrayType();
+    int ps_count = chp.getEntryCount();
+    //    Map name2data = new HashMap(ps_count);
+    Map id2data = new HashMap(ps_count);
+    int int_id_count = 0;
+    int str_id_count = 0;
+    System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
+    System.out.println("probeset count: " + ps_count);
+    ProbeSetQuantificationData psqData;
+    for (int i=0; i<ps_count; i++) {
+      psqData = chp.getQuantificationEntry(i);
+      float quant = psqData.getQuantification();
+      int intid = psqData.getId();
+      String name = null;
+      Integer nid = null;
+      if (i<2 || i>=(ps_count-2))  {
+      	System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant);
+      }
+      if (intid >= 0) {
+	nid = new Integer(intid);
+	psqData.setName(null);
+	id2data.put(nid, psqData);
+	int_id_count++;
+      }
+      else {  // nid < 0, then nid field not being used, so name should be used instead
+	name = psqData.getName();
+	try {
+	  nid = new Integer(name);
+	  intid = nid.intValue();
+	  psqData.setId(intid);
+	  psqData.setName(null);
+	  id2data.put(nid, psqData);
+	  int_id_count++;
+	}
+	catch (Exception ex) {
+	  // can't parse as an integer
+	  //	  name2data.put(name, psqData);
+	  str_id_count++;
+	}
+      }
+      if (i<2 || i>=(ps_count-2))  {
+        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant);
+      }
+    }
+    if (int_id_count > 0) {
+      //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
+      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
+      System.out.println("Probsets with integer id: " + int_id_count);
+      System.out.println("Probsets with string id: " + str_id_count);
+      System.out.println("done parsing quantification CHP file");
+    }
+    else {
+      System.out.println("CHP quantification data is not for exon chip, " +
+			 "falling back on older method for handling expression CHP files");
+      results = oldParseQuantChp(chp);
+    }
     return results;
   }
 
@@ -232,7 +332,7 @@ public class ChpParser {
    *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be
    *  empty for Exon results.
    */
-  public static List parseQuantChp(FusionCHPQuantificationData chp) {
+  public static List oldParseQuantChp(FusionCHPQuantificationData chp) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     ArrayList results = new ArrayList();
@@ -269,7 +369,7 @@ public class ChpParser {
 	float val = psqData.getQuantification();
 	int nid = psqData.getId();
 	String id = array_type + ":" + nid;
-	if (i<5 || i>=(ps_count-5))  {
+	if (i<2 || i>=(ps_count-2))  {
 	  System.out.println("full id: " + id + ", probeset id: " + nid + ", val: " + val);
 	}
 	// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
@@ -334,6 +434,13 @@ public class ChpParser {
     }  // end 3' IVT conditional  (! is_exon_chp)
 
     System.out.println("matching probeset ids found: " + match_count);
+    if (match_count == 0) {
+      System.out.println("WARNING: Could not automatically load location data for CHP file,\n " + 
+			 "  and could not find any previously loaded location data matching CHP file");
+      IGB.errorPanel("Could not automatically load location data for CHP file,\n " + 
+		     "  and could not find any previously loaded location data matching CHP file");
+      return null;
+    }
 
     // now for each sequence seen, sort the SinEntry list by span min/max
     ScoreEntryComparator comp = new ScoreEntryComparator();
@@ -370,6 +477,118 @@ public class ChpParser {
   }
 
 
+
+  public static List oldParseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    ArrayList results = new ArrayList();
+
+    String file_name = chp.getFileName();
+    String algName = chp.getAlgName();
+    String algVersion = chp.getAlgVersion();
+    String array_type = chp.getArrayType();
+    int ps_count = chp.getEntryCount();
+    int match_count = 0;
+    System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
+    System.out.println("probeset count: " + ps_count);
+    ProbeSetQuantificationDetectionData psqData;
+    boolean is_exon_chp = false;
+    if (ps_count>0) {
+      psqData = chp.getQuantificationDetectionEntry(0);
+      String name = psqData.getName();
+      // if name property is empty, then it's a CHP file for exon array results
+      //    otherwise it's a CHP file for 3' IVT array results
+      if (name == null || name.equals("")) {
+	is_exon_chp = true;
+	System.out.println("Exon CHP file");
+      }
+      else {
+	System.out.println("3' IVT CHP file");
+      }
+    }
+    Map seq2entries = new HashMap();
+
+    if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
+      ArrayList syms = new ArrayList();
+      for (int i=0; i<ps_count; i++) {
+	psqData = chp.getQuantificationDetectionEntry(i);
+	float quant = psqData.getQuantification();
+	float pval = psqData.getPValue();
+	int nid = psqData.getId();
+	String id = array_type + ":" + nid;
+	if (i<10 || i>=(ps_count-10))  {
+	  System.out.println("full id: " + id + ", probeset id: " + nid + ", quant: " + quant + ", pval: " + pval);
+	}
+	// assumes no ".n" postfix (exon chip ids are truly unique and thus should none should get postfixed by duplication)...
+	group.findSyms(id, syms, false);
+	if (syms.size() > 0) {
+	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
+	  // System.out.println("found a match for id: " + id);
+	  match_count++;
+	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
+	  SeqSpan span = prev_sym.getSpan(0);
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
+	  isym.setID(id);
+	  TwoScoreEntry sentry = new TwoScoreEntry(isym, quant, pval);
+	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	  if (sentries == null) {
+	    sentries = new ArrayList();
+	    seq2entries.put(aseq, sentries);
+	  }
+	  sentries.add(sentry);
+	}
+	syms.clear();
+      }
+
+      System.out.println("matching probeset ids found: " + match_count);
+      if (match_count == 0) {
+	System.out.println("WARNING: Could not automatically load location data for CHP file,\n " + 
+		       "  and could not find any previously loaded location data matching CHP file");
+	IGB.errorPanel("Could not automatically load location data for CHP file,\n " + 
+		       "  and could not find any previously loaded location data matching CHP file");
+	return null;
+      }
+
+      // now for each sequence seen, sort the SinEntry list by span min/max
+      ScoreEntryComparator comp = new ScoreEntryComparator();
+      Iterator ents  = seq2entries.entrySet().iterator();
+      while (ents.hasNext()) {
+	Map.Entry ent = (Map.Entry)ents.next();
+	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
+	java.util.List entry_list = (java.util.List)ent.getValue();
+	Collections.sort(entry_list, comp);
+
+	// now make the container syms
+	ScoredContainerSym container = new ScoredContainerSym();
+	container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	container.setProperty("method", file_name);
+
+        // Force the AnnotStyle for the container to have glyph depth of 1
+        AnnotStyle style = AnnotStyle.getInstance(file_name);
+        style.setGlyphDepth(1);
+	int entry_count = entry_list.size();
+	float[] quants = new float[entry_count];
+	float[] pvals = new float[entry_count];
+	System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
+	for (int k=0; k<entry_count; k++) {
+	  TwoScoreEntry sentry = (TwoScoreEntry)entry_list.get(k);
+	  container.addChild(sentry.sym);
+	  quants[k] = sentry.quant;
+	  pvals[k] = sentry.pval;
+	}
+	container.addScores("probeset quantification: " + file_name, quants);
+	container.addScores("probeset pval: " + file_name, pvals);
+        container.setID(file_name);
+	aseq.addAnnotation(container);
+      }
+    }  // end (is_exon_chp) conditional
+
+    System.out.println("done parsing quantification data CHP file");
+    return results;
+  }
+
+
   public static List parseLegacyChp(FusionCHPLegacyData chp) {
       ArrayList results = new ArrayList();
     FusionCHPHeader header = chp.getHeader();
@@ -396,6 +615,7 @@ public class ChpParser {
       exp.clear();
     }
     System.out.println("Stopped loading, parsing Legacy CHP data only partially implemented!");
+    IGB.errorPanel("CHP file is in legacy format, cannot be loaded");
     return results;
   }
 

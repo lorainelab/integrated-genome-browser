@@ -458,7 +458,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
       if (style instanceof AnnotStyle) {
         AnnotStyle astyle = (AnnotStyle) style;
-        System.out.println("Setting to: " + b);
         astyle.setColorByScore(b);
       }
     }
@@ -727,6 +726,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeMenu.add(change_bg_color_action);
     //changeMenu.add(change_height_action);
     changeMenu.add(rename_action);
+    changeMenu.add(new JSeparator());
     changeMenu.add(color_by_score_on_action);
     changeMenu.add(color_by_score_off_action);
 

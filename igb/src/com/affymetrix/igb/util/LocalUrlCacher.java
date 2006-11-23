@@ -42,11 +42,32 @@ public class LocalUrlCacher {
     
   /** Returns the local File object for the given URL;
    *  you must check File.exists() to determine if the file exists in the cache.
+   *
+   * For long URLs, the file may be contained in additional subdirectories of the 
+   *    the cache root directory in order to ensure that each path segment is 
+   *    within the file name limits of the OS
+   *  If additional subdirectories are needed, getCacheFileForURL automatically creates 
+   *     these directories
+   *  However, the File returned is not created by getCacheFileForURL -- that is 
+   *     up to other methods in LocalUrlCacher
    */
   static File getCacheFileForURL(String url) {
     String encoded_url = UrlToFileName.encode(url);
+    //    String cache_file_name = cache_root + File.separator + encoded_url;
     String cache_file_name = cache_root + "/" + encoded_url;
+    if (cache_file_name.length() > 255) {
+      System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
+			 cache_file_name.length());
+      System.out.println("    " + cache_file_name);
+    }
     File cache_file = new File(cache_file_name);
+
+
+      //    File parent_dir = cache_file.getParentFile();
+      //    if (! parent_dir.exists()) {
+      //      // if directories are missing, create them for this file's path 
+      //      parent_dir.mkdirs();
+      //    }
     return cache_file;
   }
   

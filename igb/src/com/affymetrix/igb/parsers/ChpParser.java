@@ -27,6 +27,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.view.QuickLoadView2;
 
 public class ChpParser {
   static boolean reader_registered = false;
@@ -145,6 +146,12 @@ public class ChpParser {
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
       SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
+      String seqid = aseq.getID();
+      // hack to get around problems with LazyChpSyms on virtual genome seq (and potentially encode regions as well)
+      if (seqid.equals(QuickLoadView2.GENOME_SEQ_ID) || 
+	  seqid.equals(QuickLoadView2.ENCODE_REGIONS_ID) ) {
+	continue;
+      }
       // LazyChpSym constructor handles adding span to itself for aseq
       LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
       chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
@@ -216,8 +223,6 @@ public class ChpParser {
     System.out.println("done parsing quantification data CHP file");
     return results;
   }
-
-
 
 
   /**

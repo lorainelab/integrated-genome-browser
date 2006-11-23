@@ -6,6 +6,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
@@ -37,11 +38,10 @@ import affymetrix.calvin.data.*;
  */
 public class LazyChpSym extends ScoredContainerSym {
 
-  static String PROBESET_SERVER_NAME = "localhost";
-  //  static String PROBESET_SERVER_NAME = "NetAffx";
+  //  static String PROBESET_SERVER_NAME = "localhost";
+  public static String PROBESET_SERVER_NAME = "NetAffx";
 
-    //  static Map genome2chp;
-
+  //  static Map genome2chp;
   SmartAnnotBioSeq aseq;
 
   /**
@@ -53,6 +53,7 @@ public class LazyChpSym extends ScoredContainerSym {
   /**
    *  map of probeset name Strings to probeset result data, for probesets whose name/id can _NOT_ be
    *   represented as an integer
+   *  NOT CURRENTLY USED (ALWAYS NULL)
    */
   Map probeset_name2data = null;
 
@@ -143,6 +144,7 @@ public class LazyChpSym extends ScoredContainerSym {
 
 
   public void loadCoords() {
+    coords_loaded = true;
     /**
      *  First check and see if probeset locations are already present as an annotation on seq
      *  But what if _some_ but not all of the probeset locations were already loaded via a
@@ -162,8 +164,22 @@ public class LazyChpSym extends ScoredContainerSym {
 
     Map das_servers = Das2Discovery.getDas2Servers();
     Das2ServerInfo server = (Das2ServerInfo)das_servers.get(PROBESET_SERVER_NAME);
+    // server and vsource should already be checked before making this LazyChpSym, but checking again
+    //     in case connection can no longer be established
+    if (server == null) {
+      IGB.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
+      return;
+    }
     Das2VersionedSource vsource = server.getVersionedSource(aseq.getSeqGroup());
+    if (vsource == null) {
+      IGB.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());
+      return;
+    }
     Das2Region das_segment = vsource.getSegment(aseq);
+    if (das_segment == null) {
+      IGB.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
+      return;
+    }
     List typelist = (List)vsource.getTypesByName(chp_array_type);
     if (typelist == null || typelist.size() < 1) {
       // try again with synonyms?
@@ -277,7 +293,6 @@ public class LazyChpSym extends ScoredContainerSym {
     this.addScores("pval", pvals);
 
     System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
-    coords_loaded = true;
   }
 
 

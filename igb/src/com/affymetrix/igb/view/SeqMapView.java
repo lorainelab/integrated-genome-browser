@@ -10,7 +10,6 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.igb.view;
 
 import java.awt.*;
@@ -1119,8 +1118,11 @@ public class SeqMapView extends JPanel
     if (DEBUG_COMP)  {
       System.out.println("$$$$$$$ called SeqMapView.addAnnotationTiers(), aseq: " + aseq.getID() + " $$$$$$$");
     }
-    int annotCount = aseq.getAnnotationCount();
-    for (int i=0; i<annotCount; i++) {
+    // WARNING: use aseq.getAnnotationCount() in loop, because some annotations end up lazily instantiating 
+    //   other annotations and adding them to the annotation list
+    // For example, accessing methods for the first time on a LazyChpSym can cause it to dynamically add 
+    //      probeset annotation tracks
+    for (int i=0; i<aseq.getAnnotationCount(); i++) {
       SeqSymmetry annotSym = aseq.getAnnotation(i);
       if (annotSym instanceof SymWithProps) {
 	addAnnotationGlyphs(annotSym);

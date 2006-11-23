@@ -53,6 +53,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
   public static boolean REPLACE_REPAINT_MANAGER = false;
+  public static boolean REPORT_GRAPHICS_CONFIG = false;
 
   public static boolean USE_QUICKLOAD = false;
   public static boolean USE_DATALOAD = true;
@@ -152,7 +153,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
   static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
-  
+
   static String default_prefs_resource = "/igb_default_prefs.xml";
   public static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
   static String default_user_prefs_files =
@@ -163,7 +164,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static String rest_file = "rest_enzymes"; // located in same directory as this class
 
   boolean initialized = false;
-  
+
   /**
    * Start the program.
    */
@@ -407,7 +408,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       } finally {
         try {default_prefs_stream.close();} catch (Exception e) {}
       }
-      
+
       String deploy_type = get_deployment_type(main_args);
       if (deploy_type != null) {
         if (deploy_type.equals("webstart")) {
@@ -415,7 +416,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
           downloadPrefsFile();
         }
       }
-      
+
       // If a particular web prefs file was specified, then load it.
       // Otherwise try to load the web-based-default prefs file. (But
       // only load it if it is cached, then later update the cache on
@@ -432,7 +433,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	  prefs_parser.parse(default_prefs_url_str, def_prefs_url, prefs_hash);
 	} catch (IOException ex) {
 	  System.out.println("Problem parsing prefs from url: " + def_prefs_url);
-          System.out.println("Caused by: " + ex.toString());          
+          System.out.println("Caused by: " + ex.toString());
 	} finally {
 	  try {default_prefs_url_str.close();} catch (Exception e) {}
 	}
@@ -472,12 +473,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   /**
    *  Attempts to load the web-based XML default preferences file from the
-   *  local cache.  If this file is not in the cache, will skip 
+   *  local cache.  If this file is not in the cache, will skip
    *  it and will NOT try to read it from the web.  (This is to prevent slowing
    *  down the start-up process.)  Regardless of whether the file was actualy read,
    *  will then spawn a background thread that will try to create or update
    *  the local cached copy of this preferences file so it will be available
-   *  the next time the program runs.  
+   *  the next time the program runs.
    *
    */
   static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
@@ -500,17 +501,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         System.out.println("Loading default prefs from url: " + web_prefs_url);
       } catch (Exception ex) {
          System.out.println("Problem parsing prefs from url: " + web_prefs_url);
-         System.out.println("Caused by: " + ex.toString());          
+         System.out.println("Caused by: " + ex.toString());
       } finally {
         try {is.close();} catch (Exception e) {}
       }
     }
   }
-  
+
   protected void init() {
     frm = new JFrame(APP_NAME);
     RepaintManager rm = RepaintManager.currentManager(frm);
-    System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
     /*
     if (REPLACE_REPAINT_MANAGER) {
       RepaintManager new_manager = new IgbRepaintManager();
@@ -521,13 +521,17 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else {
     }
     */
-    GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
     GraphicsDevice[] devices = genv.getScreenDevices();
-    if (devices.length >= 4) { USE_MULTI_WINDOW_MAP = true; }
-
-
+    if (devices.length >= 4) { 
+      USE_MULTI_WINDOW_MAP = true; 
+      REPORT_GRAPHICS_CONFIG = true;
+    }
+    if (REPORT_GRAPHICS_CONFIG)  {
+      System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
+      GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
+    }
     // force loading of prefs if hasn't happened yet
     // usually since IGB.main() is called first, prefs will have already been loaded
     //   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
@@ -565,7 +569,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     help_menu.setMnemonic('H');
     mbar.add(help_menu);
     //    select_broker = new SymSelectionBroker();
-    
+
     String tile_xpixels_arg = get_arg("-tile_width", main_args);
     String tile_ypixels_arg = get_arg("-tile_height", main_args);
     String tile_col_arg = get_arg("-tile_columns", main_args);
@@ -657,7 +661,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
 
-    
+
     MenuUtil.addToMenu(file_menu, open_file_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
     MenuUtil.addToMenu(file_menu, clear_item);
@@ -743,7 +747,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     int table_height = 250;
     int fudge = 55;
     //    RepaintManager rm = RepaintManager.currentManager(frm);
-    System.out.println("repaint manager: " + rm.getClass());
+    if (REPORT_GRAPHICS_CONFIG) { System.out.println("repaint manager: " + rm.getClass()); }
     Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
         new Rectangle(0, 0, 800, 600));
     UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);
@@ -862,7 +866,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public void setStatus(String s) {
     setStatus(s, true);
   }
-  
+
   public void setStatusBarHairlinePosition(String s) {
     if (USE_STATUS_BAR && status_bar != null) {
       status_bar.setPosition(s);
@@ -1222,7 +1226,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   private void exit() {
-    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING, 
+    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
         UnibrowPrefsUtil.default_ask_before_exiting);
     String message = "Really exit?";
     if ( (! ask_before_exit) || confirmPanel(message)) {

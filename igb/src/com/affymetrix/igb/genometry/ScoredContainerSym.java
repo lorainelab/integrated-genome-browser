@@ -36,7 +36,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   Map name2id_minus = new HashMap();
   java.util.List scorevals = new ArrayList();
   java.util.List scorenames = new ArrayList();
-  
+
   /**
    *  Adds scores.
    *  Assumes all child syms have already been added, and span has already been set.
@@ -47,13 +47,13 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     scorevals.add(scores);
     scorenames.add(name);
   }
-  
+
   public int getScoreCount() { return scorevals.size(); }
 
   public float[] getScores(String name) {
     return (float[])name2scores.get(name);
-  }  
-  
+  }
+
   public float[] getScores(int index) {
     return (float[])scorevals.get(index);
   }
@@ -86,7 +86,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   public void addChild(SeqSymmetry sym) {
     if (sym instanceof IndexedSym) {
       IndexedSym isym = (IndexedSym)sym;
-      int current_index = this.getChildCount();
+      // calling super.getChildCount() instead of this.getChildCount()
+      //   to avoid cyclic calls in LazyChpSym subclass
+      int current_index = super.getChildCount();
       isym.setIndex(current_index);
       isym.setParent(this);
       super.addChild(isym);
@@ -95,8 +97,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       System.err.println("ERROR: cannot add a child to ScoredContainerSym unless it is an IndexedSym");
     }
   }
-  
-  
+
+
  /**
   *  Creates a GraphIntervalSym.
   *  Assumes all child syms have already been added, and span has already been set.
@@ -209,9 +211,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       return gsym;
     }
   }
-  
+
   static Map id2gstate = new HashMap();
-  
+
   // Returns the unique graph ID associated with the score name;
   // this score will map to this same graph ID for all other
   // ScoredContainerSym's that have the same ID, even if they
@@ -225,7 +227,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     return id;
   }
-  
+
   GraphState initializeGraphState(String id, String score_name, char strand) {
     GraphState gs = GraphState.getGraphState(id);
     gs.setFloatGraph(false);
@@ -235,11 +237,11 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     gs.setComboStyle(getContainerStyle(strand));
     return gs;
   }
-  
+
   static Map id2combo_style_plus = new HashMap();
   static Map id2combo_style_minus = new HashMap();
   static Map id2combo_style_neutral = new HashMap();
-    
+
   IAnnotStyle getContainerStyle(char strand) {
     // There are separate combo style items for +, - and +/-.
     // They are shared by all scores with the same ID on different seqs.
@@ -252,7 +254,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     } else {
       name = "Scores " + name;
     }
-    
+
     if (strand == '+') {
       style = (IAnnotStyle) id2combo_style_plus.get(getID());
       if (style == null) {
@@ -274,7 +276,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
     return style;
   }
-  
+
   static IAnnotStyle newComboStyle(String name) {
     IAnnotStyle style = new DefaultIAnnotStyle(name, true);
     style.setExpandable(true);

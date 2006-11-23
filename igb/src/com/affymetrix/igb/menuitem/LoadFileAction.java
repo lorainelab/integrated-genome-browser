@@ -211,33 +211,30 @@ public class LoadFileAction {
       if (annotfile.getName().toLowerCase().endsWith("chp")) {
         //System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
         java.util.List results = ChpParser.parse(annotfile.getPath());
-        aseq = getLastSeq(results);
+	// aseq = getLastSeq(results);
       }
       else {
-
-      int file_length = (int)annotfile.length();
-      //fistr = new FileInputStream(annotfile);
-      StringBuffer sb = new StringBuffer();
-      fistr = Streamer.getInputStream(annotfile,  sb);
-      String stripped_name = sb.toString();
-      int pindex = stripped_name.lastIndexOf(".");
-      String suffix = null;
-      if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
-
-      if (GraphSymUtils.isAGraphFilename(stripped_name)) {
-        AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
-        if (seq_group == null) {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
-            "Graph data must be merged with already loaded genomic data.", null);
-        } else {
-          URL url = annotfile.toURI().toURL();
-          OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
-        }
-      }
-      else {
-        aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
-      }
-
+	int file_length = (int)annotfile.length();
+	//fistr = new FileInputStream(annotfile);
+	StringBuffer sb = new StringBuffer();
+	fistr = Streamer.getInputStream(annotfile,  sb);
+	String stripped_name = sb.toString();
+	int pindex = stripped_name.lastIndexOf(".");
+	String suffix = null;
+	if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
+	if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+	  AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+	  if (seq_group == null) {
+	    ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
+				    "Graph data must be merged with already loaded genomic data.", null);
+	  } else {
+	    URL url = annotfile.toURI().toURL();
+	    OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
+	  }
+	}
+	else {
+	  aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
+	}
       }
     }
     catch (Exception ex) {

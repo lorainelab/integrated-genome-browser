@@ -24,7 +24,8 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 public class Das2ServerInfo  {
-  static boolean REPORT_SOURCES = true;
+  static boolean DEBUG_SOURCES_QUERY = false;
+
   protected static boolean DO_FILE_TEST = false;
   protected static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
   protected static String SOURCES_QUERY = "sequence";
@@ -75,17 +76,22 @@ public class Das2ServerInfo  {
   public String getName() {
     return name;
   }
-  public String getDasVersion() {
-    if (!initialized) { initialize(); }
-    return das_version;
-  }
   public Map getSources() {
     if (!initialized) { initialize(); }
     return sources;
   }
+  
+  /** DAS/2 version is not currently used */
   protected void setDasVersion(String version) {
     das_version = version;
   }
+
+  /** DAS/2 version is not currently used */
+  public String getDasVersion() {
+    if (!initialized) { initialize(); }
+    return das_version;
+  }
+
   protected void addDataSource(Das2Source ds) {
     sources.put(ds.getID(), ds);
   }
@@ -142,18 +148,21 @@ public class Das2ServerInfo  {
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");
       System.out.println("Das Response content type: " + content_type);
-      String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
-      String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
 
+      // setting DAS version if present in content type header -- currently not used
+      int vindex = content_type.indexOf("version=");
+      if (vindex >= 0) {
+	String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
+	setDasVersion(das_version);
+      }
+      //      String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
       //GAH March 2006:
       //   HACK: Affy das server barfs w/ a trailing slash, URI resolution
       //      doesn't work without trailing slash, so adding it back in
       //      here.
-      das_query = das_query+"/";
+      if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
 
-      setDasVersion(das_version);
-
-      System.out.println("DAS server version: " + das_version + ", status: " + das_status);
+      // System.out.println("DAS server version: " + das_version + ", status: " + das_status);
       Document doc = DasLoader.getDocument(request_con);
 
       Element top_element = doc.getDocumentElement();
@@ -166,9 +175,9 @@ public class Das2ServerInfo  {
 	if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
 	String source_name = source.getAttribute(TITLE);
 	if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
-	System.out.println("title: " + source_name + ",  length: " + source_name.length());
+	if (DEBUG_SOURCES_QUERY) { System.out.println("title: " + source_name + ",  length: " + source_name.length()); }
 	if (source_name == null || source_name.length() == 0) { source_name = source_id; }
-	System.out.println("source_name: " + source_name);
+	if (DEBUG_SOURCES_QUERY)  { System.out.println("source_name: " + source_name); }
         String source_info_url = source.getAttribute("doc_href");
         String source_description = source.getAttribute("description");
         String source_taxon = source.getAttribute("taxid");
@@ -187,14 +196,16 @@ public class Das2ServerInfo  {
 	    String version_name = version.getAttribute(TITLE);
 	    if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
 	    if (version_name.length() == 0) { version_name = version_id; }
-	    System.out.println("version_name: " + version_name);
+	    if (DEBUG_SOURCES_QUERY)  { System.out.println("version_name: " + version_name); }
 
 	    String version_desc = version.getAttribute("description");
 	    String version_info_url = version.getAttribute("doc_href");
 	    //	    setDasVersionedSource(dasSource, version_id, false);
 	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
-	    System.out.println("base URI for version element: " + getBaseURI(das_query, version));
-	    System.out.println("version URI: " + version_uri.toString());
+	    if (DEBUG_SOURCES_QUERY) {
+	      System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+	    }
+	    System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
 
 	    NodeList vlist = version.getChildNodes();
 	    HashMap caps = new HashMap();
@@ -208,7 +219,9 @@ public class Das2ServerInfo  {
 		if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
 		URI base_uri = getBaseURI(das_query, capel);
 		URI cap_root = base_uri.resolve(query_id);
-		System.out.println("Capability: " + captype + ", URI: " + cap_root);
+		if (DEBUG_SOURCES_QUERY) {
+		  System.out.println("Capability: " + captype + ", URI: " + cap_root);
+		}
 		// for now don't worry about format subelements
 		Das2Capability cap = new Das2Capability(captype, cap_root, null);
 		//		vsource.addCapability(cap);

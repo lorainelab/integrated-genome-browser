@@ -49,6 +49,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *
  */
 public class Das2ClientOptimizer {
+  static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
   static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
   static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
   static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
@@ -237,7 +238,7 @@ public class Das2ClientOptimizer {
     SeqSpan inside_span = request_sym.getInsideSpan();
     String overlap_filter = null;
     String inside_filter = null;
-    if (USE_SEGMENT_URI) {
+    if (USE_SEGMENT)  {
       overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
       if (inside_span != null)  { inside_filter =  Das2FeatureSaxParser.getRangeString(inside_span, false); }
     }
@@ -268,20 +269,32 @@ public class Das2ClientOptimizer {
 
     try {
       StringBuffer buf = new StringBuffer(200);
+      if (USE_SEGMENT)  {
+	buf.append("segment=");
+	if (USE_SEGMENT_URI)  {
+	  buf.append(URLEncoder.encode(region.getID(), UTF8));
+	}
+	else  {
+	  buf.append(URLEncoder.encode(region.getName(), UTF8));
+	}
+	buf.append(";");
+      }
 
-      buf.append("segment=");
-      buf.append(URLEncoder.encode(region.getID(), UTF8));
-      buf.append(";");
       buf.append("overlaps=");
       buf.append(URLEncoder.encode(overlap_filter, UTF8));
       buf.append(";");
       if (inside_filter != null) {
 	buf.append("inside=");
-	buf.append(URLEncoder.encode(inside_filter));
+	buf.append(URLEncoder.encode(inside_filter, UTF8));
 	buf.append(";");
       }
       buf.append("type=");
-      buf.append(URLEncoder.encode(type.getID(), UTF8));
+      if (USE_TYPE_URI) {
+	buf.append(URLEncoder.encode(type.getID(), UTF8));
+      }
+      else {
+	buf.append(type.getName());
+      }
       if (OPTIMIZE_FORMAT && format != null) {
 	buf.append(";");
 	buf.append("format=");
@@ -393,7 +406,7 @@ public class Das2ClientOptimizer {
 	  System.out.println("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Bprobe1Parser bp1_reader = new Bprobe1Parser();
           // parsing probesets in bp2 format, also adding probeset ids
-	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), true);
+	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
 	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);

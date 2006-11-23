@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
 import com.affymetrix.igb.genometry.*;
@@ -39,25 +40,27 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
   static boolean USE_CREATED_ATT = true;
 
+  static Pattern interval_splitter = Pattern.compile(":");
+
   static String SERVER_SYNTAX_EXPLANATION =
     "The Genometry DAS/2 server always uses a standard URI syntax for DAS/2 query URIs,\n\n" +
     " and enforces this by specifying URIs in the SOURCES doc according to this standard:\n" +
     "    das_server_root/genome_name/capability_name[?query_parameters]";
 
   static String LIMITED_FEATURE_QUERIES_EXPLANATION =
-    "The Genometry DAS/2 server currently does not support the full range of \n" + 
-    "DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" + 
-    "To allow the Genometry DAS/2 server to still comply with the specification, \n" + 
-    "the server considers responses to any feature query it does not support as \n" + 
-    "being 'too large'.  Therefore it responds with an error message with HTTP \n" + 
-    "status code 413 'Request Entity Too Large', which is allowed by the DAS/2 spec \n" + 
-    "when the server considers the response too large.\n\n" + 
-    "Currently for the Genometry server to send a useful response containing features, \n" + 
-    "  the feature query string must contain: \n" + 
+    "The Genometry DAS/2 server currently does not support the full range of \n" +
+    "DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" +
+    "To allow the Genometry DAS/2 server to still comply with the specification, \n" +
+    "the server considers responses to any feature query it does not support as \n" +
+    "being 'too large'.  Therefore it responds with an error message with HTTP \n" +
+    "status code 413 'Request Entity Too Large', which is allowed by the DAS/2 spec \n" +
+    "when the server considers the response too large.\n\n" +
+    "Currently for the Genometry server to send a useful response containing features, \n" +
+    "  the feature query string must contain: \n" +
     "     1 type filter \n" +
-    "     1 segment filter \n" + 
-    "     1 overlaps filter \n" + 
-    "     0 or 1 inside filter \n" + 
+    "     1 segment filter \n" +
+    "     1 overlaps filter \n" +
+    "     0 or 1 inside filter \n" +
     "     0 or 1 format parameter \n" +
     "     0 other filters/parameters \n";
 
@@ -732,14 +735,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
      throws IOException  {
     log.add("received region query");
     AnnotatedSeqGroup genome = getGenome(request);
+    // genome null check already handled, so if it get this far the genome is non-null
     Das2Coords coords = (Das2Coords)genomeid2coord.get(genome.getID());
 
-    if (genome == null) {
-      log.add("genome could not be found: " + genome.getID());
-      // add error headers?
-
-      return;
-    }
     //    response.setContentType(SEGMENTS_CONTENT_TYPE);
     setContentType(response, SEGMENTS_CONTENT_TYPE);
     addDasHeaders(response);
@@ -941,6 +939,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
     long tim;
 
     AnnotatedSeqGroup genome = getGenome(request);
+    if (genome == null) {
+
+      return;
+    }
     addDasHeaders(response);
     String path_info = request.getPathInfo();
     String query = request.getQueryString();
@@ -970,7 +972,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       ArrayList overlaps = new ArrayList();
       ArrayList insides = new ArrayList();
       ArrayList excludes = new ArrayList();
-      ArrayList names = new ArrayList(); 
+      ArrayList names = new ArrayList();
       ArrayList coordinates = new ArrayList();
       ArrayList links = new ArrayList();
       ArrayList notes = new ArrayList();
@@ -1047,7 +1049,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       // handling one type, one segment, one overlaps, optionally one inside
       else if (types.size() == 1 &&      // one and only one type
 	       segments.size() == 1 &&   // one and only one segment
-	       overlaps.size() == 1 &&   // one and only one overlaps
+	       overlaps.size() <= 1 &&   // one and only one overlaps
 	       insides.size() <= 1 &&    // zere or one inside
 	       excludes.size() == 0 &&   // zero excludes
 	       names.size() == 0) {
@@ -1066,14 +1068,21 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
 	}
 
-
-	String overlap = (String)overlaps.get(0);
+	String overlap = null;
+	if (overlaps.size() == 1) {
+	  overlap = (String)overlaps.get(0);
+	}
 	System.out.println("overlaps val = " + overlap);
-	overlap_span = Das2FeatureSaxParser.getLocationSpan(seqid, overlap, genome);
+	// if overlap string is null (no overlap parameter), then no overlap filter --
+	///   which is the equivalent of any annot on seq passing overlap filter --
+	//    which is same as an overlap filter with range = [0, seq.length]
+	//    (thereforany annotation on the seq passes overlap filter
+	//     then want all getLocationSpan will return bounds of seq as overlap
+	overlap_span = getLocationSpan(seqid, overlap, genome);
 
 	if (insides.size() == 1) {
 	  String inside = (String)insides.get(0);
-	  inside_span = Das2FeatureSaxParser.getLocationSpan(seqid, inside, genome);
+	  inside_span = getLocationSpan(seqid, inside, genome);
 	}
 
 	log.add("   query type: " + query_type);
@@ -1171,6 +1180,44 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
   }
+
+
+  /**
+   *  Differs from Das2FeatureSaxParser.getLocationSpan():
+   *     Won't add unrecognized seqids or null groups
+   *     If rng is null or "", will set to span to [0, seq.getLength()]
+   */
+  public SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group)  {
+    if (seqid == null || group == null)  { return null; }
+    BioSeq seq = group.getSeq(seqid);
+    if (seq == null) { return null; }
+    int min;
+    int max;
+    boolean forward = true;
+    if (rng == null) {
+      min = 0;
+      max = seq.getLength();
+    }
+    else {
+      try {
+	String[] subfields = interval_splitter.split(rng);
+	min = Integer.parseInt(subfields[0]);
+	max = Integer.parseInt(subfields[1]);
+	if (subfields.length >= 3) {  // in DAS/2 strandedness is not allowed for range query params, but accepting it here
+	  if (subfields[2].equals("-1")) { forward = false; }
+	}
+      }
+      catch (Exception ex) {
+	log.add("Problem parsing a query parameter range filter: " + rng);
+        return null;
+      }
+    }
+    SeqSpan span;
+    if (forward)  { span = new SimpleSeqSpan(min, max, seq); }
+    else { span = new SimpleSeqSpan(max, min, seq); }
+    return span;
+  }
+
 
 
   //  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response)  {

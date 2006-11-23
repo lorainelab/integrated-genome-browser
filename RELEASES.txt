@@ -4,6 +4,12 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-4.50
+  + Adds support for parsing more types of CHP files.
+  + Adds more support for UCSC Genome Browser formats.
+  + Implements the final version of the DAS/2 feature retrieval protocol
+  + Allows hiding or showing the "+" or "-" strand at will.
+
 IGB-4.48.02
   + A bug-fix release that fixes a bug in version 4.48
 

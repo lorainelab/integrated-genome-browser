@@ -126,7 +126,7 @@ public class Das2OntologyVersionedSource extends com.affymetrix.igb.das2.Das2Ver
      *  This is a FIXME: the correct way to deal with this is to have a proper abstract class
      *  and then have everyone inherit from that.
     **/
-    protected void initRegions() {
+    protected void initSegments() {
         this.regions_initialized = true;
     }
 }

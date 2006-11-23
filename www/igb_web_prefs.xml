@@ -115,8 +115,8 @@ be used (if present).
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
   <annotation_url annot_type_regex="EnsGene"
-    name="Ensembl Human ID search"
-    url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
+    name="Ensembl all-species ID search"
+    url="http://www.ensembl.org/Homo_sapiens/textview?species=all&amp;idx=All&amp;q=$$"
   />
 
   <annotation_url annot_type_regex="EnsGene" 

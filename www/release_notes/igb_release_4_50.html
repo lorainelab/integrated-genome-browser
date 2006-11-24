@@ -56,9 +56,25 @@ to work together more easily.
 but that label could cover-up some annotations.)<br><br>
 </li>
 
-<li>Something with a picture.
-<br><br><img src="images/xxx.gif">
-<br>Figure: XXX.<br><br>
+<li>Examples of using shading to display scored data.  The sample gff
+file <a href="data/scores.gff">here</a> is shown as it displays in IGB and
+in the UCSC browser.  Coloring by score is turned on by using the flag
+<i>useScore=1</i> in the <i>track lines</i>.
+<br><br><img src="images/scores-igb.gif">
+<br>Figure: Example of displaying scores by shading.
+Note that it is possible to show different scores for each exon
+in a single mRNA.  The colors used range from a color almost equal
+to the background color for score=1 to a color equal to the foreground
+color for score=1000.<br><br>
+<img src="images/scores-ucsc.gif">
+<br>Figure: The same file viewed in the UCSC browser.
+It is not possible to show different scores for each exon; 
+the color of the whole mRNA is based on the average score of the exons.
+The colors used range from near white for score=1 to dark for score=1000.
+The only allowed score colors in the UCSC browser are blue, brown and gray.
+If you stick to those colors, the score colors will look the same as in IGB.
+Here, for the track where we specified the color red, the color red is used only
+for the lables, and grayscale is used for the scores.<br><br>
 </li>
 
 

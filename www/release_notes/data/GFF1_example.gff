@@ -3,7 +3,7 @@
 # This is an example of gff1, so the final field is the "group" field
 # and is NOT a list of attributes
 #
-# We expect IGB to ignore the browser line, but the UCSC browser uses it
+# The UCSC browser uses the browser line; IGB ignores it.
 browser position chr22:1-1300
 #
 track name="Track A" url="http://www.google.com/search?q=$$" useScore=1 color=200,0,0 visibility=2 
@@ -22,9 +22,9 @@ chr22	Testing	exon	450	708	1000	-	.	mRNA5
 chr22	Testing	exon	420	430	500	-	.	mRNA5
 chr22	Testing	exon	720	800	900	-	.	mRNA5
 #
-# Test using the scores to determine color shading
+# Example of using the scores in the range 1-1000 to determine color shading.
 # (Note that the UCSC browser restritcs this to certain colors, including 0,60,120 and 100,50,0)
-# (Scores in the range 1-1000.)
+#
 track name="Scored Track" useScore=1 color=0,60,120 visibility="pack"
 chr22	Testing	exon	110	200	1	+	.	xxx1
 chr22	Testing	exon	210	300	100	+	.	xxx2
@@ -37,13 +37,19 @@ chr22	Testing	exon	810	900	700	+	.	xxx8
 chr22	Testing	exon	910	1000	800	+	.	xxx9
 chr22	Testing	exon	1010	1100	900	+	.	xxx10
 chr22	Testing	exon	1110	1200	1000	+	.	xxx11
-# one mrna with several exons with different scores
-# The UCSC browser uses a single color, from the average score
+#
+# One mRNA with several exons with different scores.
+# The UCSC browser uses a single color, from the average score;
+# IGB shows each exon in a different color.
+#
 chr22	Testing	exon	100	300	100	+	.	yyy
 chr22	Testing	exon	400	600	300	+	.	yyy
 chr22	Testing	exon	700	900	600	+	.	yyy
 chr22	Testing	exon	1000	1200	900	+	.	yyy
-# Several exons, but all with the same score
+#
+# One mRNA with several exons, but all with the same score.
+# IGB and UCSC browser show this identically.
+#
 chr22	Testing	exon	100	200	200	+	.	zzz
 chr22	Testing	exon	310	400	200	+	.	zzz
 chr22	Testing	exon	510	600	200	+	.	zzz

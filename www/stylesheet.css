@@ -1,6 +1,6 @@
 h1,h2,h3        { font-family: Verdana, sans-serif; }
 body            { font-family: Verdana, "Lucida Sans", Helvetica, Arial, sans-serif; }
-body            { background: white; margin-left: 40px; padding: 0px }
+body            { background: white; color: black; margin-left: 40px; padding: 0px }
 h1:first-child	{ margin-top: 0px }
 img             { border: 0px; vertical-align: middle; }
 td              { vertical-align: top }

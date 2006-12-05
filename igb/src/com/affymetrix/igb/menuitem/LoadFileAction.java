@@ -208,20 +208,20 @@ public class LoadFileAction {
       //    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
       //
       // Also cannot handle compressed chp files, so don't bother with the Streamer class.
-      if (annotfile.getName().toLowerCase().endsWith("chp")) {
+      if (annotfile.getName().toLowerCase().endsWith(".chp")) {
         //System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
         java.util.List results = ChpParser.parse(annotfile.getPath());
 	// aseq = getLastSeq(results);
       }
       else {
-	int file_length = (int)annotfile.length();
+	//int file_length = (int)annotfile.length();
 	//fistr = new FileInputStream(annotfile);
 	StringBuffer sb = new StringBuffer();
 	fistr = Streamer.getInputStream(annotfile,  sb);
 	String stripped_name = sb.toString();
-	int pindex = stripped_name.lastIndexOf(".");
-	String suffix = null;
-	if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
+	//int pindex = stripped_name.lastIndexOf(".");
+	//String suffix = null;
+	//if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
 	if (GraphSymUtils.isAGraphFilename(stripped_name)) {
 	  AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
 	  if (seq_group == null) {
@@ -233,7 +233,7 @@ public class LoadFileAction {
 	  }
 	}
 	else {
-	  aseq = load(gviewer, fistr, stripped_name, input_seq, file_length);
+	  aseq = load(gviewer, fistr, stripped_name, input_seq);
 	}
       }
     }
@@ -269,12 +269,6 @@ public class LoadFileAction {
     return result;
   }
 
-  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr, String stream_name,
-                                     MutableAnnotatedBioSeq input_seq)
-  throws IOException {
-    return load(gviewer, instr, stream_name, input_seq, -1);
-  }
-
   /** Loads from an InputStream.
    *  Detects the type of file based on the filename ending of the
    *  stream_name parameter, for example ".dasxml".
@@ -282,7 +276,7 @@ public class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
-        String stream_name, MutableAnnotatedBioSeq input_seq, int stream_length)
+        String stream_name, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     System.out.println("loading file: " + stream_name);
 
@@ -462,16 +456,14 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {
         FastaParser parser = new FastaParser();
-        if (input_seq != null) {
-          aseq = parser.parse(str, input_seq, input_seq.getLength());
-        }
-        else  {
-          // to help eliminate memory spike (by dynamic reallocation of memory in StringBuffer -- don't ask...)
-          // give upper limit to sequence length, based on file size -- this will be an overestimate (due to
-          //   white space, name header, etc.), but probably no more than 10% greater than actual size, which
-          //   is a lot better than aforementioned memory spike, which can temporarily double the amount of
-          //   memory needed
-          aseq = parser.parse(str, input_seq, stream_length);  // if stream_length <= 0, will be ignored...
+        java.util.List seqs = parser.parseAll(str, selected_group);
+        
+        if (input_seq != null && seqs.contains(input_seq)) {
+          aseq = input_seq;
+        } else if (! seqs.isEmpty()) {
+          aseq = (MutableAnnotatedBioSeq) seqs.get(0);
+        } else {
+          aseq = null;
         }
         parser = null;
       }

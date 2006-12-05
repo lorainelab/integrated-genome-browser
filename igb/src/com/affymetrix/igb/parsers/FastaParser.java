@@ -308,6 +308,11 @@ public class FastaParser {
     return seq;
   }
 
+  // to help eliminate memory spike (by dynamic reallocation of memory in StringBuffer -- don't ask...)
+  // give upper limit to sequence length, based on file size -- this will be an overestimate (due to
+  //   white space, name header, etc.), but probably no more than 10% greater than actual size, which
+  //   is a lot better than aforementioned memory spike, which can temporarily double the amount of
+  //   memory needed
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
 				      int max_seq_length) {
     return oldparse(istr, aseq, max_seq_length);

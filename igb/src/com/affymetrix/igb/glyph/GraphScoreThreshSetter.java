@@ -47,6 +47,10 @@ public class GraphScoreThreshSetter extends JPanel
   static String BLANK = "";
   static String ON = "On";
   static String OFF = "Off";
+  
+  static final int THRESH_TYPE_PERCENT = 1;
+  static final int THRESH_TYPE_VALUE = 2;
+  static int prev_thresh_type = THRESH_TYPE_VALUE;
 
   Dimension slider_sizepref = new Dimension(600, 15);
   Dimension textbox_sizepref = new Dimension(400, 15);
@@ -500,10 +504,18 @@ public class GraphScoreThreshSetter extends JPanel
       }
     }
     else if (src == thresh_aboveB) {
-      setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_GREATER, true);
+      if (prev_thresh_type == THRESH_TYPE_VALUE) {
+        setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_GREATER);
+      } else {
+        setScoreThresholdByPercent(prev_thresh_per,  GraphState.THRESHOLD_DIRECTION_GREATER);
+      }
     }
     else if (src == thresh_belowB) {
-      setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_LESS, true);
+      if (prev_thresh_type == THRESH_TYPE_VALUE) {
+        setScoreThreshold(prev_thresh_val, GraphState.THRESHOLD_DIRECTION_LESS);
+      } else {
+        setScoreThresholdByPercent(prev_thresh_per,  GraphState.THRESHOLD_DIRECTION_LESS);
+      }
     }
     else if (src == shift_startTF) {
       try {
@@ -590,12 +602,8 @@ public class GraphScoreThreshSetter extends JPanel
   }
   
   public void setScoreThreshold(float val, int direction) {
-    setScoreThreshold(val, direction, true);
-  }
-
-  public void setScoreThreshold(float val, int direction, boolean force_change) {
     int gcount = graphs.size();
-    force_change = true;  // (maybe temporarily) force change to always take place
+    boolean force_change = true;
     if (force_change  || (gcount > 0 && (val != prev_thresh_val))) {
       turnOffListening();
       float min_per = Float.POSITIVE_INFINITY;
@@ -641,6 +649,7 @@ public class GraphScoreThreshSetter extends JPanel
       turnOnListening();
     }
     prev_thresh_val = val;
+    prev_thresh_type = THRESH_TYPE_VALUE;
   }
 
   void setScoreThresholdByPercent(float thresh) {
@@ -653,7 +662,7 @@ public class GraphScoreThreshSetter extends JPanel
 
   void setScoreThresholdByPercent(float percent, int direction) {
     int gcount = graphs.size();
-    boolean force_change = true;  // (maybe temporarily) force change to always take place
+    boolean force_change = true;
     if (force_change  || (gcount > 0 && (percent != prev_thresh_per))) {
       turnOffListening();
       float min_val = Float.POSITIVE_INFINITY;
@@ -701,6 +710,7 @@ public class GraphScoreThreshSetter extends JPanel
       turnOnListening();
     }
     prev_thresh_per = percent;
+    prev_thresh_type = THRESH_TYPE_PERCENT;
   }
 
 

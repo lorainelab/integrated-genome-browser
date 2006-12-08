@@ -117,8 +117,8 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     GraphGlyph graph_glyph;
     if (newgraf instanceof GraphIntervalSym) {
       GraphIntervalSym gis = (GraphIntervalSym) newgraf;
-      //graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
-      graph_glyph = new GraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
+      graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
+      //graph_glyph = new GraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
     } else {
       graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
     }

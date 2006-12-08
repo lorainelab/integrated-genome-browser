@@ -669,7 +669,7 @@ public class ExperimentPivotView extends JComponent
 
   public void clampToSpan(SeqSpan span) {
     map.setMapRange((int)span.getMin(), (int)span.getMax());
-    map.stretchToFit(false, false);
+    map.stretchToFit(true, true);
     map.updateWidget();
   }
 

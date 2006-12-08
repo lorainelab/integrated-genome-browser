@@ -26,6 +26,7 @@ import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.parsers.TrackLineParser;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -200,14 +201,25 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
-  static Color getScoreColor(SeqSymmetry insym, AnnotStyle style) {
+  static Color getSymColor(SeqSymmetry insym, AnnotStyle style) {
+    boolean use_score_colors = style.getColorByScore();
+    boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
+    
+    if (! (use_score_colors || use_item_rgb)) {
+      return style.getColor();
+    }
+    
     SeqSymmetry sym = insym;
     if (insym instanceof DerivedSeqSymmetry) {
       sym = (SymWithProps)  getMostOriginalSymmetry(insym);
       //sym = ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
     }
     
-    if (sym instanceof Scored) {
+    if (use_item_rgb && sym instanceof SymWithProps) {
+      Color cc = (Color) ((SymWithProps) insym).getProperty(TrackLineParser.ITEM_RGB);
+      if (cc != null) return cc;
+    }
+    if (use_score_colors && sym instanceof Scored) {
       float score = ((Scored) sym).getScore();
       if (score != Float.NEGATIVE_INFINITY && score > 0.0f) {
         return style.getScoreColor(score);
@@ -315,11 +327,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-    if (use_score_colors) {
-      pglyph.setColor(getScoreColor(insym, the_style));
-    } else {
-      pglyph.setColor(the_style.getColor());
-    }
+    pglyph.setColor(getSymColor(insym, the_style));
     if (SET_PARENT_INFO) {
       map.setDataModelFromOriginalSym(pglyph, sym);
     }
@@ -393,11 +401,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             if (cds_span != null) {
               GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
               cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
-              if (use_score_colors) {
-                cds_glyph.setColor(getScoreColor(cds_sym, the_style));
-              } else {
-                cds_glyph.setColor(the_style.getColor());
-              }
+              cds_glyph.setColor(getSymColor(cds_sym, the_style));
               pglyph.addChild(cds_glyph);
               if (SET_CHILD_INFO) {
                 map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
@@ -406,11 +410,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           }
         }
         cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-        if (use_score_colors) {
-          cglyph.setColor(getScoreColor(child, the_style));
-        } else {
-          cglyph.setColor(the_style.getColor());
-        }
+        cglyph.setColor(getSymColor(child, the_style));
         pglyph.addChild(cglyph);
         if (SET_CHILD_INFO) {
           map.setDataModelFromOriginalSym(cglyph, child);
@@ -497,12 +497,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     
     pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
-    if (use_score_colors) {
-      // is the insym or sym?
-      pglyph.setColor(getScoreColor(insym, the_style));
-    } else {
-      pglyph.setColor(the_style.getColor());
-    }
+    pglyph.setColor(getSymColor(insym, the_style));
     if (SET_PARENT_INFO) {
       map.setDataModelFromOriginalSym(pglyph, sym);
     }
@@ -510,7 +505,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     the_tier.addChild(pglyph);
     return pglyph;
   }
-  
   
   //TODO: Move this to SeqMapView or AltSpliceView, 
   // so boundaries don't have to be re-computed over and over  

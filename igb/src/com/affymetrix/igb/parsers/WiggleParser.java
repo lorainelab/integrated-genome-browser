@@ -184,6 +184,7 @@ public class WiggleParser {
     track_hash.put(TrackLineParser.NAME, graph_id);
     
     GraphState gstate = GraphState.getGraphState(graph_id);
+    gstate.setGraphStyle(GraphGlyph.BAR_GRAPH); // default, can be overriden by track line
     track_line_parser.applyTrackProperties(track_hash, gstate);
     
     Iterator iter = m.keySet().iterator();
@@ -193,7 +194,6 @@ public class WiggleParser {
       GraphSym gsym = wig.createGraph(graph_id);
     
       if (gsym != null) {
-        gsym.getGraphState().setGraphStyle(GraphGlyph.BAR_GRAPH);
         grafs.add(gsym);
       }
     }

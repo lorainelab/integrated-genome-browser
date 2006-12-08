@@ -59,7 +59,8 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
  *    [7] thickEnd - The ending position at which the feature is drawn thickly (for example,
  *          the stop codon in gene displays).
  *        If thickStart = thickEnd, that should be interpreted as the absence of a thick region
- *    [8] reserved - This should always be set to zero.
+ *    [8] itemRgb - a color for the item, in the format "RRR,GGG,BBB"; or use "0" for default color
+ *        These colors will be used only if the track line property itemRgb is "On".
  *    [9] blockCount - The number of blocks (exons) in the BED line.
  *    [10] blockSizes - A comma-separated list of the block sizes. The number of items in this list
  *          should correspond to blockCount.
@@ -150,6 +151,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     System.out.println("called BedParser.parseWithEvents()");
     String line;
     String type = default_type;
+    boolean use_item_rgb = false;
 
     Thread thread = Thread.currentThread();
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
@@ -160,8 +162,10 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       else if (line.startsWith("track")) {
         track_line_parser.parseTrackLine(line);
         track_line_parser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_type);
-	type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-	continue;
+        type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+        String item_rgb_string = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
+        use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
+        continue;
       }
       else if (line.startsWith("browser")) {
 	// currently take no action for browser lines
@@ -175,6 +179,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	String seq_name = null;
 	String annot_name = null;
 	int min, max;
+        String itemRgb = "";
 	int thick_min = Integer.MIN_VALUE;  // Integer.MIN_VALUE signifies that thick_min is not used
 	int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
 	float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
@@ -240,12 +245,20 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	  else  { forward = (beg <= end); }
 	  min = (int)Math.min(beg, end);
 	  max = (int)Math.max(beg, end);
-
+          
 	  if (field_count >= 8) {
 	    thick_min = Integer.parseInt(fields[findex++]); // thickStart field
 	    thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
 	  }
-	  findex += 2;
+          
+          if (field_count >= 9) {
+            itemRgb = fields[findex++];
+          } else {
+            findex++;
+          }
+          
+	  findex++; // block count field is skipped because it is redundant
+          
 	  if (field_count >= 12) {
 	    blockSizes = parseIntArray(fields[findex++]); // blockSizes field
 	    blockStarts = parseIntArray(fields[findex++]); // blockStarts field
@@ -288,9 +301,21 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	      }
 	    }
 	  }
-	  SeqSymmetry bedline_sym = null;
+	  SymWithProps bedline_sym = null;
 	  bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward,
 				       thick_min, thick_max, blockMins, blockMaxs);
+          if (use_item_rgb && itemRgb != null) {
+            java.awt.Color c = null;
+            try {
+              c = TrackLineParser.reformatColor(itemRgb);
+            } catch (Exception e) {
+              throw new IOException("Could not parse a color from String '"+itemRgb+"'");
+            }
+            if (c != null) {
+              bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
+            }
+          }
+          
 	  // if there are any ParserListeners registered, notify them of parse
 	  if (parse_listeners.size() > 0) {
 	    for (int i=0; i<parse_listeners.size(); i++) {

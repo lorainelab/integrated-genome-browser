@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphState;
 import java.awt.*;
 import java.util.*;
 import java.util.regex.*;
 
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 
@@ -61,15 +61,16 @@ public class TrackLineParser {
   public Map getCurrentTrackHash() { return track_hash; }
     
   /**
-   *  Convert a color in string representation into a Color.
+   *  Convert a color in string representation "RRR,GGG,BBB" into a Color.
+   *  Note that this can throw an exception if the String is poorly formatted.
    */
   public static Color reformatColor(String color_string) {
     String[] rgb = comma_regex.split(color_string);
     if (rgb.length == 3) {
-      int red = Integer.parseInt(rgb[0]);
-      int green = Integer.parseInt(rgb[1]);
-      int blue = Integer.parseInt(rgb[2]);
-      return new Color(red, green, blue);
+        int red = Integer.parseInt(rgb[0]);
+        int green = Integer.parseInt(rgb[1]);
+        int blue = Integer.parseInt(rgb[2]);
+        return new Color(red, green, blue);
     } else {
       return null;
     }

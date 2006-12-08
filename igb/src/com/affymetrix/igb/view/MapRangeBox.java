@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.IGB;
@@ -52,6 +53,10 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
   // (The chromosome name cannot contain any spaces.)
   static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   
+  // accepts a pattern like: "chr2 : 3,040,000 + 20000"
+  // (The chromosome name cannot contain any spaces.)
+  static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
+
   // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
   static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   static final Pattern start_width_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[+]\\s*([0-9,]+)\\s*$");
@@ -115,16 +120,32 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
       int display_format = FORMAT_START_END;
       try {
         Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
+        Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());
         Matcher start_end_matcher = start_end_pattern.matcher(range_box.getText());
         Matcher start_width_matcher = start_width_pattern.matcher(range_box.getText());
         Matcher center_matcher = center_pattern.matcher(range_box.getText());
         
-        if (chrom_start_end_matcher.matches()) {
-          String chrom_text = chrom_start_end_matcher.group(1);
-          String start_text = chrom_start_end_matcher.group(2);
-          String end_text = chrom_start_end_matcher.group(3);
+        if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+          Matcher matcher;
+          boolean uses_width;
+          if (chrom_start_width_matcher.matches()) {
+            matcher = chrom_start_width_matcher;
+            uses_width = true;
+          } else {
+            matcher = chrom_start_end_matcher;
+            uses_width = false;
+          }
+          
+          String chrom_text = matcher.group(1);
+          String start_text = matcher.group(2);
+          String end_or_width_text = matcher.group(3);
           start = nformat.parse(start_text).doubleValue();
-          end = nformat.parse(end_text).doubleValue();
+          double end_or_width = nformat.parse(end_or_width_text).doubleValue();
+          if (uses_width) {
+            end = start + end_or_width;
+          } else {
+            end = end_or_width;
+          }
 
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
           
@@ -161,11 +182,19 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
           gview.zoomTo(start, end);
           gview.setZoomSpotX(center);
         }
-        else {
-          setRangeText(display_format, start, end);
-        }        
+
+        // generally this is redundant, because zooming the view will make
+        // a call back to change this text.
+        // But if the user tries to zoom to something illogical, this can be helpful
+        SeqSpan span = gview.getVisibleSpan();
+        if (span == null) {
+          range_box.setText("");
+        } else {
+          setRangeText(display_format, span.getStart(), span.getEnd());
+        }
+
       } catch (Exception ex) {
-        System.out.println("Exception: " + ex);
+        System.out.println("Exception in MapRangeBox: " + ex);
         setRangeText(display_format, start, end);
       }
     }

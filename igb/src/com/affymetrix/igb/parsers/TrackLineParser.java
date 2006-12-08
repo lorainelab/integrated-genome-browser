@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
 import java.awt.*;
 import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 
 public class TrackLineParser {
@@ -35,6 +35,12 @@ public class TrackLineParser {
   
   /** Value will be stored in the IAnnotStyle extended properties. */
   public static final String USE_SCORE="usescore";
+  
+  /** If this property has the value "on" (case-insensitive) and the SeqSymmetry
+   *  has a property {@link #ITEM_RGB}, then that color will be used for drawing that
+   *  symmetry.  Value is stored in the IAnnotStyle extended properties.
+   */
+  public static final String ITEM_RGB = "itemrgb";
 
   /** A pattern that matches things like   <b>aaa=bbb</b> or <b>aaa="bbb"</b>
    *  or even <b>"aaa"="bbb=ccc"</b>.
@@ -57,7 +63,7 @@ public class TrackLineParser {
   /**
    *  Convert a color in string representation into a Color.
    */
-  static Color reformatColor(String color_string) {
+  public static Color reformatColor(String color_string) {
     String[] rgb = comma_regex.split(color_string);
     if (rgb.length == 3) {
       int red = Integer.parseInt(rgb[0]);
@@ -192,6 +198,10 @@ public class TrackLineParser {
     }
   }
 
+  /**
+   *  Applies the UCSC track properties that it understands to the GraphState 
+   *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
+   */
   public static void applyTrackProperties(Map track_hash, GraphState gstate) {
     applyTrackProperties(track_hash, gstate.getTierStyle());
     
@@ -204,6 +214,11 @@ public class TrackLineParser {
         gstate.setVisibleMinY(min);
         gstate.setVisibleMaxY(max);
       }
+    }
+    
+    String graph_type = (String) track_hash.get("graphtype");
+    if ("points".equalsIgnoreCase(graph_type)) {
+      gstate.setGraphStyle(GraphGlyph.DOT_GRAPH);
     }
   }
 }

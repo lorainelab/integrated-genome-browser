@@ -25,10 +25,9 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 public class Das2Region {
   static public boolean USE_SEGMENT = true;  // segment param, or old version with seq included in other filters
-  static public boolean USE_SEGMENT_URI = false;
-  static public boolean USE_TYPE_URI = false;
+  static public boolean USE_SEGMENT_URI = true;
+  static public boolean USE_TYPE_URI = true;
   static public  boolean URL_ENCODE_QUERY = true;
-
 
   URI region_uri;
   String name;

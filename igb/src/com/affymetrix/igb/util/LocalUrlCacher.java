@@ -20,16 +20,35 @@ import javax.swing.*;
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
+  static String long_url_map = cache_root + "/long_url_map.props";
   static boolean DEBUG_CONNECTION = false;
   static boolean CACHE_FILE_URLS = false;
+  static Properties long2short_filenames = new Properties();
 
   public static int IGNORE_CACHE = 100;
   public static int ONLY_CACHE = 101;
   public static int NORMAL_CACHE = 102;
+  public static int long_file_count = 0;
 
   // the "quickload" part of the constant value is there for historical reasons
   public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
+
+  static {
+    // initialize cache
+    // load "long_url_file_name to short_cache_file_name" info
+    // this can be a properties files??
+    try {
+      File long_url_file = new File(long_url_map);
+      System.out.println("properties map for conversion of long URLs: " + long_url_map);
+      if (long_url_file.exists()) {
+	long2short_filenames.load(new BufferedInputStream(new FileInputStream(long_url_file)));
+      }
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 
   public static InputStream getInputStream(String url) throws IOException  {
     return getInputStream(url, getPreferredCacheUsage(), true);
@@ -39,17 +58,17 @@ public class LocalUrlCacher {
   public static boolean isFile(String url) {
     return (url.substring(0,5).compareToIgnoreCase("file:") == 0);
   }
-    
+
   /** Returns the local File object for the given URL;
    *  you must check File.exists() to determine if the file exists in the cache.
    *
-   * For long URLs, the file may be contained in additional subdirectories of the 
-   *    the cache root directory in order to ensure that each path segment is 
+   * For long URLs, the file may be contained in additional subdirectories of the
+   *    the cache root directory in order to ensure that each path segment is
    *    within the file name limits of the OS
-   *  If additional subdirectories are needed, getCacheFileForURL automatically creates 
+   *  If additional subdirectories are needed, getCacheFileForURL automatically creates
    *     these directories
-   *  However, the File returned is not created by getCacheFileForURL -- that is 
-   *     up to other methods in LocalUrlCacher
+   *  The File object returned is created by getCacheFileForURL, but the actual on-disk file is not created --
+   *     that is up to other methods in LocalUrlCacher
    */
   static File getCacheFileForURL(String url) {
     String encoded_url = UrlToFileName.encode(url);
@@ -65,12 +84,12 @@ public class LocalUrlCacher {
 
       //    File parent_dir = cache_file.getParentFile();
       //    if (! parent_dir.exists()) {
-      //      // if directories are missing, create them for this file's path 
+      //      // if directories are missing, create them for this file's path
       //      parent_dir.mkdirs();
       //    }
     return cache_file;
   }
-  
+
   /** Returns the cache directory, creating it if necessary. */
   static File getCacheDirectory() {
     File fil = new File(cache_root);
@@ -81,20 +100,20 @@ public class LocalUrlCacher {
     }
     return fil;
   }
-  
+
   public static final String TYPE_FILE = "In Filesystem";
   public static final String TYPE_CACHED = "Cached";
   public static final String TYPE_STALE_CACHE = "Stale Cache";
   public static final String TYPE_NOT_CACHED = "Remote File";
   public static final String TYPE_UNREACHABLE = "Not Available?";
-  
+
   /**
    *  Returns the accesibility of the file represented by the URL.
    *  Will be one of {@link #TYPE_FILE}, {@link #TYPE_CACHED},
    *  {@link #TYPE_STALE_CACHE}, {@link #TYPE_NOT_CACHED},
    *  {@link #TYPE_UNREACHABLE}.
    */
-  public static String getLoadType(String url, int cache_option) {
+  protected static String getLoadType(String url, int cache_option) {
 
     // if url is a file url, and not caching files, then just directly return stream
     if (isFile(url)) {
@@ -112,7 +131,7 @@ public class LocalUrlCacher {
         return TYPE_FILE;
       }
     }
-    
+
     File cache_dir = getCacheDirectory(); // Make sure cache directory exists. Maybe not needed.
 
     File cache_file = getCacheFileForURL(url);
@@ -122,7 +141,7 @@ public class LocalUrlCacher {
       if (cached) return TYPE_CACHED;
       else return TYPE_NOT_CACHED;
     }
-    
+
     URLConnection conn = null;
 
     long remote_timestamp = 0;
@@ -131,7 +150,7 @@ public class LocalUrlCacher {
     boolean url_reachable = false;
     boolean has_timestamp = false;
     // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
-    
+
     try {
       URL theurl = new URL(url);
       conn = theurl.openConnection();
@@ -161,7 +180,7 @@ public class LocalUrlCacher {
         return TYPE_UNREACHABLE;
       }
     }
-    
+
     // We have normal cache usage and the remote file is reachable.
     if (cached) {
       long local_timestamp = cache_file.lastModified();
@@ -180,10 +199,10 @@ public class LocalUrlCacher {
        throws IOException {
     return getInputStream(url, getPreferredCacheUsage(), write_to_cache);
   }
-  
+
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
-    
+
     // if url is a file url, and not caching files, then just directly return stream
     if ((! CACHE_FILE_URLS) && isFile(url)) {
       InputStream fstr = null;
@@ -353,19 +372,19 @@ public class LocalUrlCacher {
     //    System.out.println("returning stream: " + result_stream);
     return result_stream;
   }
-  
+
   public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
   throws IOException {
     return askAndGetInputStream(filename, getPreferredCacheUsage(), cache_annots_param);
   }
-  
+
   /**
-   *  Similar to {@link #getInputStream()}, but asks the user before 
+   *  Similar to {@link #getInputStream()}, but asks the user before
    *  downloading anything over the network.
    *  @return returns an InputStream or null if the user cancelled or the file
    *  is unreachable.
    */
-  public static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param) 
+  public static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param)
   throws IOException {
     String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
 
@@ -375,25 +394,25 @@ public class LocalUrlCacher {
       short_filename = filename.substring(index+1);
     }
 
-    if (LocalUrlCacher.TYPE_FILE.equals(cache_type)) { 
+    if (LocalUrlCacher.TYPE_FILE.equals(cache_type)) {
       // just go ahead and load it
       return LocalUrlCacher.getInputStream(filename, cache_usage_param, cache_annots_param);
     }
-    
+
     else if (LocalUrlCacher.TYPE_CACHED.equals(cache_type) && ! (cache_usage_param == LocalUrlCacher.IGNORE_CACHE)) {
       // just go ahead and load from cache
       return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
     }
-    
+
     else if (LocalUrlCacher.TYPE_UNREACHABLE.equals(cache_type)) {
       ErrorHandler.errorPanel("File Unreachable",
         "The requested file can not be found:\n" + filename);
       return null;
     }
-    
+
     else if (LocalUrlCacher.TYPE_STALE_CACHE.equals(cache_type)) {
       String[] options = { "Load remote file", "Use local cache", "Cancel" };
-      String message = "The remote file \"" + short_filename + 
+      String message = "The remote file \"" + short_filename +
           "\"is more recent than the local copy.";
 
       int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
@@ -408,9 +427,9 @@ public class LocalUrlCacher {
         return null;
       }
     }
-    
+
     else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
-    
+
       String[] options = { "OK", "Cancel" };
       String message = "Load " + short_filename + " from the remote server?";
 
@@ -424,10 +443,10 @@ public class LocalUrlCacher {
         return null;
       }
     }
-    
+
     return null;
   }
-  
+
   /**
    *  Forces flushing of entire cache.
    *  Simply removes all cached files.
@@ -471,9 +490,9 @@ public class LocalUrlCacher {
     Thread t = new Thread(r);
     t.start();
   }
-  
+
   static void updateCacheUrlAndWait(String url) throws IOException {
-    InputStream is = null; 
+    InputStream is = null;
     try {
       getInputStream(url, NORMAL_CACHE, true);
       System.out.println("Updated cache for: " + url);
@@ -481,7 +500,7 @@ public class LocalUrlCacher {
       if (is != null) try { is.close(); } catch (IOException ioe) {}
     }
   }
-  
+
   public static void reportHeaders(URLConnection query_con) {
     try {
       System.out.println("URL: " + query_con.getURL().toString());

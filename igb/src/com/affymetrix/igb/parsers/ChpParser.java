@@ -80,6 +80,17 @@ public class ChpParser {
     FusionCHPGenericData genchp;
     boolean has_coord_data = false;
 
+    /** For all chips other than tiling (and potentially resequencing?), the genomic location of the 
+     *   probesets is not specified in the CHP file.  Therefore it needs to be obtained from another 
+     *   source, based on info that _is_ in the CHP file and the current genome/AnnotatedSeqGroup (or 
+     *   most up-to-date genome for the organism if current genome is not for same organism as CHP file data
+     *
+     *  Plan is to get this data from DAS/2 server in as optimized a format as possible -- for instance, 
+     *     "bp2" format for exon chips.  It may be possible to optimize formats even further if parser  
+     *     can assume a particular ordering of data in CHP file will always be followed for a particular 
+     *     Affy chip, but I don't think we can make that assumption...
+     *  Therefore will have to join location info with CHP info based on shared probeset IDs.
+     */ 
     /** expression CHP file (gene or WTA), without detection */
     if ((qchp = FusionCHPQuantificationData.fromBase(chp))  != null) {
       System.out.println("CHP file is for expression array, without detection info: " + qchp);

@@ -309,8 +309,8 @@ public class GraphGlyph extends Glyph {
               max_x_plus_width.y = curr_x_plus_width.y; // yB
             }
           }
-        } else if (graph_style == BAR_GRAPH) {
-
+        } 
+	else if (graph_style == BAR_GRAPH) {
           if (curr_point.y > zero_point.y) {
             ymin_pixel = zero_point.y;
             yheight_pixel = curr_point.y - zero_point.y;
@@ -326,8 +326,8 @@ public class GraphGlyph extends Glyph {
             final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
             g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
           }
-
-        } else if (graph_style == DOT_GRAPH) {
+        }
+	else if (graph_style == DOT_GRAPH) {
           if (wcoords == null) {
             g.fillRect(curr_point.x, curr_point.y, 1, 1);
           }

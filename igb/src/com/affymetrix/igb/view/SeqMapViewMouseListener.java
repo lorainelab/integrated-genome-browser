@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -34,7 +34,7 @@ import java.util.*;
  *  how to check for the pop-up trigger and whether things happen on
  *  mousePressed() or mouseReleased() and detection of "right" mouse clicks.
  *  This is because the GenoViz SDK RubberBand interferes with some possibilities.
- *  
+ *
  *  For example, we always show the popup during mouseReleased(), never
  *  mousePressed(), because that would interfere with the rubber band.
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
@@ -47,7 +47,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   //  mousePressed() or mouseReleased().
   //
   // Users normally expect something to happen on mousePressed(), but
-  // if updateWidget() is done in mousePressed(), it can occasionally make 
+  // if updateWidget() is done in mousePressed(), it can occasionally make
   // the rubber band draw oddly.
   //
   // A solution is to move all mouse event processing into mouseReleased(),
@@ -57,8 +57,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   // A better solution would be to fix the rubber band drawing routines
   // so that they respond properly after updateWidget()
   //
-  // The program should work perfectly fine with this flag true or false, 
-  // the rubber band simply looks odd sometimes (particularly with a fast drag) 
+  // The program should work perfectly fine with this flag true or false,
+  // the rubber band simply looks odd sometimes (particularly with a fast drag)
   // if this flag is true.
   private boolean SELECT_ON_MOUSE_PRESSED = false;
   boolean DEBUG_RUBBERBAND = false;
@@ -75,7 +75,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   public void mouseExited(MouseEvent evt) { }
 
-  public void mouseClicked(MouseEvent evt) { 
+  public void mouseClicked(MouseEvent evt) {
     // reset rubber_band_start here?
   }
 
@@ -83,7 +83,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (map instanceof AffyLabelledTierMap) {
       ((AffyLabelledTierMap) map).getLabelMap().clearSelected();
     }
-    
+
     // turn OFF autoscrol in mousePressed()
     if (smv.map_auto_scroller != null) {
       smv.toggleAutoScroll();
@@ -94,10 +94,10 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
 
   int num_last_selections = 0;
-  
+
   public void mouseReleased(MouseEvent evt) {
     num_last_selections = map.getSelected().size();
-    
+
     // process selections in mousePressed() or mouseReleased()
     if (! SELECT_ON_MOUSE_PRESSED) {
       // if rubber-banding is going on, don't post selections now,
@@ -112,7 +112,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     if (isOurPopupTrigger(evt)) {
       smv.showPopup((NeoMouseEvent) evt);
     }
-    
+
     // if the GraphSelectionManager is also trying to control popup menus,
     // then there needs to be code here to prevent both this and that from
     // trying to do a popup at the same time.  But it is tricky.  So for
@@ -120,7 +120,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   }
 
   void processSelections(MouseEvent evt, boolean post_selections) {
-        
+
     if (! (evt instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
@@ -134,7 +134,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       topgl = zoomCorrectedGlyphChoice(topgl, zoom_point);
     }
 
-    // If drag began in the axis tier, then do NOT do normal selection stuff, 
+    // If drag began in the axis tier, then do NOT do normal selection stuff,
     // because we are selecting sequence instead.
     // (This only really matters when SELECT_ON_MOUSE_PRESSED is false.
     //  If SELECT_ON_MOUSE_PRESSED is true, topgl will already be null
@@ -146,7 +146,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     // Normally, clicking will clear previons selections before selecting new things.
     // but we preserve the current selections if:
     //  shift (Add To) or alt (Toggle) or pop-up (button 3) is being pressed
-    boolean preserve_selections = 
+    boolean preserve_selections =
       (isAddToSelectionEvent(nevt) || isToggleSelectionEvent(nevt) || isOurPopupTrigger(nevt));
 
     // Special case:  if pop-up button is pressed on top of a single item and
@@ -163,7 +163,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
 
     if ( ! preserve_selections) {
-      smv.clearSelection(); // Note that this also clears the selected sequence        
+      smv.clearSelection(); // Note that this also clears the selected sequence region
     }
 
     // seems no longer needed
@@ -186,7 +186,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       else {
         map.select(topgl);
       }
-      for (int i=0; i<gcount; i++) {      
+      for (int i=0; i<gcount; i++) {
 	GraphGlyph gl = (GraphGlyph)graphs.get(i);
 	if (gl != topgl) {  // if gl == topgl, already handled above...
 	  if (toggle_event && gl.isSelected()) {
@@ -201,14 +201,14 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     boolean nothing_changed = (preserve_selections && (topgl == null));
     boolean selections_changed = ! nothing_changed;
-    
+
     if (smv.show_edge_matches && selections_changed)  {
       smv.doEdgeMatching(map.getSelected(), false);
     }
     smv.setZoomSpotX(zoom_point.getX());
     smv.setZoomSpotY(zoom_point.getY());
 
-    map.updateWidget(); 
+    map.updateWidget();
 
     if (selections_changed && post_selections) {
       smv.postSelections();
@@ -226,7 +226,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
    *  @param zoom_point  the location where you clicked; if the returned glyph
    *   is different from the given glyph, the returned zoom_point will be
    *   at the center of that returned glyph, otherwise it will be unmodified.
-   *   This parameter should not be supplied as null. 
+   *   This parameter should not be supplied as null.
    *  @return a Glyph, and also modifies the value of zoom_point
    */
   GlyphI zoomCorrectedGlyphChoice(GlyphI topgl, java.awt.geom.Point2D.Double zoom_point) {
@@ -274,11 +274,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   static boolean isOurPopupTrigger(MouseEvent evt) {
     if (evt == null) {return false;}
     else if (isToggleSelectionEvent(evt)) return false;
-    else return (evt.isControlDown() ||  evt.isMetaDown() || 
+    else return (evt.isControlDown() ||  evt.isMetaDown() ||
          ((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0 ));
   }
 
-  /** Checks whether this the sort of mouse click that should preserve 
+  /** Checks whether this the sort of mouse click that should preserve
       and add to existing selections.  */
   static boolean isAddToSelectionEvent(MouseEvent evt) {
     return (evt != null && (evt.isShiftDown()));
@@ -293,14 +293,14 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   private transient MouseEvent rubber_band_start = null;
 
-  public void rubberBandChanged(NeoRubberBandEvent evt) {        
+  public void rubberBandChanged(NeoRubberBandEvent evt) {
     /*
      * Note that because using SmartRubberBand, rubber banding will only happen
      *   (and NeoRubberBandEvents will only be received) when the orginal mouse press to
      *    start the rubber band doesn't land on a hitable glyph
      */
 
-    if (isOurPopupTrigger(evt)) { 
+    if (isOurPopupTrigger(evt)) {
       return;
       // This doesn't stop the rubber band from being drawn, because you would
       // have to do that inside the SmartRubberBand itself.  But if you don't
@@ -359,11 +359,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       axis_tier.inside(rubber_band_start.getX(), rubber_band_start.getY());
     return started_in_axis_tier;
   }
-  
+
   boolean isInAxisTier(GlyphI g) {
     TierGlyph axis_tier = smv.getAxisTier();
     if (axis_tier == null) return false;
-    
+
     GlyphI p = g;
     while ( p != null) {
       if (p == axis_tier) return true;
@@ -371,7 +371,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
     return false;
   }
-  
+
   void doTheSelection(Vector glyphs, MouseEvent evt) {
     boolean something_changed = true;
 
@@ -396,7 +396,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
       if (! corrected.contains(zc)) {corrected.add(zc);}
     }
     glyphs = corrected;
-    
+
     if (isToggleSelectionEvent(evt)) {
       if (glyphs.isEmpty()) {
         something_changed = false;
@@ -421,7 +421,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
 
     map.updateWidget();
-    
+
     if (something_changed) {
       smv.postSelections();
     }

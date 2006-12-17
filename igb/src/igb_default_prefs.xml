@@ -129,6 +129,9 @@
     name="NetAffx Transcript Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
-    
+  <annotation_url annot_type_regex="genbank:gene\S*"
+    name="Entrez"
+    url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
+  />    
 </prefs>
 

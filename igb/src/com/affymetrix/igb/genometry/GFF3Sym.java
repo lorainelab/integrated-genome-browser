@@ -114,7 +114,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     else if (name.equals("feature_type") || name.equals("type")) { return feature_type; }
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
-    else if (name.equals("seqname") || name.equals("id")) {
+    else if (name.equals("id")) {
       return getID(); 
     }
     String[] temp = getGFF3PropertyFromAttributes(name, attributes);
@@ -138,7 +138,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
    */
   public boolean setProperty(String name, Object val) {
     String lc_name = name.toLowerCase();
-    if (name.equals("id") || name.equals("seqname")) {
+    if (name.equals("id")) {
       if (val instanceof String) {
         id = (String) val;
         return true;
@@ -187,7 +187,6 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     }
     if (getID() != null) {
       tprops.put("id", getID());
-      tprops.put("seqname", getID());
     }
     if (source != null) { 
       tprops.put("source", source);

@@ -129,7 +129,7 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
     else if (name.equals("group")) { return getGroup(); }
-    else if (name.equals("seqname") || name.equals("id")) { return getID(); }
+    else if (name.equals("id")) { return getID(); }
     else if (is_gff1) {
       return super.getProperty(name);
     } else {
@@ -145,7 +145,7 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
    *  these include "group", "score" and "frame".
    */
   public boolean setProperty(String name, Object val) {
-    if (name.equals("id") || name.equals("seqname")) {
+    if (name.equals("id")) {
       if (val instanceof String) {
         id = (String) val;
         return true;
@@ -208,7 +208,6 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
     }
     if (getID() != null) {
       tprops.put("id", getID());
-      tprops.put("seqname", getID());
     }
     if (source != null) { tprops.put("source", source); }
     if (method != null) { tprops.put("method", method); }

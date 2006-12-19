@@ -56,6 +56,7 @@ public class Das2VersionedSource  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   URI version_uri;
+  URI coords_uri;
   Das2Source source;
   String name;
   String description;
@@ -77,9 +78,19 @@ public class Das2VersionedSource  {
 
   LinkedList platforms = new LinkedList();
 
+  /**
+   *  To maintain backward compatibility, keeping constuctor with no coords_uri argument, 
+   *   but it just acts as a pass-through to the constructor that takes a coords_uri argument
+   */
   public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
 			     String href, String description, boolean init) {
+    this(das_source, vers_uri, null, name, href, description, init);
+  }
+
+  public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
+			     String href, String description, boolean init) {
     this.name = name;
+    this.coords_uri = coords_uri;
     version_uri = vers_uri;
     source = das_source;
     if (init) {
@@ -96,9 +107,10 @@ public class Das2VersionedSource  {
   public Date getCreationDate() { return creation_date; }
   public Date getLastModifiedDate() { return modified_date; }
   public Das2Source getSource() { return source; }
+  public URI getCoordinatesURI() { return coords_uri; }  
 
   /** NOT YET IMPLEMENTED */
-  //  public List getAssembly()   { return assembly; }
+  //  public List getAssembly()   { return assembly; } 
   /** NOT YET IMPLEMENTED */
   //  public Map getProperties()  { return properties; }
   /** NOT YET IMPLEMENTED */
@@ -120,7 +132,21 @@ public class Das2VersionedSource  {
       // This won't work in every situation!  Really need to resolve issues between VersionedSource URI ids and group ids
       String groupid = this.getName();
       if (groupid == null) { groupid = this.getID(); }
-      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+      //      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+      genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+      if (genome == null && coords_uri != null) { // try coordinates
+	genome = gmodel.getSeqGroup(coords_uri.toString());
+      }
+      if (genome == null) { 
+	// add new seq group -- if has global coordinates uri, then use that
+	//   otherwise, use groupid (version source name or URI)
+	if (coords_uri == null) {
+	  genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+	}
+	else {
+	  genome = gmodel.addSeqGroup(coords_uri.toString());
+	}
+      }
     }
     return genome;
   }

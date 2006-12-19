@@ -35,6 +35,7 @@ import com.affymetrix.igb.das2.Das2Coords;
  */
 public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
+  static String RELEASE_VERSION = "2.1";
   static boolean MAKE_LANDSCAPES = false;
   static boolean TIME_RESPONSES = true;
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
@@ -206,7 +207,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     try {
       super.init();
-
+      System.out.println("GenometryDas2Servlet version: " + RELEASE_VERSION);
       if (! (new File(data_root)).isDirectory()) {
         throw new ServletException("Aborting: Specified directory does not exist: '"+data_root+"'");
       }

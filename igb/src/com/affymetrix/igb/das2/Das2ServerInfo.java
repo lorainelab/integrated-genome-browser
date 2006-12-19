@@ -209,6 +209,7 @@ public class Das2ServerInfo  {
 
 	    NodeList vlist = version.getChildNodes();
 	    HashMap caps = new HashMap();
+	    URI coords_uri = null;
 	    for (int j=0; j<vlist.getLength(); j++) {
 	      String nodename = vlist.item(j).getNodeName();
 	      // was CATEGORY, renamed CAPABILITY
@@ -227,14 +228,21 @@ public class Das2ServerInfo  {
 		//		vsource.addCapability(cap);
 		caps.put(captype, cap);
 	      }
+	      else if (nodename.equals("COORDINATES")) {
+		Element coordel = (Element)vlist.item(j);
+		String uri_att = coordel.getAttribute("uri");
+		URI base_uri = getBaseURI(das_query, coordel);
+		coords_uri = base_uri.resolve(uri_att);
+		System.out.println("$$$$ Coordinates URI: " + coords_uri);
+	      }
 	    }
 	    Das2VersionedSource vsource;
 	    if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
-	      vsource = new Das2WritebackVersionedSource(dasSource, version_uri, version_name,
+	      vsource = new Das2WritebackVersionedSource(dasSource, version_uri, coords_uri, version_name,
 							 version_desc, version_info_url, false);
 	    }
 	    else {
-	      vsource = new Das2VersionedSource(dasSource, version_uri, version_name,
+	      vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name,
 						version_desc, version_info_url, false);
 	    }
 	    Iterator capiter = caps.values().iterator();

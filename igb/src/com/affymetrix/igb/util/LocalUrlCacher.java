@@ -17,12 +17,16 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import java.security.MessageDigest;
+import java.math.BigInteger;
+
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
   static String long_url_map = cache_root + "/long_url_map.props";
   static boolean DEBUG_CONNECTION = false;
   static boolean CACHE_FILE_URLS = false;
+  static MessageDigest md5_generator;
   static Properties long2short_filenames = new Properties();
 
   public static int IGNORE_CACHE = 100;
@@ -39,6 +43,7 @@ public class LocalUrlCacher {
     // load "long_url_file_name to short_cache_file_name" info
     // this can be a properties files??
     try {
+      md5_generator = MessageDigest.getInstance("MD5");
       File long_url_file = new File(long_url_map);
       System.out.println("properties map for conversion of long URLs: " + long_url_map);
       if (long_url_file.exists()) {
@@ -78,9 +83,13 @@ public class LocalUrlCacher {
       System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
 			 cache_file_name.length());
       System.out.println("    " + cache_file_name);
+      byte[] md5_digest = md5_generator.digest(encoded_url.getBytes());
+      BigInteger md5_big_int = new BigInteger(md5_digest);
+      String md5_string = md5_big_int.toString(16);
+      cache_file_name = cache_root + "/" + md5_string;
+      System.out.println("new file path: " + cache_file_name);
     }
     File cache_file = new File(cache_file_name);
-
 
       //    File parent_dir = cache_file.getParentFile();
       //    if (! parent_dir.exists()) {

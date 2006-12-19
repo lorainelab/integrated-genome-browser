@@ -38,7 +38,7 @@ import affymetrix.calvin.data.*;
  */
 public class LazyChpSym extends ScoredContainerSym {
 
-  //  static String PROBESET_SERVER_NAME = "localhost";
+  //  public static String PROBESET_SERVER_NAME = "localhost";
   public static String PROBESET_SERVER_NAME = "NetAffx";
 
   //  static Map genome2chp;
@@ -158,9 +158,6 @@ public class LazyChpSym extends ScoredContainerSym {
      *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
      *      [server_root]/[genomeid]/features?segment=[seqid];
      */
-    // ScoredContainerSym should have one and only one span/seq and it should be a SmartAnnotBioSeq
-    //   aseq is now a field, set in constructor
-    //    SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)this.getSpanSeq(0);
 
     Map das_servers = Das2Discovery.getDas2Servers();
     Das2ServerInfo server = (Das2ServerInfo)das_servers.get(PROBESET_SERVER_NAME);
@@ -248,13 +245,14 @@ public class LazyChpSym extends ScoredContainerSym {
 
     // should the syms be sorted here??
     Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
+    ArrayList rlist = new ArrayList(); // reusable list for retrieving syms from seq group sym hash
 
     // Iterate through probeset annotations, try hashing each one to chp data, collect hits
     for (int i=0; i<symcount; i++) {
-      SeqSymmetry probeset = (SeqSymmetry)symlist.get(i);
-      if (probeset instanceof EfficientProbesetSymA) {
+      SeqSymmetry annot = (SeqSymmetry)symlist.get(i);
+      if (annot instanceof EfficientProbesetSymA) {
 	// want to use integer id to avoid lots of String churn
-	EfficientProbesetSymA psym = (EfficientProbesetSymA)probeset;
+	EfficientProbesetSymA psym = (EfficientProbesetSymA)annot;
 	int nid = psym.getIntID();
 	Integer pid = new Integer(nid);
 	// look for a match in ID-to-ScoreEntry
@@ -266,6 +264,18 @@ public class LazyChpSym extends ScoredContainerSym {
 	  id_sym_hits.add(psym);
 	}
       }
+      else {
+	/*
+	String id = annot.getID();
+	if (id != null) {
+	  aseq.getSeqGroup().findSyms(id, rlist);
+	  if (rlist.size() > 0) { System.out.println("found syms for " + id  + " : " + rlist.size()) }
+	}
+	rlist.clear();
+	*/
+      }
+
+
     }
 
     // now see what was found
@@ -278,14 +288,15 @@ public class LazyChpSym extends ScoredContainerSym {
       IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), span.getBioSeq());
       this.addChild(isym);
 
-      //      if (data instanceof ProbeSetQuantificationData) {
-      //      }
-      //      else if (data instanceof ProbeSetQuantificationDetectionData) {
-      ProbeSetQuantificationDetectionData pdata = (ProbeSetQuantificationDetectionData)data;
-      quants[i] = pdata.getQuantification();
-      pvals[i] = pdata.getPValue();
-      //      }
-
+      if (data instanceof ProbeSetQuantificationData) {
+	ProbeSetQuantificationData pdata = (ProbeSetQuantificationData)data;
+	quants[i] = pdata.getQuantification();
+      }
+      else if (data instanceof ProbeSetQuantificationDetectionData) {
+	ProbeSetQuantificationDetectionData pdata = (ProbeSetQuantificationDetectionData)data;
+	quants[i] = pdata.getQuantification();
+	pvals[i] = pdata.getPValue();
+      }
     }
     //    this.addScores("score: " + this.getID(), quants);
     //    this.addScores("pval: " + this.getID(), pvals);

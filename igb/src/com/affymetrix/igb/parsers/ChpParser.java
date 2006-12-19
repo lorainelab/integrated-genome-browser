@@ -109,7 +109,7 @@ public class ChpParser {
     }
     /** legacy data */
     else if ((legchp = FusionCHPLegacyData.fromBase(chp)) != null) {
-      System.out.println("CHP file is for legacty data: " + legchp);
+      System.out.println("CHP file is for legacy data: " + legchp);
       results = parseLegacyChp(legchp);
     }
     else if ((genchp = FusionCHPGenericData.fromBase(chp))  != null) {
@@ -252,6 +252,10 @@ public class ChpParser {
       if (i<4 || i>=(ps_count-4))  {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
+      if (intid == 3916576) {
+	System.out.println("*** Found transcript ID 3916576 ***");
+        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
+      }
     }
     if (int_id_count > 0) {
       //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
@@ -318,6 +322,10 @@ public class ChpParser {
       }
       if (i<2 || i>=(ps_count-2))  {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant);
+      }
+      if (intid == 3916576) {
+	System.out.println("*** Found transcript ID 3916576 ***");
+        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant );
       }
     }
     if (int_id_count > 0) {

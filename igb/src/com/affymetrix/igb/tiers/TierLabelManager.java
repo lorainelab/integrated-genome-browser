@@ -115,9 +115,23 @@ public class TierLabelManager {
       TierGlyph tg = tierlabel.getReferenceTier();
       int child_count = tg.getChildCount();
       if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
+        // It would be nice if we could assume that a tier contains only
+        // GraphGlyph's or only non-GraphGlyph's, but that is not true.
+        // 
+        // When graph thresholding is turned on, there can be one or
+        // two other EfficientFillRectGlyphs that are a child of the tier glyph 
+        // but are not instances of GraphGlyph.  They can be ignored.
+        // (I would like to change them to be children of the GraphGlyph, but
+        // haven't done it yet.)
+        
         // Assume that if first child is a GraphGlyph, then so are all others
         for (int i=0; i<child_count; i++) {
-          GraphGlyph child = (GraphGlyph) tg.getChild(i);
+          Object ob = tg.getChild(i);
+          if (! (ob instanceof GraphGlyph)) {
+            // ignore the glyphs that are not GraphGlyph's
+            continue;
+          }
+          GraphGlyph child = (GraphGlyph) ob;
           Object sym = child.getInfo();
           // sym will be a GraphSym, but we don't need to cast it
           if (tierlabel.isSelected()) {

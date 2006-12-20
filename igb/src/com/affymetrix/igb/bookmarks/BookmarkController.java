@@ -107,7 +107,10 @@ public abstract class BookmarkController {
     //System.err.println("I am in loadGraphs!!!!");
     
     // Figure out the "source_url" paths of all currently-loaded graphs
-    java.util.List loaded_graphs = gviewer.collectGraphs();
+    java.util.List loaded_graphs = Collections.EMPTY_LIST;
+    if (gviewer != null) {
+      loaded_graphs = gviewer.collectGraphs();
+    }
     Iterator iter = loaded_graphs.iterator();
     java.util.List loaded_graph_paths = new Vector(loaded_graphs.size());
     while (iter.hasNext()) {
@@ -213,7 +216,7 @@ public abstract class BookmarkController {
         }
         if (DEBUG) {
           System.out.println(gmodel.getSelectedSeq());
-          System.out.println(gviewer.getSeqMap());
+          if (gviewer != null) System.out.println(gviewer.getSeqMap());
           System.out.println(col+", "+ypos+", "+ yheight
               +", "+use_floating_graphs+", "+show_label+", "+ show_axis
               +", "+minvis+", "+maxvis+", "
@@ -295,12 +298,14 @@ public abstract class BookmarkController {
       // Because of combo graphs, have to completely re-draw the display
       // Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
       // especially if the graphs are attached graphs.
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
+      if (gviewer != null) {
+        gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
+      }
       
     } catch (Exception ex) {
-      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error while loading graphs", ex);
+      ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
     } catch (Error er) {
-      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error while loading graphs", er);
+      ErrorHandler.errorPanel("ERROR", "Error while loading graphs", er);
     } finally {
       if (istr != null) try {istr.close();} catch (IOException ioe) {}
     }

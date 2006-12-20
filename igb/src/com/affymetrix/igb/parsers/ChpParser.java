@@ -32,6 +32,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.view.QuickLoadView2;
 
 public class ChpParser {
+  static boolean DEBUG = false;
   static boolean reader_registered = false;
   //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {
   // }
@@ -224,7 +225,7 @@ public class ChpParser {
       int intid = psqData.getId();
       String name = null;
       Integer nid = null;
-      if (i<4 || i>=(ps_count-4))  {
+      if (DEBUG && (i<4 || i>=(ps_count-4))) {
       	System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
       if (intid >= 0) {
@@ -249,11 +250,7 @@ public class ChpParser {
 	  str_id_count++;
 	}
       }
-      if (i<4 || i>=(ps_count-4))  {
-        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
-      }
-      if (intid == 3916576) {
-	System.out.println("*** Found transcript ID 3916576 ***");
+      if (DEBUG && (i<4 || i>=(ps_count-4)))  {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
     }
@@ -295,7 +292,7 @@ public class ChpParser {
       int intid = psqData.getId();
       String name = null;
       Integer nid = null;
-      if (i<2 || i>=(ps_count-2))  {
+      if (DEBUG && (i<2 || i>=(ps_count-2)))  {
       	System.out.println("preprocessed, id: " + intid + ", name: " + psqData.getName() + ", quant: " + quant);
       }
       if (intid >= 0) {
@@ -320,12 +317,8 @@ public class ChpParser {
 	  str_id_count++;
 	}
       }
-      if (i<2 || i>=(ps_count-2))  {
+      if (DEBUG && (i<2 || i>=(ps_count-2)))  {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant);
-      }
-      if (intid == 3916576) {
-	System.out.println("*** Found transcript ID 3916576 ***");
-        System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant );
       }
     }
     if (int_id_count > 0) {

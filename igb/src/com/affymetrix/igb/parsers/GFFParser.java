@@ -93,6 +93,11 @@ public class GFFParser implements AnnotationWriter  {
   public static final String GFF3_ID = "ID";
   public static final String GFF3_PARENT = "Parent";
 
+  static java.util.List pref_list = new ArrayList();
+  static {
+    pref_list.add("gff");
+  }
+
   int gff_version = 0;
 
   boolean DEBUG_GROUPING = false;
@@ -148,7 +153,7 @@ public class GFFParser implements AnnotationWriter  {
   String id_tag = null;
 
   TrackLineParser track_line_parser = new TrackLineParser();
-  
+
   /** Whether to convert group_id field value to lower case.
    *  Beginning with source forge version 1.5 of this file, we started always
    *  doing this, but the reason has been forgotten.  Unless we can remember
@@ -259,18 +264,24 @@ public class GFFParser implements AnnotationWriter  {
   public void setIdTag(String tag) {
     id_tag = tag;
   }
-  
+
   boolean use_track_lines = true;
 
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot) 
+  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
   throws IOException {
     return this.parse(istr, ".", seq_group, create_container_annot);
   }
 
   public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
     throws IOException {
+    return this.parse(istr, default_source, seq_group, create_container_annot, true);
+  }
+
+  public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
+		    boolean create_container_annot, boolean annotate_seq)
+    throws IOException {
     System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
-    
+
     int line_count = 0;
     int sym_count = 0;
     int group_count = 0;
@@ -295,7 +306,7 @@ public class GFFParser implements AnnotationWriter  {
       //      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) && (line_count < 100)) {
       while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
         if (line == null) { continue; }
-        if (line.startsWith("##")) { 
+        if (line.startsWith("##")) {
           processDirective(line);
           if (gff_version == 3) {
             if (line_count > 0) {
@@ -349,7 +360,7 @@ public class GFFParser implements AnnotationWriter  {
           if (seq == null) {
             seq = seq_group.addSeq(seq_name, 0);
           }
-          
+
 	  if (gff_version == GFF3) {
 	    // temporary hack to make GFF3 look like GFF1
 	    last_field = hackGff3GroupId(last_field);
@@ -499,11 +510,13 @@ public class GFFParser implements AnnotationWriter  {
 
         if (create_container_annot) {
           String meth = (String)sym.getProperty("method");
-          SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth);
+          SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth, annotate_seq);
           parent_sym.addChild(sym);
         }
         else {
-          seq.addAnnotation(sym);
+	  if (annotate_seq) {
+	    seq.addAnnotation(sym);
+	  }
         }
       }
     }
@@ -527,7 +540,7 @@ public class GFFParser implements AnnotationWriter  {
      *    Map meth2csym = (Map)seq2meths.get(seq);
      *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
      */
-  static SimpleSymWithProps getContainer(Map seq2meths, MutableAnnotatedBioSeq seq, String meth) {
+  static SimpleSymWithProps getContainer(Map seq2meths, MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
     Map meth2csym = (Map)seq2meths.get(seq);
     if (meth2csym == null) {
       meth2csym = new HashMap();
@@ -538,7 +551,10 @@ public class GFFParser implements AnnotationWriter  {
       parent_sym = new SimpleSymWithProps();
       parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
       parent_sym.setProperty("method", meth);
-      seq.addAnnotation(parent_sym);
+      parent_sym.setProperty("preferred_formats", pref_list);
+      if (annotate_seq) {
+	seq.addAnnotation(parent_sym);
+      }
       meth2csym.put(meth, parent_sym);
     }
     return parent_sym;
@@ -759,7 +775,7 @@ public class GFFParser implements AnnotationWriter  {
     addFeatureFilter("cluster");
     addFeatureFilter("psr");
     addFeatureFilter("link");
-    
+
     System.out.println("group tag: transcript_id");
     setGroupTag("transcript_id");
   }
@@ -775,7 +791,7 @@ public class GFFParser implements AnnotationWriter  {
   static final Integer TWO = new Integer(2);
 
   int number_of_duplicate_warnings = 0;
-  
+
   public String hackGff3GroupId(String atts) {
     String groupid = null;
     String featid = null;
@@ -792,7 +808,7 @@ public class GFFParser implements AnnotationWriter  {
       else if (tag.equals(GFF3_ID)) {
 	featid = val;
 	Object obj = gff3_id_hash.get(featid);
-	if (obj == null) { 
+	if (obj == null) {
           gff3_id_hash.put(featid, featid);
         }
 	else {

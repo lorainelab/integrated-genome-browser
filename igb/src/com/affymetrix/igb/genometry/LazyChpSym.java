@@ -38,8 +38,8 @@ import affymetrix.calvin.data.*;
  */
 public class LazyChpSym extends ScoredContainerSym {
 
-  //  public static String PROBESET_SERVER_NAME = "localhost";
   public static String PROBESET_SERVER_NAME = "NetAffx";
+  //  public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
 
   //  static Map genome2chp;
   SmartAnnotBioSeq aseq;
@@ -146,19 +146,11 @@ public class LazyChpSym extends ScoredContainerSym {
   public void loadCoords() {
     coords_loaded = true;
     /**
-     *  First check and see if probeset locations are already present as an annotation on seq
-     *  But what if _some_ but not all of the probeset locations were already loaded via a
-     *     different route (NetAffx page?  DAS/2 GUI?) -- this is a problem
-     *  If only other way to get probeset data with same type is through DAS/2 range query, then
-     *    DAS/2 optimizations _might_ deal with this -- if there already is an annotation on seq,
-     *    make the request anyway but run it through the optimizer -- if entire seq already covered,
-     *    optimizer will eliminate entire request, if only partial then optimizer will trim out
-     *    parts already covered and request the rest.
-     *
      *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
      *      [server_root]/[genomeid]/features?segment=[seqid];
+     *  DAS/2 query is run through Das2ClientOptimizer, so only regions that haven't been retrieved yet are queried for
+     *  If features have already been retrieved for entire seq, then optimizer won't make any feature query calls
      */
-
     Map das_servers = Das2Discovery.getDas2Servers();
     Das2ServerInfo server = (Das2ServerInfo)das_servers.get(PROBESET_SERVER_NAME);
     // server and vsource should already be checked before making this LazyChpSym, but checking again
@@ -177,75 +169,89 @@ public class LazyChpSym extends ScoredContainerSym {
       IGB.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
       return;
     }
-    List typelist = (List)vsource.getTypesByName(chp_array_type);
-    if (typelist == null || typelist.size() < 1) {
-      // try again with synonyms?
-      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      List synonyms = lookup.getSynonyms(chp_array_type);
-      if (synonyms != null)  {
-	System.out.println("synonym count: " + synonyms.size());
-	for (int i=0; i<synonyms.size(); i++) {
-	  String syn = (String)synonyms.get(i);
-	  System.out.println("synonym " + i + ": " + syn);
-	  typelist = (List)vsource.getTypesByName(syn);
-	  if ((typelist != null) && (typelist.size() > 0)) {
-	    break;
-	  }
+
+    /**
+     *  May need to load multiple annotations -- for instance, for exon arrays both Probes (in bp2 format)
+     *     and Transcripts (in ??? format [gff, bgn?])
+     *  Assume that any annotation type whose name starts with chp_array_type,
+     *     or starts with any synonym of chp_array_type, need to be loaded...
+     */
+    SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+    Map types = vsource.getTypes();
+    Map matched_types = new HashMap();
+    ArrayList chp_array_syns = lookup.getSynonyms(chp_array_type);
+    if (chp_array_syns == null) { chp_array_syns = new ArrayList(); chp_array_syns.add(chp_array_type); }
+    for (int i=0; i<chp_array_syns.size(); i++) {
+      String synonym = (String)chp_array_syns.get(i);
+      Iterator titer = types.entrySet().iterator();
+      while (titer.hasNext())  {
+	Map.Entry ent = (Map.Entry)titer.next();
+	Das2Type type = (Das2Type)ent.getValue();
+	String tname = type.getName();
+	if (tname.startsWith(synonym) && (matched_types.get(type) == null)) {
+	  matched_types.put(type, type);
 	}
       }
     }
-    if (typelist == null || typelist.size() < 1) {
+
+    if (matched_types.size() < 1) {
       // no DAS/2 type found for the CHP!
       System.out.println("****** WARNING: could not find location data for CHP array type: " + chp_array_type);
       return;
     }
 
-    Das2Type das_type = (Das2Type)typelist.get(0);
-    System.out.println("found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
-
-    SeqSymmetry typesym = aseq.getAnnotation(chp_array_type);
-    SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-    // to get Das2Region and Das2Type, need to intialize DAS/2 versioned source
-    //    (but can do this once per versioned source, rather than once per LazyChpSym?
-    //    (YES -- once DAS/2 versioned source is initialized, model doesn't have to
-    //       make additional queries to
-    Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);
-    System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
-
-    // if already retrieved chp_array_type coord annotations for this whole sequence (for example
-    //   due to a previously loaded CHP file with same "array_type", then optimizer
-    //   will figure this out and not make any queries --
-    //   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
-    // optimizer should also figure out (based on Das2Type info) an optimized format to load data with
-    //   (for example "bp2" for
-    Das2ClientOptimizer.loadFeatures(request_sym);
-
-    TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
     List symlist = new ArrayList(10000);
     List id_data_hits = new ArrayList(10000);
     List id_name_hits = new ArrayList(10000);
     List id_sym_hits = new ArrayList(10000);
     int id_hit_count = 0;
+    int str_hit_count = 0;
 
-    // collect probeset annotations for given chp type
-    //     (probesets should be at 3rd level down in annotation hierarchy)
-    for (int i=0; i<container.getChildCount(); i++) {
-      Das2FeatureRequestSym req = (Das2FeatureRequestSym)container.getChild(i);
-      int pset_count = req.getChildCount();
-      for (int k=0; k<pset_count; k++) {
-	// probeset should be one of:
-	//    EfficientProbesetSymA (for exon chips)
-	//    ??? (for gene chips)
-	//    ??? (for genotyping chips)
-	SeqSymmetry probeset = req.getChild(k);
-	symlist.add(probeset);
+    Iterator titer = matched_types.entrySet().iterator();
+    while (titer.hasNext()) {
+      Map.Entry ent = (Map.Entry)titer.next();
+      Das2Type das_type = (Das2Type)ent.getValue();
+      System.out.println("found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
+      SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+      // to get Das2Region and Das2Type, need to intialize DAS/2 versioned source
+      //    (but can do this once per versioned source, rather than once per LazyChpSym?
+      //    (YES -- once DAS/2 versioned source is initialized, model doesn't have to
+      //       make additional queries to
+      Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);
+      System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
+
+      // if already retrieved chp_array_type coord annotations for this whole sequence (for example
+      //   due to a previously loaded CHP file with same "array_type", then optimizer
+      //   will figure this out and not make any queries --
+      //   so if load multiple chps of same array type, actual feature query to DAS/2 server only happens once (per seq)
+      // optimizer should also figure out (based on Das2Type info) an optimized format to load data with
+      //   (for example "bp2" for
+      Das2ClientOptimizer.loadFeatures(request_sym);
+
+      TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
+      // TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
+
+      // collect probeset annotations for given chp type
+      //     (probesets should be at 3rd level down in annotation hierarchy)
+      for (int i=0; i<container.getChildCount(); i++) {
+	Das2FeatureRequestSym req = (Das2FeatureRequestSym)container.getChild(i);
+	int pset_count = req.getChildCount();
+	for (int k=0; k<pset_count; k++) {
+	  // probeset should be one of:
+	  //    EfficientProbesetSymA (for exon chips exon probesets)
+	  //    ??? (for exon chip transcript clusters)
+	  //    ??? (for gene chips)
+	  //    ??? (for genotyping chips)
+	  SeqSymmetry probeset = req.getChild(k);
+	  symlist.add(probeset);
+	}
       }
     }
-    int symcount = symlist.size();
 
+    int symcount = symlist.size();
     // should the syms be sorted here??
     Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
-    ArrayList rlist = new ArrayList(); // reusable list for retrieving syms from seq group sym hash
+    //    ArrayList rlist = new ArrayList(); // reusable list for retrieving syms from seq group sym hash
 
     // Iterate through probeset annotations, try hashing each one to chp data, collect hits
     for (int i=0; i<symcount; i++) {
@@ -261,26 +267,40 @@ public class LazyChpSym extends ScoredContainerSym {
 	if (data != null) {
 	  id_hit_count++;
 	  id_data_hits.add(data);
-	  id_sym_hits.add(psym);
+	  id_sym_hits.add(annot);
 	}
       }
       else {
-	/*
 	String id = annot.getID();
+	// try making id an integer and hashing to probeset_id2data
+	// if not an integer, try id as string and hashing to probeset_name2data
+	// [ what if can make it an integer, but no hit in probeset_id2data -- should also try probeset_name2data?
+	//     NO, for now consider that a miss -- if _can_ be an integer, should have been converted in ChpParser
+	//     to an Integer and populated in probeset_id2data ]
 	if (id != null) {
-	  aseq.getSeqGroup().findSyms(id, rlist);
-	  if (rlist.size() > 0) { System.out.println("found syms for " + id  + " : " + rlist.size()) }
+	  try {
+	    Integer pid = new Integer(id);
+	    Object data = probeset_id2data.get(pid);
+	    if (data != null) {
+	      id_hit_count++;
+	      id_data_hits.add(data);
+	      id_sym_hits.add(annot);
+	    }
+	  }
+	  catch (Exception ex) { // can't parse as an integer
+            if (probeset_name2data != null)  {
+              Object data = probeset_name2data.get(id);
+              if (data != null) { str_hit_count++; }
+            }
+	  }
 	}
-	rlist.clear();
-	*/
       }
-
-
     }
 
     // now see what was found
     float[] quants = new float[id_hit_count];
     float[] pvals = new float[id_hit_count];
+    boolean has_pvals = false;
     for (int i=0; i<id_hit_count; i++) {
       Object data = id_data_hits.get(i);
       SeqSymmetry sym = (SeqSymmetry)id_sym_hits.get(i);
@@ -291,19 +311,28 @@ public class LazyChpSym extends ScoredContainerSym {
       if (data instanceof ProbeSetQuantificationData) {
 	ProbeSetQuantificationData pdata = (ProbeSetQuantificationData)data;
 	quants[i] = pdata.getQuantification();
+	pvals[i] = 0;
       }
       else if (data instanceof ProbeSetQuantificationDetectionData) {
 	ProbeSetQuantificationDetectionData pdata = (ProbeSetQuantificationDetectionData)data;
 	quants[i] = pdata.getQuantification();
 	pvals[i] = pdata.getPValue();
+	has_pvals = true;
+      }
+      else {
+	quants[i] = 0;
+	pvals[i] = 0;
       }
     }
     //    this.addScores("score: " + this.getID(), quants);
     //    this.addScores("pval: " + this.getID(), pvals);
     this.addScores("score", quants);
-    this.addScores("pval", pvals);
+    if (has_pvals)  {
+      this.addScores("pval", pvals);
+    }
 
     System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
+    System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
   }
 
 

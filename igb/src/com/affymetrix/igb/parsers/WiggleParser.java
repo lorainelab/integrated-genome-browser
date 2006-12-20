@@ -17,10 +17,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkPropertyParser;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.util.GraphSymUtils;
+import java.net.URL;
 
 /**
  *  A parser for graph data in the UCSC browser Wiggle format.
@@ -61,11 +64,23 @@ public class WiggleParser {
     
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line;
+    Map graph_props_map = Collections.EMPTY_MAP;
+    
     while ((line = br.readLine()) != null && ! Thread.currentThread().isInterrupted()) {
       // Generally should be "track" line, followed by optional "format" line
       // (If there is no format line, BED4 format is assumed.)
       
       if (line.length() == 0) { continue; }
+      else if (line.startsWith("##IGB-graphs ")) {
+        try {
+        String graph_props = line.substring(13);
+        System.out.println(">>>> '" + graph_props + "'");
+        String the_url = "http://localhost:7085/UnibrowControl?" + graph_props;
+        graph_props_map = Bookmark.parseParameters(new URL(the_url));
+        } catch (Exception e) {
+          throw new IOException("Couldn't parse IGB-graphs pragma");
+        }
+      }
       else if (line.startsWith("#")) { continue; } 
       else if (line.startsWith("%")) { continue; } 
       else if (line.startsWith("browser")) { continue; } 
@@ -146,6 +161,9 @@ public class WiggleParser {
         seq.addAnnotation(graf);
       }
     }
+
+    BookmarkPropertyParser.thingy(grafs, graph_props_map);
+    
     return grafs;
   }
   

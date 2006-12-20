@@ -74,7 +74,6 @@ public class WiggleParser {
       else if (line.startsWith("##IGB-graphs ")) {
         try {
         String graph_props = line.substring(13);
-        System.out.println(">>>> '" + graph_props + "'");
         String the_url = "http://localhost:7085/UnibrowControl?" + graph_props;
         graph_props_map = Bookmark.parseParameters(new URL(the_url));
         } catch (Exception e) {
@@ -162,7 +161,7 @@ public class WiggleParser {
       }
     }
 
-    BookmarkPropertyParser.thingy(grafs, graph_props_map);
+    BookmarkPropertyParser.applyGraphProperties(grafs, graph_props_map);
     
     return grafs;
   }

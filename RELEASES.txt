@@ -4,6 +4,23 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-4.52
+  + Bugfix for loading exon array CHP files with scores for transcript clusters.
+  + Enhancements for simultaneous viewing of data from different DAS/2 servers.
+  + Added support to accept GFF-format data from a DAS/2 server, when available.
+  + Fixed bug in Pivot View window that caused data to sometimes be invisible
+    when the view was first opened
+  + Added more items to the "Change" pop-up menu.  You can now make most
+    customizations in this menu, rather than opening the "Customize" window.
+  + Now allowing graph thresholding to be used with ALL graph types.
+  + The map range box now additionally accepts input format "chrX:start+width"
+    in addition to the existing "chrX:start-end".
+  + Added support for two more "track line" settings: 
+    itemRgb="on" in BED annotation files, and 
+    graphType="points" in WIG graph files.
+  + It is now possible to load residues for a multiple sequences 
+    from a single FASTA file.  (Recommended only for small sequences.)
+
 IGB-4.50
   + Adds support for parsing more types of CHP files.
   + Adds more support for UCSC Genome Browser formats.

@@ -26,32 +26,40 @@ import java.util.*;
 public class BookmarkPropertyParser {
   static boolean DEBUG = false;
   
-    static double default_ypos = 30;
-    static double default_yheight = 60;
-    static Color default_col = Color.lightGray;
-    static boolean default_float = true;
-    static boolean default_show_label = true;
-    static boolean default_show_axis = false;
-    static double default_minvis = Double.NEGATIVE_INFINITY;
-    static double default_maxvis = Double.POSITIVE_INFINITY;
-    static double default_score_thresh = 0;
-    static int default_minrun_thresh = 30;
-    static int default_maxgap_thresh = 100;
-    static boolean default_show_thresh = false;
-    static int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
+  static double default_ypos = 30;
+  static double default_yheight = 60;
+  static Color default_col = Color.lightGray;
+  static boolean default_float = true;
+  static boolean default_show_label = true;
+  static boolean default_show_axis = false;
+  static double default_minvis = Double.NEGATIVE_INFINITY;
+  static double default_maxvis = Double.POSITIVE_INFINITY;
+  static double default_score_thresh = 0;
+  static int default_minrun_thresh = 30;
+  static int default_maxgap_thresh = 100;
+  static boolean default_show_thresh = false;
+  static int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
 
-    public BookmarkPropertyParser() {
+    
+  public static void applyGraphProperties(Collection grafs, Map map) {
+    Collection states = new ArrayList(grafs.size());
+    Iterator graf_iter = grafs.iterator();
+    while (graf_iter.hasNext()) {
+      GraphSym graf = (GraphSym) graf_iter.next();
+      GraphState gstate = graf.getGraphState();
+      states.add(gstate);
+    }
+    applyGraphPropertiesToStates(states, map);
   }
 
-  // graph_path will be used as a default graph name, if necessary
-  public static void thingy(Collection grafs, Map map) {
-    if (grafs != null) {
+  public static void applyGraphPropertiesToStates(Collection states, Map map) {
+    if (states != null) {
       Map combos = new HashMap();
-      Iterator graf_iter = grafs.iterator();
+      Iterator states_iter = states.iterator();
       int i = -1;
 
-      while (graf_iter.hasNext()) {
-        GraphSym graf = (GraphSym) graf_iter.next();
+      while (states_iter.hasNext()) {
+        GraphState gstate = (GraphState) states_iter.next();
         i++;
 
         String graph_path = UnibrowControlServlet.getStringParameter(map, "graph_source_url_" + i);
@@ -151,8 +159,7 @@ public class BookmarkPropertyParser {
               + show_thresh + ", " + thresh_direction);
         }
         
-        GraphState gstate = graf.getGraphState();
-        graf.setGraphName(graph_name);
+        gstate.getTierStyle().setHumanName(graph_name);
         if (graph_style_num != null)  {
           gstate.setGraphStyle(graph_style_num.intValue());
         }
@@ -192,5 +199,4 @@ public class BookmarkPropertyParser {
       }
     }
   }
-  
 }

@@ -408,6 +408,11 @@ public class Das2ClientOptimizer {
           // parsing probesets in bp2 format, also adding probeset ids
 	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
 	}
+	else if (content_subtype.equals("gff")) {
+	  System.out.println("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
+	  GFFParser parser = new GFFParser();
+	  feats = parser.parse(bis, ".", seq_group, false, false);
+	}
 	else {
 	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  success = false;

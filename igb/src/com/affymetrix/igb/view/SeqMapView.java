@@ -2663,6 +2663,9 @@ public class SeqMapView extends JPanel
     if (! report_hairline_position_in_status_bar) {
       return;
     }
+    if (hairline == null || IGB.getSingletonIGB() == null) {
+      return;
+    }
     String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
     IGB.getSingletonIGB().setStatusBarHairlinePosition(pos);
   }

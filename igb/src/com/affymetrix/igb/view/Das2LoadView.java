@@ -118,7 +118,6 @@ public class Das2LoadView extends JComponent
     table_scroller = new JScrollPane(types_table);
 
     this.setLayout(new BorderLayout());
-    this.add("West", new JScrollPane(tree));
 
     JPanel types_panel = new JPanel(new BorderLayout());
     types_panel.setBorder(new TitledBorder("Available Annotation Types"));
@@ -133,12 +132,12 @@ public class Das2LoadView extends JComponent
     types_panel.add("South", load_features_box);
 
 
-    JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+    final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     //    splitpane.setDividerSize(8);
     //    splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
+    splitpane.setLeftComponent(new JScrollPane(tree));
     if (INCLUDE_NAME_SEARCH) {
-      splitpane.setLeftComponent(new JScrollPane(tree));
       tpane.addTab("Types", types_panel);
       tpane.addTab("Name Search", namesearchP);
       splitpane.setRightComponent(tpane);
@@ -146,6 +145,15 @@ public class Das2LoadView extends JComponent
     else {
       splitpane.setRightComponent(types_panel);
     }
+    
+    // As soon as this component becomes visible, set the splitpane position
+    this.addComponentListener(new ComponentAdapter() {
+      public void componentShown(ComponentEvent evt) {
+        splitpane.setDividerLocation(0.35);
+        // but only do this the FIRST time this component is made visible
+        Das2LoadView.this.removeComponentListener(this);
+      }
+    });
 
     this.add("Center", splitpane);
 
@@ -604,7 +612,7 @@ class Das2TypeState {
 
 
 class Das2TypesTableModel extends AbstractTableModel   {
-  static String[] column_names = { "load", "name", "ID", "ontology", "source", "load strategy" };
+  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range" };
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
   static int ID_COLUMN = 2;

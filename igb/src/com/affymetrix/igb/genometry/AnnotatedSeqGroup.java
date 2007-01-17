@@ -261,8 +261,8 @@ public class AnnotatedSeqGroup {
             results.addAll(syms);
             success = true;
           }
+	  postfix++;
         }
-        postfix++;
       }
     }
     return success;

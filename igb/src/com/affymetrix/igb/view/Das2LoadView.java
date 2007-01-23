@@ -28,6 +28,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -342,7 +343,14 @@ public class Das2LoadView extends JComponent
 	public Object construct() {
 	  for (int i=0; i<request_syms.size(); i++) {
 	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
-	    if (USE_DAS2_OPTIMIZER) {
+
+            // Create an AnnotStyle so that we can automatically set the
+            // human-readable name to the DAS2 name, rather than the ID, which is a URI
+            Das2Type type = request_sym.getDas2Type();
+            AnnotStyle style = AnnotStyle.getInstance(type.getID());
+            style.setHumanName(type.getName());
+            
+            if (USE_DAS2_OPTIMIZER) {
 	      Das2ClientOptimizer.loadFeatures(request_sym);
 	    }
 	    else {
@@ -571,6 +579,8 @@ class Das2TypeState {
     //    System.out.println("subnode_load = " + subnode_load);
     //        System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
+    
+    // WARNING: These node names can be too long.  Need to replace them with shorter names
     lnode_load = das2_node.node(subnode_load);
     lnode_strategy = das2_node.node(subnode_strategy);
     load = lnode_load.getBoolean(type.getID(), default_load);

@@ -296,7 +296,7 @@ public class Das2VersionedSource  {
       int typeCounter = 0;
 
       //      ontologyStuff1();
-      for (int i=0; i< typelist.getLength(); i++)  {
+      for (int i=0; i< typelist.getLength(); i++) {
 	Element typenode = (Element)typelist.item(i);
 
 	String typeid = typenode.getAttribute(URID); // Gets the ID value
@@ -344,15 +344,28 @@ public class Das2VersionedSource  {
 	  String val = pnode.getAttribute("value");
 	  props.put(key, val);
 	}
+        
 	//	ontologyStuff2();
 	// System.out.println("type id att: " + typeid);
 	// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
-	URI type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
-	// System.out.println("type URI: " + type_uri.toString());
-	Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?
-	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
-	//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
-	this.addType(type);
+
+        // If one of the typeid's is not a valid URI, then skip it, but allow
+        // other typeid's to get through.
+        URI type_uri = null;
+        try {
+	  type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
+        } catch (Exception e) {
+          System.out.println("Error in typeid, skipping: " + typeid + 
+              "\nUsually caused by an improper character in the URI.");
+        }
+        
+        if (type_uri != null) {
+          // System.out.println("type URI: " + type_uri.toString());
+          Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?
+          //	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
+          //	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
+          this.addType(type);
+        }
       }
     }
     catch (Exception ex) {

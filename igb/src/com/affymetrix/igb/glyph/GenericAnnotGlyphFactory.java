@@ -582,9 +582,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     return der;
   }
 
+  /** Used to manage a re-usable object pool. */
   static java.util.Stack derived_stack = new Stack();
   static final int max_stack_size = 100;
   
+  /** Get an instance of DerivedSeqSymmetry from an object pool. */
   static DerivedSeqSymmetry getDerived() {
     if (derived_stack.isEmpty()) {
       return new SimpleDerivedSeqSymmetry();
@@ -593,6 +595,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
+  /** Indicate that the given object is no longer in use and can be re-used later. */
   static void recycleDerived(DerivedSeqSymmetry sym) {
     for (int i=sym.getChildCount()-1; i>=0; i--) {
       recycleDerived((DerivedSeqSymmetry) sym.getChild(i));

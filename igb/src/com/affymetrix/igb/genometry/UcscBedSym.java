@@ -188,7 +188,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     }
   }
   
-  class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps {
+  class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
     public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
       super(start, end, seq);
     }
@@ -197,6 +197,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     public Map cloneProperties() {return UcscBedSym.this.cloneProperties();}
     public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}
     public boolean setProperty(String key, Object val) {return UcscBedSym.this.setProperty(key, val);}
+    public float getScore() {return UcscBedSym.this.getScore(); }
   }
   
   // SeqSpan implementation

@@ -241,7 +241,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	    }
 	  }
 	  if (field_count >=5) { score = Float.parseFloat(fields[findex++]); } // score field
-	  if (field_count >= 6) { forward = (fields[findex++].equals("+")); }  // strand field
+	  if (field_count >= 6) { forward = !(fields[findex++].equals("-")); }  // strand field
 	  else  { forward = (beg <= end); }
 	  min = (int)Math.min(beg, end);
 	  max = (int)Math.max(beg, end);

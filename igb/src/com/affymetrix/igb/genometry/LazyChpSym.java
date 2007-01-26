@@ -4,12 +4,10 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.util.IntList;
-import com.affymetrix.igb.util.FloatList;
 
 import affymetrix.calvin.data.*;
 
@@ -212,6 +210,10 @@ public class LazyChpSym extends ScoredContainerSym {
       Map.Entry ent = (Map.Entry)titer.next();
       Das2Type das_type = (Das2Type)ent.getValue();
       System.out.println("found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
+
+      // Set the human name on the tier to the short type name, not the long URL ID
+      AnnotStyle.getInstance(das_type.getID()).setHumanName(das_type.getName());
+      
       SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
       // to get Das2Region and Das2Type, need to intialize DAS/2 versioned source
       //    (but can do this once per versioned source, rather than once per LazyChpSym?

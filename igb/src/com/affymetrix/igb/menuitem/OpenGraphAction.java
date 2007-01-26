@@ -195,6 +195,11 @@ public class OpenGraphAction extends AbstractAction {
     return graphs;
   }
 
+  /**
+   *  Return a graph name for the given URL.  The graph name is typically just
+   *  the last portion of the URL, but the entire URL may be used, depending on
+   *  the preference GraphGlyphUtils.PREF_USE_URL_AS_NAME.
+   */
   public static String getGraphNameForURL(URL furl) {
     String name;
     boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
@@ -208,6 +213,24 @@ public class OpenGraphAction extends AbstractAction {
         String last_name = name.substring(index+1);
         if (last_name.length()>0) { 
           name = URLDecoder.decode(last_name); 
+        }
+      }
+    }
+    return name;
+  }
+
+  public static String getGraphNameForFile(String name) {
+    boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+        GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
+    if (use_full_url) {
+      // leave the name alone
+    } else { // use only the filename, not the whole url
+      int index = name.lastIndexOf(System.getProperty("file.separator"));
+      if (index > 0) {
+        String last_name = name.substring(index+1);
+        if (last_name.length()>0) { 
+          // shouldn't need to do URLDecoder.decode()
+          name = last_name; 
         }
       }
     }

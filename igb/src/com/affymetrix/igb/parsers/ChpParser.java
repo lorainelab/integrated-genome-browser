@@ -17,19 +17,17 @@ import java.util.*;
 
 import affymetrix.fusion.chp.*;
 import affymetrix.calvin.data.*;
-import affymetrix.calvin.parsers.*;
 import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.view.QuickLoadView2;
 
 public class ChpParser {
   static boolean DEBUG = false;
@@ -65,14 +63,12 @@ public class ChpParser {
     String chp_type_name = chp_type.getGuid();
     System.out.println("CHP type: " + chp_type_name);
 
-
     // The following function will determine if the CHP file read contains "legacy" format data. This
     // can be either a GCOS/XDA file or a Command Console file. The "legacy" format data is that
     // which contains a signal, detection call, detection p-value, probe pairs, probe pairs used and
     // comparison results if a comparison analysis was performed. This will be from the MAS5 algorithm.
     // Note: The file may also contain genotyping results from the GTYPE software. The ExtractData function
     // will perform a check to ensure it is an expression CHP file.
-    boolean success = false;
 
     FusionCHPQuantificationData qchp;
     FusionCHPQuantificationDetectionData qdchp;
@@ -129,6 +125,7 @@ public class ChpParser {
        *
        */
     }
+    
     return results;
   }
 
@@ -172,6 +169,11 @@ public class ChpParser {
       return null;
     }
 
+    String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+    // Force the AnnotStyle for the container to have glyph depth of 1
+    AnnotStyle style = AnnotStyle.getInstance(type_name);
+    style.setGlyphDepth(1);
+    
     List results = new ArrayList();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
@@ -190,8 +192,8 @@ public class ChpParser {
 	// LazyChpSym constructor handles adding span to itself for aseq
 	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
 	chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-	chp_sym.setProperty("method", file_name);
-	chp_sym.setID(file_name);
+	chp_sym.setProperty("method", type_name);
+	chp_sym.setID(type_name);
 	aseq.addAnnotation(chp_sym);
 	results.add(chp_sym);
       }
@@ -218,6 +220,8 @@ public class ChpParser {
     System.out.println("probeset count: " + ps_count);
     ProbeSetQuantificationDetectionData psqData;
 
+    String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+    
     for (int i=0; i<ps_count; i++) {
       psqData = chp.getQuantificationDetectionEntry(i);
       float quant = psqData.getQuantification();
@@ -256,7 +260,7 @@ public class ChpParser {
     }
     if (int_id_count > 0) {
       //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
-      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
+      results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification + detection CHP file");
@@ -454,6 +458,11 @@ public class ChpParser {
       return null;
     }
 
+    String type_name = OpenGraphAction.getGraphNameForFile(file_name);      
+    // Force the AnnotStyle for the container to have glyph depth of 1
+    AnnotStyle style = AnnotStyle.getInstance(type_name);
+    style.setGlyphDepth(1);
+
     // now for each sequence seen, sort the SinEntry list by span min/max
     ScoreEntryComparator comp = new ScoreEntryComparator();
     Iterator ents  = seq2entries.entrySet().iterator();
@@ -462,15 +471,12 @@ public class ChpParser {
       MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
       java.util.List entry_list = (java.util.List)ent.getValue();
       Collections.sort(entry_list, comp);
-
+      
       // now make the container syms
       ScoredContainerSym container = new ScoredContainerSym();
       container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-      container.setProperty("method", file_name);
+      container.setProperty("method", type_name);
 
-      // Force the AnnotStyle for the container to have glyph depth of 1
-      AnnotStyle style = AnnotStyle.getInstance(file_name);
-      style.setGlyphDepth(1);
       int entry_count = entry_list.size();
       float[] scores = new float[entry_count];
       System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
@@ -479,8 +485,8 @@ public class ChpParser {
 	container.addChild(sentry.sym);
 	scores[k] = sentry.score;
       }
-      container.addScores("probeset scores: " + file_name, scores);
-      container.setID(file_name);
+      container.addScores("probeset scores: " + type_name, scores);
+      container.setID(type_name);
       aseq.addAnnotation(container);
     }
 
@@ -562,6 +568,11 @@ public class ChpParser {
 	return null;
       }
 
+      String type_name = OpenGraphAction.getGraphNameForFile(file_name);
+      // Force the AnnotStyle for the container to have glyph depth of 1
+      AnnotStyle style = AnnotStyle.getInstance(type_name);
+      style.setGlyphDepth(1);
+
       // now for each sequence seen, sort the SinEntry list by span min/max
       ScoreEntryComparator comp = new ScoreEntryComparator();
       Iterator ents  = seq2entries.entrySet().iterator();
@@ -574,11 +585,8 @@ public class ChpParser {
 	// now make the container syms
 	ScoredContainerSym container = new ScoredContainerSym();
 	container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-	container.setProperty("method", file_name);
+	container.setProperty("method", type_name);
 
-        // Force the AnnotStyle for the container to have glyph depth of 1
-        AnnotStyle style = AnnotStyle.getInstance(file_name);
-        style.setGlyphDepth(1);
 	int entry_count = entry_list.size();
 	float[] quants = new float[entry_count];
 	float[] pvals = new float[entry_count];
@@ -589,9 +597,9 @@ public class ChpParser {
 	  quants[k] = sentry.quant;
 	  pvals[k] = sentry.pval;
 	}
-	container.addScores("probeset quantification: " + file_name, quants);
-	container.addScores("probeset pval: " + file_name, pvals);
-        container.setID(file_name);
+	container.addScores("probeset quantification: " + type_name, quants);
+	container.addScores("probeset pval: " + type_name, pvals);
+        container.setID(type_name);
 	aseq.addAnnotation(container);
       }
     }  // end (is_exon_chp) conditional
@@ -714,7 +722,7 @@ public class ChpParser {
       if (aseq.getLength() < last_base_pos) {
 	aseq.setLength(last_base_pos);
       }
-      String graph_id = tchp.getFileName();
+      String graph_id = OpenGraphAction.getGraphNameForFile(tchp.getFileName());
       if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq); }
       GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
 

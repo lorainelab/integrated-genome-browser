@@ -83,7 +83,7 @@ public class Bookmark implements Serializable {
    *  HttpServletRequest objects.
    *  Thus if the query string is  x=3&z&y=4&y=5  then the
    *  resulting Map will have three String[] entries, for x={"3"} and z={""} and y={"4", "5"}.
-   *  @return the same Map that was passed in, which can be empty.  All entries will be Strings.
+   *  All entries will be Strings.
    *  @param use_url_decoding whether or not to apply {@link URLDecoder} to all keys and values.
    */
   public static void parseParametersFromQuery(Map map, String query, boolean use_url_decoding) {

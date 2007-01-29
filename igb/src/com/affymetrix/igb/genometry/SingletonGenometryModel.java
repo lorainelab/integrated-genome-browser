@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -215,7 +215,6 @@ public class SingletonGenometryModel {
    *  All the SymSelectionListener's will be notified.
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
-   *  @return The List of sequences with selections on them after this operation.
    */
   public void setSelectedSymmetries(List syms, Object src)  {
     List seqs_with_selections = setSelectedSymmetries(syms);

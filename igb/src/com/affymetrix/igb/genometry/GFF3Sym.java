@@ -274,9 +274,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   
   /**
    *  Converts feature types that IGB understands into one of the constant strings:
-   *  {@link #FEATURE_TYPE_GENE}, etc.  Invalid ones, and valid ones that
-   *  IGB doesn't understand are transformed into
-   *  {@link #FEATURE_TYPE_OTHER}.
+   *  {@link #FEATURE_TYPE_GENE}, etc.  Invalid ones, are simply interned.
    */
   public static String normalizeFeatureType(String s) {
     

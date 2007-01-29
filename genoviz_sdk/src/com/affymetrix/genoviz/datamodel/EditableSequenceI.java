@@ -36,11 +36,7 @@ public interface EditableSequenceI extends SequenceI {
    * @param new_residues the residues to insert.
    */
   public void insertResidues(int start, String new_residues);
-  /**
-   * gets all the residues.
-   *
-   * @return a String of single-letter codes for the residues.
-   */
+
   public void insertString( int offset, String str );
 
   public void remove( int offset, int length );

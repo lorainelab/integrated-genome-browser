@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -71,10 +71,28 @@ public class Bookmark implements Serializable {
     Map map = new LinkedHashMap();
     String query = url.getQuery();
     if (query != null) {
+      parseParametersFromQuery(map, query, true);
+    }
+    if (DEBUG) System.out.println("Finished parsing");
+    return map;
+  }
+
+  /** Takes the query parameter string from a URL and parses the parameters
+   *  into a the given map.
+   *  All entries will be String arrays, as is expected by
+   *  HttpServletRequest objects.
+   *  Thus if the query string is  x=3&z&y=4&y=5  then the
+   *  resulting Map will have three String[] entries, for x={"3"} and z={""} and y={"4", "5"}.
+   *  @return the same Map that was passed in, which can be empty.  All entries will be Strings.
+   *  @param use_url_decoding whether or not to apply {@link URLDecoder} to all keys and values.
+   */
+  public static void parseParametersFromQuery(Map map, String query, boolean use_url_decoding) {
+    if (query != null) {
       StringTokenizer st = new StringTokenizer(query, "&");
       while (st.hasMoreTokens()) {
         String token = (String) st.nextToken();
         int ind_1 = token.indexOf('=');
+
         String key, value;
         if (ind_1 > 0) {
           key = token.substring(0, ind_1);
@@ -83,18 +101,29 @@ public class Bookmark implements Serializable {
           key = token;
           value = "";
         }
-        try {
+
+        if (use_url_decoding) try {
           key = URLDecoder.decode(key, "UTF-8");
           value = URLDecoder.decode(value, "UTF-8");
         } catch (java.io.UnsupportedEncodingException e) {}
-        if (DEBUG) System.out.println("Bookmark.parseParameters: Key  ->  "+key+",  value -> "+value);
+
         addToMap(map, key, value);
+
+        if (DEBUG) System.out.println("Bookmark.parseParameters: Key  ->  "+key+",  value -> "+value);
       }
     }
     if (DEBUG) System.out.println("Finished parsing");
-    return map;
   }
-
+  
+  public static final String IGB_GRAPHS_PRAGMA = "##IGB-graphs ";
+  
+  public static void parseIGBGraphsPragma(Map map, String line, boolean use_url_decoding) {
+    if (line.startsWith(IGB_GRAPHS_PRAGMA)) {
+      String graph_props = line.substring(IGB_GRAPHS_PRAGMA.length());
+      parseParametersFromQuery(map, graph_props, use_url_decoding);
+    }
+  }
+  
   /**
    *  Adds a key->value mapping to a map where the key will map to
    *  a String array.  If the key already has a String[] mapped to it,

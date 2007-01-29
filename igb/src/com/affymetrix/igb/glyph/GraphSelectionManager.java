@@ -538,7 +538,7 @@ public class GraphSelectionManager
    *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
    *  that could cause conflicts with the other pop-up menu which is opened
    *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
-   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List)}
+   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List, SymWithProps)}
    *  provided by the interface ContextualPopupListener to add to the pop-up
    *  menu which the SeqMapView itself constructs.
    */

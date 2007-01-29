@@ -39,7 +39,7 @@ public class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym  
    *  @param seq  consider annotations only on this seq
    *  @param exclude_graphs if true, ignore graph annotations
    *  @param min  an initial minimum value.
-   *  @param min  an initial maximum value.
+   *  @param max  an initial maximum value.
    */
   public int[] getAnnotationBounds(BioSeq seq, boolean exclude_graphs, int min, int max) {
     int[] min_max = new int[2];

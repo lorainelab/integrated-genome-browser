@@ -88,6 +88,13 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
       //      NeoMap cmap = (NeoMap)child_maps.get(i);
       for (int y=0; y<tile_rows; y++) {
 	NeoMap cmap = child_maps[x][y];
+        
+        if (cmap == null) {
+          // maps can be null if the initial parameters don't match capabilities
+          // of the graphics hardware.
+          continue;
+        }
+        
         // System.out.println("map: " + cmap);
         ViewI cview = cmap.getView();
         // System.out.println("view: " + cview);
@@ -211,7 +218,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
             child_maps[x][y] = newmap;
 	    //            System.out.println("added map : " + child_maps[x][y]);
-	    win.show();
+            win.show();
 	    break;
 	  }
 	}

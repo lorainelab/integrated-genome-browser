@@ -91,8 +91,8 @@ public class AnnotStyle implements IAnnotStyle {
     if (style == null) {
       AnnotStyle template = getDefaultInstance();
       style = new AnnotStyle(unique_name, persistent, template);
+      static_map.put(unique_name.toLowerCase(), style);
     }
-    static_map.put(unique_name.toLowerCase(), style);
     return style;
   }
 

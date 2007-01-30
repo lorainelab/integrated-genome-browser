@@ -238,26 +238,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   void setTiersCollapsed(java.util.List tier_labels, boolean collapsed) {
-    for (int i=0; i<tier_labels.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
-      IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
-      if (style.getExpandable()) {
-        style.setCollapsed(collapsed);
-
-        // When collapsing, make them all be the same height as the tier.
-        // (this is for simplicity in figuring out how to draw things.)
-        if (collapsed) {
-          java.util.List graphs = handler.getContainedGraphs(tlg);
-          double tier_height = style.getHeight();
-          for (int j=0; j<graphs.size(); j++) {
-            GraphGlyph graph = (GraphGlyph) graphs.get(j);
-            graph.getGraphState().getTierStyle().setHeight(tier_height);
-          }
-        }
-      }
-    }
-
-    refreshMap(false);
+    handler.setTiersCollapsed(tier_labels, collapsed, true, true);
+    refreshMap(true);
   }
 
   public void changeExpandMax(java.util.List tier_labels) {
@@ -350,7 +332,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
     showMenu.removeAll();
-    refreshMap(false);
+
+    ArrayList label_glyphs = new ArrayList(handler.getAllTierLabels());
+    handler.orderTierLabels(label_glyphs);
+    handler.orderTiersByLabels(label_glyphs);
+
+    refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
   }
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -376,6 +363,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         public void actionPerformed(ActionEvent e) {
           style.setShow(true);
           showMenu.remove(show_tier);
+          ArrayList label_glyphs = new ArrayList(handler.getAllTierLabels());
+          handler.orderTierLabels(label_glyphs);
+          handler.orderTiersByLabels(label_glyphs);
           refreshMap(false);
         }
       });

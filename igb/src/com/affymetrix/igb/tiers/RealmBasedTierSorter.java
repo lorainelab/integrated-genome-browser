@@ -14,7 +14,6 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
-import com.affymetrix.igb.view.SeqMapView;
 import java.util.Comparator;
 
   /**
@@ -29,10 +28,8 @@ import java.util.Comparator;
    *  see {@link TierLabelManager#setTierSorter(Comparator)}
    */
   public class RealmBasedTierSorter implements Comparator {
-    SeqMapView smv = null;    
     
-    public RealmBasedTierSorter(SeqMapView smv) {
-      this.smv = smv;
+    public RealmBasedTierSorter() {
     }
     
     public int compare(Object obj1, Object obj2) {
@@ -50,54 +47,39 @@ import java.util.Comparator;
       // Tiers in different realms are sorted purley by their realm:
       // lower realm numbers go on top.
       //
-      // For now:
-      // realm = -1 is for (+/-) and (no-direction) strands
-      // realm = 0  is for (+) strand
-      // realm = 1  is for axis tier
-      // realm = 2  is for (-) strand
       int realm_1 = -1;
       int realm_2 = -1;
       
       int dir1 = ref1.getDirection();
       int dir2 = ref2.getDirection();
-
-      if (dir1 == TierGlyph.DIRECTION_REVERSE) {
-        realm_1 = 2;
-      } else if (dir1 == TierGlyph.DIRECTION_FORWARD) {
-        realm_1 = 0;
-      } else {
-        realm_1 = -1;
+      
+      switch (dir1) {
+        case TierGlyph.DIRECTION_FORWARD:
+          realm_1 = 0; break;
+        case TierGlyph.DIRECTION_AXIS:
+          realm_1 = 1; break;
+        case TierGlyph.DIRECTION_REVERSE:
+          realm_1 = 2; break;
+        default:
+          // if either tier is DIRECTION_NONE or _BOTH, then realms do not apply
+          return basicCompare(label_1, label_2);
       }
       
-      if (dir2 == TierGlyph.DIRECTION_REVERSE) {
-        realm_2 = 2;
-      } else if (dir2 == TierGlyph.DIRECTION_FORWARD) {
-        realm_2 = 0;
-      } else {
-        realm_2 = -1;
+      switch (dir2) {
+        case TierGlyph.DIRECTION_FORWARD:
+          realm_2 = 0; break;
+        case TierGlyph.DIRECTION_AXIS:
+          realm_2 = 1; break;
+        case TierGlyph.DIRECTION_REVERSE:
+          realm_2 = 2; break;
+        default:
+          // if either tier is DIRECTION_NONE or _BOTH, then realms do not apply
+          return basicCompare(label_1, label_2);
       }
-      
-      if (smv != null) {
-        TierGlyph central_tier = smv.getAxisTier();
-        if (ref1 == central_tier) {
-          realm_1 = 1;
-        }
-        else if (ref2 == central_tier) {
-          realm_2 = 1;
-        }
-      }
-            
-      //IAnnotStyle a1 = ref1.getAnnotStyle();
-      //IAnnotStyle a2 = ref2.getAnnotStyle();            
-      
-      // anything declared as realm -1 can go wherever it wants
-      if (realm_1 == -1 || realm_2 == -1) {
-        return basicCompare(label_1, label_2);
-      }
-
+ 
       if (realm_1 < realm_2) {
         return -1;
-      } else if (realm_2 > realm_1) {
+      } else if (realm_1 > realm_2) {
         return 1;
       }
 

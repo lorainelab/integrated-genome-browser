@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -63,6 +63,26 @@ public class AltSpliceView extends JComponent
       }
     }
 
+    // override so that the tier glyph in the splice view has a different
+    // AnnotStyle from the TierGlyph in the main view.  (So that if we hide it,
+    // it won't become hidden in the main view.)
+    public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+      // Create a temporary style with all the properties of the given style.
+      // Thus any changes to this copy in the slice view 
+      // will not affect the original in the main view
+      AnnotStyle style_copy = new AnnotStyle() {};
+      style_copy.copyPropertiesFrom(style);
+      TierGlyph[] glyphs = super.getTiers(meth, next_to_axis, style_copy);
+      
+      // super.getTiers() may have created a brand new tier, in which case
+      // the style is already set to "style_copy", or it may have re-used
+      // a tier, in which case it may still have an old copy of the style
+      // associated with it.  Reset the style to be certain.
+      glyphs[0].setStyle(style_copy);
+      glyphs[1].setStyle(style_copy);
+      return glyphs;
+    }
+    
     void postSelections() {
       // someday, we might want to think about not posting selections from the
       // alt splice view.  The only thing that makes sense for hearing these
@@ -275,46 +295,26 @@ public class AltSpliceView extends JComponent
 
     Action hide_action = new AbstractAction("Hide Tier") {
       public void actionPerformed(ActionEvent e) {
+        spliced_view.doEdgeMatching(Collections.EMPTY_LIST, false);
         handler.hideTiers(handler.getSelectedTierLabels(), false, true);
       }
     };
 
     Action restore_all_action = new AbstractAction("Show All") {
       public void actionPerformed(ActionEvent e) {
-        java.util.List list = handler.getAllTierLabels();
-        Iterator iter = list.iterator();
-        while (iter.hasNext()) {
-          TierLabelGlyph tlg = (TierLabelGlyph) iter.next();
-          TierGlyph tg = tlg.getReferenceTier();
-          IAnnotStyle style = tg.getAnnotStyle();
-          if (tg.getChildCount() <= 0) {
-            tg.setState(TierGlyph.HIDDEN);
-          }
-          else if (style == null) {
-            // Style may be null for Coordinates, and for "Stop Codons" tiers
-            tg.restoreState();
-          }
-          else {
-            if (style.getShow()) {
-              tg.setState(style.getCollapsed() ? TierGlyph.COLLAPSED : TierGlyph.EXPANDED);
-            } else {
-              tg.setState(TierGlyph.HIDDEN);
-            }
-          }
-          handler.repackTheTiers(true, true);
-        }
+        // undo all edge-matching, because packing will behave badly otherwise.
+        spliced_view.doEdgeMatching(Collections.EMPTY_LIST, false);        
+        handler.showTiers(handler.getAllTierLabels(), true, true);
       }
     };
 
     hide_action.setEnabled(! selected_labels.isEmpty());
-    //show_all_action.setEnabled( true );
     restore_all_action.setEnabled(true);
 
     if (popup.getComponentCount() > 0) {
       popup.add(new JSeparator());
     }
     popup.add(hide_action);
-    //popup.add(show_all_action);
     popup.add(restore_all_action);
   }
   

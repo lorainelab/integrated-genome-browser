@@ -153,7 +153,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   /**
    *  Make a GraphSym, but only with scores for scored intervals in the specified orientation.
    *  @param orientation  true for forward strand intervals.
-   *  @see #makeGraphSym(String,boolean)
+   *  @see #makeGraphSym(String,AnnotatedSeqGroup)
    */
   public GraphIntervalSym makeGraphSym(String name, boolean orientation, AnnotatedSeqGroup seq_group) {
     float[] scores = getScores(name);

@@ -63,7 +63,7 @@ public class GraphGlyphUtils {
   /**
    *  Checks to make sure the the boundaries of a floating glyph are
    *  inside the map view.
-   *  See {@link checkPixelBounds(GraphGlyph, AffyTieredMap)}.
+   *  See {@link #checkPixelBounds(GraphGlyph, AffyTieredMap)}.
    */
   public static boolean checkPixelBounds(GraphGlyph gl, SeqMapView gviewer) {
     AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
@@ -211,7 +211,7 @@ public class GraphGlyphUtils {
   
   /**
    *  Combines two graphs by the given arithmetical operation.
-   *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable()}.
+   *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.
    *  During division, indefinite values are replaced by zero.
    */
   public static GraphSym graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {

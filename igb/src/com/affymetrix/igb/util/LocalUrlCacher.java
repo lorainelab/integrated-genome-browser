@@ -388,7 +388,7 @@ public class LocalUrlCacher {
   }
 
   /**
-   *  Similar to {@link #getInputStream()}, but asks the user before
+   *  Similar to {@link #getInputStream(String)}, but asks the user before
    *  downloading anything over the network.
    *  @return returns an InputStream or null if the user cancelled or the file
    *  is unreachable.

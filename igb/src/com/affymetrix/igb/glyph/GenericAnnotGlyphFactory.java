@@ -296,9 +296,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;
-    
-    boolean use_score_colors = the_style.getColorByScore();
-    
+        
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
@@ -319,6 +317,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
       //          System.out.println("using label: " + label);
+
       lglyph.setLabel(label);
       pheight = 2 * pheight;
       pglyph = lglyph;
@@ -388,6 +387,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         GlyphI cglyph = (GlyphI)child_glyph_class.newInstance();
         
         double cheight = thick_height;
+        Color child_color = getSymColor(child, the_style);
         if (cdsSpan != null) {
           cheight = thin_height;
           if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } else if (SeqUtils.overlap(cdsSpan, cspan)) {
@@ -401,7 +401,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             if (cds_span != null) {
               GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
               cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
-              cds_glyph.setColor(getSymColor(cds_sym, the_style));
+              cds_glyph.setColor(child_color); // CDS same color as exon
               pglyph.addChild(cds_glyph);
               if (SET_CHILD_INFO) {
                 map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
@@ -410,7 +410,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           }
         }
         cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-        cglyph.setColor(getSymColor(child, the_style));
+        cglyph.setColor(child_color);
         pglyph.addChild(cglyph);
         if (SET_CHILD_INFO) {
           map.setDataModelFromOriginalSym(cglyph, child);
@@ -450,7 +450,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     BioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
     boolean same_seq = (annotseq == coordseq);
-    
+
     if (! same_seq) {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
@@ -467,9 +467,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
     AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
-    
-    boolean use_score_colors = the_style.getColorByScore();
-    
+        
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
@@ -489,6 +487,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
+      
       lglyph.setLabel(label);
       pheight = 2 * pheight;
       pglyph = lglyph;

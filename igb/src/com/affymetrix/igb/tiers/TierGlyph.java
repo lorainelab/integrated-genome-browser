@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -19,7 +19,6 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.genoviz.util.Timer;
 
 /**
  *  TierGlyph is intended for use with AffyTieredMap.
@@ -56,6 +55,11 @@ public class TierGlyph extends SolidGlyph {
   public static final int DIRECTION_REVERSE = -1;
   public static final int DIRECTION_BOTH = 2;
 
+  /** Use this direction for axis tiers, so they can be recognized as a 
+   *  special case when sorting tiers. 
+   */
+  public static final int DIRECTION_AXIS = -2;
+  
   protected double spacer = 2;
 
   /*
@@ -311,7 +315,7 @@ public class TierGlyph extends SolidGlyph {
       System.out.println("######## time to pack " + label + ": " + tim/cycles);
     }
   }
-
+  
   /**
    *  Overriden to allow background shading by a collection of non-child
    *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -362,7 +366,7 @@ public class TierGlyph extends SolidGlyph {
 
     super.draw(view);
   }
-
+    
   /**
    *  Remove all children of the glyph, including those added with
    *  addMiddleGlyph(GlyphI).
@@ -551,7 +555,8 @@ public class TierGlyph extends SolidGlyph {
    *  DIRECTION_BOTH or DIRECTION_NONE.
    */
   public void setDirection(int d) {
-    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH)) {
+    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) 
+        && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH) && (d != DIRECTION_AXIS)) {
       throw new IllegalArgumentException();
     }
     this.direction = d;

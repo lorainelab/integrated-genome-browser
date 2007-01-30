@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -217,6 +217,33 @@ public class TierLabelManager {
     repackTheTiers(full_repack, fit_y);
   }
   
+  void setTiersCollapsed(java.util.List tier_labels, boolean collapsed, boolean full_repack, boolean fit_y) {
+    for (int i=0; i<tier_labels.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
+      IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+      if (style.getExpandable()) {
+        style.setCollapsed(collapsed);
+
+        // When collapsing, make them all be the same height as the tier.
+        // (this is for simplicity in figuring out how to draw things.)
+        if (collapsed) {
+          java.util.List graphs = getContainedGraphs(tlg);
+          double tier_height = style.getHeight();
+          for (int j=0; j<graphs.size(); j++) {
+            GraphGlyph graph = (GraphGlyph) graphs.get(j);
+            graph.getGraphState().getTierStyle().setHeight(tier_height);
+          }
+        }
+        
+        for (int j=0; j<tlg.getReferenceTier().getScene().getViews().size(); j++) {
+          tlg.getReferenceTier().pack((ViewI) tlg.getReferenceTier().getScene().getViews().get(j));
+        }
+      }
+    }
+
+    repackTheTiers(full_repack, fit_y);
+  }
+
   public void finishDragging(TierLabelGlyph glyph) {
     java.util.List label_glyphs = tiermap.getTierLabels();
     orderTierLabels(label_glyphs);

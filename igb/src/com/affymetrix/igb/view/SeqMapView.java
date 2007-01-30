@@ -349,7 +349,9 @@ public class SeqMapView extends JPanel
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
         tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
       }
+      tier_manager.setTierSorter(new RealmBasedTierSorter());
     }
+    
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     seqmap.addMouseListener(mouse_listener);
 
@@ -571,7 +573,7 @@ public class SeqMapView extends JPanel
     axis_tier = new TransformTierGlyph(blank_style);
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
-    axis_tier.setDirection(TierGlyph.DIRECTION_NONE);
+    axis_tier.setDirection(TierGlyph.DIRECTION_AXIS);
     //    axis_tier.setFixedPixelHeight(false);
     AxisGlyph axis = seqmap.addAxis(0);
     axis.setHitable(false);

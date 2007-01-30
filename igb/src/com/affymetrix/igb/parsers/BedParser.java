@@ -229,18 +229,11 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	  int beg = Integer.parseInt(fields[findex++]);  // start field
 	  int end = Integer.parseInt(fields[findex++]);  // stop field
 	  if (field_count >= 4) {
-	    annot_name = fields[findex++]; // name field
-	    Integer count = (Integer)name_counts.get(annot_name);
-	    if (count == null) {
-	      name_counts.put(annot_name, int1);
-	    }
-	    else {
-	      Integer new_count = new Integer(count.intValue() + 1);
-	      name_counts.put(annot_name, new_count);
-	      annot_name = annot_name + "." + new_count.toString();
-	    }
+            annot_name = parseName(fields[findex++]);
 	  }
-	  if (field_count >=5) { score = Float.parseFloat(fields[findex++]); } // score field
+	  if (field_count >=5) { 
+            score = parseScore(fields[findex++]);
+          } // score field
 	  if (field_count >= 6) { forward = !(fields[findex++].equals("-")); }  // strand field
 	  else  { forward = (beg <= end); }
 	  min = (int)Math.min(beg, end);
@@ -331,6 +324,27 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     }   // end of line-reading loop
   }
 
+  /** Converts the data in the score field, if present, to a floating-point number. */
+  public float parseScore(String s) {
+     return Float.parseFloat(s); 
+  }
+  
+  /** Parses the name field from the file.  Ensures that names are unique by
+   *  adding a ".1", ".2", etc., as needed.
+   */
+  public String parseName(String s) {
+    String annot_name = s;
+    Integer count = (Integer)name_counts.get(annot_name);
+    if (count == null) {
+      name_counts.put(annot_name, int1);
+    }
+    else {
+      Integer new_count = new Integer(count.intValue() + 1);
+      name_counts.put(annot_name, new_count);
+      annot_name = annot_name + "." + new_count.toString();
+    }
+    return annot_name;
+  }
 
   /**
    * Implementation of ParserListener interface.

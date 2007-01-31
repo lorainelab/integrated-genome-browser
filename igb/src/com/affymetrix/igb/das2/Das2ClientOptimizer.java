@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2006 Affymetrix, Inc.
+*   Copyright (c) 2006-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -74,8 +74,8 @@ public class Das2ClientOptimizer {
 					       DasFeaturesAction2.default_show_das_query_genometry);
   }
 
-  // input is List of Das2FeatureRequestSyms
-  // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input List,
+  // input is a single Das2FeatureRequestSyms
+  // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
   //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/SmartAnnotBioSeq
   //    annotations --
   //    Could this strategy handle persistent caching??   Would need to redirect to
@@ -86,7 +86,9 @@ public class Das2ClientOptimizer {
   // also attaches
   // assume for now one type, one overlap span
   public static List loadFeatures(Das2FeatureRequestSym request_sym) {
-    System.out.println("called Das2ClientOptimizer.loadFeatures()");
+    Das2RequestLog request_log = request_sym.getLog();
+    
+    request_log.addLogMessage("called Das2ClientOptimizer.loadFeatures()");
     //  public static List optimizeFeatureRequests(List input_requests) {
     List output_requests = new ArrayList();
     // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
@@ -101,7 +103,7 @@ public class Das2ClientOptimizer {
     SeqSymmetry split_query = null;
 
     if (! (seq instanceof SmartAnnotBioSeq)) {
-      System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is NOT a SmartAnnotBioSeq!");
+      request_log.addLogMessage("Can't optimize DAS/2 query for type: " + typeid + ", seq is NOT a SmartAnnotBioSeq!");
       output_requests.add(request_sym);
     }
     else {
@@ -111,19 +113,19 @@ public class Das2ClientOptimizer {
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
       // little hack fro GraphSyms, need to resolve when to use id vs. name vs. type
       if (cont_sym == null && typeid.endsWith(".bar")) {
-	System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
+	request_log.addLogMessage("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
 	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
-	System.out.println("cont_sym: " + cont_sym);
+	request_log.addLogMessage("cont_sym: " + cont_sym);
       }
 
       if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
-	System.out.println("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);
+	request_log.addLogMessage("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);
 	output_requests.add(request_sym);
       }
 
       else {
 	int prevcount = cont_sym.getChildCount();
-	System.out.println("  child count: " + prevcount);
+	request_log.addLogMessage("  child count: " + prevcount);
 	ArrayList prev_overlaps = new ArrayList(prevcount);
 	for (int i=0; i<prevcount; i++) {
 	  SeqSymmetry prev_request = cont_sym.getChild(i);
@@ -143,12 +145,12 @@ public class Das2ClientOptimizer {
 	split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
 	if (split_query == null || split_query.getChildCount() == 0) {
 	  // all of current query overlap range covered by previous queries, so return empty list
-	  System.out.println("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
+	  request_log.addLogMessage("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
 	}
 	else {
 	  SeqSpan split_query_span = split_query.getSpan(aseq);
-	  System.out.println("DAS/2 optimizer, split query: ");
-	  SeqUtils.printSymmetry(split_query);
+	  request_log.addLogMessage("DAS/2 optimizer, split query: " + 
+              SeqUtils.symToString(split_query));
 	  // figure out min/max within bounds based on location of previous queries relative to new query
 	  int first_within_min;
 	  int last_within_max;
@@ -173,7 +175,9 @@ public class Das2ClientOptimizer {
 	  // done determining first_within_min and last_within_max
 
 	  int split_count = split_query.getChildCount();
-	  if (split_count == 0) { System.out.println("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN"); }
+	  if (split_count == 0) {
+            request_log.addLogMessage("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN"); 
+          }
 	  else {
 	    int cur_within_min;
 	    int cur_within_max;
@@ -186,7 +190,7 @@ public class Das2ClientOptimizer {
 	      else { cur_within_max = ospan.getMax(); }
 
 	      SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
-	      System.out.println("   new request: " + SeqUtils.spanToString(ispan));
+	      request_log.addLogMessage("   new request: " + SeqUtils.spanToString(ispan));
 	      Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
 	      output_requests.add(new_request);
 
@@ -207,10 +211,10 @@ public class Das2ClientOptimizer {
 	//	output_requests.add(request_sym);
       }
     }
+    
     for (int i=0; i<output_requests.size(); i++) {
       Das2FeatureRequestSym request = (Das2FeatureRequestSym)output_requests.get(i);
-      boolean success = optimizedLoadFeatures(request);
-
+      optimizedLoadFeatures(request);
     }
 
     if (SHOW_DAS_QUERY_GENOMETRY) {
@@ -231,8 +235,10 @@ public class Das2ClientOptimizer {
 
 
 
-  static boolean optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
-    boolean success = true;
+  static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
+    Das2RequestLog request_log = request_sym.getLog();
+    request_log.setSuccess(true);
+    
     Das2Region region = request_sym.getRegion();
     SeqSpan overlap_span = request_sym.getOverlapSpan();
     SeqSpan inside_span = request_sym.getInsideSpan();
@@ -246,7 +252,7 @@ public class Das2ClientOptimizer {
       overlap_filter = region.getPositionString(overlap_span, false);
       if (inside_span != null)  { inside_filter = region.getPositionString(inside_span, false); }
     }
-    System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter +
+    request_log.addLogMessage("in Das2Region.getFeatures(), overlap = " + overlap_filter +
                        ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
     String format = null;
@@ -264,8 +270,8 @@ public class Das2ClientOptimizer {
     Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
     String request_root = featcap.getRootURI().toString();
 
-    System.out.println("   request root: " + request_root);
-    System.out.println("   preferred format: " + format);
+    request_log.addLogMessage("   request root: " + request_root);
+    request_log.addLogMessage("   preferred format: " + format);
 
     try {
       StringBuffer buf = new StringBuffer(200);
@@ -307,8 +313,8 @@ public class Das2ClientOptimizer {
 
       String query_part = buf.toString();
       String feature_query = request_root + "?" + query_part;
-      System.out.println("feature query URL:  " + feature_query);
-      System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+      request_log.addLogMessage("feature query URL:  " + feature_query);
+      request_log.addLogMessage("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
 
       /**
        *  Need to look at content-type of server response
@@ -325,12 +331,15 @@ public class Das2ClientOptimizer {
       }
       else {
 	URL query_url = new URL(feature_query);
-	System.out.println("    opening connection");
+	request_log.addLogMessage("    opening connection");
 	// casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
 	HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
 	int response_code = query_con.getResponseCode();
 	String response_message = query_con.getResponseMessage();
-	//      System.out.println("http response code: " + response_code + ", " + response_message);
+
+        request_log.setHttpResponse(response_code, response_message);
+        
+	request_log.addLogMessage("http response code: " + response_code + ", " + response_message);
 
 	//      Map headers = query_con.getHeaderFields();
 	if (DEBUG_HEADERS) {
@@ -339,27 +348,29 @@ public class Das2ClientOptimizer {
 	    String val = query_con.getHeaderField(hindex);
 	    String key = query_con.getHeaderFieldKey(hindex);
 	    if (val == null && key == null) { break; }
-	    System.out.println("header:   key = " + key + ", val = " + val);
+	    request_log.addLogMessage("header:   key = " + key + ", val = " + val);
 	    hindex++;
 	  }
 	}
-	if (response_code != 200) {
-	  System.out.println("WARNING, HTTP response code not 200/OK: " +
+
+        if (response_code != 200) {
+          request_log.addLogMessage("WARNING, HTTP response code not 200/OK: " +
 			     response_code + ", " + response_message);
 	}
-	if (response_code >= 400 && response_code < 600) {
-	  System.out.println("Server returned error code, aborting response parsing!");
-	  success = false;
+
+        if (response_code >= 400 && response_code < 600) {
+	  request_log.addLogMessage("Server returned error code, aborting response parsing!");
+	  request_log.setSuccess(false);
 	}
 	else {
-	  System.out.println("    getting content type");
+	  request_log.addLogMessage("    getting content type");
 	  String content_type = query_con.getContentType();
-	  System.out.println("    getting input stream");
+	  request_log.addLogMessage("    getting input stream");
 	  InputStream istr = query_con.getInputStream();
 	  bis = new BufferedInputStream(istr);
-          System.out.println("content type: " + content_type);
+          request_log.addLogMessage("content type: " + content_type);
 	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
-          System.out.println("content subtype: " + content_subtype);
+          request_log.addLogMessage("content subtype: " + content_subtype);
 	  if (content_type == null ||
 	      content_subtype == null ||
 	      content_type.equals("unknown") ||
@@ -371,51 +382,52 @@ public class Das2ClientOptimizer {
 	  }
 	}
       }
-      if (success) {
+
+      if (request_log.getSuccess()) {
 	java.util.List feats = null;
 	if (content_subtype.equals("das2feature") ||
 	    content_subtype.equals("das2xml") ||
 	    content_subtype.startsWith("x-das-feature")) {
-	  System.out.println("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
           InputSource isrc = new InputSource(bis);
 	  feats = parser.parse(isrc, feature_query, seq_group, false);
 	}
 	else if (content_subtype.equals("bgn")) {
-	  System.out.println("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
 	  BgnParser parser = new BgnParser();
           feats = parser.parse(bis, type.getID(), seq_group, -1, false);
 	}
 	else if (content_subtype.equals("bps")) {
-	  System.out.println("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
 	  BpsParser parser = new BpsParser();
 	  DataInputStream dis = new DataInputStream(bis);
           feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
 	}
         else if (content_subtype.equals("brs"))  {
-          System.out.println("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
+          request_log.addLogMessage("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
           BrsParser parser = new BrsParser();
           DataInputStream dis = new DataInputStream(bis);
           feats = parser.parse(dis, type.getID(), seq_group);
         }
 	else if (content_subtype.equals("bar")) {
-	  System.out.println("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
 	  feats = BarParser.parse(bis, seq_group, type.getName(), false);
 	}
 	else if (content_subtype.equals("bp2")) {
-	  System.out.println("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Bprobe1Parser bp1_reader = new Bprobe1Parser();
           // parsing probesets in bp2 format, also adding probeset ids
 	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
 	}
 	else if (content_subtype.equals("gff")) {
-	  System.out.println("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
+	  request_log.addLogMessage("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
 	  GFFParser parser = new GFFParser();
 	  feats = parser.parse(bis, ".", seq_group, false, false);
 	}
 	else {
-	  System.out.println("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
-	  success = false;
+	  request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
+	  request_log.setSuccess(false);
 	}
 
 	if (feats == null || feats.size() == 0) {
@@ -430,9 +442,9 @@ public class Das2ClientOptimizer {
 	    request_sym.addChild(child);
 	  */
 	}
-	else if (success)  {  // checking success again, could have changed before getting to this point...
+	else if (request_log.getSuccess())  {  // checking success again, could have changed before getting to this point...
 	  int feat_count = feats.size();
-	  System.out.println("parsed query results, annot count = " + feat_count);
+	  request_log.addLogMessage("parsed query results, annot count = " + feat_count);
 	  boolean no_graphs = true;
 	  for (int k=0; k<feat_count; k++) {
 	    SeqSymmetry feat = (SeqSymmetry)feats.get(k);
@@ -454,13 +466,19 @@ public class Das2ClientOptimizer {
 	  }
 	}
       }  // end if (success) conditional
-      if (bis != null)  { bis.close(); }
+      if (bis != null) try { 
+        bis.close(); 
+      } catch (Exception e) {
+        e.printStackTrace();
+        // This type of exception shouldn't be included in the response status
+      }
     }
     catch (Exception ex) {
-      ex.printStackTrace();
-      success = false;
+//      ex.printStackTrace();
+      request_log.setSuccess(false);
+      request_log.setException(ex);
     }
-    return success;
+    return request_log;
   }
 
   /**
@@ -470,16 +488,18 @@ public class Das2ClientOptimizer {
    *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
    */
   public static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
-    System.out.println("adding a child GraphSym to parent graph");
+    Das2RequestLog request_log = request_sym.getLog();
+
+    request_log.addLogMessage("adding a child GraphSym to parent graph");
     SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)cgraf.getGraphSeq();
     // check and see if parent graph already exists
     //    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
     String id = cgraf.getID();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
-    System.out.println("   child graph id: " + id);
-    System.out.println("   seq: " + aseq.getID());
+    request_log.addLogMessage("   child graph id: " + id);
+    request_log.addLogMessage("   seq: " + aseq.getID());
     GraphSym pgraf = (GraphSym)aseq.getAnnotation(id);
     if (pgraf == null) {
-      System.out.println("$$$$ creating new parent composite graph sym");
+      request_log.addLogMessage("$$$$ creating new parent composite graph sym");
       //      pgraf = new CompositeGraphSym(new int[0], new float[0], id, aseq);
       //      String compid = GraphSymUtils.getUniqueGraphID(id, aseq);
       // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
@@ -493,9 +513,7 @@ public class Das2ClientOptimizer {
     //    rest of Das2ClientOptimizer span of request is preferred
     cgraf.removeSpan(cgraf.getSpan(aseq));
     cgraf.addSpan(request_sym.getOverlapSpan());
-    System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
+    request_log.addLogMessage("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
     pgraf.addChild(cgraf);
   }
-
-
 }

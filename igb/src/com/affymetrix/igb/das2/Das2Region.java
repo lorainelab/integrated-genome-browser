@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -76,7 +76,8 @@ public class Das2Region {
 
 
   /**
-   *  Basic retrieval of DAS/2 features, without optimizations (see Das2ClientOptimizer for that)
+   *  Basic retrieval of DAS/2 features, without optimizations 
+   *  (see {@link Das2ClientOptimizer} for that).
    *  Retrieves features from a DAS2 server based on inforation in the Das2FeatureRequestSym.
    *  Takes an uninitialized Das2FeatureRequestSym as an argument,
    *    constructs a DAS2 query based on sym,
@@ -86,19 +87,19 @@ public class Das2Region {
    *    (should it also add request_sym to SmartAnnotBioSeq (becomes child of container, or
    *         should that be handled before/after getFeatures() is called?  leaning towards the latter...)
    *
-   *  returns true if feature query returns successfully, false otherwise
+   *  @return true if feature query returns successfully, false otherwise.  Look
+   *  at {@link Das2FeatureRequestSym#getLog()} for more details of the results.
    *
    */
   public boolean getFeatures(Das2FeatureRequestSym request_sym) {
     boolean success = true;
+    Das2RequestLog request_log = request_sym.getLog();
       SeqSpan overlap_span = request_sym.getOverlapSpan();
-      //      String overlap_filter = getPositionString(overlap_span, USE_SEGMENT_URI, false);
       String overlap_filter = getPositionString(overlap_span, false);
       SeqSpan inside_span = request_sym.getInsideSpan();
-      //      String inside_filter = getPositionString(inside_span, USE_SEGMENT_URI, false);
       String inside_filter = getPositionString(inside_span, false);
 
-      System.out.println("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
+      request_log.addLogMessage("in Das2Region.getFeatures(), overlap = " + overlap_filter + ", inside = " + inside_filter);
       Das2Type type = request_sym.getDas2Type();
       String format = FormatPriorities.getFormat(type);
 
@@ -136,39 +137,48 @@ public class Das2Region {
 	  query_part = URLEncoder.encode(query_part, "UTF-8");
 	}
 	String feature_query = request_root + "?" + query_part;
-	System.out.println("feature query:  " + feature_query);
+        request_log.addLogMessage("feature query:  " + feature_query);
 
 	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 	URL query_url = new URL(feature_query);
-	URLConnection query_con = query_url.openConnection();
+	HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
+
+        int response_code = query_con.getResponseCode();
+	String response_message = query_con.getResponseMessage();
+
+        request_log.setHttpResponse(response_code, response_message);
+        
 	InputStream istr = query_con.getInputStream();
 	BufferedInputStream bis = new BufferedInputStream(istr);
 	List feats = parser.parse(new InputSource(bis), feature_query, getVersionedSource().getGenome(), false);
 	int feat_count = feats.size();
-	System.out.println("parsed query results, annot count = " + feat_count);
+	request_log.addLogMessage("parsed query results, annot count = " + feat_count);
 	for (int k=0; k<feat_count; k++) {
 	  SeqSymmetry feat = (SeqSymmetry)feats.get(k);
 	  //	SeqUtils.printSymmetry(feat);
 	  request_sym.addChild(feat);
 	}
-	success = true;
-	bis.close();
-	istr.close();
+        success = true;
+        try { bis.close(); } catch (Exception e) {
+          // this sort of exception does NOT mean the request failed.
+          request_log.addLogMessage("WARNING: Couldn't close buffered input stream.");
+        }
+        try { istr.close(); } catch (Exception e) {
+          // this sort of exception does NOT mean the request failed.
+          request_log.addLogMessage("WARNING: Couldn't close input stream.");
+        }
+      } catch (Exception ex) {
+        request_log.setException(ex);
+        success = false;
       }
-      catch (Exception ex) {
-	ex.printStackTrace();
-	success = false;
-      }
-    return success;
+      request_log.setSuccess(success);
+      return success;
   }
 
 
   /**
-   *  moved into Das2Region
-   *  for now, assume that
    *   Converts a SeqSpan to a DAS2 region String.
-   *   if use_segment_uri, then uses full URI of the segment, otherwise uses segment name
-   *   if include_strand, then appends strand info to end of String (":1") or (":-1")
+   *   if include_strand, then appends strand info to end of String (":1") or (":-1").
    *
    *   Need to enhance this to deal with synonyms, so if seq id is different than
    *     corresponding region id, use region id instead.  To do this, probably
@@ -176,14 +186,13 @@ public class Das2Region {
    *     but probably better to have this method figure out region based on versioned source
    */
   public String getPositionString(SeqSpan span, boolean include_strand) {
-  //  public String getPositionString(SeqSpan span, boolean use_segment_uri, boolean include_strand) {
     String result = null;
     if (span != null) {
       BioSeq spanseq = span.getBioSeq();
       if (this.getAnnotatedSeq() == spanseq) {
 	StringBuffer buf = new StringBuffer(100);
 	// making sure to use name/id given by DAS server, which may be a synonym of the seq's id instead of the seq id itself
-	//	if (use_segment_uri) { buf.append(this.getID()); }
+	//	if (USE_SEGMENT_URI) { buf.append(this.getID()); }
 	//	else { buf.append(this.getName()); }
 	buf.append(this.getName());
 	// buf.append(span.getBioSeq().getID());

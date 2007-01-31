@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -338,8 +338,10 @@ public class Das2LoadView extends JComponent
    */
   public void processFeatureRequests(java.util.List requests, final boolean update_display) {
     final java.util.List request_syms = requests;
+    final java.util.List result_syms = new ArrayList();
+    
     if ((request_syms == null) || (request_syms.size() == 0)) { return; }
-    SwingWorker worker = new SwingWorker() {
+    SwingWorker worker = new SwingWorker() {      
 	public Object construct() {
 	  for (int i=0; i<request_syms.size(); i++) {
 	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
@@ -351,17 +353,28 @@ public class Das2LoadView extends JComponent
             style.setHumanName(type.getName());
             
             if (USE_DAS2_OPTIMIZER) {
-	      Das2ClientOptimizer.loadFeatures(request_sym);
+	      result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
 	    }
 	    else {
 	      request_sym.getRegion().getFeatures(request_sym);
 	      MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
 	      aseq.addAnnotation(request_sym);
+              result_syms.add(request_sym);
 	    }
 	  }
 	  return null;
 	}
-	public void finished() {
+        
+        public void finished() {
+
+          // Could examine or print the request logs now....
+//          Iterator iter = result_syms.iterator();
+//          while (iter.hasNext()) {
+//            Das2FeatureRequestSym request = (Das2FeatureRequestSym) iter.next();
+//            Das2RequestLog request_log = request.getLog();
+//            // could print out the request logs or something .....
+//          }
+          
 	  if (update_display) {
 	    if (USE_SIMPLE_VIEW) {
 	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(0);
@@ -519,7 +532,7 @@ public class Das2LoadView extends JComponent
     frm.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
-    frm.show();
+    frm.setVisible(true);
   }
 
 }

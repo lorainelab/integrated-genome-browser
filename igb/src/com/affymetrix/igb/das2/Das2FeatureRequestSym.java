@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -19,7 +19,7 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
 /**
- *  Encapsulates a _constrained_ DAS2 feature query and the features returned from the query
+ *  Encapsulates a <b>constrained</b> DAS2 feature query and the features returned from the query.
  *  The expectation is that if IGB user wants multiple regions on multiple seqs with multiple types,
  *      these queries will get broken down by IGB DAS2 query optimizer into multiple Das2FeatureRequestSyms
  *
@@ -36,8 +36,6 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
  *       (bounds of all returned spans [or union of overlap_span and bounds of all returned spans?]
  *
  */
-//public class Das2FeatureRequestSym   {extends Das2ContainerAnnot {
-// public class Das2FeatureRequestSym extends TypeContainerAnnot {
 public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
 
   LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
@@ -52,12 +50,10 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
   TypeContainerAnnot parent_container;
   BioSeq aseq;
   MutableSeqSpan sum_child_spans = null;
-  /*
-    actually should be able to populate with fewer args to constructor
-    given Das2Type and Das2Region, should be able to figure out TypeContainerAnnot?
-  */
-  //  public Das2FeatureRequestSym(Das2Type type, Das2Region region, TypeContainerAnnot container, SeqSpan overlap, SeqSpan inside) {
-  /*  for now trying to do without container info in constructor */
+
+  Das2RequestLog response = new Das2RequestLog();
+  
+  //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
     das2_type = type;
     das2_region = region;
@@ -73,26 +69,26 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
   /**
    *  Returns the overlap span, the span specified in the original DAS query
    *    that returned annotation must overlap with.
-   *  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
    */
+  // May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
   public SeqSpan getOverlapSpan() { return overlap_span; }
 
   /**
-   *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children
+   *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children.
    */
   public SeqSymmetry getOverlapSym() { return overlap_span; }
 
   /**
    *  Returns the inside span, the span specified in the original DAS query
    *    that returned annotation must be contained within.
-   *  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
    */
+  //  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
   public SeqSpan getInsideSpan() { return inside_span; }
 
   /**
-   *  Returns encompass span, the union of the bounds of all the features returned by the DAS2 feature query
-   *  (OR, may need to be union of overlap span and bounds of all features returned...)
+   *  Returns encompass span, the union of the bounds of all the features returned by the DAS2 feature query.
    */
+  // (OR, may need to be union of overlap span and bounds of all features returned...)
   public SeqSpan getEncompassSpan() { return getSpan(0); }
 
   //  public Das2ContainerAnnot getParentContainer() { return parent_container; }
@@ -165,5 +161,11 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
     super.addChild(child);
   }
 
+  /** Returns a {@link Das2RequestLog} object that can be used to store
+   *  the progress, status, and exceptions of this request.
+   */
+  public Das2RequestLog getLog() {
+    return response;
+  }
 
 }

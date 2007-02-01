@@ -807,14 +807,17 @@ public class SeqMapView extends JPanel
 
     if (frm != null) {
       StringBuffer title = new StringBuffer(128);
-      title.append(IGB.APP_NAME);
       if (seq != null) {
-        title.append(":      ").append(seq.getID());
+        title.append(seq.getID());
         String version_info = getVersionInfo(seq);
         if (version_info != null) {
           title.append("  (").append(version_info).append(')');
         }
       }
+      if (title.length() > 0) {
+        title.append(" - ");
+      }
+      title.append(IGB.APP_NAME);
       frm.setTitle(title.toString());
     }
 

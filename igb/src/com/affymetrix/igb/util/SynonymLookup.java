@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -48,9 +48,10 @@ public class SynonymLookup {
     try {
       loadSynonyms(syn_stream);
     }
-    catch (Exception ex) {
+    catch (final Throwable t) {
+      // use Throwable so out-of-memory exceptions can be caught
       System.out.println("WARNING: Error while loading synonym data from: " + synonym_loc);
-      ex.printStackTrace();
+      t.printStackTrace();
     } finally {
       if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
     }
@@ -166,8 +167,10 @@ public class SynonymLookup {
         result = list1;
       } else {
         // If the two strings map to different lists, then merge them into one
-        result = new ArrayList(list1);
-        result.addAll(list2);
+        Set the_set = new TreeSet(list1);
+        the_set.addAll(list2);
+        
+        result = new ArrayList(the_set);
       }
     }
     else if (list1 != null && list2 == null) {

@@ -11,15 +11,10 @@
 package com.affymetrix.igb.das2.assay;
 
 import com.affymetrix.igb.das2.*;
-
-import java.io.*;
 import java.net.*;
-import java.util.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 /**
  *
@@ -41,7 +36,8 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
     static String QUERY_ID = "query_id";
 
     /** Creates a new instance of Das2AssayServerInfo */
-    public Das2AssayServerInfo(String url, String name, boolean init, String ontologyUrl) {
+    public Das2AssayServerInfo(String url, String name, boolean init, String ontologyUrl)
+    throws URISyntaxException {
         super(url, name, init);
         this.root_ontologyUrl = ontologyUrl;
     }

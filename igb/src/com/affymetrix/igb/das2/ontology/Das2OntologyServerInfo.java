@@ -39,7 +39,8 @@ public class Das2OntologyServerInfo extends Das2ServerInfo{
   static String QUERY_ID = "query_id";
   
     /** Creates a new instance of Das2OntologyServerInfo */
-    public Das2OntologyServerInfo(String url, String name, boolean init) {
+    public Das2OntologyServerInfo(String url, String name, boolean init) 
+    throws URISyntaxException {
         super(url, name, init);
     }
     

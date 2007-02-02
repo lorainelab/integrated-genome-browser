@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -48,8 +48,9 @@ public class Das2ServerInfo  {
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
    */
-  public Das2ServerInfo(String url, String name, boolean init) {
-    String root_string = url;
+  public Das2ServerInfo(String uri, String name, boolean init) 
+  throws URISyntaxException {
+    String root_string = uri;
     // FIXME: if you remove the trailing slash then relative URI resolution doesn't work
     // on the das.biopackages.net server!
     // all trailing "/" chars are stripped off the end if present
@@ -57,13 +58,7 @@ public class Das2ServerInfo  {
       root_string = root_string.substring(0, root_string.length()-1);
     }
 
-    try {
-      this.server_uri = new URI(root_string);
-    }
-    catch (Exception ex) {
-      System.err.println("problem constructing URI for DAS/2 server");
-      ex.printStackTrace();
-    }
+    this.server_uri = new URI(root_string);
     this.name = name;
     if (init) {
       initialize();
@@ -132,22 +127,33 @@ public class Das2ServerInfo  {
     try {
       //      System.out.println("in DasUtils.findDasSource()");
       //      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      String das_query;
+      URL das_request = null;
       if (DO_FILE_TEST)  {
-	das_query = test_file;
+        das_request = new URL(test_file);
       }
       else {
 	// GAH 2006-02-10
 	//  changed to assuming the root_string is the full URL for a sources (sequence?)
 	//  done for compatibility with
 	//	das_request = new URL(root_string+"/" + SOURCES_QUERY);
-	das_query = server_uri.toString();
+        if (server_uri == null) {
+          return false;
+        }
+        das_request = server_uri.toURL();
       }
-      URL das_request = new URL(das_query);
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");
       System.out.println("Das Response content type: " + content_type);
+
+      String das_query = "";
+      if (das_request != null) {
+        das_query = das_request.toExternalForm();
+      }
+
+      if (content_type == null) {
+        content_type = ""; // necessary to work with "file://" URLs on Windows XP
+      }
 
       // setting DAS version if present in content type header -- currently not used
       int vindex = content_type.indexOf("version=");

@@ -26,6 +26,7 @@ public class Das2Discovery {
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
     name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
+    //name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
     //    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sequence");
     //    name2url.put("Affy Test Server, Nov 11 2006", "http://netaffxdas.affymetrix.com/das2/test/sources");
     //name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");
@@ -46,13 +47,18 @@ public class Das2Discovery {
     return name2server;
   }
 
-  protected static void initServers() {
+  protected static void initServers() {    
     Iterator names = name2url.keySet().iterator();
     while (names.hasNext()) {
       String name = (String)names.next();
       String url = (String)name2url.get(name);
-      Das2ServerInfo server = new Das2ServerInfo(url, name, false);
-      name2server.put(name, server);
+      try {
+        Das2ServerInfo server = new Das2ServerInfo(url, name, false);
+        name2server.put(name, server);
+      } catch (Exception e) {
+        System.out.println("WARNING: Could not initialize DAS/2 server with address: " + url);
+        e.printStackTrace(System.out);
+      }
     }
     servers_initialized = true;
   }

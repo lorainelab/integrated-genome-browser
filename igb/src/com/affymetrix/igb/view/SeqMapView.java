@@ -349,7 +349,7 @@ public class SeqMapView extends JPanel
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
         tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
       }
-      tier_manager.setTierSorter(new RealmBasedTierSorter());
+      tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
     }
     
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
@@ -2927,7 +2927,7 @@ public class SeqMapView extends JPanel
         throw new NullPointerException();
       }
       AffyTieredMap map = this.getSeqMap();
-
+      
       // try to match up method with tiers...
       TierGlyph fortier = (TierGlyph)method2ftier.get(meth.toLowerCase());
       TierGlyph revtier = (TierGlyph)method2rtier.get(meth.toLowerCase());

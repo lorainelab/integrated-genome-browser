@@ -28,14 +28,27 @@ import java.util.Comparator;
    *  see {@link TierLabelManager#setTierSorter(Comparator)}
    */
   public class RealmBasedTierSorter implements Comparator {
+    TierLabelManager manager;
     
-    public RealmBasedTierSorter() {
+    public RealmBasedTierSorter(TierLabelManager manager) {
+      this.manager = manager;
     }
     
     public int compare(Object obj1, Object obj2) {
-      return compare((TierLabelGlyph) obj1, (TierLabelGlyph) obj2);
+      if (getUseRealms()) {
+        return compare((TierLabelGlyph) obj1, (TierLabelGlyph) obj2);
+      } else {
+        return basicCompare((TierLabelGlyph) obj1, (TierLabelGlyph) obj2);
+      }
     }
 
+    // Whether or not the realm-based sorting will be used.
+    // If false, revert to standard sorting, which allows tiers to
+    // be placed in any order the user chooses.
+    public boolean getUseRealms() {
+      return true;
+    }
+    
     public int compare(TierLabelGlyph label_1, TierLabelGlyph label_2) {
       TierGlyph ref1 = label_1.getReferenceTier();
       TierGlyph ref2 = label_2.getReferenceTier();

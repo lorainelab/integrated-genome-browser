@@ -57,8 +57,8 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
       //FIXME: This code is almost identical to the initialize method in 
       //       Das2OntologyServerInfo.  It should be consolidated in the superclass.
       try {
-        String das_query = server_uri.toString();
-        URL das_request = new URL(das_query);
+        URL das_request = server_uri.toURL();
+        String das_query = das_request.toExternalForm();
         System.out.println("Das Request: " + das_request);
         URLConnection request_con = das_request.openConnection();
         String content_type = request_con.getHeaderField("Content-Type");

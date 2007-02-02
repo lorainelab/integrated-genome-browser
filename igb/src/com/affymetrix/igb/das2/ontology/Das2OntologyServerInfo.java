@@ -51,8 +51,8 @@ public class Das2OntologyServerInfo extends Das2ServerInfo{
     //FIXME: The ontology namespace has not been updated to the DAS2 spec 300
     //       so this doc doesn't have capabilities, uri, etc.
     try {
-      String das_query = server_uri.toString();
-      URL das_request = new URL(das_query);
+      URL das_request = server_uri.toURL();
+      String das_query = das_request.toExternalForm();
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");

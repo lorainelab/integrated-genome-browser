@@ -155,6 +155,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
 
   static String default_prefs_resource = "/igb_default_prefs.xml";
+  
+  /**
+   *  We no longer distribute a file called "igb_prefs.xml".
+   *  Instead there is a default prefs file hidden inside the igb.jar file, and
+   *  this is augmented by a web-based prefs file at {@link #WEB_PREFS_URL}.
+   *  But, we still will load a file called "igb_prefs.xml" if it exists in
+   *  the user's home directory, since they may have put some personal modifications
+   *  there.
+   */
   public static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
   static String default_user_prefs_files =
     (new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath() +
@@ -249,40 +258,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return default_sequence_accessible;
   }
 
-  /**
-   * This method is called only when deploying IGB
-   * via a JNLP client such as webstart. This will download
-   * a copy of a file named {@link #DEFAULT_PREFS_FILENAME}
-   * to the client machine so the users
-   * can customize their preferences.
-   */
-  public static void downloadPrefsFile() {
-    //download prefs file if not available in user.dir
-    //destination dir is decided by browser.
-    File dest_prefs_file = new File(user_home, DEFAULT_PREFS_FILENAME);
-    if (! dest_prefs_file.exists()) {
-      try {
-          InputStream prefs_strm = IGB.class.getResourceAsStream("/"+DEFAULT_PREFS_FILENAME);
-        if (prefs_strm==null) {
-          System.out.println("Could not locate "+DEFAULT_PREFS_FILENAME+" to download");
-        } else {
-          OutputStream out_strm = new FileOutputStream(dest_prefs_file);
-          int c;
-          while ((c = prefs_strm.read()) != -1) { out_strm.write(c); }
-          prefs_strm.close();
-          out_strm.close();
-          informPanel("Preferences file for " + APP_NAME + " has been downloaded to: \n" +
-                      dest_prefs_file + "\nPlease edit this file if you want to " +
-                      "customize preferences or \nreplace this file if you already have" +
-                      " custom preferences for " + APP_NAME);
-        }
-      } catch (IOException ioe) {
-        System.out.println("Could not copy "+DEFAULT_PREFS_FILENAME+" to "
-          + dest_prefs_file.getAbsolutePath());
-      }
-    }
-  }
-
   public SeqMapView getMapView() {
     return map_view;
   }
@@ -346,11 +321,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return (String[]) result.toArray(new String[result.size()]);
   }
 
-  public static String get_deployment_type(String[] args) {
-    String deployment_type = get_arg("-deploy", args);
-    return deployment_type;
-  }
-
   public static String get_default_prefs_url(String[] args) {
     String def_prefs_url = get_arg("-default_prefs_url", args);
     return def_prefs_url;
@@ -407,14 +377,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         ex.printStackTrace();
       } finally {
         try {default_prefs_stream.close();} catch (Exception e) {}
-      }
-
-      String deploy_type = get_deployment_type(main_args);
-      if (deploy_type != null) {
-        if (deploy_type.equals("webstart")) {
-          System.out.println("*****" + deploy_type + " deployment********");
-          downloadPrefsFile();
-        }
       }
 
       // If a particular web prefs file was specified, then load it.

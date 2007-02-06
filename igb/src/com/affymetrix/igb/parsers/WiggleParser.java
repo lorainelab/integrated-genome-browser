@@ -49,7 +49,7 @@ public class WiggleParser {
   
   /**
    *  Reads a Wiggle-formatted file using any combination of the three formats
-   *  @link{#BED4}, @link{#VARSTEP}, @link{#FIXEDSTEP}.
+   *  {@link #BED4}, {@link #VARSTEP}, {@link #FIXEDSTEP}.
    *  The format must be specified on the first line following a track line,
    *  otherwise BED4 is assumed.
    */
@@ -64,18 +64,16 @@ public class WiggleParser {
     
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line;
-    Map graph_props_map = Collections.EMPTY_MAP;
+    Map graph_props_map = new LinkedHashMap();
     
     while ((line = br.readLine()) != null && ! Thread.currentThread().isInterrupted()) {
       // Generally should be "track" line, followed by optional "format" line
       // (If there is no format line, BED4 format is assumed.)
       
       if (line.length() == 0) { continue; }
-      else if (line.startsWith("##IGB-graphs ")) {
+      else if (line.startsWith(Bookmark.IGB_GRAPHS_PRAGMA)) {
         try {
-        String graph_props = line.substring(13);
-        String the_url = "http://localhost:7085/UnibrowControl?" + graph_props;
-        graph_props_map = Bookmark.parseParameters(new URL(the_url));
+          Bookmark.parseIGBGraphsPragma(graph_props_map, line, false);
         } catch (Exception e) {
           throw new IOException("Couldn't parse IGB-graphs pragma");
         }

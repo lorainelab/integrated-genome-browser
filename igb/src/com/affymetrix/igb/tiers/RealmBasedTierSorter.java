@@ -53,15 +53,17 @@ import java.util.Comparator;
       TierGlyph ref1 = label_1.getReferenceTier();
       TierGlyph ref2 = label_2.getReferenceTier();
       
-      if (ref1 == ref2) return 0; // shouldn't happen
+      if (ref1 == ref2) {
+        return 0; // shouldn't happen
+      }
       
       // There can be multiple realms.
       // Tiers in the same realm are sorted by the y-coords of their handles.
       // Tiers in different realms are sorted purley by their realm:
       // lower realm numbers go on top.
       //
-      int realm_1 = -1;
-      int realm_2 = -1;
+      int realm_1 = 1;
+      int realm_2 = 1;
       
       int dir1 = ref1.getDirection();
       int dir2 = ref2.getDirection();
@@ -69,25 +71,28 @@ import java.util.Comparator;
       switch (dir1) {
         case TierGlyph.DIRECTION_FORWARD:
           realm_1 = 0; break;
-        case TierGlyph.DIRECTION_AXIS:
-          realm_1 = 1; break;
         case TierGlyph.DIRECTION_REVERSE:
           realm_1 = 2; break;
+        case TierGlyph.DIRECTION_AXIS:
+        case TierGlyph.DIRECTION_NONE:
+        case TierGlyph.DIRECTION_BOTH:
+          realm_1 = 1; break;
         default:
-          // if either tier is DIRECTION_NONE or _BOTH, then realms do not apply
-          return basicCompare(label_1, label_2);
+          // default is same as DIRECTION_NONE
+          realm_1 = 1;
       }
       
       switch (dir2) {
         case TierGlyph.DIRECTION_FORWARD:
           realm_2 = 0; break;
-        case TierGlyph.DIRECTION_AXIS:
-          realm_2 = 1; break;
         case TierGlyph.DIRECTION_REVERSE:
           realm_2 = 2; break;
+        case TierGlyph.DIRECTION_AXIS:
+        case TierGlyph.DIRECTION_NONE:
+        case TierGlyph.DIRECTION_BOTH:
+          realm_2 = 1; break;
         default:
-          // if either tier is DIRECTION_NONE or _BOTH, then realms do not apply
-          return basicCompare(label_1, label_2);
+          realm_2 = 1;
       }
  
       if (realm_1 < realm_2) {

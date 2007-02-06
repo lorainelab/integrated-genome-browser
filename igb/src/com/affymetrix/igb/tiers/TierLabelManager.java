@@ -245,6 +245,13 @@ public class TierLabelManager {
   }
 
   public void finishDragging(TierLabelGlyph glyph) {
+    sortTiers();
+  }
+
+  /**
+   *  Sorts all tiers and then calls packTiers() and updateWidget().
+   */
+  public void sortTiers() {
     java.util.List label_glyphs = tiermap.getTierLabels();
     orderTierLabels(label_glyphs);
     orderTiersByLabels(label_glyphs);
@@ -286,9 +293,9 @@ public class TierLabelManager {
   /**
    *  Called after a tier label has been dragged, this can be used to
    *  re-sort the given List of Tier Label Glyphs.  The List is
-   *  sorted in-place.
-   *  Immediately after this is called, {@link #orderTiersByLabels(java.util.List)}
-   *  will be called.
+   *  sorted in-place.  Typically, do not use this directly, but
+   *  call {@link #resortTiers()} instead, which will call this and then
+   *  call {@link #orderTiersByLabels(java.util.List)}.
    */
   public void orderTierLabels(java.util.List label_glyphs) {
     if (tier_sorter != null) {

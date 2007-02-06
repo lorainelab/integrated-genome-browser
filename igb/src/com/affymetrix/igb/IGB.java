@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -1060,7 +1060,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
     about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
-    about_text.append("Copyright 2001-2006 Affymetrix Inc." + "\n");
+    about_text.append("Copyright 2001-2007 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");

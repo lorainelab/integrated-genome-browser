@@ -37,7 +37,7 @@ import affymetrix.calvin.data.*;
 public class LazyChpSym extends ScoredContainerSym {
 
   public static String PROBESET_SERVER_NAME = "NetAffx";
-  //  public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
+  // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
 
   //  static Map genome2chp;
   SmartAnnotBioSeq aseq;
@@ -172,7 +172,7 @@ public class LazyChpSym extends ScoredContainerSym {
      *  May need to load multiple annotations -- for instance, for exon arrays both Probes (in bp2 format)
      *     and Transcripts (in ??? format [gff, bgn?])
      *  Assume that any annotation type whose name starts with chp_array_type,
-     *     or starts with any synonym of chp_array_type, need to be loaded...
+     *     or starts with any synonym of chp_array_type, need to be loaded...-st
      */
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
     Map types = vsource.getTypes();

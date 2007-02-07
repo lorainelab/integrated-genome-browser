@@ -63,7 +63,7 @@ public class CytobandParser {
         float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
         boolean forward;
         
-        if (fields == null || field_count != 5) {
+        if (fields == null || field_count < 4) {
           throw new IOException("Line has wrong number of data columns.");
         }
         
@@ -77,7 +77,11 @@ public class CytobandParser {
         int beg = Integer.parseInt(fields[1]);  // start field
         int end = Integer.parseInt(fields[2]);  // stop field
         annot_name = new String(fields[3]);
-        band = new String(fields[4]);
+        if (field_count >= 5) {
+          band = new String(fields[4]);
+        } else {
+          band = "";
+        }
         
         if (beg > seq.getLength()) {
           seq.setLength(beg);
@@ -112,7 +116,13 @@ public class CytobandParser {
       // "gpos50" == 500
       // "gpos100" == 1000
       // etc.
-      return 10.0f * Integer.parseInt(s.substring(4));
+      float pos = 1000.0f;
+      try {
+        pos = 10.0f * Integer.parseInt(s.substring(4));
+      } catch (NumberFormatException nfe) {
+        
+      }
+      return pos;
     }
     else return 0.0f;
   }

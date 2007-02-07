@@ -486,9 +486,20 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
     GraphicsDevice[] devices = genv.getScreenDevices();
-    if (devices.length >= 4) { 
-      USE_MULTI_WINDOW_MAP = true; 
-      REPORT_GRAPHICS_CONFIG = true;
+
+    if (devices.length >= 4) {
+      int multi_window_choice =
+	JOptionPane.showConfirmDialog(frm,
+				      "Use multi-screen rendering speedups?\n" +
+				      "(but some features will be disabled)",
+				      "Multi-screen Rendering Options",
+				      JOptionPane.YES_NO_OPTION);
+
+      if (multi_window_choice == JOptionPane.YES_OPTION) {
+	System.out.println("&&&&&&&&&&&&&&  MULTI_WINDOW_CHOICE = YES &&&&&&&&&&&&&&");
+	USE_MULTI_WINDOW_MAP = true;
+	REPORT_GRAPHICS_CONFIG = true;
+      }
     }
     if (REPORT_GRAPHICS_CONFIG)  {
       System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());

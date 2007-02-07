@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -63,6 +63,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2"},
         "Binary Files"));
+      chooser.addChoosableFileFilter(new UniFileFilter("cyt", "Cytobands"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"gff", "gtf", "gff3"},
         "GFF Files"));
@@ -304,7 +305,13 @@ public class LoadFileAction {
         str = new BufferedInputStream(str);
       }
 
-      if (lcname.endsWith(".axml")) {
+      if (lcname.endsWith(".cyt")) {
+        CytobandParser parser = new CytobandParser();
+        parser.parse(str, selected_group);
+        aseq = input_seq;
+        parser = null;
+      }
+      else if (lcname.endsWith(".axml")) {
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
         parser = null;

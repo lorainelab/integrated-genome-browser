@@ -184,7 +184,7 @@ public class Bprobe1Parser implements AnnotationWriter {
             int min = dis.readInt();
 	    cmins[k] = min;
           }
-	  SeqSymmetry psym = new EfficientProbesetSymA(cmins, probe_length, forward, id_prefix, nid, aseq);
+	  SeqSymmetry psym = new EfficientProbesetSymA(container_sym, cmins, probe_length, forward, id_prefix, nid, aseq);
 	  syms[i]  = psym;
 	  container_sym.addChild(psym);
 	  results.add(psym);
@@ -237,8 +237,8 @@ public class Bprobe1Parser implements AnnotationWriter {
           dos = new DataOutputStream(outstream);
       }
       // Changed to not wrap with a buffered output stream -- this must be handled in the calling code
-      // Wrapping with a buffered output stream was causing EOFExceptions and socket errors in 
-      //     Genometry DAS/2 servlet 
+      // Wrapping with a buffered output stream was causing EOFExceptions and socket errors in
+      //     Genometry DAS/2 servlet
       //     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
       else { dos = new DataOutputStream(outstream); }
       //      else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }

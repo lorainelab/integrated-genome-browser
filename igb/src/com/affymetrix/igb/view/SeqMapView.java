@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -58,6 +58,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
 import com.affymetrix.igb.genometry.ScoredContainerSym;
+import com.affymetrix.igb.parsers.CytobandParser;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
@@ -245,13 +246,7 @@ public class SeqMapView extends JPanel
   Box xzoombox;
   Box yzoombox;
   MapRangeBox map_range_box;
-
-  /** If true, remove empty tiers from map, but not from method2ftier and method2rtier,
-   *  when changing sequence.  Thus generally remembers the relative ordering of tiers.
-   */
-  boolean remember_tiers = true;
-
-
+  
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
   /** Constructor. By default, does not add popup menu items. */
@@ -532,7 +527,12 @@ public class SeqMapView extends JPanel
   TransformTierGlyph axis_tier;
 
   /** An un-collapsible instance.  It is hideable, though. */
-  public static IAnnotStyle axis_annot_style = new DefaultIAnnotStyle("Coordinates", false) {
+  public static AnnotStyle axis_annot_style = new AnnotStyle() {
+    
+    { // a non-static initializer block
+      setHumanName("Coordinates");
+    }
+    
     public boolean getSeparate() { return false; }
     public boolean getCollapsed() { return false; }
     public boolean getExpandable() { return false; }
@@ -562,7 +562,7 @@ public class SeqMapView extends JPanel
       super.setShow(b);
     }
   };
-
+  
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 
   /** Set up a tier with fixed pixel height and place axis in it. */
@@ -588,8 +588,51 @@ public class SeqMapView extends JPanel
     axis_tier.setForegroundColor(axis_fg);
     setAxisFormatFromPrefs(axis);
 
-    axis_tier.addChild(axis);
+    if (viewseq instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) viewseq;
+      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
+      
+      int cyto_height = 10;
+      if (cyto_annots instanceof TypeContainerAnnot) {
+        TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
+        EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
+        cytoband_glyph.setBackgroundColor(Color.WHITE);
+        cytoband_glyph.setHitable(false);
+        cytoband_glyph.setCoords(0.0, 0.0, viewseq.getLength(), cyto_height + 4);        
+                
+        for (int q=0; q<cyto_container.getChildCount(); q++) {
+          SeqSymmetry sym  = cyto_container.getChild(q);
+          SeqSpan cyto_span = sym.getSpan(viewseq);
+          if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
+            CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
+          
+            //float score = ((Scored) cyto_sym).getScore();
+            GlyphI efg;
+            if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
+              efg = new PointedGlyph();
+              efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+              ((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
+            } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
+              efg = new DoublePointedGlyph();
+              efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+            } else {
+              efg = new EfficientFillRectGlyph();
+              efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+            }
+            efg.setColor(cyto_sym.getColor());
+            efg.setInfo(cyto_sym);
+            cytoband_glyph.addChild(efg);
+          }
+        }
+        
+        axis_tier.addChild(cytoband_glyph);
+        
+        axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + cyto_height + 4);
+      }
+    }
 
+axis_tier.addChild(axis);
+    
     // it is important to set the colors before adding the tier
     // to the map, else the label tier colors won't match
     if (seqmap.getTiers().size() >= tier_index) {
@@ -613,7 +656,7 @@ public class SeqMapView extends JPanel
     }
     //    System.out.println("seq glyph coords: " + seq_glyph.getCoordBox());
 
-    axis_tier.addChild(seq_glyph);
+    axis_tier.addChild(seq_glyph);    
 
       // need to change this to get residues from viewseq! (to take account of reverse complement,
       //    coord shift, slice'n'dice, etc.
@@ -1129,6 +1172,15 @@ public class SeqMapView extends JPanel
     //      probeset annotation tracks
     for (int i=0; i<aseq.getAnnotationCount(); i++) {
       SeqSymmetry annotSym = aseq.getAnnotation(i);
+
+      // skip over any cytoband data.  It is show in a different way
+      if (annotSym instanceof TypeContainerAnnot) {
+        TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
+        if (tca.getType().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
+          continue;
+        }
+      }
+
       if (annotSym instanceof SymWithProps) {
 	addAnnotationGlyphs(annotSym);
       }
@@ -2931,7 +2983,7 @@ public class SeqMapView extends JPanel
       // try to match up method with tiers...
       TierGlyph fortier = (TierGlyph)method2ftier.get(meth.toLowerCase());
       TierGlyph revtier = (TierGlyph)method2rtier.get(meth.toLowerCase());
-
+      
       TierGlyph axis_tier = this.getAxisTier();
       if (fortier == null) {
         fortier = new TierGlyph(style);

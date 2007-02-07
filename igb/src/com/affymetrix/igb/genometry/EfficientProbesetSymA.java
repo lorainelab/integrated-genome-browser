@@ -29,16 +29,18 @@ import java.util.*;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps {
+public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, ParentOfLeafSym {
   BioSeq seq;
   int probe_length;
   boolean forward;
   int nid;
   int[] child_mins;
   String id_prefix;
+  SymWithProps parent;
 
   /**
    * Constructor.
+   * @param parent parent symmetry
    * @param cmins an array of the minima of the probe positions, this should
    *   be sorted in ascending order (but will be automatically sorted by this
    *   routine if this is not the case.  This means that the ordering
@@ -48,8 +50,9 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    * @param nid  an integer to be used as the ID
    * @param seq  the BioSeq
    */
-  public EfficientProbesetSymA(int[] cmins, int probe_length, boolean forward,
-			       String prefix, int nid, BioSeq seq) {
+  public EfficientProbesetSymA(SymWithProps parent, int[] cmins, int probe_length, boolean forward,
+  			       String prefix, int nid, BioSeq seq) {
+    this.parent = parent;
     this.child_mins = cmins;
     this.probe_length = probe_length;
     this.forward = forward;
@@ -57,7 +60,20 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     this.seq = seq;
     this.id_prefix = prefix;
 
+
     java.util.Arrays.sort(this.child_mins);
+  }
+
+  /** implementing ParentOfLeafSpan interface */
+  public MutableSeqSpan getChildSpan(int child_index, BioSeq aseq, MutableSeqSpan result_span) {
+    if ((child_index >= child_mins.length) ||
+	(aseq != seq) ||
+	(result_span == null)) {
+      return null;
+    }
+    if (forward) { result_span.set(child_mins[child_index], child_mins[child_index] + probe_length, seq); }
+    else { result_span.set(child_mins[child_index] + probe_length, child_mins[child_index], seq); }
+    return result_span;
   }
 
   /* SeqSymmetry implementation */
@@ -173,7 +189,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    */
   public Map getProperties() {
     HashMap properties = new HashMap(1);
-    properties.put("method", "HuEx-1_0-st-Probes");
+    properties.put("method", parent.getProperty("method"));
     properties.put("id", "" + this.getID());
     return properties;
   }
@@ -185,8 +201,8 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   /** See getProperties(). */
   public Object getProperty(String key) {
-    if ("method".equals(key)) return "HuEx-1_0-st-Probes";
-    else if ("id".equals(key)) return this.getID();
+    if ("method".equals(key)) { return parent.getProperty("method"); }
+    if ("id".equals(key)) return this.getID();
     else return null;
   }
 

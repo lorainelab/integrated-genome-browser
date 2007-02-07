@@ -32,6 +32,24 @@ import com.affymetrix.igb.das2.Das2Coords;
  *  Search strategy: "interval array"
  *                   binary search followed by constrained location-tuned bidirectional scan
  *
+
+   // Server looks for data in directory specified by system property "das2_genometry_server_dir"
+   // Within data directory should be subdirectories, each corresponding to a different organism
+    //    organism_name = directory name
+    //    subdirectory under organsism name for each genome_version
+    //    for each genome version:
+    //       genome_version_name = directory name
+    //       parse liftAll or chromInfo file to create new AnnotatedSeqGroup for genome
+    //           in SingletonGenometryModel
+    //       for each file in genome_version directory
+    //           if directory:
+    //                if ends with "..seqs" then indicates a subdirectory with same annotation type,
+    //                      but split up into one annotation file per seq (for example .bar graph files)
+    //                recurse in
+    //           else if non-loading filetype (for example .bar):
+    //                add as annot type without loading
+    //           else try to parse and annotate seqs based on file suffix (.xyz)
+    //
  */
 public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
@@ -192,7 +210,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
   SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
   long date_initialized = 0;
   String date_init_string = null;
-  Map graph_name2file = new LinkedHashMap();
+  Map graph_name2file = new LinkedHashMap();  // mapping to graph files when there is one file for all seqs
+  Map graph_name2dir = new LinkedHashMap();   // mapping to graph directories when multiple files under dir, one for each seq
   ArrayList graph_formats = new ArrayList();
   String xml_base = null;
   String xml_base_trimmed = null;
@@ -486,20 +505,31 @@ public class GenometryDas2Servlet extends HttpServlet  {
    */
   public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup seq_group) {
     String file_name = current_file.getName();
+    String file_path = current_file.getPath();
     // if current file is directory, then descend down into child files
     if (current_file.isDirectory()) {
       //      if (directory_filter.get(file_name) != null) {
       //	System.out.println("filtering out directory: " + current_file);
       //	return;  // screening out anything in filtered directories
       //      }
-      System.out.println("checking for annotations in directory: " + current_file);
-      File[] child_files = current_file.listFiles();
-      for (int i=0; i<child_files.length; i++) {
-	loadAnnotsFromFile(child_files[i], seq_group);
+      if (file_name.endsWith(".seqs")) {
+	// each file in directory is same annotation type, but for a single seq?
+	// assuming bar files for now, each with starting with seq id?
+	//	graph_name2file.put(file_name, file_path);
+	String graph_name = file_name.substring(0, file_name.length()-5);
+	System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
+	graph_name2dir.put(file_name, file_path);
+      }
+      else {
+	System.out.println("checking for annotations in directory: " + current_file);
+	File[] child_files = current_file.listFiles();
+	for (int i=0; i<child_files.length; i++) {
+	  loadAnnotsFromFile(child_files[i], seq_group);
+	}
       }
     }
     else if (file_name.endsWith(".bar"))  {
-      String file_path = current_file.getPath();
+      // String file_path = current_file.getPath();
       // special casing so bar files are seen in types request, but not parsed in on startup
       //    (because using graph slicing so don't have to pull all bar file graphs into memory)
       System.out.println("@@@ adding graph file to types: " + file_name + ", path: " + file_path);

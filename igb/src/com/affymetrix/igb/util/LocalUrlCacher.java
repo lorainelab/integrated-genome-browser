@@ -27,7 +27,7 @@ public class LocalUrlCacher {
   static boolean DEBUG_CONNECTION = false;
   static boolean CACHE_FILE_URLS = false;
   static MessageDigest md5_generator;
-  static Properties long2short_filenames = new Properties();
+  //  static Properties long2short_filenames = new Properties();
 
   public static int IGNORE_CACHE = 100;
   public static int ONLY_CACHE = 101;
@@ -40,15 +40,15 @@ public class LocalUrlCacher {
 
   static {
     // initialize cache
-    // load "long_url_file_name to short_cache_file_name" info
-    // this can be a properties files??
     try {
       md5_generator = MessageDigest.getInstance("MD5");
+      /**
       File long_url_file = new File(long_url_map);
       System.out.println("properties map for conversion of long URLs: " + long_url_map);
       if (long_url_file.exists()) {
 	long2short_filenames.load(new BufferedInputStream(new FileInputStream(long_url_file)));
       }
+      */
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -227,14 +227,18 @@ public class LocalUrlCacher {
     }
     fil = null;
 
-    // if not in cache, then return input stream from http connection
-    // if in cache, then check timestamping
-    // Should probably do this via a "just headers" http call, but for now doing standard GET and
-    //    just reading headers
+    // if NORMAL_CACHE:
+    //   if not in cache, then return input stream from http connection
+    //   if in cache, then check URL content has changed via GET with if-modified-since header based
+    //        on modification date of cached file
+    //      if content is returned, check last-modified header just to be sure (some servers might ignore
+    //        if-modified-since header?)
     InputStream result_stream = null;
 
     File cache_file = getCacheFileForURL(url);
     boolean cached = cache_file.exists();
+    long local_timestamp = -1;
+    if (cached) { local_timestamp = cache_file.lastModified(); }
     URLConnection conn = null;
 
     long remote_timestamp = 0;
@@ -242,11 +246,28 @@ public class LocalUrlCacher {
     String content_type = null;
     boolean url_reachable = false;
     boolean has_timestamp = false;
+    HttpURLConnection hcon = null;
+    int http_status = -1;
+
+
+    if (cache_option == ONLY_CACHE) {
+    }
+    else if (cache_option == IGNORE_CACHE) {
+    }
+    else if (cache_option == NORMAL_CACHE) {
+    }
+    else {
+      // SHOULD NEVER GET HERE
+    }
+
     // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
     if (cache_option != ONLY_CACHE) {
       try {
 	URL theurl = new URL(url);
 	conn = theurl.openConnection();
+	if (cached) {
+	  conn.setIfModifiedSince(local_timestamp);
+	}
 	// adding a conn.connect() call here to force throwing of error here if can't open connection
 	//    because some method calls on URLConnection like those below don't always throw errors
 	//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
@@ -260,6 +281,10 @@ public class LocalUrlCacher {
 	content_type = conn.getContentType();
 	content_length = conn.getContentLength();
 	//	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
+	if (conn instanceof HttpURLConnection) {
+	  hcon = (HttpURLConnection)conn;
+	  http_status = hcon.getResponseCode();
+        }
 	url_reachable = true;
       }
       catch (IOException ioe) {
@@ -271,20 +296,14 @@ public class LocalUrlCacher {
 
     // if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
     if (cached && (cache_option != IGNORE_CACHE)) {
-      if (! url_reachable) {
-        if (cache_option != ONLY_CACHE) {
-          System.out.println("Remote URL not reachable.");
-        }
-        if (cached) {
-          System.out.println("Loading cached file for URL");
-          result_stream = new BufferedInputStream(new FileInputStream(cache_file));
-        } else {
-          System.out.println("No cached local copy of the file is available.");
-          result_stream = null;
-        }
-      } else { // url is reachable
-        long local_timestamp = cache_file.lastModified();
-        if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
+      if (url_reachable) {
+	//  response contents not modified since local cached copy last modified, so use local
+	if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
+	  System.out.println("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
+	}
+	//        long local_timestamp = cache_file.lastModified();
+	else if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
 	  System.out.println("Cache exists and is more recent, using cache: " + cache_file);
 	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
         }
@@ -292,6 +311,13 @@ public class LocalUrlCacher {
 	  System.out.println("cached file exists, but URL is more recent, so reloading cache");
           result_stream = null;
         }
+      }
+      else { // url is reachable
+        if (cache_option != ONLY_CACHE) {
+          System.out.println("Remote URL not reachable.");
+        }
+	System.out.println("Loading cached file for URL");
+	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
       }
     }
 

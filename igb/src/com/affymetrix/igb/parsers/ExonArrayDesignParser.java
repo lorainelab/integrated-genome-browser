@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -61,10 +61,10 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *     transcript cluster ID postfix (UTF-8)  -- usually null
  *     exon cluster ID prefix (UTF-8) -- combined with probeset id int, get full id
  *     exon cluster ID postfix (UTF-8)  -- usually null
- *     probeset ID prefix (UTF-8) -- combined with probeset id int, get full id
- *     probeset ID postfix (UTF-8)  -- usually null
  *     PSR ID prefix (UTF-8) -- combined with PSR id int, get full id
  *     PSR ID postfix (UTF-8)  -- usually null
+ *     probeset ID prefix (UTF-8) -- combined with probeset id int, get full id
+ *     probeset ID postfix (UTF-8)  -- usually null
  *     Number of tag-val properties (int)
  *     for each tag-val
  *        tag (UTF-8)
@@ -85,7 +85,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *                 id (int)
  *                 start
  *                 end
- *                 number of probesets
+ *                 number of PSRs
  *                 for each PSR
  *                     id (int)
  *                     start

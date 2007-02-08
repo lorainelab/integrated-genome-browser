@@ -588,20 +588,22 @@ public class SeqMapView extends JPanel
     axis_tier.setForegroundColor(axis_fg);
     setAxisFormatFromPrefs(axis);
 
-    if (viewseq instanceof SmartAnnotBioSeq) {
-      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) viewseq;
+    if (aseq instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) aseq;
       SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
       
       int cyto_height = 10;
       if (cyto_annots instanceof TypeContainerAnnot) {
         TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
         EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
-        cytoband_glyph.setBackgroundColor(Color.WHITE);
+        cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
         cytoband_glyph.setHitable(false);
         cytoband_glyph.setCoords(0.0, 0.0, viewseq.getLength(), cyto_height + 4);        
                 
         for (int q=0; q<cyto_container.getChildCount(); q++) {
           SeqSymmetry sym  = cyto_container.getChild(q);
+          SeqSymmetry sym2 = transformForViewSeq(sym, aseq);
+
           SeqSpan cyto_span = sym.getSpan(viewseq);
           if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
             CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
@@ -615,12 +617,17 @@ public class SeqMapView extends JPanel
             } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
               efg = new DoublePointedGlyph();
               efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+            } else if ("".equals(cyto_sym.getBand())) {
+              efg = new EfficientOutlinedRectGlyph();
+              efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);              
             } else {
-              efg = new EfficientFillRectGlyph();
+              efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
               efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(axis_fg);
+              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
             }
             efg.setColor(cyto_sym.getColor());
-            efg.setInfo(cyto_sym);
+            seqmap.setDataModelFromOriginalSym(efg, cyto_sym);
             cytoband_glyph.addChild(efg);
           }
         }
@@ -631,7 +638,7 @@ public class SeqMapView extends JPanel
       }
     }
 
-axis_tier.addChild(axis);
+    axis_tier.addChild(axis);
     
     // it is important to set the colors before adding the tier
     // to the map, else the label tier colors won't match

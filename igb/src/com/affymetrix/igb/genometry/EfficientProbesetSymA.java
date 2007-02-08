@@ -36,11 +36,11 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
   int nid;
   int[] child_mins;
   String id_prefix;
-  SymWithProps parent;
+  Map props;
 
   /**
    * Constructor.
-   * @param parent parent symmetry
+   * @param props  a hash (usually shared with other syms) that EfficientProbesetSymA can use for common properties
    * @param cmins an array of the minima of the probe positions, this should
    *   be sorted in ascending order (but will be automatically sorted by this
    *   routine if this is not the case.  This means that the ordering
@@ -50,9 +50,9 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    * @param nid  an integer to be used as the ID
    * @param seq  the BioSeq
    */
-  public EfficientProbesetSymA(SymWithProps parent, int[] cmins, int probe_length, boolean forward,
+  public EfficientProbesetSymA(Map props, int[] cmins, int probe_length, boolean forward,
   			       String prefix, int nid, BioSeq seq) {
-    this.parent = parent;
+    this.props = props;
     this.child_mins = cmins;
     this.probe_length = probe_length;
     this.forward = forward;
@@ -189,7 +189,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    */
   public Map getProperties() {
     HashMap properties = new HashMap(1);
-    properties.put("method", parent.getProperty("method"));
+    properties.put("method", (String)props.get("method"));
     properties.put("id", "" + this.getID());
     return properties;
   }
@@ -201,7 +201,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   /** See getProperties(). */
   public Object getProperty(String key) {
-    if ("method".equals(key)) { return parent.getProperty("method"); }
+    if ("method".equals(key)) { return (String)props.get("method"); }
     if ("id".equals(key)) return this.getID();
     else return null;
   }

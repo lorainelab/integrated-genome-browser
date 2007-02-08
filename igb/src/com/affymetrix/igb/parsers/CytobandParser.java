@@ -46,6 +46,8 @@ public class CytobandParser {
 
   public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
   throws IOException  {
+    int band_alternator = 1; // toggles dark/light when band color is missing
+    
     String line;
     
     Thread thread = Thread.currentThread();
@@ -80,7 +82,12 @@ public class CytobandParser {
         if (field_count >= 5) {
           band = new String(fields[4]);
         } else {
-          band = "";
+          if (band_alternator > 0) {
+            band = "gpos25";
+          } else {
+            band = "gpos75";
+          }
+          band_alternator = -band_alternator;
         }
         
         if (beg > seq.getLength()) {
@@ -152,6 +159,14 @@ public class CytobandParser {
         float score = parseScore(band);
         return cyto_heat_map.getColors()[(int) (255 * 0.001 * score)];
       }
+    }
+    
+    /** Retrieves a color that will contrast well with {@link #getColor()}. */
+    public Color getTextColor() {
+      Color col = getColor();
+      int intensity = col.getRed() + col.getGreen() + col.getBlue();
+      if (intensity > 255+128) { return Color.BLACK; }
+      else return Color.WHITE;
     }
     
     public boolean setProperty(String name, Object val) {

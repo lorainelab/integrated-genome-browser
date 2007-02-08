@@ -44,24 +44,34 @@ public class AffyTieredMap extends NeoMap {
   static boolean show_minus = true;
   static boolean show_mixed = true;
   
+  /**
+   *  Starting with Java 1.6, there is an Action property Action.SELECTED_KEY.
+   *  By setting this property, JCheckBoxMenuItem's can update themselves
+   *  automatically. This property doesn't exist in earlier versions of java,
+   *  so I have to fake it.
+   *
+   */
+  public static final String SELECTED_KEY = "selected";
+  // public static final String SELECTED_KEY = Action.SELECTED_KEY;
+  
   public Action show_plus_action = new AbstractAction("Show (+) tiers") {
     public void actionPerformed(ActionEvent e) {
       show_plus = ! show_plus;
-      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_plus));
+      putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
       repackTheTiers(false, true);
     }
   };
   public Action show_minus_action = new AbstractAction("Show (-) tiers") {
     public void actionPerformed(ActionEvent e) {
       show_minus = ! show_minus;
-      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_minus));
+      putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
       repackTheTiers(false, true);
     }    
   };
   public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
     public void actionPerformed(ActionEvent e) {
       show_mixed = ! show_mixed;
-      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_mixed));
+      putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
       repackTheTiers(false, true);
     }    
   };
@@ -77,9 +87,9 @@ public class AffyTieredMap extends NeoMap {
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
-    show_plus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_plus));
-    show_minus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_minus));
-    show_mixed_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_mixed));
+    show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
+    show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
+    show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
   }
 
   /** Add the given tier to the map, building top-down. */

@@ -90,6 +90,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   //JMenu tools_menu;
   JMenu help_menu;
   JTabbedPane tab_pane;
+  JSplitPane splitpane;
 
   public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
   LoadFileAction open_file_action;
@@ -128,6 +129,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem bgcolor_item;
 
   JMenuItem move_tab_to_window_item;
+  JMenuItem move_tabbed_panel_to_window_item;
 
   SeqMapView map_view;
   //  SeqMapView overview;
@@ -634,6 +636,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
     move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
+    move_tabbed_panel_to_window_item = new JMenuItem("Open Tab Panel in New Window", KeyEvent.VK_P);
 
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
@@ -674,6 +677,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, shrink_wrap_item);
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
     MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
+    MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
@@ -720,6 +724,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     unclamp_item.addActionListener(this);
     toggle_hairline_label_item.addActionListener(this);
     move_tab_to_window_item.addActionListener(this);
+    move_tabbed_panel_to_window_item.addActionListener(this);
 
     Container cpane = frm.getContentPane();
     int table_height = 250;
@@ -733,7 +738,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     tab_pane = new JTabbedPane();
 
     cpane.setLayout(new BorderLayout());
-    JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
@@ -1049,6 +1054,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       UnibrowPrefsUtil.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
     } else if (src == move_tab_to_window_item) {
       openTabInNewWindow(tab_pane);
+    } else if (src == move_tabbed_panel_to_window_item) {
+      openTabbedPanelInNewWindow(tab_pane);
     }
     else if (src == gc_item) {
       System.gc();
@@ -1369,6 +1376,60 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
 
+  void openTabbedPanelInNewWindow(final JComponent comp) {
+
+    final String title = "Tabbed Panes";
+    final String display_name = title;
+    final String tool_tip = null;
+    Image temp_icon = null;
+
+    // If not already open in a new window, make a new window
+    if (comp2window.get(comp) == null) {
+      splitpane.remove(comp);
+      splitpane.validate();
+
+      final JFrame frame = new JFrame(display_name);
+      final Image icon = temp_icon;
+      if (icon != null) { frame.setIconImage(icon); }
+      final Container cont = frame.getContentPane();
+      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+      cont.add(comp);
+      comp.setVisible(true);
+      comp2window.put(comp, frame);
+      frame.pack(); // pack() to set frame to its preferred size
+
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
+      if (pos != null) {
+        UnibrowPrefsUtil.setWindowSize(frame, pos);
+      }
+      frame.setVisible(true);
+      frame.addWindowListener( new WindowAdapter() {
+	  public void windowClosing(WindowEvent evt) {
+            // save the current size into the preferences, so the window
+            // will re-open with this size next time
+            UnibrowPrefsUtil.saveWindowLocation(frame, title);
+	    comp2window.remove(comp);
+	    cont.remove(comp);
+	    cont.validate();
+	    frame.dispose();
+            splitpane.setBottomComponent(comp);
+            splitpane.setDividerLocation(0.70);
+            UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+            JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+            if (menu_item != null) {
+              menu_item.setSelected(false);
+            }
+	  }
+	});
+    }
+    // extra window already exists, but may not be visible
+    else {
+      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
+    }
+    UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
+  }
+  
   public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
     popup.add(popup_windowsM);
   }

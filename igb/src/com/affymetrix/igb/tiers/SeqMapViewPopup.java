@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -207,6 +207,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
   JMenu showMenu = new JMenu("Show...");
   JMenu changeMenu = new JMenu("Change...");
+  JMenu strandsMenu = new JMenu("Strands...");
   boolean curation_enabled = UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations);
 
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
@@ -299,6 +300,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
     refreshMap(false);
+    handler.sortTiers();
   }
   
 //  void changeHeight(java.util.List tier_label_glyphs, double height) {
@@ -333,11 +335,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
     showMenu.removeAll();
 
-    ArrayList label_glyphs = new ArrayList(handler.getAllTierLabels());
-    handler.orderTierLabels(label_glyphs);
-    handler.orderTiersByLabels(label_glyphs);
-
     refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
+    handler.sortTiers();
   }
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -363,10 +362,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         public void actionPerformed(ActionEvent e) {
           style.setShow(true);
           showMenu.remove(show_tier);
-          ArrayList label_glyphs = new ArrayList(handler.getAllTierLabels());
-          handler.orderTierLabels(label_glyphs);
-          handler.orderTiersByLabels(label_glyphs);
           refreshMap(false);
+          handler.sortTiers();
         }
       });
       showMenu.add(show_tier);
@@ -759,6 +756,15 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(hide_action);
     popup.add(showMenu);
     popup.add(show_all_action);
+    
+    if (gviewer instanceof SeqMapView) {
+      SeqMapView smv = (SeqMapView) gviewer;
+      strandsMenu.removeAll();
+      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_plus_action));
+      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_minus_action));
+      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_mixed_action));
+      popup.add(strandsMenu);
+    }
     popup.add(new JSeparator());
     popup.add(select_all_tiers_action);
     popup.add(changeMenu);

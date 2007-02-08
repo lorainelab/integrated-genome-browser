@@ -96,6 +96,7 @@ public class QuickLoadView2 extends JComponent
 
   static {
     default_types.put(default_annot_name, default_annot_name);
+    default_types.put("cytoBand", "cytoBand");
   }
 
   public QuickLoadView2() {

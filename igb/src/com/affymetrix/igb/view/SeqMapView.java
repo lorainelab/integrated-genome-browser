@@ -604,7 +604,7 @@ public class SeqMapView extends JPanel
           SeqSymmetry sym  = cyto_container.getChild(q);
           SeqSymmetry sym2 = transformForViewSeq(sym, aseq);
 
-          SeqSpan cyto_span = sym.getSpan(viewseq);
+          SeqSpan cyto_span = sym2.getSpan(viewseq);
           if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
             CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
           
@@ -623,7 +623,7 @@ public class SeqMapView extends JPanel
             } else {
               efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
               efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(axis_fg);
+              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
               ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
             }
             efg.setColor(cyto_sym.getColor());

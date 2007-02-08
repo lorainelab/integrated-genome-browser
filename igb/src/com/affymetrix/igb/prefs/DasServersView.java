@@ -47,7 +47,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
 
   public DasServersView() {
     super();
-    this.setName("DAS Servers");
+    this.setName("DAS/1 Servers");
     this.setLayout(new BorderLayout());
 
     JScrollPane scroll_pane = new JScrollPane(table);

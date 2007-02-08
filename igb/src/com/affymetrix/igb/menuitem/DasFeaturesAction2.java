@@ -947,7 +947,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       JOptionPane.PLAIN_MESSAGE,
       JOptionPane.OK_CANCEL_OPTION
     );
-    final JDialog dialog = new JDialog(gviewer.getFrame(), "DAS Feature Loader", true);
+    final JDialog dialog = new JDialog(gviewer.getFrame(), "DAS/1 Feature Loader", true);
     dialog.setContentPane(opt_pane);
 
     opt_pane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {

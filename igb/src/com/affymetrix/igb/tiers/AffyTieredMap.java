@@ -20,6 +20,8 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genometry.*;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import java.util.*;
 import javax.swing.*;
@@ -51,7 +53,7 @@ public class AffyTieredMap extends NeoMap {
    *  so I have to fake it.
    *
    */
-  public static final String SELECTED_KEY = "selected";
+  public static final String SELECTED_KEY = "Selected (AffyTieredMap)";
   // public static final String SELECTED_KEY = Action.SELECTED_KEY;
   
   public Action show_plus_action = new AbstractAction("Show (+) tiers") {
@@ -587,6 +589,25 @@ public class AffyTieredMap extends NeoMap {
     }
     else {
       super.setDataModel(g, sym);
+    }
+  }
+  
+  /** A subclass of JCheckBoxMenuItem that pays attention to my
+   *  version of AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
+   *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
+   */
+  public static class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
+    public ActionToggler(Action action) {
+      super(action);
+      this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY)).booleanValue());
+      action.addPropertyChangeListener(this);
+    }
+    
+    public void propertyChange(PropertyChangeEvent evt) {
+      if (AffyTieredMap.SELECTED_KEY.equals(evt.getPropertyName())) {
+        Boolean b = (Boolean) evt.getNewValue();
+        this.setSelected(b.booleanValue());
+      }
     }
   }
 

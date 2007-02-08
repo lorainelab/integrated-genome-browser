@@ -15,7 +15,6 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -29,6 +28,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.parsers.BedParser;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
 
@@ -210,9 +210,19 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   JMenu strandsMenu = new JMenu("Strands...");
   boolean curation_enabled = UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations);
 
+  ActionToggler at1;
+  ActionToggler at2;
+  ActionToggler at3;
+  
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
     this.handler = handler;
     this.gviewer = gviewer;
+    if (gviewer instanceof SeqMapView) {
+      SeqMapView smv = (SeqMapView) gviewer;
+      at1 = new ActionToggler(smv.getSeqMap().show_plus_action);
+      at2 = new ActionToggler(smv.getSeqMap().show_minus_action);
+      at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
+    }
   }
 
   void showCustomizer() {
@@ -760,9 +770,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (gviewer instanceof SeqMapView) {
       SeqMapView smv = (SeqMapView) gviewer;
       strandsMenu.removeAll();
-      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_plus_action));
-      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_minus_action));
-      strandsMenu.add(new JCheckBoxMenuItem(smv.getSeqMap().show_mixed_action));
+      strandsMenu.add(at1);
+      strandsMenu.add(at2);
+      strandsMenu.add(at3);
       popup.add(strandsMenu);
     }
     popup.add(new JSeparator());

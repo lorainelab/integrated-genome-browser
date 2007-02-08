@@ -33,6 +33,7 @@ import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.EPSWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
@@ -656,9 +657,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     // rev_comp option currently not working, so disabled
     JMenu strands_menu = new JMenu("Strands");
-    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_plus_action));
-    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_minus_action));
-    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_mixed_action));
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_plus_action));
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 
     view_menu.add(strands_menu);
     //    MenuUtil.addToMenu(view_menu, rev_comp_item);

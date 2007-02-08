@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -44,31 +44,27 @@ public class AffyTieredMap extends NeoMap {
   static boolean show_minus = true;
   static boolean show_mixed = true;
   
-  Action show_plus_action = new AbstractAction("Show (+) Tiers") {
+  public Action show_plus_action = new AbstractAction("Show (+) tiers") {
     public void actionPerformed(ActionEvent e) {
-      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
-      show_plus = show_plus_mi.isSelected();
+      show_plus = ! show_plus;
+      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_plus));
       repackTheTiers(false, true);
     }
   };
-  Action show_minus_action = new AbstractAction("Show (-) Tiers") {
+  public Action show_minus_action = new AbstractAction("Show (-) tiers") {
     public void actionPerformed(ActionEvent e) {
-      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
-      show_minus = show_minus_mi.isSelected();
+      show_minus = ! show_minus;
+      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_minus));
       repackTheTiers(false, true);
     }    
   };
-  Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
+  public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
     public void actionPerformed(ActionEvent e) {
-      //JCheckBoxMenuItem mi = (JCheckBoxMenuItem) e.getSource();
-      show_mixed = show_mixed_mi.isSelected();
+      show_mixed = ! show_mixed;
+      putValue(Action.SELECTED_KEY, Boolean.valueOf(show_mixed));
       repackTheTiers(false, true);
     }    
   };
-
-  public JCheckBoxMenuItem show_plus_mi = new JCheckBoxMenuItem(show_plus_action);
-  public JCheckBoxMenuItem show_minus_mi = new JCheckBoxMenuItem(show_minus_action);
-  public JCheckBoxMenuItem show_mixed_mi = new JCheckBoxMenuItem(show_mixed_action);
 
   public AffyTieredMap() {
     super();
@@ -81,9 +77,9 @@ public class AffyTieredMap extends NeoMap {
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
-    show_plus_mi.setSelected(show_plus);
-    show_minus_mi.setSelected(show_minus);
-    show_mixed_mi.setSelected(show_mixed);
+    show_plus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_plus));
+    show_minus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_minus));
+    show_mixed_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_mixed));
   }
 
   /** Add the given tier to the map, building top-down. */

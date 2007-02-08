@@ -652,9 +652,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     // rev_comp option currently not working, so disabled
     JMenu strands_menu = new JMenu("Strands");
-    strands_menu.add(getMapView().getSeqMap().show_plus_mi);
-    strands_menu.add(getMapView().getSeqMap().show_minus_mi);
-    strands_menu.add(getMapView().getSeqMap().show_mixed_mi);
+    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_plus_action));
+    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_minus_action));
+    strands_menu.add(new JCheckBoxMenuItem(getMapView().getSeqMap().show_mixed_action));
 
     view_menu.add(strands_menu);
     //    MenuUtil.addToMenu(view_menu, rev_comp_item);

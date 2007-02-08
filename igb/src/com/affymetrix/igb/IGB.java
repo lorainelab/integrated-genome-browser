@@ -194,12 +194,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // if laf == null, then apply the windows look and feel
     if (laf == null) try {
       // It this is Windows, then use the Windows look and feel.
-      LookAndFeel look_and_feel = new com.sun.java.swing.plaf.windows.WindowsLookAndFeel();
+      
+      Class cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+      LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+      
       if (look_and_feel.isSupportedLookAndFeel()) {
         UIManager.setLookAndFeel(look_and_feel);
       }
-    } catch (UnsupportedLookAndFeelException ulfe) {
-      // Windows look and feel is only supported on Windows.  That is ok.
+    } catch (Exception ulfe) {
+      // Windows look and feel is only supported on Windows, and only in
+      // some version of the jre.  That is perfectly ok.
     }
 
     // Initialize the ConsoleView right off, so that ALL output will

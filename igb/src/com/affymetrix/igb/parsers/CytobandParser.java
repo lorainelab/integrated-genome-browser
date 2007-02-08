@@ -38,8 +38,8 @@ public class CytobandParser {
   public static final String CYTOBAND_TIER_NAME = "Cytobands";
   public static final float GNEG_SCORE = 100.0f;
   public static final float GVAR_SCORE = 100.0f;
-  public static final float ACEN_SCORE = 600.005f;
-  public static final float STALK_SCORE = 500.005f;
+  public static final float ACEN_SCORE = 600.0f;
+  public static final float STALK_SCORE = 500.0f;
   
   public CytobandParser() {
   }
@@ -120,7 +120,7 @@ public class CytobandParser {
       try {
         pos = 10.0f * Integer.parseInt(s.substring(4));
       } catch (NumberFormatException nfe) {
-        
+        pos = 1000.0f;
       }
       return pos;
     }

@@ -153,6 +153,8 @@ public class Bprobe1Parser implements AnnotationWriter {
         String val = dis.readUTF();
         tagvals.put(tag, val);
       }
+      tagvals.put("method", annot_type);
+
       Iterator seqiter = seq2syms.keySet().iterator();
       while (seqiter.hasNext()) {
         String seqid = (String) seqiter.next();
@@ -184,7 +186,7 @@ public class Bprobe1Parser implements AnnotationWriter {
             int min = dis.readInt();
 	    cmins[k] = min;
           }
-	  SeqSymmetry psym = new EfficientProbesetSymA(container_sym, cmins, probe_length, forward, id_prefix, nid, aseq);
+	  SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
 	  syms[i]  = psym;
 	  container_sym.addChild(psym);
 	  results.add(psym);

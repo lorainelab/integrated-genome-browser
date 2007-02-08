@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -333,7 +333,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
    *  adding a ".1", ".2", etc., as needed.
    */
   public String parseName(String s) {
-    String annot_name = s;
+    String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
     Integer count = (Integer)name_counts.get(annot_name);
     if (count == null) {
       name_counts.put(annot_name, int1);

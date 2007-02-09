@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -232,7 +232,7 @@ public class GraphSymUtils {
     }
     */
     else if (sname.endsWith(".bgr")) {
-      grafs = wrapInList(BgrParser.parse(newstr, seq_group));
+      grafs = wrapInList(BgrParser.parse(newstr, stream_name, seq_group, true));
     }
     else if (sname.endsWith(".sgr")) {
       SgrParser sgr_parser = new SgrParser();

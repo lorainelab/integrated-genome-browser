@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2006 Affymetrix, Inc.
+*   Copyright (c) 2006-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -95,11 +95,7 @@ public class BgrParser {
     return true;
   }
 
-  public static GraphSym parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-    return parse(istr, seq_group, true);
-  }
-
-  public static GraphSym parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
+  public static GraphSym parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
     throws IOException  {
     com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
     tim.start();
@@ -144,12 +140,19 @@ public class BgrParser {
       System.out.println("seq not found, creating new seq: '"+seq_name+"'");
       seq = seq_group.addSeq(seq_name, largest_x);
     }
+    
+    StringBuffer sb = new StringBuffer();
+    append(sb, analysis_group_name);
+    append(sb, value_type_name);
+    append(sb, parameter_set_name);
 
-    String graph_name =
-      analysis_group_name + ", " +
-      value_type_name + ", " +
-      parameter_set_name;
-
+    String graph_name;
+    if (sb.length() == 0) {
+      graph_name = stream_name;
+    } else {
+      graph_name = sb.toString();
+    }
+    
     // need to replace seq_name with name of graph (some combo of group name and conditions...)
     if (ensure_unique_id) { graph_name = GraphSymUtils.getUniqueGraphID(graph_name, seq); }
     GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
@@ -160,4 +163,13 @@ public class BgrParser {
     return graf;
   }
 
+  static void append(StringBuffer sb, String s) {
+    if (s != null && ! "null".equals(s) && s.trim().length()>0) {
+      if (sb.length() > 0) {
+        sb.append(", ");
+      }
+      sb.append(s);
+    }
+  }
+  
 }

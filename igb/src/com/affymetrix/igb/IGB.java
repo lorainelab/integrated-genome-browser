@@ -66,8 +66,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
 
-  public static Color default_bg_col = Color.black;
-  public static Color default_label_col = Color.white;
+  final static String TABBED_PANES_TITLE = "Tabbed Panes";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static Map prefs_hash;
@@ -635,8 +634,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     toggle_edge_matching_item.setState(map_view.getEdgeMatching());
     autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
     autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
-    move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
-    move_tabbed_panel_to_window_item = new JMenuItem("Open Tab Panel in New Window", KeyEvent.VK_P);
+    move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
+    move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
 
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
@@ -743,7 +742,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setTopComponent(map_view);
-    splitpane.setBottomComponent(tab_pane);
+    
+    boolean tab_panel_in_a_window = (UnibrowPrefsUtil.getComponentState(TABBED_PANES_TITLE).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
+    if (tab_panel_in_a_window) {
+      openTabbedPanelInNewWindow(tab_pane);
+    } else {
+      splitpane.setBottomComponent(tab_pane);
+    }
 
     if (USE_OVERVIEW) {
       //      overview = new SeqMapView(true);
@@ -1240,6 +1245,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         UnibrowPrefsUtil.saveWindowLocation(f, pi.getPluginName());
       }
     }
+    Frame f = (Frame) comp2window.get(tab_pane);
+    if (f != null) {
+      UnibrowPrefsUtil.saveWindowLocation(f, TABBED_PANES_TITLE);
+    }
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
@@ -1302,16 +1311,21 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   public void openTabInNewWindow(final JTabbedPane tab_pane) {
-    int index = tab_pane.getSelectedIndex();
-    if (index<0) {
-      errorPanel("No more panes!");
-      return;
-    }
-    final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
-    final String title = tab_pane.getTitleAt(index);
-    final String tool_tip = tab_pane.getToolTipTextAt(index);
-    //openCompInWindow(comp, title, tool_tip, null, tab_pane);
-    openCompInWindow(comp, tab_pane);
+    Runnable r = new Runnable() {
+      public void run() {
+        int index = tab_pane.getSelectedIndex();
+        if (index<0) {
+          errorPanel("No more panes!");
+          return;
+        }
+        final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
+        final String title = tab_pane.getTitleAt(index);
+        final String tool_tip = tab_pane.getToolTipTextAt(index);
+        //openCompInWindow(comp, title, tool_tip, null, tab_pane);
+        openCompInWindow(comp, tab_pane);
+      }
+    };
+    SwingUtilities.invokeLater(r);
   }
 
   void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
@@ -1378,7 +1392,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   void openTabbedPanelInNewWindow(final JComponent comp) {
 
-    final String title = "Tabbed Panes";
+    final String title = TABBED_PANES_TITLE;
     final String display_name = title;
     final String tool_tip = null;
     Image temp_icon = null;
@@ -1404,24 +1418,47 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
       frame.setVisible(true);
+      
+      final Runnable return_panes_to_main_window = new Runnable() {
+        public void run() {
+          // save the current size into the preferences, so the window
+          // will re-open with this size next time
+          UnibrowPrefsUtil.saveWindowLocation(frame, title);
+          comp2window.remove(comp);
+          cont.remove(comp);
+          cont.validate();
+          frame.dispose();
+          splitpane.setBottomComponent(comp);
+          splitpane.setDividerLocation(0.70);
+          UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+          JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+          if (menu_item != null) {
+            menu_item.setSelected(false);
+          }
+        }
+      };
+      
       frame.addWindowListener( new WindowAdapter() {
-	  public void windowClosing(WindowEvent evt) {
-            // save the current size into the preferences, so the window
-            // will re-open with this size next time
-            UnibrowPrefsUtil.saveWindowLocation(frame, title);
-	    comp2window.remove(comp);
-	    cont.remove(comp);
-	    cont.validate();
-	    frame.dispose();
-            splitpane.setBottomComponent(comp);
-            splitpane.setDividerLocation(0.70);
-            UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
-            JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
-            if (menu_item != null) {
-              menu_item.setSelected(false);
-            }
-	  }
-	});
+        public void windowClosing(WindowEvent evt) {
+          SwingUtilities.invokeLater(return_panes_to_main_window);
+        }});
+
+       JMenuBar mbar = new JMenuBar();
+       frame.setJMenuBar(mbar);
+       JMenu menu1 = new JMenu("Windows");
+       menu1.setMnemonic('W');
+       mbar.add( menu1 );
+       
+       menu1.add(new AbstractAction("Return Tabbed Panes to Main Window") {
+        public void actionPerformed(ActionEvent evt) {
+          SwingUtilities.invokeLater(return_panes_to_main_window);
+        }
+       });
+       menu1.add(new AbstractAction("Open Current Tab in New Window") {
+        public void actionPerformed(ActionEvent evt) {
+          openTabInNewWindow(tab_pane);
+        }
+       });
     }
     // extra window already exists, but may not be visible
     else {

@@ -386,7 +386,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
   }
 
   /**
-   *  mutspan is a MutableSeqSpan used for
+   *  scratch_span is a MutableSeqSpan used for transient span instantiation
    */
   protected static void writeTranscriptCluster(SingletonSymWithIntId tsym, MutableSeqSpan scratch_span, DataOutputStream dos)
     throws IOException {
@@ -482,17 +482,17 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       genomeid = args[4];
       if (args.length == 6) { versionid = args[5]; }
     } else {
-      System.out.println("Usage:  java ... ExonArrayDesignParser <GFF infile> <BP1 outfile> <id_prefix> <annot type> <genomeid> [<version>]");
+      System.out.println("Usage:  java ... ExonArrayDesignParser <GFF infile> <EAD outfile> <id_prefix> <annot type> <genomeid> [<version>]");
       System.out.println("Example:  java ... ExonArrayDesignParser foo.gff foo.ead HuEx HuEx-1_0-st-Probes H_sapiens_Jul_2003");
       System.exit(1);
     }
 
 
-    System.out.println("Creating a '.bp1' format file: ");
+    System.out.println("Creating a '.ead' format file: ");
     System.out.println("Input '"+in_file+"'");
     System.out.println("Output '"+out_file+"'");
     convertGff(in_file, out_file, genomeid, versionid, annot_type, id_prefix);
-    System.out.println("DONE!  Finished converting GFF file to BP1 file.");
+    System.out.println("DONE!  Finished converting GFF file to EAD file.");
     System.out.println("");
 
     /*
@@ -516,7 +516,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *     All annotations in GFF file are genome-based probes (contiguous intervals on genome);
    *     25-mer probes (for now)
    */
-  public static void convertGff(String gff_file, String output_file, String genome_id,
+  public static void convertGff(String in_file, String output_file, String genome_id,
 				String version_id, String annot_type, String id_prefix)
     throws IOException {
 
@@ -524,7 +524,16 @@ public class ExonArrayDesignParser implements AnnotationWriter {
     int probe_length = 25;
     List annots = null;
     try {
-      System.out.println("parsing gff file: " + gff_file);
+      System.out.println("parsing gff file: " + in_file);
+      File gff_file = new File(in_file);
+      List gfiles = new ArrayList();
+      if (gff_file.isDirectory()) {
+	// process all gff files in directory
+	// gfiles.add(gfile);
+      }
+      else {
+	gfiles.add(gff_file);
+      }
       GFFParser gff_parser = new GFFParser();
       BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
       annots = gff_parser.parse(bis, seq_group, false);

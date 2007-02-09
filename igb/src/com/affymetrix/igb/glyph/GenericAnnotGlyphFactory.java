@@ -216,7 +216,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     
     if (use_item_rgb && sym instanceof SymWithProps) {
-      Color cc = (Color) ((SymWithProps) insym).getProperty(TrackLineParser.ITEM_RGB);
+      Color cc = (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
       if (cc != null) return cc;
     }
     if (use_score_colors && sym instanceof Scored) {

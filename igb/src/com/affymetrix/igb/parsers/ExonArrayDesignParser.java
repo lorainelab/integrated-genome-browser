@@ -467,7 +467,10 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *</pre>
    */
   public static void main(String[] args) throws IOException {
-    String in_file = "";
+    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
+    //    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
+    //    String in_file = "";
+    String in_file = default_in_file;
     String out_file = "";
     String id_prefix = "";
     String genomeid= "";
@@ -486,7 +489,6 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       System.out.println("Example:  java ... ExonArrayDesignParser foo.gff foo.ead HuEx HuEx-1_0-st-Probes H_sapiens_Jul_2003");
       System.exit(1);
     }
-
 
     System.out.println("Creating a '.ead' format file: ");
     System.out.println("Input '"+in_file+"'");
@@ -535,7 +537,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	gfiles.add(gff_file);
       }
       GFFParser gff_parser = new GFFParser();
-      BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
+      BufferedInputStream bis = new BufferedInputStream( new FileInputStream( gff_file ) );
       annots = gff_parser.parse(bis, seq_group, false);
       bis.close();
     }

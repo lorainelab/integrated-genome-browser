@@ -189,7 +189,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    */
   public Map getProperties() {
     HashMap properties = new HashMap(1);
-    properties.put("method", (String)props.get("method"));
+    if(props != null)  { properties.put("method", (String)props.get("method")); }
     properties.put("id", "" + this.getID());
     return properties;
   }
@@ -201,7 +201,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   /** See getProperties(). */
   public Object getProperty(String key) {
-    if ("method".equals(key)) { return (String)props.get("method"); }
+    if ("method".equals(key) && props != null) { return (String)props.get("method"); }
     if ("id".equals(key)) return this.getID();
     else return null;
   }

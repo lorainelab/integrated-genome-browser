@@ -470,14 +470,14 @@ public abstract class SeqUtils {
   /** Inner class helper for inverse() method. */
   static class StartSorter implements Comparator {
     static StartSorter static_instance = null;
-    
+
     public static StartSorter getInstance() {
       if (static_instance == null) {
         static_instance = new StartSorter();
       }
       return static_instance;
     }
-    
+
     public int compare(Object objA, Object objB) {
       SeqSpan spanA = (SeqSpan)objA;
       SeqSpan spanB = (SeqSpan)objB;
@@ -724,7 +724,7 @@ public abstract class SeqUtils {
    *    tranform methods themselves rather than have a post-operative fix!
    */
   public static boolean transformSymmetry(MutableSeqSymmetry resultSet, SeqSymmetry[] symPath) {
-    // for each SeqSymmetry mapSym in SeqSymmetry[] symPath
+    // for each SeqSymmetry mapSym in SeqSymmetry[] symPathy
     for (int i=0; i<symPath.length; i++) {
       SeqSymmetry sym = symPath[i];
       boolean success = transformSymmetry(resultSet, sym, true);
@@ -877,7 +877,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
                   }
                 }
                 childResult.addSpan(interSpan);
-              }              
+              }
             }
           }
           if (childResult == null) {
@@ -927,8 +927,8 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // STEP 3
 	//
 	// GAH 2006-03-28
-	// changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even 
-	//   if they are already present in result sym.  This fixes bug encountered with shallow transforms 
+	// changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even
+	//   if they are already present in result sym.  This fixes bug encountered with shallow transforms
 	//   (result depth = 1, mapping depth = 1)
 	// Not sure how this will affect deep transformations, but so far appears to be working properly
 
@@ -1475,7 +1475,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       return BMin <= AMax;
     }
   }
-  
+
   /**
    *    Exactly like looseOverlap(spanA, spanB), except exact abutment is not considered overlap.
    *    (&gt; and &lt; rather than &gt;= and &lt;= used for comparisons...).
@@ -1497,7 +1497,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       return AMin < BMax;
     } else {
       return BMin < AMax;
-    }    
+    }
   }
 
   /**
@@ -1569,7 +1569,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       return null;
     }
   }
-  
+
   /**
    *  More efficient method to retrieve intersection of two spans.
    *  returns the resulting span in dstSpan, and returns true if
@@ -1683,15 +1683,15 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       AMin = spanA.getEndDouble();
       AMax = spanA.getStartDouble();
     }
-    
+
     if (BForward) {
       BMin = spanB.getStartDouble();
       BMax = spanB.getEndDouble();
     } else {
       BMin = spanB.getEndDouble();
-      BMax = spanB.getStartDouble();      
+      BMax = spanB.getStartDouble();
     }
-        
+
     if (use_strict_overlap) {
       if (! strictOverlap(AMin, AMax, BMin, BMax)) { return false; }
     }
@@ -1763,7 +1763,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     return true;
   }
 
-  public static boolean encompass(boolean AForward, boolean BForward, 
+  public static boolean encompass(boolean AForward, boolean BForward,
     double AMin, double AMax, double BMin, double BMax,
     BioSeq seq, MutableSeqSpan dstSpan) {
 
@@ -1935,6 +1935,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    */
   public static String symToString(SeqSymmetry sym) {
     String result = "";
+    String id = sym.getID();
     if (sym == null) {
       result = "SeqSymmetry == null";
     }
@@ -1943,10 +1944,21 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       int n = sym_class.lastIndexOf('.');
       if (n>0 && n<sym_class.length()) sym_class = sym_class.substring(n+1);
       String hex = Integer.toHexString(sym.hashCode());
-      result = sym_class + " ("+hex+")";
+      if (id == null) {
+	result = sym_class + " ("+hex+")";
+      }
+      else {
+	result = id + " : " + sym_class + " ("+hex+")";
+      }
     } else {
-      result = sym + ", children: " + sym.getChildCount()
-        + ", depth: "+ getDepth(sym);
+      if (id == null) {
+	result = sym + ", children: " + sym.getChildCount()
+	  + ", depth: "+ getDepth(sym);
+      }
+      else {
+	result = id + " : " + sym + ", children: " + sym.getChildCount()
+	  + ", depth: "+ getDepth(sym);
+      }
     }
     return result;
   }

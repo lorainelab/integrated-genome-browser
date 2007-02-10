@@ -15,8 +15,11 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import java.util.*;
 
+import com.affymetrix.genoviz.util.Memer;
+
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
@@ -317,6 +320,10 @@ public class ExonArrayDesignParser implements AnnotationWriter {
     for (int i=0; i<scount; i++) {
       SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
       SymWithProps typesym = aseq.getAnnotation(annot_type);
+      // transcript clusters should be third level down in hierarchy:
+      //    1) type container
+      //    2) intermediate container
+      //    3) transcript cluster
       List syms = new ArrayList();
       // collect all transcript cluster syms
       writeSeqWithAnnots(syms, aseq, dos);
@@ -469,14 +476,18 @@ public class ExonArrayDesignParser implements AnnotationWriter {
   public static void main(String[] args) throws IOException {
     String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
     //    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
+    String default_genome_id = "H_sapiens_Mar_2006";
+    String default_id_prefix = "HuEx-1_0-st-v2:";
+    String default_annot_type = "HuEx-1_0-st-v2";
     //    String in_file = "";
     String in_file = default_in_file;
     String out_file = "";
-    String id_prefix = "";
-    String genomeid= "";
+    String id_prefix = default_id_prefix;
+    String genomeid= default_genome_id;
     String versionid = "";
-    String annot_type = "";
+    String annot_type = default_annot_type;
 
+    /*
     if (args.length == 5 || args.length == 6) {
       in_file = args[0];
       out_file = args[1];
@@ -489,6 +500,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       System.out.println("Example:  java ... ExonArrayDesignParser foo.gff foo.ead HuEx HuEx-1_0-st-Probes H_sapiens_Jul_2003");
       System.exit(1);
     }
+    */
 
     System.out.println("Creating a '.ead' format file: ");
     System.out.println("Input '"+in_file+"'");
@@ -522,9 +534,9 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 				String version_id, String annot_type, String id_prefix)
     throws IOException {
 
+    Memer mem = new Memer();
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
     int probe_length = 25;
-    List annots = null;
     try {
       System.out.println("parsing gff file: " + in_file);
       File gff_file = new File(in_file);
@@ -536,10 +548,112 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       else {
 	gfiles.add(gff_file);
       }
-      GFFParser gff_parser = new GFFParser();
-      BufferedInputStream bis = new BufferedInputStream( new FileInputStream( gff_file ) );
-      annots = gff_parser.parse(bis, seq_group, false);
-      bis.close();
+      int printcount = 0;
+      for (int i=0; i<gfiles.size(); i++) {
+	GFFParser gff_parser = new GFFParser();
+	BufferedInputStream bis = new BufferedInputStream( new FileInputStream( gff_file ) );
+	List annots = gff_parser.parse(bis, ".", seq_group, false, false);
+
+	HashMap seq2container = new HashMap();
+
+	mem.printMemory();
+	System.out.println("top-level annots: " + annots.size());
+	// now convert each annot hierarchy to SingletonSymWithIntId and EfficientProbesetSymA
+	  // assuming 5-level deep hierarchy:
+	  // a) transcript-cluster
+	  //    b) exon-cluster
+	  //       c) PSR
+	  //          d) probeset
+	  //             e) probe
+	  // can't use just getID() for id because this depends on headers at start of gff that may not
+	  //    be set correctly (for example in some the tag for probeset ID is "probeset_name" instead of "probeset_id")
+	int tcount = annots.size();
+	for (int tindex=0; tindex < tcount; tindex++) {
+	  SymWithProps tcluster = (SymWithProps)annots.get(tindex);
+	  SeqSpan tspan = tcluster.getSpan(0);
+	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)tspan.getBioSeq();
+	  SimpleSymWithProps container = (SimpleSymWithProps)seq2container.get(aseq);
+	  if (container == null) {
+	    container = new SimpleSymWithProps();
+	    container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
+	    container.setProperty("method", annot_type);
+	    container.setProperty("preferred_formats", pref_list);
+	    seq2container.put(aseq, container);
+	  }
+	  String tid = tcluster.getID();
+	  if (tid == null)  { tid = (String)tcluster.getProperty("transcript_cluster_id"); }
+	  SingletonSymWithIntId new_tcluster =
+	    new SingletonSymWithIntId(tspan.getStart(), tspan.getEnd(), aseq, Integer.parseInt(tid));
+	  container.addChild(new_tcluster);
+
+	  int ecount = tcluster.getChildCount();
+	  for (int eindex=0; eindex < ecount; eindex++) {
+	    SymWithProps ecluster = (SymWithProps)tcluster.getChild(eindex);
+	    SeqSpan espan = ecluster.getSpan(0);
+	    String eid = ecluster.getID();
+	    if (eid == null)  { eid = (String)ecluster.getProperty("exon_cluster_id"); }
+	    if (eid == null)  { eid = (String)ecluster.getProperty("intron_cluster_id"); }
+	    SingletonSymWithIntId new_ecluster =
+	      new SingletonSymWithIntId(espan.getStart(), espan.getEnd(), aseq, Integer.parseInt(eid));
+	    new_tcluster.addChild(new_ecluster);
+
+	    int psrcount = ecluster.getChildCount();
+	    for (int psrindex=0; psrindex < psrcount; psrindex++) {
+	      SymWithProps psr = (SymWithProps)ecluster.getChild(psrindex);
+	      SeqSpan psrspan = psr.getSpan(0);
+	      String psrid = psr.getID();
+	      if (psrid == null) { psrid = (String)psr.getProperty("psr_id"); }
+	      SingletonSymWithIntId new_psr =
+		new SingletonSymWithIntId(psrspan.getStart(), psrspan.getEnd(), aseq, Integer.parseInt(psrid));
+	      new_ecluster.addChild(new_psr);
+
+	      int probeset_count = psr.getChildCount();
+	      for (int probeset_index=0; probeset_index < probeset_count; probeset_index++) {
+		SymWithProps probeset = (SymWithProps)psr.getChild(probeset_index);
+		SeqSpan probeset_span = probeset.getSpan(0);
+		String probeset_id = probeset.getID();
+		if (probeset_id == null) { probeset_id = (String)probeset.getProperty("probeset_id"); }
+		int probeset_nid = Integer.parseInt(probeset_id);
+		int probecount = probeset.getChildCount();
+		int[] probemins = new int[probecount];
+		if (printcount < 1 && tcluster.getChildCount() > 1) {
+		  System.out.println("transcript_cluster_id: " + tid);
+		  System.out.println("exon_cluster_id: " + eid);
+		  System.out.println("psr_id: " + psrid);
+		  System.out.println("probeset_id: " + probeset_id);
+		  System.out.println("probeset_nid: " + probeset_nid);
+		}
+		for (int probeindex=0; probeindex < probecount; probeindex++) {
+		  SeqSymmetry probe = probeset.getChild(probeindex);
+		  probemins[probeindex] = probe.getSpan(0).getMin();
+		}
+
+		EfficientProbesetSymA new_probeset =
+		  new EfficientProbesetSymA(null, probemins, probe_length, probeset_span.isForward(), id_prefix, probeset_nid, aseq);
+		new_psr.addChild(new_probeset);
+	      }
+	    }
+	  }
+
+	  if (printcount < 1 && tcluster.getChildCount() > 1) {
+	    SeqUtils.printSymmetry(tcluster, "   ", true);   // print symmetry with props
+	    System.out.println("###########################");
+	    SeqUtils.printSymmetry(new_tcluster, "   ", true);
+	    printcount++;
+	  }
+	}  // end transcript_cluster loop
+	bis.close();
+
+	System.gc();
+	Iterator siter = seq2container.entrySet().iterator();
+	while (siter.hasNext()) {
+	  Map.Entry ent = (Map.Entry)siter.next();
+	  SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)ent.getKey();
+	  SeqSymmetry container = (SeqSymmetry)ent.getValue();
+	  aseq.addAnnotation(container, annot_type);
+	}
+	mem.printMemory();
+      }
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }

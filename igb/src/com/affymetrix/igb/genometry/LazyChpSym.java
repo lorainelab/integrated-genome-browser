@@ -2,6 +2,8 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 
+import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.das2.*;
@@ -142,6 +144,8 @@ public class LazyChpSym extends ScoredContainerSym {
 
 
   public void loadCoords() {
+    Timer tim = new Timer();
+    tim.start();
     coords_loaded = true;
     /**
      *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
@@ -213,7 +217,7 @@ public class LazyChpSym extends ScoredContainerSym {
 
       // Set the human name on the tier to the short type name, not the long URL ID
       AnnotStyle.getInstance(das_type.getID()).setHumanName(das_type.getName());
-      
+
       SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
       // to get Das2Region and Das2Type, need to intialize DAS/2 versioned source
       //    (but can do this once per versioned source, rather than once per LazyChpSym?
@@ -233,6 +237,7 @@ public class LazyChpSym extends ScoredContainerSym {
       TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
       // TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
 
+
       // collect probeset annotations for given chp type
       //     (probesets should be at 3rd level down in annotation hierarchy)
       for (int i=0; i<container.getChildCount(); i++) {
@@ -244,8 +249,10 @@ public class LazyChpSym extends ScoredContainerSym {
 	  //    ??? (for exon chip transcript clusters)
 	  //    ??? (for gene chips)
 	  //    ??? (for genotyping chips)
-	  SeqSymmetry probeset = req.getChild(k);
-	  symlist.add(probeset);
+	  SeqSymmetry sym = req.getChild(k);
+	  //	  addIntIdsToList(sym, int_ids);
+	  addIdSyms(sym, symlist);
+	  //	  symlist.add(sym);
 	}
       }
     }
@@ -258,10 +265,10 @@ public class LazyChpSym extends ScoredContainerSym {
     // Iterate through probeset annotations, try hashing each one to chp data, collect hits
     for (int i=0; i<symcount; i++) {
       SeqSymmetry annot = (SeqSymmetry)symlist.get(i);
-      if (annot instanceof EfficientProbesetSymA) {
+      if (annot instanceof IntId) {
 	// want to use integer id to avoid lots of String churn
-	EfficientProbesetSymA psym = (EfficientProbesetSymA)annot;
-	int nid = psym.getIntID();
+	IntId isym = (IntId)annot;
+	int nid = isym.getIntID();
 	Integer pid = new Integer(nid);
 	// look for a match in ID-to-ScoreEntry
 	Object data = probeset_id2data.get(pid);
@@ -332,11 +339,25 @@ public class LazyChpSym extends ScoredContainerSym {
     if (has_pvals)  {
       this.addScores("pval", pvals);
     }
-
+    System.out.println("Time to load and merge coords from DAS for CHP file: " + tim.read()/1000f);
     System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
     System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
   }
 
-
+  protected void addIdSyms(SeqSymmetry sym, List symlist) {
+    if (sym instanceof IntId) {
+      symlist.add(sym);
+    }
+    else if (sym.getID() != null)  {
+      symlist.add(sym);
+    }
+    // if SingletonSymWithIntId, recursively descend through children and add those with IDs
+    if ((sym.getChildCount() > 0) && (sym instanceof SingletonSymWithIntId))  {
+      for (int i=0; i<sym.getChildCount(); i++) {
+	SeqSymmetry child = sym.getChild(i);
+	addIdSyms(child, symlist);
+      }
+    }
+  }
 
 }

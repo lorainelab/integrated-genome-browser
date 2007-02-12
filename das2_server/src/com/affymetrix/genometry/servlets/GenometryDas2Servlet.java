@@ -255,6 +255,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE, Das2FeatureSaxParser.class);
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, Das2FeatureSaxParser.class);
       output_registry.put("bp2", Bprobe1Parser.class);
+      output_registry.put("ead", ExonArrayDesignParser.class);
 
       graph_formats.add("bar");
 

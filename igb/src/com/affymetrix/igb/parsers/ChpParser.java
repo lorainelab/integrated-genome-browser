@@ -59,7 +59,7 @@ public class ChpParser {
 
     AffymetrixGuidType chp_type =  chp.getFileTypeIdentifier();
     String chp_type_name = chp_type.getGuid();
-    System.out.println("CHP type: " + chp_type_name);
+    System.out.println("CHP file type guid: " + chp_type_name);
 
     // The following function will determine if the CHP file read contains "legacy" format data. This
     // can be either a GCOS/XDA file or a Command Console file. The "legacy" format data is that
@@ -266,11 +266,10 @@ public class ChpParser {
     ProbesetQuanDetectComparator comp = new  ProbesetQuanDetectComparator();
     Collections.sort(int_entries, comp);
     if (int_id_count > 0) {
-      //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification + detection CHP file");
-      // results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
+      results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
     }
     else {
       System.out.println("CHP quantification/detection data is not for exon chip, " +

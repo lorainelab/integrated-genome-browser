@@ -20,6 +20,8 @@ import affymetrix.calvin.data.*;
 import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
+import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.IGB;
@@ -35,13 +37,9 @@ public class ChpParser {
   //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {
   // }
 
-  // assumes this points to root of an Affy Genometry DAS/2 server, so
-  //   can construct query URLs for probeset coord annotations
-  //   based on standard Genometry server addressing syntax:
-  //        [root]/[genome_name]/features?segment=[chromid];type=[array_type]
-  static String das2_coord_server = "http://netaffxdas.affymetrix.com/das2";
-
   public static List parse(String file_name) throws IOException {
+    Timer tim = new Timer();
+    tim.start();
     List results = null;
     if (! (reader_registered)) {
       //    FusionCHPLegacyData.registerReader();
@@ -77,17 +75,17 @@ public class ChpParser {
     FusionCHPGenericData genchp;
     boolean has_coord_data = false;
 
-    /** For all chips other than tiling (and potentially resequencing?), the genomic location of the 
-     *   probesets is not specified in the CHP file.  Therefore it needs to be obtained from another 
-     *   source, based on info that _is_ in the CHP file and the current genome/AnnotatedSeqGroup (or 
+    /** For all chips other than tiling (and potentially resequencing?), the genomic location of the
+     *   probesets is not specified in the CHP file.  Therefore it needs to be obtained from another
+     *   source, based on info that _is_ in the CHP file and the current genome/AnnotatedSeqGroup (or
      *   most up-to-date genome for the organism if current genome is not for same organism as CHP file data
      *
-     *  Plan is to get this data from DAS/2 server in as optimized a format as possible -- for instance, 
-     *     "bp2" format for exon chips.  It may be possible to optimize formats even further if parser  
-     *     can assume a particular ordering of data in CHP file will always be followed for a particular 
+     *  Plan is to get this data from DAS/2 server in as optimized a format as possible -- for instance,
+     *     "bp2" format for exon chips.  It may be possible to optimize formats even further if parser
+     *     can assume a particular ordering of data in CHP file will always be followed for a particular
      *     Affy chip, but I don't think we can make that assumption...
      *  Therefore will have to join location info with CHP info based on shared probeset IDs.
-     */ 
+     */
     /** expression CHP file (gene or WTA), without detection */
     if ((qchp = FusionCHPQuantificationData.fromBase(chp))  != null) {
       System.out.println("CHP file is for expression array, without detection info: " + qchp);
@@ -125,7 +123,8 @@ public class ChpParser {
        *
        */
     }
-    
+
+    System.out.println("Time to load CHP file (etc.): " + tim.read()/1000f);
     return results;
   }
 
@@ -153,6 +152,8 @@ public class ChpParser {
      *
      */
   protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data) {
+    Timer tim2 = new Timer();
+    tim2.start();
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -173,7 +174,7 @@ public class ChpParser {
     // Force the AnnotStyle for the container to have glyph depth of 1
     AnnotStyle style = AnnotStyle.getInstance(type_name);
     style.setGlyphDepth(1);
-    
+
     List results = new ArrayList();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
@@ -198,6 +199,7 @@ public class ChpParser {
 	results.add(chp_sym);
       }
     }
+    System.out.println("Time to build LazyChpSyms: " + tim2.read()/1000f);
     return results;
   }
 
@@ -214,6 +216,7 @@ public class ChpParser {
     int ps_count = chp.getEntryCount();
     //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
+    List int_entries = new ArrayList(ps_count);
     int int_id_count = 0;
     int str_id_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -221,7 +224,7 @@ public class ChpParser {
     ProbeSetQuantificationDetectionData psqData;
 
     String type_name = OpenGraphAction.getGraphNameForFile(file_name);
-    
+
     for (int i=0; i<ps_count; i++) {
       psqData = chp.getQuantificationDetectionEntry(i);
       float quant = psqData.getQuantification();
@@ -240,11 +243,13 @@ public class ChpParser {
       }
       else {  // nid < 0, then nid field not being used, so name should be used instead
 	name = psqData.getName();
+
 	try {
 	  nid = new Integer(name);
 	  intid = nid.intValue();
 	  psqData.setId(intid);
 	  psqData.setName(null);
+	  int_entries.add(psqData);
 	  id2data.put(nid, psqData);
 	  int_id_count++;
 	}
@@ -258,17 +263,19 @@ public class ChpParser {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
     }
+    ProbesetQuanDetectComparator comp = new  ProbesetQuanDetectComparator();
+    Collections.sort(int_entries, comp);
     if (int_id_count > 0) {
       //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
-      results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification + detection CHP file");
+      // results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
     }
     else {
       System.out.println("CHP quantification/detection data is not for exon chip, " +
 			 "falling back on older method for handling expression CHP files");
-      results = oldParseQuantDetectChp(chp);
+      //      results = oldParseQuantDetectChp(chp);
     }
     return results;
   }
@@ -327,10 +334,10 @@ public class ChpParser {
     }
     if (int_id_count > 0) {
       //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
-      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification CHP file");
+      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
     }
     else {
       System.out.println("CHP quantification data is not for exon chip, " +
@@ -451,14 +458,14 @@ public class ChpParser {
 
     System.out.println("matching probeset ids found: " + match_count);
     if (match_count == 0) {
-      System.out.println("WARNING: Could not automatically load location data for CHP file,\n " + 
+      System.out.println("WARNING: Could not automatically load location data for CHP file,\n " +
 			 "  and could not find any previously loaded location data matching CHP file");
-      IGB.errorPanel("Could not automatically load location data for CHP file,\n " + 
+      IGB.errorPanel("Could not automatically load location data for CHP file,\n " +
 		     "  and could not find any previously loaded location data matching CHP file");
       return null;
     }
 
-    String type_name = OpenGraphAction.getGraphNameForFile(file_name);      
+    String type_name = OpenGraphAction.getGraphNameForFile(file_name);
     // Force the AnnotStyle for the container to have glyph depth of 1
     AnnotStyle style = AnnotStyle.getInstance(type_name);
     style.setGlyphDepth(1);
@@ -471,7 +478,7 @@ public class ChpParser {
       MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
       java.util.List entry_list = (java.util.List)ent.getValue();
       Collections.sort(entry_list, comp);
-      
+
       // now make the container syms
       ScoredContainerSym container = new ScoredContainerSym();
       container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
@@ -561,9 +568,9 @@ public class ChpParser {
 
       System.out.println("matching probeset ids found: " + match_count);
       if (match_count == 0) {
-	System.out.println("WARNING: Could not automatically load location data for CHP file,\n " + 
+	System.out.println("WARNING: Could not automatically load location data for CHP file,\n " +
 		       "  and could not find any previously loaded location data matching CHP file");
-	IGB.errorPanel("Could not automatically load location data for CHP file,\n " + 
+	IGB.errorPanel("Could not automatically load location data for CHP file,\n " +
 		       "  and could not find any previously loaded location data matching CHP file");
 	return null;
       }
@@ -754,12 +761,16 @@ public class ChpParser {
   }
 
   public static void main(String[] args) throws IOException {
-    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
+    //    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
+    String infile = "c:/data/chp_data_exon/exon_chp_results/HuEx-1_0-st-v2.colon-cancer-data-set/10_5N.rma-exon-all-dabg.chp";
     List results = ChpParser.parse(infile);
-    System.out.println("graphs parsed: " + results.size());
-    for (int i=0; i<results.size(); i++)  {
-      GraphSym gsym = (GraphSym)results.get(i);
-      System.out.println(gsym.getGraphName() + ",  " + gsym.getID() + ",  points = " + gsym.getPointCount());
+    if (results != null)  {
+        System.out.println("graphs parsed: " + results.size());
+        for (int i = 0; i < results.size(); i++) {
+            GraphSym gsym = (GraphSym) results.get(i);
+            System.out.println(gsym.getGraphName() + ",  " + gsym.getID() +
+                               ",  points = " + gsym.getPointCount());
+        }
     }
   }
 
@@ -800,6 +811,18 @@ class ScoreEntryComparator implements Comparator  {
       else if (symA.getMax() > symB.getMax()) { return 1; }
       else { return 0; }  // mins are equal and maxes are equal, so consider them equal
     }
+  }
+}
+
+class ProbesetQuanDetectComparator implements Comparator {
+  public int compare(Object objA, Object objB) {
+    ProbeSetQuantificationDetectionData dataA = (ProbeSetQuantificationDetectionData)objA;
+    ProbeSetQuantificationDetectionData dataB = (ProbeSetQuantificationDetectionData)objB;
+    int idA = dataA.getId();
+    int idB = dataB.getId();
+    if (idA < idB) { return -1; }
+    else if (idA > idB) { return 1; }
+    else {  return 0; }
   }
 }
 

@@ -420,6 +420,11 @@ public class Das2ClientOptimizer {
           // parsing probesets in bp2 format, also adding probeset ids
 	  feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
 	}
+	else if (content_subtype.equals("ead")) {
+	  request_log.addLogMessage("PARSING EAD FORMAT FOR DAS2 FEATURE RESPONSE");
+	  ExonArrayDesignParser parser = new ExonArrayDesignParser();
+	  feats = parser.parse(bis, seq_group, false, type.getName());
+	}
 	else if (content_subtype.equals("gff")) {
 	  request_log.addLogMessage("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
 	  GFFParser parser = new GFFParser();

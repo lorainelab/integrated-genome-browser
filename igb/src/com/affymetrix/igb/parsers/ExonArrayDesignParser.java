@@ -109,7 +109,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  */
 public class ExonArrayDesignParser implements AnnotationWriter {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static boolean DEBUG = true;
+  static boolean DEBUG = false;
   static java.util.List pref_list = new ArrayList();
   static {
     pref_list.add("ead");
@@ -180,6 +180,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	System.out.println("id_prefix: " + id_prefix);
 	System.out.println("seq_count: " + seq_count);
       }
+      int total_probeset_count = 0;
 
       for (int seqindex = 0; seqindex < seq_count; seqindex++) {
         String seqid = dis.readUTF();
@@ -203,6 +204,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	  int tend = dis.readInt();
 	  int exon_cluster_count = dis.readInt();
 	  SingletonSymWithIntId tcluster = new SingletonSymWithIntId(tstart, tend, aseq, tcluster_id);
+	  results.add(tcluster);
 	  //	  if (DEBUG) {SeqUtils.printSymmetry(tcluster); }
 	  container_sym.addChild(tcluster);
 	  for (int eindex=0; eindex < exon_cluster_count; eindex++) {
@@ -222,6 +224,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	      ecluster.addChild(psr);
 	      //	      if (DEBUG) { SeqUtils.printSymmetry(psr); }
 	      for (int probeset_index=0; probeset_index < probeset_count; probeset_index++) {
+		total_probeset_count++;
 		int nid = dis.readInt();
 		int b = (int) dis.readByte();
 		int probe_count = Math.abs(b);
@@ -249,6 +252,8 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	}
 
       }  // end seq loop
+	
+      System.out.println("probeset count: " + total_probeset_count);
       System.out.println("finished parsing probeset file");
       dis.close();
     }
@@ -502,8 +507,8 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *</pre>
    */
   public static void main(String[] args) throws IOException {
-    boolean WRITE = true;
-    boolean READ = false;
+    boolean WRITE = false;
+    boolean READ = true;
     String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
     //    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
     String default_out_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.ead";

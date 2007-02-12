@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -102,11 +102,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   SingletonSymWithProps current_sym = null;
 
   String featid = null;
+  String feat_label = null;
   String feattype = null;
   int featstart = Integer.MIN_VALUE;
   int featend = Integer.MIN_VALUE;
   int featstrand = UNKNOWN;
   String featgroup = null;
+  String featgroup_label = null;
   java.util.List featlink_urls = new ArrayList();
   java.util.List featlink_names = new ArrayList();
   Map feat_notes = null;
@@ -241,9 +243,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     if (iname == FEATURE) {
       featcount++;
       featid = atts.getValue("id");
+      feat_label = atts.getValue("label");
     }
     else if (iname == GROUP) {
       featgroup = atts.getValue("id");
+      featgroup_label = atts.getValue("label");
       within_group_element = true;
     }
     else if (iname == LINK) {
@@ -349,11 +353,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     
   public void clearFeature() {
     featid = null;
+    feat_label = null;
     feattype = null;
     featstart = Integer.MIN_VALUE;
     featend = Integer.MIN_VALUE;
     featstrand = UNKNOWN;
     featgroup = null;
+    featgroup_label = null;
     //    featlink = null;
     featlink_urls.clear();
     featlink_names.clear();
@@ -487,7 +493,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           groupcount++;
           //        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
           parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
-          parent_sym.setProperty("id", featgroup);
+          if (featgroup_label != null && featgroup_label.trim().length() > 0) { 
+            parent_sym.setProperty(DAS_GROUP_ID, featgroup);
+            parent_sym.setProperty("id", featgroup_label); 
+          } else {
+            //parent_sym.setProperty("das_group_id", featgroup);
+            parent_sym.setProperty("id", featgroup);          
+          }
           if (feattype != null)  { parent_sym.setProperty("method", feattype); }
           putGroupSymmetryForType(feattype, featgroup, parent_sym);
           seq_group.addToIndex(featgroup, parent_sym);
@@ -576,7 +588,15 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
             parent_sym.setProperty("link", linkurl);
           }
         }
-        if (featid != null) { current_sym.setProperty("id", featid); }
+        if (feat_label != null && feat_label.trim().length() > 0) { 
+          if (featid != null) {
+            parent_sym.setProperty(DAS_FEATURE_ID, featid);
+          }
+          parent_sym.setProperty("id", feat_label); 
+        } else if (featid != null) {
+          //parent_sym.setProperty("das_group_id", featgroup);
+          parent_sym.setProperty("id", featid);          
+        }
         if (feattype != null) { current_sym.setProperty("method", feattype); }
         if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) { grandparent_sym.addChild(current_sym); }
         else { aseq.addAnnotation(current_sym); }
@@ -748,6 +768,14 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     pw.println("</DASGFF>");
   }
 
+  /**
+   *  When the user has specified a "label" in the GROUP element, the real
+   *  group ID will be stored in a field with this name instead of in the "id"
+   *  field, which will hold the given label instead.
+   */
+  static final String DAS_GROUP_ID = "das_group_id";
+  static final String DAS_FEATURE_ID = "das_feature_id";
+  
   public static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
     if (feat_type == null && annot instanceof SymWithProps) {
       feat_type = (String)((SymWithProps)annot).getProperty("method");
@@ -760,7 +788,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     String group_id = "unknown";
     if (annot instanceof SymWithProps) {
-      group_id = (String)((SymWithProps)annot).getProperty("id");
+      // Typically, the DAS group ID's are simply stored in the "id" field.
+      // But if the property DAS_GROUP_ID is non-null, it must be used as
+      // the DAS group id.
+      group_id = (String)((SymWithProps)annot).getProperty(DAS_GROUP_ID);
+      if (group_id == null) {
+        group_id = (String)((SymWithProps)annot).getProperty("id");
+      }
       if (group_id == null) { group_id = "unknown"; }
     }
 

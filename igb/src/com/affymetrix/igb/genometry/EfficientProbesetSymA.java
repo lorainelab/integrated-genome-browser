@@ -29,7 +29,7 @@ import java.util.*;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, ParentOfLeafSym {
+public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, ParentOfLeafSym, IntId {
   BioSeq seq;
   int probe_length;
   boolean forward;
@@ -132,7 +132,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
     }
   }
 
-  public int getIntID() { return nid; }
+  public int getIntID() { return nid; } // implementing com.affymetrix.igb.genometry.IntId interface
   public int getProbeLength() { return probe_length; }
   public String getPrefixID() { return id_prefix; }
 

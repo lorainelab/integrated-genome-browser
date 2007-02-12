@@ -61,7 +61,7 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter("bed"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2"},
+        new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2", "ead"},
         "Binary Files"));
       chooser.addChoosableFileFilter(new UniFileFilter("cyt", "Cytobands"));
       chooser.addChoosableFileFilter(new UniFileFilter(
@@ -189,13 +189,13 @@ public class LoadFileAction {
             // make the SeqMapView update itself.  (It's contents may have changed.)
             gmodel.setSelectedSeq(previous_seq);
           }
-        }        
+        }
       }
     }
 
     return gmodel.getSelectedSeq();
   }
-  
+
   public MutableAnnotatedBioSeq load(File annotfile) {
     return load(gviewer, annotfile, gmodel.getSelectedSeq());
   }
@@ -446,6 +446,13 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
+      else if (lcname.endsWith(".ead")) {
+	ExonArrayDesignParser parser = new ExonArrayDesignParser();
+	String default_type = stream_name.substring(0, stream_name.indexOf(".ead"));
+	parser.parse(str, selected_group, true, default_type);
+	aseq = input_seq;
+	parser = null;
+      }
       else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf") || lcname.endsWith(".gff3")) {
         // assume it's GFF1, GFF2, GTF, or GFF3 format
         GFFParser parser = new GFFParser();
@@ -464,7 +471,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {
         FastaParser parser = new FastaParser();
         java.util.List seqs = parser.parseAll(str, selected_group);
-        
+
         if (input_seq != null && seqs.contains(input_seq)) {
           aseq = input_seq;
         } else if (! seqs.isEmpty()) {
@@ -563,7 +570,7 @@ public class LoadFileAction {
     public JRadioButton merge_button = new JRadioButton("Merge with currently-loaded data", true);
     public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);
     public JTextField genome_name_TF = new JTextField("Unknown Genome");
-    
+
     Box box = null;
 
     public MergeOptionFileChooser() {
@@ -591,8 +598,8 @@ public class LoadFileAction {
       merge_button.setMnemonic('M');
       no_merge_button.setMnemonic('C');
     }
-    
-    
+
+
     protected JDialog createDialog(Component parent) throws HeadlessException {
       JDialog dialog = super.createDialog(parent);
 

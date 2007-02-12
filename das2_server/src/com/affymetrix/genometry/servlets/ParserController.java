@@ -86,6 +86,13 @@ public class ParserController {
 	results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 	System.out.println("done loading via Bprobe1Parser: " + stream_name);
       }
+      else if (stream_name.endsWith(".ead")) {
+	System.out.println("loading via ExonArrayDesignParser");
+	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".ead"));
+	ExonArrayDesignParser parser = new ExonArrayDesignParser();
+	parser.parse(str, seq_group, true, annot_type);
+	System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
+      }
       else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
 	// assume it's GFF1, GFF2, or GTF format
 	System.out.println("loading via GFFParser: " + stream_name);

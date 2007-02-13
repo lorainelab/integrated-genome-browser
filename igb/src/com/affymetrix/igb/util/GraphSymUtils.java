@@ -53,11 +53,12 @@ public class GraphSymUtils {
     "BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
   
   /**
-   *  Transforms a GraphSym based on a SeqSymmetry.
+   *  Transforms a restricted type of GraphSym based on a SeqSymmetry.
    *  This is _not_ a general algorithm for transforming GraphSyms with an arbitrary mapping sym --
    *    it is simpler, and assumes that the mapping symmetry is of depth=2 (or possibly 1?) and
    *    breadth = 2, and that they're "regular" (parent sym and each child sym have seqspans pointing
-   *    to same two BioSeqs
+   *    to same two BioSeqs.
+   *  It should work fine on GraphIntervalSym objects as well as regular GraphSym objects.
    *  ensure_unique_id indicates whether should try to muck with id so it's not same as any GraphSym on the seq
    *     (including the original_graf, if it's one of seq's annotations)
    *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
@@ -66,6 +67,7 @@ public class GraphSymUtils {
     //    System.out.println("called GraphGlyphUtils.transformGraphSym(), mapping sym:");
     //    SeqUtils.printSymmetry(mapsym);
     //    System.out.println("");
+    
     BioSeq fromseq = original_graf.getGraphSeq();
     SeqSpan fromspan = mapsym.getSpan(fromseq);
     GraphSym new_graf = null;
@@ -73,8 +75,8 @@ public class GraphSymUtils {
       BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
       
       SeqSpan tospan = mapsym.getSpan(toseq);
-      int tospan_end = tospan.getEnd();
       if (toseq != null && fromseq != null) {
+        int tospan_end = tospan.getEnd();
 	int[] xcoords = original_graf.getGraphXCoords();
 	float[] ycoords = original_graf.getGraphYCoords();
         int[] wcoords = null;
@@ -83,6 +85,7 @@ public class GraphSymUtils {
         }
 	if (xcoords != null && ycoords != null) {
 	  double graf_base_length = xcoords[xcoords.length-1] - xcoords[0];
+          
 	  // calculating graf length from xcoords, since graf's span
 	  //    is (usually) incorrectly set to start = 0, end = seq.getLength();
 	  double points_per_base = (double)xcoords.length / (double)graf_base_length;
@@ -123,17 +126,19 @@ public class GraphSymUtils {
 	      while ((start_index > 0) && (xcoords[start_index-1] == xcoords[start_index]))  { start_index--; }
 	    }
 	    if (start_index < 0) { start_index = 0; } // making sure previous conditional didn't result in index < 0
-	    for (int k=start_index; k<kmax; k++) {
-	      int old_xcoord = xcoords[k];
+            for (int k=start_index; k<kmax; k++) {
+	      final int old_xcoord = xcoords[k];
 	      if (old_xcoord >= oend) { break; }
 	      int new_xcoord = (int)((scale * old_xcoord) + offset);
 	      new_xcoords.add(new_xcoord);
 	      new_ycoords.add(ycoords[k]);
               if (wcoords != null) {
-                int new_wcoord = (int) (scale * wcoords[k]);
-                if (new_xcoord + new_wcoord >= tospan_end) {
-                  //todo: make sure new x + width is within the correct range
+                final int old_x2coord = old_xcoord + wcoords[k];
+  	        int new_x2coord = (int)((scale * old_x2coord) + offset);
+                if (new_x2coord >= tospan_end) {
+                  new_x2coord = tospan_end;
                 }
+                int new_wcoord = new_x2coord - new_xcoord;
                 new_wcoords.add(new_wcoord);
               }
 	    }

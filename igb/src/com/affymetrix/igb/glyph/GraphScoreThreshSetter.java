@@ -766,6 +766,7 @@ public class GraphScoreThreshSetter extends JPanel
     annot_style.setColor(col);
     annot_style.setGlyphDepth(1);
     annot_style.setHumanName(description);
+    annot_style.setCollapsed(true);
     
     gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
   }

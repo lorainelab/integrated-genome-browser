@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -741,7 +741,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
     Graphics g = view.getGraphics();
     g.setColor(lighter);
-    double x, y;
+    double x, w, y;
     double pass_thresh_start = 0;
     double pass_thresh_end = 0;
     int pass_thresh_count = 0;
@@ -802,6 +802,10 @@ public class SmartGraphGlyph extends GraphGlyph {
     //      true, true, false
     for (int i = draw_beg_index; i <= draw_end_index; i++) {
       x = xcoords[i];
+      w = 0;
+      if (wcoords != null) {
+        w = wcoords[i];
+      }
       y = ycoords[i];
 
       //      pass_score_thresh = ((y >= min_score_threshold) &&
@@ -816,7 +820,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  if (passes_max_gap) { // AND its within max distance
 	    // true, true, true
 	    // passes threshold test, within max distance, keep extending region
-	    pass_thresh_end = x;
+	    pass_thresh_end = x + w;
 	  }
 	  else {
 	    // true, true, false
@@ -845,7 +849,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  // switch into pass_threshold_mode
 	  // don't need to worry about distance thresh here
 	  pass_thresh_start = x;
-	  pass_thresh_end = x;
+	  pass_thresh_end = x + w;
 	  pass_threshold_mode = true;
 	}
 	else {
@@ -884,7 +888,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	draw_previous = false;
 	if (pass_score_thresh) {  // current point passes threshold test, start new region scan
 	  pass_thresh_start = x;
-	  pass_thresh_end = x;
+	  pass_thresh_end = x + w;
 	  pass_threshold_mode = true;
 	}
 	else {

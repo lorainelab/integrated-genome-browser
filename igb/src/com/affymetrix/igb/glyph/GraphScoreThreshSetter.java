@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -746,10 +746,11 @@ public class GraphScoreThreshSetter extends JPanel
 
     SimpleSymWithProps psym = new SimpleSymWithProps();
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-    //    String meth = "graph pickle " + pickle_count;
-    String meth =
-      "thresh, min_score=" + nformat.format(sgg.getMinScoreThreshold()) +
-      ", max_score=" + nformat.format(sgg.getMaxScoreThreshold()) +
+    String meth = "threhold " + pickle_count;
+    String description =
+      "threshold, [" + nformat.format(sgg.getMinScoreThreshold()) +
+      " to " + nformat.format(sgg.getMaxScoreThreshold()) 
+      + "]" +
       ", thresh_direction=" + sgg.getThresholdDirection() +
       ", max_gap=" + (int)sgg.getMaxGapThreshold() +
       ", min_run=" + (int)sgg.getMinRunThreshold() +
@@ -764,6 +765,7 @@ public class GraphScoreThreshSetter extends JPanel
     AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
     annot_style.setColor(col);
     annot_style.setGlyphDepth(1);
+    annot_style.setHumanName(description);
     
     gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
   }

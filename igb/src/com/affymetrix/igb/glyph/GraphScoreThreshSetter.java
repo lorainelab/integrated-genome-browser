@@ -14,7 +14,9 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.IGB;
@@ -543,7 +545,6 @@ public class GraphScoreThreshSetter extends JPanel
       int gcount = graphs.size();
       for (int i=0; i<gcount; i++) {
         SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
-        System.out.println("pickling graph: " + sggl.getLabel());
         pickleThreshold(sggl);
       }
       widg.updateWidget();
@@ -619,9 +620,11 @@ public class GraphScoreThreshSetter extends JPanel
         sgg.setThresholdDirection(direction);
 	if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 	  sgg.setMinScoreThreshold(val);
+          sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
 	}
 	else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
 	  sgg.setMaxScoreThreshold(val);
+          sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 	}
         else {
           System.out.println("Threshold 'between' not yet implemented");
@@ -679,8 +682,10 @@ public class GraphScoreThreshSetter extends JPanel
         sgg.setThresholdDirection(direction);
 	if (direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 	  sgg.setMinScoreThreshold(val);
+	  sgg.setMaxScoreThreshold(Float.POSITIVE_INFINITY);
 	}
 	else if (direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+          sgg.setMinScoreThreshold(Float.NEGATIVE_INFINITY);
 	  sgg.setMaxScoreThreshold(val);
 	}
         else {
@@ -739,27 +744,42 @@ public class GraphScoreThreshSetter extends JPanel
   }
 
   static DecimalFormat nformat = new DecimalFormat();
+  static DecimalFormat nformat2 = new DecimalFormat();
   int pickle_count = 0;
   public void pickleThreshold(SmartGraphGlyph sgg) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
+
+    nformat2.setPositivePrefix("+");
 
     SimpleSymWithProps psym = new SimpleSymWithProps();
     psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
     String meth = "threhold " + pickle_count;
     String description =
       "threshold, [" + nformat.format(sgg.getMinScoreThreshold()) +
-      " to " + nformat.format(sgg.getMaxScoreThreshold()) 
-      + "]" +
-      ", thresh_direction=" + sgg.getThresholdDirection() +
+      " to " + nformat.format(sgg.getMaxScoreThreshold()) +
+      "]" +
+      " offsets: (" + nformat2.format(sgg.getThreshStartShift()) +
+      ", " + nformat2.format(sgg.getThreshEndShift()) +
+      ")" +
+//    ", thresh_direction=" + sgg.getThresholdDirection() +
       ", max_gap=" + (int)sgg.getMaxGapThreshold() +
       ", min_run=" + (int)sgg.getMinRunThreshold() +
       ", graph: " + sgg.getLabel();
     pickle_count++;
-    psym.setProperty("method", meth);
     ViewI view = gviewer.getSeqMap().getView();
     sgg.drawThresholdedRegions(view, psym, aseq);
+
+    // If there were any overlapping child symmetries, collapse them
+    // (by intersecting psym with itself)
+    SimpleSymWithProps result_sym = new SimpleSymWithProps();
+    SeqUtils.intersection(psym, psym, result_sym, aseq);
+    psym = result_sym;
+    
+    
+    psym.setProperty("method", meth);
     aseq.addAnnotation(psym);
+    
     Color col = sgg.getColor();
     //    Color col = Color.red;
     AnnotStyle annot_style = AnnotStyle.getInstance(meth, false);
@@ -767,6 +787,8 @@ public class GraphScoreThreshSetter extends JPanel
     annot_style.setGlyphDepth(1);
     annot_style.setHumanName(description);
     annot_style.setCollapsed(true);
+    
+    System.out.println("Created threshold tier: " + description);
     
     gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
   }

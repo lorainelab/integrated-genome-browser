@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -38,6 +38,51 @@ public abstract class WiggleData {
    *  has been stored yet.
    */
   public abstract GraphSym createGraph(String graph_id);
+
+  void sortData(int graph_length, int[] xcoords, int[] wcoords, float ycoords[]) {
+    
+    List points = new ArrayList(graph_length);
+    if (wcoords != null) {
+      for (int i=0; i<graph_length; i++) {
+        Point3D pnt = new Point3D(xcoords[i], wcoords[i], ycoords[i]);
+        points.add(pnt);
+      }
+    } else {
+      for (int i=0; i<graph_length; i++) {
+        Point3D pnt = new Point3D(xcoords[i], 1, ycoords[i]);
+        points.add(pnt);
+      }
+    }
+    PointComp pointcomp = new PointComp();
+    Collections.sort(points, pointcomp);
+    
+    for (int i=0; i<graph_length; i++) {
+      Point3D pnt = (Point3D) points.get(i);
+      xcoords[i] = pnt.x;
+      ycoords[i] = pnt.y;
+      if (wlist != null) {
+        wcoords[i] = pnt.w;
+      }
+    }
+  }
+
+  class Point3D {
+    float y;
+    int x, w;
+    public Point3D(int x, int w, float y) {
+      this.x = x; this.y =y; this.w = w;
+    }
+  }
+  
+  class PointComp implements Comparator {
+    public int compare(Object o1, Object o2) {
+      Point3D p1 = (Point3D) o1;
+      Point3D p2 = (Point3D) o2;
+      if (p1.x < p2.x) return -1;
+      else if (p1.x == p2.x) return 0;
+      else return +1;
+    }
+  }
 }
 
 class FixedStepWiggleData extends WiggleData {
@@ -74,6 +119,7 @@ class FixedStepWiggleData extends WiggleData {
     
     BioSeq seq = seq_group.addSeq(seq_id, x_vals[x_vals.length-1] + x_span);
     GraphSym gsym = null;
+    // fixed-step data never needs sorting
     if (x_span == 0 || x_span == 1) {
       gsym = new GraphSym(x_vals, ylist.copyToArray(), graph_id, seq);
     } else {
@@ -115,6 +161,7 @@ class VariableStepWiggleData extends WiggleData {
     int largest_x = xlist.get(xlist.size()-1) + span;
     BioSeq seq = seq_group.addSeq(seq_id, largest_x);
     GraphSym gsym = null;
+    sortData(xlist.size(), xlist.getInternalArray(), widths, ylist.getInternalArray());
     if (widths == null) {
       gsym = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
     } else {
@@ -147,8 +194,10 @@ class BedWiggleData extends WiggleData {
     int largest_x = xlist.get(xlist.size()-1) + wlist.get(wlist.size()-1);
     
     BioSeq seq = seq_group.addSeq(seq_id, largest_x);
+    
+    sortData(xlist.size(), xlist.getInternalArray(), wlist.getInternalArray(), ylist.getInternalArray());
     GraphSym gsym = new GraphIntervalSym(xlist.copyToArray(), wlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
     
     return gsym;
-  }
+  }    
 }

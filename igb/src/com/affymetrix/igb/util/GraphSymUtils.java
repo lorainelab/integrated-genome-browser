@@ -75,8 +75,7 @@ public class GraphSymUtils {
       BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
       
       SeqSpan tospan = mapsym.getSpan(toseq);
-      if (toseq != null && fromseq != null) {
-        int tospan_end = tospan.getEnd();
+      if (toseq != null && tospan != null) {
 	int[] xcoords = original_graf.getGraphXCoords();
 	float[] ycoords = original_graf.getGraphYCoords();
         int[] wcoords = null;
@@ -99,8 +98,9 @@ public class GraphSymUtils {
           if (wcoords != null) {
             new_wcoords = new IntList(initcap);
           }
-	  List leaf_syms = SeqUtils.getLeafSyms(mapsym);
-	  for (int i=0; i<leaf_syms.size(); i++) {
+
+          List leaf_syms = SeqUtils.getLeafSyms(mapsym);
+          for (int i=0; i<leaf_syms.size(); i++) {
 	    SeqSymmetry leafsym = (SeqSymmetry)leaf_syms.get(i);
 	    SeqSpan fspan = leafsym.getSpan(fromseq);
 	    SeqSpan tspan = leafsym.getSpan(toseq);
@@ -114,30 +114,63 @@ public class GraphSymUtils {
 	    if (opposite_spans) { scale = -scale; }
 	    double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
 	    int kmax = xcoords.length;
-	    // should really use a binary search here to speed things up...
-	    // but right now just doing a brute force scan for each leaf span to map to toseq
-	    //    any graph points that overlap fspan in fromseq
-	    // assumes graph is sorted
-	    int start_index = Arrays.binarySearch(xcoords, ostart);
-	    if (start_index < 0)  { start_index = -start_index -1; }
-	    else {
-	      // start_index > 0, so found exact match, but possible it's part of group of exact matches,
-	      //    so move to left until find a non-match
-	      while ((start_index > 0) && (xcoords[start_index-1] == xcoords[start_index]))  { start_index--; }
-	    }
-	    if (start_index < 0) { start_index = 0; } // making sure previous conditional didn't result in index < 0
+            
+            
+            int start_index = 0;
+            
+            if (wcoords == null) {
+              // If there are no width coordinates, then we can speed-up the
+              // drawing be determining the start_index of the first x-value in range.
+              // If there are widths, this is much harder to determine, since
+              // even something starting way over to the left but having a huge width
+              // could intersect our region.  So when there are wcoords, don't
+              // try to determine start_index.  Luckily, when there are widths, there
+              // tend to be fewer graph points to deal with.
+              
+              // should really use a binary search here to speed things up...
+              // but right now just doing a brute force scan for each leaf span to map to toseq
+              //    any graph points that overlap fspan in fromseq
+              // assumes graph is sorted
+              start_index = Arrays.binarySearch(xcoords, ostart);
+              if (start_index < 0)  { start_index = -start_index -1; } else {
+                // start_index > 0, so found exact match, but possible it's part of group of exact matches,
+                //    so move to left until find a non-match
+                while ((start_index > 0) && (xcoords[start_index-1] == xcoords[start_index]))  { start_index--; }
+              }
+              if (start_index < 0) { start_index = 0; } // making sure previous conditional didn't result in index < 0
+            }
+            
             for (int k=start_index; k<kmax; k++) {
 	      final int old_xcoord = xcoords[k];
-	      if (old_xcoord >= oend) { break; }
+	      if (old_xcoord >= oend) {
+                break; // since the array is sorted, we can stop here
+              }
 	      int new_xcoord = (int)((scale * old_xcoord) + offset);
-	      new_xcoords.add(new_xcoord);
-	      new_ycoords.add(ycoords[k]);
+
+              // new_x2coord will represent x + width: initial assumption is width is zero
+              int new_x2coord = new_xcoord;
               if (wcoords != null) {
                 final int old_x2coord = old_xcoord + wcoords[k];
-  	        int new_x2coord = (int)((scale * old_x2coord) + offset);
-                if (new_x2coord >= tospan_end) {
-                  new_x2coord = tospan_end;
+  	        new_x2coord = (int)((scale * old_x2coord) + offset);
+                if (new_x2coord >= tspan.getEnd()) {
+                  new_x2coord = tspan.getEnd();
                 }
+              }
+              
+              final int tstart = tspan.getStart();
+              if (new_xcoord < tstart) {
+                if (wcoords == null) {
+                  continue;
+                } else if (new_x2coord > tstart) {
+                  new_xcoord = tstart;
+                } else {
+                  continue;
+                }
+              }
+              
+              new_xcoords.add(new_xcoord);
+	      new_ycoords.add(ycoords[k]);
+              if (wcoords != null) {
                 int new_wcoord = new_x2coord - new_xcoord;
                 new_wcoords.add(new_wcoord);
               }

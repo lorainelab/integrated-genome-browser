@@ -30,49 +30,39 @@ import java.util.*;
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
 public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, ParentOfLeafSym, IntId {
-  BioSeq seq;
-  int probe_length;
+  SharedProbesetInfo info;
   boolean forward;
   int nid;
   int[] child_mins;
-  String id_prefix;
-  Map props;
 
   /**
    * Constructor.
-   * @param props  a hash (usually shared with other syms) that EfficientProbesetSymA can use for common properties
+   * @param  SharedProbesetInfo to provide seq, probe_length, id_prefix (and props?)
    * @param cmins an array of the minima of the probe positions, this should
    *   be sorted in ascending order (but will be automatically sorted by this
    *   routine if this is not the case.  This means that the ordering
    *   of the elements in the array you pass in may be altered as a side-effect.)
-   * @param probe_length  the length of each probe
    * @param forward  true for forward strand
    * @param nid  an integer to be used as the ID
-   * @param seq  the BioSeq
    */
-  public EfficientProbesetSymA(Map props, int[] cmins, int probe_length, boolean forward,
-  			       String prefix, int nid, BioSeq seq) {
-    this.props = props;
+  //  public EfficientProbesetSymA(SharedProbesetInfo info, int[] cmins, int probe_length, boolean forward,
+  public EfficientProbesetSymA(SharedProbesetInfo info, int[] cmins, boolean forward, int nid) {
+    this.info = info;
     this.child_mins = cmins;
-    this.probe_length = probe_length;
     this.forward = forward;
     this.nid = nid;
-    this.seq = seq;
-    this.id_prefix = prefix;
-
-
     java.util.Arrays.sort(this.child_mins);
   }
 
   /** implementing ParentOfLeafSpan interface */
   public MutableSeqSpan getChildSpan(int child_index, BioSeq aseq, MutableSeqSpan result_span) {
     if ((child_index >= child_mins.length) ||
-	(aseq != seq) ||
+	(aseq != getBioSeq()) ||
 	(result_span == null)) {
       return null;
     }
-    if (forward) { result_span.set(child_mins[child_index], child_mins[child_index] + probe_length, seq); }
-    else { result_span.set(child_mins[child_index] + probe_length, child_mins[child_index], seq); }
+    if (forward) { result_span.set(child_mins[child_index], child_mins[child_index] + getProbeLength(), aseq); }
+    else { result_span.set(child_mins[child_index] + getProbeLength(), child_mins[child_index], aseq); }
     return result_span;
   }
 
@@ -122,28 +112,28 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
       int start, end;
       if (forward) {
 	start = child_mins[index];
-	end = start + probe_length;
+	end = start + getProbeLength();
       }
       else {
 	end = child_mins[index];
-	start = end + probe_length;
+	start = end + getProbeLength();
       }
       return new LeafSingletonSymmetry(start, end, this.getBioSeq());
     }
   }
 
   public int getIntID() { return nid; } // implementing com.affymetrix.igb.genometry.IntId interface
-  public int getProbeLength() { return probe_length; }
-  public String getPrefixID() { return id_prefix; }
+  public int getProbeLength() { return info.getProbeLength(); }
+  public String getIDPrefix() { return info.getIDPrefix(); }
 
   /** The integer id converted to String representation. */
   public String getID() {
     String rootid = Integer.toString(getIntID());
-    if (id_prefix == null) {
+    if (getIDPrefix() == null) {
       return rootid;
     }
     else {
-      return (id_prefix + rootid);
+      return (getIDPrefix() + rootid);
     }
   }
 
@@ -152,12 +142,12 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
   public int getStart() {
     // assumes child_mins has been sorted in ascending order
     if (forward)  { return child_mins[0]; }
-    else { return (child_mins[child_mins.length-1] + probe_length); }
+    else { return (child_mins[child_mins.length-1] + getProbeLength()); }
   }
 
   public int getEnd() {
     // assumes child_mins has been sorted in ascending order
-    if (forward) { return (child_mins[child_mins.length-1] + probe_length); }
+    if (forward) { return (child_mins[child_mins.length-1] + getProbeLength()); }
     else { return child_mins[0]; }
   }
 
@@ -168,12 +158,12 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   public int getMax() {
     // assumes child_mins has been sorted in ascending order
-    return (child_mins[child_mins.length-1] + probe_length);
+    return (child_mins[child_mins.length-1] + getProbeLength());
   }
 
   public int getLength() { return (getMax() - getMin()); }
   public boolean isForward() { return forward; }
-  public BioSeq getBioSeq() { return seq; }
+  public BioSeq getBioSeq() { return info.getBioSeq(); }
   public double getStartDouble() { return (double)getStart(); }
   public double getEndDouble() { return (double)getEnd(); }
   public double getMinDouble() { return (double)getMin(); }
@@ -189,7 +179,10 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    */
   public Map getProperties() {
     HashMap properties = new HashMap(1);
-    if(props != null)  { properties.put("method", (String)props.get("method")); }
+    Map shared_props = info.getProps();
+    if (shared_props != null && shared_props.get("method") != null) {
+      properties.put("method", (String)shared_props.get("method"));
+    }
     properties.put("id", "" + this.getID());
     return properties;
   }
@@ -201,7 +194,8 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   /** See getProperties(). */
   public Object getProperty(String key) {
-    if ("method".equals(key) && props != null) { return (String)props.get("method"); }
+    Map shared_props = info.getProps();
+    if ("method".equals(key) && shared_props != null) { return (String)shared_props.get("method"); }
     if ("id".equals(key)) return this.getID();
     else return null;
   }

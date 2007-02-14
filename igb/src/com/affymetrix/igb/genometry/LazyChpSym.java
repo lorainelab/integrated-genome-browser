@@ -41,8 +41,8 @@ import affymetrix.calvin.data.*;
  */
 public class LazyChpSym extends ScoredContainerSym {
 
-  //  public static String PROBESET_SERVER_NAME = "NetAffx";
-  public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
+  public static String PROBESET_SERVER_NAME = "NetAffx";
+  // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
 
   //  static Map genome2chp;
   SmartAnnotBioSeq aseq;

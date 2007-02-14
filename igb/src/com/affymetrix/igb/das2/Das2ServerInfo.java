@@ -144,7 +144,7 @@ public class Das2ServerInfo  {
       System.out.println("Das Request: " + das_request);
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");
-      System.out.println("Das Response content type: " + content_type);
+      if (DEBUG_SOURCES_QUERY) { System.out.println("Das Response content type: " + content_type); }
 
       String das_query = "";
       if (das_request != null) {
@@ -173,7 +173,7 @@ public class Das2ServerInfo  {
 
       Element top_element = doc.getDocumentElement();
       NodeList sources= doc.getElementsByTagName("SOURCE");
-      System.out.println("source count: " + sources.getLength());
+      //      System.out.println("source count: " + sources.getLength());
       for (int i=0; i< sources.getLength(); i++)  {
         Element source = (Element)sources.item(i);
         //        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
@@ -210,8 +210,9 @@ public class Das2ServerInfo  {
 	    URI version_uri = getBaseURI(das_query, version).resolve(version_id);
 	    if (DEBUG_SOURCES_QUERY) {
 	      System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+	      System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
 	    }
-	    System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
+
 
 	    NodeList vlist = version.getChildNodes();
 	    HashMap caps = new HashMap();
@@ -239,7 +240,7 @@ public class Das2ServerInfo  {
 		String uri_att = coordel.getAttribute("uri");
 		URI base_uri = getBaseURI(das_query, coordel);
 		coords_uri = base_uri.resolve(uri_att);
-		System.out.println("$$$$ Coordinates URI: " + coords_uri);
+		//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
 	      }
 	    }
 	    Das2VersionedSource vsource;

@@ -23,8 +23,8 @@ import java.math.BigInteger;
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
-  static String long_url_map = cache_root + "/long_url_map.props";
   static boolean DEBUG_CONNECTION = false;
+  static boolean REPORT_LONG_URLS = false;
   static boolean CACHE_FILE_URLS = false;
   static MessageDigest md5_generator;
   //  static Properties long2short_filenames = new Properties();
@@ -41,14 +41,8 @@ public class LocalUrlCacher {
   static {
     // initialize cache
     try {
+      getCacheDirectory(); // forces creation of cache directory if doesn't already exist
       md5_generator = MessageDigest.getInstance("MD5");
-      /**
-      File long_url_file = new File(long_url_map);
-      System.out.println("properties map for conversion of long URLs: " + long_url_map);
-      if (long_url_file.exists()) {
-	long2short_filenames.load(new BufferedInputStream(new FileInputStream(long_url_file)));
-      }
-      */
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -80,18 +74,19 @@ public class LocalUrlCacher {
     //    String cache_file_name = cache_root + File.separator + encoded_url;
     String cache_file_name = cache_root + "/" + encoded_url;
     if (cache_file_name.length() > 255) {
-      System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
-			 cache_file_name.length());
-      System.out.println("    " + cache_file_name);
+      if (REPORT_LONG_URLS) {
+	System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
+			   cache_file_name.length());
+	System.out.println("    " + cache_file_name);
+      }
       byte[] md5_digest = md5_generator.digest(encoded_url.getBytes());
       BigInteger md5_big_int = new BigInteger(md5_digest);
       String md5_string = md5_big_int.toString(16);
       cache_file_name = cache_root + "/" + md5_string;
-      System.out.println("new file path: " + cache_file_name);
+      if (REPORT_LONG_URLS)  {  System.out.println("new file path: " + cache_file_name); }
     }
     File cache_file = new File(cache_file_name);
-
-      //    File parent_dir = cache_file.getParentFile();
+      //  File parent_dir = cache_file.getParentFile();
       //    if (! parent_dir.exists()) {
       //      // if directories are missing, create them for this file's path
       //      parent_dir.mkdirs();

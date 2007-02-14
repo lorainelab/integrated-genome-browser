@@ -60,6 +60,9 @@ public class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym  
             int[] xcoords = graf.getGraphXCoords();
             min_max[0] = Math.min(xcoords[0], min_max[0]);
             min_max[1] = Math.max(xcoords[xcoords.length-1], min_max[0]);
+            // TODO: This needs to take into account GraphIntervalSyms width coords also !!
+            // The easiest way would be to re-write the GraphSym and GraphIntervalSym
+            // method getSpan() so that it returned the correct values.
           }
         } else {
           SeqSpan span = annotSym.getSpan(seq);

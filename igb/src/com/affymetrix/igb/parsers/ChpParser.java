@@ -30,6 +30,9 @@ import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.util.QuantByIntIdComparator;
+import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
+
 
 public class ChpParser {
   static boolean DEBUG = false;
@@ -38,8 +41,8 @@ public class ChpParser {
   // }
 
   public static List parse(String file_name) throws IOException {
-    Timer tim = new Timer();
-    tim.start();
+    //    Timer tim = new Timer();
+    //    tim.start();
     List results = null;
     if (! (reader_registered)) {
       //    FusionCHPLegacyData.registerReader();
@@ -124,7 +127,7 @@ public class ChpParser {
        */
     }
 
-    System.out.println("Time to load CHP file (etc.): " + tim.read()/1000f);
+    //    System.out.println("Time to load CHP file (etc.): " + tim.read()/1000f);
     return results;
   }
 
@@ -151,9 +154,9 @@ public class ChpParser {
      *     and match by id to associate locations with the probeset results.
      *
      */
-  protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data) {
-    Timer tim2 = new Timer();
-    tim2.start();
+  protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
+    //    Timer tim2 = new Timer();
+    //    tim2.start();
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -191,7 +194,7 @@ public class ChpParser {
       //      }
       if (das_segment != null) {
 	// LazyChpSym constructor handles adding span to itself for aseq
-	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data);
+	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data, int_entries);
 	chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
 	chp_sym.setProperty("method", type_name);
 	chp_sym.setID(type_name);
@@ -199,7 +202,7 @@ public class ChpParser {
 	results.add(chp_sym);
       }
     }
-    System.out.println("Time to build LazyChpSyms: " + tim2.read()/1000f);
+    //    System.out.println("Time to build LazyChpSyms: " + tim2.read()/1000f);
     return results;
   }
 
@@ -238,19 +241,19 @@ public class ChpParser {
       if (intid >= 0) {
 	nid = new Integer(intid);
 	psqData.setName(null);
-	id2data.put(nid, psqData);
+	int_entries.add(psqData);
+	//	id2data.put(nid, psqData);
 	int_id_count++;
       }
       else {  // nid < 0, then nid field not being used, so name should be used instead
 	name = psqData.getName();
-
 	try {
 	  nid = new Integer(name);
 	  intid = nid.intValue();
 	  psqData.setId(intid);
 	  psqData.setName(null);
 	  int_entries.add(psqData);
-	  id2data.put(nid, psqData);
+	  //	  id2data.put(nid, psqData);
 	  int_id_count++;
 	}
 	catch (Exception ex) {
@@ -263,13 +266,14 @@ public class ChpParser {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant + ", pval: " + pval);
       }
     }
-    ProbesetQuanDetectComparator comp = new  ProbesetQuanDetectComparator();
+    // sort by int_entries int id
+    QuantDetectByIntIdComparator comp = new  QuantDetectByIntIdComparator();
     Collections.sort(int_entries, comp);
     if (int_id_count > 0) {
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification + detection CHP file");
-      results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null);
+      results = ChpParser.makeLazyChpSyms(type_name, array_type, id2data, null, int_entries);
     }
     else {
       System.out.println("CHP quantification/detection data is not for exon chip, " +
@@ -291,6 +295,7 @@ public class ChpParser {
     int ps_count = chp.getEntryCount();
     //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
+    List int_entries = new ArrayList(ps_count);
     int int_id_count = 0;
     int str_id_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -308,7 +313,8 @@ public class ChpParser {
       if (intid >= 0) {
 	nid = new Integer(intid);
 	psqData.setName(null);
-	id2data.put(nid, psqData);
+	int_entries.add(psqData);
+	//	id2data.put(nid, psqData);
 	int_id_count++;
       }
       else {  // nid < 0, then nid field not being used, so name should be used instead
@@ -318,7 +324,8 @@ public class ChpParser {
 	  intid = nid.intValue();
 	  psqData.setId(intid);
 	  psqData.setName(null);
-	  id2data.put(nid, psqData);
+	  int_entries.add(psqData);
+	  //	  id2data.put(nid, psqData);
 	  int_id_count++;
 	}
 	catch (Exception ex) {
@@ -331,12 +338,15 @@ public class ChpParser {
         System.out.println(" post, id: " + psqData.getId() + ", name: " + psqData.getName() + ", quant: " + quant);
       }
     }
+    // sort by int_entries int id
+    QuantByIntIdComparator comp = new  QuantByIntIdComparator();
+    Collections.sort(int_entries, comp);
     if (int_id_count > 0) {
       //      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, name2data);
       System.out.println("Probsets with integer id: " + int_id_count);
       System.out.println("Probsets with string id: " + str_id_count);
       System.out.println("done parsing quantification CHP file");
-      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null);
+      results = ChpParser.makeLazyChpSyms(file_name, array_type, id2data, null, int_entries);
     }
     else {
       System.out.println("CHP quantification data is not for exon chip, " +
@@ -761,6 +771,9 @@ public class ChpParser {
 
   public static void main(String[] args) throws IOException {
     //    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup group = gmodel.addSeqGroup("H_sapiens_Mar_2006");
+    gmodel.setSelectedSeqGroup(group);
     String infile = "c:/data/chp_data_exon/exon_chp_results/HuEx-1_0-st-v2.colon-cancer-data-set/10_5N.rma-exon-all-dabg.chp";
     List results = ChpParser.parse(infile);
     if (results != null)  {
@@ -813,15 +826,4 @@ class ScoreEntryComparator implements Comparator  {
   }
 }
 
-class ProbesetQuanDetectComparator implements Comparator {
-  public int compare(Object objA, Object objB) {
-    ProbeSetQuantificationDetectionData dataA = (ProbeSetQuantificationDetectionData)objA;
-    ProbeSetQuantificationDetectionData dataB = (ProbeSetQuantificationDetectionData)objB;
-    int idA = dataA.getId();
-    int idB = dataB.getId();
-    if (idA < idB) { return -1; }
-    else if (idA > idB) { return 1; }
-    else {  return 0; }
-  }
-}
 

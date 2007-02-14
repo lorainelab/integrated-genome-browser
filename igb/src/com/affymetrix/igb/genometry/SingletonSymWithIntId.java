@@ -21,14 +21,22 @@ import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 
 public class SingletonSymWithIntId extends MutableSingletonSeqSymmetry implements IntId {
   int nid;
+  String id_prefix;
 
-  public SingletonSymWithIntId(int start, int end, BioSeq seq, int nid) {
+  public SingletonSymWithIntId(int start, int end, BioSeq seq, String id_prefix, int nid) {
     super(start, end, seq);
+    this.id_prefix = id_prefix;
     this.nid = nid;
   }
 
   public String getID() {
-    return Integer.toString(nid);
+    String rootid = Integer.toString(getIntID());
+    if (id_prefix == null) {
+      return rootid;
+    }
+    else {
+      return (id_prefix + rootid);
+    }
   }
 
   public int getIntID() {

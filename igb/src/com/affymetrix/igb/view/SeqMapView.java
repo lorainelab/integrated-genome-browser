@@ -344,7 +344,7 @@ public class SeqMapView extends JPanel
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
         tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
       }
-      tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
+      //tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
     }
     
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );

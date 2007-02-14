@@ -10,6 +10,9 @@ import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.igb.util.QuantByIntIdComparator;
+import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
+import com.affymetrix.igb.util.StringUtils;
 
 import affymetrix.calvin.data.*;
 
@@ -38,8 +41,8 @@ import affymetrix.calvin.data.*;
  */
 public class LazyChpSym extends ScoredContainerSym {
 
-  public static String PROBESET_SERVER_NAME = "NetAffx";
-  // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
+  //  public static String PROBESET_SERVER_NAME = "NetAffx";
+  public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
 
   //  static Map genome2chp;
   SmartAnnotBioSeq aseq;
@@ -56,6 +59,13 @@ public class LazyChpSym extends ScoredContainerSym {
    *  NOT CURRENTLY USED (ALWAYS NULL)
    */
   Map probeset_name2data = null;
+
+  /**
+   *  list of probeset result data for probesets whose name/id can be
+   *   represented as an integer
+   *  list should be sorted by integer id
+   */
+  List int_entries = null;
 
   /** in Affy Fusion SDK this is called "CHP array type", for example "HuEx-1_0-st-v2" */
   String chp_array_type = null;
@@ -83,11 +93,15 @@ public class LazyChpSym extends ScoredContainerSym {
    */
   List probesets_on_seq = null;
 
-  public LazyChpSym(SmartAnnotBioSeq seq, String array_type, Map id2data, Map name2data) {
+  /**
+   *  Assumes entries_with_int_id is already sorted by int id
+   */
+  public LazyChpSym(SmartAnnotBioSeq seq, String array_type, Map id2data, Map name2data, List entries_with_int_id) {
     this.aseq = seq;
     this.chp_array_type = array_type;
     this.probeset_id2data = id2data;
     this.probeset_name2data = name2data;
+    this.int_entries = entries_with_int_id;
     // this.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
   }
 
@@ -144,8 +158,8 @@ public class LazyChpSym extends ScoredContainerSym {
 
 
   public void loadCoords() {
-    Timer tim = new Timer();
-    tim.start();
+    //    Timer tim = new Timer();
+    //    tim.start();
     coords_loaded = true;
     /**
      *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
@@ -172,9 +186,24 @@ public class LazyChpSym extends ScoredContainerSym {
       return;
     }
 
+    ProbeSetQuantificationDetectionData quant_detect = new ProbeSetQuantificationDetectionData();
+    ProbeSetQuantificationData quant = new ProbeSetQuantificationData();
+    QuantDetectByIntIdComparator quant_detect_comp = null;
+    QuantByIntIdComparator quant_comp = null;
+    if (int_entries != null && int_entries.size() > 0) {
+      Object data = int_entries.get(0);
+      if (data instanceof ProbeSetQuantificationDetectionData)  {
+	quant_detect_comp = new QuantDetectByIntIdComparator();
+      }
+      else if (data instanceof ProbeSetQuantificationData)  {
+	quant_comp = new QuantByIntIdComparator();
+      }
+    }
+
     /**
-     *  May need to load multiple annotations -- for instance, for exon arrays both Probes (in bp2 format)
-     *     and Transcripts (in ??? format [gff, bgn?])
+     *  May need to load multiple annotations from DAS/2 server -- 
+     *     for instance, for exon arrays both probesets (in bp2 format) and transcripts (in bgn format)
+     *     [moving towards single load, for example probesets/transcripts/etc. all in "ead" format]
      *  Assume that any annotation type whose name starts with chp_array_type,
      *     or starts with any synonym of chp_array_type, need to be loaded...-st
      */
@@ -204,10 +233,10 @@ public class LazyChpSym extends ScoredContainerSym {
 
     List symlist = new ArrayList(10000);
     List id_data_hits = new ArrayList(10000);
-    List id_name_hits = new ArrayList(10000);
     List id_sym_hits = new ArrayList(10000);
     int id_hit_count = 0;
     int str_hit_count = 0;
+    int all_digit_not_int = 0;
 
     Iterator titer = matched_types.entrySet().iterator();
     while (titer.hasNext()) {
@@ -219,10 +248,6 @@ public class LazyChpSym extends ScoredContainerSym {
       AnnotStyle.getInstance(das_type.getID()).setHumanName(das_type.getName());
 
       SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-      // to get Das2Region and Das2Type, need to intialize DAS/2 versioned source
-      //    (but can do this once per versioned source, rather than once per LazyChpSym?
-      //    (YES -- once DAS/2 versioned source is initialized, model doesn't have to
-      //       make additional queries to
       Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);
       System.out.println("request: " + das_type.getName() + ", seq = " + aseq.getID() + ", length = " + aseq);
 
@@ -237,22 +262,14 @@ public class LazyChpSym extends ScoredContainerSym {
       TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getID()); // should be a TypeContainerAnnot
       // TypeContainerAnnot container = (TypeContainerAnnot)aseq.getAnnotation(das_type.getName());
 
-
       // collect probeset annotations for given chp type
       //     (probesets should be at 3rd level down in annotation hierarchy)
       for (int i=0; i<container.getChildCount(); i++) {
 	Das2FeatureRequestSym req = (Das2FeatureRequestSym)container.getChild(i);
 	int pset_count = req.getChildCount();
 	for (int k=0; k<pset_count; k++) {
-	  // probeset should be one of:
-	  //    EfficientProbesetSymA (for exon chips exon probesets)
-	  //    ??? (for exon chip transcript clusters)
-	  //    ??? (for gene chips)
-	  //    ??? (for genotyping chips)
 	  SeqSymmetry sym = req.getChild(k);
-	  //	  addIntIdsToList(sym, int_ids);
 	  addIdSyms(sym, symlist);
-	  //	  symlist.add(sym);
 	}
       }
     }
@@ -260,49 +277,72 @@ public class LazyChpSym extends ScoredContainerSym {
     int symcount = symlist.size();
     // should the syms be sorted here??
     Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
-    //    ArrayList rlist = new ArrayList(); // reusable list for retrieving syms from seq group sym hash
 
-    // Iterate through probeset annotations, try hashing each one to chp data, collect hits
+    // Iterate through probeset annotations, if possible do integer id binary search, 
+    //     otherwise do hash for string ID
     for (int i=0; i<symcount; i++) {
       SeqSymmetry annot = (SeqSymmetry)symlist.get(i);
-      if (annot instanceof IntId) {
+      Object data = null;
+      if (annot instanceof IntId) { 
 	// want to use integer id to avoid lots of String churn
 	IntId isym = (IntId)annot;
 	int nid = isym.getIntID();
-	Integer pid = new Integer(nid);
-	// look for a match in ID-to-ScoreEntry
-	Object data = probeset_id2data.get(pid);
-	// if get a match, add as child sym, keep track of score(s)
-	if (data != null) {
+	int index = -1;
+	if (quant_detect_comp != null) {
+	  quant_detect.setId(nid);
+	  index = Collections.binarySearch(int_entries, quant_detect, quant_detect_comp);
+	}
+	else if (quant_comp != null) {
+	  quant.setId(nid);
+	  index = Collections.binarySearch(int_entries, quant, quant_comp);
+	}
+	if (index >= 0) {  // if index >= 0 then found entry at that index
+	  data = int_entries.get(index);
 	  id_hit_count++;
-	  id_data_hits.add(data);
-	  id_sym_hits.add(annot);
 	}
       }
-      else {
+      else {  //  annot is not an IntId, try string ID
 	String id = annot.getID();
 	// try making id an integer and hashing to probeset_id2data
 	// if not an integer, try id as string and hashing to probeset_name2data
 	// [ what if can make it an integer, but no hit in probeset_id2data -- should also try probeset_name2data?
-	//     NO, for now consider that a miss -- if _can_ be an integer, should have been converted in ChpParser
-	//     to an Integer and populated in probeset_id2data ]
+	//     NO, for now consider that a miss -- if id in CHP file _can_ be an integer,
+	//     should have been converted in ChpParser to an Integer and populated in probeset_id2data ]
 	if (id != null) {
-	  try {
-	    Integer pid = new Integer(id);
-	    Object data = probeset_id2data.get(pid);
+	  if (probeset_name2data != null)  {
+	    data = probeset_name2data.get(id);
 	    if (data != null) {
-	      id_hit_count++;
-	      id_data_hits.add(data);
-	      id_sym_hits.add(annot);
+	      str_hit_count++;
 	    }
 	  }
-	  catch (Exception ex) { // can't parse as an integer
-            if (probeset_name2data != null)  {
-              Object data = probeset_name2data.get(id);
-              if (data != null) { str_hit_count++; }
-            }
+	  if (data == null && StringUtils.isAllDigits(id)) {
+	    // using a simple isAllDigits() method here, which will miss some
+	    //    want to avoid needing try/catch unless most likely can parse as integer
+	    try {
+	      int nid = Integer.parseInt(id);
+	      int index = -1;
+	      if (quant_detect_comp != null) {
+		quant_detect.setId(nid);
+		index = Collections.binarySearch(int_entries, quant_detect, quant_detect_comp);
+	      }
+	      else if (quant_comp != null)  {
+		quant.setId(nid);
+		index = Collections.binarySearch(int_entries, quant, quant_comp);
+	      }
+	      if (index >= 0) {  // if index >= 0 then found entry at that index
+		data = int_entries.get(index);
+		id_hit_count++;
+	      }
+	    }
+	    catch (Exception ex) { // can't parse as an integer (even though all chars are digits)
+	      all_digit_not_int++;
+	    }
 	  }
 	}
+      }  // end non-IntId conditional
+      if (data != null) {
+	id_data_hits.add(data);
+	id_sym_hits.add(annot);
       }
     }
 
@@ -339,11 +379,19 @@ public class LazyChpSym extends ScoredContainerSym {
     if (has_pvals)  {
       this.addScores("pval", pvals);
     }
-    System.out.println("Time to load and merge coords from DAS for CHP file: " + tim.read()/1000f);
+    //    System.out.println("Time to load and merge coords from DAS for CHP file: " + tim.read()/1000f);
     System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
     System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
   }
 
+   
+  /**
+   *  syms should be one of:
+   *     EfficientProbesetSymA (for exon array probesets)
+   *     SingletonSymWithIntId (for exon array transcript_clusters, exon_clusters, PSRs)
+   *     ??? (for gene chips)
+   *     ??? (for genotyping chips)
+   */
   protected void addIdSyms(SeqSymmetry sym, List symlist) {
     if (sym instanceof IntId) {
       symlist.add(sym);

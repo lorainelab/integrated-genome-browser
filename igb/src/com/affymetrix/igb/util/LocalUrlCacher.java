@@ -55,6 +55,7 @@ public class LocalUrlCacher {
 
   /** Determines whether the given URL string represents a file URL. */
   public static boolean isFile(String url) {
+    if (url == null || url.length() < 5)  { return false; }
     return (url.substring(0,5).compareToIgnoreCase("file:") == 0);
   }
 

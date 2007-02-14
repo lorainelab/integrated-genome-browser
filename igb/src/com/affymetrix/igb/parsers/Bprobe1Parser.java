@@ -21,6 +21,7 @@ import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.EfficientProbesetSymA;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.SharedProbesetInfo;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 
 /**
@@ -163,6 +164,7 @@ public class Bprobe1Parser implements AnnotationWriter {
 	System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
 
 	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)group.getSeq(seqid);
+	SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
         if (aseq == null) {
 	  int seqlength = ((Integer)seq2lengths.get(seqid)).intValue();
 	  aseq = group.addSeq(seqid, seqlength);
@@ -186,7 +188,8 @@ public class Bprobe1Parser implements AnnotationWriter {
             int min = dis.readInt();
 	    cmins[k] = min;
           }
-	  SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
+	  SeqSymmetry psym = new EfficientProbesetSymA(shared_info, cmins, forward, nid);
+	  // SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
 	  syms[i]  = psym;
 	  container_sym.addChild(psym);
 	  results.add(psym);
@@ -229,7 +232,7 @@ public class Bprobe1Parser implements AnnotationWriter {
       // use first sym to get shared probe_length & id_prefix
       EfficientProbesetSymA fsym = (EfficientProbesetSymA)syms.iterator().next();
       probe_length = fsym.getProbeLength();
-      id_prefix = fsym.getPrefixID();
+      id_prefix = fsym.getIDPrefix();
     }
 
     DataOutputStream dos = null;

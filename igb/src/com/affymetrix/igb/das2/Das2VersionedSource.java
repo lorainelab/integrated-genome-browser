@@ -234,7 +234,7 @@ public class Das2VersionedSource  {
       region_request = segcap.getRootURI().toString();
     }
     try {
-      System.out.println("Das Region Request: " + region_request);
+      System.out.println("Das Segments Request: " + region_request);
       Document doc = DasLoader.getDocument(region_request);
       Element top_element = doc.getDocumentElement();
       NodeList regionlist = doc.getElementsByTagName("SEGMENT");

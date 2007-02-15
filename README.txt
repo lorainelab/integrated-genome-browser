@@ -26,7 +26,7 @@ Jetty from Mortbay Consulting, Vector Graphics from FreeHEP
 and Fusion from Affymetrix.  
 Those packages are covered by their own open source licenses.
 
-IGB is Copyright (c) 2000-2006 Affymetrix, Inc.  
+IGB is Copyright (c) 2000-2007 Affymetrix, Inc.  
 Research and development of IGB is supported in part by NIH grant R01HG003040.
 
 GenoViz is hosted on SourceForge.net at 

@@ -4,6 +4,12 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-4.56
+  + Now displays cytobands when the information is available
+  + Entire set of tabbed panels can use a new window to maximize space
+  + Multiple bug fixes
+  + Refer to http://genoviz.sourceforge.net/release_notes/igb_release.html
+
 IGB-4.52
   + Bugfix for loading exon array CHP files with scores for transcript clusters.
   + Enhancements for simultaneous viewing of data from different DAS/2 servers.

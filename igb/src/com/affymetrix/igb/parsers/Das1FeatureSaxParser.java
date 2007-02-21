@@ -462,8 +462,6 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         //        SeqUtils.printSymmetry(current_sym); }
         //        if (featcount <= 10)  { SeqUtils.printSymmetry(current_sym); }
       }
-      //    MutableSingletonSeqSymmetry parent_sym = null;
-      SingletonSymWithProps parent_sym = null;
       //    SymWithProps grandparent_sym = null;
       SimpleSymWithProps grandparent_sym = null;
       if (feattype != null && MAKE_TYPE_CONTAINER_SYM) {
@@ -486,8 +484,9 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
       }
       if (featgroup != null) {  // if there is a group id, add annotation to parent annotation
-        
-        parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
+
+      //    MutableSingletonSeqSymmetry parent_sym = null;
+      SingletonSymWithProps parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
         
         if (parent_sym == null) {
           groupcount++;
@@ -578,24 +577,28 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           }
         }
       }
-      else {  // if no group id, add annotation directly to AnnotatedBioSeq
+      else {  // if no group id, then no parent sym
+	//  so add annotation directly to AnnotatedBioSeq 
+	//  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM 
         seq_group.addToIndex(featid, current_sym);
         //        if (featlink != null) { current_sym.setProperty("link", featlink); }
         if (featlink_urls.size() > 0)  {
           int linkcount = featlink_urls.size();
           for (int i=0; i<linkcount; i++) {
             String linkurl = (String)featlink_urls.get(i);
-            parent_sym.setProperty("link", linkurl);
+	    //            parent_sym.setProperty("link", linkurl);
+            current_sym.setProperty("link", linkurl);
           }
         }
         if (feat_label != null && feat_label.trim().length() > 0) { 
           if (featid != null) {
-            parent_sym.setProperty(DAS_FEATURE_ID, featid);
+	    //	    System.out.println("featid: " + featid);
+            current_sym.setProperty(DAS_FEATURE_ID, featid);
           }
-          parent_sym.setProperty("id", feat_label); 
+          current_sym.setProperty("id", feat_label); 
         } else if (featid != null) {
           //parent_sym.setProperty("das_group_id", featgroup);
-          parent_sym.setProperty("id", featid);          
+          current_sym.setProperty("id", featid);          
         }
         if (feattype != null) { current_sym.setProperty("method", feattype); }
         if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) { grandparent_sym.addChild(current_sym); }
@@ -668,8 +671,10 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     Das1FeatureSaxParser test = new Das1FeatureSaxParser();
     try {
       String user_dir = System.getProperty("user.dir");
-      //      String test_file_name = user_dir + "/testdata/das/dastesting2.xml";
-      String test_file_name = user_dir + "/testdata/das/dastesting3.xml";
+      // String test_file_name = user_dir + "/testdata/das/dastesting2.xml";
+      //      String test_file_name = "c:/data/das1_responses/ensembl_feature_response.xml";
+      String test_file_name = "c:/data/das1_responses/ensembl_feature_response2.xml";
+
       File test_file = new File(test_file_name);
       FileInputStream fistr = new FileInputStream(test_file);
       SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();

@@ -312,7 +312,7 @@ public class LocalUrlCacher {
         if (cache_option != ONLY_CACHE) {
           System.out.println("Remote URL not reachable.");
         }
-	System.out.println("Loading cached file for URL");
+	System.out.println("Loading cached file for URL: " + url);
 	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
       }
     }

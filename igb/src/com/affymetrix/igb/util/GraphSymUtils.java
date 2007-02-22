@@ -484,6 +484,19 @@ public class GraphSymUtils {
         } else {
           throw new IOException("Not the correct graph type for the '.egr' format.");
         }
+      } else if (file_name.endsWith(".wig")) {
+        if (gsym instanceof GraphIntervalSym) {
+          GraphIntervalSym gisym = (GraphIntervalSym) gsym;
+          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+          String genome_name = null;
+          if (seq_group != null) {
+            genome_name = seq_group.getID();
+          }
+          bos = new BufferedOutputStream(new FileOutputStream(file_name));
+          WiggleParser.writeBedFormat(gisym, genome_name, bos);
+        } else {
+          throw new IOException("Not the correct graph type for the '.wig' format.");
+        }
       } else {
         throw new IOException("Graph file name does not have the correct extension");
         //result = false;

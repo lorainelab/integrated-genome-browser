@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -25,6 +25,7 @@ import javax.swing.filechooser.FileFilter;
  */
 public class GraphSaverFileChooser extends UniFileChooser {
 
+  static public final UniFileFilter wig_filter = new UniFileFilter(new String[] {"wig"}, "Wiggle Graph");
   static public final UniFileFilter egr_filter = new UniFileFilter(new String[] {"egr"}, "Scored Interval Graph");
   static public final UniFileFilter gr_filter = new UniFileFilter(new String[] {"gr"}, "Text Graph");
   static public final UniFileFilter sgr_filter = new UniFileFilter(new String[] {"sgr"}, "Text Graph with Sequence Names");
@@ -43,6 +44,7 @@ public class GraphSaverFileChooser extends UniFileChooser {
     
     boolean has_width_coords = false;
     if (sym instanceof GraphIntervalSym) {
+      addChoosableFileFilter(wig_filter);
       addChoosableFileFilter(egr_filter);
       has_width_coords = true;
     }

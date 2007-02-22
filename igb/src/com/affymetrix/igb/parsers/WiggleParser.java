@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.parsers;
 
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -218,7 +219,7 @@ public class WiggleParser {
     
   
   /**
-   *  Currently only writing out one particular wiggle format. Specifically:
+   *  Writes out one particular wiggle format. Specifically:
    *     variableStep two-column data; started by a declaration line and followed with
    *       chromosome positions and data values:
    *<pre>
@@ -252,5 +253,51 @@ public class WiggleParser {
       ex.printStackTrace();
     }
     return true;
-  }  
+  }
+
+  /** Writes the given GraphIntervalSym in wiggle-BED format.  
+   *  Also writes a track line as a header. 
+   */
+  public static boolean writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {    
+    int xpos[] = graf.getGraphXCoords();
+    int widths[] = graf.getGraphWidthCoords();
+    float ypos[] = graf.getGraphYCoords();
+
+    OutputStreamWriter osw = null;
+    BufferedWriter bw = null;
+
+    try {
+      osw = new OutputStreamWriter(outstream);
+      bw = new BufferedWriter(osw);
+
+      BioSeq seq = graf.getGraphSeq();
+      String seq_id = (seq == null ? "." : seq.getID());
+      String human_name = graf.getGraphState().getTierStyle().getHumanName();
+      String gname = graf.getGraphName();
+      GraphState state = graf.getGraphState();
+      Color color = state.getTierStyle().getColor();
+
+      if (genome_version != null) {
+        bw.write("# genome_version = " + genome_version + '\n');
+      }
+      bw.write("track type=wiggle_0 name=\"" + gname + "\"");
+      bw.write(" description=\""+human_name+"\"");
+      bw.write(" visibility=full");
+      bw.write(" color=" + color.getRed() + ","+color.getGreen()+","+color.getBlue());
+      bw.write(" viewLimits="+Float.toString(state.getVisibleMinY())+":"+Float.toString(state.getVisibleMaxY()));
+      bw.write("");
+      bw.write('\n');
+      
+      for (int i=0; i<xpos.length; i++) {
+        int x2 = xpos[i] + widths[i];
+        bw.write(seq_id + ' ' + xpos[i] + ' ' +  x2  + ' ' + ypos[i] + '\n');
+      }
+      bw.flush();
+    } finally {
+      bw.close();
+      osw.close();
+    }
+    return true;
+  }
+
 }

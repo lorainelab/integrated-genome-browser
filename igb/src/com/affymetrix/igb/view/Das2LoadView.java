@@ -500,7 +500,8 @@ public class Das2LoadView extends JComponent
     int lastrow = evt.getLastRow();
     Das2TypeState  tstate = type_model.getTypeState(firstrow);
 
-    if ((col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN) && (current_seq != null)) {
+    if ((current_seq != null) && (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN ||
+         col == Das2TypesTableModel.LOAD_BOOLEAN_COLUMN)) {
       // All attributes of TableModelEvent are in the TableModel coordinates, not
       // necessarily the same as the JTable coordinates, so use the model
       //      Object val = type_model.getValueAt(firstrow, col);

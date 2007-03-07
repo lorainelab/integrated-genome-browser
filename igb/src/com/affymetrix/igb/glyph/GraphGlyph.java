@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -508,12 +508,25 @@ public class GraphGlyph extends Glyph {
     Graphics g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
     view.transformToPixels(getPositiveCoordBox(), pixelbox);
+//    g.drawRect(view_pixbox.x, pixelbox.y,
+//               view_pixbox.width-1, pixelbox.height-1);
+//    if (THICK_OUTLINE) {
+//      g.drawRect(view_pixbox.x+1, pixelbox.y+1,
+//               view_pixbox.width-3, pixelbox.height-3);
+//    }
+    
+    // only outline the handle, not the whole graph
     g.drawRect(view_pixbox.x, pixelbox.y,
-               view_pixbox.width-1, pixelbox.height-1);
+               handle_width-1, pixelbox.height-1);
     if (THICK_OUTLINE) {
       g.drawRect(view_pixbox.x+1, pixelbox.y+1,
-               view_pixbox.width-3, pixelbox.height-3);
+               handle_width-3, pixelbox.height-3);
     }
+    
+    // also draw a little pointing triangle to make the selection stand-out more
+    int[] xs = {view_pixbox.x + handle_width, view_pixbox.x + 2*handle_width, view_pixbox.x + handle_width};
+    int[] ys = {pixelbox.y,  pixelbox.y + (int) (0.5*(pixelbox.height-1)), pixelbox.y + pixelbox.height-1};
+    g.fillPolygon(xs, ys, 3);
   }
 
 
@@ -722,14 +735,14 @@ public class GraphGlyph extends Glyph {
 
   protected double getUpperYCoordInset(ViewI view) {
     double top_ycoord_inset = 0;
-    if (getShowLabel()) {
-      Graphics g = view.getGraphics();
-      g.setFont(default_font);
-      FontMetrics fm = g.getFontMetrics();
-      label_pix_box.height = fm.getAscent() + fm.getDescent();
-      view.transformToCoords(label_pix_box, label_coord_box);
-      top_ycoord_inset = label_coord_box.height;
-    }
+//    if (getShowLabel()) {
+//      Graphics g = view.getGraphics();
+//      g.setFont(default_font);
+//      FontMetrics fm = g.getFontMetrics();
+//      label_pix_box.height = fm.getAscent() + fm.getDescent();
+//      view.transformToCoords(label_pix_box, label_coord_box);
+//      top_ycoord_inset = label_coord_box.height;
+//    }
     return top_ycoord_inset;
   }
 

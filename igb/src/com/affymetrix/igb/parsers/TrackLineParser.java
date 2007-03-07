@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -218,8 +218,12 @@ public class TrackLineParser {
     }
     
     String graph_type = (String) track_hash.get("graphtype");
+    // UCSC browser supports only the types "points" and "bar"
     if ("points".equalsIgnoreCase(graph_type)) {
       gstate.setGraphStyle(GraphGlyph.DOT_GRAPH);
+    }
+    else if ("bar".equalsIgnoreCase(graph_type)) {
+      gstate.setGraphStyle(GraphGlyph.BAR_GRAPH);
     }
   }
 }

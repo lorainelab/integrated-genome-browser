@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -246,7 +246,7 @@ public class XmlPrefsParser {
             processAnnotStyle(el, type2factory, regex2factory);
           }
           else if (name.equalsIgnoreCase("annotation_url")) {
-            processLinkUrl(el, prefs_hash);
+            processLinkUrl(el);
           }
           else if (name.equalsIgnoreCase("annotation_style_defaults")) {
             // processDefaultAnnotStyle();
@@ -340,7 +340,7 @@ public class XmlPrefsParser {
    *  By default, match is case-insensitive;  use match_case="true" if you want
    *  to require an exact match.
    */
-  public void processLinkUrl(Element el, Map prefs_hash) {
+  public void processLinkUrl(Element el) {
     Map attmap = this.getAttributeMap(el);
     String annot_type_regex_string = (String) attmap.get("annot_type_regex");
     if (annot_type_regex_string != null && annot_type_regex_string.trim().length()==0) {

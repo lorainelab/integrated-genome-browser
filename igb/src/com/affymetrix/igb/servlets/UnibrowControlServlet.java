@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -41,16 +41,12 @@ import com.affymetrix.swing.DisplayUtils;
  *      end of region in view
  *  and bring up corect version, chromosome, and region with (at least)
  *      annotations that can be loaded via QuickLoaderView
- *  If the currently loaded genome doesn't match the one requested, will
+ *  If the currently loaded genome doesn't match the one requested, might
  *      ask the user before switching.
- *
- *  WARNING:
- *     Using version=unknown to suprress genome checking is no longer supported!
  *</pre>
  */
 public class UnibrowControlServlet extends HttpServlet {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static int graph_height = 60;
 
   IGB uni;
 
@@ -62,12 +58,13 @@ public class UnibrowControlServlet extends HttpServlet {
   
   public void service(HttpServletRequest request, HttpServletResponse response) throws
     ServletException, IOException, NumberFormatException {
-    System.out.println("UnibrowControlServlet received request");
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     if (request.getParameter("ping") != null) {
       // query from another instance of unibrow to see if port is occupied...
-      System.out.println("received ping request");
+      System.out.println("Received ping request");
       return;
+    } else {
+      System.out.println("Received bookmark request");
     }
     
     //  restore and focus on IGB when a unibrow call is made
@@ -154,7 +151,7 @@ public class UnibrowControlServlet extends HttpServlet {
         t.join();
       }
     } catch (MalformedURLException e) {
-      IGB.errorPanel("Error loading bookmark\nDAS URL malformed\n", e);
+      IGB.errorPanel("Error loading bookmark\nData URL malformed\n", e);
     }
     catch (InterruptedException ex){}
   }
@@ -167,13 +164,13 @@ public class UnibrowControlServlet extends HttpServlet {
     int start = 0;
     int end = Integer.MAX_VALUE;
     if (start_param == null || start_param.equals("")) {
-      System.err.println("No start value found in the request URL");
+      System.err.println("No start value found in the bookmark URL");
     }
     else {
       start = Integer.parseInt(start_param);
     }
     if (end_param == null || end_param.equals("")) {
-      System.err.println("No end value found in the request URL");
+      System.err.println("No end value found in the bookmark URL");
     }
     else {
       end = Integer.parseInt(end_param);
@@ -203,103 +200,91 @@ public class UnibrowControlServlet extends HttpServlet {
    *  @param graph_files it is ok for this parameter to be null.
    *  @return true indicates that the action suceeded
    */
-  static boolean goToBookmark(IGB uni, String seqid, String version,
-                           int start, int end, final int selstart, final int selend,
-                           final String[] graph_files) {
-
-    if (version == null || version.trim().equals("")) {
-      IGB.errorPanel("Genome version not specified in bookmark.");
-      return false; // cancel
-    }
-    if (seqid == null || seqid.trim().equals("")) {
-      IGB.errorPanel("Sequence id not specified in bookmark.");
-      return false; // cancel
-    }
-
-    // no longer special-casing for version = "unknown"...
+  static boolean goToBookmark(final IGB uni, final String seqid, final String version,
+      final int start, final int end, final int selstart, final int selend,
+      final String[] graph_files) {
+    
     final SeqMapView gviewer = uni.getMapView();
     final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
-    AnnotatedSeqGroup book_group = null;
-    if ("unknown".equals(version)) {
+    final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
+    final AnnotatedSeqGroup book_group;
+    if (version == null || "unknown".equals(version) || version.trim().equals("")) {
       book_group = selected_group;
     } else {
       book_group = gmodel.getSeqGroup(version);
     }
-
+    
     if (book_group == null) {
       IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
-        "You may need to choose a different QuickLoad server.");
+          "You may need to choose a different QuickLoad server.");
       return false; // cancel
     }
-    System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
-    System.out.println("selected group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
-    if (book_group != null && ! book_group.equals(selected_group)) {
-      if (selected_group != null && ! selected_group.equals("null")) {
-        if (!uni.confirmPanel("Do you want to switch the Genome version to '" +
-                              version )) {
-          return false; // was cancelled
-        }
-      }
-      gmodel.setSelectedSeqGroup(book_group);
-    }
-    // quick_view.testLoad(version);
-    // quick_view.setSelection(version);
-
-    // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
-    //     gviewer is registered as a SeqSelectionListener on gmodel
-
-    // hopefully setting gmodel's selected seq group above triggered population of seqs
-    //   for group if not already populated
-    MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-    final MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
-
-
-    System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
-    System.out.println("selected seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
-
-    if (book_seq == null) {
-      IGB.errorPanel("No seqid", "The bookmark did not specify a valid seqid");
-      return false;
-    } else {
-      if (book_seq != selected_seq)  {
-        gmodel.setSelectedSeq(book_seq);
-      }
-
-      final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
-      final double middle = (start + end)/2.0;
-//      System.out.println("graph files: " + graph_files);
-      SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            try {
-//              MutableAnnotatedBioSeq view_seq = (MutableAnnotatedBioSeq)
-//                view_span.getBioSeq();
-//              if (view_seq != gmodel.getSelectedSeq()) {
-//                gviewer.setAnnotatedSeq(view_seq);
-//                gviewer.setAnnotatedSeq(aseq);
-//              }
-              gviewer.setZoomSpotX(middle);
-              gviewer.zoomTo(view_span);
-              if (selstart >= 0 && selend >= 0) {
-                SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
-                gviewer.setSelectedRegion(regionsym, true);
-              }
-              if (graph_files != null) {
-                URL[] graph_urls = new URL[graph_files.length];
-                for (int i = 0; i < graph_files.length; i++) {
-                  graph_urls[i] = new URL(graph_files[i]);
-                }
-                Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
-                  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
-                t.start();
-              }
-            }
-            catch (Exception ex) {
-              ex.printStackTrace();
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        try {
+          System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
+          System.out.println("selected group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
+          if (book_group != null && ! book_group.equals(selected_group)) {
+            if (selected_group != null && ! selected_group.equals("null")) {
+              // confirmation panel not needed since curations are not now possible
+              //if (uni.confirmPanel("Do you want to switch the Genome version to '" + version )) {
+                gmodel.setSelectedSeqGroup(book_group);
+              //}
+            } else {
+              gmodel.setSelectedSeqGroup(book_group);
             }
           }
-        });
-    }
+       
+          // hopefully setting gmodel's selected seq group above triggered population of seqs
+          //   for group if not already populated
+          MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
+          MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
+          
+          
+          System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
+          System.out.println("selected seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
+          
+          if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {
+            book_seq = selected_seq;
+          } else {
+            book_seq = book_group.getSeq(seqid);
+          }
+          
+          if (book_seq == null) {
+            IGB.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '"+seqid+"'");
+          } else {
+            // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
+            //     gviewer is registered as a SeqSelectionListener on gmodel
+            if (book_seq != selected_seq)  {
+              gmodel.setSelectedSeq(book_seq);
+            }
+            
+            final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
+            final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
+            final double middle = (start + end)/2.0;
+            if (start >=0 && end > 0 && end != Integer.MAX_VALUE) {
+              gviewer.setZoomSpotX(middle);
+              gviewer.zoomTo(view_span);
+            }
+            if (selstart >= 0 && selend >= 0) {
+              gviewer.setSelectedRegion(regionsym, true);
+            }
+            if (graph_files != null) {
+              URL[] graph_urls = new URL[graph_files.length];
+              for (int i = 0; i < graph_files.length; i++) {
+                graph_urls[i] = new URL(graph_files[i]);
+              }
+              Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
+                  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
+              t.start();
+            }
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
     return true; // was not cancelled, was sucessful
   }
   

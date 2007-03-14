@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -33,7 +33,8 @@ import com.affymetrix.igb.IGB;
  */
 public class UnibrowControlServer {
   public static final int default_server_port = 7085;
-  public final static String SERVLET_NAME = "UnibrowControl";
+  public final static String SERVLET_NAME_OLD = "UnibrowControl";
+  public final static String SERVLET_NAME = "IGBControl";
   static int ports_to_try = 5;
   int server_port;
 
@@ -90,6 +91,8 @@ public class UnibrowControlServer {
         ServletHolder sholder = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME+"/*",
 						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
 	sholder.setInitOrder(1);
+        ServletHolder sholder_old = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME_OLD+"/*",
+						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
 
 	ServletHolder writeback_test_servlet = servlets.addServlet("Das2WritebackTester", "/Das2WritebackTester/*",
 						    "com.affymetrix.igb.servlets.Das2WritebackDevel");

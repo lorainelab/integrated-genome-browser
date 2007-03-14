@@ -29,7 +29,6 @@ import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.view.FindAnnotationsPanel;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
@@ -70,6 +69,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   
   public AnnotBrowserView() {
     super();
+    super.setName("Annotation Browser");
 
     finder = new FindAnnotationsPanel();
     finder.initialize();
@@ -213,6 +213,11 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
               status_bar.setText("" + rows.size() + " results");
             }
             search_action.setEnabled(true);
+            
+            // If the view has been opened in a new window and that window is
+            // now minimized or not on top, re-display the window
+            JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, AnnotBrowserView.this);
+            DisplayUtils.bringFrameToFront(frame);
           }
         });
       }
@@ -253,7 +258,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     current_group_hash_number = hash_number;
   }
     
-  void performSearch() {
+  public void performSearch() {
     finder.reinitialize(SingletonGenometryModel.getGenometryModel());
 
     String[] options = new String[] {"OK", "Cancel"};

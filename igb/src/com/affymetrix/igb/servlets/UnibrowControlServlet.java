@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.servlets;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -57,7 +56,8 @@ public class UnibrowControlServlet extends HttpServlet {
   }
   
   public void service(HttpServletRequest request, HttpServletResponse response) throws
-    ServletException, IOException, NumberFormatException {
+    ServletException {
+
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     if (request.getParameter("ping") != null) {
       // query from another instance of unibrow to see if port is occupied...
@@ -68,8 +68,14 @@ public class UnibrowControlServlet extends HttpServlet {
     }
     
     //  restore and focus on IGB when a unibrow call is made
-    DisplayUtils.bringFrameToFront(IGB.getSingletonIGB().getFrame());
-    goToBookmark(this.uni, request.getParameterMap());
+    try {
+      DisplayUtils.bringFrameToFront(IGB.getSingletonIGB().getFrame());
+      goToBookmark(this.uni, request.getParameterMap());
+    } catch (Exception e) {
+      System.out.println("Error while processing IGB bookmark: " + e.toString());
+      ServletException se = new ServletException("Exception while processing IGB bookmark", e);
+      throw se;
+    }
   }
 
   /** Convenience method for retreiving a String parameter from a parameter map
@@ -223,8 +229,8 @@ public class UnibrowControlServlet extends HttpServlet {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {
+          System.out.println("current group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
           System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
-          System.out.println("selected group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
           if (book_group != null && ! book_group.equals(selected_group)) {
             if (selected_group != null && ! selected_group.equals("null")) {
               // confirmation panel not needed since curations are not now possible
@@ -242,11 +248,14 @@ public class UnibrowControlServlet extends HttpServlet {
           MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
           
           
+          System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
           System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
-          System.out.println("selected seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
           
           if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {
             book_seq = selected_seq;
+            if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
+              book_seq = gmodel.getSelectedSeqGroup().getSeq(0);
+            }
           } else {
             book_seq = book_group.getSeq(seqid);
           }
@@ -270,16 +279,19 @@ public class UnibrowControlServlet extends HttpServlet {
             if (selstart >= 0 && selend >= 0) {
               gviewer.setSelectedRegion(regionsym, true);
             }
-            if (graph_files != null) {
-              URL[] graph_urls = new URL[graph_files.length];
-              for (int i = 0; i < graph_files.length; i++) {
-                graph_urls[i] = new URL(graph_files[i]);
-              }
-              Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
-                  loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
-              t.start();
-            }
           }
+
+          // Now process "graph_files" url's
+          if (graph_files != null) {
+            URL[] graph_urls = new URL[graph_files.length];
+            for (int i = 0; i < graph_files.length; i++) {
+              graph_urls[i] = new URL(graph_files[i]);
+            }
+            Thread t = com.affymetrix.igb.menuitem.OpenGraphAction.
+                loadAndShowGraphs(graph_urls, gmodel.getSelectedSeq(), gviewer);
+            t.start();
+          }
+
         } catch (Exception ex) {
           ex.printStackTrace();
         }

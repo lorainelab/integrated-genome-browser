@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,6 +20,15 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public abstract class MenuUtil {
 
+  static JMenuBar main_menu_bar = new JMenuBar();
+  
+  static {
+    // Pre-initialize certain menus so that they will be in a predictable order
+    getMenu("File");
+    getMenu("View");
+    getMenu("Find");
+    getMenu("Help");
+  }
   
   /** Sets the accelerator for the given JMenuItem based on
    *  the preference associated with the action command.
@@ -50,6 +59,35 @@ public abstract class MenuUtil {
     return ks;
   }
 
+  public static final JMenuBar getMainMenuBar() {
+    return main_menu_bar;
+  }
+  
+  public static final JMenu getMenu(String name) {
+    int num_menus = main_menu_bar.getMenuCount();
+    for (int i=0; i<num_menus; i++) {
+      JMenu menu_i = main_menu_bar.getMenu(i);
+      if (name.equals(menu_i.getText())) {
+        menu_i.getName();
+        return menu_i;
+      }
+    }
+    JMenu new_menu = new JMenu(name);
+    new_menu.setName(name); // JMenu.getName() and JMenu.getText() aren't automatically equal
+    
+    // Add the new menu, but keep the "Help" menu in last place
+    if (num_menus > 0 && "Help".equals(main_menu_bar.getMenu(num_menus-1).getName())) {
+      main_menu_bar.add(new_menu, num_menus-1);
+    } else {
+      main_menu_bar.add(new_menu);
+    }
+    return new_menu;
+  }
+  
+  public static final JMenuItem addToMenu(String name, JMenuItem item) {
+    return addToMenu(getMenu(name), item);
+  }
+  
   /**
    *  Calls {@link #addToMenu(JMenu, JMenuItem, String)}
    *  with command set to null.

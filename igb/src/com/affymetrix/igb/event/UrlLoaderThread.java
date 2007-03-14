@@ -25,7 +25,9 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.parsers.BpsParser;
 import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.parsers.PSLParser;
+import org.xml.sax.InputSource;
 
 public class UrlLoaderThread extends Thread {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -251,6 +253,9 @@ public class UrlLoaderThread extends Thread {
     else if (content_type.startsWith("binary/bps")) {
       parseBinaryBps(feat_request_con, type);
     }
+    else if (content_type.startsWith("application/x-das-features+xml")) {
+      parseDas2XML(feat_request_con);
+    }
     else if (content_type.startsWith("text/plain") ||
                content_type.startsWith("text/html") ||
                content_type.startsWith("text/xml")
@@ -305,6 +310,38 @@ public class UrlLoaderThread extends Thread {
       bis = new BufferedInputStream(result_stream);
       Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
       das_parser.parse(result_stream, gmodel.getSelectedSeqGroup());
+      
+    } finally {
+      
+      if (bis != null) try {bis.close();} catch (Exception e) {}
+      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+    }
+  }
+
+  /**
+   *  Opens a text input stream from the given url and adds the resulting
+   *  data to the given BioSeq.
+   */
+  static void parseDas2XML(URLConnection feat_request_con)
+  throws IOException {
+    InputStream result_stream = null;
+    BufferedInputStream bis = null;
+    try {
+      result_stream = feat_request_con.getInputStream();
+      bis = new BufferedInputStream(result_stream);
+      InputSource input_source = new InputSource(bis);
+      
+      Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
+      das_parser.parse(input_source, feat_request_con.getURL().toURI().toString(), gmodel.getSelectedSeqGroup(), true);
+      
+    } catch (Exception e) {
+      
+      if (e instanceof IOException) { throw  (IOException) e; }
+      else {
+        IOException ioe = new IOException("Error parsing DAS2 XML");
+        ioe.initCause(e);
+        throw ioe;
+      }
       
     } finally {
       

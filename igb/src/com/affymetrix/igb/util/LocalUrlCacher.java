@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -38,6 +38,8 @@ public class LocalUrlCacher {
   public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 
+  static boolean offline = false;
+  
   static {
     // initialize cache
     try {
@@ -47,6 +49,18 @@ public class LocalUrlCacher {
     catch (Exception ex) {
       ex.printStackTrace();
     }
+  }
+  
+  /** Sets the cacher to off-line mode, in which case only cached data will
+   *  be used, will never try to get data from the web.
+   */
+  public static void setOffLine(boolean b) {
+    offline = b;
+  }
+  
+  /** Returns the value of the off-line flag. */
+  public static boolean getOffLine() {
+    return offline;
   }
 
   public static InputStream getInputStream(String url) throws IOException  {
@@ -142,7 +156,7 @@ public class LocalUrlCacher {
     File cache_file = getCacheFileForURL(url);
     boolean cached = cache_file.exists();
 
-    if (cache_option == ONLY_CACHE) {
+    if (offline || cache_option == ONLY_CACHE) {
       if (cached) return TYPE_CACHED;
       else return TYPE_NOT_CACHED;
     }
@@ -245,18 +259,13 @@ public class LocalUrlCacher {
     HttpURLConnection hcon = null;
     int http_status = -1;
 
-
-    if (cache_option == ONLY_CACHE) {
-    }
-    else if (cache_option == IGNORE_CACHE) {
-    }
-    else if (cache_option == NORMAL_CACHE) {
-    }
-    else {
-      // SHOULD NEVER GET HERE
+    if (offline) {
+      // ignore whatever option was specified when we are offline, only the
+      // cache is available.
+      cache_option = ONLY_CACHE;
     }
 
-    // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
+    // if offline or if cache_option == ONLY_CACHE, then don't even try to retrieve from url
     if (cache_option != ONLY_CACHE) {
       try {
 	URL theurl = new URL(url);
@@ -417,8 +426,13 @@ public class LocalUrlCacher {
    */
   public static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param)
   throws IOException {
-    String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
 
+    if (offline) {
+      cache_usage_param = ONLY_CACHE;
+    }
+
+    String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
+    
     String short_filename = "selected file";
     int index = filename.lastIndexOf('/');
     if (index > 0) {
@@ -460,7 +474,11 @@ public class LocalUrlCacher {
     }
 
     else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
-
+      
+      if (getOffLine()) {
+        throw new IOException("You are running in off-line mode and this file is not cached locally: " + short_filename);
+      }
+      
       String[] options = { "OK", "Cancel" };
       String message = "Load " + short_filename + " from the remote server?";
 

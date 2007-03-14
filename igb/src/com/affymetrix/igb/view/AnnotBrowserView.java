@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.swing.DisplayUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -22,6 +21,7 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SymMapChangeEvent;
@@ -29,6 +29,7 @@ import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
@@ -55,7 +56,15 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   public Action search_action = new AbstractAction("Find Annotations...") {
     public void actionPerformed(ActionEvent e) {
-      performSearch();
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          try {
+            performSearch();
+          } catch (InterruptedException ex) {
+            setStatus("Search interrupted");
+          }
+        }
+      });
     }
   };
   JButton go_b = new JButton(search_action);
@@ -128,7 +137,9 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
     validate();
     AnnotatedSeqGroup.addSymMapChangeListener(this);
-    SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);    
+    SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
+    
+    MenuUtil.addToMenu("View", new JMenuItem(search_action));
   }
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;
@@ -190,9 +201,10 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   }
     
   /** 
-   * Re-populates the table with the given AnnotatedSeqGroup.
+   * Creates a Thread that will perform the search based on the settings in
+   * the search criteria panel.
    */
-  public void showSymHash(AnnotatedSeqGroup seq_group) {
+  Thread doSearch(AnnotatedSeqGroup seq_group) {
     final AnnotatedSeqGroup final_seq_group = seq_group;
     current_group_hash_number = (seq_group == null ? 0 : seq_group.hashCode());
     
@@ -201,32 +213,31 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     Thread thread = new Thread() {
       public void run() {
         search_action.setEnabled(false);
-        clearTable("Working...");
+        clearTable("Working...");        
+        
         final Vector rows = buildRows(final_seq_group, start, end);
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             model.setDataVector(rows, col_headings_vector);
             int num_results = rows.size();
             if (rows.size() >= THE_LIMIT) {
-              status_bar.setText("More than " + THE_LIMIT + " results");
+              setStatus("More than " + THE_LIMIT + " results");
             } else {
-              status_bar.setText("" + rows.size() + " results");
+              setStatus("" + rows.size() + " results");
             }
             search_action.setEnabled(true);
             
-            // If the view has been opened in a new window and that window is
-            // now minimized or not on top, re-display the window
-            JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, AnnotBrowserView.this);
-            DisplayUtils.bringFrameToFront(frame);
+            IGB.ensureComponentIsShowing(AnnotBrowserView.this);
           }
         });
       }
     };
 
-    thread.start();
+    return thread;
   }
 
-  void dataModified(final String text) {
+  /** Set the text in the status bar in a thread-safe way. */
+  void setStatus(final String text) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         status_bar.setText(text);
@@ -241,7 +252,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
    */
   public void symMapModified(SymMapChangeEvent evt) {
     //showSymHash(evt.getSeqGroup());
-    dataModified("Data modified, search again");
+    setStatus("Data modified, search again");
   }
   
   public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -252,13 +263,16 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       if (hash_number != current_group_hash_number) {
         clearTable("Data modified, search again");
       } else {
-        dataModified("Data modified, search again");
+        setStatus("Data modified, search again");
       }
     }
     current_group_hash_number = hash_number;
   }
-    
-  public void performSearch() {
+  
+  /** Brings-up a dialog to specify search parameters and then performs the search.
+   *  This method will not return until the search is finished.
+   */
+  public void performSearch() throws InterruptedException {
     finder.reinitialize(SingletonGenometryModel.getGenometryModel());
 
     String[] options = new String[] {"OK", "Cancel"};
@@ -267,7 +281,8 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         options, options[0]);
 
     if (result == 0) {
-      showSymHash(SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
+      Thread thread = doSearch(SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
+      thread.start();
     }
   }
     

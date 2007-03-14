@@ -263,7 +263,7 @@ public class UrlLoaderThread extends Thread {
       // Note that some http servers will return "text/html" even when that is untrue.
       // we could try testing whether the filename extension is a recognized extension, like ".psl"
       // and if so passing to LoadFileAction.load(.. feat_request_con.getInputStream() ..)
-      parseDasGff(feat_request_con);
+      parseDas1XML(feat_request_con);
     }
     else if (content_type.startsWith("text/psl")) {
       parsePSL(feat_request_con, type);
@@ -301,7 +301,7 @@ public class UrlLoaderThread extends Thread {
    *  Opens a text input stream from the given url and adds the resulting
    *  data to the given BioSeq.
    */
-  static void parseDasGff(URLConnection feat_request_con)
+  static void parseDas1XML(URLConnection feat_request_con)
   throws IOException {
     InputStream result_stream = null;
     BufferedInputStream bis = null;

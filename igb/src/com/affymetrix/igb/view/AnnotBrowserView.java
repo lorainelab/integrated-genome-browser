@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.swing.DisplayUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.event.GroupSelectionEvent;
@@ -29,6 +29,7 @@ import com.affymetrix.igb.event.SymMapChangeListener;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.view.FindAnnotationsPanel;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
@@ -53,25 +54,26 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
 
-  JTextField from_tf = new JTextField(8) {
-      public Dimension getMaximumSize() {
-        return getPreferredSize();
-      }
+  public Action search_action = new AbstractAction("Find Annotations...") {
+    public void actionPerformed(ActionEvent e) {
+      performSearch();
+    }
   };
-  JTextField to_tf = new JTextField(8) {
-      public Dimension getMaximumSize() {
-        return getPreferredSize();
-      }
-  };
-  JButton go_b = new JButton("Find");
+  JButton go_b = new JButton(search_action);
 
   JLabel status_bar = new JLabel("0 results");
   
   // Helps to figure out when the selected group has changed
   int current_group_hash_number = 0;
+
+  FindAnnotationsPanel finder;
   
   public AnnotBrowserView() {
     super();
+
+    finder = new FindAnnotationsPanel();
+    finder.initialize();
+    
     this.setLayout(new BorderLayout());
     this.setBorder(BorderFactory.createEtchedBorder());
 
@@ -79,14 +81,6 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     this.add(top_row, BorderLayout.NORTH);
     
     top_row.add(Box.createRigidArea(new Dimension(6, 30)));
-    top_row.add(new JLabel("Find ids from:"));
-    top_row.add(Box.createRigidArea(new Dimension(10, 30)));
-    top_row.add(from_tf);
-    top_row.add(Box.createRigidArea(new Dimension(10, 30)));
-    top_row.add(new JLabel("to:"));
-    top_row.add(Box.createRigidArea(new Dimension(10, 30)));
-    top_row.add(to_tf);
-    top_row.add(Box.createHorizontalGlue());
     top_row.add(go_b);
     top_row.add(Box.createRigidArea(new Dimension(6, 30)));
         
@@ -134,34 +128,19 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
     validate();
     AnnotatedSeqGroup.addSymMapChangeListener(this);
-    SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
-    
-    go_b.addActionListener(text_action_listener);
-    from_tf.addActionListener(text_action_listener);
-    to_tf.addActionListener(text_action_listener);
-    
-    // Focus listeners are a bad idea here.  They create too many updates.
-    //from_tf.addFocusListener(text_focus_listener);
-    //to_tf.addFocusListener(text_focus_listener);
+    SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);    
   }
 
-  int THE_LIMIT = Integer.MAX_VALUE;
+  public static final int THE_LIMIT = Integer.MAX_VALUE;
   
   protected Vector buildRows(AnnotatedSeqGroup seq_group, String start, String end) {
     if (seq_group == null) {
       return new Vector(0);
     }
 
-    Set sym_ids;
-    // if end<start, then switch the order of the search,
-    // but don't do that if start or end is blank, because 
-    // "a" to "" is different from "" to "a" and both searches are valid
-    if (start.length() > 0 && end.length() > 0 && start.compareTo(end) > 0) {
-      sym_ids = seq_group.getSymmetryIDs(end, start);
-    } else {
-      sym_ids = seq_group.getSymmetryIDs(start, end);
-    }
-    java.util.List seq_list = seq_group.getSeqList();
+    Set sym_ids = finder.searchForID(seq_group);
+
+    //java.util.List seq_list = seq_group.getSeqList();
     
     java.util.List entries = new ArrayList(sym_ids);
     int num_rows = entries.size();
@@ -175,27 +154,24 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
 
         int span_count = sym.getSpanCount();
-        SeqSpan first_span_in_group = null; // first span with a BioSeq in this SeqGroup
         for (int i=0; i<span_count; i++) {
           SeqSpan span = sym.getSpan(i);
           if (span == null) continue;
 
           BioSeq seq = span.getBioSeq();
-          if (seq_list.contains(seq)) {
-            first_span_in_group = span;
-            break;
-          }
-        }
+          if (finder.filterBySequence(seq)) /* (seq_list.contains(seq)*/ {
         
-        if (first_span_in_group != null) {
-          Vector a_row = new Vector(NUM_COLUMNS);
-          a_row.add(key);
-          a_row.add(sym);
-          a_row.add(new Integer(first_span_in_group.getStart()));
-          a_row.add(new Integer(first_span_in_group.getEnd()));
-          String s = first_span_in_group.getBioSeq().getID() + (first_span_in_group.isForward() ? "+" : "-");
-          a_row.add(s);
-          rows.add(a_row);
+//        if (finder.filterBySpan(span)) {
+              Vector a_row = new Vector(NUM_COLUMNS);
+              a_row.add(key);
+              a_row.add(sym);
+              a_row.add(new Integer(span.getStart()));
+              a_row.add(new Integer(span.getEnd()));
+              String s = span.getBioSeq().getID() + (span.isForward() ? "+" : "-");
+              a_row.add(s);
+              rows.add(a_row);
+//            }
+          }
         }
       }
     }
@@ -219,10 +195,12 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   public void showSymHash(AnnotatedSeqGroup seq_group) {
     final AnnotatedSeqGroup final_seq_group = seq_group;
     current_group_hash_number = (seq_group == null ? 0 : seq_group.hashCode());
-    final String start = from_tf.getText().trim().toLowerCase();
-    final String end = to_tf.getText().trim().toLowerCase();
+    
+    final String start = "";
+    final String end = "";
     Thread thread = new Thread() {
       public void run() {
+        search_action.setEnabled(false);
         clearTable("Working...");
         final Vector rows = buildRows(final_seq_group, start, end);
         SwingUtilities.invokeLater(new Runnable() {
@@ -234,6 +212,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
             } else {
               status_bar.setText("" + rows.size() + " results");
             }
+            search_action.setEnabled(true);
           }
         });
       }
@@ -273,21 +252,20 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     }
     current_group_hash_number = hash_number;
   }
-  
-  // Redraws the table in response to events in the text fields and buttons.
-  ActionListener text_action_listener = new ActionListener() {
-    public void actionPerformed(ActionEvent e) {
+    
+  void performSearch() {
+    finder.reinitialize(SingletonGenometryModel.getGenometryModel());
+
+    String[] options = new String[] {"OK", "Cancel"};
+    int result = JOptionPane.showOptionDialog(AnnotBrowserView.this, finder, "Search",
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, (Icon) null,
+        options, options[0]);
+
+    if (result == 0) {
       showSymHash(SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
     }
-  };
-  
-  // Redraws the table in response to events in the text fields and buttons.
-  FocusListener text_focus_listener = new FocusAdapter() {
-    public void focusLost(FocusEvent e) {
-      showSymHash(SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
-    }          
-  };
-  
+  }
+    
   /** This is called when the user selects a row of the table. */
   ListSelectionListener list_selection_listener = new ListSelectionListener() {
     public void valueChanged(ListSelectionEvent evt) {
@@ -321,7 +299,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     frm.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
-    frm.show();
+    frm.setVisible(true);
   }
 
   // implementation of IPlugin

@@ -253,7 +253,7 @@ public class UrlLoaderThread extends Thread {
     else if (content_type.startsWith("binary/bps")) {
       parseBinaryBps(feat_request_con, type);
     }
-    else if (content_type.startsWith("application/x-das-features+xml")) {
+    else if (content_type.startsWith(Das2FeatureSaxParser.FEATURES_CONTENT_TYPE)) {
       parseDas2XML(feat_request_con);
     }
     else if (content_type.startsWith("text/plain") ||

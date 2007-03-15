@@ -219,15 +219,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       notifyModified();
       return;
     }
-    String type = null;
-    if (sym instanceof TypedSym)  {
-      type = ((TypedSym)sym).getType();
-    }
-    // add other SymWithProps with a "method" property as children
-    //   of a top-level container
-    if (type == null)  {
-      type = SeqMapView.determineMethod(sym);
-    }
+    String type = SeqMapView.determineMethod(sym);
     if (type != null)  {
       // add as child to the top-level container
       addAnnotation(sym, type); // side-effect calls notifyModified()

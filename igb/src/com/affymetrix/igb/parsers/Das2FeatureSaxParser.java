@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,9 +21,8 @@ import java.util.regex.*;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleBioSeq;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.seq.*;
+import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
@@ -36,7 +35,7 @@ import com.affymetrix.igb.util.GenometryViewer; // for testing main
  *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
 */
 public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
-    implements AnnotationWriter  {
+    implements AnnotationWriter, org.xml.sax.ErrorHandler  {
 
   // DO_SEQID_HACK is a very temporary fix!!!
   // Need to move to using full URI references to identify sequences,
@@ -53,6 +52,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   //   "text/x-das-feature+xml";
   public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
   public static String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
+  public static String FILENAME_EXTENSION = "das2xml";
+  public static String FILENAME_EXTENSION_WITH_DOT = "."+FILENAME_EXTENSION;
 
   //  static String DAS2_NAMESPACE = "http://www.biodas.org/ns/das/2.00";
   public static String DAS2_NAMESPACE = "http://biodas.org/documents/das2";
@@ -228,6 +229,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);
       reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
       reader.setContentHandler(this);
+      reader.setErrorHandler(this);
       reader.parse(isrc);
     }
     catch (Exception ex) {
@@ -262,7 +264,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   /**
    *  implementing sax content handler interface.
    */
-  public void startElement(String uri, String localName, String qname, Attributes atts) {
+  public void startElement(String uri, String localName, String qname, Attributes atts) 
+  throws SAXException {
     // to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
     //     should make sure that the uri is the DAS/2 namespace URI
     //     because otherwise if there is arbitrary embedded XML, could have other elements with same localName
@@ -286,12 +289,20 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       else if (current_elem == FEATURE) {
 	String feat_id_att = atts.getValue(URID);
 	if (feat_id_att == null) { feat_id_att = atts.getValue(ID); }  // for backward-compatibility
-	feat_id = current_base_uri.resolve(feat_id_att).toString();
+        try {
+          feat_id = URLDecoder.decode(current_base_uri.resolve(feat_id_att).toString());
+        } catch (IllegalArgumentException ioe) {
+          throw new SAXException("Feature id uses illegal characters: '"+feat_id_att+"'");
+        }
 	// trying "type", "type_id", and "type_uri" for type attribute name
 	String feat_type_att = atts.getValue(TYPE);
 	if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPEID); }  // for backward-compatibility
 	if (feat_type_att == null)  { feat_type_att = atts.getValue(TYPEURI); }  // for backward-compatibility
-	feat_type = current_base_uri.resolve(feat_type_att).toString();
+        try {
+          feat_type = URLDecoder.decode(current_base_uri.resolve(feat_type_att).toString());
+        } catch (IllegalArgumentException ioe) {
+          throw new SAXException("Feature type uses illegal characters: '"+feat_type_att+"'");
+        }
 	feat_name = atts.getValue(TITLE);
 	if (feat_name == null) {  feat_name = atts.getValue(NAME); }  // for backward-compatibility
 	// feat_parent_id has moved to <PARENT> element
@@ -305,7 +316,13 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	String seqid_att = atts.getValue(SEGMENT);
 	if (seqid_att == null) { seqid_att = atts.getValue(URID); }
 	if (seqid_att == null) { seqid_att = atts.getValue(ID); }
-	String seqid = current_base_uri.resolve(seqid_att).toString();
+        String seqid;
+        try {
+         seqid = URLDecoder.decode(current_base_uri.resolve(seqid_att).toString());
+        }
+        catch (IllegalArgumentException ioe) {
+          throw new SAXException("Segment id uses illegal characters: '"+seqid_att+"'");
+        }
 	String range = atts.getValue(RANGE);
 	String cigar = atts.getValue(CIGAR);  // location can optionally have an alignment cigar string
 	// DO_SEQID_HACK is a very temporary fix!!!
@@ -321,7 +338,11 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	if (feat_parent_id == null) {
 	  feat_parent_id = atts.getValue(URID);
 	  if (feat_parent_id == null) { feat_parent_id = atts.getValue(ID); }
-	  feat_parent_id = current_base_uri.resolve(feat_parent_id).toString();
+          try {
+            feat_parent_id = URLDecoder.decode(current_base_uri.resolve(feat_parent_id).toString());
+          } catch (IllegalArgumentException ioe) {
+            throw new SAXException("Parent id uses illegal characters: '"+feat_parent_id+"'");
+          }
 	}
 	else {
 	  System.out.println("WARNING:  multiple parents for feature, just using first one");
@@ -330,7 +351,11 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       else if (current_elem == PART) {
 	String part_id = atts.getValue(URID);
 	if (part_id == null) { part_id = atts.getValue(ID); }
-	part_id = current_base_uri.resolve(part_id).toString();
+        try {
+          part_id = URLDecoder.decode(current_base_uri.resolve(part_id).toString());
+        } catch (IllegalArgumentException ioe) {
+          throw new SAXException("Part id uses illegal characters: '"+part_id+"'");
+        }
 	/*
 	 *  Use part_id to look for child sym already constructed and placed in id2sym hash
 	 *  If child sym found then map part_id to child sym in feat_parts
@@ -680,23 +705,14 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       // removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
       //	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
       String feat_name = null;
-      if (annot instanceof SymWithProps) {
-	SymWithProps swp = (SymWithProps)annot;
-	if (feat_type == null) {
-	  feat_type = (String)swp.getProperty("method");
-	  if (feat_type == null) {
-	    feat_type = (String)swp.getProperty("meth");
-	  }
-	  if (feat_type == null) {
-	    feat_type = (String)swp.getProperty("type");
-	  }
-	}
+      if (feat_type == null) {
+        feat_type = SmartAnnotBioSeq.determineMethod(annot);
       }
       String feat_id = getChildID(annot, parent_id, parent_index);
 
       // print <FEATURE ...> line
       pw.print("  <FEATURE uri=\"");
-      pw.print(feat_id);
+      pw.print(URLEncoder.encode(feat_id));
       pw.print("\" title=\"");
       pw.print(feat_id);
       pw.print("\" type=\"");
@@ -714,7 +730,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           span = mspan;
         }
 	pw.print("     <LOC segment=\"");
-	pw.print(span.getBioSeq().getID());
+	pw.print(URLEncoder.encode(span.getBioSeq().getID()));
 	pw.print("\" range=\"");
 	String range = getRangeString(span);
 	pw.print(range);
@@ -738,7 +754,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	pw.print("     <PARENT ");
 	pw.print(URID);
 	pw.print("=\"");
-	pw.print(parent_id);
+	pw.print(URLEncoder.encode(parent_id));
 	pw.print("\" />");
 	pw.println();
       }
@@ -752,7 +768,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	  pw.print("     <PART ");
 	  pw.print(URID);
 	  pw.print("=\"");
-	  pw.print(child_id);
+	  pw.print(URLEncoder.encode(child_id));
 	  pw.print("\" />");
 	  pw.println();
 	}
@@ -920,7 +936,6 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
       return buf.toString();
     }
-
 
     public static void main(String[] args) {
       boolean test_result_list = true;

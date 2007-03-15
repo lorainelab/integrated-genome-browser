@@ -139,7 +139,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     AnnotatedSeqGroup.addSymMapChangeListener(this);
     SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
     
-    MenuUtil.addToMenu("View", new JMenuItem(search_action));
+    MenuUtil.addToMenu("Find", new JMenuItem(search_action));
   }
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;

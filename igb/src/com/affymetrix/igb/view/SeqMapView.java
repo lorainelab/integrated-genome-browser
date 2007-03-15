@@ -1239,9 +1239,9 @@ public class SeqMapView extends JPanel
 
   /**
    *  Finds the "method" for a SeqSymmetry.
-   *  Looks for the "method" in these places, in order:
-   *   (1) the property "method", (2) the property "type",
-   *   (3) TypedSym.getType().
+   *  Looks for the "method" in four places, in order:
+   *   (1) the property "method", (2) the property "meth",
+   *   (3) the property "type", (4) TypedSym.getType().
    *  If no method is found, returns null.
    */
   public static String determineMethod(SeqSymmetry sym) {
@@ -1249,6 +1249,7 @@ public class SeqMapView extends JPanel
     if (sym instanceof SymWithProps)  {
       SymWithProps psym = (SymWithProps)sym;
       meth = (String)psym.getProperty("method");
+      if (meth == null) { meth = (String) psym.getProperty("meth"); }
       if (meth == null) { meth = (String) psym.getProperty("type"); }
     }
     if (meth == null) {

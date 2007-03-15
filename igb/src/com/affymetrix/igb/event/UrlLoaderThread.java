@@ -310,9 +310,9 @@ public class UrlLoaderThread extends Thread {
       bis = new BufferedInputStream(result_stream);
       Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
       das_parser.parse(result_stream, gmodel.getSelectedSeqGroup());
-      
+
     } finally {
-      
+
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
@@ -330,21 +330,21 @@ public class UrlLoaderThread extends Thread {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
       InputSource input_source = new InputSource(bis);
-      
+
       Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
-      das_parser.parse(input_source, feat_request_con.getURL().toURI().toString(), gmodel.getSelectedSeqGroup(), true);
-      
+      das_parser.parse(input_source, new URI(feat_request_con.getURL().toString()).toString(), gmodel.getSelectedSeqGroup(), true);
+
     } catch (Exception e) {
-      
+
       if (e instanceof IOException) { throw  (IOException) e; }
       else {
         IOException ioe = new IOException("Error parsing DAS2 XML");
         ioe.initCause(e);
         throw ioe;
       }
-      
+
     } finally {
-      
+
       if (bis != null) try {bis.close();} catch (Exception e) {}
       if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
     }
@@ -368,7 +368,7 @@ public class UrlLoaderThread extends Thread {
 
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-      
+
       bps_parser.parse(dis, type, null, group, false, true);
       group.symHashChanged(bps_parser);
     } finally {

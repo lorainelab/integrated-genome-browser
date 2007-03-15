@@ -31,6 +31,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SymWithProps;
 
 import com.affymetrix.igb.util.GenometryViewer; // for testing main
+import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *
@@ -782,14 +783,8 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static final String DAS_FEATURE_ID = "das_feature_id";
   
   public static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
-    if (feat_type == null && annot instanceof SymWithProps) {
-      feat_type = (String)((SymWithProps)annot).getProperty("method");
-      if (feat_type == null) {
-        feat_type = (String)((SymWithProps)annot).getProperty("meth");
-      }
-      if (feat_type == null) {
-        feat_type = (String)((SymWithProps)annot).getProperty("type");
-      }
+    if (feat_type == null) {
+      feat_type = SeqMapView.determineMethod(annot);
     }
     String group_id = "unknown";
     if (annot instanceof SymWithProps) {

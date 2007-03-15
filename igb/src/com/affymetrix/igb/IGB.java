@@ -125,13 +125,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JCheckBoxMenuItem toggle_hairline_label_item;
   JCheckBoxMenuItem toggle_edge_matching_item;
   JMenuItem autoscroll_item;
-  JMenuItem bgcolor_item;
+  //JMenuItem web_links_item;
 
   JMenuItem move_tab_to_window_item;
   JMenuItem move_tabbed_panel_to_window_item;
 
+  JMenu find_menu = new JMenu("Find");
+  
   SeqMapView map_view;
-  //  SeqMapView overview;
   OverView overview;
 
   //QuickLoaderView quickload_view;
@@ -157,7 +158,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
 
   static String default_prefs_resource = "/igb_default_prefs.xml";
-  
+
   /**
    *  We no longer distribute a file called "igb_prefs.xml".
    *  Instead there is a default prefs file hidden inside the igb.jar file, and
@@ -217,6 +218,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     System.out.println();
 
     main_args = args;
+
+    String offline = get_arg("-offline", args);
+    if (offline != null) {
+      LocalUrlCacher.setOffLine(true);
+    }
+    System.out.println("Offline> : " + offline);
 
     getIGBPrefs(); // force loading of prefs
 
@@ -335,15 +342,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   /**
    * Returns the value of the argument indicated by label.
-   * e.g., if given
-   *   -foo bar
-   * returns bar.  Expects to find both in the given array.
+   * If arguments are
+   *   "-flag_2 -foo bar", then get_arg("foo", args) 
+   * returns "bar", get_arg("flag_2") returns a non-null string,
+   * and get_arg("flag_5") returns null.
    */
   public static String get_arg(String label,String[] args) {
     String to_return = null;
+    boolean got_it = false;
     if (label != null && args != null) {
       int num_args = args.length;
-      boolean got_it = false;
       for (int i = 0 ; i < num_args ; i++) {
 	String item = args[i];
 	if (got_it) {
@@ -354,6 +362,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	  got_it = true;
 	}
       }
+    }
+    if (got_it && to_return == null) {
+      to_return = "true";
     }
     return to_return;
   }
@@ -526,27 +537,31 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Image icon = getIcon();
     if (icon != null) { frm.setIconImage(icon); }
 
-    mbar = new JMenuBar();
+    mbar = MenuUtil.getMainMenuBar();
     frm.setJMenuBar(mbar);
-    file_menu = new JMenu("File");
+    file_menu = MenuUtil.getMenu("File");
     file_menu.setMnemonic('F');
-    mbar.add( file_menu );
+    //mbar.add( file_menu );
 
-    view_menu = new JMenu("View");
+    view_menu = MenuUtil.getMenu("View");
     view_menu.setMnemonic('V');
-    mbar.add(view_menu);
+    //mbar.add(view_menu);
 
-    bookmark_menu = new JMenu("Bookmarks");
+    bookmark_menu = MenuUtil.getMenu("Bookmarks");
     bookmark_menu.setMnemonic('B');
-    mbar.add(bookmark_menu);
+    //mbar.add(bookmark_menu);
 
-//    tools_menu = new JMenu("Tools");
+//    tools_menu = MenuUtil.getMenu("Tools");
 //    tools_menu.setMnemonic('T');
 //    mbar.add(tools_menu);
 
-    help_menu = new JMenu("Help");
+    find_menu = MenuUtil.getMenu("Find");
+    find_menu.setMnemonic('F');
+    //mbar.add(find_menu);
+    
+    help_menu = MenuUtil.getMenu("Help");
     help_menu.setMnemonic('H');
-    mbar.add(help_menu);
+    //mbar.add(help_menu);
     //    select_broker = new SymSelectionBroker();
 
     String tile_xpixels_arg = get_arg("-tile_width", main_args);
@@ -637,10 +652,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
     move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
 
+    //web_links_item = new JMenuItem("Configure Web Links", KeyEvent.VK_W);
+    
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
-
 
     MenuUtil.addToMenu(file_menu, open_file_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
@@ -677,6 +693,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
     MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
     MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
+    //MenuUtil.addToMenu(view_menu, web_links_item);
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
@@ -694,7 +711,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       MenuUtil.addToMenu(help_menu, gc_item);
       MenuUtil.addToMenu(help_menu, memory_item);
     }
-
+    
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
     about_item.addActionListener(this);
@@ -715,6 +732,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     autoscroll_item.addActionListener(this);
     adjust_edgematch_item.addActionListener(this);
     view_ucsc_item.addActionListener(this);
+    //web_links_item.addActionListener(this);
 
     res2clip_item.addActionListener(this);
     rev_comp_item.addActionListener(this);
@@ -1079,9 +1097,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PreferencesPanel pv = PreferencesPanel.getSingleton();
       JFrame f = pv.getFrame();
       f.setVisible(true);
+//    } else if (src == web_links_item) {
+//      WebLinksManagerView.showManager();
     }
   }
-
 
   public void showAboutDialog() {
     JPanel message_pane = new JPanel();
@@ -1140,7 +1159,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       } );
     freehepB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-          WebBrowserControl.displayURL("http://java.freehep.org/freehep1.x/vectorgraphics/License.html");
+          WebBrowserControl.displayURL("http://java.freehep.org/vectorgraphics/license.html");
         }
       } );
     fusionB.addActionListener(new ActionListener() {
@@ -1329,11 +1348,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
-    PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
-
-    final String title = pi.getPluginName();
-    final String display_name = pi.getDisplayName();
+    final String title;
+    final String display_name;
     final String tool_tip = comp.getToolTipText();
+    
+    if (comp2plugin.get(comp) instanceof PluginInfo) {
+      PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
+      title = pi.getPluginName();
+      display_name = pi.getDisplayName();
+    } else {
+      title = comp.getName();
+      display_name = comp.getName();
+    }
+
     Image temp_icon = null;
     if (comp instanceof IPlugin) {
       IPlugin pv = (IPlugin) comp;
@@ -1546,6 +1573,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
       plugin_list.add(pi);
     }
+
     if (USE_RESTRICTION_MAPPER) {
       PluginInfo pi = new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true);
       plugin_list.add(pi);
@@ -1565,5 +1593,20 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return plugin_list;
   }
 
+  public static void ensureComponentIsShowing(final Component c) {
+    final IGB igb = IGB.getSingletonIGB();
+    if (igb.tab_pane.indexOfComponent(c) >= 0) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          igb.tab_pane.setSelectedComponent(c);
+        }
+      });
+    } else {
+      // If the view has been opened in a new window and that window is
+      // now minimized or not on top, re-display the window
+      JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
+      DisplayUtils.bringFrameToFront(frame);
+    }
+  }
 
 }

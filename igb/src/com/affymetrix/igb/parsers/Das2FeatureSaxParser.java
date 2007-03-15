@@ -35,7 +35,7 @@ import com.affymetrix.igb.util.GenometryViewer; // for testing main
  *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
 */
 public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
-    implements AnnotationWriter, org.xml.sax.ErrorHandler  {
+    implements AnnotationWriter  {
 
   // DO_SEQID_HACK is a very temporary fix!!!
   // Need to move to using full URI references to identify sequences,

@@ -219,7 +219,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       notifyModified();
       return;
     }
-    String type = SeqMapView.determineMethod(sym);
+    String type = determineMethod(sym);
     if (type != null)  {
       // add as child to the top-level container
       addAnnotation(sym, type); // side-effect calls notifyModified()
@@ -281,4 +281,26 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
+  /**
+   *  Finds the "method" for a SeqSymmetry.
+   *  Looks for the "method" in four places, in order:
+   *   (1) the property "method", (2) the property "meth",
+   *   (3) the property "type", (4) TypedSym.getType().
+   *  If no method is found, returns null.
+   */
+  public static String determineMethod(SeqSymmetry sym) {
+    String meth = null;
+    if (sym instanceof SymWithProps)  {
+      SymWithProps psym = (SymWithProps)sym;
+      meth = (String)psym.getProperty("method");
+      if (meth == null) { meth = (String) psym.getProperty("meth"); }
+      if (meth == null) { meth = (String) psym.getProperty("type"); }
+    }
+    if (meth == null) {
+      if (sym instanceof TypedSym) {
+        meth = ((TypedSym)sym).getType();
+      }
+    }
+    return meth;
+  }
 }

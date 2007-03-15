@@ -20,6 +20,7 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.event.SeqModifiedListener;
+import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *   Extends NibbleBioSeq to add "retrieve top-level feature by 'method'/'type'".
@@ -224,13 +225,8 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
     // add other SymWithProps with a "method" property as children
     //   of a top-level container
-    if (type == null && sym instanceof SymWithProps)  {
-      SymWithProps swp = (SymWithProps)sym;
-      // TODO: use the existing determineMethod() method
-      type = (String)swp.getProperty("method");
-      if (type == null) { type = (String)swp.getProperty("type"); }
-      if (type == null) { type = (String)swp.getProperty("meth"); }
-      //      else { super.addAnnotation(sym); }
+    if (type == null)  {
+      type = SeqMapView.determineMethod(sym);
     }
     if (type != null)  {
       // add as child to the top-level container

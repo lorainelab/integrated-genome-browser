@@ -388,8 +388,11 @@ public class FindAnnotationsPanel extends JPanel {
     }
     
     if (SEQ_all_RB.isSelected()) {
+      
+      // When "All sequences" is selected, what we really want to see
+      // is all sequences in the current seq group.  Not really all sequences.
 
-      return true;
+      return gmodel.getSelectedSeqGroup().getSeqList().contains(seq);
 
     } else if (SEQ_name_RB.isSelected()) {
       

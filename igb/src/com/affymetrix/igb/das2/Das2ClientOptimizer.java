@@ -385,8 +385,9 @@ public class Das2ClientOptimizer {
 
       if (request_log.getSuccess()) {
 	java.util.List feats = null;
-	if (content_subtype.equals("das2feature") ||
-	    content_subtype.equals("das2xml") ||
+	if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE) ||
+            content_subtype.equals("das2feature") ||  // should remove this line
+	    content_subtype.equals("das2xml") ||      // should remove this line
 	    content_subtype.startsWith("x-das-feature")) {
 	  request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
 	  Das2FeatureSaxParser parser = new Das2FeatureSaxParser();

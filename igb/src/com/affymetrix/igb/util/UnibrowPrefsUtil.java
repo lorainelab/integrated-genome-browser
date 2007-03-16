@@ -13,17 +13,18 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.swing.ColorIcon;
+import com.affymetrix.swing.DisplayUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 import java.util.Vector;
 import java.util.prefs.*;
 import javax.swing.*;
-
-import com.affymetrix.igb.menuitem.FileTracker;
-
 
 /**
  *  Helps to save and load preferences such as locations of windows.
@@ -677,4 +678,40 @@ import com.affymetrix.igb.menuitem.FileTracker;
     return parent.node(shortKeyName(name));
   }
   
+  public static JFrame createFrame(String name, JPanel panel) {
+    final JFrame frame;
+    
+    if (name.length() > 70) {
+      throw new IllegalArgumentException("Title of the frame must be less than 70 chars.");
+    }
+    
+    // If not already open in a new window, make a new window
+    frame = new JFrame(name);
+    frame.setName(name);
+    
+    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif");
+    if (icon != null) { frame.setIconImage(icon.getImage()); }
+    frame.getContentPane().add(panel);
+    frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
+    panel.setVisible(true);
+    frame.pack(); // pack() to set frame to its preferred size
+    
+    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
+    if (pos != null) {
+      UnibrowPrefsUtil.setWindowSize(frame, pos);
+    }
+    
+    frame.setVisible(true);
+    frame.addWindowListener( new WindowAdapter() {
+      public void windowClosing(WindowEvent evt) {
+        // save the current size into the preferences, so the window
+        // will re-open with this size next time
+        UnibrowPrefsUtil.saveWindowLocation(frame, frame.getTitle());
+      }
+    });
+    
+    // window already exists, but may not be visible
+    return frame;
+  }
  }

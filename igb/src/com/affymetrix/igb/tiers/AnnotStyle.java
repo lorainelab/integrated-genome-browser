@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -145,7 +145,7 @@ public class AnnotStyle implements IAnnotStyle {
     applyHardCodedDefaults();
     if (is_persistent) {
       try {
-        node = tiers_root_node.node(this.unique_name);
+        node = UnibrowPrefsUtil.getSubnode(tiers_root_node, this.unique_name);
       } catch (Exception e) {
         // if there is a problem creating the node, continue with a non-persistent style.
         System.out.println("Exception: " + e);

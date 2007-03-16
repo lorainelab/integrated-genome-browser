@@ -44,6 +44,15 @@ public class Bookmark implements Serializable {
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
       this one can occur 0,1, or more times in the URL of a UnibrowControlServlet bookmark. */
   public static final String DATA_URL = "data_url";
+  /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark,
+      this optional paramater can be used to give the filetype extensions, such as ".gff" of
+      each of the urls given with {@link #DATA_URL}.
+      If these parameters are not used, then the filetype will be guessed based on the
+      content type returned from the URLConnection, or from the file name in the URL.
+      This parameter is optional, but if given there must be exactly one paramater
+      for each of the {@link #DATA_URL} parameters given 
+   */
+  public static final String DATA_URL_FILE_EXTENSIONS = "data_url_file_extension";
   
   
   private static boolean DEBUG = false;
@@ -241,7 +250,7 @@ public class Bookmark implements Serializable {
     String host = url.getHost();
     String path = url.getPath();
     return (("localhost".equals(host) || "127.0.0.1".equals(host)) 
-      && path.equals("/"+UnibrowControlServer.SERVLET_NAME));
+      && (path.equals("/"+UnibrowControlServer.SERVLET_NAME) || path.equals("/"+UnibrowControlServer.SERVLET_NAME_OLD)));
   }
 
   public String toString() {

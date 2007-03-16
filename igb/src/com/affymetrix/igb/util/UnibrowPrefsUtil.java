@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -659,4 +659,22 @@ import com.affymetrix.igb.menuitem.FileTracker;
     return button;
   }
 
+  /** Convert a String of arbitrary length into one that is short enough to
+   *  be used as a key name or node name.
+   */
+  public static String shortKeyName(String s) {
+    String short_s;
+    if (s.length() >= Preferences.MAX_NAME_LENGTH) {
+      short_s = s.substring(0,Preferences.MAX_NAME_LENGTH - 2);
+    } else {
+      short_s = s;
+    }
+    return short_s;
+  }
+  
+  /** Create a subnode, making sure to shorten the name if necessary. */
+  public static Preferences getSubnode(Preferences parent, String name) {
+    return parent.node(shortKeyName(name));
+  }
+  
  }

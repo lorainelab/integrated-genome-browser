@@ -665,7 +665,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
   public static String shortKeyName(String s) {
     String short_s;
     if (s.length() >= Preferences.MAX_NAME_LENGTH) {
-      short_s = s.substring(0,Preferences.MAX_NAME_LENGTH - 2);
+      short_s = UrlToFileName.toMd5(s);
     } else {
       short_s = s;
     }

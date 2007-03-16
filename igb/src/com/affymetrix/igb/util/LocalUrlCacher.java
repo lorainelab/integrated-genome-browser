@@ -17,16 +17,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import java.security.MessageDigest;
-import java.math.BigInteger;
-
 
 public class LocalUrlCacher {
   static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
   static boolean DEBUG_CONNECTION = false;
   static boolean REPORT_LONG_URLS = false;
   static boolean CACHE_FILE_URLS = false;
-  static MessageDigest md5_generator;
   //  static Properties long2short_filenames = new Properties();
 
   public static int IGNORE_CACHE = 100;
@@ -39,18 +35,7 @@ public class LocalUrlCacher {
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 
   static boolean offline = false;
-  
-  static {
-    // initialize cache
-    try {
-      getCacheDirectory(); // forces creation of cache directory if doesn't already exist
-      md5_generator = MessageDigest.getInstance("MD5");
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-  
+    
   /** Sets the cacher to off-line mode, in which case only cached data will
    *  be used, will never try to get data from the web.
    */
@@ -86,18 +71,26 @@ public class LocalUrlCacher {
    */
   static File getCacheFileForURL(String url) {
     String encoded_url = UrlToFileName.encode(url);
-    //    String cache_file_name = cache_root + File.separator + encoded_url;
     String cache_file_name = cache_root + "/" + encoded_url;
+
+    // NOTE: This logic is a bit wrong.  It was probably intended that only file
+    // names longer than 255 characters would be md5-encoded, but this encodes
+    // any file-path-name longer than 255 characters, which means that practially
+    // all file-path-names are getting encoded.
+    //
+    // Correct logic would be:
+    //if (encoded_url.length() > 255) {
+    //  encoded_url = UrlToFileName.toMd5(encoded_url);
+    //}
+    //File cache_file = new File(cache_root, encoded_url);
+    
     if (cache_file_name.length() > 255) {
       if (REPORT_LONG_URLS) {
 	System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
 			   cache_file_name.length());
 	System.out.println("    " + cache_file_name);
       }
-      byte[] md5_digest = md5_generator.digest(encoded_url.getBytes());
-      BigInteger md5_big_int = new BigInteger(md5_digest);
-      String md5_string = md5_big_int.toString(16);
-      cache_file_name = cache_root + "/" + md5_string;
+      cache_file_name = cache_root + "/" + UrlToFileName.toMd5(encoded_url);
       if (REPORT_LONG_URLS)  {  System.out.println("new file path: " + cache_file_name); }
     }
     File cache_file = new File(cache_file_name);

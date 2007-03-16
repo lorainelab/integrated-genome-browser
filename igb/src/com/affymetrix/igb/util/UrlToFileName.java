@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.util;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.regex.*;
 
 /**
@@ -77,6 +79,38 @@ segment=http%3A%2F%2Flocalhost%3A9092%2Fdas2%2Fgenome%2FH_sapiens_Mar_2006%2Fchr
  *  
  */
 public class UrlToFileName {
+
+  static MessageDigest md5_generator;
+  
+  static boolean md5_init = false;
+  static void initializeMd5() {
+    try {
+      md5_generator = MessageDigest.getInstance("MD5");
+    }
+    catch (Exception ex) {
+      md5_generator = null;
+      ex.printStackTrace();
+    }
+    md5_init = true;
+  }
+  
+  /** Converts an arbitrary string into an MD5 hash code as a HEX String. 
+   *  If for some reason it was impossible to initialize the md5 generator,
+   *  the string will be returned unchanged.
+   */
+  public static String toMd5(String s) {
+    if (! md5_init) {
+      initializeMd5();
+    }
+
+    if ( md5_generator != null) {
+      byte[] md5_digest = md5_generator.digest(s.getBytes());
+      BigInteger md5_big_int = new BigInteger(md5_digest);
+      return md5_big_int.toString(16);
+    } else {
+      return s;
+    }
+  }
 
   /**
    *  Matches chars in URLs that need to encoded/escaped when converted to filename.

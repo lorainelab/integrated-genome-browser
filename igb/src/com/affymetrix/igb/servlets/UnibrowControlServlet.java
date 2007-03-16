@@ -136,7 +136,8 @@ public class UnibrowControlServlet extends HttpServlet {
     }
 
     String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
-    loadDataFromURLs(uni, data_urls, null);
+    String[] url_file_extensions = (String[]) parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
+    loadDataFromURLs(uni, data_urls, url_file_extensions, null);
     
     String selectParam = getStringParameter(parameters, "select");
     if (selectParam != null){
@@ -145,14 +146,14 @@ public class UnibrowControlServlet extends HttpServlet {
     
   }
 
-  public static void loadDataFromURLs(final IGB uni, final String[] das_urls, final String[] tier_names) {
+  public static void loadDataFromURLs(final IGB uni, final String[] das_urls, final String[] extensions, final String[] tier_names) {
     try {
       if (das_urls != null && das_urls.length != 0) {
         URL[] urls = new URL[das_urls.length];
         for (int i=0; i<das_urls.length; i++) {
           urls[i] = new URL(das_urls[i]);
         }
-        final UrlLoaderThread t = new UrlLoaderThread(uni.getMapView(), urls, tier_names);
+        final UrlLoaderThread t = new UrlLoaderThread(uni.getMapView(), urls, extensions, tier_names);
         t.runEventually();
         t.join();
       }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -331,7 +331,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
           urls[i] = new URL(array[0]);
           tier_names[i] = array[1];
         }
-        UrlLoaderThread t = new UrlLoaderThread(gviewer, urls, tier_names);
+        UrlLoaderThread t = new UrlLoaderThread(gviewer, urls, null, tier_names);
         t.runEventually();
       } catch (MalformedURLException mfe) {
         ErrorHandler.errorPanel("Problem with DAS\n" +
@@ -346,7 +346,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         System.out.println("DAS request1: " + das_feat_request);
         if (das_feat_request != null) {
           URL url = new URL(das_feat_request);
-          UrlLoaderThread t = UrlLoaderThread.getUrlLoaderThread(gviewer, url, "Unknown");
+          UrlLoaderThread t = UrlLoaderThread.getUrlLoaderThread(gviewer, url, null, "Unknown");
           t.runEventually();
         }
       }

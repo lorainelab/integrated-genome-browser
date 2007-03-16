@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -34,16 +34,19 @@ public class UrlLoaderThread extends Thread {
   final URL[] urls;
   final String[] tier_names;
   final SeqMapView gviewer;
+  final String[] file_extensions;
 
   /** A convenience method that makes it easier to get an instance for loading
    *  a <i>single</i> URL.  For loading multiple URLs, use the main constructor.
    */
-  public static UrlLoaderThread getUrlLoaderThread(SeqMapView smv, URL das_url, String tier_name) {
+  public static UrlLoaderThread getUrlLoaderThread(SeqMapView smv, URL das_url, String file_extension, String tier_name) {
     URL[] das_urls = new URL[1];
     das_urls[0] = das_url;
     String[] tier_names = null;
     if (tier_name != null) {tier_names = new String[] {tier_name};}
-    return new UrlLoaderThread(smv, das_urls, tier_names);
+    String[] file_extensions = null;
+    if (file_extensions != null) {file_extensions = new String[] {file_extension};}
+    return new UrlLoaderThread(smv, das_urls, file_extensions, tier_names);
   }
 
   /**
@@ -51,19 +54,23 @@ public class UrlLoaderThread extends Thread {
    *  A ThreadProgressMonitor will be opened to show the user that something is
    *  happening.
    *  @param smv The SeqMapView instance to load data into
-   *  @param das_urls  The URLs that will load PSL data from a DAS server
+   *  @param urls  The URLs that will load data
+   *  @param file_extensions  File extensions, such as ".gff", to help determine
+   *     which parser to use if it is not possible to determine that in any other way.
+   *     It is ok for any of these to be either blank or null.
    *  @param tier_names  The names for the data tiers.  If you specify <code>null</code>,
    *  the tier names will be determined from the "type" parameter of each URL.
    *  If a non-null array is provided, the length must match the length of the
    *  das_urls array.
    */
-  public UrlLoaderThread(SeqMapView smv, URL[] das_urls, String[] tier_names) {
-    if (tier_names != null && das_urls.length != tier_names.length) {
+  public UrlLoaderThread(SeqMapView smv, URL[] urls, String[] file_extensions, String[] tier_names) {
+    if (tier_names != null && urls.length != tier_names.length) {
       throw new IllegalArgumentException("Array lengths do not match");
     }
     this.gviewer = smv;
-    this.urls = das_urls;
+    this.urls = urls;
     this.tier_names = tier_names;
+    this.file_extensions = file_extensions;
   }
 
   public void run() {
@@ -93,11 +100,15 @@ public class UrlLoaderThread extends Thread {
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
         URL url = urls[i];
-         String tier_name = null;
+        String tier_name = null;
         if (tier_names != null) {
           tier_name = tier_names[i];
         } else {
           tier_name = parseTermName(url, "DAS_Data");
+        }
+        String file_extension = null;
+        if (file_extensions != null) {
+          file_extension = file_extensions[i];
         }
 
         System.out.println("Attempting to load data from URL: "+url.toExternalForm());
@@ -117,7 +128,7 @@ public class UrlLoaderThread extends Thread {
 
         try {
 	  //  parseDataFromURL(gviewer, connection, aseq, tier_name);
-	  parseDataFromURL(gviewer, connection, tier_name);
+	  parseDataFromURL(gviewer, connection, file_extension, tier_name);
         }
         catch (IOException ex){handleException(ex); continue;}
 
@@ -219,7 +230,7 @@ public class UrlLoaderThread extends Thread {
    *  data to the given BioSeq.
    *  @param type  a parameter passed on to parsePSL
    */
-  static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String type)
+  static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
     throws java.net.UnknownHostException, java.io.IOException {
 
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
@@ -233,20 +244,39 @@ public class UrlLoaderThread extends Thread {
     }
 
     URL url = feat_request_con.getURL();
-    if (content_type==null) {content_type="content/unknown";} // to avoid null pointer
-    if (content_type == null ||
-	content_type.startsWith("content/unknown") ||
-	content_type.startsWith("application/zip") ||
-	content_type.startsWith("application/octet-stream") ||
-	"file".equals(url.getProtocol().toLowerCase()))
-    {
-      System.out.println("Attempting to load data from: " + url.toExternalForm());
-
+//if (3<4) return;
+//    content_type = null; // For Testing Only !!!!!!!!!!!!!!!!!!!!!!
+    
+    if (content_type==null) {
+      content_type="content/unknown"; // to avoid null pointer
+    }
+    
+    if ("file".equalsIgnoreCase(url.getProtocol()) || "ftp".equalsIgnoreCase(url.getProtocol())) {
+      System.out.println("Attempting to load data from file: " + url.toExternalForm());
+      
       // Note: we want the filename so we can guess the filetype from the ending, like ".psl" or ".psl.gz"
       // url.getPath() is OK for this purpose, url.getFile() is not because
       // url.getFile() = url.getPath() + url.getQuery()
       String filename = url.getPath();
-
+      
+      InputStream stream = feat_request_con.getInputStream();
+      LoadFileAction.load(gviewer, stream,  filename, aseq);
+    } 
+    else if (content_type == null ||
+        content_type.startsWith("content/unknown") ||
+        content_type.startsWith("application/zip") ||
+        content_type.startsWith("application/octet-stream")) {
+      System.out.println("Attempting to load data from: " + url.toExternalForm());
+      System.out.println("Using file extension: " + file_extension);
+      
+      String filename = url.getPath();
+      if (file_extension != null && ! "".equals(file_extension.trim())) {
+        if (! file_extension.startsWith(".")) {
+          filename += ".";
+        }
+        filename += file_extension;
+      }
+      
       InputStream stream = feat_request_con.getInputStream();
       LoadFileAction.load(gviewer, stream,  filename, aseq);
     }

@@ -594,11 +594,11 @@ class Das2TypeState {
     //        System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
     
-    // WARNING: These node names can be too long.  Need to replace them with shorter names
-    lnode_load = das2_node.node(subnode_load);
-    lnode_strategy = das2_node.node(subnode_strategy);
-    load = lnode_load.getBoolean(type.getID(), default_load);
-    load_strategy = lnode_strategy.getInt(type.getID(), default_load_strategy);
+    lnode_load = UnibrowPrefsUtil.getSubnode(das2_node, subnode_load);
+    lnode_strategy = UnibrowPrefsUtil.getSubnode(das2_node, subnode_strategy);
+
+    load = lnode_load.getBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load);
+    load_strategy = lnode_strategy.getInt(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load_strategy);
     if (load_strategy == OFF) {
       // OFF strategy has been deprecated but may still exist in some user's prefs
       setLoadStrategy(default_load_strategy);
@@ -608,7 +608,7 @@ class Das2TypeState {
 
   public void setLoad(boolean b) {
     load = b;
-    lnode_load.putBoolean(type.getID(), load);
+    lnode_load.putBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), load);
   }
 
   public boolean getLoad() {
@@ -626,7 +626,7 @@ class Das2TypeState {
 
   public void setLoadStrategy(int strategy) {
     load_strategy = strategy;
-    lnode_strategy.putInt(type.getID(), strategy);
+    lnode_strategy.putInt(UnibrowPrefsUtil.shortKeyName(type.getID()), strategy);
   }
 
   public int getLoadStrategy() { return load_strategy; }

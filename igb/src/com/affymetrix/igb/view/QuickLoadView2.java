@@ -525,7 +525,7 @@ public class QuickLoadView2 extends JComponent
    *  Load sequence residues for a span along a sequence.
    *  Access residues via DAS reference server
    *
-   *  DAS reference server can be specified in igb_prefs.xml file by setting DasDnaServer element
+   *  DAS reference server can be specified by setting PREF_DAS_DNA_SERVER_URL preference value.
    *  Currently defaults to UCSC DAS reference server (this will cause problems if genome is not
    *     available at UCSC)
    */

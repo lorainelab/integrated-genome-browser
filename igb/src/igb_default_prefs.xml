@@ -4,7 +4,11 @@
      If one is specified, it will be used in addition to the default one(s).
 <tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/>
 -->
+<!--
+   It is no longer possible to specify a DasDnaServer through this file.
+   Set it in the preferences graphical interface.
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
+-->
 
 <boolean tag="USE_QUICK_LOADER" val="true" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />

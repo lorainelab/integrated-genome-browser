@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,25 +16,17 @@ package com.affymetrix.igb.view;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import java.net.URLEncoder;
 import java.util.*;
-import java.util.regex.Pattern;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.WebBrowserControl;
 
-public class LinkControl implements ActionListener, ContextualPopupListener {
-  Map menu2url = new HashMap();
-
-  /** A pattern that matches the string "$$". */
-  Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");
+public class LinkControl implements ContextualPopupListener {
 
   public LinkControl() { }
 
   public void popupNotify(JPopupMenu popup, List selected_syms, SymWithProps primary_sym) {
-    menu2url.clear();
-    
     if (selected_syms.size() == 1 && primary_sym != null) {
       
       Map menu_items = new LinkedHashMap(); // map of menu url->name, or url -> url if there is no name
@@ -46,6 +38,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
       if (links != null) {
         if (links instanceof String) {
           String url = (String) links;
+          url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
           if (link_names instanceof String) {
             menu_items.put(url, (String) link_names);
           } else {
@@ -55,6 +48,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
           List urls = (List)links;
           for (int i=0; i<urls.size(); i++) {
             String url = (String) urls.get(i);
+            url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
             menu_items.put(url, url);
           }
         } else if (links instanceof Map) {
@@ -64,6 +58,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
             Map.Entry entry = (Map.Entry)iter.next();
             String name = (String)entry.getKey();
             String url = (String)entry.getValue();
+            url = WebLink.replacePlaceholderWithId(url, primary_sym.getID());
             menu_items.put(url, name);
           }
         }
@@ -79,19 +74,20 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
         // Generally, just let any link replace an existing link that has the same URL.
         // But, if the new one has no name, and the old one does, then keep the old one.
         String new_name = web_links[i].getName();
-        String old_name = (String) menu_items.get(web_links[i].getUrl());
+        String url = web_links[i].getURLForSym(primary_sym);
+        String old_name = (String) menu_items.get(url);
         if (old_name == null || "".equals(old_name)) {
-          menu_items.put(web_links[i].getUrl(), web_links[i].getName());
+          menu_items.put(url, new_name);
         }
       }
       
       //String id = (String) proper.getProperty("id");
-      String id = (String) primary_sym.getID();
-      makeMenuItemsFromMap(popup, menu_items, id);
+      //String id = (String) primary_sym.getID();
+      makeMenuItemsFromMap(popup, menu_items);
     }
   }
   
-  void makeMenuItemsFromMap(JPopupMenu popup, Map urls, String id) {    
+  void makeMenuItemsFromMap(JPopupMenu popup, Map urls) {    
     if (urls.isEmpty()) {
       return;
     }
@@ -105,7 +101,7 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
       if (name == null || name.equals(url)) {
         name = "Get more info";
       }
-      JMenuItem mi = makeMenuItem(name, url, id);
+      JMenuItem mi = makeMenuItem(name, url);
       mi.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
       popup.add(mi);
     }
@@ -121,35 +117,21 @@ public class LinkControl implements ActionListener, ContextualPopupListener {
         if (name == null || name.equals(url)) {
           name = "Unnamed link to web";
         }
-        JMenuItem mi = makeMenuItem(name, url, id);
+        JMenuItem mi = makeMenuItem(name, url);
         linkMenu.add(mi);
       }
     }  
   }
-
-  JMenuItem makeMenuItem(String name, String url, String id) {
+  
+  JMenuItem makeMenuItem(String name, final String url) {
     JMenuItem linkMI = new JMenuItem(name);
-    linkMI.addActionListener(this);
-    url = convertUrl(url, id);
-    menu2url.put(linkMI, url);
+    if (url != null) {
+      linkMI.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURLEventually(url);
+        }
+      });
+    }
     return linkMI;
-  }
-  
-  String convertUrl(String url, String id) {
-    // Now replace all "$$" in the url pattern with the given id, URLEncoded
-    if (url != null && id != null) {
-      String encoded_id = URLEncoder.encode(id);
-      url = DOUBLE_DOLLAR_PATTERN.matcher(url).replaceAll(encoded_id);
-    }
-    return url;
-  }
-  
-  
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-    String weburl = (String)menu2url.get(src);
-    if (weburl != null) {
-      WebBrowserControl.displayURLEventually(weburl);
-    }
   }
 }

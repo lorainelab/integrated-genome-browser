@@ -78,7 +78,7 @@ public class WebLinksManagerView extends JPanel {
   }
   
   public static Action getShowFrameAction() {
-    Action a = new AbstractAction("Web Links") {
+    Action a = new AbstractAction("Configure Web Links") {
       public void actionPerformed(ActionEvent evt) {
         showManager();
       }

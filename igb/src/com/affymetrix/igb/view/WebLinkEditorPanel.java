@@ -17,8 +17,8 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
@@ -185,6 +185,7 @@ public class WebLinkEditorPanel extends JPanel {
       }
     });
     dialog.pack();
+    dialog.setLocationRelativeTo(frame);
     dialog.setVisible(true);
 
     Object choice_obj = opt_pane.getValue();
@@ -211,6 +212,15 @@ public class WebLinkEditorPanel extends JPanel {
       ErrorHandler.errorPanel("The URL cannot be blank");
       url_tf.grabFocus();
       return false;
+    } else {
+      try {
+        URL url = new URL(url_tf.getText());
+      } catch (MalformedURLException e) {
+        ErrorHandler.errorPanel("Malformed URL",
+            "The given URL appears to be invalid.\n"+e.getMessage(),
+            url_tf);
+        return false;
+      }
     }
 
     if (regex_b.isSelected()) {

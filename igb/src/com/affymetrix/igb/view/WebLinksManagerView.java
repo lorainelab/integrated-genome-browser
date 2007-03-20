@@ -261,8 +261,6 @@ public class WebLinksManagerView extends JPanel {
   }
 
   Action makeAddAction() {
-    ImageIcon icon = null;
-    
     Action a = new AbstractAction("Add...") {
       public void actionPerformed(ActionEvent ae) {
         WebLink link = new WebLink();
@@ -274,7 +272,7 @@ public class WebLinksManagerView extends JPanel {
         }
       }
     };
-    a.putValue(Action.SMALL_ICON, icon);
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponentAdd16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Add New Web Link");
     a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_A));
     setAccelerator(a);
@@ -282,8 +280,6 @@ public class WebLinksManagerView extends JPanel {
   }
   
   Action makeEditAction() {
-    ImageIcon icon = null;
-
     Action a = new AbstractAction("Edit...") {
       public void actionPerformed(ActionEvent ae) {
         WebLink link = (WebLink) the_list.getSelectedValue();
@@ -296,7 +292,7 @@ public class WebLinksManagerView extends JPanel {
         }        
       }
     };
-    a.putValue(Action.SMALL_ICON, icon);
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
     a.putValue(Action.SHORT_DESCRIPTION, "Edit Selected Web Link");
     a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_E));
     setAccelerator(a);

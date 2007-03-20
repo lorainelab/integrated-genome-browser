@@ -28,7 +28,7 @@ import javax.swing.ListModel;
 
 public class WebLink {
   String url = null;
-  String name = null;
+  String name = "";
   String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
 
   Pattern pattern = null;
@@ -74,10 +74,20 @@ public class WebLink {
   /**
    *  A a WebLink to the static list.  Multiple WebLink's with the same 
    *  regular expressions are allowed, as long as they have different URLs.
+   *  WebLinks that differ only in name are not allowed; the one added last
+   *  will be the one that is kept, unless the one added first had a name and
+   *  the one added later does not.
    */
   public static void addWebLink(WebLink wl) {
-    if ( weblink_list.contains(wl) ) {
-      System.out.println("Not adding duplicate web link for regex: '" + wl.getRegex() + "'");
+    int index = weblink_list.indexOf(wl);
+    if ( index >= 0 ) {
+      if (wl.getName() == null || wl.getName().trim().length() == 0) {
+        //System.out.println("Not adding duplicate web link for regex: '" + wl.getRegex() + "'");
+      } else {
+        //System.out.println("---------- Renaming Web Link To: " + wl.getName());
+        weblink_list.removeElementAt(index);
+        weblink_list.addElement(wl);
+      }
     } else {
       weblink_list.addElement(wl);
     }
@@ -132,7 +142,11 @@ public class WebLink {
   }
   
   public void setName(String name) {
-    this.name = name;
+    if ("null".equals(name) || name == null) {
+      this.name = "";
+    } else {
+      this.name = name;
+    }
   }
   
   public String getRegex() {

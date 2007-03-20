@@ -75,13 +75,9 @@ public class WebLinksManagerView extends JPanel {
     this.validate();
 
     edit_panel = new WebLinkEditorPanel();
-   
-    JMenu menu = MenuUtil.getMenu("Tools");
-    menu.setMnemonic(KeyEvent.VK_T);
-    menu.add(new JMenuItem(getShowFrameAction()));
   }
   
-  Action getShowFrameAction() {
+  public static Action getShowFrameAction() {
     Action a = new AbstractAction("Web Links") {
       public void actionPerformed(ActionEvent evt) {
         showManager();

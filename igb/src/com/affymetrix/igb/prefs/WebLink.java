@@ -49,9 +49,14 @@ public class WebLink {
   }
   
   public boolean equals(Object o) {
+    // Do NOT consider the "name" in tests of equality.
+    // We do not want to allow two links that are identical except for name.
+    // This is important in allowing users to over-ride the default links.
     if (o instanceof WebLink) {
       WebLink w = (WebLink) o;
-      return (equals(name, w.name) && equals(getRegex(), w.getRegex()) 
+      return (
+          //equals(name, w.name) && 
+       equals(getRegex(), w.getRegex()) 
        && equals(url, w.url) && equals(id_field_name, w.id_field_name));
     }
     return false;
@@ -59,7 +64,7 @@ public class WebLink {
   
   public int hashCode() {
     int hash = 1;
-    if (name != null) { hash = 31*hash + name.hashCode(); }
+    //if (name != null) { hash = 31*hash + name.hashCode(); }
     if (pattern != null) { hash = 31*hash + getRegex().hashCode(); }
     if (url != null) { hash = 31*hash + url.hashCode(); }
     if (id_field_name != null) { hash = 31*hash + id_field_name.hashCode(); }

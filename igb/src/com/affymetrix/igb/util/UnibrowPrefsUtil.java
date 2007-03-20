@@ -15,14 +15,10 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.swing.ColorIcon;
-import com.affymetrix.swing.DisplayUtils;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
 
@@ -322,6 +318,12 @@ import javax.swing.*;
     return UnibrowPrefsUtil.getTopNode().node("keystrokes");
   }
 
+  static SortedSet keystroke_node_names = new TreeSet();
+  
+  public static Collection getKeystrokesNodeNames() {
+    return Collections.unmodifiableSet(new TreeSet(keystroke_node_names));
+  }
+  
   /** Finds the KeyStroke that was specified in the preferences
    *  for the given action_command String.
    *  @param action_command  a String used to uniquely identify an action
@@ -334,6 +336,8 @@ import javax.swing.*;
     String str = getKeystrokesNode().get(action_command, "");
     KeyStroke ks = KeyStroke.getKeyStroke(str);
 
+    keystroke_node_names.add(action_command);
+    
     if (ks == null) {
       if ("".equals(str)) {
         //System.out.println("No accelerator set for '"+ action_command +"'");
@@ -343,6 +347,8 @@ import javax.swing.*;
       }
       // put a blank value in the keystroke so that the user will be able to
       // see which preferences are settable
+      // (actually, this is no longer necessary now that the keystroke_node_names
+      // Set is being used to keep track of these.)
       getKeystrokesNode().put(action_command, "");
     }
     

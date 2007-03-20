@@ -291,6 +291,8 @@ public class WebLinksManagerView extends JPanel {
         boolean ok = edit_panel.showDialog((JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, the_list));
         if (ok) {
           edit_panel.setLinkPropertiesFromGUI();
+          the_list.invalidate();
+          the_list.repaint();
         }        
       }
     };
@@ -365,8 +367,11 @@ public class WebLinksManagerView extends JPanel {
     }
   }
 
-    
-  static WebLinksManagerView static_panel = null;
+  // initialize the static_panel early, because this will cause the accelerator
+  // key-strokes to be configured early through the UnibrowPrefsUtil and thus
+  // for them to be visible in the KeyStrokesView
+  static WebLinksManagerView static_panel = new WebLinksManagerView();
+
   public static synchronized WebLinksManagerView getManager() {
     if (static_panel == null) {
       static_panel = new WebLinksManagerView();

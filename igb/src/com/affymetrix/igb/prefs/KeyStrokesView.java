@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -77,15 +77,17 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     validate();
   }
 
-  protected Object[][] buildRows(Preferences node) throws BackingStoreException {
-    String[] keys = node.keys();
+  protected Object[][] buildRows(Preferences node) {
+    Collection keys = UnibrowPrefsUtil.getKeystrokesNodeNames();
     
-    int num_rows = keys.length;
+    int num_rows = keys.size();
     int num_cols = 2;
     Object[][] rows = new Object[num_rows][num_cols];
-    for (int i = 0 ; i < num_rows ; i++) {
-      rows[i][0] = keys[i];
-      rows[i][1] = node.get(keys[i], "");
+    Iterator iter = keys.iterator();
+    for (int i=0; iter.hasNext(); i++) {
+      String key = (String) iter.next();
+      rows[i][0] = key;
+      rows[i][1] = node.get(key, "");
     }
     return rows;
   }
@@ -93,12 +95,8 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   /** Re-populates the table with the shortcut data. */
   public void showShortcuts() {
     Object[][] rows = null;
-    try {
-      rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
-      model.setDataVector(rows, col_headings);
-    } catch (BackingStoreException bse) {
-      ErrorHandler.errorPanel("ERROR", "Couldn't access preferences", bse);
-    }
+    rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
+    model.setDataVector(rows, col_headings);
   }
 
   public void refresh() {
@@ -160,11 +158,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     sb.append("can give more predictable shortcut behavior.  ");
     sb.append("</p>\n");
 
-    sb.append("<p>\n");
-    sb.append("It is possible that some action names are listed that don't have any function.  ");
-    sb.append("This could happen if you have installed and then un-installed some plugins, ");
-    sb.append("or if some actions have been re-named. ");
-    sb.append("</p>\n");
     sb.append("  ");
     sb.append("  ");
  

@@ -501,7 +501,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
   }
 
   /**
-   *   If current_file is directory, recursively call on each child files;
+   *   If current_file is directory:
+   *       if ".seqs" suffix, then handle as graphs
+   *       otherwise recursively call on each child files;
    *   if not directory, see if can parse as annotation file.
    */
   public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup seq_group) {
@@ -513,13 +515,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //	System.out.println("filtering out directory: " + current_file);
       //	return;  // screening out anything in filtered directories
       //      }
-      if (file_name.endsWith(".seqs")) {
+      if (file_name.endsWith(".graphs.seqs")) {
 	// each file in directory is same annotation type, but for a single seq?
 	// assuming bar files for now, each with starting with seq id?
 	//	graph_name2file.put(file_name, file_path);
-	String graph_name = file_name.substring(0, file_name.length()-5);
+	String graph_name = file_name.substring(0, file_name.length()-12);
 	System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
-	graph_name2dir.put(file_name, file_path);
+	graph_name2dir.put(graph_name, file_path);
       }
       else {
 	System.out.println("checking for annotations in directory: " + current_file);
@@ -934,6 +936,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
       genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
     }
 
+    giter = graph_name2dir.keySet().iterator();
+    while (giter.hasNext()) {
+      String gname = (String)giter.next();
+      genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+    }
+
     return genome_types;
   }
 
@@ -1120,7 +1128,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	log.add("   query type: " + query_type);
 	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
-	if (query_type.endsWith(".bar")) {
+	//	if (query_type.endsWith(".bar")) {
+	if (graph_name2dir.get(query_type) != null) {
 	  handleGraphRequest(request, response, query_type, overlap_span);
 	  return;
 	}
@@ -1259,11 +1268,20 @@ public class GenometryDas2Servlet extends HttpServlet  {
     SmartAnnotBioSeq seq = (SmartAnnotBioSeq)span.getBioSeq();
     String seqid = seq.getID();
     AnnotatedSeqGroup genome = seq.getSeqGroup();
-    log.add("#### genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
+    log.add("#### type: " + type + ", genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
     // use bar parser to extract just the overlap slice from the graph
-    String file_name = type;   // for now using file_name as graph type
-    String file_path = (String)graph_name2file.get(file_name);
-    if (file_path == null) { file_path = file_name; }
+    String graph_name = type;   // for now using graph_name as graph type
+
+    boolean use_graph_dir = false;
+    String file_path = (String)graph_name2dir.get(graph_name);
+    if (file_path != null) { use_graph_dir = true; }
+    if (file_path == null) { file_path = (String)graph_name2file.get(graph_name); }
+    if (file_path == null) { file_path = graph_name; }
+
+    if (use_graph_dir) {
+      file_path += "/" + seqid + ".bar";
+    }
+
     log.add("####    file: " + file_path);
     GraphSym graf = null;
     try  {

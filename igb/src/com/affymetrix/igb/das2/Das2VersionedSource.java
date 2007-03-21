@@ -79,7 +79,7 @@ public class Das2VersionedSource  {
   LinkedList platforms = new LinkedList();
 
   /**
-   *  To maintain backward compatibility, keeping constuctor with no coords_uri argument, 
+   *  To maintain backward compatibility, keeping constuctor with no coords_uri argument,
    *   but it just acts as a pass-through to the constructor that takes a coords_uri argument
    */
   public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
@@ -107,10 +107,10 @@ public class Das2VersionedSource  {
   public Date getCreationDate() { return creation_date; }
   public Date getLastModifiedDate() { return modified_date; }
   public Das2Source getSource() { return source; }
-  public URI getCoordinatesURI() { return coords_uri; }  
+  public URI getCoordinatesURI() { return coords_uri; }
 
   /** NOT YET IMPLEMENTED */
-  //  public List getAssembly()   { return assembly; } 
+  //  public List getAssembly()   { return assembly; }
   /** NOT YET IMPLEMENTED */
   //  public Map getProperties()  { return properties; }
   /** NOT YET IMPLEMENTED */
@@ -135,9 +135,12 @@ public class Das2VersionedSource  {
       //      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
       genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
       if (genome == null && coords_uri != null) { // try coordinates
+	System.out.println("tring to match up coordinates: " + coords_uri);
 	genome = gmodel.getSeqGroup(coords_uri.toString());
+	if (genome != null)  { System.out.println("  found match: " + genome.getID()); }
+
       }
-      if (genome == null) { 
+      if (genome == null) {
 	// add new seq group -- if has global coordinates uri, then use that
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
@@ -344,7 +347,7 @@ public class Das2VersionedSource  {
 	  String val = pnode.getAttribute("value");
 	  props.put(key, val);
 	}
-        
+
 	//	ontologyStuff2();
 	// System.out.println("type id att: " + typeid);
 	// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
@@ -355,10 +358,10 @@ public class Das2VersionedSource  {
         try {
 	  type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
         } catch (Exception e) {
-          System.out.println("Error in typeid, skipping: " + typeid + 
+          System.out.println("Error in typeid, skipping: " + typeid +
               "\nUsually caused by an improper character in the URI.");
         }
-        
+
         if (type_uri != null) {
           // System.out.println("type URI: " + type_uri.toString());
           Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?

@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -25,7 +25,8 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   boolean collapsed = false;
   boolean expandable = true;
   int max_depth = 0;
-  String name = "";
+  String unique_name = "";
+  String human_name = "";
   double height = 60;
   double y = 0.0f;
   boolean is_graph = false;
@@ -33,13 +34,15 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   
   public DefaultIAnnotStyle() {
     super();
+    this.unique_name = Integer.toHexString(hashCode()); // a unique name, just in case it is ever needed
     this.fg = AnnotStyle.getDefaultInstance().getColor();
     this.bg = AnnotStyle.getDefaultInstance().getBackground();
   }
   
   public DefaultIAnnotStyle(String name, boolean graph) {
     this();
-    this.name = name;
+    this.unique_name = name;
+    this.human_name = name;
     this.is_graph = graph;
   }
   
@@ -53,8 +56,10 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   public boolean getShow() { return show; }
   public void setShow(boolean b) { show = b; }
   
-  public String getHumanName() { return name; }
-  public void setHumanName(String s) { name = s; }
+  public String getUniqueName() { return unique_name; }
+  
+  public String getHumanName() { return human_name; }
+  public void setHumanName(String s) { human_name = s; }
   
   public Color getBackground() { return bg; }
   public void setBackground(Color c) { bg = c; }
@@ -88,6 +93,7 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   public void copyPropertiesFrom(IAnnotStyle g) {
     setColor(g.getColor());
     setShow(g.getShow());
+    // don't copy unique name
     setHumanName(g.getHumanName());
     setBackground(g.getBackground());
     setCollapsed(g.getCollapsed());

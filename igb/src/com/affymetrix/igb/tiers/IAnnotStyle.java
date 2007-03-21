@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -26,6 +26,8 @@ public interface IAnnotStyle {
   
   public boolean getShow();
   public void setShow(boolean b);
+  
+  public String getUniqueName();
   
   public String getHumanName();
   public void setHumanName(String s);

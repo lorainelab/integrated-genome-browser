@@ -134,47 +134,29 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;
   
-  protected Vector buildRows(AnnotatedSeqGroup seq_group) {
-    if (seq_group == null) {
+  FindResiduesPanel find_residues = new FindResiduesPanel();
+  
+  protected Vector buildRows(java.util.List results) {
+        
+    if (results == null || results.isEmpty()) {
       return new Vector(0);
     }
-
-    Set sym_ids = finder.searchForID(seq_group);
-
-    //java.util.List seq_list = seq_group.getSeqList();
     
-    java.util.List entries = new ArrayList(sym_ids);
-    int num_rows = entries.size();
+    int num_rows = results.size();
     
     Vector rows = new Vector(num_rows, num_rows/10);
     for (int j = 0 ; j < num_rows && rows.size() < THE_LIMIT ; j++) {
-      String key = (String) entries.get(j);
-      java.util.List the_list = seq_group.findSyms(key);
+      SearchResult result = (SearchResult) results.get(j);      
+      SeqSpan span = result.span;
       
-      for (int k=0; k<the_list.size(); k++) {
-        SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
-
-        int span_count = sym.getSpanCount();
-        for (int i=0; i<span_count; i++) {
-          SeqSpan span = sym.getSpan(i);
-          if (span == null) continue;
-
-          BioSeq seq = span.getBioSeq();
-          if (finder.filterBySequence(seq)) /* (seq_list.contains(seq)*/ {
-        
-//        if (finder.filterBySpan(span)) {
-              Vector a_row = new Vector(NUM_COLUMNS);
-              a_row.add(key);
-              a_row.add(sym);
-              a_row.add(new Integer(span.getStart()));
-              a_row.add(new Integer(span.getEnd()));
-              String s = span.getBioSeq().getID() + (span.isForward() ? "+" : "-");
-              a_row.add(s);
-              rows.add(a_row);
-//            }
-          }
-        }
-      }
+      Vector a_row = new Vector(NUM_COLUMNS);
+      a_row.add(result.id);
+      a_row.add(result.sym);
+      a_row.add(new Integer(span.getStart()));
+      a_row.add(new Integer(span.getEnd()));
+      String s = span.getBioSeq().getID() + (span.isForward() ? "+" : "-");
+      a_row.add(s);
+      rows.add(a_row);
     }
     
     return rows;
@@ -205,7 +187,8 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         search_action.setEnabled(false);
         clearTable("Working...");        
         
-        final Vector rows = buildRows(final_seq_group);
+       java.util.List results = finder.searchForSyms(final_seq_group);
+        final Vector rows = buildRows(results);
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             model.setDataVector(rows, col_headings_vector);
@@ -266,7 +249,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     finder.reinitialize(SingletonGenometryModel.getGenometryModel());
 
     String[] options = new String[] {"OK", "Cancel"};
-    int result = JOptionPane.showOptionDialog(AnnotBrowserView.this, finder, "Search",
+    int result = JOptionPane.showOptionDialog(/*AnnotBrowserView.this*/ null, finder, "Search",
         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, (Icon) null,
         options, options[0]);
 
@@ -366,6 +349,17 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       SeqSymmetry s1 = (SeqSymmetry) o1;
       SeqSymmetry s2 = (SeqSymmetry) o2;
       return SeqMapView.determineMethod(s1).compareTo(SeqMapView.determineMethod(s2));
+    }
+  }
+  
+  public static class SearchResult {
+    public String id = "Search Result";
+    public SeqSymmetry sym;
+    public SeqSpan span;
+    public SearchResult(String id, SeqSymmetry sym, SeqSpan span) {
+      this.id = id;
+      this.sym = sym;
+      this.span = span;
     }
   }
 }

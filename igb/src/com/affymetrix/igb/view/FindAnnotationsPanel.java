@@ -461,5 +461,43 @@ public class FindAnnotationsPanel extends JPanel {
     }
     
     return matched_ids;
-  }  
+  }
+
+  public List searchForSyms(AnnotatedSeqGroup seq_group) {
+    List results = new ArrayList();
+
+    if (seq_group == null) {
+      return results;
+    }
+
+    Set sym_ids = searchForID(seq_group);
+
+    java.util.List entries = new ArrayList(sym_ids);
+    
+    Iterator iter = sym_ids.iterator();
+    while (iter.hasNext() && results.size() < AnnotBrowserView.THE_LIMIT) {
+      String key = (String) iter.next();
+      java.util.List the_list = seq_group.findSyms(key);
+      
+      for (int k=0; k<the_list.size(); k++) {
+        SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
+
+        int span_count = sym.getSpanCount();
+        for (int i=0; i<span_count; i++) {
+          SeqSpan span = sym.getSpan(i);
+          if (span == null) continue;
+
+          BioSeq seq = span.getBioSeq();
+          if (filterBySequence(seq)) /* (seq_list.contains(seq)*/ {
+        
+//        if (filterBySpan(span)) {
+              results.add(new AnnotBrowserView.SearchResult(key, sym, span));
+//            }
+          }
+        }
+      }
+    }
+    
+    return results;
+  }
 }

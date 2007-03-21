@@ -695,8 +695,6 @@ import javax.swing.*;
     frame = new JFrame(name);
     frame.setName(name);
     
-    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif");
-    if (icon != null) { frame.setIconImage(icon.getImage()); }
     frame.getContentPane().add(panel);
     frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     

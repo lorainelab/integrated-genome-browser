@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -333,10 +333,11 @@ public class ScoredIntervalParser {
 	  Map.Entry entry = (Map.Entry)iter.next();
 	  container.setProperty((String)entry.getKey(), entry.getValue());
 	}
-	container.setProperty("method", stream_name);
+
+	container.setProperty("method", unique_container_name);
 
         // Force the AnnotStyle for the container to have glyph depth of 1
-        AnnotStyle style = AnnotStyle.getInstance(stream_name);
+        AnnotStyle style = AnnotStyle.getInstance(unique_container_name);
         style.setGlyphDepth(1);
 
 	//	seq2container.put(seqid, container);

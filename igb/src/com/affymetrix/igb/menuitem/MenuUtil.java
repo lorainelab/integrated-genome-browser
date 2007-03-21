@@ -26,7 +26,7 @@ public abstract class MenuUtil {
     // Pre-initialize certain menus so that they will be in a predictable order
     getMenu("File");
     getMenu("View");
-    getMenu("Find");
+    //getMenu("Tools");
     getMenu("Help");
   }
   

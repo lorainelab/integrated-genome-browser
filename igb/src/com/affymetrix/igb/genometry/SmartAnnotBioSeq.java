@@ -90,12 +90,11 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   /**
    *  Returns a top-level symmetry or null.
    *  Used to return a TypeContainerAnnot, but now returns a SymWithProps which is
-   *     either a TypeContainerAnnot or a GraphSym, so GraphSyms can be retrieved with graph id given as type
+   *     either a TypeContainerAnnot or a GraphSym, or a ScoredContainerSym,
+   *     so GraphSyms can be retrieved with graph id given as type
    */
   public SymWithProps getAnnotation(String type) {
-  //  public TypeContainerAnnot getAnnotation(String type) {
     if (type2sym == null) { return null; }
-    //    return (TypeContainerAnnot)type2sym.get(type);
     return (SymWithProps)type2sym.get(type.toLowerCase());
   }
 

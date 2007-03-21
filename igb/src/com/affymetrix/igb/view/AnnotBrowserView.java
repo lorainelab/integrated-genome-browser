@@ -31,6 +31,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
 /**
@@ -54,19 +55,8 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
 
-  public Action search_action = new AbstractAction("Find Annotations...") {
-    public void actionPerformed(ActionEvent e) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          try {
-            performSearch();
-          } catch (InterruptedException ex) {
-            setStatus("Search interrupted");
-          }
-        }
-      });
-    }
-  };
+  public Action search_action = getSearchAction();
+
   JButton go_b = new JButton(search_action);
 
   JLabel status_bar = new JLabel("0 results");
@@ -139,12 +129,12 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     AnnotatedSeqGroup.addSymMapChangeListener(this);
     SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
     
-    MenuUtil.addToMenu("Find", new JMenuItem(search_action));
+    MenuUtil.addToMenu("Tools", new JMenuItem(search_action));
   }
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;
   
-  protected Vector buildRows(AnnotatedSeqGroup seq_group, String start, String end) {
+  protected Vector buildRows(AnnotatedSeqGroup seq_group) {
     if (seq_group == null) {
       return new Vector(0);
     }
@@ -215,7 +205,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         search_action.setEnabled(false);
         clearTable("Working...");        
         
-        final Vector rows = buildRows(final_seq_group, start, end);
+        final Vector rows = buildRows(final_seq_group);
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             model.setDataVector(rows, col_headings_vector);
@@ -302,6 +292,29 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     }
   };
 
+  public Action getSearchAction() {
+    String name = "Find Annotations...";
+    Action a = new AbstractAction(name) {
+      public void actionPerformed(ActionEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            try {
+              performSearch();
+            } catch (InterruptedException ex) {
+              setStatus("Search interrupted");
+            }
+          }
+        });
+      }
+    };
+    a.putValue(Action.SMALL_ICON, MenuUtil.getIcon("toolbarButtonGraphics/general/Find16.gif"));
+    a.putValue(Action.SHORT_DESCRIPTION, "Search for annotations");
+    a.putValue(Action.MNEMONIC_KEY, new Integer(KeyEvent.VK_A));
+    KeyStroke ks = UnibrowPrefsUtil.getAccelerator(name);
+    a.putValue(Action.ACCELERATOR_KEY, ks);
+    return a;
+  }
+  
   public void destroy() {
     removeAll();
     AnnotatedSeqGroup.removeSymMapChangeListener(this);

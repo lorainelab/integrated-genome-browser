@@ -134,7 +134,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;
   
-  FindResiduesPanel find_residues = new FindResiduesPanel();
+//  FindResiduesPanel find_residues = new FindResiduesPanel();
   
   protected Vector buildRows(java.util.List results) {
         

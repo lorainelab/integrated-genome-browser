@@ -136,9 +136,9 @@ public class GraphGlyph extends Glyph {
       ident = ((SeqSymmetry)mod).getID();
     }
     if (ident == null) {
-      ident = state.getTierStyle().getHumanName();
+      ident = state.getTierStyle().getUniqueName();
     }
-    return null;
+    return ident;
   }
 
   public GraphState getGraphState() { return state; }

@@ -19,9 +19,12 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.Scored;
 import com.affymetrix.igb.genometry.SingletonSymWithProps;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
+import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.glyph.HeatMap;
 import java.awt.Color;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -138,7 +141,7 @@ public class CytobandParser {
     else return 0.0f;
   }
   
-  public class CytobandSym extends SingletonSymWithProps implements Scored {
+  public class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
     String band;
     public CytobandSym(int start, int end, BioSeq seq, String name, String band) {
       super(start, end, seq);
@@ -194,6 +197,22 @@ public class CytobandParser {
       }
       else return super.getProperty(name);
     }
+
+    public Map cloneProperties() {
+      Map props = super.cloneProperties();
+      if (props == null) {
+        props = new HashMap(4);
+      }
+      if (id != null) {
+        props.put("id", id);
+      }
+      //props.put("method", CYTOBAND_TIER_NAME);
+      props.put("band", band);
+      return props;
+    }
     
+    public String getType() {
+      return CYTOBAND_TIER_NAME;
+    }
   }
 }

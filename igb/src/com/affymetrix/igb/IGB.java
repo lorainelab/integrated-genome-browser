@@ -86,7 +86,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenu view_menu;
   //JMenu navigation_menu;
   JMenu bookmark_menu;
-  //JMenu tools_menu;
+  JMenu tools_menu;
   JMenu help_menu;
   JTabbedPane tab_pane;
   JSplitPane splitpane;
@@ -125,13 +125,11 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JCheckBoxMenuItem toggle_hairline_label_item;
   JCheckBoxMenuItem toggle_edge_matching_item;
   JMenuItem autoscroll_item;
-  //JMenuItem web_links_item;
+  JMenuItem web_links_item;
 
   JMenuItem move_tab_to_window_item;
   JMenuItem move_tabbed_panel_to_window_item;
 
-  JMenu find_menu = new JMenu("Find");
-  
   SeqMapView map_view;
   OverView overview;
 
@@ -551,13 +549,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     bookmark_menu.setMnemonic('B');
     //mbar.add(bookmark_menu);
 
-//    tools_menu = MenuUtil.getMenu("Tools");
-//    tools_menu.setMnemonic('T');
-//    mbar.add(tools_menu);
-
-    find_menu = MenuUtil.getMenu("Find");
-    find_menu.setMnemonic('F');
-    //mbar.add(find_menu);
+    tools_menu = MenuUtil.getMenu("Tools");
+    tools_menu.setMnemonic('T');
+    //mbar.add(tools_menu);
     
     help_menu = MenuUtil.getMenu("Help");
     help_menu.setMnemonic('H');
@@ -652,7 +646,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
     move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
 
-    //web_links_item = new JMenuItem("Configure Web Links", KeyEvent.VK_W);
+    web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
     
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
@@ -693,7 +687,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
     MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
     MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
-    //MenuUtil.addToMenu(view_menu, web_links_item);
+
+    MenuUtil.addToMenu(tools_menu, web_links_item);
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
@@ -732,7 +727,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     autoscroll_item.addActionListener(this);
     adjust_edgematch_item.addActionListener(this);
     view_ucsc_item.addActionListener(this);
-    //web_links_item.addActionListener(this);
 
     res2clip_item.addActionListener(this);
     rev_comp_item.addActionListener(this);
@@ -854,6 +848,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       export_slice_item.setEnabled(true);
     }
 
+    WebLink.autoLoad();
+    
     // Start listining for http requests only after all set-up is done.
     startControlServer();
 
@@ -1097,8 +1093,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       PreferencesPanel pv = PreferencesPanel.getSingleton();
       JFrame f = pv.getFrame();
       f.setVisible(true);
-//    } else if (src == web_links_item) {
-//      WebLinksManagerView.showManager();
     }
   }
 
@@ -1242,6 +1236,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       if (bmark_action != null) {
         bmark_action.autoSaveBookmarks();
       }
+      WebLink.autoSave();
       saveWindowLocations();
       System.exit(0);
     }

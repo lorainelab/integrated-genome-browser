@@ -35,7 +35,11 @@ public class CytobandParser {
   static final Color cyto_acen_color = new Color(198,64,64); // dark red
   static final Color cyto_stalk_color = Color.GRAY;
       
-  public static final String CYTOBAND_TIER_NAME = "Cytobands";
+  /** This is the name that is used to identify the cytobands data.  It is not
+   *  intended to be displayed to the user.  It should be some String that they
+   *  are unlikely to want to use as the name of a tier.
+   */
+  public static final String CYTOBAND_TIER_NAME = "__cytobands";
   public static final float GNEG_SCORE = 100.0f;
   public static final float GVAR_SCORE = 100.0f;
   public static final float ACEN_SCORE = 600.0f;

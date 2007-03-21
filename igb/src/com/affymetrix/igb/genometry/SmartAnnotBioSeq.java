@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -96,7 +96,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   //  public TypeContainerAnnot getAnnotation(String type) {
     if (type2sym == null) { return null; }
     //    return (TypeContainerAnnot)type2sym.get(type);
-    return (SymWithProps)type2sym.get(type);
+    return (SymWithProps)type2sym.get(type.toLowerCase());
   }
 
   public void addModifiedListener(SeqModifiedListener listener) {
@@ -161,6 +161,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *  @return an instance of {@link TypeContainerAnnot}
    */
   public MutableSeqSymmetry addAnnotation(String type) {
+    type = type.toLowerCase();
     if (type2sym == null) { type2sym = new HashMap(); }
     MutableSeqSymmetry container = new TypeContainerAnnot(type);
     ((SymWithProps)container).setProperty("method", type);
@@ -178,6 +179,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *     if doesn't yet exist.
    */
   public void addAnnotation(SeqSymmetry sym, String type) {
+    type = type.toLowerCase();
     if (type2sym == null) { type2sym = new HashMap(); }
     MutableSeqSymmetry container = (MutableSeqSymmetry)type2sym.get(type);
     if (container == null) {
@@ -214,7 +216,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
 	System.out.println("WARNING: GraphSym ID is null!!!");
 	throw new RuntimeException("GraphSym ID is null, this should never happen!");
       }
-      type2sym.put(id, sym);
+      type2sym.put(id.toLowerCase(), sym);
       super.addAnnotation(sym);
       notifyModified();
       return;
@@ -256,12 +258,19 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
 	}
       }
     }
-    /*
-    throw new RuntimeException("SmartAnnotBioSeq.removeAnnotation(sym) not yet allowed " +
-			       "except when sym is top-level annotation " +
-			       "(container or graph)" );
-    */
- }
+  }
+
+  public void removeType(String type) {
+    if ((type != null)) {
+      type = type.toLowerCase();
+      MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
+      if (container != null) {
+        type2sym.remove(type);
+        super.removeAnnotation(container);
+        notifyModified();
+      }
+    }
+  }
 
   public void removeAnnotation(int index) {
     SeqSymmetry annot = getAnnotation(index);
@@ -299,6 +308,9 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       if (sym instanceof TypedSym) {
         meth = ((TypedSym)sym).getType();
       }
+    }
+    if (meth != null) {
+      meth = meth.toLowerCase();
     }
     return meth;
   }

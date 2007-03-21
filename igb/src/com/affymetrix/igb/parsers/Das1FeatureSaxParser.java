@@ -148,6 +148,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    */
   List result_syms = null;
 
+
   public Das1FeatureSaxParser() {
     //    filter_hash.put("estOrientInfo", "estOrientInfo");
   }
@@ -221,6 +222,10 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     this.aseq = null;
     this.current_sym = null;
     clearFeature();
+
+    /**
+     *   now check results, set glyph depth to 1 or 2 based on sym depth?
+     */
 
     return result_syms;
   }

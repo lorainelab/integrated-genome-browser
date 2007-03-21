@@ -172,7 +172,12 @@ public class GraphAdjusterView {
       // Set an initial color so that the "reset" button will work.
       GraphSym graf_0 = (GraphSym) graf_syms.get(0);
       GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
-      Color initial_color = gl_0.getColor();
+      Color initial_color = Color.GREEN;
+      if (gl_0 != null) {
+        // gl_0 could be null if there is a selected graph that isn't visible in
+        // the current view.
+        initial_color = gl_0.getColor();
+      }
       Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
         "Graph Color Chooser", initial_color);
       // Note: If the user selects "Cancel", col will be null

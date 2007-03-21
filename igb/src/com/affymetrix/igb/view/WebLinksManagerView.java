@@ -380,6 +380,8 @@ public class WebLinksManagerView extends JPanel {
   public static synchronized JFrame showManager() {
     if (static_frame == null) {
       static_frame = UnibrowPrefsUtil.createFrame("Web Links", getManager());
+      ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif");
+      if (icon != null) { static_frame.setIconImage(icon.getImage()); }
     }
     DisplayUtils.bringFrameToFront(static_frame);
     return static_frame;

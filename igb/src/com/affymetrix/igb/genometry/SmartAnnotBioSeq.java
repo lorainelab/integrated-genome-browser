@@ -240,9 +240,8 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       notifyModified();
       //      return;
     }
-    else if (annot instanceof SymWithProps) {
-      // TODO: addAnnotation and removeAnnotation use different method to get "method" !??
-      String type = (String)(((SymWithProps)annot).getProperty("method"));
+    else {
+      String type = determineMethod(annot);
       if ((type != null) && (getAnnotation(type) != null)) {
 	MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
 	if (container == annot) {
@@ -270,11 +269,11 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   }
 
   /**
-   * Returns true if the sym is of a type needs to be wrapped in a TypedContainerSym.
+   * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
    * GraphSym's and ScoredContainerSym's are added directly, not in containers.
    */
   public boolean needsContainer(SeqSymmetry sym) {
-    if (sym instanceof GraphSym || sym instanceof ScoredContainerSym) {
+    if (sym instanceof GraphSym || sym instanceof ScoredContainerSym || sym instanceof TypeContainerAnnot) {
       return false;
     } else {
       return true;

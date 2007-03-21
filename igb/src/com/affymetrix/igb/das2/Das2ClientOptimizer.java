@@ -111,7 +111,7 @@ public class Das2ClientOptimizer {
       MutableSeqSymmetry cont_sym;
       // this should work even for graphs, now that graphs are added to SmartAnnotBioSeq's type hash (with id as type)
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
-      // little hack fro GraphSyms, need to resolve when to use id vs. name vs. type
+      // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
       if (cont_sym == null && typeid.endsWith(".bar")) {
 	request_log.addLogMessage("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
 	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
@@ -492,6 +492,7 @@ public class Das2ClientOptimizer {
    *
    *  Assumes ids of parent graphs are unique among annotations on seq
    *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
+   *  Uses type URI as graph ID, type name as graph name
    */
   public static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
     Das2RequestLog request_log = request_sym.getLog();
@@ -500,8 +501,12 @@ public class Das2ClientOptimizer {
     SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)cgraf.getGraphSeq();
     // check and see if parent graph already exists
     //    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
-    String id = cgraf.getID();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+    //    String id = cgraf.getID();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+    Das2Type type = request_sym.getDas2Type();
+    String id = type.getID();
+    String name = type.getName();
     request_log.addLogMessage("   child graph id: " + id);
+    request_log.addLogMessage("   child graph name: " + name);
     request_log.addLogMessage("   seq: " + aseq.getID());
     GraphSym pgraf = (GraphSym)aseq.getAnnotation(id);
     if (pgraf == null) {
@@ -510,7 +515,8 @@ public class Das2ClientOptimizer {
       //      String compid = GraphSymUtils.getUniqueGraphID(id, aseq);
       // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
       pgraf = new CompositeGraphSym(id, aseq);
-      pgraf.setGraphName(id);
+      //      pgraf.setGraphName(id);
+      pgraf.setGraphName(name);
       aseq.addAnnotation(pgraf);
     }
     // since GraphSyms get a span automatically set to the whole seq when constructed, need to first

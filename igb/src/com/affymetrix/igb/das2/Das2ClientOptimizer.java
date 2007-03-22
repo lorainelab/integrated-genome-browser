@@ -436,22 +436,20 @@ public class Das2ClientOptimizer {
 	  request_log.setSuccess(false);
 	}
 
+	boolean no_graphs = true;
 	if (feats == null || feats.size() == 0) {
 	  // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
 	  //    populate with empty sym child/grandchild
-	  // better way might be to have request sym's span on aseq be dependent on children, so
-	  //    if no children then no span on aseq (though still an overlap_span and inside_span)
-	  /*
+	  //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
+	  //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
 	    SimpleSymWithProps child = new SimpleSymWithProps();
 	    SimpleSymWithProps grandchild = new SimpleSymWithProps();
 	    child.addChild(grandchild);
 	    request_sym.addChild(child);
-	  */
 	}
 	else if (request_log.getSuccess())  {  // checking success again, could have changed before getting to this point...
 	  int feat_count = feats.size();
 	  request_log.addLogMessage("parsed query results, annot count = " + feat_count);
-	  boolean no_graphs = true;
 	  for (int k=0; k<feat_count; k++) {
 	    SeqSymmetry feat = (SeqSymmetry)feats.get(k);
 	    if (feat instanceof GraphSym) {
@@ -462,15 +460,15 @@ public class Das2ClientOptimizer {
 	      request_sym.addChild(feat);
 	    }
 	  }
-	  // probably want to synchronize on annotated seq, since don't want to add annotations to aseq
-	  // on one thread when might be rendering based on aseq in event thread...
-	  //
-	  // or maybe should just make addAnnotation() a synchronized method
-	  if (no_graphs) {
-	    // aseq = request_sym.getRegion().getAnnotatedSeq();
-	    synchronized (aseq)  { aseq.addAnnotation(request_sym); }
-	  }
 	}
+	// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
+	// on one thread when might be rendering based on aseq in event thread...
+	//
+	// or maybe should just make addAnnotation() a synchronized method
+	if (no_graphs) {
+	  synchronized (aseq)  { aseq.addAnnotation(request_sym); }
+	}
+
       }  // end if (success) conditional
       if (bis != null) try { 
         bis.close(); 

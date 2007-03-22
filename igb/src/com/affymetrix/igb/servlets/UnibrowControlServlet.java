@@ -146,12 +146,12 @@ public class UnibrowControlServlet extends HttpServlet {
     
   }
 
-  public static void loadDataFromURLs(final IGB uni, final String[] das_urls, final String[] extensions, final String[] tier_names) {
+  public static void loadDataFromURLs(final IGB uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
     try {
-      if (das_urls != null && das_urls.length != 0) {
-        URL[] urls = new URL[das_urls.length];
-        for (int i=0; i<das_urls.length; i++) {
-          urls[i] = new URL(das_urls[i]);
+      if (data_urls != null && data_urls.length != 0) {
+        URL[] urls = new URL[data_urls.length];
+        for (int i=0; i<data_urls.length; i++) {
+          urls[i] = new URL(data_urls[i]);
         }
         final UrlLoaderThread t = new UrlLoaderThread(uni.getMapView(), urls, extensions, tier_names);
         t.runEventually();

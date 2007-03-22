@@ -469,7 +469,8 @@ public class LocalUrlCacher {
     else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
       
       if (getOffLine()) {
-        throw new IOException("You are running in off-line mode and this file is not cached locally: " + short_filename);
+        ErrorHandler.errorPanel("You are running in off-line mode and this file is not cached locally: " + short_filename);
+        return null;
       }
       
       String[] options = { "OK", "Cancel" };

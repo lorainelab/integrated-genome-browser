@@ -27,6 +27,7 @@ import com.affymetrix.igb.parsers.BpsParser;
 import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.parsers.PSLParser;
+import java.util.regex.Pattern;
 import org.xml.sax.InputSource;
 
 public class UrlLoaderThread extends Thread {
@@ -95,11 +96,13 @@ public class UrlLoaderThread extends Thread {
         this,
         false, false);
       monitor.showDialogEventually();
-
+      
       for (int i=0; i<urls.length; i++) {
         if (isInterrupted() || monitor.isCancelled()) {break;}
 
         URL url = urls[i];
+        
+        
         String tier_name = null;
         if (tier_names != null) {
           tier_name = tier_names[i];
@@ -112,25 +115,14 @@ public class UrlLoaderThread extends Thread {
         }
 
         System.out.println("Attempting to load data from URL: "+url.toExternalForm());
-
-        String where_from = url.getHost();
-        if (where_from == null || where_from.length()==0) {
-          where_from = url.getPath();
-        }
-        monitor.setMessageEventually("Connecting to "+where_from);
-        if (isInterrupted() || monitor.isCancelled()) {break;}
-
-        URLConnection connection = url.openConnection();
-        connection.connect(); // throws an exception if no connection available
-
-        monitor.setMessageEventually("Loading data from "+where_from);
-        if (isInterrupted() || monitor.isCancelled()) {break;}
-
         try {
-	  //  parseDataFromURL(gviewer, connection, aseq, tier_name);
-	  parseDataFromURL(gviewer, connection, file_extension, tier_name);
+          parseUrl(monitor, url, file_extension, tier_name);
+        } catch (IOException ioe) {
+          handleException(ioe);
+          if (isInterrupted() || monitor.isCancelled()) {return;}
+          continue; // try the next url
         }
-        catch (IOException ex){handleException(ex); continue;}
+        if (isInterrupted() || monitor.isCancelled()) {return;}
 
         monitor.setMessageEventually("Updating view");
         if (isInterrupted() || monitor.isCancelled()) {break;}
@@ -146,6 +138,24 @@ public class UrlLoaderThread extends Thread {
       // update the view again, mainly in case the thread was interrupted
       updateViewer(gviewer, aseq);
     }
+  }
+  
+  void parseUrl(ThreadProgressMonitor monitor, URL url, String file_extension, String tier_name)
+  throws IOException {
+    String where_from = url.getHost();
+    if (where_from == null || where_from.length()==0) {
+      where_from = url.getPath();
+    }
+    monitor.setMessageEventually("Connecting to "+where_from);
+    if (isInterrupted() || monitor.isCancelled()) {return;}
+    
+    URLConnection connection = url.openConnection();
+    connection.connect(); // throws an exception if no connection available
+    
+    monitor.setMessageEventually("Loading data from "+where_from);
+    if (isInterrupted() || monitor.isCancelled()) {return;}
+    
+    parseDataFromURL(gviewer, connection, file_extension, tier_name);
   }
 
   void handleException(final Exception e) {

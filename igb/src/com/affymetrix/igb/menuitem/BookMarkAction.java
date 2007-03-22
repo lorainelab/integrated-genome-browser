@@ -35,6 +35,7 @@ import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.UniFileFilter;
 
 import com.affymetrix.igb.bookmarks.*;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.swing.DisplayUtils;
@@ -383,7 +384,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
         }
       }
       catch (Exception ex) {
-        IGB.errorPanel(frame, "Error", "Error importing bookmarks", ex);
+        ErrorHandler.errorPanel(frame, "Error", "Error importing bookmarks", ex);
       }
     }
   }
@@ -405,7 +406,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
 
   public static void exportBookmarks(BookmarkList main_bookmark_list, JFrame frame) {
     if (main_bookmark_list == null || main_bookmark_list.getChildCount()==0) {
-      IGB.errorPanel(frame, "Error", "No bookmarks to save", null);
+      ErrorHandler.errorPanel(frame, "Error", "No bookmarks to save", null);
       return;
     }
     JFileChooser chooser = getJFileChooser();
@@ -427,7 +428,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
         BookmarkList.exportAsNetscapeHTML(main_bookmark_list, fil);
       }
       catch (Exception ex) {
-        IGB.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
+        ErrorHandler.errorPanel(frame, "Error", "Error exporting bookmarks", ex);
       }
     }
   }

@@ -1269,16 +1269,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  panel as its parent.
    */
   public static void errorPanel(String title, String message) {
-    errorPanel(title, message, (Throwable) null);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent.
-   */
-  public static void errorPanel(String title, String message, Throwable e) {
-    IGB igb = getSingletonIGB();
-    JFrame frame = (igb==null) ? null : igb.frm;
-    errorPanel(frame, title, message, e);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, title, message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
@@ -1298,14 +1289,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  panel as its parent, and the title "ERROR".
    */
   public static void errorPanel(String message) {
-    errorPanel("ERROR", message);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent, and the title "ERROR".
    */
   public static void errorPanel(String message, Throwable e) {
-    errorPanel("ERROR", message, e);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, e);
   }
 
   /** Shows a panel asking for the user to confirm something.

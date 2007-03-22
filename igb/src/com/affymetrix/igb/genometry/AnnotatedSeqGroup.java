@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -58,6 +58,69 @@ public class AnnotatedSeqGroup {
       seqlist = new ArrayList(id2seq.values());
     }
     return seqlist;
+  }
+
+  /**
+   *  Returns the set of type id String's of all the types on all
+   *  the SmartAnnotBioSeq's returned by getSeqList().
+   */
+  public Set getTypeIds() {
+    Set types = new TreeSet();
+    List seq_list = getSeqList();
+    Iterator iter = seq_list.iterator();
+    while (iter.hasNext()) {
+      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+      if (seq instanceof SmartAnnotBioSeq) {
+        types.addAll(((SmartAnnotBioSeq) seq).getTypeIds());
+      }
+    }
+    return types;
+  }
+  
+  /**
+   *  Returns true if any seq in the group contains an annotation of the given type.
+   *  Equivalent to getTypeIds().contains(type), but usually faster.
+   */
+  public boolean hasType(String type) {
+    if (type == null) {
+      return false;
+    }
+    List seq_list = getSeqList();
+    Iterator iter = seq_list.iterator();
+    while (iter.hasNext()) {
+      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+      if (seq instanceof SmartAnnotBioSeq) {
+        if (((SmartAnnotBioSeq) seq).getTypeIds().contains(type.toLowerCase())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  /**
+   *  Remove all annotations of a given type from all seqs in this group.
+   */
+  public void removeType(String type) {
+    List seq_list = getSeqList();
+    Iterator iter = seq_list.iterator();
+    while (iter.hasNext()) {
+      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+      if (seq instanceof SmartAnnotBioSeq) {
+        ((SmartAnnotBioSeq) seq).removeType(type.toLowerCase());
+      }
+    }
+  }
+
+  public String getUniqueTypeID(String id) {
+    if (id == null) { return null; }
+    String newid = id;
+    int prevcount = 0;
+    while (hasType(newid)) {
+      prevcount++;
+      newid = id + "." + prevcount;
+    }
+    return newid;
   }
 
   /**
@@ -170,6 +233,9 @@ public class AnnotatedSeqGroup {
   }
 
   public void addSeq(MutableAnnotatedBioSeq seq) {
+    // It would be nice to require that all children seqs be SmartAnnotBioSeqs,
+    // but there is still some code in the internal Affy code that might be
+    // adding Combosite BioSeq's instead.
     MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
     if (oldseq == null) {
       id2seq.put(seq.getID(), seq);

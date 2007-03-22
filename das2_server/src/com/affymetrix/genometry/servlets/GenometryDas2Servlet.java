@@ -374,7 +374,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
      *   (and recursively descend through subdirectories doing same)
      */
     //    loadAnnotsFromFile(genome_directory, seqhash);
-    loadAnnotsFromFile(genome_directory, genome);
+    loadAnnotsFromFile(genome_directory, genome, null);
 
     /**
      *  Third optimize genome by replacing second-level syms with IntervalSearchSyms
@@ -500,26 +500,39 @@ public class GenometryDas2Servlet extends HttpServlet  {
     ParserController.parse(istr, stream_name, seq_group);
   }
 
+  String graph_dir_suffix = ".graphs.seqs";
   /**
    *   If current_file is directory:
    *       if ".seqs" suffix, then handle as graphs
    *       otherwise recursively call on each child files;
    *   if not directory, see if can parse as annotation file.
+   *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
    */
-  public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup seq_group) {
+  public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup seq_group, String type_prefix) {
     String file_name = current_file.getName();
     String file_path = current_file.getPath();
+    String type_name;
+    String new_type_prefix;
+    if (type_prefix == null)  {  // special-casing for top level genome directory, don't want genome name added to type name path
+      type_name = file_name; 
+      new_type_prefix = ""; 
+    }
+    else  { 
+      type_name = type_prefix + file_name;
+      new_type_prefix = type_name + "/";
+    }
+
     // if current file is directory, then descend down into child files
     if (current_file.isDirectory()) {
       //      if (directory_filter.get(file_name) != null) {
       //	System.out.println("filtering out directory: " + current_file);
       //	return;  // screening out anything in filtered directories
       //      }
-      if (file_name.endsWith(".graphs.seqs")) {
+      if (type_name.endsWith(graph_dir_suffix)) {
 	// each file in directory is same annotation type, but for a single seq?
 	// assuming bar files for now, each with starting with seq id?
-	//	graph_name2file.put(file_name, file_path);
-	String graph_name = file_name.substring(0, file_name.length()-12);
+	//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
+	String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 	System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
 	graph_name2dir.put(graph_name, file_path);
       }
@@ -527,22 +540,22 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	System.out.println("checking for annotations in directory: " + current_file);
 	File[] child_files = current_file.listFiles();
 	for (int i=0; i<child_files.length; i++) {
-	  loadAnnotsFromFile(child_files[i], seq_group);
+	  loadAnnotsFromFile(child_files[i], seq_group, new_type_prefix);
 	}
       }
     }
-    else if (file_name.endsWith(".bar"))  {
+    else if (type_name.endsWith(".bar"))  {
       // String file_path = current_file.getPath();
       // special casing so bar files are seen in types request, but not parsed in on startup
       //    (because using graph slicing so don't have to pull all bar file graphs into memory)
-      System.out.println("@@@ adding graph file to types: " + file_name + ", path: " + file_path);
-      graph_name2file.put(file_name, file_path);
+      System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
+      graph_name2file.put(type_name, file_path);
     }
     else {  // current file is not a directory, so try and recognize as annotation file
       InputStream istr = null;
       try {
 	istr = new BufferedInputStream(new FileInputStream(current_file));
-	loadAnnotsFromStream(istr, file_name, seq_group);
+	loadAnnotsFromStream(istr, type_name, seq_group);
       }
       catch (Exception ex)  {
 	ex.printStackTrace();
@@ -1104,8 +1117,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	//    (as it should according to DAS/2 spec)
 	//    special-case exception is when need to know full URL for locating graph data,
 	if (!(query_type.endsWith(".bar"))) {
-	  sindex = query_type.lastIndexOf("/");
-	  if (sindex >= 0) { query_type = query_type.substring(sindex+1); }
+	  String gid = genome.getID();
+	  int gindex = query_type.indexOf(gid);
+	  if (gindex >= 0) {
+	    query_type = query_type.substring(gindex + gid.length() + 1);
+	  }
+	  //	  int pindex = query_type.lastIndexOf("/");
+	  //	  if (pindex >= 0) { query_type = query_type.substring(pindex+1); }
 	}
 
 	String overlap = null;

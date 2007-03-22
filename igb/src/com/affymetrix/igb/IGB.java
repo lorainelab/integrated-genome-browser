@@ -1281,13 +1281,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  the exception text will be appended to the message and
    *  a stack trace might be printed on standard error.
    */
-  public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
-    ErrorHandler.errorPanel(frame, title, message, e);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent, and the title "ERROR".
-   */
   public static void errorPanel(String message) {
     ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, null);
   }

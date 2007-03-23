@@ -24,7 +24,8 @@ import java.util.Comparator;
    *  followed by the axis tier,
    *  followed by {@link TierGlyph#DIRECTION_REVERSE} strands on bottom.  Other strands (
    *  {@link TierGlyph#DIRECTION_BOTH} or
-   *  {@link TierGlyph#DIRECTION_NONE}) can be placed anywhere.
+   *  {@link TierGlyph#DIRECTION_NONE}) are placed at the very top, above the
+   *  forward strands.
    *  see {@link TierLabelManager#setTierSorter(Comparator)}
    */
   public class RealmBasedTierSorter implements Comparator {
@@ -62,6 +63,13 @@ import java.util.Comparator;
       // Tiers in different realms are sorted purley by their realm:
       // lower realm numbers go on top.
       //
+      //  WARNING: 
+      //  It might seem that it would be easy to let tiers with no directionality
+      //  be sorted at arbitrary positions relative to the + and - strands.
+      //  But since most sorting algorithms will only compare nearest neghbors,
+      //  such a comparator can produce states where nearest neighbors are sorted properly
+      //  relative to each other, but the overall sorting is incomplete.
+
       int realm_1 = 1;
       int realm_2 = 1;
       
@@ -71,30 +79,30 @@ import java.util.Comparator;
       switch (dir1) {
         case TierGlyph.DIRECTION_FORWARD:
           realm_1 = 0; break;
+        case TierGlyph.DIRECTION_AXIS:
+          realm_1 = 1; break;
         case TierGlyph.DIRECTION_REVERSE:
           realm_1 = 2; break;
-        case TierGlyph.DIRECTION_AXIS:
         case TierGlyph.DIRECTION_NONE:
         case TierGlyph.DIRECTION_BOTH:
-          realm_1 = 1; break;
         default:
           // default is same as DIRECTION_NONE
-          realm_1 = 1;
+          realm_1 = -1; // -1 means put these at the very top
       }
       
       switch (dir2) {
         case TierGlyph.DIRECTION_FORWARD:
           realm_2 = 0; break;
+        case TierGlyph.DIRECTION_AXIS:
+          realm_2 = 1; break;
         case TierGlyph.DIRECTION_REVERSE:
           realm_2 = 2; break;
-        case TierGlyph.DIRECTION_AXIS:
         case TierGlyph.DIRECTION_NONE:
         case TierGlyph.DIRECTION_BOTH:
-          realm_2 = 1; break;
         default:
-          realm_2 = 1;
+          realm_2 = -1;
       }
- 
+      
       if (realm_1 < realm_2) {
         return -1;
       } else if (realm_1 > realm_2) {

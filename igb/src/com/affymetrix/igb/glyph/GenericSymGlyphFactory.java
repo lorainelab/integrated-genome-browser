@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,6 +22,8 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.igb.genometry.SimpleSymWithProps;
+import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -31,7 +33,6 @@ import com.affymetrix.igb.view.SeqMapView;
  *     (usually the leaf nodes and their parents).
  */
 public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
-  SeqMapView gviewer;
   ExpandedTierPacker packer;
   int min_height = 10;
   int diff_height = 6;
@@ -50,12 +51,28 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
   public void init(Map options) {
   }
 
+  boolean isContainer(SeqSymmetry sym) {
+    if (sym instanceof SymWithProps) {
+      SymWithProps swp = (SymWithProps) sym;
+      if (Boolean.TRUE.equals(swp.getProperty(SimpleSymWithProps.CONTAINER_PROP))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
     createGlyph(sym, smv, false);
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
-    setMapView(smv);
+
+    if (isContainer(sym)) {
+      for (int i=0; i<sym.getChildCount(); i++) {
+        createGlyph(sym.getChild(i), smv, next_to_axis);
+      }
+      return;
+    }
 
     String meth = SeqMapView.determineMethod(sym);
     if (meth == null && sym.getChildCount() <= 0) {
@@ -64,20 +81,16 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
 
     if (meth != null) {
       AnnotStyle style = AnnotStyle.getInstance(meth);
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
+      TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
-      glyphifySymmetry(sym, tiers[tier_index], 0, glyph_height);
+      glyphifySymmetry(smv, sym, tiers[tier_index], 0, glyph_height);
     }
     else {  // keep recursing down into child syms if parent sym has no "method" property
       System.out.println("Ackk, no method for symmetry");
     }
   }
 
-  public void setMapView(SeqMapView smv) {
-    gviewer = smv;
-  }
-
-  public GlyphI glyphifySymmetry(SeqSymmetry insym, GlyphI parent_glyph,
+  public GlyphI glyphifySymmetry(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph,
 			       int depth, int glyph_height) {
 
     NeoMap map = gviewer.getSeqMap();
@@ -108,7 +121,7 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
       // now recursively call glyphifySymmetry on children
       for (int i=0; i<childCount; i++) {
 	SeqSymmetry childsym = insym.getChild(i);
-	glyphifySymmetry(childsym, gl, depth+1, glyph_height);
+	glyphifySymmetry(gviewer, childsym, gl, depth+1, glyph_height);
       }
       gl.pack(map.getView());
     }

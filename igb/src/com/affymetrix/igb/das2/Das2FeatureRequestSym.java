@@ -62,6 +62,7 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
     overlap_span = new LeafSingletonSymmetry(overlap);
     inside_span = inside;
     aseq = overlap_span.getBioSeq();
+    this.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
   }
 
   public String getType() { return das2_type.getID(); }

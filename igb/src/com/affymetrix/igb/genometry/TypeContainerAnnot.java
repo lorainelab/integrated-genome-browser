@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -27,6 +27,7 @@ public class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym  
     super();
     this.type = type;
     this.setProperty("method", type);
+    this.setProperty(CONTAINER_PROP, Boolean.TRUE);
   }
   
   public String getType()  { return type; }

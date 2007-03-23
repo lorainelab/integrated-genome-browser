@@ -25,6 +25,13 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    *  be applied to property values in setProperty().
    */
   static boolean OPT_CONVERT_OBJECTS = false;
+  
+  /** Set this property to Boolean.TRUE to indicate that the Symmetry is being
+   *  used simply to group other Symmetry's together, and that this Symmetry
+   *  does not represent any biological feature and should typically not be drawn
+   *  as a glyph.
+   */
+  public static final String CONTAINER_PROP = "container sym";
 
   protected Map props;
 

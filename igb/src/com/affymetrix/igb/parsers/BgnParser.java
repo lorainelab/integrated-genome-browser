@@ -188,6 +188,7 @@ public class BgnParser implements AnnotationWriter  {
 	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
 	      parent_sym.setProperty("method", annot_type);
 	      parent_sym.setProperty("preferred_formats", pref_list);
+              parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	      annots.add(parent_sym);
 	      chrom2sym.put(chrom_name, parent_sym);
 	    }

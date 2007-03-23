@@ -335,6 +335,7 @@ public class ScoredIntervalParser {
 	}
 
 	container.setProperty("method", unique_container_name);
+        container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
         // Force the AnnotStyle for the container to have glyph depth of 1
         AnnotStyle style = AnnotStyle.getInstance(unique_container_name);

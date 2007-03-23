@@ -284,6 +284,7 @@ public class BpsParser implements AnnotationWriter  {
 	    query_parent_sym.addSpan(new SimpleSeqSpan(0, queryseq.getLength(), queryseq));
 	    query_parent_sym.setProperty("method", annot_type);
 	    query_parent_sym.setProperty("preferred_formats", pref_list);
+            query_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	    queryseq.addAnnotation(query_parent_sym);
 	    query2sym.put(qname, query_parent_sym);
 	  }
@@ -298,6 +299,7 @@ public class BpsParser implements AnnotationWriter  {
 	    target_parent_sym.addSpan(new SimpleSeqSpan(0, targetseq.getLength(), targetseq));
 	    target_parent_sym.setProperty("method", annot_type);
 	    target_parent_sym.setProperty("preferred_formats", pref_list);
+            target_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	    targetseq.addAnnotation(target_parent_sym);
 	    target2sym.put(tname, target_parent_sym);
 	  }

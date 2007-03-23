@@ -173,6 +173,7 @@ public class Bprobe1Parser implements AnnotationWriter {
 	container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq) );
 	container_sym.setProperty("method", annot_type);
 	container_sym.setProperty("preferred_formats", pref_list);
+        container_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
         for (int i = 0; i < probeset_count; i++) {
           int nid = dis.readInt();

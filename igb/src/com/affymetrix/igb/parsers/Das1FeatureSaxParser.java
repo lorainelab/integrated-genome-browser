@@ -479,6 +479,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           MutableSeqSpan gpspan = new SimpleMutableSeqSpan(current_sym.getStart(),
                                                            current_sym.getEnd(), aseq);
           grandparent_sym.setProperty("method", feattype);
+          grandparent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
           grandparent_sym.addSpan(gpspan);
           typehash.put(feattype, grandparent_sym);
           aseq.addAnnotation(grandparent_sym);

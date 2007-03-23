@@ -435,6 +435,7 @@ public class PSLParser implements AnnotationWriter  {
       } else {
         parent_sym.setProperty("preferred_formats", psl_pref_list);
       }
+      parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
       seq.addAnnotation(parent_sym);
       type2csym.put(type, parent_sym);
     }

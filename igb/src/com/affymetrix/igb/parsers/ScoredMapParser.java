@@ -45,6 +45,7 @@ public class ScoredMapParser {
       parent.setID(unique_container_name);
       parent.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
       parent.setProperty("method", stream_name);
+      parent.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
       // assuming first line is header
       line = br.readLine();

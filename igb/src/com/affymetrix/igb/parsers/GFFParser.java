@@ -552,6 +552,7 @@ public class GFFParser implements AnnotationWriter  {
       parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
       parent_sym.setProperty("method", meth);
       parent_sym.setProperty("preferred_formats", pref_list);
+      parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
       if (annotate_seq) {
 	seq.addAnnotation(parent_sym);
       }

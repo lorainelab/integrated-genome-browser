@@ -128,6 +128,7 @@ import com.affymetrix.igb.genometry.*;
 	  psym = new SimpleSymWithProps();
 	  seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
 	  psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+          ((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	  id2psym.put(seqid, psym);
 	  parent_syms.add(psym);
 	}
@@ -201,6 +202,7 @@ import com.affymetrix.igb.genometry.*;
       System.out.println("seqid: " + seqids[i] + ", rpts: " + rpt_counts[i]);
       SimpleSymWithProps psym = new SimpleSymWithProps();
       psym.setProperty("type", annot_type);
+      psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
       psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq));
       if (annot_seq && (aseq != null))  {
 	aseq.addAnnotation(psym);

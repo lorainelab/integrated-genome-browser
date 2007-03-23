@@ -165,9 +165,10 @@ public class BsnpParser {
 	// therefore just taking first annotation
 	// need to debug this eventually...
 	if (acount >= 1) { 
-	  MutableSeqSymmetry new_psym = new SimpleSymWithProps();
+	  SimpleSymWithProps new_psym = new SimpleSymWithProps();
 	  MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
 	  new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+          new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	  for (int k=0; k<acount; k++) {
 	    SeqSymmetry psym = aseq.getAnnotation(k);
 	    int child_count = psym.getChildCount();
@@ -213,6 +214,7 @@ public class BsnpParser {
 	  psym = new SimpleSymWithProps();
 	  MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
 	  psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+          ((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	  id2psym.put(seqid, psym);
 	  parent_syms.add(psym);
 	}
@@ -279,6 +281,7 @@ public class BsnpParser {
 	//	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
 	SimpleSymWithProps psym = new SimpleSymWithProps();
 	psym.setProperty("type", annot_type);
+        psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	if (aseq != null) { psym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq)); }
 	else { psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq)); }
 	if (annot_seq && (aseq != null))  {

@@ -210,6 +210,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq) );
 	container_sym.setProperty("method", annot_type);
 	container_sym.setProperty("preferred_formats", pref_list);
+        container_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
 
 	if (USE_FULL_HIERARCHY) {
@@ -722,6 +723,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
 	    container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
 	    container.setProperty("method", annot_type);
 	    container.setProperty("preferred_formats", pref_list);
+            container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	    seq2container.put(aseq, container);
 	  }
 	  String tid = tcluster.getID();

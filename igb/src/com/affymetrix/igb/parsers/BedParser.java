@@ -369,6 +369,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	  parent_sym = new SimpleSymWithProps();
 	  parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
 	  parent_sym.setProperty("method", type);
+          parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	  seq.addAnnotation(parent_sym);
 	  type2csym.put(type, parent_sym);
 	}

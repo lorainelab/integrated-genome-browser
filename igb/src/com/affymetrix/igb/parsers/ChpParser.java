@@ -197,6 +197,7 @@ public class ChpParser {
 	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data, int_entries);
 	chp_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
 	chp_sym.setProperty("method", type_name);
+        chp_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 	chp_sym.setID(type_name);
 	aseq.addAnnotation(chp_sym);
 	results.add(chp_sym);

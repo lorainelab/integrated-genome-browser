@@ -94,6 +94,8 @@ public class QuickLoadView2 extends JComponent
 
   int pref_tab_number = -1;
 
+  boolean auto_select_first_seq_in_group = true;
+  
   static {
     default_types.put(default_annot_name, default_annot_name);
     default_types.put("cytoBand", "cytoBand");
@@ -230,13 +232,24 @@ public class QuickLoadView2 extends JComponent
       String old_group_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_GENOME, null);
       String old_seq_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_SEQ, null);
 
+      auto_select_first_seq_in_group = false; 
+        // Don't let the group selection trigger an automatic seq selection
+        // because that could happen during start-up and would always force the breif display
+        // of chr1 (or whatever chr is first in the group) before going to the old_group_id.
       AnnotatedSeqGroup group = gmodel.getSeqGroup(old_group_id);
       gmodel.setSelectedSeqGroup(group); // causes a GroupSelectionEvent
       if (group != null && group == gmodel.getSelectedSeqGroup()) {
         MutableAnnotatedBioSeq seq = group.getSeq(old_seq_id);
-        gmodel.setSelectedSeq(seq); // causes a SeqSelectionEvent
+        if (seq != null) {
+          gmodel.setSelectedSeq(seq); // causes a SeqSelectionEvent
+        } else {
+          if (group.getSeqCount() > 0) {
+            gmodel.setSelectedSeq(group.getSeq(0));
+          }
+        }
       }
       types_panel.invalidate(); // make sure display gets updated
+      auto_select_first_seq_in_group = true;
     }
 
     else if ((src == genomeCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
@@ -376,13 +389,14 @@ public class QuickLoadView2 extends JComponent
               cb.setSelected(loaded);
               cb.setText(getCheckboxTitle(loaded, filename));
 
-              // Now force display of the current seq (or the first seq in the group)
-              AnnotatedBioSeq seq = gmodel.getSelectedSeq();
-              if (seq == null && current_group.getSeqCount() > 0) {
-                seq =  current_group.getSeq(0);
-              }
-              if (seq != null) {
-                gviewer.setAnnotatedSeq(seq, true, true, false);
+              if (auto_select_first_seq_in_group) {
+                AnnotatedBioSeq seq = gmodel.getSelectedSeq();
+                if (seq == null && current_group.getSeqCount() > 0) {
+                  seq =  current_group.getSeq(0);
+                }
+                if (seq != null) {
+                  gviewer.setAnnotatedSeq(seq, true, true, false);
+                }
               }
             }
           }

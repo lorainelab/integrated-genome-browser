@@ -19,10 +19,9 @@ import com.affymetrix.igb.genometry.GFF3Sym;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SymWithProps;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
   
@@ -62,7 +61,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     return (StyleElement) stylename2styleElement.get(name);
   }
   
-  public StyleElement createStyle(String name, String extends_name) {
+  public StyleElement createStyle(String name, String extends_name, boolean add_to_index) {
     StyleElement se = null;
     
     if (extends_name != null) {
@@ -75,7 +74,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
       se = new StyleElement();
     }
 
-    if (name != null) {
+    if (add_to_index && name != null && name.trim().length() > 0) {
       se.name = name;
       stylename2styleElement.put(name, se);
     }
@@ -95,7 +94,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
 
   /**
    *  Tries to find a styleElement for the given seq symmetry.
-   *  First looks for a styleElement stored in sym.getProperty(SYM_TO_styleElement_PROPERTY_KEY).
+   *  First looks for a styleElement stored in sym.getProperty(SYM_TO_STYLE_PROPERTY_KEY).
    *  Second looks for a match by feature type (such as an ontology term).
    *  Third looks for a match by feature "method" (i.e. the tier name).
    */
@@ -109,21 +108,27 @@ public class Stylesheet implements Cloneable, XmlAppender {
       }
     }
     
-    if (sym instanceof Das2FeatureRequestSym) {
-      Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
-      String type = d2r.getType();
-      styleElement = getstyleElementForType(type);
-    } else if (sym instanceof GFF3Sym) {
-      GFF3Sym gff = (GFF3Sym) sym;
-      String type = gff.getFeatureType();
-      styleElement = getstyleElementForType(type);
+    if (styleElement == null) {
+      if (sym instanceof Das2FeatureRequestSym) {
+        Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
+        String type = d2r.getType();
+        styleElement = getStyleElementForType(type);
+      } else if (sym instanceof GFF3Sym) {
+        GFF3Sym gff = (GFF3Sym) sym;
+        String type = gff.getFeatureType();
+        styleElement = getStyleElementForType(type);
+      }
     }
     
     if (styleElement == null) {
       styleElement = getstyleElementForMethod(SmartAnnotBioSeq.determineMethod(sym));
     }
     
-    System.out.println("XmlStylesheetParser: >> styleElement for sym "+sym+":  " + styleElement);
+    if (styleElement == null) {
+      styleElement = getDefaultstyleElement();
+    }
+    
+//    System.out.println("XmlStylesheetParser: >> styleElement for sym "+sym+":  " + styleElement);
     return styleElement;
   }
   
@@ -157,13 +162,13 @@ public class Stylesheet implements Cloneable, XmlAppender {
     
     StyleElement styleElement = getStyleByName(stylename);
     
-    System.out.println(">> styleElement for method "+meth+":  " + styleElement);
+//    System.out.println(">> styleElement for method "+meth+":  " + styleElement);
     return styleElement;
   }
   
-  public StyleElement getstyleElementForType(String type){
+  public StyleElement getStyleElementForType(String type){
     StyleElement styleElement = (StyleElement) type2stylename.get(type);
-    System.out.println(">> styleElement for type "+type+":  " + styleElement);
+//    System.out.println(">> styleElement for type "+type+":  " + styleElement);
     return styleElement;
   }
   
@@ -205,10 +210,11 @@ public class Stylesheet implements Cloneable, XmlAppender {
     
     Iterator r_iter = regex2stylename.keySet().iterator();
     while (r_iter.hasNext()) {
-      String regex_name = (String) r_iter.next();
-      String style_name = (String) regex2stylename.get(regex_name);
+      Pattern regex = (Pattern) r_iter.next();
+      String regex_string = regex.pattern();
+      String style_name = (String) regex2stylename.get(regex);
       sb.append(indent).append(indent + "  ").append("<METHOD_ASSOCIATION ");
-      XmlStylesheetParser.appendAttribute(sb, "method", regex_name);
+      XmlStylesheetParser.appendAttribute(sb, "method", regex_string);
       XmlStylesheetParser.appendAttribute(sb, "style", style_name);
       XmlStylesheetParser.appendAttribute(sb, "match_by", "regex");
       sb.append("/>\n");

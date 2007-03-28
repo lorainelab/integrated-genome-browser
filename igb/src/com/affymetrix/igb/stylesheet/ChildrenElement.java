@@ -38,7 +38,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
 //  
 //  String child_arrangement = ARRANGEMENT_CENTER;
   
-  String child_container = ".";
+  String childContainer = ".";
   String position; // becomes default position for children glyphs if they don't override it
   List matchElements;
   StyleElement styleElement;
@@ -62,7 +62,13 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   public ChildrenElement() {
   }
   
-  public void doChildren(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl) {
+  /** Draws the children symmetries as glyphs. 
+   *  @param insym the parent sym
+   *  @param gl the glyph corresponding to the parent sym.  By default, children
+   *   symmetries are drawn as glyphs inside this parent glyph, but that can
+   *   change depending on the setting of {@link #childContainer}.
+   */
+  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl) {
     int childCount = insym.getChildCount();
     for (int i=0; i<childCount; i++) {
       SeqSymmetry childsym = insym.getChild(i);
@@ -93,16 +99,16 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   GlyphI findContainer(GlyphI gl) {
     GlyphI container_glyph = gl;
     
-    if (".".equals(child_container)) {
+    if (".".equals(childContainer)) {
       container_glyph = gl;
-    } else if ("..".equals(child_container)) {
+    } else if ("..".equals(childContainer)) {
       container_glyph = parent(gl);
-    } else if ("../..".equals(child_container)) {
+    } else if ("../..".equals(childContainer)) {
       container_glyph = parent(parent(gl));
       
       /// etc.
       
-    } else if ("/".equals(child_container)) {
+    } else if ("/".equals(childContainer)) {
       container_glyph = gl.getParent();
       while (!( container_glyph instanceof TierGlyph)) {
         container_glyph = parent(gl);
@@ -140,7 +146,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append(indent).append("<CHILDREN ");
-    XmlStylesheetParser.appendAttribute(sb, "container", child_container);
+    XmlStylesheetParser.appendAttribute(sb, "container", childContainer);
     XmlStylesheetParser.appendAttribute(sb, "position", position);
     sb.append(">\n");
 
@@ -162,5 +168,21 @@ public class ChildrenElement implements Cloneable, XmlAppender {
 
     sb.append(indent).append("</CHILDREN>\n");
     return sb;
+  }
+
+  public String getChildContainer() {
+    return this.childContainer;
+  }
+
+  public void setChildContainer(String child_container) {
+    this.childContainer = child_container;
+  }
+
+  public String getPosition() {
+    return this.position;
+  }
+
+  public void setPosition(String position) {
+    this.position = position;
   }
 }

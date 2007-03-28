@@ -14,9 +14,12 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.Propertied;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasLoader;
 import java.awt.Color;
 import java.io.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
@@ -28,18 +31,49 @@ import org.apache.xerces.parsers.DOMParser;
 public class XmlStylesheetParser {
 
   Stylesheet stylesheet = new Stylesheet();
-    
-  public Stylesheet parse(File fl) {
+  static Stylesheet system_stylesheet = null;
+  static Stylesheet user_stylesheet = null;
+  
+  // This resource should in the top-level igb source directory, or top level of jar file
+  static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
+
+  public static void main(String args[]) {
+    Stylesheet s = getSystemStylesheet();
+    System.out.println("Got it? " + ( s != null));
+  }
+  
+  public static synchronized Stylesheet getSystemStylesheet() {
+    if (system_stylesheet == null) {
+      try {
+        XmlStylesheetParser parser = new XmlStylesheetParser();
+        // If using class.getResource... use name beginning with "/"
+        InputStream istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
+        // If using getContextClassLoader... use name NOT beginning with "/"
+        //InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(system_stylesheet_resource_name);
+        system_stylesheet = parser.parse(istr);
+      } catch (Exception e) {
+        System.out.println("ERROR: Couldn't initialize system stylesheet.");
+        e.printStackTrace();
+        system_stylesheet = null;
+      }
+    }
+    if (system_stylesheet == null) {
+      system_stylesheet = new Stylesheet();
+    }
+    return system_stylesheet;
+  }
+  
+  public static Stylesheet getUserStylesheet() {
+    return new Stylesheet();
+  }
+  
+  public Stylesheet parse(File fl) throws IOException {
     FileInputStream fistr = null;
     BufferedInputStream bistr = null;
     try {
       fistr = new FileInputStream(fl);
       bistr = new BufferedInputStream(fistr);
       stylesheet = parse(bistr);
-    }
-    catch(Exception ex) {
-      System.out.println("ERROR: Exception processing stylesheet file "+ex.toString());
-      ex.printStackTrace();
     }
     finally {
       if (bistr != null) try {bistr.close();} catch (Exception e) {}
@@ -48,20 +82,13 @@ public class XmlStylesheetParser {
     return stylesheet;
   }
 
-  public Stylesheet parse(InputStream istr) {
-    try {
-      InputSource insrc = new InputSource(istr);
-      parse(insrc);
-    }
-    catch (Exception ex) {
-      System.err.println("ERROR while reading stylesheet.");
-      System.err.println("  "+ex.toString());
-      ex.printStackTrace();
-    }
+  public Stylesheet parse(InputStream istr) throws IOException {
+    InputSource insrc = new InputSource(istr);
+    parse(insrc);
     return stylesheet;
   }
 
-  public Stylesheet parse(InputSource insource) {
+  public Stylesheet parse(InputSource insource) throws IOException {
     try {
       //DOMParser parser = new DOMParser();
       DOMParser parser = DasLoader.nonValidatingParser();
@@ -70,19 +97,22 @@ public class XmlStylesheetParser {
       Document prefsdoc = parser.getDocument();
       processDocument(prefsdoc);
     }
+    catch (IOException ioe) {
+      throw ioe;
+    }
     catch (Exception ex) {
-      System.err.println("ERROR while reading stylesheet.");
-      System.err.println("  "+ex.toString());
-      ex.printStackTrace();
+      IOException ioe = new IOException("Error processing stylesheet file");
+      ioe.initCause(ex);
+      throw ioe;
     }
     return stylesheet;
   }
 
-  public void processDocument(Document prefsdoc) {
+  public void processDocument(Document prefsdoc) throws IOException {
     Element top_element = prefsdoc.getDocumentElement();
     String topname = top_element.getTagName();
-    if (! (topname.equalsIgnoreCase("stylesheet"))) {
-      System.err.println("not a stylesheet file -- can't parse");
+    if (! (topname.equalsIgnoreCase("igb_stylesheet"))) {
+      throw new IOException("Can't parse file: Initial Element is not <IGB_STYLESHEET>.");
     }
     NodeList children = top_element.getChildNodes();
 
@@ -121,11 +151,11 @@ public class XmlStylesheetParser {
     System.out.println("Stylesheet: Not yet implemented: " + s);
   }
   
-  void processImport(Element el) {
+  void processImport(Element el) throws IOException {
     notImplemented("<IMPORT>");
   }
 
-  void processAssociations(Element associations) {
+  void processAssociations(Element associations) throws IOException {
 
     NodeList children = associations.getChildNodes();
 
@@ -145,7 +175,13 @@ public class XmlStylesheetParser {
           String style = el.getAttribute("style");
           String match_by = el.getAttribute("match_by");
           if ("regex".equalsIgnoreCase(match_by)) {
-            stylesheet.regex2stylename.put(method, style);
+            try {
+              Pattern pattern = Pattern.compile(method);
+              stylesheet.regex2stylename.put(pattern, style);
+            } catch (PatternSyntaxException pse) {
+              throw new IOException("ERROR in stylesheet: Regular Expression not valid: '" +
+                  method + "'");
+            }
           } else if ("exact".equalsIgnoreCase(match_by) || match_by == null) {
             stylesheet.meth2stylename.put(method, style);
           } else {
@@ -159,7 +195,7 @@ public class XmlStylesheetParser {
     }
   }
 
-  void processStyles(Element styleNode) {
+  void processStyles(Element styleNode) throws IOException {
     NodeList children = styleNode.getChildNodes();
 
     for (int i=0; i<children.getLength(); i++) {
@@ -169,7 +205,7 @@ public class XmlStylesheetParser {
         Element el = (Element) child;
         
         if (name.equalsIgnoreCase("style")) {
-          processStyle(el);
+          processStyle(el, true);
         }
       }
     }
@@ -180,13 +216,13 @@ public class XmlStylesheetParser {
     return Color.RED;
   }
   
-  StyleElement processStyle(Element styleel) {
+  StyleElement processStyle(Element styleel, boolean top_level) throws IOException {
 
 
     String styleName = styleel.getAttribute("name");
     String ext = styleel.getAttribute("extends");
 
-    StyleElement se = stylesheet.createStyle(styleName, ext);
+    StyleElement se = stylesheet.createStyle(styleName, ext, top_level);
     
     Color c1 = string2Color(styleel.getAttribute("color"));
     Color c2 = string2Color(styleel.getAttribute("color2"));
@@ -222,7 +258,7 @@ public class XmlStylesheetParser {
     return se;
   }
   
-  GlyphElement processGlyph(Element glyphel) {
+  GlyphElement processGlyph(Element glyphel) throws IOException {
     GlyphElement ge = new GlyphElement();
 
     String type = glyphel.getAttribute("type");
@@ -255,7 +291,7 @@ public class XmlStylesheetParser {
     return ge;
   }
   
-  ChildrenElement processChildrenElement(Element childel) {
+  ChildrenElement processChildrenElement(Element childel) throws IOException {
     ChildrenElement ce = new ChildrenElement();
     
     NodeList children = childel.getChildNodes();
@@ -266,7 +302,7 @@ public class XmlStylesheetParser {
         Element el = (Element) child;
         
         if (name.equalsIgnoreCase("style")) {
-          StyleElement se = processStyle(el);
+          StyleElement se = processStyle(el, false);
           ce.setStyleElement(se);
         } else if (name.equalsIgnoreCase("match")) {
           MatchElement me = processMatchElement(el);
@@ -280,7 +316,7 @@ public class XmlStylesheetParser {
 
   }
   
-  MatchElement processMatchElement(Element matchel) {
+  MatchElement processMatchElement(Element matchel) throws IOException {
     MatchElement me = new MatchElement();
     NodeList children = matchel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
@@ -290,7 +326,7 @@ public class XmlStylesheetParser {
         Element el = (Element) child;
         
         if (name.equalsIgnoreCase("style")) {
-          StyleElement se = processStyle(el);
+          StyleElement se = processStyle(el, false);
           me.setStyle(se);
         } else if (name.equalsIgnoreCase("match")) {
           MatchElement me2 = processMatchElement(el);
@@ -303,7 +339,7 @@ public class XmlStylesheetParser {
     return me;
   }
   
-  void applyProperties(Element el, Propertied proper) {
+  void applyProperties(Element el, Propertied proper) throws IOException {
     NodeList children = el.getChildNodes();
 
     for (int i=0; i<children.getLength(); i++) {
@@ -315,7 +351,7 @@ public class XmlStylesheetParser {
           String key = prop_el.getAttribute("key");
           String value = prop_el.getAttribute("value");
           if (key == null || proper == null) {
-            System.out.println("ERROR: key or value of <PROPERTY> is null");
+             throw new IOException("ERROR: key or value of <PROPERTY> is null");
           }
           proper.setProperty(key, value);
         }

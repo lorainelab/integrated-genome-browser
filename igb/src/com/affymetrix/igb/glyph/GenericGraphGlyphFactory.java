@@ -122,7 +122,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     
     Rectangle2D cbox = map.getCoordBounds();
     graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-    map.setDataModel(graph_glyph, graf); // side-effect of graph_glyph.setInfo(graf)
+    map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 
     // graph_glyph.setFasterDraw(true);
     // graph_glyph.setCalcCache(true);

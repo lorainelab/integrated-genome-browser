@@ -294,6 +294,11 @@ public class XmlStylesheetParser {
   ChildrenElement processChildrenElement(Element childel) throws IOException {
     ChildrenElement ce = new ChildrenElement();
     
+    String position = childel.getAttribute("position");
+    ce.setPosition(position);
+    String container = childel.getAttribute("container");
+    ce.setChildContainer(container);
+
     NodeList children = childel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);

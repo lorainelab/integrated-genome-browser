@@ -15,6 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.view.SeqMapView;
@@ -48,7 +49,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
   int glyph_height = 10;
   static int diff_height = 3;
   
-  Color color;
+  Color color = Color.CYAN;
   
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
@@ -76,6 +77,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
   }
 
   public void setPosition(String position) {
+    this.position = position;
   }
 
   public String getType() {
@@ -118,19 +120,22 @@ public class GlyphElement implements Cloneable, XmlAppender {
   
   public static GlyphI makeGlyph(String type) {
     GlyphI gl = null;
-    if (type == TYPE_BOX) {
+    if (TYPE_BOX.equals(type)) {
       gl = new EfficientOutlineContGlyph();
-    } else if (type == TYPE_FILLED_BOX) {
+    } else if (TYPE_FILLED_BOX.equals(type)) {
       gl = new EfficientOutlinedRectGlyph(); // shouldn't be used as a container
-    } else if (type == TYPE_LINE) {
+    } else if (TYPE_LINE.equals(type)) {
       gl = new EfficientLineContGlyph();
-    } else if (type == TYPE_NOT_DRAWN) {
+    } else if (TYPE_NOT_DRAWN.equals(type)) {
       gl = null; //TODO: Needs to be an invisible non-null glyph ?
+    } else {
+      // this will be caught by knownGlyphType() method
+      System.out.println("GLYPH Type Not Known: " + type);
     }
     return gl;
   }
   
-  public GlyphI glyphifySymmetry(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph) {
 
     if (insym == null) { return null; }
 
@@ -145,9 +150,19 @@ public class GlyphElement implements Cloneable, XmlAppender {
 
       gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
       gl.setColor(color);
-    
+
       addToParent(parent_glyph, gl, this.position);
       gl.setInfo(insym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
+      
+      if (children != null) {
+        //TODO; should we use "insym" or "transformed_sym" here?
+        // insym should always work
+        // transformed_sym should work faster (avoids redundant transformations),
+        // but may not work in some cases where the earlier transform has
+        // changed the number of levels of symmetry.
+        children.childSymsToGlyphs(gviewer, insym, gl);
+      }
     }
 
     return gl;

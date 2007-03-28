@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -104,15 +104,7 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
       cov.setCoords(0, 0, coordseq.getLength(), glyph_height);
       ftier.addChild(cov);
 
-      // make sure set data model to the original sym (if transform was needed then tsym will 
-      //    probably be a DerivedSeqSymmetry with a reference to the original sym
-      if (tsym instanceof DerivedSeqSymmetry)  {
-	map.setDataModel(cov, ((DerivedSeqSymmetry)tsym).getOriginalSymmetry());
-      }
-      else {
-	map.setDataModel(cov, tsym);
-      }
-      
+      map.setDataModelFromOriginalSym(cov, tsym);      
     }
   }
 

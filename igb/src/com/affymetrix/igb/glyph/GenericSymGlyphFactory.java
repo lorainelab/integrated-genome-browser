@@ -125,7 +125,7 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
       }
       gl.pack(map.getView());
     }
-    gl.setInfo(insym);
+    gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
     return gl;
   }
 

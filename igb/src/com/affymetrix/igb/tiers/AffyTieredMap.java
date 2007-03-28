@@ -585,7 +585,7 @@ public class AffyTieredMap extends NeoMap {
    */
   public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
     if (sym instanceof DerivedSeqSymmetry)  {
-      super.setDataModel(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
+      setDataModelFromOriginalSym(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
     }
     else {
       super.setDataModel(g, sym);

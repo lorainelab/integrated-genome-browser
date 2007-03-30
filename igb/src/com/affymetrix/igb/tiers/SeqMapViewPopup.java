@@ -205,9 +205,20 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
+  
+  Action delete_action = new AbstractAction("Delete selected tiers") {
+    public void actionPerformed(ActionEvent e) {
+      java.util.List current_tiers = handler.getSelectedTierLabels();
+      if (IGB.confirmPanel("Really remove selected tiers?")) {
+        removeTiers(current_tiers);
+      }
+    }
+  };
+  
   JMenu showMenu = new JMenu("Show...");
   JMenu changeMenu = new JMenu("Change...");
   JMenu strandsMenu = new JMenu("Strands...");
+  JMenuItem deleteMI = new JMenuItem("Delete");
   boolean curation_enabled = UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations);
 
   ActionToggler at1;
@@ -484,7 +495,44 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     refreshMap(false);
   }
+  
+  void removeTiers(java.util.List tier_labels) {
+    gmodel.setSelectedSymmetries(Collections.EMPTY_LIST, this);
+    Set types_to_remove = new TreeSet();
+    
+    for (int i=0; i<tier_labels.size(); i++) {
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);      
 
+      java.util.List graphs = handler.getContainedGraphs(tlg);
+      
+      if (graphs.isEmpty()) {
+        IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
+        String type = style.getUniqueName();
+        if (type != null) {
+          // coordinates tier has null type
+          types_to_remove.add(type);
+        }
+      } else {
+        Iterator graphs_iter = graphs.iterator();
+        while (graphs_iter.hasNext()) {
+          GraphGlyph gg =(GraphGlyph) graphs_iter.next();
+          String id =  gg.getGraphState().getTierStyle().getUniqueName();
+          if (id != null) {
+            types_to_remove.add(id);
+          }
+        }
+      }
+    }
+
+    Iterator iter = types_to_remove.iterator();
+    while (iter.hasNext()) {
+      String type = (String) iter.next();
+      if (type != null) {
+        gmodel.getSelectedSeqGroup().removeType(type);
+      }
+    }
+    refreshMap(true);
+  }
   
   /*
   public void outputWritebackTestFile(OutputStream ostr) {
@@ -685,7 +733,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     
     for (int i=0; i<labels.size(); i++) {
       TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
-      TierGlyph glyph = (TierGlyph) label.getInfo();
+      TierGlyph glyph = label.getReferenceTier();
       IAnnotStyle style = glyph.getAnnotStyle();
       if (style instanceof AnnotStyle) {
         AnnotStyle astyle = (AnnotStyle) style;
@@ -795,6 +843,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (das2_writeback_enabled && curation_enabled) {
       save_menu.add(write_das_action);
     }
+    
+    popup.add(delete_action);
 
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);

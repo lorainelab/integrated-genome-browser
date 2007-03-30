@@ -30,6 +30,7 @@ import java.util.*;
 public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     
   Stylesheet stylesheet = null;
+  PropertyMap propMap = new PropertyMap();
   
   public XmlStylesheetGlyphFactory(Stylesheet ss) {
     this.stylesheet = ss;
@@ -55,6 +56,11 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
   
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer, boolean next_to_axis) {
 
+    // I'm assuming that for container glyphs, the container method is the
+    // same as the contained items method
+    String meth = SeqMapView.determineMethod(sym);
+    AnnotStyle style = AnnotStyle.getInstance(meth);
+    
     if (isContainer(sym)) {
       for (int i=0; i<sym.getChildCount(); i++) {
         createGlyph(sym.getChild(i), gviewer, next_to_axis);
@@ -62,15 +68,17 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
       return;
     }
     
-    StyleElement se = stylesheet.getstyleElementForSym(sym);
+    StyleElement se = stylesheet.getStyleElementForSym(sym);
 
-    String meth = SeqMapView.determineMethod(sym);
-
-    AnnotStyle style = AnnotStyle.getInstance(meth);
     TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
     int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
     
-    se.symToGlyph(gviewer, sym, tiers[tier_index]);
+    propMap.clear();
+    // properties set in this top-level propMap will be used as defaults,
+    // the stylesheet may over-ride them.
+    propMap.put("color", style.getColor());
+    
+    se.symToGlyph(gviewer, sym, tiers[tier_index], propMap);
   }
 
 }

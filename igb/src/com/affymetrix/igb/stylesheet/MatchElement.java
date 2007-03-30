@@ -25,6 +25,7 @@ public class MatchElement implements Cloneable, XmlAppender {
 //  <!ELEMENT MATCH (MATCH*, STYLE)>
   
   StyleElement styleElement;
+  PropertyMap propertyMap;
   List subMatchList = new ArrayList();
   
   public Object clone() throws CloneNotSupportedException {
@@ -36,10 +37,14 @@ public class MatchElement implements Cloneable, XmlAppender {
       MatchElement new_me = (MatchElement) me.clone();
       clone.subMatchList.add(new_me);
     }
+    if (propertyMap != null) {
+      clone.propertyMap = (PropertyMap) this.propertyMap.clone();
+    }
     return clone;
   }
 
-  public MatchElement() {
+  public MatchElement(PropertyMap pm) {
+    this.propertyMap = new PropertyMap(pm);
   }
   
   /**

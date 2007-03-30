@@ -14,10 +14,12 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.genometry.GFF3Sym;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -61,27 +63,30 @@ public class Stylesheet implements Cloneable, XmlAppender {
     return (StyleElement) stylename2styleElement.get(name);
   }
   
-  public StyleElement createStyle(String name, String extends_name, boolean add_to_index) {
-    StyleElement se = null;
-    
-    if (extends_name != null) {
-      StyleElement original = (StyleElement) getStyleByName(extends_name);
-      if (original != null) {
-        se = easyClone(getStyleByName(extends_name));
-      }
-    }
+  /** Creates a new style.  If one with the given name already exists, it will
+   *  be obliterated and replaced by this new one.
+   */
+  public StyleElement createStyle(String name, PropertyMap pm, boolean add_to_index) {
+
+    StyleElement se = getStyleByName(name);
     if (se == null) {
-      se = new StyleElement();
+      se = new StyleElement(pm);
+      se.name = name;
+    }
+    
+    if (add_to_index) {
+      addToIndex(se);
     }
 
-    if (add_to_index && name != null && name.trim().length() > 0) {
-      se.name = name;
-      stylename2styleElement.put(name, se);
-    }
-    se.extends_name = extends_name;
     return se;
   }
 
+  public void addToIndex(StyleElement se) {
+    if (se.name != null && se.name.trim().length() > 0) {
+      stylename2styleElement.put(se.name, se);
+    }
+  }
+  
   public static StyleElement easyClone(StyleElement original) {
     try {
       StyleElement cloned = (StyleElement) original.clone();
@@ -98,7 +103,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
    *  Second looks for a match by feature type (such as an ontology term).
    *  Third looks for a match by feature "method" (i.e. the tier name).
    */
-  public StyleElement getstyleElementForSym(SeqSymmetry sym) {
+  public StyleElement getStyleElementForSym(SeqSymmetry sym) {
     StyleElement styleElement = null;
     if (sym instanceof SymWithProps) {
       SymWithProps proper = (SymWithProps) sym;
@@ -128,7 +133,6 @@ public class Stylesheet implements Cloneable, XmlAppender {
       styleElement = getDefaultstyleElement();
     }
     
-//    System.out.println("XmlStylesheetParser: >> styleElement for sym "+sym+":  " + styleElement);
     return styleElement;
   }
   
@@ -160,20 +164,15 @@ public class Stylesheet implements Cloneable, XmlAppender {
       }
     }
     
-    StyleElement styleElement = getStyleByName(stylename);
-    
-//    System.out.println(">> styleElement for method "+meth+":  " + styleElement);
-    return styleElement;
+    return getStyleByName(stylename);
   }
   
   public StyleElement getStyleElementForType(String type){
-    StyleElement styleElement = (StyleElement) type2stylename.get(type);
-//    System.out.println(">> styleElement for type "+type+":  " + styleElement);
-    return styleElement;
+    return (StyleElement) type2stylename.get(type);
   }
   
   public StyleElement getDefaultstyleElement() {
-    return new StyleElement();
+    return new StyleElement(new PropertyMap());
   }  
 
   public StringBuffer appendXML(String indent, StringBuffer sb) {
@@ -236,5 +235,38 @@ public class Stylesheet implements Cloneable, XmlAppender {
     sb.append(indent).append("</STYLESHEET>\n");
     sb.append("\n");
     return sb;
+  }
+  
+  public StyleElement getWrappedStyle(String name, PropertyMap pm) {
+    return new WrappedStyleElement(name, pm);
+  }
+  
+  public class WrappedStyleElement extends StyleElement {
+    public String name;
+    public WrappedStyleElement(String name, PropertyMap pm) {
+      super(pm);
+      this.name = name;
+    }
+    public StyleElement getReferredStyle() {
+      StyleElement se = getStyleByName(name);
+      if (se == null) {
+        se = new StyleElement(null);
+      }
+      return se;
+    }
+    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap parentProperties) {
+      StyleElement se = getReferredStyle();
+      // Note: ignore the parentProperties that were passed-in and
+      // use the wrapper's properties as the parent instead
+
+//      System.out.println("Drawing wrapped sym passing this context: \n" + propertyMap.fullParentHeirarchy("--a--", new StringBuffer()));
+//      System.out.println("Drawing wrapped sym passing this context: \n" + parentProperties.fullParentHeirarchy("--b--", new StringBuffer()));
+      
+      return getReferredStyle().symToGlyph(gviewer, sym, container, propertyMap);
+//      return getReferredStyle().symToGlyph(gviewer, sym, container, parentProperties);
+    }
+    public StringBuffer appendXML(String indent, StringBuffer sb) {
+      return sb.append(indent).append("<USE_STYLE name=\"").append(name).append("\"/>\n");
+    }
   }
 }

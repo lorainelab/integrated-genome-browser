@@ -14,8 +14,10 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.Propertied;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.io.*;
 import java.util.regex.Pattern;
@@ -37,11 +39,6 @@ public class XmlStylesheetParser {
   // This resource should in the top-level igb source directory, or top level of jar file
   static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
 
-  public static void main(String args[]) {
-    Stylesheet s = getSystemStylesheet();
-    System.out.println("Got it? " + ( s != null));
-  }
-  
   public static synchronized Stylesheet getSystemStylesheet() {
     if (system_stylesheet == null) {
       try {
@@ -109,6 +106,7 @@ public class XmlStylesheetParser {
   }
 
   public void processDocument(Document prefsdoc) throws IOException {
+
     Element top_element = prefsdoc.getDocumentElement();
     String topname = top_element.getTagName();
     if (! (topname.equalsIgnoreCase("igb_stylesheet"))) {
@@ -143,12 +141,12 @@ public class XmlStylesheetParser {
     }
   }
   
-  void cantParse(Node n) {
-    System.out.println("Stylesheet: Cannot parse element: " + n.getNodeName());
+  void cantParse(Element n) {
+    System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
   }
 
   void notImplemented(String s) {
-    System.out.println("Stylesheet: Not yet implemented: " + s);
+    System.out.println("WARNING: Stylesheet: Not yet implemented: " + s);
   }
   
   void processImport(Element el) throws IOException {
@@ -195,8 +193,14 @@ public class XmlStylesheetParser {
     }
   }
 
-  void processStyles(Element styleNode) throws IOException {
-    NodeList children = styleNode.getChildNodes();
+  void processStyles(Element stylesNode) throws IOException {
+    NodeList children = stylesNode.getChildNodes();
+
+    //applyProperties(stylesNode, ...);
+    
+    // There could be a top-level property map that applies to the
+    // whole stylesheet, but that isn't implemented now
+    PropertyMap top_level_property_map = null;
 
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
@@ -204,34 +208,80 @@ public class XmlStylesheetParser {
       if (child instanceof Element) {
         Element el = (Element) child;
         
-        if (name.equalsIgnoreCase("style")) {
-          processStyle(el, true);
+        if (name.equalsIgnoreCase("style") || name.equalsIgnoreCase("copy_style")) {
+          processStyle(el, top_level_property_map, true);
         }
       }
     }
   }
 
   Color string2Color(String s) {
-    //TODO;
-    return Color.RED;
+    if (s==null || s.trim().length() == 0) {
+      return null;
+    }
+    if (s.startsWith("Ox")) {
+      return Color.decode(s);
+    } else {
+      return Color.decode("0x"+s);
+    }
   }
   
-  StyleElement processStyle(Element styleel, boolean top_level) throws IOException {
+  StyleElement processStyle(Element styleel, PropertyMap pm, boolean top_level) throws IOException {
 
+    // node name should be STYLE, COPY_STYLE or USE_STYLE
+    String node_name = styleel.getNodeName();
 
-    String styleName = styleel.getAttribute("name");
-    String ext = styleel.getAttribute("extends");
-
-    StyleElement se = stylesheet.createStyle(styleName, ext, top_level);
     
-    Color c1 = string2Color(styleel.getAttribute("color"));
-    Color c2 = string2Color(styleel.getAttribute("color2"));
-    Color c3 = string2Color(styleel.getAttribute("color3"));
-    if (c1 != null) {se.color = c1;}
-    if (c2 != null) {se.color2 = c2;}
-    if (c3 != null) {se.color3 = c3;}
+    StyleElement se = null;
+    if ("STYLE".equalsIgnoreCase(node_name)) {
+      String styleName = styleel.getAttribute("name");
+      se = stylesheet.createStyle(styleName, pm, top_level);
+
+    } else if ("COPY_STYLE".equalsIgnoreCase(node_name)) {
+      String newName = styleel.getAttribute("new_name");
+      String extendsName = styleel.getAttribute("extends");
+      se = stylesheet.getStyleByName(extendsName);
+      
+      if (se == null) {
+        se = stylesheet.createStyle(newName, pm, top_level);
+      } else {
+        se = StyleElement.clone(se, newName);
+      }
+      
+    } else if ("USE_STYLE".equalsIgnoreCase(node_name)) {
+      String styleName = styleel.getAttribute("name");
+      if (styleName==null || styleName.trim().length()==0) {
+        throw new IOException("Can't have a USE_STYLE element with no name");
+      }
+      
+      se = stylesheet.getWrappedStyle(styleName, pm);
+            
+      return se; // do not do any other processing on a USE_STYLE element
+    } else {
+      cantParse(styleel);
+    }
+
+    if (se == null) {
+      cantParse(styleel);
+    }
+
+    if (top_level) {
+      if ((se.getName() == null || se.getName().trim().length() == 0)) {
+        System.out.println("WARNING: Stylesheet: All top-level styles must have a name!");
+      } else {
+        stylesheet.addToIndex(se);
+      }
+    }
     
-    applyProperties(styleel, se.propertyMap);
+//    Color c1 = string2Color(styleel.getAttribute("color"));
+//    Color c2 = string2Color(styleel.getAttribute("color2"));
+//    Color c3 = string2Color(styleel.getAttribute("color3"));
+//
+//    if (c1 != null) {se.propertyMap.setProperty("color", c1);}
+//    if (c2 != null) {se.propertyMap.setProperty("color2", c2);}
+//    if (c3 != null) {se.propertyMap.setProperty("color3", c3);}
+    
+    //applyProperties(styleel, se.propertyMap);
 
     NodeList children = styleel.getChildNodes();
     
@@ -245,10 +295,15 @@ public class XmlStylesheetParser {
         Element el = (Element) child;
         
         if (name.equalsIgnoreCase("glyph")) {
-          GlyphElement ge2 = processGlyph(el);
+          GlyphElement ge2 = processGlyph(el, se.propertyMap);
           se.setGlyphElement(ge2);
         } else if (name.equalsIgnoreCase("property")) {
-          // handled elsewhere
+          processProperty(el, se.propertyMap);
+if ("COPY_STYLE".equalsIgnoreCase(node_name)) {
+System.out.println("------------------ Putting property in a copied style !! " + se.getClass().getName());
+System.out.println("" + se.propertyMap.fullParentHeirarchy("<> ", new StringBuffer()));
+System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
+        }
         } else {
           cantParse(el);
         }
@@ -258,13 +313,15 @@ public class XmlStylesheetParser {
     return se;
   }
   
-  GlyphElement processGlyph(Element glyphel) throws IOException {
-    GlyphElement ge = new GlyphElement();
+  GlyphElement processGlyph(Element glyphel, PropertyMap pm) throws IOException {
+    GlyphElement ge = new GlyphElement(pm);
 
     String type = glyphel.getAttribute("type");
     ge.setType(type);
     String position = glyphel.getAttribute("position");
     ge.setPosition(position);
+
+    //applyProperties(glyphel, ge.propertyMap);
     
     NodeList children = glyphel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
@@ -274,30 +331,31 @@ public class XmlStylesheetParser {
         Element el = (Element) child;
         
         if (name.equalsIgnoreCase("glyph")) {
-          GlyphElement ge2 = processGlyph(el);
+          GlyphElement ge2 = processGlyph(el, ge.propertyMap);
           ge.addGlyphElement(ge2);
         } else if (name.equalsIgnoreCase("children")) {
-          ChildrenElement ce = processChildrenElement(el);
+          ChildrenElement ce = processChildrenElement(el, ge.propertyMap);
           ge.setChildrenElement(ce);
         } else if (name.equalsIgnoreCase("property")) {
-          // dealt with below
+          processProperty(el, ge.propertyMap);
         } else {
           cantParse(el);
         }
       }
-      
-      applyProperties(glyphel, ge.propertyMap);
     }
+
     return ge;
   }
   
-  ChildrenElement processChildrenElement(Element childel) throws IOException {
-    ChildrenElement ce = new ChildrenElement();
+  ChildrenElement processChildrenElement(Element childel, PropertyMap pm) throws IOException {
+    ChildrenElement ce = new ChildrenElement(pm);
     
-    String position = childel.getAttribute("position");
+    String position = childel.getAttribute("child_positions");
     ce.setPosition(position);
     String container = childel.getAttribute("container");
     ce.setChildContainer(container);
+
+    //applyProperties(childel, ce.propertyMap);
 
     NodeList children = childel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
@@ -306,12 +364,15 @@ public class XmlStylesheetParser {
       if (child instanceof Element) {
         Element el = (Element) child;
         
-        if (name.equalsIgnoreCase("style")) {
-          StyleElement se = processStyle(el, false);
+        if (name.equalsIgnoreCase("style") || name.equalsIgnoreCase("copy_style") || name.equalsIgnoreCase("use_style")) {
+          StyleElement se = processStyle(el, ce.propertyMap, false);
           ce.setStyleElement(se);
         } else if (name.equalsIgnoreCase("match")) {
-          MatchElement me = processMatchElement(el);
+          MatchElement me = processMatchElement(el, ce.propertyMap);
           ce.addMatchElement(me);
+        } else if (name.equalsIgnoreCase("property")) {
+          // dealt with above
+          processProperty(el, ce.propertyMap);
         } else {
           cantParse(el);
         }
@@ -321,21 +382,26 @@ public class XmlStylesheetParser {
 
   }
   
-  MatchElement processMatchElement(Element matchel) throws IOException {
-    MatchElement me = new MatchElement();
+  MatchElement processMatchElement(Element matchel, PropertyMap pm) throws IOException {
+    MatchElement me = new MatchElement(pm);
     NodeList children = matchel.getChildNodes();
+
+    //applyProperties(matchel, me.propertyMap);
+
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
       String name = child.getNodeName();
       if (child instanceof Element) {
         Element el = (Element) child;
         
-        if (name.equalsIgnoreCase("style")) {
-          StyleElement se = processStyle(el, false);
+        if (name.equalsIgnoreCase("style") || name.equalsIgnoreCase("copy_style") || name.equalsIgnoreCase("use_style")) {
+          StyleElement se = processStyle(el, pm, false);
           me.setStyle(se);
         } else if (name.equalsIgnoreCase("match")) {
-          MatchElement me2 = processMatchElement(el);
+          MatchElement me2 = processMatchElement(el, me.propertyMap);
           me.subMatchList.add(me2);
+        } else if (name.equalsIgnoreCase("property")) {
+          processProperty(el, me.propertyMap);
         } else {
           cantParse(el);
         }
@@ -344,25 +410,35 @@ public class XmlStylesheetParser {
     return me;
   }
   
-  void applyProperties(Element el, Propertied proper) throws IOException {
-    NodeList children = el.getChildNodes();
-
-    for (int i=0; i<children.getLength(); i++) {
-      Node child = children.item(i);
-      String name = child.getNodeName();
-      if (name.equalsIgnoreCase("property")) {
-        if (child instanceof Element) {
-          Element prop_el = (Element) child;
-          String key = prop_el.getAttribute("key");
-          String value = prop_el.getAttribute("value");
-          if (key == null || proper == null) {
-             throw new IOException("ERROR: key or value of <PROPERTY> is null");
-          }
-          proper.setProperty(key, value);
-        }
-      }
+  void processProperty(Element properElement, PropertyMap propertied) 
+  throws IOException {
+    String key = properElement.getAttribute("key");
+    String value = properElement.getAttribute("value");
+    if (key == null) {
+       throw new IOException("ERROR: key or value of <PROPERTY> is null");
     }
+    propertied.setProperty(key, value);
   }
+  
+//  void applyProperties(Element el, Propertied proper) throws IOException {
+//    NodeList children = el.getChildNodes();
+//
+//    for (int i=0; i<children.getLength(); i++) {
+//      Node child = children.item(i);
+//      String name = child.getNodeName();
+//      if (name.equalsIgnoreCase("property")) {
+//        if (child instanceof Element) {
+//          Element prop_el = (Element) child;
+//          String key = prop_el.getAttribute("key");
+//          String value = prop_el.getAttribute("value");
+//          if (key == null || proper == null) {
+//             throw new IOException("ERROR: key or value of <PROPERTY> is null");
+//          }
+//          proper.setProperty(key, value);
+//        }
+//      }
+//    }
+//  }
   
   static String escapeXML(String s) {
     if (s==null) {
@@ -379,7 +455,5 @@ public class XmlStylesheetParser {
       sb.append(" ").append(name).append("='").append(escapeXML(value)).append("'");
     }
   }
-  
-
 }
 

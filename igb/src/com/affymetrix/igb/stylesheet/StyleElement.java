@@ -26,7 +26,6 @@ public class StyleElement implements Cloneable, XmlAppender {
 <!ELEMENT STYLE (PROP*, GLYPH?)>
 <!ATTLIST STYLE
     name CDATA #IMPLIED
-    extends CDATA #IMPLIED
     color CDATA #IMPLIED
     color2 CDATA #IMPLIED
     color3 CDATA #IMPLIED
@@ -39,19 +38,21 @@ public class StyleElement implements Cloneable, XmlAppender {
   GlyphElement glyphElement;
 
   String name;
-  String extends_name;
-  Color color = Color.CYAN;
-  Color color2 = Color.YELLOW;
-  Color color3 = Color.MAGENTA;
+  //Color color = Color.CYAN;
+  //Color color2 = Color.YELLOW;
+  //Color color3 = Color.MAGENTA;
   
   
-  public StyleElement() {
-  }  
+  public StyleElement(PropertyMap pm) {
+    this.propertyMap = new PropertyMap(pm);
+  }
 
   /** Not yet implemented. Needs to do a deep copy. */
   public Object clone() throws CloneNotSupportedException {
     StyleElement clone = (StyleElement) super.clone();
-    clone.propertyMap = new PropertyMap(this.propertyMap);
+    if (propertyMap != null) {
+      clone.propertyMap = (PropertyMap) this.propertyMap.clone();
+    }
     if (glyphElement != null) {
       clone.glyphElement = (GlyphElement) this.glyphElement.clone();
     }
@@ -59,9 +60,26 @@ public class StyleElement implements Cloneable, XmlAppender {
     return clone;
   }  
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container) {
+  public static StyleElement clone(StyleElement se, String newName) {
+    try {
+      StyleElement clone = (StyleElement) se.clone();
+      clone.name = newName;
+      return clone;
+    } catch (CloneNotSupportedException cnse) {
+      throw new RuntimeException(cnse);
+    }
+  }
+  
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap parentPropertyMap) {
     GlyphI glyph = null;
-    //TODO
+    if (glyphElement != null) {
+//      System.out.println("OLD: " + this.propertyMap.appendXML("---", new StringBuffer()));
+      PropertyMap old_parent_map = this.propertyMap.parentProperties;
+      this.propertyMap.parentProperties = parentPropertyMap;
+//      System.out.println("NEW: " + this.propertyMap.appendXML("+++", new StringBuffer()));
+      glyph = glyphElement.symToGlyph(gviewer, sym, container, this.propertyMap);
+      this.propertyMap.parentProperties = old_parent_map;
+    }
     return glyph;
   }
   
@@ -91,7 +109,6 @@ public class StyleElement implements Cloneable, XmlAppender {
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append(indent).append("<STYLE ");
     XmlStylesheetParser.appendAttribute(sb, "name", name);
-    XmlStylesheetParser.appendAttribute(sb, "extends", extends_name);
     sb.append(">\n");
     this.propertyMap.appendXML(indent + "  ", sb);
     if (glyphElement != null) {

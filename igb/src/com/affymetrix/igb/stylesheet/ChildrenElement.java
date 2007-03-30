@@ -15,6 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
@@ -39,9 +40,19 @@ public class ChildrenElement implements Cloneable, XmlAppender {
 //  String child_arrangement = ARRANGEMENT_CENTER;
   
   String childContainer = ".";
-  String position; // becomes default position for children glyphs if they don't override it
+  String childPositions; // becomes default position for children glyphs if they don't override it
   List matchElements;
   StyleElement styleElement;
+  
+  PropertyMap propertyMap;
+  
+  static ExpandPacker expand_packer;
+  
+  static {
+      expand_packer = new ExpandPacker();
+      expand_packer.setParentSpacer(3);
+      expand_packer.setStretchHorizontal(false);
+  }
   
   public Object clone() throws CloneNotSupportedException {
     ChildrenElement clone = (ChildrenElement) super.clone();
@@ -56,10 +67,14 @@ public class ChildrenElement implements Cloneable, XmlAppender {
         clone.matchElements.add(new_me);
       }
     }
+    if (propertyMap != null) {
+      clone.propertyMap = (PropertyMap) this.propertyMap.clone();
+    }
     return clone;
   }
   
-  public ChildrenElement() {
+  public ChildrenElement(PropertyMap pm) {
+    this.propertyMap = new PropertyMap(pm);
   }
   
   /** Draws the children symmetries as glyphs. 
@@ -70,14 +85,19 @@ public class ChildrenElement implements Cloneable, XmlAppender {
    */
   public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl) {
     int childCount = insym.getChildCount();
-    for (int i=0; i<childCount; i++) {
-      SeqSymmetry childsym = insym.getChild(i);
-      this.childSymToGlyph(gviewer, childsym, gl);
+    if (childCount > 0) {
+      GlyphI container_glyph = findContainer(gl);
+      for (int i=0; i<childCount; i++) {
+        SeqSymmetry childsym = insym.getChild(i);
+        this.childSymToGlyph(gviewer, childsym, gl);
+      }
+      
+      container_glyph.setPacker(expand_packer);
+      container_glyph.pack(gviewer.getSeqMap().getView());
     }
   }
 
-  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, GlyphI gl) {
-    GlyphI container_glyph = findContainer(gl);
+  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, GlyphI container_glyph) {
     
     if (matchElements != null) {
       Iterator iter = matchElements.iterator();
@@ -93,7 +113,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     }
     
     // If none of the match elements matched, use the default child_factory
-    return styleElement.symToGlyph(gviewer, childsym, container_glyph);
+    return styleElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
   }
   
   GlyphI findContainer(GlyphI gl) {
@@ -147,7 +167,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append(indent).append("<CHILDREN ");
     XmlStylesheetParser.appendAttribute(sb, "container", childContainer);
-    XmlStylesheetParser.appendAttribute(sb, "position", position);
+    XmlStylesheetParser.appendAttribute(sb, "child_positions", childPositions);
     sb.append(">\n");
 
 //    if (this.propertyMap != null) {
@@ -179,10 +199,10 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   }
 
   public String getPosition() {
-    return this.position;
+    return this.childPositions;
   }
 
   public void setPosition(String position) {
-    this.position = position;
+    this.childPositions = position;
   }
 }

@@ -40,6 +40,8 @@ public class GlyphElement implements Cloneable, XmlAppender {
   public static String TYPE_LINE = "line";
   public static String TYPE_NOT_DRAWN = "hidden";
 
+  public static Color default_color = Color.GREEN;
+  
   PropertyMap propertyMap = new PropertyMap();
   List enclosedGlyphElements = null;
   ChildrenElement children = null;
@@ -49,7 +51,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
   int glyph_height = 10;
   static int diff_height = 3;
   
-  Color color = Color.CYAN;
+//  Color color = null;
   
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
@@ -61,7 +63,9 @@ public class GlyphElement implements Cloneable, XmlAppender {
         clone.enclosedGlyphElements.add(new_glyph_element);
       }
     }
-    clone.propertyMap = new PropertyMap(this.propertyMap);
+    if (propertyMap != null) {
+      clone.propertyMap = (PropertyMap) this.propertyMap.clone();
+    }
     if (children != null) {
       clone.children = (ChildrenElement) this.children.clone();
     }
@@ -69,7 +73,11 @@ public class GlyphElement implements Cloneable, XmlAppender {
     return clone;
   }
   
-  public GlyphElement() {
+  //public GlyphElement() {
+  //}
+  
+  public GlyphElement(PropertyMap parentProperties) {    
+    this.propertyMap = new PropertyMap(parentProperties);
   }
 
   public String getPosition() {
@@ -135,10 +143,11 @@ public class GlyphElement implements Cloneable, XmlAppender {
     return gl;
   }
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph) {
-
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, PropertyMap parentPropMap) {
+    
     if (insym == null) { return null; }
 
+    
     GlyphI gl = null;
     if (knownGlyphType(type)) {
       SeqSymmetry transformed_sym = gviewer.transformForViewSeq(insym);
@@ -146,14 +155,34 @@ public class GlyphElement implements Cloneable, XmlAppender {
       SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
       if (span == null) { return null; } // ???????  maybe try children anyway?
 
+      // Temporarily switch the percieved "parent" of the glyph's property map.
+      // Switch it back at the end of this method.
+      // This is necessary to support the <USE_STYLE> element
+      PropertyMap old_parent_props = propertyMap.parentProperties;    
+      propertyMap.parentProperties = parentPropMap;
+
       gl = makeGlyph(type);
 
       gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
+      Color color = (Color) propertyMap.getColor("color");
+      if (color == null) {
+        color = default_color;
+      }
+      
       gl.setColor(color);
 
       addToParent(parent_glyph, gl, this.position);
       gl.setInfo(insym);
       gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
+      
+      //TODO:  Now do encolosed glyphs
+      if (enclosedGlyphElements != null) {
+        Iterator iter = enclosedGlyphElements.iterator();
+        while (iter.hasNext()) {
+          GlyphElement kid = (GlyphElement) iter.next();
+          kid.symToGlyph(gviewer, insym, parent_glyph, this.propertyMap);
+        }
+      }
       
       if (children != null) {
         //TODO; should we use "insym" or "transformed_sym" here?
@@ -163,6 +192,8 @@ public class GlyphElement implements Cloneable, XmlAppender {
         // changed the number of levels of symmetry.
         children.childSymsToGlyphs(gviewer, insym, gl);
       }
+
+      propertyMap.parentProperties = old_parent_props;
     }
 
     return gl;

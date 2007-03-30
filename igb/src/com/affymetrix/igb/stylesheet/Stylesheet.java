@@ -70,7 +70,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
 
     StyleElement se = getStyleByName(name);
     if (se == null) {
-      se = new StyleElement(pm);
+      se = new StyleElement();
       se.name = name;
     }
     
@@ -172,7 +172,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
   }
   
   public StyleElement getDefaultstyleElement() {
-    return new StyleElement(new PropertyMap());
+    return new StyleElement();
   }  
 
   public StringBuffer appendXML(String indent, StringBuffer sb) {
@@ -237,32 +237,32 @@ public class Stylesheet implements Cloneable, XmlAppender {
     return sb;
   }
   
-  public StyleElement getWrappedStyle(String name, PropertyMap pm) {
-    return new WrappedStyleElement(name, pm);
+  public StyleElement getWrappedStyle(String name) {
+    return new WrappedStyleElement(name);
   }
   
   public class WrappedStyleElement extends StyleElement {
     public String name;
-    public WrappedStyleElement(String name, PropertyMap pm) {
-      super(pm);
+    public WrappedStyleElement(String name) {
+      super();
       this.name = name;
     }
     public StyleElement getReferredStyle() {
       StyleElement se = getStyleByName(name);
       if (se == null) {
-        se = new StyleElement(null);
+        se = new StyleElement();
       }
       return se;
     }
-    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap parentProperties) {
+    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap context) {
       StyleElement se = getReferredStyle();
       // Note: ignore the parentProperties that were passed-in and
       // use the wrapper's properties as the parent instead
 
 //      System.out.println("Drawing wrapped sym passing this context: \n" + propertyMap.fullParentHeirarchy("--a--", new StringBuffer()));
-//      System.out.println("Drawing wrapped sym passing this context: \n" + parentProperties.fullParentHeirarchy("--b--", new StringBuffer()));
+      System.out.println("Drawing wrapped sym passing this context: \n" + context.fullParentHeirarchy("--b--", new StringBuffer()));
       
-      return getReferredStyle().symToGlyph(gviewer, sym, container, propertyMap);
+      return getReferredStyle().symToGlyph(gviewer, sym, container, context);
 //      return getReferredStyle().symToGlyph(gviewer, sym, container, parentProperties);
     }
     public StringBuffer appendXML(String indent, StringBuffer sb) {

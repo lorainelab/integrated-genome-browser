@@ -73,8 +73,9 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     return clone;
   }
   
-  public ChildrenElement(PropertyMap pm) {
-    this.propertyMap = new PropertyMap(pm);
+  public ChildrenElement() {
+    //this.propertyMap = new PropertyMap(pm);
+    this.propertyMap = new PropertyMap();
   }
   
   /** Draws the children symmetries as glyphs. 
@@ -83,13 +84,13 @@ public class ChildrenElement implements Cloneable, XmlAppender {
    *   symmetries are drawn as glyphs inside this parent glyph, but that can
    *   change depending on the setting of {@link #childContainer}.
    */
-  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl) {
+  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, PropertyMap context) {
     int childCount = insym.getChildCount();
     if (childCount > 0) {
       GlyphI container_glyph = findContainer(gl);
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childsym = insym.getChild(i);
-        this.childSymToGlyph(gviewer, childsym, gl);
+        this.childSymToGlyph(gviewer, childsym, gl, context);
       }
       
       container_glyph.setPacker(expand_packer);
@@ -97,23 +98,32 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     }
   }
 
-  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, GlyphI container_glyph) {
-    
+  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, GlyphI container_glyph, PropertyMap context) {
+    GlyphI result = null;
+
+    this.propertyMap.parentProperties = context;
+
     if (matchElements != null) {
       Iterator iter = matchElements.iterator();
-      while (iter.hasNext()) {
+      while (iter.hasNext() && result == null) {
         MatchElement matchElement = (MatchElement) iter.next();
         
         // If the match element matches, it will return a glyph, otherwise will return null
-        GlyphI match_glyph = matchElement.symToGlyph(gviewer, childsym, container_glyph);
+        GlyphI match_glyph = matchElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
         if (match_glyph != null) {
-          return match_glyph;
+          result = match_glyph;
         }
       }
     }
+
     
     // If none of the match elements matched, use the default child_factory
-    return styleElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
+    if (result == null) {
+      result = styleElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
+    }
+
+    this.propertyMap.parentProperties = null;
+    return result;
   }
   
   GlyphI findContainer(GlyphI gl) {
@@ -170,9 +180,9 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     XmlStylesheetParser.appendAttribute(sb, "child_positions", childPositions);
     sb.append(">\n");
 
-//    if (this.propertyMap != null) {
-//      propertyMap.appendXML(indent + "  ", sb);
-//    }
+    if (this.propertyMap != null) {
+      propertyMap.appendXML(indent + "  ", sb);
+    }
     
     if (matchElements != null) {
       Iterator iter = matchElements.iterator();

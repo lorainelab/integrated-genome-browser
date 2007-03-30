@@ -30,7 +30,7 @@ import java.util.*;
 public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     
   Stylesheet stylesheet = null;
-  PropertyMap propMap = new PropertyMap();
+  PropertyMap context = new PropertyMap();
   
   public XmlStylesheetGlyphFactory(Stylesheet ss) {
     this.stylesheet = ss;
@@ -73,12 +73,13 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
     int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
     
-    propMap.clear();
-    // properties set in this top-level propMap will be used as defaults,
+    context.clear();
+
+    // properties set in this top-level context will be used as defaults,
     // the stylesheet may over-ride them.
-    propMap.put("color", style.getColor());
+    context.put("color", style.getColor());
     
-    se.symToGlyph(gviewer, sym, tiers[tier_index], propMap);
+    se.symToGlyph(gviewer, sym, tiers[tier_index], context);
   }
 
 }

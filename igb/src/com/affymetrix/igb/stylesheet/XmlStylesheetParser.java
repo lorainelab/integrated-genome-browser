@@ -254,7 +254,7 @@ public class XmlStylesheetParser {
         throw new IOException("Can't have a USE_STYLE element with no name");
       }
       
-      se = stylesheet.getWrappedStyle(styleName, pm);
+      se = stylesheet.getWrappedStyle(styleName);
             
       return se; // do not do any other processing on a USE_STYLE element
     } else {
@@ -273,16 +273,6 @@ public class XmlStylesheetParser {
       }
     }
     
-//    Color c1 = string2Color(styleel.getAttribute("color"));
-//    Color c2 = string2Color(styleel.getAttribute("color2"));
-//    Color c3 = string2Color(styleel.getAttribute("color3"));
-//
-//    if (c1 != null) {se.propertyMap.setProperty("color", c1);}
-//    if (c2 != null) {se.propertyMap.setProperty("color2", c2);}
-//    if (c3 != null) {se.propertyMap.setProperty("color3", c3);}
-    
-    //applyProperties(styleel, se.propertyMap);
-
     NodeList children = styleel.getChildNodes();
     
 
@@ -299,11 +289,6 @@ public class XmlStylesheetParser {
           se.setGlyphElement(ge2);
         } else if (name.equalsIgnoreCase("property")) {
           processProperty(el, se.propertyMap);
-if ("COPY_STYLE".equalsIgnoreCase(node_name)) {
-System.out.println("------------------ Putting property in a copied style !! " + se.getClass().getName());
-System.out.println("" + se.propertyMap.fullParentHeirarchy("<> ", new StringBuffer()));
-System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
-        }
         } else {
           cantParse(el);
         }
@@ -314,15 +299,13 @@ System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
   }
   
   GlyphElement processGlyph(Element glyphel, PropertyMap pm) throws IOException {
-    GlyphElement ge = new GlyphElement(pm);
+    GlyphElement ge = new GlyphElement();
 
     String type = glyphel.getAttribute("type");
     ge.setType(type);
     String position = glyphel.getAttribute("position");
     ge.setPosition(position);
 
-    //applyProperties(glyphel, ge.propertyMap);
-    
     NodeList children = glyphel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
@@ -348,14 +331,12 @@ System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
   }
   
   ChildrenElement processChildrenElement(Element childel, PropertyMap pm) throws IOException {
-    ChildrenElement ce = new ChildrenElement(pm);
+    ChildrenElement ce = new ChildrenElement();
     
     String position = childel.getAttribute("child_positions");
     ce.setPosition(position);
     String container = childel.getAttribute("container");
     ce.setChildContainer(container);
-
-    //applyProperties(childel, ce.propertyMap);
 
     NodeList children = childel.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
@@ -371,7 +352,6 @@ System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
           MatchElement me = processMatchElement(el, ce.propertyMap);
           ce.addMatchElement(me);
         } else if (name.equalsIgnoreCase("property")) {
-          // dealt with above
           processProperty(el, ce.propertyMap);
         } else {
           cantParse(el);
@@ -383,10 +363,8 @@ System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
   }
   
   MatchElement processMatchElement(Element matchel, PropertyMap pm) throws IOException {
-    MatchElement me = new MatchElement(pm);
+    MatchElement me = new MatchElement();
     NodeList children = matchel.getChildNodes();
-
-    //applyProperties(matchel, me.propertyMap);
 
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
@@ -418,27 +396,7 @@ System.out.println("" + se.appendXML("xxx ", new StringBuffer()));
        throw new IOException("ERROR: key or value of <PROPERTY> is null");
     }
     propertied.setProperty(key, value);
-  }
-  
-//  void applyProperties(Element el, Propertied proper) throws IOException {
-//    NodeList children = el.getChildNodes();
-//
-//    for (int i=0; i<children.getLength(); i++) {
-//      Node child = children.item(i);
-//      String name = child.getNodeName();
-//      if (name.equalsIgnoreCase("property")) {
-//        if (child instanceof Element) {
-//          Element prop_el = (Element) child;
-//          String key = prop_el.getAttribute("key");
-//          String value = prop_el.getAttribute("value");
-//          if (key == null || proper == null) {
-//             throw new IOException("ERROR: key or value of <PROPERTY> is null");
-//          }
-//          proper.setProperty(key, value);
-//        }
-//      }
-//    }
-//  }
+  }  
   
   static String escapeXML(String s) {
     if (s==null) {

@@ -43,18 +43,21 @@ public class MatchElement implements Cloneable, XmlAppender {
     return clone;
   }
 
-  public MatchElement(PropertyMap pm) {
-    this.propertyMap = new PropertyMap(pm);
+  public MatchElement() {
+    this.propertyMap = new PropertyMap();
   }
   
   /**
    *  If this MatchElement, or one of its children, matcheds the given symmetry,
    *  then a glyph will be created and returned.  Otherwise, will return null.
    */
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl, PropertyMap context) {
+    propertyMap.parentProperties = context;
     // If a sub_matcher matches, use it to make the glyph, 
     // otherwise if this matches, make it ourselves,
     // otherwise, if no match, return null
+
+    propertyMap.parentProperties = null;
     return null;
   }
 
@@ -74,9 +77,9 @@ public class MatchElement implements Cloneable, XmlAppender {
     sb.append(indent).append("<MATCH ");
     sb.append(">\n");
 
-//    if (this.propertyMap != null) {
-//      propertyMap.appendXML(indent + "  ", sb);
-//    }
+    if (this.propertyMap != null) {
+      propertyMap.appendXML(indent + "  ", sb);
+    }
     
     Iterator iter = this.getSubMatchList().iterator();
     while (iter.hasNext()) {

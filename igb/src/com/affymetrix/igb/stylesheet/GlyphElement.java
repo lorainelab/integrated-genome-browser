@@ -42,7 +42,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
 
   public static Color default_color = Color.GREEN;
   
-  PropertyMap propertyMap = new PropertyMap();
+  PropertyMap propertyMap;
   List enclosedGlyphElements = null;
   ChildrenElement children = null;
   String position;
@@ -73,11 +73,8 @@ public class GlyphElement implements Cloneable, XmlAppender {
     return clone;
   }
   
-  //public GlyphElement() {
-  //}
-  
-  public GlyphElement(PropertyMap parentProperties) {    
-    this.propertyMap = new PropertyMap(parentProperties);
+  public GlyphElement() {
+    this.propertyMap = new PropertyMap();
   }
 
   public String getPosition() {
@@ -143,7 +140,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
     return gl;
   }
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, PropertyMap parentPropMap) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, PropertyMap context) {
     
     if (insym == null) { return null; }
 
@@ -155,11 +152,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
       SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
       if (span == null) { return null; } // ???????  maybe try children anyway?
 
-      // Temporarily switch the percieved "parent" of the glyph's property map.
-      // Switch it back at the end of this method.
-      // This is necessary to support the <USE_STYLE> element
-      PropertyMap old_parent_props = propertyMap.parentProperties;    
-      propertyMap.parentProperties = parentPropMap;
+      propertyMap.parentProperties = context;
 
       gl = makeGlyph(type);
 
@@ -190,10 +183,10 @@ public class GlyphElement implements Cloneable, XmlAppender {
         // transformed_sym should work faster (avoids redundant transformations),
         // but may not work in some cases where the earlier transform has
         // changed the number of levels of symmetry.
-        children.childSymsToGlyphs(gviewer, insym, gl);
+        children.childSymsToGlyphs(gviewer, insym, gl, propertyMap);
       }
 
-      propertyMap.parentProperties = old_parent_props;
+      propertyMap.parentProperties = null; // for possible garbage collection
     }
 
     return gl;

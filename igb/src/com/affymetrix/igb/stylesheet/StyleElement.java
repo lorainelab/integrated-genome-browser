@@ -43,8 +43,8 @@ public class StyleElement implements Cloneable, XmlAppender {
   //Color color3 = Color.MAGENTA;
   
   
-  public StyleElement(PropertyMap pm) {
-    this.propertyMap = new PropertyMap(pm);
+  public StyleElement() {
+    this.propertyMap = new PropertyMap();
   }
 
   /** Not yet implemented. Needs to do a deep copy. */
@@ -70,15 +70,16 @@ public class StyleElement implements Cloneable, XmlAppender {
     }
   }
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap parentPropertyMap) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap context) {
     GlyphI glyph = null;
     if (glyphElement != null) {
 //      System.out.println("OLD: " + this.propertyMap.appendXML("---", new StringBuffer()));
-      PropertyMap old_parent_map = this.propertyMap.parentProperties;
-      this.propertyMap.parentProperties = parentPropertyMap;
+//      PropertyMap old_parent_map = this.propertyMap.parentProperties;
+      this.propertyMap.parentProperties = context;
 //      System.out.println("NEW: " + this.propertyMap.appendXML("+++", new StringBuffer()));
       glyph = glyphElement.symToGlyph(gviewer, sym, container, this.propertyMap);
-      this.propertyMap.parentProperties = old_parent_map;
+      this.propertyMap.parentProperties = null;
+//      this.propertyMap.parentProperties = old_parent_map;
     }
     return glyph;
   }

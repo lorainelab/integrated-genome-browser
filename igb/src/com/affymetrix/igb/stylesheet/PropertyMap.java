@@ -59,10 +59,15 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
 
   public Object getProperty(String key) {
     Object o = get(key);
-    if (o == null && parentProperties != null) {
-      return parentProperties.getProperty(key);
+    
+    //WARNING: the simple, obvious way of implementing recursion would have the
+    // possibility of infinite recursion which is avoided here.
+    PropertyMap pm = parentProperties;
+    while (o == null && pm != null && pm != this) {
+      o = pm.get(key);
+      pm = pm.parentProperties;
     }
-    else return o;
+    return o;
   }
 
   public boolean setProperty(String key, Object val) {
@@ -70,21 +75,35 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     return true; // why ?
   }
   
+  
+//  Color convertToColor() {}
+  
   public Color getColor(String key) {
-    Object o = get(key);
+        
+    Color c = null;
+    Object o = getProperty(key);
     if (o instanceof Color) {
-      return (Color) o;
+      c = (Color) o;
     } else if (o instanceof String) {
-      Color c = Color.decode("0x"+o);
-      // replace the color string with a Color object for speed in next call.
-      // But be careful to do thiw only when the key->color entry was found
-      // in THIS map, not the parent map.
-   //   put(key, c);
-      return c;
-    } else if (parentProperties != null) {
-      return parentProperties.getColor(key);
+      c = Color.decode("0x"+o);
     }
-    return null;
+
+    PropertyMap pm = this;
+    if (c != null) {
+      // replace the color string with a Color object for speed in next call.
+      // But be careful to do thiw only where the key->color entry was found
+      // in THIS map, not a parent or child map.
+      while (pm != null && pm != this) {
+        if (pm.get(key) != null) {
+          pm.put(key, c);
+          pm = null; // to end the loop
+        } else {
+          pm = pm.parentProperties;
+        }
+      }
+    }
+
+    return c;
   }
   
   public Object clone() {

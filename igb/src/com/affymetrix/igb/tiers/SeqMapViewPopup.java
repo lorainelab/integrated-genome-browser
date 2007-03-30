@@ -209,7 +209,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTierLabels();
-      if (IGB.confirmPanel("Really remove selected tiers?")) {
+      if (IGB.confirmPanel("Really remove selected tiers?\n"+
+          "Data will be removed from all chromosomes on this genome.\n"+
+          "(Note: to remove graphs made from .egr files, delete the corresponding annotation tier.)"
+          )) {
         removeTiers(current_tiers);
       }
     }

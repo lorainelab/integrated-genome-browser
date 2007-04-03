@@ -219,9 +219,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
     String offline = get_arg("-offline", args);
     if (offline != null) {
-      LocalUrlCacher.setOffLine(true);
+      LocalUrlCacher.setOffLine("true".equals("offline"));
     }
-    System.out.println("Offline> : " + offline);
 
     getIGBPrefs(); // force loading of prefs
 

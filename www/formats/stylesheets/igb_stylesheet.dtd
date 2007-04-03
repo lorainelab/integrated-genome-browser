@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+
+  IGB Stylesheet definition.  Version 1.0.
+
+-->
+<!--
+    TODO define vocabulary indentification
+    PUBLIC ID: -//genoviz//IGB Stylesheet 0.1//EN
+    SYSTEM ID: http://sourceforge.net/projects/genoviz/formats/stylesheets/igb_stylesheet_0_1.dtd
+
+-->
+
+
+<!ELEMENT IGB_STYLESHEET (IMPORT?, STYLES?, ASSOCIATIONS?)>
+<!ATTLIST IGB_STYLESHEET
+   dtd     CDATA #IMPLIED
+   version CDATA #IMPLIED
+  >
+
+
+<!--- Import definitions and associations from an external document, if desired. -->
+<!ELEMENT IMPORT EMPTY>
+<!ATTLIST IMPORT
+    url CDATA #REQUIRED
+  >
+
+<!--- STYLES section contains one or more styles. -->
+<!ELEMENT STYLES (STYLE|COPY_STYLE)*>
+
+<!--- STYLE element defines a new style. A style defined at the top level
+      should be given a name.  If another style with the same name was previously
+      defined, the new one will replace it.
+-->
+<!ELEMENT STYLE (PROPERTY*, GLYPH)>
+<!ATTLIST STYLE
+    name CDATA #IMPLIED
+  >
+
+<!ELEMENT COPY_STYLE (PROPERTY*, GLYPH*)>
+<!ATTLIST COPY_STYLE
+    new_name CDATA #IMPLIED
+    extends CDATA #REQUIRED
+  >
+
+<!ELEMENT USE_STYLE EMPTY>
+<!ATTLIST USE_STYLE
+    name CDATA #IMPLIED
+  >
+
+<!--- An arbitrary property, specified as a key and a value.  
+      Clients may ignore any properties they do not use. -->
+<!ELEMENT PROPERTY EMPTY>
+<!ATTLIST PROPERTY
+    key CDATA #REQUIRED
+    value CDATA #REQUIRED
+  >
+
+<!-- When <GLYPH> items are nested, each sub-glyph is drawing the SAME object,
+   not the children.  But each sub-glyph has access to the list of children
+   and can draw them as well.
+-->
+<!ELEMENT GLYPH (PROPERTY*, GLYPH*, CHILDREN?)>
+<!ATTLIST GLYPH
+    type CDATA #REQUIRED
+    position CDATA #IMPLIED
+  >
+
+<!--- Loop through the children.
+      If MATCH is absent, apply STYLE to every child.
+      If MATCH is present, apply STYLE only to children that fail all tests;
+      the children that pass any test have their style specified inside the 
+      corresponding MATCH element
+-->
+<!ELEMENT CHILDREN (PROPERTY*, MATCH*, (STYLE|COPY_STYLE|USE_STYLE)?)>
+<!ATTLIST CHILDREN
+    container CDATA #IMPLIED
+    child_positions CDATA #IMPLIED
+  >
+
+<!--- Use inside the CHILDREN element.
+      Apply the given style to any children that match the condition.
+      How to specify the conditions is left for the next version of this document.
+-->
+<!ELEMENT MATCH (MATCH*, (STYLE|COPY_STYLE|USE_STYLE))>
+
+<!--- ASSOCIATIONS associates styles to data types. 
+      All METHOD_ASSOCIATION elements must appear before all TYPE_ASSOCIATION
+      elements, which is a reminder of the order in which the checks are
+      performed.  
+-->
+<!ELEMENT ASSOCIATIONS (METHOD_ASSOCIATION*, TYPE_ASSOCIATION*)>
+
+<!--- Associate a method with a style. 
+   method = a type, idendified by an exact string or a regular expression
+   style = the name of a style defined earlier.
+   match_by = {"exact" (default) or "regex"}
+-->
+<!ELEMENT METHOD_ASSOCIATION EMPTY>
+<!ATTLIST METHOD_ASSOCIATION
+    method CDATA #REQUIRED
+    style CDATA #REQUIRED
+    match_by CDATA #IMPLIED
+  >
+
+<!--- Associates a type (ontology) with a style.
+   style = the name of a style defined earlier.
+   ontology = a URI pointing to an ontology entry.
+ -->
+<!ELEMENT TYPE_ASSOCIATION EMPTY>
+<!ATTLIST TYPE_ASSOCIATION
+    type CDATA #REQUIRED
+    style CDATA #REQUIRED
+  >

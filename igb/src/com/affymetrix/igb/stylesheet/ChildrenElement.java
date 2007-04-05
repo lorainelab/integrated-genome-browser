@@ -14,7 +14,9 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.glyph.LabelledGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -84,21 +86,31 @@ public class ChildrenElement implements Cloneable, XmlAppender {
    *   symmetries are drawn as glyphs inside this parent glyph, but that can
    *   change depending on the setting of {@link #childContainer}.
    */
-  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, PropertyMap context) {
+  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, 
+      Stylesheet stylesheet, PropertyMap context) {
+
+    
     int childCount = insym.getChildCount();
     if (childCount > 0) {
-      GlyphI container_glyph = findContainer(gl);
+      GlyphI container_glyph = findContainer(gl, childContainer);
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childsym = insym.getChild(i);
-        this.childSymToGlyph(gviewer, childsym, gl, context);
+        this.childSymToGlyph(gviewer, childsym, gl, stylesheet, context);
       }
       
-      container_glyph.setPacker(expand_packer);
-      container_glyph.pack(gviewer.getSeqMap().getView());
+      // packing will be handled in the containing <GLYPH> element
+//      if (! (container_glyph instanceof LabelledGlyph)) {
+//        container_glyph.setPacker(expand_packer);
+//        container_glyph.pack(gviewer.getSeqMap().getView());
+//      }
     }
   }
 
-  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, GlyphI container_glyph, PropertyMap context) {
+  /** Draws a single child from the <CHILDREN> element.  Generally called
+   *  only from inside this class.
+   */
+  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, 
+      GlyphI container_glyph, Stylesheet stylesheet, PropertyMap context) {
     GlyphI result = null;
 
     this.propertyMap.parentProperties = context;
@@ -109,7 +121,8 @@ public class ChildrenElement implements Cloneable, XmlAppender {
         MatchElement matchElement = (MatchElement) iter.next();
         
         // If the match element matches, it will return a glyph, otherwise will return null
-        GlyphI match_glyph = matchElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
+        GlyphI match_glyph = matchElement.symToGlyph(gviewer, childsym, 
+            container_glyph, stylesheet, propertyMap);
         if (match_glyph != null) {
           result = match_glyph;
         }
@@ -117,28 +130,40 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     }
 
     
-    // If none of the match elements matched, use the default child_factory
+    // If none of the match elements matched, use the default <STYLE> element
     if (result == null) {
-      result = styleElement.symToGlyph(gviewer, childsym, container_glyph, propertyMap);
+      // If not default style element was specified in the <CHILDREN> element,
+      // ask the stylesheet for an appropriate one.
+      StyleElement se = styleElement;
+      if (se == null) {
+        se = stylesheet.getStyleElementForSym(childsym);
+      }
+      if (se != null) {
+        result = se.symToGlyph(gviewer, childsym, container_glyph, stylesheet, propertyMap);
+      } else {
+        SeqUtils.printSymmetry(childsym);
+      }
     }
 
     this.propertyMap.parentProperties = null;
     return result;
   }
   
-  GlyphI findContainer(GlyphI gl) {
+  public static GlyphI findContainer(GlyphI gl, String container) {
     GlyphI container_glyph = gl;
     
-    if (".".equals(childContainer)) {
+    if (".".equals(container)) {
       container_glyph = gl;
-    } else if ("..".equals(childContainer)) {
+    } else if ("..".equals(container)) {
       container_glyph = parent(gl);
-    } else if ("../..".equals(childContainer)) {
+    } else if ("../..".equals(container)) {
       container_glyph = parent(parent(gl));
+    } else if ("../../..".equals(container)) {
+      container_glyph = parent(parent(parent(gl)));
       
       /// etc.
       
-    } else if ("/".equals(childContainer)) {
+    } else if ("/".equals(container)) {
       container_glyph = gl.getParent();
       while (!( container_glyph instanceof TierGlyph)) {
         container_glyph = parent(gl);
@@ -147,7 +172,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
     return container_glyph;
   }  
   
-  GlyphI parent(GlyphI gl) {
+  static GlyphI parent(GlyphI gl) {
     if (gl instanceof TierGlyph) {
       return gl;
     } else {

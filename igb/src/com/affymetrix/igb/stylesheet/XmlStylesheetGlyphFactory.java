@@ -70,16 +70,20 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     
     StyleElement se = stylesheet.getStyleElementForSym(sym);
 
-    TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
+    TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style, false);
     int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
+    TierGlyph the_tier = tiers[tier_index];
     
     context.clear();
 
     // properties set in this top-level context will be used as defaults,
     // the stylesheet may over-ride them.
-    context.put("color", style.getColor());
     
-    se.symToGlyph(gviewer, sym, tiers[tier_index], context);
+    // Allow StyleElement access to the AnnotStyle if it needs it.
+    context.put(AnnotStyle.class.getName(), style);
+    context.put(TierGlyph.class.getName(), the_tier);
+    
+    se.symToGlyph(gviewer, sym, the_tier, stylesheet, context);
   }
 
 }

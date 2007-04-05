@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,13 +21,10 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 
 /**
  *  A glyph that is drawn as a solid, outlined rectangle.
- *  <p>
- *  This is not intended to be used as a container for other glyphs,
- *  because it will recurse through its children and draw them even if it
- *  is too small for you to see the children.
  */
-public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
+public class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
   Color bgcolor = Color.white;
+  static boolean optimize_child_draw = true;
   
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
@@ -49,6 +46,12 @@ public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
     super.draw(view);
   }
 
+  // specifies how to draw the glyph when it is too small to draw its
+  // contained glyphs
+  public void fillDraw(ViewI view) {
+    super.fillDraw(view);
+  }
+  
   /** Sets the outline color; the fill color is automatically calculated as  
    *  a darker shade. 
    */

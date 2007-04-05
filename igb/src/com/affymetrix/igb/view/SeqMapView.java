@@ -35,7 +35,6 @@ import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.genometry.Versioned;
@@ -207,6 +206,7 @@ public class SeqMapView extends JPanel
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
+//  MapViewGlyphFactoryI xml_factory;
 
   GlyphEdgeMatcher edge_matcher = null;
 
@@ -282,6 +282,11 @@ public class SeqMapView extends JPanel
    *  be false in the AltSpliceView, for instance.
    */
   public SeqMapView(boolean add_popups, boolean split_win) {
+
+//    Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
+
+//    xml_factory = new XmlStylesheetGlyphFactory(stylesheet);
+
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
 
@@ -344,7 +349,7 @@ public class SeqMapView extends JPanel
         //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
         tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
       }
-      //tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
+//      tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
     }
     
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
@@ -513,7 +518,7 @@ public class SeqMapView extends JPanel
     if (show_slicendice) {
       slicendiceMI = setUpMenuItem(sym_popup, "Slice and dice");
     }
-
+    
     String[] commands = { "ZOOM_OUT_FULLY",
       "ZOOM_OUT_X", "ZOOM_IN_X", "ZOOM_OUT_Y", "ZOOM_IN_Y",
       "SCROLL_UP", "SCROLL_DOWN", "SCROLL_RIGHT", "SCROLL_LEFT"};
@@ -853,6 +858,7 @@ public class SeqMapView extends JPanel
    //               need to "genometrize" them
    //            currently sequence is not properly displayed when reverse complementing
    //
+    
     stopSlicingThread();
 
     if (frm != null) {
@@ -1294,8 +1300,11 @@ public class SeqMapView extends JPanel
       // Again, a clone might be better.
       meth2factory.put(meth, default_glyph_factory);
     }
+
+//    factory = xml_factory;
+    
     return factory;
-  }
+  }  
 
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
@@ -2390,7 +2399,7 @@ public class SeqMapView extends JPanel
       //   add_to_previous ==> false
       //   call_listeners ==> false
       //   update_widget ==>  false   (zoomToSelections() will make an updateWidget() call...)
-      select(symlist, false, false, false);
+      select(symlist, false, true, false);
       // Zoom to selections, unless the selection was caused by the TierLabelManager
       // (which sets the selection source as the AffyTieredMap, i.e. getSeqMap())
       if (src != getSeqMap()) {
@@ -2913,7 +2922,7 @@ public class SeqMapView extends JPanel
     if (tier == null) {
       tier = new TierGlyph(style);
       tier.setDirection(tier_direction);
-      setUpTierPacker(tier, true);
+      setUpTierPacker(tier, true, false);
       gstyle2tier.put(style, tier);
     }
 
@@ -2967,6 +2976,16 @@ public class SeqMapView extends JPanel
    *    in this case place glyphs for both forward and revers items into it.
    */
   public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+    return getTiers(meth, next_to_axis, style, true);
+  }
+
+  /**
+   *  This version of getTiers() allows you to specify whether the tier will hold
+   *  glyphs that are all of the same height.  If so, a more efficient packer can
+   *  be used.  Note: if style.isGraphTier() is true, then the given value of 
+   *  constant_height will be ignored and re-set to false.
+   */
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style, boolean constant_heights) {
       if (style == null) {
         throw new NullPointerException();
       }
@@ -2976,10 +2995,14 @@ public class SeqMapView extends JPanel
       TierGlyph fortier = (TierGlyph)method2ftier.get(meth.toLowerCase());
       TierGlyph revtier = (TierGlyph)method2rtier.get(meth.toLowerCase());
       
+      if (style.isGraphTier()) {
+        constant_heights = false;
+      }
+      
       TierGlyph axis_tier = this.getAxisTier();
       if (fortier == null) {
         fortier = new TierGlyph(style);
-        setUpTierPacker(fortier, true);
+        setUpTierPacker(fortier, true, constant_heights);
         method2ftier.put(meth.toLowerCase(), fortier);
       }
 
@@ -3001,7 +3024,7 @@ public class SeqMapView extends JPanel
       if (revtier == null)  {
         revtier = new TierGlyph(style);
         revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
-        setUpTierPacker(revtier, false);
+        setUpTierPacker(revtier, false, constant_heights);
         method2rtier.put(meth.toLowerCase(), revtier);
       }
       revtier.setLabel(style.getHumanName());
@@ -3022,9 +3045,9 @@ public class SeqMapView extends JPanel
       }
   }
 
-  void setUpTierPacker(TierGlyph tg, boolean above_axis) {
+  void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constant_heights) {
     ExpandPacker ep = null;
-    if (tg.getAnnotStyle().isGraphTier()) {
+    if (! constant_heights) {
       ep = new ExpandPacker(); // this one doesn't assume constant heights
       // slow in general, but fine for tiers with only graphs in them.
     } else {

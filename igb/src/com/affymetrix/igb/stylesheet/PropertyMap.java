@@ -57,21 +57,29 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     return getProperties();
   }
 
+  public Object get(Object key) {
+    return this.getProperty((String) key);
+  }
+  
   public Object getProperty(String key) {
-    Object o = get(key);
+    Object o = super.get(key);
     
     //WARNING: the simple, obvious way of implementing recursion would have the
     // possibility of infinite recursion which is avoided here.
     PropertyMap pm = parentProperties;
     while (o == null && pm != null && pm != this) {
-      o = pm.get(key);
+      o = pm.getProperty(key);
       pm = pm.parentProperties;
+    }
+
+    if ("".equals(o)) {
+      o = null; // this allows a way to ignore properties set in a higher level parent
     }
     return o;
   }
 
   public boolean setProperty(String key, Object val) {
-    put(key, val);
+    super.put(key, val);
     return true; // why ?
   }
   

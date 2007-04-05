@@ -254,17 +254,12 @@ public class Stylesheet implements Cloneable, XmlAppender {
       }
       return se;
     }
-    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap context) {
-      StyleElement se = getReferredStyle();
-      // Note: ignore the parentProperties that were passed-in and
-      // use the wrapper's properties as the parent instead
+    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, 
+        Stylesheet stylesheet, PropertyMap context) {
 
-//      System.out.println("Drawing wrapped sym passing this context: \n" + propertyMap.fullParentHeirarchy("--a--", new StringBuffer()));
-      System.out.println("Drawing wrapped sym passing this context: \n" + context.fullParentHeirarchy("--b--", new StringBuffer()));
-      
-      return getReferredStyle().symToGlyph(gviewer, sym, container, context);
-//      return getReferredStyle().symToGlyph(gviewer, sym, container, parentProperties);
+      return getReferredStyle().symToGlyph(gviewer, sym, container, stylesheet, context);
     }
+
     public StringBuffer appendXML(String indent, StringBuffer sb) {
       return sb.append(indent).append("<USE_STYLE name=\"").append(name).append("\"/>\n");
     }

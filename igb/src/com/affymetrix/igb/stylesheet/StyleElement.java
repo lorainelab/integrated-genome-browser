@@ -70,16 +70,13 @@ public class StyleElement implements Cloneable, XmlAppender {
     }
   }
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, PropertyMap context) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, 
+      Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
-    if (glyphElement != null) {
-//      System.out.println("OLD: " + this.propertyMap.appendXML("---", new StringBuffer()));
-//      PropertyMap old_parent_map = this.propertyMap.parentProperties;
+    if (glyphElement != null) {      
       this.propertyMap.parentProperties = context;
-//      System.out.println("NEW: " + this.propertyMap.appendXML("+++", new StringBuffer()));
-      glyph = glyphElement.symToGlyph(gviewer, sym, container, this.propertyMap);
+      glyph = glyphElement.symToGlyph(gviewer, sym, container, stylesheet, this.propertyMap);
       this.propertyMap.parentProperties = null;
-//      this.propertyMap.parentProperties = old_parent_map;
     }
     return glyph;
   }

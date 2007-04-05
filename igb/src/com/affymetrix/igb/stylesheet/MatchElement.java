@@ -48,10 +48,12 @@ public class MatchElement implements Cloneable, XmlAppender {
   }
   
   /**
+   *  NOT IMPLEMENTED.
    *  If this MatchElement, or one of its children, matcheds the given symmetry,
    *  then a glyph will be created and returned.  Otherwise, will return null.
    */
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl, PropertyMap context) {
+  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl, 
+      Stylesheet stylesheet, PropertyMap context) {
     propertyMap.parentProperties = context;
     // If a sub_matcher matches, use it to make the glyph, 
     // otherwise if this matches, make it ourselves,

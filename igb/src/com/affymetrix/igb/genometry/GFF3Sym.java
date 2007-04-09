@@ -226,6 +226,10 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   static final Pattern commaP = Pattern.compile(",");
   
   public static void addAllAttributesFromGFF3(Map m, String attributes) {
+    if (attributes == null) {
+      return;
+    }
+    
     String[] tag_vals = attributes.split(";");
     
     for (int i=0; i<tag_vals.length; i++) {
@@ -233,14 +237,16 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
         continue;
       }
       String[] tag_and_vals = equalsP.split(tag_vals[i], 2);
-      String[] vals = commaP.split(tag_and_vals[1]);
-      for (int j=0; j<vals.length; j++) {
-        vals[j] = URLDecoder.decode(vals[j]);
-      }
-      if (vals.length == 1) { // put a single String
-        m.put(tag_and_vals[0], vals[0]);
-      } else { // put a String array
-        m.put(tag_and_vals[0], vals);
+      if (tag_and_vals.length == 2) {
+        String[] vals = commaP.split(tag_and_vals[1]);
+        for (int j=0; j<vals.length; j++) {
+          vals[j] = URLDecoder.decode(vals[j]);
+        }
+        if (vals.length == 1) { // put a single String
+          m.put(tag_and_vals[0], vals[0]);
+        } else { // put a String array
+          m.put(tag_and_vals[0], vals);
+        }
       }
     }
   }

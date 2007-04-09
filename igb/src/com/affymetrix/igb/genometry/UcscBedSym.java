@@ -193,6 +193,9 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       super(start, end, seq);
     }
 
+    // For the web links to be constructed properly, this class must implement getID(),
+    // or must NOT implement SymWithProps.
+    public String getID() {return UcscBedSym.this.getID();}
     public Map getProperties() {return UcscBedSym.this.getProperties();}
     public Map cloneProperties() {return UcscBedSym.this.cloneProperties();}
     public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}

@@ -97,11 +97,15 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
     
     GlyphI gl = null;
 
+    String feat_type = insym.getFeatureType();
+    if (feat_type == null) { feat_type = "";}
+    else {feat_type = feat_type.toLowerCase();}
+    
     if (GFF3Sym.FEATURE_TYPE_MRNA.equalsIgnoreCase(insym.getFeatureType())) {
       gl = drawMRNA(insym, style, ftier, rtier);
       return gl; // recursion handled inside that method
     }
-    else if (GFF3Parser.GROUP_FEATURE_TYPE.equalsIgnoreCase(insym.getFeatureType())) {
+    else if (insym.isMultiLine()) {
       // If this is a CDS group, it will be drawn as an mRNA-type thing,
       // otherwise just recurses down to the children and draws them.
       gl = drawGroup(insym, style, ftier, rtier);

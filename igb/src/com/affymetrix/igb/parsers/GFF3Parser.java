@@ -180,7 +180,7 @@ public class GFF3Parser {
               id2sym.put(the_id, sym);
               all_syms.add(sym);
             } else {
-              if (GROUP_FEATURE_TYPE.equals(old_sym.getFeatureType())) {
+              if (old_sym.isMultiLine()) {
                 // if a group symmetry with the same ID already exists,
                 // just add this as a child of it.
                 old_sym.addChild(sym);
@@ -280,8 +280,6 @@ public class GFF3Parser {
   }
   
   
-  public static final String GROUP_FEATURE_TYPE = "group";
-  
   /**
    *  Utility to group GFF3 features that were specified on several lines with the same ID.
    *  Lines with the same ID are supposed to represent different parts of the same feature.
@@ -289,8 +287,9 @@ public class GFF3Parser {
    *  All properties specified on separate lines, except start, stop and frame,
    *  are supposed to be equivalent on all lines. 
    *  In Genometry, we need to create a parent symmetry to hold the individual
-   *  pieces.  This parent symmetry will be a GFF3Sym with type {@link #GROUP_FEATURE_TYPE},
-   *  and the two given sym's will become its children.
+   *  pieces.  This parent symmetry will be a MultiLineGFF3Sym with the type as specified
+   *  (such as "cds") and the two given sym's will become its children with "-part"
+   *  attended to their type (such as "cds-type").
    *  The attributes of the group symmetry will be taken from the attributes of
    *  sym1; but the specification requires that all parts of the group have
    *  identical attributes.
@@ -302,13 +301,17 @@ public class GFF3Parser {
     } else {
       strand = '-';
     }
-    GFF3Sym parent = new GFF3Sym(sym1.getBioSeq(), sym1.getSource(), GROUP_FEATURE_TYPE,
+    String type = sym1.getFeatureType();
+    GFF3Sym parent = new GFF3Sym.MultiLineGFF3Sym(
+        sym1.getBioSeq(), sym1.getSource(), type,
         Math.min(sym1.getMin(), sym2.getMin()) + 1, Math.max(sym1.getMax(), sym2.getMax()),
         GFF3Sym.UNKNOWN_SCORE, strand, GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
     parent.setProperty("method", sym1.getProperty("method"));
+    sym1.feature_type = type + "-part";
+    sym2.feature_type = type + "-part";
     parent.addChild(sym1);
     parent.addChild(sym2);
     
     return parent;
-  }
+  }  
 }

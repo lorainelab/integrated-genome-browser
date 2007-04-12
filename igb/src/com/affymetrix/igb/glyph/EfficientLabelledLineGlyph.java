@@ -154,6 +154,16 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     }
   }
 
+  public void pack(ViewI view) {
+    if ( isMoveChildren()) {
+      this.adjustChildren();
+      // Maybe now need to adjust size of total glyph to take into account
+      // any expansion of the children ?
+    } else {
+      super.pack(view);
+    }
+  }
+
   public void setLabelLocation(int loc) {
     if (loc != getLabelLocation()) {
       adjustChildren();

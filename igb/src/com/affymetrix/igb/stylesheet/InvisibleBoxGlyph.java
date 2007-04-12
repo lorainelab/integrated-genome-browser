@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 
 public class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
   public InvisibleBoxGlyph() {
-    this.setHitable(false);
   }
 
   public void draw(ViewI view) {
@@ -53,14 +52,5 @@ public class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
 	}
       }
     }
-  }
-
-  /** This glyph is always non-hitable. */
-  public void setHitable(boolean hitable) {
-    super.setHitable(false);
-  }
-
-  public boolean isHitable() {
-    return false;
   }
 }

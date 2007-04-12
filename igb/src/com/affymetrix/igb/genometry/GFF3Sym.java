@@ -43,7 +43,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   
   String source;
   String method;
-  String feature_type;
+  public String feature_type;
   float score;
   char frame;
   String attributes;
@@ -316,5 +316,20 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
   public String toString() {
     return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
         + " children=" + getChildCount();
+  }
+  
+  public boolean isMultiLine() {
+    return false;
+  }
+  
+  public static class MultiLineGFF3Sym extends GFF3Sym {
+    public MultiLineGFF3Sym(BioSeq seq, String source, String feature_type, int a, int b, 
+                    float score, char strand, char frame, String attributes) {
+      super(seq, source, feature_type, a, b, score, strand, frame, attributes);
+    }
+
+    public boolean isMultiLine() {
+      return true;
+    }
   }
 }

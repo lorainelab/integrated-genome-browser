@@ -16,7 +16,6 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.glyph.LabelledGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -27,12 +26,17 @@ import java.util.List;
 public class ChildrenElement implements Cloneable, XmlAppender {
 
 /*
-<!ELEMENT CHILDREN (MATCH*, STYLE?)>
+<!ELEMENT CHILDREN (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
 <!ATTLIST CHILDREN
     container CDATA #IMPLIED
-    position CDATA #IMPLIED
+    child_positions CDATA #IMPLIED
   >
 */
+  
+public static String NAME = "CHILDREN";
+  
+public static String ATT_CONTAINER = "container";
+public static String ATT_POSITIONS = "child_positions";
   
 //  static String ARRANGEMENT_CENTER = "center";
 //  static String ARRANGEMENT_FAR = "far";
@@ -76,7 +80,6 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   }
   
   public ChildrenElement() {
-    //this.propertyMap = new PropertyMap(pm);
     this.propertyMap = new PropertyMap();
   }
   
@@ -88,7 +91,6 @@ public class ChildrenElement implements Cloneable, XmlAppender {
    */
   public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, 
       Stylesheet stylesheet, PropertyMap context) {
-
     
     int childCount = insym.getChildCount();
     if (childCount > 0) {
@@ -97,13 +99,9 @@ public class ChildrenElement implements Cloneable, XmlAppender {
         SeqSymmetry childsym = insym.getChild(i);
         this.childSymToGlyph(gviewer, childsym, gl, stylesheet, context);
       }
-      
-      // packing will be handled in the containing <GLYPH> element
-//      if (! (container_glyph instanceof LabelledGlyph)) {
-//        container_glyph.setPacker(expand_packer);
-//        container_glyph.pack(gviewer.getSeqMap().getView());
-//      }
     }
+     
+    // packing will be handled in the containing <GLYPH> element
   }
 
   /** Draws a single child from the <CHILDREN> element.  Generally called
@@ -113,9 +111,10 @@ public class ChildrenElement implements Cloneable, XmlAppender {
       GlyphI container_glyph, Stylesheet stylesheet, PropertyMap context) {
     GlyphI result = null;
 
-    this.propertyMap.parentProperties = context;
+    PropertyMap oldContext = propertyMap.getContext();
+    this.propertyMap.setContext(context);
 
-    if (matchElements != null) {
+    if (matchElements != null && ! matchElements.isEmpty()) {
       Iterator iter = matchElements.iterator();
       while (iter.hasNext() && result == null) {
         MatchElement matchElement = (MatchElement) iter.next();
@@ -128,14 +127,14 @@ public class ChildrenElement implements Cloneable, XmlAppender {
         }
       }
     }
-
     
-    // If none of the match elements matched, use the default <STYLE> element
-    if (result == null) {
-      // If not default style element was specified in the <CHILDREN> element,
-      // ask the stylesheet for an appropriate one.
+    // If there were no match elements matched, use the given <STYLE> element
+    else {
       StyleElement se = styleElement;
       if (se == null) {
+        // NOTE: The current DTD requires that a <STYLE> or <USE_STYLE> be specified,
+        // but I've experimented with the possibility of leaving it blank, in which case
+        // ask the stylesheet for an appropriate style.
         se = stylesheet.getStyleElementForSym(childsym);
       }
       if (se != null) {
@@ -145,14 +144,16 @@ public class ChildrenElement implements Cloneable, XmlAppender {
       }
     }
 
-    this.propertyMap.parentProperties = null;
+    this.propertyMap.setContext(oldContext);
     return result;
   }
   
   public static GlyphI findContainer(GlyphI gl, String container) {
     GlyphI container_glyph = gl;
     
-    if (".".equals(container)) {
+    if (container == null || "".equals(container)) {
+      container_glyph = gl;
+    } else if (".".equals(container)) {
       container_glyph = gl;
     } else if ("..".equals(container)) {
       container_glyph = parent(gl);
@@ -160,13 +161,15 @@ public class ChildrenElement implements Cloneable, XmlAppender {
       container_glyph = parent(parent(gl));
     } else if ("../../..".equals(container)) {
       container_glyph = parent(parent(parent(gl)));
+    } else if ("../../../..".equals(container)) {
+      container_glyph = parent(parent(parent(parent(gl))));
       
-      /// etc.
+      /// TODO: handle arbitrary nesting levels
       
     } else if ("/".equals(container)) {
-      container_glyph = gl.getParent();
+      container_glyph = gl;
       while (!( container_glyph instanceof TierGlyph)) {
-        container_glyph = parent(gl);
+        container_glyph = parent(container_glyph);
       }
     }
     return container_glyph;
@@ -200,9 +203,9 @@ public class ChildrenElement implements Cloneable, XmlAppender {
   }
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
-    sb.append(indent).append("<CHILDREN ");
-    XmlStylesheetParser.appendAttribute(sb, "container", childContainer);
-    XmlStylesheetParser.appendAttribute(sb, "child_positions", childPositions);
+    sb.append(indent).append('<').append(NAME);
+    XmlStylesheetParser.appendAttribute(sb, ATT_CONTAINER, childContainer);
+    XmlStylesheetParser.appendAttribute(sb, ATT_POSITIONS, childPositions);
     sb.append(">\n");
 
     if (this.propertyMap != null) {
@@ -221,7 +224,7 @@ public class ChildrenElement implements Cloneable, XmlAppender {
       styleElement.appendXML(indent + "  ", sb);
     }
 
-    sb.append(indent).append("</CHILDREN>\n");
+    sb.append(indent).append("</").append(NAME).append(">\n");
     return sb;
   }
 

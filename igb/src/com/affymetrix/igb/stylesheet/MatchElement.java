@@ -15,19 +15,44 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
+import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MatchElement implements Cloneable, XmlAppender {
 
-//  <!ELEMENT MATCH (MATCH*, STYLE)>
+//<!ELEMENT MATCH (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
+//<!ATTLIST MATCH
+//    test CDATA #REQUIRED
+//    param CDATA #REQUIRED
+//>
+  
+  public static String NAME = "MATCH";
+
+  public static String ATT_TEST = "test";
+  public static String ATT_PARAM = "param";
+  
+  public static String MATCH_BY_EXACT_TYPE = "type";
+  public static String MATCH_BY_EXACT_METHOD = "method";
+  public static String MATCH_BY_METHOD_REGEX = "method regex";
+
+  /** A test where of whether the item has or doesn't have children;
+   *  the param should be set to "true" (default) or "false".
+   */
+  public static String TEST_HAS_CHILDREN = "has children";
   
   StyleElement styleElement;
   PropertyMap propertyMap;
   List subMatchList = new ArrayList();
   
+  String match_test = null;
+  String match_param = null;
+  Pattern match_regex = null;
+    
   public Object clone() throws CloneNotSupportedException {
     MatchElement clone = (MatchElement) super.clone();
     clone.styleElement = (StyleElement) styleElement.clone();
@@ -54,15 +79,73 @@ public class MatchElement implements Cloneable, XmlAppender {
    */
   public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI gl, 
       Stylesheet stylesheet, PropertyMap context) {
-    propertyMap.parentProperties = context;
+    PropertyMap oldContext = propertyMap.getContext();
+    propertyMap.setContext(context);
+    
     // If a sub_matcher matches, use it to make the glyph, 
     // otherwise if this matches, make it ourselves,
     // otherwise, if no match, return null
+    
+    GlyphI result = null;
+    
+    if (subMatchList != null && ! subMatchList.isEmpty()) {
+      Iterator iter = subMatchList.iterator();
+      while (iter.hasNext() && result == null) {
+        MatchElement me = (MatchElement) iter.next();
+        result = me.symToGlyph(gviewer, sym, gl, stylesheet, propertyMap);
+      }
+    }
 
-    propertyMap.parentProperties = null;
-    return null;
+    // If none of the sub-matches matched, then check whether this matches,
+    // and if so, draw it ourselves
+    else if (styleElement != null) {
+      if (matches(sym)) {
+        result = styleElement.symToGlyph(gviewer, sym, gl, stylesheet, propertyMap);
+      }
+    }
+
+    propertyMap.setContext(oldContext);
+    return result;
   }
 
+  boolean matches(SeqSymmetry sym) {
+    boolean result = false;
+    
+    if (match_param == null) {
+      return false;
+    }
+    
+    if (TEST_HAS_CHILDREN.equals(match_test)) {
+      boolean hasChildren = (sym.getChildCount() == 0);
+      if ("false".equalsIgnoreCase(match_param)) {
+        return ! hasChildren;
+      } else {
+        return hasChildren;
+      }
+    }
+    
+    if (MATCH_BY_EXACT_TYPE.equals(match_test)) {
+      if (sym instanceof SymWithProps && 
+          match_param.equals( ((SymWithProps) sym).getProperty("type") ))  {
+        result = true;
+      }
+    }
+    
+    else if (MATCH_BY_EXACT_METHOD.equals(match_test)) {
+      if (match_param.equals( SmartAnnotBioSeq.determineMethod(sym) ))  {
+        result = true;
+      }
+    }
+
+    else if (MATCH_BY_METHOD_REGEX.equals(match_test) && match_regex != null) {
+      if (match_regex.matcher(SmartAnnotBioSeq.determineMethod(sym)).matches())  {
+        result = true;
+      }
+    }
+    
+    return result;
+  }
+  
   public StyleElement getStyle() {
     return this.styleElement;
   }
@@ -76,7 +159,13 @@ public class MatchElement implements Cloneable, XmlAppender {
   }
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
-    sb.append(indent).append("<MATCH ");
+    return appendXML(indent, sb, NAME);
+  }
+
+  StringBuffer appendXML(String indent, StringBuffer sb, String name) {
+    sb.append(indent).append("<").append(NAME).append(' ');
+    XmlStylesheetParser.appendAttribute(sb, ATT_TEST, match_test);
+    XmlStylesheetParser.appendAttribute(sb, ATT_PARAM, match_param);
     sb.append(">\n");
 
     if (this.propertyMap != null) {
@@ -93,7 +182,7 @@ public class MatchElement implements Cloneable, XmlAppender {
       styleElement.appendXML(indent + "  ", sb);
     }
 
-    sb.append(indent).append("</MATCH>\n");
+    sb.append(indent).append("</").append(name).append(">\n");
     return sb;
   }
 }

@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, XmlAppender {
 
-  PropertyMap parentProperties;
+  private PropertyMap parentProperties;
   
   public PropertyMap() {
   }
@@ -37,6 +37,19 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
   public PropertyMap(PropertyMap p) {
     this();
     this.parentProperties = p;
+  }
+  
+  public void setContext(PropertyMap context) {
+    if (context == null) {
+      this.parentProperties = null;
+    } else {
+      // I don't know exactly why, but cloning prevents infinite recursion in some cases.
+      this.parentProperties = (PropertyMap) context.clone();
+    }
+  }
+  
+  public PropertyMap getContext() {
+    return this.parentProperties;
   }
   
   /** Returns a Map containing all properties (including inherited properties
@@ -60,15 +73,35 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
   public Object get(Object key) {
     return this.getProperty((String) key);
   }
-  
+    
   public Object getProperty(String key) {
+    Object o = super.get(key);
+    
+    //WARNING: the simple, obvious way of implementing recursion would have the
+    // possibility of infinite recursion which is avoided here (I hope!).
+    PropertyMap pm = parentProperties;
+    while (o == null && pm != null && pm != this) {
+      o = pm.getProperty(key, 0, this);
+      pm = pm.parentProperties;
+    }
+    return o;
+  }
+    
+  Object getProperty(String key, int recur, PropertyMap originator) {
+    if (originator == this) {
+      throw new RuntimeException("Caught an infinite loop!");
+    }
+    if (recur == 100) {
+      throw new RuntimeException("Recursion too deep.");
+    }
+    
     Object o = super.get(key);
     
     //WARNING: the simple, obvious way of implementing recursion would have the
     // possibility of infinite recursion which is avoided here.
     PropertyMap pm = parentProperties;
     while (o == null && pm != null && pm != this) {
-      o = pm.getProperty(key);
+      o = pm.getProperty(key, recur + 1, originator);
       pm = pm.parentProperties;
     }
 
@@ -82,15 +115,14 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     super.put(key, val);
     return true; // why ?
   }
-  
-  
-//  Color convertToColor() {}
-  
+    
   public Color getColor(String key) {
         
     Color c = null;
     Object o = getProperty(key);
-    if (o instanceof Color) {
+    if ("".equals(o)) {
+      return null;
+    } else if (o instanceof Color) {
       c = (Color) o;
     } else if (o instanceof String) {
       c = Color.decode("0x"+o);
@@ -116,24 +148,31 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
   
   public Object clone() {
     PropertyMap clone = (PropertyMap) super.clone();
+    // It does not seem necessary to clone the parent properties,
+    // but I can revisit this later if necessary
+    //clone.parentProperties = (PropertyMap) this.parentProperties.clone();
     clone.parentProperties = this.parentProperties;
     return clone;
   }
+  
+  public static String PROP_ELEMENT_NAME = "PROPERTY";
+  public static String PROP_ATT_KEY = "key";
+  public static String PROP_ATT_VALUE = "value";
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     Iterator iter = this.keySet().iterator();
     while (iter.hasNext()) {
      String key = (String) iter.next();
      Object value = (Object) this.getProperty(key);
-     sb.append(indent).append("<PROPERTY ");
-     XmlStylesheetParser.appendAttribute(sb, "key", key);
-     XmlStylesheetParser.appendAttribute(sb, "value", ""+value);
+     sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
+     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
+     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, ""+value);
      sb.append("/>\n");
     }
     return sb;
   }
 
-  /** For diagnostic testing, prints the properties and the parent properties, etc. */
+  /** For diagnostic testing, appends the properties and the parent properties, etc. */
   public StringBuffer fullParentHeirarchy(String indent, StringBuffer sb) {
     sb.append(indent).append("<PROPERTIY_MAP>\n");
     Iterator iter = this.keySet().iterator();

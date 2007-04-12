@@ -20,9 +20,7 @@ import com.affymetrix.igb.genometry.GFF3Sym;
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
@@ -66,7 +64,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
   /** Creates a new style.  If one with the given name already exists, it will
    *  be obliterated and replaced by this new one.
    */
-  public StyleElement createStyle(String name, PropertyMap pm, boolean add_to_index) {
+  public StyleElement createStyle(String name, boolean add_to_index) {
 
     StyleElement se = getStyleByName(name);
     if (se == null) {
@@ -203,7 +201,6 @@ public class Stylesheet implements Cloneable, XmlAppender {
       sb.append(indent).append(indent + "  ").append("<METHOD_ASSOCIATION ");
       XmlStylesheetParser.appendAttribute(sb, "method", method_name);
       XmlStylesheetParser.appendAttribute(sb, "style", style_name);
-      XmlStylesheetParser.appendAttribute(sb, "match_by", "exact");
       sb.append("/>\n");
     }
     
@@ -212,10 +209,9 @@ public class Stylesheet implements Cloneable, XmlAppender {
       Pattern regex = (Pattern) r_iter.next();
       String regex_string = regex.pattern();
       String style_name = (String) regex2stylename.get(regex);
-      sb.append(indent).append(indent + "  ").append("<METHOD_ASSOCIATION ");
-      XmlStylesheetParser.appendAttribute(sb, "method", regex_string);
+      sb.append(indent).append(indent + "  ").append("<METHOD_REGEX_ASSOCIATION ");
+      XmlStylesheetParser.appendAttribute(sb, "regex", regex_string);
       XmlStylesheetParser.appendAttribute(sb, "style", style_name);
-      XmlStylesheetParser.appendAttribute(sb, "match_by", "regex");
       sb.append("/>\n");
     }
 
@@ -238,17 +234,20 @@ public class Stylesheet implements Cloneable, XmlAppender {
   }
   
   public StyleElement getWrappedStyle(String name) {
-    return new WrappedStyleElement(name);
+    StyleElement se = new WrappedStyleElement(name);
+    return se;
   }
   
-  public class WrappedStyleElement extends StyleElement {
-    public String name;
+  public static class WrappedStyleElement extends StyleElement {
+    public static String NAME = "USE_STYLE";
+    
     public WrappedStyleElement(String name) {
       super();
       this.name = name;
     }
-    public StyleElement getReferredStyle() {
-      StyleElement se = getStyleByName(name);
+
+    public StyleElement getReferredStyle(Stylesheet ss) {
+      StyleElement se = ss.getStyleByName(name);
       if (se == null) {
         se = new StyleElement();
       }
@@ -257,11 +256,16 @@ public class Stylesheet implements Cloneable, XmlAppender {
     public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, 
         Stylesheet stylesheet, PropertyMap context) {
 
-      return getReferredStyle().symToGlyph(gviewer, sym, container, stylesheet, context);
+      GlyphI containerGlyph = ChildrenElement.findContainer(container, this.childContainer);
+
+      return getReferredStyle(stylesheet).symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);
     }
 
     public StringBuffer appendXML(String indent, StringBuffer sb) {
-      return sb.append(indent).append("<USE_STYLE name=\"").append(name).append("\"/>\n");
+      sb.append(indent).append('<').append(NAME);
+      XmlStylesheetParser.appendAttribute(sb, ATT_NAME, name);
+      sb.append("\"/>\n");
+      return sb;
     }
   }
 }

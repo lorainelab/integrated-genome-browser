@@ -84,6 +84,7 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
       o = pm.getProperty(key, 0, this);
       pm = pm.parentProperties;
     }
+    
     return o;
   }
     
@@ -105,9 +106,6 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
       pm = pm.parentProperties;
     }
 
-    if ("".equals(o)) {
-      o = null; // this allows a way to ignore properties set in a higher level parent
-    }
     return o;
   }
 
@@ -121,6 +119,8 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     Color c = null;
     Object o = getProperty(key);
     if ("".equals(o)) {
+      // setting the value of color to "" means that you want to ignore the
+      // color settings in any inherited context and revert to the default.
       return null;
     } else if (o instanceof Color) {
       c = (Color) o;
@@ -166,7 +166,7 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
      Object value = (Object) this.getProperty(key);
      sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
-     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, ""+value);
+     XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, "" + value);
      sb.append("/>\n");
     }
     return sb;
@@ -181,7 +181,7 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
       Object value = (Object) this.getProperty(key);
       sb.append(indent + "  ").append("<PROPERTY ");
       XmlStylesheetParser.appendAttribute(sb, "key", key);
-      XmlStylesheetParser.appendAttribute(sb, "value", ""+value);
+      XmlStylesheetParser.appendAttribute(sb, "value", "" + value);
       sb.append("/>\n");
     }
     if (parentProperties == this) {

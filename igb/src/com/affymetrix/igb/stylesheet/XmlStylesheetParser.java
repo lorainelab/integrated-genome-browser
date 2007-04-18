@@ -38,6 +38,14 @@ public class XmlStylesheetParser {
   
   // This resource should in the top-level igb source directory, or top level of jar file
   static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
+  static final String default_user_stylesheet_resource_name = "/default_user_stylesheet.xml";
+
+  /** Set the system stylesheet to null, so that the next call to getSystemStylesheet()
+   *  will re-load it from storage.
+   */
+  public static synchronized void refreshSystemStylesheet() {
+    system_stylesheet = null;
+  }
 
   public static synchronized Stylesheet getSystemStylesheet() {
     if (system_stylesheet == null) {
@@ -59,9 +67,38 @@ public class XmlStylesheetParser {
     }
     return system_stylesheet;
   }
-  
-  public static Stylesheet getUserStylesheet() {
-    return new Stylesheet();
+
+  /** Set the user stylesheet to null, so that the next call to getSystemStylesheet()
+   *  will re-load it from storage.
+   */
+  public static synchronized void refreshUserStylesheet() {
+    system_stylesheet = null;
+    user_stylesheet = null;
+  }
+
+  public static synchronized Stylesheet getUserStylesheet() {
+    if (user_stylesheet == null) {      
+      try {
+        XmlStylesheetParser parser = new XmlStylesheetParser();
+        // If using class.getResource... use name beginning with "/"
+        InputStream istr = XmlStylesheetParser.class.getResourceAsStream(default_user_stylesheet_resource_name);
+        
+        // Initialize the user stylesheet with the contents of the system stylesheet
+        parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
+        
+        // then load the user stylesheet on top of that
+        user_stylesheet = parser.parse(istr);
+
+      } catch (Exception e) {
+        System.out.println("ERROR: Couldn't initialize user stylesheet.");
+        e.printStackTrace();
+        user_stylesheet = null;
+      }
+    }
+    if (user_stylesheet == null) {
+      user_stylesheet = new Stylesheet();
+    }
+    return user_stylesheet;
   }
   
   public Stylesheet parse(File fl) throws IOException {
@@ -113,10 +150,6 @@ public class XmlStylesheetParser {
       throw new IOException("Can't parse file: Initial Element is not <IGB_STYLESHEET>.");
     }
     NodeList children = top_element.getChildNodes();
-
-      // if red, green, blue attributes then val = color(red, green, blue)
-      // else if has nested tags then val = (recursive hashtable into nesting)
-      // else val = String(content)
 
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
@@ -225,17 +258,6 @@ public class XmlStylesheetParser {
           processStyle(el, true);
         }
       }
-    }
-  }
-
-  Color string2Color(String s) {
-    if (s==null || s.trim().length() == 0) {
-      return null;
-    }
-    if (s.startsWith("Ox")) {
-      return Color.decode(s);
-    } else {
-      return Color.decode("0x"+s);
     }
   }
   

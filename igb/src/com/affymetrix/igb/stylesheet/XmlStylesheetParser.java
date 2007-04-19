@@ -178,6 +178,11 @@ public class XmlStylesheetParser {
     System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
   }
 
+  void cantParse(Element n, String msg) {
+    System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
+    System.out.println("        " + msg);
+  }
+
   void notImplemented(String s) {
     System.out.println("WARNING: Stylesheet: Not yet implemented: " + s);
   }
@@ -419,6 +424,10 @@ public class XmlStylesheetParser {
       String type = matchel.getAttribute(MatchElement.ATT_TEST);
       String param = matchel.getAttribute(MatchElement.ATT_PARAM);
       if (! isBlank(type)) {
+        if (! MatchElement.knownTestType(type)) {
+          cantParse(matchel, "Unknown test type, test='" + type + "'");
+        }
+        
         me.match_test = type;
         if (! isBlank(param)) {
           me.match_param = param;

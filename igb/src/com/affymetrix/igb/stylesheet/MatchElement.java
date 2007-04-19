@@ -38,12 +38,17 @@ public class MatchElement implements Cloneable, XmlAppender {
   
   public static String MATCH_BY_EXACT_TYPE = "type";
   public static String MATCH_BY_EXACT_METHOD = "method";
-  public static String MATCH_BY_METHOD_REGEX = "method regex";
+  public static String MATCH_BY_METHOD_REGEX = "method_regex";
 
   /** A test where of whether the item has or doesn't have children;
    *  the param should be set to "true" (default) or "false".
    */
-  public static String TEST_HAS_CHILDREN = "has children";
+  public static String TEST_HAS_CHILDREN = "has_children";
+  
+  static String[] knownTypes = new String[] {
+    MATCH_BY_EXACT_TYPE, MATCH_BY_EXACT_METHOD, MATCH_BY_METHOD_REGEX,
+    TEST_HAS_CHILDREN,
+  };
   
   StyleElement styleElement;
   PropertyMap propertyMap;
@@ -106,6 +111,13 @@ public class MatchElement implements Cloneable, XmlAppender {
 
     propertyMap.setContext(oldContext);
     return result;
+  }
+
+  static boolean knownTestType(String type) {
+    for (int i=0; i<knownTypes.length; i++) {
+      if (type.equals(knownTypes[i])) { return true; }
+    }
+    return false;
   }
 
   boolean matches(SeqSymmetry sym) {

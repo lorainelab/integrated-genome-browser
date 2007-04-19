@@ -37,7 +37,7 @@ public class StyleElement implements Cloneable, XmlAppender {
   static Map names2styles = new HashMap();
   
   String childContainer = ".";
-  PropertyMap propertyMap = new PropertyMap();
+  PropertyMap propertyMap;
   List matchElements;
   GlyphElement glyphElement;
 

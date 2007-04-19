@@ -13,12 +13,8 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.Propertied;
 import java.awt.Color;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  *  A cascading implementation of the Java Map class that also implements
@@ -27,23 +23,39 @@ import java.util.Map;
  *  first in its own Map, then in it's parent Map, then the parent's parent, etc.
  *  All keys and values must be String's.
  */
-public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, XmlAppender {
+public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender {
 
   private PropertyMap parentProperties;
   
   public PropertyMap() {
   }
   
-  public PropertyMap(PropertyMap p) {
-    this();
-    this.parentProperties = p;
+  /** Checks whether this item's parent, or grandparent, etc. is
+   *  identical to the possible_ancestor. This helps prevent infinite loops
+   *  that could arise during processing recursive <STYLE> invocations.
+   */
+  boolean hasAncestor(PropertyMap possible_ancestor) {
+    PropertyMap p2 = this;
+    while (p2 != null) {
+      if (p2 == possible_ancestor) {
+        return true;
+      }
+      p2 = p2.parentProperties;
+    }
+    return false;
   }
   
   public void setContext(PropertyMap context) {
     if (context == null) {
       this.parentProperties = null;
     } else {
-      // I don't know exactly why, but cloning prevents infinite recursion in some cases.
+      
+      if (context.hasAncestor(this)) {
+        throw new RuntimeException("BAD CONTEXT: Current already present in context");
+      }
+      
+      // Cloning prevents context.hasAncestor(this) from ever being true.
+      // There may be a simpler way....
       this.parentProperties = (PropertyMap) context.clone();
     }
   }
@@ -52,58 +64,51 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     return this.parentProperties;
   }
   
-  /** Returns a Map containing all properties (including inherited properties
-   *  of the parents), but changing anything in this map will have no 
-   *  effect on this object. 
-   */
-  public Map getProperties() {
-    HashMap m = new HashMap();
-    if (parentProperties != null) {
-      m.putAll(parentProperties);
-    }
-    m.putAll(this);
-    return Collections.unmodifiableMap(m);
-  }
-
-  /** Equivalent to getProperties(). */
-  public Map cloneProperties() {
-    return getProperties();
-  }
-
   public Object get(Object key) {
     return this.getProperty((String) key);
   }
     
+  ArrayList ancestors = new ArrayList(100);
+
   public Object getProperty(String key) {
     Object o = super.get(key);
     
     //WARNING: the simple, obvious way of implementing recursion would have the
     // possibility of infinite recursion which is avoided here (I hope!).
-    PropertyMap pm = parentProperties;
-    while (o == null && pm != null && pm != this) {
-      o = pm.getProperty(key, 0, this);
-      pm = pm.parentProperties;
+    if (o == null) {
+      ancestors.clear();
+      o = this.getProperty(key, 0, ancestors);
+      ancestors.clear();
     }
     
     return o;
   }
-    
-  Object getProperty(String key, int recur, PropertyMap originator) {
-    if (originator == this) {
-      throw new RuntimeException("Caught an infinite loop!");
+  
+  boolean contains(List list, Object o) {
+    for (int i=0; i<list.size(); i++) {
+      if (list.get(i) == o) {
+        return true;
+      }
     }
+    return false;
+  }
+    
+  Object getProperty(String key, int recur, List ancestors) {
+
+    if (contains(ancestors, this)) {
+      System.out.println("WARNING: Caught an infinite loop!");
+      return null;
+    }
+
     if (recur == 100) {
       throw new RuntimeException("Recursion too deep.");
     }
     
     Object o = super.get(key);
     
-    //WARNING: the simple, obvious way of implementing recursion would have the
-    // possibility of infinite recursion which is avoided here.
-    PropertyMap pm = parentProperties;
-    while (o == null && pm != null && pm != this) {
-      o = pm.getProperty(key, recur + 1, originator);
-      pm = pm.parentProperties;
+    if (o == null && parentProperties != null) {
+      ancestors.add(this);
+      o = this.parentProperties.getProperty(key, recur+1, ancestors);
     }
 
     return o;
@@ -125,7 +130,11 @@ public class PropertyMap extends HashMap implements Map, Propertied, Cloneable, 
     } else if (o instanceof Color) {
       c = (Color) o;
     } else if (o instanceof String) {
-      c = Color.decode("0x"+o);
+      try {
+        c = Color.decode("0x"+o);
+      } catch (Exception e) {
+        System.out.print("WARNING: could not parse color '"+o+"'");
+      }
     }
 
     PropertyMap pm = this;

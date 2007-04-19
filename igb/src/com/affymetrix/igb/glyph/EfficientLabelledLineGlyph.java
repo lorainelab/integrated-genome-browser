@@ -117,40 +117,60 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
    *  Overriding addChild to force a call to adjustChildren().
    */
   public void addChild(GlyphI glyph) {
-    // child.cbox.y is modified, but not child.cbox.height)
-    // center the children of the LineContainerGlyph on the line
-    super.addChild(glyph);
-    adjustChild(glyph);
+    if (isMoveChildren()) {
+      double child_height = adjustChild(glyph);
+      super.addChild(glyph);
+      if (this.height < 2.0 * child_height) {
+        this.height = 2.0 * child_height;
+        adjustChildren();
+      }
+    } else {
+      super.addChild(glyph);
+    }
   }
 
-  protected void adjustChild(GlyphI child) {
-    if (! isMoveChildren()) return;
-    Rectangle2D cbox = child.getCoordBox();
-    if (show_label) {
-      if (label_loc == NORTH) {
-        double ycenter = this.y + (0.75 * this.height);
-        cbox.y = ycenter - (0.5 * cbox.height);
+  protected double adjustChild(GlyphI child) {
+    if (isMoveChildren()) {
+      // child.cbox.y is modified, but not child.cbox.height)
+      // center the children of the LineContainerGlyph on the line
+      final Rectangle2D cbox = child.getCoordBox();
+      double ycenter;
+      // use moveAbsolute or moveRelative to make sure children also get moved
+      
+      if (show_label) {
+        if (label_loc == NORTH) {
+          ycenter = this.y + (0.75 * this.height);
+          child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
+        } else {
+          ycenter = this.y + (0.25 * this.height);
+          child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
+        }
+      } else {
+        ycenter = this.y + this.height * 0.5;
       }
-      else {
-        double ycenter = this.y + (0.25 * this.height);
-        cbox.y = ycenter - (0.5 * cbox.height);
-      }
-    }
-    else {
-      double ycenter = this.y + this.height/2;
-      cbox.y = ycenter - cbox.height/2;
+      child.moveRelative(0, ycenter - (cbox.height * 0.5) - cbox.y);      
+      return cbox.height;
+    } else {
+      return this.height;
     }
   }
 
   protected void adjustChildren() {
-    if (! isMoveChildren()) return;
-    java.util.List childlist = this.getChildren();
-    if (childlist != null) {
-      int child_count = this.getChildCount();
-      for (int i=0; i<child_count; i++) {
-        GlyphI child = (GlyphI)childlist.get(i);
-        adjustChild(child);
+    double max_height = 0.0;
+    if (isMoveChildren()) {
+      java.util.List childlist = this.getChildren();
+      if (childlist != null) {
+        int child_count = this.getChildCount();
+        for (int i=0; i<child_count; i++) {
+          GlyphI child = (GlyphI)childlist.get(i);
+          double child_height = adjustChild(child);
+          max_height = Math.max(max_height, child_height);
+        }
       }
+    }
+    if (this.height < 2.0 * max_height) {
+      this.height = 2.0 * max_height;
+      adjustChildren(); // have to adjust children again after a height change.
     }
   }
 

@@ -259,16 +259,17 @@ public class Stylesheet implements Cloneable, XmlAppender {
     public StyleElement getReferredStyle(Stylesheet ss) {
       StyleElement se = ss.getStyleByName(name);
       if (se == null) {
-        se = new StyleElement();
+        se = ss.getDefaultStyleElement();
       }
       return se;
     }
     public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, 
         Stylesheet stylesheet, PropertyMap context) {
-
+      StyleElement referredStyle = getReferredStyle(stylesheet);
+      
       GlyphI containerGlyph = ChildrenElement.findContainer(container, this.childContainer);
 
-      return getReferredStyle(stylesheet).symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);
+      return referredStyle.symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);
     }
 
     public StringBuffer appendXML(String indent, StringBuffer sb) {

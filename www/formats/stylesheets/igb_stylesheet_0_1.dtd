@@ -27,6 +27,8 @@ Example:
    version CDATA #IMPLIED
   >
 
+<!ENTITY % MATCH_BLOCK "(MATCH*, ELSE?)" >
+<!ENTITY % MATCH_OR_STYLE "(%MATCH_BLOCK; | (STYLE?, USE_STYLE?))" >
 
 <!--- Import definitions and associations from an external document, if desired. 
   Any definitions in the current document will override definitions with the
@@ -55,7 +57,7 @@ Example:
     or parent's parent, etc., of the current glyph.
     Value "/" means draw inside the "root" glyph, i.e. the Tier itself.
 -->
-<!ELEMENT STYLE (PROPERTY*, ((MATCH+,ELSE?) | GLYPH))>
+<!ELEMENT STYLE (PROPERTY*, (%MATCH_BLOCK; | GLYPH))>
 <!ATTLIST STYLE
     name CDATA #IMPLIED
     container CDATA #IMPLIED
@@ -92,7 +94,7 @@ Example:
 -->
 <!ELEMENT GLYPH (PROPERTY*, GLYPH*, CHILDREN?)>
 <!ATTLIST GLYPH
-    type CDATA #REQUIRED
+    type (box | filled_box | arrow | hidden | line | pointed | span | none) #REQUIRED
     position CDATA #IMPLIED
   >
 
@@ -104,7 +106,7 @@ Example:
 
       If no MATCH or ELSE is given, apply the given STYLE to every child.
 -->
-<!ELEMENT CHILDREN (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
+<!ELEMENT CHILDREN (PROPERTY*, (%MATCH_OR_STYLE;))>
 <!ATTLIST CHILDREN
     container CDATA #IMPLIED
     child_positions CDATA #IMPLIED
@@ -125,12 +127,12 @@ Example:
       Types of conditions:
         test="type" param="foo"  : match only items where type equals "foo"
         test="method" param="foo"  : match only items where method equals "foo"
-        test="method regex" param="foo.*"  : match only items where method matches regex "foo.*"
+        test="method_regex" param="foo.*"  : match only items where method matches regex "foo.*"
       Other sorts of match conditions may be specified in a future version of this document.
 -->
-<!ELEMENT MATCH (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
+<!ELEMENT MATCH (PROPERTY*, (%MATCH_OR_STYLE;))>
 <!ATTLIST MATCH
-    test CDATA #REQUIRED
+    test (type | method | method_regex) #REQUIRED
     param CDATA #REQUIRED
 >
 
@@ -139,7 +141,7 @@ Example:
       Apply the given style (if any) to any children that failed the preceding 
       match condition.  If style is not specified, do not draw the child.
 -->
-<!ELEMENT ELSE (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
+<!ELEMENT ELSE (PROPERTY*, (%MATCH_OR_STYLE;))>
 
 <!--- ASSOCIATIONS associates styles to data types. 
       All METHOD_ASSOCIATION elements must appear before all TYPE_ASSOCIATION

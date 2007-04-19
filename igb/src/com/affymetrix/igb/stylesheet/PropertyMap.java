@@ -119,6 +119,9 @@ public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender 
     return true; // why ?
   }
     
+  static int color_warnings = 0; // count the number of warnings about colors
+  // Printing millions of such warnings would cause a big slowdown.
+  
   public Color getColor(String key) {
         
     Color c = null;
@@ -133,7 +136,10 @@ public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender 
       try {
         c = Color.decode("0x"+o);
       } catch (Exception e) {
-        System.out.print("WARNING: could not parse color '"+o+"'");
+        c = null;
+        if (++color_warnings < 100) {
+          System.out.println("WARNING: could not parse color '"+o+"'");
+        }
       }
     }
 

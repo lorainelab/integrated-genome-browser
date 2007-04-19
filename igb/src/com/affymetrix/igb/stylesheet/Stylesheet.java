@@ -128,7 +128,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     }
     
     if (styleElement == null) {
-      styleElement = getDefaultstyleElement();
+      styleElement = getDefaultStyleElement();
     }
     
     return styleElement;
@@ -169,9 +169,19 @@ public class Stylesheet implements Cloneable, XmlAppender {
     return (StyleElement) type2stylename.get(type);
   }
   
-  public StyleElement getDefaultstyleElement() {
-    return new StyleElement();
-  }  
+  StyleElement default_style;
+  
+  public StyleElement getDefaultStyleElement() {
+    if (default_style == null) {
+      // Create a default style that is just boxes inside boxes...
+      default_style = new StyleElement();
+      default_style.glyphElement = new GlyphElement();
+      default_style.glyphElement.type = GlyphElement.TYPE_BOX;
+      default_style.glyphElement.childrenElement = new ChildrenElement();
+      default_style.glyphElement.childrenElement.styleElement = default_style;
+    }
+    return default_style;
+  }
 
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append("<?xml version=\"1.0\"?>\n");

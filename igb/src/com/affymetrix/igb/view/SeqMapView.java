@@ -60,6 +60,7 @@ import com.affymetrix.igb.genometry.ScoredContainerSym;
 import com.affymetrix.igb.parsers.CytobandParser;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -69,6 +70,7 @@ public class SeqMapView extends JPanel
   static final boolean DIAGNOSTICS = false;
   static final boolean DEBUG_TIERS = false;
   public static boolean DEBUG_COMP = false;
+  static final boolean DEBUG_STYLESHEETS = true;
 
   boolean LABEL_TIERMAP = true;
 
@@ -206,7 +208,6 @@ public class SeqMapView extends JPanel
 
   Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
   Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
-//  MapViewGlyphFactoryI xml_factory;
 
   GlyphEdgeMatcher edge_matcher = null;
 
@@ -282,10 +283,6 @@ public class SeqMapView extends JPanel
    *  be false in the AltSpliceView, for instance.
    */
   public SeqMapView(boolean add_popups, boolean split_win) {
-
-//    Stylesheet stylesheet = XmlStylesheetParser.getSystemStylesheet();
-
-//    xml_factory = new XmlStylesheetGlyphFactory(stylesheet);
 
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
@@ -1300,8 +1297,6 @@ public class SeqMapView extends JPanel
       // Again, a clone might be better.
       meth2factory.put(meth, default_glyph_factory);
     }
-
-//    factory = xml_factory;
     
     return factory;
   }  
@@ -1413,9 +1408,7 @@ public class SeqMapView extends JPanel
     }
     return result_sym;
   }
-
-
-
+    
   public AffyTieredMap getSeqMap() {
     return seqmap;
   }
@@ -2828,6 +2821,18 @@ public class SeqMapView extends JPanel
     if (selected_syms.size() == 1) {
       sym_popup.add(printSymmetryMI);
     }
+    if (DEBUG_STYLESHEETS) {
+      Action reload_stylesheet = new AbstractAction("Re-load user stylesheet") {
+        public void actionPerformed(ActionEvent evt) {
+          XmlStylesheetParser.refreshUserStylesheet();
+          XmlStylesheetParser.refreshSystemStylesheet();
+          setAnnotatedSeq(getAnnotatedSeq());
+        }
+      };
+      
+      sym_popup.add(reload_stylesheet);
+    }
+    
 
     for (int i=0; i<popup_listeners.size(); i++) {
       ContextualPopupListener listener = (ContextualPopupListener)popup_listeners.get(i);
@@ -3045,14 +3050,9 @@ public class SeqMapView extends JPanel
       }
   }
 
-  void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constant_heights) {
-    ExpandPacker ep = null;
-    if (! constant_heights) {
-      ep = new ExpandPacker(); // this one doesn't assume constant heights
-      // slow in general, but fine for tiers with only graphs in them.
-    } else {
-      ep = new FasterExpandPacker(); // assumes constant heights
-    }
+  void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
+    FasterExpandPacker ep = new FasterExpandPacker();
+    ep.setConstantHeights(constantHeights);
     if (above_axis) {
       ep.setMoveType(ExpandPacker.UP);
     } else {

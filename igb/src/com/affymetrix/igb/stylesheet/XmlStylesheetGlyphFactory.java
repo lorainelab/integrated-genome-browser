@@ -32,7 +32,10 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
   Stylesheet stylesheet = null;
   PropertyMap context = new PropertyMap();
   
-  public XmlStylesheetGlyphFactory(Stylesheet ss) {
+  public XmlStylesheetGlyphFactory() {
+  }
+  
+  public void setStylesheet(Stylesheet ss) {
     this.stylesheet = ss;
   }
   

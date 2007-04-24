@@ -33,6 +33,7 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
@@ -59,7 +60,7 @@ import com.affymetrix.igb.genometry.TypeContainerAnnot;
 import com.affymetrix.igb.genometry.ScoredContainerSym;
 import com.affymetrix.igb.parsers.CytobandParser;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
 public class SeqMapView extends JPanel
@@ -1317,6 +1318,13 @@ public class SeqMapView extends JPanel
       factory = getAnnotationGlyphFactory(meth);
     }
     if (factory == null) { factory = default_glyph_factory; }
+
+    if (factory instanceof XmlStylesheetGlyphFactory) {
+      // Re-setting the stylesheet every time allows the 
+      // DEBUG_STYLESHEETS flag to work right, and doesn't add any
+      // performance hit
+      ((XmlStylesheetGlyphFactory) factory).setStylesheet(XmlStylesheetParser.getUserStylesheet());
+    }
 
     if (DEBUG_COMP && transform_path != null)  {
       System.out.println("transform path length: " + transform_path.length);

@@ -43,11 +43,12 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
-  static boolean INCLUDE_NAME_SEARCH = true;
+  static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
   static boolean DEBUG_EVENTS = false;
   static boolean THREAD_FEATURE_REQUESTS = true;
   static boolean USE_SIMPLE_VIEW = false;
+  static boolean USE_TYPES_TREE_TABLE = false;
 
   static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
 
@@ -125,16 +126,20 @@ public class Das2LoadView extends JComponent
 
 
     ArrayList test_states = new ArrayList();
-    Das2TypesTreeTableModel types_tree_model = new Das2TypesTreeTableModel(test_states);
-    types_tree_table = new JTreeTable(types_tree_model);
-    tree_table_scroller = new JScrollPane(types_tree_table);
+    JPanel types_tree_panel = null;
+    if (USE_TYPES_TREE_TABLE) {
+      Das2TypesTreeTableModel types_tree_model = new Das2TypesTreeTableModel(test_states);
+      types_tree_table = new JTreeTable(types_tree_model);
+      tree_table_scroller = new JScrollPane(types_tree_table);
+      types_tree_panel = new JPanel(new BorderLayout());
+      types_tree_panel.setBorder(new TitledBorder("Available Annotation Types"));
+      types_tree_panel.add("Center", tree_table_scroller);
+    }
 
     this.setLayout(new BorderLayout());
 
     JPanel types_panel = new JPanel(new BorderLayout());
     types_panel.setBorder(new TitledBorder("Available Annotation Types"));
-    JPanel types_tree_panel = new JPanel(new BorderLayout());
-    types_tree_panel.setBorder(new TitledBorder("Available Annotation Types"));
 
     JPanel namesearchP = new JPanel();
 
@@ -144,18 +149,16 @@ public class Das2LoadView extends JComponent
     //    types_panel.add("North", namesearchP);
     types_panel.add("Center", table_scroller);
     types_panel.add("South", load_features_box);
-    types_tree_panel.add("Center", tree_table_scroller);
-
 
     final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     //    splitpane.setDividerSize(8);
     //    splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setLeftComponent(new JScrollPane(tree));
-    if (INCLUDE_NAME_SEARCH) {
+    if (INCLUDE_NAME_SEARCH  || USE_TYPES_TREE_TABLE) {
       tpane.addTab("Types", types_panel);
-      tpane.addTab("TypesTree", types_tree_panel);
-      tpane.addTab("Name Search", namesearchP);
+      if (USE_TYPES_TREE_TABLE)  { tpane.addTab("TypesTree", types_tree_panel); }
+      if (INCLUDE_NAME_SEARCH)  {tpane.addTab("Name Search", namesearchP); }
       splitpane.setRightComponent(tpane);
     }
     else {

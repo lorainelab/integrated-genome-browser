@@ -53,6 +53,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
+  public static boolean USE_REFRESH_BUTTON = true;
   public static boolean REPLACE_REPAINT_MANAGER = false;
   public static boolean REPORT_GRAPHICS_CONFIG = false;
 
@@ -576,7 +577,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	ex.printStackTrace();
       }
     }
-    map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP);
+    map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP, USE_REFRESH_BUTTON);
 
 //    navigation_menu = map_view.getNavigationMenu("Go");
 //    navigation_menu.setMnemonic('G');

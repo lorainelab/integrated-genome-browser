@@ -73,17 +73,10 @@ public class LocalUrlCacher {
     String encoded_url = UrlToFileName.encode(url);
     String cache_file_name = cache_root + "/" + encoded_url;
 
-    // NOTE: This logic is a bit wrong.  It was probably intended that only file
+    // Need to make sure that full path of file is < 255 characters to ensure 
+    //    cross-platform compatibility (some OS allow any length, some only restrict file name 
+    //    length (last path segment), but there are some that restrict full path to <= 255 characters
     // names longer than 255 characters would be md5-encoded, but this encodes
-    // any file-path-name longer than 255 characters, which means that practially
-    // all file-path-names are getting encoded.
-    //
-    // Correct logic would be:
-    //if (encoded_url.length() > 255) {
-    //  encoded_url = UrlToFileName.toMd5(encoded_url);
-    //}
-    //File cache_file = new File(cache_root, encoded_url);
-    
     if (cache_file_name.length() > 255) {
       if (REPORT_LONG_URLS) {
 	System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +

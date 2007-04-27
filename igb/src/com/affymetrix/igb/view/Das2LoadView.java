@@ -15,6 +15,7 @@ package com.affymetrix.igb.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URI;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
@@ -33,6 +34,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.GenometryViewer;
+import javax.swing.treetable.*;
 
 import javax.swing.event.*;  // temporary visualization till hooked into IGB
 
@@ -41,22 +43,25 @@ public class Das2LoadView extends JComponent
 	     SeqSelectionListener, GroupSelectionListener,
              TreeSelectionListener {
 
-  static boolean INCLUDE_NAME_SEARCH = false;
+  static boolean INCLUDE_NAME_SEARCH = true;
   static boolean USE_DAS2_OPTIMIZER = true;
-  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
   static boolean DEBUG_EVENTS = false;
+  static boolean THREAD_FEATURE_REQUESTS = true;
+  static boolean USE_SIMPLE_VIEW = false;
 
-  boolean THREAD_FEATURE_REQUESTS = true;
-  boolean USE_SIMPLE_VIEW = false;
-  SeqMapView gviewer = null;
-  GenometryViewer simple_viewer = null;
+  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
+
+  static SeqMapView gviewer = null;
+  static GenometryViewer simple_viewer = null;
 
   JTabbedPane tpane = new JTabbedPane();
   JTextField searchTF = new JTextField(40);
   JComboBox typestateCB;
   JButton load_featuresB;
   JTable types_table;
+  JTable types_tree_table;
   JScrollPane table_scroller;
+  JScrollPane tree_table_scroller;
   Map das_servers;
   Map version2typestates = new LinkedHashMap();
 
@@ -66,7 +71,7 @@ public class Das2LoadView extends JComponent
   Das2VersionedSource current_version;
   Das2Region current_region;
 
-  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  static SingletonGenometryModel gmodel = IGB.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
 
@@ -118,10 +123,18 @@ public class Das2LoadView extends JComponent
     types_table.setModel(empty_table_model);
     table_scroller = new JScrollPane(types_table);
 
+
+    ArrayList test_states = new ArrayList();
+    Das2TypesTreeTableModel types_tree_model = new Das2TypesTreeTableModel(test_states);
+    types_tree_table = new JTreeTable(types_tree_model);
+    tree_table_scroller = new JScrollPane(types_tree_table);
+
     this.setLayout(new BorderLayout());
 
     JPanel types_panel = new JPanel(new BorderLayout());
     types_panel.setBorder(new TitledBorder("Available Annotation Types"));
+    JPanel types_tree_panel = new JPanel(new BorderLayout());
+    types_tree_panel.setBorder(new TitledBorder("Available Annotation Types"));
 
     JPanel namesearchP = new JPanel();
 
@@ -131,6 +144,7 @@ public class Das2LoadView extends JComponent
     //    types_panel.add("North", namesearchP);
     types_panel.add("Center", table_scroller);
     types_panel.add("South", load_features_box);
+    types_tree_panel.add("Center", tree_table_scroller);
 
 
     final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -140,13 +154,14 @@ public class Das2LoadView extends JComponent
     splitpane.setLeftComponent(new JScrollPane(tree));
     if (INCLUDE_NAME_SEARCH) {
       tpane.addTab("Types", types_panel);
+      tpane.addTab("TypesTree", types_tree_panel);
       tpane.addTab("Name Search", namesearchP);
       splitpane.setRightComponent(tpane);
     }
     else {
       splitpane.setRightComponent(types_panel);
     }
-    
+
     // As soon as this component becomes visible, set the splitpane position
     this.addComponentListener(new ComponentAdapter() {
       public void componentShown(ComponentEvent evt) {
@@ -336,12 +351,12 @@ public class Das2LoadView extends JComponent
    *  so every request (one per type) launches on its own thread
    *  But for now putting them all on same (non-event) thread controlled by SwingWorker
    */
-  public void processFeatureRequests(java.util.List requests, final boolean update_display) {
+  public static void processFeatureRequests(java.util.List requests, final boolean update_display) {
     final java.util.List request_syms = requests;
     final java.util.List result_syms = new ArrayList();
-    
+
     if ((request_syms == null) || (request_syms.size() == 0)) { return; }
-    SwingWorker worker = new SwingWorker() {      
+    SwingWorker worker = new SwingWorker() {
 	public Object construct() {
 	  for (int i=0; i<request_syms.size(); i++) {
 	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
@@ -351,7 +366,7 @@ public class Das2LoadView extends JComponent
             Das2Type type = request_sym.getDas2Type();
             AnnotStyle style = AnnotStyle.getInstance(type.getID());
             style.setHumanName(type.getName());
-            
+
             if (USE_DAS2_OPTIMIZER) {
 	      result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
 	    }
@@ -364,7 +379,7 @@ public class Das2LoadView extends JComponent
 	  }
 	  return null;
 	}
-        
+
         public void finished() {
 
           // Could examine or print the request logs now....
@@ -374,7 +389,7 @@ public class Das2LoadView extends JComponent
 //            Das2RequestLog request_log = request.getLog();
 //            // could print out the request logs or something .....
 //          }
-          
+
 	  if (update_display) {
 	    if (USE_SIMPLE_VIEW) {
 	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(0);
@@ -593,7 +608,7 @@ class Das2TypeState {
     //    System.out.println("subnode_load = " + subnode_load);
     //        System.out.println("subnode = " + subnode);
     //    System.out.println("    length: " + subnode.length());
-    
+
     lnode_load = UnibrowPrefsUtil.getSubnode(das2_node, subnode_load);
     lnode_strategy = UnibrowPrefsUtil.getSubnode(das2_node, subnode_strategy);
 
@@ -632,8 +647,182 @@ class Das2TypeState {
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
   public Das2Type getDas2Type() { return type; }
+  public String toString() { return getDas2Type().getName(); }
 }
 
+/*
+class Das2TypeNode extend DefaultMutableTreeNode {
+  Das2TypeState type_state;
+  public Das2TypeNode(String label, Das2TypeState tstate) {
+  }
+  public Das2TypeState getTypeState() { return type_state; }
+  public Das2Type getDas2Type() { return type_state.getDas2Type(); }
+}
+*/
+
+class Das2TypesTreeTableModel extends AbstractTreeTableModel  {
+  static String[] column_names = { "name", "load", "ID", "ontology", "source", "range" };
+  static int LOAD_BOOLEAN_COLUMN = 1;
+  static int NAME_COLUMN = 0;
+  static int ID_COLUMN = 2;
+  static int ONTOLOGY_COLUMN = 3;
+  static int SOURCE_COLUMN = 4;
+  static int LOAD_STRATEGY_COLUMN = 5;
+
+  static int model_count = 0;
+
+  static DefaultMutableTreeNode default_root;
+
+  static {
+    default_root = new DefaultMutableTreeNode("Root Node");
+    DefaultMutableTreeNode child1 = new DefaultMutableTreeNode("Child1");
+    DefaultMutableTreeNode child2 = new DefaultMutableTreeNode("Child1");
+    DefaultMutableTreeNode grandchildA = new DefaultMutableTreeNode("GrandChildA");
+    child2.add(grandchildA);
+
+    Das2ServerInfo dserver= (Das2ServerInfo)Das2Discovery.getDas2Servers().get("NetAffx");
+    Das2Source dsrc = (Das2Source)dserver.getSources().get("http://netaffxdas.affymetrix.com/das2/H_sapiens");
+    Das2VersionedSource vsrc = (Das2VersionedSource)dsrc.getVersions().get("http://netaffxdas.affymetrix.com/das2/H_sapiens_May_2004");
+    Map dtypes = vsrc.getTypes();
+    Iterator iter = dtypes.values().iterator();
+    while  (iter.hasNext())  {
+        Das2Type dtype = (Das2Type)iter.next();
+        Das2TypeState dstate = new Das2TypeState(dtype);
+        DefaultMutableTreeNode typenode = new DefaultMutableTreeNode(dstate);
+        default_root.add(typenode);
+    }
+
+    System.out.println("@@@@@@@ DAS2VERSIONEDSOURCE: " + vsrc);
+
+    default_root.add(child1);
+    default_root.add(child2);
+  }
+
+  int model_num;
+  java.util.List type_states;
+  //  DefaultMutableTreeNode root = new DefaultMutableTreeNode("Annotation Types");
+
+  public Das2TypesTreeTableModel(java.util.List states)  {
+    super(default_root);
+    model_num = model_count;
+    model_count++;
+    type_states = states;
+    int col_count = column_names.length;
+    int row_count = states.size();
+  }
+
+  //  public void addTreeModelListener(TreeModelListener l)     // handled in AbstractTreeTableModel
+  //  public void removeTreeModelListener(TreeModelListener l)  // handled in AbstractTreeTableModel
+  //  Returns the child of parent at index index in the parent's child array. 
+  public Object getChild(Object parent, int index)  {
+    return ((TreeNode)parent).getChildAt(index);
+  }
+  // Returns the number of children of parent. 
+  public int getChildCount(Object parent) {
+    return ((TreeNode)parent).getChildCount();
+  }
+  // Returns the index of child in parent.
+  public int getIndexOfChild(Object parent, Object child)  {
+    return ((TreeNode)parent).getIndex((TreeNode)child);
+  }
+  // Returns the root of the tree. 
+  //  public Object getRoot()  {
+  //    return root;
+  //  }
+  // Returns true if node is a leaf.
+  public boolean isLeaf(Object node)  {
+    System.out.println("in Das2TypeTreeTableModel.isLeaf(): " + node);
+    if (node == null) { return true; }
+    return ((TreeNode)node).isLeaf();
+  }
+
+  // Messaged when the user has altered the value for the item identified by path to newValue.
+  public void valueForPathChanged(TreePath path, Object newValue)  {
+  }
+
+  /*
+  public Das2TypeState getTypeState(int row) {
+    return (Das2TypeState)type_states.get(row);
+  }
+  */
+
+  public int getColumnCount() {
+    return column_names.length;
+  }
+
+  public int getRowCount() {
+    return type_states.size();
+  }
+
+  public String getColumnName(int col) {
+    return column_names[col];
+  }
+
+  //  public Object getValueAt(int row, int col) {
+  public Object getValueAt(Object node, int col) {
+    Object result = null;
+    if (node instanceof DefaultMutableTreeNode) {
+      DefaultMutableTreeNode tnode = (DefaultMutableTreeNode)node;
+      Object obj = tnode.getUserObject();
+      if (obj instanceof Das2TypeState) {
+	//      Das2TypeState state = getTypeState(row);
+	Das2TypeState state = (Das2TypeState)obj;
+	if (state != null) {
+	  Das2Type type = state.getDas2Type();
+	  if (col == NAME_COLUMN) {
+	    result = type.getName();
+	  }
+	  else if (col == ID_COLUMN) {
+	    result = type.getID();
+	  }
+	  else if (col == ONTOLOGY_COLUMN) {
+	    result = type.getOntology();
+	  }
+	  else if (col == SOURCE_COLUMN) {
+	    result = type.getDerivation();
+	  }
+	  else if (col == LOAD_STRATEGY_COLUMN) {
+	    result = state.getLoadString();
+	  }
+	  else if (col == LOAD_BOOLEAN_COLUMN) {
+	    result = (state.getLoad() ? Boolean.TRUE : Boolean.FALSE);
+	  }
+	}
+      }
+      //      else {
+      //
+      //      }
+    }
+    return result;
+  }
+
+  public Class getColumnClass(int col) {
+    if (col == LOAD_BOOLEAN_COLUMN) { return Boolean.class; }
+    else if (col == NAME_COLUMN) { return TreeTableModel.class; }
+    else { return String.class; }
+  }
+
+  public boolean isCellEditable(int row, int col) {
+    if (col == LOAD_STRATEGY_COLUMN || col == LOAD_BOOLEAN_COLUMN) { return true; }
+    else { return false; }
+  }
+
+  public void setValueAt(Object value, int row, int col) {
+    System.out.println("Das2TypesTableModel.setValueAt() called, row = " + row +
+		       ", col = " + col + "val = " + value.toString());
+    Das2TypeState state = (Das2TypeState)type_states.get(row);
+    if (col == LOAD_STRATEGY_COLUMN)  {
+      state.setLoadStrategy(value.toString());
+    }
+
+    else if (col == LOAD_BOOLEAN_COLUMN) {
+      Boolean bool = (Boolean)value;
+      state.setLoad(bool.booleanValue());
+    }
+
+    // fireTableCellUpdated(row, col);
+  }
+}
 
 class Das2TypesTableModel extends AbstractTableModel   {
   static String[] column_names = { "load", "name", "ID", "ontology", "source", "range" };

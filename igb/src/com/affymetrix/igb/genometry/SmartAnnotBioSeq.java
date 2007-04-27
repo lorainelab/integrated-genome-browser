@@ -212,8 +212,8 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       if (type2sym == null) { type2sym = new HashMap(); }
       String id = sym.getID();
       if (id == null) {
-	System.out.println("WARNING: GraphSym ID is null!!!");
-	throw new RuntimeException("GraphSym ID is null, this should never happen!");
+	System.out.println("WARNING: ID is null!!!  sym: " + sym);
+	throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation, sym.getID() == null && (! needsContainer(sym)), this should never happen!");
       }
       type2sym.put(id.toLowerCase(), sym);
       super.addAnnotation(sym);

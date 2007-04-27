@@ -58,6 +58,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   static boolean TIME_RESPONSES = true;
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
   static boolean USE_CREATED_ATT = true;
+  static boolean WINDOWS_OS_TEST = false;
 
   static Pattern interval_splitter = Pattern.compile(":");
 
@@ -112,6 +113,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
     genomeid2coord.put("Drosophila_Apr_2004",
 		     new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
 				    "BDGP", "7227", "4", "Chromosome", null));
+    
+    WINDOWS_OS_TEST = System.getProperty("os.name").startsWith("Windows");
   }
 
   static String DAS2_VERSION = "2.0";
@@ -984,7 +987,29 @@ public class GenometryDas2Servlet extends HttpServlet  {
        *  If there are multiple occurences of the same filter name in the request, take the union
        *      of the results of each of these filters individually
        *  Then take intersection of results of each different filter name
-       *  (OR similar filters, AND different filters)
+       *  (OR similar filters, AND different filters [ except excludes ] )
+       *  
+       *  General query strategy:
+       *  [NOT SURE WHAT TO DO YET ABOUT COORDINATES FILTERS]
+       *    if any link, note, or prop filter, then return empty results
+       *    if format parameter:
+       *       if > 1 format parameter, then return "bad request" error
+       *       if > 1 type (or no type), then need to make sure that format can support multiple types
+       *         (for now, return "REQUEST TOO LARGE" error)
+       *       if 1 type, then make sure server supports returning that type in that format
+       *    if just name filter:
+       *        special case to search for names...
+       *    else: 
+       *      if no type given, then return "REQUEST TOO LARGE" error
+       *      else for each type:
+       *       for each segment:  
+       *          for each overlap:
+       *               collect (top-level) RESULTS syms with given type, segment, and overlap range
+       *    for each sym in RESULTS
+       *        filter by inside(s) 
+       *        filter by exclude(s)
+       *        filter by name(s)
+       *
        */
   public void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
     log.add("received features request");
@@ -1079,7 +1104,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  known_query = false;  // tag not recognized, so reject whole query
 	}
       }
-      if (formats.size() > 0) {
+      if (formats.size() == 1) {
 	output_format = (String)formats.get(0);
       }
 
@@ -1100,8 +1125,16 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	result = new ArrayList();
       }
       // handling one type, one segment, one overlaps, optionally one inside
+      /*
       else if (types.size() == 1 &&      // one and only one type
 	       segments.size() == 1 &&   // one and only one segment
+	       overlaps.size() <= 1 &&   // one and only one overlaps
+	       insides.size() <= 1 &&    // zere or one inside
+	       excludes.size() == 0 &&   // zero excludes
+	       names.size() == 0) {
+      */
+      else if (types.size() >= 1 &&      // one and only one type
+	       // need to support 0, 1, or multiple segments   segments.size() >= 1 &&   // one and only one segment
 	       overlaps.size() <= 1 &&   // one and only one overlaps
 	       insides.size() <= 1 &&    // zere or one inside
 	       excludes.size() == 0 &&   // zero excludes
@@ -1147,7 +1180,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
 	//	if (query_type.endsWith(".bar")) {
-	if (graph_name2dir.get(query_type) != null) {
+	if ((graph_name2dir.get(query_type) != null) || 
+	    (graph_name2file.get(query_type) != null)  ||
+	    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  || 
+	    (query_type.endsWith(".bar")) )   {
 	  handleGraphRequest(request, response, query_type, overlap_span);
 	  return;
 	}
@@ -1280,6 +1316,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
   //  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response)  {
+  /**
+   *  1) looks for graph files in graph seq grouping directories (".graphs.seqs")
+   *  if not 1), then
+   *     2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
+   *     if not 2), then 
+   *        3) tries to directly access file
+   */
   public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response,
 				 String type, SeqSpan span) {
     log.add("#### handling graph request");
@@ -1291,16 +1334,26 @@ public class GenometryDas2Servlet extends HttpServlet  {
     String graph_name = type;   // for now using graph_name as graph type
 
     boolean use_graph_dir = false;
-    String file_path = (String)graph_name2dir.get(graph_name);
-    if (file_path != null) { use_graph_dir = true; }
+    String file_path = (String)graph_name2dir.get(graph_name);  
+    if (file_path != null) { use_graph_dir = true; }  
     if (file_path == null) { file_path = (String)graph_name2file.get(graph_name); }
     if (file_path == null) { file_path = graph_name; }
 
     if (use_graph_dir) {
       file_path += "/" + seqid + ".bar";
     }
+    
+    if (file_path.startsWith("file:")) {  // if file_path is URI string, strip off "file:" prefix
+      if (WINDOWS_OS_TEST) {
+	file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
+      }
+      else {
+	file_path = file_path.substring(5);
+      }
+    }
 
-    log.add("####    file: " + file_path);
+    //    System.out.println("#### file_path: " + file_path);
+    log.add("####    file:  " + file_path);
     GraphSym graf = null;
     try  {
       graf = BarParser.getSlice(file_path, span);

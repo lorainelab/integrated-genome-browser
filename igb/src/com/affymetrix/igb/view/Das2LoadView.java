@@ -46,7 +46,7 @@ public class Das2LoadView extends JComponent
   static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
   static boolean DEBUG_EVENTS = false;
-  static boolean THREAD_FEATURE_REQUESTS = true;
+  static boolean DEFAULT_THREAD_FEATURE_REQUESTS = true;
   static boolean USE_SIMPLE_VIEW = false;
   static boolean USE_TYPES_TREE_TABLE = false;
 
@@ -355,6 +355,10 @@ public class Das2LoadView extends JComponent
    *  But for now putting them all on same (non-event) thread controlled by SwingWorker
    */
   public static void processFeatureRequests(java.util.List requests, final boolean update_display) {
+    processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS);
+  }
+
+  public static void processFeatureRequests(java.util.List requests, final boolean update_display, boolean thread_requests) {
     final java.util.List request_syms = requests;
     final java.util.List result_syms = new ArrayList();
 
@@ -408,7 +412,7 @@ public class Das2LoadView extends JComponent
 	}
       };
 
-    if (THREAD_FEATURE_REQUESTS) {
+    if (thread_requests) {
       worker.start();
     }
     else {

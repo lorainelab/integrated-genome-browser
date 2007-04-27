@@ -85,7 +85,9 @@ public class SeqMapView extends JPanel
   boolean hairline_is_labeled = false;
 
   SeqSpan viewspan_before_slicing = null;
+  java.util.List selection_listeners = new ArrayList();
   java.util.List popup_listeners = new ArrayList();
+  java.util.List data_request_listeners = new ArrayList();
 
   MapViewGlyphFactoryI default_glyph_factory = new GenericAnnotGlyphFactory();
 
@@ -240,7 +242,6 @@ public class SeqMapView extends JPanel
 
   SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
   Vector match_glyphs = new Vector();
-  Vector selection_listeners = new Vector();
   TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
@@ -248,6 +249,7 @@ public class SeqMapView extends JPanel
   Box xzoombox;
   Box yzoombox;
   MapRangeBox map_range_box;
+  JButton refreshB = new JButton("Refresh Data");
   
   SingletonGenometryModel gmodel = IGB.getGenometryModel();
 
@@ -283,7 +285,22 @@ public class SeqMapView extends JPanel
    *  NOT to set this to true in any view other than the main view; it should
    *  be false in the AltSpliceView, for instance.
    */
-  public SeqMapView(boolean add_popups, boolean split_win) {
+  public SeqMapView(boolean add_popups, boolean split_win)  {
+    this(add_popups, split_win, false);
+  }
+
+  /**
+   * Constructor.
+   * @param add_popups  Whether to add some popup menus to the tier label manager
+   *  that control tier hiding and collapsing and so forth.  It is probably best
+   *  NOT to set this to true in any view other than the main view; it should
+   *  be false in the AltSpliceView, for instance.
+   * @param use_refresh_button Whether to add a data refresh button, to trigger 
+   *  sending DataRequestEvents to DataRequestListeners.  This is used to notify  
+   *  components that are doing partial data-loading based on current view 
+   *  (DAS client controls, graph slice loaders, etc.)
+   */
+  public SeqMapView(boolean add_popups, boolean split_win, boolean use_refresh_button) {
 
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
@@ -378,6 +395,15 @@ public class SeqMapView extends JPanel
 
     xzoombox.add(Box.createRigidArea(new Dimension(6,0)));
     xzoombox.add((Component) xzoomer);
+    if (use_refresh_button)   { 
+      xzoombox.add(refreshB); 
+      refreshB.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent evt) {
+	    broadcastDataRequest();
+	  }
+	} );
+    }
+
     boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
     if (x_above) {
       this.add(BorderLayout.NORTH, xzoombox);
@@ -2697,7 +2723,14 @@ public class SeqMapView extends JPanel
         seqmap.scroll(NeoWidgetI.Y, visible[0]- (visible[1]-visible[0])/10 );
         seqmap.updateWidget();
       }
+      //    else if (command.equals(REFRESH_DATA) {
+      //      seqmap.
+      //    }
+      //      else {
+      //	System.out.println("SeqMapvViewActionListener received unknown command: " + command);
+      //      }
     }
+
   }
 
   // sets the text on the JLabel based on the current selection
@@ -3193,5 +3226,30 @@ public class SeqMapView extends JPanel
     }
     return navigation_menu;
   }
+
+  public void addDataRequestListener(DataRequestListener listener) {
+    if (! data_request_listeners.contains(listener)) {
+      data_request_listeners.add(listener);
+    }
+  }
+
+  public void removeDataRequestListener(DataRequestListener listener) {
+    data_request_listeners.remove(listener);
+  }
+
+  protected boolean broadcastDataRequest() {
+    SeqSpan request_span = this.getVisibleSpan();
+    if (data_request_listeners.size() > 0) {
+      DataRequestEvent evt = new DataRequestEvent(this, request_span);
+      Iterator listeners = data_request_listeners.iterator();
+      while (listeners.hasNext()) {
+	DataRequestListener listener = (DataRequestListener)listeners.next();
+	listener.dataRequested(evt);
+      }
+    }
+    return false;
+
+  }
+
 }
 

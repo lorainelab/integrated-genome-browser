@@ -74,7 +74,7 @@ public class Das2ClientOptimizer {
 					       DasFeaturesAction2.default_show_das_query_genometry);
   }
 
-  // input is a single Das2FeatureRequestSyms
+  // input is a single Das2FeatureRequestSym
   // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
   //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/SmartAnnotBioSeq
   //    annotations --
@@ -454,7 +454,7 @@ public class Das2ClientOptimizer {
 	    SeqSymmetry feat = (SeqSymmetry)feats.get(k);
 	    if (feat instanceof GraphSym) {
 	      addChildGraph((GraphSym)feat, request_sym);
-	      no_graphs = false;
+	      no_graphs = false;  // should either be all graphs or no graphs
 	    }
 	    else  {
 	      request_sym.addChild(feat);
@@ -463,9 +463,8 @@ public class Das2ClientOptimizer {
 	}
 	// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
 	// on one thread when might be rendering based on aseq in event thread...
-	//
 	// or maybe should just make addAnnotation() a synchronized method
-	if (no_graphs) {
+	if (no_graphs) {   // if graphs, then adding to annotation bioseq is already handled by addChildGraph() method
 	  synchronized (aseq)  { aseq.addAnnotation(request_sym); }
 	}
 

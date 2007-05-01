@@ -1,11 +1,12 @@
 /**
+*
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,6 +19,7 @@ import com.affymetrix.igb.event.UrlLoaderThread;
 // Java
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -40,6 +42,7 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler implements ActionListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -109,7 +112,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
   public static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
   public static final boolean default_show_das_query_genometry = false;
-  
+
   public DasFeaturesAction2(SeqMapView gviewer) {
     this.gviewer = gviewer;
     optimizer = new DasClientOptimizer(null);
@@ -135,7 +138,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       }
     };
     select_serverCB.addPopupMenuListener(select_server_pml);
-    
+
 
     checkpanel.setLayout(new BoxLayout(checkpanel, BoxLayout.Y_AXIS));
     JPanel panA = new JPanel();
@@ -216,13 +219,13 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
    *  the list in the Set from DasDiscovery.getDasServers().keySet().
    */
   public void refreshDasServersComboBox() {
-    // Get the list of what is currently in the combo-box    
+    // Get the list of what is currently in the combo-box
     int item_count = select_serverCB.getItemCount();
     Vector current_list = new Vector(item_count);
     for (int i=0; i<item_count; i++) {
       current_list.add((String) select_serverCB.getItemAt(i));
     }
-    
+
     // Add any servers to the combo box that aren't already there
     Set das_servers = DasDiscovery.getDasServers().keySet();
     Iterator iter = das_servers.iterator();
@@ -232,7 +235,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         select_serverCB.addItem(server_name);
       }
     }
-    
+
     // Remove servers from the combo box that aren't in the das_servers list
     for (int i=0; i<item_count; i++) {
       String server_name = (String) current_list.get(i);
@@ -487,7 +490,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
                 current_das_server +   //  "/"  already included in current_das_server
                 URLEncoder.encode(current_das_source) + "/" +
                 "features?" +
-                "segment=" + URLEncoder.encode(seqid) 
+                "segment=" + URLEncoder.encode(seqid)
                    + ":" + exclusive_span.getMin() + "," + exclusive_span.getMax() +
                 ";type=" + URLEncoder.encode(type) +
                 ";minmin=" + first_hard_min +
@@ -517,7 +520,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
                   current_das_server +   //  "/"  already included in current_das_server
                   URLEncoder.encode(current_das_source) + "/" +
                   "features?" +
-                  "segment=" + URLEncoder.encode(seqid) 
+                  "segment=" + URLEncoder.encode(seqid)
                      + ":" + childspan.getMin() + "," + childspan.getMax() +
                   ";type=" + URLEncoder.encode(type) +
                   ";minmin=" + cur_hard_min +
@@ -608,7 +611,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     try {
       int seqstart = Integer.parseInt(min_fieldTF.getText());
       int seqstop = Integer.parseInt(max_fieldTF.getText());
-      
+
       if (seqstart == 0) {
         // due to a bug on the UCSC DAS server, re-set any start of 0 to 1.
         // The only possible features that this could cause you to miss are those
@@ -654,8 +657,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
    *  yet, etc.
    */
   public void clearDASServer() {
-    if (DEBUG)  { System.out.println("* starting *clear DAS Server*"); }
-    if (DEBUG)  { System.out.println("* ending *clear DAS Server*"); }
+    //    if (DEBUG)  { System.out.println("* starting *clear DAS Server*"); }
+    //    if (DEBUG)  { System.out.println("* ending *clear DAS Server*"); }
   }
 
 
@@ -881,8 +884,15 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     checklist.validate();
     checklist.repaint();
     try {
-      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
+      /*
+      URL request_url = new URL(uri);
+      URLConnection request_con = request_url.openConnection();
+      if (DEBUG) { LocalUrlCacher.reportHeaders(request_con); }
+      BufferedInputStream response_stream = new BufferedInputStream(request_con.getInputStream());
+      InputSource isrc = new InputSource(response_stream);
+      */
       InputSource isrc = new InputSource(uri);
+      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
       reader.setContentHandler(this);
       reader.parse(isrc);
     }

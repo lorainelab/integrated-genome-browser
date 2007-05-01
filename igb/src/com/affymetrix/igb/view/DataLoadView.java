@@ -30,6 +30,9 @@ public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean USE_QUICKLOAD = true;
+  static boolean USE_DAS2_VIEW = true;
+  static boolean USE_DAS1_VIEW = false;
+
   Das2LoadView das2_view;
   DasLoadView das1_view;
   QuickLoadView2 quick_view;
@@ -58,7 +61,12 @@ public class DataLoadView extends JComponent  {
       quick_view.setBorder(BorderFactory.createEtchedBorder());
       tpane.addTab("QuickLoad", quick_view); 
     }
-    tpane.addTab("DAS/2", das2_view);
+    if (USE_DAS2_VIEW) {
+      tpane.addTab("DAS/2", das2_view);
+    }
+    if (USE_DAS1_VIEW) {
+      tpane.addTab("DAS/1", das1_view);
+    }
   }
 
   public void initialize() {

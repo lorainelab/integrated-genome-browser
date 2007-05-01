@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 /**
  * A class to help load and parse documents from a DAS server.
@@ -36,7 +37,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 public abstract class DasLoader {
   final static boolean DEBUG = false;
 
-  /** Creates a new DOMParser that has validation features turned off. 
+  /** Creates a new DOMParser that has validation features turned off.
    *  The parser returned is not specifically set-up for DAS, and can be
    *  used in any case where you want a non-validating parser.
    */
@@ -54,10 +55,10 @@ public abstract class DasLoader {
     catch (org.xml.sax.SAXNotRecognizedException e) {}
     return parser;
   }
-  
+
   /**
    *  Set parser to _not_ defer node expansion (thus forcing full expansion of DOM when
-   *    loaded). This slows down "loading" of DOM significantly (~2-3x), but also significantly 
+   *    loaded). This slows down "loading" of DOM significantly (~2-3x), but also significantly
    *    speeds up later access of the document, since that does not
    *    trigger any node expansions.
    *  Saves a lot of memory because it eliminates deferred-node objects that xerces-j uses, which
@@ -88,6 +89,8 @@ public abstract class DasLoader {
   throws java.io.IOException, org.xml.sax.SAXException {
     if (DEBUG) System.out.println("=========== Getting a Document from connection: "+request_con.getURL().toExternalForm());
 
+    if (DEBUG) { LocalUrlCacher.reportHeaders(request_con); }
+
     InputStream result_stream = null;
     Document doc = null;
     try {
@@ -100,7 +103,7 @@ public abstract class DasLoader {
   }
 
   /** Opens an XML document, using {@link #nonValidatingParser()}. */
-  public static Document getDocument(InputStream str) 
+  public static Document getDocument(InputStream str)
   throws java.io.IOException, org.xml.sax.SAXException {
     Document doc = null;
     InputSource isrc = new InputSource(str);
@@ -109,7 +112,7 @@ public abstract class DasLoader {
     doc = parser.getDocument();
     return doc;
   }
-  
+
   /**
    *  Returns a Map where keys are String labels and values are SeqSpan's.
    *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
@@ -214,13 +217,13 @@ public abstract class DasLoader {
     }
     return ids;
   }
-  
+
   /** FIXME: This is test code, functionality will be rolled into
    *  or replaced by com.affymetrix.igb.util.LocalUrlCacher.
    *  A method that checks the URL requested against a local
    *  document store and returns the local document URL if the
    *  server doc hasn't changed. Otherwise it just returns
-   *  the URL argument. 
+   *  the URL argument.
    */
   public static String getCachedDocumentURL(String url)
     throws java.net.MalformedURLException, java.io.IOException {
@@ -228,21 +231,21 @@ public abstract class DasLoader {
     // fetch info about this URL
     URL request_url = new URL(url);
     URLConnection request_con = request_url.openConnection();
-    
+
     // figure out hashcode
     int hashcode = url.hashCode();
-    
+
     // find and create cache dir
     String home = System.getProperty("user.home");
-    String sep = System.getProperty("file.separator");   
+    String sep = System.getProperty("file.separator");
     String cacheDir = home+sep+".igb"+sep+"cache";
     new File(cacheDir).mkdirs();
     File cacheFile = new File(cacheDir+sep+hashcode+".cache");
     long cacheDate = cacheFile.lastModified();
-    
-    /* HACK: I'm forcing the use of the cache docs 
+
+    /* HACK: I'm forcing the use of the cache docs
      * FIXME: if I to a getLastModified on a non-cached DAS/2 server (biopackages)
-     * it actually causes the complete request to go through!!  So this call takes 
+     * it actually causes the complete request to go through!!  So this call takes
      * forever and really makes the local caceh pointless.
      */
     long date = 0;// HACK: request_con.getLastModified();
@@ -257,7 +260,7 @@ public abstract class DasLoader {
       }
     }
       HACK */
-    
+
     // If the server doesn't report a lastModified then flush the cache every month (86400000 is milliseconds in a day)
     // FIXME: this should be configurable
     double cacheAge = new Date().getTime() - cacheDate;
@@ -277,14 +280,14 @@ public abstract class DasLoader {
       in.close();
       out.close();
     }
-    
+
     // Finally, set the mod time of the cache file if the server reports it
     if (date > 0) cacheFile.setLastModified(date);
-    
+
     String returnString = "file:///"+cacheFile.getAbsolutePath();
     //the following is needed on Windows to make the path a URL (instead of a Windows path)
     try {
-        Pattern p = Pattern.compile("\\\\");    
+        Pattern p = Pattern.compile("\\\\");
         Matcher m = p.matcher(returnString);
         returnString = m.replaceAll("/");
     }
@@ -292,6 +295,6 @@ public abstract class DasLoader {
         System.out.println(e.getMessage());
     }
     return returnString;
-    
+
   }
 }

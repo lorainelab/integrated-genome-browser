@@ -31,6 +31,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
 public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
@@ -116,25 +117,25 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), true);
     }
-  };  
-  
+  };
+
   Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), false);
     }
-  };  
-  
+  };
+
   Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), true);
     }
-  };  
-  
+  };
+
   Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), false);
     }
-  };  
+  };
   //TODO: make a change_height_action
   //Action change_height_action = ....
 
@@ -227,7 +228,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   ActionToggler at1;
   ActionToggler at2;
   ActionToggler at3;
-  
+
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
     this.handler = handler;
     this.gviewer = gviewer;
@@ -326,7 +327,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
     handler.sortTiers();
   }
-  
+
 //  void changeHeight(java.util.List tier_label_glyphs, double height) {
 //    if (gviewer instanceof SeqMapView) {
 //    AffyTieredMap map = ((SeqMapView) gviewer).getSeqMap();
@@ -505,7 +506,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);      
-
       java.util.List graphs = handler.getContainedGraphs(tlg);
       
       if (graphs.isEmpty()) {
@@ -537,6 +537,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(true);
   }
   
+
   /*
   public void outputWritebackTestFile(OutputStream ostr) {
     String test_writeback_file = "C:/data/das2_testing/writeback_test5.xml";
@@ -733,7 +734,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     boolean any_are_color_off = false; // whether any allow setColorByScore()
     boolean any_are_separate_tiers = false;
     boolean any_are_single_tier = false;
-    
+
     for (int i=0; i<labels.size(); i++) {
       TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
       TierGlyph glyph = label.getReferenceTier();
@@ -817,7 +818,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(hide_action);
     popup.add(showMenu);
     popup.add(show_all_action);
-    
+
     if (gviewer instanceof SeqMapView) {
       SeqMapView smv = (SeqMapView) gviewer;
       strandsMenu.removeAll();

@@ -15,6 +15,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.*;
 
+
 public interface AnnotatedSeqViewer {
   public void setAnnotatedSeq(AnnotatedBioSeq seq);
   public void setAnnotatedSeq(AnnotatedBioSeq seq, 

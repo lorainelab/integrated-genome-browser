@@ -259,7 +259,9 @@ public class XmlPrefsParser {
             the_name = tag;
             val = el.getAttribute("val");
             prefs_hash.put(tag, val);
-            //            System.out.println("added tagval to prefs hash: tag = " + tag + ", val = " + val);
+	    if (tag.equals("QuickLoadUrl"))  {
+	      System.out.println("added QuickLoadUrl to prefs: " + val);
+	    }
           }
           else if (name.equalsIgnoreCase("boolean")) {
             String tag = el.getAttribute("tag");

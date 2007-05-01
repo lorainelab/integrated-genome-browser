@@ -885,16 +885,16 @@ public class GFFParser implements AnnotationWriter  {
       System.exit(0);
     }
     */
-    input_file_name  = "in.gff3";
-    output_file_name = "out.gff";
+    input_file_name  = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
+    //    output_file_name = "out.gff";
 
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
-    test.setUseStandardFilters(true);
-    test.setGffVersion(GFF3);
-    test.addFeatureFilter("misc_feature");
-    test.addFeatureFilter("tRNA_gene");
+    // test.setUseStandardFilters(true);
+    //    test.setGffVersion(GFF3);
+    //    test.addFeatureFilter("misc_feature");
+    //    test.addFeatureFilter("tRNA_gene");
 
     Memer mem = new Memer();
     System.out.println(mem.toString());

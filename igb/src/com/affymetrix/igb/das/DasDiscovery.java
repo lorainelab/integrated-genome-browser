@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -50,8 +50,8 @@ public class DasDiscovery {
 
     return das_servers;
   }
-  
-  /** Forget about all known DAS servers. Next call to getDasServers will 
+
+  /** Forget about all known DAS servers. Next call to getDasServers will
    *  re-generate a list based on persistent Preferences.
    */
   public static void reset() {
@@ -89,11 +89,11 @@ public class DasDiscovery {
       try {is.close();} catch (Exception ioe) {}
     }
   }
-  
+
   public static Preferences getPreferencesNode() {
     return UnibrowPrefsUtil.getTopNode().node("DAS Servers");
   }
-  
+
   static void addServersFromPreferences() {
     Preferences top_node = getPreferencesNode();
 
@@ -117,19 +117,19 @@ public class DasDiscovery {
       UnibrowPrefsUtil.handleBSE(null, bse);
     }
   }
-  
-  
+
+
   /**
    *  Adds a DAS server to the list that will be returned by {@link #getDasServers()}.
    *  If this is called before the first time {@link #getDasServers()} is
    *  called, it forces a call to that method to load the default servers.
    */
   public static void addDasServer(String name, String url)  {
-    if (das_servers == null) { 
+    if (das_servers == null) {
       // if this routine is ever called before getDasServers(), then
       // force a call to getDasServers() here to load the default values
       // before adding the new one.
-      das_servers = getDasServers(); 
+      das_servers = getDasServers();
     }
     if (url == null || name == null) {
       throw new IllegalArgumentException();
@@ -146,7 +146,7 @@ public class DasDiscovery {
       das_servers.put(preferred_name, server);
     }
   }
-  
+
   /**
    *  Remove a given Das URL, both from the in-memory list and the persistent
    *  storage.
@@ -172,7 +172,7 @@ public class DasDiscovery {
       }
     }
   }
-  
+
   // Gets a node for the url, possibly making it if it didn't exist already.
   public static Preferences getNodeForURL(String url, boolean create) {
     Preferences p = null;
@@ -206,7 +206,7 @@ public class DasDiscovery {
     }
     return p;
   }
-  
+
   // the node names are meaningless, so just pick some integer that hasn't
   // been used yet
   static String getUnusedNodeName() throws BackingStoreException {

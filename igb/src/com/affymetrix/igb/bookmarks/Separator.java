@@ -19,6 +19,8 @@ import java.io.Serializable;
  *  with a JSeparator, for example.
  */
 public class Separator implements Serializable {
+  // test
+  
   String tag = "$Name$";
   // $Author$
   // $Date$
@@ -32,6 +34,9 @@ public class Separator implements Serializable {
   // $State$
 
   // $Log$
+  // Revision 1.5  2007/05/02 17:20:57  chyekk
+  // Just testing CVS tags.  Ignore.
+  //
   // Revision 1.4  2007/05/02 17:19:22  chyekk
   // Just testing CVS tags.  Ignore.
   //

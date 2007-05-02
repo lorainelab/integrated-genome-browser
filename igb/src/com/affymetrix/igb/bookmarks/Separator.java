@@ -31,6 +31,9 @@ public class Separator implements Serializable {
   // $State$
 
   // $Log$
+  // Revision 1.3  2007/05/02 17:15:56  chyekk
+  // Just testing CVS tags.  Ignore.
+  //
   // Revision 1.2  2007/05/02 16:51:16  chyekk
   // Just testing CVS tags.  Ignore.
   //

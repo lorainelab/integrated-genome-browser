@@ -19,7 +19,7 @@ import java.io.Serializable;
  *  with a JSeparator, for example.
  */
 public class Separator implements Serializable {
-  // test
+  // blah blah
   
   String tag = "$Name$";
   // $Author$
@@ -34,6 +34,9 @@ public class Separator implements Serializable {
   // $State$
 
   // $Log$
+  // Revision 1.6  2007/05/02 17:28:40  chyekk
+  // Just testing CVS tags.  Ignore.
+  //
   // Revision 1.5  2007/05/02 17:20:57  chyekk
   // Just testing CVS tags.  Ignore.
   //

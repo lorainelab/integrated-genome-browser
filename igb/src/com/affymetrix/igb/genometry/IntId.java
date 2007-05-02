@@ -6,3 +6,19 @@ package com.affymetrix.igb.genometry;
 public interface IntId {
   public int getIntID();
 }
+
+  // $Author$
+  // $Date$
+  // $Header$
+  // $ID$
+  // $Locker$
+  // $Name$
+  // $RCSfile$
+  // $Revision$
+  // $Source$
+  // $State$
+
+  // $Log$
+  // Revision 1.2  2007/05/02 16:48:07  chyekk
+  // Just testing CVS tags.  Ignore.
+  //

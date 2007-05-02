@@ -19,6 +19,21 @@ import java.io.Serializable;
  *  with a JSeparator, for example.
  */
 public class Separator implements Serializable {
+  // $Author$
+  // $Date$
+  // $Header$
+  // $ID$
+  // $Locker$
+  // $Name$
+  // $RCSfile$
+  // $Revision$
+  // $Source$
+  // $State$
+
+  // $Log$
+  // Revision 1.2  2007/05/02 16:51:16  chyekk
+  // Just testing CVS tags.  Ignore.
+  //
 
   /** Creates a new instance of Separator */
   public Separator() {}

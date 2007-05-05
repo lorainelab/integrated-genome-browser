@@ -326,6 +326,8 @@ public class Das2ServerInfo  {
     return base_uri;
   }
 
+  public boolean isInitialized() { return initialized; }
+
   /**
    *  For testing.
    */

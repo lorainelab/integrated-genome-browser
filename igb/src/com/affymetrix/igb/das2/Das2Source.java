@@ -72,12 +72,14 @@ public class Das2Source {
    *  Equivalent to {@link SingletonGenometryModel#addSeqGroup(String)} with the
    *  id from {@link #getID()}.  Caches the result.
    */
+  /*
   public AnnotatedSeqGroup getGenome() {
     if (genome == null) {
       genome = gmodel.addSeqGroup(source_uri.toString());
     }
     return genome;
   }
+  */
 
   public Map getVersions() {
     return versions;

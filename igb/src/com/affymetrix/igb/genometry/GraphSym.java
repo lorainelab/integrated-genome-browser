@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,34 +13,155 @@
 
 package com.affymetrix.igb.genometry;
 
-import java.util.*;
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.glyph.GraphState;
 
 /**
  *  A SeqSymmetry for holding graph data.
  */
 public class GraphSym extends SimpleSymWithProps {
+
+  /** A property that can optionally be set to give a hint about the graph strand for display. */
+  public static final String PROP_GRAPH_STRAND = "Graph Strand";
+  public static final Integer GRAPH_STRAND_PLUS = new Integer(1);
+  public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
+  public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
+  public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
+  
   int xcoords[];
   float ycoords[];
   BioSeq graph_original_seq;
-  String graph_name;
+  String gid;
 
-  List thresh_names = null;
-  FloatList thresh_vals = null;
+  /**
+   *  id_locked is a temporary fix to allow graph id to be changed after construction, 
+   *  but then lock once lockID() is called.
+   *  Really want to forbid setting id except in constructor, but currently some code 
+   *    needs to modify this after construction, but before adding as annotation to graph_original_seq
+   */
+  boolean id_locked = false;
 
-  public GraphSym(int[] x, float[] y, String name, BioSeq seq) {
+  ///** add a constructor to explicitly set span? */
+  //  this would be for slices, which need a span that expresses the bounds of the slice
+  //     (which will often be slightly bigger than the xcoord min and max)
+  //  public GraphSym(int[] x, float[] y, String name, BioSeq seq, SeqSpan span) {
+
+  public GraphSym(int[] x, float[] y, String id, BioSeq seq) {
     super();
-    this.xcoords = x;
-    this.ycoords = y;
-    this.graph_name = name;
     this.graph_original_seq = seq;
-    // should at some point probably make seqspan shrink-wrap to bounds of xcoords...
+
     SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
     this.addSpan(span);
+    this.xcoords = x;
+    this.ycoords = y;
+    this.gid = id;
   }
 
+  public void lockID() {
+    id_locked = true;
+  }
+
+  public void setGraphName(String name) {
+    //    System.out.println("called GraphSym.setGraphName(): " + name);
+    GraphState state = GraphState.getGraphState(this.gid);
+    state.getTierStyle().setHumanName(name);
+    setProperty("name", name);
+  }
+
+  public String getGraphName() {
+    //    System.out.println("called GraphSym.getGraphName()");
+    GraphState state = GraphState.getGraphState(this.gid);
+    String gname = state.getTierStyle().getHumanName();
+    if (gname == null) {
+      gname = this.getID();
+    }
+    return gname;
+  }
+
+  public String getID() {
+    //    System.out.println("called GraphSym.getID()");
+    return gid;
+  }
+
+  /**
+   *  Not allowed to call GraphSym.setID(), id
+   */
+  public void setID(String id) {
+    if (id_locked) {
+      System.out.println("%%%%%%% WARNING: called GraphSym.setID(), not allowed!");
+      //      SmartAnnotBioSeq sab = (SmartAnnotBioSeq)getGraphSeq();
+      //      System.out.println("   seq = " + sab.getID() + ", group = " + sab.getSeqGroup().getID());
+      System.out.println("    old id: " + this.getID());
+      System.out.println("    new id: " + id);
+    }
+    else {
+      gid = id;
+    }
+    //    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
+  }
+
+  public int getPointCount() {
+    if (xcoords == null) { return 0; }
+    else { return xcoords.length; }
+  }
+
+  public int[] getGraphXCoords() {
+    return xcoords;
+  }
+
+  public float[] getGraphYCoords() {
+    return ycoords;
+  }
+
+  /**
+   *  Get the seq that the graph's xcoords are specified in
+   */
+  public BioSeq getGraphSeq() {
+    return graph_original_seq;
+  }
+
+  /**
+   *  Returns the graph state.  Will never be null.
+   */
+  public GraphState getGraphState() {
+    GraphState state = GraphState.getGraphState(this.gid);
+    return state;
+  }
+
+  /**
+   *  Overriding request for property "method" to return graph name.
+   */
+  public Object getProperty(String key) {
+    if (key.equals("method")) {
+      return getGraphName();
+    }
+    else if (key.equals("id")) {
+      return this.getID();
+    }
+    else {
+      return super.getProperty(key);
+    }
+  }
+
+  public boolean setProperty(String name, Object val) {
+    if (name.equals("id")) {
+      this.setID(name);
+      return false;
+    }
+    else {
+      return super.setProperty(name, val);
+    }
+  }
+
+
+
+
+  //  List thresh_names = null;
+  //  FloatList thresh_vals = null;
+
+  /*
   public void addStoredThreshold(String thresh_name, float score_thresh) {
     if (thresh_names == null) { thresh_names = new ArrayList(); }
     if (thresh_vals == null) { thresh_vals = new FloatList(); }
@@ -62,54 +183,6 @@ public class GraphSym extends SimpleSymWithProps {
     if (thresh_vals == null) { return Float.NEGATIVE_INFINITY; }
     return thresh_vals.get(i);
   }
+  */
 
-  public void setGraphName(String name) {
-    this.graph_name = name;
-  }
-
-  public String getGraphName() {
-    return graph_name;
-  }
-
-  public void setGraphCoords(int[] x, float[] y) {
-    this.xcoords = x;
-    this.ycoords = y;
-  }
-
-  public int getPointCount() {
-    if (xcoords == null) { return 0; }
-    else { return xcoords.length; }
-  }
-
-  public int[] getGraphXCoords() {
-    return xcoords;
-  }
-
-  public float[] getGraphYCoords() {
-    return ycoords;
-  }
-
-  public void setGraphSeq(BioSeq seq) {
-    this.graph_original_seq = seq;
-  }
-
-  /**
-   *  Get the seq that the graph's xcoords are specified in
-   */
-  public BioSeq getGraphSeq() {
-    return graph_original_seq;
-  }
-
-  /**
-   *  Overriding request for property "method" to return graph name.
-   */
-  public Object getProperty(String key) {
-
-    if (key.equals("method")) {
-      return getGraphName();
-    }
-    else {
-      return super.getProperty(key);
-    }
-  }
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.DoubleList;
 
 /**
@@ -33,6 +32,11 @@ import com.affymetrix.igb.util.DoubleList;
  *     1. The list of children being packed into a parent must be sorted by
  *          ascending min (child.getCoordBox().x)
  *     2. All children must be the same height (child.getCoordBox().height);
+ *        If children are different heights, you *must* indicate this by calling
+ *        setConstantHeights(false).  This will then act as if all glyphs
+ *        are the same height as the one with the maximum height, thus leaving
+ *        more blank vertical space than is necessary, but allowing the packing
+ *        to remain fast.
  *  (To meet requirement (1), call TierGlyph.pack() forces a sorting of the tier
  *        if it is not sorted in ascending min)
  *  </p>
@@ -111,7 +115,43 @@ public class FasterExpandPacker extends EfficientExpandPacker
   int max_slots_allowed = 1000;
 
   public int getMaxSlots() { return max_slots_allowed; }
-  public void setMaxSlots(int slotnum) {  max_slots_allowed = slotnum; }
+  
+  /**
+   *  Sets the maximum depth of glyphs to pack in the tier.
+   *  @param slotnum  a positive integer or zero; zero implies there is no
+   *  limit to the depth of packing.  If a negative number is given, it is
+   *  reset to zero.
+   */
+  public void setMaxSlots(int slotnum) {
+    if (slotnum >= 0 ) {
+      max_slots_allowed = slotnum;
+    } else {
+      slotnum = 0;
+    }
+  }
+
+  boolean constant_heights = true;
+  
+  /** Set whether or not packer can assume all children glyphs are the same height. 
+   *  Default is true.  If false, it will pack into layers based on the maximum 
+   *  child height.
+   */
+  public void setConstantHeights(boolean b) {
+    constant_heights = b;
+  }
+  
+  double getMaxChildHeight(GlyphI parent) {
+    double max = 0;
+    if (constant_heights) {
+      max = parent.getChild(0).getCoordBox().height;
+    } else {
+      int children = parent.getChildCount();
+      for (int i=0; i<children; i++) {
+        max = Math.max(parent.getChild(i).getCoordBox().height, max);
+      }
+    }
+    return max;
+  }
 
   // PackerI interface (via inheritance from PaddedPackerI
   public Rectangle pack(GlyphI parent, ViewI view) {
@@ -138,8 +178,9 @@ public class FasterExpandPacker extends EfficientExpandPacker
 
     int slot_checks = 0;
     DoubleList slot_maxes = new DoubleList(1000);
-    double slot_height = parent.getChild(0).getCoordBox().height + (2 * spacing);
 
+    double slot_height = getMaxChildHeight(parent) + 2 * spacing;
+    
     double prev_min_xmax = Double.POSITIVE_INFINITY;
     // min_xmax_slot_index is index of slot with max of prev_min_xmax
     int min_xmax_slot_index = 0;
@@ -203,7 +244,7 @@ public class FasterExpandPacker extends EfficientExpandPacker
 	double new_ycoord;
 	// make new slot for child (unless already have max number of slots allowed,
 	//   in which case layer at top/bottom depending on movetype
-	if (slot_maxes.size() >= max_slots_allowed) {
+	if ((max_slots_allowed > 0) && slot_maxes.size() >= max_slots_allowed) {
           child.setVisibility(true);
 	  if (this.getMoveType() == NeoConstants.UP) {
 	    new_ycoord = - (((slot_maxes.size()-1) * slot_height) + spacing +

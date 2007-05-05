@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,19 +13,20 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.das.DasDiscovery;
 import java.awt.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.util.Comparator;
 import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 
-//import com.affymetrix.igb.util.TableSorter;
+import com.affymetrix.igb.das.DasDiscovery;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.awt.event.ActionEvent;
+import com.affymetrix.swing.BooleanTableCellRenderer;
+import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
@@ -47,7 +48,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
 
   public DasServersView() {
     super();
-    this.setName("DAS Servers");
+    this.setName("DAS/1 Servers");
     this.setLayout(new BorderLayout());
 
     JScrollPane scroll_pane = new JScrollPane(table);
@@ -55,10 +56,28 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     this.add(scroll_pane);
 
     model = new DefaultTableModel() {
-      public boolean isCellEditable(int row, int column) {return false;}
+      public boolean isCellEditable(int row, int column) {
+        return (column == 2);
+      }
       public Class getColumnClass(int column) {
+        if (column == 1) {return Preferences.class;}
         if (column == 2) {return Boolean.class;}
         else {return String.class;}
+      }
+      public void setValueAt(Object value, int row, int column) {
+        if (column == 2) {
+          Boolean b = (Boolean) value;
+          Preferences node = (Preferences) getValueAt(row, 1);
+          node.putBoolean(DasDiscovery.KEY_ENABLED, b.booleanValue());
+          refresh();
+        }
+      }
+      public void fireTableStructureChanged() {
+        // The columns never change, so suppress tableStructureChanged events
+        // converting to normal table-rows-changed-type events.
+        // This allows the column-order and column-based sorting settings to be preserved when
+        // the data changes.
+        fireTableChanged(new javax.swing.event.TableModelEvent(this));
       }
     };
     model.setDataVector(new Object[0][0], col_headings);
@@ -67,13 +86,23 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    //TableSorter sort_model = new TableSorter(model);
+    TableSorter2 sort_model = new TableSorter2(model);
     //sort_model.addMouseListenerToHeaderInTable(table);
+    sort_model.setTableHeader(table.getTableHeader());
+    sort_model.setColumnComparator(Preferences.class, new Comparator() {
+      public int compare(Object o1, Object o2) {
+        String s1 = ((Preferences) o1).get(DasDiscovery.KEY_NAME, "");
+        String s2 = ((Preferences) o2).get(DasDiscovery.KEY_NAME, "");
+        return s1.compareTo(s2);
+      }
+    });
 
     table.setModel(model);
-    //table.setModel(sort_model);
+    table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
+    table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+    table.setDefaultRenderer(Preferences.class, special_renderer);
 
     add_action = new AbstractAction("Add ...") {
       public void actionPerformed(ActionEvent evt) {
@@ -111,6 +140,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     button_box.add(Box.createHorizontalStrut(5));
     button_box.add(new JButton(remove_action));
     button_box.add(Box.createHorizontalGlue());
+    button_box.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     this.add("South", button_box);
     
     DasDiscovery.getPreferencesNode().addNodeChangeListener(this);
@@ -118,12 +148,23 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     refresh();
     validate();
     
-    editor = new DasServerInfoEditor(this);
+    DisplayUtils.adjustColumnPreferredWidths(table, true);
     
-    editor.dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    editor = new DasServerInfoEditor(this);
+    sort_model.setSortingStatus(1, TableSorter2.ASCENDING);
   }
 
-
+  TableCellRenderer special_renderer = new DefaultTableCellRenderer() {
+    public Component getTableCellRendererComponent(JTable table, Object value, 
+        boolean isSelected, boolean hasFocus, int row, int column) {
+      Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      String name = ((Preferences) value).get(DasDiscovery.KEY_NAME, "<Unnamed DAS Server>");
+      ((DefaultTableCellRenderer) c).setText(name);
+      return c;
+    }
+  };
+  
+  
   public void performEdit(String url) {
     //System.out.println("Edit: "+url);
     Preferences node = DasDiscovery.getNodeForURL(url, false);
@@ -172,7 +213,8 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
       Preferences kid = top_node.node(node_names[i]);
       String the_url = kid.get(DasDiscovery.KEY_URL, "???");
       rows[i][0] = the_url;
-      rows[i][1] = kid.get(DasDiscovery.KEY_NAME, "<Unnamed DAS Server>");
+      rows[i][1] = kid;
+//      rows[i][1] = kid.get(DasDiscovery.KEY_NAME, "<Unnamed DAS Server>");
       boolean default_enabled = ! the_url.equals("???");
       rows[i][2] = Boolean.valueOf(kid.getBoolean(DasDiscovery.KEY_ENABLED, default_enabled));
     }
@@ -182,6 +224,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
   /** Re-populates the table with the preferences data. */
   public void refresh() {
     Object[][] rows = null;
+    TableSorter2 sort_model = (TableSorter2) table.getModel();
     try {
       //System.out.println("I am refreshing now!");
       rows = buildRows(DasDiscovery.getPreferencesNode());
@@ -189,6 +232,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     } catch (BackingStoreException bse) {
       UnibrowPrefsUtil.handleBSE(this, bse);
     }
+    sort_model.setSortingStatus(1, TableSorter2.ASCENDING);
     DasDiscovery.reset(); //TODO: I hate this harsh way of handling a reset
   }
     
@@ -233,6 +277,12 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     sb.append("Although DAS servers may have 'official' names, you can assign other names for convenience.  ");
     sb.append("You can disable servers that you aren't interested in to keep the number of choices presented to you managable.  ");
     sb.append("You can re-enable the server if you change your mind.  ");
+    sb.append("</p>\n");
+    
+    sb.append("<p>\n");
+    sb.append("Use this panel only for servers implementing the DAS/1 specification.  \n");
+    sb.append("Do not enter the URL of any DAS/2 server here.  ");
+    sb.append("For details of these DAS specifications, please see biodas.org  \n");
     sb.append("</p>\n");
     
     sb.append("<h2>Deleting vs Disabling</h2>\n");

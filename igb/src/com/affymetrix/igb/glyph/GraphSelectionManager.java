@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,8 +18,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
 
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genoviz.event.*;
@@ -27,20 +25,20 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.UniFileChooser;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.ContextualPopupListener;
 
 public class GraphSelectionManager
-  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener  {
+  implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
+  ContextualPopupListener, TierLabelManager.PopupListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   /**
@@ -53,13 +51,13 @@ public class GraphSelectionManager
 
   boolean ALLOW_THRESHOLD_DRAG = false;
   //  ArrayList stored_threshMI = new ArrayList();
-  Map threshMI_2_thresh = new HashMap();
+  //  Map threshMI_2_thresh = new HashMap();
   final static boolean DEBUG = false;
 
   boolean DRAG_IN_FRONT = true;
   int max_label_length = 50;
 
-  static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
+  static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
   java.util.List graphlist = new ArrayList();
   GraphGlyph current_graph = null;
@@ -89,9 +87,9 @@ public class GraphSelectionManager
 
   JMenu graph_style = new JMenu("Graph Style");
   JMenu decor = new JMenu("Decorations");
-  JMenu thresh = new JMenu("Thresholding");
+  //JMenu thresh = new JMenu("Thresholding");
   JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
-  JMenu combine = new JMenu("Combine Graphs");
+  JMenu combine = new JMenu("Combine 2 Graphs");
   JMenuItem span_graph;
 
   JMenuItem bar_graph;
@@ -198,10 +196,10 @@ public class GraphSelectionManager
     decor.add(show_bounds);
     decor.add(show_graph);
 
-    thresh.add(thresh_graph);
-    thresh.add(tweak_thresh);
-    thresh.add(adjust_false_positive);
-    thresh.add(pickle_thresh);
+    //thresh.add(thresh_graph);
+    //thresh.add(tweak_thresh);
+    //thresh.add(adjust_false_positive);
+    //thresh.add(pickle_thresh);
 
     bounds.add(adjust_hilo);
     bounds.add(adjust_percent);
@@ -241,119 +239,121 @@ public class GraphSelectionManager
     Object src = evt.getSource();
     if (current_graph != null) {
       if (src == bar_graph) {
-	if (DEBUG) System.out.println("picked bar graph");
-	current_graph.setGraphStyle(GraphGlyph.BAR_GRAPH);
+        if (DEBUG) System.out.println("picked bar graph");
+        current_graph.setGraphStyle(GraphGlyph.BAR_GRAPH);
       }
       else if (src == line_graph) {
-	if (DEBUG) System.out.println("picked line graph");
-	current_graph.setGraphStyle(GraphGlyph.LINE_GRAPH);
+        if (DEBUG) System.out.println("picked line graph");
+        current_graph.setGraphStyle(GraphGlyph.LINE_GRAPH);
       }
       else if (src == dot_graph) {
-	if (DEBUG) System.out.println("picked dot graph");
-	current_graph.setGraphStyle(GraphGlyph.DOT_GRAPH);
+        if (DEBUG) System.out.println("picked dot graph");
+        current_graph.setGraphStyle(GraphGlyph.DOT_GRAPH);
       }
       else if (src == stairstep_graph) {
-	if (DEBUG) System.out.println("picked stairstep graph");
-	current_graph.setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
+        if (DEBUG) System.out.println("picked stairstep graph");
+        current_graph.setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);
       }
       else if (src == min_max_graph) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  current_graph.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          current_graph.setGraphStyle(SmartGraphGlyph.MINMAXAVG);
+        }
       }
       else if (src == adjust_hilo) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  if (DEBUG) System.out.println("setting up graph bounds adjuster");
-	  GraphMinMaxSetter.showFramedAdjuster(graphlist, current_source);
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          if (DEBUG) System.out.println("setting up graph bounds adjuster");
+          GraphMinMaxSetter.showFramedAdjuster(graphlist, current_source);
+        }
       }
       else if (src == adjust_percent) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  if (DEBUG) System.out.println("setting up percent adjuster");
-	  PercentThresholder.showFramedThresholder(sgg, current_source);
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          if (DEBUG) System.out.println("setting up percent adjuster");
+          PercentThresholder.showFramedThresholder(sgg, current_source);
+        }
       }
       else if (src == thresh_graph) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  if (second_current_graph != null || current_graph == null) {
-	    IGB.errorPanel("Must select exactly one graph.");
-	  } else {
-	    SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	    boolean show = ! sgg.getShowThreshold();
-	    sgg.setShowThreshold(show);
-	  }
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          if (second_current_graph != null || current_graph == null) {
+            ErrorHandler.errorPanel("ERROR", "Must select exactly one graph", gviewer.getSeqMap());
+          } else {
+            SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+            boolean show = ! sgg.getShowThreshold();
+            sgg.setShowThreshold(show);
+          }
+        }
       }
       else if (src == tweak_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  showThresholds((SmartGraphGlyph)current_graph);
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          showThresholds((SmartGraphGlyph)current_graph);
+        }
       }
       else if (src == max_gap_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  //	  if (sgg.getShowThreshold()) {
-	  sgg.setShowThreshold(true);
-	    if (DEBUG) System.out.println("setting up max_gap thresholder");
-	    MaxGapThresholder.showFramedThresholder(sgg, current_source);
-	    //	  }
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          //          if (sgg.getShowThreshold()) {
+          sgg.setShowThreshold(true);
+            if (DEBUG) System.out.println("setting up max_gap thresholder");
+            MaxGapThresholder.showFramedThresholder(sgg, current_source);
+            //          }
+        }
       }
       else if (src == min_score_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  sgg.setShowThreshold(true);
-	  if (DEBUG) System.out.println("setting up max_gap thresholder");
-	  MinScoreThresholder.showFramedThresholder(sgg, current_source);
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          sgg.setShowThreshold(true);
+          if (DEBUG) System.out.println("setting up max_gap thresholder");
+          MinScoreThresholder.showFramedThresholder(sgg, current_source);
+        }
       }
       else if (src == min_run_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  if (sgg.getShowThreshold()) {
-	    if (DEBUG) System.out.println("setting up min_run thresholder");
-	    MinRunThresholder.showFramedThresholder(sgg, current_source);
-	  }
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          if (sgg.getShowThreshold()) {
+            if (DEBUG) System.out.println("setting up min_run thresholder");
+            MinRunThresholder.showFramedThresholder(sgg, current_source);
+          }
+        }
       }
-      else if (src == pickle_thresh) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  pickleThreshold(sgg);
-	}
+//      else if (src == pickle_thresh) {
+//        if (current_graph instanceof SmartGraphGlyph) {
+//          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+//          pickleThreshold(sgg);
+//        }
+//      }
+     /*
+       else if (src == faster_draw_toggle) {
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          sgg.setFasterDraw(! sgg.getFasterDraw());
+        }
       }
-      else if (src == faster_draw_toggle) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  sgg.setFasterDraw(! sgg.getFasterDraw());
-	}
-      }
+      */
       else if (src == change_color) {
         Color col = JColorChooser.showDialog(frm,
           "Graph Color Chooser", current_graph.getColor());
         current_graph.setColor(col);
-	// if graph is in a tier, change foreground color of tier also
-	//   (which in turn triggers change in color for TierLabelGlyph...)
-	if (current_graph.getParent() instanceof TierGlyph) {
-	  current_graph.getParent().setForegroundColor(col);
-	}
+        // if graph is in a tier, change foreground color of tier also
+        //   (which in turn triggers change in color for TierLabelGlyph...)
+        if (current_graph.getParent() instanceof TierGlyph) {
+          current_graph.getParent().setForegroundColor(col);
+        }
       }
       else if (src == show_bounds) {
-	current_graph.setShowBounds(! current_graph.getShowBounds());
+        current_graph.setShowBounds(! current_graph.getShowBounds());
       }
       else if (src == show_graph) {
-	current_graph.setShowGraph(! current_graph.getShowGraph());
+        current_graph.setShowGraph(! current_graph.getShowGraph());
       }
       else if (src == show_label) {
-	current_graph.setShowLabel( ! current_graph.getShowLabel());
+        current_graph.setShowLabel( ! current_graph.getShowLabel());
       }
       else if (src == show_axis) {
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  sgg.setShowAxis( ! sgg.getShowAxis());
-	}
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          sgg.setShowAxis( ! sgg.getShowAxis());
+        }
       }
       else if (src == delete_graph) {
         deleteGraph(current_source, current_graph);
@@ -366,62 +366,46 @@ public class GraphSelectionManager
       //   end up _behind_ all the tiers, and since tiers fill in their backgrounds, the graphs
       //   will effectively disapear!
       else if (src == to_back) {
-	current_source.toBackOfSiblings(current_graph);
-	GlyphI parent = current_graph.getParent();
-	if ((parent != null) && (! (parent instanceof TierGlyph))) {
-	  current_source.toBackOfSiblings(parent);
-	}
+        current_source.toBackOfSiblings(current_graph);
+        GlyphI parent = current_graph.getParent();
+        if ((parent != null) && (! (parent instanceof TierGlyph))) {
+          current_source.toBackOfSiblings(parent);
+        }
       }
       else if (src == toggle_floating) {
-	if (DEBUG) System.out.println("selected toggle floating, currently floating: " +
-			   !(current_graph.getParent() instanceof TierGlyph));
-	GraphGlyphUtils.toggleFloating(current_graph, gviewer);
+        if (DEBUG) System.out.println("selected toggle floating, currently floating: " +
+                           !(current_graph.getParent() instanceof TierGlyph));
+        //        GraphGlyphUtils.toggleFloating(current_graph, gviewer);
+        // toggle_floating is currently unused, so don't worry that the code is commented out
       }
+
       else if (src == diff_graphs) {
-        if (DEBUG) System.out.println("trying to create diff graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createDiffGraph(second_current_graph, current_graph, Color.yellow);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_DIFFERENCE);
       }
       else if (src == sum_graphs) {
-        if (DEBUG) System.out.println("trying to create diff graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createSumGraph(second_current_graph, current_graph, Color.yellow);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_SUM);
       }
       else if (src == ratio_graphs) {
-        if (DEBUG) System.out.println("trying to create ratio graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createRatioGraph(second_current_graph, current_graph, Color.red);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_RATIO);
       }
       else if (src == product_graphs) {
-        if (DEBUG) System.out.println("trying to create product graph");
-        if (current_graph == null || second_current_graph == null) {
-          IGB.errorPanel("Must select exactly two graphs.");
-        } else {
-          createProductGraph(second_current_graph, current_graph, Color.red);
-        }
+        graphArithmetic(current_graph, second_current_graph, GraphGlyphUtils.MATH_PRODUCT);
       }
       else if (src == save_graph) {
-	saveGraph(current_graph);
+        saveGraph(current_graph);
       }
+      /*
       else if ((src instanceof JMenuItem) && (threshMI_2_thresh.get(src) != null)) {
-	JMenuItem item = (JMenuItem)src;
+        JMenuItem item = (JMenuItem)src;
         float val = ((Float)threshMI_2_thresh.get(item)).floatValue();
-	if (DEBUG) System.out.println("thresh: " + item.getText() + ", value = " + val);
-	if (current_graph instanceof SmartGraphGlyph) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
-	  sgg.setShowThreshold(true);
-	  sgg.setScoreThreshold(val);
-	}
+        if (DEBUG) System.out.println("thresh: " + item.getText() + ", value = " + val);
+        if (current_graph instanceof SmartGraphGlyph) {
+          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+          sgg.setShowThreshold(true);
+          sgg.setMinScoreThreshold(val);
+        }
       }
+      */
       current_source.updateWidget();
     }
     graphlist.clear(); // for garbage collection, etc.
@@ -436,12 +420,12 @@ public class GraphSelectionManager
   void deleteGraph(NeoWidgetI source, GraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
-    gviewer.select(Collections.EMPTY_LIST);
+    gmodel.clearSelectedSymmetries(this);
 
     Object info = gl.getInfo();
+    GraphSym gsym = null;
     if (info instanceof GraphSym) {
-      GraphSym gsym = (GraphSym) info;
-      gviewer.getGraphFactoryHash().remove(gsym);
+      gsym = (GraphSym) info;
       AnnotatedBioSeq aseq = (AnnotatedBioSeq) gsym.getGraphSeq();
       if (aseq instanceof MutableAnnotatedBioSeq) {
         MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
@@ -450,15 +434,14 @@ public class GraphSelectionManager
     }
 
     // if this is not a floating graph, get rid of the tier it was in
-    if (source instanceof AffyLabelledTierMap &&
+    if (source instanceof AffyTieredMap &&
       ! GraphGlyphUtils.hasFloatingAncestor(gl) ) {
 
-      AffyLabelledTierMap map = (AffyLabelledTierMap) source;
+      AffyTieredMap map = (AffyTieredMap) source;
       GlyphI parentgl = gl.getParent();
       parentgl.removeChild(gl);
       if (parentgl instanceof TierGlyph) {
         map.removeTier((TierGlyph)parentgl);
-        gviewer.getGraphStateTierHash().remove(gl.getGraphState());
         map.packTiers(false, true, false);
         map.stretchToFit(false, false);
       }
@@ -481,14 +464,13 @@ public class GraphSelectionManager
     cpane.add(minrun_thresher);
     frm.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
-	Window w = evt.getWindow();
-	w.setVisible(false);
-	w.dispose();
+        Window w = evt.getWindow();
+        w.setVisible(false);
+        w.dispose();
       }
     } );
     frm.pack();
-    frm.show();
-
+    frm.setVisible(true);
   }
 
   static JFileChooser graph_file_chooser = null;
@@ -496,8 +478,8 @@ public class GraphSelectionManager
   /** Returns a file chooser that forces the user to use the 'gr' file extension. */
   static JFileChooser getFileChooser() {
     if (graph_file_chooser == null) {
-      graph_file_chooser = UniFileChooser.getFileChooser("Graph File (*.gr)", "gr");
-      graph_file_chooser.setCurrentDirectory(load_dir_tracker.getFile());
+      graph_file_chooser = UniFileChooser.getFileChooser("Graph File", "gr");
+      graph_file_chooser.setCurrentDirectory(output_file_tracker.getFile());
     }
     return graph_file_chooser;
   }
@@ -507,298 +489,60 @@ public class GraphSelectionManager
     if (info instanceof GraphSym) {
       FileOutputStream ostr = null;
       try {
-	GraphSym gsym = (GraphSym)info;
+        GraphSym gsym = (GraphSym)info;
         JFileChooser chooser = getFileChooser();
-	//	int option = chooser.showSaveDialog(gviewer.getFrame());
-	int option = chooser.showSaveDialog(frm);
-	if (option == JFileChooser.APPROVE_OPTION) {
-          load_dir_tracker.setFile(chooser.getCurrentDirectory());
-	  File fil = chooser.getSelectedFile();
-	  GraphSymUtils.writeGraphFile(gsym, fil.getName());
-	}
+        //        int option = chooser.showSaveDialog(gviewer.getFrame());
+        int option = chooser.showSaveDialog(frm);
+        if (option == JFileChooser.APPROVE_OPTION) {
+          output_file_tracker.setFile(chooser.getCurrentDirectory());
+          File fil = chooser.getSelectedFile();
+          GraphSymUtils.writeGraphFile(gsym, fil.getName());
+        }
       }
       catch (Exception ex) {
-	IGB.errorPanel("Error saving graph", ex);
+         ErrorHandler.errorPanel("ERROR", "Error saving graph", gviewer.getSeqMap(), ex);
       } finally {
         if (ostr != null) try { ostr.close(); } catch (IOException ioe) {}
       }
     }
     else {
-      IGB.errorPanel("graph does not have associated GraphSym data model, can't save");
+      ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model",
+        gviewer.getSeqMap());
     }
   }
 
-  public void createDiffGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A-B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-	newY[i] = yA[i] - yB[i];
-      }
-      String newname = "diff: (" + graphA.getLabel() + ") - (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-	(MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  public void createSumGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A+B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-	newY[i] = yA[i] + yB[i];
-      }
-      String newname = "sum: (" + graphA.getLabel() + ") + (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-	(MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  /**
-   *  Creates a graph that is a ratio of two other graphs.
-   *  if two graphs are comparable (each graph has same xcoords), then
-   *     creates graphC where for each coord index i in graphA and graphB,
-   *     graphC.y[i] = graphA.y[i] / graphB.y[i]
-   *  To avoid division by 0, if graphB.y[i] == 0,
-   *     then the point at index i is not included in graphC
-   */
-  public void createRatioGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A/B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      int[] xA = graphA.getXCoords();
-      int no_zero_points = 0;
-      for (int i=0; i<numpoints; i++) {
-	if (yB[i] != 0) { no_zero_points++; }
-      }
-      int newX[] = new int[no_zero_points];
-      float newY[] = new float[no_zero_points];
-      int newindex = 0;
-
-      for (int i=0; i<numpoints; i++) {
-	if (yB[i] == 0) { continue; }
-	newX[newindex] = xA[i];
-	newY[newindex] = yA[i] / yB[i];
-	newindex++;
-      }
-
-      String newname = "ratio: (" + graphA.getLabel() +
-	") / (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-	(MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      GraphSym newsym = new GraphSym(newX, newY, newname, aseq);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  public void createProductGraph(GraphGlyph graphA, GraphGlyph graphB, Color col) {
-    if (DEBUG) System.out.println("(A*B), graphA info: " + graphA.getInfo());
-    if (graphsAreComparable(graphA, graphB)) {
-      int numpoints = graphA.getPointCount();
-      float[] yA = graphA.getYCoords();
-      float[] yB = graphB.getYCoords();
-      float newY[] = new float[numpoints];
-      for (int i=0; i<numpoints; i++) {
-	newY[i] = yA[i] * yB[i];
-      }
-      String newname = "product: (" + graphA.getLabel() +
-	") * (" + graphB.getLabel() + ")";
-      MutableAnnotatedBioSeq aseq =
-	(MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
-      GraphSym newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
-      aseq.addAnnotation(newsym);
-      gviewer.setAnnotatedSeq(aseq, true, true);
-      GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
-      newglyph.setColor(col);
-    }
-  }
-
-  /**
-   *  Checks to make sure that two graphs can be compared with one
-   *  another for operations like diff, ratio, etc.
-   *  (Graphs must have exact same x positions.)
-   */
-  public boolean graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
-    // checking that both graphs are non-null
+  void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
     if (graphA == null || graphB == null) {
-      JOptionPane.showMessageDialog(null,
-				    "must select two graphs to diff",
-				    "Error",
-				    JOptionPane.ERROR_MESSAGE);
-      return false;
+      // This error condition is likely never triggered
+      ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs.", gviewer.getSeqMap());
     }
-    int numpoints = graphA.getPointCount();
-    // checking that both graph have same number of points
-    if (numpoints != graphB.getPointCount()) {
-      JOptionPane.showMessageDialog(null,
-				    "graphs must have same x points",
-				    "Error",
-				    JOptionPane.ERROR_MESSAGE);
-      return false;
+    String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
+    if (error != null) {
+      ErrorHandler.errorPanel("ERROR", error);
+      return;
     }
-    int[] xcoordsA = graphA.getXCoords();
-    int[] xcoordsB = graphB.getXCoords();
-    // checking that both graphs have same x points
-    for (int i=0; i<numpoints; i++) {
-      if (xcoordsA[i] != xcoordsB[i]) {
-	JOptionPane.showMessageDialog(null,
-				      "graphs must have same x points",
-				      "Error",
-				      JOptionPane.ERROR_MESSAGE);
-	return false;
-      }
-    }
-    return true;
-  }
-
-  static NumberFormat nformat = new DecimalFormat();
-  int pickle_count = 0;
-  public void pickleThreshold(SmartGraphGlyph sgg) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    SimpleSymWithProps psym = new SimpleSymWithProps();
-    psym.addSpan(new SimpleMutableSeqSpan(0, aseq.getLength(), aseq));
-    //    String meth = "graph pickle " + pickle_count;
-    String meth =
-      "threshold, s:" + nformat.format(sgg.getScoreThreshold()) +
-      ", d:" + (int)sgg.getMaxGapThreshold();
-    pickle_count++;
-    psym.setProperty("method", meth);
-    ViewI view = gviewer.getSeqMap().getView();
-    sgg.drawThresholdedRegions(view, psym, aseq);
-    aseq.addAnnotation(psym);
-    Color col = sgg.getColor();
-    if (DEBUG) System.out.println("setting new tier color: " + col);
-    //    gviewer.getColorHash().put(meth, col);
-    gviewer.addTierInfo(meth, col);
-    if (DEBUG) System.out.println("region count: " + psym.getChildCount());
-    //    gviewer.setAnnotatedSeq(aseq);
-
-    gviewer.setAnnotatedSeq(aseq, true, true);
-  }
-
-  public void mouseClicked(MouseEvent evt) {
-    int mods = evt.getModifiers();
-
-    //TODO: Proper thing here is to check isPopupTrigger() in *both* mousePressed() and mouseReleased(),
-    // but this is OK for now
-    if ((evt instanceof NeoMouseEvent) &&
-	(evt.isMetaDown() ||
-	 evt.isControlDown() ||
-	 ((mods & InputEvent.BUTTON3_MASK) != 0 )) ) {
-           showPopup(evt, current_source.getSelected());
+    else {
+      GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
+      
+      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+      aseq.addAnnotation(newsym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
+      //GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
     }
   }
 
-  void showPopup(MouseEvent evt, Vector selected) {
-      graphlist.clear();
-      current_graph = null;
-      second_current_graph = null;
 
-      // searching starting at end of selected vec, to find _top_ graph
-      // (will be closest to end of pick vec)
-      for (int i=selected.size()-1; i >=0; i--) {
-	if (selected.get(i) instanceof GraphGlyph) {
-	  graphlist.add(selected.get(i));
-	}
-      }
-      int num_selected_graphs = graphlist.size();
-      //      System.out.println("trying to show graph popup, selected graphs: " + num_selected_graphs);
 
-      if (num_selected_graphs > 0) {
-	current_graph = (GraphGlyph)graphlist.get(0);
-	if (num_selected_graphs > 1) {
-	  second_current_graph = (GraphGlyph)graphlist.get(1);
-	  System.out.println("graphA: " + second_current_graph.getLabel());
-	  System.out.println("graphB: " + current_graph.getLabel());
-	}
 
-	toggle_floating.setEnabled(num_selected_graphs == 1);
-	change_color.setEnabled(num_selected_graphs == 1);
-	delete_graph.setEnabled(num_selected_graphs == 1);
-	graph_style.setEnabled(num_selected_graphs == 1);
-	decor.setEnabled(num_selected_graphs == 1);
-	thresh.setEnabled(num_selected_graphs == 1);
-	//	  bounds.setEnabled(num_selected_graphs == 1);
-	bounds.setEnabled(num_selected_graphs > 0);
-
-	combine.setEnabled(num_selected_graphs == 2);
-	diff_graphs.setEnabled(num_selected_graphs == 2);
-	sum_graphs.setEnabled(num_selected_graphs == 2);
-	ratio_graphs.setEnabled(num_selected_graphs == 2);
-	product_graphs.setEnabled(num_selected_graphs == 2);
-        save_graph.setEnabled(num_selected_graphs == 1);
-
-	String current_label = current_graph.getLabel();
-	if (current_label == null)  { current_label = "no label"; }
-	if (current_label.length() > max_label_length) {
-	  current_label = current_label.substring(0, max_label_length);
-	}
-	graph_info.setText(current_label);
-
-	if (num_selected_graphs>=1) {
-	  if (num_selected_graphs==2) {
-	    graph_info.setText("A: "+getGraphLabel(current_graph));
-	    graph_info2.setText("B: "+getGraphLabel(second_current_graph));
-	  } else if (num_selected_graphs==1) {
-	    graph_info.setText(getGraphLabel(current_graph));
-	    graph_info2.setText("");
-	  } else {
-	    graph_info.setText("Multiple graphs selected");
-	    graph_info2.setText("");
-	  }
-	}
-
-	if (current_graph.getParent() instanceof TierGlyph) {
-	  toggle_floating.setText("Float graph");
-	}
-	else {
-	  toggle_floating.setText("Attach graph");
-	}
-	// remove previous stored threshold menu selections
-	Iterator iter = threshMI_2_thresh.keySet().iterator();
-	while (iter.hasNext()) {
-	  JMenuItem item = (JMenuItem)iter.next();
-	  thresh.remove(item);
-	}
-	threshMI_2_thresh.clear();
-	GraphSym current_sym = (GraphSym)current_graph.getInfo();
-	if (current_sym != null) {
-	  int stored_thresh_count = current_sym.getStoredThreshCount();
-	  for (int k=0; k<stored_thresh_count; k++) {
-	    String name = current_sym.getStoredThreshName(k);
-	    float val = current_sym.getStoredThreshValue(k);
-	    JMenuItem item = new JMenuItem(name + " (score = " + val + ")");
-	    thresh.add(item);
-	    item.addActionListener(this);
-	    threshMI_2_thresh.put(item, new Float(val));
-	  }
-	}
-        popup.show((Component) evt.getSource(),
-          evt.getX()+xoffset_pop,
-          evt.getY()+yoffset_pop);
-      }
-  }
+  /**
+   *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
+   *  that could cause conflicts with the other pop-up menu which is opened
+   *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
+   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List, SymWithProps)}
+   *  provided by the interface ContextualPopupListener to add to the pop-up
+   *  menu which the SeqMapView itself constructs.
+   */
+  public void mouseClicked(MouseEvent evt) {}
 
   public void mouseEntered(MouseEvent evt) { }
   public void mouseExited(MouseEvent evt) { }
@@ -809,31 +553,31 @@ public class GraphSelectionManager
       NeoWidget widg = (NeoWidget)nevt.getSource();
       Vector selected = nevt.getItems();
       for (int i=selected.size()-1; i >=0; i--) {
-	//	System.out.println("selected: " + selected.elementAt(i));
-	GlyphI gl = (GlyphI)selected.elementAt(i);
-	if (ALLOW_THRESHOLD_DRAG &&
-	    (! (gl instanceof GraphGlyph)) &&
-	    (gl.getParent() instanceof GraphGlyph)) {
-	  // for now assume if child of GraphGlyph then it's the threshold glyph
-	  //	  System.out.println("hit child of GraphGlyph");
-	  dragGraph(gl, nevt);
-	  break;
-	}
-	// only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
-	else if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
-	  GraphGlyph gr = (GraphGlyph)gl;
-	  if (nevt.isShiftDown() || nevt.isAltDown()) {
-	    scaleGraph(gr, nevt);
-	    break;
-	  }
-	  else {
-	    dragGraph(gr, nevt);
-	    break;
-	  }
-	}
-	else if (gl.getParent() instanceof GraphGlyph) {
-	  if (DEBUG) System.out.println("hit child of graph...");
-	}
+	//        System.out.println("selected: " + selected.elementAt(i));
+        GlyphI gl = (GlyphI)selected.elementAt(i);
+        if (ALLOW_THRESHOLD_DRAG &&
+            (! (gl instanceof GraphGlyph)) &&
+            (gl.getParent() instanceof GraphGlyph)) {
+          // for now assume if child of GraphGlyph and not itself a GraphGlyph then it's the threshold glyph
+          //          System.out.println("hit child of GraphGlyph");
+          dragGraph(gl, nevt);
+          break;
+        }
+        // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
+        else if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
+          GraphGlyph gr = (GraphGlyph)gl;
+          if (nevt.isShiftDown() || nevt.isAltDown()) {
+            scaleGraph(gr, nevt);
+            break;
+          }
+          else {
+            dragGraph(gr, nevt);
+            break;
+          }
+        }
+        else if (gl.getParent() instanceof GraphGlyph) {
+          if (DEBUG) System.out.println("hit child of graph...");
+        }
       }
     }
   }
@@ -864,12 +608,12 @@ public class GraphSelectionManager
       double graph_center = bbox.y + (bbox.height/2);
       double new_graph_height = start_graph_height + coord_diff;
       if (new_graph_height >= 0) {
-	graph_to_scale.setCoords(bbox.x, graph_center - (new_graph_height/2),
-				 bbox.width, new_graph_height);
-	widg.updateWidget();
+        graph_to_scale.setCoords(bbox.x, graph_center - (new_graph_height/2),
+                                 bbox.width, new_graph_height);
+        widg.updateWidget();
       }
       else {
-	//	System.out.println("uh-oh -- graph just went into negative height...");
+        //        System.out.println("uh-oh -- graph just went into negative height...");
       }
     }
   }
@@ -879,11 +623,11 @@ public class GraphSelectionManager
     NeoWidget widg = (NeoWidget)nevt.getSource();
     if (DRAG_IN_FRONT)  {
       if (widg instanceof NeoMap) {
-	((NeoMap)widg).toFront(gl);
+        ((NeoMap)widg).toFront(gl);
       }
       else {
-	// toFront() is specific to NeoMap, try toFrontOfSiblings() instead
-	widg.toFrontOfSiblings(gl);
+        // toFront() is specific to NeoMap, try toFrontOfSiblings() instead
+        widg.toFrontOfSiblings(gl);
       }
     }
     dragger = new GlyphDragger((NeoWidgetI)nevt.getSource());
@@ -932,17 +676,26 @@ public class GraphSelectionManager
       //      System.out.println("got a drag in progress event: " + evt);
       GlyphI gl = evt.getGlyph();
       if (gl.getParent() instanceof SmartGraphGlyph && src instanceof NeoWidget) {
-	NeoWidget widg = (NeoWidget)src;
-	ViewI view = widg.getView();
-	GlyphI threshgl = gl;
-	SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
-	Rectangle2D tbox = threshgl.getCoordBox();
-	float new_threshold = graphgl.getGraphValue(view, tbox.y);
-	graphgl.setScoreThreshold(new_threshold);
+        NeoWidget widg = (NeoWidget)src;
+        ViewI view = widg.getView();
+        GlyphI threshgl = gl;
+        SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
+        Rectangle2D tbox = threshgl.getCoordBox();
+        float new_threshold = graphgl.getGraphValue(view, tbox.y);
+        if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
+          graphgl.setMinScoreThreshold(new_threshold);
+        } else {
+          graphgl.setMaxScoreThreshold(new_threshold);
+        }
       }
     }
     else if (id == evt.DRAG_ENDED) {
       dragger.removeGlyphDragListener(this);
+
+      GlyphI gl = evt.getGlyph();
+      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
+        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+      }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
     //   since this class called dragger.dragStart to begin with...
@@ -959,6 +712,66 @@ public class GraphSelectionManager
     }
     return result;
   }
+
+  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SymWithProps primary_sym) {
+    Vector selected_graph_glyphs = new Vector(0);
+    current_graph = null;
+    second_current_graph = null;
+
+    // convert the selected syms to a list of selected graph glyphs
+    Iterator iter = selected_syms.iterator();
+    while (iter.hasNext()) {
+      SeqSymmetry sym = (SeqSymmetry) iter.next();
+      GlyphI g = gviewer.getSeqMap().getItem(sym);
+      if (g instanceof GraphGlyph) {
+        selected_graph_glyphs.add(g);
+      }
+    }
+
+    JMenu combine = new JMenu("Combine Graphs");
+    if (selected_graph_glyphs.size() >= 2) {
+      current_graph = (GraphGlyph) selected_graph_glyphs.get(0);
+      second_current_graph = (GraphGlyph) selected_graph_glyphs.get(1);
+
+      combine.setEnabled(true);
+      JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
+      JLabel graph_info_B = new JLabel("B: "+getGraphLabel(second_current_graph));
+
+      combine.add(graph_info_A);
+      combine.add(graph_info_B);
+      combine.add(new JSeparator());
+      combine.add(sum_graphs);
+      combine.add(diff_graphs);
+      combine.add(product_graphs);
+      combine.add(ratio_graphs);
+    } else {
+      combine.setEnabled(false);
+    }
+
+    the_popup.add(combine);
+  }
+
+    public void popupNotify(JPopupMenu popup, TierLabelManager handler) {
+      // This class was orignially written to implement ContextualPopupListener
+      // for left-click on the tier handles.
+      // This routine adapts it to also work as a TierLabelManager.PopupListener
+      // for left-click on the TierLabelGlyph's
+
+      java.util.List labels = handler.getSelectedTierLabels();
+      java.util.List graph_glyphs = handler.getContainedGraphs(labels);
+
+      java.util.List graph_syms = new ArrayList(graph_glyphs.size());
+      for (int i=0; i<graph_glyphs.size(); i++) {
+        GraphGlyph glyph = (GraphGlyph) graph_glyphs.get(i);
+        graph_syms.add(glyph.getInfo()); // It will be a GraphSym object
+      }
+      GraphSym primary_sym = null;
+      if (! graph_syms.isEmpty()) {
+        primary_sym = (GraphSym) graph_syms.get(0);
+      }
+
+      this.popupNotify(popup, graph_syms, primary_sym);
+    }
 }
 
 

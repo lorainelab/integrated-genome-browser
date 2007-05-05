@@ -14,18 +14,19 @@
 package com.affymetrix.igb.util;
 
 /**
- *  a Vector-like class for ints (since Vectors don't deal with primitives).
- *  does not implement the Collection interfaces.
- *  really just for getting a stretchable array of ints.
+ *  A Vector-like class for ints (since Vectors don't deal with primitives).
+ *  Does not implement the Collection interfaces.
+ *  Really just for getting a stretchable array of ints.
  */
 public class IntList {
+
   /**
-   *  the array of primitives (in the case of IntList, ints)
+   *  The array of primitives (in the case of IntList, ints).
    */
   private int primData[];
 
   /**
-   * the size of the *List (the number of primitive values it contains)
+   * The size of the *List (the number of primitive values it contains).
    */
   private int size;
 
@@ -88,11 +89,14 @@ public class IntList {
     return result;
   }
   
-  // WARNING -- this array may be bigger than 
-  //    this.size(), and any entries beyond this.intData[size()-1] are 
-  //    not guaranteed to mean anything
-  // if using this method, be sure to also retrieve this.size(), and 
-  //    _don't_ use values beyond returned_array[size()-1]
+  /**
+   * Get direct access to the internal data array.
+   * WARNING -- this array may be bigger than 
+   *   this.size(), and any entries beyond this.intData[size()-1] are 
+   *  not guaranteed to mean anything.
+   * If using this method, be sure to also retrieve this.size(), and 
+   *  <b>do not</b> use values beyond returned_array[size()-1].
+   */
   public int[] getInternalArray() {
     return primData;
   }
@@ -101,8 +105,10 @@ public class IntList {
     return primData[index];
   }
 
-  // replaces value at index
-  // returns previous value at index
+  /**
+   *  Replaces value at index.
+   *  Returns previous value at index.
+   */
   public int set(int index, int val) {
     int oldValue = primData[index];
     primData[index] = val;

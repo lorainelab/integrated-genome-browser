@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,17 +13,14 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.swing.ColorIcon;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
-
-import com.affymetrix.igb.menuitem.FileTracker;
-
 
 /**
  *  Helps to save and load preferences such as locations of windows.
@@ -42,6 +39,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 
   /** The name of a boolean preference. */
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
+  public static final boolean default_ask_before_exiting = false;
   
   private static Vector FILENAMES;
   static {
@@ -208,7 +206,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
   /** Gets a static re-usable file chooser that prefers "xml" files. */
   static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
-      static_chooser = new UniFileChooser("XML File (*.xml)", "xml");
+      static_chooser = new UniFileChooser("XML File", "xml");
     }
     static_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
     //static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -261,7 +259,10 @@ import com.affymetrix.igb.menuitem.FileTracker;
       try {
         importPreferences(f);
       } catch (InvalidPreferencesFormatException ipfe) {
-        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage());
+        ErrorHandler.errorPanel("ERROR", "Invalid preferences format:\n"+ipfe.getMessage()
+        +"\n\nYou can only IMPORT preferences from a file that was created with EXPORT.  "+
+        "In particular, you cannot import the file 'igb_prefs.xml' that was "+
+        "used in earlier versions of this program.");
       } catch (Exception e) {
         ErrorHandler.errorPanel("ERROR", "Error importing preferences from file", e);
       }
@@ -317,6 +318,12 @@ import com.affymetrix.igb.menuitem.FileTracker;
     return UnibrowPrefsUtil.getTopNode().node("keystrokes");
   }
 
+  static SortedSet keystroke_node_names = new TreeSet();
+  
+  public static Collection getKeystrokesNodeNames() {
+    return Collections.unmodifiableSet(new TreeSet(keystroke_node_names));
+  }
+  
   /** Finds the KeyStroke that was specified in the preferences
    *  for the given action_command String.
    *  @param action_command  a String used to uniquely identify an action
@@ -329,6 +336,8 @@ import com.affymetrix.igb.menuitem.FileTracker;
     String str = getKeystrokesNode().get(action_command, "");
     KeyStroke ks = KeyStroke.getKeyStroke(str);
 
+    keystroke_node_names.add(action_command);
+    
     if (ks == null) {
       if ("".equals(str)) {
         //System.out.println("No accelerator set for '"+ action_command +"'");
@@ -338,6 +347,8 @@ import com.affymetrix.igb.menuitem.FileTracker;
       }
       // put a blank value in the keystroke so that the user will be able to
       // see which preferences are settable
+      // (actually, this is no longer necessary now that the keystroke_node_names
+      // Set is being used to keep track of these.)
       getKeystrokesNode().put(action_command, "");
     }
     
@@ -536,7 +547,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
    *  @param new_val  The value you to be tested.
    *  @param fallback  The value to use if the given value isn't parseable as the
    *    given class type
-   *  @param class_type one of Double, Long, Short, Integer, or Float
+   *  @param type one of Double, Long, Short, Integer, or Float
    *  @return a String representing the value given by new_val, if it was
    *    parseable as the requested class type, or else the fallback value.
    *    (Note that the value of the fallback string is never tested and might not
@@ -655,4 +666,56 @@ import com.affymetrix.igb.menuitem.FileTracker;
     return button;
   }
 
+  /** Convert a String of arbitrary length into one that is short enough to
+   *  be used as a key name or node name.
+   */
+  public static String shortKeyName(String s) {
+    String short_s;
+    if (s.length() >= Preferences.MAX_NAME_LENGTH) {
+      short_s = UrlToFileName.toMd5(s);
+    } else {
+      short_s = s;
+    }
+    return short_s;
+  }
+  
+  /** Create a subnode, making sure to shorten the name if necessary. */
+  public static Preferences getSubnode(Preferences parent, String name) {
+    return parent.node(shortKeyName(name));
+  }
+  
+  public static JFrame createFrame(String name, JPanel panel) {
+    final JFrame frame;
+    
+    if (name.length() > 70) {
+      throw new IllegalArgumentException("Title of the frame must be less than 70 chars.");
+    }
+    
+    // If not already open in a new window, make a new window
+    frame = new JFrame(name);
+    frame.setName(name);
+    
+    frame.getContentPane().add(panel);
+    frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+    
+    panel.setVisible(true);
+    frame.pack(); // pack() to set frame to its preferred size
+    
+    Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
+    if (pos != null) {
+      UnibrowPrefsUtil.setWindowSize(frame, pos);
+    }
+    
+    frame.setVisible(true);
+    frame.addWindowListener( new WindowAdapter() {
+      public void windowClosing(WindowEvent evt) {
+        // save the current size into the preferences, so the window
+        // will re-open with this size next time
+        UnibrowPrefsUtil.saveWindowLocation(frame, frame.getTitle());
+      }
+    });
+    
+    // window already exists, but may not be visible
+    return frame;
+  }
  }

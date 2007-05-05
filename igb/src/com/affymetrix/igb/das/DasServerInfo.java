@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.das;
 
-import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.regex.*;
@@ -249,7 +248,7 @@ public class DasServerInfo {
     AnnotatedSeqGroup genome = first_source.getGenome();
     System.out.println("current genome: " + genome);
     
-    Iterator iter = genome.getSeqs().values().iterator();
+    Iterator iter = genome.getSeqList().iterator();
     while (iter.hasNext()) {
       AnnotatedBioSeq seq = (AnnotatedBioSeq)iter.next();
       System.out.println("seq: " + seq.getID() + ", length = " + seq.getLength());

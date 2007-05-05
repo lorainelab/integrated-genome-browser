@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,32 +13,27 @@
 
 package com.affymetrix.igb.menuitem;
 
-// Java
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
-import javax.swing.JColorChooser;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
-import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.GraphSym;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UniFileFilter;
 import com.affymetrix.igb.parsers.Streamer;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.tiers.IAnnotStyle;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class OpenGraphAction extends AbstractAction {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -57,7 +52,7 @@ public class OpenGraphAction extends AbstractAction {
     // allowing for multiple file selection, so may have multiple graphs
     BioSeq aseq = gmodel.getSelectedSeq();
     if (aseq == null) {
-      IGB.errorPanel("Must load a sequence before loading a graph");
+      ErrorHandler.errorPanel("Must load a sequence before loading a graph");
       return;
     }
 
@@ -69,7 +64,7 @@ public class OpenGraphAction extends AbstractAction {
       Thread t = loadAndShowGraphs(files, aseq, gviewer);
       t.start();
     } catch (MalformedURLException m) {
-      IGB.errorPanel("Error loading graphs", m);
+      ErrorHandler.errorPanel("Error loading graphs", m);
     }
   }
 
@@ -93,15 +88,15 @@ public class OpenGraphAction extends AbstractAction {
           this,
           false, false);
         monitor.showDialogEventually();
-        Vector graphs = null;
+        List graphs = null;
         try {
-          Map shash = IGB.getGenometryModel().getSelectedSeqGroup().getSeqs();
-          graphs = loadGraphFiles(files, shash, aseq, true, monitor, gviewer);
+          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+          graphs = loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
         } catch (final Throwable t) { // catch Out-Of-Memory Errors, etc.
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               if (monitor != null) monitor.closeDialog();
-              IGB.errorPanel("Error loading graphs", t);
+              ErrorHandler.errorPanel("Error loading graphs", t);
             }
 	    });
         }
@@ -134,68 +129,124 @@ public class OpenGraphAction extends AbstractAction {
   }
 
   /** Loads graphs from a set of files.
-   *  The return Vector will contain all sucessfully loaded GraphSym objects;
+   *  The return List will contain all sucessfully loaded GraphSym objects;
    *  there may be more or fewer graphs than given files.
-   *  @param aseq  a BioSeq. If null, this routine will return an empty Vector
+   *  @param aseq  a BioSeq. If null, this routine will return an empty List
    *  @param update_viewer  If true, this will call {@link #updateViewer(SeqMapView)} after
    *   each graph file is loaded.
    *  @throws OutOfMemoryError  Any routine can throw an OutOfMemoryError, but
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static Vector loadGraphFiles(URL[] files, Map seqhash, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  static List loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
-    Vector graphs = new Vector();
+    List graphs = Collections.EMPTY_LIST;
     if (aseq != null) {
       for (int i=0; i<files.length; i++) {
         if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+files[i].getPath());}
-        Vector v = loadGraphFile(files[i], seqhash, aseq);
-        graphs.addAll(v);
-        if (update_viewer && ! v.isEmpty()) {updateViewer(gviewer);}
+        graphs = loadGraphFile(files[i], seq_group, aseq);
+        if (update_viewer && ! graphs.isEmpty()) {updateViewer(gviewer);}
       }
     }
     return graphs;
   }
 
-  static Vector loadGraphFile(URL furl, Map seqhash, BioSeq aseq) throws IOException, OutOfMemoryError {
-    Vector graphs = new Vector();
+  public static List loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
+    List graphs = Collections.EMPTY_LIST;
     InputStream fis = null;
     try {
-      String name = furl.getPath();
-      fis = furl.openStream();
-
-      String stripped_name = Streamer.stripEndings(name);
-
-      if (stripped_name.endsWith(".bar") ||
-	  stripped_name.endsWith(".mbar") ||
-	  stripped_name.endsWith(".sgr")) {
-        java.util.List multigraphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seqhash);
-        for (int k=0; k<multigraphs.size(); k++) {
-          GraphSym graf = (GraphSym)multigraphs.get(k);
-          graphs.addElement(graf);
-        }
+      String path = furl.getPath();
+      if (! GraphSymUtils.isAGraphFilename(path)) {
+        throw new IOException("Filename does not match any known type of graph:\n" + path);
+      }
+      if (IGB.CACHE_GRAPHS)  {
+        String graph_url = furl.toExternalForm();
+        System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
+        fis = LocalUrlCacher.getInputStream(graph_url);
       }
       else {
-        GraphSym graf = GraphSymUtils.readGraph(fis, furl.toExternalForm(), aseq);
-        graphs.addElement(graf);
+        fis = furl.openStream();
       }
+
+      graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
+      
+      String graph_name = getGraphNameForURL(furl);
+      // Now set the graph names (either the URL or the filename, possibly with an integer appended)
+      for (int i=0; i<graphs.size(); i++) {
+        com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
+
+        IAnnotStyle style = gg.getGraphState().getTierStyle();
+        
+        String name = graph_name;
+        if (graphs.size() > 1) {
+          name = name + " " + (i+1);
+        }
+        if (style.getHumanName().equals(gg.getID())) {
+          //Only apply a new graph name it current name is the same as the ID.
+          //(Because the ID is mainly for internal use and if a different name
+          // has already been set by the parser, it is probably a good one.)
+          style.setHumanName(name);
+        }
+      }      
+      
     } finally {
       if (fis != null) try { fis.close(); } catch (IOException ioe) {}
     }
     return graphs;
   }
 
+  /**
+   *  Return a graph name for the given URL.  The graph name is typically just
+   *  the last portion of the URL, but the entire URL may be used, depending on
+   *  the preference GraphGlyphUtils.PREF_USE_URL_AS_NAME.
+   */
+  public static String getGraphNameForURL(URL furl) {
+    String name;
+    boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+        GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
+    if (use_full_url) {
+      name = furl.toExternalForm();
+    } else { // use only the filename, not the whole url
+      name = furl.getFile();
+      int index = name.lastIndexOf('/');
+      if (index > 0) {
+        String last_name = name.substring(index+1);
+        if (last_name.length()>0) { 
+          name = URLDecoder.decode(last_name); 
+        }
+      }
+    }
+    return name;
+  }
+
+  public static String getGraphNameForFile(String name) {
+    boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
+        GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
+    if (use_full_url) {
+      // leave the name alone
+    } else { // use only the filename, not the whole url
+      int index = name.lastIndexOf(System.getProperty("file.separator"));
+      if (index > 0) {
+        String last_name = name.substring(index+1);
+        if (last_name.length()>0) { 
+          // shouldn't need to do URLDecoder.decode()
+          name = last_name; 
+        }
+      }
+    }
+    return name;
+  }
+  
   static JFileChooser chooser = null;
 
   static JFileChooser getFileChooser() {
     if (chooser == null) {
       chooser = new JFileChooser();
       chooser.setMultiSelectionEnabled(true);
-      // set directory later // chooser.setCurrentDirectory(new File((String) System.getProperties().get("user.dir")));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bar", "mbar"}));
+      chooser.addChoosableFileFilter(new UniFileFilter("bar"));
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
-      chooser.addChoosableFileFilter(new UniFileFilter("sbar"));
-      chooser.addChoosableFileFilter(new UniFileFilter(new String[] {"bgr", "bpr"}));
+      chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
+      chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {
@@ -217,8 +268,6 @@ public class OpenGraphAction extends AbstractAction {
   }
 
 }
-
-
 
 
 

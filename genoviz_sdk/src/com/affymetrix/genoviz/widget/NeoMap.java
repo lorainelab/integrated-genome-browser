@@ -97,9 +97,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   // when the range coords of the map change.
   private Vector axes = new Vector();
 
-  /** @deprecated No longer works, Use axes instead */
-  protected Vector axii = null;
-
   // fields for map glyph factories
   // a hashtable to map name strings to MapGlyphFactories
   Hashtable factory_hash;
@@ -329,7 +326,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     initComponentLayout();
 
-    /**
+    /*
      * checking for whether these scrollbars are used
      * (should really default to AUTO_SCROLL_INCREMENT anyway
      *  and reset in widgets that don't want it [like NeoSeq] )
@@ -569,10 +566,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     // scene.setCoords() is now handled in setBounds()
 
     if (orient == VERTICAL) {
-      this.setBounds(Y,start,end);
+      //      this.setBounds(Y,start,end);
+      this.setFloatBounds(Y,(double)start,(double)end);
     }
     else {
-      this.setBounds(X,start,end);
+      //      this.setBounds(X,start,end);
+      this.setFloatBounds(X,(double)start,(double)end);
     }
     AxisGlyph ga;
     if (axes != null) {
@@ -677,7 +676,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     yscale = trans.getScaleY();
     yoffset = trans.getOffsetY();
 
-    /**
+    /*
      * GAH 4-10-2002
      *  added a callout to calcFittedTransform() here so that subclasses
      *  (particularly new tiered map implementation) can calculate fitted
@@ -1088,10 +1087,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   /**
-   * removes all glyphs.
+   * Removes all glyphs.
    * However, factories, dataadapters, coord bounds, etc. remain.
    */
   public void clearWidget() {
+    super.clearWidget();
     // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = (RootGlyph)scene.getGlyph();
     Rectangle2D evebox = oldeve.getCoordBox();

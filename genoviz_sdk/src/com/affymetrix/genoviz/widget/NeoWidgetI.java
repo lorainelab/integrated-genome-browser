@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -680,6 +680,13 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    */
   public Object getDataModel(GlyphI glyph);
+
+  /**
+   *  Returns true if any datamodels are represented by multiple glyphs.
+   *  WARNING: once one model is represented by multiple glyphs, this flag might only 
+   *     be reset to false when clearWidget() is called
+  */
+  public boolean hasMultiGlyphsPerModel();
 
   /**
    * Returns the first GlyphI found in the NeoWidgetI that is associated with

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,12 +18,10 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -35,13 +33,36 @@ import com.affymetrix.igb.view.SeqMapView;
  */
 public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
+/*
+Algorithm for drawing probe-set-display data.
+
+Find the annotations on the chromosome.
+Recurse through each annotation down to depth=2
+  Each of these is a consensus symmetry "CSym"
+Transform each CSym into "View" coordinates: "CSym_x_view"
+Each CSym points to a Consensus Seq: "CSeq"
+Recurse through the annotations of CSeq down to depth=2
+  Each of these is a probe set: "PS"
+Transform each PS by the CSym giving "PS_x_Csym" with depth=3
+Transform again for the view "(PS_x_Csym)_x_View" with depth unknown
+
+In (PS_x_Csym)_x_View, the overal depth is unknown, but you do know
+that the top level is probeset, then probe, then pieces of probes (if split
+across introns)
+
+If you try to skip a step and transform PS by Csym_x_View
+giving PS_x_(CSym_x_View), you cannot predict at what depth to find
+the probeset, probe and pieces of probes
+*/  
+  
+  static final boolean DEBUG = false;
+    
   /** Any method name (track-line name) ending with this is taken as a poly_a_site. */
   public static final String POLY_A_SITE_METHOD = "netaffx poly_a_sites";
   /** Any method name (track-line name) ending with this is taken as a poly_a_stack. */
   public static final String POLY_A_STACK_METHOD = "netaffx poly_a_stacks";
   /** Any method name (track-line name) ending with this is taken as a consensus/exemplar sequence. */
   public static final String NETAFFX_CONSENSUS = " netaffx consensus";
-
 
   static Color ps_color = Color.PINK;
   static Color ps_s_color = Color.GREEN;
@@ -65,53 +86,11 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
    */
   boolean outline_probes_in_probeset = false;
   
-  /** The name of the property in the consensus seq SeqSymmetry to use to
-   *  construct a label.  Default is "id".  Set to null to turn off labelling. 
-   */
-  String label_field = "id";
-
-  /** The name of the property in the probe set SeqSymmetry to use to
-   *  construct a label.  Default is "id".  Set to null to turn off labelling. 
-   */
-  String ps_label_field = "id";
-
-  /** Color for the consensus sequence glyphs. */
-  Color consensus_color;
-
-  /** Color for the gaps in the consensus sequence alignment. 
-   *  Simply a darker version of the consensus_color.
-   */
-  Color gap_color;
-
   int glyph_depth = 2;
   
+  String label_field = null;
 
-  /** Initializes options based on given Map.
-   *  Special notes: 
-   *    "label_field" and "ps_label_field" both default to "id", but you can set
-   *     them to something else, or set them to "" if you want to turn off labels.
-   *    "color" sets the color of the consensus sequence glyphs; the colors
-   *    of the probe set and poly_A glyphs are hard-wired.  (Color actually
-   *    sets the color of the consensus glyph outlines: the centers are drawn
-   *    in a darker shade.)
-   */
   public void init(Map options) {
-    //    System.out.println("called AbstractAnnotGlyphFactory.init()");
-    consensus_color = (Color) options.get("color");
-    if (consensus_color == null) { consensus_color = GenericAnnotGlyphFactory.default_annot_color; }
-
-    gap_color = consensus_color.darker();
-
-    label_field = (String)options.get("label_field");
-    if (label_field==null) {label_field="id";}
-    if ("".equals(label_field)) {label_field = null;} // turn off labels
-
-    ps_label_field = (String)options.get("ps_label_field");
-    if (ps_label_field==null) {ps_label_field="id";}
-    if ("".equals(ps_label_field)) {ps_label_field = null;} // turn them off
-    
-    do_independent_probeset_glyphs = setBooleanProperty(options, "probeset_glyphs", do_independent_probeset_glyphs);
-    outline_probes_in_probeset = setBooleanProperty(options, "outline_probes", outline_probes_in_probeset);
   }
 
   // used by init()
@@ -130,7 +109,6 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    AffyTieredMap map = gviewer.getSeqMap();
     String meth = SeqMapView.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
@@ -139,9 +117,10 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       if (n>0) meth = meth.substring(0, n);
     }
     if (meth != null) {
-      boolean use_fast_packers = false; // Glyphs in tier may have varying heights
-      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, use_fast_packers, consensus_color, default_tier_color);
-      BioSeq seq = gviewer.getAnnotatedSeq();
+      AnnotStyle style = AnnotStyle.getInstance(meth);
+      label_field = style.getLabelField();
+      
+      TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
       addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
     }
   }
@@ -234,6 +213,13 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       return null;
     }
     AffyTieredMap map = gviewer.getSeqMap();
+
+    // Find boundaries of the splices.  Used to draw glyphs for deletions.
+    int[][] boundaries = null;
+    if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
+      boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq);
+    }
+    
     boolean forward = pspan.isForward();
 
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
@@ -244,7 +230,11 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     int parent_y = 100; // irrelevant because packing will move the glyphs around
     int child_y = 100; // relevant relative to parent_y
 
-    boolean use_label = (label_field != null && (consensus_sym instanceof SymWithProps));
+    IAnnotStyle the_style = the_tier.getAnnotStyle();
+    Color consensus_color = the_style.getColor();
+
+    boolean use_label = (label_field != null && (label_field.trim().length()>0) && 
+      (consensus_sym instanceof SymWithProps));
     GlyphI pglyph;
     if (use_label) {
       EfficientLabelledLineGlyph lglyph = new EfficientLabelledLineGlyph();
@@ -268,20 +258,46 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     pglyph.setCoords(pspan.getMin(), parent_y, pspan.getLength(), parent_height);
     //System.out.println("PARENT: "+pglyph.getCoordBox().y+", "+pglyph.getCoordBox().height);
     pglyph.setColor(consensus_color);
-    map.setDataModel(pglyph, transformed_consensus_sym);
+    map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
     int childCount = transformed_consensus_sym.getChildCount();
-        
+    int j=0;
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = transformed_consensus_sym.getChild(i);
       SeqSpan cspan = child.getSpan(coordseq);
-      if (cspan == null) { continue; }
+      if (cspan == null) {
+        if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq) {
+          // There is a missing child, so indicate it with a little glyph.
+          
+          int annot_span_min = child.getSpan(annotseq).getMin();
+          while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
+            j++;
+          }
+          int gap_location = boundaries[j][1];
+          
+          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
+          boundary_glyph.setCoords((double) gap_location, child_y + child_height/4, 1.0, child_height/2);
+          boundary_glyph.setColor(consensus_color);
+          //boundary_glyph.setHitable(false);
+          pglyph.addChild(boundary_glyph);
+          
+          // strecth the parent to be wide enough for this glyph
+          Rectangle2D cb = pglyph.getCoordBox();
+          if (cb.x > gap_location) {
+            cb.width += cb.x - gap_location;
+            cb.x = gap_location;
+          } else if (cb.x + cb.width < gap_location) {
+            cb.width = gap_location - cb.x;
+          }
+        }
+        continue;
+     }
       EfficientOutlinedRectGlyph cglyph = new EfficientOutlinedRectGlyph();
       
       cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);
       cglyph.setColor(consensus_color);
       pglyph.addChild(cglyph);
-      map.setDataModel(cglyph, child);
+      map.setDataModelFromOriginalSym(cglyph, child);
     }
 
     // Add the pglyph to the tier before drawing probesets because probesets
@@ -348,21 +364,23 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
    */
   void drawConsensusAnnotation(SeqSymmetry probeset, SeqSymmetry consensus_sym, 
     GlyphI parent_glyph, double y, double height) {
-     int consensus_depth = SeqUtils.getDepth(consensus_sym);
-     if (consensus_depth != 2) {
-       System.out.println("***************** ERROR: consensus_depth is not 2, but is "+consensus_depth);
-       return;
-     }
+    if (DEBUG) {
+      int consensus_depth = SeqUtils.getDepth(consensus_sym);
+      if (consensus_depth != 2) {
+        System.out.println("***************** ERROR: consensus_depth is not 2, but is "+consensus_depth);
+        return;
+      }
+    }
     String meth = SeqMapView.determineMethod(probeset);
     DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
     SeqUtils.transformSymmetry(probeset_sym, consensus_sym);
     // Note that the transformation generates a probeset_sym of depth 3
 
     String probeset_id = null;
-    boolean use_label = (ps_label_field != null && (probeset instanceof SymWithProps));
-    if (use_label) {
-      probeset_id = (String) ((SymWithProps) probeset).getProperty(ps_label_field);
-    }
+//    boolean use_label = (ps_label_field != null && (probeset instanceof SymWithProps));
+//    if (use_label) {
+//      probeset_id = (String) ((SymWithProps) probeset).getProperty(ps_label_field);
+//    }
     if (meth != null && meth.endsWith(POLY_A_SITE_METHOD)) {
       drawPolyA(probeset_sym, parent_glyph, probeset_id, y, height, poly_a_site_color);
     } else if (meth != null && meth.indexOf(POLY_A_STACK_METHOD) >= 0) {
@@ -397,7 +415,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     polyA_glyph_rect.setCoords(span.getMin(), y, span.getLength(), height);
     //polyA_glyph_rect.setAboveAxis(span.isForward());
     consensus_glyph.addChild(polyA_glyph_rect);
-    gviewer.getSeqMap().setDataModel(polyA_glyph_rect, poly_A_sym);
+    gviewer.getSeqMap().setDataModelFromOriginalSym(polyA_glyph_rect, poly_A_sym);
   }  
   
   /**
@@ -444,7 +462,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       probeset_glyph.setColor(probeset_color);
 
       parent_glyph.addChild(probeset_glyph);
-      gviewer.getSeqMap().setDataModel(probeset_glyph, probeset_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(probeset_glyph, probeset_sym);
       addProbesToProbeset(probeset_glyph, transformed_probeset_sym,
         probe_y, probe_height, probeset_color);
     } else {
@@ -459,6 +477,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
 
+  /** @deprecated Not tested with AnnotStyle mechanism */
   void makeFloatingProbesetGlyph(Color probeset_color, SeqSpan span, String probeset_id,
     DerivedSeqSymmetry probeset_sym, SeqSymmetry transformed_probeset_sym) {
       GlyphI another_probeset_glyph = null;
@@ -467,6 +486,8 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       double child_y = floating_probeset_y;
       double child_height = floating_probeset_height;
       {
+        String ps_label_field = null; // the AnnotStyle system doesn't have any way to set this property
+          // the "Extended Properties" has could be used if we want to resurrect this
         if (ps_label_field != null) {
           LabelledGlyph lglyph = new EfficientLabelledGlyph();
           if (probeset_id != null) {
@@ -487,7 +508,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
           GlyphI outline = new EfficientOutlineContGlyph();
           outline.setForegroundColor(probeset_color);
-          gviewer.getSeqMap().setDataModel(outline, probeset_sym);
+          gviewer.getSeqMap().setDataModelFromOriginalSym(outline, probeset_sym);
           outline.setCoords(span.getMin(), child_y, span.getLength(), child_height);
           addProbesToProbeset(outline, transformed_probeset_sym, child_y, child_height, probeset_color);
 
@@ -502,13 +523,13 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
       String meth = SeqMapView.determineMethod(probeset_sym.getOriginalSymmetry());
       if (meth==null) {meth = "unknown";}
-      TierGlyph[] tiers = gviewer.getTiers(meth, false, true, consensus_color, default_tier_color);
+      TierGlyph[] tiers = gviewer.getTiers(meth, false, null);
       if (span.isForward()) {
         tiers[0].addChild(another_probeset_glyph);
       } else {
-        tiers[1].addChild(another_probeset_glyph);        
+        tiers[1].addChild(another_probeset_glyph);
       }
-      gviewer.getSeqMap().setDataModel(another_probeset_glyph, probeset_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(another_probeset_glyph, probeset_sym);
     }
   
   void addProbesToProbeset(GlyphI probeset_glyph, SeqSymmetry transformed_probeset_sym, 
@@ -519,7 +540,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
       GlyphI probe_glyph = drawProbeGlyph(probe_sym, probe_y, probe_height, probeset_color);
       if (probe_glyph == null) continue;
       probeset_glyph.addChild(probe_glyph);
-      gviewer.getSeqMap().setDataModel(probe_glyph, probe_sym);
+      gviewer.getSeqMap().setDataModelFromOriginalSym(probe_glyph, probe_sym);
     }
   }
   
@@ -543,7 +564,7 @@ public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
         GlyphI probe_part_glyph = drawProbeSegmentGlyph(probe_part_span, probe_y, probe_height, c);
         probe_glyph.addChild(probe_part_glyph);
-        gviewer.getSeqMap().setDataModel(probe_part_glyph, probe_part_sym);
+        gviewer.getSeqMap().setDataModelFromOriginalSym(probe_part_glyph, probe_part_sym);
       }
     } else {
       probe_glyph = drawProbeSegmentGlyph(probe_sym.getSpan(gviewer.getViewSeq()), probe_y, probe_height, c);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,14 +13,12 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.*;
-import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.tree.DefaultTreeModel;
 
 /**
  * A GUI editor for a Unibrow Control Bookmark.
@@ -112,7 +110,7 @@ public class UCBEditor {
       the_bm.setURL(url);
     } catch (MalformedURLException e) {
       JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this.main_box);
-      IGB.errorPanel(frame, "Error", "Cannot construct bookmark", e);
+      ErrorHandler.errorPanel(frame, "Error", "Cannot construct bookmark", e);
     }
     System.out.println("");
     System.out.println("After: "+the_bm.getURL().toExternalForm());

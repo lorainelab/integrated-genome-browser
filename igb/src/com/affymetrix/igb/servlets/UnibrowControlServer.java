@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,14 +33,15 @@ import com.affymetrix.igb.IGB;
  */
 public class UnibrowControlServer {
   public static final int default_server_port = 7085;
-  public final static String SERVLET_NAME = "UnibrowControl";
+  public final static String SERVLET_NAME_OLD = "UnibrowControl";
+  public final static String SERVLET_NAME = "IGBControl";
   static int ports_to_try = 5;
   int server_port;
-  
+
   public static final String DEFAULT_SERVLET_URL = "http://localhost:"
       + UnibrowControlServer.default_server_port +
       "/" + UnibrowControlServer.SERVLET_NAME;
-      
+
   public UnibrowControlServer(IGB uni) {
     try {
 
@@ -90,10 +91,19 @@ public class UnibrowControlServer {
         ServletHolder sholder = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME+"/*",
 						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
 	sholder.setInitOrder(1);
+        ServletHolder sholder_old = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME_OLD+"/*",
+						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
+
+	ServletHolder writeback_test_servlet = servlets.addServlet("Das2WritebackTester", "/Das2WritebackTester/*",
+						    "com.affymetrix.igb.servlets.Das2WritebackDevel");
+
         server.addContext(context);
 
         // Start the http server
         server.start();
+
+        // set the form content size limit high to allow for long urls
+        System.setProperty("org.mortbay.http.HttpRequest.maxFormContentSize", "100000000");
 	UnibrowControlServlet igb_controller = (UnibrowControlServlet)sholder.getServlet();
 	igb_controller.setUnibrowInstance(uni);
       }
@@ -128,7 +138,7 @@ public class UnibrowControlServer {
         }
         catch (Exception ex) {
           System.out.println("no igb found at port: " + current_port);
-        }	
+        }
       }
     }
     return other_igb_port;

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,16 +13,18 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.event.*;
-
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.genoviz.util.Timer;
+
+import com.affymetrix.genometry.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import java.util.*;
+import javax.swing.*;
 
 public class AffyTieredMap extends NeoMap {
 
@@ -40,12 +42,56 @@ public class AffyTieredMap extends NeoMap {
   //    (recalculated with every packTiers() call)
   double fixed_coord_height;
 
+  static boolean show_plus = true;
+  static boolean show_minus = true;
+  static boolean show_mixed = true;
+  
+  /**
+   *  Starting with Java 1.6, there is an Action property Action.SELECTED_KEY.
+   *  By setting this property, JCheckBoxMenuItem's can update themselves
+   *  automatically. This property doesn't exist in earlier versions of java,
+   *  so I have to fake it.
+   *
+   */
+  public static final String SELECTED_KEY = "Selected (AffyTieredMap)";
+  // public static final String SELECTED_KEY = Action.SELECTED_KEY;
+  
+  public Action show_plus_action = new AbstractAction("Show (+) tiers") {
+    public void actionPerformed(ActionEvent e) {
+      show_plus = ! show_plus;
+      putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
+      repackTheTiers(false, true);
+    }
+  };
+  public Action show_minus_action = new AbstractAction("Show (-) tiers") {
+    public void actionPerformed(ActionEvent e) {
+      show_minus = ! show_minus;
+      putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
+      repackTheTiers(false, true);
+    }    
+  };
+  public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
+    public void actionPerformed(ActionEvent e) {
+      show_mixed = ! show_mixed;
+      putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
+      repackTheTiers(false, true);
+    }    
+  };
+
   public AffyTieredMap() {
     super();
   }
 
+  public AffyTieredMap(AffyTieredMap rootmap) {
+    super(rootmap);
+    this.tiers = rootmap.tiers;
+  }
+
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
     super(hscroll, vscroll);
+    show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
+    show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
+    show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
   }
 
   /** Add the given tier to the map, building top-down. */
@@ -81,6 +127,9 @@ public class AffyTieredMap extends NeoMap {
     return null;
   }
 
+  /** Returns the index of the requested TierGlyph in the map,
+   *  or -1 if it isn't included. The test is based on "==", not equals().
+   */
   public int getTierIndex(TierGlyph tg) {
     int tindex = -1;
     for (int i=0; i<tiers.size(); i++) {
@@ -108,7 +157,6 @@ public class AffyTieredMap extends NeoMap {
 
   /**
    *  @param stretch_includes_nontiers doesn't do _anything_ yet
-   *  @deprecated
    */
   public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers) {
     packTiers(full_repack, stretch_map);
@@ -125,7 +173,7 @@ public class AffyTieredMap extends NeoMap {
    *
    * if tier has no children, won't be considered in packing
    *
-   * Protected because outside of subclasses of AffyTieredMap, all calls should 
+   * Protected because outside of subclasses of AffyTieredMap, all calls should
    *   go through packTiers(boolean, boolean, boolean)
    */
   protected void packTiers(boolean full_repack, boolean stretch_map) {
@@ -142,17 +190,44 @@ public class AffyTieredMap extends NeoMap {
       }
     }
 
+    // Now hide or show tiers based on which checkboxes are selected
+    for (int i=0; i<tiers.size(); i++) {
+      TierGlyph mtg = (TierGlyph) tiers.elementAt(i);
+      IAnnotStyle style = mtg.getAnnotStyle();
+      
+      if (mtg.getChildCount() <= 0) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_plus) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_minus) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else if ((! show_mixed) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
+        mtg.setState(TierGlyph.HIDDEN);
+      }
+      else {
+        if (mtg.getAnnotStyle().getShow()) {
+          mtg.restoreState();
+        } else {
+          mtg.setState(TierGlyph.HIDDEN);
+        }
+      }
+    }
+
     Rectangle2D mbox = getCoordBounds();
     // assuming all tiers start anchored at 0 when being packed...
     //   if want to add anchor location stuff back in, refer to
     //   com.affymetrix.genoviz. widget. TieredNeoMap
     double offset = 0;
     double height = mbox.height;
+    //    System.out.println("in packTiers(), bounding coordbox: " + mbox);
     TierGlyph mtg;
     for (int i=0; i<tiers.size(); i++) {
       mtg = (TierGlyph) tiers.elementAt(i);
       // don't make room if tier is'nt visible, or if it's hidden
-      if ( (! mtg.isVisible()) || 
+      if ( (! mtg.isVisible()) ||
 	   ((mtg.getState() == TierGlyph.HIDDEN))) {
 	//	System.out.println("hiding tier: " + mtg.getLabel());
         continue;
@@ -171,7 +246,8 @@ public class AffyTieredMap extends NeoMap {
       // need to call moveAbsolute to trigger recursive move of
       //   all children
       //      System.out.println("moving tier absolute, yoffset = " + offset);
-      mtg.moveAbsolute(mbox.x, offset);
+      //      mtg.moveAbsolute(mbox.x, offset);
+      mtg.moveAbsolute(mtg.getCoordBox().x, offset);
       //      mtg.setCoords(mbox.x, offset, mbox.width, height);
       offset = offset + height;
     }
@@ -185,16 +261,16 @@ public class AffyTieredMap extends NeoMap {
 
       for (int i=0; i<tiers.size(); i++) {
         mtg = (TierGlyph) tiers.elementAt(i);
-	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {  
+	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {
 	  //	  System.out.println("still trying to hide tier: " + mtg.getLabel());
-	  continue; 
+	  continue;
 	}
 	else if ( newbox == null ) {
 	  newbox = new Rectangle2D();
 	  newbox.reshape(pbox.x, mtg.getCoordBox().y,
 			 pbox.width, mtg.getCoordBox().height);
 	}
-	else { 
+	else {
 	  GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
 	}
       }
@@ -216,7 +292,7 @@ public class AffyTieredMap extends NeoMap {
 
   public void clearWidget() {
     super.clearWidget();
-    tiers = new Vector();
+    tiers.clear();
   }
 
   /**
@@ -240,8 +316,8 @@ public class AffyTieredMap extends NeoMap {
     if (gl.getChildren() != null) {
       Vector children = gl.getChildren();
       int childCount = children.size();
-      /* remove from end of child Vector instead of beginning! -- that way, won't 
-       *   get issues with trying to access elements off end of Vector as 
+      /* remove from end of child Vector instead of beginning! -- that way, won't
+       *   get issues with trying to access elements off end of Vector as
        *   Vector shrinks during removal...
        */
       for (int i=childCount-1; i>=0; i--) {
@@ -273,11 +349,44 @@ public class AffyTieredMap extends NeoMap {
     return false;
   }
 
-
-
   public void stretchToFit(boolean fitx, boolean fity) {
+    this.stretchToFit(fitx, fity, true);
+  }
+
+  public void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
     super.stretchToFit(fitx, fity);
-    packTiers(false, true, false);
+    if (packTiers) {
+      packTiers(false, true, false);
+    }
+    if (!fity) {
+      doZoomFix(NeoMap.Y); 
+    }
+    if (!fitx) {
+      doZoomFix(NeoMap.X);
+    }
+  }
+
+  /**
+   *  A hack.  Sometimes after a stretchToFit() where fity is false it can happen
+   *  that a portion of the area that should be filled by map tiers is empty.
+   *  (Perhaps because some tiers were just hidden and the remaining ones don't
+   *  fill up all the space.)  As soon as the user touches the Y-zoomer, 
+   *  the map snaps to fill the given space.  This hack makes that happen automatically
+   *  without the user having to touch the zoomer.
+   */
+  void doZoomFix(int id) {
+    if (zoomtrans[id] == null) {
+      return;
+    }
+    zoomer_scale[id] = zoomtrans[id].transform(id, zoomer_value[id]);
+    if (scale_constraint[id] == INTEGRAL_PIXELS ||
+        scale_constraint[id] == INTEGRAL_ALL) {
+      if (zoomer_scale[id] >= 1)  {
+        zoomer_scale[id] = (int)(zoomer_scale[id] +.0001);
+      }
+    }
+    zoom(id, zoomer_scale[id]);
+    // updateWidget(); // usually something else will call updateWidget() later
   }
 
   /**  Called within NeoMap.stretchToFit(), subclassing here to customize calculation
@@ -340,14 +449,14 @@ public class AffyTieredMap extends NeoMap {
     if (id == X) { super.zoom(id, zoom_scale); return; }
     //    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
     if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
-	zoom_scale == Float.NaN) {
+	Double.isNaN(zoom_scale)) {
       return;
     }
     // should be able to replace many variables calculation here with
     //    access to view coordbox fields...
     Rectangle2D prev_view_coords = view.calcCoordBox();
     double prev_pixels_per_coord = pixels_per_coord[id]; // should be same as trans.getScale()
-    double prev_coords_per_pixel = 1/prev_pixels_per_coord;
+    //double prev_coords_per_pixel = 1/prev_pixels_per_coord;
     pixels_per_coord[id] = zoom_scale;
     coords_per_pixel[id] = 1/zoom_scale;
     if (pixels_per_coord[id] == prev_pixels_per_coord) {
@@ -363,7 +472,7 @@ public class AffyTieredMap extends NeoMap {
       fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
       //      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
     }
-    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired 
+    // because bounds of map may change with every zoom (due to fixed-pixel tiers), the desired
     //   _coord_ of a glyph that needs to stay fixed in pixel-space may change.
     //   therefore need a better way of dealing with this...
     else if (zoom_behavior[id] == CONSTRAIN_COORD) {
@@ -446,11 +555,60 @@ public class AffyTieredMap extends NeoMap {
     //	System.out.println("ViewCoordBox:  " + view.getCoordBox());
   }
 
+  /**
+   *  Repacks tiers.  Should be called after hiding or showing tiers or
+   *  changing their heights.
+   */
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    packTiers(full_repack, true, false);
+    stretchToFit(false, stretch_vertically, false);
+    // apply a hack to make sure strechToFit worked
+    if ((getZoom(Y) < getMinZoom(Y)) || (getZoom(Y) > getMaxZoom(Y))) {
+      stretchToFit(false, true, false);
+    }
+    updateWidget();
+    
+    // pack them again!  This clears-up problems with the packing of the axis
+    // tier and getting the labelmap lined-up with the main tier map.
+    packTiers(false,true,false); 
+  }
+
   /** Prints this component. */
   public void print() throws java.awt.print.PrinterException {
     ComponentPagePrinter cpp = new ComponentPagePrinter(this);
     cpp.print();
     cpp = null; // for garbage collection
+  }
+
+  /** Sets the data model to the given SeqSymmetry, unless it is a
+   *  DerivedSeqSymmetry, in which case the original SeqSymmetry is used.
+   */
+  public void setDataModelFromOriginalSym(GlyphI g, SeqSymmetry sym) {
+    if (sym instanceof DerivedSeqSymmetry)  {
+      setDataModelFromOriginalSym(g, ((DerivedSeqSymmetry)sym).getOriginalSymmetry());
+    }
+    else {
+      super.setDataModel(g, sym);
+    }
+  }
+  
+  /** A subclass of JCheckBoxMenuItem that pays attention to my
+   *  version of AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
+   *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
+   */
+  public static class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
+    public ActionToggler(Action action) {
+      super(action);
+      this.setSelected(((Boolean) action.getValue(AffyTieredMap.SELECTED_KEY)).booleanValue());
+      action.addPropertyChangeListener(this);
+    }
+    
+    public void propertyChange(PropertyChangeEvent evt) {
+      if (AffyTieredMap.SELECTED_KEY.equals(evt.getPropertyName())) {
+        Boolean b = (Boolean) evt.getNewValue();
+        this.setSelected(b.booleanValue());
+      }
+    }
   }
 
     // if fixed tiers, then pack first
@@ -480,7 +638,6 @@ public class AffyTieredMap extends NeoMap {
     //     can interleave manipulations happening in packTiers() and zoom(),
     //     so that zoom is done with the right scene size, and pack is done with the
     //     appropriate scaling factor
-
 }
 
 

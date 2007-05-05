@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -65,12 +65,12 @@ import com.affymetrix.genometry.symmetry.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps  {
+public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
   BioSeq seq; // "chrom"
   int txMin; // "chromStart"
   int txMax; // "chromEnd"
   String name; // "name"
-  float score; // "score"
+  float score; // "score" // (if score == Float.NEGATIVE_INFINITY then score is not used)
   boolean forward; // "strand"
   int cdsMin = Integer.MIN_VALUE;  // "thickStart" (if = Integer.MIN_VALUE then cdsMin not used)
   int cdsMax = Integer.MIN_VALUE;  // "thickEnd" (if = Integer.MIN_VALUE then cdsMin not used)
@@ -80,6 +80,16 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   Map props;
   boolean hasCdsSpan = false;
 
+  /**
+   *  Constructs a SeqSymmetry optimized for BED-file format.
+   *  This object is optimized for the case where all optional columns in the
+   *  bed file are used.  If you are using only the first few columns, it would
+   *  be more efficient to use a different SeqSymmetry object.
+   *  @param cdsMin the start of the CDS region, "thinEnd", or Integer.MIN_VALUE.
+   *         If cdsMin = Integer.MIN_VALUE or cdsMin = cdsMax, then there is no CDS.
+   *  @param cdsMax the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
+   *  @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no score.
+   */
   public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 		    boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
     this.type = type;
@@ -91,7 +101,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     this.forward = forward;
     this.cdsMin = cdsMin;
     this.cdsMax = cdsMax;
-    hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE));
+    hasCdsSpan = ((cdsMin != Integer.MIN_VALUE) && (cdsMax != Integer.MIN_VALUE) && (cdsMin != cdsMax));
 
     this.blockMins = blockMins;
     this.blockMaxs = blockMaxs;
@@ -100,6 +110,11 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   public String getName() { return name; }
   public String getType() { return type; }
 
+  /**
+   *  Returns true if the cds was specified in the constructor with valid values.
+   *  If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax, then there is no CDS.
+   *  
+   */
   public boolean hasCdsSpan() { return hasCdsSpan; }
   public SeqSpan getCdsSpan() {
     if (! hasCdsSpan()) { return null; }
@@ -166,11 +181,26 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       //       is handled by BedParser)
       //      return new SingletonSeqSymmetry(blockMins[index],
       //      				      blockMins[index] + blockSizes[index], seq);
-      return new SingletonSeqSymmetry(blockMins[index], blockMaxs[index], seq);
+      return new BedChildSingletonSeqSym(blockMins[index], blockMaxs[index], seq);
     }
     else {
-      return new SingletonSeqSymmetry(blockMaxs[index], blockMins[index], seq);
+      return new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
     }
+  }
+  
+  class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
+    public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
+      super(start, end, seq);
+    }
+
+    // For the web links to be constructed properly, this class must implement getID(),
+    // or must NOT implement SymWithProps.
+    public String getID() {return UcscBedSym.this.getID();}
+    public Map getProperties() {return UcscBedSym.this.getProperties();}
+    public Map cloneProperties() {return UcscBedSym.this.cloneProperties();}
+    public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}
+    public boolean setProperty(String key, Object val) {return UcscBedSym.this.setProperty(key, val);}
+    public float getScore() {return UcscBedSym.this.getScore(); }
   }
   
   // SeqSpan implementation
@@ -187,6 +217,8 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   public double getMinDouble() { return (double)getMin(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
+  
+  public float getScore() { return score; }
 
   public Map getProperties() {
     return cloneProperties();
@@ -199,9 +231,12 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     tprops.put("name", name);
     tprops.put("seq id", seq.getID());
     tprops.put("forward", new Boolean(forward));
-    tprops.put("cds min", new Integer(cdsMin));
-    tprops.put("cds max", new Integer(cdsMax));
-    tprops.put("score", new Float(score));
+    if (hasCdsSpan) {
+      tprops.put("cds min", new Integer(cdsMin));
+      tprops.put("cds max", new Integer(cdsMax));
+    } if (score != Float.NEGATIVE_INFINITY) {
+      tprops.put("score", new Float(score));
+    }
     if (props != null) {
       tprops.putAll(props);
     }
@@ -216,9 +251,9 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     else if (key.equals("name")) { return name; }
     else if (key.equals("seq id")) { return seq.getID(); }
     else if (key.equals("forward")) { return new Boolean(forward); }
-    else if (key.equals("cds min")) { return new Integer(cdsMin); }
-    else if (key.equals("cds max")) { return new Integer(cdsMax); }
-    else if (key.equals("score")) { return new Float(score); }
+    else if (hasCdsSpan && key.equals("cds min")) { return new Integer(cdsMin); }
+    else if (hasCdsSpan && key.equals("cds max")) { return new Integer(cdsMax); }
+    else if (key.equals("score") && (score != Float.NEGATIVE_INFINITY)) { return new Float(score); }
     else if (props != null)  {
       return props.get(key);
     }
@@ -248,10 +283,14 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       // only keep going if has score field
       if (score > Float.NEGATIVE_INFINITY) {
 	out.write('\t');
-	out.write(Float.toString(score));
+        if (score == 0) {
+          out.write('0');
+        } else {
+	  out.write(Float.toString(score));
+        }
 	out.write('\t');
-	if (forward) { out.write("+"); }
-	else { out.write("-"); }
+	if (forward) { out.write('+'); }
+	else { out.write('-'); }
 	// only keep going if has thickstart/thickend
 	if (cdsMin > Integer.MIN_VALUE &&
 	    cdsMax > Integer.MIN_VALUE)  {

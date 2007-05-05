@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -48,12 +48,12 @@ public class DasServerInfoEditor extends JPanel {
 
     Box line1 = new Box(BoxLayout.X_AXIS);
     line1.add(url_label);
-    line1.add(Box.createHorizontalStrut(5));
+    line1.add(Box.createRigidArea(new Dimension(6,0)));
     line1.add(url_field);
 
     Box line2 = new Box(BoxLayout.X_AXIS);
     line2.add(name_label);
-    line2.add(Box.createHorizontalStrut(5));
+    line2.add(Box.createRigidArea(new Dimension(6,0)));
     line2.add(name_field);
     
     Box line3 = new Box(BoxLayout.X_AXIS);
@@ -82,8 +82,11 @@ public class DasServerInfoEditor extends JPanel {
     submit_button = new JButton(submit_action);
     
     Box top_box = new Box(BoxLayout.Y_AXIS);
+    line1.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     top_box.add(line1);
+    line2.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     top_box.add(line2);
+    line3.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     top_box.add(line3);
 
     Box line4 = new Box(BoxLayout.X_AXIS);

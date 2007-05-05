@@ -19,7 +19,6 @@ import java.io.Serializable;
  *  with a JSeparator, for example.
  */
 public class Separator implements Serializable {
-
   /** Creates a new instance of Separator */
   public Separator() {}
 }

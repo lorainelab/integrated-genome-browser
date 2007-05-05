@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2005 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,6 +15,7 @@ package com.affymetrix.igb.util;
 
 import java.awt.Component;
 import java.awt.Toolkit;
+import java.io.FileNotFoundException;
 import javax.swing.*;
 
 /**
@@ -80,13 +81,32 @@ public abstract class ErrorHandler {
     // messages from system.out and system.err don't get out-of-synch
     System.out.flush();
     System.err.flush();
-    System.err.println(title+": "+message);
+    System.err.println();
+    System.err.println("-------------------------------------------------------");
     if (e != null) {
-      if (print_stack_traces) {e.printStackTrace(System.err);}
       String error_message = e.toString();
       message = message + "\n" + error_message;
+      Throwable cause = e.getCause();
+      while (cause != null) {
+        message += "\n\nCaused by:\n" + cause.toString();
+        cause = cause.getCause();
+      }
+    }
+    System.err.println(title+": "+message);
+    if (e != null) {
+      if (print_stack_traces) {
+        if (e instanceof FileNotFoundException) {
+          // do nothing.  Error already printed above, stack trace not usually useful
+          //System.err.println("FileNotFoundException: " + e.getMessage());
+        }
+        else {
+          e.printStackTrace(System.err);
+        }
+      }
     }
 
+    System.err.println("-------------------------------------------------------");
+    System.err.println();
     System.err.flush();
     Toolkit.getDefaultToolkit().beep();
     final Component scroll_pane = makeScrollPane(message);

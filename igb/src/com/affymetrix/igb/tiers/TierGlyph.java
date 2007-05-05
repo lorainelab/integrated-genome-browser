@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -19,7 +19,6 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.genoviz.util.Timer;
 
 /**
  *  TierGlyph is intended for use with AffyTieredMap.
@@ -27,29 +26,49 @@ import com.affymetrix.genoviz.util.Timer;
  *  states as indicated below.
  *  In a AffyTieredMap, TierGlyphs pack relative to each other but not to other glyphs added
  *  directly to the map.
+ *
  */
-public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
+public class TierGlyph extends SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
   boolean DEBUG_SEARCH = false;
   boolean sorted = true;
   boolean ready_for_searching = false;
   static Comparator child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
+  int direction = DIRECTION_NONE;
+
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+
+  /** glyphs to be drawn in the "middleground" --
+   *    in front of the solid background, but behind the child glyphs
+   *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
+   */
+  java.util.List middle_glyphs = new ArrayList();
 
   public static final int HIDDEN = 100;
   public static final int COLLAPSED = 101;
   public static final int EXPANDED = 102;
   public static final int FIXED_COORD_HEIGHT = 103;
-  //  public static final int SUMMARIZED = 104;
 
-  protected int state = FIXED_COORD_HEIGHT;
-  protected int stateBeforeHidden = FIXED_COORD_HEIGHT;
+  public static final int DIRECTION_FORWARD = +1;
+  public static final int DIRECTION_NONE = 0;
+  public static final int DIRECTION_REVERSE = -1;
+  public static final int DIRECTION_BOTH = 2;
+
+  /** Use this direction for axis tiers, so they can be recognized as a 
+   *  special case when sorting tiers. 
+   */
+  public static final int DIRECTION_AXIS = -2;
+  
   protected double spacer = 2;
 
-  // for now ignoring background color, foreground color
-  //   inherited from Glyph (as a style)
-  protected Color fill_color = null;
+  /*
+   * other_fill_color is derived from fill_color whenever setFillColor() is called.
+   * if there are any "middle" glyphs, then background is drawn with other_fill_color and
+   *    middle glyphs are drawn with fill_color
+   * if no "middle" glyphs, then background is drawn with fill_color
+   */
+  protected Color other_fill_color = null;
   protected Color outline_color = null;
   protected boolean hideable = true;
   protected String label = null;
@@ -81,11 +100,56 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
 
   protected java.util.List max_child_sofar = null;
 
-  public TierGlyph() {
-    state = 0; // do this so that setState() will work.
-    setState(EXPANDED);
-    setSpacer(spacer);
+  IAnnotStyle style;
+
+  public TierGlyph(IAnnotStyle style) {
     setHitable(false);
+    setSpacer(spacer);
+    setStyle(style);
+  }
+
+  /** Constructor that generates a default IAnnotStyle. */
+  public TierGlyph() {
+    this(new DefaultIAnnotStyle());
+  }
+
+  public void setStyle(IAnnotStyle style) {
+    this.style = style;
+
+    if (style != null) {
+      // most tier glyphs ignore their foreground color, but AffyTieredLabelMap copies
+      // the fg color to the TierLabel glyph, which does pay attention to that color.
+      setForegroundColor(style.getColor());
+      setFillColor(style.getBackground());
+
+      if (style.getCollapsed()) {
+        setPacker(collapse_packer);
+      } else {
+        setPacker(expand_packer);
+      }
+      setVisibility( ! style.getShow() );
+      setMaxExpandDepth(style.getMaxDepth());
+      setLabel(style.getHumanName());
+    } else {
+      throw new NullPointerException();
+    }
+  }
+    
+  public IAnnotStyle getAnnotStyle() {
+    return style;
+  }
+
+/**
+ *  Adds "middleground" glyphs, which are drawn in front of the background but
+ *    behind all "real" child glyphs.
+ *  These are generally not considered children of
+ *    the glyph.  The TierGlyph will render these glyphs, but they can't be selected since they
+ *    are not considered children in pickTraversal() method.
+ *  The only way to remove these is via removeAllChildren() method,
+ *    there is currently no external access to them.
+ */
+  public void addMiddleGlyph(GlyphI gl) {
+    middle_glyphs.add(gl);
   }
 
   public void initForSearching() {
@@ -225,6 +289,7 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return sorted;
   }
 
+  
   public void setLabel(String str) {
     label = str;
   }
@@ -250,7 +315,12 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
       System.out.println("######## time to pack " + label + ": " + tim/cycles);
     }
   }
-
+  
+  /**
+   *  Overriden to allow background shading by a collection of non-child
+   *    "middleground" glyphs.  These are rendered after the solid background but before
+   *    all of the children (which could be considered the "foreground").
+   */
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
@@ -260,81 +330,98 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     Rectangle vbox = view.getPixelBox();
     pixelbox = GeometryUtils.intersection(vbox, pixelbox, pixelbox);
 
-    if (fill_color != null) {
-      g.setColor(fill_color);
-      g.fillRect(pixelbox.x, pixelbox.y,
-		 pixelbox.width, pixelbox.height);
+    if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
+      if (style.getBackground() != null) {
+	g.setColor(style.getBackground());
+	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+      }
+    }
+    else {
+      // there are middle glyphs, so use other_fill_color to fill entire tier,
+      //   and fill_color to color middle glyphs
+      if (other_fill_color != null) {
+	g.setColor(other_fill_color);
+	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+      }
+    }
+
+    // cycle through "middleground" glyphs,
+    //   make sure their coord box y and height are set to same as TierGlyph,
+    //   then call mglyph.draw(view)
+    int mcount = middle_glyphs.size();
+    for (int i=0; i<mcount; i++) {
+      GlyphI mglyph = (GlyphI)middle_glyphs.get(i);
+      Rectangle2D mbox = mglyph.getCoordBox();
+      mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
+      mglyph.setColor(style.getBackground());
+      mglyph.drawTraversal(view);
     }
     if (outline_color != null) {
       g.setColor(outline_color);
       g.drawRect(pixelbox.x, pixelbox.y,
 		 pixelbox.width-1, pixelbox.height);
     }
-    // not messing with clipbox until need too
+    // not messing with clipbox until need to
     //        g.setClip ( oldClipbox );
+
     super.draw(view);
   }
-
-  /** Remove all children of the glyph */
-  public void removeChildren () {
-    Vector kids = this.getChildren();
-    if (kids != null) {
-      for (int i=0; i < kids.size(); i++)
-        this.removeChild((GlyphI)kids.elementAt(i));
-    }
+    
+  /**
+   *  Remove all children of the glyph, including those added with
+   *  addMiddleGlyph(GlyphI).
+   */
+  public void removeAllChildren() {
+    super.removeAllChildren();
+    // also remove all middleground glyphs
+    // this is currently the only place where middleground glyphs are treated as if they were children
+    //   maybe should rename this method clear() or something like that...
+    // only reference to middle glyphs should be in this.middle_glyphs, so should be able to GC them by
+    //     clearing middle_glyphs.  These glyphs never have setScene() called on them,
+    //     so it is not necessary to call setScene(null) on them.
+    middle_glyphs.clear();
   }
-
+    
   public void setState(int newstate) {
-    // terminate any pingponging if state is already same
-    if (state == newstate) {
-      return;
-    }
-    // if state is unrecognized, do not change state
-    if (! (newstate == COLLAPSED || newstate == EXPANDED ||
-	   newstate == HIDDEN || newstate == FIXED_COORD_HEIGHT  // ||
-	   // 	   newstate == SUMMARIZED
-	   ) ) {
-      System.out.println("state not recognized: " + newstate);
-      return;
-    }
-    if (newstate == HIDDEN)  {
-      stateBeforeHidden = state; // used by restoreState();
-    }
-    state = newstate;
-    if (state == EXPANDED) {
+    if (newstate == EXPANDED) {
       setPacker(expand_packer);
       setVisibility(true);
     }
-    else if (state == COLLAPSED) {
+    else if (newstate == COLLAPSED) {
       setPacker(collapse_packer);
       setVisibility(true);
     }
-    else if (state == HIDDEN) {
+    else if (newstate == FIXED_COORD_HEIGHT)  {
       setPacker(null);
+      setVisibility(true);
+    }
+    else if (newstate == HIDDEN) {
       setVisibility(false);
     }
-    /*
-    else if (state == SUMMARIZED) {
-      System.out.println("setting state to summarize");
-      setPacker(summarize_packer);
-      setVisibility(true);
-    }
-    */
-    else if (state == FIXED_COORD_HEIGHT)  {
-      setPacker(null);
-      setVisibility(true);
+    else {
+      System.out.println("state not recognized: " + newstate);
+      return;
     }
   }
-
-
-  /** If the state==HIDDEN, restore the glyph to the state it was in before
-      it was hidden. Else do nothing. */
+  
+  /** Equivalent to setVisibility(true). */
   public void restoreState() {
-    if (state==HIDDEN) setState(stateBeforeHidden);
+    setVisibility(true);
   }
 
   public int getState() {
-    return state;
+    if (isVisible()) {
+      if (packer == expand_packer) {
+        return EXPANDED;
+      } else if (packer == collapse_packer) {
+        return COLLAPSED;
+      } else if (packer == null) {
+        return FIXED_COORD_HEIGHT;
+      }
+    } else {
+      return HIDDEN;
+    }
+    return -1; // should never happen
   }
 
   public PackerI getExpandedPacker() {
@@ -345,14 +432,19 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return collapse_packer;
   }
 
+  /** Sets the expand packer.  Note that you are responsible for setting
+   *  any properties of the packer, such as those based on the AnnotStyle.
+   */
   public void setExpandedPacker(PackerI packer) {
     this.expand_packer = packer;
     setSpacer(getSpacer());
+    setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
   public void setCollapsedPacker(PackerI packer) {
     this.collapse_packer = packer;
     setSpacer(getSpacer());
+    setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
   public void setSpacer(double spacer) {
@@ -382,19 +474,62 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return outline_color;
   }
 
+
   /** Sets the color used to fill the tier background, or null if no color
-   *  @param col  A color, or null if no outline is desired.
+   *  @param col  A color, or null if no background color is desired.
    */
   public void setFillColor(Color col) {
-    fill_color = col;
+    style.setBackground(col);
+
+    // Now set the "middleground" color based on the fill color
+    if (col == null) {
+      other_fill_color = Color.DARK_GRAY;
+    } else {
+      int intensity = col.getRed() + col.getGreen() + col.getBlue();
+      if (intensity == 0) { other_fill_color = Color.darkGray; }
+      else if (intensity > (255+127)) { other_fill_color = col.darker(); }
+      else { other_fill_color = col.brighter(); }
+    }
   }
 
-  /** Returns the color used to draw the tier outline, or null
-      if there is no outline. */
+  
+  // very, very deprecated
+  public Color getColor() {
+    return getForegroundColor();
+  }
+  
+  // very, very deprecated
+  public void setColor(Color c) {
+    setForegroundColor(c);
+  }
+  
+  
+  /** Returns the color used to draw the tier background, or null
+      if there is no background. */
   public Color getFillColor() {
-    return fill_color;
+    return style.getBackground();
   }
 
+  public void setForegroundColor(Color color) {
+    style.setColor(color);
+    //super.setForegroundColor(color);
+    //super.setColor(color); // NO: super.setColor calls setBackgroundColor()
+  }
+
+  public Color getForegroundColor() {
+    return style.getColor();
+  }
+  
+  public void setBackgroundColor(Color color) {
+    //super.setBackgroundColor(color);
+    setFillColor(color);
+  }
+  
+  public Color getBackgroundColor() {
+    //return super.getBackgroundColor();
+    return getFillColor();
+  }
+  
   /** Set whether or not the tier wants to allow itself to be hidden;
    *  The state of this flag has no effect on whether setState(HIDDEN)
    *  will work or not.
@@ -411,20 +546,70 @@ public class TierGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph {
     return this.hideable;
   }
 
+  public int getDirection() {
+    return direction;
+  }
+
+  /**
+   *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
+   *  DIRECTION_BOTH or DIRECTION_NONE.
+   */
+  public void setDirection(int d) {
+    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) 
+        && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH) && (d != DIRECTION_AXIS)) {
+      throw new IllegalArgumentException();
+    }
+    this.direction = d;
+  }
+
+
+  /** Changes the maximum depth of the expanded packer.
+   *  This does not call pack() afterwards, and has no effect if the
+   *  getExpandedPacker() is not of the correct type to allow for setting the max depth.
+   *  @return true if the current expand packer allowed the max depth to be set.
+   */
+  public boolean setMaxExpandDepth(int max) {
+    PackerI packer = getExpandedPacker();
+    if (packer instanceof FasterExpandPacker) {
+      FasterExpandPacker fpacker = (FasterExpandPacker)packer;
+      fpacker.setMaxSlots(max);
+      return true;
+    }
+    return false;
+  }
+
+
   /** Returns a string representing the state of this object.
       @see #setState */
   public String getStateString() {
-    return getStateString(getState());
+    String str = (this.isVisible ? "VISIBLE" : "HIDDEN") + " | ";
+    if (packer instanceof ExpandPacker) {
+      str += "EXPANDED";
+    } else if (packer instanceof CollapsePacker) {
+      str += "COLLAPSED";
+    } else if (packer == null) {
+      str += "NULL PACKER";
+    } else {
+      str += "PACKER = " + packer.getClass().getName(); 
+    }
+    return str;
+  }
+  
+  /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+  protected void drawSelectedFill(ViewI view) {
+    this.drawSelectedOutline(view);
   }
 
-  /** Converts the given state constant into a human-readable string.
-      @see #setState */
-  public static String getStateString(int astate) {
-    if (astate == HIDDEN) { return "HIDDEN"; }
-    else if (astate == COLLAPSED) { return "COLLAPSED"; }
-    else if (astate == EXPANDED) { return "EXPANDED"; }
-    else if (astate == FIXED_COORD_HEIGHT) { return "FIXED_COORD_HEIGHT"; }
-    else { return "UNKNOWN"; }
+  /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+  protected void drawSelectedReverse(ViewI view) {
+    this.drawSelectedOutline(view);
   }
+
+  /*
+  public void moveAbsolute(double x, double y) {
+    System.out.println("move absolute: " + label + ", " + x + ", " + y);
+    super.moveAbsolute(x, y);
+  }
+  */
 
 }

@@ -59,6 +59,7 @@ public class Efficient2LevelPairSym implements SeqSymmetry {
 		    int[] qmins,
 		    int[] tmins
 		    ) {
+    this.id = id;
     this.type = type;
     this.qforward = qforward;
     this.qseq = qseq;

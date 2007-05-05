@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.swing.SixWaySplitPane;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -24,33 +23,26 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.swing.SixWaySplitPane;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
 public class AffyTieredMultiMap extends AffyLabelledTierMap {
-  
+
   /* The extra map is where the rotated view appears on the right. */
   AffyTieredMap extramap;
+  AffyTieredMap northEastMap;
+  AffyTieredMap northMap;
+  AffyTieredMap northWestMap = null;
+
   JPanel nwpan, nepan, wpan, cpan, epan;
   java.util.List extra_glyphs = new ArrayList();
   double extramap_inset = 5;
-  
+
   private SixWaySplitPane windowPane;
-  private AffyTieredMap northEastMap;
-  AffyTieredMap northMap;
-  AffyTieredMap northWestMap = null;
-  class Shim extends JComponent implements Cloneable {
-    private Dimension prefSize = new Dimension( 16, 16 ); // Same as NeoScrollbar.
-    private Dimension minSize = new Dimension( 1, 1 );
-    public Dimension getPreferredSize() {
-      return this.prefSize;
-    }
-    public Dimension getMinimumSize() {
-      return this.minSize;
-    }
-  }
 
   /**
    * Construct a map with default scroll bars.
@@ -69,13 +61,14 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
 
   /**
-   *  overriding initComponenetLayout from NeoMap
-   *    (called in NeoMap constructor...)
+   *  Overriding method from NeoMap. Called in NeoMap constructor.
    */
   public void initComponentLayout() {
 
     this.northEastMap = new AffyTieredMap( false, false );
+    this.northEastMap.name = "NorthEast";
     this.northMap = new AffyTieredMap( false, false );
+    this.northMap.name = "North";
     int[] mainRange = this.getMapRange();
     this.northMap.setMapRange( mainRange[0], mainRange[1] );
     //this.northWestMap = new AffyTieredMap( false, false );
@@ -88,6 +81,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
+    labelmap.name = "LabelMap";
 
     this.nwpan = new JPanel( new BorderLayout() );
     this.nepan = new JPanel( new BorderLayout() );
@@ -101,28 +95,24 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     extramap = new AffyTieredMap(false, false);
     extramap.setBackground(Color.green);
+    extramap.name = "ExtraMap";
     this.epan = new JPanel( new BorderLayout() );
     this.epan.add( extramap, BorderLayout.CENTER );
     this.epan.setPreferredSize( new Dimension( 100, 200 ) );
 
     if ( this.hscroll_show && this.scroller[X] instanceof NeoScrollbar )  {
-      //this.wpan.add( new Shim(), BorderLayout.SOUTH );
       this.wpan.add( new MotionPanel( this.scroller[X].getOrientation(), -1 ), BorderLayout.SOUTH );
-      //this.cpan.add( (NeoScrollbar) scroller[X], BorderLayout.SOUTH );
       MotionPanel mp = new MotionPanel( this.scroller[X].getOrientation(), X, X );
       setZoomer( X, mp.getZoomer( X ) );
       this.cpan.add( mp, BorderLayout.SOUTH );
       this.scroller[X] = mp.getPanner( X );
-      //this.epan.add( new Shim(), BorderLayout.SOUTH );
       this.epan.add( new MotionPanel( this.scroller[X].getOrientation(), -1, -1 ), BorderLayout.SOUTH );
     }
     if ( this.vscroll_show && this.scroller[Y] instanceof NeoScrollbar )  {
-      //this.epan.add( (NeoScrollbar) scroller[Y], BorderLayout.EAST );
       MotionPanel mp = new MotionPanel( this.scroller[Y].getOrientation(), Y );
       setZoomer( Y, mp.getZoomer( Y ) );
       this.epan.add( mp, BorderLayout.EAST );
       this.scroller[Y] = mp.getPanner( Y );
-      //this.nepan.add( new Shim(), BorderLayout.EAST );
       this.nepan.add( new MotionPanel( this.scroller[Y].getOrientation(), -1 ), BorderLayout.EAST );
     }
 
@@ -134,6 +124,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     //this.windowPane.addNorthWest( northWestMap );
     this.windowPane.addNorthWest( nwpan );
     this.windowPane.addNorthEast( this.nepan );
+    this.windowPane.setDividerLocations(50, 50, 150);
 
     this.setLayout(new BorderLayout());
     add( this.windowPane, BorderLayout.CENTER );
@@ -146,6 +137,8 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     ZoomLine l = new ZoomLine();
     l.addMap( this );
+    
+    this.name = "AffyTieredMultiMap";
   }
 
   /**
@@ -158,30 +151,15 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
    */
   public void addScroller( int theOrientation, int theSection ) {
     if ( HORIZONTAL == theOrientation && EAST == theSection ) {
-      int count = this.epan.getComponentCount();
-      for ( int i = 0; i < count; i++ ) {
-        Component c = this.epan.getComponent( i );
-        if ( c instanceof Shim ) {
-          this.epan.remove( i );
-          break;
-        }
-      }
       MotionPanel mp = new MotionPanel( theOrientation, X );
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
       this.extramap.setScroller( X, mp.getPanner( X ) );
+      this.extramap.setZoomer(X, mp.getZoomer(X));
       this.northEastMap.setScroller( X, mp.getPanner( X ) );
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }
     else if ( VERTICAL == theOrientation && NORTH == theSection ) {
-      int count = this.nepan.getComponentCount();
-      for ( int i = 0; i < count; i++ ) {
-        Component c = this.nepan.getComponent( i );
-        if ( c instanceof Shim ) {
-          this.nepan.remove( i );
-          break;
-        }
-      }
       NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.VERTICAL );
       this.nepan.add( sb, BorderLayout.EAST );
       if ( null != this.northWestMap ) this.northWestMap.setScroller( Y, sb );
@@ -194,7 +172,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
 
   /**
-   * add a zoomer to a section.
+   * Add a zoomer to a section.
    * So far,
    * the only valid combinations are <code>X</code> with <code>EAST</code>
    * and <code>Y</code> with <code>NORTH</code>.
@@ -216,9 +194,9 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
       throw new IllegalArgumentException( "Only support X with EAST and Y with NORTH." );
     }
   }
-  
+
   /**
-   * add a zoomer component to a section
+   * Add a zoomer component to a section.
    * The axis is inferred from the orientation of the zoomer.
    * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
    * @param theControl for zooming
@@ -241,15 +219,11 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
    * and so label manipulations in packTiers() ends up bringing them back?
    */
     super.clearWidget();
-    if ( null != this.northMap ) {
-      this.northMap.clearWidget();
-    }
-    if ( null != this.northEastMap ) {
-      this.northEastMap.clearWidget();
-    }
-    if ( null != this.extramap ) {
-      this.extramap.clearWidget();
-    }
+    if (extramap != null) { extramap.clearWidget(); }
+    if (northMap != null) { northMap.clearWidget(); }
+    if (northEastMap != null) { northEastMap.clearWidget(); }
+    if (northWestMap != null)  { northWestMap.clearWidget(); }
+    if (labelmap != null)  { labelmap.clearWidget(); } // or is this handled in the superclass?
     extra_glyphs = new ArrayList();
   }
 
@@ -268,7 +242,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     super.packTiers(full_repack, stretch_map, extra_for_now);
     Rectangle2D lbox = extramap.getCoordBounds();
     for (int i=0; i<extra_glyphs.size(); i++) {
-      GlyphI extra_glyph = (GlyphI)extra_glyphs.get(i);
+      TierGlyph extra_glyph = (TierGlyph) extra_glyphs.get(i);
       TierGlyph tier_glyph = (TierGlyph)extra_glyph.getInfo();
       Rectangle2D tbox = tier_glyph.getCoordBox();
       extra_glyph.setCoords(0, 0, lbox.width, tbox.height);
@@ -278,6 +252,11 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
         child.setCoords(lbox.x, tbox.y + extramap_inset,
                         lbox.width, tbox.height-(2*extramap_inset));
       }
+      
+      // The "extra" tier glyph does not share the same AnnotStyle as the tier glyph,
+      // because it may be drawn as a HeatMap while the other tier is drawn as
+      // an mRNA glyph, but it does need to have the same property for "show".
+      extra_glyph.getAnnotStyle().setShow(tier_glyph.isVisible());
       extra_glyph.setVisibility(tier_glyph.isVisible());
     }
     // The extra map's tiers need to be sorted by y position (top to bottom)
@@ -297,31 +276,8 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public double getExtraMapInset() { return extramap_inset; }
 
 
-  /**
-   * New to replace northern map with a seq map view.
-   */
-  public void setNorthMap( AffyTieredMap theNewMap ) {
-    this.northMap = theNewMap;
-  }
-
-  /**
-   * @param theAxisTier (for what is this needed?)
-   */
-  public TierGlyph getExtraAxis( TierGlyph theAxisTier ) {
-    TierGlyph answer = (TierGlyph) this.northEastMap.getItem( theAxisTier );
-    if ( null == answer ) {
-      answer = new TierGlyph();
-      // Make the glyph fill the map (for now).
-      int[] range = this.northEastMap.getMapRange();
-      int[] offset = this.northEastMap.getMapOffset();
-      answer.setCoords( range[0], offset[0], range[1], offset[1] );
-      answer.setCoords( range[0], -100, range[1], 101 );
-      answer.setFillColor( Color.blue );
-    }
-    else {
-      System.out.println( "got extra axis: " + answer );
-    }
-    return answer;
+  public AffyTieredMap getNorthMap() {
+    return this.northMap;
   }
 
 
@@ -329,15 +285,15 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     return this.northEastMap;
   }
 
-  public void addNorthEastGlyph( SolidGlyph theGlyph ) {
-    int[] offset = this.northEastMap.getMapOffset();
-    int[] range = this.northEastMap.getMapRange();
-    Rectangle2D r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
-    theGlyph.setCoordBox( r );
-    theGlyph.setCoords(0, 0, 100, 100);
-    this.northEastMap.addItem( theGlyph );
-    this.northEastMap.updateWidget();
-  }
+//  public void addNorthEastGlyph( SolidGlyph theGlyph ) {
+//    int[] offset = this.northEastMap.getMapOffset();
+//    int[] range = this.northEastMap.getMapRange();
+//    Rectangle2D r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
+//    theGlyph.setCoordBox( r );
+//    theGlyph.setCoords(0, 0, 100, 100);
+//    this.northEastMap.addItem( theGlyph );
+//    this.northEastMap.updateWidget();
+//  }
 
 
   public void addNorthEastTier( TierGlyph theTier ) {
@@ -371,6 +327,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
   public void setFloatBounds(int axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
+    //? should the following two lines refer to labelmap or extramap?
     if (axis == Y && labelmap != null) {
       extramap.setFloatBounds(axis, start, end);
     }
@@ -444,6 +401,18 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   public void updateWidget() {
     super.updateWidget();
     this.extramap.updateWidget();
+    this.northMap.updateWidget();
+    if (northEastMap != null) {this.northEastMap.updateWidget();}
+    if (northWestMap != null) {this.northWestMap.updateWidget();}
+    zoom( Y, this.getZoom( Y ) ); // This seems a bit artificial.
+  }
+
+  public void updateWidget(boolean b) {
+    super.updateWidget(b);
+    this.extramap.updateWidget(b);
+    this.northMap.updateWidget(b);
+    if (northEastMap != null) {this.northEastMap.updateWidget(b);}
+    if (northWestMap != null) {this.northWestMap.updateWidget(b);}
     zoom( Y, this.getZoom( Y ) ); // This seems a bit artificial.
   }
 
@@ -455,15 +424,27 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     this.northEastMap.stretchToFit( fitx, fity );
   }
 
-  /**
-   * Put the axis on the north map.
-   * Maybe we shouldn't do this.
-   * Perhaps we need an addHeaderAxis() method instead. -- without offset?
-   */
-  public AxisGlyph addAxis( int theOffset ) {
-    return this.northMap.addAxis( 100 );
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    super.repackTheTiers(full_repack, stretch_vertically);
+    this.extramap.repackTheTiers(full_repack,stretch_vertically);
+    if ( null != this.northWestMap ) this.northWestMap.repackTheTiers(full_repack, stretch_vertically);
+    this.northMap.repackTheTiers(full_repack, stretch_vertically);
+    this.northEastMap.repackTheTiers(full_repack, stretch_vertically);    
   }
   
+  
+  /**
+   * Put the axis on the north map.
+   */
+  public AxisGlyph addHeaderAxis() {
+    northMap.setMapOffset(0, 20);
+    AxisGlyph ag = this.northMap.addAxis( 10 );    
+    SeqMapView.setAxisFormatFromPrefs(ag);
+    northMap.stretchToFit(true, true);
+    northMap.updateWidget(true);
+    return ag;
+  }
+
   public void setMapRange( int theStart, int theEnd ) {
     super.setMapRange( theStart, theEnd );
     if ( null != this.northMap ) {
@@ -485,9 +466,16 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   }
   private VerticalTierComparator extraMapSorter = new VerticalTierComparator();
 
+  public void setBackground(Color col) {
+    super.setBackground(col);
+    this.northEastMap.setBackground(col);
+    this.northMap.setBackground(col);
+    if (northWestMap != null) {this.northWestMap.setBackground(col);}
+    if (extramap != null) {this.extramap.setBackground(col);}
+  }
   
   /**
-   *  main for testing AffyTieredMultiMap
+   *  Main for testing.
    */
   public static void main(String[] args) {
     AffyTieredMultiMap map = new AffyTieredMultiMap();
@@ -521,7 +509,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
 
     map.addScroller( HORIZONTAL, EAST );
     //map.addScroller( VERTICAL, NORTH );
-    
+
     map.repack();
 
     JFrame frm = new JFrame("AffyTieredMultiMap.main() test");
@@ -534,7 +522,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
         System.exit(0);
       }
     } );
-    frm.show();
+    frm.setVisible(true);
   }
 
 }

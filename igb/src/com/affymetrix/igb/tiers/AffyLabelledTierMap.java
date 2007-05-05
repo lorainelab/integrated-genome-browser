@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,7 +20,6 @@ import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
@@ -53,6 +52,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
+    // setMapColor() controls what I normally think of as the background.
 
     mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     mapsplitter.setOneTouchExpandable(true);
@@ -77,6 +77,16 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+  public void setMapColor(Color c) {
+    super.setMapColor(c);
+    labelmap.setMapColor(c);
+  }
+  
+  public void setBackground(Color c) {
+    super.setBackground(c);
+    labelmap.setBackground(c);
+  }
+  
   public void clearWidget() {
     super.clearWidget();
     labelmap.clearWidget();
@@ -90,7 +100,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   public AffyTieredMap getLabelMap() {
     return labelmap;
   }
-
+    
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
     super.packTiers(full_repack, stretch_map, extra_for_now);
     //Rectangle2D bbox = this.getCoordBounds();
@@ -119,13 +129,10 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    */
   public void addTier(TierGlyph mtg, int tier_index) {
     super.addTier(mtg, tier_index);
-    TierLabelGlyph label_glyph = new TierLabelGlyph();
-    if (mtg.getLabel() != null) { label_glyph.setString(mtg.getLabel()); }
-    else { label_glyph.setString("......."); }
-    if (mtg.getFillColor() != null) {
-      label_glyph.setBackgroundColor(mtg.getFillColor());
-    }
-    label_glyph.setForegroundColor(mtg.getForegroundColor());
+    TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
+    // No need to set the TierLabelGlyph colors or label:
+    // it reads that information dynamically from the given TierGlyph
+
     label_glyph.setShowBackground(true);
     label_glyph.setShowOutline(true);
     labelmap.addItem(label_glyph);
@@ -182,9 +189,19 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     labelmap.updateWidget();
   }
 
+  public void updateWidget(boolean full_update) {
+    super.updateWidget(full_update);
+    labelmap.updateWidget(full_update);
+  }
+
   public void stretchToFit(boolean fitx, boolean fity) {
     super.stretchToFit(fitx, fity);
     labelmap.stretchToFit(fitx, fity);
+  }
+
+  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+    super.repackTheTiers(full_repack, stretch_vertically);  
+    labelmap.repackTheTiers(full_repack, stretch_vertically);  
   }
 
   /** Prints this component, including the label map. */
@@ -204,6 +221,13 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
     cpp.print();
     cpp = null; // for garbage collection
+  }
+  
+  /** Returns the JSplitPane that contains the label map and the tier map.
+   *  This is mostly useful for printing.
+   */
+  public JSplitPane getSplitPane() {
+    return mapsplitter;
   }
   
   /**
@@ -243,7 +267,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 	System.exit(0);
       }
     } );
-    frm.show();
+    frm.setVisible(true);
   }
 
 }

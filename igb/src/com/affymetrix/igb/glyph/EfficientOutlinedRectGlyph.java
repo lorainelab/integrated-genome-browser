@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,53 +21,42 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 
 /**
  *  A glyph that is drawn as a solid, outlined rectangle.
- *  <p>
- *  This is not intended to be used as a container for other glyphs,
- *  because it will recurse through its children and draw them even if it
- *  is too small for you to see the children.
  */
-public class EfficientOutlinedRectGlyph extends EfficientSolidGlyph  {
-
+public class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
+  Color bgcolor = Color.white;
+  static boolean optimize_child_draw = true;
+  
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
-    Graphics g = view.getGraphics();
-    g.setColor(getBackgroundColor());
     
     pixelbox = fixAWTBigRectBug(view, pixelbox);
     
     pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
     pixelbox.height = Math.max ( pixelbox.height, min_pixels_height );
     
-    g.setColor(getBackgroundColor());
+    Graphics g = view.getGraphics();
+    g.setColor(getColor());
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
     if (pixelbox.width > 2 && pixelbox.height > 2) {
-      g.setColor(fill_color);
+      g.setColor(bgcolor);
       g.fillRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-2, pixelbox.height-2);
     }
 
     super.draw(view);
   }
+
+  // specifies how to draw the glyph when it is too small to draw its
+  // contained glyphs
+  public void fillDraw(ViewI view) {
+    super.fillDraw(view);
+  }
   
-  Color fill_color = null;
-  
-  /** Sets the background (outline) color to given color; foreground is automatically 
-   *  set to a darker shade. 
+  /** Sets the outline color; the fill color is automatically calculated as  
+   *  a darker shade. 
    */
   public void setColor(Color c) {
     super.setColor(c);
-    if (color == null) { // silly to check this?
-      fill_color = null;
-    } else {
-      setForegroundColor(color.darker());
-    }
-  }
-  
-  public void setForegroundColor(Color c) {
-    this.fill_color = c;
-  }
-
-  public Color getForegroundColor() {
-    return fill_color;
+    bgcolor = c.darker();
   }
 }

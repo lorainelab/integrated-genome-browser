@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,7 +27,9 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
   static  {
     default_order = new Vector();
     default_order.add("gene name");
+    default_order.add("name");
     default_order.add("id");
+    default_order.add("type");
     default_order.add("start");
     default_order.add("end");
     default_order.add("length");
@@ -39,7 +41,7 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     setMinimumSize(new java.awt.Dimension(100, 250));
     SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);
   }
-  
+
   public void symSelectionChanged(SymSelectionEvent evt) {
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
@@ -52,6 +54,9 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       SeqSymmetry sym = (SeqSymmetry)selected_syms.get(i);
       Map props = null;
       if (sym instanceof SymWithProps) {
+	// using Propertied.cloneProperties() here instead of Propertied.getProperties()
+	//   because adding start, end, id, and length as additional key-val pairs to props Map
+	//   and don't want these to bloat up sym's properties
         props = ((SymWithProps)sym).cloneProperties();
       }
       if (props == null && sym instanceof DerivedSeqSymmetry) {
@@ -63,6 +68,10 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       if (props == null) {
 	// make an empty hashtable if sym has no properties...
 	props = new Hashtable();
+      }
+      String symid = sym.getID();
+      if (symid != null)  {
+        props.put("id", symid);
       }
       BioSeq seq = null;
       if (src instanceof SeqMapView) {
@@ -83,4 +92,14 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     propvec.copyInto(prop_array);
     this.showProperties(prop_array, default_order);
   }
+
+  public static void printMap(Map hash)  {
+    Iterator iter = hash.entrySet().iterator();
+    while (iter.hasNext())  {
+      System.out.println(iter.next());
+    }
+
+  }
 }
+
+

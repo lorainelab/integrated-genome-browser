@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -10,7 +10,6 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.igb;
 
 import java.awt.*;
@@ -26,50 +25,56 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.util.EPSWriter;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  */
 public class IGB implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
-  public static String APP_NAME = "Integrated Genome Browser";
-  public static String IGB_VERSION = "3.18";
+  public static String APP_NAME = IGBConstants.APP_NAME;
+  public static String IGB_VERSION = IGBConstants.IGB_VERSION;
 
+  public static boolean USE_OVERVIEW = false;
+  public static boolean USE_MULTI_WINDOW_MAP = false;
+  public static boolean USE_REFRESH_BUTTON = true;
+  public static boolean REPLACE_REPAINT_MANAGER = false;
+  public static boolean REPORT_GRAPHICS_CONFIG = false;
+
+  public static boolean USE_QUICKLOAD = false;
+  public static boolean USE_DATALOAD = true;
+  public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
-  public static boolean CURATION_ENABLED = true;
+  public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
 
-  /** Preference for whether a control server should be started.
-   *  A control server allows IGB to be controled by http requests from other
-   *  applications.  If the control server is turned off, bookmarks used inside
-   *  the program will still work, but calls from external applications will not.
-   */
-  public static final String PREF_USE_CONTROL_SERVER = "Use control server";
-  public static boolean default_use_control_server = true;
-
-  public static Color default_bg_col = Color.black;
-  public static Color default_label_col = Color.white;
+  final static String TABBED_PANES_TITLE = "Tabbed Panes";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static Map prefs_hash;
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  private static HashMap id2sym_hash = new HashMap();
+  Map comp2menu_item = new HashMap(); // Component -> JCheckBoxMenuItem
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -78,28 +83,35 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JFrame frm;
   JMenuBar mbar;
   JMenu file_menu;
+  JMenu export_to_file_menu;
   JMenu view_menu;
+  //JMenu navigation_menu;
   JMenu bookmark_menu;
+  JMenu tools_menu;
   JMenu help_menu;
   JTabbedPane tab_pane;
+  JSplitPane splitpane;
 
   public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
   LoadFileAction open_file_action;
-  OpenGraphAction open_graph_action;
   DasFeaturesAction2 load_das_action;
 
   JMenuItem gc_item;
   JMenuItem memory_item;
   JMenuItem about_item;
+  JMenuItem documentation_item;
+  JMenuItem console_item;
 
   JMenuItem clear_item;
   JMenuItem clear_graphs_item;
 
   JMenuItem open_file_item;
-  JMenuItem open_graph_item;
   JMenuItem load_das_item;
   JMenuItem print_item;
   JMenuItem print_frame_item;
+  JMenuItem export_map_item;
+  JMenuItem export_labelled_map_item;
+  JMenuItem export_slice_item;
   JMenuItem preferences_item;
   JMenuItem exit_item;
 
@@ -109,30 +121,51 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   JMenuItem clamp_view_item;
   JMenuItem unclamp_item;
   JMenuItem rev_comp_item;
-  JMenuItem shrink_wrap_item;
+  JCheckBoxMenuItem shrink_wrap_item;
   JMenuItem adjust_edgematch_item;
-  JMenuItem toggle_hairline_label_item;
-  JMenuItem toggle_edge_matching_item;
+  JCheckBoxMenuItem toggle_hairline_label_item;
+  JCheckBoxMenuItem toggle_edge_matching_item;
   JMenuItem autoscroll_item;
-  JMenuItem bgcolor_item;
+  JMenuItem web_links_item;
 
   JMenuItem move_tab_to_window_item;
+  JMenuItem move_tabbed_panel_to_window_item;
 
   SeqMapView map_view;
+  OverView overview;
+
   //QuickLoaderView quickload_view;
-  AnnotBrowserView glyph_browser_view;
 
   CurationControl curation_control;
   AlignControl align_control;
+  DataLoadView data_load_view = null;
+  AltSpliceView slice_view = null;
 
   java.util.List plugin_list;
+
+
+  // USE_STATUS_BAR can be set to false in public releases until we have
+  // started putting enough useful information in the status bar.
+  final static boolean USE_STATUS_BAR = true;
+  StatusBar status_bar;
 
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
 
   FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
+  static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
+
   static String default_prefs_resource = "/igb_default_prefs.xml";
+
+  /**
+   *  We no longer distribute a file called "igb_prefs.xml".
+   *  Instead there is a default prefs file hidden inside the igb.jar file, and
+   *  this is augmented by a web-based prefs file at {@link #WEB_PREFS_URL}.
+   *  But, we still will load a file called "igb_prefs.xml" if it exists in
+   *  the user's home directory, since they may have put some personal modifications
+   *  there.
+   */
   public static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
   static String default_user_prefs_files =
     (new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath() +
@@ -141,42 +174,87 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   static String rest_file = "rest_enzymes"; // located in same directory as this class
 
+  boolean initialized = false;
 
   /**
    * Start the program.
    */
   public static void main(String[] args) {
-   try {
-    main_args = args;
-    getIGBPrefs(); // force loading of prefs
+    try {
 
-    String url_from_xml_prefs = (String) IGB.getIGBPrefs().get("QuickLoadUrl");
-    if (url_from_xml_prefs != null) {
-      UnibrowPrefsUtil.getLocationsNode().put(QuickLoaderView.PREF_QUICKLOAD_URL, url_from_xml_prefs);
+    // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
+    System.setProperty("swing.aatext", "true");
+
+    // Letting the look-and-feel determine the window decorations would
+    // allow exporting the whole frame, including decorations, to an eps file.
+    // But it also may take away some things, like resizing buttons, that the
+    // user is used to in their operating system, so leave as false.
+    JFrame.setDefaultLookAndFeelDecorated(false);
+
+    String laf = System.getProperty("swing.defaultlaf");
+    // if laf != null, then the user-requested l-and-f has already been applied
+    // if laf == null, then apply the windows look and feel
+    if (laf == null) try {
+      // It this is Windows, then use the Windows look and feel.
+      
+      Class cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+      LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
+      
+      if (look_and_feel.isSupportedLookAndFeel()) {
+        UIManager.setLookAndFeel(look_and_feel);
+      }
+    } catch (Exception ulfe) {
+      // Windows look and feel is only supported on Windows, and only in
+      // some version of the jre.  That is perfectly ok.
     }
 
-    SynonymLookup dlookup = new SynonymLookup();
-    String quick_load_url = QuickLoaderView.getQuickLoadUrl();
+    // Initialize the ConsoleView right off, so that ALL output will
+    // be captured there.
+    ConsoleView.init();
+
+    System.out.println("Starting \"" + IGBConstants.APP_NAME + "\"");
+    System.out.println("Version: " + IGBConstants.IGB_VERSION);
+    System.out.println();
+
+    main_args = args;
+
+    String offline = get_arg("-offline", args);
+    if (offline != null) {
+      LocalUrlCacher.setOffLine("true".equals("offline"));
+    }
+
+    getIGBPrefs(); // force loading of prefs
+
+    String quick_load_url = QuickLoadView2.getQuickLoadUrl();
+    SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     dlookup.loadSynonyms(quick_load_url + "synonyms.txt");
-    SynonymLookup.setDefaultLookup(dlookup);
+    QuickLoadView2.processDasServersList(quick_load_url);
 
     singleton_igb = new IGB();
     singleton_igb.init();
 
+
     // If the command line contains a parameter "-href http://..." where
     // the URL is a valid IGB control bookmark, then go to that bookmark.
-    String url = get_arg("-href", args);
+    final String url = get_arg("-href", args);
     if (url != null && url.length() > 0) {
       try {
-        System.out.println("Loading bookmark: "+url);
-        Bookmark bm = new Bookmark(null, url);
+        final Bookmark bm = new Bookmark(null, url);
         if (bm.isUnibrowControl()) {
-          BookmarkController.viewBookmark(singleton_igb, bm);
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              System.out.println("Loading bookmark: "+url);
+              BookmarkController.viewBookmark(singleton_igb, bm);
+            }
+          });
+        } else {
+          System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
         }
       } catch (MalformedURLException mue) {
         mue.printStackTrace(System.err);
       }
     }
+
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
@@ -191,42 +269,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return default_sequence_accessible;
   }
 
-  /**
-   * This method is called only when deploying IGB
-   * via a JNLP client such as webstart. This will download
-   * a copy of a file named {@link #DEFAULT_PREFS_FILENAME}
-   * to the client machine so the users
-   * can customize their preferences.
-   */
-  public static void downloadPrefsFile() {
-    //download prefs file if not available in user.dir
-    //destination dir is decided by browser.
-    File dest_prefs_file = new File(user_home, DEFAULT_PREFS_FILENAME);
-    if (! dest_prefs_file.exists()) {
-      try {
-          InputStream prefs_strm = IGB.class.getResourceAsStream("/"+DEFAULT_PREFS_FILENAME);
-        if (prefs_strm==null) {
-          System.out.println("Could not locate "+DEFAULT_PREFS_FILENAME+" to download");
-        } else {
-          OutputStream out_strm = new FileOutputStream(dest_prefs_file);
-          int c;
-          while ((c = prefs_strm.read()) != -1) { out_strm.write(c); }
-          prefs_strm.close();
-          out_strm.close();
-          informPanel("Preferences file for " + APP_NAME + " has been downloaded to: \n" +
-                      dest_prefs_file + "\nPlease edit this file if you want to " +
-                      "customize preferences or \nreplace this file if you already have" +
-                      " custom preferences for " + APP_NAME);
-        }
-      } catch (IOException ioe) {
-        System.out.println("Could not copy "+DEFAULT_PREFS_FILENAME+" to "
-          + dest_prefs_file.getAbsolutePath());
-      }
-    }
-  }
-
   public SeqMapView getMapView() {
     return map_view;
+  }
+
+  public CurationControl getCurationControl() {
+    return curation_control;
   }
 
   // currently not needed
@@ -242,8 +290,25 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public JFrame getFrame() { return frm; }
   public JTabbedPane getTabPane() { return tab_pane; }
 
-  public void startControlServer() {
-    web_control = new UnibrowControlServer(this);
+  void startControlServer() {
+    // Use the Swing Thread to start a non-Swing thread
+    // that will start the control server.
+    // Thus the control server will be started only after current GUI stuff is finished,
+    // but starting it won't cause the GUI to hang.
+
+    Runnable r = new Runnable() {
+      public void run() {
+        web_control = new UnibrowControlServer(IGB.this);
+      }
+    };
+
+    final Thread t = new Thread(r);
+
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        t.start();
+      }
+    });
   }
 
   public UnibrowControlServer getControlServer() {
@@ -261,15 +326,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     StringTokenizer st = new StringTokenizer(files, ";");
     Set result = new HashSet();
     result.add(st.nextToken());
-    for (int i=0; st.hasMoreTokens(); i++) {
+    while (st.hasMoreTokens()) {
       result.add(st.nextToken());
     }
     return (String[]) result.toArray(new String[result.size()]);
-  }
-
-  public static String get_deployment_type(String[] args) {
-    String deployment_type = get_arg("-deploy", args);
-    return deployment_type;
   }
 
   public static String get_default_prefs_url(String[] args) {
@@ -280,15 +340,16 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   /**
    * Returns the value of the argument indicated by label.
-   * e.g., if given
-   *   -foo bar
-   * returns bar.  Expects to find both in the given array.
+   * If arguments are
+   *   "-flag_2 -foo bar", then get_arg("foo", args) 
+   * returns "bar", get_arg("flag_2") returns a non-null string,
+   * and get_arg("flag_5") returns null.
    */
   public static String get_arg(String label,String[] args) {
     String to_return = null;
+    boolean got_it = false;
     if (label != null && args != null) {
       int num_args = args.length;
-      boolean got_it = false;
       for (int i = 0 ; i < num_args ; i++) {
 	String item = args[i];
 	if (got_it) {
@@ -300,31 +361,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	}
       }
     }
+    if (got_it && to_return == null) {
+      to_return = "true";
+    }
     return to_return;
-  }
-
-  /**
-   *  map of tags (usually names or ids) to SeqSymmetries for currently
-   *  loaded genome and/or chromosome
-   */
-  public static final HashMap getSymHash() {
-    return id2sym_hash;
-  }
-
-  public static void clearSymHash() {
-    id2sym_hash.clear();
   }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
-  }
-
-  /** Call this method if you alter the Map returned by {@link #getSymHash}. */
-  public static final void symHashChanged() {
-    AnnotBrowserView gbv = getSingletonIGB().glyph_browser_view;
-    if (gbv != null) {
-      gbv.showSymHash(getSymHash());
-    }
   }
 
   /**
@@ -335,44 +379,43 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (prefs_hash != null)  { return prefs_hash; }
     else {
       prefs_hash = new HashMap();
+      XmlPrefsParser prefs_parser = new XmlPrefsParser();
 
       /**  first load default prefs from jar */
       InputStream default_prefs_stream = null;
-      XmlPrefsParser prefs_parser = new XmlPrefsParser();
       try {
-	default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
-	System.out.println("loading default prefs from: " + default_prefs_resource);
-	prefs_parser.parse(default_prefs_stream, "", prefs_hash);
+        default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
+        System.out.println("loading default prefs from: " + default_prefs_resource);
+        prefs_parser.parse(default_prefs_stream, "", prefs_hash);
       } catch (Exception ex) {
-	System.out.println("Problem parsing prefs from: " + default_prefs_resource);
-	ex.printStackTrace();
+        System.out.println("Problem parsing prefs from: " + default_prefs_resource);
+        ex.printStackTrace();
       } finally {
-	try {default_prefs_stream.close();} catch (Exception e) {}
+        try {default_prefs_stream.close();} catch (Exception e) {}
       }
 
-      String deploy_type = get_deployment_type(main_args);
-      if (deploy_type != null) {
-	if (deploy_type.equals("webstart")) {
-	  System.out.println("*****" + deploy_type + " deployment********");
-	  downloadPrefsFile();
-	}
-      }
-
+      // If a particular web prefs file was specified, then load it.
+      // Otherwise try to load the web-based-default prefs file. (But
+      // only load it if it is cached, then later update the cache on
+      // a background thread.)
       String def_prefs_url = get_default_prefs_url(main_args);
-      if (def_prefs_url != null) {
+      if (def_prefs_url == null) {
+        loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+      }
+      else {
 	InputStream default_prefs_url_str = null;
 	try {
-	  URL prefs_url = new URL(def_prefs_url);
-	  default_prefs_url_str = prefs_url.openStream();
-	  System.out.println("loading default prefs from url: " + def_prefs_url);
-	  new XmlPrefsParser().parse(default_prefs_url_str, def_prefs_url, prefs_hash);
-	} catch (Exception ex) {
+          default_prefs_url_str = LocalUrlCacher.getInputStream(def_prefs_url);
+	  System.out.println("loading prefs from url: " + def_prefs_url);
+	  prefs_parser.parse(default_prefs_url_str, def_prefs_url, prefs_hash);
+	} catch (IOException ex) {
 	  System.out.println("Problem parsing prefs from url: " + def_prefs_url);
-	  ex.printStackTrace();
+          System.out.println("Caused by: " + ex.toString());
 	} finally {
 	  try {default_prefs_url_str.close();} catch (Exception e) {}
 	}
       }
+
       String[] prefs_files = get_prefs_files(main_args);
       if (prefs_files.length > 0) {
 	prefs_parser = new XmlPrefsParser();
@@ -405,18 +448,83 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return prefs_hash;
   }
 
+  /**
+   *  Attempts to load the web-based XML default preferences file from the
+   *  local cache.  If this file is not in the cache, will skip
+   *  it and will NOT try to read it from the web.  (This is to prevent slowing
+   *  down the start-up process.)  Regardless of whether the file was actualy read,
+   *  will then spawn a background thread that will try to create or update
+   *  the local cached copy of this preferences file so it will be available
+   *  the next time the program runs.
+   *
+   */
+  static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
+    String web_prefs_url = WEB_PREFS_URL;
+    InputStream is = null;
+    try {
+      is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
+    } catch (IOException ioe) {
+      System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
+      is = null;
+    }
+
+    if (is == null) {
+      System.out.println("Thinking about updating in bg.");
+      LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
+    }
+    else {
+      try {
+        prefs_parser.parse(is, web_prefs_url, prefs_hash);
+        System.out.println("Loading default prefs from url: " + web_prefs_url);
+      } catch (Exception ex) {
+         System.out.println("Problem parsing prefs from url: " + web_prefs_url);
+         System.out.println("Caused by: " + ex.toString());
+      } finally {
+        try {is.close();} catch (Exception e) {}
+      }
+    }
+  }
+
   protected void init() {
+    frm = new JFrame(APP_NAME);
+    RepaintManager rm = RepaintManager.currentManager(frm);
+    /*
+    if (REPLACE_REPAINT_MANAGER) {
+      RepaintManager new_manager = new IgbRepaintManager();
+      new_manager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
+      RepaintManager.setCurrentManager(new_manager);
+      //	RepaintManager.setCurrentManager(new DiagnosticRepaintManager());
+    }
+    else {
+    }
+    */
+    GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
+    GraphicsDevice[] devices = genv.getScreenDevices();
+
+    if (devices.length >= 4) {
+      int multi_window_choice =
+	JOptionPane.showConfirmDialog(frm,
+				      "Use multi-screen rendering speedups?\n" +
+				      "(but some features will be disabled)",
+				      "Multi-screen Rendering Options",
+				      JOptionPane.YES_NO_OPTION);
+
+      if (multi_window_choice == JOptionPane.YES_OPTION) {
+	System.out.println("&&&&&&&&&&&&&&  MULTI_WINDOW_CHOICE = YES &&&&&&&&&&&&&&");
+	USE_MULTI_WINDOW_MAP = true;
+	REPORT_GRAPHICS_CONFIG = true;
+      }
+    }
+    if (REPORT_GRAPHICS_CONFIG)  {
+      System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
+      GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
+    }
     // force loading of prefs if hasn't happened yet
     // usually since IGB.main() is called first, prefs will have already been loaded
     //   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
-
-    if (UnibrowPrefsUtil.getBooleanParam(PREF_USE_CONTROL_SERVER, default_use_control_server)) {
-      startControlServer();
-    }
-
-    frm = new JFrame(APP_NAME);
 
     // when HTTP authentication is needed, getPasswordAuthentication will
     //    be called on the authenticator set as the default
@@ -427,27 +535,54 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Image icon = getIcon();
     if (icon != null) { frm.setIconImage(icon); }
 
-    mbar = new JMenuBar();
+    mbar = MenuUtil.getMainMenuBar();
     frm.setJMenuBar(mbar);
-    file_menu = new JMenu("File");
+    file_menu = MenuUtil.getMenu("File");
     file_menu.setMnemonic('F');
-    mbar.add( file_menu );
+    //mbar.add( file_menu );
 
-    view_menu = new JMenu("View");
+    view_menu = MenuUtil.getMenu("View");
     view_menu.setMnemonic('V');
-    mbar.add(view_menu);
+    //mbar.add(view_menu);
 
-    bookmark_menu = new JMenu("Bookmarks");
+    bookmark_menu = MenuUtil.getMenu("Bookmarks");
     bookmark_menu.setMnemonic('B');
-    mbar.add(bookmark_menu);
+    //mbar.add(bookmark_menu);
 
-    help_menu = new JMenu("Help");
+    tools_menu = MenuUtil.getMenu("Tools");
+    tools_menu.setMnemonic('T');
+    //mbar.add(tools_menu);
+    
+    help_menu = MenuUtil.getMenu("Help");
     help_menu.setMnemonic('H');
-    mbar.add(help_menu);
-
+    //mbar.add(help_menu);
     //    select_broker = new SymSelectionBroker();
 
-    map_view = new SeqMapView();
+    String tile_xpixels_arg = get_arg("-tile_width", main_args);
+    String tile_ypixels_arg = get_arg("-tile_height", main_args);
+    String tile_col_arg = get_arg("-tile_columns", main_args);
+    String tile_row_arg = get_arg("-tile_rows", main_args);
+    if (tile_xpixels_arg != null &&
+	tile_ypixels_arg != null &&
+	tile_col_arg != null &&
+	tile_row_arg != null) {
+      USE_MULTI_WINDOW_MAP = true;
+      try {
+	MultiWindowTierMap.tile_width = Integer.parseInt(tile_xpixels_arg);
+	MultiWindowTierMap.tile_height = Integer.parseInt(tile_ypixels_arg);
+	MultiWindowTierMap.tile_columns = Integer.parseInt(tile_col_arg);
+	MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
+      }
+      catch (Exception ex) {
+	ex.printStackTrace();
+      }
+    }
+    map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP, USE_REFRESH_BUTTON);
+
+//    navigation_menu = map_view.getNavigationMenu("Go");
+//    navigation_menu.setMnemonic('G');
+//    navigation_menu.add(new JMenu("Genome..."));
+//    mbar.add( navigation_menu, 2);
 
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
@@ -455,53 +590,77 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     //    gmodel.addSeqModifiedListener(map_view);
 
     map_view.setFrame(frm);
-    map_view.setColorHash(prefs_hash);
 
     bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
     align_control = new AlignControl(this, map_view);
-    if (CURATION_ENABLED) {
+    if (UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations)) {
       curation_control = new CurationControl(map_view);
     }
 
     open_file_action = new LoadFileAction(map_view, load_directory);
-    open_graph_action = new OpenGraphAction(map_view, load_directory);
     load_das_action = new DasFeaturesAction2(map_view);
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
-    open_graph_item = new JMenuItem("Add Graph", KeyEvent.VK_G);
+    open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
     load_das_item = new JMenuItem("Load DAS Features", KeyEvent.VK_D);
+    load_das_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
+    print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
+    export_to_file_menu = new JMenu("Print to EPS File");
+    export_to_file_menu.setMnemonic('T');
+    export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
+    export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
+    export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
 
     exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
     adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
     view_ucsc_item = new JMenuItem("View Region in UCSC Browser", KeyEvent.VK_R);
+    view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
     clamp_view_item = new JMenuItem("Clamp To View", KeyEvent.VK_V);
     res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
+    res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
     unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
     rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
-    shrink_wrap_item = new JMenuItem("Toggle Shrink Wrapping", KeyEvent.VK_S);
+    shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
+    shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
+    shrink_wrap_item.setState(map_view.getShrinkWrap());
 
-    toggle_hairline_label_item = new JMenuItem("Toggle Hairline Label", KeyEvent.VK_H);
-    toggle_edge_matching_item = new JMenuItem("Toggle Edge Matching");
-    autoscroll_item = new JMenuItem("AutoScroll");
-    move_tab_to_window_item = new JMenuItem("Open Tab in New Window", KeyEvent.VK_O);
+    toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
+    toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
+    boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, false);
+    if (map_view.isHairlineLabeled() != use_hairline_label) {
+      map_view.toggleHairlineLabel();
+    }
+    toggle_hairline_label_item.setState(map_view.isHairlineLabeled());
 
+    toggle_edge_matching_item = new JCheckBoxMenuItem("Toggle Edge Matching");
+    toggle_edge_matching_item.setMnemonic(KeyEvent.VK_M);
+    toggle_edge_matching_item.setState(map_view.getEdgeMatching());
+    autoscroll_item = new JMenuItem("AutoScroll", KeyEvent.VK_A);
+    autoscroll_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/media/Movie16.gif"));
+    move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
+    move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
+
+    web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
+    
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
+    preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
 
     MenuUtil.addToMenu(file_menu, open_file_item);
-    MenuUtil.addToMenu(file_menu, open_graph_item);
     MenuUtil.addToMenu(file_menu, load_das_item);
     MenuUtil.addToMenu(file_menu, clear_item);
     MenuUtil.addToMenu(file_menu, clear_graphs_item);
     file_menu.addSeparator();
     MenuUtil.addToMenu(file_menu, print_item);
-    MenuUtil.addToMenu(file_menu, print_frame_item);
+    file_menu.add(export_to_file_menu);
+    MenuUtil.addToMenu(export_to_file_menu, export_map_item);
+    MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
     file_menu.addSeparator();
     MenuUtil.addToMenu(file_menu, preferences_item);
 
@@ -509,6 +668,12 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(file_menu, exit_item);
 
     // rev_comp option currently not working, so disabled
+    JMenu strands_menu = new JMenu("Strands");
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_plus_action));
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
+    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
+
+    view_menu.add(strands_menu);
     //    MenuUtil.addToMenu(view_menu, rev_comp_item);
     MenuUtil.addToMenu(view_menu, autoscroll_item);
     MenuUtil.addToMenu(view_menu, res2clip_item);
@@ -521,25 +686,41 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     MenuUtil.addToMenu(view_menu, shrink_wrap_item);
     MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
     MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
+    MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
+
+    MenuUtil.addToMenu(tools_menu, web_links_item);
 
     gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
     memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
     about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
+    about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
+    console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
+    console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
+    documentation_item = new JMenuItem("Documentation...", KeyEvent.VK_D);
+    documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
 
     MenuUtil.addToMenu(help_menu, about_item);
-    //MenuUtil.addToMenu(help_menu, gc_item);
-    //MenuUtil.addToMenu(help_menu, memory_item);
-
+    MenuUtil.addToMenu(help_menu, documentation_item);
+    MenuUtil.addToMenu(help_menu, console_item);
+    if (ADD_DIAGNOSTICS) {
+      MenuUtil.addToMenu(help_menu, gc_item);
+      MenuUtil.addToMenu(help_menu, memory_item);
+    }
+    
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
     about_item.addActionListener(this);
+    documentation_item.addActionListener(this);
+    console_item.addActionListener(this);
     clear_item.addActionListener(this);
     clear_graphs_item.addActionListener(this);
     open_file_item.addActionListener(this);
-    open_graph_item.addActionListener(this);
     load_das_item.addActionListener(this);
     print_item.addActionListener(this);
     print_frame_item.addActionListener(this);
+    export_map_item.addActionListener(this);
+    export_labelled_map_item.addActionListener(this);
+    export_slice_item.addActionListener(this);
     exit_item.addActionListener(this);
 
     toggle_edge_matching_item.addActionListener(this);
@@ -554,11 +735,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     unclamp_item.addActionListener(this);
     toggle_hairline_label_item.addActionListener(this);
     move_tab_to_window_item.addActionListener(this);
+    move_tabbed_panel_to_window_item.addActionListener(this);
 
     Container cpane = frm.getContentPane();
     int table_height = 250;
     int fudge = 55;
-    RepaintManager rm = RepaintManager.currentManager(frm);
+    //    RepaintManager rm = RepaintManager.currentManager(frm);
+    if (REPORT_GRAPHICS_CONFIG) { System.out.println("repaint manager: " + rm.getClass()); }
     Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
         new Rectangle(0, 0, 800, 600));
     UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);
@@ -566,17 +749,72 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     tab_pane = new JTabbedPane();
 
     cpane.setLayout(new BorderLayout());
-    JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setTopComponent(map_view);
-    splitpane.setBottomComponent(tab_pane);
-    cpane.add("Center", splitpane);
+    
+    boolean tab_panel_in_a_window = (UnibrowPrefsUtil.getComponentState(TABBED_PANES_TITLE).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
+    if (tab_panel_in_a_window) {
+      openTabbedPanelInNewWindow(tab_pane);
+    } else {
+      splitpane.setBottomComponent(tab_pane);
+    }
+
+    if (USE_OVERVIEW) {
+      //      overview = new SeqMapView(true);
+      overview = new OverView(false);
+      gmodel.addSeqSelectionListener(overview);
+      gmodel.addGroupSelectionListener(overview);
+      gmodel.addSymSelectionListener(overview);
+      overview.setFrame(frm);
+      JSplitPane oversplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+      oversplit.setOneTouchExpandable(true);
+      oversplit.setDividerSize(8);
+      oversplit.setDividerLocation(100);
+      oversplit.setTopComponent(overview);
+      oversplit.setBottomComponent(splitpane);
+      cpane.add("Center", oversplit);
+    }
+    else {
+      cpane.add("Center", splitpane);
+    }
+
+    // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
+    // pop-up menu (or any other mouse listener) on the tab handles.
+    // (A pop-up with "Open tab in a new window" would be nice.)
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4465870
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4499556
+    tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    tab_pane.setMinimumSize(new Dimension(0,0));
+
+    status_bar = new StatusBar();
+    status_bar.setStatus(IGBConstants.APP_NAME);
+    if (USE_STATUS_BAR) {
+      cpane.add(status_bar, BorderLayout.SOUTH);
+    }
+
+    // Show the frame before loading the plugins.  Thus any error panel
+    // that is created by an exception during plugin set-up will appear
+    // on top of the main frame, not hidden by it.
+
+    frm.addWindowListener( new WindowAdapter() {
+	public void windowClosing(WindowEvent evt) {exit();}
+      });
+    //    frm.resize(1000, 750);
+    frm.setVisible(true);
+
 
     ArrayList plugin_list = new ArrayList(16);
-    PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
-    plugin_list.add(quickload);
+    if (USE_QUICKLOAD) {
+      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
+      plugin_list.add(quickload);
+    }
+    if (USE_DATALOAD)  {
+      PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
+      plugin_list.add(dataload);
+    }
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
     plugin_list.add(selection_info);
@@ -584,11 +822,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     plugin_list.addAll(getPluginsFromXmlPrefs(getIGBPrefs()));
     //plugin_list = null;
     //try {
-    //  plugin_list = PluginInfo.getAllPlugins();
+    //  plugin_list = Plugin>Info.getAllPlugins();
     //} catch (java.util.prefs.BackingStoreException bse) {
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
-
 
     if (plugin_list == null || plugin_list.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
@@ -600,14 +837,54 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
 
-    tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-    tab_pane.setMinimumSize(new Dimension(0,0));
+    // We need to let the QuickLoad system get started-up before starting
+    // the control server that listens to ping requests.
+    if (data_load_view != null) {
+      data_load_view.initialize();
+    }
 
-    frm.addWindowListener( new WindowAdapter() {
-	public void windowClosing(WindowEvent evt) {exit();}
-      });
-    frm.show();
+    if (slice_view != null) {
+      MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
+      export_slice_item.setEnabled(true);
+    }
 
+    WebLink.autoLoad();
+    
+    // Start listining for http requests only after all set-up is done.
+    startControlServer();
+
+    initialized = true;
+  }
+
+  /** Returns true if initialization has completed. */
+  public boolean isInitialized() {
+    return initialized;
+  }
+
+  /** Sets the text in the status bar.
+   *  Will also echo a copy of the string to System.out.
+   *  It is safe to call this method even if the status bar is not being displayed.
+   */
+  public void setStatus(String s) {
+    setStatus(s, true);
+  }
+
+  public void setStatusBarHairlinePosition(String s) {
+    if (USE_STATUS_BAR && status_bar != null) {
+      status_bar.setPosition(s);
+    }
+  }
+
+  /** Sets the text in the status bar.
+   *  Will optionally echo a copy of the string to System.out.
+   *  It is safe to call this method even if the status bar is not being displayed.
+   *  @param echo  Whether to echo a copy to System.out.
+   */
+  public void setStatus(String s, boolean echo) {
+    if (USE_STATUS_BAR && status_bar != null) {
+      status_bar.setStatus(s);
+    }
+    if (echo && s != null) {System.out.println(s);}
   }
 
   /**
@@ -627,21 +904,28 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       return;
     }
 
-    Object plugin = pi.instantiatePlugin(class_name);
+    Object plugin = null;
+    Throwable t = null;
+    try {
+      plugin = pi.instantiatePlugin(class_name);
+    } catch (InstantiationException e) {
+      plugin = null;
+      t = e;
+    }
 
     if (plugin == null) {
       ErrorHandler.errorPanel("Bad Plugin",
         "Could not create plugin '"+pi.getPluginName()+"'.",
-        this.frm);
+        this.frm, t);
       PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
       return;
     }
 
-    Icon icon = null;
+    ImageIcon icon = null;
 
     if (plugin instanceof IPlugin) {
       IPlugin plugin_view = (IPlugin) plugin;
-      icon = (Icon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      icon = (ImageIcon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
 
       plugin_view.putPluginProperty(IPlugin.TEXT_KEY_IGB, this);
       plugin_view.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, map_view);
@@ -664,6 +948,9 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       JComponent comp = (JComponent) plugin;
       boolean in_a_window = (UnibrowPrefsUtil.getComponentState(title).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
       //boolean in_a_window = PluginInfo.PLACEMENT_WINDOW.equals(pi.getPlacement());
+      addToPopupWindows(comp, title);
+      JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+      menu_item.setSelected(in_a_window);
       if (in_a_window) {
         //openCompInWindow(comp, title, tool_tip, null, tab_pane);
         openCompInWindow(comp, tab_pane);
@@ -671,16 +958,19 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       else {
         tab_pane.addTab(title, icon, comp, tool_tip);
       }
-      addToPopupWindows(comp, title);
+    }
+
+    if (plugin instanceof DataLoadView) {
+      data_load_view = (DataLoadView) plugin;
+    }
+    if (plugin instanceof AltSpliceView) {
+      slice_view = (AltSpliceView) plugin;
     }
   }
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
-    if (src == open_graph_item) {
-      open_graph_action.actionPerformed(evt);
-    }
-    else if (src == open_file_item) {
+    if (src == open_file_item) {
       open_file_action.actionPerformed(evt);
     }
     else if (src == load_das_item) {
@@ -695,12 +985,37 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       }
     }
     else if (src == print_frame_item) {
-      ComponentPagePrinter cprinter = new ComponentPagePrinter(frm);
+      ComponentPagePrinter cprinter = new ComponentPagePrinter(getFrame());
       try {
         cprinter.print();
       }
       catch (Exception ex) {
         errorPanel("Problem trying to print.", ex);
+      }
+    }
+    else if (src == export_map_item) {
+      try {
+        EPSWriter.outputToFile(map_view.getSeqMap().getNeoCanvas());
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
+      }
+    }
+    else if (src == export_labelled_map_item) {
+      try {
+        AffyLabelledTierMap tm = (AffyLabelledTierMap) map_view.getSeqMap();
+        EPSWriter.outputToFile(tm.getSplitPane());
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
+      }
+    }
+    else if (src == export_slice_item) {
+      try {
+        if (slice_view != null) {
+          AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();
+          EPSWriter.outputToFile(tm.getSplitPane());
+        }
+      } catch (Exception ex) {
+        errorPanel("Problem during output.", ex);
       }
     }
     else if (src == clear_item) {
@@ -717,7 +1032,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       exit();
     }
     else if (src == res2clip_item) {
-      System.out.println("trying to copy last rubberbanded region to clipboard");
       map_view.copySelectedResidues();
     }
     else if (src == view_ucsc_item) {
@@ -729,9 +1043,10 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_edge_matching_item) {
       map_view.setEdgeMatching(! map_view.getEdgeMatching());
+      toggle_edge_matching_item.setState(map_view.getEdgeMatching());
+      //adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
     }
     else if (src == adjust_edgematch_item) {
-      System.out.println("trying to adjust edge-matching fuzziness");
       EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
     }
     // rev comp not working
@@ -741,6 +1056,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     else if (src == shrink_wrap_item) {
       System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
       map_view.setShrinkWrap(! map_view.getShrinkWrap());
+      shrink_wrap_item.setState(map_view.getShrinkWrap());
     }
     else if (src == clamp_view_item) {
       System.out.println("trying to clamp to view");
@@ -752,8 +1068,13 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == toggle_hairline_label_item) {
       map_view.toggleHairlineLabel();
+      boolean b = map_view.isHairlineLabeled();
+      toggle_hairline_label_item.setState(b);
+      UnibrowPrefsUtil.getTopNode().putBoolean(SeqMapView.PREF_HAIRLINE_LABELED, b);
     } else if (src == move_tab_to_window_item) {
       openTabInNewWindow(tab_pane);
+    } else if (src == move_tabbed_panel_to_window_item) {
+      openTabbedPanelInNewWindow(tab_pane);
     }
     else if (src == gc_item) {
       System.gc();
@@ -763,24 +1084,32 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     else if (src == about_item) {
       showAboutDialog();
+    } else if (src == documentation_item) {
+      showDocumentationDialog();
+    }
+    else if (src == console_item) {
+      ConsoleView.showConsole();
     } else if (src == preferences_item) {
       PreferencesPanel pv = PreferencesPanel.getSingleton();
       JFrame f = pv.getFrame();
-      f.show();
+      f.setVisible(true);
     }
   }
-
 
   public void showAboutDialog() {
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
     about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
-    about_text.append("Copyright 2001-2004 Affymetrix Inc." + "\n");
+    about_text.append("Copyright 2001-2007 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");
-    about_text.append("and the Jetty package from Mort Bay Consulting.\n");
+    about_text.append("the Jetty package from Mort Bay Consulting, \n");
+    about_text.append("the Fusion SDK from Affymetrix,  \n");
+    about_text.append("and the Vector Graphics package from java.FreeHEP.org \n");
+    about_text.append("(released under the LGPL license).\n");
+    about_text.append(" \n");
     Iterator names = XmlPrefsParser.getFilenames(prefs_hash).iterator();
     if (names.hasNext()) {
       about_text.append("\nLoaded the following preference file(s): \n");
@@ -796,16 +1125,17 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     }
     String data_dir = UnibrowPrefsUtil.getAppDataDirectory();
     if (data_dir != null) {
-      about_text.append("\nApplication data stored in: \n  "+ data_dir +"\n");
+      File data_dir_f = new File(data_dir);
+      about_text.append("\nApplication data stored in: \n  "+
+        data_dir_f.getAbsolutePath() +"\n");
     }
 
     message_pane.add(new JScrollPane(about_text));
     JButton licenseB = new JButton("View IGB License");
-    licenseB.setForeground(Color.darkGray);
     JButton apacheB = new JButton("View Apache License");
-    apacheB.setForeground(Color.darkGray);
     JButton jettyB = new JButton("View Jetty License");
-    jettyB.setForeground(Color.darkGray);
+    JButton freehepB = new JButton("View FreeHEP Vector Graphics License");
+    JButton fusionB = new JButton("View Fusion SDK License");
     licenseB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
@@ -821,17 +1151,63 @@ public class IGB implements ActionListener, ContextualPopupListener  {
           WebBrowserControl.displayURL("http://jetty.mortbay.org/jetty/");
         }
       } );
+    freehepB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://java.freehep.org/vectorgraphics/license.html");
+        }
+      } );
+    fusionB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/fusion/index.affx");
+        }
+      } );
     JPanel buttonP = new JPanel(new GridLayout(3,1));
     buttonP.add(licenseB);
     buttonP.add(apacheB);
     buttonP.add(jettyB);
+    buttonP.add(freehepB);
+    buttonP.add(fusionB);
     message_pane.add(buttonP);
 
-    JOptionPane.showMessageDialog(frm,
-				 message_pane,
-				 ("About " + APP_NAME),
-				 JOptionPane.INFORMATION_MESSAGE,
-				 null);
+    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+     JOptionPane.DEFAULT_OPTION);
+    final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
+    //dialog.setResizable(true);
+    dialog.setVisible(true);
+  }
+
+  public void showDocumentationDialog() {
+    JPanel message_pane = new JPanel();
+    message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
+    JTextArea about_text = new JTextArea();
+    about_text.append(DocumentationView.getDocumentationText());
+    message_pane.add(new JScrollPane(about_text));
+
+    JButton affyB = new JButton("Go To IGB at Affymetrix");
+    JButton sfB = new JButton("Go To IGB at SourceForge");
+    affyB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/download_igb.affx");
+        }
+      } );
+    sfB.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+          WebBrowserControl.displayURL("http://sourceforge.net/projects/genoviz/");
+        }
+      } );
+    Box buttonP = Box.createHorizontalBox();
+    buttonP.add(Box.createHorizontalGlue());
+    buttonP.add(affyB);
+    buttonP.add(Box.createHorizontalGlue());
+    buttonP.add(sfB);
+    buttonP.add(Box.createHorizontalGlue());
+    message_pane.add(buttonP);
+
+    final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
+     JOptionPane.DEFAULT_OPTION);
+    final JDialog dialog = pane.createDialog(frm, "Documentation");
+    dialog.setResizable(true);
+    dialog.setVisible(true);
   }
 
 
@@ -853,12 +1229,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   private void exit() {
-    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING, false);
+    boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
+        UnibrowPrefsUtil.default_ask_before_exiting);
     String message = "Really exit?";
     if ( (! ask_before_exit) || confirmPanel(message)) {
       if (bmark_action != null) {
         bmark_action.autoSaveBookmarks();
       }
+      WebLink.autoSave();
       saveWindowLocations();
       System.exit(0);
     }
@@ -881,25 +1259,17 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         UnibrowPrefsUtil.saveWindowLocation(f, pi.getPluginName());
       }
     }
+    Frame f = (Frame) comp2window.get(tab_pane);
+    if (f != null) {
+      UnibrowPrefsUtil.saveWindowLocation(f, TABBED_PANES_TITLE);
+    }
   }
-
-  /* Determines whether stack traces will be printed by the errorPanel routine. */
-  private static final boolean print_stack_traces = true;
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent.
    */
   public static void errorPanel(String title, String message) {
-    errorPanel(title, message, (Throwable) null);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent.
-   */
-  public static void errorPanel(String title, String message, Throwable e) {
-    IGB igb = getSingletonIGB();
-    JFrame frame = (igb==null) ? null : igb.frm;
-    errorPanel(frame, title, message, e);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, title, message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
@@ -911,22 +1281,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  the exception text will be appended to the message and
    *  a stack trace might be printed on standard error.
    */
-  public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
-    ErrorHandler.errorPanel(frame, title, message, e);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent, and the title "ERROR".
-   */
   public static void errorPanel(String message) {
-    errorPanel("ERROR", message);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent, and the title "ERROR".
    */
   public static void errorPanel(String message, Throwable e) {
-    errorPanel("ERROR", message, e);
+    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, e);
   }
 
   /** Shows a panel asking for the user to confirm something.
@@ -946,28 +1309,42 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   }
 
   public void openTabInNewWindow(final JTabbedPane tab_pane) {
-    int index = tab_pane.getSelectedIndex();
-    if (index<0) {
-      errorPanel("No more panes!");
-      return;
-    }
-    final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
-    final String title = tab_pane.getTitleAt(index);
-    final String tool_tip = tab_pane.getToolTipTextAt(index);
-    //openCompInWindow(comp, title, tool_tip, null, tab_pane);
-    openCompInWindow(comp, tab_pane);
+    Runnable r = new Runnable() {
+      public void run() {
+        int index = tab_pane.getSelectedIndex();
+        if (index<0) {
+          errorPanel("No more panes!");
+          return;
+        }
+        final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
+        final String title = tab_pane.getTitleAt(index);
+        final String tool_tip = tab_pane.getToolTipTextAt(index);
+        //openCompInWindow(comp, title, tool_tip, null, tab_pane);
+        openCompInWindow(comp, tab_pane);
+      }
+    };
+    SwingUtilities.invokeLater(r);
   }
 
   void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
-    PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
-
-    final String title = pi.getPluginName();
-    final String display_name = pi.getDisplayName();
+    final String title;
+    final String display_name;
     final String tool_tip = comp.getToolTipText();
+    
+    if (comp2plugin.get(comp) instanceof PluginInfo) {
+      PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
+      title = pi.getPluginName();
+      display_name = pi.getDisplayName();
+    } else {
+      title = comp.getName();
+      display_name = comp.getName();
+    }
+
     Image temp_icon = null;
     if (comp instanceof IPlugin) {
       IPlugin pv = (IPlugin) comp;
-      temp_icon = (Image) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+      if (image_icon != null) temp_icon = image_icon.getImage();
     }
     if (temp_icon==null) { temp_icon = getIcon(); }
 
@@ -991,7 +1368,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
-      frame.show();
+      frame.setVisible(true);
       frame.addWindowListener( new WindowAdapter() {
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window
@@ -1004,38 +1381,121 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 	    tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
             UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
             //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
+            JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+            if (menu_item != null) {
+              menu_item.setSelected(false);
+            }
 	  }
 	});
     }
     // extra window already exists, but may not be visible
     else {
-      Frame win = (Frame) comp2window.get(comp);
-      boolean isShowing = win.isShowing();
-      if ((win.getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED) {
-        // de-iconify it while leaving the maximized/minimized state flags alone
-        win.setExtendedState(win.getExtendedState() & ~Frame.ICONIFIED);
-      }
-      if (! win.isShowing()) { win.show(); }
-      win.toFront();
+      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
     }
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
 
-  public void popupNotify(JPopupMenu popup,  java.util.List selected_items) {
+  void openTabbedPanelInNewWindow(final JComponent comp) {
+
+    final String title = TABBED_PANES_TITLE;
+    final String display_name = title;
+    final String tool_tip = null;
+    Image temp_icon = null;
+
+    // If not already open in a new window, make a new window
+    if (comp2window.get(comp) == null) {
+      splitpane.remove(comp);
+      splitpane.validate();
+
+      final JFrame frame = new JFrame(display_name);
+      final Image icon = temp_icon;
+      if (icon != null) { frame.setIconImage(icon); }
+      final Container cont = frame.getContentPane();
+      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+      cont.add(comp);
+      comp.setVisible(true);
+      comp2window.put(comp, frame);
+      frame.pack(); // pack() to set frame to its preferred size
+
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
+      if (pos != null) {
+        UnibrowPrefsUtil.setWindowSize(frame, pos);
+      }
+      frame.setVisible(true);
+      
+      final Runnable return_panes_to_main_window = new Runnable() {
+        public void run() {
+          // save the current size into the preferences, so the window
+          // will re-open with this size next time
+          UnibrowPrefsUtil.saveWindowLocation(frame, title);
+          comp2window.remove(comp);
+          cont.remove(comp);
+          cont.validate();
+          frame.dispose();
+          splitpane.setBottomComponent(comp);
+          splitpane.setDividerLocation(0.70);
+          UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+          JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+          if (menu_item != null) {
+            menu_item.setSelected(false);
+          }
+        }
+      };
+      
+      frame.addWindowListener( new WindowAdapter() {
+        public void windowClosing(WindowEvent evt) {
+          SwingUtilities.invokeLater(return_panes_to_main_window);
+        }});
+
+       JMenuBar mbar = new JMenuBar();
+       frame.setJMenuBar(mbar);
+       JMenu menu1 = new JMenu("Windows");
+       menu1.setMnemonic('W');
+       mbar.add( menu1 );
+       
+       menu1.add(new AbstractAction("Return Tabbed Panes to Main Window") {
+        public void actionPerformed(ActionEvent evt) {
+          SwingUtilities.invokeLater(return_panes_to_main_window);
+        }
+       });
+       menu1.add(new AbstractAction("Open Current Tab in New Window") {
+        public void actionPerformed(ActionEvent evt) {
+          openTabInNewWindow(tab_pane);
+        }
+       });
+    }
+    // extra window already exists, but may not be visible
+    else {
+      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
+    }
+    UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
+  }
+  
+  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
     popup.add(popup_windowsM);
   }
 
   void addToPopupWindows(final JComponent comp, final String title) {
-    JMenuItem popupMI = new JMenuItem(title);
+    JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
     popup_windowsM.add(popupMI);
     popupMI.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent evt) {
-	  Object src = evt.getSource();
+	  JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
 	  //openCompInWindow(comp, title, tool_tip, null, tab_pane);
-          openCompInWindow(comp, tab_pane);
+          Frame frame = (Frame) comp2window.get(comp);
+          if (frame == null) {
+            openCompInWindow(comp, tab_pane);
+            src.setSelected(true);
+          } else {
+            // would like to move window back into tab, but needs some work
+            //src.setSelected(false);
+          }
 	}
       } );
+    comp2menu_item.put(comp, popupMI);
+    popup_windowsM.add(new JCheckBoxMenuItem("foo"));
   }
 
   /**
@@ -1055,10 +1515,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
-    boolean USE_BOOKMARK_MANAGER = false;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
-
     if (prefs_hash.get("USE_GRAPH_ADJUSTER") != null) {
       USE_GRAPH_ADJUSTER = ((Boolean)prefs_hash.get("USE_GRAPH_ADJUSTER")).booleanValue(); }
     if (prefs_hash.get("USE_PIVOT_VIEW") != null) {
@@ -1071,33 +1529,30 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       USE_PATTERN_SEARCHER = ((Boolean)prefs_hash.get("USE_PATTERN_SEARCHER")).booleanValue(); }
     if (prefs_hash.get("USE_ANNOT_BROWSER") != null) {
       USE_ANNOT_BROWSER = ((Boolean)prefs_hash.get("USE_ANNOT_BROWSER")).booleanValue(); }
-    if (prefs_hash.get("USE_BOOKMARK_MANAGER") != null) {
-      USE_BOOKMARK_MANAGER = ((Boolean)prefs_hash.get("USE_BOOKMARK_MANAGER")).booleanValue(); }
 
     if (USE_SLICE_VIEW) {
       PluginInfo pi = new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true);
       plugin_list.add(pi);
     }
     if (USE_GRAPH_ADJUSTER) {
-      PluginInfo pi = new PluginInfo(GraphAdjusterView.class.getName(), "Graph Adjuster", true);
+      PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true);
       plugin_list.add(pi);
     }
     if (USE_PATTERN_SEARCHER) {
       PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
       plugin_list.add(pi);
     }
-    if (USE_BOOKMARK_MANAGER) {
-      PluginInfo pi = new PluginInfo(BookmarkManagerView.class.getName(), "Bookmarks", true);
-      plugin_list.add(pi);
-    }
+
     if (USE_PIVOT_VIEW) {
       PluginInfo pi = new PluginInfo(ExperimentPivotView.class.getName(), "Pivot View", true);
       plugin_list.add(pi);
     }
+
     if (USE_ANNOT_BROWSER) {
       PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
       plugin_list.add(pi);
     }
+
     if (USE_RESTRICTION_MAPPER) {
       PluginInfo pi = new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true);
       plugin_list.add(pi);
@@ -1107,11 +1562,30 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     Iterator iter = other_plugins.values().iterator();
     while (iter.hasNext()) {
       PluginInfo pi = (PluginInfo) iter.next();
-      plugin_list.add(pi);
+      if ("com.affymetrix.igb.plugin.menu.EpsOutputAction".equals(pi.getClassName())) {
+        System.out.println("This plugin is obsolete, not using: " + pi.getClassName());
+      } else {
+        plugin_list.add(pi);
+      }
     }
 
     return plugin_list;
   }
 
+  public static void ensureComponentIsShowing(final Component c) {
+    final IGB igb = IGB.getSingletonIGB();
+    if (igb.tab_pane.indexOfComponent(c) >= 0) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          igb.tab_pane.setSelectedComponent(c);
+        }
+      });
+    } else {
+      // If the view has been opened in a new window and that window is
+      // now minimized or not on top, re-display the window
+      JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
+      DisplayUtils.bringFrameToFront(frame);
+    }
+  }
 
 }

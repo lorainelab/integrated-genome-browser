@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,11 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 import java.awt.*;
 
@@ -106,13 +104,15 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
    */
   public void addChild(GlyphI glyph) {
     if (isMoveChildren()) {
-      // child.cbox.y is modified, but not child.cbox.height)
-      // center the children of the LineContainerGlyph on the line
-      Rectangle2D cbox = glyph.getCoordBox();
-      double ycenter = this.y + this.height/2;
-      cbox.y = ycenter - cbox.height/2;
+      double child_height = adjustChild(glyph);
+      super.addChild(glyph);
+      if (child_height > this.height) {
+        this.height = child_height;
+        adjustChildren();
+      }
+    } else {
+      super.addChild(glyph);
     }
-    super.addChild(glyph);
   }
 
 
@@ -133,5 +133,48 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
    */
   public void setMoveChildren(boolean move_children) {
     this.move_children = move_children;
+  }
+
+  protected double adjustChild(GlyphI child) {
+    if (isMoveChildren()) {
+      // child.cbox.y is modified, but not child.cbox.height)
+      // center the children of the LineContainerGlyph on the line
+      final Rectangle2D cbox = child.getCoordBox();
+      final double ycenter = this.y + this.height/2;
+      // use moveAbsolute or moveRelative to make sure children also get moved
+      child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
+      return cbox.height;
+    } else {
+      return this.height;
+    }
+  }
+
+  protected void adjustChildren() {
+    double max_height = 0.0;
+    if (isMoveChildren()) {
+      java.util.List childlist = this.getChildren();
+      if (childlist != null) {
+        int child_count = this.getChildCount();
+        for (int i=0; i<child_count; i++) {
+          GlyphI child = (GlyphI)childlist.get(i);
+          double child_height = adjustChild(child);
+          max_height = Math.max(max_height, child_height);
+        }
+      }
+    }
+    if (max_height > this.height) {
+      this.height = max_height;
+      adjustChildren(); // have to adjust children again after a height change.
+    }
+  }
+  
+  public void pack(ViewI view) {
+    if ( isMoveChildren()) {
+      this.adjustChildren();
+      // Maybe now need to adjust size of total glyph to take into account
+      // any expansion of the children ?
+    } else {
+      super.pack(view);
+    }
   }
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,7 +21,7 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-//import com.affymetrix.igb.util.TableSorter;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
@@ -44,7 +44,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
 
     JScrollPane scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
-    this.add(scroll_pane);
 
     model = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {return false;}
@@ -58,11 +57,12 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    //TableSorter sort_model = new TableSorter(model);
+    TableSorter2 sort_model = new TableSorter2(model);
     //sort_model.addMouseListenerToHeaderInTable(table);
+    sort_model.setTableHeader(table.getTableHeader());
 
-    table.setModel(model);
-    //table.setModel(sort_model);
+    //table.setModel(model);
+    table.setModel(sort_model);
     table.setRowSelectionAllowed(true);
     table.setEnabled( true );
 
@@ -77,15 +77,17 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     validate();
   }
 
-  protected Object[][] buildRows(Preferences node) throws BackingStoreException {
-    String[] keys = node.keys();
+  protected Object[][] buildRows(Preferences node) {
+    Collection keys = UnibrowPrefsUtil.getKeystrokesNodeNames();
     
-    int num_rows = keys.length;
+    int num_rows = keys.size();
     int num_cols = 2;
     Object[][] rows = new Object[num_rows][num_cols];
-    for (int i = 0 ; i < num_rows ; i++) {
-      rows[i][0] = keys[i];
-      rows[i][1] = node.get(keys[i], "");
+    Iterator iter = keys.iterator();
+    for (int i=0; iter.hasNext(); i++) {
+      String key = (String) iter.next();
+      rows[i][0] = key;
+      rows[i][1] = node.get(key, "");
     }
     return rows;
   }
@@ -93,12 +95,8 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   /** Re-populates the table with the shortcut data. */
   public void showShortcuts() {
     Object[][] rows = null;
-    try {
-      rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
-      model.setDataVector(rows, col_headings);
-    } catch (BackingStoreException bse) {
-      ErrorHandler.errorPanel("ERROR", "Couldn't access preferences", bse);
-    }
+    rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
+    model.setDataVector(rows, col_headings);
   }
 
   public void refresh() {
@@ -108,7 +106,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   /** This is called when the user selects a row of the table;
    */
   public void valueChanged(ListSelectionEvent evt) {
-    boolean old_way = true;
     if (evt.getSource()==lsm && ! evt.getValueIsAdjusting()) {
       int srow = table.getSelectedRow();
       if (srow >= 0) {
@@ -130,7 +127,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     }
     // Each time a keystroke preference is changed, update the
     // whole table.  Inelegant, but works.
-    showShortcuts();
+    refresh();
   }  
 
   public void destroy() {
@@ -161,11 +158,6 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     sb.append("can give more predictable shortcut behavior.  ");
     sb.append("</p>\n");
 
-    sb.append("<p>\n");
-    sb.append("It is possible that some action names are listed that don't have any function.  ");
-    sb.append("This could happen if you have installed and then un-installed some plugins, ");
-    sb.append("or if some actions have been re-named. ");
-    sb.append("</p>\n");
     sb.append("  ");
     sb.append("  ");
  

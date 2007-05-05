@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,8 +15,11 @@ package com.affymetrix.igb.event;
 
 import java.util.*;
 
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+
 public class GroupSelectionEvent extends EventObject {
   List selected_groups;
+  AnnotatedSeqGroup primary_selection = null;
 
   /**
    *  Constructor.
@@ -26,8 +29,23 @@ public class GroupSelectionEvent extends EventObject {
   public GroupSelectionEvent(Object src, List groups) {
     super(src);
     this.selected_groups = groups;
+    this.primary_selection = null;
     if (selected_groups == null) {
       selected_groups = Collections.EMPTY_LIST;
+    } else if (! selected_groups.isEmpty()) {
+      primary_selection = (AnnotatedSeqGroup) groups.get(0);
+    }
+  }
+  
+  public GroupSelectionEvent(Object src, AnnotatedSeqGroup group) {
+    super(src);
+    if (group == null) {
+      primary_selection = null;
+      selected_groups = Collections.EMPTY_LIST;
+    } else {
+      primary_selection = group;
+      selected_groups = new ArrayList(1);
+      selected_groups.add(group);
     }
   }
   
@@ -39,4 +57,16 @@ public class GroupSelectionEvent extends EventObject {
     return selected_groups;
   }
   
+  /** Gets the first entry in the list {@link #getSelectedGroups()}.
+   *  @return an AnnotatedSeqGroup or null.
+   */
+  public AnnotatedSeqGroup getSelectedGroup() {
+    return primary_selection;
+  }
+
+  public String toString() {
+    return "GroupSelectionEvent: group count: " + selected_groups.size() +
+        " first group: '" + (primary_selection == null ? "null" : primary_selection.getID()) +
+        "' source: " + this.getSource();
+  }
 }

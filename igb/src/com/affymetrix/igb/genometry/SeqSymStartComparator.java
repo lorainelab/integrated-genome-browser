@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -44,14 +44,16 @@ public class SeqSymStartComparator implements Comparator {
   public int compare(Object obj1, Object obj2) {
     SeqSymmetry sym1 = (SeqSymmetry)obj1;
     SeqSymmetry sym2 = (SeqSymmetry)obj2;
+    final SeqSpan span1 = sym1.getSpan(seq);
+    final SeqSpan span2 = sym2.getSpan(seq);
     if (ascending) {
-      if (sym1.getSpan(seq).getStart() < sym2.getSpan(seq).getStart()) { return -1; }
-      else if (sym1.getSpan(seq).getStart() > sym2.getSpan(seq).getStart()) { return 1; }
+      if (span1.getStart() < span2.getStart()) { return -1; }
+      else if (span1.getStart() > span2.getStart()) { return 1; }
       else { return 0; }
     }
     else {
-      if (sym1.getSpan(seq).getStart() > sym2.getSpan(seq).getStart()) { return -1; }
-      else if (sym1.getSpan(seq).getStart() < sym2.getSpan(seq).getStart()) { return 1; }
+      if (span1.getStart() > span2.getStart()) { return -1; }
+      else if (span1.getStart() < span2.getStart()) { return 1; }
       else { return 0; }
     }
   }

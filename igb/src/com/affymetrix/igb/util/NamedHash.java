@@ -38,6 +38,8 @@ public class NamedHash extends java.util.TreeMap {
 
   public String getName() { return name; }
 
+  public String toString() { return getName(); }
+
 }
 
 

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,6 +24,7 @@ import org.xml.sax.InputSource;
 import org.apache.xerces.parsers.DOMParser;
 
 import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 
@@ -67,6 +68,7 @@ Example:
     <annotation_style annot_type="abc" factory="com.affymetrix.igb.glyph.GenericSymGlyphFactory" />
 
 Optionally specifying color:
+(Colors <b>IGNORED</b> by all standard glyph factories starting with IGB version 4.01)
 Method 1: specify single color for this annot type by adding red, green, blue attributes:
    <annotation_style annot_type="test" red="200" green="0" blue="200" />
 Method 2: specify multiple colors to be used for this annot type by adding <color> sub-elements
@@ -96,27 +98,9 @@ Example:
     parent_glyph="com.affymetrix.igb.glyph.EfficientOutlineContGlyph"
     child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 
-"glyph_depth": This attribute specifies which symmetries in a symmetry hierarchy
-   should be rendered into glyphs.  For annotations like transcripts or alignments,
-   it is usually "2", indicating that the leaf symmetry nodes (for example, exons
-   or alignment blocks) should be rendered with objects of class "child_glyph",
-   and that the nodes just above the leaves (for example, the genomic span of the
-   transcript or alignment) should be rendered with objects of class "parent_glyph".
-   If it is "1", then only the leaf nodes are rendered as glyphs, as objects of
-   class "child_glyph" (good for repeats and SNPs, for example).  There _might_ be
-   reasons to use glyph_depth > 2 (which would imply that leaf nodes might not be
-   rendered), but I'd suggest sticking with 1 or 2 for now.  The default is 2.
+"glyph_depth": 
+   <b>IGNORED</b> starting with IGB 4.01.
 
-Color names that GenericAnnotGlyphFactory currently recognizes;
-   "color":  if no "parent_color" or "child_color", uses this for both
-   "parent_color":  the color used for parent glyphs
-   "child_color":  the color used for child glyphs
-
-Other attributes that GenericAnnotGlyphFactory should recognize in the near future:
-     glyph_height="15"
-     tier_name="Aligned RefSeqs"
-     tier_start_state="EXPAND"
-     tier_expand_max="10"
 *</pre>
 */
 public class XmlPrefsParser {
@@ -126,11 +110,6 @@ public class XmlPrefsParser {
     com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;
 
   private static final String FILENAME_LIST = "FILENAME_LIST";
-
-  /** The name of a Map used to link regular expressions for method names to urls.
-   *  Use with {@link #getNamedMap(Map, String)}.
-   */
-  public static final String REGEX_URLS = "regex_urls";
 
   /** The name of a Map used to link exact names to glyph factories.
    *  Use with {@link #getNamedMap(Map, String)}.
@@ -267,7 +246,7 @@ public class XmlPrefsParser {
             processAnnotStyle(el, type2factory, regex2factory);
           }
           else if (name.equalsIgnoreCase("annotation_url")) {
-            processLinkUrl(el, prefs_hash);
+            processLinkUrl(el);
           }
           else if (name.equalsIgnoreCase("annotation_style_defaults")) {
             // processDefaultAnnotStyle();
@@ -280,7 +259,9 @@ public class XmlPrefsParser {
             the_name = tag;
             val = el.getAttribute("val");
             prefs_hash.put(tag, val);
-            //            System.out.println("added tagval to prefs hash: tag = " + tag + ", val = " + val);
+	    if (tag.equals("QuickLoadUrl"))  {
+	      System.out.println("added QuickLoadUrl to prefs: " + val);
+	    }
           }
           else if (name.equalsIgnoreCase("boolean")) {
             String tag = el.getAttribute("tag");
@@ -361,7 +342,7 @@ public class XmlPrefsParser {
    *  By default, match is case-insensitive;  use match_case="true" if you want
    *  to require an exact match.
    */
-  public void processLinkUrl(Element el, Map prefs_hash) {
+  public void processLinkUrl(Element el) {
     Map attmap = this.getAttributeMap(el);
     String annot_type_regex_string = (String) attmap.get("annot_type_regex");
     if (annot_type_regex_string != null && annot_type_regex_string.trim().length()==0) {
@@ -371,18 +352,22 @@ public class XmlPrefsParser {
     if (url != null && url.trim().length()==0) {
       url = null;
     }
+    String name = (String) attmap.get("name");
     if (annot_type_regex_string != null && url != null) {
      try {
       Pattern regex = null;
-      if ("true".equalsIgnoreCase((String) attmap.get("match_case"))) {
-        regex = Pattern.compile(annot_type_regex_string);
+      WebLink link = new WebLink();
+      link.setName(name);
+      link.setUrl(url);
+      if ("false".equalsIgnoreCase((String) attmap.get("match_case"))) {
+        link.setRegex(annot_type_regex_string);
+        //regex = Pattern.compile(annot_type_regex_string);
       } else {
-        regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
+        link.setRegex("(?i)" + annot_type_regex_string);
+        //regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
       }
-      if (regex != null) {
-        Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-        regex2url.put(regex, url);
-      }
+
+      WebLink.addWebLink(link);
      } catch (PatternSyntaxException pse) {
         System.out.println("ERROR: Regular expression syntax error in preferences\n"+pse.getMessage());
      }
@@ -393,34 +378,7 @@ public class XmlPrefsParser {
         +"'  url='"+url+"'");
     }
   }
-
-  /**
-   *  Returns a URL based on regular-expression matching of the given method name.
-   *  For example, if the preferences file contains:
-   *  <p>
-   *  <code>&gt;annotation_url annot_type_regex="google" ignore_case="true" url="http://www.google.com/search?q=$$" /&lt;</code>
-   *  <p>
-   *  then if method="GooGle", this method will return "http://www.google.com/search?q=$$"
-   *  @return a String or null
-   */
-  public static String getLinkURL(Map prefs_hash, String method) {
-    // This is not terribly fast, but it is not called in places where speed matters
-    String url = null;
-    if (method != null) {
-      Map regex2url = getNamedMap(prefs_hash, REGEX_URLS);
-      Iterator iter = regex2url.entrySet().iterator();
-      while (iter.hasNext()) {
-        Map.Entry entry = (Map.Entry) iter.next();
-        Pattern regex = (Pattern) entry.getKey();
-        if (regex.matcher(method).matches()) {
-          url = (String) entry.getValue();
-          break;
-        }
-      }
-    }
-    return url;
-  }
-
+  
   public void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
     /*  Builds two hash tables:
      *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI

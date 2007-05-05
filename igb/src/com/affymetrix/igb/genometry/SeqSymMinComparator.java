@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2006 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -43,18 +43,26 @@ public class SeqSymMinComparator implements Comparator {
   public int compare(Object obj1, Object obj2) {
     SeqSymmetry sym1 = (SeqSymmetry)obj1;
     SeqSymmetry sym2 = (SeqSymmetry)obj2;
+    SeqSpan span1 = sym1.getSpan(seq);
+    SeqSpan span2 = sym2.getSpan(seq);
+    final int min1 = span1.getMin();
+    final int min2 = span2.getMin();
     if (ascending) {
-      if (sym1.getSpan(seq).getMin() < sym2.getSpan(seq).getMin()) { return -1; }
-      else if (sym1.getSpan(seq).getMin() > sym2.getSpan(seq).getMin()) { return 1; }
-      else if (sym1.getSpan(seq).getMax() < sym2.getSpan(seq).getMax()) { return -1; }
-      else if (sym1.getSpan(seq).getMax() > sym2.getSpan(seq).getMax()) { return 1; }
+      if (min1 < min2) { return -1; }
+      else if (min1 > min2) { return 1; }
+      final int max1 = span1.getMax();
+      final int max2 = span2.getMax();
+      if (max1 < max2) { return -1; }
+      else if (max1 > max2) { return 1; }
       else { return 0; }
     }
     else {
-      if (sym1.getSpan(seq).getMin() > sym2.getSpan(seq).getMin()) { return -1; }
-      else if (sym1.getSpan(seq).getMin() < sym2.getSpan(seq).getMin()) { return 1; }
-      else if (sym1.getSpan(seq).getMax() > sym2.getSpan(seq).getMax()) { return -1; }
-      else if (sym1.getSpan(seq).getMax() < sym2.getSpan(seq).getMax()) { return 1; }
+      if (min1 > min2) { return -1; }
+      else if (min1 < min2) { return 1; }
+      final int max1 = span1.getMax();
+      final int max2 = span2.getMax();
+      if (max1 > max2) { return -1; }
+      else if (max1 < max2) { return 1; }
       else { return 0; }
     }
   }

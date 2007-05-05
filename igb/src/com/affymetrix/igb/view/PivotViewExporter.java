@@ -16,6 +16,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.util.TableFilter;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -61,10 +62,59 @@ public class PivotViewExporter extends AbstractAction {
       theDest.println();
       for ( int i = 0; i < rows; i++ ) {
         for ( int j = 0; j < lastCol; j++ ) {
-          theDest.print( theTable.getValueAt( i, j ) + "\t" );
+          theDest.print( format(theTable.getValueAt( i, j )) + "\t" );
         }
         if ( 0 < cols ) {
-          theDest.print( theTable.getValueAt( i, lastCol ) );
+          theDest.print( format(theTable.getValueAt( i, lastCol )) );
+        }
+        theDest.println();
+      }
+    }
+  };
+
+  
+  /**
+   * Convert the table to "cdt" format.
+   */
+  private TableFilter cdtFilter = new TableFilter() {
+    {
+      this.validSuffixes.add( "cdt" );
+      this.description = "Clustered Data Table";
+    }
+    /**
+     * Quote the source using Microsoft style quote mark stuffing.
+     */
+
+    public void write( TableModel theTable, PrintWriter theDest ) {
+      int rows = theTable.getRowCount();
+      int cols = theTable.getColumnCount();
+
+      theDest.print("UID\tNAME\tGWEIGHT");
+      for ( int i = 3; i < cols; i++ ) {
+        theDest.print('\t');
+        theDest.print( theTable.getColumnName( i ));
+      }
+      theDest.println();
+      
+      theDest.print("EWEIGHT\t\t");
+      for ( int j = 3; j < cols; j++ ) {
+        theDest.print("\t1");
+      }
+      theDest.println();
+      
+      for ( int i = 0; i < rows; i++ ) {
+        theDest.print(Integer.toString(i));
+        theDest.print('\t');
+        theDest.print(theTable.getValueAt(i, 0));
+        theDest.print('\t');
+        theDest.print('1');
+        for ( int j = 3; j < cols; j++ ) {
+          theDest.print('\t');
+          String cell = "";
+          Object o = theTable.getValueAt( i, j );
+          if ( null != o ) cell = format(o);
+          else cell = "0";
+          theDest.print(cell);
         }
         theDest.println();
       }
@@ -104,7 +154,7 @@ public class PivotViewExporter extends AbstractAction {
         for ( int j = 0; j < cols; j++ ) {
           String cell = "";
           Object o = theTable.getValueAt( i, j );
-          if ( null != o ) cell = o.toString();
+          if ( null != o ) cell = format(o);
           theDest.print( quote( cell ) + ", " );
         }
         theDest.println();
@@ -142,7 +192,7 @@ public class PivotViewExporter extends AbstractAction {
       for ( int i = 0; i < cols; i++ ) {
         String cell = "";
         Object o = theTable.getColumnName( i );
-        if ( null != o ) cell = quote( o.toString() );
+        if ( null != o ) cell = quote( format(o) );
         theDest.print( "<th>" + cell + "</th>" );
       }
       theDest.println( "</tr>" );
@@ -151,7 +201,7 @@ public class PivotViewExporter extends AbstractAction {
         for ( int j = 0; j < cols; j++ ) {
           String cell = "";
           Object o = theTable.getValueAt( i, j );
-          if ( null != o ) cell = quote( o.toString() );
+          if ( null != o ) cell = quote( format(o) );
           theDest.print( "<td>" + cell + "</td>" );
         }
         theDest.println( "</tr>" );
@@ -160,12 +210,35 @@ public class PivotViewExporter extends AbstractAction {
     }
   };
 
+  NumberFormat nf = NumberFormat.getInstance();
+  
+  /**
+   *  Convert an object to a String; if it is a number, then use
+   *  a NumberFormat to do so.
+   */
+  String format(Object o) {
+    String s;
+    if (o==null) {
+      s = "";
+    }
+    else if (o instanceof Number) {
+      s = nf.format(o);
+    } else {
+      s = o.toString();
+    }
+    
+    return s;
+  }
 
   private ExperimentPivotView pivotView;
   private JFileChooser dialog = new JFileChooser();
   {
     dialog.addChoosableFileFilter( tsvFilter );
     dialog.addChoosableFileFilter( csvFilter );
+    /* I created this CDT format exporter, but am not sure yet if it is useful
+     * to add it to IGB.
+    dialog.addChoosableFileFilter( cdtFilter );
+     */
     dialog.addChoosableFileFilter( htmlFilter );
     dialog.setFileFilter( tsvFilter );
   }
@@ -173,6 +246,7 @@ public class PivotViewExporter extends AbstractAction {
   public PivotViewExporter( ExperimentPivotView theView ) {
     super( "Export..." );
     this.pivotView = theView;
+    nf.setGroupingUsed(false); // no commas
   }
 
   /**

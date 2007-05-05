@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -54,7 +54,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
   static {
     Font base_fnt = new Font("Monospaced", Font.PLAIN, 1);
     Toolkit kit = Toolkit.getDefaultToolkit();
-    Dimension dim = kit.getScreenSize();
+    // Dimension dim = kit.getScreenSize();
 
     int pixindex = 1;;
     int pntcount = 3;
@@ -166,7 +166,8 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
         if ((xpix_per_char >= min_char_xpix) && (ypix_per_char >= min_char_ypix))  {
           if (xpix_per_char > max_char_xpix) { xpix_per_char = max_char_xpix; }
           if (ypix_per_char > max_char_ypix) { ypix_per_char = max_char_ypix; }
-          Graphics2D g2 = (Graphics2D)g;
+          // Graphics2D g2 = (Graphics2D)g;
+          Graphics g2 = g;
           Font xmax_font = xpix2fonts[xpix_per_char];
           Font ymax_font = ypix2fonts[ypix_per_char];
           Font chosen_font = (xmax_font.getSize()<ymax_font.getSize()) ? xmax_font : ymax_font;

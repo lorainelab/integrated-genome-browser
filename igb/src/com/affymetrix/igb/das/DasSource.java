@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -129,7 +129,8 @@ public class DasSource {
 	if (orient != null) {
 	  forward = (! orient.equals("-"));  // anything other than "-" is considered forward
 	}
-	if (startstr != null && stopstr != null) {
+	if (startstr != null && startstr.length() > 0
+            && stopstr != null && stopstr.length() > 0) {
 	  start = Integer.parseInt(startstr);
 	  stop = Integer.parseInt(stopstr);
 	}

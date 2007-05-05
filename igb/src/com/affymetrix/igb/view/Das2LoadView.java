@@ -41,7 +41,7 @@ import javax.swing.event.*;  // temporary visualization till hooked into IGB
 public class Das2LoadView extends JComponent
   implements ActionListener, TableModelListener,
 	     SeqSelectionListener, GroupSelectionListener,
-             TreeSelectionListener {
+             TreeSelectionListener, DataRequestListener {
 
   static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
@@ -94,6 +94,7 @@ public class Das2LoadView extends JComponent
     USE_SIMPLE_VIEW = simple_view;
     if (!USE_SIMPLE_VIEW) {
       gviewer = IGB.getSingletonIGB().getMapView();
+      gviewer.addDataRequestListener(this);
     }
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
@@ -558,6 +559,11 @@ public class Das2LoadView extends JComponent
     frm.setVisible(true);
   }
 
+  public boolean dataRequested(DataRequestEvent evt) {
+    System.out.println("Das2LoadView recieved DataRequestEvent: " + evt);
+    return false;
+  }
+
 }
 
 /**
@@ -568,7 +574,7 @@ public class Das2LoadView extends JComponent
 class Das2TypeState {
   static boolean default_load = false;
   static String[] LOAD_STRINGS = new String[3];
-  static int OFF = 0;
+  //  static int OFF = 0;
   static int VISIBLE_RANGE = 1;   // MANUAL_VISIBLE_RANGE
   static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
   static int default_load_strategy = VISIBLE_RANGE;
@@ -583,7 +589,7 @@ class Das2TypeState {
   static Preferences das2_node = root_node.node("das2");
 
   static {
-    LOAD_STRINGS[OFF] = "Off"; // OFF strategy is deprecated; use load=false
+    // LOAD_STRINGS[OFF] = "Off"; // OFF strategy is deprecated; use load=false
     LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
     LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
@@ -621,11 +627,13 @@ class Das2TypeState {
 
     load = lnode_load.getBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load);
     load_strategy = lnode_strategy.getInt(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load_strategy);
+    /*
     if (load_strategy == OFF) {
       // OFF strategy has been deprecated but may still exist in some user's prefs
       setLoadStrategy(default_load_strategy);
       setLoad(false);
     }
+    */
   }
 
   public void setLoad(boolean b) {

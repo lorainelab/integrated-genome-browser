@@ -205,7 +205,7 @@ public class Das2LoadView extends JComponent
     Object src = evt.getSource();
     if (src == load_featuresB) {
       System.out.println("Das2LoadView received ActionEvent on load features button");
-      loadFeaturesInView();
+      loadFeaturesInView(true);
     }
     else if (src == searchTF) {
       String name = searchTF.getText();
@@ -289,19 +289,17 @@ public class Das2LoadView extends JComponent
   }
 
   public void loadFeaturesInView() {
+    loadFeaturesInView(false);
+  }
+
+  public void loadFeaturesInView(boolean restrict_to_current_vsource) {
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
+    if (! (selected_seq instanceof SmartAnnotBioSeq)) {
+      ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
+      return;
+    }
     final SeqSpan overlap = gviewer.getVisibleSpan();
     final MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)overlap.getBioSeq();
-    //    MutableAnnotatedBioSeq current_seq = current_region.getAnnotatedSeq();
-    if (current_version != null) {
-      if (current_seq != null) {
-	current_region = current_version.getSegment(current_seq);
-      }
-      else {
-	current_region = current_version.getSegment(visible_seq);
-      }
-    }
-
     if (selected_seq == null) {
       ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
       return;
@@ -310,28 +308,46 @@ public class Das2LoadView extends JComponent
       System.out.println("ERROR, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!");
       return;
     }
+
     System.out.println("seq = " + visible_seq.getID() +
 		       ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
+    SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)selected_seq;
+    AnnotatedSeqGroup genome = aseq.getSeqGroup();
+    java.util.List vsources;
 
     // iterate through Das2TypeStates
     //    if off, ignore
     //    if load_in_visible_range, do range in view annotation request
-    //    if per-seq, then should already be loaded?
-    // maybe add a fully_loaded flag so know which ones to skip because they're done?
 
-    java.util.List type_states = (java.util.List) version2typestates.get(current_version);
+    // maybe add a fully_loaded flag so know which ones to skip because they're done?
+    if (restrict_to_current_vsource) {
+      vsources = new ArrayList();
+      vsources.add(current_version);
+    }
+    else {
+      boolean FORCE_SERVER_LOAD = false;
+      vsources = Das2Discovery.getVersionedSources(genome, false);
+    }
+
     ArrayList requests = new ArrayList();
-    if (type_states != null) {
+    
+    for (int i=0; i<vsources.size(); i++) {
+      Das2VersionedSource vsource = (Das2VersionedSource)vsources.get(i);
+      if (vsource == null) { continue; }
+      java.util.List type_states = (java.util.List) version2typestates.get(vsource);
+      if (type_states == null) { continue; }
+      Das2Region region = vsource.getSegment(aseq);
       Iterator titer = type_states.iterator();
       while (titer.hasNext()) {
-        Das2TypeState tstate = (Das2TypeState)titer.next();
-        Das2Type dtype = tstate.getDas2Type();
-        if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
-          System.out.println("type to load for visible range: " + dtype.getID());
-          Das2FeatureRequestSym request_sym =
-            new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-          requests.add(request_sym);
-        }
+	Das2TypeState tstate = (Das2TypeState)titer.next();
+	Das2Type dtype = tstate.getDas2Type();
+	//  only add to request list if set for loading and strategy is VISIBLE_RANGE loading
+	if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
+	  System.out.println("type to load for visible range: " + dtype.getID());      
+	  Das2FeatureRequestSym request_sym =
+	    new Das2FeatureRequestSym(dtype, region, overlap, null);
+	  requests.add(request_sym);
+	}
       }
     }
     if (requests.size() == 0) {
@@ -561,6 +577,7 @@ public class Das2LoadView extends JComponent
 
   public boolean dataRequested(DataRequestEvent evt) {
     System.out.println("Das2LoadView recieved DataRequestEvent: " + evt);
+    loadFeaturesInView();
     return false;
   }
 
@@ -574,7 +591,6 @@ public class Das2LoadView extends JComponent
 class Das2TypeState {
   static boolean default_load = false;
   static String[] LOAD_STRINGS = new String[3];
-  //  static int OFF = 0;
   static int VISIBLE_RANGE = 1;   // MANUAL_VISIBLE_RANGE
   static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
   static int default_load_strategy = VISIBLE_RANGE;
@@ -589,7 +605,6 @@ class Das2TypeState {
   static Preferences das2_node = root_node.node("das2");
 
   static {
-    // LOAD_STRINGS[OFF] = "Off"; // OFF strategy is deprecated; use load=false
     LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
     LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
@@ -614,7 +629,6 @@ class Das2TypeState {
     // String subnode_load = server_root_url + "/" + source.getID() + "/" + version.getID() + "/type_load";
     String base_node_id = version.getID();
     base_node_id = base_node_id.replaceAll("/{2,}", "/");
-//    base_node_id.
     String subnode_strategy = base_node_id + "/type_load_strategy";
     String subnode_load = base_node_id + "/type_load";
     // System.out.println("subnode_strategy = " + subnode_strategy);
@@ -627,13 +641,6 @@ class Das2TypeState {
 
     load = lnode_load.getBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load);
     load_strategy = lnode_strategy.getInt(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load_strategy);
-    /*
-    if (load_strategy == OFF) {
-      // OFF strategy has been deprecated but may still exist in some user's prefs
-      setLoadStrategy(default_load_strategy);
-      setLoad(false);
-    }
-    */
   }
 
   public void setLoad(boolean b) {

@@ -15,6 +15,8 @@ package com.affymetrix.igb.das2;
 
 import java.util.*;
 
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+
 public class Das2Discovery {
 
   static Map name2server = new LinkedHashMap();
@@ -22,17 +24,17 @@ public class Das2Discovery {
   static boolean servers_initialized = false;
 
   static {
-    //    name2url.put("localhost", "http://localhost:9092/das2/genome");
+    name2url.put("localhost", "http://localhost:9092/das2/genome");
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
     name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
     //name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
     //    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sequence");
     //    name2url.put("Affy Test Server, Nov 11 2006", "http://netaffxdas.affymetrix.com/das2/test/sources");
-    //name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");
-    //name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");
+    //    name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");
+    name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");
     //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");
-    //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
+    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");
   }
 
@@ -47,7 +49,7 @@ public class Das2Discovery {
     return name2server;
   }
 
-  protected static void initServers() {    
+  protected static void initServers() {
     Iterator names = name2url.keySet().iterator();
     while (names.hasNext()) {
       String name = (String)names.next();
@@ -61,6 +63,39 @@ public class Das2Discovery {
       }
     }
     servers_initialized = true;
+  }
+
+  /**
+   *  Given an AnnotatedSeqGroup, return a list of Das2VersionedSources that
+   *    provide annotations for the group [ versioned_source.getGenome() = group ]
+   *  if (try_unloaded_servers) then force retrieval of versioned sources info for
+   *       all known server, otherwise only check versioned sources whose info is already loaded??
+   */
+  public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+    List matches = new ArrayList();
+    Iterator servers = getDas2Servers().values().iterator();
+    while (servers.hasNext()) {
+      Das2ServerInfo server = (Das2ServerInfo)servers.next();
+      boolean init = server.isInitialized();
+      if ((! init) && try_unloaded_servers) {
+	server.initialize();
+	init = server.isInitialized();
+      }
+      if (init) {
+	Iterator sources = server.getSources().values().iterator();
+	while (sources.hasNext()) {
+	  Das2Source source = (Das2Source)sources.next();
+	  Iterator versioned_sources = source.getVersions().values().iterator();
+	  while (versioned_sources.hasNext()) {
+	    Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
+	    if (version.getGenome() == group) {
+	      matches.add(version);
+	    }
+	  }
+	}
+      }
+    }
+    return matches;
   }
 
   /** NOT YET IMPLEMENTED

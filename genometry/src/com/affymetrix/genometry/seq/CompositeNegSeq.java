@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,11 +13,9 @@
 
 package com.affymetrix.genometry.seq;
 
-import java.util.Vector;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.util.SeqUtils;
 
 /**
  *  A CompositeBioSeq that can have start less than 0.

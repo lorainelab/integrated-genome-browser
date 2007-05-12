@@ -81,11 +81,11 @@ public class Das2Source {
   }
   */
 
-  public Map getVersions() {
+  public synchronized Map getVersions() {
     return versions;
   }
 
-  public void addVersion(Das2VersionedSource version) {
+  public synchronized void addVersion(Das2VersionedSource version) {
     versions.put(version.getID(), version);
   }
 

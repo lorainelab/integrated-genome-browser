@@ -32,9 +32,9 @@ public class Das2Discovery {
     //    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sequence");
     //    name2url.put("Affy Test Server, Nov 11 2006", "http://netaffxdas.affymetrix.com/das2/test/sources");
     //    name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");
-    name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");
+    //    name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");
     //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");
-    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
+    //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");
   }
 
@@ -76,6 +76,7 @@ public class Das2Discovery {
     Iterator servers = getDas2Servers().values().iterator();
     while (servers.hasNext()) {
       Das2ServerInfo server = (Das2ServerInfo)servers.next();
+      //      System.out.println("  server: " + server.getName());
       boolean init = server.isInitialized();
       if ((! init) && try_unloaded_servers) {
 	server.initialize();
@@ -88,6 +89,7 @@ public class Das2Discovery {
 	  Iterator versioned_sources = source.getVersions().values().iterator();
 	  while (versioned_sources.hasNext()) {
 	    Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
+	    //	    System.out.println("     version: " + version.getName());
 	    if (version.getGenome() == group) {
 	      matches.add(version);
 	    }
@@ -96,6 +98,46 @@ public class Das2Discovery {
       }
     }
     return matches;
+  }
+
+
+  /**
+   *  Given an AnnotatedSeqGroup, return a list of Das2Sources that have at least one Das2VersionedSource that 
+   *    provides annotations for the group
+   *  if (try_unloaded_servers) then force search of 
+   *       all known servers, otherwise only check info that is already loaded??
+   */
+  public static List getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+    List vsources = getVersionedSources(group, try_unloaded_servers);
+    Set sourceset = new LinkedHashSet(vsources.size());
+    Iterator iter = vsources.iterator();
+    while (iter.hasNext()) {
+      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+      Das2Source source = version.getSource();
+      sourceset.add(source);
+    }
+    List results = new ArrayList(sourceset);
+    return results;
+  }
+
+  /**
+   *  Given an AnnotatedSeqGroup, return a list of Das2ServerInfos that have at least one Das2Source that has 
+   *    at least one Das2VersionedSource that 
+   *    provides annotations for the group
+   *  if (try_unloaded_servers) then force search of 
+   *       all known servers, otherwise only check info that is already loaded??
+   */
+  public static List getServers(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+    List vsources = getVersionedSources(group, try_unloaded_servers);
+    Set serverset = new LinkedHashSet(vsources.size());
+    Iterator iter = vsources.iterator();
+    while (iter.hasNext()) {
+      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+      Das2ServerInfo server = version.getSource().getServerInfo();
+      serverset.add(server);
+    }
+    List results = new ArrayList(serverset);
+    return results;
   }
 
   /** NOT YET IMPLEMENTED

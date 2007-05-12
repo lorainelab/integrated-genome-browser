@@ -71,7 +71,8 @@ public class Das2ServerInfo  {
   public String getName() {
     return name;
   }
-  public Map getSources() {
+
+  public synchronized Map getSources() {
     if (!initialized) { initialize(); }
     return sources;
   }
@@ -121,7 +122,7 @@ public class Das2ServerInfo  {
   /**
    * Return true if successfully initialized.
    */
-  public boolean initialize() {
+  public synchronized boolean initialize() {
     //TODO: think about whether this needs synchronization.
     //TODO: clean-up streams in finally block
     try {
@@ -141,7 +142,7 @@ public class Das2ServerInfo  {
         }
         das_request = server_uri.toURL();
       }
-      System.out.println("Das Request: " + das_request);
+      if (DEBUG_SOURCES_QUERY)  { System.out.println("Das Request: " + das_request); }
       URLConnection request_con = das_request.openConnection();
       String content_type = request_con.getHeaderField("Content-Type");
       if (DEBUG_SOURCES_QUERY) { System.out.println("Das Response content type: " + content_type); }

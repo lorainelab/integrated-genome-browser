@@ -135,18 +135,19 @@ public class Das2VersionedSource  {
       //      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
       genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
       if (genome == null && coords_uri != null) { // try coordinates
-	System.out.println("tring to match up coordinates: " + coords_uri);
+	//	System.out.println("tring to match up coordinates: " + coords_uri);
 	genome = gmodel.getSeqGroup(coords_uri.toString());
-	if (genome != null)  { System.out.println("  found match: " + genome.getID()); }
-
+	//	if (genome != null)  { System.out.println("  found match: " + genome.getID()); }
       }
       if (genome == null) {
 	// add new seq group -- if has global coordinates uri, then use that
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
+	  System.out.println("@@@@  Adding genome: " + groupid);
 	  genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
 	}
 	else {
+	  System.out.println("@@@@  Adding genome: " + coords_uri);
 	  genome = gmodel.addSeqGroup(coords_uri.toString());
 	}
       }
@@ -158,7 +159,7 @@ public class Das2VersionedSource  {
   void setDescription(String desc) { this.description = desc; }
   void setInfoUrl(String url) { this.info_url = url; }
 
-  public Map getSegments() {
+  public synchronized Map getSegments() {
     if (! regions_initialized)  {
       initSegments();
     }
@@ -184,11 +185,11 @@ public class Das2VersionedSource  {
     return result;
   }
 
-  public void addRegion(Das2Region region) {
+  public synchronized void addRegion(Das2Region region) {
     regions.put(region.getID(), region);
   }
 
-  public void addType(Das2Type type) {
+  public synchronized void addType(Das2Type type) {
     types.put(type.getID(), type);
     String name = type.getName();
     List prevlist = (List)name2types.get(name);
@@ -199,7 +200,7 @@ public class Das2VersionedSource  {
     prevlist.add(type);
   }
 
-  public Map getTypes() {
+  public synchronized Map getTypes() {
     if (! types_initialized || types_filter != null) {
       initTypes(null, false);
     }
@@ -227,7 +228,7 @@ public class Das2VersionedSource  {
   }
 
   /** Get regions from das server. */
-  protected void initSegments() {
+  protected synchronized void initSegments() {
     String region_request;
     if (DO_FILE_TEST)  {
       region_request = test_file;
@@ -279,7 +280,7 @@ public class Das2VersionedSource  {
   /**
    *  loading of parents disabled, getParents currently does nothing
    */
-  protected void initTypes(String filter, boolean getParents) {
+  protected synchronized void initTypes(String filter, boolean getParents) {
     this.types_filter = filter;
     this.clearTypes();
 
@@ -388,7 +389,7 @@ public class Das2VersionedSource  {
    *       For now, trying to just add features directly to seq...)
    *   For now, not allowing combination with any other filters
    */
-  public List getFeaturesByName(String name) {
+  public synchronized List getFeaturesByName(String name) {
     List feats = null;
     try {
       Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);

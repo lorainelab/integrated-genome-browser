@@ -26,7 +26,7 @@ import com.affymetrix.igb.event.*;
 import com.affymetrix.swing.threads.SwingWorker;
 
 public class DasLoadView extends JComponent
-  implements ItemListener, SeqSelectionListener, GroupSelectionListener  {
+  implements ItemListener, SeqSelectionListener, GroupSelectionListener, DataRequestListener {
 
   SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
@@ -254,6 +254,10 @@ public class DasLoadView extends JComponent
     AnnotatedSeqGroup group = evt.getSelectedGroup();
   }
 
+  public boolean dataRequested(DataRequestEvent evt) {
+    return false;
+  }
+
   public static void main(String[] args) {
     DasLoadView testview = new DasLoadView();
     JFrame frm = new JFrame();
@@ -267,4 +271,6 @@ public class DasLoadView extends JComponent
     frm.pack();
     frm.show();
   }
+
+  
 }

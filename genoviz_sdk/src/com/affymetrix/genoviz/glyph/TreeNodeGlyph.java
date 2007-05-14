@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,11 +23,11 @@ import java.awt.image.ImageObserver;
  */
 
 public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
-  // need to generalize the notion of a TreeNodeGlyph, so _any_ glyph can 
+  // need to generalize the notion of a TreeNodeGlyph, so _any_ glyph can
   //    be added to a tree
-  // or, TreeNodeGlyph needs to have a notion of containing two kinds of 
-  //    children -- more TreeNodes, and a collection of other glyphs (labels, 
-  //    icons, 
+  // or, TreeNodeGlyph needs to have a notion of containing two kinds of
+  //    children -- more TreeNodes, and a collection of other glyphs (labels,
+  //    icons,
   public static int OUTLINE = 1000;
   public static int TREE = 1001;
   protected int style = OUTLINE;
@@ -41,7 +41,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
   protected boolean draw_outline = false;  // for debugging bounding rects
   protected boolean draw_branches = true;
   protected Font fnt;
-  protected FontMetrics fm = 
+  protected FontMetrics fm =
      Toolkit.getDefaultToolkit().getFontMetrics(DEFAULT_FONT);
   protected Rectangle2D scratchbox = new Rectangle2D();
   protected Rectangle scratchpix = new Rectangle();
@@ -71,7 +71,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
   public Image getIcon() {
     return icon;
   }
-  
+
   public void addChild(GlyphI child) {
     super.addChild(child);
     child.setVisibility(expanded);
@@ -79,7 +79,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
       ((TreeNodeGlyph)child).setNodeStyle(style);
     }
   }
-  
+
   public void setExpanded(boolean expanded) {
     this.expanded = expanded;
     Vector ch = this.getChildren();
@@ -106,7 +106,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
   }
 
   public Rectangle2D calcUnexpandedCoords(Rectangle2D rect_to_return) {
-    // WARNING -- this assumes TreeNodeGlyph is being used on a non-scaling map, 
+    // WARNING -- this assumes TreeNodeGlyph is being used on a non-scaling map,
     // where 1 coord == 1 pixel
     // need to fix this if using TreeNodeGlyphs on scalable maps!
     //    FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(fnt);
@@ -143,7 +143,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
     view.transformToPixels(scratchbox, scratchpix);
 
     if (style == OUTLINE) {
-      // -2 as a fudge factor to compensate for extra font ascent 
+      // -2 as a fudge factor to compensate for extra font ascent
       //   above max caps on most platforms
       baseline = scratchpix.y + scratchpix.height/2 + text_height/2 - 2;
     }
@@ -194,9 +194,9 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
           break;
         }
       }
-      // draw a vertical line from the node to the middle of the 
+      // draw a vertical line from the node to the middle of the
       // label of the last visible child
-      g.fillRect(pixelbox.x+3, ymin, 1, ymax-ymin); 
+      g.fillRect(pixelbox.x+3, ymin, 1, ymax-ymin);
 
       for (int i=0; i<ch.size(); i++) {
         // children should really be doing this!
@@ -244,7 +244,7 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
   }
 
   /**
-   * Overriding drawSelectedFill(view) to draw a filled background in 
+   * Overriding drawSelectedFill(view) to draw a filled background in
    * selection color, and a normal draw of the TreeNodeGlyph on top.
    */
   public void drawSelectedFill(ViewI view) {
@@ -274,5 +274,4 @@ public class TreeNodeGlyph extends Glyph {  // or should it extend SolidGlyph???
   public int getNodeStyle() {
     return style;
   }
-
 }

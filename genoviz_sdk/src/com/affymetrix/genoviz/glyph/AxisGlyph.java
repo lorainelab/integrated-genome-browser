@@ -170,13 +170,15 @@ public class AxisGlyph extends Glyph {
     this.labelFormat = theFormat;
   }
 
+  //TODO: use a Range object for the range
+  @SuppressWarnings("unchecked")
   public void selectRange ( int[] range ) {
     if ( range.length != 2 ) {
       System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
       return;
     }
     if ( selected_regions == null ) selected_regions = new Vector();
-    selected_regions.addElement ( range );
+    selected_regions.addElement( range );
   }
 
   public void deselectAll () {

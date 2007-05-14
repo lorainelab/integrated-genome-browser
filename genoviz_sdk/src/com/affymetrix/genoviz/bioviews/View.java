@@ -109,21 +109,21 @@ public class View implements ViewI, NeoPaintListener,
   protected Graphics graphics;
   protected boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck;
-  protected Vector mouse_listeners = new Vector();
-  protected Vector mouse_motion_listeners = new Vector();
-  protected Vector key_listeners = new Vector();
+  protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
+  protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
+  protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
 
   /**
    *  Vector of viewbox listeners to be notified immediately _before_
    *    view is drawn with changed bounding box
    */
-  protected Vector predraw_viewbox_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> predraw_viewbox_listeners = new Vector<NeoViewBoxListener>();
 
   /**
    *  Vector of viewbox listeners to be notified immediately _after__
    *    view is drawn with changed bounding box
    */
-  protected Vector viewbox_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
 
   /** fields to help with optimizations **/
   protected boolean scrolling_optimized = false;
@@ -391,8 +391,7 @@ public class View implements ViewI, NeoPaintListener,
         NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, true);
         for (int i=0; i<predraw_viewbox_listeners.size(); i++) {
-          NeoViewBoxListener listener =
-            (NeoViewBoxListener)predraw_viewbox_listeners.elementAt(i);
+          NeoViewBoxListener listener = predraw_viewbox_listeners.elementAt(i);
           listener.viewBoxChanged(nevt);
         }
       }
@@ -1101,7 +1100,7 @@ public class View implements ViewI, NeoPaintListener,
       new NeoViewMouseEvent(e, this, coordrect.x, coordrect.y);
     if (mouse_listeners.size() > 0) {
       for (int i=0; i<mouse_listeners.size(); i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }

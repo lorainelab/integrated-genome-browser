@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -86,10 +86,12 @@ implements NeoAssemblerI, NeoViewBoxListener,
   protected Scene align_scene, label_scene, cons_scene;
   // currently no vertical zooming, so no need for internal vzoom
   protected Adjustable hscroll, vscroll, hzoom;
+
   protected StretchContainerGlyph cglyph;
+
   protected AssemblyPacker apacker;
   protected Vector align_glyphs;
-  protected Vector adapters;
+  protected Vector<NeoDataAdapterI> adapters;
   boolean optimize_scrolling = false;
   boolean optimize_damage = false;
   boolean use_label_arrows = true;
@@ -98,9 +100,9 @@ implements NeoAssemblerI, NeoViewBoxListener,
   protected boolean all_sorted = false;
 
   // hash of alignment glyphs to label glyphs on label map
-  protected Hashtable labelhash = new Hashtable();
+  protected Hashtable<GlyphI,StringGlyph> labelhash = new Hashtable<GlyphI,StringGlyph>();
   // hash of alignment glyphs to arrow glyphs on label map
-  protected Hashtable arrowhash = new Hashtable();
+  protected Hashtable<GlyphI,ArrowGlyph> arrowhash = new Hashtable<GlyphI,ArrowGlyph>();
   // hash of alignment glyphs to alignment Mappings
   //  Hashtable alignhash = new Hashtable();
 
@@ -171,7 +173,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   private int assemblyType = NA_ASSEMBLY;
 
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   protected Character match_char = null;
 
@@ -1316,6 +1318,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   int select_start, select_end;
 
+  @SuppressWarnings("unchecked")
   public void heardMouseEvent(MouseEvent evt) {
     int id = evt.getID();
     Object source = evt.getSource();
@@ -1347,15 +1350,11 @@ implements NeoAssemblerI, NeoViewBoxListener,
           }
         }
 
-        Vector a = (Vector)alignmap.getSelected().clone();
+        Vector<GlyphI> a = (Vector<GlyphI>) alignmap.getSelected().clone();
         // Vector a must be a clone! getSelected() returns the real thing.
-        Enumeration e = consmap.getSelected().elements();
-        while (e.hasMoreElements()) {
-          a.addElement(e.nextElement());
-        }
-        this.selected.removeAllElements();
+        a.addAll(consmap.getSelected());
+        //this.selected.removeAllElements();
         this.selected = a;
-
       }
 
       else if (SELECT_RESIDUES == selection_behavior) {
@@ -1461,7 +1460,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
     selected.removeAllElements();
   }
 
-  public Vector getSelected() {
+  public Vector<GlyphI> getSelected() {
     return selected;
   }
   //-------------------------------------------
@@ -1502,7 +1501,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       throw new NullPointerException("cannot add a null NeoDataAdapterI.");
     }
     if (adapters == null) {
-      adapters = new Vector();
+      adapters = new Vector<NeoDataAdapterI>();
     }
     adapters.addElement(adapter);
   }
@@ -1517,7 +1516,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       throw new NullPointerException("cannot addData if adapters is null.");
     }
     for (int i=0; i<adapters.size(); i++) {
-      da = (NeoDataAdapterI)adapters.elementAt(i);
+      da = adapters.elementAt(i);
       if (da.accepts(obj)) {
         glyph = da.createGlyph(obj);
         return glyph;
@@ -2277,7 +2276,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
             vbox.x, vbox.x + vbox.width);
         NeoRangeListener rl;
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
+          rl = range_listeners.elementAt(i);
           rl.rangeChanged(nevt);
         }
       }

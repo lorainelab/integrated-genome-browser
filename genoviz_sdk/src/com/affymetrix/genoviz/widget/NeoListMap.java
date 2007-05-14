@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -54,7 +54,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     return -1;
   }
 
-  private Vector items = new Vector();
+  private Vector<MapTierGlyph> items = new Vector<MapTierGlyph>();
   private int selectedIndex = -1;
   private Integer itemIndex = new Integer( selectedIndex );
   private MouseListener switcher = new MouseAdapter() {
@@ -100,7 +100,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
   public void clearWidget(){
     super.clearWidget();
     this.lastItem = -1;
-    items = new Vector();
+    items = new Vector<MapTierGlyph>();
     selectedIndex = -1;
   }
 
@@ -190,7 +190,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     int at = this.getSelectedIndex();
     int low = Math.min( from, to );
     int high = Math.max( from, to );
-    Object o = this.items.elementAt( from );
+    MapTierGlyph o = this.items.elementAt( from );
     this.items.removeElementAt( from );
     this.items.insertElementAt( o, to );
     if ( low <= at && at <= high ) {

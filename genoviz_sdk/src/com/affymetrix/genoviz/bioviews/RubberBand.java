@@ -27,7 +27,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
   // need to resolve EventSourceI vs. Component !!!
   protected Component comp;
   protected Color color;
-  protected Vector listeners;
+  protected Vector<NeoRubberBandListener> listeners;
   protected Rectangle pixelbox;
   protected int xorigin, yorigin;
   protected boolean forward, drawn, started;
@@ -49,7 +49,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
    */
   public RubberBand() {
     color = Color.black;
-    listeners = new Vector();
+    listeners = new Vector<NeoRubberBandListener>();
     drawn = false;
     started = false;
     startEventID = MouseEvent.MOUSE_PRESSED;

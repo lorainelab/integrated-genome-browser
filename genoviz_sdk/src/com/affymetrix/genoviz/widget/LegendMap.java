@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -30,9 +30,9 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 
   Color uniform_label_color = null;
   TieredNeoMap map_to_track;
-  Hashtable tier_to_legend = new Hashtable();
-  Hashtable legend_to_tier = new Hashtable();
-  Vector legend_glyphs = new Vector();
+  Hashtable<MapTierGlyph,LegendGlyph> tier_to_legend = new Hashtable<MapTierGlyph,LegendGlyph>();
+  Hashtable<LegendGlyph,MapTierGlyph> legend_to_tier = new Hashtable<LegendGlyph,MapTierGlyph>();
+  Vector<LegendGlyph> legend_glyphs = new Vector<LegendGlyph>();
   boolean debug_events = false;
   Color expanded_color = Color.white;
   Color collapsed_color = Color.black;
@@ -49,9 +49,9 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 
   public void clearWidget() {
     super.clearWidget();
-    tier_to_legend = new Hashtable();
-    legend_to_tier = new Hashtable();
-    legend_glyphs = new Vector();
+    tier_to_legend = new Hashtable<MapTierGlyph,LegendGlyph>();
+    legend_to_tier = new Hashtable<LegendGlyph,MapTierGlyph>();
+    legend_glyphs = new Vector<LegendGlyph>();
   }
 
   public void setExpandedColor( Color expanded_color ) {

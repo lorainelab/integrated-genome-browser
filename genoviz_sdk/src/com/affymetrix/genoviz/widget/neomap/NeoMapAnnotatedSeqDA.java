@@ -32,7 +32,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import java.awt.Frame; // Just for testing.
-import java.awt.Frame; // Just for testing.
 import java.awt.Color;
 
 /**
@@ -113,8 +112,8 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
     int highEnd = Integer.MIN_VALUE;
     int lowEnd = Integer.MAX_VALUE;
 
-    Hashtable featureTypes = new Hashtable();
-    Hashtable pieceGlyphs = new Hashtable();
+    Hashtable<String,MapGlyphFactory> featureTypes = new Hashtable<String,MapGlyphFactory>();
+    Hashtable<String,MapGlyphFactory> pieceGlyphs = new Hashtable<String,MapGlyphFactory>();
 
     int length = 0;
     this.sequence = theSequence.getSequence();

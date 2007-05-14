@@ -19,15 +19,12 @@ import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.TransformI;
@@ -35,10 +32,8 @@ import com.affymetrix.genoviz.bioviews.View;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoViewMouseEvent;
-import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.pseudoswing.*;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
 
@@ -130,7 +125,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected String hscroll_loc = hscroll_default_loc;
   protected String vscroll_loc = vscroll_default_loc;
 
-  protected Vector rubberband_listeners = new Vector();
+  protected Vector<NeoRubberBandListener> rubberband_listeners = new Vector<NeoRubberBandListener>();
 
 
   public NeoWidget() {
@@ -323,7 +318,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // SHOULD THIS BE getViewBounds() INSTEAD!!??!!!
     //    WHICH GLYPHS DO WE REALLY WANT TO RETURN????
     Rectangle2D coordrect = getCoordBounds();
-    Vector pickvect = new Vector();
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
@@ -333,8 +328,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *  retrieve a Vector of all drawn glyphs that overlap
    *  the coordinate rectangle coordrect.
    */
-  public Vector getItemsByCoord(Rectangle2D coordrect) {
-    Vector pickvect = new Vector();
+  public Vector<GlyphI> getItemsByCoord(Rectangle2D coordrect) {
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
@@ -371,7 +366,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @return the overlapping glyphs
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
    */
-  public Vector getItems(double x, double y) {
+  public Vector<GlyphI> getItems(double x, double y) {
     Rectangle2D coordrect = new Rectangle2D(x, y, 1, 1);
     if (0 < pixelblur) {
       Rectangle pixrect = new Rectangle();
@@ -383,14 +378,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return getItemsByCoord(coordrect);
   }
 
-  public Vector getItems(double x, double y, int location) {
+  public Vector<GlyphI> getItems(double x, double y, int location) {
     return getItems(x,y);
   }
 
 
-  /**
-   * To Be Done.
-   */
   public NeoWidgetI getWidget(int location) { return this; }
 
     public NeoWidgetI getWidget(GlyphI gl) {
@@ -978,7 +970,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param datamodel being visualized.
    * @return a Vector of all the glyphs tied to the given data model.
    */
+   @SuppressWarnings("unchecked")
    public Vector getItems(Object datamodel) {
+    Collections.singletonList(datamodel);
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;
@@ -1265,7 +1259,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public boolean isOnTop(GlyphI gl) {
     if (!gl.isVisible()) { return false; }
     Rectangle2D cbox = gl.getCoordBox();
-    Vector pickvect = new Vector();
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     getScene().pickTraversal(cbox, pickvect, getView());
     if (pickvect.size() == 0) {
       // something very strange is going on if pickvect doesn't at

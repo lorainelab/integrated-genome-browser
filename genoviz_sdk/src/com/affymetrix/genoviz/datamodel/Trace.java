@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -43,9 +43,9 @@ public class Trace implements TraceI {
 
   protected String name;
 
-  protected Vector baseVector;
-  protected Vector sampleVector;
-  protected Hashtable baseHashtable;
+  protected Vector<BaseCall> baseVector;
+  protected Vector<TraceSample> sampleVector;
+  protected Hashtable<Integer,BaseCall> baseHashtable;
   protected StringBuffer seqBuffer;
 
   protected int left_clip;
@@ -59,9 +59,9 @@ public class Trace implements TraceI {
   private BaseCalls activeBaseCalls;
 
   public Trace() {
-    sampleVector = new Vector();
-    baseVector = new Vector();
-    baseHashtable = new Hashtable();
+    sampleVector = new Vector<TraceSample>();
+    baseVector = new Vector<BaseCall>();
+    baseHashtable = new Hashtable<Integer,BaseCall>();
     seqBuffer = new StringBuffer();
   }
 
@@ -79,7 +79,7 @@ public class Trace implements TraceI {
    * @return a Vector of TraceSamples,
    * one for each data point in the trace.
    */
-  public Vector getSampleVector() {
+  public Vector<TraceSample> getSampleVector() {
     return sampleVector;
   }
 
@@ -103,15 +103,7 @@ public class Trace implements TraceI {
    * one for each base called in the trace.
    */
   public BaseCall[] getBaseArray() {
-    BaseCall[] cba = new BaseCall[baseVector.size()];
-    Enumeration e = baseVector.elements();
-    int i = 0;
-    while (e.hasMoreElements()) {
-      BaseCall cb = (BaseCall) e.nextElement();
-      cba[i] = cb;
-      i++;
-    }
-    return cba;
+    return baseVector.toArray(new BaseCall[baseVector.size()]);
   }
 
   /**
@@ -153,14 +145,14 @@ public class Trace implements TraceI {
    * @return the TraceSample for the indexed data point.
    */
   public TraceSample sampleAt(int index) {
-    return (TraceSample) (sampleVector.elementAt(index));
+    return sampleVector.elementAt(index);
   }
 
   /**
    * @return the BaseCall made at the indexed data point.
    */
   public BaseCall getBaseAtSampleIndex(int index) {
-    return (BaseCall) baseHashtable.get(new Integer(index));
+    return baseHashtable.get(index);
   }
 
   /**
@@ -326,8 +318,8 @@ public class Trace implements TraceI {
 
   public void replaceBaseCalls( BaseCall[] theCall ) {
     int i = this.baseVector.size();
-    baseHashtable = new Hashtable(i);
-    baseVector = new Vector(i);
+    baseHashtable = new Hashtable<Integer,BaseCall>(i);
+    baseVector = new Vector<BaseCall>(i);
     seqBuffer = new StringBuffer(i);
     for ( i = 0; i < theCall.length; i++ ) {
       addBase( theCall[i] );
@@ -355,7 +347,7 @@ public class Trace implements TraceI {
    */
   public Trace reverseComplement() {
     Trace rev = new Trace();
-    Vector rev_samples = new Vector();
+    Vector<TraceSample> rev_samples = new Vector<TraceSample>();
     int num_samples = sampleVector.size();
     TraceSample sample, rev_sample;
 
@@ -374,7 +366,7 @@ public class Trace implements TraceI {
     // It is here for backward compatibility.
     BaseCall base;
     for (int i = baseVector.size() - 1; i >= 0; i--) {
-      base = ((BaseCall) baseVector.elementAt(i)).reverseComplement(num_samples);
+      base = baseVector.elementAt(i).reverseComplement(num_samples);
       rev.addBase(base);
     }
 

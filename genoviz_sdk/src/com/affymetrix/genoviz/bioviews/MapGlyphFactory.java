@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.util.Debug;
 public class MapGlyphFactory implements NeoConstants  {
 
   protected int orient;  // orientation, default to HORIZONTAL
-  protected static Hashtable colormap = GeneralUtils.getColorMap();
+  protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
   protected String name;
   protected Scene scene;
   protected Color color, default_color, foreground_color, default_foreground;
@@ -49,7 +49,7 @@ public class MapGlyphFactory implements NeoConstants  {
 
   protected Class glyphtype, default_glyphtype;
   protected String packerstring, glyphstring;
-  protected Hashtable default_options;
+  protected Hashtable<String,String> default_options;
 
   /**
    * creates a horizontally oriented factory.
@@ -93,7 +93,7 @@ public class MapGlyphFactory implements NeoConstants  {
    * @see #configure(Hashtable)
    */
   public void configure(String options) {
-    Hashtable options_hash = GeneralUtils.parseOptions(options);
+    Hashtable<String,Object> options_hash = GeneralUtils.parseOptions(options);
     configure(options_hash);
   }
 
@@ -125,7 +125,7 @@ public class MapGlyphFactory implements NeoConstants  {
    * (orthogonal to the primary axis)</td></tr>
    * </table>
    */
-  public void configure(Hashtable options) {
+  public void configure(Hashtable<String,Object> options) {
     configureTemp(options);
     default_color = color;
     default_width = width;
@@ -234,7 +234,7 @@ public class MapGlyphFactory implements NeoConstants  {
     this.default_packer = packer;
   }
 
-  protected void configureTemp(Hashtable options) {
+  protected void configureTemp(Hashtable<String,Object> options) {
     if (options == null) {
       return;
     }
@@ -440,7 +440,7 @@ public class MapGlyphFactory implements NeoConstants  {
 
       if (packer != null) {
         packer.pack((GlyphI)scene.getGlyph(), (GlyphI)item,
-            (ViewI)scene.getViews().elementAt(0));
+          scene.getViews().elementAt(0));
       }
 
     } catch( InstantiationException ie ) {
@@ -467,7 +467,7 @@ public class MapGlyphFactory implements NeoConstants  {
    * @see #configure(String)
    */
   public GlyphI makeGlyph(double beg, double end, String options) {
-    Hashtable options_hash = GeneralUtils.parseOptions(options);
+    Hashtable<String,Object> options_hash = GeneralUtils.parseOptions(options);
     return makeGlyph(beg, end, options_hash);
   }
 
@@ -485,7 +485,7 @@ public class MapGlyphFactory implements NeoConstants  {
    * @see #makeGlyph(double, double)
    * @see #configure(Hashtable)
    */
-  public GlyphI makeGlyph(double beg, double end, Hashtable options) {
+  public GlyphI makeGlyph(double beg, double end, Hashtable<String,Object> options) {
     // set configuration fields based on options hash
     configureTemp(options);
     // make the glyph, based on configuration fields
@@ -520,21 +520,21 @@ public class MapGlyphFactory implements NeoConstants  {
     return makeItem((double)beg, (double)end, options);
   }
   public GlyphI makeItem(double beg, double end, String options) {
-    Hashtable options_hash = GeneralUtils.parseOptions(options);
+    Hashtable<String,Object> options_hash = GeneralUtils.parseOptions(options);
     return makeItem(beg, end, options_hash);
   }
 
   /**
    * @see #makeItem(double, double)
    */
-  public GlyphI makeItem(int beg, int end, Hashtable options)  {
+  public GlyphI makeItem(int beg, int end, Hashtable<String,Object> options)  {
     return makeItem((double)beg, (double)end, options);
   }
 
   /**
    * @see #makeItem(double, double)
    */
-  public GlyphI makeItem(double beg, double end, Hashtable options)  {
+  public GlyphI makeItem(double beg, double end, Hashtable<String,Object> options)  {
     // set configuration fields based on options hash
     configureTemp(options);
     // make the glyph, based on configuration fields

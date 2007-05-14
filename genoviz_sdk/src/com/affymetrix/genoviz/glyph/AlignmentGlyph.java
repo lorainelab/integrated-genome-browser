@@ -95,8 +95,8 @@ implements Comparable {
   // keeping separate vectors for aligned span children and
   // unaligned span children (otherwise there's no real way to
   // distinguish them)
-  protected Vector unaligned_spans = new Vector();
-  protected Vector aligned_spans = new Vector();
+  protected Vector<GlyphI> unaligned_spans = new Vector<GlyphI>();
+  protected Vector<GlyphI> aligned_spans = new Vector<GlyphI>();
 
   private ArrowGlyph arrow = new ArrowGlyph();
 

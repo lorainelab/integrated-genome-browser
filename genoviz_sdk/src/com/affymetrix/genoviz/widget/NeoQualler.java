@@ -90,7 +90,7 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
   protected Selection sel_range;
 
   protected Range range;
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   public NeoQualler() {
     super();
@@ -513,7 +513,7 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
     throw new RuntimeException("deselect not yet implemented.");
   }
 
-  public Vector getSelected() {
+  public Vector<GlyphI> getSelected() {
     return selected;
   }
 

@@ -31,7 +31,7 @@ public class Scene implements SceneI  {
   private static final boolean debug = false;
 
   protected GlyphI eveGlyph;
-  protected Vector views, listeners;
+  protected Vector<ViewI> views;
   protected Color select_color;
   protected int select_style;
 
@@ -47,9 +47,9 @@ public class Scene implements SceneI  {
    * Vector of transient glyphs that are "layered" on top of views
    * after all other glyphs have been drawn.
    */
-  protected Vector transients;
+  protected Vector<TransientGlyph> transients;
 
-  protected Vector adapters;
+  protected Vector<NeoDataAdapterI> adapters;
 
   public Scene ()  {
     /*
@@ -63,7 +63,7 @@ public class Scene implements SceneI  {
     eveGlyph = new RootGlyph();
     eveGlyph.setScene(this);
     eveGlyph.setCoords(0,0,1,1);
-    views = new Vector();
+    views = new Vector<ViewI>();
     select_color = Color.red;
     select_style = SELECT_FILL;
     scratchCoordBox = new Rectangle2D();
@@ -148,7 +148,7 @@ public class Scene implements SceneI  {
   /**
    * Returns a vector of the views that are currently representing the scene.
    */
-  public Vector getViews()  {
+  public Vector<ViewI> getViews()  {
     return views;
   }
 
@@ -170,7 +170,7 @@ public class Scene implements SceneI  {
   public void draw()  {
     int i = 0;
     while (i < views.size())  {
-      ((ViewI)views.elementAt(i)).draw();
+      (views.elementAt(i)).draw();
       i++;
     }
     clearDamage();
@@ -191,7 +191,7 @@ public class Scene implements SceneI  {
     ViewI view;
     int i = 0;
     while (i < views.size())  {
-      view = (ViewI)views.elementAt(i);
+      view = views.elementAt(i);
       if (view.getComponent() == c)  {
         view.setGraphics (g);
         view.draw();
@@ -214,7 +214,7 @@ public class Scene implements SceneI  {
   // should really move data adapters out to widgets...
   public void addDataAdapter(NeoDataAdapterI adapter) {
     if (adapters == null) {
-      adapters = new Vector();
+      adapters = new Vector<NeoDataAdapterI>();
     }
     adapters.addElement(adapter);
     adapter.setScene(this);
@@ -234,7 +234,7 @@ public class Scene implements SceneI  {
       return null;
     }
     for (int i=0; i<adapters.size(); i++) {
-      da = (NeoDataAdapterI)adapters.elementAt(i);
+      da = adapters.elementAt(i);
       if (da.accepts(obj)) {
         glyph = da.createGlyph(obj);
         if (glyph != null) {
@@ -246,12 +246,12 @@ public class Scene implements SceneI  {
     return null;
   }
 
-  public void pickTraversal(Rectangle2D coordrect, Vector pickvect,
+  public void pickTraversal(Rectangle2D coordrect, Vector<GlyphI> pickvect,
       ViewI view) {
     eveGlyph.pickTraversal(coordrect, pickvect, view);
   }
 
-  public void pickTraversal(Rectangle coordrect, Vector pickvect,
+  public void pickTraversal(Rectangle coordrect, Vector<GlyphI> pickvect,
       ViewI view) {
     eveGlyph.pickTraversal(coordrect, pickvect, view);
   }
@@ -521,7 +521,7 @@ public class Scene implements SceneI  {
 
   protected void addTransient(TransientGlyph tg) {
     if (transients == null) {
-      transients = new Vector();
+      transients = new Vector<TransientGlyph>();
     }
     transients.addElement(tg);
   }

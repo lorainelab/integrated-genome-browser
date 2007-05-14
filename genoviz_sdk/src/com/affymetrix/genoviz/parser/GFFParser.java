@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -78,7 +78,7 @@ public class GFFParser implements ContentParser {
    */
   public Object importContent( InputStream theInput ) throws IOException {
 
-    Hashtable annoSeqs = new Hashtable();
+    Hashtable<String,AnnotatedSequence> annoSeqs = new Hashtable<String,AnnotatedSequence>();
 
     InputStreamReader in = new InputStreamReader( theInput );
     StreamTokenizer tokens = new StreamTokenizer( in );
@@ -126,27 +126,17 @@ public class GFFParser implements ContentParser {
       return o;
     }
     else {
-      Vector v = new Vector( annoSeqs.size() );
-      Enumeration e = annoSeqs.elements();
-      while ( e.hasMoreElements() ) {
-        Object o = e.nextElement();
-        v.addElement( o );
-      }
-      return v;
+      return new Vector<AnnotatedSequence>( annoSeqs.values() );
     }
 
   }
 
-  private AnnotatedSequence getAnnotSeq( String theName, Hashtable theSeqs ) {
-    AnnotatedSequence as;
-    Object o = theSeqs.get( theName );
-    if ( null == o ) {
+  private AnnotatedSequence getAnnotSeq( String theName, Hashtable<String,AnnotatedSequence> theSeqs ) {
+    AnnotatedSequence as = theSeqs.get( theName );
+    if ( null == as ) {
       as = new AnnotatedSequence();
       as.addIdentifier( theName );
       theSeqs.put( theName, as );
-    }
-    else {
-      as = (AnnotatedSequence) o;
     }
     return as;
   }
@@ -166,7 +156,7 @@ public class GFFParser implements ContentParser {
    * @param theSeqs contains the annotated sequences
    * where our sequences is stored.
    */
-  protected void parseMetaLine(StreamTokenizer theTokens, Hashtable theSeqs)
+  protected void parseMetaLine(StreamTokenizer theTokens, Hashtable<String,AnnotatedSequence> theSeqs)
     throws IOException {
     int token = theTokens.nextToken();
     switch (token) {
@@ -271,7 +261,7 @@ public class GFFParser implements ContentParser {
    */
   protected void parseLine(int token,
                            StreamTokenizer tokens,
-                           Hashtable theSeqs)
+                           Hashtable<String,AnnotatedSequence> theSeqs)
     throws IOException {
     SeqFeatureI f = null;
     String source = null;

@@ -33,7 +33,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
   protected boolean dragging_outside = false;
   protected boolean grab_focus_on_click = true;
   protected boolean focus_traversable = true;
-  protected Vector paint_listeners = new Vector();
+  protected Vector<NeoPaintListener> paint_listeners = new Vector<NeoPaintListener>();
 
 
   /**

@@ -21,14 +21,11 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.bioviews.Scene;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
@@ -40,9 +37,6 @@ import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
-
-import com.affymetrix.genoviz.widget.neomap.*;
 
 /**
  * NeoMap is the <strong>implementation</strong> of NeoMapI.
@@ -95,11 +89,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   // a vector of axes added to the map
   // this is maintained in order to stretch them
   // when the range coords of the map change.
-  private Vector axes = new Vector();
+  private Vector<AxisGlyph> axes = new Vector<AxisGlyph>();
 
   // fields for map glyph factories
   // a hashtable to map name strings to MapGlyphFactories
-  Hashtable factory_hash;
+  // TODO: Use MapGlyphFactoryI ?
+  Hashtable<String,MapGlyphFactory> factory_hash;
 
   // fields to keep track of whether ranges have been explicitly set or not
   boolean axis_range_set = false;
@@ -118,8 +113,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   boolean drag_scrolling_enabled = false;
 
   protected int selectionMethod = NO_SELECTION;
-  protected Vector viewbox_listeners = new Vector();
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   /**
    * Constructs a horizontal NeoMap with scrollbars.
@@ -339,9 +334,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
     }
 
-    factory_hash = new Hashtable();
-    glyph_hash = new Hashtable();
-    model_hash = new Hashtable();
+    factory_hash = new Hashtable<String,MapGlyphFactory>();
+    glyph_hash = new Hashtable<GlyphI,Object>();
+    model_hash = new Hashtable<Object,Object>();
 
     // defaults to black background!!!
     setBackground(default_panel_background);
@@ -880,12 +875,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   public MapGlyphFactory addFactory(String config_string) {
-    Hashtable config_hash = null;
+    Hashtable<String,Object> config_hash = null;
     config_hash = GeneralUtils.parseOptions(config_string);
     return addFactory(config_hash);
   }
 
-  public MapGlyphFactory addFactory(Hashtable config_hash) {
+  public MapGlyphFactory addFactory(Hashtable<String,Object> config_hash) {
 
     MapGlyphFactory fac = new MapGlyphFactory(orient);
     fac.setScene(scene);
@@ -1102,10 +1097,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     scene.setGlyph(neweve);
 
     // reset glyph_hash
-    glyph_hash = new Hashtable();
+    glyph_hash = new Hashtable<GlyphI,Object>();
 
     // reset model_hash
-    model_hash = new Hashtable();
+    model_hash = new Hashtable<Object,Object>();
 
     // reset axes
     axes.removeAllElements();
@@ -1392,7 +1387,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * {"option1" ==&gt; "value1",<BR>
    *  "option2" ==&gt; "value2", ...}<BR>
    */
-  public void configure(Hashtable options) {
+  public void configure(Hashtable<String,Object> options) {
     default_factory.configure(options);
   }
 
@@ -1550,12 +1545,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {
           this.deselect(prev_items);
         }
-        Vector candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
+        Vector<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
         if (candidates.size() > 0 && (shiftDown || controlDown)) {
-          Enumeration it = candidates.elements();
-          Vector in = new Vector(), out = new Vector();
-          while (it.hasMoreElements()) {
-            Object obj = it.nextElement();
+
+          Vector<GlyphI> in = new Vector<GlyphI>(), out = new Vector<GlyphI>();
+          for (GlyphI obj : candidates) {
             if (prev_items.contains(obj)) {
               out.addElement(obj);
             }

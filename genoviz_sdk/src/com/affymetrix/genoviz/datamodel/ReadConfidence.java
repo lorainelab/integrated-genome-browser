@@ -27,14 +27,14 @@ import java.util.StringTokenizer;
 public class ReadConfidence
 {
 
-  private Vector qualityVector;
+  private Vector<BaseConfidence> qualityVector;
   private int maxConfidence = 0;
 
   /**
    * creates an empty ReadConfidence.
    */
   public ReadConfidence() {
-    this.qualityVector = new Vector();
+    this.qualityVector = new Vector<BaseConfidence>();
   }
 
   /** @return the number of bases called (read). */

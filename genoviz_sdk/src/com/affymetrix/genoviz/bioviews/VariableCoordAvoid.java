@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.util.*;
-import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 
 /**
@@ -47,7 +46,7 @@ public class VariableCoordAvoid extends AbstractCoordPacker {
 
     if (children == null) { return null; }
 
-    Vector sibsinrange = new Vector();
+    Vector<GlyphI> sibsinrange = new Vector<GlyphI>();
     GlyphI sibling;
     int i, j;
     for (i=0; i<children.size(); i++) {

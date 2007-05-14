@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -15,8 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.util.*;
-
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -465,7 +463,7 @@ public interface NeoMapI extends NeoWidgetI {
    *   factory.
    * @return the MapGlyphFactory created
    */
-  public MapGlyphFactory addFactory(Hashtable config);
+  public MapGlyphFactory addFactory(Hashtable<String,Object> config);
 
 
   /**
@@ -524,7 +522,7 @@ public interface NeoMapI extends NeoWidgetI {
    *    ...<BR>
    *  }
    */
-  public void configure(Hashtable options);
+  public void configure(Hashtable<String,Object> options);
 
   /**
    * Add a previously created GlyphI to a map.

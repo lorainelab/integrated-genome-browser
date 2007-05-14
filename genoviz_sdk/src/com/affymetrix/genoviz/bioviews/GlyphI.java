@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -116,7 +116,7 @@ public interface GlyphI extends NeoConstants  {
    *
    * @return a Vector containing the children.
    */
-  public Vector getChildren();
+  public Vector<GlyphI> getChildren();
 
   /**
    *  Returns number of child glyph's this glyph has.
@@ -292,13 +292,13 @@ public interface GlyphI extends NeoConstants  {
    * Searches children for hits and add them to the pick vector.
    * @param pickvec modified by this routine to return the results
    */
-  public void pickTraversal(Rectangle pickrect, Vector pickvec, ViewI view);
+  public void pickTraversal(Rectangle pickrect, Vector<GlyphI> pickvec, ViewI view);
 
   /**
    * Searches children for hits and add them to the pick vector.
    * @param pickvec modified by this routine to return the results
    */
-  public void pickTraversal(Rectangle2D pickrect, Vector pickvec, ViewI view);
+  public void pickTraversal(Rectangle2D pickrect, Vector<GlyphI> pickvec, ViewI view);
 
 
   /**

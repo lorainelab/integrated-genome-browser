@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -38,7 +38,7 @@ public class MultiSeqAlign {
 
   String consensus = null;
   String consensusName = null;
-  Hashtable seqs = new Hashtable();
+  Hashtable<String,AlignSequence> seqs = new Hashtable<String,AlignSequence>();
 
   /**
    * sets a consensus sequence
@@ -139,14 +139,8 @@ public class MultiSeqAlign {
    * @return <code>java.lang.String</code>s
    *         representing the residues in each sequence.
    */
-  public Enumeration sequences() {
-    Vector v = new Vector();
-    Enumeration e = seqs.elements();
-    while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-    }
-    return v.elements();
+  public Enumeration<AlignSequence> sequences() {
+    return seqs.elements();
   }
 
   /**
@@ -156,7 +150,7 @@ public class MultiSeqAlign {
    * @return the names of the sequences.
    * Each name is a <code>java.lang.String</code>.
    */
-  public Enumeration sequenceNames() {
+  public Enumeration<String> sequenceNames() {
     return seqs.keys();
   }
 
@@ -169,17 +163,16 @@ public class MultiSeqAlign {
    */
   public String buildAssembly() {
 
-    Enumeration e = this.sequences();
-    Vector v = new Vector();
+    Enumeration<AlignSequence> e = this.sequences();
+    Vector<AlignSequence> v = new Vector<AlignSequence>();
     StringBuffer con = new StringBuffer();
 
     while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-      AlignSequence s = (AlignSequence) o;
+      AlignSequence s = e.nextElement();
+      v.addElement(s);
     }
 
-    int length = ((AlignSequence) v.elementAt(0)).getAlignEnd();
+    int length = v.elementAt(0).getAlignEnd();
 
     for (int i=0; i < length; i++) {
       char c = ' ';
@@ -228,17 +221,16 @@ public class MultiSeqAlign {
    */
   public String buildConsensus() {
 
-    Enumeration e = this.sequences();
-    Vector v = new Vector();
+    Enumeration<AlignSequence> e = this.sequences();
+    Vector<AlignSequence> v = new Vector<AlignSequence>();
     StringBuffer con = new StringBuffer();
 
     while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-      AlignSequence s = (AlignSequence) o;
+      AlignSequence s = e.nextElement();
+      v.addElement(s);
     }
 
-    int length = ((AlignSequence) v.elementAt(0)).getAlignEnd();
+    int length = v.elementAt(0).getAlignEnd();
 
     for (int i=0; i < length; i++) {
       char c = ' ';

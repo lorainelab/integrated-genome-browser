@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -45,8 +45,8 @@ public abstract class AbstractTieredMap
   public boolean debug_events = false; // for debugging only
   public String name; // for debugging only
 
-  protected Vector tiers            = new Vector();
-  private Vector tierEventListeners = new Vector();
+  protected Vector<MapTierGlyph> tiers = new Vector<MapTierGlyph>();
+  private Vector<TierEventListener> tierEventListeners = new Vector<TierEventListener>();
   private boolean notifyingListeners = false;
 
   /**
@@ -88,21 +88,21 @@ public abstract class AbstractTieredMap
   /**
    * Add a listener to the audience.
    */
-  public synchronized void addTierEventListener (TierEventListener tel) {
-    tierEventListeners.addElement (tel);
+  public synchronized void addTierEventListener(TierEventListener tel) {
+    tierEventListeners.addElement(tel);
   }
 
   /**
    * Remove a listener from the audience.
    */
-  public synchronized void removeTierEventListener (TierEventListener tel) {
-    tierEventListeners.removeElement (tel);
+  public synchronized void removeTierEventListener(TierEventListener tel) {
+    tierEventListeners.removeElement(tel);
   }
 
   /**
    * Tell all listeners of an event.
    */
-  public synchronized void notifyTierEventListeners (TierEvent evt) {
+  public synchronized void notifyTierEventListeners(TierEvent evt) {
     if (debug_events) {
       if (evt.getTier() == null) {
         System.out.println(name + " notifying listeners of event: " +
@@ -119,7 +119,7 @@ public abstract class AbstractTieredMap
     int tot = tierEventListeners.size();
     notifyingListeners = true;
     for (int i=0; i < tot; i++) {
-      ((TierEventListener) tierEventListeners.elementAt(i)).heardTierEvent(evt);
+      (tierEventListeners.elementAt(i)).heardTierEvent(evt);
     }
     notifyingListeners = false;
   }
@@ -287,7 +287,7 @@ public abstract class AbstractTieredMap
        m.removeChildren();
     }
     super.clearWidget();
-    tiers = new Vector();
+    tiers = new Vector<MapTierGlyph>();
   }
 
   /**
@@ -351,7 +351,7 @@ public abstract class AbstractTieredMap
     if ( from == to ) { // null operation
       return;
     }
-    MapTierGlyph mtg = (MapTierGlyph) tiers.elementAt( from );
+    MapTierGlyph mtg = tiers.elementAt( from );
     tiers.removeElementAt( from );
     tiers.insertElementAt( mtg, to );
 

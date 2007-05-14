@@ -188,7 +188,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
   }
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Vector sibs;
+    Vector<GlyphI> sibs;
     GlyphI child;
 
     sibs = parent.getChildren();
@@ -319,16 +319,16 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     childbox = child.getCoordBox();
 
-    Vector sibs = parent.getChildren();
+    Vector<? extends GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
 
-    Vector sibsinrange;
+    Vector<GlyphI> sibsinrange;
 
     if (parent instanceof MapTierGlyph && use_search_nodes) {
       sibsinrange = ((MapTierGlyph)parent).getOverlappingSibs(child);
     }
     else {
-      sibsinrange = new Vector();
+      sibsinrange = new Vector<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
         GlyphI sibling = (GlyphI)sibs.elementAt(i);

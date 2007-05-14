@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -108,8 +108,8 @@ public class ComponentPagePrinter implements Printable {
     g2.translate(pXStart, pYStart);
     g2.scale(xRatio, yRatio);
 
-    Vector neo_comps = new Vector();
-    Vector buf_states = new Vector();
+    Vector<NeoBufferedComponent> neo_comps = new Vector<NeoBufferedComponent>();
+    Vector<Boolean> buf_states = new Vector<Boolean>();
     if (DISABLE_NEO_BUFFERING) {
       // turning double buffering off in NeoBufferedComponents
       turnNeoBufferingOff(comp, neo_comps, buf_states);
@@ -139,7 +139,7 @@ public class ComponentPagePrinter implements Printable {
   // recursively descend into children, searching for NeoBufferedComponents,
   //    recording their double-buffering status (in neo_comps and buf_states vectors),
   //    then turning double buffering off
-  public void turnNeoBufferingOff(Component com, Vector neo_comps, Vector buf_states) {
+  public void turnNeoBufferingOff(Component com, Vector<NeoBufferedComponent> neo_comps, Vector<Boolean> buf_states) {
     if (com instanceof NeoBufferedComponent) {
       NeoBufferedComponent nbc = (NeoBufferedComponent)com;
       boolean buffered = nbc.isDoubleBuffered();
@@ -165,10 +165,10 @@ public class ComponentPagePrinter implements Printable {
 
   // restore buffer state of NeoBufferedComponents,
   //   based on neo_comps and buf_states Vectors
-  public void restoreNeoBuffering(Vector neo_comps, Vector buf_states) {
+  public void restoreNeoBuffering(Vector<NeoBufferedComponent> neo_comps, Vector<Boolean> buf_states) {
     for (int i=0; i<neo_comps.size(); i++) {
-      NeoBufferedComponent nbc = (NeoBufferedComponent)neo_comps.elementAt(i);
-      boolean buffered = ((Boolean)buf_states.elementAt(i)).booleanValue();
+      NeoBufferedComponent nbc = neo_comps.elementAt(i);
+      boolean buffered = buf_states.elementAt(i);
       if (DEBUG)  {
         System.out.println("restoring buffering in " + nbc +
             ", buffer state: " + buffered);

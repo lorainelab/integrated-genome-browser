@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -62,7 +62,8 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
     this.clip_new_ranges = clip_new_ranges;
   }
 
-  private void mergeRange ( int[] new_range ) {
+  @SuppressWarnings("unchecked")
+  private void mergeRange( int[] new_range ) {
     // first, make sure that the new range doesn't overlap with old secondary selections.  Clip and separate as necessary to prevent redundancy.
     int[] old_range;
     if ( clip_new_ranges ) {
@@ -104,7 +105,7 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
       // case 3:
       if ( new_range[0] < old_range[0] && new_range[1] > old_range[1] ) {
         primary_selections.removeElementAt ( i );
-        primary_selections.addElement ( new_range );
+        primary_selections.addElement( new_range );
         return;
       }
       // case 4:
@@ -139,9 +140,9 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   /**
    * Converts all primary selections to secondary selections.
    */
+  @SuppressWarnings("unchecked")
   public void convertRanges () {
-    for ( int i = 0; i < primary_selections.size(); i++ )
-      secondary_selections.addElement ( primary_selections.elementAt(i) );
+    secondary_selections.addAll(primary_selections);
     primary_selections.removeAllElements();
   }
 

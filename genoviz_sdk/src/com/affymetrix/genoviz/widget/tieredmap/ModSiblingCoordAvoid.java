@@ -32,7 +32,7 @@ public class ModSiblingCoordAvoid extends AbstractCoordPacker {
 
     if (children == null) { return null; }
 
-    Vector sibsinrange = new Vector();
+    Vector<GlyphI> sibsinrange = new Vector<GlyphI>();
     boolean hit = true;
     GlyphI sibling;
     int i, j;

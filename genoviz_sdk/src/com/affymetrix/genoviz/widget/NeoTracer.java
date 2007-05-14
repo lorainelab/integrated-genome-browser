@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -77,8 +77,8 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   protected TraceI trace;
   protected TraceGlyph trace_glyph;
 
-  protected Vector base_calls_vector; // vector of BaseCalls;
-  protected Vector base_glyphs; // vector of TraceBaseGlyphs
+  protected Vector<BaseCalls> base_calls_vector; // vector of BaseCalls's;
+  protected Vector<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
   private AsymAxisGlyph base_axis;
   private TraceBaseGlyph activeBaseCallsGlyph;
 
@@ -87,7 +87,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   private Mapping cons_aligner; // aligns the consensus
   private Mapping active_aligner; // aligns the active BaseCalls object with the consensus
 
-  private Vector base_listeners = new Vector();
+  private Vector<NeoBaseSelectListener> base_listeners = new Vector<NeoBaseSelectListener>();
 
   protected Glyph line_glyph;
   protected FillRectGlyph left_trim_glyph, right_trim_glyph;
@@ -113,7 +113,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   protected boolean hscroll_show, hzoom_show, vzoom_show;
 
   protected Range range;
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   /**
    * constructs a NeoTracer using all the built-in controls.
@@ -154,8 +154,8 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     trace_map = new NeoMap(false, false);
     base_map = new NeoMap(false, false);
 
-    base_calls_vector = new Vector();
-    base_glyphs = new Vector();
+    base_calls_vector = new Vector<BaseCalls>();
+    base_glyphs = new Vector<TraceBaseGlyph>();
 
     this.setBackground(default_panel_background);
     trace_map.setMapColor(default_trace_background);
@@ -1285,19 +1285,16 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     boolean cViz = getBaseVisibility( C );
     boolean gViz = getBaseVisibility( G );
     boolean tViz = getBaseVisibility( T );
-    Vector newBaseCalls = new Vector();
-    Enumeration e = base_calls_vector.elements();
-    while( e.hasMoreElements() ) {
-      BaseCalls bc = (BaseCalls)e.nextElement();
+    Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
+    Enumeration<BaseCalls> e = base_calls_vector.elements();
+    for (BaseCalls bc : base_calls_vector ) {
       newBaseCalls.addElement( bc.reverseComplement() );
     }
     // Remove the old.
     removeAllBaseCalls();
     // Add the new.
-    e = newBaseCalls.elements();
-    while( e.hasMoreElements() ) {
-      addBaseCalls( ( BaseCalls ) e.nextElement() );
-    }
+    base_calls_vector.addAll(newBaseCalls);
+
     // Switch the visibility of complimentary bases.
     setBaseVisibility( A, tViz );
     setBaseVisibility( T, aViz );
@@ -1612,7 +1609,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       active_base_calls = getActiveBaseCalls();
     }
     consensus = new BaseCalls();
-    Vector inserts = new Vector();
+    Vector<Character> inserts = new Vector<Character>();
     int last_pos=0;
 
     int calls_index = active_aligner.getMappedStart();

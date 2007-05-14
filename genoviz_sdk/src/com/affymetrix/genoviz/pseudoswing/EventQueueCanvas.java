@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -35,18 +35,18 @@ public class EventQueueCanvas extends Canvas  {
    *  Vector of all EventQueueCanvases
    *  the EventQueueCanvas constructor adds each EventQueueCanvas to this Vector
    */
-  protected static Vector allEventQueueCanvases = new Vector();
+  protected static Vector<EventQueueCanvas> allEventQueueCanvases = new Vector<EventQueueCanvas>();
 
   /**
    *  maps Containers to their associated EventQueueCanvas
    */
-  protected static Hashtable containerToCanvas = new Hashtable();
+  protected static Hashtable<Container,EventQueueCanvas> containerToCanvas = new Hashtable<Container,EventQueueCanvas>();
 
   /**
    * Vector of all the WrappedRunnableEvents associated with this
    *   EventQueueCanvas (each added to it via addWrappedRunnableEvent());
    */
-  protected Vector runnableEvents = new Vector();
+  protected Vector<WrappedRunnableEvent> runnableEvents = new Vector<WrappedRunnableEvent>();
 
   EventQueueCanvas(Container cont) {
     super();

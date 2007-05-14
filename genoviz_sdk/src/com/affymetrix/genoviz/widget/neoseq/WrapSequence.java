@@ -48,7 +48,7 @@ public class WrapSequence extends WrapGlyph {
   protected WrapAnnot outline_annot_glyph = new WrapAnnot();
   protected WrapColors sel_glyph = null;
 
-  protected Vector ORFs = new Vector();
+  protected Vector<ORFSpecs> ORFs = new Vector<ORFSpecs>();
   protected boolean translateOnlyORFs = false;
 
   public WrapSequence() {

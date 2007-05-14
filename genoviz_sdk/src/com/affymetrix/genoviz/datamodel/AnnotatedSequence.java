@@ -32,10 +32,10 @@ import java.util.Vector;
  */
 public class AnnotatedSequence extends Observable {
 
-  private Vector identifiers = new Vector();
+  private Vector<Identifier> identifiers = new Vector<Identifier>();
   private String description;
   private SequenceI sequence;
-  private Vector features = new Vector();
+  private Vector<SeqFeatureI> features = new Vector<SeqFeatureI>();
 
   /**
    * associates a name, synonym, or other identifier with this sequence.

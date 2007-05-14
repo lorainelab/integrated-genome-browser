@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -138,7 +138,7 @@ public class NeoSeq extends NeoContainerWidget
   protected int scroll_increment;
   protected ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   public NeoSeq() {
     super();
@@ -1747,8 +1747,8 @@ public class NeoSeq extends NeoContainerWidget
    * Get annotation glyphs that overlap a sequence range.
    * Note that this method filters out the glyph used for highlighting.
    */
-  public Vector getAnnotationItems(int start, int end) {
-    Vector resultVec = new Vector();
+  public Vector<GlyphI> getAnnotationItems(int start, int end) {
+    Vector<GlyphI> resultVec = new Vector<GlyphI>();
     Range sel_range = new Range(start, end);
     Range annot_range = new Range(0,0);
 

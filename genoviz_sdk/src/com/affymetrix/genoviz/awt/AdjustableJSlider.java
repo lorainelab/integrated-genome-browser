@@ -105,7 +105,7 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
   public final void setVisibleAmount(int  v) {setExtent(v);}
 
 
-  private Vector listeners = new Vector();
+  private Vector<AdjustmentListener> listeners = new Vector<AdjustmentListener>();
 
   /**
    * registers a listener for adjustment events.

@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class ArcConnectorGlyph extends Glyph {
 
-  private Vector twoglyphs = new Vector(2);
+  private Vector<GlyphI> twoglyphs = new Vector<GlyphI>(2);
   private int spans;
 
   private boolean aboveaxis = false;

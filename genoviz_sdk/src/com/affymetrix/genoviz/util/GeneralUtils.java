@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class GeneralUtils  {
 
-  protected static Hashtable colormap;
+  protected static Hashtable<String,Color> colormap;
 
   /**
    * toObjectString(obj) is a debugging tool
@@ -44,7 +44,7 @@ public class GeneralUtils  {
   }
 
   /** a "global" color map of color names to Color objects */
-  public static Hashtable getColorMap() {
+  public static Hashtable<String,Color> getColorMap() {
     if (colormap == null) {
       colormap = initColorMap();
     }
@@ -67,8 +67,8 @@ public class GeneralUtils  {
    * @param option_string string of name, value pairs to be parsed.
    * @return option values indexed by name.
    */
-  public static Hashtable parseOptions ( String option_string ) {
-    Hashtable hash = new Hashtable(15);
+  public static Hashtable<String,Object> parseOptions ( String option_string ) {
+    Hashtable<String,Object> hash = new Hashtable<String,Object>(15);
     String key, value;
     StringTokenizer tokens = new StringTokenizer(option_string);
     while (tokens.hasMoreElements()) {
@@ -88,19 +88,14 @@ public class GeneralUtils  {
    * Combines hash1 and hash2 so that any keys that are in both hash1
    * and hash2 are taken from hash1.
    */
-  public static Hashtable CombineOptions( Hashtable hash1, Hashtable hash2 )  {
+  public static Hashtable<String,Object> CombineOptions( Hashtable<String,Object> hash1, Hashtable<String,Object> hash2 )  {
     // for efficiency, deal first with special case where hashes are identical
     if (hash1 == hash2) {
       return hash1;
     }
     Object key, value;
-    Hashtable return_hash = (Hashtable)hash2.clone();
-    Enumeration e = hash1.keys();
-    while (e.hasMoreElements()) {
-      key = e.nextElement();
-      value = hash1.get(key);
-      return_hash.put(key,value);
-    }
+    Hashtable<String,Object> return_hash = new Hashtable<String,Object>(hash2);
+    return_hash.putAll(hash1);
     return return_hash;
   }
 
@@ -109,8 +104,8 @@ public class GeneralUtils  {
    *
    * @return the AWT colors indexed by name.
    */
-  protected static Hashtable initColorMap() {
-    Hashtable cm = new Hashtable();
+  protected static Hashtable<String,Color> initColorMap() {
+    Hashtable<String,Color> cm = new Hashtable<String,Color>();
     cm.put("black", Color.black);
     cm.put("blue", Color.blue);
     cm.put("cyan", Color.cyan);

@@ -20,11 +20,11 @@ import com.affymetrix.genoviz.bioviews.*;
 
 public class GlyphSearchNode implements Cloneable {
 
-  private Hashtable glyphsInSearchTree = new Hashtable();
+  private Hashtable<GlyphI,Object> glyphsInSearchTree = new Hashtable<GlyphI,Object>();
 
   private GlyphSearchNode l;
   private GlyphSearchNode r;
-  private Vector children;
+  private Vector<GlyphI> children;
 
   private long start;
   private long end;
@@ -141,7 +141,7 @@ public class GlyphSearchNode implements Cloneable {
 
     if (m - start <= minimum_m || (a <= m && b > m) ) {
       if (null == children) {
-        children = new Vector();
+        children = new Vector<GlyphI>();
       }
       if (debug) {
         System.out.println("Really Adding interval: [" + a + "," + b + "] to " + this);
@@ -228,13 +228,13 @@ public class GlyphSearchNode implements Cloneable {
     }
   }
 
-  public Vector getOverlaps(GlyphI g) {
-    Vector o = new Vector();
+  public Vector<GlyphI> getOverlaps(GlyphI g) {
+    Vector<GlyphI> o = new Vector<GlyphI>();
     getOverlaps(g, o);
     return o;
   }
 
-  private void getOverlaps(GlyphI i, Vector o) {
+  private void getOverlaps(GlyphI i, Vector<GlyphI> o) {
     Rectangle2D gbox = i.getCoordBox();
     double a = gbox.x;
     double b = gbox.x + gbox.width;
@@ -285,12 +285,12 @@ public class GlyphSearchNode implements Cloneable {
   }
 
   public Vector getOverlappingGlyphs(double a, double b) {
-    Vector o = new Vector();
+    Vector<GlyphI> o = new Vector<GlyphI>();
     getOverlappingGlyphs(a, b, o);
     return o;
   }
 
-  private void getOverlappingGlyphs(double a, double b, Vector o) {
+  private void getOverlappingGlyphs(double a, double b, Vector<GlyphI> o) {
     if (a > b) {
       double t = a;
       a = b;

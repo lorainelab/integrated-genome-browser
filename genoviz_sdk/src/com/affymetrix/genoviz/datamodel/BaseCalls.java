@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,7 +33,7 @@ import java.util.Enumeration;
 
 public class BaseCalls {
 
-  private Vector baseVector;  // vector of BaseCalls
+  private Vector<BaseCall> baseVector;  // vector of BaseCalls
   private TraceI trace;
 
   /** optional datamodel for aligning bases. */
@@ -47,7 +47,7 @@ public class BaseCalls {
 
 
   public BaseCalls() {
-    baseVector = new Vector();
+    baseVector = new Vector<BaseCall>();
   }
 
   public BaseCalls( BaseCall[] base_calls ) {
@@ -65,7 +65,7 @@ public class BaseCalls {
 
   public void setBaseCalls( BaseCall[] theCalls ){
     int iBaseCount = this.baseVector.size();
-    baseVector = new Vector(iBaseCount);
+    baseVector = new Vector<BaseCall>(iBaseCount);
     for ( int i = 0; i < theCalls.length; i++ ) {
       addBase( theCalls[i] );
     }

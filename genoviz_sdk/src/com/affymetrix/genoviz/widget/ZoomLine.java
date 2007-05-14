@@ -30,7 +30,7 @@ import java.util.*;
 public class ZoomLine implements NeoWidgetListener {
 
   private VisibleRange zoomPoint = new VisibleRange();
-  private Hashtable maps = new Hashtable();
+  private Hashtable<NeoMap,Shadow> maps = new Hashtable<NeoMap,Shadow>();
 
   private MouseListener zoomPointAdjuster = new MouseAdapter() {
     public void mouseReleased( MouseEvent e ) {

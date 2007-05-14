@@ -97,12 +97,12 @@ implements NeoConstants, LayoutManager  {
   protected int min_comp_size = 0;
   protected boolean togglingControl = false;
   protected Component toggledComponent = null;
-  Vector splitters = new Vector();
+  Vector<NeoSplitterBar> splitters = new Vector<NeoSplitterBar>();
 
   // the splitter currently being moved
   NeoSplitterBar current_splitter;
 
-  Vector comps = new Vector();
+  Vector<Component> comps = new Vector<Component>();
   
   // vector of components' previous size, relative to others (as percentage?), 
   //  for toggling expansion/compression

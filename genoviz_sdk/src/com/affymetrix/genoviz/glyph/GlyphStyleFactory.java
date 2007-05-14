@@ -27,10 +27,10 @@ import com.affymetrix.genoviz.util.NeoColorMap;
 public class GlyphStyleFactory {
 
   private static Font default_font = new Font("Courier", Font.PLAIN, 12);
-  private Hashtable styles;
+  private Hashtable<GlyphStyle,GlyphStyle> styles;
 
   public GlyphStyleFactory() {
-    styles = new Hashtable();
+    styles = new Hashtable<GlyphStyle,GlyphStyle>();
   };
 
   public String debug_str( Color fg, Color bg, Font fnt ) {

@@ -19,9 +19,7 @@ import java.util.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
-import com.affymetrix.genoviz.pseudoswing.*;
 
 /**
  * Supports compositions of widgets into a more complex widget.
@@ -32,9 +30,9 @@ implements NeoWidgetI{
   // pixelblur is the amount of pixel space leeway given when finding overlaps
   protected int pixelblur = 2;
 
-  protected static Hashtable colormap = GeneralUtils.getColorMap();
+  protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
-  protected Vector widgets;
+  protected Vector<NeoWidgetI> widgets;
 
   public NeoContainerWidget() {
     super();
@@ -43,7 +41,7 @@ implements NeoWidgetI{
     //    setOpaque(true);
     //    setDoubleBuffered(true);
 
-    widgets = new Vector();
+    widgets = new Vector<NeoWidgetI>();
   }
 
   public void addWidget(NeoWidgetI widget) {
@@ -465,6 +463,7 @@ implements NeoWidgetI{
   /**
    * @see NeoWidgetI#scroll
    */
+  @SuppressWarnings("unchecked")
   public void scroll(int axisid, double value) {
     if (!(NeoWidgetI.X == axisid || NeoWidgetI.Y == axisid))
       throw new IllegalArgumentException(
@@ -478,12 +477,12 @@ implements NeoWidgetI{
     }
   }
 
-    public Vector getItems(Object datamodel) {
+  @SuppressWarnings("unchecked")
+  public Vector getItems(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;
-    }
-    else {
+    } else {
       Vector vec = new Vector();
       vec.addElement(result);
       return vec;

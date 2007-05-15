@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,14 +22,14 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 import java.awt.*;
 
 /**
- *  A glyph that displays as a centered line and manipulates children to center on the 
+ *  A glyph that displays as a centered line and manipulates children to center on the
  *  same line.
  *
- *  LineContainerGlyph is very convenient for representing data that has a range but 
- *  has multiple sub-ranges within it, such as genes which have a known intron/exon 
+ *  LineContainerGlyph is very convenient for representing data that has a range but
+ *  has multiple sub-ranges within it, such as genes which have a known intron/exon
  *  structure.
  *
- *  Improves rendering performance by subclassing drawTraversal() and optimizing 
+ *  Improves rendering performance by subclassing drawTraversal() and optimizing
  *     to just draw a filled rect if glyph is small, and skip drawing children.
  *
  *
@@ -43,34 +43,32 @@ public class ImprovedLineContGlyph extends Glyph  {
     if (optimize_child_draw) {
       view.transformToPixels(coordbox, pixelbox);
       if (withinView(view) && isVisible) {
-	if (pixelbox.width <=3 || pixelbox.height <=3) {
-	  // still ends up drawing children for selected, but in general 
-	  //    only a few glyphs are ever selected at the same time, so should be fine
-	  if (selected) { drawSelected(view); }  
-	  else  { fillDraw(view); }
-	}
-	else {
-	  super.drawTraversal(view);  // big enough to draw children
-	}
+        if (pixelbox.width <=3 || pixelbox.height <=3) {
+          // still ends up drawing children for selected, but in general
+          //    only a few glyphs are ever selected at the same time, so should be fine
+          if (selected) { drawSelected(view); }
+          else  { fillDraw(view); }
+        }
+        else {
+          super.drawTraversal(view);  // big enough to draw children
+        }
       }
     }
     else {
       super.drawTraversal(view);  // no optimization, so draw children
     }
-  }    
+  }
 
   public void fillDraw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     Graphics g = view.getGraphics();
-    //    g.setColor(getBackgroundColor());
-    //    g.setColor(color);
     if (DEBUG_OPTIMIZED_FILL) {
       g.setColor(Color.white);
     }
     else {
-      g.setColor(color);
+      g.setColor(getBackgroundColor());
     }
-    
+
     EfficientGlyph.fixAWTBigRectBug(view, pixelbox);
 
     if (pixelbox.width < 1) { pixelbox.width = 1; }
@@ -80,7 +78,7 @@ public class ImprovedLineContGlyph extends Glyph  {
 
     super.draw(view);
   }
-    
+
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
@@ -119,13 +117,13 @@ public class ImprovedLineContGlyph extends Glyph  {
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible ? coord_hitbox.intersects(coordbox) : false;
   }
-  
+
   /**
    * If true, {@link #addChild(GlyphI)} will automatically center the child vertically.
    */
   public boolean isMoveChildren() {
     return this.move_children;
-  }  
+  }
 
   /**
    * Set whether {@link #addChild(GlyphI)} will automatically center the child vertically.
@@ -133,5 +131,5 @@ public class ImprovedLineContGlyph extends Glyph  {
   public void setMoveChildren(boolean move_children) {
     this.move_children = move_children;
   }
-  
+
 }

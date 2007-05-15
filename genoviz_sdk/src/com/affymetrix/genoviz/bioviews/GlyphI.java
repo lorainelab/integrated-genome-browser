@@ -217,11 +217,6 @@ public interface GlyphI extends NeoConstants  {
     public boolean isHitable();
 
   /**
-   * @deprecated use {@link #setSelected} instead.
-   */
-  public void select(boolean selected);
-
-  /**
    * Sets whether or not the glyph is selected.
    * <p>
    * Selected glyphs should be visually distinguishable

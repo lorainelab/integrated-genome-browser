@@ -52,13 +52,6 @@ public class GeneralUtils  {
   }
 
   /**
-   * @deprecated use parseOptions
-   */
-  public static Hashtable ParseOptions ( String option_string ) {
-    return parseOptions( option_string );
-  }
-
-  /**
    * creates a Hastable from a string of options.
    * The options are name, value pairs of tokens.
    * e.g. "color blue size 12".

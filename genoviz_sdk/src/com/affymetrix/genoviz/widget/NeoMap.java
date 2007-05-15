@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -476,6 +476,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    *  to override reshape behavior, override this method, not setBounds
    *  (due to weirdness in the Container source code from Sun).
    */
+  @Deprecated
   public void reshape(int x, int y, int width, int height) {
     reshapeCount++;
     if (width < 1) width = 1;
@@ -487,7 +488,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
     super.reshape(x, y, width, height);
 
-    this.layout();
+    this.doLayout();
 
     /*
       Forcing a layout in reshape for two reasons
@@ -700,16 +701,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
       min_pixels_per_coord[X] = max_pixels_per_coord[X];
       trans.setScaleX(min_pixels_per_coord[X]);
-      trans.setOffsetX(canvas.getSize().width/2 - // j1.0
-//      trans.setOffsetX(canvas.getSize().width/2 - // j1.1
+      trans.setOffsetX(canvas.getSize().width/2 -
       trans.getScaleX()*scene.getCoordBox().width/2);
     }
     if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
       min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
       trans.setScaleY(min_pixels_per_coord[Y]);
       trans.setOffsetY(
-        canvas.getSize().height/2 - // j1.0
-//        canvas.getSize().height/2 - // j1.1
+        canvas.getSize().height/2 -
         trans.getScaleY()*scene.getCoordBox().height/2);
     }
 
@@ -867,13 +866,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     zoom(Y, zoom_scale);
   }
 
-  /**
-   * @deprecated Use {@link #updateWidget}.
-   */
-  public void updateMap() {
-    this.updateWidget();
-  }
-
   public MapGlyphFactory addFactory(String config_string) {
     Hashtable<String,Object> config_hash = null;
     config_hash = GeneralUtils.parseOptions(config_string);
@@ -932,27 +924,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
     scene.addGlyph(gl);
     return gl;
-  }
-
-  /**
-   * Use a named factory to create a glyph and add it to the map.
-   * @deprecated use {@link #addItem(MapGlyphFactory, int, int)} instead.
-   */
-  public GlyphI addItem(String factory_name, int start, int end) {
-    return addItem(factory_name, start, end, null);
-  }
-
-  /**
-   * Use a named factory to create and customize a glyph and add it to the map.
-   * @deprecated use {@link #addItem(MapGlyphFactory,int,int,String)} instead.
-   */
-  public GlyphI addItem(String factory_name, int start, int end,
-                        String options) {
-    Object fac = factory_hash.get(factory_name);
-    if (fac == null) {
-      return null;
-    }
-    return this.addItem((MapGlyphFactory)fac, start, end, options);
   }
 
   public GlyphI addItem(int start, int end) {
@@ -1030,13 +1001,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     return zoomer[id];
   }
 
-  /**
-   * @deprecated Use {@link NeoWidget#setReshapeBehavior(int, int)}.
-   */
-  public void setReshapeConstraint(int axisid, int constraint) {
-    setReshapeBehavior(axisid, constraint);
-  }
-
   public void removeItem(GlyphI gl) {
     scene.removeGlyph(gl);
     glyph_hash.remove(gl);
@@ -1073,13 +1037,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   //  also need to add a removeFactory method...
-
-  /**
-   *  @deprecated use {@link #clearWidget()} instead.
-   */
-  public void clearMap() {
-    clearWidget();
-  }
 
   /**
    * Removes all glyphs.
@@ -1236,13 +1193,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       return (int)Math.round(gl.getSelectedRegion().x +
                         gl.getSelectedRegion().width - 1);
     }
-  }
-
-  /**
-   * @deprecated in favor of {@link #setScaleConstraint}.
-   */
-  public void setScaleBehavior(int id, int behavior) {
-    setScaleConstraint(id, behavior);
   }
 
   public void update(Graphics g) {

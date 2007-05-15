@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -32,13 +32,13 @@ public class ExponentialTransform implements TransformI {
     this.xmin = xmin;
     this.ymax = ymax;
     this.ymin = ymin;
-    lxmax = (double)Math.log(xmax);
-    lxmin = (double)Math.log(xmin);
+    lxmax = Math.log(xmax);
+    lxmin = Math.log(xmin);
     ratio = (lxmax-lxmin)/(ymax-ymin);
   }
 
   public double transform(int orientation, double in) {
-    double out = (double)Math.exp(in*ratio + lxmin);
+    double out = Math.exp(in*ratio + lxmin);
     /*
      *  Fix for zooming -- for cases where y _should_ be 7, but ends up
      *  being 6.9999998 or thereabouts because of errors in Math.exp()
@@ -53,7 +53,7 @@ public class ExponentialTransform implements TransformI {
   }
 
   public double inverseTransform(int orientation, double in) {
-    double out = ((double)Math.log(in)-lxmin) / ratio;
+    double out = (Math.log(in)-lxmin) / ratio;
     return out;
   }
 
@@ -61,28 +61,28 @@ public class ExponentialTransform implements TransformI {
     // y = f(x), but in this case y is really dst.x
     //   (Exponential is a one-dimensional transform, ignores src.y & dst.y
     double x = src.x;
-    double y = (double)Math.exp(x*ratio);
+    double y = Math.exp(x*ratio);
     dst.x = y;
     return dst;
   }
 
   public Point2D inverseTransform(Point2D src, Point2D dst) {
     double y = src.x;
-    double x = (double)Math.log(y/ratio);
+    double x = Math.log(y/ratio);
     dst.x = x;
     return dst;
   }
 
   public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
     double x = src.x;
-    double y = (double)Math.exp(x*ratio);
+    double y = Math.exp(x*ratio);
     dst.x = y;
     return dst;
   }
 
   public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
     double y = src.x;
-    double x = (double)Math.log(y/ratio);
+    double x = Math.log(y/ratio);
     dst.x = x;
     return dst;
   }

@@ -80,7 +80,7 @@ public final class NeoColorMap extends Hashtable<String,Color> {
   }
 
   /**
-   * gets a named color from the map.
+   * Gets a named color from the map.
    * This is a type safe way to <code>get( theName )</code>.
    * Prefer this to the Hashtable method.
    *
@@ -91,7 +91,7 @@ public final class NeoColorMap extends Hashtable<String,Color> {
     if (null == theName) {
       throw new IllegalArgumentException("Can't getColor without a name.");
     }
-    return (Color)map.get(theName);
+    return map.get(theName);
   }
 
   /**

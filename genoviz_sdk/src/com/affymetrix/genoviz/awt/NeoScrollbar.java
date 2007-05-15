@@ -116,6 +116,7 @@ implements Adjustable, NeoTimerListener {
    * @deprecated
    * Use <code>setBounds(int, int, int, int)</code> (but override reshape).
    */
+  @Deprecated
   public void reshape(int new_x, int new_y, int new_width, int new_height) {
 
     super.reshape(new_x, new_y, new_width, new_height);
@@ -717,6 +718,7 @@ implements Adjustable, NeoTimerListener {
    * The default implementation of the preferred {@link #getPreferredSize()} calls this method.
    * @deprecated Use getPreferredSize().
    */
+  @Deprecated
   public Dimension preferredSize() {
     if ( HORIZONTAL == this.orientation ) {
       return new Dimension( 2 * arrow_width + thumb_pixel_size_min, arrow_width );
@@ -725,19 +727,4 @@ implements Adjustable, NeoTimerListener {
       return new Dimension( arrow_width, 2 *arrow_width + thumb_pixel_size_min );
     }
   }
-
-  /**
-   * @deprecated Use {@link #setDoubleBuffered(boolean)} instead.
-   */
-  public void setBuffered(boolean b) {
-    setDoubleBuffered(b);
-  }
-
-  /**
-   * @deprecated Use {@link #isDoubleBuffered()} instead.
-   */
-  public boolean getBuffered() {
-    return isDoubleBuffered();
-  }
-
 }

@@ -447,13 +447,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       "OFFSET_ZOOMER, TRACES, or BASES.");
   }
 
-  /**
-   * @deprecated use {@link #doLayout}.
-   */
-  public synchronized void layout() { // j1.0
-    doLayout(); // j1.0
-  } // j1.0
-
   public synchronized void doLayout() {
 
     Dimension dim = this.getSize();
@@ -627,7 +620,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       // Move the base calls out of the trace
       // and add them directly.
       this.base_count = trace.getBaseCount();
-      BaseCall[] b = trace.getBaseArray();
+      BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
       base_map.removeItem ( base_glyphs );
       base_calls_vector.removeAllElements();
       base_glyphs.removeAllElements();
@@ -1015,23 +1008,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   /** Methods for dealing with selection **/
 
   /**
-   * Selects a region in the widget starting from one specified base
-   * to another.
-   *
-   * @param basenum_start the first base selected
-   * @param basenum_end   the last base selected
-   * @deprecated use {@link #selectResidues(int, int)}
-   */
-  public void selectBases(int basenum_start, int basenum_end) {
-    selectResidues(basenum_start, basenum_end);
-        // quick fix to deal with arrayindex exceptions 6-30-98  GAH
-    if (basenum_start < 0 || basenum_end < 0 || basenum_start > 10000 ||
-        basenum_end > 10000)  {
-               return;
-        }
-  }
-
-  /**
    * gets a base call from the active set of base calls.
    * For backward compatibility,
    * if there are no active base calls,
@@ -1043,10 +1019,11 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   private BaseCall getBaseCall( int theBaseIndex ) {
     BaseCalls bc = getActiveBaseCalls();
     if ( null == bc ) { // for backward compatibility
-      return this.trace.getBaseCall( theBaseIndex );
+      return this.trace.getActiveBaseCalls().getBaseCall(theBaseIndex);
     }
     return bc.getBaseCall( theBaseIndex );
   }
+
   private int getBaseCount() {
     BaseCalls bc = getActiveBaseCalls();
     if ( null == bc ) { // for backward compatibility
@@ -1407,35 +1384,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     }
     throw new IllegalArgumentException("NeoTracer.getBackground(id) " +
         "currently only supports ids of TRACES or BASES");
-  }
-
-  /**
-   * sets the background color behind the traces.
-   *
-   * @deprecated use setBackground(TRACES, theColor);
-   */
-  public void setTracesBackground(Color theColor) {
-    setBackground(TRACES, theColor);
-  }
-  /**
-   * @deprecated use getBackground(TRACES);
-   */
-  public Color getTracesBackground() {
-    return getBackground(TRACES);
-  }
-  /**
-   * sets the background color behind the bases.
-   *
-   * @deprecated use setBackground(BASES, theColor);
-   */
-  public void setBasesBackground(Color theColor) {
-    setBackground(BASES, theColor);
-  }
-  /**
-   * @deprecated use getBackground(BASES);
-   */
-  public Color getBasesBackground() {
-    return getBackground(BASES);
   }
 
   public void update(Observable theObserved, Object theArgument) {

@@ -127,6 +127,7 @@ public class OutlineRectGlyph extends SolidGlyph  {
    * @deprecated use setForegroundColor(Color) for the outline color and
    *  setBackgroundColor(Color) for the fill color.
    */
+  @Deprecated
   public void setColor(Color color)  {
     this.setForegroundColor( color );
   }

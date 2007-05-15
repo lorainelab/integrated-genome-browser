@@ -246,11 +246,6 @@ public class View implements ViewI, NeoPaintListener,
     return this.transform;
   }
 
-  /** @deprecated -- use {@link #transformToPixels(Rectangle2D, Rectangle)} */
-  public Rectangle newTransformToPixels(Rectangle2D src, Rectangle dst)  {
-    return this.transformToPixels(src, dst);
-  }
-
     /**
       Maps src rectangle in coordinate space to dst rectangle in pixel
       (screen) space.
@@ -476,9 +471,7 @@ public class View implements ViewI, NeoPaintListener,
           new NeoViewBoxChangeEvent(this, newbox, false);
 
         for (int i=0; i<viewbox_listeners.size(); i++) {
-          NeoViewBoxListener listener =
-            (NeoViewBoxListener)viewbox_listeners.elementAt(i);
-          listener.viewBoxChanged(nevt);
+          viewbox_listeners.elementAt(i).viewBoxChanged(nevt);
         }
       }
     }
@@ -956,22 +949,6 @@ public class View implements ViewI, NeoPaintListener,
     key_listeners.removeElement(l);
   }
 
-  /**
-   * @deprecated
-   * use addPostDrawViewListener() instead.
-   */
-  public void addNeoViewBoxListener(NeoViewBoxListener l) {
-    addPostDrawViewListener(l);
-  }
-
-  /**
-   *  @deprecated
-   *  use removePostDrawViewListener() instead
-   */
-  public void removeNeoViewBoxListener(NeoViewBoxListener l) {
-    removePostDrawViewListener(l);
-  }
-
   public void addPostDrawViewListener(NeoViewBoxListener l) {
     if (!viewbox_listeners.contains(l)) {
       viewbox_listeners.addElement(l);
@@ -1011,21 +988,6 @@ public class View implements ViewI, NeoPaintListener,
     return component_size_rect;
   }
 
-  /**
-   * returns the bounds of the component
-   * on which the view is being displayed.
-   * This is <em>not</em> the same as rectangle
-   * of x=0, y=0, width=comp.size().width, height=comp.size().height
-   * But it was being used for that purpose though.
-   * If that is what you want
-   * use getComponentSizeRect() instead!
-   *
-   * @deprecated Use getComponentSizeRect.
-   */
-  public Rectangle getComponentBounds() {
-    return component_bounds;
-  }
-
   /** implementing MouseListener interface and collecting mouse events */
   public void mouseClicked(MouseEvent e) { heardMouseEvent(e); }
   public void mouseEntered(MouseEvent e) { heardMouseEvent(e); }
@@ -1062,7 +1024,7 @@ public class View implements ViewI, NeoPaintListener,
     KeyListener kl;
     if (key_listeners.size() > 0) {
       for (int i=0; i<key_listeners.size(); i++) {
-        kl = (KeyListener)key_listeners.elementAt(i);
+        kl = key_listeners.elementAt(i);
         if (id == KeyEvent.KEY_PRESSED) {
           kl.keyPressed(e);
         }
@@ -1110,8 +1072,7 @@ public class View implements ViewI, NeoPaintListener,
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

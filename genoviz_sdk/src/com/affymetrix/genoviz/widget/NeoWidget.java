@@ -238,9 +238,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public Scene getScene() { return scene; }
 
-  /** @deprecated  use getNeoCanvas() instead */
-  public NeoCanvas getCanvas() { return getNeoCanvas(); }
-
   public NeoCanvas getNeoCanvas() { return canvas; }
 
   public View getView() { return view; }

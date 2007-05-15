@@ -224,11 +224,6 @@ public interface NeoMapI extends NeoWidgetI {
   public void setRubberBand( RubberBand theBand );
 
   /**
-   * @deprecated Use {@link #updateWidget()}.
-   */
-  public void updateMap();
-
-  /**
    * adds a glyph object to this map to visually represent features.
    * The glyph's starting position is <code>start</code>
    * and ending position is <code>end</code>.

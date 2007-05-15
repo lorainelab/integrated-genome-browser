@@ -66,7 +66,7 @@ public class VariableCoordAvoid extends AbstractCoordPacker {
           childbox.height + 2*coord_fuzziness);
       somethingMoved = false;
       for (j=0; j<sibsinrange.size(); j++) {
-        sibling = (GlyphI)sibsinrange.elementAt(j);
+        sibling = sibsinrange.elementAt(j);
         if (sibling == child) { continue; }
         if (sibling.hit(expanded_childbox, view)) {
           if ( child instanceof com.affymetrix.genoviz.glyph.LabelGlyph ) {

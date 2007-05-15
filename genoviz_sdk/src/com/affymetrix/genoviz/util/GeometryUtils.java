@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -28,10 +28,10 @@ public class GeometryUtils {
    */
   public static Rectangle intersection(Rectangle src1, Rectangle src2,
       Rectangle dst) {
-    int xbeg = (int)Math.max(src1.x, src2.x);
-    int xend = (int)Math.min(src1.x + src1.width, src2.x + src2.width);
-    int ybeg = (int)Math.max(src1.y, src2.y);
-    int yend = (int)Math.min(src1.y + src1.height, src2.y + src2.height);
+    int xbeg = Math.max(src1.x, src2.x);
+    int xend = Math.min(src1.x + src1.width, src2.x + src2.width);
+    int ybeg = Math.max(src1.y, src2.y);
+    int yend = Math.min(src1.y + src1.height, src2.y + src2.height);
     dst.setBounds(xbeg, ybeg, xend - xbeg, yend - ybeg);
     return dst;
   }

@@ -59,7 +59,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
     while (childMoved) {
       childMoved = false;
       for (j=0; j<sibsinrange.size(); j++) {
-        sibling = (GlyphI)sibsinrange.elementAt(j);
+        sibling = sibsinrange.elementAt(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
         if (child.hit(siblingbox, view) ) {

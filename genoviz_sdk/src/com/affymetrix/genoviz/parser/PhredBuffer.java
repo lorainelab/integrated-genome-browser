@@ -31,6 +31,7 @@ import java.util.StringTokenizer;
  * If what you want is a data model, use {@link com.affymetrix.genoviz.datamodel.ReadConfidence}.
  * If what you want is a parser, use {@link PhredParser} or {@link PHDReadConfParser}.
  */
+@Deprecated
 public class PhredBuffer
 {
 

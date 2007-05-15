@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.util.NeoConstants;  // to use VERTICAL and HORIZON
  * <p> It is also still a bit experimental.
  * Dynamic resizing, in particular, is problematic in some environments.
  */
-public class NeoMultiSplitter extends Panel 
+public class NeoMultiSplitter extends Panel
 implements NeoConstants, LayoutManager  {
 
   private boolean DEBUG_LAYOUT = false;
@@ -39,15 +39,15 @@ implements NeoConstants, LayoutManager  {
   static Color darkTransient = Color.black;
 
   /*
-   * color intensity at which to transition from using darkTransient 
-   *    against a light background to lightTransient against a dark 
+   * color intensity at which to transition from using darkTransient
+   *    against a light background to lightTransient against a dark
    *    background
-   * full intensity is white, r=255 + g=255 + b=255 = 765, 
+   * full intensity is white, r=255 + g=255 + b=255 = 765,
    *    so threshold light/dark transition at half intensity = 382
-   * unfortunately, this makes the bar hard to see when using 
-   *    lightTransient/darkTransient colors that aren't extreme, when 
+   * unfortunately, this makes the bar hard to see when using
+   *    lightTransient/darkTransient colors that aren't extreme, when
    *    moving bar over other mellow colors...
-   * therfore try three transient colors -- when background is mellow, use 
+   * therfore try three transient colors -- when background is mellow, use
    *    middleTransient, which should be extreme
    */
   static int low_threshold = 200;
@@ -81,10 +81,10 @@ implements NeoConstants, LayoutManager  {
   public static int DELAYED_LAYOUT = 6;
   /**
    * possible value for layout timing.
-   * Potential fix for slow machines. 
+   * Potential fix for slow machines.
    * Just cursor change?
    */
-  public static int REALLY_DELAYED_LAYOUT = 7;  
+  public static int REALLY_DELAYED_LAYOUT = 7;
 
   protected int comp_count = 0;
   protected int orientation = HORIZONTAL;
@@ -103,8 +103,8 @@ implements NeoConstants, LayoutManager  {
   NeoSplitterBar current_splitter;
 
   Vector<Component> comps = new Vector<Component>();
-  
-  // vector of components' previous size, relative to others (as percentage?), 
+
+  // vector of components' previous size, relative to others (as percentage?),
   //  for toggling expansion/compression
   Vector prev_relative_size = new Vector();
 
@@ -151,7 +151,7 @@ implements NeoConstants, LayoutManager  {
       int bx = x - barbox.x;
       int by = y - barbox.y;
       boolean hitControls = bar.hitControls(bx, by);
-      if (hitControls)  { 
+      if (hitControls)  {
         togglingControl = true;
         if (bar.hitHighExpand(bx, by)) {
           toggledComponent = getHighComponent(bar);
@@ -251,13 +251,13 @@ implements NeoConstants, LayoutManager  {
       pgraphics = cont.getGraphics();
       back = cont.getBackground();
       int intensity = back.getRed() + back.getGreen() + back.getBlue();
-      if (intensity < low_threshold) { 
-        transColor = lightTransient; 
-      } 
-      else if (intensity < high_threshold) {
-        transColor = middleTransient; 
+      if (intensity < low_threshold) {
+        transColor = lightTransient;
       }
-      else { transColor = darkTransient; } 
+      else if (intensity < high_threshold) {
+        transColor = middleTransient;
+      }
+      else { transColor = darkTransient; }
       pgraphics.setColor(transColor);
       pgraphics.setXORMode(back);
 
@@ -278,13 +278,13 @@ implements NeoConstants, LayoutManager  {
       child_bounds = child.getBounds();
 
       // if transient split not within component, skip this component
-      if (orientation == VERTICAL && 
-          (x < child_bounds.x || 
+      if (orientation == VERTICAL &&
+          (x < child_bounds.x ||
            x > (child_bounds.x + child_bounds.width))) {
         continue;
       }
-      else if (orientation == HORIZONTAL && 
-               (y < child_bounds.y || 
+      else if (orientation == HORIZONTAL &&
+               (y < child_bounds.y ||
                 y > (child_bounds.y + child_bounds.height))) {
         continue;
       }
@@ -302,23 +302,23 @@ implements NeoConstants, LayoutManager  {
           back = child.getBackground();
           int intensity = back.getRed() + back.getGreen() + back.getBlue();
 
-          if (intensity < low_threshold) { 
-            transColor = lightTransient; 
-          } 
-          else if (intensity < high_threshold) {
-            transColor = middleTransient; 
+          if (intensity < low_threshold) {
+            transColor = lightTransient;
           }
-          else { transColor = darkTransient; } 
+          else if (intensity < high_threshold) {
+            transColor = middleTransient;
+          }
+          else { transColor = darkTransient; }
           cgraphics.setColor(transColor);
           cgraphics.setXORMode(back);
 
 
           if (orientation == VERTICAL) {
-            cgraphics.fillRect(xtrans-tbarsize/2, 0, 
+            cgraphics.fillRect(xtrans-tbarsize/2, 0,
                                tbarsize, child.getSize().height);
           }
           else {
-            cgraphics.fillRect(0, ytrans-tbarsize/2, 
+            cgraphics.fillRect(0, ytrans-tbarsize/2,
                                child.getSize().width, tbarsize);
           }
           cgraphics.dispose();
@@ -349,7 +349,7 @@ implements NeoConstants, LayoutManager  {
       split_loc = 100;
     }
     doLayout();
-    
+
   }
 
   /**
@@ -360,7 +360,7 @@ implements NeoConstants, LayoutManager  {
   public Component getLowComponent(NeoSplitterBar bar) {
     for (int i=0; i<splitters.size(); i++) {
       if (splitters.elementAt(i) == bar) {
-        return (Component)comps.elementAt(i);
+        return comps.elementAt(i);
       }
     }
     return null;
@@ -374,7 +374,7 @@ implements NeoConstants, LayoutManager  {
   public Component getHighComponent(NeoSplitterBar bar) {
     for (int i=0; i<splitters.size(); i++) {
       if (splitters.elementAt(i) == bar) {
-        return (Component)comps.elementAt(i+1);
+        return comps.elementAt(i+1);
       }
     }
     return null;
@@ -450,7 +450,7 @@ implements NeoConstants, LayoutManager  {
    */
   public void layoutContainer(Container target) {
     if (DEBUG_LAYOUT) {
-      System.err.print("NeoMultiSplitter.layoutContainer() called, " + 
+      System.err.print("NeoMultiSplitter.layoutContainer() called, " +
                        "current splitter = " + current_splitter);
     }
     if (target != this) {
@@ -458,10 +458,10 @@ implements NeoConstants, LayoutManager  {
     }
 
     // if no components contained, then there's nothing to lay out...
-    // remember, MUST use add("name", component) method for components to 
+    // remember, MUST use add("name", component) method for components to
     // actually be added
     if (comps.size() == 0) {
-      return; 
+      return;
     }
     Dimension dm = getSize();
     Insets ins = getInsets();
@@ -480,16 +480,16 @@ implements NeoConstants, LayoutManager  {
     int splitleft, splitright, splittop, splitbottom;
 
     // just a temporary route around VERTICAL option
-    if (orientation == VERTICAL) { 
+    if (orientation == VERTICAL) {
       int spare_pixels = usable_width - total_splitter_pixels;
       if (current_splitter == null) {
         int total_comp_pixels = 0;
         for (int i=0; i<comps.size(); i++) {
-          total_comp_pixels += ((Component)comps.elementAt(i)).getSize().width;
+          total_comp_pixels += (comps.elementAt(i)).getSize().width;
         }
         if (DEBUG_LAYOUT) {
-          System.out.println("comps: " + total_comp_pixels + 
-                             ", splitters: " + total_splitter_pixels + 
+          System.out.println("comps: " + total_comp_pixels +
+                             ", splitters: " + total_splitter_pixels +
                              ", spare_pixels: = " + spare_pixels);
         }
         //  previous dimensions were zeroed out, so divide up equally
@@ -497,10 +497,10 @@ implements NeoConstants, LayoutManager  {
           int comp_size = spare_pixels / comps.size();
           int offset = left;
           for (int i=0; i<comps.size(); i++) {
-            Component comp = (Component)comps.elementAt(i);
+            Component comp = comps.elementAt(i);
             if (DEBUG_LAYOUT) {
-              System.out.println("Reshaping comp " + comp + 
-                                 ", offset = " + offset + 
+              System.out.println("Reshaping comp " + comp +
+                                 ", offset = " + offset +
                                  ", size = " + comp_size);
             }
             comp.setBounds(offset, top, comp_size, usable_height);
@@ -508,8 +508,8 @@ implements NeoConstants, LayoutManager  {
             if (i < (comps.size()-1)) {
               Component splitbar = (Component)splitters.elementAt(i);
               if (DEBUG_LAYOUT)  {
-                System.out.println("Reshaping splitbar " + splitbar + 
-                                   ", offset = " + offset + 
+                System.out.println("Reshaping splitbar " + splitbar +
+                                   ", offset = " + offset +
                                    ", size = " + barsize);
               }
               splitbar.setBounds(offset, top, barsize, usable_height);
@@ -517,20 +517,20 @@ implements NeoConstants, LayoutManager  {
             }
           }
         }
-        else { 
+        else {
           // no splitter moved, and components already have been sized
           // therefore scale non-splitbar components proportionally
-          if (DEBUG_LAYOUT) { 
-            System.err.print("no splitter moved, components already sized, " + 
+          if (DEBUG_LAYOUT) {
+            System.err.print("no splitter moved, components already sized, " +
                              "therefore scaling components proportionally");
-          } 
-          double scaling_factor = 
+          }
+          double scaling_factor =
             (double)spare_pixels / (double)total_comp_pixels;
           double proportion;
           int comp_size;
           int offset = left;
           for (int i=0; i<comps.size(); i++) {
-            Component comp = (Component)comps.elementAt(i);
+            Component comp = comps.elementAt(i);
             comp_size = (int)(scaling_factor * comp.getSize().width);
             comp.setBounds(offset, top, comp_size, usable_height);
             offset += comp_size;
@@ -544,7 +544,7 @@ implements NeoConstants, LayoutManager  {
         }
       }
       else {   // current_splitter != null
-        // if layoutContainer call is due to dragging a splitter bar, then 
+        // if layoutContainer call is due to dragging a splitter bar, then
         // calculate the total pixels of the two components that this bar is
         //    actually splitting, and re-shape them accordingly
         // for this type of behavior, don't have to worry about other components
@@ -555,30 +555,30 @@ implements NeoConstants, LayoutManager  {
         for (int i=0; i<splitters.size(); i++) {
           if (splitters.elementAt(i) == current_splitter) {
             splitter_num = i;
-            lesser = (Component)comps.elementAt(i);
-            greater = (Component)comps.elementAt(i+1);
+            lesser = comps.elementAt(i);
+            greater = comps.elementAt(i+1);
             break;
           }
         }
-        if (splitter_num > 0) { 
-          Rectangle prev_split_bounds = 
+        if (splitter_num > 0) {
+          Rectangle prev_split_bounds =
             ((Component)splitters.elementAt(splitter_num-1)).getBounds();
           left = prev_split_bounds.x + prev_split_bounds.width;
         }
         if (splitter_num < (splitters.size()-1)) {
-          Rectangle next_split_bounds = 
+          Rectangle next_split_bounds =
             ((Component)splitters.elementAt(splitter_num+1)).getBounds();
           right = next_split_bounds.x;
         }
-        
+
         splitleft = split_loc-barsize/2;
         splitright = split_loc+barsize/2;
         if (DEBUG_LAYOUT)  {
-          System.err.print(" splitleft = " + splitleft + 
-                           " splitright = " + splitright + 
+          System.err.print(" splitleft = " + splitleft +
+                           " splitright = " + splitright +
                            " left = " + left + ", right = " + right);
-        } 
-        if (splitleft < left) { 
+        }
+        if (splitleft < left) {
           if (DEBUG_LAYOUT)  { System.err.print(" splitleft < left!"); }
           splitleft = left + min_comp_size;
           splitright = splitleft + barsize;
@@ -592,38 +592,38 @@ implements NeoConstants, LayoutManager  {
         if (current_splitter != null)  {
           current_splitter.setBounds(splitleft, top, barsize, usable_height);
           if (DEBUG_LAYOUT)  {
-            System.err.print("Splitter: " + current_splitter.getBounds() + ", " + 
+            System.err.print("Splitter: " + current_splitter.getBounds() + ", " +
                              current_splitter.getBackground());
           }
           current_splitter.validate();
         }
         if (lesser != null)  {
-          // validating because sometimes panels don't redraw after re-shape 
+          // validating because sometimes panels don't redraw after re-shape
           //   unless specifically validated...
           lesser.setBounds(left, top, splitleft-left, usable_height);
           if (DEBUG_LAYOUT)  {
-            System.err.print("Lesser: " + lesser + ", " + 
-                             lesser.getBounds() + ", " + 
+            System.err.print("Lesser: " + lesser + ", " +
+                             lesser.getBounds() + ", " +
                              lesser.getBackground());
           }
           lesser.validate();
         }
         if (greater != null)  {
-          // validating because sometimes panels don't redraw after re-shape 
+          // validating because sometimes panels don't redraw after re-shape
           //   unless specifically validated...
           greater.setBounds(splitright, top, right-splitright, usable_height);
-          if (DEBUG_LAYOUT)  {          
-            System.err.print("Greater: " + greater + ", " + 
-                             greater.getBounds() + ", " + 
+          if (DEBUG_LAYOUT)  {
+            System.err.print("Greater: " + greater + ", " +
+                             greater.getBounds() + ", " +
                              greater.getBackground());
           }
           greater.validate();
         }
         int total_size = 0;
         for (int i=0; i<comps.size(); i++) {
-          total_size += ((Component)comps.elementAt(i)).getSize().width;
+          total_size += (comps.elementAt(i)).getSize().width;
         }
-        if (DEBUG_LAYOUT)  { 
+        if (DEBUG_LAYOUT)  {
           System.err.println("Total Component Size: " + total_size);
         }
       }  // END splitter used conditional
@@ -631,18 +631,18 @@ implements NeoConstants, LayoutManager  {
     else { // orientation == HORIZONTAL
       int spare_pixels = usable_height - total_splitter_pixels;
 
-      // if there's no current_splitter, assume this is a resizing issue, 
+      // if there's no current_splitter, assume this is a resizing issue,
       // and divide up the space based on previous proportions
-      // but, if previous dimensions were zeroed out, then divide up 
+      // but, if previous dimensions were zeroed out, then divide up
       // equally
       if (current_splitter == null) {
         int total_comp_pixels = 0;
         for (int i=0; i<comps.size(); i++) {
-          total_comp_pixels += ((Component)comps.elementAt(i)).getSize().height;
+          total_comp_pixels += (comps.elementAt(i)).getSize().height;
         }
         if (DEBUG_LAYOUT) {
-          System.out.println("comps: " + total_comp_pixels + 
-                             ", splitters: " + total_splitter_pixels + 
+          System.out.println("comps: " + total_comp_pixels +
+                             ", splitters: " + total_splitter_pixels +
                              ", spare_pixels: = " + spare_pixels);
         }
         //  previous dimensions were zeroed out, so divide up equally
@@ -650,19 +650,19 @@ implements NeoConstants, LayoutManager  {
           int comp_size = spare_pixels / comps.size();
           int offset = top;
           for (int i=0; i<comps.size(); i++) {
-            Component comp = (Component)comps.elementAt(i);
+            Component comp = comps.elementAt(i);
             if (DEBUG_LAYOUT) {
-              System.out.println("Reshaping comp " + comp + 
-                                 ", offset = " + offset + 
+              System.out.println("Reshaping comp " + comp +
+                                 ", offset = " + offset +
                                  ", size = " + comp_size);
             }
             comp.setBounds(left, offset, usable_width, comp_size);
             offset += comp_size;
             if (i < (comps.size()-1)) {
-              Component splitbar = (Component)splitters.elementAt(i);
+              Component splitbar = splitters.elementAt(i);
               if (DEBUG_LAYOUT)  {
-                System.out.println("Reshaping splitbar " + splitbar + 
-                                   ", offset = " + offset + 
+                System.out.println("Reshaping splitbar " + splitbar +
+                                   ", offset = " + offset +
                                    ", size = " + barsize);
               }
               splitbar.setBounds(left, offset, usable_width, barsize);
@@ -670,25 +670,25 @@ implements NeoConstants, LayoutManager  {
             }
           }
         }
-        else { 
+        else {
           // no splitter moved, and components already have been sized
           // therefore scale non-splitbar components proportionally
-          if (DEBUG_LAYOUT) { 
-            System.err.print("no splitter moved, components already sized, " + 
+          if (DEBUG_LAYOUT) {
+            System.err.print("no splitter moved, components already sized, " +
                              "therefore scaling components proportionally");
-          } 
-          double scaling_factor = 
+          }
+          double scaling_factor =
             (double)spare_pixels / (double)total_comp_pixels;
           double proportion;
           int comp_size;
           int offset = top;
           for (int i=0; i<comps.size(); i++) {
-            Component comp = (Component)comps.elementAt(i);
+            Component comp = comps.elementAt(i);
             comp_size = (int)(scaling_factor * comp.getSize().height);
             comp.setBounds(left, offset, usable_width, comp_size);
             offset += comp_size;
             if (i < (comps.size()-1)) {
-              Component splitbar = (Component)splitters.elementAt(i);
+              Component splitbar = splitters.elementAt(i);
               splitbar.setBounds(left, offset, usable_width, barsize);
               offset += barsize;
             }
@@ -697,7 +697,7 @@ implements NeoConstants, LayoutManager  {
         }
       }
 
-      // if layoutContainer call is due to dragging a splitter bar, then 
+      // if layoutContainer call is due to dragging a splitter bar, then
       // calculate the total pixels of the two components that this bar is
       //    actually splitting, and re-shape them accordingly
       // for this type of behavior, don't have to worry about other components
@@ -708,30 +708,30 @@ implements NeoConstants, LayoutManager  {
         for (int i=0; i<splitters.size(); i++) {
           if (splitters.elementAt(i) == current_splitter) {
             splitter_num = i;
-            lesser = (Component)comps.elementAt(i);
-            greater = (Component)comps.elementAt(i+1);
+            lesser = comps.elementAt(i);
+            greater = comps.elementAt(i+1);
             break;
           }
         }
-        if (splitter_num > 0) { 
-          Rectangle prev_split_bounds = 
-            ((Component)splitters.elementAt(splitter_num-1)).getBounds();
+        if (splitter_num > 0) {
+          Rectangle prev_split_bounds =
+            (splitters.elementAt(splitter_num-1)).getBounds();
           top = prev_split_bounds.y + prev_split_bounds.height;
         }
         if (splitter_num < (splitters.size()-1)) {
-          Rectangle next_split_bounds = 
-            ((Component)splitters.elementAt(splitter_num+1)).getBounds();
+          Rectangle next_split_bounds =
+            (splitters.elementAt(splitter_num+1)).getBounds();
           bottom = next_split_bounds.y;
         }
-        
+
         splittop = split_loc-barsize/2;
         splitbottom = split_loc+barsize/2;
         if (DEBUG_LAYOUT)  {
-          System.err.print(" splittop = " + splittop + 
-                           " splitbottom = " + splitbottom + 
+          System.err.print(" splittop = " + splittop +
+                           " splitbottom = " + splitbottom +
                            " top = " + top + ", bottom = " + bottom);
-        } 
-        if (splittop < top) { 
+        }
+        if (splittop < top) {
           if (DEBUG_LAYOUT)  { System.err.print(" splittop < top!"); }
           splittop = top + min_comp_size;
           splitbottom = splittop + barsize;
@@ -745,45 +745,45 @@ implements NeoConstants, LayoutManager  {
         if (current_splitter != null)  {
           current_splitter.setBounds(left, splittop, usable_width, barsize);
           if (DEBUG_LAYOUT)  {
-            System.err.print("Splitter: " + current_splitter.getBounds() + ", " + 
+            System.err.print("Splitter: " + current_splitter.getBounds() + ", " +
                              current_splitter.getBackground());
           }
           current_splitter.validate();
         }
         if (lesser != null)  {
-          // validating because sometimes panels don't redraw after re-shape 
+          // validating because sometimes panels don't redraw after re-shape
           //   unless specifically validated...
           lesser.setBounds(left, top, usable_width, splittop-top);
           if (DEBUG_LAYOUT)  {
-            System.err.print("Lesser: " + lesser + ", " + 
-                             lesser.getBounds() + ", " + 
+            System.err.print("Lesser: " + lesser + ", " +
+                             lesser.getBounds() + ", " +
                              lesser.getBackground());
           }
           lesser.validate();
         }
         if (greater != null)  {
-          // validating because sometimes panels don't redraw after re-shape 
+          // validating because sometimes panels don't redraw after re-shape
           //   unless specifically validated...
           greater.setBounds(left, splitbottom, usable_width, bottom-splitbottom);
-          if (DEBUG_LAYOUT)  {          
-            System.err.print("Greater: " + greater + ", " + 
-                             greater.getBounds() + ", " + 
+          if (DEBUG_LAYOUT)  {
+            System.err.print("Greater: " + greater + ", " +
+                             greater.getBounds() + ", " +
                              greater.getBackground());
           }
           greater.validate();
         }
         int total_size = 0;
         for (int i=0; i<comps.size(); i++) {
-          total_size += ((Component)comps.elementAt(i)).getSize().height;
+          total_size += (comps.elementAt(i)).getSize().height;
         }
-        if (DEBUG_LAYOUT)  { 
+        if (DEBUG_LAYOUT)  {
           System.err.println("Total Component Size: " + total_size);
         }
       }  // END splitter used conditional
     }  // END orientation conditional
     prev_size.width = dm.width;
     prev_size.height = dm.height;
-    if (layoutTiming == DELAYED_LAYOUT) { 
+    if (layoutTiming == DELAYED_LAYOUT) {
       current_splitter = null;
     }
   }

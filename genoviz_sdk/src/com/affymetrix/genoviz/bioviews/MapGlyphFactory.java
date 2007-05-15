@@ -439,7 +439,7 @@ public class MapGlyphFactory implements NeoConstants  {
       item.setForegroundColor(foreground_color);
 
       if (packer != null) {
-        packer.pack((GlyphI)scene.getGlyph(), (GlyphI)item,
+        packer.pack(scene.getGlyph(), item,
           scene.getViews().elementAt(0));
       }
 

@@ -30,17 +30,6 @@ import com.affymetrix.genoviz.util.DNAUtils;
  */
 public class Trace implements TraceI {
 
-  /**
-   * true if Sequence is reverse complement relative to trace bases
-   * (for univiewer, need to test for this even when traces are not pulled up,
-   * to determine correct direction to display for Sequence on the alignment.
-   *  in the univiewer files, all sequences are forward in the alignment, but
-   *  ones that have been flipped relative to their original traces should be
-   *  displayed as reverse complement (arrows pointing left))
-   * @deprecated I dont think this is ever used
-   */
-  protected boolean flipped;
-
   protected String name;
 
   protected Vector<BaseCall> baseVector;
@@ -248,17 +237,6 @@ public class Trace implements TraceI {
   }
 
   /**
-   * @deprecated use {@link #getBaseCall}.
-   */
-  public BaseCall getBase(int index) {
-    // quick fix for index out of bounds exceptions  6-31-98  GAH
-    if (index < 0 || index > baseVector.size()-1)  {
-      return null;
-    }
-    return (BaseCall) (baseVector.elementAt(index));
-  }
-
-  /**
    * gets the n'th base called.
    *
    * @param index into all the bases called.
@@ -267,15 +245,11 @@ public class Trace implements TraceI {
     if (index < 0 || baseVector.size()-1 < index) {
       return null;
     }
-    return (BaseCall) (baseVector.elementAt(index));
+    return baseVector.elementAt(index);
   }
 
   public String getName() {
     return name;
-  }
-
-  public boolean isFlipped() {
-    return flipped;
   }
 
   public void setLeftClip(int left_clip) {
@@ -355,7 +329,7 @@ public class Trace implements TraceI {
     // so last point in trace is first point in reverse trace, and the
     // base values are switched for their complement
     for (int i = num_samples-1; i >= 0; i--) {
-      sample = (TraceSample)sampleVector.elementAt(i);
+      sample = sampleVector.elementAt(i);
       rev_sample = sample.complement();
       rev_samples.addElement(rev_sample);
     }

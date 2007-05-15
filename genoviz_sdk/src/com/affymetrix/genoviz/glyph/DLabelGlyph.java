@@ -315,13 +315,6 @@ public class DLabelGlyph extends Glyph implements NeoConstants  {
   }
 
   /**
-   * @deprecated use setLabeledGlyph
-   */
-  public void setLabelledGlyph(GlyphI lg) {
-    setLabeledGlyph((GlyphI) lg);
-  }
-
-  /**
    * associates this label with a labeled glyph.
    * Only one glyph can be labeled at a time.
    * Multiple labels can label the same glyph.
@@ -336,13 +329,6 @@ public class DLabelGlyph extends Glyph implements NeoConstants  {
     Rectangle2D lgbox = lg.getCoordBox();
     setCoords(lgbox.x, lgbox.y, lgbox.width, lgbox.height);
     prev_view = null;
-  }
-
-  /**
-   * @deprecated use getLabeledGlyph.
-   */
-  public GlyphI getLabelledGlyph() {
-    return getLabeledGlyph();
   }
 
   public GlyphI getLabeledGlyph() {

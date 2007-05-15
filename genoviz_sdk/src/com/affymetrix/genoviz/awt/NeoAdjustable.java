@@ -23,5 +23,6 @@ import java.awt.Adjustable;
  *
  * @deprecated use java.awt.Adjustable
  */
+@Deprecated
 public interface NeoAdjustable extends Adjustable {
 }    

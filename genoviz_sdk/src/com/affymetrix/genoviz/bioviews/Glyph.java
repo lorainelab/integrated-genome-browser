@@ -49,8 +49,6 @@ public abstract class Glyph implements GlyphI  {
   protected Vector<GlyphI> children;
   protected GlyphStyle style;
 
-  /** @deprecated use {@link #style}. */
-  protected Color color = Color.black;
   protected boolean isVisible;
   protected Object info;
   protected PackerI packer;
@@ -143,7 +141,7 @@ public abstract class Glyph implements GlyphI  {
       GlyphI child;
       int numChildren = children.size();
       for ( int i = 0; i < numChildren; i++ ) {
-        child = (GlyphI) children.elementAt( i );
+        child = children.elementAt( i );
         // TransientGlyphs are usually NOT drawn in standard drawTraversal
         if (!(child instanceof TransientGlyph) || drawTransients()) {
           child.drawTraversal(view);
@@ -254,7 +252,7 @@ public abstract class Glyph implements GlyphI  {
         GlyphI child;
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          child = (GlyphI)children.elementAt( i );
+          child = children.elementAt( i );
           child.pickTraversal( pickRect, pickVector, view );
         }
       }
@@ -287,7 +285,7 @@ public abstract class Glyph implements GlyphI  {
         // We avoid object creation overhead by avoiding Enumeration.
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.elementAt(i);
+          child = children.elementAt(i);
           child.pickTraversal(pickRect, pickVector, view);
         }
       }
@@ -419,7 +417,7 @@ public abstract class Glyph implements GlyphI  {
   public void removeAllChildren() {
     if (children != null)  {
       for (int i=0; i<children.size(); i++) {
-        ((GlyphI)children.elementAt(i)).setScene(null);
+        children.elementAt(i).setScene(null);
       }
     }
     children = null;
@@ -431,7 +429,7 @@ public abstract class Glyph implements GlyphI  {
   }
 
   public GlyphI getChild(int index) {
-    return (GlyphI)children.elementAt(index);
+    return children.elementAt(index);
   }
 
   public Vector<GlyphI> getChildren()  {
@@ -554,7 +552,6 @@ public abstract class Glyph implements GlyphI  {
 
   public void setBackgroundColor(Color color)  {
     this.style = stylefactory.getStyle( style.getForegroundColor(), color, style.getFont() );
-    this.color = color;
   }
 
   public Color getBackgroundColor()  {
@@ -614,7 +611,7 @@ public abstract class Glyph implements GlyphI  {
     if (children != null) {
       int numchildren = children.size();
       for (int i=0; i<numchildren; i++) {
-        ((GlyphI)children.elementAt(i)).moveRelative(diffx, diffy);
+        children.elementAt(i).moveRelative(diffx, diffy);
       }
     }
   }
@@ -630,7 +627,7 @@ public abstract class Glyph implements GlyphI  {
     if (children != null) {
       int size = children.size();
       for (int i=0; i<size; i++) {
-        ((GlyphI)children.elementAt(i)).setScene(s);
+        children.elementAt(i).setScene(s);
       }
     }
   }
@@ -657,19 +654,6 @@ public abstract class Glyph implements GlyphI  {
    */
   public boolean isSelectable() {
     return this.selectable;
-  }
-
-
-  /**
-   * Selects the glyph if it is selectable.
-   * If it is not then this does nothing.
-   *
-   * @param selected true if the glyph is to be selected,
-   * false otherwise.
-   * @deprecated use {@link #setSelected(boolean)} instead.
-   */
-  public void select(boolean selected) {
-    setSelected(selected);
   }
 
   /**
@@ -722,7 +706,7 @@ public abstract class Glyph implements GlyphI  {
     }
     trans.copyTransform((LinearTransform)view.getTransform());
     while (! (glstack.empty())) {
-      gl = (GlyphI)glstack.pop();
+      gl = glstack.pop();
       gl.getChildTransform(view, trans);
     }
     return true;

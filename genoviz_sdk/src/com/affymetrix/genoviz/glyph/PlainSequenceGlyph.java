@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.bioviews.*;
  * and only at the appropriate resolution.
  * @deprecated Use SequenceGlyph with no background color.
  */
+@Deprecated
 public class PlainSequenceGlyph extends AbstractResiduesGlyph {
   // these are relative to the sequence of the parent glyph
   int parent_seq_beg, parent_seq_end;

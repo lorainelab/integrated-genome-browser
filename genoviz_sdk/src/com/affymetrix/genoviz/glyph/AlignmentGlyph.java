@@ -389,13 +389,6 @@ implements Comparable {
     return glyph;
   }
 
-  /**
-   *  @deprecated Use {@link #getAlignedSpans} instead.
-   */
-  public Vector getUngappedAlignments() {
-    return getAlignedSpans();
-  }
-
   public void setBackgroundColorStrategy(int strategy) {
     Vector glyphs = getAlignedSpans();
     AlignedResiduesGlyph arglyph;
@@ -684,20 +677,6 @@ implements Comparable {
 
   public boolean isForward() {
     return this.forward;
-  }
-
-  /**
-   *  @deprecated Use {@link #setForward} instead.
-   */
-  public void isForward(boolean forward) {
-    setForward(forward);
-  }
-
-  /**
-   *  @deprecated Use {@link #isForward} instead.
-   */
-  public boolean getForward() {
-    return isForward();
   }
 
   public void setBackgroundColor(Color c) {

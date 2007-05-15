@@ -100,7 +100,7 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
     int direction = ((Integer)arg).intValue();
     NeoDragEvent new_event = new NeoDragEvent(this, direction);
     for (int i=0; i<listeners.size(); i++) {
-      ((NeoDragListener)listeners.elementAt(i)).heardDragEvent(new_event);
+      listeners.elementAt(i).heardDragEvent(new_event);
     }
     time_count++;
   }

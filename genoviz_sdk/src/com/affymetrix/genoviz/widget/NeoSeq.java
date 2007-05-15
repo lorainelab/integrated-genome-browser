@@ -934,15 +934,6 @@ public class NeoSeq extends NeoContainerWidget
 
   /**
    * Removes highlighting of selected range of sequence.
-   *
-   * @deprecated Use deselect() instead.
-   */
-  public void unhighlight() {
-    deselect();
-  }
-
-  /**
-   * Removes highlighting of selected range of sequence.
    */
   public void deselect() {
     residues_selected = false;
@@ -973,12 +964,13 @@ public class NeoSeq extends NeoContainerWidget
     residue_map.adjustScroller(residue_map.Y);
   }
 
-  /**
+ /**
    * sets the residues in the NeoSeq.
    *
    * @param seq_string contains the residues.
    * @deprecated Use setResidues(String residues) instead.
    */
+  @Deprecated
   public void setSequence(String seq_string) {
     setResidues(seq_string);
   }
@@ -1645,20 +1637,6 @@ public class NeoSeq extends NeoContainerWidget
 
   public void setNumberFontColor(Color col) {
     num_glyph.setColor(col);
-  }
-
-  /**
-   * @deprecated Use {@link #setShow(int, boolean)} instead.
-   */
-  public void setShowComp(boolean showComp) {
-    setShow(COMPLEMENT, showComp);
-  }
-
-  /**
-   * @deprecated Use {@link #getShow(int)} instead.
-   */
-  public boolean getShowComp() {
-    return getShow(COMPLEMENT);
   }
 
   /**

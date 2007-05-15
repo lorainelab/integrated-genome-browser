@@ -136,14 +136,6 @@ public class CornerGlyph extends DirectedGlyph {
   }
 
   /**
-   * @param c is ignored.
-   * @deprecated Use {@link #getPatchColor()}.
-   */
-  public java.awt.Color getPatchColor( Color c ) {
-    return getPatchColor();
-  }
-
-  /**
    * Gets the 2nd color used to draw the patch.
    */
   public java.awt.Color getPatchColor() {

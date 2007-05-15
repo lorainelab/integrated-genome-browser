@@ -84,7 +84,7 @@ public class BaseCalls {
   }
 
   public BaseCall getBaseCall( int index ) {
-    return (BaseCall) (baseVector.elementAt(index));
+    return baseVector.elementAt(index);
   }
 
 
@@ -104,20 +104,6 @@ public class BaseCalls {
   }
 
   /**
-   * @deprecated use reverseComplement() without parameters.
-   */
-  public BaseCalls reverseComplement( int trace_length ){
-    BaseCalls revBaseCalls = new BaseCalls();
-    revBaseCalls.setTrace( this.getTrace() );
-    int iCount = getBaseCount();
-    for (int i = iCount - 1; i >= 0; i--) {
-      BaseCall base = ((BaseCall) baseVector.elementAt(i)).reverseComplement( trace_length );
-      revBaseCalls.addBase(base);
-    }
-    return revBaseCalls;
-  }
-
-  /**
    * constructs the reverse complement of this set of base calls.
    *
    * @return a new set of base calls.
@@ -131,7 +117,7 @@ public class BaseCalls {
     revBaseCalls.setTrace( this.getTrace() );
     int iCount = getBaseCount();
     for (int i = iCount - 1; i >= 0; i--) {
-      BaseCall base = ((BaseCall) baseVector.elementAt(i)).reverseComplement( traceLength );
+      BaseCall base = baseVector.elementAt(i).reverseComplement( traceLength );
       revBaseCalls.addBase(base);
     }
     return revBaseCalls;

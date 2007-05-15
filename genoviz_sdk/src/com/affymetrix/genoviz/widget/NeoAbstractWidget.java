@@ -109,7 +109,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     if (null == name) {
       throw new IllegalArgumentException("can't getColor without a name.");
     }
-    return (Color)colormap.get(name);
+    return colormap.get(name);
   }
   public String getColorName(Color theColor) {
     if (null == theColor) {
@@ -317,7 +317,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
               e.getKeyCode(), e.getKeyChar());
         KeyListener kl;
         for (int i=0; i<key_listeners.size(); i++) {
-          kl = (KeyListener)key_listeners.elementAt(i);
+          kl = key_listeners.elementAt(i);
           if (id == e.KEY_PRESSED) {
             kl.keyPressed(nevt);
           }
@@ -342,13 +342,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
    *
    *  @deprecated use {@link #setBounds(int,int,int,int)}.
    */
+  @Deprecated
   public void reshape(int x, int y, int width, int height) {
     pref_widg_size.setSize(width, height);
     super.reshape(x, y, width, height);
-  }
-
-  public Dimension preferredSize() {
-    return getPreferredSize();
   }
 
   public Dimension getPreferredSize() {

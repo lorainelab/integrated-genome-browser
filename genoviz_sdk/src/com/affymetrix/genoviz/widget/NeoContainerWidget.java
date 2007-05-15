@@ -50,7 +50,7 @@ implements NeoWidgetI{
 
   public void destroy() {
     for ( int i = 0; i < widgets.size(); i++ ) {
-      ((NeoWidgetI)widgets.elementAt(i)).destroy();
+      widgets.elementAt(i).destroy();
     }
     widgets.removeAllElements();
     this.removeAll();
@@ -174,17 +174,17 @@ implements NeoWidgetI{
     }
   }
   public int getSelectionAppearance() {
-    return ((NeoWidgetI)widgets.firstElement()).getSelectionAppearance();
+    return widgets.firstElement().getSelectionAppearance();
   }
 
   public void setSelectionColor(Color col) {
-    Enumeration e = widgets.elements();
-    while (e.hasMoreElements()) {
-      ((NeoWidgetI)e.nextElement()).setSelectionColor(col);
+    for (NeoWidgetI w : widgets) {
+      w.setSelectionColor(col);
     }
   }
+
   public Color getSelectionColor() {
-    return ((NeoWidgetI)widgets.firstElement()).getSelectionColor();
+    return widgets.firstElement().getSelectionColor();
   }
 
   /**
@@ -454,7 +454,7 @@ implements NeoWidgetI{
         +"Not " + axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getMinZoom(axisid);
+    return widgets.elementAt(0).getMinZoom(axisid);
   }
 
   /*--------  End of Zooming Implementation --------*/
@@ -511,7 +511,7 @@ implements NeoWidgetI{
     Scene glyph_scene, widg_scene;
     NeoWidgetI widg;
     for (int i=0; i<widgets.size(); i++) {
-      widg = (NeoWidgetI)widgets.elementAt(i);
+      widg = widgets.elementAt(i);
       if (widg.getWidget(gl) == widg) { return widg; }
     }
     return null;
@@ -637,7 +637,7 @@ implements NeoWidgetI{
       for (int i=0;
           (i <= last_listener) && (i < mouse_listeners.size());
           i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -647,8 +647,7 @@ implements NeoWidgetI{
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

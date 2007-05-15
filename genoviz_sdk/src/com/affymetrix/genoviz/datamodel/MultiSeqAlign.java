@@ -100,7 +100,7 @@ public class MultiSeqAlign {
   }
 
   public Sequence getSequence(String theName) {
-    AlignSequence s = (AlignSequence)this.seqs.get(theName);
+    AlignSequence s = this.seqs.get(theName);
     return s;
   }
 
@@ -111,7 +111,7 @@ public class MultiSeqAlign {
    * @return the residues in the sequence.
    */
   public String getResidues(String theName) {
-    AlignSequence s = (AlignSequence)this.seqs.get(theName);
+    AlignSequence s = this.seqs.get(theName);
     if (null != s) {
       StringBuffer sb = new StringBuffer();
       int i = 0;
@@ -180,7 +180,7 @@ public class MultiSeqAlign {
       int best_score = 0;
 
       for (int j=0; j < v.size(); j++) {
-        AlignSequence s = (AlignSequence) v.elementAt(j);
+        AlignSequence s = v.elementAt(j);
         char a = s.getResidue(i);
         if (i >= s.getStart() && i < (s.getStart() + s.getLength()) ) {
           if (possibles.indexOf(a) < 0) {
@@ -193,7 +193,7 @@ public class MultiSeqAlign {
         char a = possibles.charAt(j);
         int score  = 0;
         for (int k=0; k < v.size(); k++) {
-          AlignSequence t = (AlignSequence) v.elementAt(k);
+          AlignSequence t = v.elementAt(k);
           if (i >= t.getStart() && i < (t.getStart() + t.getLength()) ) {
             char b = t.getResidue(i);
             score += score(a, b);
@@ -238,7 +238,7 @@ public class MultiSeqAlign {
       int best_score = 0;
 
       for (int j=0; j < v.size(); j++) {
-        AlignSequence s = (AlignSequence) v.elementAt(j);
+        AlignSequence s = v.elementAt(j);
         char a = s.getResidue(i);
         if (possibles.indexOf(a) < 0) {
           possibles += a;
@@ -249,7 +249,7 @@ public class MultiSeqAlign {
         char a = possibles.charAt(j);
         int score  = 0;
         for (int k=0; k < v.size(); k++) {
-          AlignSequence t = (AlignSequence) v.elementAt(k);
+          AlignSequence t = v.elementAt(k);
           char b = t.getResidue(i);
           score += score(a, b);
         }

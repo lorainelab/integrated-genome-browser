@@ -140,7 +140,7 @@ public class NeoTimerEventClock extends Thread {
     NeoTimerEvent nte = new NeoTimerEvent(src, arg, count);
     NeoTimerListener listener;
     for (int i=0; i<listeners.size(); i++) {
-      listener = (NeoTimerListener)listeners.elementAt(0);
+      listener = listeners.elementAt(0);
       listener.heardTimerEvent(nte);
     }
   }

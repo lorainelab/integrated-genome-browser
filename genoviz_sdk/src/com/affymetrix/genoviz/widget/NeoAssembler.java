@@ -634,14 +634,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     return aglyph;
   }
 
-  /**
-   * @deprecated in favor of addAlignedSpan() (for naming consistency).
-   */
-  public GlyphI addUngappedSpan(GlyphI seq_tag, int seqstart, int seqend,
-      int alignstart, int alignend) {
-    return addAlignedSpan(seq_tag, seqstart, seqend, alignstart, alignend);
-  }
-
   public GlyphI addAlignedSpan(GlyphI seq_tag, int seqstart, int seqend,
       int alignstart, int alignend) {
     AlignedResiduesGlyph gl;
@@ -822,13 +814,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     return aglyph;
   }
 
-  /**
-   * @deprecated use <code>getAlignmentGlyphs()</code>.
-   */
-  public Vector getSequences() {
-    return getAlignmentGlyphs();
-  }
-
   public String getLabel(GlyphI seq_tag) {
     String label = null;
     AlignmentGlyph aglyph = (AlignmentGlyph)seq_tag;
@@ -883,43 +868,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     moveLabels();
     return sglyph;
   }
-
-
-  //
-  //  Note that this assumes adding based on sequence!
-  //  so that it will _include_ the end -- thus if
-  //  start = 0, end = 1, really creating a sequence annotation that
-  //  starts at 0 and is 2 map units long
-  //
-  /**
-   * @deprecated in favor of <pre>
-   *    Object obj = addSequence(start, end),
-   *    setLabel(obj, namestring);</pre>
-   */
-  public GlyphI addSequence(String name, int start, int end) {
-    GlyphI seq_glyph = (GlyphI)addSequence(start, end);
-    GlyphI label_glyph = (GlyphI)setLabel(seq_glyph, name);
-    return seq_glyph;
-  }
-
-
-
-  // want to be able to add sequence without knowing anything about
-  // the Sequence data model.  Therefore need separate methods to
-  // add the sequence residues & name, and ungapped alignment spans
-  /**
-   * @deprecated in favor of <pre>
-   *   Object obj = addSequence(start, end),
-   *   setLabel(obj, namestring);
-   *   setResidues(obj, residuestring);</pre>
-   */
-  public GlyphI addSequence(String name, int start, int end, String residues) {
-    AlignmentGlyph aglyph = (AlignmentGlyph)addSequence(name, start, end);
-    aglyph.setMatchChar ( match_char );
-    setResidues(aglyph, residues);
-    return aglyph;
-  }
-
 
   /**
    * makes sure that the labels are all matched up properly
@@ -1013,16 +961,10 @@ implements NeoAssemblerI, NeoViewBoxListener,
    *
    * @deprecated use setBounds (but override reshape).
    */
+  @Deprecated
   public synchronized void reshape(int x, int y, int width, int height) {
     super.reshape(x, y, width, height);
     alignmap.adjustScroller(alignmap.Y);
-  }
-
-  /**
-   * @deprecated use doLayout.
-   */
-  public synchronized void layout() {
-    doLayout();
   }
 
   public synchronized void doLayout() {
@@ -1464,15 +1406,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     return selected;
   }
   //-------------------------------------------
-
-  /**
-   * @deprecated Use updateWidget().
-   */
-  public void updateMap() {
-    alignmap.updateWidget();
-    consmap.updateWidget();
-    labelmap.updateWidget();
-  }
 
   public void updateMap(boolean alignments, boolean consensus, boolean labels) {
     if (alignments)  alignmap.updateWidget();
@@ -2058,11 +1991,11 @@ implements NeoAssemblerI, NeoViewBoxListener,
       //   if switch to making a new matrix with each call to
       //   adjustColorMatrix()
 
-      Vector align_glyphs = this.getSequences();
+      Vector align_glyphs = this.getAlignmentGlyphs();
       AlignmentGlyph gar;
       if (color_matrix == bg_color_matrix) {
         for (int i=0; i<align_glyphs.size(); i++) {
-          gar = (AlignmentGlyph)align_glyphs.elementAt(i);
+          gar = (AlignmentGlyph) align_glyphs.elementAt(i);
           gar.setBackgroundColorMatrix(color_matrix);
         }
         if (colors_affect_cons && cons_glyph != null) {
@@ -2256,10 +2189,10 @@ implements NeoAssemblerI, NeoViewBoxListener,
     font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
     residue_color = col;
     if (apply_color_retro) {
-      Vector align_glyphs = this.getSequences();
+      Vector align_glyphs = this.getAlignmentGlyphs();
       AlignmentGlyph gar;
       for (int i=0; i<align_glyphs.size(); i++) {
-        gar = (AlignmentGlyph)align_glyphs.elementAt(i);
+        gar = (AlignmentGlyph) align_glyphs.elementAt(i);
         gar.setForegroundColor(residue_color);
       }
       if (colors_affect_cons && cons_glyph != null)  {

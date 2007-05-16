@@ -24,43 +24,39 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
-  
-  /*
-<!ELEMENT STYLESHEET (IMPORT?, STYLES?, ASSOCIATIONS?)>
-   */
-  
-  LinkedHashMap meth2stylename = new LinkedHashMap();
-  LinkedHashMap regex2stylename = new LinkedHashMap();
-  LinkedHashMap type2stylename = new LinkedHashMap();
+
+  LinkedHashMap/*<String, AssociationElement>*/ meth2association = new LinkedHashMap/*<String, AssociationElement>*/();
+  LinkedHashMap/*<Pattern, AssociationElement>*/ regex2association = new LinkedHashMap/*<Pattern, AssociationElement>*/();
+  LinkedHashMap/*<String, AssociationElement>*/ type2association = new LinkedHashMap/*<String, AssociationElement>*/();
 
   LinkedHashMap stylename2styleElement = new LinkedHashMap();
 
   public static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
-  
+
   public Object clone() throws CloneNotSupportedException {
     Stylesheet clone = (Stylesheet) super.clone();
-    clone.meth2stylename = new LinkedHashMap();
-    clone.meth2stylename.putAll(meth2stylename);
-    clone.regex2stylename = new LinkedHashMap();
-    clone.regex2stylename.putAll(regex2stylename);
-    clone.type2stylename = new LinkedHashMap();
-    clone.type2stylename.putAll(type2stylename);
+    clone.meth2association = new LinkedHashMap();
+    clone.meth2association.putAll(meth2association);
+    clone.regex2association = new LinkedHashMap();
+    clone.regex2association.putAll(regex2association);
+    clone.type2association = new LinkedHashMap();
+    clone.type2association.putAll(type2association);
     clone.stylename2styleElement = new LinkedHashMap();
     clone.stylename2styleElement.putAll(stylename2styleElement);
     return clone;
   }
-  
+
   public Stylesheet() {
   }
-  
+
   public void importFromURL(String url) {
     throw new RuntimeException("import not implemented");
   }
-  
+
   public StyleElement getStyleByName(String name) {
     return (StyleElement) stylename2styleElement.get(name);
   }
-  
+
   /** Creates a new style.  If one with the given name already exists, it will
    *  be obliterated and replaced by this new one.
    */
@@ -71,7 +67,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
       se = new StyleElement();
       se.name = name;
     }
-    
+
     if (add_to_index) {
       addToIndex(se);
     }
@@ -84,7 +80,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
       stylename2styleElement.put(se.name, se);
     }
   }
-  
+
   public static StyleElement easyClone(StyleElement original) {
     try {
       StyleElement cloned = (StyleElement) original.clone();
@@ -101,76 +97,76 @@ public class Stylesheet implements Cloneable, XmlAppender {
    *  Second looks for a match by feature type (such as an ontology term).
    *  Third looks for a match by feature "method" (i.e. the tier name).
    */
-  public StyleElement getStyleElementForSym(SeqSymmetry sym) {
-    StyleElement styleElement = null;
+  public DrawableElement getDrawableForSym(SeqSymmetry sym) {
+    DrawableElement drawable = null;
     if (sym instanceof SymWithProps) {
       SymWithProps proper = (SymWithProps) sym;
       Object o = proper.getProperty(SYM_TO_STYLE_PROPERTY_KEY);
-      if (o instanceof StyleElement) {
-        styleElement = (StyleElement) o;
+      if (o instanceof DrawableElement) {
+        drawable = (DrawableElement) o;
       }
     }
-    
-    if (styleElement == null) {
+
+    if (drawable == null) {
       if (sym instanceof Das2FeatureRequestSym) {
         Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
         String type = d2r.getType();
-        styleElement = getStyleElementForType(type);
+        drawable = getAssociationForType(type);
       } else if (sym instanceof GFF3Sym) {
         GFF3Sym gff = (GFF3Sym) sym;
         String type = gff.getFeatureType();
-        styleElement = getStyleElementForType(type);
+        drawable = getAssociationForType(type);
       }
     }
-    
-    if (styleElement == null) {
-      styleElement = getstyleElementForMethod(SmartAnnotBioSeq.determineMethod(sym));
+
+    if (drawable == null) {
+      drawable = getAssociationForMethod(SmartAnnotBioSeq.determineMethod(sym));
     }
-    
-    if (styleElement == null) {
-      styleElement = getDefaultStyleElement();
+
+    if (drawable == null) {
+      drawable = getDefaultStyleElement();
     }
-    
-    return styleElement;
+
+    return drawable;
   }
-  
-  public StyleElement getstyleElementForMethod(String meth){
+
+  public AssociationElement getAssociationForMethod(String meth){
     if (meth == null) {
       return null;
     }
-    
-    String stylename = null;
-    
+
+    AssociationElement association = null;
+
     // First try to match styleElement based on exact name match
-    stylename = (String) meth2stylename.get(meth);
-    
+    association = (AssociationElement) meth2association.get(meth);
+
     // Then try to match styleElement from regular expressions
-    if (stylename == null) {
-      java.util.List keyset = new ArrayList(regex2stylename.keySet());
-      
+    if (association == null) {
+      java.util.List keyset = new ArrayList(regex2association.keySet());
+
       // Look for a matching pattern, going backwards, so that the
       // patterns from the last preferences read take precedence over the
       // first ones read (such as the default prefs).  Within a single
       // file, the last matching pattern will trump any earlier ones.
-      for (int j=keyset.size()-1 ; j >= 0 && stylename == null; j--) {
+      for (int j=keyset.size()-1 ; j >= 0 && association == null; j--) {
         java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
         if (regex.matcher(meth).find()) {
-          stylename = (String) regex2stylename.get(regex);
+          association = (AssociationElement) regex2association.get(regex);
           // Put the stylename in meth2stylename to speed things up next time through.
-          meth2stylename.put(meth, stylename);
+          meth2association.put(meth, association);
         }
       }
     }
-    
-    return getStyleByName(stylename);
+
+    return association;
   }
-  
-  public StyleElement getStyleElementForType(String type){
-    return (StyleElement) type2stylename.get(type);
+
+  public AssociationElement getAssociationForType(String type){
+    return (AssociationElement) type2association.get(type);
   }
-  
+
   StyleElement default_style;
-  
+
   public StyleElement getDefaultStyleElement() {
     if (default_style == null) {
       // Create a default style that is just boxes inside boxes...
@@ -203,36 +199,16 @@ public class Stylesheet implements Cloneable, XmlAppender {
 
     sb.append("\n");
     sb.append(indent).append("<ASSOCIATIONS>\n");
-    
-    Iterator m_iter = meth2stylename.keySet().iterator();
-    while (m_iter.hasNext()) {
-      String method_name = (String) m_iter.next();
-      String style_name = (String) meth2stylename.get(method_name);
-      sb.append(indent).append(indent + "  ").append("<METHOD_ASSOCIATION ");
-      XmlStylesheetParser.appendAttribute(sb, "method", method_name);
-      XmlStylesheetParser.appendAttribute(sb, "style", style_name);
-      sb.append("/>\n");
-    }
-    
-    Iterator r_iter = regex2stylename.keySet().iterator();
-    while (r_iter.hasNext()) {
-      Pattern regex = (Pattern) r_iter.next();
-      String regex_string = regex.pattern();
-      String style_name = (String) regex2stylename.get(regex);
-      sb.append(indent).append(indent + "  ").append("<METHOD_REGEX_ASSOCIATION ");
-      XmlStylesheetParser.appendAttribute(sb, "regex", regex_string);
-      XmlStylesheetParser.appendAttribute(sb, "style", style_name);
-      sb.append("/>\n");
-    }
 
-    Iterator t_iter = type2stylename.keySet().iterator();
-    while (t_iter.hasNext()) {
-      String type_name = (String) t_iter.next();
-      String style_name = (String) type2stylename.get(type_name);
-      sb.append(indent).append(indent + "  ").append("<TYPE_ASSOCIATION ");
-      XmlStylesheetParser.appendAttribute(sb, "type", type_name);
-      XmlStylesheetParser.appendAttribute(sb, "style", style_name);
-      sb.append("/>\n");
+    List associations = new ArrayList();
+    associations.addAll(meth2association.values());
+    associations.addAll(regex2association.values());
+    associations.addAll(type2association.values());
+
+    Iterator a_iter = associations.iterator();
+    while (a_iter.hasNext()) {
+      AssociationElement ae = (AssociationElement) a_iter.next();
+      ae.appendXML(indent+"  ",sb);
     }
 
     sb.append(indent).append("</ASSOCIATIONS>\n");
@@ -242,15 +218,15 @@ public class Stylesheet implements Cloneable, XmlAppender {
     sb.append("\n");
     return sb;
   }
-  
+
   public StyleElement getWrappedStyle(String name) {
     StyleElement se = new WrappedStyleElement(name);
     return se;
   }
-  
+
   public static class WrappedStyleElement extends StyleElement {
     public static String NAME = "USE_STYLE";
-    
+
     public WrappedStyleElement(String name) {
       super();
       this.name = name;
@@ -263,10 +239,10 @@ public class Stylesheet implements Cloneable, XmlAppender {
       }
       return se;
     }
-    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container, 
+    public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container,
         Stylesheet stylesheet, PropertyMap context) {
       StyleElement referredStyle = getReferredStyle(stylesheet);
-      
+
       GlyphI containerGlyph = ChildrenElement.findContainer(container, this.childContainer);
 
       return referredStyle.symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);

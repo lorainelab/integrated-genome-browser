@@ -1,6 +1,6 @@
 <prefs>
 
-<!-- 
+<!--
 This is a web-based preferences file for IGB.
 
 In versions of IGB *after* 4.46, IGB will first attempt to read this
@@ -29,27 +29,27 @@ be used (if present).
   <annotation_style annot_type_regex=".*netaffx consensus" factory="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
   <!-- End of probe set display section -->
 
-  <annotation_style annot_type="contigs" 
+  <annotation_style annot_type="contigs"
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
-  /> 
-  <annotation_style annot_type="contig" 
+  />
+  <annotation_style annot_type="contig"
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
-  /> 
+  />
 
-  <annotation_style annot_type="Probesets" 
+  <annotation_style annot_type="Probesets"
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
-  /> 
-  <annotation_style annot_type="PSRs" 
+  />
+  <annotation_style annot_type="PSRs"
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
-  /> 
-  
-<annotation_style annot_type_starts_with="coverage: " 
-     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
+  />
+
+<annotation_style annot_type_starts_with="coverage: "
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory"
      height="100"
      style="coverage" />
 
 <annotation_style annot_type_ends_with="_tf"
-     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory" 
+     factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory"
      height="100"
      style="coverage" />
 
@@ -72,7 +72,7 @@ be used (if present).
 
 
 <!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
-<!-- 
+<!--
   Must match all these names:  (and similar ones for non-human chips)
     "HuEx-1_0-st", "HuEx-1_0-st-Probes", "HuEx-1_0-st-Transcripts"
     "HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
@@ -110,7 +110,7 @@ be used (if present).
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="TAIR\S*" 
+  <annotation_url annot_type_regex="TAIR\S*"
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
@@ -119,7 +119,7 @@ be used (if present).
     url="http://www.ensembl.org/Homo_sapiens/textview?species=all&amp;idx=All&amp;q=$$"
   />
 
-  <annotation_url annot_type_regex="EnsGene" 
+  <annotation_url annot_type_regex="EnsGene"
      name="Ensembl Human GeneView"
      url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
   />
@@ -136,7 +136,11 @@ be used (if present).
     name="NetAffx Transcript Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
-    
-    
+
+  <annotation_url annot_type_regex="^.*HuGene-1_0-st.*Transcripts$"
+    name="NetAffx Transcript Cluster Details"
+    url="https://www.affymetrix.com/analysis/netaffx/exon/wtgene_transcript.affx?pk=$$"
+  />
+
 </prefs>
 

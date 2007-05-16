@@ -71,7 +71,7 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
       return;
     }
     
-    StyleElement se = stylesheet.getStyleElementForSym(sym);
+    DrawableElement drawable = stylesheet.getDrawableForSym(sym);
 
     TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style, false);
     int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
@@ -86,7 +86,7 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     context.put(AnnotStyle.class.getName(), style);
     context.put(TierGlyph.class.getName(), the_tier);
     
-    se.symToGlyph(gviewer, sym, the_tier, stylesheet, context);
+    drawable.symToGlyph(gviewer, sym, the_tier, stylesheet, context);
   }
 
 }

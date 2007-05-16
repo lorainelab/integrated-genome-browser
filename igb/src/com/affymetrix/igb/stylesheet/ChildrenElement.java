@@ -130,15 +130,15 @@ public static String ATT_POSITIONS = "child_positions";
     
     // If there were no match elements matched, use the given <STYLE> element
     else {
-      StyleElement se = styleElement;
-      if (se == null) {
+      DrawableElement drawable = styleElement;
+      if (drawable == null) {
         // NOTE: The current DTD requires that a <STYLE> or <USE_STYLE> be specified,
         // but I've experimented with the possibility of leaving it blank, in which case
         // ask the stylesheet for an appropriate style.
-        se = stylesheet.getStyleElementForSym(childsym);
+        drawable = stylesheet.getDrawableForSym(childsym);
       }
-      if (se != null) {
-        result = se.symToGlyph(gviewer, childsym, container_glyph, stylesheet, propertyMap);
+      if (drawable != null) {
+        result = drawable.symToGlyph(gviewer, childsym, container_glyph, stylesheet, propertyMap);
       } else {
         SeqUtils.printSymmetry(childsym);
       }

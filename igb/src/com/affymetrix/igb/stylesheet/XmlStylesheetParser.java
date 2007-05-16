@@ -205,31 +205,36 @@ public class XmlStylesheetParser {
       if (child instanceof Element) {
         Element el = (Element) child;
 
-        if (name.equalsIgnoreCase("TYPE_ASSOCIATION")) {
-          String type = el.getAttribute("type");
-          String style = el.getAttribute("style");
+        AssociationElement associationElement = null;
+        
+        if (name.equalsIgnoreCase(AssociationElement.TYPE_ASSOCIATION)) {
+          String type = el.getAttribute(AssociationElement.ATT_TYPE);
+          String style = el.getAttribute(AssociationElement.ATT_STYLE);
           if (isBlank(type) || isBlank(style)) {
             throw new IOException("ERROR in stylesheet: missing method or style in METHOD_ASSOCIATION");
           }
-          stylesheet.type2stylename.put(type, style);
+          associationElement = AssociationElement.getTypeAssocation(stylesheet, type, style);
+          stylesheet.type2association.put(type, associationElement);
         }
-        else if (name.equalsIgnoreCase("METHOD_ASSOCIATION")) {
-          String method = el.getAttribute("method");
-          String style = el.getAttribute("style");
+        else if (name.equalsIgnoreCase(AssociationElement.METHOD_ASSOCIATION)) {
+          String method = el.getAttribute(AssociationElement.ATT_METHOD);
+          String style = el.getAttribute(AssociationElement.ATT_STYLE);
           if (isBlank(method) || isBlank(style)) {
             throw new IOException("ERROR in stylesheet: missing method or style in METHOD_ASSOCIATION");
           }
-          stylesheet.meth2stylename.put(method, style);
+          associationElement = AssociationElement.getMethodAssocation(stylesheet, method, style);
+          stylesheet.meth2association.put(method, associationElement);
         }
-        else if (name.equalsIgnoreCase("METHOD_REGEX_ASSOCIATION")) {
-          String regex = el.getAttribute("regex");
-          String style = el.getAttribute("style");
+        else if (name.equalsIgnoreCase(AssociationElement.METHOD_REGEX_ASSOCIATION)) {
+          String regex = el.getAttribute(AssociationElement.ATT_REGEX);
+          String style = el.getAttribute(AssociationElement.ATT_STYLE);
           if (isBlank(regex) || isBlank(style)) {
             throw new IOException("ERROR in stylesheet: missing method or style in METHOD_ASSOCIATION");
           }
           try {
             Pattern pattern = Pattern.compile(regex);
-            stylesheet.regex2stylename.put(pattern, style);
+            associationElement = AssociationElement.getMethodRegexAssocation(stylesheet, regex, style);
+            stylesheet.regex2association.put(pattern, associationElement);
           } catch (PatternSyntaxException pse) {
             IOException ioe = new IOException("ERROR in stylesheet: Regular Expression not valid: '" +
                 regex + "'");
@@ -239,6 +244,19 @@ public class XmlStylesheetParser {
         }
         else {
           cantParse(el);
+        }
+        
+        //Now read the properties maps
+        NodeList grand_children = child.getChildNodes();
+        for (int j=0; j<grand_children.getLength(); j++) {
+          Node grand_child = grand_children.item(j);
+          if (grand_child instanceof Element) {
+            if (grand_child.getNodeName().equalsIgnoreCase(PropertyMap.PROP_ELEMENT_NAME)) {
+              processProperty((Element) grand_child, associationElement.propertyMap);
+            } else {
+              cantParse(el);
+            }
+          }
         }
       }
     }

@@ -468,11 +468,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
       is = null;
     }
 
-    if (is == null) {
-      System.out.println("Thinking about updating in bg.");
-      LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
-    }
-    else {
+    if (is != null) {
       try {
         prefs_parser.parse(is, web_prefs_url, prefs_hash);
         System.out.println("Loading default prefs from url: " + web_prefs_url);
@@ -483,6 +479,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
         try {is.close();} catch (Exception e) {}
       }
     }
+
+     LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
   }
 
   protected void init() {

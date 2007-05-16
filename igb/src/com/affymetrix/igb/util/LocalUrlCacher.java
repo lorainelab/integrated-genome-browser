@@ -372,13 +372,13 @@ public class LocalUrlCacher {
       }
       bis.close();
       connstr.close();
-      if (write_to_cache) {
-	System.out.println("writing to cache: " + cache_file.getPath());
-	// write data from URL into a File
-	BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
-	// no API for returning number of bytes successfully written, so write all in one shot...
-	bos.write(content, 0, content_length);
-	bos.close();
+      if (write_to_cache && content != null && content.length > 0) {
+        System.out.println("writing to cache: " + cache_file.getPath());
+        // write data from URL into a File
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
+        // no API for returning number of bytes successfully written, so write all in one shot...
+        bos.write(content, 0, content.length);
+        bos.close();
       }
       result_stream = new ByteArrayInputStream(content);
     }

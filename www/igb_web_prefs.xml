@@ -137,11 +137,11 @@ be used (if present).
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
 
-  <annotation_url annot_type_regex="^HuGene-1_0-st.*(Transcripts|Probesets)$"
+  <annotation_url annot_type_regex="^HuGene-1_0-st.*(Transcripts|Probes)$"
     name="NetAffx HuGene Details"
     url="https://www.affymetrix.com/analysis/netaffx/exon/wtgene_transcript.affx?pk=$$"
   />
-  <annotation_url annot_type_regex="^http.*HuGene-1_0-st.*(Transcripts|Probesets)$"
+  <annotation_url annot_type_regex="^http.*HuGene-1_0-st.*(Transcripts|Probes)$"
     name="NetAffx HuGene Details"
     url="https://www.affymetrix.com/analysis/netaffx/exon/wtgene_transcript.affx?pk=1:$$"
   />

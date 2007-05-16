@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class MatchElement implements Cloneable, XmlAppender {
+public class MatchElement implements DrawableElement {
 
 //<!ELEMENT MATCH (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
 //<!ATTLIST MATCH

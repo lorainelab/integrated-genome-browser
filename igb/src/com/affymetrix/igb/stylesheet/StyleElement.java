@@ -20,7 +20,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
 
 
-public class StyleElement implements Cloneable, XmlAppender {
+public class StyleElement implements DrawableElement {
   /*
 <!ELEMENT STYLE (PROPERTY*, ((MATCH+,ELSE?) | GLYPH))>
 <!ATTLIST STYLE

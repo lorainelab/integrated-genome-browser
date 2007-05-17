@@ -89,7 +89,7 @@ public class SeqMapView extends JPanel
   java.util.List popup_listeners = new ArrayList();
   java.util.List data_request_listeners = new ArrayList();
 
-  MapViewGlyphFactoryI default_glyph_factory = new GenericAnnotGlyphFactory();
+  XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 
   /**
    *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
@@ -441,7 +441,8 @@ public class SeqMapView extends JPanel
     LinkControl link_control = new LinkControl();
     this.addPopupListener(link_control);
 
-        
+    default_glyph_factory.setStylesheet(XmlStylesheetParser.getUserStylesheet());
+
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
   }
   
@@ -1296,43 +1297,18 @@ public class SeqMapView extends JPanel
     return container_factory;
   }
 
-  public MapViewGlyphFactoryI getAnnotationGlyphFactory(String meth) {
-    if (meth == null) {
-      return null;
-    }
-    MapViewGlyphFactoryI factory;
-    factory = (MapViewGlyphFactoryI)meth2factory.get(meth);
-    if (factory == null) {
-      java.util.List keyset = new ArrayList(regex2factory.keySet());
-
-      // Look for a matching pattern, going backwards, so that the
-      // patterns from the last preferences read take precedence over the
-      // first ones read (such as the default prefs).  Within a single
-      // file, the last matching pattern will trump any earlier ones.
-      for (int j=keyset.size()-1 ; j >= 0 && factory == null; j--) {
-        java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
-        if (regex.matcher(meth).find()) {
-          factory = (MapViewGlyphFactoryI) regex2factory.get(regex);
-          // Put (a clone of?) the factory in meth2factory to speed things up next time through.
-          // (A clone would let us later modify the color, etc. of that copy)
-          meth2factory.put(meth, factory);
-        }
-      }
-    }
-    if (factory == null) {
-      factory = default_glyph_factory;
-      // Again, a clone might be better.
-      meth2factory.put(meth, default_glyph_factory);
-    }
-    
-    return factory;
-  }  
+  // The parameter "method" is now ignored because the default glyph factory
+  // is an XmlStylesheetGlyphFactory, and it will take the method and type
+  // into account when determining how to draw a sym.
+  public MapViewGlyphFactoryI getAnnotationGlyphFactory(String method) {
+    return default_glyph_factory;
+  }
 
   public void addAnnotationGlyphs(SeqSymmetry annotSym) {
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
-    String meth = null;
-
+    String meth = determineMethod(annotSym);
+    
     if (annotSym instanceof ScoredContainerSym) {
       factory = getScoredContainerGlyphFactory();
     }
@@ -1340,26 +1316,17 @@ public class SeqMapView extends JPanel
       factory = getGenericGraphGlyphFactory();
     }
     else {
-      meth = determineMethod(annotSym);
       factory = getAnnotationGlyphFactory(meth);
-    }
-    if (factory == null) { factory = default_glyph_factory; }
-
-    if (factory instanceof XmlStylesheetGlyphFactory) {
-      // Re-setting the stylesheet every time allows the 
-      // DEBUG_STYLESHEETS flag to work right, and doesn't add any
-      // performance hit
-      ((XmlStylesheetGlyphFactory) factory).setStylesheet(XmlStylesheetParser.getUserStylesheet());
     }
 
     if (DEBUG_COMP && transform_path != null)  {
       System.out.println("transform path length: " + transform_path.length);
       for (int i=0; i<transform_path.length; i++) {
-	SeqUtils.printSymmetry(transform_path[i]);
+        SeqUtils.printSymmetry(transform_path[i]);
       }
     }
-    factory.createGlyph(annotSym, this);
 
+    factory.createGlyph(annotSym, this);
     doMiddlegroundShading(annotSym, meth);
   }
 
@@ -2867,7 +2834,8 @@ public class SeqMapView extends JPanel
         public void actionPerformed(ActionEvent evt) {
           XmlStylesheetParser.refreshUserStylesheet();
           XmlStylesheetParser.refreshSystemStylesheet();
-          setAnnotatedSeq(getAnnotatedSeq());
+          default_glyph_factory.setStylesheet(XmlStylesheetParser.getUserStylesheet());
+         setAnnotatedSeq(getAnnotatedSeq());
         }
       };
       

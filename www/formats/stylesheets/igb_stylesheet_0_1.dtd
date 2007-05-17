@@ -154,7 +154,7 @@ Example:
    method = a method type, idendified by an exact string
    style = the name of a style defined earlier.
 -->
-<!ELEMENT METHOD_ASSOCIATION EMPTY>
+<!ELEMENT METHOD_ASSOCIATION (PROPERTY*)>
 <!ATTLIST METHOD_ASSOCIATION
     method CDATA #REQUIRED
     style CDATA #REQUIRED
@@ -164,7 +164,7 @@ Example:
    regex = a method type, idendified by a regular expression
    style = the name of a style defined earlier.
 -->
-<!ELEMENT METHOD_REGEX_ASSOCIATION  EMPTY>
+<!ELEMENT METHOD_REGEX_ASSOCIATION (PROPERTY*)>
 <!ATTLIST METHOD_REGEX_ASSOCIATION
     regex CDATA #REQUIRED
     style CDATA #REQUIRED
@@ -174,7 +174,7 @@ Example:
    type = A type name, possibily a URI for an ontology entry.
    style = the name of a style defined earlier.
  -->
-<!ELEMENT TYPE_ASSOCIATION  EMPTY>
+<!ELEMENT TYPE_ASSOCIATION (PROPERTY*)>
 <!ATTLIST TYPE_ASSOCIATION
     type CDATA #REQUIRED
     style CDATA #REQUIRED

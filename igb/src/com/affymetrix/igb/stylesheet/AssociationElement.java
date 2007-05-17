@@ -14,11 +14,10 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import java.util.*;
-
 
 public class AssociationElement implements DrawableElement {
   /*
@@ -41,6 +40,9 @@ public class AssociationElement implements DrawableElement {
   String styleName;
   String paramName;  // method, type, or regex
   String paramValue;
+  
+  // If the styleName starts with "com.", then try to instantiate an old-fashioned factory
+  MapViewGlyphFactoryI factory = null;
 
   protected AssociationElement(Stylesheet stylesheet, String elementName,
     String paramName, String paramValue, String styleName) {
@@ -52,6 +54,12 @@ public class AssociationElement implements DrawableElement {
     this.paramName = paramName;
     this.paramValue = paramValue;
     this.styleName = styleName;
+    
+    if (styleName.startsWith("com.")) {
+      this.factory = getFactoryByClassname(styleName);
+    } else {
+      this.factory = null;
+    }
   }
 
   public static final String METHOD_ASSOCIATION = "METHOD_ASSOCIATION";
@@ -77,7 +85,6 @@ public class AssociationElement implements DrawableElement {
       ATT_TYPE, method, styleName);
   }
 
-  /** Not yet implemented. Needs to do a deep copy. */
   public Object clone() throws CloneNotSupportedException {
     StyleElement clone = (StyleElement) super.clone();
     if (propertyMap != null) {
@@ -86,14 +93,47 @@ public class AssociationElement implements DrawableElement {
     return clone;
   }
 
+  MapViewGlyphFactoryI getFactoryByClassname(String name) {
+    Class factory_class = null;
+
+    try {
+      factory_class = ObjectUtils.classForName(styleName);
+    }
+    catch (ClassNotFoundException ex) {
+      System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be found");
+      factory_class = null;
+    }
+
+    if (factory_class != null) {
+      try {
+        factory = (MapViewGlyphFactoryI)factory_class.newInstance();
+      } catch (InstantiationException ie) {
+        System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be created: "+ ie.toString());
+      } catch (IllegalAccessException iae) {
+        System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be created: " + iae.toString());
+      }
+    }
+
+    return factory;
+  }
+  
   public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container,
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
 
+    if (factory != null) {
+      factory.createGlyph(sym, gviewer);
+      return null;
+    }
+
     PropertyMap oldContext = propertyMap.getContext();
     this.propertyMap.setContext(context);
 
-    stylesheet.getStyleByName(styleName).symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
+    StyleElement se = stylesheet.getStyleByName(styleName);
+    if (se == null) {
+      se = stylesheet.default_style;
+    }
+    se.symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
 
     this.propertyMap.setContext(oldContext);
     return glyph;

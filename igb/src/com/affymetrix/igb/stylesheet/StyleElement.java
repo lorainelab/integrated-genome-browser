@@ -143,6 +143,10 @@ public class StyleElement implements DrawableElement {
     matchElements.add(me);
   }
   
+  public String toString() {
+    return "StyleElement [name="+name+"]";
+  }
+ 
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append(indent).append('<').append(NAME);
     XmlStylesheetParser.appendAttribute(sb, ATT_NAME, name);

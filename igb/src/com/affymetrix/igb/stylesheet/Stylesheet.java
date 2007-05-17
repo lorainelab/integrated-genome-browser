@@ -171,6 +171,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     if (default_style == null) {
       // Create a default style that is just boxes inside boxes...
       default_style = new StyleElement();
+      default_style.name = "<system-default-style>";
       default_style.glyphElement = new GlyphElement();
       default_style.glyphElement.type = GlyphElement.TYPE_BOX;
       default_style.glyphElement.childrenElement = new ChildrenElement();

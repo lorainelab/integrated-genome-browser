@@ -44,15 +44,15 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
       Rectangle pixelbox = view.getScratchPixBox();
       view.transformToPixels(this, pixelbox);
       if (withinView(view) && isVisible) {
-	if (pixelbox.width <=3 || pixelbox.height <=3) {
-	  // still ends up drawing children for selected, but in general 
-	  //    only a few glyphs are ever selected at the same time, so should be fine
-	  if (selected) { drawSelected(view); }  
-	  else  { fillDraw(view); }
-	}
-	else {
-	  super.drawTraversal(view);  // big enough to draw children
-	}
+        if (pixelbox.width <=3 || pixelbox.height <=3) {
+          // still ends up drawing children for selected, but in general 
+          //    only a few glyphs are ever selected at the same time, so should be fine
+          if (selected) { drawSelected(view); }  
+          else  { fillDraw(view); }
+        }
+        else {
+          super.drawTraversal(view);  // big enough to draw children
+        }
       }
     }
     else {
@@ -78,11 +78,12 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
     if (pixelbox.width < 1) { pixelbox.width = 1; }
     if (pixelbox.height < 1) { pixelbox.height = 1; }
     // draw the box
+
     g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 
     super.draw(view);
   }
-    
+
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -141,7 +142,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
       // center the children of the LineContainerGlyph on the line
       final Rectangle2D cbox = child.getCoordBox();
       final double ycenter = this.y + this.height/2;
-      // use moveAbsolute or moveRelative to make sure children also get moved
+      // use moveAbsolute or moveRelative to make sure children of "child" glyph also get moved
       child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
       return cbox.height;
     } else {

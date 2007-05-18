@@ -330,7 +330,7 @@ public class SeqMapView extends JPanel
 
     edge_matcher = GlyphEdgeMatcher.getSingleton();
 
-    action_listener = new SeqMapViewActionListener();
+    action_listener = new SeqMapViewActionListener(this);
     mouse_listener = new SeqMapViewMouseListener(this);
 
     //    map.setScrollingOptimized(true);
@@ -543,13 +543,13 @@ public class SeqMapView extends JPanel
     if (show_slicendice) {
       slicendiceMI = setUpMenuItem(sym_popup, "Slice and dice");
     }
-    
-    String[] commands = { "ZOOM_OUT_FULLY",
-      "ZOOM_OUT_X", "ZOOM_IN_X", "ZOOM_OUT_Y", "ZOOM_IN_Y",
-      "SCROLL_UP", "SCROLL_DOWN", "SCROLL_RIGHT", "SCROLL_LEFT"};
-    for (int i=0; i<commands.length; i++) {
-      MenuUtil.addAccelerator((JComponent) this, action_listener, commands[i]);
-    }
+//    
+//    String[] commands = { "ZOOM_OUT_FULLY",
+//      "ZOOM_OUT_X", "ZOOM_IN_X", "ZOOM_OUT_Y", "ZOOM_IN_Y",
+//      "SCROLL_UP", "SCROLL_DOWN", "SCROLL_RIGHT", "SCROLL_LEFT"};
+//    for (int i=0; i<commands.length; i++) {
+//      MenuUtil.addAccelerator((JComponent) this, action_listener, commands[i]);
+//    }
   }
 
   public JPopupMenu getSelectionPopup() { return sym_popup; }
@@ -2509,197 +2509,6 @@ public class SeqMapView extends JPanel
     return result;
   }
 
-  final String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
-
-  final String ZOOM_OUT_X = "ZOOM_OUT_X";
-  final String ZOOM_IN_X = "ZOOM_IN_X";
-
-  final String ZOOM_OUT_Y = "ZOOM_OUT_Y";
-  final String ZOOM_IN_Y = "ZOOM_IN_Y";
-
-  final String SCROLL_UP = "SCROLL_UP";
-  final String SCROLL_DOWN = "SCROLL_DOWN";
-  final String SCROLL_LEFT = "SCROLL_LEFT";
-  final String SCROLL_RIGHT = "SCROLL_RIGHT";
-  final String ZOOM_TO_SELECTED = "Zoom to selected";
-
-  private class SeqMapViewActionListener implements ActionListener {
-    String[] commands = { ZOOM_OUT_FULLY,
-      ZOOM_OUT_X, ZOOM_IN_X, ZOOM_OUT_Y, ZOOM_IN_Y,
-      SCROLL_UP, SCROLL_DOWN, SCROLL_RIGHT, SCROLL_LEFT};
-
-    Action zoom_out_fully_action;
-    Action zoom_out_x_action;
-    Action zoom_in_x_action;
-    Action zoom_out_y_action;
-    Action zoom_in_y_action;
-
-    Action zoom_to_selected_action;
-
-    public SeqMapViewActionListener() {
-      //super(true);
-      zoom_out_x_action = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_OUT_X);
-        }
-      };
-      zoom_in_x_action = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_IN_X);
-        }
-      };
-      zoom_out_y_action = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_OUT_Y);
-        }
-      };
-      zoom_in_y_action = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_IN_Y);
-        }
-      };
-      zoom_out_fully_action = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_OUT_FULLY);
-        }
-      };
-
-      Icon icon0 = MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif");
-      zoom_to_selected_action = new AbstractAction(ZOOM_TO_SELECTED, icon0) {
-        public void actionPerformed(ActionEvent e) {
-          action_listener.doAction(ZOOM_TO_SELECTED);
-        }
-      };
-
-      Icon icon1 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomOut16.gif");
-      zoom_out_y_action.putValue(Action.NAME, "Zoom out vertically");
-      zoom_out_y_action.putValue(Action.SMALL_ICON, icon1);
-      zoom_out_x_action.putValue(Action.NAME, "Zoom out horizontally");
-      zoom_out_x_action.putValue(Action.SMALL_ICON, icon1);
-
-      Icon icon2 = MenuUtil.getIcon("toolbarButtonGraphics/general/ZoomIn16.gif");
-      zoom_in_y_action.putValue(Action.NAME, "Zoom in vertically");
-      zoom_in_y_action.putValue(Action.SMALL_ICON, icon2);
-      zoom_in_x_action.putValue(Action.NAME, "Zoom in horizontally");
-      zoom_in_x_action.putValue(Action.SMALL_ICON, icon2);
-
-      Icon icon3 = MenuUtil.getIcon("toolbarButtonGraphics/navigation/Home16.gif");
-      zoom_out_fully_action.putValue(Action.SHORT_DESCRIPTION, "Zoom out fully");
-      zoom_out_fully_action.putValue(Action.NAME, "Home Position");
-      zoom_out_fully_action.putValue(Action.SMALL_ICON, icon3);
-    }
-
-    public void actionPerformed(ActionEvent evt) {
-      String command = evt.getActionCommand();
-      //System.out.println("SeqMapView received action event "+command);
-      doAction(command);
-    }
-
-    public void doAction(String command) {
-      if (command.equals(zoomtoMI.getText())) {
-        zoomToSelections();
-      }
-      else if (command.equals(zoomclampMI.getText())) {
-        Vector selected_glyphs = seqmap.getSelected();
-        if (selected_glyphs.isEmpty()) {
-          IGB.errorPanel("Nothing selected");
-        } else {
-          clampToGlyph((GlyphI) selected_glyphs.lastElement());
-        }
-      }
-      else if (command.equals(selectParentMI.getText())) {
-        if (seqmap.getSelected().isEmpty()) {
-          IGB.errorPanel("Nothing selected");
-        } else if (seqmap.getSelected().size() == 1) {
-          // one selection: select its parent, not recursively
-          selectParents(false);
-        } else {
-          // multiple selections: select parents recursively
-          selectParents(true);
-        }
-      }
-      else if (command.equals(printSymmetryMI.getText())) {
-        SeqSymmetry sym = getSelectedSymmetry();
-        if (sym == null) {
-          IGB.errorPanel("No symmetry selected");
-        } else if (sym instanceof GraphSym) {
-          GraphSym gs = (GraphSym) sym;
-          GraphState gstate = gs.getGraphState();
-          IAnnotStyle style = gstate.getTierStyle();
-          System.out.println("Graph: " + gs.getGraphName());
-          Map m = gs.getProperties();
-          if (m != null) {
-            Set keys = m.keySet();
-            Iterator iter = keys.iterator();
-            while (iter.hasNext()) {
-              String key = (String)iter.next();
-              System.out.println(key + " --> " + m.get(key));
-            }
-          }
-        } else {
-          SeqUtils.printSymmetry(sym);
-        }
-      }
-      else if (command.equals(slicendiceMI)) {
-        sliceBySelection();
-      }
-      else if (command.equals(ZOOM_OUT_FULLY)) {
-        Adjustable adj = seqmap.getZoomer(NeoMap.X);
-        adj.setValue(adj.getMinimum());
-        adj = seqmap.getZoomer(NeoMap.Y);
-        adj.setValue(adj.getMinimum());
-        //map.updateWidget();
-      }
-      else if (command.equals(ZOOM_OUT_X)) {
-        Adjustable adj = seqmap.getZoomer(NeoMap.X);
-        adj.setValue(adj.getValue()- (adj.getMaximum()-adj.getMinimum())/20);
-        //map.updateWidget();
-      }
-      else if (command.equals(ZOOM_IN_X)) {
-        Adjustable adj = seqmap.getZoomer(NeoMap.X);
-        adj.setValue(adj.getValue()+ (adj.getMaximum()-adj.getMinimum())/20);
-        //map.updateWidget();
-      }
-      else if (command.equals(ZOOM_OUT_Y)) {
-        Adjustable adj = seqmap.getZoomer(NeoMap.Y);
-        adj.setValue(adj.getValue()- (adj.getMaximum()-adj.getMinimum())/20);
-        //map.updateWidget();
-      }
-      else if (command.equals(ZOOM_IN_Y)) {
-        Adjustable adj = seqmap.getZoomer(NeoMap.Y);
-        adj.setValue(adj.getValue()+ (adj.getMaximum()-adj.getMinimum())/20);
-        //map.updateWidget();
-      }
-      else if (command.equals(SCROLL_LEFT)) {
-        int[] visible =  seqmap.getVisibleRange();
-        seqmap.scroll(NeoWidgetI.X, visible[0]+ (visible[1]-visible[0])/10 );
-        seqmap.updateWidget();
-      }
-      else if (command.equals(SCROLL_RIGHT)) {
-        int[] visible =  seqmap.getVisibleRange();
-        seqmap.scroll(NeoWidgetI.X, visible[0]- (visible[1]-visible[0])/10 );
-        seqmap.updateWidget();
-      }
-      else if (command.equals(SCROLL_UP)) {
-        int[] visible =  seqmap.getVisibleOffset();
-        seqmap.scroll(NeoWidgetI.Y, visible[0]+ (visible[1]-visible[0])/10 );
-        seqmap.updateWidget();
-      }
-      else if (command.equals(SCROLL_DOWN)) {
-        int[] visible =  seqmap.getVisibleOffset();
-        seqmap.scroll(NeoWidgetI.Y, visible[0]- (visible[1]-visible[0])/10 );
-        seqmap.updateWidget();
-      }
-      //    else if (command.equals(REFRESH_DATA) {
-      //      seqmap.
-      //    }
-      //      else {
-      //	System.out.println("SeqMapvViewActionListener received unknown command: " + command);
-      //      }
-    }
-
-  }
-
   // sets the text on the JLabel based on the current selection
   private void setPopupMenuTitle(JLabel label, java.util.List selected_glyphs) {
     String title = "";
@@ -3070,70 +2879,6 @@ public class SeqMapView extends JPanel
     tg.setExpandedPacker(ep);
     tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
   }
-
-//  int[][] the_boundaries = null;
-//  BioSeq last_viewseq = null;
-//  BioSeq last_annotseq = null;
-//  
-//  
-//  // a helper function used in drawing the "deletion" glyphs
-//  public int[][] determineBoundaries() {
-//    BioSeq annotseq = getAnnotatedSeq();
-//    BioSeq viewseq = getViewSeq();
-//    if (annotseq != last_annotseq || viewseq != last_viewseq) {
-//      the_boundaries = null;
-//    }
-//    if (the_boundaries == null) {
-//      int[][] boundaries = null;
-//      if (annotseq != viewseq) {
-//        MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
-//        simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
-//        SeqSymmetry bounds_sym = transformForViewSeq(simple_sym, annotseq);
-//
-//        boundaries = determineBoundaries(bounds_sym, annotseq, viewseq);
-//        last_viewseq = viewseq;
-//        last_annotseq = annotseq;
-//      }
-//    }
-//    return the_boundaries;
-//  }
-//
-//  // a helper function used in drawing the "deletion" glyphs
-//  // Returns an int array of size [n][2] where [n][0] is the boundary in terms of seq0
-//  // and [n][1] is the corresponding boundary in terms of seq1.
-//  // Value [0][0] = Integer.MIN_VALUE and [0][1] = minimum of first span in seq1.
-//  // For all other [n][0] and [n][1] it is the value of the Maximum of the boundary
-//  // span in the seq0 or seq1.
-//  static int[][] determineBoundaries(SeqSymmetry bounds_sym, BioSeq seq0, BioSeq seq1) {
-//    int[][] boundaries = null;
-//    if (seq0 != seq1) {
-//      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
-//      simple_sym.addSpan(new SimpleMutableSeqSpan(0, seq0.getLength(), seq0));
-//
-//      int child_count = bounds_sym.getChildCount();
-//      if (child_count == 0) {
-//        return null;
-//      }
-//      
-//      boundaries = new int[child_count+1][];
-//      
-//      SeqSymmetry child = bounds_sym.getChild(0);
-//
-//      boundaries[0] = new int[2];
-//      boundaries[0][0] = Integer.MIN_VALUE;
-//      boundaries[0][1] = child.getSpan(seq1).getMin();
-//      for (int qq = 1 ; qq < boundaries.length; qq++) {
-//        child = bounds_sym.getChild(qq-1);
-//        SeqSpan annot_span = child.getSpan(seq0);
-//        SeqSpan coord_span = child.getSpan(seq1);
-//        
-//        boundaries[qq] = new int[2];
-//        boundaries[qq][0] = annot_span.getMax();
-//        boundaries[qq][1] = coord_span.getMax();
-//      }
-//    }
-//    return boundaries;    
-//  }
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     AnnotatedSeqGroup group = evt.getSelectedGroup();

@@ -121,19 +121,21 @@ public class AssociationElement implements DrawableElement {
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
 
-    if (factory != null) {
-      factory.createGlyph(sym, gviewer);
-      return null;
-    }
-
     PropertyMap oldContext = propertyMap.getContext();
     this.propertyMap.setContext(context);
 
-    StyleElement se = stylesheet.getStyleByName(styleName);
-    if (se == null) {
-      se = stylesheet.default_style;
+    if (factory == null) {
+      StyleElement se = stylesheet.getStyleByName(styleName);
+      if (se == null) {
+        se = stylesheet.default_style;
+      }
+      glyph = se.symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
+    } else {
+      factory.init(propertyMap);
+
+      factory.createGlyph(sym, gviewer);
+      glyph = null; // TODO: maybe change the MapViewGlyphFactoryI interface to return a GlyphI ?
     }
-    se.symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
 
     this.propertyMap.setContext(oldContext);
     return glyph;

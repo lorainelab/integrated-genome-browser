@@ -75,11 +75,11 @@ public class LegendMap extends NeoMap implements TierEventListener  {
   }
 
   public LegendGlyph getLegendForTier(MapTierGlyph mtg) {
-    return (LegendGlyph)tier_to_legend.get(mtg);
+    return tier_to_legend.get(mtg);
   }
 
   public MapTierGlyph getTierForLegend(LegendGlyph lg) {
-    return (MapTierGlyph)legend_to_tier.get(lg);
+    return legend_to_tier.get(lg);
   }
 
   /* TierEventListener implementation */
@@ -176,7 +176,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
     Rectangle2D trackbox = map_to_track.getCoordBounds();
 
     for (int i=0; i<legend_glyphs.size(); i++) {
-      lglyph = (LegendGlyph)legend_glyphs.elementAt(i);
+      lglyph = legend_glyphs.elementAt(i);
       MapTierGlyph mtg = getTierForLegend(lglyph);
 
       if (mtg != null) {

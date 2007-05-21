@@ -236,7 +236,7 @@ implements NeoWidgetI{
         +"Not for "+ axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getExpansionBehavior(axisid);
+    return widgets.elementAt(0).getExpansionBehavior(axisid);
   }
 
   /** Subclasses must define getWidget() method. */
@@ -440,7 +440,7 @@ implements NeoWidgetI{
         +"Not " + axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getMaxZoom(axisid);
+    return widgets.elementAt(0).getMaxZoom(axisid);
   }
 
   /**
@@ -568,7 +568,7 @@ implements NeoWidgetI{
   }
 
   public void toBackOfSiblings(GlyphI glyph) {
-    NeoWidgetI widg = this.getWidget((GlyphI)glyph);
+    NeoWidgetI widg = getWidget(glyph);
     if (widg != null) {
       widg.toBackOfSiblings(glyph);
     }

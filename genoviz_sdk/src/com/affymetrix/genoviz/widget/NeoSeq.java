@@ -775,8 +775,7 @@ public class NeoSeq extends NeoContainerWidget
     if (fit_check) {
       int check_base = (int)num_map.getView().getCoordBox().y;
       if (start_base != check_base && residues_per_line != 0) {
-        start_base =
-          ((int)(check_base / residues_per_line)) * residues_per_line;
+        start_base = (check_base / residues_per_line) * residues_per_line;
       }
     }
 
@@ -1997,10 +1996,9 @@ public class NeoSeq extends NeoContainerWidget
         // ignore viewbox coordbox, just use the NeoSeq's visible range
         Range r = getVisibleRange();
         NeoRangeEvent nevt = new NeoRangeEvent(this, r.beg, r.end);
-        NeoRangeListener rl;
+
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
-          rl.rangeChanged(nevt);
+          range_listeners.elementAt(i).rangeChanged(nevt);
         }
       }
     }

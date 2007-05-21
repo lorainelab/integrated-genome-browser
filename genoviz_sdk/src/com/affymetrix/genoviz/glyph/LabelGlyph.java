@@ -427,7 +427,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
         GlyphI child;
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.elementAt(i);
+          child = children.elementAt(i);
           child.pickTraversal(pickRect, pickVector, view);
         }
       }
@@ -454,7 +454,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
         // We avoid object creation overhead by avoiding Enumeration.
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.elementAt(i);
+          child = children.elementAt(i);
           child.pickTraversal(pickRect, pickVector, view);
         }
       }

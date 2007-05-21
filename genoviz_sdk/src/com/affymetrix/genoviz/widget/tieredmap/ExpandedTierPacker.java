@@ -239,7 +239,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     else {  // old way
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-        child = (GlyphI)sibs.elementAt(i);
+        child = sibs.elementAt(i);
         cbox = child.getCoordBox();
         // MUST CALL moveAbsolute!!!
         // setCoords() does not guarantee that coord changes will recurse
@@ -265,19 +265,19 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     Rectangle2D newbox = new Rectangle2D();
     Rectangle2D tempbox = new Rectangle2D();
-    child = (GlyphI)sibs.elementAt(0);
+    child = sibs.elementAt(0);
     newbox.reshape(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-        child = (GlyphI)sibs.elementAt(i);
+        child = sibs.elementAt(i);
         GeometryUtils.union(newbox, child.getCoordBox(), newbox);
       }
     }
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-        child = (GlyphI)sibs.elementAt(i);
+        child = sibs.elementAt(i);
         Rectangle2D childbox = child.getCoordBox();
         tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
@@ -285,7 +285,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
-        child = (GlyphI)sibs.elementAt(i);
+        child = sibs.elementAt(i);
         Rectangle2D childbox = child.getCoordBox();
         tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
@@ -350,7 +350,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.elementAt(j);
+        GlyphI sibling = sibsinrange.elementAt(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
         if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

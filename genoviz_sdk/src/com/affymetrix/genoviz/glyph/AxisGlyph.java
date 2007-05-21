@@ -606,8 +606,7 @@ public class AxisGlyph extends Glyph {
 
     if (orient == VERTICAL) {
       if (pixelbox.y < clipbox.y) {
-        map_loc = (double)(((int)(view.
-                                 transformToCoords(clipbox, scratchcoords).y /
+        map_loc = (((int)(view.transformToCoords(clipbox, scratchcoords).y /
                                  tick_increment)) * tick_increment);
       }
       else  {
@@ -624,8 +623,7 @@ public class AxisGlyph extends Glyph {
     }
     else {
       if (pixelbox.x < clipbox.x)  {
-        map_loc = (double)(((int)(view.
-                                 transformToCoords(clipbox, scratchcoords).x /
+        map_loc = (((int)(view.transformToCoords(clipbox, scratchcoords).x /
                                  tick_increment)) * tick_increment);
       }
       else  {
@@ -649,8 +647,7 @@ public class AxisGlyph extends Glyph {
     double subtick_loc, rev_subtick_loc;
     // need to do tick_loc for those maps that don't start
     // at convenient tick_increments
-    double tick_loc =
-      tick_increment * (double)Math.ceil(map_loc/tick_increment);
+    double tick_loc = tick_increment * Math.ceil(map_loc/tick_increment);
 
     // for reversed map, start by drawing from the right side
     // use view's coordbox -- we were having problems with the
@@ -661,8 +658,8 @@ public class AxisGlyph extends Glyph {
     // we can start drawing ticks from that location when the axis is reversed.
     // Starting from the right-most edge of the coordbox as was previously done
     // resulted in a big performance drain.  EEE - Sept 2000
-    double rev_tick_loc = rev_tick_const- tick_increment * (
-      (double)Math.ceil((rev_tick_const-max_map)/tick_increment));
+    double rev_tick_loc = rev_tick_const- tick_increment *
+      Math.ceil((rev_tick_const-max_map)/tick_increment);
 
     // making sure first tick_loc is offscreen to ensure that all visible
     // subticks between it and first visible tick_loc get drawn
@@ -675,7 +672,7 @@ public class AxisGlyph extends Glyph {
     rev_subtick_loc = rev_tick_loc;
     double tick_scaled_loc, tick_scaled_increment, rev_tick_scaled_loc;
     if (orient == VERTICAL) {
-      scratchcoords.y = (double) (reversed ? rev_tick_loc : tick_loc);
+      scratchcoords.y = (reversed ? rev_tick_loc : tick_loc);
       scratchcoords.height = tick_increment;
       cumulative.transform(scratchcoords, scratchcoords);
       tick_scaled_loc = scratchcoords.y;
@@ -683,7 +680,7 @@ public class AxisGlyph extends Glyph {
       rev_tick_scaled_loc = scratchcoords.y;
     }
     else {
-      scratchcoords.x = (double) (reversed ? rev_tick_loc : tick_loc);
+      scratchcoords.x = (reversed ? rev_tick_loc : tick_loc);
       scratchcoords.width = tick_increment;
       cumulative.transform(scratchcoords, scratchcoords);
       tick_scaled_loc = scratchcoords.x;
@@ -725,7 +722,7 @@ public class AxisGlyph extends Glyph {
           }
         }
         if (labelFormat != NO_LABELS)  {
-          label = stringRepresentation((double)tick_loc, (double)tick_increment);
+          label = stringRepresentation(tick_loc, tick_increment);
         }
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
@@ -781,7 +778,7 @@ public class AxisGlyph extends Glyph {
           }
         }
         if (labelFormat != NO_LABELS)  {
-          label = stringRepresentation((double)rev_tick_value, (double)tick_increment);
+          label = stringRepresentation(rev_tick_value, tick_increment);
         }
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
@@ -823,8 +820,8 @@ public class AxisGlyph extends Glyph {
     }
     else {  //horizontal map
       if (!reversed) {
-        scratchcoords.x = (double)subtick_loc;
-        scratchcoords.width = (double)subtick_increment;
+        scratchcoords.x = subtick_loc;
+        scratchcoords.width = subtick_increment;
         // what is this doing??? hopefully just vestigial...
         // should try getting rid of it soon -- GAH 12-6-97
         cumulative.transform(scratchcoords, scratchcoords);
@@ -832,8 +829,8 @@ public class AxisGlyph extends Glyph {
         subtick_scaled_increment = scratchcoords.width;
       }
       else {  //reversed map
-        scratchcoords.x = (double)rev_subtick_loc;
-        scratchcoords.width = (double)subtick_increment;
+        scratchcoords.x = rev_subtick_loc;
+        scratchcoords.width = subtick_increment;
         cumulative.transform(scratchcoords, scratchcoords);
         subtick_scaled_loc = scratchcoords.x;
         subtick_scaled_increment = scratchcoords.width;

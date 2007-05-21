@@ -250,7 +250,7 @@ public class GlyphSearchNode implements Cloneable {
     if (null != children) {
       int j_size = children.size();
       for (int j=0; j<j_size; j++) {
-        GlyphI c = (GlyphI) children.elementAt(j);
+        GlyphI c = children.elementAt(j);
         if (i != c) {
           Rectangle2D cbox = c.getCoordBox();
           if (debug) {
@@ -300,7 +300,7 @@ public class GlyphSearchNode implements Cloneable {
     if (null != children) {
       int j_size = children.size();
       for (int j=0; j<j_size; j++) {
-        GlyphI c = (GlyphI) children.elementAt(j);
+        GlyphI c = children.elementAt(j);
         Rectangle2D cbox = c.getCoordBox();
         if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
           o.addElement(c);

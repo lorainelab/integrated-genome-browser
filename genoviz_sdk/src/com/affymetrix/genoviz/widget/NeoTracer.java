@@ -664,7 +664,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
    */
   private void replaceBaseCalls( BaseCall[] theCalls, int bases_index ) {
     try {
-      BaseCalls bc = (BaseCalls)( base_calls_vector.elementAt( bases_index ) );
+      BaseCalls bc = base_calls_vector.elementAt( bases_index );
       bc.setBaseCalls( theCalls );
     } catch ( ArrayIndexOutOfBoundsException e ) {
     }
@@ -704,7 +704,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
     int iBaseGlyphs = base_glyphs.size();
     for( int i =0; i < iBaseGlyphs; i++ ) {
-      TraceBaseGlyph old_base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
+      TraceBaseGlyph old_base_glyph = base_glyphs.elementAt(i);
       old_base_height += old_base_glyph.getHeight() + 1;
     }
 
@@ -746,13 +746,13 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     // this is only called when about to replace the base calls with reverse complements.
     // To be correct,
     // we should remove all the base glyphs.
-    int iBaseGlyphs = this.base_glyphs.size();
+    int iBaseGlyphs = base_glyphs.size();
     for ( int i =0; i < iBaseGlyphs; i++ ) {
-      TraceBaseGlyph baseGlyph = (TraceBaseGlyph)(this.base_glyphs.elementAt(i));
-      this.base_map.getScene().removeGlyph(baseGlyph);
+      TraceBaseGlyph baseGlyph = base_glyphs.elementAt(i);
+      base_map.getScene().removeGlyph(baseGlyph);
     }
-    this.base_glyphs.removeAllElements();
-    this.base_calls_vector.removeAllElements();
+    base_glyphs.removeAllElements();
+    base_calls_vector.removeAllElements();
   }
 
   /**
@@ -760,22 +760,22 @@ implements NeoTracerI, Observer, NeoViewBoxListener
    */
   public void setActiveBaseCalls( BaseCalls bc ) {
     if ( null == bc || base_calls_vector.contains( bc ) ) {
-      ((Trace)this.trace).setActiveBaseCalls( bc );
+      trace.setActiveBaseCalls( bc );
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-        if ( base_glyph.getBaseCalls() == ((Trace)this.trace).getActiveBaseCalls() ) {
+        TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
+        if ( base_glyph.getBaseCalls() == trace.getActiveBaseCalls() ) {
           this.activeBaseCallsGlyph = base_glyph;
         }
         else {
           base_glyph.clearSelection();
         }
       }
-      base_axis.setBaseCalls( ((Trace)this.trace).getActiveBaseCalls() );
+      base_axis.setBaseCalls( trace.getActiveBaseCalls() );
     }
   }
 
   public final BaseCalls getActiveBaseCalls() {
-    return ((Trace)this.trace).getActiveBaseCalls();
+    return trace.getActiveBaseCalls();
   }
 
   public void scrollRange(double value) {
@@ -930,7 +930,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     }
     else {
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
+        TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
         base_map.select(base_glyph, start, end);
       }
     }
@@ -1168,14 +1168,13 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   }
 
   public final boolean getBaseVisibility(int baseID) {
-    return ((TraceBaseGlyph)(base_glyphs.firstElement())).getVisibility(baseID);
+    return base_glyphs.firstElement().getVisibility(baseID);
   }
 
   public void setBaseVisibility(int baseID, boolean visible) {
     if (!(getBaseVisibility(baseID) == visible)) {
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-        base_glyph.setVisibility(baseID, visible);
+        base_glyphs.elementAt(i).setVisibility(baseID, visible);
       }
       base_map.getScene().maxDamage();
     }
@@ -1471,8 +1470,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   public void setTraceColors(Color[] colors) {
     trace_glyph.setTraceColors(colors);
     for( int i=0; i < base_glyphs.size(); i++ ) {
-      TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-      base_glyph.setBaseColors(colors);
+      base_glyphs.elementAt(i).setBaseColors(colors);
     }
   }
 
@@ -1482,10 +1480,9 @@ implements NeoTracerI, Observer, NeoViewBoxListener
         Range visRange = getVisibleBaseRange();
         NeoRangeEvent nevt = new NeoRangeEvent(this,
             visRange.beg, visRange.end);
-        NeoRangeListener rl;
+
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
-          rl.rangeChanged(nevt);
+          range_listeners.elementAt(i).rangeChanged(nevt);
         }
       }
     }
@@ -1527,11 +1524,10 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   }
 
   private void sendBaseSelectedEvent( int base_index ) {
-    Enumeration e = base_listeners.elements();
+    Enumeration<NeoBaseSelectListener> e = base_listeners.elements();
     NeoBaseSelectEvent event = new NeoBaseSelectEvent( (Object)this, base_index );
     while( e.hasMoreElements() ) {
-      NeoBaseSelectListener l = ( NeoBaseSelectListener ) e.nextElement();
-      l.baseSelected( event );
+      e.nextElement().baseSelected( event );
     }
   }
 
@@ -1606,7 +1602,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
         int span = position - last_pos;// amount of space we have to stuff in inserts
         double spacing = span / ( iSize + 1 ); // space inbetween edges
         for( int i=0; i < iSize; i++ ) {
-          char insert_base = ((Character)inserts.elementAt(i)).charValue();
+          char insert_base = inserts.elementAt(i).charValue();
           int insert_pos = last_pos + (int)( spacing * (i+1) );
           new_base_obj = new BaseConfidence( insert_base, conf, insert_pos );
           consensus.addBase( new_base_obj );

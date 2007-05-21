@@ -348,7 +348,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
         int [] visible_offset = labelmap.getVisibleOffset();
         double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
         int font_height = getToolkit().getFontMetrics(residue_font).getHeight();
-        int visible_map_height = (int)(visible_offset[1]-visible_offset[0]);
+        int visible_map_height = visible_offset[1] - visible_offset[0];
         //visible_map_height is in coords
         visible_map_height = (int)(visible_map_height-(font_height/scale));
         //font_height is substracted from the visible_map_height to prevent scrolling past the last seq.
@@ -477,7 +477,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
     consmap.stretchToFit();
     consmap.setRubberBandBehavior(false);
-    axis_glyph = (AxisGlyph)consmap.addAxis(axis_offset);
+    axis_glyph = consmap.addAxis(axis_offset);
 
     axis_glyph.setVisibility(false);
     consmap.setReshapeBehavior(consmap.X, reshape_constraint[X]);
@@ -507,8 +507,8 @@ implements NeoAssemblerI, NeoViewBoxListener,
    * Makes sure that the range of the map takes into account orientation.
    */
   protected boolean checkRange(int start, int end) {
-    int orientedStart = (int)Math.min(start, end);
-    int orientedEnd = (int)Math.max(start, end);
+    int orientedStart = Math.min(start, end);
+    int orientedEnd = Math.max(start, end);
     if (orientedStart < range_start || orientedEnd > range_end) {
       if (orientedStart < range_start) { range_start = orientedStart; }
       if (orientedEnd > range_end) { range_end = orientedEnd; }
@@ -821,8 +821,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       label = consensus_name;
     }
     else {
-      StringGlyph sglyph = (StringGlyph)labelhash.get(aglyph);
-      label = sglyph.getString();
+      label = labelhash.get(aglyph).getString();
     }
     return label;
   }
@@ -893,7 +892,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
             label.getCoordBox().width, acoords.height);
       }
       if (use_label_arrows) {
-        arrow = (ArrowGlyph)arrowhash.get(align);
+        arrow = arrowhash.get(align);
         if (arrow != null) {
           arrow.setCoords(arrow.getCoordBox().x, acoords.y,
               arrow.getCoordBox().width, acoords.height);
@@ -1395,9 +1394,8 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   public void clearSelected() {
     for (int i=0; i<selected.size(); i++) {
-      GlyphI gl = (GlyphI)selected.elementAt(i);
-      Scene sc = gl.getScene();
-      sc.deselect(gl);
+      GlyphI gl = selected.elementAt(i);
+      gl.getScene().deselect(gl);
     }
     selected.removeAllElements();
   }

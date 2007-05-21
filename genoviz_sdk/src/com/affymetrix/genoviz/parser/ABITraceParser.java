@@ -200,7 +200,7 @@ public class ABITraceParser implements ContentParser {
       index_number = 0;
       index_found = false;
 
-      index = (ABIIndex) ABIindices.elementAt (index_number);
+      index = ABIindices.elementAt (index_number);
       while ( !index_found && index_number < ABIindices.size() ) {
         if (serial_number == index.serial_number
             && (label.equals (index.label))
@@ -229,7 +229,7 @@ public class ABITraceParser implements ContentParser {
         else {
           index_number++;
           if ( index_number < ABIindices.size() ) {
-            index = (ABIIndex) ABIindices.elementAt (index_number);
+            index = ABIindices.elementAt (index_number);
           }
         }
       }
@@ -384,10 +384,10 @@ public class ABITraceParser implements ContentParser {
            && i < G_vector.size ()
            && i < C_vector.size ());
           i++) {
-        trace.addSample(((Integer)A_vector.elementAt (i)).intValue(),
-            ((Integer)C_vector.elementAt (i)).intValue(),
-            ((Integer)G_vector.elementAt (i)).intValue(),
-            ((Integer)T_vector.elementAt (i)).intValue());
+        trace.addSample(A_vector.elementAt(i).intValue(),
+            C_vector.elementAt(i).intValue(),
+            G_vector.elementAt(i).intValue(),
+            T_vector.elementAt(i).intValue());
       }
     }
 
@@ -499,7 +499,7 @@ public class ABITraceParser implements ContentParser {
       for (int i = 0; i < bases_index.numbyt; i++) {
         base = in.readUnsignedByte ();
         curpos++;
-        base_position = (Integer) base_positions.elementAt (i);
+        base_position = base_positions.elementAt (i);
         CalledBase trace_base =
           new CalledBase(base_position.intValue(), 0, 0, 0, 0, (char) base);
         trace.addBase(trace_base);

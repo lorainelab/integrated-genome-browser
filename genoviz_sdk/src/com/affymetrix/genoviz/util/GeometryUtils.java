@@ -54,10 +54,10 @@ public class GeometryUtils {
    */
   public static Rectangle union(Rectangle src1, Rectangle src2,
       Rectangle dst) {
-    int xbeg = (int)Math.min(src1.x, src2.x);
-    int xend = (int)Math.max(src1.x + src1.width, src2.x + src2.width);
-    int ybeg = (int)Math.min(src1.y, src2.y);
-    int yend = (int)Math.max(src1.y + src1.height, src2.y + src2.height);
+    int xbeg = Math.min(src1.x, src2.x);
+    int xend = Math.max(src1.x + src1.width, src2.x + src2.width);
+    int ybeg = Math.min(src1.y, src2.y);
+    int yend = Math.max(src1.y + src1.height, src2.y + src2.height);
     dst.setBounds(xbeg, ybeg, xend - xbeg, yend - ybeg);
     return dst;
   }

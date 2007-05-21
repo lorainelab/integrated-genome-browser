@@ -125,8 +125,8 @@ public class NeoMultiTracer extends Container
     current_cons_index = axis_index;
     // in case there is no coverage, approximate new visible range from width of last range.
     int visible_cons_width = visible_cons_range.end - visible_cons_range.beg;
-    visible_cons_range.beg = axis_index - (int)( visible_cons_width/2 );
-    visible_cons_range.end = axis_index + visible_cons_width - (int)( visible_cons_width/2 );
+    visible_cons_range.beg = axis_index - ( visible_cons_width/2 );
+    visible_cons_range.end = axis_index + visible_cons_width - ( visible_cons_width/2 );
 
     for (NeoTracer t : tracers ) {
       Range r = t.getVisibleBaseRange(); // do I need to shift coord box by hand before calling this???
@@ -178,11 +178,11 @@ public class NeoMultiTracer extends Container
     // position tracers only on the right
     Enumeration<NeoTracer> e = non_centered_right.elements();
     while( e.hasMoreElements() ) { // line left edge up with covering tracer
-      NeoTracer t = ( NeoTracer )(e.nextElement());
+      NeoTracer t = e.nextElement();
 
       if( centered_right.size() >= 1 ) {
         // full coverage is guaranteed, unless there is NO overlap at all
-        NeoTracer cover = (NeoTracer)centered_right.elementAt( 0 );
+        NeoTracer cover = centered_right.elementAt( 0 );
         int mappped_base_index = cover.mapFromAxisPos( t.mapToAxisPos(0) );
         int view_point;
         try {
@@ -223,11 +223,11 @@ public class NeoMultiTracer extends Container
     // do it all over again for the non_centered_left tracers
     e = non_centered_left.elements();
     while( e.hasMoreElements() ) { // line right edge up with covering tracer
-      NeoTracer t = ( NeoTracer )(e.nextElement());
+      NeoTracer t = e.nextElement();
       int trace_end_index = t.getActiveBaseCalls().getBaseCount() - 1;
       if( centered_left.size() >= 1 ) {
         // full coverage is guaranteed, unless there is NO overlap at all
-        NeoTracer cover = (NeoTracer)centered_left.elementAt( 0 ); // first element is guaranteed to have the most coverage
+        NeoTracer cover = centered_left.elementAt( 0 ); // first element is guaranteed to have the most coverage
         int mappped_base_index = cover.mapFromAxisPos( t.mapToAxisPos( trace_end_index ) );
         int view_point;
         try {

@@ -195,7 +195,7 @@ public class Trace implements TraceI {
   public void setPeaks() {
     peak = new int[baseVector.size()];
     for (int i = baseVector.size()-1; 0 <= i; i--) {
-      BaseCall b = (BaseCall)baseVector.elementAt(i);
+      BaseCall b = baseVector.elementAt(i);
       peak[i] = b.getTracePoint();
       //System.err.println(peak[i]);
     }

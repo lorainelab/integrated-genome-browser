@@ -129,7 +129,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     }
     this.selectedIndex = index;
     if ( -1 < index ) {
-      g = ( MapTierGlyph ) this.items.elementAt( index );
+      g = this.items.elementAt( index );
       select(g);  // This makes sure that g.getSelected() == true, _and_ adds g to map selection vec.
       fireItemEvent( new ItemEvent( this,
                                     ItemEvent.ITEM_STATE_CHANGED,
@@ -143,7 +143,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
    * Similar to java.awt.List#deselect.
    */
   public void deselect( int index ) {
-    MapTierGlyph g = ( MapTierGlyph ) this.items.elementAt( index );
+    MapTierGlyph g = this.items.elementAt( index );
     deselect(g);  // This makes sure that g.getSelected() == false, _and_ removes g from map selection vec.
     Integer i = new Integer( this.selectedIndex );
     this.selectedIndex = -1;

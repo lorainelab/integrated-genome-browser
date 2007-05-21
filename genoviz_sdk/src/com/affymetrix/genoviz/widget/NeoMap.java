@@ -164,7 +164,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     view.removeKeyListener(this);
 
     // Now set up NeoMap with root's scene, and a new view onto that scene
-    scene = (Scene)root.getScene();
+    scene = root.getScene();
 
     // don't remove old view from root's scene! this is needed by root!
     view = new View(scene);
@@ -569,11 +569,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       //      this.setBounds(X,start,end);
       this.setFloatBounds(X,(double)start,(double)end);
     }
-    AxisGlyph ga;
+
     if (axes != null) {
       for (int i=0; i<axes.size(); i++) {
-        ga = (AxisGlyph)axes.elementAt(i);
-        ga.rangeChanged(); // notify the axis of the range change.
+        axes.elementAt(i).rangeChanged(); // notify the axis of the range change.
       }
     }
 
@@ -1531,10 +1530,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     if (viewbox_listeners.size() > 0) {
       NeoViewBoxChangeEvent vevt =
         new NeoViewBoxChangeEvent(this, e.getCoordBox());
-      NeoViewBoxListener vl;
+
       for (int i=0; i<viewbox_listeners.size(); i++) {
-        vl = (NeoViewBoxListener)viewbox_listeners.elementAt(i);
-        vl.viewBoxChanged(vevt);
+        viewbox_listeners.elementAt(i).viewBoxChanged(vevt);
       }
     }
     if (range_listeners.size() > 0) {
@@ -1546,28 +1544,25 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       else {
           nevt = new NeoRangeEvent(this, vbox.x, vbox.x + vbox.width);
       }
-      NeoRangeListener rl;
+
       for (int i=0; i<range_listeners.size(); i++) {
-        rl = (NeoRangeListener)range_listeners.elementAt(i);
+        range_listeners.elementAt(i).rangeChanged(nevt);
         // currently range events are generated for _any_ viewbox change
         //    event, so sometimes the range may not actually have changed,
         //    might be only "offset" that is changing
-        rl.rangeChanged(nevt);
       }
     }
   }
 
   public void rubberBandChanged(NeoRubberBandEvent e) {
     if (rubberband_listeners.size() > 0) {
-      NeoRubberBandListener bl;
       // not transforming to widget pixels (yet)
       NeoRubberBandEvent nevt =
         new NeoRubberBandEvent(this, e.getID(), e.getWhen(), e.getModifiers(),
                                e.getX(), e.getY(), e.getClickCount(),
                                e.isPopupTrigger(), e.getRubberBand());
       for (int i=0; i<rubberband_listeners.size(); i++) {
-        bl = (NeoRubberBandListener)rubberband_listeners.elementAt(i);
-        bl.rubberBandChanged(nevt);
+        rubberband_listeners.elementAt(i).rubberBandChanged(nevt);
       }
     }
   }

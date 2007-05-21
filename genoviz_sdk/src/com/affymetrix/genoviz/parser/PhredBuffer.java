@@ -180,7 +180,7 @@ public class PhredBuffer
    * @return the quality score (confidence).
    */
   public BaseConfidence getBaseConfidenceAt(int index) {
-    return (BaseConfidence) qualityVector.elementAt(index);
+    return qualityVector.elementAt(index);
   }
 
   /**

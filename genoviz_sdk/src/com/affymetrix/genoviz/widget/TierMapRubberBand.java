@@ -153,7 +153,7 @@ public class TierMapRubberBand extends RubberBand {
     mystate = tiermap.isAbleToPackToMatch();
     tiermap.setAbleToPackToMatch(false);
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       states[i] = atm.isAbleToPackToMatch();
       atm.setAbleToPackToMatch(false);
     }
@@ -163,14 +163,14 @@ public class TierMapRubberBand extends RubberBand {
     }
 
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       atm.moveTier( from, to );
     }
 
 
     tiermap.setAbleToPackToMatch(mystate);
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       atm.setAbleToPackToMatch(states[i]);
       atm.repack();
     }
@@ -192,7 +192,7 @@ public class TierMapRubberBand extends RubberBand {
           tiers[i+1] = tiers[i];
         }
         else {
-          tiers[i+1] = (int)(rect.y + rect.height);
+          tiers[i+1] = rect.y + rect.height;
         }
       }
       else {

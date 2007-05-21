@@ -602,7 +602,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     view.calcCoordBox();
     if (DEBUG_SCROLL) {
-      System.out.println("Scrolling to: " + (double)(coord_value));
+      System.out.println("Scrolling to: " + coord_value);
       System.out.println(trans);
       System.out.println(view.getCoordBox());
     }
@@ -1084,8 +1084,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           ratio_diff = 0;
         }
         else {
-          ratio_diff =
-            (double)Math.abs(1-zoom_scale/max_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/max_pixels_per_coord[id]);
         }
         if (ratio_diff < 0.0001) {
           zoom_scale = max_pixels_per_coord[id];
@@ -1115,7 +1114,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           ratio_diff = 0;
         }
         else {
-          ratio_diff = (double)Math.abs(1-zoom_scale/min_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/min_pixels_per_coord[id]);
         }
         if (ratio_diff < 0.0001) {
           zoom_scale = min_pixels_per_coord[id];
@@ -1365,7 +1364,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       for (int i=0;
            (i <= last_listener) && (i < mouse_listeners.size());
            i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -1375,8 +1374,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

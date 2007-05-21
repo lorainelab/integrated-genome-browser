@@ -123,7 +123,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
       GlyphI child;
       Rectangle2D childbox;
       for (i=0; i<children.size(); i++) {
-        child = (GlyphI)children.elementAt(i);
+        child = children.elementAt(i);
         childbox = child.getCoordBox();
         child.setCoords(childbox.x, y, childbox.width, height);
       }

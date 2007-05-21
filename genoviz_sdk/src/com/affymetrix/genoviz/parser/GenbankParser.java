@@ -83,6 +83,7 @@ loop:
         break;
       default:
         Debug.warn("parsing residues, unexpected token: " + tok);
+        break loop;
       case '/':
         Debug.inform("reached the end of input.");
         break loop;
@@ -283,7 +284,7 @@ loop:
       toBeFormatted.append("     ");
       toBeFormatted.append(aFeature.getType());
       // Prints spaces to the 22nd place, where the feature attributes are supposed to begin.
-      for ( int count = 5 +  (( String )aFeature.getType()).length()  ; count < 22; count++)
+      for ( int count = 5 +  aFeature.getType().length()  ; count < 22; count++)
         toBeFormatted.append(" ");
       rangeOrAttrib = aFeature.pieces();
       // Find out how many members the Enumeration has (how many ranges) for formatting,
@@ -565,6 +566,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
             break;
           case '\"':
             Debug.inform("quoted string >" + stoks.sval + "<");
+            break;
           default:
             Debug.inform("other token >" + tok + "<");
           }

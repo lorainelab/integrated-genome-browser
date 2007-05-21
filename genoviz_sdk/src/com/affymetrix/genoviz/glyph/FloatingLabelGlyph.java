@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,7 +18,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 /**
- * A label that doubles to remain entirely in view as long as any part of its 
+ * A label that doubles to remain entirely in view as long as any part of its
  * bounding box is in view.
  *
  * <p> FloatingLabelGlyph is still experimental.
@@ -73,40 +73,40 @@ public class FloatingLabelGlyph extends Glyph
         if (LEFT) {
             if ((parent_pix.x - text_width - blank_width) >= pixelbox.x) {
                 in_view = true;
-                pixelbox.x = (int) (parent_pix.x - text_width - blank_width);
+                pixelbox.x = (parent_pix.x - text_width - blank_width);
             }
         }
         else if (RIGHT) {
             if ((parent_pix.x + parent_pix.width + text_width + blank_width)
                     <= pixelbox.x + pixelbox.width) {
                 in_view = true;
-                pixelbox.x = (int) (parent_pix.x + parent_pix.width + blank_width);
+                pixelbox.x = (parent_pix.x + parent_pix.width + blank_width);
             }
         }
         else {
             if (text_width <= pixelbox.width) {
                 in_view = true;
-                xpixel_center = (int) pixelbox.x + (pixelbox.width / 2);
+                xpixel_center = pixelbox.x + (pixelbox.width / 2);
                 pixelbox.x = (int) (xpixel_center - (text_width / 2));
             }
         }
 
         if (ABOVE) {
             in_view &= true;
-            pixelbox.y = (int) pixelbox.y;
+            pixelbox.y = pixelbox.y;
         }
         else if (BELOW) {
             in_view &= true;
-            pixelbox.y = (int) pixelbox.y + (2 * pixelbox.height);
+            pixelbox.y += 2 * pixelbox.height;
         }
         else {
             in_view &= true;
-            pixelbox.y = (int) pixelbox.y + pixelbox.height;
+            pixelbox.y += pixelbox.height;
         }
         pixelbox.width = text_width;
         pixelbox.height = text_height;
         g.setColor(getForegroundColor());
-        g.drawString (label, pixelbox.x, pixelbox.y);
+        g.drawString(label, pixelbox.x, pixelbox.y);
     }
     super.draw(view);
   }
@@ -123,6 +123,7 @@ public class FloatingLabelGlyph extends Glyph
   /**
    * @deprecated use {@link #setForegroundColor}.
    */
+  @Deprecated
   public void setColor( Color c ) {
     setForegroundColor( c );
   }
@@ -130,6 +131,7 @@ public class FloatingLabelGlyph extends Glyph
   /**
    * @deprecated use {@link #getForegroundColor}.
    */
+  @Deprecated
   public Color getColor() {
     return getForegroundColor();
   }

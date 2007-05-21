@@ -79,9 +79,9 @@ public class VisibleRange implements Cloneable {
    */
   public void setSpot( double thePlace ) {
     if ( debug ) new RuntimeException ("setSpot in VisibleRange: " + (int)thePlace).printStackTrace();
-    double before = ( double ) Math.floor( thePlace );
+    double before = Math.floor( thePlace );
     setBeginning( before );
-    double after = ( double ) Math.ceil( thePlace );
+    double after = Math.ceil( thePlace );
     if ( before == after ) after++;
     setEnd( after );
     notifyListeners();

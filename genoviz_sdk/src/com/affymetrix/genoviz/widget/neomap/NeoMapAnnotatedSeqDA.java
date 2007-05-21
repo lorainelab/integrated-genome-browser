@@ -32,7 +32,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import java.awt.Frame; // Just for testing.
-import java.awt.Frame; // Just for testing.
 import java.awt.Color;
 
 /**
@@ -113,8 +112,8 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
     int highEnd = Integer.MIN_VALUE;
     int lowEnd = Integer.MAX_VALUE;
 
-    Hashtable featureTypes = new Hashtable();
-    Hashtable pieceGlyphs = new Hashtable();
+    Hashtable<String,MapGlyphFactory> featureTypes = new Hashtable<String,MapGlyphFactory>();
+    Hashtable<String,MapGlyphFactory> pieceGlyphs = new Hashtable<String,MapGlyphFactory>();
 
     int length = 0;
     this.sequence = theSequence.getSequence();
@@ -126,7 +125,7 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
       this.map.setMapRange((int)(-length*0.05), (int)(length*1.05));
     }
 
-    AxisGlyph ag = (AxisGlyph)(this.map.addAxis(0));
+    AxisGlyph ag = this.map.addAxis(0);
     ag.setForegroundColor(axisColor);
 
     // switching to set behavior to NeoMapI.FIT_WIDGET to ensure initial
@@ -140,9 +139,9 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
     int featureOffset = 3;
     int FEATURE_HEIGHT = 7;
 
-    Enumeration enum = this.annotatedSequence.features();
-    while (enum.hasMoreElements()) {
-      Object o = enum.nextElement();
+    Enumeration numer = this.annotatedSequence.features();
+    while (numer.hasMoreElements()) {
+      Object o = numer.nextElement();
       SeqFeatureI f = (SeqFeatureI)o;
       String type = f.getType();
       if (!type.equals("source")) {
@@ -171,7 +170,7 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
           }
           featureOffset++;
         }
-        MapGlyphFactory factory = (MapGlyphFactory)featureTypes.get(type);
+        MapGlyphFactory factory = featureTypes.get(type);
         int strand = NASeqFeature.FORWARD;
         if (f instanceof NASeqFeature) {
           strand = ((NASeqFeature)f).getStrand();
@@ -191,16 +190,16 @@ public class NeoMapAnnotatedSeqDA implements DataAdapter {
         highEnd = Math.max(highEnd, end);
 
         if (p < 2) { // There is only one piece.
-          factory = (MapGlyphFactory)pieceGlyphs.get(type);
+          factory = pieceGlyphs.get(type);
         }
         GlyphI lc;
         if (NASeqFeature.REVERSE == strand)
-          lc = (GlyphI)this.map.addItem(factory, end-1, beg-1);
+          lc = this.map.addItem(factory, end-1, beg-1);
         else
-          lc = (GlyphI)this.map.addItem(factory, beg-1, end-1);
+          lc = this.map.addItem(factory, beg-1, end-1);
         this.map.setDataModel(lc, f);
         if (1 < p) { // There is more than one piece.
-          factory = (MapGlyphFactory)pieceGlyphs.get(type);
+          factory = pieceGlyphs.get(type);
           pieces = f.pieces();
           while (pieces.hasMoreElements()) {
             Object oo = pieces.nextElement();

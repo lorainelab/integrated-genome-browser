@@ -48,7 +48,7 @@ public class WrapSequence extends WrapGlyph {
   protected WrapAnnot outline_annot_glyph = new WrapAnnot();
   protected WrapColors sel_glyph = null;
 
-  protected Vector ORFs = new Vector();
+  protected Vector<ORFSpecs> ORFs = new Vector<ORFSpecs>();
   protected boolean translateOnlyORFs = false;
 
   public WrapSequence() {
@@ -152,12 +152,11 @@ public class WrapSequence extends WrapGlyph {
 
   /** Given a location, is it outside all of our specified ORFs? */
   protected boolean isOutsideORFs (int loc) {
-    ORFSpecs orf;
     boolean foundInside = true;
     int numORFs = ORFs.size();
 
     for (int i=0; i < numORFs; i++) {
-      orf = (ORFSpecs) ORFs.elementAt(i);
+      ORFSpecs orf = ORFs.elementAt(i);
       if ((loc >= orf.startLoc) && (loc <= orf.endLoc)) {
         foundInside = false;
         break;
@@ -190,8 +189,7 @@ public class WrapSequence extends WrapGlyph {
 
     // *_line_num is line number (relative to visible number of lines, i.e.
     // first visible line is 0) where start/end base is located
-    int start_line_num =
-      (int)((start - first_visible_residue) / residues_per_line);
+    int start_line_num = ((start - first_visible_residue) / residues_per_line);
     int end_line_num =
       (int)(Math.ceil((end - first_visible_residue) / residues_per_line));
     int line_height = getResidueHeight();
@@ -519,7 +517,7 @@ public class WrapSequence extends WrapGlyph {
     ORFSpecs otherOrf;
 
     for (int i=0; i < ORFs.size(); i++) {
-      otherOrf = (ORFSpecs) ORFs.elementAt(i);
+      otherOrf = ORFs.elementAt(i);
 
       if (((orf.startLoc + firstOrd) == otherOrf.startLoc) &&
           ((orf.endLoc   + firstOrd) == otherOrf.endLoc)) {

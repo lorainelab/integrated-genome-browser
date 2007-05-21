@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,11 +21,11 @@ import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 
-public class DragMonitor 
+public class DragMonitor
 implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
   NeoCanvas can;
-  Vector listeners = new Vector();
+  Vector<NeoDragListener> listeners = new Vector<NeoDragListener>();
   boolean already_dragging_outside = false;
 
   protected NeoTimerEventClock timer = null;
@@ -39,14 +39,14 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
     can.addMouseListener(this);
     can.addMouseMotionListener(this);
   }
-  
+
   /** implementing MouseListener interface */
   public void mouseClicked(MouseEvent e) { }
   public void mouseEntered(MouseEvent e) { }
   public void mouseExited(MouseEvent e) { }
   public void mousePressed(MouseEvent e) { }
-  public void mouseReleased(MouseEvent e) { 
-    if (timer != null) { 
+  public void mouseReleased(MouseEvent e) {
+    if (timer != null) {
       timer.stop();
       timer = null;
     }
@@ -55,12 +55,12 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
   /** implementing MouseMotionListener interface */
   public void mouseMoved(MouseEvent e) { }
-  public void mouseDragged(MouseEvent evt) { 
-    Dimension dim = can.getSize(); 
+  public void mouseDragged(MouseEvent evt) {
+    Dimension dim = can.getSize();
     int x = evt.getX();
     int y = evt.getY();
     if ((!already_dragging_outside) &&
-        (x < 0 || x > dim.width || 
+        (x < 0 || x > dim.width ||
          y < 0 || y > dim.height)) {
       if (timer != null) { timer.stop(); }
       already_dragging_outside = true;
@@ -73,25 +73,25 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
       else if (y > dim.height) { direction = SOUTH; }
       else { direction = NONE; }
       Integer dirobj = new Integer(direction);
-        
+
       timer = new NeoTimerEventClock(initial_delay, timer_interval, dirobj);
       timer.addTimerListener(this);
       timer.start();
-    } 
-    else if (already_dragging_outside && 
-             (x > 0 && x < dim.width && 
+    }
+    else if (already_dragging_outside &&
+             (x > 0 && x < dim.width &&
               y > 0 && y < dim.height)) {
       already_dragging_outside = false;
-      if (timer != null) { 
-        timer.stop(); 
+      if (timer != null) {
+        timer.stop();
         timer = null;
       }
     }
   }
 
   /**
-   *  If NeoTimerEventClock's lazy_event_posting is turned on, calls to 
-   *  heardTimerEvent() should be running on the event dispatch thread, 
+   *  If NeoTimerEventClock's lazy_event_posting is turned on, calls to
+   *  heardTimerEvent() should be running on the event dispatch thread,
    *  and therefore be running synchronously with AWT event and paint calls
    */
   public void heardTimerEvent(NeoTimerEvent evt) {
@@ -100,7 +100,7 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
     int direction = ((Integer)arg).intValue();
     NeoDragEvent new_event = new NeoDragEvent(this, direction);
     for (int i=0; i<listeners.size(); i++) {
-      ((NeoDragListener)listeners.elementAt(i)).heardDragEvent(new_event);
+      listeners.elementAt(i).heardDragEvent(new_event);
     }
     time_count++;
   }
@@ -112,7 +112,7 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
   public void removeDragListener(NeoDragListener listener) {
     listeners.removeElement(listener);
   }
-  
+
   public Vector getDragListeners() {
     return listeners;
   }

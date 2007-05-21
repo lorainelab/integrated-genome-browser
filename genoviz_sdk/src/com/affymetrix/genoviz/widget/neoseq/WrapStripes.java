@@ -95,8 +95,7 @@ public class WrapStripes extends WrapGlyph {
 
           int yoffset =
             stripe_start % (stripe_colors.length * residues_per_stripe);
-          int stripe_num =
-            (int)(stripe_start/(residues_per_line * residues_per_stripe));
+          int stripe_num = stripe_start/(residues_per_line * residues_per_stripe);
 
           backCoordPoint1.x = 0;
           backCoordPoint1.y = stripe_start;

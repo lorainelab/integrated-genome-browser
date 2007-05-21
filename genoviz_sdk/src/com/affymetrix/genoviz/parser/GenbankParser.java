@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -52,7 +52,7 @@ public abstract class GenbankParser implements ContentParser {
       results = importContent(istream);
       istream.close();
     }
-    catch(Exception ex) { 
+    catch(Exception ex) {
       System.err.println(ex.getMessage());
     }
     return results;
@@ -83,6 +83,7 @@ loop:
         break;
       default:
         Debug.warn("parsing residues, unexpected token: " + tok);
+        break loop;
       case '/':
         Debug.inform("reached the end of input.");
         break loop;
@@ -148,7 +149,7 @@ loop:
       }
     }
   }
-  
+
   private static final boolean marking
 =false;//    = !System.getProperty("java.version", "1.0").startsWith("1.0");
 
@@ -236,12 +237,12 @@ loop:
     throws IOException
   {
     PrintWriter pw = new PrintWriter(theOutput, true);
-    // Prints the description up to but not including the base count    
+    // Prints the description up to but not including the base count
     pw.print ( theSeq.getDescription().substring( 0, theSeq.getDescription().indexOf ( "BASE COUNT") ) );
     pw.println ( "FEATURES              Location/Qualifiers");
      exportFeatures( pw, theSeq);
     // Prints the base count
-    pw.println ( theSeq.getDescription().substring(theSeq.getDescription().indexOf ( "BASE COUNT") ) );    
+    pw.println ( theSeq.getDescription().substring(theSeq.getDescription().indexOf ( "BASE COUNT") ) );
     exportBases( pw, theSeq.getSequence().getResidues() );
   }
 
@@ -283,14 +284,14 @@ loop:
       toBeFormatted.append("     ");
       toBeFormatted.append(aFeature.getType());
       // Prints spaces to the 22nd place, where the feature attributes are supposed to begin.
-      for ( int count = 5 +  (( String )aFeature.getType()).length()  ; count < 22; count++)
+      for ( int count = 5 +  aFeature.getType().length()  ; count < 22; count++)
         toBeFormatted.append(" ");
       rangeOrAttrib = aFeature.pieces();
-      // Find out how many members the Enumeration has (how many ranges) for formatting,  
+      // Find out how many members the Enumeration has (how many ranges) for formatting,
       // then reset it to print.
       while ( rangeOrAttrib.hasMoreElements() ) {
         numberOfElements++;
-        theRange = (Range)rangeOrAttrib.nextElement();  
+        theRange = (Range)rangeOrAttrib.nextElement();
       }
       rangeOrAttrib = aFeature.pieces();
       if (numberOfElements > 1) {
@@ -389,9 +390,9 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     }
     pw.println ( theLine );
   }
-  
+
   private void formatFeature ( String toBeFormatted, PrintWriter pw )
-  {  
+  {
     StringTokenizer parser = new StringTokenizer ( toBeFormatted, ",", true);
     String theToken = "";
     StringBuffer theLine = new StringBuffer ();
@@ -411,7 +412,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     }
     pw.println ( theLine );
   }
-  private String parseSectionName(StreamTokenizer toks) 
+  private String parseSectionName(StreamTokenizer toks)
     throws IOException
   {
     int tok = toks.nextToken();
@@ -435,7 +436,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
    * @param theBuffer is where the text goes.
    * @param toks is where the text comes from.
    */
-  private void appendSection(StringBuffer theBuffer, StreamTokenizer toks) 
+  private void appendSection(StringBuffer theBuffer, StreamTokenizer toks)
     throws IOException
   {
     int tok;
@@ -464,7 +465,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
    * @param theBuffer is where the marked up text goes.
    * @param toks is where the text comes from.
    */
-  private void markupSection(StringBuffer theBuffer, StreamTokenizer toks) 
+  private void markupSection(StringBuffer theBuffer, StreamTokenizer toks)
     throws IOException
   {
     int tok;
@@ -498,7 +499,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     }
   }
 
-  private void skipSection(StreamTokenizer toks) 
+  private void skipSection(StreamTokenizer toks)
     throws IOException
   {
     int tok;
@@ -565,6 +566,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
             break;
           case '\"':
             Debug.inform("quoted string >" + stoks.sval + "<");
+            break;
           default:
             Debug.inform("other token >" + tok + "<");
           }
@@ -586,7 +588,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     }
   }
 
-  private int parseAttribute(SeqFeatureI f, StreamTokenizer stoks) 
+  private int parseAttribute(SeqFeatureI f, StreamTokenizer stoks)
     throws IOException
   {
     String attName = "", attValue = "";
@@ -707,7 +709,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     throws IOException
   {
     int tok;
-    Vector v = new Vector();
+    Vector<Range> v = new Vector<Range>();
     do {
       Range r = parseSpan(toks);
       if (null != r) {
@@ -724,7 +726,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     throws IOException
   {
     int tok = toks.nextToken();
-    if ('<' == tok || '>' == tok) 
+    if ('<' == tok || '>' == tok)
       tok = toks.nextToken();
     if (StreamTokenizer.TT_WORD == tok ) { // it might be an external reference
       tok = toks.nextToken();
@@ -748,7 +750,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
       return new Range(x, x);
     }
     tok = toks.nextToken();
-    if ('<' == tok || '>' == tok) 
+    if ('<' == tok || '>' == tok)
       tok = toks.nextToken();
     if (StreamTokenizer.TT_NUMBER != tok)
       throw new RuntimeException("invalid span: expected number");
@@ -756,7 +758,7 @@ private void formatFeatureAttribute ( String toBeFormatted, PrintWriter pw ) {
     return new Range(x, y);
   }
 
-  private void skipFeature(StreamTokenizer toks) 
+  private void skipFeature(StreamTokenizer toks)
     throws IOException
   {
     int tok;

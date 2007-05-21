@@ -43,22 +43,12 @@ public class BaseConfidence implements BaseCall {
     this( Character.toUpperCase( base ), conf, 0 );
   }
 
-  /**
-   * @deprecated use {@link #getBase()}.
-   */
-  public char base() { return base; }
-
   public void setBase(char theBase) {
     this.base = theBase;
   }
   public char getBase() {
     return this.base;
   }
-
-  /**
-   * @deprecated use {@link #getConfidence()}.
-   */
-  public int confidence() { return conf; }
 
   public void setConfidence(int theConfidence) {
     this.conf = theConfidence;

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -133,36 +133,6 @@ public interface NeoWidgetI extends NeoConstants   {
    */
   public static final int FITWIDGET = 5;
 
-  /**
-   * @deprecated -- use {@link SceneI#SELECT_NONE}.
-   */
-  public static final int SELECT_NONE = SceneI.SELECT_NONE;
-
-  /**
-   * @deprecated -- use {@link SceneI#SELECT_OUTLINE}.
-   */
-  public static final int SELECT_OUTLINE = SceneI.SELECT_OUTLINE;
-
-  /**
-   * @deprecated -- use {@link SceneI#SELECT_FILL}.
-   */
-  public static final int SELECT_FILL = SceneI.SELECT_FILL;
-
-  /**
-   * indicates that rectangle behind selected items should be
-   * filled with the selection color.
-   *
-   * @deprecated use {@link SceneI#BACKGROUND_FILL}.
-   */
-  public static final int SELECT_BACK_FILL = 103;
-
-  /**
-   * indicates that selected items should be visually highlighted.
-   *
-   * @deprecated Use {@link #SELECT_FILL} instead.
-   * @see #setSelectionAppearance
-   */
-  public static final int SELECT_HIGHLIGHT = SELECT_FILL;
 
   /**
    * constrains high resolution zooming
@@ -680,6 +650,13 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    */
   public Object getDataModel(GlyphI glyph);
+
+  /**
+   *  Returns true if any datamodels are represented by multiple glyphs.
+   *  WARNING: once one model is represented by multiple glyphs, this flag might only 
+   *     be reset to false when clearWidget() is called
+  */
+  public boolean hasMultiGlyphsPerModel();
 
   /**
    * Returns the first GlyphI found in the NeoWidgetI that is associated with

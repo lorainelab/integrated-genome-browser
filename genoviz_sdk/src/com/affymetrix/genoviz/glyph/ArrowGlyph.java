@@ -47,21 +47,6 @@ public class ArrowGlyph extends DirectedGlyph  {
   }
 
   /**
-   * @deprecated use setForward() instead.
-   */
-  public void isForward(boolean forward) {
-    setForward(forward);
-  }
-
-  /**
-   * @deprecated use isForward.
-   * @return true iff the arrow points toward the top of the range.
-   */
-  public boolean getForward() {
-    return this.isForward();
-  }
-
-  /**
    * Sets the stem width of the arrow.
    * This also sets arrow head's height & width.
    * Stem width is forced to be odd.

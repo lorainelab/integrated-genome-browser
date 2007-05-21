@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,14 +21,11 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.bioviews.Scene;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
@@ -40,9 +37,6 @@ import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
-
-import com.affymetrix.genoviz.widget.neomap.*;
 
 /**
  * NeoMap is the <strong>implementation</strong> of NeoMapI.
@@ -95,14 +89,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   // a vector of axes added to the map
   // this is maintained in order to stretch them
   // when the range coords of the map change.
-  private Vector axes = new Vector();
-
-  /** @deprecated No longer works, Use axes instead */
-  protected Vector axii = null;
+  private Vector<AxisGlyph> axes = new Vector<AxisGlyph>();
 
   // fields for map glyph factories
   // a hashtable to map name strings to MapGlyphFactories
-  Hashtable factory_hash;
+  // TODO: Use MapGlyphFactoryI ?
+  Hashtable<String,MapGlyphFactory> factory_hash;
 
   // fields to keep track of whether ranges have been explicitly set or not
   boolean axis_range_set = false;
@@ -121,8 +113,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   boolean drag_scrolling_enabled = false;
 
   protected int selectionMethod = NO_SELECTION;
-  protected Vector viewbox_listeners = new Vector();
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   /**
    * Constructs a horizontal NeoMap with scrollbars.
@@ -172,7 +164,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     view.removeKeyListener(this);
 
     // Now set up NeoMap with root's scene, and a new view onto that scene
-    scene = (Scene)root.getScene();
+    scene = root.getScene();
 
     // don't remove old view from root's scene! this is needed by root!
     view = new View(scene);
@@ -329,7 +321,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     initComponentLayout();
 
-    /**
+    /*
      * checking for whether these scrollbars are used
      * (should really default to AUTO_SCROLL_INCREMENT anyway
      *  and reset in widgets that don't want it [like NeoSeq] )
@@ -342,9 +334,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
     }
 
-    factory_hash = new Hashtable();
-    glyph_hash = new Hashtable();
-    model_hash = new Hashtable();
+    factory_hash = new Hashtable<String,MapGlyphFactory>();
+    glyph_hash = new Hashtable<GlyphI,Object>();
+    model_hash = new Hashtable<Object,Object>();
 
     // defaults to black background!!!
     setBackground(default_panel_background);
@@ -484,6 +476,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    *  to override reshape behavior, override this method, not setBounds
    *  (due to weirdness in the Container source code from Sun).
    */
+  @Deprecated
   public void reshape(int x, int y, int width, int height) {
     reshapeCount++;
     if (width < 1) width = 1;
@@ -495,7 +488,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
     super.reshape(x, y, width, height);
 
-    this.layout();
+    this.doLayout();
 
     /*
       Forcing a layout in reshape for two reasons
@@ -569,16 +562,17 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     // scene.setCoords() is now handled in setBounds()
 
     if (orient == VERTICAL) {
-      this.setBounds(Y,start,end);
+      //      this.setBounds(Y,start,end);
+      this.setFloatBounds(Y,(double)start,(double)end);
     }
     else {
-      this.setBounds(X,start,end);
+      //      this.setBounds(X,start,end);
+      this.setFloatBounds(X,(double)start,(double)end);
     }
-    AxisGlyph ga;
+
     if (axes != null) {
       for (int i=0; i<axes.size(); i++) {
-        ga = (AxisGlyph)axes.elementAt(i);
-        ga.rangeChanged(); // notify the axis of the range change.
+        axes.elementAt(i).rangeChanged(); // notify the axis of the range change.
       }
     }
 
@@ -677,7 +671,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     yscale = trans.getScaleY();
     yoffset = trans.getOffsetY();
 
-    /**
+    /*
      * GAH 4-10-2002
      *  added a callout to calcFittedTransform() here so that subclasses
      *  (particularly new tiered map implementation) can calculate fitted
@@ -706,16 +700,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
       min_pixels_per_coord[X] = max_pixels_per_coord[X];
       trans.setScaleX(min_pixels_per_coord[X]);
-      trans.setOffsetX(canvas.getSize().width/2 - // j1.0
-//      trans.setOffsetX(canvas.getSize().width/2 - // j1.1
+      trans.setOffsetX(canvas.getSize().width/2 -
       trans.getScaleX()*scene.getCoordBox().width/2);
     }
     if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
       min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
       trans.setScaleY(min_pixels_per_coord[Y]);
       trans.setOffsetY(
-        canvas.getSize().height/2 - // j1.0
-//        canvas.getSize().height/2 - // j1.1
+        canvas.getSize().height/2 -
         trans.getScaleY()*scene.getCoordBox().height/2);
     }
 
@@ -873,20 +865,13 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     zoom(Y, zoom_scale);
   }
 
-  /**
-   * @deprecated Use {@link #updateWidget}.
-   */
-  public void updateMap() {
-    this.updateWidget();
-  }
-
   public MapGlyphFactory addFactory(String config_string) {
-    Hashtable config_hash = null;
+    Hashtable<String,Object> config_hash = null;
     config_hash = GeneralUtils.parseOptions(config_string);
     return addFactory(config_hash);
   }
 
-  public MapGlyphFactory addFactory(Hashtable config_hash) {
+  public MapGlyphFactory addFactory(Hashtable<String,Object> config_hash) {
 
     MapGlyphFactory fac = new MapGlyphFactory(orient);
     fac.setScene(scene);
@@ -938,27 +923,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
     scene.addGlyph(gl);
     return gl;
-  }
-
-  /**
-   * Use a named factory to create a glyph and add it to the map.
-   * @deprecated use {@link #addItem(MapGlyphFactory, int, int)} instead.
-   */
-  public GlyphI addItem(String factory_name, int start, int end) {
-    return addItem(factory_name, start, end, null);
-  }
-
-  /**
-   * Use a named factory to create and customize a glyph and add it to the map.
-   * @deprecated use {@link #addItem(MapGlyphFactory,int,int,String)} instead.
-   */
-  public GlyphI addItem(String factory_name, int start, int end,
-                        String options) {
-    Object fac = factory_hash.get(factory_name);
-    if (fac == null) {
-      return null;
-    }
-    return this.addItem((MapGlyphFactory)fac, start, end, options);
   }
 
   public GlyphI addItem(int start, int end) {
@@ -1036,13 +1000,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     return zoomer[id];
   }
 
-  /**
-   * @deprecated Use {@link NeoWidget#setReshapeBehavior(int, int)}.
-   */
-  public void setReshapeConstraint(int axisid, int constraint) {
-    setReshapeBehavior(axisid, constraint);
-  }
-
   public void removeItem(GlyphI gl) {
     scene.removeGlyph(gl);
     glyph_hash.remove(gl);
@@ -1081,17 +1038,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   //  also need to add a removeFactory method...
 
   /**
-   *  @deprecated use {@link #clearWidget()} instead.
-   */
-  public void clearMap() {
-    clearWidget();
-  }
-
-  /**
-   * removes all glyphs.
+   * Removes all glyphs.
    * However, factories, dataadapters, coord bounds, etc. remain.
    */
   public void clearWidget() {
+    super.clearWidget();
     // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = (RootGlyph)scene.getGlyph();
     Rectangle2D evebox = oldeve.getCoordBox();
@@ -1102,10 +1053,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     scene.setGlyph(neweve);
 
     // reset glyph_hash
-    glyph_hash = new Hashtable();
+    glyph_hash = new Hashtable<GlyphI,Object>();
 
     // reset model_hash
-    model_hash = new Hashtable();
+    model_hash = new Hashtable<Object,Object>();
 
     // reset axes
     axes.removeAllElements();
@@ -1241,13 +1192,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       return (int)Math.round(gl.getSelectedRegion().x +
                         gl.getSelectedRegion().width - 1);
     }
-  }
-
-  /**
-   * @deprecated in favor of {@link #setScaleConstraint}.
-   */
-  public void setScaleBehavior(int id, int behavior) {
-    setScaleConstraint(id, behavior);
   }
 
   public void update(Graphics g) {
@@ -1392,7 +1336,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * {"option1" ==&gt; "value1",<BR>
    *  "option2" ==&gt; "value2", ...}<BR>
    */
-  public void configure(Hashtable options) {
+  public void configure(Hashtable<String,Object> options) {
     default_factory.configure(options);
   }
 
@@ -1550,12 +1494,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {
           this.deselect(prev_items);
         }
-        Vector candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
+        Vector<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
         if (candidates.size() > 0 && (shiftDown || controlDown)) {
-          Enumeration it = candidates.elements();
-          Vector in = new Vector(), out = new Vector();
-          while (it.hasMoreElements()) {
-            Object obj = it.nextElement();
+
+          Vector<GlyphI> in = new Vector<GlyphI>(), out = new Vector<GlyphI>();
+          for (GlyphI obj : candidates) {
             if (prev_items.contains(obj)) {
               out.addElement(obj);
             }
@@ -1587,10 +1530,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     if (viewbox_listeners.size() > 0) {
       NeoViewBoxChangeEvent vevt =
         new NeoViewBoxChangeEvent(this, e.getCoordBox());
-      NeoViewBoxListener vl;
+
       for (int i=0; i<viewbox_listeners.size(); i++) {
-        vl = (NeoViewBoxListener)viewbox_listeners.elementAt(i);
-        vl.viewBoxChanged(vevt);
+        viewbox_listeners.elementAt(i).viewBoxChanged(vevt);
       }
     }
     if (range_listeners.size() > 0) {
@@ -1602,28 +1544,25 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       else {
           nevt = new NeoRangeEvent(this, vbox.x, vbox.x + vbox.width);
       }
-      NeoRangeListener rl;
+
       for (int i=0; i<range_listeners.size(); i++) {
-        rl = (NeoRangeListener)range_listeners.elementAt(i);
+        range_listeners.elementAt(i).rangeChanged(nevt);
         // currently range events are generated for _any_ viewbox change
         //    event, so sometimes the range may not actually have changed,
         //    might be only "offset" that is changing
-        rl.rangeChanged(nevt);
       }
     }
   }
 
   public void rubberBandChanged(NeoRubberBandEvent e) {
     if (rubberband_listeners.size() > 0) {
-      NeoRubberBandListener bl;
       // not transforming to widget pixels (yet)
       NeoRubberBandEvent nevt =
         new NeoRubberBandEvent(this, e.getID(), e.getWhen(), e.getModifiers(),
                                e.getX(), e.getY(), e.getClickCount(),
                                e.isPopupTrigger(), e.getRubberBand());
       for (int i=0; i<rubberband_listeners.size(); i++) {
-        bl = (NeoRubberBandListener)rubberband_listeners.elementAt(i);
-        bl.rubberBandChanged(nevt);
+        rubberband_listeners.elementAt(i).rubberBandChanged(nevt);
       }
     }
   }

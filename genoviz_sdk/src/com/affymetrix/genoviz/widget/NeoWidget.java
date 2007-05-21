@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -19,15 +19,12 @@ import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.TransformI;
@@ -35,10 +32,8 @@ import com.affymetrix.genoviz.bioviews.View;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoViewMouseEvent;
-import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.pseudoswing.*;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
 
@@ -130,7 +125,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected String hscroll_loc = hscroll_default_loc;
   protected String vscroll_loc = vscroll_default_loc;
 
-  protected Vector rubberband_listeners = new Vector();
+  protected Vector<NeoRubberBandListener> rubberband_listeners = new Vector<NeoRubberBandListener>();
 
 
   public NeoWidget() {
@@ -243,9 +238,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public Scene getScene() { return scene; }
 
-  /** @deprecated  use getNeoCanvas() instead */
-  public NeoCanvas getCanvas() { return getNeoCanvas(); }
-
   public NeoCanvas getNeoCanvas() { return canvas; }
 
   public View getView() { return view; }
@@ -323,7 +315,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // SHOULD THIS BE getViewBounds() INSTEAD!!??!!!
     //    WHICH GLYPHS DO WE REALLY WANT TO RETURN????
     Rectangle2D coordrect = getCoordBounds();
-    Vector pickvect = new Vector();
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
@@ -333,8 +325,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *  retrieve a Vector of all drawn glyphs that overlap
    *  the coordinate rectangle coordrect.
    */
-  public Vector getItemsByCoord(Rectangle2D coordrect) {
-    Vector pickvect = new Vector();
+  public Vector<GlyphI> getItemsByCoord(Rectangle2D coordrect) {
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
@@ -371,7 +363,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @return the overlapping glyphs
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
    */
-  public Vector getItems(double x, double y) {
+  public Vector<GlyphI> getItems(double x, double y) {
     Rectangle2D coordrect = new Rectangle2D(x, y, 1, 1);
     if (0 < pixelblur) {
       Rectangle pixrect = new Rectangle();
@@ -383,14 +375,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return getItemsByCoord(coordrect);
   }
 
-  public Vector getItems(double x, double y, int location) {
+  public Vector<GlyphI> getItems(double x, double y, int location) {
     return getItems(x,y);
   }
 
 
-  /**
-   * To Be Done.
-   */
   public NeoWidgetI getWidget(int location) { return this; }
 
     public NeoWidgetI getWidget(GlyphI gl) {
@@ -613,7 +602,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     view.calcCoordBox();
     if (DEBUG_SCROLL) {
-      System.out.println("Scrolling to: " + (double)(coord_value));
+      System.out.println("Scrolling to: " + coord_value);
       System.out.println(trans);
       System.out.println(view.getCoordBox());
     }
@@ -852,6 +841,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     selected.removeElement(g);
   }
 
+  public void clearWidget() {
+    super.clearWidget();
+  }
 
   /**
    * Scale constraints are currently only considered during
@@ -874,6 +866,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
   public int getZoomBehavior(int axisid) {
     return zoom_behavior[axisid];
+  }
+
+  public double getZoomCoord(int axisid) {
+    return zoom_coord[axisid];
   }
 
   public void setZoomBehavior(int axisid, int constraint, double coord) {
@@ -971,7 +967,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param datamodel being visualized.
    * @return a Vector of all the glyphs tied to the given data model.
    */
-  public Vector getItems(Object datamodel) {
+   @SuppressWarnings("unchecked")
+   public Vector getItems(Object datamodel) {
+    Collections.singletonList(datamodel);
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;
@@ -984,6 +982,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       return vec;
     }
   }
+
 
   /**
    *  If there is more than one glyph associated with the datamodel,
@@ -1085,8 +1084,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           ratio_diff = 0;
         }
         else {
-          ratio_diff =
-            (double)Math.abs(1-zoom_scale/max_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/max_pixels_per_coord[id]);
         }
         if (ratio_diff < 0.0001) {
           zoom_scale = max_pixels_per_coord[id];
@@ -1116,7 +1114,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           ratio_diff = 0;
         }
         else {
-          ratio_diff = (double)Math.abs(1-zoom_scale/min_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/min_pixels_per_coord[id]);
         }
         if (ratio_diff < 0.0001) {
           zoom_scale = min_pixels_per_coord[id];
@@ -1257,7 +1255,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public boolean isOnTop(GlyphI gl) {
     if (!gl.isVisible()) { return false; }
     Rectangle2D cbox = gl.getCoordBox();
-    Vector pickvect = new Vector();
+    Vector<GlyphI> pickvect = new Vector<GlyphI>();
     getScene().pickTraversal(cbox, pickvect, getView());
     if (pickvect.size() == 0) {
       // something very strange is going on if pickvect doesn't at
@@ -1366,7 +1364,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       for (int i=0;
            (i <= last_listener) && (i < mouse_listeners.size());
            i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -1376,8 +1374,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

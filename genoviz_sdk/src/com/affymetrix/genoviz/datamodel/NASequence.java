@@ -55,14 +55,6 @@ public class NASequence extends Sequence implements Translatable, NASequenceI {
     }
   }
 
-
-  /**
-   * @deprecated in favor of {@link #getReverseComplement}.
-   */
-  public String getRevComp() {
-    return this.getReverseComplement();
-  }
-
   public String getReverseComplement() {
     if (revcomp == null) {
       revcomp = DNAUtils.reverseComplement(this.getResidues());
@@ -152,7 +144,7 @@ public class NASequence extends Sequence implements Translatable, NASequenceI {
         String compTrans = null;
         try {
           revCompTrans =
-            DNAUtils.translate(getRevComp(), rev_frametype, trans_codetype,
+            DNAUtils.translate(getReverseComplement(), rev_frametype, trans_codetype,
                 initial_spacer, pre_string, post_string);
           compTrans = DNAUtils.chunkReverse(revCompTrans,
               initial_spacer.length(), 3);

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -54,7 +54,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     return -1;
   }
 
-  private Vector items = new Vector();
+  private Vector<MapTierGlyph> items = new Vector<MapTierGlyph>();
   private int selectedIndex = -1;
   private Integer itemIndex = new Integer( selectedIndex );
   private MouseListener switcher = new MouseAdapter() {
@@ -100,7 +100,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
   public void clearWidget(){
     super.clearWidget();
     this.lastItem = -1;
-    items = new Vector();
+    items = new Vector<MapTierGlyph>();
     selectedIndex = -1;
   }
 
@@ -129,7 +129,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     }
     this.selectedIndex = index;
     if ( -1 < index ) {
-      g = ( MapTierGlyph ) this.items.elementAt( index );
+      g = this.items.elementAt( index );
       select(g);  // This makes sure that g.getSelected() == true, _and_ adds g to map selection vec.
       fireItemEvent( new ItemEvent( this,
                                     ItemEvent.ITEM_STATE_CHANGED,
@@ -143,7 +143,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
    * Similar to java.awt.List#deselect.
    */
   public void deselect( int index ) {
-    MapTierGlyph g = ( MapTierGlyph ) this.items.elementAt( index );
+    MapTierGlyph g = this.items.elementAt( index );
     deselect(g);  // This makes sure that g.getSelected() == false, _and_ removes g from map selection vec.
     Integer i = new Integer( this.selectedIndex );
     this.selectedIndex = -1;
@@ -190,7 +190,7 @@ public class NeoListMap extends TieredNeoMap implements ItemSelectable {
     int at = this.getSelectedIndex();
     int low = Math.min( from, to );
     int high = Math.max( from, to );
-    Object o = this.items.elementAt( from );
+    MapTierGlyph o = this.items.elementAt( from );
     this.items.removeElementAt( from );
     this.items.insertElementAt( o, to );
     if ( low <= at && at <= high ) {

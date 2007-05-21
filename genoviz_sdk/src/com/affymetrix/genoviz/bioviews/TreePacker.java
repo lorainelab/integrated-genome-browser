@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -116,7 +116,7 @@ public class TreePacker implements PackerI {
     return parent_node.getPixelBox();
   }
 
-  public Vector getVisibleLeafNodes(TreeNodeGlyph root, Vector result_vec) {
+  public Vector<TreeNodeGlyph> getVisibleLeafNodes(TreeNodeGlyph root, Vector<TreeNodeGlyph> result_vec) {
     if (!root.isVisible()) { return result_vec; }
     Vector children = root.getChildren();
     if (children == null || (!root.isExpanded()))   {
@@ -126,7 +126,7 @@ public class TreePacker implements PackerI {
     TreeNodeGlyph child;
     for (int i=0; i<children.size(); i++) {
       if (children.elementAt(i) instanceof TreeNodeGlyph) {
-        child = (TreeNodeGlyph)children.elementAt(i);
+        child = (TreeNodeGlyph) children.elementAt(i);
         getVisibleLeafNodes(child, result_vec);
       }
     }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,14 +27,14 @@ import java.util.StringTokenizer;
 public class ReadConfidence
 {
 
-  private Vector qualityVector;
+  private Vector<BaseConfidence> qualityVector;
   private int maxConfidence = 0;
 
   /**
    * creates an empty ReadConfidence.
    */
   public ReadConfidence() {
-    this.qualityVector = new Vector();
+    this.qualityVector = new Vector<BaseConfidence>();
   }
 
   /** @return the number of bases called (read). */
@@ -100,9 +100,9 @@ public class ReadConfidence
 
   /** @return an array of the bases called. */
   public char[] getBaseArray() {
-    char[] b = new char[this.qualityVector.size()];
+    char[] b = new char[qualityVector.size()];
     for ( int i = 0; i < b.length; i++ ) {
-      b[i] = ((BaseConfidence)this.qualityVector.elementAt(i)).getBase();
+      b[i] = qualityVector.elementAt(i).getBase();
     }
     return b;
   }
@@ -115,9 +115,9 @@ public class ReadConfidence
 
   /** @return the quality scores. */
   public int[] getQualArray() {
-    int[] q = new int[this.qualityVector.size()];
+    int[] q = new int[qualityVector.size()];
     for ( int i = 0; i < q.length; i++ ) {
-      q[i] = ((BaseConfidence)this.qualityVector.elementAt(i)).getConfidence();
+      q[i] = qualityVector.elementAt(i).getConfidence();
     }
     return q;
   }
@@ -127,14 +127,14 @@ public class ReadConfidence
    * @return a BaseConfidence (including score) of that base.
    */
   public BaseConfidence getBaseConfidenceAt(int index) {
-    return (BaseConfidence) this.qualityVector.elementAt(index);
+    return qualityVector.elementAt(index);
   }
 
   /**
    * @return an array of base calls
    */
   public BaseCall[] getBaseCalls() {
-    BaseCall[] array = new BaseCall[this.qualityVector.size()];
+    BaseCall[] array = new BaseCall[qualityVector.size()];
     this.qualityVector.copyInto( array );
     return array;
   }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -25,19 +25,19 @@ import java.util.*;
  */
 public class LineConnectorGlyph extends Glyph {
 
-  private Vector twoglyphs = new Vector(2);
+  private Vector<GlyphI> twoglyphs = new Vector<GlyphI>(2);
 
   /**
    * Only two glyphs can be connected with a LineConnectorGlyph,
    * any more additions will be ignored except for an error message.
    */
-  public void addGlyph ( GlyphI glyph ) {
+  public void addGlyph( GlyphI glyph ) {
     if ( !twoglyphs.contains ( glyph ) ) {
       if ( twoglyphs.size() > 2 ) {
-        System.err.println ( "ConnectorGlyph: already have two glyphs.");
+        System.err.println( "ConnectorGlyph: already have two glyphs.");
         return;
       }
-      twoglyphs.addElement ( glyph );
+      twoglyphs.addElement( glyph );
     }
   }
 
@@ -65,15 +65,15 @@ public class LineConnectorGlyph extends Glyph {
     left = new Rectangle2D();
     right = new Rectangle2D();
 
-    x1 =  ( (GlyphI) twoglyphs.elementAt( 0 ) ).getCoordBox().x;
-    x2 =  ( (GlyphI) twoglyphs.elementAt( 1 ) ).getCoordBox().x;
+    x1 =  twoglyphs.elementAt( 0 ).getCoordBox().x;
+    x2 =  twoglyphs.elementAt( 1 ).getCoordBox().x;
 
     if ( x1 < x2 ) {
-      leftGlyph = (GlyphI) twoglyphs.elementAt ( 0 );
-      rightGlyph = (GlyphI) twoglyphs.elementAt ( 1 );
+      leftGlyph = twoglyphs.elementAt ( 0 );
+      rightGlyph = twoglyphs.elementAt ( 1 );
     } else {
-      leftGlyph = (GlyphI) twoglyphs.elementAt ( 1 );
-      rightGlyph = (GlyphI) twoglyphs.elementAt ( 0 );
+      leftGlyph = twoglyphs.elementAt ( 1 );
+      rightGlyph = twoglyphs.elementAt ( 0 );
     }
 
     left = leftGlyph.getCoordBox();

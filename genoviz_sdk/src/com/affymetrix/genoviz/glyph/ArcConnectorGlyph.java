@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class ArcConnectorGlyph extends Glyph {
 
-  private Vector twoglyphs = new Vector(2);
+  private java.util.List<GlyphI> twoglyphs = new ArrayList<GlyphI>(2);
   private int spans;
 
   private boolean aboveaxis = false;
@@ -57,7 +57,7 @@ public class ArcConnectorGlyph extends Glyph {
         System.err.println ( "ConnectorGlyph: already have two glyphs.");
         return;
       }
-      twoglyphs.addElement ( glyph );
+      twoglyphs.add( glyph );
     }
   }
 
@@ -87,15 +87,15 @@ public class ArcConnectorGlyph extends Glyph {
     left = new Rectangle2D();
     right = new Rectangle2D();
 
-    x1 =  ( (GlyphI) twoglyphs.elementAt( 0 ) ).getCoordBox().x;
-    x2 =  ( (GlyphI) twoglyphs.elementAt( 1 ) ).getCoordBox().x;
+    x1 =  twoglyphs.get( 0 ).getCoordBox().x;
+    x2 =  twoglyphs.get( 1 ).getCoordBox().x;
 
     if ( x1 < x2 ) {
-      leftGlyph = (GlyphI) twoglyphs.elementAt ( 0 );
-      rightGlyph = (GlyphI) twoglyphs.elementAt ( 1 );
+      leftGlyph = twoglyphs.get( 0 );
+      rightGlyph = twoglyphs.get( 1 );
     } else {
-      leftGlyph = (GlyphI) twoglyphs.elementAt ( 1 );
-      rightGlyph = (GlyphI) twoglyphs.elementAt ( 0 );
+      leftGlyph = twoglyphs.get( 1 );
+      rightGlyph = twoglyphs.get( 0 );
     }
 
     left = leftGlyph.getCoordBox();
@@ -106,7 +106,7 @@ public class ArcConnectorGlyph extends Glyph {
     else  coordbox.y = left.y - (left.height / 8);                   //below axis
 
     coordbox.width = right.x - ( left.x + left.width );
-    coordbox.height = (double)(left.height * 1.5);
+    coordbox.height = (left.height * 1.5);
 
     if ( coordbox.y < 0 ) arcAngle = -180; //above axis
     else arcAngle = 180;                   //below axis
@@ -117,7 +117,6 @@ public class ArcConnectorGlyph extends Glyph {
     g.drawArc ( pixelbox.x - 2, pixelbox.y+1, pixelbox.width + 3, pixelbox.height, 180, arcAngle );
 
     super.draw ( view );
-
   }
 
 }

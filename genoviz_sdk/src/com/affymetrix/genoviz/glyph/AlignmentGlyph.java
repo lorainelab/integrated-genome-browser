@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -95,8 +95,8 @@ implements Comparable {
   // keeping separate vectors for aligned span children and
   // unaligned span children (otherwise there's no real way to
   // distinguish them)
-  protected Vector unaligned_spans = new Vector();
-  protected Vector aligned_spans = new Vector();
+  protected Vector<GlyphI> unaligned_spans = new Vector<GlyphI>();
+  protected Vector<GlyphI> aligned_spans = new Vector<GlyphI>();
 
   private ArrowGlyph arrow = new ArrowGlyph();
 
@@ -389,13 +389,6 @@ implements Comparable {
     return glyph;
   }
 
-  /**
-   *  @deprecated Use {@link #getAlignedSpans} instead.
-   */
-  public Vector getUngappedAlignments() {
-    return getAlignedSpans();
-  }
-
   public void setBackgroundColorStrategy(int strategy) {
     Vector glyphs = getAlignedSpans();
     AlignedResiduesGlyph arglyph;
@@ -670,7 +663,7 @@ implements Comparable {
     if (children != null) {
       int size = children.size();
       for (int i=0; i<size; i++) {
-        ((GlyphI)children.elementAt(i)).setSelected(selected);
+        children.elementAt(i).setSelected(selected);
       }
     }
   }
@@ -684,20 +677,6 @@ implements Comparable {
 
   public boolean isForward() {
     return this.forward;
-  }
-
-  /**
-   *  @deprecated Use {@link #setForward} instead.
-   */
-  public void isForward(boolean forward) {
-    setForward(forward);
-  }
-
-  /**
-   *  @deprecated Use {@link #isForward} instead.
-   */
-  public boolean getForward() {
-    return isForward();
   }
 
   public void setBackgroundColor(Color c) {
@@ -749,8 +728,8 @@ implements Comparable {
     double oldend = coordbox.x + coordbox.width;
     double newend = childbox.x + childbox.width;
     if (childbox.x < coordbox.x || newend > oldend) {
-      double newx = (double)Math.min(childbox.x, coordbox.x);
-      double newwidth = (double)Math.max(oldend, newend) - newx;
+      double newx = Math.min(childbox.x, coordbox.x);
+      double newwidth = Math.max(oldend, newend) - newx;
       setCoords(newx, coordbox.y, newwidth, coordbox.height);
     }
   }

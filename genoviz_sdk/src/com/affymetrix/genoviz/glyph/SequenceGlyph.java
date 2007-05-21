@@ -75,13 +75,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     return sequence;
   }
 
-  /**
-   * @deprecated use getResidues().
-   */
-  public String getSequence() {
-    return getResidues();
-  }
-
   public void select(boolean selected) {
     super.setSelected(selected);
   }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -480,7 +480,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
           // return the whole String without creating a new one.  So only
           // new Strings being created are for glyphs on the edges of the map
           g.setFont(getResidueFont());
-          g.setColor(getResidueColor());
+          g.setColor(getForegroundColor());
 
           // Check inorder to prevent Array out of bounds exception
           // when the length of color array is small - hari 3/21/2000
@@ -590,10 +590,6 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
     full_rect.setBackgroundColor(col);
   }
 
-  /** @deprecated use {@link #setForegroundColor}. */
-  public void setResidueColor(Color col) { setForegroundColor(col); }
-  /** @deprecated use {@link #getForegroundColor}. */
-  public Color getResidueColor() { return getForegroundColor(); }
   public void setForegroundColor(Color col) { fg_color = col; }
   public Color getForegroundColor() { return fg_color; }
   public void setBackgroundColor(Color col) { bg_color = col; }

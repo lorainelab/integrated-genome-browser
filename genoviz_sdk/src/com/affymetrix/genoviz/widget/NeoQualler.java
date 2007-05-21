@@ -90,7 +90,7 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
   protected Selection sel_range;
 
   protected Range range;
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   public NeoQualler() {
     super();
@@ -294,11 +294,6 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
       "cannot getPlacement for an unknown component.");
   }
 
-  /** @deprecated use doLayout() instead. */
-  public synchronized void layout() {
-    doLayout();
-  }
-
   public synchronized void doLayout() {
 
     Dimension dim = this.getSize();
@@ -494,8 +489,8 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
   }
 
   public void clearSelection() {
-    ((QualityBars)bar_glyph).clearSelection();
-    ((QualityBases)base_glyph).clearSelection();
+    bar_glyph.clearSelection();
+    base_glyph.clearSelection();
   }
 
   /* Methods for Dealing with Selection */
@@ -513,7 +508,7 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
     throw new RuntimeException("deselect not yet implemented.");
   }
 
-  public Vector getSelected() {
+  public Vector<GlyphI> getSelected() {
     return selected;
   }
 
@@ -639,7 +634,7 @@ implements NeoQuallerI, Observer, NeoViewBoxListener  {
             vbox.x, vbox.x + vbox.width);
         NeoRangeListener rl;
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
+          rl = range_listeners.elementAt(i);
           rl.rangeChanged(nevt);
         }
       }

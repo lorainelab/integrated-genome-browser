@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -18,16 +18,10 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.event.NeoBaseSelectListener;
 import com.affymetrix.genoviz.event.NeoBaseSelectEvent;
 
 import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.util.*;
-
-import com.affymetrix.genoviz.widget.neotracer.*;
 
 /**
  * NeoMultiTracer acts as a container for multiple NeoTracers.
@@ -37,7 +31,7 @@ import com.affymetrix.genoviz.widget.neotracer.*;
 public class NeoMultiTracer extends Container
   implements NeoBaseSelectListener, AdjustmentListener
 {
-  private Vector tracers; // vector of NeoTracers
+  private Vector<NeoTracer> tracers; // vector of NeoTracers
   private Sequence cons_bases; // consensus to be added to NeoTracers
   private Mapping cons_aligner;
   private Panel panel;
@@ -52,7 +46,7 @@ public class NeoMultiTracer extends Container
   public NeoMultiTracer() {
     this.setLayout(new BorderLayout() );
 
-    tracers = new Vector();
+    tracers = new Vector<NeoTracer>();
 
     panel = new NeoPanel();
     this.add( panel, BorderLayout.CENTER );
@@ -119,10 +113,10 @@ public class NeoMultiTracer extends Container
 
   /** Need to get the consensus base indices at the edges of the screen. */
   public void centerAllOnConsensusBase( int axis_index ) {
-    Vector centered_left  = new Vector(); // centered, entire left covered
-    Vector centered_right  = new Vector();  // centered, entire right covered
-    Vector non_centered_left = new Vector();  // centering failed, some trace on left
-    Vector non_centered_right = new Vector(); // '', some trace on right
+    Vector<NeoTracer> centered_left  = new Vector<NeoTracer>(); // centered, entire left covered
+    Vector<NeoTracer> centered_right  = new Vector<NeoTracer>();  // centered, entire right covered
+    Vector<NeoTracer> non_centered_left = new Vector<NeoTracer>();  // centering failed, some trace on left
+    Vector<NeoTracer> non_centered_right = new Vector<NeoTracer>(); // '', some trace on right
     Vector coverage = new Vector();
 
     int max_end = Integer.MIN_VALUE; // used to order the centered_rights
@@ -131,12 +125,10 @@ public class NeoMultiTracer extends Container
     current_cons_index = axis_index;
     // in case there is no coverage, approximate new visible range from width of last range.
     int visible_cons_width = visible_cons_range.end - visible_cons_range.beg;
-    visible_cons_range.beg = axis_index - (int)( visible_cons_width/2 );
-    visible_cons_range.end = axis_index + visible_cons_width - (int)( visible_cons_width/2 );
+    visible_cons_range.beg = axis_index - ( visible_cons_width/2 );
+    visible_cons_range.end = axis_index + visible_cons_width - ( visible_cons_width/2 );
 
-    Enumeration e = tracers.elements();
-    while( e.hasMoreElements() ) {
-      NeoTracer t = ( NeoTracer )(e.nextElement());
+    for (NeoTracer t : tracers ) {
       Range r = t.getVisibleBaseRange(); // do I need to shift coord box by hand before calling this???
       int base_index = t.mapFromAxisPos( axis_index );
       if( t.centerAtBase( base_index ) ) { // returns true if centering successful
@@ -184,13 +176,13 @@ public class NeoMultiTracer extends Container
 
 
     // position tracers only on the right
-    e = non_centered_right.elements();
+    Enumeration<NeoTracer> e = non_centered_right.elements();
     while( e.hasMoreElements() ) { // line left edge up with covering tracer
-      NeoTracer t = ( NeoTracer )(e.nextElement());
+      NeoTracer t = e.nextElement();
 
       if( centered_right.size() >= 1 ) {
         // full coverage is guaranteed, unless there is NO overlap at all
-        NeoTracer cover = (NeoTracer)centered_right.elementAt( 0 );
+        NeoTracer cover = centered_right.elementAt( 0 );
         int mappped_base_index = cover.mapFromAxisPos( t.mapToAxisPos(0) );
         int view_point;
         try {
@@ -231,11 +223,11 @@ public class NeoMultiTracer extends Container
     // do it all over again for the non_centered_left tracers
     e = non_centered_left.elements();
     while( e.hasMoreElements() ) { // line right edge up with covering tracer
-      NeoTracer t = ( NeoTracer )(e.nextElement());
+      NeoTracer t = e.nextElement();
       int trace_end_index = t.getActiveBaseCalls().getBaseCount() - 1;
       if( centered_left.size() >= 1 ) {
         // full coverage is guaranteed, unless there is NO overlap at all
-        NeoTracer cover = (NeoTracer)centered_left.elementAt( 0 ); // first element is guaranteed to have the most coverage
+        NeoTracer cover = centered_left.elementAt( 0 ); // first element is guaranteed to have the most coverage
         int mappped_base_index = cover.mapFromAxisPos( t.mapToAxisPos( trace_end_index ) );
         int view_point;
         try {

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -43,7 +43,7 @@ public class SquiggleGlyph extends SolidGlyph  {
     }
     else {
       int halfsegment = Math.min(pixelbox.height-1,preferred_halfsegment);
-      halfsegment = (int) Math.min(pixelbox.width/2,halfsegment);
+      halfsegment = Math.min(pixelbox.width/2, halfsegment);
       int half_segments = (pixelbox.width-1) / halfsegment;
       int full_segments = (pixelbox.width-1) / (halfsegment*2);
       int xleft = pixelbox.x;
@@ -87,6 +87,7 @@ public class SquiggleGlyph extends SolidGlyph  {
   /**
    * @deprecated use {@link #setForegroundColor}.
    */
+  @Deprecated
   public void setColor( Color c ) {
     setForegroundColor( c );
   }
@@ -94,6 +95,7 @@ public class SquiggleGlyph extends SolidGlyph  {
   /**
    * @deprecated use {@link #getForegroundColor}.
    */
+  @Deprecated
   public Color getColor() {
     return getForegroundColor();
   }

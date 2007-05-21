@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -34,11 +34,12 @@ public class Sequence implements EditableSequenceI {
   private String description;
   private String name;
 
-  private Vector positions = new Vector();
+  private Vector<Position> positions = new Vector<Position>();
+  private Vector<SequenceListener> listeners = new Vector<SequenceListener>();
 
   private StringBuffer residues;
 
-  public Sequence () { 
+  public Sequence () {
     this( null );
   }
 
@@ -47,7 +48,7 @@ public class Sequence implements EditableSequenceI {
    *
    * @param id the identifier.
    */
-  public Sequence (String id) { 
+  public Sequence (String id) {
     this.start = 0;
     setID( id );
   }
@@ -64,11 +65,11 @@ public class Sequence implements EditableSequenceI {
    *
    * @param id the identifier.
    */
-  public void setID (String id) { 
-    this.id = id; 
+  public void setID (String id) {
+    this.id = id;
   }
 
-  /** 
+  /**
    * Returns the unique identifier for this sequence.
    *
    * @return the identifier set with setID.
@@ -78,8 +79,8 @@ public class Sequence implements EditableSequenceI {
   }
 
   /** @return the sequence length. */
-  public int getLength() { 
-    return length; 
+  public int getLength() {
+    return length;
   }
 
   /**
@@ -100,7 +101,7 @@ public class Sequence implements EditableSequenceI {
    * sets the numbering for the first residue in sequence.
    * Defaults to 0.
    */
-  public void setStart(int theStart) { 
+  public void setStart(int theStart) {
     if ( theStart < 0 )
       throw new IllegalArgumentException
         ( "theStart cannot be negative" );
@@ -109,7 +110,7 @@ public class Sequence implements EditableSequenceI {
   }
 
   /*
-  public void setLength(int length) { 
+  public void setLength(int length) {
     this.length = length;
   }
   */
@@ -117,7 +118,7 @@ public class Sequence implements EditableSequenceI {
   /**
    *  Set the sequence residues to the characters in the residues String
    */
-  public void setResidues ( String residues ) { 
+  public void setResidues ( String residues ) {
     if (residues != null) {
       this.residues = new StringBuffer(residues);
       length = residues.length();
@@ -135,7 +136,7 @@ public class Sequence implements EditableSequenceI {
    *
    * @param resBuf contains the encoded residues.
    */
-  public void setResidues ( StringBuffer resBuf ) { 
+  public void setResidues ( StringBuffer resBuf ) {
     if (resBuf != null) {
       residues = resBuf;
     }
@@ -183,7 +184,7 @@ public class Sequence implements EditableSequenceI {
    *
    * @return a String of single-letter codes for the residues.
    */
-  public String getResidues () { 
+  public String getResidues () {
 
     if (residues == null) { return null; }
     return residues.toString();
@@ -211,22 +212,22 @@ public class Sequence implements EditableSequenceI {
 
   }
 
-  /** 
+  /**
    * Gets a String representing the residues
    * numbered from start to end-1
-   * 
+   *
    * Note that this method <em>excludes</em> the residue at <em>end</em>.
    * This is so that it agrees with analogous methods in String and StringBuffer.
    *
    * @param start index of the first residue to retreive.
    * @param end index of the residue after the last residue to retreive.
    */
-  public String getResidues(int start, int end) { 
+  public String getResidues(int start, int end) {
    // CLH: This is counter-intuitive...
    //I'm changing it back to match the way substring operates,
    //so if you really want bases 1 through 50, do getResidues(1,51)
    //
-   //returns substring of sequence residues, 
+   //returns substring of sequence residues,
    //  _inclusive_ of end point (unlike String.substring(beg,end))
 
     //    System.out.println(residues.length() + ", " + start + ", " + end);
@@ -254,7 +255,7 @@ public class Sequence implements EditableSequenceI {
    */
   public char getResidue (int n) {
     char c = '\000';
-    try { 
+    try {
       c = residues.charAt( n - this.start );
     } catch ( RuntimeException e ) {
       //System.err.println( "getting residue " + n );
@@ -264,14 +265,14 @@ public class Sequence implements EditableSequenceI {
     }
     return c;
   }
-  
+
   /**
    * Gets a description of this sequence.
    *
    * @return the description set by setDescription.
    */
-  public String getDescription() { 
-    return description; 
+  public String getDescription() {
+    return description;
   }
 
   /**
@@ -279,7 +280,7 @@ public class Sequence implements EditableSequenceI {
    *
    * @param description to assign.
    */
-  public void setDescription(String description) { 
+  public void setDescription(String description) {
     this.description = description;
   }
 
@@ -288,8 +289,8 @@ public class Sequence implements EditableSequenceI {
    *
    * @return the name assigned by setName().
    */
-  public String getName() { 
-    return name; 
+  public String getName() {
+    return name;
   }
 
   /**
@@ -297,11 +298,11 @@ public class Sequence implements EditableSequenceI {
    *
    * @param name the name to assign.
    */
-  public void setName(String name) { 
-    this.name = name; 
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public String toString() { 
+  public String toString() {
     String s = this.getClass().getName()
       + ": length = " + this.length;
     if (null != this.id) s += ", id = " + this.id;
@@ -340,9 +341,7 @@ public class Sequence implements EditableSequenceI {
     this.end += str.length();
 
     // Adjust positions.
-    for ( Enumeration it = this.positions.elements();
-        it.hasMoreElements(); ) {
-      Position p = (Position ) it.nextElement();
+    for ( Position p : positions ) {
       int o = p.getOffset();
       if ( offset <= o ) {
         o += str.length();
@@ -383,9 +382,7 @@ public class Sequence implements EditableSequenceI {
     if ( this.end < 0 ) this.end = 0;
 
     // Adjust positions.
-    for ( Enumeration it = this.positions.elements();
-        it.hasMoreElements(); ) {
-      Position p = (Position ) it.nextElement();
+    for ( Position p : positions ) {
       int o = p.getOffset();
       if ( offset < o ) {
         o -= length;
@@ -436,8 +433,5 @@ public class Sequence implements EditableSequenceI {
   public void removeSequenceListener( SequenceListener l ) {
     listeners.removeElement( l );
   }
-
-  private Vector listeners = new Vector();
-
 
 }

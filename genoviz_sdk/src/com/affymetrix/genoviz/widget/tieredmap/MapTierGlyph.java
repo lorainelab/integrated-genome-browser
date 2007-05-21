@@ -42,7 +42,7 @@ import com.affymetrix.genoviz.util.GeometryUtils;
  */
 public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
-  private Vector tierStateChangeListeners = new Vector();
+  private Vector<TierStateChangeListener> tierStateChangeListeners = new Vector<TierStateChangeListener>();
 
     /**
      *  If hidden, the MapTierGlyph height is 0 coords
@@ -107,7 +107,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   protected boolean showLabel = true;
   protected boolean hitable = false;
   protected boolean hideable = true;
-  protected Vector moreStrings;
+  protected Vector<String> moreStrings;
   protected int label_spacing = -1;
   protected int strand = STRAND_INSENSITIVE;
 
@@ -160,16 +160,17 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
     gsn = new GlyphSearchNode();
   }
 
-  public Vector getOverlappingSibs(GlyphI child) {
+  public Vector<GlyphI> getOverlappingSibs(GlyphI child) {
     return gsn.getOverlaps(child);
   }
 
   /**
    * @return a clone of the moreStrings vector, used with TieredLabelMap.
    */
-  public Vector getMoreStrings() {
-    if ( this.moreStrings == null ) moreStrings = new Vector();
-    return (Vector) this.moreStrings.clone();
+  @SuppressWarnings("unchecked")
+  public Vector<String> getMoreStrings() {
+    if ( this.moreStrings == null ) moreStrings = new Vector<String>();
+    return (Vector<String>) this.moreStrings.clone();
   }
 
   /**
@@ -180,7 +181,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
    * which does make a clone.
    * @see #getMoreStrings
    */
-  public void setMoreStrings( Vector theStrings ) {
+  public void setMoreStrings( Vector<String> theStrings ) {
     this.moreStrings = theStrings;
   }
 
@@ -261,7 +262,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
         for (int i = 0; i < moreStrings.size(); i++) {
           textYPos += label_spacing;
           if ( textYPos >= bottom ) break;
-          g.drawString ((String)moreStrings.elementAt(i), textXPos, textYPos);
+          g.drawString (moreStrings.elementAt(i), textXPos, textYPos);
         }
       }
     }
@@ -277,8 +278,8 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   }
 
   public void addLineToLabel ( String s ) {
-    if ( moreStrings == null ) moreStrings = new Vector();
-    moreStrings.addElement ( s );
+    if ( moreStrings == null ) moreStrings = new Vector<String>();
+    moreStrings.addElement( s );
   }
 
   public PackerI getExpandedPacker() {
@@ -529,21 +530,20 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   }
 
   /** Add a TierStateChangeListener to the audience. */
-  public synchronized void addTierStateChangeListener (TierStateChangeListener tl) {
-    tierStateChangeListeners.addElement (tl);
+  public synchronized void addTierStateChangeListener(TierStateChangeListener tl) {
+    tierStateChangeListeners.addElement(tl);
   }
 
   /** Remove a TierStateChangeListener from the audience. */
-  public synchronized void removeTierStateChangeListener (TierStateChangeListener tl) {
-    tierStateChangeListeners.removeElement (tl);
+  public synchronized void removeTierStateChangeListener(TierStateChangeListener tl) {
+    tierStateChangeListeners.removeElement(tl);
   }
 
   /** Tell all listeners of a TierStateChangeEvent. */
-  public synchronized void notifyTierStateChangeListeners (TierStateChangeEvent evt) {
+  public synchronized void notifyTierStateChangeListeners(TierStateChangeEvent evt) {
     int tot = tierStateChangeListeners.size();
     for (int i=0; i < tot; i++) {
-      ((TierStateChangeListener)
-       tierStateChangeListeners.elementAt(i)).heardTierStateChangeEvent(evt);
+      (tierStateChangeListeners.elementAt(i)).heardTierStateChangeEvent(evt);
     }
   }
 

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -25,7 +25,7 @@ import java.util.Hashtable;
  * to get a pointer to it.
  * The constructor is private.
  */
-public final class NeoColorMap extends Hashtable {
+public final class NeoColorMap extends Hashtable<String,Color> {
 
   private static NeoColorMap map = new NeoColorMap();
 
@@ -80,7 +80,7 @@ public final class NeoColorMap extends Hashtable {
   }
 
   /**
-   * gets a named color from the map.
+   * Gets a named color from the map.
    * This is a type safe way to <code>get( theName )</code>.
    * Prefer this to the Hashtable method.
    *
@@ -91,7 +91,7 @@ public final class NeoColorMap extends Hashtable {
     if (null == theName) {
       throw new IllegalArgumentException("Can't getColor without a name.");
     }
-    return (Color)map.get(theName);
+    return map.get(theName);
   }
 
   /**

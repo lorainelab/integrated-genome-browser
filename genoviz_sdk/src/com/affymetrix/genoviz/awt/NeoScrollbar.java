@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,12 +21,12 @@ import com.affymetrix.genoviz.bioviews.NeoTimerEventClock;
 import com.affymetrix.genoviz.widget.NeoQualler;
 
 /**
- *  A replacement for java.awt.Scrollbar.  NeoScrollBar provides better 
- *  cross-platform compatibility, which is critical for proper scrolling 
- *  and zooming in the com.affymetrix.genoviz.widget.* components.  Also, 
- *  emulation of JDK 1.1 Adjustable and AdjusmentEvent are 
- *  provided so NeoScrollBars can use delegation-based event handling 
- *  (pseudo-1.1 event handling) to notify listeners of adjusment events, 
+ *  A replacement for java.awt.Scrollbar.  NeoScrollBar provides better
+ *  cross-platform compatibility, which is critical for proper scrolling
+ *  and zooming in the com.affymetrix.genoviz.widget.* components.  Also,
+ *  emulation of JDK 1.1 Adjustable and AdjusmentEvent are
+ *  provided so NeoScrollBars can use delegation-based event handling
+ *  (pseudo-1.1 event handling) to notify listeners of adjusment events,
  *  even with JDK 1.0 JVMs.
  */
 public class NeoScrollbar extends NeoBufferedComponent
@@ -49,7 +49,7 @@ implements Adjustable, NeoTimerListener {
   protected static final int LOWARROW = 6;
   protected static final int HIGHARROW = 7;
 
-  protected Vector listeners;
+  protected Vector<AdjustmentListener> listeners;
   protected int thumb_coord_value, thumb_coord_size, thumb_coord_max, thumb_coord_min;
   protected int thumb_pixel_value, thumb_pixel_size, thumb_pixel_max, thumb_pixel_min;
   protected int thumb_pixel_size_min = 15;
@@ -110,14 +110,15 @@ implements Adjustable, NeoTimerListener {
   public NeoScrollbar() {
     this(VERTICAL, 0, 10, 0, 100);
   }
-    
+
 
   /**
    * @deprecated
    * Use <code>setBounds(int, int, int, int)</code> (but override reshape).
    */
+  @Deprecated
   public void reshape(int new_x, int new_y, int new_width, int new_height) {
-                       
+
     super.reshape(new_x, new_y, new_width, new_height);
      Dimension size = getSize();
      low_arrow = new Polygon();
@@ -151,7 +152,7 @@ implements Adjustable, NeoTimerListener {
      thumb_pixel_min = arrow_width;
      thumb_pixel_max = pixels_lengthwise - arrow_width;
      setValues(thumb_coord_value, thumb_coord_size,
-               thumb_coord_min, 
+               thumb_coord_min,
                thumb_coord_max + thumb_coord_size);
   }
 
@@ -184,7 +185,7 @@ implements Adjustable, NeoTimerListener {
     thumb_coord_value = value;
     thumb_coord_min = minimum;
 
-    // making NeoScrollbars behave more like JDK1.1 and Swing 
+    // making NeoScrollbars behave more like JDK1.1 and Swing
     // scrollbars, so can mix and match
     thumb_coord_max = maximum - visible;
 
@@ -228,7 +229,7 @@ implements Adjustable, NeoTimerListener {
   }
 
   public void setValue(int value) {
-    setValues(value, thumb_coord_size, thumb_coord_min, 
+    setValues(value, thumb_coord_size, thumb_coord_min,
               thumb_coord_max + thumb_coord_size);
   }
 
@@ -255,7 +256,7 @@ implements Adjustable, NeoTimerListener {
   public int calcCoordPosition(int x, int y) {
     int coord_value;
     if (orientation == HORIZONTAL) {
-      coord_value = 
+      coord_value =
         (int)((x-offset) / pixels_per_coord) + thumb_coord_min;
     }
     else {
@@ -276,7 +277,7 @@ implements Adjustable, NeoTimerListener {
     }
 
     /*
-     * needed to add this as compensation for 9/30/97 max value bug fix, or 
+     * needed to add this as compensation for 9/30/97 max value bug fix, or
      * else thumb_coord_value occasionally exceeds thumb_coord_max
      */
     if (thumb_coord_value > thumb_coord_max) {
@@ -327,14 +328,14 @@ implements Adjustable, NeoTimerListener {
    *  Paints directly onto the specified Graphics.
    */
   public void directPaint(Graphics g)  {
-    // Don't try to paint if Dimension or Graphic is null -- this happens 
-    //   in some JVM's, and will cause NullPointerExceptions if not 
+    // Don't try to paint if Dimension or Graphic is null -- this happens
+    //   in some JVM's, and will cause NullPointerExceptions if not
     //   checked for
 
-    // Hmm... for some reason, null Graphics are slipping through 
+    // Hmm... for some reason, null Graphics are slipping through
     //   even though we are doing a null check!
-    // However, can check for Dimension width or height being 0 (which 
-    //   seems to always be associated with null Graphics) and return before 
+    // However, can check for Dimension width or height being 0 (which
+    //   seems to always be associated with null Graphics) and return before
     //   trying to draw to the Graphics if either == 0
 
     if (g == null) { return; }
@@ -354,8 +355,8 @@ implements Adjustable, NeoTimerListener {
                    thumb_rect.width, thumb_rect.height, true);
       g.setColor(Color.black);
       if (debug) {
-        g.drawString(thumb_coord_value + "   " + 
-                     (thumb_coord_value + thumb_coord_size), 
+        g.drawString(thumb_coord_value + "   " +
+                     (thumb_coord_value + thumb_coord_size),
                      thumb_rect.x, thumb_rect.y + 12);
 
       }
@@ -400,17 +401,17 @@ implements Adjustable, NeoTimerListener {
     int id = e.getID();
 
     // GAH 12-7-98
-    // Think I've figured out bug where NeoScrollbar is "jumpy" on 
-    //   thumb drags.  This happens sometimes when click on thumb, drag 
-    //   outside of scrollbar, then drag back into scrollbar -- thumb 
+    // Think I've figured out bug where NeoScrollbar is "jumpy" on
+    //   thumb drags.  This happens sometimes when click on thumb, drag
+    //   outside of scrollbar, then drag back into scrollbar -- thumb
     //   can "jump" over farther to the left than it should
-    //   
-    // looks like their is a bug in some JVMs in reporting correct pixel 
-    // values in MOUSE_ENTER and MOUSE_EXIT Events -- ends up reporting 
-    // pixel position relative to parent container (pixel 0, 0 at upper left 
-    // corner of container) rather than relative to NeoScrollbar itself 
-    // (pixel 0, 0, at upper left corner of NeoScrollbar).  This in turn is 
-    // causing prevx/prevy to be set incorrectly.  Tentative solution is 
+    //
+    // looks like their is a bug in some JVMs in reporting correct pixel
+    // values in MOUSE_ENTER and MOUSE_EXIT Events -- ends up reporting
+    // pixel position relative to parent container (pixel 0, 0 at upper left
+    // corner of container) rather than relative to NeoScrollbar itself
+    // (pixel 0, 0, at upper left corner of NeoScrollbar).  This in turn is
+    // causing prevx/prevy to be set incorrectly.  Tentative solution is
     // to completely ignore MOUSE_ENTER/MOUSE_EXIT events
 
     if (id == MouseEvent.MOUSE_ENTERED || id == MouseEvent.MOUSE_EXITED) {
@@ -442,7 +443,7 @@ implements Adjustable, NeoTimerListener {
         selected = LOWARROW;
         thumb_coord_value -= lineIncrement;
       }
-      else if (draw_arrows && 
+      else if (draw_arrows &&
                (current_pixel > pixels_lengthwise - arrow_width))  {
         selected = HIGHARROW;
         thumb_coord_value += lineIncrement;
@@ -455,13 +456,13 @@ implements Adjustable, NeoTimerListener {
         selected = LOWGUTTER;
         thumb_coord_value -= pageIncrement;
       }
-      else if (draw_thumb && 
+      else if (draw_thumb &&
                (current_pixel > (thumb_pixel_value + thumb_pixel_size)))  {
         selected = HIGHGUTTER;
         thumb_coord_value += pageIncrement;
       }
-      else { 
-        return ; 
+      else {
+        return ;
       }
       if (thumb_coord_value < thumb_coord_min)  {
             thumb_coord_value = thumb_coord_min;
@@ -472,17 +473,17 @@ implements Adjustable, NeoTimerListener {
       calcThumbPixels();
       repaint();
 
-      // if mouse down over arrow, then start NeoTimerEventClock thread 
+      // if mouse down over arrow, then start NeoTimerEventClock thread
       //     to generate timer tick events  GAH 2-21-98
-      if (selected == HIGHARROW || selected == LOWARROW || 
-         (gutter_scroll && 
+      if (selected == HIGHARROW || selected == LOWARROW ||
+         (gutter_scroll &&
               (selected == HIGHGUTTER || selected == LOWGUTTER))) {
         if (timer != null) { timer.stop(); }
         timer = new NeoTimerEventClock(initial_delay, timer_interval);
         timer.addTimerListener(this);
         timer.start();
       }
-      
+
     }
 
     else if (id == MouseEvent.MOUSE_DRAGGED) {
@@ -495,7 +496,7 @@ implements Adjustable, NeoTimerListener {
         int moveto;
         moveto = thumb_pixel_value + diff_pixel;
         /*
-         *  Bug: in some circumstances, scrollbar cannot get to 
+         *  Bug: in some circumstances, scrollbar cannot get to
          *       max value by dragging the thumb
          *    I believe this is what has been causing many of the zooming
          *    problems, where can't zoom to base visibility on some platforms
@@ -509,7 +510,7 @@ implements Adjustable, NeoTimerListener {
           moveto = thumb_pixel_min;
         }
 
-        // Fix for setting scrollbar at max or min if current_pixel is 
+        // Fix for setting scrollbar at max or min if current_pixel is
         //   not within gutter/thumb
         if (current_pixel < arrow_width) {
           moveto = thumb_pixel_min;
@@ -528,7 +529,7 @@ implements Adjustable, NeoTimerListener {
         calcThumbValues();
       }
       else {
-        // should probably just ignore drags in arrows, now that 
+        // should probably just ignore drags in arrows, now that
         //   there's a threaded timer for mouse holds
         // but leaving the drag stuff in for now...  GAH 2-21-98
         if (selected == LOWARROW) {
@@ -538,14 +539,14 @@ implements Adjustable, NeoTimerListener {
           thumb_coord_value += lineIncrement;
         }
         else if (selected == LOWGUTTER)  {
-          // putting in check to make sure current_pixel is still in 
+          // putting in check to make sure current_pixel is still in
           //    low gutter (at least along the primary axis) -- GAH 12/16/96
           if (current_pixel < thumb_pixel_value)  {
             thumb_coord_value -= pageIncrement;
           }
         }
         else if (selected == HIGHGUTTER)  {
-          // putting in check to make sure current_pixel is still in 
+          // putting in check to make sure current_pixel is still in
           //    high gutter (at least along the primary axis) -- GAH 12/16/96
           if (current_pixel > (thumb_pixel_value + thumb_pixel_size))  {
             thumb_coord_value += pageIncrement;
@@ -563,10 +564,10 @@ implements Adjustable, NeoTimerListener {
     }
     else if (id == MouseEvent.MOUSE_RELEASED) {
       // BUG FIX 6-1-98
-      // handling what seems to be an AWT bug: sometimes a MOUSE_ENTER 
-      //   event either triggers a spurious MOUSE_UP event, or is itself 
+      // handling what seems to be an AWT bug: sometimes a MOUSE_ENTER
+      //   event either triggers a spurious MOUSE_UP event, or is itself
       //   mistakenly given a MOUSE_UP id
-      // therefore to filter out false MOUSE_UP, check that there was a 
+      // therefore to filter out false MOUSE_UP, check that there was a
       //   previous MOUSE_DOWN event
       if (mouse_is_down) {
         mouse_is_down = false;
@@ -576,12 +577,12 @@ implements Adjustable, NeoTimerListener {
         //     boot out without any further action!
         return;
       }
-      
+
       selected = NO_SELECTION;
 
       // stop (and mark for gc) mouse-down-and-hold timer
-      if (timer != null) { 
-        timer.stop(); 
+      if (timer != null) {
+        timer.stop();
         timer = null;
       }
       repaint();
@@ -609,7 +610,7 @@ implements Adjustable, NeoTimerListener {
 
   public void addAdjustmentListener(AdjustmentListener listener) {
     if (listeners == null) {
-      listeners = new Vector();
+      listeners = new Vector<AdjustmentListener>();
     }
     listeners.addElement(listener);
   }
@@ -618,15 +619,12 @@ implements Adjustable, NeoTimerListener {
     if (listeners == null) { return; }
     listeners.removeElement(listener);
   }
-  
+
   public void processAdjustmentEvent(AdjustmentEvent evt) {
     AdjustmentListener lis;
-    // what the heck does drawing the thumbnail have to do with
-    // whether or not events should be sent? --- Ed
-    if (listeners != null /* && draw_thumb */) {
-      for (int i=0; i<listeners.size(); i++)  {
-        lis = (AdjustmentListener)listeners.elementAt(i);
-        lis.adjustmentValueChanged(evt);
+    if (listeners != null) {
+      for (AdjustmentListener listener : listeners)  {
+        listener.adjustmentValueChanged(evt);
       }
     }
   }
@@ -649,7 +647,7 @@ implements Adjustable, NeoTimerListener {
  /**
   *  Listening for events generated by timer NeoTimerEventClock.
   *  To respond appropriately to user holding mouse down over arrows
-  *  to make scrolling appear faster without shortening the timer interval 
+  *  to make scrolling appear faster without shortening the timer interval
   *  too much, doing +/- 2*lineIncrement for holding down on arrows
   *  single clicks on arrows continue to be +/- lineIncrement for fine control
   */
@@ -671,7 +669,7 @@ implements Adjustable, NeoTimerListener {
       }
       calcThumbPixels();
       repaint();
-      AdjustmentEvent adjevt = 
+      AdjustmentEvent adjevt =
               new AdjustmentEvent(this, 0, AdjustmentEvent.TRACK, getValue());
       processAdjustmentEvent(adjevt);
     }
@@ -679,7 +677,7 @@ implements Adjustable, NeoTimerListener {
       if (selected == LOWGUTTER)  {
         if (current_pixel < thumb_pixel_value)  {
           if (thumb_coord_value <= thumb_coord_min) { return; }
-          thumb_coord_value -= pageIncrement;          
+          thumb_coord_value -= pageIncrement;
         }
       }
       else if (selected == HIGHGUTTER)  {
@@ -698,7 +696,7 @@ implements Adjustable, NeoTimerListener {
 
       calcThumbPixels();
       repaint();
-      AdjustmentEvent adjevt = 
+      AdjustmentEvent adjevt =
         new AdjustmentEvent(this, 0, AdjustmentEvent.TRACK, getValue());
       processAdjustmentEvent(adjevt);
     }
@@ -720,6 +718,7 @@ implements Adjustable, NeoTimerListener {
    * The default implementation of the preferred {@link #getPreferredSize()} calls this method.
    * @deprecated Use getPreferredSize().
    */
+  @Deprecated
   public Dimension preferredSize() {
     if ( HORIZONTAL == this.orientation ) {
       return new Dimension( 2 * arrow_width + thumb_pixel_size_min, arrow_width );
@@ -728,19 +727,4 @@ implements Adjustable, NeoTimerListener {
       return new Dimension( arrow_width, 2 *arrow_width + thumb_pixel_size_min );
     }
   }
-
-  /**
-   * @deprecated Use {@link #setDoubleBuffered(boolean)} instead.
-   */
-  public void setBuffered(boolean b) {
-    setDoubleBuffered(b);
-  }
-
-  /**
-   * @deprecated Use {@link #isDoubleBuffered()} instead.
-   */
-  public boolean getBuffered() {
-    return isDoubleBuffered();
-  }
-
 }

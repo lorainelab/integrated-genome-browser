@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -38,7 +38,7 @@ public class MultiSeqAlign {
 
   String consensus = null;
   String consensusName = null;
-  Hashtable seqs = new Hashtable();
+  Hashtable<String,AlignSequence> seqs = new Hashtable<String,AlignSequence>();
 
   /**
    * sets a consensus sequence
@@ -100,7 +100,7 @@ public class MultiSeqAlign {
   }
 
   public Sequence getSequence(String theName) {
-    AlignSequence s = (AlignSequence)this.seqs.get(theName);
+    AlignSequence s = this.seqs.get(theName);
     return s;
   }
 
@@ -111,7 +111,7 @@ public class MultiSeqAlign {
    * @return the residues in the sequence.
    */
   public String getResidues(String theName) {
-    AlignSequence s = (AlignSequence)this.seqs.get(theName);
+    AlignSequence s = this.seqs.get(theName);
     if (null != s) {
       StringBuffer sb = new StringBuffer();
       int i = 0;
@@ -139,14 +139,8 @@ public class MultiSeqAlign {
    * @return <code>java.lang.String</code>s
    *         representing the residues in each sequence.
    */
-  public Enumeration sequences() {
-    Vector v = new Vector();
-    Enumeration e = seqs.elements();
-    while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-    }
-    return v.elements();
+  public Enumeration<AlignSequence> sequences() {
+    return seqs.elements();
   }
 
   /**
@@ -156,7 +150,7 @@ public class MultiSeqAlign {
    * @return the names of the sequences.
    * Each name is a <code>java.lang.String</code>.
    */
-  public Enumeration sequenceNames() {
+  public Enumeration<String> sequenceNames() {
     return seqs.keys();
   }
 
@@ -169,17 +163,16 @@ public class MultiSeqAlign {
    */
   public String buildAssembly() {
 
-    Enumeration e = this.sequences();
-    Vector v = new Vector();
+    Enumeration<AlignSequence> e = this.sequences();
+    Vector<AlignSequence> v = new Vector<AlignSequence>();
     StringBuffer con = new StringBuffer();
 
     while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-      AlignSequence s = (AlignSequence) o;
+      AlignSequence s = e.nextElement();
+      v.addElement(s);
     }
 
-    int length = ((AlignSequence) v.elementAt(0)).getAlignEnd();
+    int length = v.elementAt(0).getAlignEnd();
 
     for (int i=0; i < length; i++) {
       char c = ' ';
@@ -187,7 +180,7 @@ public class MultiSeqAlign {
       int best_score = 0;
 
       for (int j=0; j < v.size(); j++) {
-        AlignSequence s = (AlignSequence) v.elementAt(j);
+        AlignSequence s = v.elementAt(j);
         char a = s.getResidue(i);
         if (i >= s.getStart() && i < (s.getStart() + s.getLength()) ) {
           if (possibles.indexOf(a) < 0) {
@@ -200,7 +193,7 @@ public class MultiSeqAlign {
         char a = possibles.charAt(j);
         int score  = 0;
         for (int k=0; k < v.size(); k++) {
-          AlignSequence t = (AlignSequence) v.elementAt(k);
+          AlignSequence t = v.elementAt(k);
           if (i >= t.getStart() && i < (t.getStart() + t.getLength()) ) {
             char b = t.getResidue(i);
             score += score(a, b);
@@ -228,17 +221,16 @@ public class MultiSeqAlign {
    */
   public String buildConsensus() {
 
-    Enumeration e = this.sequences();
-    Vector v = new Vector();
+    Enumeration<AlignSequence> e = this.sequences();
+    Vector<AlignSequence> v = new Vector<AlignSequence>();
     StringBuffer con = new StringBuffer();
 
     while (e.hasMoreElements()) {
-      Object o = e.nextElement();
-      v.addElement(o);
-      AlignSequence s = (AlignSequence) o;
+      AlignSequence s = e.nextElement();
+      v.addElement(s);
     }
 
-    int length = ((AlignSequence) v.elementAt(0)).getAlignEnd();
+    int length = v.elementAt(0).getAlignEnd();
 
     for (int i=0; i < length; i++) {
       char c = ' ';
@@ -246,7 +238,7 @@ public class MultiSeqAlign {
       int best_score = 0;
 
       for (int j=0; j < v.size(); j++) {
-        AlignSequence s = (AlignSequence) v.elementAt(j);
+        AlignSequence s = v.elementAt(j);
         char a = s.getResidue(i);
         if (possibles.indexOf(a) < 0) {
           possibles += a;
@@ -257,7 +249,7 @@ public class MultiSeqAlign {
         char a = possibles.charAt(j);
         int score  = 0;
         for (int k=0; k < v.size(); k++) {
-          AlignSequence t = (AlignSequence) v.elementAt(k);
+          AlignSequence t = v.elementAt(k);
           char b = t.getResidue(i);
           score += score(a, b);
         }

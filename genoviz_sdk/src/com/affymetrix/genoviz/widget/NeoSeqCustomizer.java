@@ -13,23 +13,14 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.View;
 
 import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Event;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.MenuItem;
+import java.awt.GraphicsEnvironment;
 import java.awt.Label;
 import java.awt.Panel;
-import java.awt.Toolkit;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Enumeration;
 
 public class NeoSeqCustomizer
   extends NeoWidgetICustomizer
@@ -276,7 +267,7 @@ public class NeoSeqCustomizer
 
     // Font
     String fontName = neoSeq.getFont().getFamily();
-    String[] fl = Toolkit.getDefaultToolkit().getFontList();
+    String[] fl = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     loadChoice(fontNameChoice, fl, fontName);
     int fontSize[] = { 8, 10, 12, 14, 18, 24 };
     int defltFontSize = neoSeq.getFont().getSize();

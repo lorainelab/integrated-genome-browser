@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -30,7 +30,7 @@ import java.util.*;
 public class ZoomLine implements NeoWidgetListener {
 
   private VisibleRange zoomPoint = new VisibleRange();
-  private Hashtable maps = new Hashtable();
+  private Hashtable<NeoMap,Shadow> maps = new Hashtable<NeoMap,Shadow>();
 
   private MouseListener zoomPointAdjuster = new MouseAdapter() {
     public void mouseReleased( MouseEvent e ) {
@@ -103,12 +103,25 @@ public class ZoomLine implements NeoWidgetListener {
     Object o = this.maps.get( m );
     if ( null != o ) {
       Shadow hairline = ( Shadow ) o;
-      this.zoomPoint.removeListener( hairline );
-      this.maps.remove( m );
-      hairline = new Shadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
-      this.maps.put( m, hairline );
+      /* GAH  3-12-2005
+         fixed bug in use of Shadow that was causing potentially large memory leak, because when new Shadow
+         was created, there was still a reference to old Shadow because it was registered as a
+         preDrawListener on the View and never unregistered, and the old Shadow in turn had reference to
+         old RootGlyph, which in turn contained complete old glyph hierarchy
+
+        This is solution #1: Reuse old Shadow instead of creating a new Shadow
+        To prevent possible future memory leaks like this, still need to fix a few more things
+            solution #2: make sure Shadow unregisters as preDrawListener on View when it should
+            solution #4: Make sure NeoMap.clearWidget() actually clears out old RootGlyph's hierarchy,
+                         rather than just detaching and attaching a new RootGlyph like it does now
+       */
+//      this.zoomPoint.removeListener( hairline );
+//      this.maps.remove( m );
+//      hairline = new Shadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
+//      this.maps.put( m, hairline );
+      hairline.resetShadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
       hairline.setSelectable( false );
-      this.zoomPoint.addListener( hairline );
+//      this.zoomPoint.addListener( hairline );
     }
   }
 

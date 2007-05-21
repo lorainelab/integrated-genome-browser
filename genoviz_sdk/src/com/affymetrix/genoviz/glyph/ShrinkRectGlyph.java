@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.*;
  * so that adjacent glyphs might have a gap between them.
  * @deprecated use FillRectGlyph
  */
+@Deprecated
 public class ShrinkRectGlyph extends Glyph
 {
   public void draw(ViewI view) {

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -90,6 +90,14 @@ public class View implements ViewI, NeoPaintListener,
   private static final boolean optscroll_checkNoDamage = true;
 
   protected Rectangle pixelbox;
+
+  // GAH 2006-03-28  for experimental multiscreen support
+  // View may actually be a "subview" (for example when trying to farm single NeoMap out to multiple
+  //    NeoMap children, or during scroll optimizations), in which case glyphs may want
+  //    to know bounds, etc. of full virtual "parent" view.
+  // If this is not a subviwe, then full_view = this view
+  protected ViewI full_view = null;
+
   // View currently requires specific Scene implementation to
   //    handle optimization method calls
   protected Scene scene;
@@ -101,21 +109,21 @@ public class View implements ViewI, NeoPaintListener,
   protected Graphics graphics;
   protected boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck;
-  protected Vector mouse_listeners = new Vector();
-  protected Vector mouse_motion_listeners = new Vector();
-  protected Vector key_listeners = new Vector();
+  protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
+  protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
+  protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
 
   /**
    *  Vector of viewbox listeners to be notified immediately _before_
    *    view is drawn with changed bounding box
    */
-  protected Vector predraw_viewbox_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> predraw_viewbox_listeners = new Vector<NeoViewBoxListener>();
 
   /**
    *  Vector of viewbox listeners to be notified immediately _after__
    *    view is drawn with changed bounding box
    */
-  protected Vector viewbox_listeners = new Vector();
+  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
 
   /** fields to help with optimizations **/
   protected boolean scrolling_optimized = false;
@@ -156,7 +164,7 @@ public class View implements ViewI, NeoPaintListener,
   protected Rectangle2D scene_coordbox;
 
   public View()  {
-
+    full_view = this;
     // transforms initialized to Identity transform
     transform = new LinearTransform();
     timecheck = new com.affymetrix.genoviz.util.Timer();
@@ -236,11 +244,6 @@ public class View implements ViewI, NeoPaintListener,
 
   public TransformI getTransform ()  {
     return this.transform;
-  }
-
-  /** @deprecated -- use {@link #transformToPixels(Rectangle2D, Rectangle)} */
-  public Rectangle newTransformToPixels(Rectangle2D src, Rectangle dst)  {
-    return this.transformToPixels(src, dst);
   }
 
     /**
@@ -383,8 +386,7 @@ public class View implements ViewI, NeoPaintListener,
         NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, true);
         for (int i=0; i<predraw_viewbox_listeners.size(); i++) {
-          NeoViewBoxListener listener =
-            (NeoViewBoxListener)predraw_viewbox_listeners.elementAt(i);
+          NeoViewBoxListener listener = predraw_viewbox_listeners.elementAt(i);
           listener.viewBoxChanged(nevt);
         }
       }
@@ -469,9 +471,7 @@ public class View implements ViewI, NeoPaintListener,
           new NeoViewBoxChangeEvent(this, newbox, false);
 
         for (int i=0; i<viewbox_listeners.size(); i++) {
-          NeoViewBoxListener listener =
-            (NeoViewBoxListener)viewbox_listeners.elementAt(i);
-          listener.viewBoxChanged(nevt);
+          viewbox_listeners.elementAt(i).viewBoxChanged(nevt);
         }
       }
     }
@@ -855,6 +855,14 @@ public class View implements ViewI, NeoPaintListener,
     return this.coordbox;
   }
 
+  public void setFullView(ViewI full_view) {
+    this.full_view = full_view;
+  }
+
+  public ViewI getFullView() {
+    return full_view;
+  }
+
   public void setGraphics(Graphics g)  {
     graphics = g;
   }
@@ -909,7 +917,6 @@ public class View implements ViewI, NeoPaintListener,
     return transformToCoords(pixelbox, coordbox);
   }
 
-
   //  Standard methods to implement the event source for event listeners
 
   public void addMouseListener(MouseListener l) {
@@ -940,22 +947,6 @@ public class View implements ViewI, NeoPaintListener,
 
   public void removeKeyListener(KeyListener l) {
     key_listeners.removeElement(l);
-  }
-
-  /**
-   * @deprecated
-   * use addPostDrawViewListener() instead.
-   */
-  public void addNeoViewBoxListener(NeoViewBoxListener l) {
-    addPostDrawViewListener(l);
-  }
-
-  /**
-   *  @deprecated
-   *  use removePostDrawViewListener() instead
-   */
-  public void removeNeoViewBoxListener(NeoViewBoxListener l) {
-    removePostDrawViewListener(l);
   }
 
   public void addPostDrawViewListener(NeoViewBoxListener l) {
@@ -997,21 +988,6 @@ public class View implements ViewI, NeoPaintListener,
     return component_size_rect;
   }
 
-  /**
-   * returns the bounds of the component
-   * on which the view is being displayed.
-   * This is <em>not</em> the same as rectangle
-   * of x=0, y=0, width=comp.size().width, height=comp.size().height
-   * But it was being used for that purpose though.
-   * If that is what you want
-   * use getComponentSizeRect() instead!
-   *
-   * @deprecated Use getComponentSizeRect.
-   */
-  public Rectangle getComponentBounds() {
-    return component_bounds;
-  }
-
   /** implementing MouseListener interface and collecting mouse events */
   public void mouseClicked(MouseEvent e) { heardMouseEvent(e); }
   public void mouseEntered(MouseEvent e) { heardMouseEvent(e); }
@@ -1048,7 +1024,7 @@ public class View implements ViewI, NeoPaintListener,
     KeyListener kl;
     if (key_listeners.size() > 0) {
       for (int i=0; i<key_listeners.size(); i++) {
-        kl = (KeyListener)key_listeners.elementAt(i);
+        kl = key_listeners.elementAt(i);
         if (id == KeyEvent.KEY_PRESSED) {
           kl.keyPressed(e);
         }
@@ -1086,7 +1062,7 @@ public class View implements ViewI, NeoPaintListener,
       new NeoViewMouseEvent(e, this, coordrect.x, coordrect.y);
     if (mouse_listeners.size() > 0) {
       for (int i=0; i<mouse_listeners.size(); i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -1096,8 +1072,7 @@ public class View implements ViewI, NeoPaintListener,
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

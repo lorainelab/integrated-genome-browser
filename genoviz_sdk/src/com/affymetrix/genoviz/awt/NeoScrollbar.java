@@ -18,7 +18,6 @@ import java.awt.event.*;
 import java.util.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.NeoTimerEventClock;
-import com.affymetrix.genoviz.widget.NeoQualler;
 
 /**
  *  A replacement for java.awt.Scrollbar.  NeoScrollBar provides better
@@ -221,8 +220,6 @@ implements Adjustable, NeoTimerListener {
    * @param b If set to true, any time the position of the scrollbar is
    *  changed by a call to {@link #setValues(int, int, int, int)}
    *  a call will be made to {@link #processAdjustmentEvent(AdjustmentEvent)}.
-   *  This is often a good thing, but it may break the initial display
-   *  of {@link com.affymetrix.genoviz.widget.NeoQualler}.
    */
   public void setSendEvents(boolean b) {
     send_events = b;

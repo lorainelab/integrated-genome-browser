@@ -13,14 +13,39 @@
 
 package com.affymetrix.genoviz.util;
 
-import com.affymetrix.genoviz.datamodel.Translatable;
 import java.awt.Color;
 
 /**
  * A collection of constants and static methods
  * useful in manipulating ascii representations of DNA sequences.
  */
-public class DNAUtils implements Translatable  {
+public class DNAUtils  {
+
+  public enum FrameType {
+    NUCLEOTIDES(0),
+    COMPLEMENT(0),
+    ONE(0),
+    TWO(1),
+    THREE(2),
+    NEG_ONE(0),
+    NEG_TWO(-1),
+    NEG_THREE(-2);
+
+    int frameMapping;
+
+    FrameType(int i) {
+      frameMapping = i;
+    }
+
+    public int getFrameMapping() {
+      return frameMapping;
+    }
+  };
+
+  //public static final int FORWARD_SPLICED_TRANSLATION = 8;
+  //public static final int REVERSE_SPLICED_TRANSLATION = 9;
+
+  public enum CodeType {ONE_LETTER_CODE, THREE_LETTER_CODE};
 
   static char[] dna_chars = {
     'A', 'C', 'G', 'T', 'N', 'M', 'R', 'W',
@@ -920,7 +945,7 @@ public class DNAUtils implements Translatable  {
    * @return a representation of the amino acid sequence
    *         encoded by the given nucleotide sequence.
    */
-  public static String translate(String s, int frametype, int codetype) {
+  public static String translate(String s, FrameType frametype, CodeType codetype) {
     return translate(s, frametype, codetype, null, null, null);
   }
 
@@ -940,16 +965,16 @@ public class DNAUtils implements Translatable  {
    * @return a representation of the amino acid sequence
    *         encoded by the given nucleotide sequence.
    */
-  public static String translate(String s, int frametype, int codetype,
+  public static String translate(String s, FrameType frametype, CodeType codetype,
       String initial_string,
       String pre_string, String post_string) {
     String result = null;
-    if (codetype == ONE_LETTER_CODE || codetype == 1) {
+    if (codetype == CodeType.ONE_LETTER_CODE) {
       result =
        translate(s, frametype, getGeneticCodeOne(),
            initial_string, pre_string, post_string);
     }
-    else if (codetype == THREE_LETTER_CODE || codetype == 3) {
+    else if (codetype == CodeType.THREE_LETTER_CODE) {
       result =
        translate(s, frametype, getGeneticCodeThree(),
            initial_string, pre_string, post_string);
@@ -980,7 +1005,7 @@ public class DNAUtils implements Translatable  {
   // initial_string is what goes at front of entire translation
   // pre_string is what goes before every amino acid
   // post_string is what goes after every amino acid
-  public static String translate(String s, int frametype,
+  public static String translate(String s, FrameType frametype,
       String[][][] genetic_code,
       String initial_string,
       String pre_string, String post_string) {
@@ -991,7 +1016,7 @@ public class DNAUtils implements Translatable  {
       return null;
     }
 
-    int frame = FRAME_MAPPING[frametype];
+    int frame = frametype.getFrameMapping();
     int length = s.length();
     byte[] basenums = new byte[length];
 

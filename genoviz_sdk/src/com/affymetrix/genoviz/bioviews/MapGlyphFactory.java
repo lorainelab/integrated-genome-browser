@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.Debug;
 
 /**
  *  A factory used to conveniently generate glyphs on a widget.

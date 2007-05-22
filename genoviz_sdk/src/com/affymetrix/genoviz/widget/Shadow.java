@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
@@ -23,8 +22,6 @@ import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
-
-import com.affymetrix.genoviz.util.Debug;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -105,8 +102,6 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   }
 
   public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
-    Debug.test( this.topMargin + this.bottomMargin < 1.0, "Margins too large." );
-
     this.map = destination;
 
     // Start out with the TransientGlyph the full size of the map!
@@ -182,7 +177,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
        label.setShowBackground(true);
        label.setPlacement(StringGlyph.CENTER);
        label.setSelectable(false);
-       
+
        this.setRange(current_range_st, current_range_en);
 
        map.addItem( this.tg, extraRect);
@@ -290,7 +285,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
       this.vGlyph.setCoords(x,y,width,height);
 
     }
-    
+
     current_range_st = st;
     current_range_en = en;
   }

@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
@@ -363,65 +362,6 @@ public interface NeoMapI extends NeoWidgetI {
    */
   public Vector getItemsByPixel(int x, int y);
 
-  /**
-   * adds a <code>NeoDataAdapterI</code> to this widget.
-   * A data adapter facilitates the abstraction
-   * of the visual representation of an object
-   * dependent on characteristics of the data.
-   *
-   * <p> Data adapters automate building visual representations
-   * of data according to a data model.
-   * Once this data adapter has been added,
-   * all subsequently added data
-   * using <code>{@link #addData}</code> will be represented
-   * according to this data adapter.
-   *
-   * <p> Essentially, data adapters provide a level of abstraction
-   * above glyphs and factories.  Whereas glyphs are added using
-   * <code>{@link #addItem}</code> according to some specified parameter,
-   * e.g. position or inheritance,
-   * and are visualized using a specified factory, data adapters
-   * do not presume that the user must create a
-   * glyph at all; instead, an abstract datum is added to the widget for
-   * which a data adapter must visualize according to arbitrary
-   * characteristics of the data adapter's model and the particular
-   * attributes of the datum being added.
-   *
-   * <p> The prototypical example of a data adapter is one that allows color
-   * coding according to a feature "score".
-   * An example is described at {@link #addData}.
-   *
-   * @param adapter a data adapter.
-   */
-  public void addDataAdapter(NeoDataAdapterI adapter);
-
-  /**
-   * adds data to the widget
-   * to be visually represented according to a data adapter.
-   * <code>model</code> is an <code>Object</code>
-   * representing a particular datum.
-   * This method presumes that an appropriate data adapter has been added
-   * using {@link #addDataAdapter}, and that <code>model</code> is
-   * of an appropriate type for the current data adapter.
-   *
-   * <p> The following example assumes a fictitious data adapter
-   * <code>GeneAdapter</code>, and a data model <code>Exon</code>
-   * which requires the specification of a coding frame, length, and
-   * relative offset from the previous exon.<p>
-   *
-   * <pre> widget.addDataAdapter(new GeneAdapter());
-   * widget.addData(new Exon(0,150,0));
-   * widget.addData(new Exon(2,220,-500));</pre>
-   *
-   * @param datamodel  an arbitrary datamodel Object to be added
-   *                   according to the current data adapter.
-   * @return a GlyphI representing the visual representation of
-   *  <code>datamodel</code>.
-   * @see #addDataAdapter(NeoDataAdapterI)
-   * @see #addFactory(String)
-   * @see #addItem(GlyphI, GlyphI)
-   */
-  public GlyphI addData(Object datamodel);
 
   /**
    * creates a glyph factory for this map.

@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
@@ -433,15 +432,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public boolean getRubberBandBehavior() {
     return rbActivated;
   }
-
-  public void addDataAdapter(NeoDataAdapterI adapter) {
-    scene.addDataAdapter(adapter);
-  }
-
-  public GlyphI addData(Object model) {
-    return scene.addData(model);
-  }
-
 
   /** This is the only place <code>pixel_*</code> should change. */
   protected void setPixelBounds() {

@@ -49,8 +49,6 @@ public class Scene implements SceneI  {
    */
   protected Vector<TransientGlyph> transients;
 
-  protected Vector<NeoDataAdapterI> adapters;
-
   public Scene ()  {
     /*
      * eveGlyph is a RootGlyph glyph rather than a base glyph.
@@ -209,41 +207,6 @@ public class Scene implements SceneI  {
 
   public Rectangle2D getCoordBox() {
     return eveGlyph.getCoordBox();
-  }
-
-  // should really move data adapters out to widgets...
-  public void addDataAdapter(NeoDataAdapterI adapter) {
-    if (adapters == null) {
-      adapters = new Vector<NeoDataAdapterI>();
-    }
-    adapters.addElement(adapter);
-    adapter.setScene(this);
-  }
-
-  // should really move data adapters out to widgets...
-  public void removeDataAdapter(NeoDataAdapterI adapter) {
-    if (adapters == null)  return;
-    adapters.removeElement(adapter);
-  }
-
-  // should really move data adapters out to widgets...
-  public GlyphI addData(Object obj) {
-    NeoDataAdapterI da;
-    GlyphI glyph;
-    if (adapters == null) {
-      return null;
-    }
-    for (int i=0; i<adapters.size(); i++) {
-      da = adapters.elementAt(i);
-      if (da.accepts(obj)) {
-        glyph = da.createGlyph(obj);
-        if (glyph != null) {
-          addGlyph(glyph);
-        }
-        return glyph;
-      }
-    }
-    return null;
   }
 
   public void pickTraversal(Rectangle2D coordrect, Vector<GlyphI> pickvect,

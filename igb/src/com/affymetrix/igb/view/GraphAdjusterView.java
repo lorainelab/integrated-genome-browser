@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -21,6 +21,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -91,7 +92,7 @@ public class GraphAdjusterView {
     int gcount = grafs.size();
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
-      deleteGraph(gviewer, graf);
+      deleteGraph(gmodel, gviewer, graf);
     }
     gmodel.clearSelectedSymmetries(GraphAdjusterView.class);
     gviewer.getSeqMap().updateWidget();
@@ -104,7 +105,7 @@ public class GraphAdjusterView {
    *  happens to be a child of a tier in the widget, and the tier has no children
    *  left after deleting the graph, then delete the tier as well.
    */
-  public static void deleteGraph(SeqMapView gviewer, GraphSym gsym) {
+  public static void deleteGraph(SingletonGenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
     //System.out.println("deleting graph: " + gsym);
 
     AnnotatedBioSeq aseq = (AnnotatedBioSeq)gsym.getGraphSeq();
@@ -112,6 +113,12 @@ public class GraphAdjusterView {
       MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
       mut.removeAnnotation(gsym);
     }
+
+    if (IGB.ALLOW_DELETING_DATA && aseq instanceof SmartAnnotBioSeq) {
+      String method = SmartAnnotBioSeq.determineMethod(gsym);
+      gmodel.getSelectedSeqGroup().removeType(method);
+    }
+
     GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
     if (gl != null) {
       gviewer.getSeqMap().removeItem(gl);

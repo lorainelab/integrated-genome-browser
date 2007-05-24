@@ -251,6 +251,8 @@ public class GlyphElement implements Cloneable, XmlAppender {
         gl = null; 
         // NOTE: important not to simply call "return null" before
         // taking care of restoring the context.
+      } else if (span.getLength() == 0 && parent_glyph instanceof TierGlyph) {
+        gl = null;
       }
       else {
 
@@ -401,7 +403,6 @@ public class GlyphElement implements Cloneable, XmlAppender {
   
   /** An efficient method to transform a single span. */
   SeqSpan transformForViewSeq(SeqMapView gviewer, SeqSymmetry insym) {
-    SeqSymmetry result_sym = insym;
 
     der.clear();
 
@@ -417,10 +418,17 @@ public class GlyphElement implements Cloneable, XmlAppender {
       SeqUtils.transformSymmetry(der, gviewer.getTransformPath());
 
       //der.setOriginalSymmetry(insym);
-      result_sym = der;
     }
 
-    return der.getSpan(gviewer.getViewSeq());
+    SeqSpan result_span = der.getSpan(gviewer.getViewSeq());
+
+    // I can't remember what the purpose of this was supposed to be,
+    // but it doesn't seem necessary
+    //if (result_span == null) {
+    //  result_span = new SimpleSeqSpan(0, 0, gviewer.getViewSeq());
+    //}
+
+    return result_span;
   }
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {

@@ -73,6 +73,25 @@ public class SeqMapView extends JPanel
   public static boolean DEBUG_COMP = false;
   static final boolean DEBUG_STYLESHEETS = true;
 
+  /** Add spans to the transformation sym that will cause all
+  * "intron" spans in the regions of aseq between exons chosen for slicing
+  * to be transformed into zero-length spans.
+  * This allows glyph factories to find "deleted" exons
+  * and draw them (if desired) without requiring messy calculations in
+  * the glyph factories.
+  */
+  public static final boolean ADD_INTRON_TRANSFORMS = true;
+
+  /**
+   * Extends the action of ADD_INTRON_TRANSFORMS to add an extra transform for
+   * the "intron" that extends from the start of the sequence to the first
+   * selected exon and from the end of the last selected exon to the end of
+   * the sequence.  It is probably NOT very efficient to do this.  It seems
+   * to work better to let the glyph factories figure out this information in
+   * other ways.
+   */
+  public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
+
   boolean LABEL_TIERMAP = true;
 
   boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
@@ -1862,10 +1881,10 @@ public class SeqMapView extends JPanel
       if (exact_span == null) { continue; }  // skip any children that don't have a span in aseq
       int next_min;
       if (i == (childCount-1)) {
-	next_min = aseq.getLength();
+        next_min = aseq.getLength();
       }
       else {
-	next_min = sym.getChild(i+1).getSpan(aseq).getMin();
+        next_min = sym.getChild(i+1).getSpan(aseq).getMin();
       }
 
       int slice_min = (int)Math.max(prev_max, (exact_span.getMin() - slice_buffer));
@@ -1882,16 +1901,39 @@ public class SeqMapView extends JPanel
         SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
         SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);
       } else {
-        MutableSeqSymmetry slice_sym = new SimpleMutableSeqSymmetry();
-        slice_sym.addSpan(seq_slice_span);
-        slice_sym.addSpan(view_slice_span);
+        if ( ADD_INTRON_TRANSFORMS ) {
+          if (prev_seq_slice != null){
+            SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), seq_slice_span.getMin(), aseq);
+            SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
+            // SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
+            // since there will be frequent calls to getSpan(BioSeq)
+            seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
+          }
+          else if (ADD_EDGE_INTRON_TRANSFORMS && i==0) {
+           // Add an extra transform for the "intron" that extends from the start of the sequence to the first selected exon
+            SeqSpan intron_region_span = new SimpleSeqSpan(0, seq_slice_span.getMin(), aseq);
+            SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
+            seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
+          }
+        }
+
+        SeqSymmetry slice_sym = new SimplePairSeqSymmetry(seq_slice_span, view_slice_span);
         seq2viewSym.addChild(slice_sym);
+
         prev_seq_slice = seq_slice_span;
         prev_view_slice = view_slice_span;
       }
       slice_offset += slice_length;
       prev_max = slice_max;
     }
+
+    if ( ADD_EDGE_INTRON_TRANSFORMS && ADD_INTRON_TRANSFORMS ) {
+      // Add an extra transform for the "intron" that extends from the last selection to the end of the sequence
+      SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), aseq.getLength(), aseq);
+      SeqSpan zero_length_span = new SimpleSeqSpan(prev_view_slice.getMax(), prev_view_slice.getMax(), viewseq);
+      seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
+    }
+
     SeqSpan seq_span = SeqUtils.getChildBounds(seq2viewSym, aseq);
     SeqSpan view_span = SeqUtils.getChildBounds(seq2viewSym, viewseq);
     seq2viewSym.addSpan(seq_span);

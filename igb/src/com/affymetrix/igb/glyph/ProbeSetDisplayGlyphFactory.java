@@ -216,7 +216,7 @@ the probeset, probe and pieces of probes
 
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
-    if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
+    if (GenericAnnotGlyphFactory.CALCULATE_DELETION_GLYPH_LOCATIONS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
       boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq);
     }
     
@@ -266,7 +266,30 @@ the probeset, probe and pieces of probes
       SeqSymmetry child = transformed_consensus_sym.getChild(i);
       SeqSpan cspan = child.getSpan(coordseq);
       if (cspan == null) {
-        if (GenericAnnotGlyphFactory.DRAW_DELETION_GLYPHS && annotseq != coordseq) {
+        if (i == 0) {
+          // if first child has null span, it represents a deletion, so extend parent to left
+          pglyph.getCoordBox().width += pglyph.getCoordBox().x;
+          pglyph.getCoordBox().x = 0;
+
+          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
+          boundary_glyph.setCoords(0.0, child_y + child_height/4, 1.0, child_height/2);
+          boundary_glyph.setColor(pglyph.getColor());
+          //boundary_glyph.setHitable(false);
+          pglyph.addChild(boundary_glyph);
+        } else if (i == childCount - 1) {
+          // if last child has null span, it represents a deletion, so extend parent to right
+          pglyph.getCoordBox().width = coordseq.getLength() - pglyph.getCoordBox().x;
+
+          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
+          boundary_glyph.setCoords(coordseq.getLength()-0.5, child_y + child_height/4, 1.0, child_height/2);
+          boundary_glyph.setColor(pglyph.getColor());
+          //boundary_glyph.setHitable(false);
+          pglyph.addChild(boundary_glyph);
+        }
+        // any deletion at a point other than the left or right edge will produce
+        // a cspan of length 0 rather than a null one and so will be dealt with below
+
+        if (GenericAnnotGlyphFactory.CALCULATE_DELETION_GLYPH_LOCATIONS && annotseq != coordseq) {
           // There is a missing child, so indicate it with a little glyph.
           
           int annot_span_min = child.getSpan(annotseq).getMin();
@@ -292,8 +315,14 @@ the probeset, probe and pieces of probes
         }
         continue;
      }
-      EfficientOutlinedRectGlyph cglyph = new EfficientOutlinedRectGlyph();
-      
+
+      GlyphI cglyph;
+      if (cspan.getLength() == 0) {
+        cglyph = new GenericAnnotGlyphFactory.DeletionGlyph();
+      } else {
+        cglyph = new EfficientOutlinedRectGlyph();
+      }
+
       cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);
       cglyph.setColor(consensus_color);
       pglyph.addChild(cglyph);

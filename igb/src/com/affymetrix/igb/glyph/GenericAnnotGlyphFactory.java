@@ -43,9 +43,14 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean ASSUME_CONSTANT_DEPTH = true;
   
   /**
-   * Set to true to draw glyphs at locations of deletions.
+   * Set to true to calculate the locations of deleted exons and
+   * draw deletion glyphs.  If SeqMapView.ADD_INTRON_TRANSFORMS is true,
+   * then it is NOT necessary to do these calculations directly in this class
+   * because the deleted exons will naturally be calculated during the
+   * coordinate transform and will be recognizable by the fact that they have
+   * a length of zero.
    */
-  static final boolean DRAW_DELETION_GLYPHS = true;
+  static final boolean CALCULATE_DELETION_GLYPH_LOCATIONS = false;
   
   static Class default_parent_class = (new ImprovedLineContGlyph()).getClass();
   static Class default_child_class = (new FillRectGlyph()).getClass();
@@ -273,18 +278,17 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     
     SeqSpan pspan = sym.getSpan(coordseq);
-    if (pspan == null) {
+    if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;
     
     // Find boundaries of the splices.  Used to draw glyphs for deletions.
     int[][] boundaries = null;
-    if (DRAW_DELETION_GLYPHS && ! same_seq && ADD_CHILDREN && sym.getChildCount() > 0) {
+    if (CALCULATE_DELETION_GLYPH_LOCATIONS && ! same_seq && ADD_CHILDREN && sym.getChildCount() > 0) {
       boundaries = determineBoundaries(gviewer, annotseq);
     }
-    
-    boolean forward = pspan.isForward();
-    TierGlyph the_tier = forward ? forward_tier : reverse_tier;
+
+    TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
     
     GlyphI pglyph = null;
     
@@ -355,8 +359,31 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         cspan = child.getSpan(coordseq);
         
         if (cspan == null) {
-          
-          if (DRAW_DELETION_GLYPHS && ! same_seq && boundaries != null) {
+
+          if (i == 0) {
+            // if first child has null span, it represents a deletion, so extend parent to left
+            pglyph.getCoordBox().width += pglyph.getCoordBox().x;
+            pglyph.getCoordBox().x = 0;
+
+            DeletionGlyph boundary_glyph = new DeletionGlyph();
+            boundary_glyph.setCoords(0.0, 0.0, 1.0, (double) thin_height);
+            boundary_glyph.setColor(pglyph.getColor());
+            //boundary_glyph.setHitable(false);
+            pglyph.addChild(boundary_glyph);
+          } else if (i == childCount - 1) {
+            // if last child has null span, it represents a deletion, so extend parent to right
+            pglyph.getCoordBox().width = coordseq.getLength() - pglyph.getCoordBox().x;
+
+            DeletionGlyph boundary_glyph = new DeletionGlyph();
+            boundary_glyph.setCoords(coordseq.getLength()-0.5, 0.0, 1.0, (double) thin_height);
+            boundary_glyph.setColor(pglyph.getColor());
+            //boundary_glyph.setHitable(false);
+            pglyph.addChild(boundary_glyph);
+          }
+          // any deletion at a point other than the left or right edge will produce
+          // a cspan of length 0 rather than a null one and so will be dealt with below
+
+          if (CALCULATE_DELETION_GLYPH_LOCATIONS && ! same_seq && boundaries != null) {
             // There is a missing child, so indicate it with a little glyph.
             
             int annot_span_min = child.getSpan(annotseq).getMin();
@@ -384,7 +411,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           continue;
         }
         
-        GlyphI cglyph = (GlyphI)child_glyph_class.newInstance();
+        GlyphI cglyph;
+        if (cspan.getLength() == 0) {
+          cglyph = new DeletionGlyph();
+        } else {
+          cglyph = (GlyphI)child_glyph_class.newInstance();
+        }
         
         double cheight = thick_height;
         Color child_color = getSymColor(child, the_style);
@@ -399,7 +431,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             }
             SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
             if (cds_span != null) {
-              GlyphI cds_glyph = (GlyphI)child_glyph_class.newInstance();
+              GlyphI cds_glyph;
+              if (cspan.getLength() == 0) {
+                cds_glyph = new DeletionGlyph();
+              } else {
+                cds_glyph = (GlyphI)child_glyph_class.newInstance();
+              }
               cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
               cds_glyph.setColor(child_color); // CDS same color as exon
               pglyph.addChild(cds_glyph);
@@ -456,12 +493,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     
     SeqSpan pspan = sym.getSpan(coordseq);
-    if (pspan == null) {
+    if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;
     
-    boolean forward = pspan.isForward();
-    TierGlyph the_tier = forward ? forward_tier : reverse_tier;
+    TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
     
     GlyphI pglyph = null;
     
@@ -515,8 +551,19 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
       simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
       SeqSymmetry bounds_sym = gviewer.transformForViewSeq(simple_sym, annotseq);
-      
-      boundaries = determineBoundaries(bounds_sym, annotseq, gviewer.getViewSeq());
+
+      // Now remove all zero-length syms in the bounds_sym,
+      // caused by SeqMapView.ADD_EMPTY_TRANSFORMS == true
+      MutableSeqSymmetry new_bounds_sym = new SimpleMutableSeqSymmetry();
+      java.util.List zero_lengths = new ArrayList();
+      for (int i = 0; i<bounds_sym.getChildCount(); i++) {
+        SeqSymmetry sym = bounds_sym.getChild(i);
+        if (sym.getSpan(gviewer.getViewSeq()).getLength() > 0.001) {
+          new_bounds_sym.addChild(sym);
+        }
+      }
+
+      boundaries = determineBoundaries(new_bounds_sym, annotseq, gviewer.getViewSeq());
     }
     return boundaries;
   }

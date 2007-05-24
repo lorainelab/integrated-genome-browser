@@ -63,6 +63,14 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
+  
+  // Whether to allow users to delete data from the loaded AnnotatedSeqGroup.
+  // This should not be turned on until all the caching and optimization features
+  // are aware of how to deal with it.  Specifically, QuickLoad needs to know
+  // when data has been deleted so that it can reload data of the same time
+  // if requested, and the DAS/1 loader needs to get rid of its cached queries
+  // related to the given feature type.
+  public static final boolean ALLOW_DELETING_DATA = false;
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;

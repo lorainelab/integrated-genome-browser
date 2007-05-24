@@ -1,7 +1,7 @@
 /**
 *
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
@@ -19,7 +19,6 @@ import com.affymetrix.igb.event.UrlLoaderThread;
 // Java
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -42,7 +41,6 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler implements ActionListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -103,12 +101,11 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
    *        served by DAS server with name/url "server_name"
    */
 
-  //  Assuming for now that DAS query tracking info is discarded when switching
-  //     to a different DAS data source
-  Map server2genomes = new Hashtable();
-  Map seq2type;
-  DasClientOptimizer optimizer;
-  boolean TEST_OPTIMIZER = false;
+  static Map server2genomes = new Hashtable();
+  //  DAS query tracking info (seq2type) is kept separate for each DAS data source
+  static Map source2seq2type = new HashMap();
+  static DasClientOptimizer optimizer;
+  static final boolean TEST_OPTIMIZER = false;
 
   public static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
   public static final boolean default_show_das_query_genometry = false;
@@ -325,21 +322,15 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     // hack for dealing with pseudo-das PslQueryServlet, until it can handle
     //   feature requests with multiple features types
     if (server_name.startsWith("Affy-Genometry") || server_supports_bps) {
-      java.util.List the_list = doFeatureRequestHack();
-      if (the_list != null && !the_list.isEmpty()) try {
-        URL[] urls = new URL[the_list.size()];
-        String[] tier_names = new String[the_list.size()];
-        for (int i=0; i<the_list.size(); i++) {
-          String[] array = (String[]) the_list.get(i);
-          urls[i] = new URL(array[0]);
-          tier_names[i] = array[1];
-        }
-        UrlLoaderThread t = new UrlLoaderThread(gviewer, urls, null, tier_names);
-        t.runEventually();
-      } catch (MalformedURLException mfe) {
-        ErrorHandler.errorPanel("Problem with DAS\n" +
-                           "Malformed URL: " + mfe.getMessage());
-      }
+      String seqid = (String)select_seqCB.getSelectedItem();
+      int seqstart = Integer.parseInt(min_fieldTF.getText());
+      int seqstop = Integer.parseInt(max_fieldTF.getText());
+      String source_name = (String) select_sourceCB.getSelectedItem();
+
+      doFeatureRequests(gviewer,
+          current_das_server,current_das_source,source_name,
+          seqid,seqstart,seqstop,
+          selected_types, server_supports_minmax);
     }
     else {
       String das_feat_request = composeDasFeatRequest();
@@ -360,11 +351,40 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     }
   }
 
+  static void doFeatureRequests(SeqMapView gviewer,
+      String server, String source, String source_name,
+      String seqid, int start, int stop,
+      Vector types, boolean supports_minmax) {
+
+    java.util.List the_list = optimizeFeatureRequests(
+        gviewer,
+        server,source,source_name,
+        seqid,start,stop,
+        types,supports_minmax);
+
+    if (the_list != null && !the_list.isEmpty()) try {
+      URL[] urls = new URL[the_list.size()];
+      String[] tier_names = new String[the_list.size()];
+      for (int i=0; i<the_list.size(); i++) {
+        String[] array = (String[]) the_list.get(i);
+        urls[i] = new URL(array[0]);
+        tier_names[i] = array[1];
+      }
+      UrlLoaderThread t = new UrlLoaderThread(gviewer, urls, null, tier_names);
+      t.runEventually();
+    } catch (MalformedURLException mfe) {
+      ErrorHandler.errorPanel("Problem with DAS\n" +
+          "Malformed URL: " + mfe.getMessage());
+    }
+  }
 
   /**
    *  Returns a List of String[2] arrays s, where each s[0] is a URL and s[1] is a tier name.
    */
-  java.util.List doFeatureRequestHack() {
+  static java.util.List optimizeFeatureRequests(SeqMapView gviewer,
+      String das_server, String das_source, String source_name, 
+      String seqid, int seqstart, int seqstop,
+      Vector types, boolean server_supports_minmax) {
     boolean SHOW_DAS_QUERY_GENOMETRY = UnibrowPrefsUtil.getTopNode().getBoolean(
       PREF_SHOW_DAS_QUERY_GENOMETRY, default_show_das_query_genometry);
 
@@ -379,22 +399,24 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     if (DEBUG)  { System.out.println("doing hack to request features from bps DAS server"); }
     String das_feat_request = null;
     try {
-      String seqid = (String)select_seqCB.getSelectedItem();
-      int seqstart = Integer.parseInt(min_fieldTF.getText());
-      int seqstop = Integer.parseInt(max_fieldTF.getText());
-      Map type2collector = (Map)seq2type.get(seqid);
+      Map seq2type = (Map) source2seq2type.get(source_name);
+      if (seq2type == null) {
+        seq2type = new HashMap();
+        source2seq2type.put(source_name, seq2type);
+      }
+      Map type2collector = (Map) seq2type.get(seqid);
       if (type2collector == null) {
         ErrorHandler.errorPanel("WARNING -- type2collector has for seq = " + seqid + " not found!");
       }
       SeqSpan query_span = new SimpleSeqSpan(seqstart, seqstop, current_seq);
 
-      String das_source_root = current_das_server +   //  "/"  already included in current_das_server
-	current_das_source + "/";
+      String das_source_root = das_server +   //  "/"  already included in current_das_server
+        das_source + "/";
       if (TEST_OPTIMIZER)  {
-	optimizer.loadAnnotations(das_source_root, "test", query_span, selected_types);
+        optimizer.loadAnnotations(das_source_root, "test", query_span, types);
       }
-      for (int i=0; i<selected_types.size(); i++) {
-        String type = (String)selected_types.elementAt(i);
+      for (int i=0; i<types.size(); i++) {
+        String type = (String) types.elementAt(i);
 
         // for testing/debugging of more sophisticated client-side processing
         //   of DAS query, adding annotations to show spans of all DAS queries...
@@ -403,7 +425,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         query_sym.setProperty("method",
                               //  current_das_server + ", " + current_das_source + ":" +
                               ("das_raw_query:" + type));
-	//        SeqSpan query_span = new SimpleSeqSpan(seqstart, seqstop, current_seq);
+
         query_sym.addSpan(query_span);
         if (SHOW_DAS_QUERY_GENOMETRY) { current_seq.addAnnotation(query_sym); }
         SeqSymmetry exclusive_sym;
@@ -416,8 +438,6 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         }
         else {
           exclusive_sym = SeqUtils.exclusive(query_sym, query_collector, current_seq);
-          //          System.out.println("Exclusive Sym: ");
-          //          SeqUtils.printSymmetry(exclusive_sym);
         }
 
         SeqSpan exclusive_span = exclusive_sym.getSpan(current_seq);
@@ -487,8 +507,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
               if (SHOW_DAS_QUERY_GENOMETRY) { current_seq.addAnnotation(hard_edges); }
 
               das_feat_request =
-                current_das_server +   //  "/"  already included in current_das_server
-                URLEncoder.encode(current_das_source) + "/" +
+                das_server +   //  "/"  already included in current_das_server
+                URLEncoder.encode(das_source) + "/" +
                 "features?" +
                 "segment=" + URLEncoder.encode(seqid)
                    + ":" + exclusive_span.getMin() + "," + exclusive_span.getMax() +
@@ -517,8 +537,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
                 if (SHOW_DAS_QUERY_GENOMETRY) { current_seq.addAnnotation(hard_edges); }
 
                 das_feat_request =
-                  current_das_server +   //  "/"  already included in current_das_server
-                  URLEncoder.encode(current_das_source) + "/" +
+                  das_server +   //  "/"  already included in current_das_server
+                  URLEncoder.encode(das_source) + "/" +
                   "features?" +
                   "segment=" + URLEncoder.encode(seqid)
                      + ":" + childspan.getMin() + "," + childspan.getMax() +
@@ -534,8 +554,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         }
         else {
           das_feat_request =
-            current_das_server +   //  "/"  already included in current_das_server
-            URLEncoder.encode(current_das_source) + "/" +
+            das_server +   //  "/"  already included in current_das_server
+            URLEncoder.encode(das_source) + "/" +
             "features?" +
             "segment=" + URLEncoder.encode(seqid) + ":" + seqstart + "," + seqstop +
             ";type=" + URLEncoder.encode(type);
@@ -727,7 +747,11 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       } else {
         current_das_source = source_name;
       }
-      seq2type = new HashMap();
+      Map seq2type = (Map) source2seq2type.get(source_name);
+      if (seq2type == null) {
+        seq2type = new HashMap();
+        source2seq2type.put(source_name, seq2type);
+      }
       server_supports_termquery = false;
       server_supports_bps = false;
       server_supports_minmax = false;

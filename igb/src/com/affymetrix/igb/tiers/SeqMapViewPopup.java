@@ -847,8 +847,10 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (das2_writeback_enabled && curation_enabled) {
       save_menu.add(write_das_action);
     }
-    
-    popup.add(delete_action);
+
+    // The delete_action works properly, but the QuickLoad tab doesn't update
+    // its state in response.  So it is best to disable this for now.
+    // popup.add(delete_action);
 
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -93,13 +93,6 @@ the probeset, probe and pieces of probes
   public void init(Map options) {
   }
 
-  // used by init()
-  static private final boolean setBooleanProperty(Map m, String name, boolean def) {
-    String s = (String) m.get(name);
-    if (s==null) { return def; }
-    else { return Boolean.valueOf(s).booleanValue(); }
-  }
-  
   public ProbeSetDisplayGlyphFactory() {
   }
 
@@ -214,12 +207,6 @@ the probeset, probe and pieces of probes
     }
     AffyTieredMap map = gviewer.getSeqMap();
 
-    // Find boundaries of the splices.  Used to draw glyphs for deletions.
-    int[][] boundaries = null;
-    if (GenericAnnotGlyphFactory.CALCULATE_DELETION_GLYPH_LOCATIONS && annotseq != coordseq  && consensus_sym.getChildCount() > 0) {
-      boundaries = GenericAnnotGlyphFactory.determineBoundaries(gviewer, annotseq);
-    }
-    
     boolean forward = pspan.isForward();
 
     TierGlyph the_tier = forward ? forward_tier : reverse_tier;
@@ -261,7 +248,7 @@ the probeset, probe and pieces of probes
     map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
     int childCount = transformed_consensus_sym.getChildCount();
-    int j=0;
+
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = transformed_consensus_sym.getChild(i);
       SeqSpan cspan = child.getSpan(coordseq);
@@ -289,30 +276,6 @@ the probeset, probe and pieces of probes
         // any deletion at a point other than the left or right edge will produce
         // a cspan of length 0 rather than a null one and so will be dealt with below
 
-        if (GenericAnnotGlyphFactory.CALCULATE_DELETION_GLYPH_LOCATIONS && annotseq != coordseq) {
-          // There is a missing child, so indicate it with a little glyph.
-          
-          int annot_span_min = child.getSpan(annotseq).getMin();
-          while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
-            j++;
-          }
-          int gap_location = boundaries[j][1];
-          
-          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
-          boundary_glyph.setCoords((double) gap_location, child_y + child_height/4, 1.0, child_height/2);
-          boundary_glyph.setColor(consensus_color);
-          //boundary_glyph.setHitable(false);
-          pglyph.addChild(boundary_glyph);
-          
-          // strecth the parent to be wide enough for this glyph
-          Rectangle2D cb = pglyph.getCoordBox();
-          if (cb.x > gap_location) {
-            cb.width += cb.x - gap_location;
-            cb.x = gap_location;
-          } else if (cb.x + cb.width < gap_location) {
-            cb.width = gap_location - cb.x;
-          }
-        }
         continue;
      }
 

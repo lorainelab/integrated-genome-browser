@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -41,17 +41,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
    *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
    */
   static final boolean ASSUME_CONSTANT_DEPTH = true;
-  
-  /**
-   * Set to true to calculate the locations of deleted exons and
-   * draw deletion glyphs.  If SeqMapView.ADD_INTRON_TRANSFORMS is true,
-   * then it is NOT necessary to do these calculations directly in this class
-   * because the deleted exons will naturally be calculated during the
-   * coordinate transform and will be recognizable by the fact that they have
-   * a length of zero.
-   */
-  static final boolean CALCULATE_DELETION_GLYPH_LOCATIONS = false;
-  
+
   static Class default_parent_class = (new ImprovedLineContGlyph()).getClass();
   static Class default_child_class = (new FillRectGlyph()).getClass();
   static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
@@ -281,12 +271,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;
-    
-    // Find boundaries of the splices.  Used to draw glyphs for deletions.
-    int[][] boundaries = null;
-    if (CALCULATE_DELETION_GLYPH_LOCATIONS && ! same_seq && ADD_CHILDREN && sym.getChildCount() > 0) {
-      boundaries = determineBoundaries(gviewer, annotseq);
-    }
 
     TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
     
@@ -351,7 +335,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     if (ADD_CHILDREN) {
       int childCount = sym.getChildCount();
-      int j = 0;
+
       for (int i=0; i<childCount; i++) {
         SeqSymmetry child = null;
         SeqSpan cspan = null;
@@ -383,34 +367,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           // any deletion at a point other than the left or right edge will produce
           // a cspan of length 0 rather than a null one and so will be dealt with below
 
-          if (CALCULATE_DELETION_GLYPH_LOCATIONS && ! same_seq && boundaries != null) {
-            // There is a missing child, so indicate it with a little glyph.
-            
-            int annot_span_min = child.getSpan(annotseq).getMin();
-            while (j+1 < boundaries.length && annot_span_min >= boundaries[j+1][0]) {
-              j++;
-            }
-            int gap_location = boundaries[j][1];
-            
-            DeletionGlyph boundary_glyph = new DeletionGlyph();
-            boundary_glyph.setCoords((double) gap_location, 0.0, 1.0, (double) thin_height);
-            boundary_glyph.setColor(pglyph.getColor());
-            //boundary_glyph.setHitable(false);
-            pglyph.addChild(boundary_glyph);
-            
-            // Now stretch the parent glyph so that it includes this glyph.
-            Rectangle2D cb = pglyph.getCoordBox();
-            if (cb.x > gap_location) {
-              cb.width += cb.x - gap_location;
-              cb.x = gap_location;
-            } else if (cb.x + cb.width < gap_location) {
-              cb.width = gap_location - cb.x;
-            }
-          }
-          
           continue;
         }
-        
+
         GlyphI cglyph;
         if (cspan.getLength() == 0) {
           cglyph = new DeletionGlyph();
@@ -539,70 +498,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     the_tier.addChild(pglyph);
     return pglyph;
-  }
-  
-  //TODO: Move this to SeqMapView or AltSpliceView, 
-  // so boundaries don't have to be re-computed over and over  
-  
-  // a helper function used in drawing the "deletion" glyphs
-  static int[][] determineBoundaries(SeqMapView gviewer, BioSeq annotseq) {
-    int[][] boundaries = null;
-    if (annotseq != gviewer.getViewSeq()) {
-      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
-      simple_sym.addSpan(new SimpleMutableSeqSpan(0, annotseq.getLength(), annotseq));
-      SeqSymmetry bounds_sym = gviewer.transformForViewSeq(simple_sym, annotseq);
-
-      // Now remove all zero-length syms in the bounds_sym,
-      // caused by SeqMapView.ADD_EMPTY_TRANSFORMS == true
-      MutableSeqSymmetry new_bounds_sym = new SimpleMutableSeqSymmetry();
-      java.util.List zero_lengths = new ArrayList();
-      for (int i = 0; i<bounds_sym.getChildCount(); i++) {
-        SeqSymmetry sym = bounds_sym.getChild(i);
-        if (sym.getSpan(gviewer.getViewSeq()).getLength() > 0.001) {
-          new_bounds_sym.addChild(sym);
-        }
-      }
-
-      boundaries = determineBoundaries(new_bounds_sym, annotseq, gviewer.getViewSeq());
-    }
-    return boundaries;
-  }
-
-  // a helper function used in drawing the "deletion" glyphs
-  // Returns an int array of size [n][2] where [n][0] is the boundary in terms of seq0
-  // and [n][1] is the corresponding boundary in terms of seq1.
-  // Value [0][0] = Integer.MIN_VALUE and [0][1] = minimum of first span in seq1.
-  // For all other [n][0] and [n][1] it is the value of the Maximum of the boundary
-  // span in the seq0 or seq1.
-  static int[][] determineBoundaries(SeqSymmetry bounds_sym, BioSeq seq0, BioSeq seq1) {
-    int[][] boundaries = null;
-    if (seq0 != seq1) {
-      MutableSeqSymmetry simple_sym = new SimpleMutableSeqSymmetry();
-      simple_sym.addSpan(new SimpleMutableSeqSpan(0, seq0.getLength(), seq0));
-
-      int child_count = bounds_sym.getChildCount();
-      if (child_count == 0) {
-        return null;
-      }
-      
-      boundaries = new int[child_count+1][];
-      
-      SeqSymmetry child = bounds_sym.getChild(0);
-
-      boundaries[0] = new int[2];
-      boundaries[0][0] = Integer.MIN_VALUE;
-      boundaries[0][1] = child.getSpan(seq1).getMin();
-      for (int qq = 1 ; qq < boundaries.length; qq++) {
-        child = bounds_sym.getChild(qq-1);
-        SeqSpan annot_span = child.getSpan(seq0);
-        SeqSpan coord_span = child.getSpan(seq1);
-        
-        boundaries[qq] = new int[2];
-        boundaries[qq][0] = annot_span.getMax();
-        boundaries[qq][1] = coord_span.getMax();
-      }
-    }
-    return boundaries;    
   }
 
   // Copies to a derived SeqSymmetry without copying any of the children.

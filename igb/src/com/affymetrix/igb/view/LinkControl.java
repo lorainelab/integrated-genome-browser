@@ -34,7 +34,7 @@ public class LinkControl implements ContextualPopupListener {
       // DAS files can contain links for each individual feature.
       // These are stored in the "link" property
       Object links = primary_sym.getProperty("link");
-      Object link_names = primary_sym.getProperty("link-name");
+      Object link_names = primary_sym.getProperty("link_name");
       if (links != null) {
         if (links instanceof String) {
           String url = (String) links;

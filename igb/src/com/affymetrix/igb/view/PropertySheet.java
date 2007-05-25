@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -197,14 +197,14 @@ public class PropertySheet extends JPanel {
     }
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);
-    this.table = new JTable ();
-    TableModel model = new DefaultTableModel(rows,col_headings) {
-    };
+    this.table = new JTable();
+    TableModel model = new DefaultTableModel(rows,col_headings);
     table.setModel(model);
 
-    table.setEnabled ( true );  // to allow selection, etc.
+    table.setEnabled( true );  // to allow selection, etc.
     this.size.height = table.getSize().height;
-    table.setSize ( this.size );
+    //table.setSize ( this.size );
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     this.removeAll();
     this.setLayout(new BorderLayout() );
     scroll_pane = new JScrollPane(table);

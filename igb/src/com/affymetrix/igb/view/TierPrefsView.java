@@ -93,6 +93,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     this.setLayout(new BorderLayout());
    
     JScrollPane table_scroll_pane = new JScrollPane(table);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     
     this.add(table_scroll_pane, BorderLayout.CENTER);
     JPanel button_panel = new JPanel();
@@ -167,6 +168,8 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     TableSorter2 sort_model = new TableSorter2(model);
     sort_model.setTableHeader(table.getTableHeader());
     table.setModel(sort_model);
+    table.getColumnModel().getColumn(COL_TIER_NAME).setPreferredWidth(150);
+    table.getColumnModel().getColumn(COL_HUMAN_NAME).setPreferredWidth(150);
 
     table.setRowSelectionAllowed(true);
     table.setEnabled( true ); // doesn't do anything ?

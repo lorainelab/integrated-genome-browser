@@ -355,7 +355,7 @@ public class WebLinksManagerView extends JPanel {
         if (! full_path.endsWith(".xml")) {
           fil = new File(full_path + ".xml");
         }
-        WebLink.exportWebLinks(fil);
+        WebLink.exportWebLinks(fil, false);
       }
       catch (Exception ex) {
         ErrorHandler.errorPanel("Error", "Error exporting web links", frame, ex);
@@ -394,9 +394,11 @@ public class WebLinksManagerView extends JPanel {
   
   /** Main, for testing. */
   public static void main(String[] args) throws Exception {
+    WebLink.autoLoad();
     JFrame frame = showManager();
     frame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
+        WebLink.autoSave();
         System.exit(0);
       }
     });

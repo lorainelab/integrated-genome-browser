@@ -34,7 +34,12 @@ import com.affymetrix.swing.DisplayUtils;
 public class DasServersView extends JPanel implements ListSelectionListener, NodeChangeListener, IPrefEditorComponent  {
 
   private final JTable table = new JTable();
-  private final static String[] col_headings = {"URL", "Name", "Enabled"};
+  private final static String[] col_headings = {"Enabled", "Name", "URL"};
+  private final static int COL_ENABLED = 0;
+  private final static int COL_NAME = 1;
+  private final static int COL_URL = 2;
+  
+  
   private final DefaultTableModel model;
   private final ListSelectionModel lsm; 
  
@@ -52,22 +57,23 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     this.setLayout(new BorderLayout());
 
     JScrollPane scroll_pane = new JScrollPane(table);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     this.add(scroll_pane, BorderLayout.CENTER);
     this.add(scroll_pane);
 
     model = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {
-        return (column == 2);
+        return (column == COL_ENABLED);
       }
       public Class getColumnClass(int column) {
-        if (column == 1) {return Preferences.class;}
-        if (column == 2) {return Boolean.class;}
+        if (column == COL_NAME) {return Preferences.class;}
+        if (column == COL_ENABLED) {return Boolean.class;}
         else {return String.class;}
       }
       public void setValueAt(Object value, int row, int column) {
-        if (column == 2) {
+        if (column == COL_ENABLED) {
           Boolean b = (Boolean) value;
-          Preferences node = (Preferences) getValueAt(row, 1);
+          Preferences node = (Preferences) getValueAt(row, COL_NAME);
           node.putBoolean(DasDiscovery.KEY_ENABLED, b.booleanValue());
           refresh();
         }
@@ -151,7 +157,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     DisplayUtils.adjustColumnPreferredWidths(table, true);
     
     editor = new DasServerInfoEditor(this);
-    sort_model.setSortingStatus(1, TableSorter2.ASCENDING);
+    sort_model.setSortingStatus(COL_NAME, TableSorter2.ASCENDING);
   }
 
   TableCellRenderer special_renderer = new DefaultTableCellRenderer() {
@@ -212,11 +218,11 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     for (int i = 0 ; i < num_rows ; i++) {
       Preferences kid = top_node.node(node_names[i]);
       String the_url = kid.get(DasDiscovery.KEY_URL, "???");
-      rows[i][0] = the_url;
-      rows[i][1] = kid;
+      rows[i][COL_URL] = the_url;
+      rows[i][COL_NAME] = kid;
 //      rows[i][1] = kid.get(DasDiscovery.KEY_NAME, "<Unnamed DAS Server>");
       boolean default_enabled = ! the_url.equals("???");
-      rows[i][2] = Boolean.valueOf(kid.getBoolean(DasDiscovery.KEY_ENABLED, default_enabled));
+      rows[i][COL_ENABLED] = Boolean.valueOf(kid.getBoolean(DasDiscovery.KEY_ENABLED, default_enabled));
     }
     return rows;
   }
@@ -232,7 +238,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     } catch (BackingStoreException bse) {
       UnibrowPrefsUtil.handleBSE(this, bse);
     }
-    sort_model.setSortingStatus(1, TableSorter2.ASCENDING);
+    sort_model.setSortingStatus(COL_NAME, TableSorter2.ASCENDING);
     DasDiscovery.reset(); //TODO: I hate this harsh way of handling a reset
   }
     
@@ -243,7 +249,7 @@ public class DasServersView extends JPanel implements ListSelectionListener, Nod
     if (evt.getSource()==lsm && ! evt.getValueIsAdjusting()) {
       int srow = table.getSelectedRow();
       if (srow >= 0) {
-        chosen_url = (String) table.getModel().getValueAt(srow, 0);
+        chosen_url = (String) table.getModel().getValueAt(srow, COL_URL);
         edit_action.setEnabled(true);
         remove_action.setEnabled(true);
       } else {

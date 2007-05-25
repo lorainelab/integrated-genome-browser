@@ -26,9 +26,11 @@ import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SymMapChangeEvent;
 import com.affymetrix.igb.event.SymMapChangeListener;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -187,7 +189,14 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         search_action.setEnabled(false);
         clearTable("Working...");        
         
-       java.util.List results = finder.searchForSyms(final_seq_group);
+        java.util.List results = Collections.EMPTY_LIST;
+        try {
+          results = finder.searchForSyms(final_seq_group);
+        } catch (Exception e) {
+          ErrorHandler.errorPanel("Error", e);
+          results = Collections.EMPTY_LIST;
+        }
+
         final Vector rows = buildRows(results);
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
@@ -339,16 +348,16 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     
     protected void setValue(Object value) {
       SeqSymmetry sym = (SeqSymmetry) value;
-      super.setValue(SeqMapView.determineMethod(sym));
+      super.setValue(SmartAnnotBioSeq.determineMethod(sym));
     }
   }
 
-  /** A Comparator that compares based on {@link SeqMapView#determineMethod(SeqSymmetry)}. */
+  /** A Comparator that compares based on {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}. */
   public static class SeqSymmetryMethodComparator implements Comparator {
     public int compare(Object o1, Object o2) {
       SeqSymmetry s1 = (SeqSymmetry) o1;
       SeqSymmetry s2 = (SeqSymmetry) o2;
-      return SeqMapView.determineMethod(s1).compareTo(SeqMapView.determineMethod(s2));
+      return SmartAnnotBioSeq.determineMethod(s1).compareTo(SmartAnnotBioSeq.determineMethod(s2));
     }
   }
   
@@ -357,6 +366,9 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     public SeqSymmetry sym;
     public SeqSpan span;
     public SearchResult(String id, SeqSymmetry sym, SeqSpan span) {
+      if (sym == null || id == null || span == null) {
+        throw new IllegalArgumentException("Null arguments are not allowed for SearchResult");
+      }
       this.id = id;
       this.sym = sym;
       this.span = span;

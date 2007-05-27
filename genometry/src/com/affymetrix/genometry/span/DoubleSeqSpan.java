@@ -96,7 +96,7 @@ public class DoubleSeqSpan implements SeqSpan, Cloneable {
   }
 
   public double getLengthDouble() {
-    return (getMaxDouble() - getMinDouble());
+    return (end > start ? end-start : start-end);
   }
 
 

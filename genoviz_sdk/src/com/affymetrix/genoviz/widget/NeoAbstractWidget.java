@@ -18,8 +18,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
-
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -77,7 +75,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     else {
       models_have_multiple_glyphs = true;
       if (previous instanceof Vector) {
-        ((Vector)previous).addElement(gl);
+        ((Vector<GlyphI>) previous).addElement(gl);
       }
       else {
         Vector<GlyphI> glyphs = new Vector<GlyphI>();

@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.Font;
-import java.awt.Color;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public interface ResiduesGlyphI extends GlyphI {

@@ -13,11 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.FontMetrics;
-import java.awt.Font;
+import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 

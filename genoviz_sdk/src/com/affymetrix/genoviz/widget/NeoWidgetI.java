@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.*;

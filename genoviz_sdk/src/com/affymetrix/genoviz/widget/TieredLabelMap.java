@@ -16,10 +16,7 @@ package com.affymetrix.genoviz.widget;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
-
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.event.TierEvent;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 
 /**
@@ -102,10 +99,6 @@ public class TieredLabelMap extends AbstractTieredMap {
   }
 
   /** Adding only permitted by ourself */
-
-  private void addTier(MapTierGlyph mtg) {
-    addTier(mtg, false);
-  }
 
   private void addTier(MapTierGlyph mtg, boolean ontop) {
     if (mtg == null)

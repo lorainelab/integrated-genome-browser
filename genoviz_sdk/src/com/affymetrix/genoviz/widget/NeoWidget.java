@@ -55,9 +55,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
   private static final boolean DEBUG_SCROLLER_VALUES = false;
   private static final boolean DEBUG_SCROLL = false;
   private static final boolean DEBUG_ZOOM = false;
-  private static final boolean NW_DEBUG_EVENTS = false;
-  private static final boolean NW_DEBUG_COLORS = false;
 
+  
   protected boolean checkZoomValue = true;
   protected boolean checkScrollValue = true;
 
@@ -1181,7 +1180,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           scale_constraint[id] == INTEGRAL_ALL) && zoom_scale >= 1) {
       coord_offset = (int)coord_offset;
     }
-    double first_coord_displayed = coord_offset;
+
 
     double last_coord_displayed = coord_offset + visible_coords;
 
@@ -1339,8 +1338,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     if (source != view) { return; }
     int id = e.getID();
-    int x = e.getX();
-    int y = e.getY();
 
     NeoMouseEvent nevt =
       new NeoMouseEvent(e, this, UNKNOWN, e.getCoordX(), e.getCoordY());

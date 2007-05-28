@@ -756,10 +756,9 @@ public class DNAUtils  {
   public static String reverseComplement(String s) {
     if (s == null) { return null; }
     StringBuffer buf = new StringBuffer(s.length());
-    int j=0;
+
     for (int i=s.length()-1; i>=0; i--) {
       buf.append(s.charAt(i));
-      j++;
     }
     complementBuffer(buf);
     return buf.toString();
@@ -849,38 +848,38 @@ public class DNAUtils  {
   public static char complementChar(char b) {
 
     switch (b) {
-    case 'A': return 'T';
-    case 'C': return 'G';
-    case 'G': return 'C';
-    case 'T': return 'A';
-    case 'U': return 'A';
-    case 'M': return 'K';
-    case 'R': return 'Y';
-    case 'Y': return 'R';
-    case 'K': return 'M';
-    case 'V': return 'B';
-    case 'H': return 'D';
-    case 'D': return 'H';
-    case 'B': return 'V';
-    case 'N': return 'X';
-    case 'X': return 'X';
-    case 'a': return 't';
-    case 'c': return 'g';
-    case 'g': return 'c';
-    case 't': return 'a';
-    case 'u': return 'a';
-    case 'm': return 'k';
-    case 'r': return 'y';
-    case 'y': return 'r';
-    case 'k': return 'm';
-    case 'v': return 'b';
-    case 'h': return 'd';
-    case 'd': return 'h';
-    case 'b': return 'v';
-    case 'n': return 'x';
-    case 'x': return 'x';
+      case 'A': return 'T';
+      case 'C': return 'G';
+      case 'G': return 'C';
+      case 'T': return 'A';
+      case 'U': return 'A';
+      case 'M': return 'K';
+      case 'R': return 'Y';
+      case 'Y': return 'R';
+      case 'K': return 'M';
+      case 'V': return 'B';
+      case 'H': return 'D';
+      case 'D': return 'H';
+      case 'B': return 'V';
+      case 'N': return 'X';
+      case 'X': return 'X';
+      case 'a': return 't';
+      case 'c': return 'g';
+      case 'g': return 'c';
+      case 't': return 'a';
+      case 'u': return 'a';
+      case 'm': return 'k';
+      case 'r': return 'y';
+      case 'y': return 'r';
+      case 'k': return 'm';
+      case 'v': return 'b';
+      case 'h': return 'd';
+      case 'd': return 'h';
+      case 'b': return 'v';
+      case 'n': return 'x';
+      case 'x': return 'x';
+      default: return '-';
     }
-    return '-';
   }
 
 

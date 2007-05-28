@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
-import javax.swing.SwingUtilities;
 
 /**
  *  A timer thread that generates NeoTimerEvents at specified intervals.

@@ -17,7 +17,6 @@ import java.awt.*;
 import java.util.Vector;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  *  A glyph to display a vertical or horizontal numbered axis.
@@ -175,7 +174,7 @@ public class AxisGlyph extends Glyph {
     return this.labelFormat;
   }
 
-  private double tickOffset = .5f;
+  //private double tickOffset = .5f;
 
 
   protected int tickPlacement = ABOVE;
@@ -569,7 +568,6 @@ public class AxisGlyph extends Glyph {
     // Draw the base line.
 
     int center_line_start = axis_loc - centerLineThickness/2;
-    int center_line_end = center_line_start + centerLineThickness;
 
     if (orient == VERTICAL)  {
       g.fillRect(center_line_start, axis_start, centerLineThickness,axis_length);
@@ -642,7 +640,7 @@ public class AxisGlyph extends Glyph {
 
     if (DEBUG_DRAW) System.err.println("map_loc " + map_loc + ", max " + max_map);
 
-    int i = 0;
+
     double subtick_increment = tick_increment/10;
     double subtick_loc, rev_subtick_loc;
     // need to do tick_loc for those maps that don't start
@@ -691,8 +689,7 @@ public class AxisGlyph extends Glyph {
     // Draw the major tick marks including labels.
 
     int canvas_loc;   // location in canvas coordinates
-    int less_count = 0;
-    int greater_count = 0;
+
     int string_draw_count = 0;
     int init_tick_loc = (int)tick_loc;
 
@@ -748,7 +745,6 @@ public class AxisGlyph extends Glyph {
             g.fillRect(canvas_loc, center_line_start-2,
                        2, centerLineThickness+4);
           }
-          i++;
         }
       }
       //      System.out.println("initial loc: " + init_tick_loc + ", less_count: "+ less_count + ", greater_count: " + greater_count +
@@ -803,7 +799,6 @@ public class AxisGlyph extends Glyph {
             g.fillRect(canvas_loc, center_line_start-2,
                         2, centerLineThickness+4);
           }
-          i++;
         }
       }
     }

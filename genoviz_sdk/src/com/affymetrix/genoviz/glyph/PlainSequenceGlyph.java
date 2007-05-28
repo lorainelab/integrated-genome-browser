@@ -58,18 +58,16 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
 
   public void draw(ViewI view)
   {
-    double pixels_per_base, bases_per_pixel;
+    double pixels_per_base;
     pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
-    bases_per_pixel = 1/pixels_per_base;
 
     if (((double)((int)pixels_per_base) == pixels_per_base) &&
         ((int)pixels_per_base == font_width))
     {
-      int i, pixelstart, pixelwidth;
+      int pixelstart;
       double doublestart;
       if (sequence != null)
       {
-        Rectangle pixelclipbox = view.getPixelBox();
         Rectangle2D coordclipbox = view.getCoordBox();
         Graphics g = view.getGraphics();
 
@@ -90,7 +88,6 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
                             visible_seq_span, coordbox.height);
         view.transformToPixels(scratchrect, pixelbox);
         int seq_pixel_offset = pixelbox.x;
-        int seq_pixel_width =  pixelbox.width;
 
         doublestart = (double)seq_pixel_offset;
         pixelstart = (int)doublestart;

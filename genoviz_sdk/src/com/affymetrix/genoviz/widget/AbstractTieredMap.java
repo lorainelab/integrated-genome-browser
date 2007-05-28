@@ -447,7 +447,7 @@ public abstract class AbstractTieredMap
    * @see com.affymetrix.genoviz.widget.TierMapRubberBand#swap(int,int)
    */
   protected void packToMatch (AbstractTieredMap otherMap, boolean full_repack, boolean stretch_map ) {
-    double offset = 0.0f;
+
     MapTierGlyph ourTier, otherTier;
 
     if (!ableToPackToMatch) {return;}

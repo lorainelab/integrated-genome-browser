@@ -78,7 +78,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   private static final boolean DEBUG_RESHAPE = false;
   private static final boolean debug = false;
 
-  private static final boolean NM_DEBUG_COLORS = false;
   private static final boolean NM_DEBUG_PAINT = false;
 
   protected static Color default_map_background = new Color(180, 250, 250);
@@ -1404,8 +1403,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     int direction = evt.getDirection();
     if (src == canvas_drag_monitor) {
 
-      Rectangle2D vbox = getViewBounds();
-      String str;
+
       double scroll_to_coord;
       int pixels_per_scroll = 10;
       if (direction == NORTH) {
@@ -1425,14 +1423,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
           trans.inverseTransform(LinearTransform.X, pixels_per_scroll);
         scroll(X, scroll_to_coord);
         updateWidget();
-        str = "EAST";
       }
       else if (direction == WEST) {
         scroll_to_coord =
           trans.inverseTransform(LinearTransform.X, -pixels_per_scroll);
         scroll(X, scroll_to_coord);
         updateWidget();
-        str = "WEST";
       }
     }
   }

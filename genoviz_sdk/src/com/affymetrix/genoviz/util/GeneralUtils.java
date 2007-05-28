@@ -86,7 +86,7 @@ public class GeneralUtils  {
     if (hash1 == hash2) {
       return hash1;
     }
-    Object key, value;
+
     Hashtable<String,Object> return_hash = new Hashtable<String,Object>(hash2);
     return_hash.putAll(hash1);
     return return_hash;

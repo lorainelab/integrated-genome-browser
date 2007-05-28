@@ -14,9 +14,7 @@
 package com.affymetrix.genoviz.util;
 
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
-import com.affymetrix.genoviz.bioviews.Point2D;
 import java.awt.Rectangle;
-import java.awt.Point;
 
 /**
  *  Static methods for efficient geometry operations.

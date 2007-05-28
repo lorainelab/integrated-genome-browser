@@ -56,7 +56,7 @@ public class FloatingLabelGlyph extends Glyph
     int text_height = font.getHeight();
     int blank_width = font.charWidth ('z');
     double start, end;
-    double xpixel_center, ypixel_center;
+    double xpixel_center;
     boolean in_view = false;
 
     Rectangle2D view_box = view.getCoordBox();

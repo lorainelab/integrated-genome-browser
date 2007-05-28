@@ -15,19 +15,14 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.util.*;
-
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
-import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
-
 
 /**
  * implementation of SceneI interface.
  * See SceneI for better documentation of methods.
  */
 public class Scene implements SceneI  {
-  private static final boolean DEBUG_EVENTS = false;
   private static final boolean debug = false;
 
   protected GlyphI eveGlyph;

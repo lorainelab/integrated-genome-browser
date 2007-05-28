@@ -194,10 +194,9 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     sibs = parent.getChildren();
     if (sibs == null) { return null; }
 
-    /**
+    /*
      *  child packing
      */
-    Rectangle2D cbox;
     Rectangle2D pbox = parent.getCoordBox();
 
     // resetting height of parent to just spacers
@@ -240,7 +239,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
         child = sibs.elementAt(i);
-        cbox = child.getCoordBox();
+
         // MUST CALL moveAbsolute!!!
         // setCoords() does not guarantee that coord changes will recurse
         // down through descendants of child!

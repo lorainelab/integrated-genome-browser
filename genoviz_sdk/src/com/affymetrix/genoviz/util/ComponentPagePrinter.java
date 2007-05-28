@@ -84,7 +84,7 @@ public class ComponentPagePrinter implements Printable {
       return Printable.NO_SUCH_PAGE;
     }
 
-    int orientation = format.getOrientation();
+    //int orientation = format.getOrientation();
 
     // get the bounds of the component
     Dimension dim = comp.getSize();

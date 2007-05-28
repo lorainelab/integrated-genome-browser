@@ -102,8 +102,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
         full_rect.drawTraversal(view);
         full_rect.setSelected(false);
       }
-      else {
-        if (show_background) full_rect.drawTraversal(view);
+      else if (show_background) {
+        full_rect.drawTraversal(view);
       }
 
       // 2.) draw any child glyphs
@@ -127,10 +127,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   protected void drawVertical(ViewI view) {
-    Rectangle pixelclipbox = view.getPixelBox();
     Rectangle2D coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
-    double pixels_per_base, bases_per_pixel;
+    double pixels_per_base;
     int visible_ref_beg, visible_ref_end,
         visible_seq_beg, visible_seq_end, visible_seq_span,
         seq_beg_index, seq_end_index;
@@ -157,7 +156,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph
           coordbox.width, visible_seq_span);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleY();
-      bases_per_pixel = 1/pixels_per_base;
 
       // ***** background already drawn in drawTraversal(), so just return if
       // ***** scale is < 1 pixel per base
@@ -168,7 +166,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
       // ***** otherwise semantic zooming to show more detail *****
       else {
         if ( visible_seq_span > 0 ) {
-          int i, pixelstart, pixelwidth;
+          int i, pixelstart;
           double doublestart;
           // ***** draw the sequence string for visible bases if possible ****
           // Should the DNA string be drawn?
@@ -200,10 +198,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   protected void drawHorizontal(ViewI view) {
-    Rectangle pixelclipbox = view.getPixelBox();
     Rectangle2D coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
-    double pixels_per_base, bases_per_pixel;
+    double pixels_per_base;
     int visible_ref_beg, visible_ref_end,
         visible_seq_beg, visible_seq_end, visible_seq_span,
         seq_beg_index, seq_end_index;
@@ -230,9 +227,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
-      bases_per_pixel = 1/pixels_per_base;
+
       int seq_pixel_offset = pixelbox.x;
-      int seq_pixel_width =  pixelbox.width;
 
       // ***** background already drawn in drawTraversal(), so just return if
       // ***** scale is < 1 pixel per base

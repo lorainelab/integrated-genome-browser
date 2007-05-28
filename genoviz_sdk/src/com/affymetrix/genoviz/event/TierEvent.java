@@ -86,12 +86,12 @@ public class TierEvent extends EventObject {
    * array of size 2 -- [start location, end location].
    * Locations are top-down, zero-based.
    */
-  public void setMoveLocs (int[] moveLocs) {
-    if (moveLocs == null)
-      return;
-    this.moveLocs = new int[2];
-    this.moveLocs[0] = moveLocs[0];
-    this.moveLocs[1] = moveLocs[1];
+  public void setMoveLocs(int[] moveLocs) {
+    if (moveLocs != null) {
+      this.moveLocs = new int[2];
+      this.moveLocs[0] = moveLocs[0];
+      this.moveLocs[1] = moveLocs[1];
+    }
   }
 
   /**

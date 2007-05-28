@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.event;
 
 import java.util.EventListener;
-import java.awt.event.PaintEvent;
 
 public interface NeoPaintListener extends EventListener {
   public void componentPainted(NeoPaintEvent e);

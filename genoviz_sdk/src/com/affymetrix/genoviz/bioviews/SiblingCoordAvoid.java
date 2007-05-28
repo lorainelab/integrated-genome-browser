@@ -15,9 +15,7 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.util.*;
-import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  * This packer makes sure siblings do not overlap.

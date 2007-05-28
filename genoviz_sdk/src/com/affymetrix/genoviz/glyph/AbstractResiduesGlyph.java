@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  *  An abstract base class for several different biological sequence glyphs.

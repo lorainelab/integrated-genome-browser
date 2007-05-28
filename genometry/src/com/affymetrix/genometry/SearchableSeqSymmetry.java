@@ -16,5 +16,5 @@ package com.affymetrix.genometry;
 import java.util.List;
 
 public interface SearchableSeqSymmetry   {
-  public List getOverlappingChildren(SeqSpan span);
+  public List<SeqSymmetry> getOverlappingChildren(SeqSpan span);
 }

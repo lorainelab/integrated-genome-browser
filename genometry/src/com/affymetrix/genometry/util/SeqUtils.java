@@ -181,12 +181,9 @@ public abstract class SeqUtils {
 
 
 
-  //  protected static int getFirstNonNull(SeqSpan[] spans) {
-  protected static int getFirstNonNull(List spans) {
-    //    for (int i=0; i<spans.length; i++) {
+  protected static int getFirstNonNull(List<SeqSpan> spans) {
     int spanCount = spans.size();
     for (int i=0; i<spanCount; i++) {
-      //      if (spans[i] != null) { return i; }
       if (spans.get(i) != null) { return i; }
     }
     return -1;
@@ -241,7 +238,7 @@ public abstract class SeqUtils {
     }
   }
 
-  public static List getLeafSyms(SeqSymmetry sym) {
+  public static List<SeqSymmetry> getLeafSyms(SeqSymmetry sym) {
     ArrayList<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
     collectLeafSyms(sym, leafSyms);
     return leafSyms;
@@ -425,18 +422,18 @@ public abstract class SeqUtils {
     MutableSeqSymmetry mergesymA = spanMerger(tempA);
     MutableSeqSymmetry mergesymB = spanMerger(tempB);
 
-    List leavesA = getLeafSpans(mergesymA, seq);
-    List leavesB = getLeafSpans(mergesymB, seq);
+    List<SeqSpan> leavesA = getLeafSpans(mergesymA, seq);
+    List<SeqSpan> leavesB = getLeafSpans(mergesymB, seq);
 
     int countA = leavesA.size();
     int countB = leavesB.size();
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     for (int i=0; i<countA; i++) {
-      SeqSpan spanA = (SeqSpan)leavesA.get(i);
+      SeqSpan spanA = leavesA.get(i);
       if (spanA == null) { continue; }
       for (int k=0; k<countB; k++) {
-        SeqSpan spanB = (SeqSpan)leavesB.get(k);
+        SeqSpan spanB = leavesB.get(k);
         if (spanB == null) { continue; }
         if (SeqUtils.overlap(spanA, spanB)) {
           SeqSpan spanI = SeqUtils.intersection(spanA, spanB);
@@ -574,7 +571,7 @@ public abstract class SeqUtils {
 
 
   public static MutableSeqSymmetry flattenSymmetry(SeqSymmetry sym) {
-    List leafSyms = SeqUtils.getLeafSyms(sym);
+    List<SeqSymmetry> leafSyms = SeqUtils.getLeafSyms(sym);
     MutableSeqSymmetry result = new SimpleMutableSeqSymmetry();
     //  spans in result should be same as input
     //    (so won't bother with getChildBounds(), since then would
@@ -587,7 +584,7 @@ public abstract class SeqUtils {
     }
     int leafCount = leafSyms.size();
     for (int k=0; k<leafCount; k++) {
-      SeqSymmetry child = (SeqSymmetry)leafSyms.get(k);
+      SeqSymmetry child = leafSyms.get(k);
       result.addChild(child);
     }
     return result;
@@ -1068,7 +1065,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // first trying just deciding based on
         boolean USE_NEW_STEP1 = true;
         if (USE_NEW_STEP1) {
-          List map_child_list = null;
+          List<SeqSymmetry> map_child_list = null;
           // find a seq shared by both (linkseq);
           int res_span_count = resultSym.getSpanCount();
           for (int i=0; i<res_span_count; i++) {
@@ -1098,7 +1095,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
             NEW_STEP1_LOOP:
             for (int index = 0; index < new_child_count; index++) {  // start of loop through mapSym children
               //            SeqSymmetry map_child_sym = mapSym.getChild(index);
-              SeqSymmetry map_child_sym = (SeqSymmetry)map_child_list.get(index);
+              SeqSymmetry map_child_sym = map_child_list.get(index);
               MutableSeqSymmetry childResult = null;
               // STEP 1a "sit still"
               int spanCount = map_child_sym.getSpanCount();
@@ -1879,12 +1876,12 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
      */
     if (print_props && sym instanceof Propertied) {
       Propertied pp = (Propertied) sym;
-      Map props = pp.getProperties();
+      Map<String,Object> props = pp.getProperties();
       if (props != null) {
-        Iterator iter = props.entrySet().iterator();
+        Iterator<Map.Entry<String,Object>> iter = props.entrySet().iterator();
         while (iter.hasNext()) {
-          Map.Entry entry = (Map.Entry) iter.next();
-          Object key = entry.getKey();
+          Map.Entry<String,Object> entry = iter.next();
+          String key = entry.getKey();
           Object value = entry.getValue();
           System.out.println(indent + spacer + key + " --> " + value);
         }

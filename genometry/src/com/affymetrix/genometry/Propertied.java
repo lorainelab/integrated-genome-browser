@@ -16,8 +16,8 @@ package com.affymetrix.genometry;
 import java.util.*;
 
 public interface Propertied {
-  public Map getProperties();
-  public Map cloneProperties();
+  public Map<String,Object> getProperties();
+  public Map<String,Object> cloneProperties();
   public Object getProperty(String key);
   public boolean setProperty(String key, Object val);
 }

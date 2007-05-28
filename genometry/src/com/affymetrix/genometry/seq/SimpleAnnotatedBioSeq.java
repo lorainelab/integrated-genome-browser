@@ -94,14 +94,14 @@ public class SimpleAnnotatedBioSeq
   /**
    *  NOT YET IMPLEMENTED
    */
-  public List getIntersectedAnnotations(SeqSpan span) {
+  public List<SeqSymmetry> getIntersectedAnnotations(SeqSpan span) {
     return annots;
   }
 
   /**
    *  NOT YET IMPLEMENTED
    */
-  public List getContainedAnnotations(SeqSpan span) {
+  public List<SeqSymmetry> getContainedAnnotations(SeqSpan span) {
     return annots;
   }
 

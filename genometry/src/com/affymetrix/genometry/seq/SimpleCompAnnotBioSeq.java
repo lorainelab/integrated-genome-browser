@@ -14,8 +14,8 @@
 package com.affymetrix.genometry.seq;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.util.DNAUtils;
 
-import com.affymetrix.genoviz.util.DNAUtils;
 import java.util.ArrayList;
 import java.util.List;
 

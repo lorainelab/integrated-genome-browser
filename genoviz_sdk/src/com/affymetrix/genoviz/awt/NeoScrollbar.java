@@ -32,7 +32,6 @@ public class NeoScrollbar extends NeoBufferedComponent
 implements Adjustable, NeoTimerListener {
 
   private static final boolean debug = false;
-  private static final boolean DEBUG_PAINT = false;
 
   protected boolean color_thumb_foreground = false;
   protected boolean gutter_scroll = true;
@@ -414,18 +413,16 @@ implements Adjustable, NeoTimerListener {
     if (id == MouseEvent.MOUSE_ENTERED || id == MouseEvent.MOUSE_EXITED) {
       return;
     }
-    int prev_pixel, diff_pixel;
+    int diff_pixel;
     int x = e.getX();
     int y = e.getY();
     int diffx = x - prevx;
     int diffy = y - prevy;
     if (orientation == HORIZONTAL) {
-      prev_pixel = prevx;
       current_pixel = x;
       diff_pixel = diffx;
     }
     else {   // VERTICAL
-      prev_pixel = prevy;
       current_pixel = y;
       diff_pixel = diffy;
     }
@@ -618,7 +615,6 @@ implements Adjustable, NeoTimerListener {
   }
 
   public void processAdjustmentEvent(AdjustmentEvent evt) {
-    AdjustmentListener lis;
     if (listeners != null) {
       for (AdjustmentListener listener : listeners)  {
         listener.adjustmentValueChanged(evt);

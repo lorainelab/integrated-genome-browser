@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.awt;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.awt.event.PaintEvent;
 
 import com.affymetrix.genoviz.event.NeoPaintEvent;
 import com.affymetrix.genoviz.event.NeoPaintListener;
@@ -76,14 +75,12 @@ public class NeoCanvas extends NeoBufferedComponent  {
    * @param e an event to pass to them all.
    */
   public void postPaintEvent(NeoPaintEvent e) {
-    int id = e.getID();
-    NeoPaintListener pl;
+
     for (int i=0; i<paint_listeners.size(); i++) {
-      pl = paint_listeners.elementAt(i);
-      pl.componentPainted(e);  // assume for now event id is always PAINT
+      paint_listeners.elementAt(i).componentPainted(e);
+      // assume for now event id is always PAINT
     }
   }
-
 
   /**
    * Adds the specified listener to those receiving notification

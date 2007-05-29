@@ -76,7 +76,6 @@ public class LocalUrlCacher {
     // Need to make sure that full path of file is < 255 characters to ensure 
     //    cross-platform compatibility (some OS allow any length, some only restrict file name 
     //    length (last path segment), but there are some that restrict full path to <= 255 characters
-    // names longer than 255 characters would be md5-encoded, but this encodes
     if (cache_file_name.length() > 255) {
       if (REPORT_LONG_URLS) {
 	System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +

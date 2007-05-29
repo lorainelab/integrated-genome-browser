@@ -13,17 +13,9 @@
 
 package com.affymetrix.igb.servlets;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
 import java.net.*;
-import javax.swing.*;
-
-import org.mortbay.util.*;
 import org.mortbay.http.*;
 import org.mortbay.jetty.servlet.*;
-import org.mortbay.http.handler.*;
-import org.mortbay.servlet.*;
 
 import com.affymetrix.igb.IGB;
 
@@ -33,14 +25,25 @@ import com.affymetrix.igb.IGB;
  */
 public class UnibrowControlServer {
   public static final int default_server_port = 7085;
+
+  /** The OLD name of the IGB servlet, "UnibrowControl". */
   public final static String SERVLET_NAME_OLD = "UnibrowControl";
+
+  /** The current name of the IGB servlet, "IGBControl". Current versions of
+   *  IGB will respond to both this and {@link #SERVLET_NAME_OLD}, but versions
+   *  up to and including 4.56 will respond ONLY to the old name.
+   */
   public final static String SERVLET_NAME = "IGBControl";
   static int ports_to_try = 5;
   int server_port;
 
+  /** The basic localhost URL that starts a call to IGB; for backwards-compatibility
+   *  with versions of IGB 4.56 and earlier, the old name {@link #SERVLET_NAME_OLD}
+   *  is used.
+   */
   public static final String DEFAULT_SERVLET_URL = "http://localhost:"
       + UnibrowControlServer.default_server_port +
-      "/" + UnibrowControlServer.SERVLET_NAME;
+      "/" + UnibrowControlServer.SERVLET_NAME_OLD;
 
   public UnibrowControlServer(IGB uni) {
     try {
@@ -54,12 +57,12 @@ public class UnibrowControlServer {
         server_port++;
         try {
           // try and find an open port...
-          //	  System.out.println("trying port: " + server_port);
+          //      System.out.println("trying port: " + server_port);
           URL test_url = new URL("http://localhost:" + server_port +
                                  "/"+SERVLET_NAME+"?ping=yes");
           URLConnection conn = test_url.openConnection();
           conn.connect();
-          //	  System.out.println("port not available: " + server_port);
+          //      System.out.println("port not available: " + server_port);
           available_port_found = false;
           ports_tried++;
         }
@@ -89,13 +92,13 @@ public class UnibrowControlServer {
         context.addHandler(servlets);
         // Map a servlet onto the container
         ServletHolder sholder = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME+"/*",
-						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
-	sholder.setInitOrder(1);
+                                                    "com.affymetrix.igb.servlets.UnibrowControlServlet");
+        sholder.setInitOrder(1);
         ServletHolder sholder_old = servlets.addServlet(SERVLET_NAME, "/"+SERVLET_NAME_OLD+"/*",
-						    "com.affymetrix.igb.servlets.UnibrowControlServlet");
+                                                    "com.affymetrix.igb.servlets.UnibrowControlServlet");
 
-	ServletHolder writeback_test_servlet = servlets.addServlet("Das2WritebackTester", "/Das2WritebackTester/*",
-						    "com.affymetrix.igb.servlets.Das2WritebackDevel");
+        ServletHolder writeback_test_servlet = servlets.addServlet("Das2WritebackTester", "/Das2WritebackTester/*",
+                                                    "com.affymetrix.igb.servlets.Das2WritebackDevel");
 
         server.addContext(context);
 
@@ -104,8 +107,8 @@ public class UnibrowControlServer {
 
         // set the form content size limit high to allow for long urls
         System.setProperty("org.mortbay.http.HttpRequest.maxFormContentSize", "100000000");
-	UnibrowControlServlet igb_controller = (UnibrowControlServlet)sholder.getServlet();
-	igb_controller.setUnibrowInstance(uni);
+        UnibrowControlServlet igb_controller = (UnibrowControlServlet)sholder.getServlet();
+        igb_controller.setUnibrowInstance(uni);
       }
     }
     catch (Exception ex) {
@@ -131,10 +134,10 @@ public class UnibrowControlServer {
           URL test_url = new URL("http://localhost:" + current_port + "/"+SERVLET_NAME+"?ping=yes");
           URLConnection conn = test_url.openConnection();
           conn.connect();
-          //	  System.out.println("port not available: " + server_port);
-	  System.out.println("found another igb listening at port: " + current_port);
-	  other_igb_port = current_port;
-	  break;
+          //      System.out.println("port not available: " + server_port);
+          System.out.println("found another igb listening at port: " + current_port);
+          other_igb_port = current_port;
+          break;
         }
         catch (Exception ex) {
           System.out.println("no igb found at port: " + current_port);

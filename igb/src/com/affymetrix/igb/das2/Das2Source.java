@@ -59,6 +59,7 @@ public class Das2Source {
   public URI getURI() { return source_uri; }
   public String getID() { return source_uri.toString(); }
   public String getName() { return name; }
+  public String toString() { return getName(); }
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public String getTaxon() { return taxon; }

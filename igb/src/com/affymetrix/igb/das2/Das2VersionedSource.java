@@ -102,6 +102,7 @@ public class Das2VersionedSource  {
   public URI getURI() { return version_uri; }
   public String getID() { return version_uri.toString(); }
   public String getName() { return name; }
+  public String toString() { return getName(); }
   public String getDescription() { return description; }
   public String getInfoUrl() { return info_url; }
   public Date getCreationDate() { return creation_date; }

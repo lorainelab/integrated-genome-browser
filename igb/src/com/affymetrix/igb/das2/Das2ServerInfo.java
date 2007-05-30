@@ -72,6 +72,8 @@ public class Das2ServerInfo  {
     return name;
   }
 
+  public String toString() { return getName(); }
+
   public synchronized Map getSources() {
     if (!initialized) { initialize(); }
     return sources;

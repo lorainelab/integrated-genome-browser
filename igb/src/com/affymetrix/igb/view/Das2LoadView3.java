@@ -35,21 +35,24 @@ import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import javax.swing.event.*;
 
+import skt.swing.tree.check.CheckTreeManager;
+import skt.swing.tree.check.TreePathSelectable;
+
 /**
  *  New strategy for handling DAS/2 data
- *  
+ *
  *  Choosing which genome to view is left to a different component
  *  Das2LoadView3 focuses on accessing annotation data (DAS/2 features and their types)
- *  2 main windows (possibly 
- *    A) JTree 
+ *  2 main windows (possibly
+ *    A) JTree
  *         Tree hierarchy DAS/2 server->source->version->types for all servers Das2Discover class knows about
  *         but filtered to only show those relevant to currently viewed genome
  *         Tree is pruned to only show paths with versions matching current genome
  *         Leafs are types with checkboxes for toggling loading
  *         Possibly checkboxes on version for allowing all/some/none of version's types to be loaded?
- *     
- *    B) JTable 
- *         Table of DAS/2 types that are marked for loading AND are from version that matches current genome, 
+ *
+ *    B) JTable
+ *         Table of DAS/2 types that are marked for loading AND are from version that matches current genome,
  *         these are compiled from across all DAS/2 servers that Das2Discovery class knows about
  *         Synchronized selection between A) and B) ?
  *         includes load checkbox, unchecking removes type from table (or just unchecks?)
@@ -81,6 +84,7 @@ public class Das2LoadView3 extends JComponent
   JScrollPane table_scroller;
   JScrollPane tree_table_scroller;
   JTree tree;
+  CheckTreeManager check_tree_manager; // manager for tree with checkboxes
 
   Map das_servers;
   Map version2typestates = new LinkedHashMap();
@@ -112,8 +116,15 @@ public class Das2LoadView3 extends JComponent
     }
     tree = new JTree(top);
     */
-    
+
     tree = new JTree();
+    boolean TREE_DIG = true;
+    TreePathSelectable threeplus = new TreePathSelectable(){
+      public boolean isSelectable(TreePath path){
+	return path.getPathCount() >= 5;
+      }
+    } ;
+    check_tree_manager = new CheckTreeManager(tree, TREE_DIG, threeplus);
 
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
@@ -161,12 +172,23 @@ public class Das2LoadView3 extends JComponent
       (TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.addTreeSelectionListener(this);
 
+    check_tree_manager.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+	public void valueChanged(TreeSelectionEvent evt) {
+	  TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
+	  int pcount = checkedPaths == null ? 0 : checkedPaths.length;
+	  System.out.println("checked path count: " + pcount);
+	}
+      } ) ;
+
     searchTF.addActionListener(this);
   }
 
 
   public void valueChanged(TreeSelectionEvent evt) {
+    //    System.out.println("TreeSelectionEvent: " + evt);
     Object node = tree.getLastSelectedPathComponent();
+
+    // to get the multiple paths that are currently checked:
     if (node == null) return;
     if (node instanceof Das2VersionTreeNode) {
       current_version = ((Das2VersionTreeNode)node).getVersionedSource();
@@ -533,10 +555,53 @@ public class Das2LoadView3 extends JComponent
     System.out.println("############## Das2LoadView3.redoTreeView() called #############");
     java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
     Iterator iter = versions.iterator();
+    Set servers = new LinkedHashSet();
+    Set sources = new LinkedHashSet();
+    Map server2node = new LinkedHashMap();
+    Map source2node = new LinkedHashMap();
     while (iter.hasNext()) {
       Das2VersionedSource version = (Das2VersionedSource)iter.next();
       System.out.println("####   version match: " + version.getID());
+      Das2Source source = version.getSource();
+      Das2ServerInfo server = source.getServerInfo();
+      servers.add(server);
+      sources.add(source);
     }
+
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
+    //    top.insert(new JCheckBox("whatever"), 0);
+    //    top.insert(new JCheckBox("hmm"), 0);
+
+    Iterator serveriter = servers.iterator();
+    while (serveriter.hasNext()) {
+      Das2ServerInfo server = (Das2ServerInfo)serveriter.next();
+      //      Das2ServerTreeNode snode = new Das2ServerTreeNode(server);
+      DefaultMutableTreeNode server_node = new DefaultMutableTreeNode(server);
+      top.add(server_node);
+      server2node.put(server, server_node);
+    }
+
+    Iterator sourceiter = sources.iterator();
+    while (sourceiter.hasNext()) {
+      Das2Source source = (Das2Source)sourceiter.next();
+      Das2ServerInfo server = source.getServerInfo();
+      DefaultMutableTreeNode server_node = (DefaultMutableTreeNode)server2node.get(server);
+      //      Das2SourceNode source_node = new Das2SourceNode(source);
+      DefaultMutableTreeNode source_node = new DefaultMutableTreeNode(source);
+      server_node.add(source_node);
+      source2node.put(source, source_node);
+    }
+
+    Iterator viter = versions.iterator();
+    while (viter.hasNext()) {
+      Das2VersionedSource version = (Das2VersionedSource)viter.next();
+      Das2Source source = version.getSource();
+      DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
+      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version);
+      source_node.add(version_node);
+    }
+    TreeModel tmodel = new DefaultTreeModel(top, true);
+    tree.setModel(tmodel);
   }
 
 }  // END Das2LoadView3 class
@@ -741,7 +806,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
 /**
  *  TreeNode wrapper around a Das2ServerInfo object.
  */
-class Das2ServerTreeNode extends DataSourcesAbstractNode {
+class Das2ServerTreeNode extends DefaultMutableTreeNode {
   Das2ServerInfo server;
   // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
   Vector child_nodes = null;
@@ -785,16 +850,14 @@ class Das2ServerTreeNode extends DataSourcesAbstractNode {
       Iterator iter = sources.values().iterator();
       while (iter.hasNext()) {
 	Das2Source source = (Das2Source)iter.next();
-	/*
-	Map versions = source.getVersions();
-	Iterator iter = versions.values().iterator();
-	while (iter.hasNext()) {
-	  Das2VersionedSource version = (Das2VersionedSource)iter.next();
-	  if (version
-	  Das2VersionTreeNode child = new Das2VersionTreeNode(version);
-	  version_nodes.add(child);
-	}
-	*/
+	//	Map versions = source.getVersions();
+	//	Iterator iter = versions.values().iterator();
+	//	while (iter.hasNext()) {
+	//	  Das2VersionedSource version = (Das2VersionedSource)iter.next();
+	//	  if (version
+	//	  Das2VersionTreeNode child = new Das2VersionTreeNode(version);
+	//	  version_nodes.add(child);
+	//	}
 	Das2SourceTreeNode child = new Das2SourceTreeNode(source);
 	child_nodes.add(child);
       }
@@ -807,14 +870,14 @@ class Das2ServerTreeNode extends DataSourcesAbstractNode {
   /** NOT YET IMPLEMENTED */
   public int getIndex(TreeNode node) {
     System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
-    return -1;
+    return super.getIndex(node);
   }
 }
 
 /**
  *  TreeNode wrapper around a Das2Source object.
  */
-class Das2SourceTreeNode extends DataSourcesAbstractNode {
+class Das2SourceTreeNode extends DefaultMutableTreeNode {
   Das2Source source;
   Vector version_nodes;
 
@@ -838,8 +901,8 @@ class Das2SourceTreeNode extends DataSourcesAbstractNode {
   public String toString() { return source.getName(); }
   /** NOT YET IMPLEMENTED */
   public int getIndex(TreeNode node) {
-    System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
-    return -1;
+    System.out.println("Das2SourceTreeNode.getIndex() called: " + toString());
+    return super.getIndex(node);
   }
 
 }
@@ -849,93 +912,76 @@ class Das2SourceTreeNode extends DataSourcesAbstractNode {
  * Maybe don't really need this, since Das2VersionedSource could itself serve
  * as a leaf.
  */
-class Das2VersionTreeNode extends DataSourcesAbstractNode {
+class Das2VersionTreeNode extends DefaultMutableTreeNode {
   Das2VersionedSource version;
+  boolean populated = false;
 
   public Das2VersionTreeNode(Das2VersionedSource version) { this.version = version; }
   public Das2VersionedSource getVersionedSource() { return version; }
   public String toString() { return version.getName(); }
-
-  // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
-  Vector child_nodes = null;
+  public boolean getAllowsChildren() { return true; }
+  public boolean isLeaf() { return false; }
 
   public int getChildCount() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.size();
+    if (! populated) { populate(); }
+    return super.getChildCount();
   }
 
   public TreeNode getChildAt(int childIndex) {
-    if (child_nodes == null) { populate(); }
-    return (TreeNode)child_nodes.get(childIndex);
+    if (! populated) { populate(); }
+    return super.getChildAt(childIndex);
   }
 
   public Enumeration children() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.elements();
+    if (! populated) { populate(); }
+    return super.children();
   }
 
   /**
    *  First time children are accessed, this will trigger dynamic access to DAS2 server.
+   *
+   *  Need to add hierarchical types structure for type names that can be treated as paths...
    */
-  protected void populate() {
-    if (child_nodes == null) {
+  protected synchronized void populate() {
+    if (! populated) {
+      populated = true;
       Map types = version.getTypes();
-      child_nodes = new Vector(types.size());
+      //      child_nodes = new Vector(types.size());
       Iterator iter = types.values().iterator();
       while (iter.hasNext()) {
 	Das2Type type = (Das2Type)iter.next();
-	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
-	child_nodes.add(child);
+	//	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
+	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
+	child.setAllowsChildren(false);
+	//	child_nodes.add(child);
+	this.add(child);
       }
     }
   }
 
-  public boolean getAllowsChildren() { return true; }
-  public boolean isLeaf() { return false; }
-  public int getIndex(TreeNode node) {
-    System.out.println("Das2VersionTreeNode.getIndex() called: " + toString());
-    return -1;
-  }
 }
 
 
+/*
 
-class Das2TypeTreeNode extends DataSourcesAbstractNode {
+class Das2TypeTreeNode extends DefaultMutableTreeNode {
   //  Das2TypeState type_state;
   Das2Type type;
   public Das2TypeTreeNode(Das2Type type) { this.type = type; }
   //  public Das2TypeState getTypeState() { return type_state; }
   //  public Das2Type getDas2Type(}) { return type_state.getDas2Type(); }
-
   public String toString() { return type.getName(); }
   public int getChildCount() { return 0; }
   public TreeNode getChildAt(int index) { return null; }
   public Enumeration children() { return null; }
   public boolean getAllowsChildren() { return false; }
   public boolean isLeaf() { return true; }
-  public int getIndex(TreeNode node) {
-    System.out.println("Das2TypeTreeNode.getIndex() called: " + toString());
-    return -1;
-  }
+
+  //  public int getIndex(TreeNode node) {
+  //    System.out.println("Das2TypeTreeNode.getIndex() called: " + toString());
+  //    return super.getIndex(node);
+  //  }
 }
 
-
-
-/**
- *   Stubs out MutableTreeNode methods that aren't used for Das2*Node objects.
- */
-abstract class DataSourcesAbstractNode implements MutableTreeNode {
-  TreeNode parent;
-  public void insert(MutableTreeNode child, int index)  {}
-  public void remove(int index) {}
-  public void remove(MutableTreeNode node) {}
-  public void removeFromParent() {}
-  public void setParent(MutableTreeNode newParent) {
-    this.parent = parent;
-  }
-  public TreeNode getParent() {
-    return parent;
-  }
-  public void setUserObject(Object object) {}
-}
+*/
 

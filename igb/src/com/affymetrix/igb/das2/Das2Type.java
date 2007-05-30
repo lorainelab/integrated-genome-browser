@@ -45,6 +45,7 @@ public class Das2Type {
   public URI getURI() { return type_uri; }
   public String getID() { return type_uri.toString(); }
   public String getName() { return name; }
+  public String toString() { return getName(); }
   public String getOntology() { return ontology; }
   public String getDerivation() { return derivation; }  // source attribute, but getSource() clashes with getVersionedSource();
   public String getInfoUrl() { return info_url; }

@@ -617,18 +617,6 @@ public class Das2LoadView3 extends JComponent
 
 
 /**
- *  Relates a Das2VersionedSource to it's status in IGB.
- *  For example, whether _any_ annotations should be loaded from it
- *    (overrides Das2TypeState.load for any Das2Types served from that Das2VersionedSource)
- */
-class Das2VersionState {
-  static Preferences root_node = UnibrowPrefsUtil.getTopNode();
-  static Preferences das2_node = root_node.node("das2");
-  static boolean default_load = true;
-
-}
-
-/**
  *  Relates a Das2Type to it's status in IGB.
  *  For example, whether it's load strategy is set to "full sequence"
  *  or "visible range", and possibly other details.
@@ -724,13 +712,15 @@ class Das2TypeState {
 
 
 class Das2TypesTableModel extends AbstractTableModel   {
-  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range" };
+  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server" };
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
   static int ID_COLUMN = 2;
   static int ONTOLOGY_COLUMN = 3;
   static int SOURCE_COLUMN = 4;
   static int LOAD_STRATEGY_COLUMN = 5;
+  static int VSOURCE_COLUMN = 6;
+  static int SERVER_COLUMN = 7;
 
   static int model_count = 0;
 
@@ -782,6 +772,12 @@ class Das2TypesTableModel extends AbstractTableModel   {
     else if (col == LOAD_BOOLEAN_COLUMN) {
       return (state.getLoad() ? Boolean.TRUE : Boolean.FALSE);
     }
+    else if (col == VSOURCE_COLUMN) {
+      return type.getVersionedSource().getName();
+    }
+    else if (col == SERVER_COLUMN) {  
+      return type.getVersionedSource().getSource().getServerInfo().getName();
+    }
     return null;
   }
 
@@ -811,109 +807,6 @@ class Das2TypesTableModel extends AbstractTableModel   {
   }
 }
 
-
-/**
- *  TreeNode wrapper around a Das2ServerInfo object.
- */
-/*
-class Das2ServerTreeNode extends DefaultMutableTreeNode {
-  Das2ServerInfo server;
-  // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
-  Vector child_nodes = null;
-  boolean filter_by_genome;
-
-
-  public Das2ServerTreeNode(Das2ServerInfo server) {
-    this(server, false);
-  }
-
-//    If filter_by_genome
-  public Das2ServerTreeNode(Das2ServerInfo server, boolean filter_by_genome) {
-    this.server = server;
-    this.filter_by_genome = filter_by_genome;
-  }
-
-  public int getChildCount() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.size();
-  }
-
-  public TreeNode getChildAt(int childIndex) {
-    if (child_nodes == null) { populate(); }
-    return (TreeNode)child_nodes.get(childIndex);
-  }
-
-  public Enumeration children() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.elements();
-  }
-
-  //  First time children are accessed, this will trigger dynamic access to DAS2 server.
-  protected void populate() {
-    if (child_nodes == null) {
-      Map sources = server.getSources();
-      child_nodes = new Vector(sources.size());
-      Iterator iter = sources.values().iterator();
-      while (iter.hasNext()) {
-	Das2Source source = (Das2Source)iter.next();
-	//	Map versions = source.getVersions();
-	//	Iterator iter = versions.values().iterator();
-	//	while (iter.hasNext()) {
-	//	  Das2VersionedSource version = (Das2VersionedSource)iter.next();
-	//	  if (version
-	//	  Das2VersionTreeNode child = new Das2VersionTreeNode(version);
-	//	  version_nodes.add(child);
-	//	}
-	Das2SourceTreeNode child = new Das2SourceTreeNode(source);
-	child_nodes.add(child);
-      }
-    }
-  }
-
-  public boolean getAllowsChildren() { return true; }
-  public boolean isLeaf() { return false; }
-  public String toString() { return server.getName(); }
-  // NOT YET IMPLEMENTED 
-  public int getIndex(TreeNode node) {
-    System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
-    return super.getIndex(node);
-  }
-}
-*/
-
-/**
- *  TreeNode wrapper around a Das2Source object.
- */
-/*
-class Das2SourceTreeNode extends DefaultMutableTreeNode {
-  Das2Source source;
-  Vector version_nodes;
-
-  public Das2SourceTreeNode(Das2Source source) {
-    this.source = source;
-    Map versions = source.getVersions();
-    version_nodes = new Vector(versions.size());
-    Iterator iter = versions.values().iterator();
-    while (iter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)iter.next();
-      Das2VersionTreeNode child = new Das2VersionTreeNode(version);
-      version_nodes.add(child);
-    }
-  }
-  public Das2Source getSource() { return source; }
-  public int getChildCount() { return version_nodes.size(); }
-  public TreeNode getChildAt(int childIndex) { return (TreeNode)version_nodes.get(childIndex); }
-  public Enumeration children() { return version_nodes.elements(); }
-  public boolean getAllowsChildren() { return true; }
-  public boolean isLeaf() { return false; }
-  public String toString() { return source.getName(); }
-  // NOT YET IMPLEMENTED
-  public int getIndex(TreeNode node) {
-    System.out.println("Das2SourceTreeNode.getIndex() called: " + toString());
-    return super.getIndex(node);
-  }
-}
-*/
 
 /**
  * TreeNode wrapper around a Das2VersionedSource object.
@@ -985,26 +878,4 @@ class Das2VersionTreeNode extends DefaultMutableTreeNode {
 }
 
 
-/*
-
-class Das2TypeTreeNode extends DefaultMutableTreeNode {
-  //  Das2TypeState type_state;
-  Das2Type type;
-  public Das2TypeTreeNode(Das2Type type) { this.type = type; }
-  //  public Das2TypeState getTypeState() { return type_state; }
-  //  public Das2Type getDas2Type(}) { return type_state.getDas2Type(); }
-  public String toString() { return type.getName(); }
-  public int getChildCount() { return 0; }
-  public TreeNode getChildAt(int index) { return null; }
-  public Enumeration children() { return null; }
-  public boolean getAllowsChildren() { return false; }
-  public boolean isLeaf() { return true; }
-
-  //  public int getIndex(TreeNode node) {
-  //    System.out.println("Das2TypeTreeNode.getIndex() called: " + toString());
-  //    return super.getIndex(node);
-  //  }
-}
-
-*/
 

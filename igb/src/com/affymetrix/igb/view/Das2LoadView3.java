@@ -36,6 +36,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import javax.swing.event.*;
 
 import skt.swing.tree.check.CheckTreeManager;
+import skt.swing.tree.check.CheckTreeSelectionModel;
 import skt.swing.tree.check.TreePathSelectable;
 
 /**
@@ -43,7 +44,7 @@ import skt.swing.tree.check.TreePathSelectable;
  *
  *  Choosing which genome to view is left to a different component
  *  Das2LoadView3 focuses on accessing annotation data (DAS/2 features and their types)
- *  2 main windows (possibly
+ *  Two main windows (possibly three)
  *    A) JTree
  *         Tree hierarchy DAS/2 server->source->version->types for all servers Das2Discover class knows about
  *         but filtered to only show those relevant to currently viewed genome
@@ -104,21 +105,14 @@ public class Das2LoadView3 extends JComponent
     gviewer = IGB.getSingletonIGB().getMapView();
     gviewer.addDataRequestListener(this);
 
-    /*
-    DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
-    das_servers = Das2Discovery.getDas2Servers();
-    Iterator iter = das_servers.values().iterator();
-    while (iter.hasNext()) {
-      Das2ServerInfo server = (Das2ServerInfo)iter.next();
-      String server_name = server.getName();
-      Das2ServerTreeNode snode = new Das2ServerTreeNode(server);
-      top.add(snode);
-    }
-    tree = new JTree(top);
-    */
-
     tree = new JTree();
-    boolean TREE_DIG = true;
+    /**
+     *  If set TREE_DIG = true, then will need to debug 
+     *    skt.swing.tree.check.CheckTreeSelectionModel.isDescendant(), which is throwing 
+     *    ArrayOutOfBoundsExceptions when CheckTreeSelectionModel.addSelectionPaths() is called
+     *    (looks like it needs a path length comparison added)
+     */
+    boolean TREE_DIG = false;
     TreePathSelectable threeplus = new TreePathSelectable(){
       public boolean isSelectable(TreePath path){
 	return path.getPathCount() >= 5;
@@ -177,6 +171,23 @@ public class Das2LoadView3 extends JComponent
 	  TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
 	  int pcount = checkedPaths == null ? 0 : checkedPaths.length;
 	  System.out.println("checked path count: " + pcount);
+	  TreePath[] changed_paths = evt.getPaths();
+	  int change_count = changed_paths.length;
+	  System.out.println("    changed selection count: " + change_count); 
+	  for (int i=0; i<change_count; i++) {
+	    TreePath path = changed_paths[i];
+	    boolean node_checked = evt.isAddedPath(i);
+	    Object change_node = path.getLastPathComponent();
+	    if (change_node instanceof DefaultMutableTreeNode) {
+	      DefaultMutableTreeNode tnode = (DefaultMutableTreeNode)change_node;
+	      Object userobj = tnode.getUserObject();
+	      if (userobj instanceof Das2TypeState) {
+		Das2TypeState tstate = (Das2TypeState)userobj;
+		System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
+		tstate.setLoad(node_checked);
+	      }
+	    }
+	  }
 	}
       } ) ;
 
@@ -569,8 +580,6 @@ public class Das2LoadView3 extends JComponent
     }
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
-    //    top.insert(new JCheckBox("whatever"), 0);
-    //    top.insert(new JCheckBox("hmm"), 0);
 
     Iterator serveriter = servers.iterator();
     while (serveriter.hasNext()) {
@@ -597,7 +606,7 @@ public class Das2LoadView3 extends JComponent
       Das2VersionedSource version = (Das2VersionedSource)viter.next();
       Das2Source source = version.getSource();
       DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
-      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version);
+      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version, check_tree_manager);
       source_node.add(version_node);
     }
     TreeModel tmodel = new DefaultTreeModel(top, true);
@@ -710,7 +719,7 @@ class Das2TypeState {
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
   public Das2Type getDas2Type() { return type; }
-  public String toString() { return getDas2Type().getName(); }
+  public String toString() { return getDas2Type().toString(); }
 }
 
 
@@ -806,6 +815,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
 /**
  *  TreeNode wrapper around a Das2ServerInfo object.
  */
+/*
 class Das2ServerTreeNode extends DefaultMutableTreeNode {
   Das2ServerInfo server;
   // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
@@ -817,9 +827,7 @@ class Das2ServerTreeNode extends DefaultMutableTreeNode {
     this(server, false);
   }
 
-  /**
-   *  If filter_by_genome
-   */
+//    If filter_by_genome
   public Das2ServerTreeNode(Das2ServerInfo server, boolean filter_by_genome) {
     this.server = server;
     this.filter_by_genome = filter_by_genome;
@@ -840,9 +848,7 @@ class Das2ServerTreeNode extends DefaultMutableTreeNode {
     return child_nodes.elements();
   }
 
-  /**
-   *  First time children are accessed, this will trigger dynamic access to DAS2 server.
-   */
+  //  First time children are accessed, this will trigger dynamic access to DAS2 server.
   protected void populate() {
     if (child_nodes == null) {
       Map sources = server.getSources();
@@ -867,16 +873,18 @@ class Das2ServerTreeNode extends DefaultMutableTreeNode {
   public boolean getAllowsChildren() { return true; }
   public boolean isLeaf() { return false; }
   public String toString() { return server.getName(); }
-  /** NOT YET IMPLEMENTED */
+  // NOT YET IMPLEMENTED 
   public int getIndex(TreeNode node) {
     System.out.println("Das2ServerTreeNode.getIndex() called: " + toString());
     return super.getIndex(node);
   }
 }
+*/
 
 /**
  *  TreeNode wrapper around a Das2Source object.
  */
+/*
 class Das2SourceTreeNode extends DefaultMutableTreeNode {
   Das2Source source;
   Vector version_nodes;
@@ -899,13 +907,13 @@ class Das2SourceTreeNode extends DefaultMutableTreeNode {
   public boolean getAllowsChildren() { return true; }
   public boolean isLeaf() { return false; }
   public String toString() { return source.getName(); }
-  /** NOT YET IMPLEMENTED */
+  // NOT YET IMPLEMENTED
   public int getIndex(TreeNode node) {
     System.out.println("Das2SourceTreeNode.getIndex() called: " + toString());
     return super.getIndex(node);
   }
-
 }
+*/
 
 /**
  * TreeNode wrapper around a Das2VersionedSource object.
@@ -915,8 +923,12 @@ class Das2SourceTreeNode extends DefaultMutableTreeNode {
 class Das2VersionTreeNode extends DefaultMutableTreeNode {
   Das2VersionedSource version;
   boolean populated = false;
+  CheckTreeManager ctm;
 
-  public Das2VersionTreeNode(Das2VersionedSource version) { this.version = version; }
+  public Das2VersionTreeNode(Das2VersionedSource version, CheckTreeManager ctm) {
+    this.version = version; 
+    this.ctm = ctm;
+  }
   public Das2VersionedSource getVersionedSource() { return version; }
   public String toString() { return version.getName(); }
   public boolean getAllowsChildren() { return true; }
@@ -950,11 +962,22 @@ class Das2VersionTreeNode extends DefaultMutableTreeNode {
       Iterator iter = types.values().iterator();
       while (iter.hasNext()) {
 	Das2Type type = (Das2Type)iter.next();
+	Das2TypeState tstate = new Das2TypeState(type);
+	System.out.println("type: " + tstate);
 	//	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
-	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
+	//	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
+	DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
 	child.setAllowsChildren(false);
 	//	child_nodes.add(child);
 	this.add(child);
+	if (tstate.getLoad()) {
+	  System.out.println("  setting type to loaded");
+	  TreePath child_path = new TreePath(child.getPath());
+	  TreePath[] paths = new TreePath[1];
+          paths[0] = child_path;
+	  CheckTreeSelectionModel ctmodel = ctm.getSelectionModel();
+	  ctmodel.addSelectionPaths(paths);
+	}
       }
     }
   }

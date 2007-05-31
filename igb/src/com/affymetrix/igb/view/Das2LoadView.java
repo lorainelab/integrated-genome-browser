@@ -41,7 +41,7 @@ import javax.swing.event.*;  // temporary visualization till hooked into IGB
 public class Das2LoadView extends JComponent
   implements ActionListener, TableModelListener,
 	     SeqSelectionListener, GroupSelectionListener,
-             TreeSelectionListener, DataRequestListener {
+             TreeSelectionListener {
 
   static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
@@ -94,7 +94,6 @@ public class Das2LoadView extends JComponent
     USE_SIMPLE_VIEW = simple_view;
     if (!USE_SIMPLE_VIEW) {
       gviewer = IGB.getSingletonIGB().getMapView();
-      gviewer.addDataRequestListener(this);
     }
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
@@ -573,12 +572,6 @@ public class Das2LoadView extends JComponent
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
     frm.setVisible(true);
-  }
-
-  public boolean dataRequested(DataRequestEvent evt) {
-    System.out.println("Das2LoadView recieved DataRequestEvent: " + evt);
-    loadFeaturesInView();
-    return false;
   }
 
 }

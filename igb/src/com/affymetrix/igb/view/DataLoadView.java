@@ -30,7 +30,7 @@ public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static boolean USE_QUICKLOAD = true;
-  static boolean USE_DAS2_VIEW = false;
+  static boolean USE_DAS2_VIEW = true;
   static boolean USE_DAS2_VIEW3 = true;
   static boolean USE_DAS1_VIEW = false;
 

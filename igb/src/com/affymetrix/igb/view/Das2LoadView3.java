@@ -66,7 +66,7 @@ import skt.swing.tree.check.TreePathSelectable;
 public class Das2LoadView3 extends JComponent
   implements ActionListener, TableModelListener,
 	     SeqSelectionListener, GroupSelectionListener,
-             TreeSelectionListener, DataRequestListener {
+	     DataRequestListener {
 
   static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
@@ -107,8 +107,8 @@ public class Das2LoadView3 extends JComponent
 
     tree = new JTree();
     /**
-     *  If set TREE_DIG = true, then will need to debug 
-     *    skt.swing.tree.check.CheckTreeSelectionModel.isDescendant(), which is throwing 
+     *  If set TREE_DIG = true, then will need to debug
+     *    skt.swing.tree.check.CheckTreeSelectionModel.isDescendant(), which is throwing
      *    ArrayOutOfBoundsExceptions when CheckTreeSelectionModel.addSelectionPaths() is called
      *    (looks like it needs a path length comparison added)
      */
@@ -164,7 +164,7 @@ public class Das2LoadView3 extends JComponent
 
     tree.getSelectionModel().setSelectionMode
       (TreeSelectionModel.SINGLE_TREE_SELECTION);
-    tree.addTreeSelectionListener(this);
+    //    tree.addTreeSelectionListener(this);
 
     check_tree_manager.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
 	public void valueChanged(TreeSelectionEvent evt) {
@@ -173,7 +173,7 @@ public class Das2LoadView3 extends JComponent
 	  System.out.println("checked path count: " + pcount);
 	  TreePath[] changed_paths = evt.getPaths();
 	  int change_count = changed_paths.length;
-	  System.out.println("    changed selection count: " + change_count); 
+	  System.out.println("    changed selection count: " + change_count);
 	  for (int i=0; i<change_count; i++) {
 	    TreePath path = changed_paths[i];
 	    boolean node_checked = evt.isAddedPath(i);
@@ -195,19 +195,20 @@ public class Das2LoadView3 extends JComponent
   }
 
 
+  /*
   public void valueChanged(TreeSelectionEvent evt) {
     //    System.out.println("TreeSelectionEvent: " + evt);
     Object node = tree.getLastSelectedPathComponent();
-
     // to get the multiple paths that are currently checked:
     if (node == null) return;
     if (node instanceof Das2VersionTreeNode) {
       current_version = ((Das2VersionTreeNode)node).getVersionedSource();
       System.out.println(current_version);
       System.out.println("  clicked on Das2VersionTreeNode to select genome: " + current_version.getGenome().getID());
-      setRegionsAndTypes();
+      //      setRegionsAndTypes();
     }
   }
+  */
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
@@ -221,68 +222,6 @@ public class Das2LoadView3 extends JComponent
   }
 
 
-  public void setRegionsAndTypes() {
-    //    load_featuresB.setEnabled(false);
-    types_table.setModel(empty_table_model);
-    types_table.validate();
-    types_table.repaint();
-
-    final SwingWorker worker = new SwingWorker() {
-	Map seqs = null;
-	Map types = null;
-	public Object construct() {
-	  seqs = current_version.getSegments();
-	  types = current_version.getTypes();
-	  return null;
-	}
-	public void finished() {
-	  /*
-	   *  assumes that the types available for a given versioned source do not change
-	   *    during the session
-	   */
-	  java.util.List type_states = 	(java.util.List)version2typestates.get(current_version);
-	  if (type_states == null) {
-	    type_states = new ArrayList();
-            if (types != null) {
-              Iterator iter = types.values().iterator();
-              while (iter.hasNext()) {
-                // need a map of Das2Type to Das2TypeState that persists for entire session,
-                //    and reuse Das2TypeStates when possible (because no guarantee that
-                //    Das2TypeState backing store has been updated during session)
-                Das2Type dtype = (Das2Type)iter.next();
-                Das2TypeState tstate = new Das2TypeState(dtype);
-                type_states.add(tstate);
-              }
-            }
-	    version2typestates.put(current_version, type_states);
-	  }
-	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_states);
-	  types_table.setModel(new_table_model);
-	  new_table_model.addTableModelListener(myself);
-	  TableColumn col = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
-	  col.setCellEditor(new DefaultCellEditor(typestateCB));
-
-	  types_table.validate();
-	  types_table.repaint();
-	  //          if (gviewer != null) { load_featuresB.setEnabled(true); }
-
-	  // need to do this here within finished(), otherwise may get threading issues where
-	  //    GroupSelectionEvents are being generated before group gets populated with seqs
-	  System.out.println("gmodel selected group:  " + gmodel.getSelectedSeqGroup());
-	  System.out.println("current_vers.getGenome: " + current_version.getGenome());
-	  if (gmodel.getSelectedSeqGroup() != current_version.getGenome()) {
-	    gmodel.setSelectedSeq(null);
-	    System.out.println("setting selected group to : " + current_version.getGenome());
-	    gmodel.setSelectedSeqGroup(current_version.getGenome());
-	  }
-	  else {
-	    current_seq = gmodel.getSelectedSeq();
-	    loadWholeSequenceAnnots();
-	  }
-	}
-      };
-    worker.start();
-  }
 
   public void loadFeaturesByName(String name) {
     if (current_version != null) {
@@ -617,6 +556,9 @@ public class Das2LoadView3 extends JComponent
 
 
 /**
+ *
+ *  Das2TypeState
+ *
  *  Relates a Das2Type to it's status in IGB.
  *  For example, whether it's load strategy is set to "full sequence"
  *  or "visible range", and possibly other details.
@@ -633,7 +575,6 @@ class Das2TypeState {
    *    node: ~/das2/server.root.url/typestate
    *    key: [typeid+"_loadstate"]  value: [load_state]     (load state is an integer??)
    */
-
   static Preferences root_node = UnibrowPrefsUtil.getTopNode();
   static Preferences das2_node = root_node.node("das2");
 
@@ -711,6 +652,12 @@ class Das2TypeState {
 }
 
 
+
+/**
+ *
+ *  Das2TypesTableModel
+ *
+ */
 class Das2TypesTableModel extends AbstractTableModel   {
   static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server" };
   static int LOAD_BOOLEAN_COLUMN = 0;
@@ -775,7 +722,7 @@ class Das2TypesTableModel extends AbstractTableModel   {
     else if (col == VSOURCE_COLUMN) {
       return type.getVersionedSource().getName();
     }
-    else if (col == SERVER_COLUMN) {  
+    else if (col == SERVER_COLUMN) {
       return type.getVersionedSource().getSource().getServerInfo().getName();
     }
     return null;
@@ -809,6 +756,9 @@ class Das2TypesTableModel extends AbstractTableModel   {
 
 
 /**
+ *
+ * Das2VersionTreeNode
+ *
  * TreeNode wrapper around a Das2VersionedSource object.
  * Maybe don't really need this, since Das2VersionedSource could itself serve
  * as a leaf.
@@ -819,7 +769,7 @@ class Das2VersionTreeNode extends DefaultMutableTreeNode {
   CheckTreeManager ctm;
 
   public Das2VersionTreeNode(Das2VersionedSource version, CheckTreeManager ctm) {
-    this.version = version; 
+    this.version = version;
     this.ctm = ctm;
   }
   public Das2VersionedSource getVersionedSource() { return version; }
@@ -878,4 +828,66 @@ class Das2VersionTreeNode extends DefaultMutableTreeNode {
 }
 
 
+  /*
+  public void setRegionsAndTypes() {
+    //    load_featuresB.setEnabled(false);
+    types_table.setModel(empty_table_model);
+    types_table.validate();
+    types_table.repaint();
+
+    final SwingWorker worker = new SwingWorker() {
+	Map seqs = null;
+	Map types = null;
+	public Object construct() {
+	  seqs = current_version.getSegments();
+	  types = current_version.getTypes();
+	  return null;
+	}
+	public void finished() {
+	//  assumes that the types available for a given versioned source do not change
+	//   during the session
+	  java.util.List type_states = 	(java.util.List)version2typestates.get(current_version);
+	  if (type_states == null) {
+	    type_states = new ArrayList();
+            if (types != null) {
+              Iterator iter = types.values().iterator();
+              while (iter.hasNext()) {
+                // need a map of Das2Type to Das2TypeState that persists for entire session,
+                //    and reuse Das2TypeStates when possible (because no guarantee that
+                //    Das2TypeState backing store has been updated during session)
+                Das2Type dtype = (Das2Type)iter.next();
+                Das2TypeState tstate = new Das2TypeState(dtype);
+                type_states.add(tstate);
+              }
+            }
+	    version2typestates.put(current_version, type_states);
+	  }
+	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_states);
+	  types_table.setModel(new_table_model);
+	  new_table_model.addTableModelListener(myself);
+	  TableColumn col = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
+	  col.setCellEditor(new DefaultCellEditor(typestateCB));
+
+	  types_table.validate();
+	  types_table.repaint();
+	  //          if (gviewer != null) { load_featuresB.setEnabled(true); }
+
+	  // need to do this here within finished(), otherwise may get threading issues where
+	  //    GroupSelectionEvents are being generated before group gets populated with seqs
+	  System.out.println("gmodel selected group:  " + gmodel.getSelectedSeqGroup());
+	  System.out.println("current_vers.getGenome: " + current_version.getGenome());
+	  if (gmodel.getSelectedSeqGroup() != current_version.getGenome()) {
+	    gmodel.setSelectedSeq(null);
+	    System.out.println("setting selected group to : " + current_version.getGenome());
+	    gmodel.setSelectedSeqGroup(current_version.getGenome());
+	  }
+	  else {
+	    current_seq = gmodel.getSelectedSeq();
+	    loadWholeSequenceAnnots();
+	  }
+	}
+      };
+    worker.start();
+  }
+*/
 

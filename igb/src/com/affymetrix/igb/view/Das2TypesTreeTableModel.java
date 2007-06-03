@@ -58,25 +58,25 @@ public class Das2TypesTreeTableModel extends AbstractTreeTableModel  {
     int row_count = states.size();
   }
 
-  //  public void addTreeModelListener(TreeModelListener l)     // handled in AbstractTreeTableModel
-  //  public void removeTreeModelListener(TreeModelListener l)  // handled in AbstractTreeTableModel
-  //  Returns the child of parent at index index in the parent's child array. 
+  // public void addTreeModelListener(TreeModelListener_l)   // handled in AbstractTreeTableModel
+  // public void removeTreeModelListener(TreeModelListener_l)  // handled in AbstractTreeTableModel
+  // Returns the child of parent at index index in the parent's child array.ï¿½
   public Object getChild(Object parent, int index)  {
     return ((TreeNode)parent).getChildAt(index);
   }
-  // Returns the number of children of parent. 
+  // Returns the number of children of parent.
   public int getChildCount(Object parent) {
     return ((TreeNode)parent).getChildCount();
   }
-  // Returns the index of child in parent.
+  // Returns the index of child in parent.
   public int getIndexOfChild(Object parent, Object child)  {
     return ((TreeNode)parent).getIndex((TreeNode)child);
   }
-  // Returns the root of the tree. 
+  // Returns the root of the tree.
   //  public Object getRoot()  {
   //    return root;
   //  }
-  // Returns true if node is a leaf.
+  //ï¿½Returns true if node is a leaf.
   public boolean isLeaf(Object node)  {
     System.out.println("in Das2TypeTreeTableModel.isLeaf(): " + node);
     if (node == null) { return true; }

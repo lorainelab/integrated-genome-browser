@@ -72,9 +72,6 @@ public class Das2LoadView3 extends JComponent
   static boolean USE_DAS2_OPTIMIZER = true;
   static boolean DEBUG_EVENTS = false;
   static boolean DEFAULT_THREAD_FEATURE_REQUESTS = true;
-
-  static Das2TypesTableModel empty_table_model = new Das2TypesTableModel(new ArrayList());
-
   static SeqMapView gviewer = null;
 
   JTabbedPane tpane = new JTabbedPane();
@@ -86,9 +83,12 @@ public class Das2LoadView3 extends JComponent
   JScrollPane tree_table_scroller;
   JTree tree;
   CheckTreeManager check_tree_manager; // manager for tree with checkboxes
+  Das2TypesTableModel types_table_model;
 
   Map das_servers;
   Map version2typestates = new LinkedHashMap();
+  Map tstate2node = new LinkedHashMap();
+  Map type2node = new LinkedHashMap();
 
   Das2LoadView3 myself = null;
   Das2ServerInfo current_server;
@@ -99,6 +99,7 @@ public class Das2LoadView3 extends JComponent
   static SingletonGenometryModel gmodel = IGB.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
+  TypesTreeCheckListener tree_check_listener = new TypesTreeCheckListener();
 
   public Das2LoadView3()  {
     myself = this;
@@ -119,6 +120,7 @@ public class Das2LoadView3 extends JComponent
       }
     } ;
     check_tree_manager = new CheckTreeManager(tree, TREE_DIG, threeplus);
+    types_table_model = new Das2TypesTableModel(check_tree_manager);
 
     typestateCB = new JComboBox();
     String[] load_states = Das2TypeState.LOAD_STRINGS;
@@ -126,7 +128,7 @@ public class Das2LoadView3 extends JComponent
       typestateCB.addItem(load_states[i]);
     }
     types_table = new JTable();
-    types_table.setModel(empty_table_model);
+    types_table.setModel(types_table_model);
     table_scroller = new JScrollPane(types_table);
 
 
@@ -165,33 +167,42 @@ public class Das2LoadView3 extends JComponent
     tree.getSelectionModel().setSelectionMode
       (TreeSelectionModel.SINGLE_TREE_SELECTION);
     //    tree.addTreeSelectionListener(this);
+    check_tree_manager.getSelectionModel().addTreeSelectionListener(tree_check_listener);
+    searchTF.addActionListener(this);
+  }
 
-    check_tree_manager.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-	public void valueChanged(TreeSelectionEvent evt) {
-	  TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
-	  int pcount = checkedPaths == null ? 0 : checkedPaths.length;
-	  System.out.println("checked path count: " + pcount);
-	  TreePath[] changed_paths = evt.getPaths();
-	  int change_count = changed_paths.length;
-	  System.out.println("    changed selection count: " + change_count);
-	  for (int i=0; i<change_count; i++) {
-	    TreePath path = changed_paths[i];
-	    boolean node_checked = evt.isAddedPath(i);
-	    Object change_node = path.getLastPathComponent();
-	    if (change_node instanceof DefaultMutableTreeNode) {
-	      DefaultMutableTreeNode tnode = (DefaultMutableTreeNode)change_node;
-	      Object userobj = tnode.getUserObject();
-	      if (userobj instanceof Das2TypeState) {
-		Das2TypeState tstate = (Das2TypeState)userobj;
-		System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
-		tstate.setLoad(node_checked);
-	      }
+  class TypesTreeCheckListener implements TreeSelectionListener {
+    public void valueChanged(TreeSelectionEvent evt) {
+      TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
+      int pcount = checkedPaths == null ? 0 : checkedPaths.length;
+      System.out.println("checked path count: " + pcount);
+      TreePath[] changed_paths = evt.getPaths();
+      int change_count = changed_paths.length;
+      System.out.println("    changed selection count: " + change_count);
+      for (int i=0; i<change_count; i++) {
+	TreePath path = changed_paths[i];
+	boolean node_checked = evt.isAddedPath(i);
+	Object change_node = path.getLastPathComponent();
+	if (change_node instanceof DefaultMutableTreeNode) {
+	  DefaultMutableTreeNode tnode = (DefaultMutableTreeNode)change_node;
+	  Object userobj = tnode.getUserObject();
+	  if (userobj instanceof Das2TypeState) {
+	    Das2TypeState tstate = (Das2TypeState)userobj;
+	    System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
+	    tstate.setLoad(node_checked);
+	    if (node_checked) {
+	      types_table_model.addTypeState(tstate);
+	    }
+	    else {
+	      // if want removal from table
+	      types_table_model.removeTypeState(tstate);
+	      // if don't want removal, but rather update render to reflect unchecked status
+	      // types_table_model.fireTableDataChanged();
 	    }
 	  }
 	}
-      } ) ;
-
-    searchTF.addActionListener(this);
+      }
+    }
   }
 
 
@@ -444,7 +455,8 @@ public class Das2LoadView3 extends JComponent
           current_server = null;
           current_source = null;
           // need to reset table also...
-          types_table.setModel(empty_table_model);
+	  types_table_model = new Das2TypesTableModel(check_tree_manager);
+          types_table.setModel(types_table_model);
           types_table.validate();
           types_table.repaint();
         }
@@ -545,12 +557,85 @@ public class Das2LoadView3 extends JComponent
       Das2VersionedSource version = (Das2VersionedSource)viter.next();
       Das2Source source = version.getSource();
       DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
-      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version, check_tree_manager);
+      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version);
       source_node.add(version_node);
     }
     TreeModel tmodel = new DefaultTreeModel(top, true);
     tree.setModel(tmodel);
   }
+
+  /**
+   *
+   * Das2VersionTreeNode
+   *
+   * TreeNode wrapper around a Das2VersionedSource object.
+   * Maybe don't really need this, since Das2VersionedSource could itself serve
+   * as a leaf.
+   */
+  class Das2VersionTreeNode extends DefaultMutableTreeNode {
+    Das2VersionedSource version;
+    boolean populated = false;
+
+    public Das2VersionTreeNode(Das2VersionedSource version) {
+      this.version = version;
+    }
+    public Das2VersionedSource getVersionedSource() { return version; }
+    public String toString() { return version.getName(); }
+    public boolean getAllowsChildren() { return true; }
+    public boolean isLeaf() { return false; }
+
+    public int getChildCount() {
+      if (! populated) { populate(); }
+      return super.getChildCount();
+    }
+
+    public TreeNode getChildAt(int childIndex) {
+      if (! populated) { populate(); }
+      return super.getChildAt(childIndex);
+    }
+
+    public Enumeration children() {
+      if (! populated) { populate(); }
+      return super.children();
+    }
+
+    /**
+     *  First time children are accessed, this will trigger dynamic access to DAS2 server.
+     *
+     *  Need to add hierarchical types structure for type names that can be treated as paths...
+     */
+    protected synchronized void populate() {
+      if (! populated) {
+	populated = true;
+	Map types = version.getTypes();
+	//      child_nodes = new Vector(types.size());
+	Iterator iter = types.values().iterator();
+	while (iter.hasNext()) {
+	  Das2Type type = (Das2Type)iter.next();
+	  Das2TypeState tstate = new Das2TypeState(type);
+	  System.out.println("type: " + tstate);
+	  //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
+	  //	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
+	  DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
+	  tstate2node.put(tstate, child);
+	  type2node.put(type, child);
+	  child.setAllowsChildren(false);
+	  //	child_nodes.add(child);
+	  this.add(child);
+	  if (tstate.getLoad()) {
+	    System.out.println("  setting type to loaded");
+	    TreePath child_path = new TreePath(child.getPath());
+	    TreePath[] paths = new TreePath[1];
+	    paths[0] = child_path;
+	    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
+	    ctmodel.addSelectionPaths(paths);
+	  }
+	}
+      }
+    }
+
+  }
+
 
 }  // END Das2LoadView3 class
 
@@ -588,6 +673,7 @@ class Das2TypeState {
   Das2Type type;
   Preferences lnode_strategy;
   Preferences lnode_load;
+  ArrayList listeners = new ArrayList();
 
   public Das2TypeState(Das2Type dtype) {
     this.type = dtype;
@@ -623,8 +709,11 @@ class Das2TypeState {
   }
 
   public void setLoad(boolean b) {
-    load = b;
-    lnode_load.putBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), load);
+    if (load != b) {
+      load = b;
+      lnode_load.putBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), load);
+      notifyChangeListeners();
+    }
   }
 
   public boolean getLoad() {
@@ -641,14 +730,30 @@ class Das2TypeState {
   }
 
   public void setLoadStrategy(int strategy) {
-    load_strategy = strategy;
-    lnode_strategy.putInt(UnibrowPrefsUtil.shortKeyName(type.getID()), strategy);
+    if (load_strategy != strategy) {
+      load_strategy = strategy;
+      lnode_strategy.putInt(UnibrowPrefsUtil.shortKeyName(type.getID()), strategy);
+      notifyChangeListeners();
+    }
+    
   }
 
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
   public Das2Type getDas2Type() { return type; }
   public String toString() { return getDas2Type().toString(); }
+
+  public void addChangeListener(ChangeListener listener) { listeners.add(listener); }
+  public void removeChangeListener(ChangeListener listener) { listeners.remove(listener); }
+  public void notifyChangeListeners() {
+    ChangeEvent evt = new ChangeEvent(this);
+    Iterator iter = listeners.iterator();
+    while (iter.hasNext()) {
+      ChangeListener listener = (ChangeListener)iter.next();
+      listener.stateChanged(evt);
+    }
+  }
+
 }
 
 
@@ -658,7 +763,7 @@ class Das2TypeState {
  *  Das2TypesTableModel
  *
  */
-class Das2TypesTableModel extends AbstractTableModel   {
+class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  {
   static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server" };
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
@@ -669,22 +774,38 @@ class Das2TypesTableModel extends AbstractTableModel   {
   static int VSOURCE_COLUMN = 6;
   static int SERVER_COLUMN = 7;
 
-  static int model_count = 0;
+  java.util.List type_states = new ArrayList();
 
-  int model_num;
-  java.util.List type_states;
+  CheckTreeManager ctm;
 
-  public Das2TypesTableModel(java.util.List states) {
-    model_num = model_count;
-    model_count++;
-    type_states = states;
-    int col_count = column_names.length;
-    int row_count = states.size();
+  public Das2TypesTableModel(CheckTreeManager ctm) {
+    this.ctm = ctm;
+  }
+
+  public boolean addTypeState(Das2TypeState state) {
+    int index = type_states.indexOf(state);
+    if (index >= 0) { return false; }  // given state is already present in table model
+    type_states.add(state);
+    state.addChangeListener(this);
+    int insert_index = type_states.size()-1;
+    fireTableRowsInserted(insert_index, insert_index);
+    return true;
+  }
+
+  public boolean removeTypeState(Das2TypeState state) {
+    int index = type_states.indexOf(state);
+    if (index < 0) { return false; }  // couldn't find given state in table model
+    type_states.remove(state);
+    state.removeChangeListener(this);
+    fireTableRowsDeleted(index, index);
+    return true;
   }
 
   public Das2TypeState getTypeState(int row) {
     return (Das2TypeState)type_states.get(row);
   }
+
+  public java.util.List getTypeStates() { return type_states; }
 
   public int getColumnCount() {
     return column_names.length;
@@ -748,84 +869,23 @@ class Das2TypesTableModel extends AbstractTableModel   {
     else if (col == LOAD_BOOLEAN_COLUMN) {
       Boolean bool = (Boolean)value;
       state.setLoad(bool.booleanValue());
+      System.out.println("trying to set load boolean for type: " + state + ", " + bool);
+      System.out.println(ctm);
     }
 
     fireTableCellUpdated(row, col);
   }
-}
 
-
-/**
- *
- * Das2VersionTreeNode
- *
- * TreeNode wrapper around a Das2VersionedSource object.
- * Maybe don't really need this, since Das2VersionedSource could itself serve
- * as a leaf.
- */
-class Das2VersionTreeNode extends DefaultMutableTreeNode {
-  Das2VersionedSource version;
-  boolean populated = false;
-  CheckTreeManager ctm;
-
-  public Das2VersionTreeNode(Das2VersionedSource version, CheckTreeManager ctm) {
-    this.version = version;
-    this.ctm = ctm;
-  }
-  public Das2VersionedSource getVersionedSource() { return version; }
-  public String toString() { return version.getName(); }
-  public boolean getAllowsChildren() { return true; }
-  public boolean isLeaf() { return false; }
-
-  public int getChildCount() {
-    if (! populated) { populate(); }
-    return super.getChildCount();
-  }
-
-  public TreeNode getChildAt(int childIndex) {
-    if (! populated) { populate(); }
-    return super.getChildAt(childIndex);
-  }
-
-  public Enumeration children() {
-    if (! populated) { populate(); }
-    return super.children();
-  }
-
-  /**
-   *  First time children are accessed, this will trigger dynamic access to DAS2 server.
-   *
-   *  Need to add hierarchical types structure for type names that can be treated as paths...
-   */
-  protected synchronized void populate() {
-    if (! populated) {
-      populated = true;
-      Map types = version.getTypes();
-      //      child_nodes = new Vector(types.size());
-      Iterator iter = types.values().iterator();
-      while (iter.hasNext()) {
-	Das2Type type = (Das2Type)iter.next();
-	Das2TypeState tstate = new Das2TypeState(type);
-	System.out.println("type: " + tstate);
-	//	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
-	//	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
-	DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
-	child.setAllowsChildren(false);
-	//	child_nodes.add(child);
-	this.add(child);
-	if (tstate.getLoad()) {
-	  System.out.println("  setting type to loaded");
-	  TreePath child_path = new TreePath(child.getPath());
-	  TreePath[] paths = new TreePath[1];
-          paths[0] = child_path;
-	  CheckTreeSelectionModel ctmodel = ctm.getSelectionModel();
-	  ctmodel.addSelectionPaths(paths);
-	}
-      }
+  public void stateChanged(ChangeEvent evt) {
+    Object src = evt.getSource();
+    if (src instanceof Das2TypeState) {
+      System.out.println("Das2TypesTableModel.stateChanged() called, source: " + src);
     }
   }
 
 }
+
+
 
 
   /*

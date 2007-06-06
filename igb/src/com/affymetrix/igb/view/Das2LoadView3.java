@@ -171,6 +171,12 @@ public class Das2LoadView3 extends JComponent
     searchTF.addActionListener(this);
   }
 
+  //
+  //  it would really be cleaner to tie the checkbox selection (isPathSelected()) 
+  //    directly to Das2TypeState load field (getLoad()), but that would involve 
+  //    modifying source code in the MySwing code base to allow easier subclassing 
+  //    of CheckTreeManager and CheckTreeSelectionModel...
+  //
   class TypesTreeCheckListener implements TreeSelectionListener {
     public void valueChanged(TreeSelectionEvent evt) {
       TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
@@ -189,14 +195,20 @@ public class Das2LoadView3 extends JComponent
 	  if (userobj instanceof Das2TypeState) {
 	    Das2TypeState tstate = (Das2TypeState)userobj;
 	    System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
-	    tstate.setLoad(node_checked);
+	    boolean load = tstate.getLoad();
+	    if (tstate.getLoad() != node_checked) {
+	      tstate.setLoad(node_checked);
+	    }
 	    if (node_checked) {
-	      types_table_model.addTypeState(tstate);
+	      if (types_table_model.getRow(tstate) < 0) {
+		types_table_model.addTypeState(tstate);
+	      }
 	    }
 	    else {
 	      // if want removal from table
-	      types_table_model.removeTypeState(tstate);
+	      //	      types_table_model.removeTypeState(tstate);
 	      // if don't want removal, but rather update render to reflect unchecked status
+	      // no, relying on table being ChangeListener on Das2TypeState...
 	      // types_table_model.fireTableDataChanged();
 	    }
 	  }
@@ -576,6 +588,24 @@ public class Das2LoadView3 extends JComponent
     Das2VersionedSource version;
     boolean populated = false;
 
+    ChangeListener check_changer = new ChangeListener() {
+	public void stateChanged(ChangeEvent evt) {
+	  Object src = evt.getSource();
+	  if (src instanceof Das2TypeState) {
+	    Das2TypeState tstate = (Das2TypeState)src;
+	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tstate2node.get(tstate);
+	    TreePath node_path = new TreePath(node.getPath());
+	    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
+	    boolean checked = ctmodel.isPathSelected(node_path);
+	    boolean load = tstate.getLoad();
+	    if (checked != load) {
+	      if (load) { ctmodel.addSelectionPath(node_path); }
+	      else { ctmodel.removeSelectionPath(node_path); }
+	    }
+	  }
+	}
+    };
+
     public Das2VersionTreeNode(Das2VersionedSource version) {
       this.version = version;
     }
@@ -625,11 +655,10 @@ public class Das2LoadView3 extends JComponent
 	  if (tstate.getLoad()) {
 	    System.out.println("  setting type to loaded");
 	    TreePath child_path = new TreePath(child.getPath());
-	    TreePath[] paths = new TreePath[1];
-	    paths[0] = child_path;
 	    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
-	    ctmodel.addSelectionPaths(paths);
+	    ctmodel.addSelectionPath(child_path);
 	  }
+	  tstate.addChangeListener(check_changer);
 	}
       }
     }
@@ -735,7 +764,7 @@ class Das2TypeState {
       lnode_strategy.putInt(UnibrowPrefsUtil.shortKeyName(type.getID()), strategy);
       notifyChangeListeners();
     }
-    
+
   }
 
   public int getLoadStrategy() { return load_strategy; }
@@ -805,6 +834,10 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     return (Das2TypeState)type_states.get(row);
   }
 
+  public int getRow(Das2TypeState state) {
+    return type_states.indexOf(state);
+  }
+
   public java.util.List getTypeStates() { return type_states; }
 
   public int getColumnCount() {
@@ -861,25 +894,40 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   public void setValueAt(Object value, int row, int col) {
     //      System.out.println("Das2TypesTableModel.setValueAt() called, row = " + row +
     //			 ", col = " + col + "val = " + value.toString());
+    boolean changed = false;
     Das2TypeState state = (Das2TypeState)type_states.get(row);
     if (col == LOAD_STRATEGY_COLUMN)  {
-      state.setLoadStrategy(value.toString());
+      String new_strategy = value.toString();
+      if (! (state.getLoadString().equals(new_strategy))) {
+	state.setLoadStrategy(new_strategy);
+	changed = true;
+      }
     }
 
     else if (col == LOAD_BOOLEAN_COLUMN) {
-      Boolean bool = (Boolean)value;
-      state.setLoad(bool.booleanValue());
-      System.out.println("trying to set load boolean for type: " + state + ", " + bool);
-      System.out.println(ctm);
+      boolean new_load = ((Boolean)value).booleanValue();
+      if (state.getLoad() != new_load) {
+	state.setLoad(new_load);
+	System.out.println("trying to set load boolean for type: " + state + ", " + new_load);
+	System.out.println(ctm);
+	changed = true;
+      }
     }
-
-    fireTableCellUpdated(row, col);
+    //  else { change = ???
+    if (changed) {
+      fireTableCellUpdated(row, col);
+    }
   }
 
   public void stateChanged(ChangeEvent evt) {
     Object src = evt.getSource();
     if (src instanceof Das2TypeState) {
       System.out.println("Das2TypesTableModel.stateChanged() called, source: " + src);
+      Das2TypeState tstate = (Das2TypeState)src;
+      int row = getRow(tstate);
+      if (row >=0) {  // if typestate is present in table, then send notification of row change
+	fireTableRowsUpdated(row, row);
+      }
     }
   }
 

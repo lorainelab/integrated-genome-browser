@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SymWithProps;
@@ -28,17 +29,17 @@ import java.util.*;
  *  GlyphElement.
  */
 public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
-    
+
   Stylesheet stylesheet = null;
   PropertyMap context = new PropertyMap();
-  
+
   public XmlStylesheetGlyphFactory() {
   }
-  
+
   public void setStylesheet(Stylesheet ss) {
     this.stylesheet = ss;
   }
-  
+
   // does nothing
   public void init(Map options) {
   }
@@ -56,36 +57,41 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     }
     return false;
   }
-  
-  public void createGlyph(SeqSymmetry sym, SeqMapView gviewer, boolean next_to_axis) {
 
+  public void createGlyph(SeqSymmetry sym, SeqMapView gviewer, boolean next_to_axis) {
+      // fixing bug encountered when sym doesn't have span on sequence it is annotating --
+      //   currently should only see these as "dummy" placeholder syms that are
+      //   children of Das2FeatureRequestSyms, in which case they have _no_ spans.
+      //   So for now skipping any sym with no spans...
+      if (sym.getSpanCount() == 0)  { return; }
     // I'm assuming that for container glyphs, the container method is the
     // same as the contained items method
     String meth = SeqMapView.determineMethod(sym);
+    //    if (meth == null)  { SeqUtils.printSymmetry(sym, "   ", true); }
     AnnotStyle style = AnnotStyle.getInstance(meth);
-    
+
     if (isContainer(sym)) {
       for (int i=0; i<sym.getChildCount(); i++) {
         createGlyph(sym.getChild(i), gviewer, next_to_axis);
       }
       return;
     }
-    
+
     DrawableElement drawable = stylesheet.getDrawableForSym(sym);
 
     TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style, false);
     int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
     TierGlyph the_tier = tiers[tier_index];
-    
+
     context.clear();
 
     // properties set in this top-level context will be used as defaults,
     // the stylesheet may over-ride them.
-    
+
     // Allow StyleElement access to the AnnotStyle if it needs it.
     context.put(AnnotStyle.class.getName(), style);
     context.put(TierGlyph.class.getName(), the_tier);
-    
+
     drawable.symToGlyph(gviewer, sym, the_tier, stylesheet, context);
   }
 

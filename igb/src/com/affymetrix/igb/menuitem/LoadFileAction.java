@@ -38,6 +38,7 @@ public class LoadFileAction {
   static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
+  static final boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
 
   /**
    *  Constructor.
@@ -82,6 +83,9 @@ public class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"sin", "egr", "egr.txt"},
         "Scored Interval Files"));
+      if (PARSE_CNT) {
+        chooser.addChoosableFileFilter(new UniFileFilter("cnt", "Copy Number Files"));
+      }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
@@ -314,6 +318,12 @@ public class LoadFileAction {
       else if (lcname.endsWith(".axml")) {
         Xml2GenometryParser parser = new Xml2GenometryParser();
         aseq = parser.parse(str, input_seq);
+        parser = null;
+      }
+      else if (PARSE_CNT && lcname.endsWith(".cnt")) {
+        CntParser parser = new CntParser();
+        parser.parse(str, selected_group);
+        aseq = input_seq;
         parser = null;
       }
       else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {

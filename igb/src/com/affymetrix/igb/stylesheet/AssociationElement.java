@@ -127,7 +127,7 @@ public class AssociationElement implements DrawableElement {
     if (factory == null) {
       StyleElement se = stylesheet.getStyleByName(styleName);
       if (se == null) {
-        se = stylesheet.default_style;
+        se = stylesheet.getDefaultStyleElement();
       }
       glyph = se.symToGlyph(gviewer,sym,container,stylesheet, propertyMap);
     } else {

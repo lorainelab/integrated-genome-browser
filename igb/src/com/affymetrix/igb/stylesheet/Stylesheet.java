@@ -165,7 +165,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     return (AssociationElement) type2association.get(type);
   }
 
-  StyleElement default_style;
+  private StyleElement default_style;
 
   public StyleElement getDefaultStyleElement() {
     if (default_style == null) {

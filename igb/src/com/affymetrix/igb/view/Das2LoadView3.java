@@ -15,7 +15,6 @@ package com.affymetrix.igb.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URI;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
@@ -64,8 +63,11 @@ import skt.swing.tree.check.TreePathSelectable;
  *     via Preferences nodes and UnibrowPrefsUtil
  */
 public class Das2LoadView3 extends JComponent
-  implements ActionListener, TableModelListener,
-	     SeqSelectionListener, GroupSelectionListener,
+  implements ActionListener,
+	     // TableModelListener,
+	     // TreeSelectionListener, 
+	     SeqSelectionListener,
+	     GroupSelectionListener,
 	     DataRequestListener {
 
   static boolean INCLUDE_NAME_SEARCH = false;
@@ -87,21 +89,15 @@ public class Das2LoadView3 extends JComponent
 
   Map das_servers;
   Map tstate2node = new LinkedHashMap();
-  Map type2node = new LinkedHashMap();
-
-  Das2LoadView3 myself = null;
-  Das2ServerInfo current_server;
-  Das2Source current_source;
-  Das2VersionedSource current_version;
-  Das2Region current_region;
 
   static SingletonGenometryModel gmodel = IGB.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
+  Das2VersionedSource current_version = null;
+
   TypesTreeCheckListener tree_check_listener = new TypesTreeCheckListener();
 
   public Das2LoadView3()  {
-    myself = this;
     gviewer = IGB.getSingletonIGB().getMapView();
     gviewer.addDataRequestListener(this);
 
@@ -129,10 +125,6 @@ public class Das2LoadView3 extends JComponent
     types_table = new JTable();
     types_table.setModel(types_table_model);
     table_scroller = new JScrollPane(types_table);
-
-
-    ArrayList test_states = new ArrayList();
-    JPanel types_tree_panel = null;
 
     this.setLayout(new BorderLayout());
 
@@ -216,21 +208,6 @@ public class Das2LoadView3 extends JComponent
   }
 
 
-  /*
-  public void valueChanged(TreeSelectionEvent evt) {
-    //    System.out.println("TreeSelectionEvent: " + evt);
-    Object node = tree.getLastSelectedPathComponent();
-    // to get the multiple paths that are currently checked:
-    if (node == null) return;
-    if (node instanceof Das2VersionTreeNode) {
-      current_version = ((Das2VersionTreeNode)node).getVersionedSource();
-      System.out.println(current_version);
-      System.out.println("  clicked on Das2VersionTreeNode to select genome: " + current_version.getGenome().getID());
-      //      setRegionsAndTypes();
-    }
-  }
-  */
-
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == searchTF) {
@@ -275,11 +252,11 @@ public class Das2LoadView3 extends JComponent
       return;
     }
 
-    if (load_strategy == Das2TypeState.VISIBLE_RANGE)  { 
-      overlap = gviewer.getVisibleSpan(); 
+    if (load_strategy == Das2TypeState.VISIBLE_RANGE)  {
+      overlap = gviewer.getVisibleSpan();
     }
-    else if (load_strategy == Das2TypeState.WHOLE_SEQUENCE)  { 
-      overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq); 
+    else if (load_strategy == Das2TypeState.WHOLE_SEQUENCE)  {
+      overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
     }
     else {
       ErrorHandler.errorPanel("ERROR", "Requested load strategy not recognized: " + load_strategy);
@@ -423,29 +400,24 @@ public class Das2LoadView3 extends JComponent
     if (current_group != newgroup) {
       current_group = newgroup;
       redoTreeView();
-      if (current_server != null)  {
-        current_version = current_server.getVersionedSource(current_group);
-        if (current_version == null) {
-          // reset
-          current_server = null;
-          current_source = null;
-          // need to reset table also...
-	  types_table_model = new Das2TypesTableModel(check_tree_manager);
-          types_table.setModel(types_table_model);
-          types_table.validate();
-          types_table.repaint();
-        }
-        else {
-          current_source = current_version.getSource();
-          current_server = current_source.getServerInfo();
-          System.out.println("   new das source: " + current_source.getID() +
-                             ",  new das version: " + current_version.getID());
-        }
-      }
+      // need to reset table also...
+      types_table_model = new Das2TypesTableModel(check_tree_manager);
+      types_table.setModel(types_table_model);
+      types_table.validate();
+      types_table.repaint();
     }
   }
 
 
+
+  /*  listening to events on DAS/2 server/source/version/type tree
+  public void valueChanged(TreeSelectionEvent evt) {
+    //    System.out.println("TreeSelectionEvent: " + evt);
+  }  
+  */
+
+
+  /* listening to events on DAS/2 loaded (and recently loaded) types table
   public void tableChanged(TableModelEvent evt) {
     if (DEBUG_EVENTS)  {
       System.out.println("Das2LoadView3 received table model changed event: " + evt);
@@ -464,19 +436,20 @@ public class Das2LoadView3 extends JComponent
       //      System.out.println("value of changed table cell: " + val);
 
       SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-      current_region = current_version.getSegment(current_seq);
+      Das2Region region = current_version.getSegment(current_seq);
 
       Das2Type dtype = tstate.getDas2Type();
       if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
 	System.out.println("type to load for entire sequence range: " + dtype.getID());
 	Das2FeatureRequestSym request_sym =
-	  new Das2FeatureRequestSym(dtype, current_region, overlap, null);
+	  new Das2FeatureRequestSym(dtype, region, overlap, null);
 	ArrayList requests = new ArrayList();
 	requests.add(request_sym);
 	processFeatureRequests(requests, true);
       }
     }
   }
+  */
 
   public boolean dataRequested(DataRequestEvent evt) {
     System.out.println("Das2LoadView3 recieved DataRequestEvent: " + evt);
@@ -601,19 +574,15 @@ public class Das2LoadView3 extends JComponent
       if (! populated) {
 	populated = true;
 	Map types = version.getTypes();
-	//      child_nodes = new Vector(types.size());
 	Iterator iter = types.values().iterator();
 	while (iter.hasNext()) {
 	  Das2Type type = (Das2Type)iter.next();
-	  Das2TypeState tstate = new Das2TypeState(type);
+	  Das2TypeState tstate = Das2TypeState.getState(type);
 	  System.out.println("type: " + tstate);
 	  //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
-	  //	DefaultMutableTreeNode child = new DefaultMutableTreeNode(type);
 	  DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
 	  tstate2node.put(tstate, child);
-	  type2node.put(type, child);
 	  child.setAllowsChildren(false);
-	  //	child_nodes.add(child);
 	  this.add(child);
 	  if (tstate.getLoad()) {
 	    System.out.println("  setting type to loaded");
@@ -654,6 +623,7 @@ class Das2TypeState {
    */
   static Preferences root_node = UnibrowPrefsUtil.getTopNode();
   static Preferences das2_node = root_node.node("das2");
+  static Map type2state = new LinkedHashMap();
 
   static {
     LOAD_STRINGS[VISIBLE_RANGE] = "Visible Range";
@@ -667,7 +637,17 @@ class Das2TypeState {
   Preferences lnode_load;
   ArrayList listeners = new ArrayList();
 
-  public Das2TypeState(Das2Type dtype) {
+
+  public static Das2TypeState getState(Das2Type dtype) {
+    Das2TypeState tstate = (Das2TypeState)type2state.get(dtype);
+    if (tstate == null) {
+      tstate = new Das2TypeState(dtype);
+      type2state.put(dtype, tstate);
+    }
+    return tstate;
+  }
+
+  protected Das2TypeState(Das2Type dtype) {
     this.type = dtype;
     Das2VersionedSource version = type.getVersionedSource();
     Das2Source source = version.getSource();
@@ -746,7 +726,7 @@ class Das2TypeState {
     }
   }
 
-}
+}  // END Das2TypeState
 
 
 
@@ -894,69 +874,6 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     }
   }
 
-}
+}  // END Das2TypesTableModel
 
-
-  /*
-  public void setRegionsAndTypes() {
-    //    load_featuresB.setEnabled(false);
-    types_table.setModel(empty_table_model);
-    types_table.validate();
-    types_table.repaint();
-
-    final SwingWorker worker = new SwingWorker() {
-	Map seqs = null;
-	Map types = null;
-	public Object construct() {
-	  seqs = current_version.getSegments();
-	  types = current_version.getTypes();
-	  return null;
-	}
-	public void finished() {
-	//  assumes that the types available for a given versioned source do not change
-	//   during the session
-	  java.util.List type_states = 	(java.util.List)version2typestates.get(current_version);
-	  if (type_states == null) {
-	    type_states = new ArrayList();
-            if (types != null) {
-              Iterator iter = types.values().iterator();
-              while (iter.hasNext()) {
-                // need a map of Das2Type to Das2TypeState that persists for entire session,
-                //    and reuse Das2TypeStates when possible (because no guarantee that
-                //    Das2TypeState backing store has been updated during session)
-                Das2Type dtype = (Das2Type)iter.next();
-                Das2TypeState tstate = new Das2TypeState(dtype);
-                type_states.add(tstate);
-              }
-            }
-	    version2typestates.put(current_version, type_states);
-	  }
-	  Das2TypesTableModel new_table_model = new Das2TypesTableModel(type_states);
-	  types_table.setModel(new_table_model);
-	  new_table_model.addTableModelListener(myself);
-	  TableColumn col = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
-	  col.setCellEditor(new DefaultCellEditor(typestateCB));
-
-	  types_table.validate();
-	  types_table.repaint();
-	  //          if (gviewer != null) { load_featuresB.setEnabled(true); }
-
-	  // need to do this here within finished(), otherwise may get threading issues where
-	  //    GroupSelectionEvents are being generated before group gets populated with seqs
-	  System.out.println("gmodel selected group:  " + gmodel.getSelectedSeqGroup());
-	  System.out.println("current_vers.getGenome: " + current_version.getGenome());
-	  if (gmodel.getSelectedSeqGroup() != current_version.getGenome()) {
-	    gmodel.setSelectedSeq(null);
-	    System.out.println("setting selected group to : " + current_version.getGenome());
-	    gmodel.setSelectedSeqGroup(current_version.getGenome());
-	  }
-	  else {
-	    current_seq = gmodel.getSelectedSeq();
-	    loadWholeSequenceAnnots();
-	  }
-	}
-      };
-    worker.start();
-  }
-*/
 

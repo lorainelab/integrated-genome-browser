@@ -20,11 +20,8 @@ import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.IntList;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  *  A parser for textual ".cnt" files from the Affymetrix CNAT program.
@@ -39,6 +36,9 @@ public class CntParser {
   static final String SECTION_COL_NAME = "[ColumnName]";
   static final String SECTION_DATA = "[Data]";
 
+  // index of the first column containing data
+  static final int FIRST_DATA_COLUMN = 3;
+  
   public CntParser() {
   }
 
@@ -104,7 +104,7 @@ public class CntParser {
       throw new IOException("Column names were missing or malformed");
     }
 
-    int numScores = column_names.length - 5;
+    int numScores = column_names.length - FIRST_DATA_COLUMN;
     if (numScores < 1) {
       throw new IOException("No score columns in file");
     }
@@ -140,13 +140,9 @@ public class CntParser {
         FloatList[] floats = getFloatsForSeq(aseq, numScores);
         for (int j=0; j<numScores; j++) {
           FloatList floatList = floats[j];
-          float floatVal = parseFloat(fields[5+j]);
+          float floatVal = parseFloat(fields[FIRST_DATA_COLUMN+j]);
           floatList.add(floatVal);
-//          System.out.println("Float list: " + j + " " + floatList.size());
         }
-
-
-
     }   // end of line-reading loop
 
 
@@ -159,7 +155,10 @@ public class CntParser {
       MutableAnnotatedBioSeq seq = seq_group.getSeq(seqid);
       for (int i=0; i<ys.length; i++) {
         FloatList y = ys[i];
-        String id = column_names[i+5];
+        String id = column_names[i+FIRST_DATA_COLUMN];
+        if ("ChipNum".equals(id)) {
+          continue;
+        }
         id = getGraphIdForColumn(id, seq_group);
         GraphSym graf = new GraphSym(x.getInternalArray(), y.copyToArray(), id, seq);
         seq.addAnnotation(graf);

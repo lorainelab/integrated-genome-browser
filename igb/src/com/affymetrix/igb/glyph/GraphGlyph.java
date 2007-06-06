@@ -39,6 +39,7 @@ public class GraphGlyph extends Glyph {
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
 
+  //TODO: move these to GraphState interface
   public static final int LINE_GRAPH = 1;
   public static final int BAR_GRAPH = 2;
   public static final int DOT_GRAPH = 3;

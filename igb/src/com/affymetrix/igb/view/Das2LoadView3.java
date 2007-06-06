@@ -86,7 +86,6 @@ public class Das2LoadView3 extends JComponent
   Das2TypesTableModel types_table_model;
 
   Map das_servers;
-  Map version2typestates = new LinkedHashMap();
   Map tstate2node = new LinkedHashMap();
   Map type2node = new LinkedHashMap();
 
@@ -172,9 +171,9 @@ public class Das2LoadView3 extends JComponent
   }
 
   //
-  //  it would really be cleaner to tie the checkbox selection (isPathSelected()) 
-  //    directly to Das2TypeState load field (getLoad()), but that would involve 
-  //    modifying source code in the MySwing code base to allow easier subclassing 
+  //  it would really be cleaner to tie the checkbox selection (isPathSelected())
+  //    directly to Das2TypeState load field (getLoad()), but that would involve
+  //    modifying source code in the MySwing code base to allow easier subclassing
   //    of CheckTreeManager and CheckTreeSelectionModel...
   //
   class TypesTreeCheckListener implements TreeSelectionListener {
@@ -206,10 +205,9 @@ public class Das2LoadView3 extends JComponent
 	    }
 	    else {
 	      // if want removal from table
-	      //	      types_table_model.removeTypeState(tstate);
-	      // if don't want removal, but rather update render to reflect unchecked status
-	      // no, relying on table being ChangeListener on Das2TypeState...
-	      // types_table_model.fireTableDataChanged();
+	      //   types_table_model.removeTypeState(tstate);
+	      // if don't want removal, but rather update table render to reflect unchecked status, then
+	      //   can rely on table being ChangeListener on Das2TypeState...
 	    }
 	  }
 	}
@@ -245,7 +243,6 @@ public class Das2LoadView3 extends JComponent
   }
 
 
-
   public void loadFeaturesByName(String name) {
     if (current_version != null) {
       // Das2VersionedSource.getFeaturesByName() should also add features as annotations to seqs...
@@ -254,17 +251,21 @@ public class Das2LoadView3 extends JComponent
   }
 
   public void loadFeaturesInView() {
-    loadFeaturesInView(false);
+    loadFeatures(Das2TypeState.VISIBLE_RANGE, false);
   }
 
-  public void loadFeaturesInView(boolean restrict_to_current_vsource) {
+  public void loadFeatures(int load_strategy) {
+    loadFeatures(load_strategy, false);
+  }
+
+  public void loadFeatures(int load_strategy, boolean restrict_to_current_version) {
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
+    SeqSpan overlap;
     if (! (selected_seq instanceof SmartAnnotBioSeq)) {
       ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
       return;
     }
-    final SeqSpan overlap = gviewer.getVisibleSpan();
-    final MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)overlap.getBioSeq();
     if (selected_seq == null) {
       ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
       return;
@@ -274,53 +275,40 @@ public class Das2LoadView3 extends JComponent
       return;
     }
 
+    if (load_strategy == Das2TypeState.VISIBLE_RANGE)  { 
+      overlap = gviewer.getVisibleSpan(); 
+    }
+    else if (load_strategy == Das2TypeState.WHOLE_SEQUENCE)  { 
+      overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq); 
+    }
+    else {
+      ErrorHandler.errorPanel("ERROR", "Requested load strategy not recognized: " + load_strategy);
+      return;
+    }
+
     System.out.println("seq = " + visible_seq.getID() +
 		       ", min = " + overlap.getMin() + ", max = " + overlap.getMax());
-    SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)selected_seq;
-    AnnotatedSeqGroup genome = aseq.getSeqGroup();
-    java.util.List vsources;
-
-    // iterate through Das2TypeStates
-    //    if off, ignore
-    //    if load_in_visible_range, do range in view annotation request
-
-    // maybe add a fully_loaded flag so know which ones to skip because they're done?
-    if (restrict_to_current_vsource) {
-      vsources = new ArrayList();
-      vsources.add(current_version);
-    }
-    else {
-      boolean FORCE_SERVER_LOAD = false;
-      vsources = Das2Discovery.getVersionedSources(genome, true);
-    }
-
     ArrayList requests = new ArrayList();
 
-    for (int i=0; i<vsources.size(); i++) {
-      Das2VersionedSource vsource = (Das2VersionedSource)vsources.get(i);
-      if (vsource == null) { continue; }
-      java.util.List type_states = (java.util.List) version2typestates.get(vsource);
-      if (type_states == null) { continue; }
-      Das2Region region = vsource.getSegment(aseq);
-      Iterator titer = type_states.iterator();
-      while (titer.hasNext()) {
-	Das2TypeState tstate = (Das2TypeState)titer.next();
-	Das2Type dtype = tstate.getDas2Type();
-	//  only add to request list if set for loading and strategy is VISIBLE_RANGE loading
-	if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE) {
-	  System.out.println("type to load for visible range: " + dtype.getID());
-	  Das2FeatureRequestSym request_sym =
-	    new Das2FeatureRequestSym(dtype, region, overlap, null);
-	  requests.add(request_sym);
-	}
+    Iterator tstates = types_table_model.getTypeStates().iterator();
+    while (tstates.hasNext()) {
+      Das2TypeState tstate = (Das2TypeState)tstates.next();
+      Das2Type dtype = tstate.getDas2Type();
+      Das2VersionedSource version = dtype.getVersionedSource();
+      // if restricting to types from "current" version, then skip if verion != current_version
+      if (restrict_to_current_version && (version != current_version)) { continue; }
+
+      Das2Region region = version.getSegment(selected_seq);
+      if ((region != null)  &&
+	  (tstate.getLoad()) &&
+	  (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE)) {
+	// maybe add a fully_loaded flag so know which ones to skip because they're done?
+	Das2FeatureRequestSym request_sym =
+	  new Das2FeatureRequestSym(dtype, region, overlap, null);
+	requests.add(request_sym);
       }
     }
-    if (requests.size() == 0) {
-      ErrorHandler.errorPanel("Select some data", "You must first zoom in to " +
-        "your area of interest and then select some data types "
-        +"from the table above before pressing the \"Load\" button.");
-    }
-    else {
+    if (requests.size() > 0) {
       processFeatureRequests(requests, true);
     }
   }
@@ -398,9 +386,9 @@ public class Das2LoadView3 extends JComponent
    *     DAS/2 versioned sources that share the seq's AnnotatedSeqGroup,
    *     For each (similar_versioned_source)
    *         for each type
-   *            if (Das2TypeState set to AUTO_PER_SEQUENCE loading) && ( !state.fullyLoaded(seq) )
+   *            if (Das2TypeState set to WHOLE_SEQUENCE loading) && ( !state.fullyLoaded(seq) )
    *                 Do full feature load for seq
-   *  For now assume that if a type's load state is not AUTO_PER_SEQUENCE, then no auto-loading, only
+   *  For now assume that if a type's load state is not WHOLE_SEQUENCE, then no auto-loading, only
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
@@ -410,32 +398,7 @@ public class Das2LoadView3 extends JComponent
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
-      loadWholeSequenceAnnots();
-    }
-  }
-
-  protected void loadWholeSequenceAnnots() {
-    if (current_seq == null)  { return; }
-    if (current_version != null) {
-      SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-      current_region = current_version.getSegment(current_seq);
-      java.util.List type_states = (java.util.List)version2typestates.get(current_version);
-      Iterator titer = type_states.iterator();
-      ArrayList requests = new ArrayList();
-      while (titer.hasNext()) {
-	Das2TypeState tstate = (Das2TypeState)titer.next();
-	Das2Type dtype = tstate.getDas2Type();
-	if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
-	  System.out.println("type to load for entire sequence range: " + dtype.getID());
-	  Das2FeatureRequestSym request_sym =
-	    new Das2FeatureRequestSym(dtype, current_region, overlap, null);
-	  requests.add(request_sym);
-	}
-      }
-
-      if (requests.size() > 0) {
-	processFeatureRequests(requests, true);
-      }
+      loadFeatures(Das2TypeState.WHOLE_SEQUENCE);  // load features with selected types whose load_strategy is WHOLE_SEQUENCE
     }
   }
 
@@ -663,7 +626,7 @@ public class Das2LoadView3 extends JComponent
       }
     }
 
-  }
+  } // END Das2VersionTreeNode
 
 
 }  // END Das2LoadView3 class
@@ -932,8 +895,6 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   }
 
 }
-
-
 
 
   /*

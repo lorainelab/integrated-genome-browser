@@ -53,9 +53,9 @@ public class GFF3ParserTest extends TestCase {
     List expResult = null;
     List result = instance.parse(istr, seq_group, true);
     
-    for (int i=0; i<result.size(); i++) {
-      SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
-    }
+//    for (int i=0; i<result.size(); i++) {
+//      SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
+//    }
     assertEquals(1, result.size());
     
     
@@ -79,15 +79,36 @@ public class GFF3ParserTest extends TestCase {
     assertEquals(GFF3Sym.FEATURE_TYPE_EXON, exon1.getFeatureType());
 
     GFF3Sym cds_group1 = (GFF3Sym) mRNA1.getChild(4);
-    assertEquals(GFF3Parser.GROUP_FEATURE_TYPE, cds_group1.getFeatureType());
+    assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds_group1.getFeatureType());
     assertEquals(cds_group1.getChildCount(), 4);
 
     GFF3Sym cds1 = (GFF3Sym) cds_group1.getChild(0);
-    assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds1.getFeatureType());
+    assertEquals(GFF3Sym.FEATURE_TYPE_CDS + "-part", cds1.getFeatureType());
     
     istr.close();
   }
 
+  public void testParseErrors() throws IOException {
+    System.out.println("parse");
+    
+    String filename = "test_files/GFF3_with_errors.gff3";
+    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+
+    AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+
+    GFFParser instance = new GFFParser(); // the parser should be able to recognized
+    // that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.
+    
+    
+    List expResult = null;
+    List result = instance.parse(istr, seq_group, true);
+    
+    for (int i=0; i<result.size(); i++) {
+      SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
+    }
+    assertEquals(1, result.size());
+  }
+  
   /**
    * Test of processDirective method, of class com.affymetrix.igb.parsers.GFF3Parser.
    */

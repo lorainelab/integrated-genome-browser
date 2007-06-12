@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,6 +22,7 @@ import java.util.EventObject;
  *  event handling (pseudo-1.1 event handling).
  */
 public class NeoTimerEvent extends EventObject {
+  static final long serialVersionUID = 1L;
 
   protected int tick_count;
   protected Object arg;

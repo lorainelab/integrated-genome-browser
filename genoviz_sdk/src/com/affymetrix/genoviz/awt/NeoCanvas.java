@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -27,6 +27,7 @@ import com.affymetrix.genoviz.event.NeoPaintListener;
  * and to provide double buffering
  */
 public class NeoCanvas extends NeoBufferedComponent  {
+  static final long serialVersionUID = 1L;
   public boolean DEBUG_BOUNDS = false;
   public boolean debug = false;
   protected boolean dragging_outside = false;

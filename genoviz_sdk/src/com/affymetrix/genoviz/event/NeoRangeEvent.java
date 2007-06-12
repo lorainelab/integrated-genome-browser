@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -25,6 +25,8 @@ import com.affymetrix.genoviz.bioviews.*;
  *  Not currently implemented for NeoAssembler.
  */
 public class NeoRangeEvent extends EventObject  {
+
+  static final long serialVersionUID = 1L;
 
   protected double span_start;
   protected double span_end;

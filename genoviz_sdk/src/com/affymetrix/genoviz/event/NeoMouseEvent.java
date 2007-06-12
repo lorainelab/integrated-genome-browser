@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
  * Also for retrieving glyphs under the event's coordinates.
  */
 public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
+  static final long serialVersionUID = 1L;
 
   protected static int UNKNOWN = com.affymetrix.genoviz.util.NeoConstants.UNKNOWN;
   protected EventObject original_event;

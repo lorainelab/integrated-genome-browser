@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -129,6 +129,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   protected void drawVertical(ViewI view) {
     Rectangle2D coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
+    g.setFont( getResidueFont() );
+    FontMetrics fntMet = g.getFontMetrics();
     double pixels_per_base;
     int visible_ref_beg, visible_ref_end,
         visible_seq_beg, visible_seq_end, visible_seq_span,
@@ -174,15 +176,14 @@ public class SequenceGlyph extends AbstractResiduesGlyph
           //  test for scale being natural number (integer double)
           //    and for scale matching font size
           if (((double)((int)pixels_per_base) == pixels_per_base) &&
-              ((int)pixels_per_base >= fontmet.getHeight() - 4) &&
-              pixelbox.width >= (fontmet.charWidth('C'))) {
+              ((int)pixels_per_base >= fntMet.getHeight() - 4) &&
+              pixelbox.width >= (fntMet.charWidth('C'))) {
             doublestart = (double)pixelbox.y;
-            int asc = fontmet.getAscent();
+            int asc = fntMet.getAscent();
             pixelstart = (int)doublestart + asc;
             int midline = (pixelbox.x+(pixelbox.width/2)) -
-              fontmet.charWidth('G')/2;
+              fntMet.charWidth('G')/2;
 
-            g.setFont( getResidueFont() );
             g.setColor( getForegroundColor() );
 
             for (i = seq_beg_index; i < seq_end_index; i++) {
@@ -259,10 +260,11 @@ public class SequenceGlyph extends AbstractResiduesGlyph
       int seqBegIndex,
       int seqEndIndex,
       int pixelStart ) {
-    int baseline = (this.pixelbox.y+(this.pixelbox.height/2)) + this.fontmet.getAscent()/2 - 1;
     g.setFont( getResidueFont() );
+    int fntWidth = g.getFontMetrics().charWidth('M');
+    int baseline = (this.pixelbox.y+(this.pixelbox.height/2)) + g.getFontMetrics().getAscent()/2 - 1;
     g.setColor( getForegroundColor() );
-    if ( this.font_width < pixelsPerBase ) { // Ample room to draw residue letters.
+    if ( fntWidth < pixelsPerBase ) { // Ample room to draw residue letters.
       for ( int i = seqBegIndex; i < seqEndIndex; i++ ) {
         double f = i - seqBegIndex;
         g.drawString( String.valueOf(
@@ -273,7 +275,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     }
     else if (
       ( (double)( (int) pixelsPerBase ) == pixelsPerBase ) // Make sure it's an integral number of pixels per base.
-      && ( this.font_width == pixelsPerBase )
+      && ( fntWidth == pixelsPerBase )
       )
     { // pixelsPerBase matches the font width.
       // Draw the whole string in one go.
@@ -281,7 +283,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
         pixelStart, baseline);
     }
     else { // Not enough room for letters in this font if sequence is dense.
-      int h = Math.max( 1, Math.min( this.pixelbox.height, this.fontmet.getAscent() ) );
+      int h = Math.max( 1, Math.min( this.pixelbox.height, g.getFontMetrics().getAscent() ) );
       int y = Math.min( baseline, ( this.pixelbox.y + this.pixelbox.height ) ) - h;
       for ( int i = seqBegIndex; i < seqEndIndex; i++ ) {
         if ( !Character.isWhitespace( residues.charAt( i ) ) ) {
@@ -292,7 +294,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
           }
           double f = i - seqBegIndex;
           int x = pixelStart + ( int ) ( f * pixelsPerBase );
-          if ( w <= this.font_width ) {
+          if ( w <= fntWidth ) {
             if ( this.isDrawingRects() ) {
               g.drawRect( x, y, w-1, h-1 );
             }

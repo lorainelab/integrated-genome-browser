@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.bioviews.*;
  *     take out id field, else will shadow AWTEvent id field...
  */
 public class NeoGlyphDragEvent extends EventObject {
+  static final long serialVersionUID = 1L;
   GlyphI dragged_glyph;
   public final static int DRAG_STARTED = 0;
   public final static int DRAG_IN_PROGRESS = 1;

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  *  An abstract base class for several different biological sequence glyphs.
@@ -27,7 +28,15 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 
   //  protected Font residue_font;
   //  protected Color residue_color;
+  
+  /**
+   * Deprecated. Try to get the FontMetrics from a Graphics object.
+   * @deprecated
+   */
+  @Deprecated
   protected FontMetrics fontmet;
+  
+  @Deprecated
   protected int font_width, font_ascent, font_height;
   Glyph sel_glyph;
 
@@ -59,9 +68,9 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   }
 
   public void setResidueFont(Font fnt) {
-    String fam = fnt.getFamily().toLowerCase();
+    //String fam = fnt.getFamily().toLowerCase();
 
-    fontmet = Toolkit.getDefaultToolkit().getFontMetrics( getResidueFont() );
+    fontmet = GeneralUtils.getFontMetrics( getResidueFont() );
 
     // change font
     this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
@@ -84,8 +93,14 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   }
 
   public Font getResidueFont() { return style.getFont(); }
+  
+  @Deprecated
   public int getFontWidth() { return font_width; }
+  
+  @Deprecated
   public int getFontHeight() { return font_height; }
+
+  @Deprecated
   public int getFontAscent() { return font_ascent; }
 
   public boolean supportsSubSelection() {

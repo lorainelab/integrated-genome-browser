@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2006 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.Vector;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  *  A glyph to display a vertical or horizontal numbered axis.
@@ -76,8 +77,8 @@ public class AxisGlyph extends Glyph {
    * @param f the font to use
    */
   protected final void internalSetFont(Font f) {
-    this.label_font = f;
-    FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(f);
+    label_font = f;
+    FontMetrics fm = GeneralUtils.getFontMetrics(f);
     if (VERTICAL == this.orient) {
       labelThickness = fm.stringWidth("000000");
     }

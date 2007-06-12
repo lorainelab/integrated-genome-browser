@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,6 +30,7 @@ import com.affymetrix.genoviz.bioviews.NeoTimerEventClock;
  */
 public class NeoScrollbar extends NeoBufferedComponent
 implements Adjustable, NeoTimerListener {
+  static final long serialVersionUID = 1L;
 
   private static final boolean debug = false;
 

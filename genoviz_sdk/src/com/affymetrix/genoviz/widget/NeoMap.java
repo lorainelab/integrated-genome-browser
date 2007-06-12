@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -64,6 +64,8 @@ import com.affymetrix.genoviz.glyph.RootGlyph;
  */
 public class NeoMap extends NeoWidget implements NeoMapI,
 NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
+
+  static final long serialVersionUID = 1L;
 
   protected int orient;
 
@@ -311,8 +313,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     setPixelBounds();
 
-    Toolkit tkit = Toolkit.getDefaultToolkit();
-    seqmetrics = tkit.getFontMetrics(font_for_max_zoom);
+    seqmetrics = view.getGraphics().getFontMetrics(font_for_max_zoom);
     max_pixels_per_coord[X] = seqmetrics.charWidth('C');
 
     max_pixels_per_coord[Y] = 10;
@@ -1348,8 +1349,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    */
   public void setMaxZoomToFont(Font fnt) {
     font_for_max_zoom = fnt;
-    Toolkit tkit = Toolkit.getDefaultToolkit();
-    seqmetrics = tkit.getFontMetrics(font_for_max_zoom);
+    seqmetrics = view.getGraphics().getFontMetrics(font_for_max_zoom);
     int font_width = seqmetrics.charWidth('C');
     setMaxZoom(X, font_width);
   }

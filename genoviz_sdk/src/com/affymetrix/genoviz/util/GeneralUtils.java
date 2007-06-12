@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -116,8 +116,16 @@ public class GeneralUtils  {
   }
 
   /**
-   *  determines whether for the given character set a font is monospaced
-   *    (characters are all of same pixel width)
+   * A wrapper around the deprecated method Toolkit.getFontMetrics(Font).
+   * Try to use Graphics.getFontMetrics() instead whenever possible.
+   */
+  public static FontMetrics getFontMetrics(Font fnt) {
+    return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+  }
+  
+  /**
+   *  Determines whether for the given character set a font is monospaced
+   *    (characters are all of same pixel width).
    *
    *  trying to deal with bugs in some AWT implementations,
    *  where fonts which are <em>supposed</em> to be monospaced
@@ -128,8 +136,7 @@ public class GeneralUtils  {
    *  false if any of them are not equivalent to each other
    */
   public static boolean isReallyMonospaced(Font fnt, char[] chars) {
-    FontMetrics fontmet =
-      Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+    FontMetrics fontmet = getFontMetrics(fnt);
     String name = fnt.getName();
     if ((!name.equals("Courier")) &&
         (!name.equals("Monospaced"))) {
@@ -161,8 +168,7 @@ public class GeneralUtils  {
    *  characters using a particular Font
    */
   public static int getMaxCharWidth(Font fnt, char[] chars) {
-    FontMetrics fontmet =
-      Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+    FontMetrics fontmet = getFontMetrics(fnt);
     int width = 0;
     for (int i=0; i<chars.length; i++) {
       width = Math.max(width, fontmet.charWidth(chars[i]));

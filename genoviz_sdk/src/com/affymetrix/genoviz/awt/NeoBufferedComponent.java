@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -19,6 +19,7 @@ import java.awt.*;
  * a double buffered component that should draw quickly.
  */
 public class NeoBufferedComponent extends Container {
+  static final long serialVersionUID = 1L;
   public boolean buf_debug = false;
   static boolean rememberToFlush = true;
   static boolean rememberToDispose = true;

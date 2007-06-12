@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.EventObject;
 
 public class NeoDragEvent extends EventObject {
+  static final long serialVersionUID = 1L;
 
   protected int direction;
 

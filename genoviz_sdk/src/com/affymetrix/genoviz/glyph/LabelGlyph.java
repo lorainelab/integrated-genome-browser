@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
@@ -157,7 +158,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 
   /**
-   * calculates a containing rectangle
+   * Calculates a containing rectangle
    * in pixel space.
    * This rectangle is stored
    * in the instance variable <code>pixelbox</code>.
@@ -170,7 +171,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
     FontMetrics fm;
     if ( null == theView.getGraphics() ) {
-      fm = Toolkit.getDefaultToolkit().getFontMetrics( getFont() );
+      fm = GeneralUtils.getFontMetrics( getFont() );
     }
     else {
       fm = theView.getGraphics().getFontMetrics();

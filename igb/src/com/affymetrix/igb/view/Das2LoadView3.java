@@ -176,10 +176,10 @@ public class Das2LoadView3 extends JComponent
     public void valueChanged(TreeSelectionEvent evt) {
       TreePath checkedPaths[] = check_tree_manager.getSelectionModel().getSelectionPaths();
       int pcount = checkedPaths == null ? 0 : checkedPaths.length;
-      System.out.println("checked path count: " + pcount);
+      //      System.out.println("checked pathcount: " + pcount);
       TreePath[] changed_paths = evt.getPaths();
       int change_count = changed_paths.length;
-      System.out.println("    changed selection count: " + change_count);
+      //      System.out.println("    changed selection count: " + change_count);
       for (int i=0; i<change_count; i++) {
 	TreePath path = changed_paths[i];
 	boolean node_checked = evt.isAddedPath(i);
@@ -189,7 +189,7 @@ public class Das2LoadView3 extends JComponent
 	  Object userobj = tnode.getUserObject();
 	  if (userobj instanceof Das2TypeState) {
 	    Das2TypeState tstate = (Das2TypeState)userobj;
-	    System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
+	    //	    System.out.println("setting load state: " + node_checked + ", for type: " + tstate);
 	    boolean load = tstate.getLoad();
 	    if (tstate.getLoad() != node_checked) {
 	      tstate.setLoad(node_checked);
@@ -587,14 +587,14 @@ public class Das2LoadView3 extends JComponent
 	while (iter.hasNext()) {
 	  Das2Type type = (Das2Type)iter.next();
 	  Das2TypeState tstate = Das2TypeState.getState(type);
-	  System.out.println("type: " + tstate);
+	  //	  System.out.println("type: " + tstate + ", load: " + tstate.getLoad());
 	  //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
 	  DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
 	  tstate2node.put(tstate, child);
 	  child.setAllowsChildren(false);
 	  this.add(child);
 	  if (tstate.getLoad()) {
-	    System.out.println("  setting type to loaded");
+	    //	    System.out.println("  setting type to loaded");
 	    TreePath child_path = new TreePath(child.getPath());
 	    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
 	    ctmodel.addSelectionPath(child_path);
@@ -667,29 +667,32 @@ class Das2TypeState {
    */
   public static boolean checkLoadStatus(Das2VersionedSource version) {
     System.out.println("Das2LoadView3.checkLoadStatus() called, version: " + version.getID());
+    boolean found_load = false;
     try {
       Das2Source source = version.getSource();
       Das2ServerInfo server = source.getServerInfo();
 
-      String server_name = server.getID().replaceAll("/", "%");
-      String source_name = source.getID().replaceAll("/", "%");
-      String version_name = version.getID().replaceAll("/", "%");
+      String server_name = UnibrowPrefsUtil.shortNodeName(server.getID().replaceAll("/", "%"));
+      String source_name = UnibrowPrefsUtil.shortNodeName(source.getID().replaceAll("/", "%"));
+      String version_name = UnibrowPrefsUtil.shortNodeName(version.getID().replaceAll("/", "%"));
 
       Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
       Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
       Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
+
       Preferences types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
 
       String[] types = types_node.childrenNames();
       for (int i=0; i<types.length; i++) {
 	String type_name = types[i];
-	System.out.println("type: " + type_name);
 	Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_name);
-	if (tnode.getBoolean(LOADKEY, false)) { return true; }
+	// System.out.println("type pref name: " + type_name + ", id: " + tnode.get("id", "NA"));
+	//	if (tnode.getBoolean(LOADKEY, false)) { return true; }
+	if (tnode.getBoolean(LOADKEY, false)) { found_load = true; }
       }
     }
     catch (Exception ex) { return false; }
-    return false;
+    return found_load;
   }
 
   protected Das2TypeState(Das2Type dtype) {
@@ -698,10 +701,11 @@ class Das2TypeState {
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
 
-    String server_name = server.getID().replaceAll("/", "%");
-    String source_name = source.getID().replaceAll("/", "%");
-    String version_name = version.getID().replaceAll("/", "%");
-    type_name = type.getID().replaceAll("/", "%");
+    String server_name = UnibrowPrefsUtil.shortNodeName(server.getID().replaceAll("/", "%"));
+    String source_name = UnibrowPrefsUtil.shortNodeName(source.getID().replaceAll("/", "%"));
+    String version_name = UnibrowPrefsUtil.shortNodeName(version.getID().replaceAll("/", "%"));
+    // MUST transform type_name via shortNodeName() or nodeExists() below can fail!
+    type_name = UnibrowPrefsUtil.shortNodeName(type.getID().replaceAll("/", "%"));
 
     try {
       Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
@@ -713,6 +717,9 @@ class Das2TypeState {
 	//	String id = type_node.get("id", null);
 	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
 	load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY);
+	String id = type_node.get("id", null);
+	// backfilling for prefs created before "id" key was added
+	if (id == null) { type_node.put("id", type.getID()); }
       }
     }
     catch (Exception ex) { ex.printStackTrace(); }
@@ -723,6 +730,7 @@ class Das2TypeState {
       load = b;
       if (type_node == null) {
 	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	type_node.put("id", type.getID());
       }
       type_node.putBoolean(LOADKEY, load);
       notifyChangeListeners();
@@ -747,6 +755,7 @@ class Das2TypeState {
       load_strategy = strategy;
       if (type_node == null) {
 	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	type_node.put("id", type.getID());
       }
       type_node.putInt(STRATEGYKEY, load_strategy);
       notifyChangeListeners();
@@ -799,13 +808,12 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   }
 
   public boolean addTypeState(Das2TypeState state) {
-    System.out.println("called Das2TypesTableModel.addTypeState(), state = " + state);
+    //    System.out.println("called Das2TypesTableModel.addTypeState(), state = " + state);
     int index = type_states.indexOf(state);
     if (index >= 0) { return false; }  // given state is already present in table model
     type_states.add(state);
     state.addChangeListener(this);
     int insert_index = type_states.size()-1;
-    System.out.println("    fireTableRowsInserted: " + insert_index);
     fireTableRowsInserted(insert_index, insert_index);
     return true;
   }

@@ -679,7 +679,9 @@ import javax.swing.*;
     return short_s;
   }
 
-   public static String shortNodeName(String s, boolean remove_slash) {
+   //   public static String shortNodeName(String s, boolean remove_slash)  {
+
+   public static String shortNodeName(String s)  {
     String short_s;
     if (s.length() >= Preferences.MAX_NAME_LENGTH) {
       short_s = UrlToFileName.toMd5(s);
@@ -691,7 +693,7 @@ import javax.swing.*;
   
   /** Create a subnode, making sure to shorten the name if necessary. */
   public static Preferences getSubnode(Preferences parent, String name) {
-    return parent.node(shortKeyName(name));
+    return parent.node(shortNodeName(name));
   }
   
   public static JFrame createFrame(String name, JPanel panel) {

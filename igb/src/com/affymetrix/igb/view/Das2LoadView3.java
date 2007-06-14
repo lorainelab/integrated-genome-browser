@@ -401,22 +401,31 @@ public class Das2LoadView3 extends JComponent
         System.out.println( "%%%%%%% Das2LoadView3 received GroupSelectionEvent, group: " +
                 newgroup.getID());
     }
-    if (current_group != newgroup) {
+    if ((current_group != newgroup) || (newgroup == null)) {
       current_group = newgroup;
+
+      // need to reset table before populating tree 
+      //    (because tree population may trigger table population)
+      System.out.println("********** resetting table **********");
+      types_table_model = new Das2TypesTableModel(check_tree_manager);
+      types_table.setModel(types_table_model);
+      types_table.validate();
+      types_table.repaint();
+
       clearTreeView();
       java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
       //      redoTreeView(versions);
       Iterator viter = versions.iterator();
       while (viter.hasNext()) {
 	Das2VersionedSource version = (Das2VersionedSource)viter.next();
-	addVersionToTree(version);
+	Das2VersionTreeNode version_node = addVersionToTree(version);
+	boolean type_load = Das2TypeState.checkLoadStatus(version);
+	if (type_load) {
+	  int tcount = version_node.getChildCount();  // trigger types retrieval if not already done
+	  System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
+			     ", types: " + tcount);
+	}
       }
-
-      // need to reset table also...
-      types_table_model = new Das2TypesTableModel(check_tree_manager);
-      types_table.setModel(types_table_model);
-      types_table.validate();
-      types_table.repaint();
     }
   }
 
@@ -470,6 +479,7 @@ public class Das2LoadView3 extends JComponent
   }
 
   public synchronized void clearTreeView() {
+    System.out.println("*********** clearTreeView() called *********");
     server2node.clear();
     source2node.clear();
     version2node.clear();
@@ -479,15 +489,15 @@ public class Das2LoadView3 extends JComponent
   }
 
 
-  public synchronized void addVersionToTree(Das2VersionedSource version) {
-    // for adding nodes to tree, 
-    //   using DefaultTreeModel.insertNodeInto() instead of DefaultMutableTreeNode.add() 
+  public synchronized Das2VersionTreeNode addVersionToTree(Das2VersionedSource version) {
+    // for adding nodes to tree,
+    //   using DefaultTreeModel.insertNodeInto() instead of DefaultMutableTreeNode.add()
     //   to ensure that JTree rendering is updated to reflect tree model changes
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
     DefaultMutableTreeNode server_node = (DefaultMutableTreeNode)server2node.get(server);
     DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
-    DefaultMutableTreeNode version_node = (DefaultMutableTreeNode)version2node.get(version);
+    Das2VersionTreeNode version_node = (Das2VersionTreeNode)version2node.get(version);
     DefaultTreeModel tmodel = (DefaultTreeModel)tree.getModel();
     if (server_node == null) {
       server_node = new DefaultMutableTreeNode(server);
@@ -508,6 +518,7 @@ public class Das2LoadView3 extends JComponent
       //      source_node.add(version_node);
       tmodel.insertNodeInto(version_node, source_node, source_node.getChildCount());
     }
+    return version_node;
   }
 
 
@@ -655,6 +666,7 @@ class Das2TypeState {
    *  _any_ DAS/2 type for given Das2VersionedSource have stored preference of { load = true }
    */
   public static boolean checkLoadStatus(Das2VersionedSource version) {
+    System.out.println("Das2LoadView3.checkLoadStatus() called, version: " + version.getID());
     try {
       Das2Source source = version.getSource();
       Das2ServerInfo server = source.getServerInfo();
@@ -666,11 +678,12 @@ class Das2TypeState {
       Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
       Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
       Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
-      Preferences types_node = UnibrowPrefsUtil.getSubnode(source_node, TYPES_NODE_NAME);
+      Preferences types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
 
       String[] types = types_node.childrenNames();
       for (int i=0; i<types.length; i++) {
 	String type_name = types[i];
+	System.out.println("type: " + type_name);
 	Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_name);
 	if (tnode.getBoolean(LOADKEY, false)) { return true; }
       }
@@ -786,11 +799,13 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   }
 
   public boolean addTypeState(Das2TypeState state) {
+    System.out.println("called Das2TypesTableModel.addTypeState(), state = " + state);
     int index = type_states.indexOf(state);
     if (index >= 0) { return false; }  // given state is already present in table model
     type_states.add(state);
     state.addChangeListener(this);
     int insert_index = type_states.size()-1;
+    System.out.println("    fireTableRowsInserted: " + insert_index);
     fireTableRowsInserted(insert_index, insert_index);
     return true;
   }
@@ -854,7 +869,7 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     else if (col == SERVER_COLUMN) {
       result = type.getVersionedSource().getSource().getServerInfo().getName();
     }
-    //    System.out.println("Das2TypesTableModel.getValueAt() called, row = " + row + ", col = " + col + 
+    //    System.out.println("Das2TypesTableModel.getValueAt() called, row = " + row + ", col = " + col +
     //		       ", value = " + result);
     return result;
   }

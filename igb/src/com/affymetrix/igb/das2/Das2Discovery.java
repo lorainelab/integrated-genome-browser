@@ -24,7 +24,7 @@ public class Das2Discovery {
   static boolean servers_initialized = false;
 
   static {
-    name2url.put("localhost", "http://localhost:9092/das2/genome");
+    //    name2url.put("localhost", "http://localhost:9092/das2/genome");
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
     name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
@@ -73,25 +73,27 @@ public class Das2Discovery {
    */
   public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
     List matches = new ArrayList();
-    Iterator servers = getDas2Servers().values().iterator();
-    while (servers.hasNext()) {
-      Das2ServerInfo server = (Das2ServerInfo)servers.next();
-      //      System.out.println("  server: " + server.getName());
-      boolean init = server.isInitialized();
-      if ((! init) && try_unloaded_servers) {
-	server.initialize();
-	init = server.isInitialized();
-      }
-      if (init) {
-	Iterator sources = server.getSources().values().iterator();
-	while (sources.hasNext()) {
-	  Das2Source source = (Das2Source)sources.next();
-	  Iterator versioned_sources = source.getVersions().values().iterator();
-	  while (versioned_sources.hasNext()) {
-	    Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
-	    //	    System.out.println("     version: " + version.getName());
-	    if (version.getGenome() == group) {
-	      matches.add(version);
+    if (group != null) {
+      Iterator servers = getDas2Servers().values().iterator();
+      while (servers.hasNext()) {
+	Das2ServerInfo server = (Das2ServerInfo)servers.next();
+	//      System.out.println("  server: " + server.getName());
+	boolean init = server.isInitialized();
+	if ((! init) && try_unloaded_servers) {
+	  server.initialize();
+	  init = server.isInitialized();
+	}
+	if (init) {
+	  Iterator sources = server.getSources().values().iterator();
+	  while (sources.hasNext()) {
+	    Das2Source source = (Das2Source)sources.next();
+	    Iterator versioned_sources = source.getVersions().values().iterator();
+	    while (versioned_sources.hasNext()) {
+	      Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
+	      //	    System.out.println("     version: " + version.getName());
+	      if (version.getGenome() == group) {
+		matches.add(version);
+	      }
 	    }
 	  }
 	}

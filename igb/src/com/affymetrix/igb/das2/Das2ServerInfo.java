@@ -94,14 +94,24 @@ public class Das2ServerInfo  {
     sources.put(ds.getID(), ds);
   }
 
+
   /**
-   *  assumes there is only one versioned source for each AnnotatedSeqGroup
-   *    may want to change this to return a list of versioned sources instead
+   *  getVersionedSource() 
+   *    assumes there is only one versioned source for each AnnotatedSeqGroup
+   *    if server allows multiple versioned sources per group, then should 
+   *    use getVersionedSources()
    **/
   public Das2VersionedSource getVersionedSource(AnnotatedSeqGroup group) {
+    Collection vsources = getVersionedSources(group);
+    if (vsources.size() == 0) { return null; }
+    else { return (Das2VersionedSource)vsources.iterator().next(); }
+  }
+
+  public Collection getVersionedSources(AnnotatedSeqGroup group) {
     // should probably make a vsource2seqgroup hash,
     //   but for now can just iterate through sources and versions
-    Das2VersionedSource result = null;
+    //    Das2VersionedSource result = null;
+    Set results = new LinkedHashSet();
     Iterator siter = getSources().values().iterator();
     while (siter.hasNext()) {
       Das2Source source = (Das2Source)siter.next();
@@ -110,12 +120,13 @@ public class Das2ServerInfo  {
 	Das2VersionedSource version = (Das2VersionedSource)viter.next();
 	AnnotatedSeqGroup version_group = version.getGenome();
 	if (version_group == group) {
-	  result = version;
-	  break;
+	  //	  result = version;
+	  //	  break;
+	  results.add(version);
 	}
       }
     }
-    return result;
+    return results;
   }
 
 //  public String getDescription() { return description; }

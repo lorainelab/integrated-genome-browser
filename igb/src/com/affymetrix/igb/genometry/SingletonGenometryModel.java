@@ -47,6 +47,7 @@ public class SingletonGenometryModel {
   }
 
   public AnnotatedSeqGroup getSeqGroup(String group_syn) {
+    if (group_syn == null) { return null; }
     AnnotatedSeqGroup group = (AnnotatedSeqGroup)seq_groups.get(group_syn);
     if (group == null) {
       // try and find a synonym

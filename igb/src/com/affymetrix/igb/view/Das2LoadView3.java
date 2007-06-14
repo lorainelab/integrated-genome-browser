@@ -404,7 +404,7 @@ public class Das2LoadView3 extends JComponent
     if ((current_group != newgroup) || (newgroup == null)) {
       current_group = newgroup;
 
-      // need to reset table before populating tree 
+      // need to reset table before populating tree
       //    (because tree population may trigger table population)
       System.out.println("********** resetting table **********");
       types_table_model = new Das2TypesTableModel(check_tree_manager);
@@ -413,19 +413,73 @@ public class Das2LoadView3 extends JComponent
       types_table.repaint();
 
       clearTreeView();
-      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
-      //      redoTreeView(versions);
-      Iterator viter = versions.iterator();
-      while (viter.hasNext()) {
-	Das2VersionedSource version = (Das2VersionedSource)viter.next();
-	Das2VersionTreeNode version_node = addVersionToTree(version);
-	boolean type_load = Das2TypeState.checkLoadStatus(version);
-	if (type_load) {
-	  int tcount = version_node.getChildCount();  // trigger types retrieval if not already done
-	  System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
-			     ", types: " + tcount);
+      //      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
+
+      Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
+      int new_sleep_time = 0;
+      while (servers.hasNext()) {
+          new_sleep_time += 5000;
+	final Das2ServerInfo server = (Das2ServerInfo)((Map.Entry)servers.next()).getValue();
+	final AnnotatedSeqGroup cgroup = current_group;
+        final int sleep_time = new_sleep_time;
+
+	SwingWorker server_worker = new SwingWorker() {
+	    public Object construct() {
+	      try {
+		thread.currentThread().sleep(sleep_time);
+	      }
+	      catch (Exception ex) { ex.printStackTrace(); }
+	      Object result = server.getVersionedSources(cgroup);
+	      return result;
+	    }
+
+	    public void finished() {
+	      try {
+		Iterator versions = ((Collection)this.get()).iterator();
+		while (versions.hasNext()) {
+		  Das2VersionedSource version = (Das2VersionedSource)versions.next();
+		  Das2VersionTreeNode version_node = addVersionToTree(version);
+		  boolean type_load = Das2TypeState.checkLoadStatus(version);
+		  if (type_load) {
+		    // at least one annotation type for this genome (version) has pref set to {load = true}
+		    //   therefore calling version_node.getChildCount(),
+		    //   which triggers types retrieval if not already done,
+		    //   types retrieval in turn triggers adding type nodes to tree structure
+		    //   adding type nodes to tree structure in turn triggers adding to table any
+		    //     types with preferences {load = true}
+		    int tcount = version_node.getChildCount();
+		    System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
+				       ", types: " + tcount);
+		  }
+		}
+	      }
+	      catch (Exception ex) { ex.printStackTrace(); }
+	    }
+	  };
+	server_worker.start();
+
+	/*
+	Iterator versions = server.getVersionedSources(current_group).iterator();
+	while (versions.hasNext()) {
+	  Das2VersionedSource version = (Das2VersionedSource)versions.next();
+	  Das2VersionTreeNode version_node = addVersionToTree(version);
+	  boolean type_load = Das2TypeState.checkLoadStatus(version);
+	  if (type_load) {
+	    // at least one annotation type for this genome (version) has pref set to {load = true}
+	    //   therefore calling version_node.getChildCount(),
+	    //   which triggers types retrieval if not already done,
+	    //   types retrieval in turn triggers adding type nodes to tree structure
+	    //   adding type nodes to tree structure in turn triggers adding to table any
+	    //     types with preferences {load = true}
+	    int tcount = version_node.getChildCount();
+	    System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
+			       ", types: " + tcount);
+	  }
 	}
+	*/
       }
+      //      redoTreeView(versions);
+      //      Iterator viter = versions.iterator();
     }
   }
 

@@ -73,8 +73,10 @@ public class Das2LoadView3 extends JComponent
   static boolean INCLUDE_NAME_SEARCH = false;
   static boolean USE_DAS2_OPTIMIZER = true;
   static boolean DEBUG_EVENTS = false;
+  static boolean ADD_DELAYS = false;  // inserting delays on worker threads to test threading
   static boolean DEFAULT_THREAD_FEATURE_REQUESTS = true;
   static SeqMapView gviewer = null;
+
 
   JTabbedPane tpane = new JTabbedPane();
   JTextField searchTF = new JTextField(40);
@@ -413,77 +415,64 @@ public class Das2LoadView3 extends JComponent
       types_table.repaint();
 
       clearTreeView();
-      //      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
+      if (current_group == null) { return; }
 
+      //      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
       Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
-      int new_sleep_time = 0;
+      int current_sleep_time = 0;
       while (servers.hasNext()) {
-          new_sleep_time += 5000;
+	current_sleep_time += 5000;
 	final Das2ServerInfo server = (Das2ServerInfo)((Map.Entry)servers.next()).getValue();
 	final AnnotatedSeqGroup cgroup = current_group;
-        final int sleep_time = new_sleep_time;
+        final int sleep_time = current_sleep_time;
 
 	SwingWorker server_worker = new SwingWorker() {
 	    public Object construct() {
-	      try {
-		thread.currentThread().sleep(sleep_time);
-	      }
-	      catch (Exception ex) { ex.printStackTrace(); }
-	      Object result = server.getVersionedSources(cgroup);
-	      return result;
+	      if (ADD_DELAYS)  { try { thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
+	      Collection vers = server.getVersionedSources(cgroup);
+	      return vers;
 	    }
 
 	    public void finished() {
+	      Iterator versions = null;
 	      try {
-		Iterator versions = ((Collection)this.get()).iterator();
+		versions = ((Collection)this.get()).iterator();
+	      }
+	      catch (Exception ex) { ex.printStackTrace(); }
+	      if (versions != null) {
 		while (versions.hasNext()) {
-		  Das2VersionedSource version = (Das2VersionedSource)versions.next();
-		  Das2VersionTreeNode version_node = addVersionToTree(version);
+		  final Das2VersionedSource version = (Das2VersionedSource)versions.next();
+		  final Das2VersionTreeNode version_node = addVersionToTree(version);
 		  boolean type_load = Das2TypeState.checkLoadStatus(version);
 		  if (type_load) {
 		    // at least one annotation type for this genome (version) has pref set to {load = true}
-		    //   therefore calling version_node.getChildCount(),
-		    //   which triggers types retrieval if not already done,
-		    //   types retrieval in turn triggers adding type nodes to tree structure
+		    //   therefore calling version.getTypes() on separate thread (in case it triggers long access to DAS/2 server)
+		    // once types are populated then in event thread call version_node.getChildCount(),
+		    //   which trigger version_node.populate() to add type nodes to tree structure
 		    //   adding type nodes to tree structure in turn triggers adding to table any
 		    //     types with preferences {load = true}
-		    int tcount = version_node.getChildCount();
-		    System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
-				       ", types: " + tcount);
+		    SwingWorker types_worker = new SwingWorker() {
+			public Object construct() {
+			  if (ADD_DELAYS)  { try { thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
+			  if (ADD_DELAYS)  { System.out.println("--------  types worker woke up from sleep"); }
+			  Map types = version.getTypes();
+			  return types;
+			}
+			public void finished() {
+			  int tcount = version_node.getChildCount(); // triggers tree and table population with types info
+			}
+		      };
+		    types_worker.start();
 		  }
 		}
 	      }
-	      catch (Exception ex) { ex.printStackTrace(); }
 	    }
 	  };
 	server_worker.start();
-
-	/*
-	Iterator versions = server.getVersionedSources(current_group).iterator();
-	while (versions.hasNext()) {
-	  Das2VersionedSource version = (Das2VersionedSource)versions.next();
-	  Das2VersionTreeNode version_node = addVersionToTree(version);
-	  boolean type_load = Das2TypeState.checkLoadStatus(version);
-	  if (type_load) {
-	    // at least one annotation type for this genome (version) has pref set to {load = true}
-	    //   therefore calling version_node.getChildCount(),
-	    //   which triggers types retrieval if not already done,
-	    //   types retrieval in turn triggers adding type nodes to tree structure
-	    //   adding type nodes to tree structure in turn triggers adding to table any
-	    //     types with preferences {load = true}
-	    int tcount = version_node.getChildCount();
-	    System.out.println("%%%%%%   some types have load set in version: " + version.getID() +
-			       ", types: " + tcount);
-	  }
-	}
-	*/
       }
-      //      redoTreeView(versions);
-      //      Iterator viter = versions.iterator();
+
     }
   }
-
-
 
   /*  listening to events on DAS/2 server/source/version/type tree
   public void valueChanged(TreeSelectionEvent evt) {

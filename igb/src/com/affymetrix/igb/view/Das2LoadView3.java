@@ -65,7 +65,7 @@ import skt.swing.tree.check.TreePathSelectable;
 public class Das2LoadView3 extends JComponent
   implements ActionListener,
 	     // TableModelListener,
-	     // TreeSelectionListener, 
+	     // TreeSelectionListener,
 	     SeqSelectionListener,
 	     GroupSelectionListener,
 	     DataRequestListener {
@@ -86,8 +86,12 @@ public class Das2LoadView3 extends JComponent
   JTree tree;
   CheckTreeManager check_tree_manager; // manager for tree with checkboxes
   Das2TypesTableModel types_table_model;
+  DefaultMutableTreeNode treetop = null;
 
   Map das_servers;
+  Map server2node = new HashMap();
+  Map source2node = new HashMap();
+  Map version2node = new HashMap();
   Map tstate2node = new LinkedHashMap();
 
   static SingletonGenometryModel gmodel = IGB.getGenometryModel();
@@ -239,12 +243,12 @@ public class Das2LoadView3 extends JComponent
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
     SeqSpan overlap;
-    if (! (selected_seq instanceof SmartAnnotBioSeq)) {
-      ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
-      return;
-    }
     if (selected_seq == null) {
       ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
+      return;
+    }
+    if (! (selected_seq instanceof SmartAnnotBioSeq)) {
+      ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
       return;
     }
     if (visible_seq != selected_seq) {
@@ -399,7 +403,15 @@ public class Das2LoadView3 extends JComponent
     }
     if (current_group != newgroup) {
       current_group = newgroup;
-      redoTreeView();
+      clearTreeView();
+      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
+      //      redoTreeView(versions);
+      Iterator viter = versions.iterator();
+      while (viter.hasNext()) {
+	Das2VersionedSource version = (Das2VersionedSource)viter.next();
+	addVersionToTree(version);
+      }
+
       // need to reset table also...
       types_table_model = new Das2TypesTableModel(check_tree_manager);
       types_table.setModel(types_table_model);
@@ -413,7 +425,7 @@ public class Das2LoadView3 extends JComponent
   /*  listening to events on DAS/2 server/source/version/type tree
   public void valueChanged(TreeSelectionEvent evt) {
     //    System.out.println("TreeSelectionEvent: " + evt);
-  }  
+  }
   */
 
 
@@ -457,68 +469,54 @@ public class Das2LoadView3 extends JComponent
     return false;
   }
 
-  /**
-   *  Replace old JTree model with new model,
-   *     filter based on currently selected genome (AnnotatedSeqGroup)
-   */
-  public void redoTreeView() {
-    System.out.println("############## Das2LoadView3.redoTreeView() called #############");
-    java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
-    Iterator iter = versions.iterator();
-    Set servers = new LinkedHashSet();
-    Set sources = new LinkedHashSet();
-    Map server2node = new LinkedHashMap();
-    Map source2node = new LinkedHashMap();
-    while (iter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)iter.next();
-      System.out.println("####   version match: " + version.getID());
-      Das2Source source = version.getSource();
-      Das2ServerInfo server = source.getServerInfo();
-      servers.add(server);
-      sources.add(source);
-    }
-
-    DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");
-
-    Iterator serveriter = servers.iterator();
-    while (serveriter.hasNext()) {
-      Das2ServerInfo server = (Das2ServerInfo)serveriter.next();
-      //      Das2ServerTreeNode snode = new Das2ServerTreeNode(server);
-      DefaultMutableTreeNode server_node = new DefaultMutableTreeNode(server);
-      top.add(server_node);
-      server2node.put(server, server_node);
-    }
-
-    Iterator sourceiter = sources.iterator();
-    while (sourceiter.hasNext()) {
-      Das2Source source = (Das2Source)sourceiter.next();
-      Das2ServerInfo server = source.getServerInfo();
-      DefaultMutableTreeNode server_node = (DefaultMutableTreeNode)server2node.get(server);
-      //      Das2SourceNode source_node = new Das2SourceNode(source);
-      DefaultMutableTreeNode source_node = new DefaultMutableTreeNode(source);
-      server_node.add(source_node);
-      source2node.put(source, source_node);
-    }
-
-    Iterator viter = versions.iterator();
-    while (viter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)viter.next();
-      Das2Source source = version.getSource();
-      DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
-      Das2VersionTreeNode version_node = new Das2VersionTreeNode(version);
-      source_node.add(version_node);
-    }
-    TreeModel tmodel = new DefaultTreeModel(top, true);
+  public synchronized void clearTreeView() {
+    server2node.clear();
+    source2node.clear();
+    version2node.clear();
+    treetop = new DefaultMutableTreeNode("DAS/2 Genome Servers");
+    TreeModel tmodel = new DefaultTreeModel(treetop, true);
     tree.setModel(tmodel);
   }
+
+
+  public synchronized void addVersionToTree(Das2VersionedSource version) {
+    // for adding nodes to tree, 
+    //   using DefaultTreeModel.insertNodeInto() instead of DefaultMutableTreeNode.add() 
+    //   to ensure that JTree rendering is updated to reflect tree model changes
+    Das2Source source = version.getSource();
+    Das2ServerInfo server = source.getServerInfo();
+    DefaultMutableTreeNode server_node = (DefaultMutableTreeNode)server2node.get(server);
+    DefaultMutableTreeNode source_node = (DefaultMutableTreeNode)source2node.get(source);
+    DefaultMutableTreeNode version_node = (DefaultMutableTreeNode)version2node.get(version);
+    DefaultTreeModel tmodel = (DefaultTreeModel)tree.getModel();
+    if (server_node == null) {
+      server_node = new DefaultMutableTreeNode(server);
+      server2node.put(server, server_node);
+      //      treetop.add(server_node);
+      tmodel.insertNodeInto(server_node, treetop, treetop.getChildCount());
+    }
+    if (source_node == null) {
+      source_node = new DefaultMutableTreeNode(source);
+      source2node.put(source, source_node);
+      //      server_node.add(source_node);
+      tmodel.insertNodeInto(source_node, server_node, server_node.getChildCount());
+
+    }
+    if (version_node == null) {
+      version_node = new Das2VersionTreeNode(version);
+      version2node.put(version, version_node);
+      //      source_node.add(version_node);
+      tmodel.insertNodeInto(version_node, source_node, source_node.getChildCount());
+    }
+  }
+
 
   /**
    *
    * Das2VersionTreeNode
    *
-   * TreeNode wrapper around a Das2VersionedSource object.
-   * Maybe don't really need this, since Das2VersionedSource could itself serve
-   * as a leaf.
+   * Subclassing DefaultMutableTreeNode for representing Das2VersionedSource nodes in tree
+   *   main reason for subclassing is to get dynamic addition of nodes representing Das2TypeStates
    */
   class Das2VersionTreeNode extends DefaultMutableTreeNode {
     Das2VersionedSource version;
@@ -610,11 +608,15 @@ public class Das2LoadView3 extends JComponent
  *  or "visible range", and possibly other details.
  */
 class Das2TypeState {
-  static boolean default_load = false;
   static String[] LOAD_STRINGS = new String[3];
   static int VISIBLE_RANGE = 1;   // MANUAL_VISIBLE_RANGE
   static int WHOLE_SEQUENCE = 2;  // AUTO_WHOLE_SEQUENCE
-  static int default_load_strategy = VISIBLE_RANGE;
+  static boolean DEFAULT_LOAD = false;
+  static int DEFAULT_LOAD_STRATEGY = VISIBLE_RANGE;
+  static String LOADKEY = "load";
+  static String STRATEGYKEY = "load_strategy";
+  //  static String IDKEY = "id";
+  static String TYPES_NODE_NAME = "types";
 
   /*
    *  Want to retrieve type state from Preferences if possible
@@ -630,11 +632,12 @@ class Das2TypeState {
     LOAD_STRINGS[WHOLE_SEQUENCE] = "Whole Sequence";
   }
 
-  boolean load;
-  int load_strategy;
+  boolean load = DEFAULT_LOAD;
+  int load_strategy = DEFAULT_LOAD_STRATEGY;
   Das2Type type;
-  Preferences lnode_strategy;
-  Preferences lnode_load;
+  Preferences type_node;
+  Preferences types_node;
+  String type_name;
   ArrayList listeners = new ArrayList();
 
 
@@ -647,35 +650,57 @@ class Das2TypeState {
     return tstate;
   }
 
+  /**
+   *  checks previous status (in Preferences) of Das2TypeStates, returns true if
+   *  _any_ DAS/2 type for given Das2VersionedSource have stored preference of { load = true }
+   */
+  public static boolean checkLoadStatus(Das2VersionedSource version) {
+    try {
+      Das2Source source = version.getSource();
+      Das2ServerInfo server = source.getServerInfo();
+
+      String server_name = server.getID().replaceAll("/", "%");
+      String source_name = source.getID().replaceAll("/", "%");
+      String version_name = version.getID().replaceAll("/", "%");
+
+      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
+      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
+      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
+      Preferences types_node = UnibrowPrefsUtil.getSubnode(source_node, TYPES_NODE_NAME);
+
+      String[] types = types_node.childrenNames();
+      for (int i=0; i<types.length; i++) {
+	String type_name = types[i];
+	Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	if (tnode.getBoolean(LOADKEY, false)) { return true; }
+      }
+    }
+    catch (Exception ex) { return false; }
+    return false;
+  }
+
   protected Das2TypeState(Das2Type dtype) {
     this.type = dtype;
     Das2VersionedSource version = type.getVersionedSource();
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
-    String server_root_url = server.getID();
-    if (server_root_url.startsWith("http://")) { server_root_url = server_root_url.substring(7); }
-    if (server_root_url.indexOf("//") > -1) {
-      System.out.println("need to replace all double slashes in path!");
-    }
-    String base_node_id = version.getID();
-    base_node_id = base_node_id.replaceAll("/{2,}", "/");
-    String subnode_strategy = base_node_id + "/type_load_strategy";
-    String subnode_load = base_node_id + "/type_load";
-    // System.out.println("subnode_strategy = " + subnode_strategy);
-    //    System.out.println("subnode_load = " + subnode_load);
-    //        System.out.println("subnode = " + subnode);
-    //    System.out.println("    length: " + subnode.length());
+
+    String server_name = server.getID().replaceAll("/", "%");
+    String source_name = source.getID().replaceAll("/", "%");
+    String version_name = version.getID().replaceAll("/", "%");
+    type_name = type.getID().replaceAll("/", "%");
 
     try {
-      lnode_load = UnibrowPrefsUtil.getSubnode(das2_node, subnode_load);
-      lnode_strategy = UnibrowPrefsUtil.getSubnode(das2_node, subnode_strategy);
-
-
-      String[] keys = lnode_load.keys();
-      // alternative if each type is a node:  types_node.childrenNames()
-
-      load = lnode_load.getBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load);
-      load_strategy = lnode_strategy.getInt(UnibrowPrefsUtil.shortKeyName(type.getID()), default_load_strategy);
+      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
+      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
+      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
+      types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
+      if (types_node.nodeExists(type_name)) {
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	//	String id = type_node.get("id", null);
+	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
+	load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY);
+      }
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }
@@ -683,7 +708,10 @@ class Das2TypeState {
   public void setLoad(boolean b) {
     if (load != b) {
       load = b;
-      lnode_load.putBoolean(UnibrowPrefsUtil.shortKeyName(type.getID()), load);
+      if (type_node == null) {
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+      }
+      type_node.putBoolean(LOADKEY, load);
       notifyChangeListeners();
     }
   }
@@ -704,7 +732,10 @@ class Das2TypeState {
   public void setLoadStrategy(int strategy) {
     if (load_strategy != strategy) {
       load_strategy = strategy;
-      lnode_strategy.putInt(UnibrowPrefsUtil.shortKeyName(type.getID()), strategy);
+      if (type_node == null) {
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+      }
+      type_node.putInt(STRATEGYKEY, load_strategy);
       notifyChangeListeners();
     }
 
@@ -798,31 +829,34 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   public Object getValueAt(int row, int col) {
     Das2TypeState state = getTypeState(row);
     Das2Type type = state.getDas2Type();
+    Object result = "NOT_ASSIGNED";
     if (col == NAME_COLUMN) {
-      return type.getName();
+      result = type.getName();
     }
     else if (col == ID_COLUMN) {
-      return type.getID();
+      result = type.getID();
     }
     else if (col == ONTOLOGY_COLUMN) {
-      return type.getOntology();
+      result = type.getOntology();
     }
     else if (col == SOURCE_COLUMN) {
-      return type.getDerivation();
+      result = type.getDerivation();
     }
     else if (col == LOAD_STRATEGY_COLUMN) {
-      return state.getLoadString();
+      result = state.getLoadString();
     }
     else if (col == LOAD_BOOLEAN_COLUMN) {
-      return (state.getLoad() ? Boolean.TRUE : Boolean.FALSE);
+      result = (state.getLoad() ? Boolean.TRUE : Boolean.FALSE);
     }
     else if (col == VSOURCE_COLUMN) {
-      return type.getVersionedSource().getName();
+      result = type.getVersionedSource().getName();
     }
     else if (col == SERVER_COLUMN) {
-      return type.getVersionedSource().getSource().getServerInfo().getName();
+      result = type.getVersionedSource().getSource().getServerInfo().getName();
     }
-    return null;
+    //    System.out.println("Das2TypesTableModel.getValueAt() called, row = " + row + ", col = " + col + 
+    //		       ", value = " + result);
+    return result;
   }
 
   public Class getColumnClass(int c) {

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -112,4 +112,24 @@ public class DisplayUtils {
     } // for col
   }
 
+
+  /** Makes sure that the JFrame and JTabbedPane containing this component is visible. */
+  public static void ensureComponentIsShowing(final Component c) {
+    final JTabbedPane tab_pane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, c);
+    
+    if (tab_pane != null && tab_pane.indexOfComponent(c) >= 0) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          tab_pane.setSelectedComponent(c);
+        }
+      });
+    }
+
+    // If the view has been opened in a new window and that window is
+    // now minimized or not on top, re-display the window
+    JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
+
+    //TODO: if frame is null, create one?
+    DisplayUtils.bringFrameToFront(frame);
+  }
 }

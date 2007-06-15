@@ -39,6 +39,7 @@ public class LoadFileAction {
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
   static final boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
+  static final boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
 
   /**
    *  Constructor.
@@ -85,6 +86,9 @@ public class LoadFileAction {
         "Scored Interval Files"));
       if (PARSE_CNT) {
         chooser.addChoosableFileFilter(new UniFileFilter("cnt", "Copy Number Files"));
+      }
+      if (PARSE_VAR) {
+        chooser.addChoosableFileFilter(new UniFileFilter("var", "Genomic Variation Files"));
       }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
@@ -322,6 +326,12 @@ public class LoadFileAction {
       }
       else if (PARSE_CNT && lcname.endsWith(".cnt")) {
         CntParser parser = new CntParser();
+        parser.parse(str, selected_group);
+        aseq = input_seq;
+        parser = null;
+      }
+      else if (PARSE_VAR && lcname.endsWith(".var")) {
+        VarParser parser = new VarParser();
         parser.parse(str, selected_group);
         aseq = input_seq;
         parser = null;

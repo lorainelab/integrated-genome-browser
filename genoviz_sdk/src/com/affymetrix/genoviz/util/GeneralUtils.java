@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.util;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
@@ -116,11 +117,16 @@ public class GeneralUtils  {
   }
 
   /**
-   * A wrapper around the deprecated method Toolkit.getFontMetrics(Font).
-   * Try to use Graphics.getFontMetrics() instead whenever possible.
+   * A simple way to get a FontMetrics object without calling the
+   * deprecated method Toolkit.getFontMetrics(Font).
+   * Use Graphics.getFontMetrics() instead whenever possible, but this
+   * will work just as well as Toolkit.getFontMetrics(Font).
    */
   public static FontMetrics getFontMetrics(Font fnt) {
-    return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+    BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
+    return g.getFontMetrics(fnt);
+    // return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
   }
   
   /**

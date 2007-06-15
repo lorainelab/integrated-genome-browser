@@ -21,7 +21,6 @@ import javax.swing.table.*;
 import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.event.GroupSelectionEvent;
 import com.affymetrix.igb.event.GroupSelectionListener;
 import com.affymetrix.igb.event.SymMapChangeEvent;
@@ -34,6 +33,7 @@ import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 
 /**
@@ -209,7 +209,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
             }
             search_action.setEnabled(true);
             
-            IGB.ensureComponentIsShowing(AnnotBrowserView.this);
+            DisplayUtils.ensureComponentIsShowing(AnnotBrowserView.this);
           }
         });
       }

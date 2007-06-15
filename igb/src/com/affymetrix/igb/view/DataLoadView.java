@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,7 +23,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.DisplayUtils;
 
 public class DataLoadView extends JComponent  {
@@ -41,9 +40,6 @@ public class DataLoadView extends JComponent  {
   SeqGroupView group_view;
 
   public DataLoadView() {
-    das2_view = new Das2LoadView();
-    das2_view3 = new Das2LoadView3();
-    das1_view = new DasLoadView();
     group_view = new SeqGroupView();
     
     //gmodel.addModelChangeListener(group_view);
@@ -65,12 +61,15 @@ public class DataLoadView extends JComponent  {
       tpane.addTab("QuickLoad", quick_view); 
     }
     if (USE_DAS2_VIEW) {
+      das2_view = new Das2LoadView();
       tpane.addTab("DAS/2", das2_view);
     }
     if (USE_DAS2_VIEW3) {
+      das2_view3 = new Das2LoadView3();
       tpane.addTab("New DAS/2", das2_view3);
     }
     if (USE_DAS1_VIEW) {
+      das1_view = new DasLoadView();
       tpane.addTab("DAS/1", das1_view);
     }
   }

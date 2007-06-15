@@ -313,7 +313,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     setPixelBounds();
 
-    seqmetrics = view.getGraphics().getFontMetrics(font_for_max_zoom);
+    seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
     max_pixels_per_coord[X] = seqmetrics.charWidth('C');
 
     max_pixels_per_coord[Y] = 10;

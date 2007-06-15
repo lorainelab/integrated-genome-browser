@@ -213,6 +213,10 @@ public class PropertySheet extends JPanel {
     JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
+    for (int i=0; i<table.getColumnCount(); i++) {
+      table.getColumnModel().getColumn(i).setMinWidth(100);
+      table.getColumnModel().getColumn(i).setPreferredWidth(150);
+    }
   }
 
 

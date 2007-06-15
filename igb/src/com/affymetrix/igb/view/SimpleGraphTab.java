@@ -76,11 +76,37 @@ implements SeqSelectionListener, SymSelectionListener {
   JButton colorB = new JButton("Color");
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
 
-  JButton selectAllB = new JButton("Select All");
-  JButton resetB = new JButton("Reset");
-  JButton saveB = new JButton("Save...");
-  JButton deleteB = new JButton("Delete");
-  JButton threshB = new JButton("Thresholding...");
+  Action select_all_graphs_action =  new AbstractAction("Select All Graphs") {
+    public void actionPerformed(ActionEvent e) {
+        if (gviewer != null) { 
+          gviewer.selectAllGraphs();
+        }
+      }
+   };
+
+  Action delete_selected_graphs_action =  new AbstractAction("Delete Selected Graphs") {
+    public void actionPerformed(ActionEvent e) {
+        GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
+      }
+   };
+   
+  Action save_selected_graphs_action =  new AbstractAction("Save Selected Graphs...") {
+    public void actionPerformed(ActionEvent e) {
+        GraphAdjusterView.saveGraphs(gviewer, grafs);
+      }
+   };
+   
+  Action graph_threshold_action =  new AbstractAction("Graph Thresholding...") {
+    public void actionPerformed(ActionEvent e) {
+        showGraphScoreThreshSetter();
+      }
+   };
+   
+   
+  JButton selectAllB = new JButton(select_all_graphs_action);
+  JButton saveB = new JButton(save_selected_graphs_action);
+  JButton deleteB = new JButton(delete_selected_graphs_action);
+  JButton threshB = new JButton(graph_threshold_action);
 
   JButton combineB = new JButton("Join");
   JButton splitB = new JButton("Split");
@@ -94,6 +120,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   JPanel advanced_panel;
 
+  
   public SimpleGraphTab() {
     this(IGB.getSingletonIGB());
   }
@@ -193,8 +220,6 @@ implements SeqSelectionListener, SymSelectionListener {
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(selectAllB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
-    //butbox.add(resetB);
-    //butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(saveB);
     butbox.add(Box.createRigidArea(new Dimension(5,5)));
     butbox.add(deleteB);
@@ -214,14 +239,6 @@ implements SeqSelectionListener, SymSelectionListener {
     megabox.add(Box.createRigidArea(new Dimension(1,5)));
     first_two_columns.setAlignmentX(0.0f);
     megabox.add(first_two_columns);
-
-    selectAllB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (gviewer != null) { 
-          gviewer.selectAllGraphs();
-        }
-      }
-    });
 
     Box label_box = Box.createHorizontalBox();
     label_box.add(selected_graphs_label);
@@ -259,6 +276,8 @@ implements SeqSelectionListener, SymSelectionListener {
     this.add(Box.createVerticalGlue());
     
     this.setBorder(BorderFactory.createEtchedBorder());
+    
+    resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
     
     setSeqMapView(this.gviewer); // called for the side-effects
 
@@ -448,9 +467,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
     boolean b = ! (grafs.isEmpty());
     height_slider.setEnabled(b);
-    resetB.setEnabled(false);
-    //advB.setEnabled(true);
-    threshB.setEnabled(b);
+    graph_threshold_action.setEnabled(b);
     enableButtons(stylegroup, b);
     mmavgB.setEnabled(all_are_smart_glyphs);
     floatCB.setEnabled(b);
@@ -458,8 +475,8 @@ implements SeqSelectionListener, SymSelectionListener {
     labelCB.setEnabled(b);
 
     colorB.setEnabled(b);
-    saveB.setEnabled(grafs.size() == 1);
-    deleteB.setEnabled(b);
+    save_selected_graphs_action.setEnabled(grafs.size() == 1);
+    delete_selected_graphs_action.setEnabled(b);
     cloneB.setEnabled(b);
     scaleCB.setEnabled(cloneB.isEnabled());
     
@@ -740,18 +757,6 @@ implements SeqSelectionListener, SymSelectionListener {
       advanced_panel.add(Box.createRigidArea(new Dimension(5,12)));
       advanced_panel.add(math_box);
 
-      saveB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          GraphAdjusterView.saveGraphs(gviewer, grafs);
-        }
-      });
-
-      deleteB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
-        }
-      });
-
       cloneB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           scaleGraphs();
@@ -776,11 +781,6 @@ implements SeqSelectionListener, SymSelectionListener {
         }
       });
 
-      threshB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          showGraphScoreThreshSetter();
-        }
-      });
       combineB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           combineGraphs();

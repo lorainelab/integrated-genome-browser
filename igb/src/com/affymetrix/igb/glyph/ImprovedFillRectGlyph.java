@@ -27,8 +27,8 @@ public class ImprovedFillRectGlyph extends SolidGlyph  {
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     Graphics g = view.getGraphics();
-    //    g.setColor(getBackgroundColor());
-    g.setColor(color);
+    g.setColor(getBackgroundColor());
+    //g.setColor(color);
     
     EfficientGlyph.fixAWTBigRectBug(view, pixelbox);
 

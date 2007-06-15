@@ -68,7 +68,8 @@ public class ImprovedLineContGlyph extends Glyph  {
       g.setColor(Color.white);
     }
     else {
-      g.setColor(color);
+      g.setColor(getBackgroundColor());
+      //g.setColor(color);
     }
     
     EfficientGlyph.fixAWTBigRectBug(view, pixelbox);

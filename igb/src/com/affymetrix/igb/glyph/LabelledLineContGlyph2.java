@@ -99,7 +99,7 @@ public class LabelledLineContGlyph2 extends Glyph
     super.draw(view);
     Graphics g = view.getGraphics();
     if (DEBUG_OPTIMIZED_FILL) { g.setColor(Color.white); }
-    else { g.setColor(color); }
+    else { g.setColor(getBackgroundColor()); }
 
     if (show_label) {
       scratch_cbox.x = coordbox.x;

@@ -18,7 +18,6 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.igb.IGB;
 
 public class EfficientLabelledGlyph extends EfficientSolidGlyph implements LabelledGlyph  {
 

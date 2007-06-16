@@ -22,7 +22,6 @@ import java.util.*;
 
 import com.affymetrix.igb.servlets.UnibrowControlServer;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
-import com.affymetrix.igb.IGB;
 
 /**
  *  Holds a bookmark, which is simply a name associated with a URL.

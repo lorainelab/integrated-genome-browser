@@ -23,9 +23,6 @@ import java.net.URI.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.util.DasUtils;
-import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;

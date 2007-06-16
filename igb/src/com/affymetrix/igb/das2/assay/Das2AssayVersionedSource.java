@@ -22,16 +22,9 @@ import java.lang.Object.*;
 import java.net.URI.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.util.DasUtils;
-import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.igb.das2.ontology.Das2OntologyType;
 import com.affymetrix.igb.das2.assay.sax.*;
 
 /**
@@ -39,7 +32,7 @@ import com.affymetrix.igb.das2.assay.sax.*;
  * @author Marc Carlson
  *
  */
-public class Das2AssayVersionedSource extends com.affymetrix.igb.das2.Das2VersionedSource {
+public class Das2AssayVersionedSource extends Das2VersionedSource {
 
   boolean platforms_initialized = false;
   LinkedList platforms = new LinkedList();

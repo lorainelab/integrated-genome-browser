@@ -32,11 +32,17 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.threads.SwingWorker;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.ThreadUtils;  // for calling getPrimaryExecutor()
 import javax.swing.event.*;
 
 import skt.swing.tree.check.CheckTreeManager;
 import skt.swing.tree.check.CheckTreeSelectionModel;
 import skt.swing.tree.check.TreePathSelectable;
+
+//  Using backport of jdk1.6 java.util.concurrent package to jdk1.4:
+//     backport-util-concurrent, see http://dcl.mathcs.emory.edu/util/backport-util-concurrent for details
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+
 
 /**
  *  New strategy for handling DAS/2 data
@@ -325,7 +331,7 @@ public class Das2LoadView3 extends JComponent
   }
 
   /**
-   *  Want to put loading of DAS/2 annotations on separate thread(s) (since processFeatureRequests() call is most 
+   *  Want to put loading of DAS/2 annotations on separate thread(s) (since processFeatureRequests() call is most
    *     likely being run on event thread)
    *  Also don't want to overwhelm a DAS/2 server with nearly simultaneous calls from separate threads
    *  But also don't want to slow down display of annotations from faster DAS/2 servers due to another slower server
@@ -333,11 +339,11 @@ public class Das2LoadView3 extends JComponent
    *  split requests into sets of requests, one set per Das2VersionedSource the request is being made to
    *  Then for each set of requests spawn a SwingWorker thread, with serial processing of each request in the set
    *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
-   *  
+   *
    */
   public static void processFeatureRequests(java.util.List requests, final boolean update_display, boolean thread_requests) {
     if ((requests == null) || (requests.size() == 0)) { return; }
-    
+
     final java.util.List result_syms = new ArrayList();
 
     Map requests_by_version = new LinkedHashMap();
@@ -349,19 +355,20 @@ public class Das2LoadView3 extends JComponent
       Das2VersionedSource version = dtype.getVersionedSource();
       Set rset = (Set)requests_by_version.get(version);
       if (rset == null) {
-	// Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up 
+	// Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up
 	//    in multiple branches of DAS/2 server/source/version/type tree.
-	rset = new LinkedHashSet();  
+	rset = new LinkedHashSet();
 	requests_by_version.put(version, rset);
       }
       rset.add(request);
     }
-    
+
 
     Iterator entries = requests_by_version.entrySet().iterator();
     while (entries.hasNext()) {
       Map.Entry entry = (Map.Entry)entries.next();
       Das2VersionedSource version = (Das2VersionedSource)entry.getKey();
+      Executor vexec = ThreadUtils.getPrimaryExecutor(version);
       final Set request_set = (Set)entry.getValue();
 
       SwingWorker worker = new SwingWorker() {
@@ -400,7 +407,8 @@ public class Das2LoadView3 extends JComponent
 	};
 
       if (thread_requests) {
-	worker.start();
+	//	worker.start();
+	vexec.execute(worker);
       }
       else {
 	// if not threaded, then want to execute code in above subclass of SwingWorker, but within this thread
@@ -486,6 +494,7 @@ public class Das2LoadView3 extends JComponent
 	final Das2ServerInfo server = (Das2ServerInfo)((Map.Entry)servers.next()).getValue();
 	final AnnotatedSeqGroup cgroup = current_group;
         final int sleep_time = current_sleep_time;
+	final BioSeq prev_seq = gmodel.getSelectedSeq();
 
 	SwingWorker server_worker = new SwingWorker() {
 	    public Object construct() {
@@ -503,6 +512,7 @@ public class Das2LoadView3 extends JComponent
 	      if (versions != null) {
 		while (versions.hasNext()) {
 		  final Das2VersionedSource version = (Das2VersionedSource)versions.next();
+		  Executor vexec = ThreadUtils.getPrimaryExecutor(version);
 		  final Das2VersionTreeNode version_node = addVersionToTree(version);
 		  boolean type_load = Das2TypeState.checkLoadStatus(version);
 		  if (type_load) {
@@ -520,16 +530,22 @@ public class Das2LoadView3 extends JComponent
 			  return types;
 			}
 			public void finished() {
-			  // need to somehow set up so if a seqSelection event happened between when group selection triggered 
+			  // need to somehow set up so if a seqSelection event happened between when group selection triggered
 			  // SwingWorker and when table is populated, will redo a call to getFeatures(WHOLE_SEQUENCE)
-			  // Test selected seq before SwingWorker started and after node.getChildCount(), and if different, 
+			  // Test selected seq before SwingWorker started and after node.getChildCount(), and if different,
 			  //    fire off a getFeatures(WHOLE_SEQUENCE) ??
-			  //    This is likely to usually be the case when initializing types via this SwingWorker, since 
+			  //    This is likely to usually be the case when initializing types via this SwingWorker, since
 			  //    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
 			  int tcount = version_node.getChildCount(); // triggers tree and table population with types info
+			  if (prev_seq != gmodel.getSelectedSeq()) {
+			    System.out.println("selected seq: " + gmodel.getSelectedSeq() + ", prev_seq: " + prev_seq);
+			    // seq changed while types were being retrieved?  Load annotations with type = WHOLE_SEQUENCE?
+			    loadFeatures(Das2TypeState.WHOLE_SEQUENCE);
+			  }
 			}
 		      };
-		    types_worker.start();
+		    //		    types_worker.start();
+		    vexec.execute(types_worker);
 		  }
 		}
 	      }

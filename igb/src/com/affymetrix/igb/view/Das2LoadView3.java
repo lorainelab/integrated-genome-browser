@@ -130,6 +130,12 @@ public class Das2LoadView3 extends JComponent
     }
     types_table = new JTable();
     types_table.setModel(types_table_model);
+
+    TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
+    stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
+    TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
+    progcol.setCellRenderer(new ProgressRenderer());
+
     table_scroller = new JScrollPane(types_table);
 
     this.setLayout(new BorderLayout());
@@ -311,55 +317,94 @@ public class Das2LoadView3 extends JComponent
     processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS);
   }
 
+  /**
+   *  Want to put loading of DAS/2 annotations on separate thread(s) (since processFeatureRequests() call is most 
+   *     likely being run on event thread)
+   *  Also don't want to overwhelm a DAS/2 server with nearly simultaneous calls from separate threads
+   *  But also don't want to slow down display of annotations from faster DAS/2 servers due to another slower server
+   *  Compromise is to have separate threads for each Das2VersionedSource
+   *  split requests into sets of requests, one set per Das2VersionedSource the request is being made to
+   *  Then for each set of requests spawn a SwingWorker thread, with serial processing of each request in the set
+   *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
+   *  
+   */
   public static void processFeatureRequests(java.util.List requests, final boolean update_display, boolean thread_requests) {
-    final java.util.List request_syms = requests;
+    if ((requests == null) || (requests.size() == 0)) { return; }
+    
     final java.util.List result_syms = new ArrayList();
 
-    if ((request_syms == null) || (request_syms.size() == 0)) { return; }
-    SwingWorker worker = new SwingWorker() {
-	public Object construct() {
-	  for (int i=0; i<request_syms.size(); i++) {
-	    Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
-
-            // Create an AnnotStyle so that we can automatically set the
-            // human-readable name to the DAS2 name, rather than the ID, which is a URI
-            Das2Type type = request_sym.getDas2Type();
-            AnnotStyle style = AnnotStyle.getInstance(type.getID());
-            style.setHumanName(type.getName());
-
-            if (USE_DAS2_OPTIMIZER) {
-	      result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
-	    }
-	    else {
-	      request_sym.getRegion().getFeatures(request_sym);
-	      MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
-	      aseq.addAnnotation(request_sym);
-              result_syms.add(request_sym);
-	    }
-	  }
-	  return null;
-	}
-
-        public void finished() {
-	  if (update_display && gviewer != null) {
-	    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-	    gviewer.setAnnotatedSeq(aseq, true, true);
-	  }
-	}
-      };
-
-    if (thread_requests) {
-      worker.start();
-    }
-    else {
-      // if not threaded, then want to execute code in above subclass of SwingWorker, but within this thread
-      //   so just ignore the thread features of SwingWorker and call construct() and finished() directly to
-      //   to execute in this thread
-      try {
-	worker.construct();
-	worker.finished();
+    Map requests_by_version = new LinkedHashMap();
+    // split into entries by DAS/2 versioned source
+    Iterator rsyms = requests.iterator();
+    while (rsyms.hasNext()) {
+      Das2FeatureRequestSym request = (Das2FeatureRequestSym)rsyms.next();
+      Das2Type dtype = request.getDas2Type();
+      Das2VersionedSource version = dtype.getVersionedSource();
+      Set rset = (Set)requests_by_version.get(version);
+      if (rset == null) {
+	// Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up 
+	//    in multiple branches of DAS/2 server/source/version/type tree.
+	rset = new LinkedHashSet();  
+	requests_by_version.put(version, rset);
       }
-      catch (Exception ex) { ex.printStackTrace(); }
+      rset.add(request);
+    }
+    
+
+    Iterator entries = requests_by_version.entrySet().iterator();
+    while (entries.hasNext()) {
+      Map.Entry entry = (Map.Entry)entries.next();
+      Das2VersionedSource version = (Das2VersionedSource)entry.getKey();
+      final Set request_set = (Set)entry.getValue();
+
+      SwingWorker worker = new SwingWorker() {
+	  public Object construct() {
+	    Iterator request_syms = request_set.iterator();
+	    while (request_syms.hasNext()) {
+	      //	    for (int i=0; i<request_syms.size(); i++) {
+	      //	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
+	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.next();
+
+	      // Create an AnnotStyle so that we can automatically set the
+	      // human-readable name to the DAS2 name, rather than the ID, which is a URI
+	      Das2Type type = request_sym.getDas2Type();
+	      AnnotStyle style = AnnotStyle.getInstance(type.getID());
+	      style.setHumanName(type.getName());
+
+	      if (USE_DAS2_OPTIMIZER) {
+		result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
+	      }
+	      else {
+		request_sym.getRegion().getFeatures(request_sym);
+		MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
+		aseq.addAnnotation(request_sym);
+		result_syms.add(request_sym);
+	      }
+	    }
+	    return null;
+	  }
+
+	  public void finished() {
+	    if (update_display && gviewer != null) {
+	      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+	      gviewer.setAnnotatedSeq(aseq, true, true);
+	    }
+	  }
+	};
+
+      if (thread_requests) {
+	worker.start();
+      }
+      else {
+	// if not threaded, then want to execute code in above subclass of SwingWorker, but within this thread
+	//   so just ignore the thread features of SwingWorker and call construct() and finished() directly to
+	//   to execute in this thread
+	try {
+	  worker.construct();
+	  worker.finished();
+	}
+	catch (Exception ex) { ex.printStackTrace(); }
+      }
     }
   }
 
@@ -411,6 +456,8 @@ public class Das2LoadView3 extends JComponent
       System.out.println("********** resetting table **********");
       types_table_model = new Das2TypesTableModel(check_tree_manager);
       types_table.setModel(types_table_model);
+      types_table.getColumn("Progress").setCellRenderer(new ProgressRenderer());
+
       types_table.validate();
       types_table.repaint();
 
@@ -825,6 +872,13 @@ class Das2TypeState {
 }  // END Das2TypeState
 
 
+//  class ProgressRenderer extends JProgressBar implements TableCellRenderer {
+  class ProgressRenderer implements TableCellRenderer {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
+      return (JProgressBar)value;
+      //      return this;
+    }
+  }
 
 /**
  *
@@ -832,7 +886,7 @@ class Das2TypeState {
  *
  */
 class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  {
-  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server" };
+  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server", "Progress" };
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
   static int ID_COLUMN = 2;
@@ -841,13 +895,21 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   static int LOAD_STRATEGY_COLUMN = 5;
   static int VSOURCE_COLUMN = 6;
   static int SERVER_COLUMN = 7;
+  static int LOAD_PROGRESS_COLUMN = 8;
 
   java.util.List type_states = new ArrayList();
+  JProgressBar currently_loading;
+  JProgressBar currently_resting;
 
   CheckTreeManager ctm;
 
   public Das2TypesTableModel(CheckTreeManager ctm) {
     this.ctm = ctm;
+    currently_loading = new JProgressBar(0, 100);
+    currently_loading.setIndeterminate(true);
+    currently_resting = new JProgressBar(0, 100);
+    currently_resting.setValue(100);
+
   }
 
   public boolean addTypeState(Das2TypeState state) {
@@ -919,6 +981,13 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     }
     else if (col == SERVER_COLUMN) {
       result = type.getVersionedSource().getSource().getServerInfo().getName();
+    }
+    else if (col == LOAD_PROGRESS_COLUMN) {
+      //      if (state.isCurrentlyLoading()) {
+      //      	return currently_loading;
+      //      }
+      //      else { return currently_resting; }
+      return currently_loading;
     }
     //    System.out.println("Das2TypesTableModel.getValueAt() called, row = " + row + ", col = " + col +
     //		       ", value = " + result);

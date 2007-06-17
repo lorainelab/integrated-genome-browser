@@ -123,13 +123,13 @@ public class SingletonGenometryModel {
   public List getGroupSelectionListeners() {
     return group_selection_listeners;
   }
-  
+
   void fireGroupSelectionEvent(Object src, List glist) {
     GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
     for (int i=group_selection_listeners.size()-1; i>=0; i--) {
       GroupSelectionListener listener = (GroupSelectionListener) group_selection_listeners.get(i);
       listener.groupSelectionChanged(evt);
-    }    
+    }
   }
 
   public MutableAnnotatedBioSeq getSelectedSeq() {
@@ -150,8 +150,8 @@ public class SingletonGenometryModel {
     ArrayList slist = new ArrayList();
     slist.add(selected_seq);
     fireSeqSelectionEvent(src, slist);
-  }  
-  
+  }
+
   public void addSeqSelectionListener(SeqSelectionListener listener) {
     seq_selection_listeners.add(listener);
   }
@@ -164,10 +164,17 @@ public class SingletonGenometryModel {
     return seq_selection_listeners;
   }
 
+  /**
+   *  SeqSelectionListeners are notified in the order they were added as listeners
+   *    (order is important when one listener relies on another's state --
+   *       for example in IGB some listeners assume main SeqMapView has been
+   *       notified first)
+   */
   void fireSeqSelectionEvent(Object src, List slist) {
     SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
-    for (int i=seq_selection_listeners.size()-1; i>=0; i--) {
-      SeqSelectionListener listener = (SeqSelectionListener) seq_selection_listeners.get(i);
+    Iterator iter = seq_selection_listeners.iterator();
+    while (iter.hasNext())  {
+      SeqSelectionListener listener = (SeqSelectionListener)iter.next();
       listener.seqSelectionChanged(evt);
     }
   }
@@ -190,7 +197,7 @@ public class SingletonGenometryModel {
       SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
       listener.symSelectionChanged(sevt);
     }
-  }  
+  }
 
   /** Get a list of all BioSeq's that have selected SeqSymmetries on them.
    *  This may be different from the currently selected BioSeq's, because
@@ -208,7 +215,7 @@ public class SingletonGenometryModel {
     }
     return new ArrayList(sequences);
   }
-  
+
   /**
    *  Sets the selected symmetries.
    *  The symmetries can be on multiple sequences, and selecting
@@ -228,7 +235,7 @@ public class SingletonGenometryModel {
    *  If the current bio seq contains one of the symmetries, the seq will not
    *  be changed.  Otherwise the seq will be changed to one of the ones which
    *  has a selected symmetry.
-   *  The SeqSelectionListener's will be notified first (only if the seq changes), 
+   *  The SeqSelectionListener's will be notified first (only if the seq changes),
    *  and then the SymSelectionListener's will be notified.
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
@@ -246,7 +253,7 @@ public class SingletonGenometryModel {
     }
     fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
   }
-  
+
   /**
    *  Sets the selected symmetries.
    *  The symmetries can be on multiple sequences, and selecting
@@ -259,7 +266,7 @@ public class SingletonGenometryModel {
   List setSelectedSymmetries(List syms) {
     HashMap seq2SymsHash = new HashMap();
 
-    // for each ID found in the ID2sym hash, add it to the owning sequences 
+    // for each ID found in the ID2sym hash, add it to the owning sequences
     //  list of selected symmetries
     Iterator syms_iter = syms.iterator();
     HashSet all_seqs = new HashSet(); // remember all seqs found
@@ -290,10 +297,10 @@ public class SingletonGenometryModel {
       List symslist = (List) seq2SymsHash.get(seq);
       setSelectedSymmetries(symslist, seq); // do not send an event yet
     }
-    
+
     return new ArrayList(all_seqs);
   }
-  
+
   /**
    *  Selects a List of SeqSymmetry objects for a particular MutableAnnotatedBioSeq object.
    *  All SymmetrySelectionListeners will be notified regardless of whether this
@@ -303,10 +310,10 @@ public class SingletonGenometryModel {
    *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
    */
   void setSelectedSymmetries(List syms, Object src, MutableAnnotatedBioSeq seq ) {
-    setSelectedSymmetries(syms, seq);    
+    setSelectedSymmetries(syms, seq);
     fireSymSelectionEvent(src, syms);
   }
-  
+
   // Selects a List of SeqSymmetry objects for a particular BioSeq.
   // Does not send a selection event.
   void setSelectedSymmetries(List syms, MutableAnnotatedBioSeq seq) {
@@ -330,7 +337,7 @@ public class SingletonGenometryModel {
   public List getSelectedSymmetriesOnCurrentSeq() {
     return getSelectedSymmetries(selected_seq);
   }
-  
+
   /**
    *  Get the list of selected symmetries on the currently selected sequence.
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
@@ -350,7 +357,7 @@ public class SingletonGenometryModel {
    */
   public List getSelectedSymmetries(AnnotatedBioSeq seq) {
     List selections = (List) seq2selectedSymsHash.get(seq);
-    if (selections == null) { 
+    if (selections == null) {
       selections = new ArrayList();
       seq2selectedSymsHash.put(seq, selections);
     }
@@ -365,9 +372,9 @@ public class SingletonGenometryModel {
     clearSelectedSymmetries();
     fireSymSelectionEvent(src, Collections.EMPTY_LIST);
   }
-  
+
   /**
-   *  Clears the symmetry selection for every sequence. 
+   *  Clears the symmetry selection for every sequence.
    *  Does not notifies the selection listeners.
    */
   void clearSelectedSymmetries() {
@@ -395,6 +402,6 @@ public class SingletonGenometryModel {
 //      GenometryModelChangeListener listener = (GenometryModelChangeListener) model_change_listeners.get(i);
 //      listener.genometryModelChanged(event);
 //    }
-//  }  
+//  }
 
 }

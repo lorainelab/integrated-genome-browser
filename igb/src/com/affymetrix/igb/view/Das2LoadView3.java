@@ -131,10 +131,12 @@ public class Das2LoadView3 extends JComponent
     types_table = new JTable();
     types_table.setModel(types_table_model);
 
+    /*
     TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
     stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
     TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
     progcol.setCellRenderer(new ProgressRenderer());
+    */
 
     table_scroller = new JScrollPane(types_table);
 
@@ -251,8 +253,10 @@ public class Das2LoadView3 extends JComponent
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
     SeqSpan overlap;
-    if (selected_seq == null) {
-      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
+    if (selected_seq == null || visible_seq == null) {
+      //      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
+      //      System.out.println("@@@@@ selected seq: " + selected_seq);
+      //      System.out.println("@@@@@ visible seq: " + visible_seq);
       return;
     }
     if (! (selected_seq instanceof SmartAnnotBioSeq)) {
@@ -261,6 +265,8 @@ public class Das2LoadView3 extends JComponent
     }
     if (visible_seq != selected_seq) {
       System.out.println("ERROR, VISIBLE SPAN DOES NOT MATCH GMODEL'S SELECTED SEQ!!!");
+      System.out.println("   selected seq: " + selected_seq.getID());
+      System.out.println("   visible seq: " + visible_seq.getID());
       return;
     }
 
@@ -290,7 +296,8 @@ public class Das2LoadView3 extends JComponent
       Das2Region region = version.getSegment(selected_seq);
       if ((region != null)  &&
 	  (tstate.getLoad()) &&
-	  (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE)) {
+	  //	  (tstate.getLoadStrategy() == Das2TypeState.VISIBLE_RANGE)) {
+	  (tstate.getLoadStrategy() == load_strategy)) {
 	// maybe add a fully_loaded flag so know which ones to skip because they're done?
 	Das2FeatureRequestSym request_sym =
 	  new Das2FeatureRequestSym(dtype, region, overlap, null);
@@ -420,9 +427,11 @@ public class Das2LoadView3 extends JComponent
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (DEBUG_EVENTS) {
-      System.out.println("Das2LoadView3 received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
-    }
+    //    if (DEBUG_EVENTS) {
+          System.out.println("^^^^^^^^^^^^  Das2LoadView3 received SeqSelectionEvent");
+	  System.out.println("    selected seq: " + evt.getSelectedSeq());
+	  System.out.println("    visible seq: " + gviewer.getViewSeq());
+    //    }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
@@ -456,7 +465,12 @@ public class Das2LoadView3 extends JComponent
       System.out.println("********** resetting table **********");
       types_table_model = new Das2TypesTableModel(check_tree_manager);
       types_table.setModel(types_table_model);
-      types_table.getColumn("Progress").setCellRenderer(new ProgressRenderer());
+      //      types_table.getColumn("Progress").setCellRenderer(new ProgressRenderer());
+      TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
+      stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
+      TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
+      progcol.setCellRenderer(new ProgressRenderer());
+
 
       types_table.validate();
       types_table.repaint();
@@ -506,6 +520,12 @@ public class Das2LoadView3 extends JComponent
 			  return types;
 			}
 			public void finished() {
+			  // need to somehow set up so if a seqSelection event happened between when group selection triggered 
+			  // SwingWorker and when table is populated, will redo a call to getFeatures(WHOLE_SEQUENCE)
+			  // Test selected seq before SwingWorker started and after node.getChildCount(), and if different, 
+			  //    fire off a getFeatures(WHOLE_SEQUENCE) ??
+			  //    This is likely to usually be the case when initializing types via this SwingWorker, since 
+			  //    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
 			  int tcount = version_node.getChildCount(); // triggers tree and table population with types info
 			}
 		      };

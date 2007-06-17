@@ -159,7 +159,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *  Creates an empty top-level container sym.
    *  @return an instance of {@link TypeContainerAnnot}
    */
-  public MutableSeqSymmetry addAnnotation(String type) {
+  public synchronized MutableSeqSymmetry addAnnotation(String type) {
     type = type.toLowerCase();
     if (type2sym == null) { type2sym = new HashMap(); }
     MutableSeqSymmetry container = new TypeContainerAnnot(type);
@@ -177,7 +177,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *     for the given type.  Creates new top-level container
    *     if doesn't yet exist.
    */
-  public void addAnnotation(SeqSymmetry sym, String type) {
+  public synchronized void addAnnotation(SeqSymmetry sym, String type) {
     type = type.toLowerCase();
     if (type2sym == null) { type2sym = new HashMap(); }
     MutableSeqSymmetry container = (MutableSeqSymmetry)type2sym.get(type);
@@ -207,7 +207,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *  GraphSym's and ScoredContainerSym's are added directly, not in containers.
    *  </pre>
    */
-  public void addAnnotation(SeqSymmetry sym) {
+  public synchronized void addAnnotation(SeqSymmetry sym) {
     if (! needsContainer(sym)) {
       if (type2sym == null) { type2sym = new HashMap(); }
       String id = sym.getID();

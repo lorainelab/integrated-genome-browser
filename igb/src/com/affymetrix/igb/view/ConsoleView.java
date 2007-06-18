@@ -25,11 +25,12 @@ import com.affymetrix.swing.DisplayUtils;
 
 public class ConsoleView {
   
-  public static final String TITLE = Application.getSingleton().getApplicationName() + " Console";
+  static String TITLE;
   
   static JFrame frame;
     
   protected ConsoleView() {
+    TITLE = Application.getSingleton().getApplicationName() + " Console";
   }
   
   /**

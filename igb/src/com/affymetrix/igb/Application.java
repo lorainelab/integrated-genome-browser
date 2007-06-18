@@ -22,6 +22,7 @@ public abstract class Application {
     if (USE_STATUS_BAR) {
       status_bar = new StatusBar();
     }
+    singleton = this;
   }
 
   public abstract void setBookmarkManager(Object o); //TODO: get rid of this method.

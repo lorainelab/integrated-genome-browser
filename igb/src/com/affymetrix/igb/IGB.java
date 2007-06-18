@@ -897,19 +897,8 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
 
     if (plugin instanceof IPlugin) {
       IPlugin plugin_view = (IPlugin) plugin;
+      this.setPluginInstance(plugin_view.getClass(), plugin_view);
       icon = (ImageIcon) plugin_view.getPluginProperty(IPlugin.TEXT_KEY_ICON);
-
-      plugin_view.putPluginProperty(IPlugin.TEXT_KEY_IGB, this);
-      plugin_view.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, map_view);
-      // An alternative to having IPlugin interface is checking for
-      // these other interfaces ....
-      //    if (plugin instanceof SymSelectionListener) { }
-      //    if (plugin instanceof SeqSelectionListener) { }
-      //    if (plugin instanceof GroupSelectionListener) { }
-
-      // ... or plugins that need to know about SeqMapView or other components accessible via
-      //     IGB class should access them via IGB singleton method calls
-      //     and can add themselves as listeners for various events in their constructor ...
     }
 
     if (plugin instanceof JComponent) {
@@ -930,6 +919,13 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
       else {
         tab_pane.addTab(title, icon, comp, tool_tip);
       }
+    }
+  }
+
+  public void setPluginInstance(Class c, IPlugin plugin) {
+    super.setPluginInstance(c, plugin);
+    if (c.equals(BookmarkManagerView.class)) {
+      bmark_action.setBookmarkManager((BookmarkManagerView) plugin);
     }
 
     if (plugin instanceof DataLoadView) {
@@ -1507,9 +1503,5 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
 
   public String getVersion() {
     return APP_VERSION;
-  }
-
-  public void setBookmarkManager(Object o) {
-    bmark_action.setBookmarkManager((BookmarkManagerView) o);
   }
 }

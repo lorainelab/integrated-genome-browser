@@ -1,11 +1,13 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.*;
 
 public abstract class Application {
   
@@ -24,8 +26,20 @@ public abstract class Application {
     }
     singleton = this;
   }
+  
+  Map plugin_hash = new HashMap();
+  
+  public void setPluginInstance(Class c, IPlugin plugin) {
+    plugin_hash.put(c, plugin);
+    //icon = (ImageIcon) plugin.getPluginProperty(IPlugin.TEXT_KEY_ICON);
 
-  public abstract void setBookmarkManager(Object o); //TODO: get rid of this method.
+    plugin.putPluginProperty(IPlugin.TEXT_KEY_APP, this);
+    plugin.putPluginProperty(IPlugin.TEXT_KEY_SEQ_MAP_VIEW, this.getMapView());
+  }
+
+  public IPlugin getPluginInstance(Class c) {
+    return (IPlugin) plugin_hash.get(c);
+  }
   
   public static Application getSingleton() {
     return singleton;

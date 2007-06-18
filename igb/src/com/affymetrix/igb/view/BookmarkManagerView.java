@@ -122,7 +122,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   
   public void setApplication(Application app) {
     if (app != null) {
-      app.setBookmarkManager(this);
+      app.setPluginInstance(this.getClass(), this);
     }
     thing.setApplication(app);
   }

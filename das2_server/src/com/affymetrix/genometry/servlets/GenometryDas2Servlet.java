@@ -917,9 +917,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
       MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq)seqiter.next();
       if (mseq instanceof SmartAnnotBioSeq) {
         SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)mseq;
-        Map seq_types = aseq.getTypes();
+        Set seq_types = aseq.getTypeIds();
         if (seq_types != null) {
-          Iterator titer = seq_types.keySet().iterator();
+	  //          Iterator titer = seq_types.keySet().iterator();
+          Iterator titer = seq_types.iterator();
           while (titer.hasNext()) {
             String type = (String)titer.next();
             java.util.List flist = Collections.EMPTY_LIST;

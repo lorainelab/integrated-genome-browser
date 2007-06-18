@@ -20,7 +20,6 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.event.SeqModifiedListener;
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *   Extends NibbleBioSeq to add "retrieve top-level feature by 'method'/'type'".
@@ -72,18 +71,6 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       return Collections.EMPTY_SET;
     } else {
       return Collections.unmodifiableSet(type2sym.keySet());
-    }
-  }
-
-  /**
-   * Returns an unmodifiable view of the map from type id String's to SymWithProp's.
-   * @deprecated  Use {#getTypeIds()} instead.
-   */
-  public Map getTypes() {
-    if (type2sym == null) {
-      return Collections.EMPTY_MAP;
-    } else {
-      return Collections.unmodifiableMap(type2sym);
     }
   }
 
@@ -235,7 +222,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
-  public void removeAnnotation(SeqSymmetry annot) {
+  public synchronized void removeAnnotation(SeqSymmetry annot) {
     if (! needsContainer(annot)) {
       super.removeAnnotation(annot);
       notifyModified();
@@ -271,7 +258,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
-  public void removeAnnotation(int index) {
+  public synchronized void removeAnnotation(int index) {
     SeqSymmetry annot = getAnnotation(index);
     removeAnnotation(annot);  // this will handle super call, removal from type2sym, notification, etc.
   }

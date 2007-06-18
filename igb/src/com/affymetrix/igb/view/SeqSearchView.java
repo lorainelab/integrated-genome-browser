@@ -28,7 +28,7 @@ import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
@@ -63,11 +63,11 @@ public class SeqSearchView extends JComponent implements ActionListener  {
   //  public SeqSearchView(SeqMapView gviewer) {
   public SeqSearchView() {
     super();
-    gviewer = IGB.getSingletonIGB().getMapView();
+    gviewer = Application.getSingleton().getMapView();
     
     this.setLayout(new BorderLayout());
     JPanel pan1 = new JPanel();
-    if (IGB.isSequenceAccessible()) {
+    if (Application.isSequenceAccessible()) {
       pan1.setLayout(new GridLayout(4, 3));
     }
     else {
@@ -96,7 +96,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
     pan1.add(idsearchTF);
     pan1.add(idHitCountL);
 
-    if (IGB.isSequenceAccessible()) {
+    if (Application.isSequenceAccessible()) {
       pan1.add(entryL);
       pan1.add(entryTF);
       pan1.add(hitCountL);
@@ -161,11 +161,11 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           gviewer.setZoomSpotX((double) pos);
           map.updateWidget();
         } else {
-          IGB.errorPanel("Position "+pos+" is out of bounds");
+          Application.errorPanel("Position "+pos+" is out of bounds");
           coordsearchTF.setText("");
         }
       } catch (NumberFormatException nfe) {
-        IGB.errorPanel("Position "+coordsearchTF.getText()+" is not a number");
+        Application.errorPanel("Position "+coordsearchTF.getText()+" is not a number");
       }
     }
     else if (src == entryTF || src == regexTF) {
@@ -180,7 +180,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
         } else if (src == regexTF) {
           regexHitCountL.setText(" No hits");
         }
-        IGB.errorPanel("Residues for seq not available, search aborted");
+        Application.errorPanel("Residues for seq not available, search aborted");
         return;
       }
       int residue_offset = 0;
@@ -204,7 +204,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           return;
         }
         if (searchstring.length() < 3) {
-          IGB.errorPanel("Must use at least three residues.");
+          Application.errorPanel("Must use at least three residues.");
           hitCountL.setText(" No hits");
           return;
         }
@@ -231,7 +231,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 	  }
 	}
 	catch (Exception ex) {
-	  IGB.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
+	  Application.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
 	  return;
 	}
 
@@ -309,7 +309,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
         }
         System.out.println("time to run search: " + match_time);
        } catch (Exception e) {
-         IGB.errorPanel("Exception", e);
+         Application.errorPanel("Exception", e);
        }
         map.updateWidget();
       }
@@ -326,7 +326,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           int res_index = 0;
           String str = regexTF.getText();
           if (str.length() < 3) {
-            IGB.errorPanel("Regular expression must contain at least 3 characters");
+            Application.errorPanel("Regular expression must contain at least 3 characters");
             return;
           }
           // It is possible to add the flag Pattern.CASE_INSENSITIVE, but that
@@ -361,10 +361,10 @@ public class SeqSearchView extends JComponent implements ActionListener  {
           map.updateWidget();
         }
         catch (PatternSyntaxException pse) {
-          IGB.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+          Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
         }
         catch (Exception ex) {
-          IGB.errorPanel("Problem with regular expression...", ex);
+          Application.errorPanel("Problem with regular expression...", ex);
         }
       }
     }

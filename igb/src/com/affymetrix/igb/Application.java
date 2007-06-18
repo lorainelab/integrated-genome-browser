@@ -3,12 +3,17 @@ package com.affymetrix.igb;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
+import java.awt.Image;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public abstract class Application {
   
   final static boolean USE_STATUS_BAR = true;
+  public static boolean ALLOW_DELETING_DATA = false;
+  public static boolean CACHE_GRAPHS = true;
+
+  public final static boolean DEBUG_EVENTS = false;
   StatusBar status_bar;
 
   static Application singleton = null;
@@ -19,12 +24,21 @@ public abstract class Application {
     }
   }
 
+  public abstract void setBookmarkManager(Object o); //TODO: get rid of this method.
+  
   public static Application getSingleton() {
     return singleton;
   }
   
+  abstract public Image getIcon();
   abstract public JFrame getFrame();
   abstract public SeqMapView getMapView();
+  abstract public String getApplicationName();
+  abstract public String getVersion();
+
+  public static boolean isSequenceAccessible() {
+    return true;
+  }
 
   /** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.

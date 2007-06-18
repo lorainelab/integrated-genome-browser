@@ -21,7 +21,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -114,7 +114,7 @@ public class GraphAdjusterView {
       mut.removeAnnotation(gsym);
     }
 
-    if (IGB.ALLOW_DELETING_DATA && aseq instanceof SmartAnnotBioSeq) {
+    if (Application.ALLOW_DELETING_DATA && aseq instanceof SmartAnnotBioSeq) {
       String method = SmartAnnotBioSeq.determineMethod(gsym);
       gmodel.getSelectedSeqGroup().removeType(method);
     }

@@ -19,7 +19,7 @@ import java.util.*;
 import javax.swing.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.*;
@@ -92,7 +92,7 @@ public class AltSpliceView extends JComponent
   };
   
   public AltSpliceView() {
-    original_view = IGB.getSingletonIGB().getMapView();
+    original_view = Application.getSingleton().getMapView();
     Rectangle frmbounds = SwingUtilities.getWindowAncestor(original_view).getBounds();
     this.setLayout(new BorderLayout());
     spliced_view = new AltSpliceSeqMapView(false);
@@ -161,7 +161,7 @@ public class AltSpliceView extends JComponent
    *  use too much memory).
    */
   public void symSelectionChanged(SymSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  { System.out.println("AltSpliceView received selection changed event"); }
+    if (Application.DEBUG_EVENTS)  { System.out.println("AltSpliceView received selection changed event"); }
     Object src = evt.getSource();
     // ignore if symmetry selection originated from this AltSpliceView -- don't want to
     //   reslice based on internal selection!
@@ -190,7 +190,7 @@ public class AltSpliceView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = gmodel.getSelectedSeq();

@@ -18,14 +18,14 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 
 public class ConsoleView {
   
-  public static final String TITLE = IGBConstants.APP_SHORT_NAME + " Console";
+  public static final String TITLE = Application.getSingleton().getApplicationName() + " Console";
   
   static JFrame frame;
     

@@ -18,7 +18,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.das.*;
 import com.affymetrix.igb.genometry.*;
@@ -243,14 +243,14 @@ public class DasLoadView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("DasLoadView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
   }
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    if (IGB.DEBUG_EVENTS)  { System.out.println("DasLoadView received GroupSelectionEvent: " + evt); }
+    if (Application.DEBUG_EVENTS)  { System.out.println("DasLoadView received GroupSelectionEvent: " + evt); }
     AnnotatedSeqGroup group = evt.getSelectedGroup();
   }
 

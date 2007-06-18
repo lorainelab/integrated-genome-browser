@@ -13,7 +13,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
-import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.FileTracker;
 import java.awt.*;
 import java.io.*;
@@ -67,7 +67,7 @@ public class EPSWriter {
     p.setProperty("PageSize", "Letter");
     Dimension dd = new Dimension(cWidth, cHeight);
     PSGraphics2D g = new PSGraphics2D(outfile, dd);
-    g.setCreator(IGBConstants.APP_NAME + "  Version: " + IGBConstants.IGB_VERSION);
+    g.setCreator(Application.getSingleton().getApplicationName() + "  Version: " + Application.getSingleton().getVersion());
     g.setProperties(p);
     g.startExport();
     comp.print(g);

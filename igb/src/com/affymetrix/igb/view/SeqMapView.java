@@ -39,7 +39,7 @@ import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.genometry.Versioned;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
@@ -59,7 +59,6 @@ import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.TypeContainerAnnot;
 import com.affymetrix.igb.genometry.ScoredContainerSym;
 import com.affymetrix.igb.parsers.CytobandParser;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 
@@ -228,9 +227,6 @@ public class SeqMapView extends JPanel
 
   PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
 
-  Map meth2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.MATCH_FACTORIES);
-  Map regex2factory = (Map)IGB.getIGBPrefs().get(XmlPrefsParser.REGEX_FACTORIES);
-
   GlyphEdgeMatcher edge_matcher = null;
 
   JPopupMenu sym_popup;
@@ -270,7 +266,7 @@ public class SeqMapView extends JPanel
   MapRangeBox map_range_box;
   JButton refreshB = new JButton("Refresh Data");
   
-  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   /** Constructor. By default, does not add popup menu items. */
   public SeqMapView() {
@@ -917,7 +913,7 @@ public class SeqMapView extends JPanel
       if (title.length() > 0) {
         title.append(" - ");
       }
-      title.append(IGB.APP_NAME);
+      title.append(Application.getSingleton().getApplicationName());
       frm.setTitle(title.toString());
     }
 
@@ -1623,14 +1619,14 @@ public class SeqMapView extends JPanel
     }
 
     if (residues_sym == null) {
-      IGB.errorPanel("Can't copy to clipboard",
+      Application.errorPanel("Can't copy to clipboard",
       "No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
     }
     else  {
       SeqSpan span = residues_sym.getSpan(aseq);
       if (aseq == null) {
         // This is a fishy test.  How could aseq possibly be null?
-	IGB.errorPanel("Don't have residues, can't copy to clipboard");
+	Application.errorPanel("Don't have residues, can't copy to clipboard");
       }
       else { // 2
 	int child_count = residues_sym.getChildCount();
@@ -1688,7 +1684,7 @@ public class SeqMapView extends JPanel
 	    success = true;
 	  }
 	  else {
-	    IGB.errorPanel("Missing Sequence Residues",
+	    Application.errorPanel("Missing Sequence Residues",
             "Don't have all the needed residues, can't copy to clipboard.\n" +
             "Please load sequence residues for this region.");
 	  }
@@ -2278,10 +2274,10 @@ public class SeqMapView extends JPanel
     //  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
     String ucsc_url = null;
     if (! (aseq instanceof NibbleBioSeq)) {
-      IGB.errorPanel("Can't call UCSC", "Sequence has no version info");
+      Application.errorPanel("Can't call UCSC", "Sequence has no version info");
     }
     else if (slicing_in_effect) {
-      IGB.errorPanel("Can't call UCSC", "Currently looking at sliced view, can't call UCSC");
+      Application.errorPanel("Can't call UCSC", "Currently looking at sliced view, can't call UCSC");
     }
     else {
       Rectangle2D vbox = seqmap.getView().getCoordBox();
@@ -2323,7 +2319,7 @@ public class SeqMapView extends JPanel
       //    ucsc_url = "http://
       else {
 	System.out.println("Can't call UCSC, couldn't figure out how to access genome version");
-	IGB.errorPanel("Can't call UCSC, couldn't figure out how to access genome version");
+	Application.errorPanel("Can't call UCSC, couldn't figure out how to access genome version");
       }
     }
   }
@@ -2418,7 +2414,7 @@ public class SeqMapView extends JPanel
     String src_id = ObjectUtils.objString(src);
     // ignore self-generated xym selection -- already handled internally
     if (src == this) {
-      if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from itself: " + src_id);}
+      if (Application.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from itself: " + src_id);}
       String title = getSelectionTitle(seqmap.getSelected());
       setStatus(title);
     }
@@ -2426,10 +2422,10 @@ public class SeqMapView extends JPanel
     else if ((src instanceof AltSpliceView) || (src instanceof SeqMapView))  {
       // catching SeqMapView as source of event because currently sym selection events actually originating
       //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
-      if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event from another SeqMapView: " + src_id);}
+      if (Application.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event from another SeqMapView: " + src_id);}
     }
     else {
-      if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from: " + src_id);}
+      if (Application.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from: " + src_id);}
       java.util.List symlist = evt.getSelectedSyms();
       // select:
       //   add_to_previous ==> false
@@ -2573,11 +2569,11 @@ public class SeqMapView extends JPanel
     if (! report_hairline_position_in_status_bar) {
       return;
     }
-    if (hairline == null || IGB.getSingletonIGB() == null) {
+    if (hairline == null || Application.getSingleton() == null) {
       return;
     }
     String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
-    IGB.getSingletonIGB().setStatusBarHairlinePosition(pos);
+    Application.getSingleton().setStatusBarHairlinePosition(pos);
   }
   
   boolean report_status_in_status_bar = true;
@@ -2587,7 +2583,7 @@ public class SeqMapView extends JPanel
       return;
     }
     showHairlinePositionInStatusBar();
-    IGB.getSingletonIGB().setStatus(title, false);
+    Application.getSingleton().setStatus(title, false);
   }
   
   private SymWithProps sym_used_for_title = null;
@@ -2924,7 +2920,7 @@ public class SeqMapView extends JPanel
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     AnnotatedSeqGroup group = evt.getSelectedGroup();
-    if (IGB.DEBUG_EVENTS) {
+    if (Application.DEBUG_EVENTS) {
       if (group != null) {
         System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
       }
@@ -2943,7 +2939,7 @@ public class SeqMapView extends JPanel
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();

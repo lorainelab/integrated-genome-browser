@@ -8,8 +8,8 @@ import java.util.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
+import com.affymetrix.igb.Application;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.event.VirtualRubberBandEvent;
 
@@ -179,7 +179,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 	    }
 	    else {
 	      if (USE_FRAME) { win = new Frame(gconfig); }
-	      else { win = new Window(IGB.getSingletonIGB().getFrame(), gconfig); }
+	      else { win = new Window(Application.getSingleton().getFrame(), gconfig); }
 	    }
 	    win.setLocation(win_bounds.x, win_bounds.y);
 	    win.setSize(win_bounds.width, win_bounds.height);

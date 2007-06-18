@@ -21,7 +21,7 @@ import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
@@ -43,7 +43,7 @@ public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
       singleton_adjuster = new EdgeMatchAdjuster(matcher, view);
 
       singleton_frame = new JFrame("Edge Sensitivity Adjuster");
-      Image icon = IGB.getIcon();
+      Image icon = Application.getSingleton().getIcon();
       if (icon != null) { singleton_frame.setIconImage(icon); }
       Container cpane = singleton_frame.getContentPane();
       cpane.setLayout(new BorderLayout());

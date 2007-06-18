@@ -14,12 +14,11 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.tiers.AnnotStyle;
@@ -241,7 +240,7 @@ public class GraphScoreThreshSetter extends JPanel
       thresh_setter_frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
       thresh_setter_frame.pack();
 
-      Image icon = IGB.getIcon();
+      Image icon = Application.getSingleton().getIcon();
       if (icon != null) { thresh_setter_frame.setIconImage(icon); }
 
       Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(thresh_setter_frame.getTitle(), thresh_setter_frame.getBounds());

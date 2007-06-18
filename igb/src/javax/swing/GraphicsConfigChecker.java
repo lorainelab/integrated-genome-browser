@@ -4,7 +4,7 @@ package javax.swing;
 // import javax.swing.*;
 import java.awt.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 
 public class GraphicsConfigChecker {
 
@@ -17,7 +17,7 @@ public class GraphicsConfigChecker {
     Toolkit kit = Toolkit.getDefaultToolkit();
     Dimension dim = kit.getScreenSize();
     System.out.println("Screen dimensions: " + dim);
-    RepaintManager rmanager = RepaintManager.currentManager(IGB.getSingletonIGB().getFrame());
+    RepaintManager rmanager = RepaintManager.currentManager(Application.getSingleton().getFrame());
     System.out.println("max double buffer size: " + rmanager.getDoubleBufferMaximumSize());
     //    rmanager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
     //    System.out.println("new max double buffer size: " + rmanager.getDoubleBufferMaximumSize());

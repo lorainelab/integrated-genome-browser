@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.Application;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -21,7 +22,6 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.tiers.AnnotStyle;
@@ -109,7 +109,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     });
     
     
-    IGB igb = IGB.getSingletonIGB();
+    Application igb = Application.getSingleton();
     if (igb != null) {
       smv = igb.getMapView();
     }

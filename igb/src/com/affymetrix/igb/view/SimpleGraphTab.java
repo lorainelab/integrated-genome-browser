@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.SeqSelectionEvent;
 import com.affymetrix.igb.event.SeqSelectionListener;
 import com.affymetrix.igb.event.SymSelectionEvent;
@@ -122,14 +122,14 @@ implements SeqSelectionListener, SymSelectionListener {
 
   
   public SimpleGraphTab() {
-    this(IGB.getSingletonIGB());
+    this(Application.getSingleton());
   }
 
-  public SimpleGraphTab(IGB igb) {
-    if (igb == null) {
+  public SimpleGraphTab(Application app) {
+    if (app == null) {
       this.gviewer = new SeqMapView(); // for testing only
     } else {
-      this.gviewer = igb.getMapView();
+      this.gviewer = app.getMapView();
     }
 
     Vector v = new Vector(8);

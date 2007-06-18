@@ -20,11 +20,9 @@ import affymetrix.calvin.data.*;
 import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
-import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
@@ -114,11 +112,11 @@ public class ChpParser {
       System.out.println("CHP file is generic: " + genchp);
       //      results = parseGenericChp(genchp);
       System.out.println("WARNING: generic CHP files currently not supported in IGB");
-      IGB.errorPanel("CHP file is in generic format, cannot be loaded");
+      Application.errorPanel("CHP file is in generic format, cannot be loaded");
     }
     else {
       System.out.println("WARNING: not parsing file, CHP file type not recognized: " + chp);
-      IGB.errorPanel("CHP file type not recognized, cannot be loaded");
+      Application.errorPanel("CHP file type not recognized, cannot be loaded");
     }
     if (! has_coord_data) {
       /**
@@ -164,12 +162,12 @@ public class ChpParser {
     Das2ServerInfo server = (Das2ServerInfo)das_servers.get(LazyChpSym.PROBESET_SERVER_NAME);
     // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
     if (server == null) {
-      IGB.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+      Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
       return null;
     }
     Das2VersionedSource vsource = server.getVersionedSource(group);
     if (vsource == null) {
-      IGB.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
+      Application.errorPanel("Couldn't find genome data on server for CHP file, genome = " + group.getID());
       return null;
     }
 
@@ -470,7 +468,7 @@ public class ChpParser {
     if (match_count == 0) {
       System.out.println("WARNING: Could not automatically load location data for CHP file,\n " +
 			 "  and could not find any previously loaded location data matching CHP file");
-      IGB.errorPanel("Could not automatically load location data for CHP file,\n " +
+      Application.errorPanel("Could not automatically load location data for CHP file,\n " +
 		     "  and could not find any previously loaded location data matching CHP file");
       return null;
     }
@@ -580,7 +578,7 @@ public class ChpParser {
       if (match_count == 0) {
 	System.out.println("WARNING: Could not automatically load location data for CHP file,\n " +
 		       "  and could not find any previously loaded location data matching CHP file");
-	IGB.errorPanel("Could not automatically load location data for CHP file,\n " +
+	Application.errorPanel("Could not automatically load location data for CHP file,\n " +
 		       "  and could not find any previously loaded location data matching CHP file");
 	return null;
       }
@@ -652,7 +650,7 @@ public class ChpParser {
       exp.clear();
     }
     System.out.println("Stopped loading, parsing Legacy CHP data only partially implemented!");
-    IGB.errorPanel("CHP file is in legacy format, cannot be loaded");
+    Application.errorPanel("CHP file is in legacy format, cannot be loaded");
     return results;
   }
 

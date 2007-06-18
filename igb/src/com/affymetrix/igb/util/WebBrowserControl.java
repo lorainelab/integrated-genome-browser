@@ -14,8 +14,7 @@
 package com.affymetrix.igb.util;
 
 import java.io.IOException;
-import java.util.Map;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import javax.swing.SwingUtilities;
 
 /**
@@ -59,7 +58,7 @@ public class WebBrowserControl {
     Thread t = new Thread() {
       public void run() {
         try {
-          IGB.getSingletonIGB().setStatus("Opening URL in browser: " + url);
+          Application.getSingleton().setStatus("Opening URL in browser: " + url);
           //System.err.println("Opening URL in browser: " + url);
           displayURL(url);
         } catch (final Exception e) {
@@ -127,7 +126,7 @@ public class WebBrowserControl {
     }
     catch(IOException x) {
       // couldn't exec browser
-      IGB.errorPanel("Could not invoke browser, command:\n" 
+      Application.errorPanel("Could not invoke browser, command:\n" 
                      + cmd + "\n\n" + x.toString() +
                      "\n\nYou may need to reset the browser command in the preferences panel "+
                      "at File->Preferences->Other\n");

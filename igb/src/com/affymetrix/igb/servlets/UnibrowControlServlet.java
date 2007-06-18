@@ -22,8 +22,9 @@ import javax.servlet.http.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
@@ -47,11 +48,11 @@ import com.affymetrix.swing.DisplayUtils;
 public class UnibrowControlServlet extends HttpServlet {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  IGB uni;
+  Application uni;
 
   public void init() { }
 
-  public void setUnibrowInstance(IGB uni) {
+  public void setUnibrowInstance(Application uni) {
     this.uni = uni;
   }
   
@@ -67,13 +68,13 @@ public class UnibrowControlServlet extends HttpServlet {
       System.out.println("Received bookmark request");
     }
     
-    //  restore and focus on IGB when a unibrow call is made
+    //  restore and focus on Application when a unibrow call is made
     try {
-      DisplayUtils.bringFrameToFront(IGB.getSingletonIGB().getFrame());
+      DisplayUtils.bringFrameToFront(Application.getSingleton().getFrame());
       goToBookmark(this.uni, request.getParameterMap());
     } catch (Exception e) {
-      System.out.println("Error while processing IGB bookmark: " + e.toString());
-      ServletException se = new ServletException("Exception while processing IGB bookmark", e);
+      System.out.println("Error while processing bookmark: " + e.toString());
+      ServletException se = new ServletException("Exception while processing bookmark", e);
       throw se;
     }
   }
@@ -106,7 +107,7 @@ public class UnibrowControlServlet extends HttpServlet {
    *  objects.  For example, this could be the Map returned by
    *  {@link HttpServletRequest#getParameterMap()}.
    */
-  public static void goToBookmark(IGB uni, Map parameters) throws NumberFormatException {
+  public static void goToBookmark(Application uni, Map parameters) throws NumberFormatException {
     String seqid = getStringParameter(parameters, Bookmark.SEQID);
     String version = getStringParameter(parameters, Bookmark.VERSION);
     String start_param = getStringParameter(parameters, Bookmark.START);
@@ -132,7 +133,7 @@ public class UnibrowControlServlet extends HttpServlet {
     if (!ok) { return; /* user cancelled the change of genome, or something like that */}
 
     if (has_graph_source_urls) {
-      com.affymetrix.igb.bookmarks.BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
+      BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
     }
 
     String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
@@ -146,7 +147,7 @@ public class UnibrowControlServlet extends HttpServlet {
     
   }
 
-  public static void loadDataFromURLs(final IGB uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
+  public static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
     try {
       if (data_urls != null && data_urls.length != 0) {
         URL[] urls = new URL[data_urls.length];
@@ -158,12 +159,12 @@ public class UnibrowControlServlet extends HttpServlet {
         t.join();
       }
     } catch (MalformedURLException e) {
-      IGB.errorPanel("Error loading bookmark\nData URL malformed\n", e);
+      Application.errorPanel("Error loading bookmark\nData URL malformed\n", e);
     }
     catch (InterruptedException ex){}
   }
 
-  static boolean goToBookmark(IGB uni, String seqid, String version,
+  static boolean goToBookmark(Application uni, String seqid, String version,
                            String start_param, String end_param,
                            String select_start_param, String select_end_param,
                            final String[] graph_files) throws NumberFormatException {
@@ -192,7 +193,7 @@ public class UnibrowControlServlet extends HttpServlet {
     return goToBookmark(uni, seqid, version, start, end, selstart, selend, graph_files);
   }
 
-  static boolean goToBookmark(IGB uni, String seqid, String version, int start, int end,
+  static boolean goToBookmark(Application uni, String seqid, String version, int start, int end,
                            final String[] graph_files) {
     return goToBookmark(uni, seqid, version, start, end, -1, -1, graph_files);
   }
@@ -207,7 +208,7 @@ public class UnibrowControlServlet extends HttpServlet {
    *  @param graph_files it is ok for this parameter to be null.
    *  @return true indicates that the action suceeded
    */
-  static boolean goToBookmark(final IGB uni, final String seqid, final String version,
+  static boolean goToBookmark(final Application uni, final String seqid, final String version,
       final int start, final int end, final int selstart, final int selend,
       final String[] graph_files) {
     
@@ -222,7 +223,7 @@ public class UnibrowControlServlet extends HttpServlet {
     }
     
     if (book_group == null) {
-      IGB.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
+      Application.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
           "You may need to choose a different QuickLoad server.");
       return false; // cancel
     }
@@ -262,7 +263,7 @@ public class UnibrowControlServlet extends HttpServlet {
           }
           
           if (book_seq == null) {
-            IGB.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '"+seqid+"'");
+            Application.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '"+seqid+"'");
           } else {
             // gmodel.setSelectedSeq() should trigger a gviewer.setAnnotatedSeq() since
             //     gviewer is registered as a SeqSelectionListener on gmodel

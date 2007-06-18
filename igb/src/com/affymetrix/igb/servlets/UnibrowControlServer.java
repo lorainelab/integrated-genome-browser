@@ -17,7 +17,7 @@ import java.net.*;
 import org.mortbay.http.*;
 import org.mortbay.jetty.servlet.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 
 /**
  *  A tiny server that's integrated into IGB, to listen to
@@ -45,7 +45,7 @@ public class UnibrowControlServer {
       + UnibrowControlServer.default_server_port +
       "/" + UnibrowControlServer.SERVLET_NAME_OLD;
 
-  public UnibrowControlServer(IGB uni) {
+  public UnibrowControlServer(Application app) {
     try {
 
       // find an available port, starting with the default_server_point and
@@ -108,7 +108,7 @@ public class UnibrowControlServer {
         // set the form content size limit high to allow for long urls
         System.setProperty("org.mortbay.http.HttpRequest.maxFormContentSize", "100000000");
         UnibrowControlServlet igb_controller = (UnibrowControlServlet)sholder.getServlet();
-        igb_controller.setUnibrowInstance(uni);
+        igb_controller.setUnibrowInstance(app);
       }
     }
     catch (Exception ex) {

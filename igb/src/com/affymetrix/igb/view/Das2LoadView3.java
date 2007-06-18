@@ -22,7 +22,7 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.das2.*;
@@ -102,7 +102,7 @@ public class Das2LoadView3 extends JComponent
   Map version2node = new HashMap();
   Map tstate2node = new LinkedHashMap();
 
-  static SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
   Das2VersionedSource current_version = null;
@@ -110,7 +110,7 @@ public class Das2LoadView3 extends JComponent
   TypesTreeCheckListener tree_check_listener = new TypesTreeCheckListener();
 
   public Das2LoadView3()  {
-    gviewer = IGB.getSingletonIGB().getMapView();
+    gviewer = Application.getSingleton().getMapView();
     gviewer.addDataRequestListener(this);
 
     tree = new JTree();

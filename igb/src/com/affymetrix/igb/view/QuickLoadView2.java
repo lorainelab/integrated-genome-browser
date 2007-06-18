@@ -27,6 +27,7 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.*;
 
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.event.*;
@@ -107,8 +108,8 @@ public class QuickLoadView2 extends JComponent
     pref_tab_number = pp.addPrefEditorComponent(new DataLoadPrefsView());
     UnibrowPrefsUtil.getLocationsNode().addPreferenceChangeListener(preferemce_change_listener);
 
-    if (IGB.getSingletonIGB() != null) {
-      gviewer = IGB.getSingletonIGB().getMapView();
+    if (Application.getSingleton() != null) {
+      gviewer = Application.getSingleton().getMapView();
     }
     this.setLayout(new BorderLayout());
     types_panel = new JPanel();
@@ -1151,8 +1152,8 @@ class QuickLoadServerModel {
           }
           else {
             // really should remove LoadFileAction's requirement for SeqMapView argument...
-            LoadFileAction lfa = new LoadFileAction(IGB.getSingletonIGB().getMapView(), null);
-            lfa.load(IGB.getSingletonIGB().getMapView(), bis, filename, gmodel.getSelectedSeq());
+            LoadFileAction lfa = new LoadFileAction(Application.getSingleton().getMapView(), null);
+            lfa.load(Application.getSingleton().getMapView(), bis, filename, gmodel.getSelectedSeq());
           }
 
           setLoadState(current_group, filename, true);

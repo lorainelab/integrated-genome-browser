@@ -20,6 +20,7 @@ import javax.swing.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
@@ -189,7 +190,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         ErrorHandler.errorPanel("Must select only one tier");
       }
       TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
-      CurationControl curcon = IGB.getSingletonIGB().getCurationControl();
+      CurationControl curcon = ((IGB) Application.getSingleton()).getCurationControl();
       curcon.commitCurations(current_tier);
       // testDas2Writeback(current_tier);
     }
@@ -210,7 +211,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTierLabels();
-      if (IGB.confirmPanel("Really remove selected tiers?\n"+
+      if (Application.confirmPanel("Really remove selected tiers?\n"+
           "Data will be removed from all chromosomes on this genome.\n"+
           "(Note: to remove graphs made from .egr files, delete the corresponding annotation tier.)"
           )) {
@@ -844,7 +845,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(save_menu);
     save_menu.add(save_bed_action);
     save_menu.add(save_das_action);
-    if (das2_writeback_enabled && curation_enabled) {
+    if (das2_writeback_enabled && curation_enabled && Application.getSingleton() instanceof IGB) {
       save_menu.add(write_das_action);
     }
 

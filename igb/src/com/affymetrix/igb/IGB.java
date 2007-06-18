@@ -46,10 +46,10 @@ import com.affymetrix.swing.DisplayUtils;
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  */
-public class IGB implements ActionListener, ContextualPopupListener  {
+public class IGB extends Application implements ActionListener, ContextualPopupListener  {
   static IGB singleton_igb;
   public static String APP_NAME = IGBConstants.APP_NAME;
-  public static String IGB_VERSION = IGBConstants.IGB_VERSION;
+  public static String APP_VERSION = IGBConstants.IGB_VERSION;
 
   public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
@@ -59,7 +59,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   public static boolean USE_QUICKLOAD = false;
   public static boolean USE_DATALOAD = true;
-  public static boolean CACHE_GRAPHS = true;
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
@@ -151,12 +150,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
 
   java.util.List plugin_list;
 
-
-  // USE_STATUS_BAR can be set to false in public releases until we have
-  // started putting enough useful information in the status bar.
-  final static boolean USE_STATUS_BAR = true;
-  StatusBar status_bar;
-
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
 
@@ -220,8 +213,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     // be captured there.
     ConsoleView.init();
 
-    System.out.println("Starting \"" + IGBConstants.APP_NAME + "\"");
-    System.out.println("Version: " + IGBConstants.IGB_VERSION);
+    System.out.println("Starting \"" + APP_NAME + "\"");
+    System.out.println("Version: " + APP_VERSION);
     System.out.println();
 
     main_args = args;
@@ -290,7 +283,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   //  return quickload_view;
   //}
 
-  public static IGB getSingletonIGB() {
+  public static Application getSingleton() {
     return singleton_igb;
   }
 
@@ -795,9 +788,8 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     tab_pane.setMinimumSize(new Dimension(0,0));
 
-    status_bar = new StatusBar();
-    status_bar.setStatus(IGBConstants.APP_NAME);
     if (USE_STATUS_BAR) {
+      status_bar.setStatus(getApplicationName());
       cpane.add(status_bar, BorderLayout.SOUTH);
     }
 
@@ -865,32 +857,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
   /** Returns true if initialization has completed. */
   public boolean isInitialized() {
     return initialized;
-  }
-
-  /** Sets the text in the status bar.
-   *  Will also echo a copy of the string to System.out.
-   *  It is safe to call this method even if the status bar is not being displayed.
-   */
-  public void setStatus(String s) {
-    setStatus(s, true);
-  }
-
-  public void setStatusBarHairlinePosition(String s) {
-    if (USE_STATUS_BAR && status_bar != null) {
-      status_bar.setPosition(s);
-    }
-  }
-
-  /** Sets the text in the status bar.
-   *  Will optionally echo a copy of the string to System.out.
-   *  It is safe to call this method even if the status bar is not being displayed.
-   *  @param echo  Whether to echo a copy to System.out.
-   */
-  public void setStatus(String s, boolean echo) {
-    if (USE_STATUS_BAR && status_bar != null) {
-      status_bar.setStatus(s);
-    }
-    if (echo && s != null) {System.out.println(s);}
   }
 
   /**
@@ -1106,7 +1072,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
-    about_text.append(APP_NAME + ", version: " + IGB_VERSION + "\n");
+    about_text.append(APP_NAME + ", version: " + APP_VERSION + "\n");
     about_text.append("Copyright 2001-2007 Affymetrix Inc." + "\n");
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
@@ -1221,7 +1187,7 @@ public class IGB implements ActionListener, ContextualPopupListener  {
    *  It is expected to be at com.affymetrix.igb.affychip.gif.
    *  @return null if the image file is not found or can't be opened.
    */
-  public static Image getIcon() {
+  public Image getIcon() {
     Image icon = null;
     try {
       URL url = IGB.class.getResource("affychip.gif");
@@ -1269,49 +1235,6 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     if (f != null) {
       UnibrowPrefsUtil.saveWindowLocation(f, TABBED_PANES_TITLE);
     }
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent.
-   */
-  public static void errorPanel(String title, String message) {
-    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, title, message, null);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
-   *  as its parent.
-   *  This is designed to probably be safe from the EventDispatchThread or from
-   *  any other thread.
-   *  @param frame the parent frame, null is ok.
-   *  @param e an exception (or error), if any.  null is ok. If not null,
-   *  the exception text will be appended to the message and
-   *  a stack trace might be printed on standard error.
-   */
-  public static void errorPanel(String message) {
-    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, null);
-  }
-
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
-   *  panel as its parent, and the title "ERROR".
-   */
-  public static void errorPanel(String message, Throwable e) {
-    ErrorHandler.errorPanel(IGB.getSingletonIGB().frm, "ERROR", message, e);
-  }
-
-  /** Shows a panel asking for the user to confirm something.
-   *  @return true if the user confirms, else false.
-   */
-  public static boolean confirmPanel(String message) {
-    IGB igb = getSingletonIGB();
-    JFrame frame = (igb==null) ? null : igb.frm;
-    return (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(
-      frame, message, "Confirm", JOptionPane.OK_CANCEL_OPTION));
-  }
-
-  public static void informPanel(String message) {
-    IGB igb = getSingletonIGB();
-    JFrame frame = (igb==null) ? null : igb.frm;
-    JOptionPane.showMessageDialog(frame, message, "Inform", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void openTabInNewWindow(final JTabbedPane tab_pane) {
@@ -1578,20 +1501,15 @@ public class IGB implements ActionListener, ContextualPopupListener  {
     return plugin_list;
   }
 
-  public static void ensureComponentIsShowing(final Component c) {
-    final IGB igb = IGB.getSingletonIGB();
-    if (igb.tab_pane.indexOfComponent(c) >= 0) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          igb.tab_pane.setSelectedComponent(c);
-        }
-      });
-    } else {
-      // If the view has been opened in a new window and that window is
-      // now minimized or not on top, re-display the window
-      JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
-      DisplayUtils.bringFrameToFront(frame);
-    }
+  public String getApplicationName() {
+    return APP_NAME;
   }
 
+  public String getVersion() {
+    return APP_VERSION;
+  }
+
+  public void setBookmarkManager(Object o) {
+    bmark_action.setBookmarkManager((BookmarkManagerView) o);
+  }
 }

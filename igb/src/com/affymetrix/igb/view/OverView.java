@@ -28,6 +28,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.genometry.TypedSym;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
@@ -45,6 +46,11 @@ import com.affymetrix.igb.event.SeqModifiedEvent;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
+
+/**
+ * This class should be tgreated as a work in progress.  It shares a large number of methods
+ * with SeqMapView, but the implementations haven't been kept equivalent.  Needs a refactor.
+ */
 public class OverView extends JPanel
   implements AnnotatedSeqViewer, SeqSelectionListener,
 	     GroupSelectionListener, SeqModifiedListener, SymSelectionListener {
@@ -60,7 +66,7 @@ public class OverView extends JPanel
   public static final Color default_axis_color = Color.BLACK;
 
 
-  SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedBioSeq aseq;
   /**
    *  a virtual sequence that maps the AnnotatedBioSeq aseq to the map coordinates.
@@ -613,11 +619,11 @@ public class OverView extends JPanel
 
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
     AnnotatedSeqGroup group = evt.getSelectedGroup();
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
     }
     else {
-      if (IGB.DEBUG_EVENTS)  { System.out.println("SeqMapView received seqGroupSelected() call, but group = null"); }
+      if (Application.DEBUG_EVENTS)  { System.out.println("SeqMapView received seqGroupSelected() call, but group = null"); }
     }
 
     if ((aseq != null) && (aseq instanceof SmartAnnotBioSeq) &&
@@ -630,7 +636,7 @@ public class OverView extends JPanel
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
@@ -660,10 +666,10 @@ public class OverView extends JPanel
     if ((src instanceof AltSpliceView) || (src instanceof SeqMapView))  {
       // catching SeqMapView as source of event because currently sym selection events actually originating
       //    from AltSpliceView have their source set to the AltSpliceView's internal SeqMapView...
-      if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event from another SeqMapView: " + src_id);}
+      if (Application.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event from another SeqMapView: " + src_id);}
     }
     else {
-      if (IGB.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from: " + src_id);}
+      if (Application.DEBUG_EVENTS) {System.out.println("SeqMapView received selection event originating from: " + src_id);}
       java.util.List symlist = evt.getSelectedSyms();
       //      select(symlist, false, false, false);
       //      zoomToSelections();

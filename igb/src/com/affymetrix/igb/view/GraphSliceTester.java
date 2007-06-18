@@ -9,7 +9,7 @@ import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 
 public class GraphSliceTester extends JComponent
     implements ActionListener  {
@@ -22,7 +22,7 @@ public class GraphSliceTester extends JComponent
   boolean initialized = false;
 
   public GraphSliceTester()  {
-    gviewer = IGB.getSingletonIGB().getMapView();
+    gviewer = Application.getSingleton().getMapView();
     loadB = new JButton("Get Graph Slice in View");
     this.setLayout(new FlowLayout());
     this.add(loadB);

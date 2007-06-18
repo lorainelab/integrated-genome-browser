@@ -31,7 +31,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.*;
@@ -290,7 +290,7 @@ public class ExperimentPivotView extends JComponent
 //  }
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    if (IGB.DEBUG_EVENTS)  {
+    if (Application.DEBUG_EVENTS)  {
       System.out.println("ExperimentPivotView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
     }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();

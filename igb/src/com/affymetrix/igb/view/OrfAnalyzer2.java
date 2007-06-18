@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.igb.util.IntList;
@@ -176,7 +176,7 @@ public class OrfAnalyzer2 extends JComponent
     AffyTieredMap map = smv.getSeqMap();
     orf_holders = new Vector();
     if (vseq==null || ! (vseq.isComplete())) {
-      IGB.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
+      Application.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
       show_orfs = false;
       showCB.setSelected(false);      
       return;

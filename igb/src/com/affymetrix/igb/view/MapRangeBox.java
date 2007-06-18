@@ -16,7 +16,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
@@ -155,7 +155,7 @@ class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelecti
             m.put(Bookmark.START, Integer.toString((int) start));
             m.put(Bookmark.END, Integer.toString((int) end));
             m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
-            UnibrowControlServlet.goToBookmark(IGB.getSingletonIGB(), m);
+            UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
           }
 
           //gview.zoomTo(start, end);

@@ -29,7 +29,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.genometry.*;
 
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.*;
 
 import com.affymetrix.igb.util.UniFileFilter;
@@ -52,7 +52,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
   JMenuItem clearMI;
   JMenuItem manage_bookmarksMI;
   SeqMapView gviewer;
-  IGB uni;
+  Application uni;
   private Map component_hash = new HashMap();
   BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
   JMenu main_bm_menu;
@@ -60,8 +60,8 @@ public class BookMarkAction implements ActionListener, MenuListener {
   JFrame bookmark_manager_frame = null;
   BookmarkManagerView bmv = null;
 
-  public BookMarkAction(IGB unib, SeqMapView smv, JMenu bm_menu) {
-    uni = unib;
+  public BookMarkAction(Application app, SeqMapView smv, JMenu bm_menu) {
+    uni = app;
     gviewer = smv;
     bookmark_menu = bm_menu;
     bookmark_menu.addMenuListener(this);
@@ -222,7 +222,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
       try {
         BookmarkController.viewBookmark(uni, gviewer, bm);
       } catch (Exception e) {
-        IGB.errorPanel("Problem viewing bookmark", e);
+        Application.errorPanel("Problem viewing bookmark", e);
       }
     } else if (DEBUG) {
       System.out.println("Got an action event from an unknown source: "+src);
@@ -288,11 +288,11 @@ public class BookMarkAction implements ActionListener, MenuListener {
     JMenuItem markMI = null;
     JMenu parent_menu = (JMenu) component_hash.get(bl);
     if (parent_menu == null) {
-      IGB.errorPanel("Couldn't add bookmark. Lost reference to menu");
+      Application.errorPanel("Couldn't add bookmark. Lost reference to menu");
       return null;
     }
     if (name == null || name.equals("")) {
-      IGB.errorPanel("A bookmark must have a name.");
+      Application.errorPanel("A bookmark must have a name.");
       return null;
     } else try {
       String url = Bookmark.constructURL(props);
@@ -300,7 +300,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
       addBookmarkMI(parent_menu, bm);
       bl.addBookmark(bm);
     } catch (MalformedURLException m) {
-      IGB.errorPanel("Couldn't add bookmark", m);
+      Application.errorPanel("Couldn't add bookmark", m);
     }
 
     updateBookmarkManager();
@@ -503,7 +503,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
   void showBookmarkManager() {  
     if (bmv == null) {
       bmv = new BookmarkManagerView();
-      bmv.setIGB(uni);
+      bmv.setApplication(uni);
     }
     
     // If not already open in a new window, make a new window

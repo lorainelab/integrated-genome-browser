@@ -25,7 +25,7 @@ import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 
 /**
  *  A view that allows adjusting the visibility of annotations in selected tiers 
@@ -68,7 +68,7 @@ public class TierAdjusterView extends JComponent implements ChangeListener {
     result_comp.add(missTF);
     holder.add(result_comp);
 
-    gviewer = IGB.getSingletonIGB().getMapView();
+    gviewer = Application.getSingleton().getMapView();
     tier_manager = gviewer.getTierManager();
     map = gviewer.getSeqMap();
 
@@ -334,7 +334,7 @@ class OtherCoverageFilter extends AbstractSymFilter implements ActionListener {
   JTextField expandTF = new JTextField(6);
   JComboBox trackCB = new JComboBox();
   JButton refreshB = new JButton("refresh");
-  SeqMapView gviewer = IGB.getSingletonIGB().getMapView();
+  SeqMapView gviewer = Application.getSingleton().getMapView();
   AffyTieredMap map = gviewer.getSeqMap();
   SeqSpanComparator span_comp = new SeqSpanComparator();
 

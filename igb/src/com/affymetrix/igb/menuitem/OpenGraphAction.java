@@ -22,7 +22,7 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ErrorHandler;
@@ -159,7 +159,7 @@ public class OpenGraphAction extends AbstractAction {
       if (! GraphSymUtils.isAGraphFilename(path)) {
         throw new IOException("Filename does not match any known type of graph:\n" + path);
       }
-      if (IGB.CACHE_GRAPHS)  {
+      if (Application.CACHE_GRAPHS)  {
         String graph_url = furl.toExternalForm();
         System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
         fis = LocalUrlCacher.getInputStream(graph_url);

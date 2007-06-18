@@ -15,7 +15,6 @@ package com.affymetrix.igb.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URI;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
@@ -23,7 +22,7 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.das2.*;
@@ -72,7 +71,7 @@ public class Das2LoadView extends JComponent
   Das2VersionedSource current_version;
   Das2Region current_region;
 
-  static SingletonGenometryModel gmodel = IGB.getGenometryModel();
+  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
 
@@ -93,7 +92,7 @@ public class Das2LoadView extends JComponent
     myself = this;
     USE_SIMPLE_VIEW = simple_view;
     if (!USE_SIMPLE_VIEW) {
-      gviewer = IGB.getSingletonIGB().getMapView();
+      gviewer = Application.getSingleton().getMapView();
     }
 
     DefaultMutableTreeNode top = new DefaultMutableTreeNode("DAS/2 Genome Servers");

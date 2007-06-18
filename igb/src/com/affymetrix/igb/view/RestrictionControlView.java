@@ -27,7 +27,7 @@ import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 
 public class RestrictionControlView extends JComponent
@@ -52,18 +52,18 @@ public class RestrictionControlView extends JComponent
   
   public RestrictionControlView() {
     super();
-    this.gviewer = IGB.getSingletonIGB().getMapView();
+    this.gviewer = Application.getSingleton().getMapView();
     boolean load_success  = true;
 
     String rest_file = "rest_enzymes"; // located in same directory as the IGB class
     InputStream file_input_str =
-    IGB.class.getResourceAsStream(rest_file);
+    Application.class.getResourceAsStream(rest_file);
     if (file_input_str == null) {
       // Look for restriction enzymes file as both rest_enzymes" and "/rest_enzymes".
       rest_file = "/" + rest_file;
-      file_input_str = IGB.class.getResourceAsStream(rest_file);
+      file_input_str = Application.class.getResourceAsStream(rest_file);
       if (file_input_str == null) {
-        IGB.errorPanel("Cannot open restriction enzyme file",
+        Application.errorPanel("Cannot open restriction enzyme file",
         "Cannot find restriction enzyme file '"+rest_file+"'.\n"+
         "Restriction mapping will not be available.");
       }
@@ -95,7 +95,7 @@ public class RestrictionControlView extends JComponent
     }
     catch (Exception ex) {
       load_success = false;
-      IGB.errorPanel("Problem loading restriction site file, aborting load\n"+
+      Application.errorPanel("Problem loading restriction site file, aborting load\n"+
       ex.toString());
     } finally {
       if (distr!=null) try {distr.close();} catch (Exception e) {}
@@ -184,7 +184,7 @@ public class RestrictionControlView extends JComponent
 
     BioSeq vseq = gviewer.getViewSeq();
     if (vseq==null || ! vseq.isComplete()) {
-      IGB.errorPanel("Residues for seq not available, search aborted.");
+      Application.errorPanel("Residues for seq not available, search aborted.");
       return;
     }
 
@@ -212,7 +212,7 @@ public class RestrictionControlView extends JComponent
     //    AnnotatedBioSeq aseq = gviewer.getSeq();
     BioSeq vseq = gviewer.getViewSeq();
     if (vseq==null || ! vseq.isComplete()) {
-      IGB.errorPanel("Residues for seq not available, search aborted.");
+      Application.errorPanel("Residues for seq not available, search aborted.");
       return;
     }
     int residue_offset = 0;

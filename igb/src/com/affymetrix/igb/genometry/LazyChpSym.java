@@ -2,12 +2,10 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 
-import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.das2.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
@@ -172,17 +170,17 @@ public class LazyChpSym extends ScoredContainerSym {
     // server and vsource should already be checked before making this LazyChpSym, but checking again
     //     in case connection can no longer be established
     if (server == null) {
-      IGB.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
+      Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + PROBESET_SERVER_NAME);
       return;
     }
     Das2VersionedSource vsource = server.getVersionedSource(aseq.getSeqGroup());
     if (vsource == null) {
-      IGB.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());
+      Application.errorPanel("Couldn't find genome data on server for CHP file, genome = " + aseq.getSeqGroup().getID());
       return;
     }
     Das2Region das_segment = vsource.getSegment(aseq);
     if (das_segment == null) {
-      IGB.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
+      Application.errorPanel("Couldn't find sequence data on server for CHP file, seq = " + aseq.getID());
       return;
     }
 

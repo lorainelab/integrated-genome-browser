@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
@@ -112,19 +112,19 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     setUpPopupMenu();
 
     // Start with an empty bookmark list.
-    // If later a call is made to setIGB(), that will cause the list from 
+    // If later a call is made to setApplication(), that will cause the list from 
     // the BookMarkAction to be installed instead.
     this.setBList(new BookmarkList("Bookmarks"));
 
     tree.addTreeSelectionListener(this);
     this.validate();
   }
-
-  public void setIGB(IGB igb) {
-    if (igb != null) {
-      igb.bmark_action.setBookmarkManager(this);
+  
+  public void setApplication(Application app) {
+    if (app != null) {
+      app.setBookmarkManager(this);
     }
-    thing.setIGB(igb);
+    thing.setApplication(app);
   }
 
   //boolean insert(JTree tree, TreePath tree_path, Bookmark b) {
@@ -204,7 +204,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     BookmarkList selected_bl = null;
 
     private JTree tree;
-    private IGB uni = null;
+    private Application app = null;
     private DefaultTreeModel def_tree_model;
 
     Action properties_action;
@@ -257,8 +257,8 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
      *  is pressed.
      *  @param uni an instance of Unibrow; null is ok.
      */
-    void setIGB(IGB uni) {
-      this.uni = uni;
+    void setApplication(Application app) {
+      this.app = app;
     }
 
     public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
@@ -293,7 +293,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
           name_text_field.setText(bm.getName());
           name_text_field.setEnabled(true);
           properties_action.setEnabled(true);
-          goto_action.setEnabled(uni != null);
+          goto_action.setEnabled(app != null);
         } else if (user_object instanceof Separator) {
           type_label_2.setText("Separator");
           name_text_field.setText("Separator");
@@ -395,11 +395,11 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     private Action makeGoToAction() {
       Action a = new AbstractAction("Go To") {
         public void actionPerformed(ActionEvent ae) {
-          if (uni==null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
+          if (app==null || selected_bl == null || !(selected_bl.getUserObject() instanceof Bookmark)) {
             setEnabled(false);
           } else {
             Bookmark bm = (Bookmark) selected_bl.getUserObject();
-            BookmarkController.viewBookmark(uni, bm);
+            BookmarkController.viewBookmark(app, bm);
           }
         }
       };
@@ -416,7 +416,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.setBounds(10, 10, 800, 500);
-    Image icon = com.affymetrix.igb.IGB.getIcon();
+    Image icon = Application.getSingleton().getIcon();
     if (icon != null) {frame.setIconImage(icon);}
 
     BookmarkManagerView foo = new BookmarkManagerView();
@@ -685,17 +685,17 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
   
   /** If the key is {@link IPlugin#TEXT_KEY_IGB}, this will
-   *  make a call to {@link #setIGB(IGB)}.  Any other key
+   *  make a call to {@link #setApplication(IGB)}.  Any other key
    *  will be ignored.
    */
   public void putPluginProperty(Object key, Object value) {
     if (IPlugin.TEXT_KEY_IGB.equals(key)) {
-      this.setIGB((IGB) value);
+      this.setApplication((Application) value);
     }
   }
   
   public void destroy() {
-    this.setIGB(null);
+    this.setApplication(null);
     tree.removeTreeSelectionListener(this);
     thing = null;
     tree = null;

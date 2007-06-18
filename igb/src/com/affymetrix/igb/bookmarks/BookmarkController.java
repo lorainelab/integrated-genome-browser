@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.genometry.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -53,12 +53,12 @@ public abstract class BookmarkController {
    *  bookmark, it will be opened in an external browser, using
    *  {@link WebBrowserControl#displayURL(String)}.
    */
-  public static void viewBookmark(IGB uni, Bookmark bm) {
+  public static void viewBookmark(Application app, Bookmark bm) {
     if (bm.isUnibrowControl()) {
       if (DEBUG) System.out.println("****** Viewing internal control bookmark: "+bm.getURL().toExternalForm());
       try {
         Map props = bm.parseParameters(bm.getURL());
-        UnibrowControlServlet.goToBookmark(uni, props);
+        UnibrowControlServlet.goToBookmark(app, props);
       } catch (Exception e) {
         String message = e.getClass().getName() + ": " + e.getMessage();
         ErrorHandler.errorPanel("Error opening bookmark.\n" + message);
@@ -72,8 +72,8 @@ public abstract class BookmarkController {
   /** Causes a bookmark to be executed.
    *  @param gviewer  a useless, ignored parameter.
    */
-  public static void viewBookmark(IGB uni, SeqMapView gviewer, Bookmark bm) {
-    viewBookmark(uni, bm);
+  public static void viewBookmark(Application app, SeqMapView gviewer, Bookmark bm) {
+    viewBookmark(app, bm);
   }
   
   public static void loadGraphsEventually(final SeqMapView gviewer, final Map props) {
@@ -228,7 +228,7 @@ public abstract class BookmarkController {
           graph_name = graph_path;
         }
         
-        if (IGB.CACHE_GRAPHS)  {
+        if (Application.CACHE_GRAPHS)  {
           istr = LocalUrlCacher.getInputStream(graph_path);
         } else {
           URL graphurl = new URL(graph_path);

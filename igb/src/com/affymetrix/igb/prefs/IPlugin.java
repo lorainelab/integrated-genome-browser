@@ -35,7 +35,7 @@ public interface IPlugin {
    *  You can expect that the following will be set
    *  during creation of the plugin:
    *  <ul>
-   *  <li> {@link #TEXT_KEY_IGB}: an instance of {@link com.affymetrix.igb.IGB}
+   *  <li> {@link #TEXT_KEY_APP}: an instance of {@link com.affymetrix.igb.Application}
    *  <li> {@link #TEXT_KEY_SEQ_MAP_VIEW}: an instance of {@link com.affymetrix.igb.view.SeqMapView}
    *  </ul>
    *
@@ -60,7 +60,7 @@ public interface IPlugin {
    *   <li> {@link #TEXT_KEY_HTML_HELP}: null or help text in HTML format.
    *   <li> {@link #TEXT_KEY_DESCRIPTION}: null or textual descriptive text.
    *   <li> {@link #TEXT_KEY_INFO_URL}: null or a String containing a URL to find more information.
-   *   <li> {@link #TEXT_KEY_IGB}: null or an instance of {@link com.affymetrix.igb.IGB}.
+   *   <li> {@link #TEXT_KEY_APP}: null or an instance of {@link com.affymetrix.igb.Application}.
    *   <li> {@link #TEXT_KEY_SEQ_MAP_VIEW}: null or an instance of {@link com.affymetrix.igb.view.SeqMapView}.
    *  </ul>
    *
@@ -74,9 +74,15 @@ public interface IPlugin {
   public void destroy();
     
   /**
-   *  Key for holding an instance of {@link com.affymetrix.igb.IGB}.
+   *  Key for holding an instance of {@link com.affymetrix.igb.Application}.
    */
-  public static final String TEXT_KEY_IGB = "IGB";
+  public static final String TEXT_KEY_APP = "Application";
+  
+  /**
+   * @deprecated
+   */
+  @Deprecated
+  public static final String TEXT_KEY_IGB = TEXT_KEY_APP;
 
   /**
    *  Key for holding an instance of {@link com.affymetrix.igb.view.SeqMapView}.

@@ -18,7 +18,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.menuitem.MenuUtil;
@@ -132,13 +132,13 @@ public class SeqMapViewActionListener implements ActionListener {
     } else if (command.equals(gviewer.zoomclampMI.getText())) {
       Vector selected_glyphs = seqmap.getSelected();
       if (selected_glyphs.isEmpty()) {
-        IGB.errorPanel("Nothing selected");
+        Application.errorPanel("Nothing selected");
       } else {
         gviewer.clampToGlyph((GlyphI) selected_glyphs.lastElement());
       }
     } else if (command.equals(gviewer.selectParentMI.getText())) {
       if (seqmap.getSelected().isEmpty()) {
-        IGB.errorPanel("Nothing selected");
+        Application.errorPanel("Nothing selected");
       } else if (seqmap.getSelected().size() == 1) {
         // one selection: select its parent, not recursively
         gviewer.selectParents(false);
@@ -149,7 +149,7 @@ public class SeqMapViewActionListener implements ActionListener {
     } else if (command.equals(gviewer.printSymmetryMI.getText())) {
       SeqSymmetry sym = gviewer.getSelectedSymmetry();
       if (sym == null) {
-        IGB.errorPanel("No symmetry selected");
+        Application.errorPanel("No symmetry selected");
       } else if (sym instanceof GraphSym) {
         GraphSym gs = (GraphSym) sym;
         GraphState gstate = gs.getGraphState();

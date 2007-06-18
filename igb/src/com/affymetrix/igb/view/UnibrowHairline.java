@@ -16,7 +16,6 @@ package com.affymetrix.igb.view;
 import java.awt.event.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Font;
 import java.util.prefs.*;

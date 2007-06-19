@@ -17,17 +17,15 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.Point2DComparator;
-import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.igb.util.PointIntFloat;
 
 public class SgrParser {
   static boolean DEBUG = false;
-  static Comparator pointcomp = new Point2DComparator(true, true);
+  static Comparator pointcomp = PointIntFloat.getComparator(true, true);
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
   public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
@@ -55,7 +53,7 @@ public class SgrParser {
     if (ensure_unique_id)  {
       // Making sure the ID is unique on the whole genome, not just this seq
       // will make sure the GraphState is also unique on the whole genome.
-      gid = GraphSymUtils.getUniqueGraphID(gid, seq_group);
+      gid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq_group);
     }
     
     while ((line = br.readLine()) != null) {
@@ -153,16 +151,16 @@ public class SgrParser {
     for (int i=0; i<graph_length; i++) {
       int x = xlist.get(i);
       float y = ylist.get(i);
-      Point2D pnt = new Point2D((double)x, (double)y);
+      PointIntFloat pnt = new PointIntFloat(x, y);
       points.add(pnt);
     }
     Collections.sort(points, pointcomp);
     IntList new_xlist = new IntList(graph_length);
     FloatList new_ylist = new FloatList(graph_length);
     for (int i=0; i<graph_length; i++) {
-      Point2D pnt = (Point2D)points.get(i);
-      new_xlist.add((int)pnt.x);
-      new_ylist.add((float)pnt.y);
+      PointIntFloat pnt = (PointIntFloat) points.get(i);
+      new_xlist.add(pnt.x);
+      new_ylist.add(pnt.y);
     }
     xhash.put(seqid, new_xlist);
     yhash.put(seqid, new_ylist);

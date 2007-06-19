@@ -12,17 +12,19 @@
 */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.igb.genometry.GraphSym;
+import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.util.IntList;
+import com.affymetrix.igb.util.PointIntFloat;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.util.*;
-import com.affymetrix.genoviz.bioviews.Point2D;
 
 public class GrParser {
 
-  static Comparator pointcomp = new Point2DComparator(true, true);
+  static Comparator pointcomp = PointIntFloat.getComparator(true, true);
 
   public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
     int xpos[] = graf.getGraphXCoords();
@@ -130,16 +132,16 @@ public class GrParser {
       for (int i=0; i<graph_length; i++) {
         x = xlist.get(i);
         y = ylist.get(i);
-        Point2D pnt = new Point2D((double)x, (double)y);
+        PointIntFloat pnt = new PointIntFloat(x, y);
         points.add(pnt);
       }
       Collections.sort(points, pointcomp);
       xcoords = new int[graph_length];
       ycoords = new float[graph_length];
       for (int i=0; i<graph_length; i++) {
-        Point2D pnt = (Point2D)points.get(i);
-        xcoords[i] = (int)pnt.x;
-        ycoords[i] = (float)pnt.y;
+        PointIntFloat pnt = (PointIntFloat)points.get(i);
+        xcoords[i] = pnt.x;
+        ycoords[i] = pnt.y;
       }
     }
     else {
@@ -151,7 +153,7 @@ public class GrParser {
       System.gc();
     }
     //    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
-    if (ensure_unique_id)  { name = GraphSymUtils.getUniqueGraphID(name, aseq); }
+    if (ensure_unique_id)  { name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq); }
     graf = new GraphSym(xcoords, ycoords, name, aseq);
     System.out.println("loaded graph data, total points = " + count);
     return graf;

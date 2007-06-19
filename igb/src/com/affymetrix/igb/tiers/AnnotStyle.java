@@ -511,14 +511,17 @@ public class AnnotStyle implements IAnnotStyleExtended {
     setMaxDepth(g.getMaxDepth());
     setHeight(g.getHeight());
     setY(g.getY());
-
     setExpandable(g.getExpandable());
+    
+    if (g instanceof IAnnotStyleExtended) {
+      IAnnotStyleExtended as = (IAnnotStyleExtended) g;
+      setColorByScore(as.getColorByScore());
+      setGlyphDepth(as.getGlyphDepth());
+    }
     if (g instanceof AnnotStyle) {
       AnnotStyle as = (AnnotStyle) g;
       setCustomizable(as.getCustomizable());
       setLabelField(as.getLabelField());
-      setColorByScore(as.getColorByScore());
-      setGlyphDepth(as.getGlyphDepth());
       setSeparate(as.getSeparate());
     }
 

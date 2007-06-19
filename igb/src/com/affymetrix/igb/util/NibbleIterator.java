@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.util.SearchableCharIterator;
+import com.affymetrix.genometry.util.DNAUtils;
 
 public class NibbleIterator implements SearchableCharIterator {
   int length;
@@ -314,7 +314,7 @@ public class NibbleIterator implements SearchableCharIterator {
     }
     residues = buf.toString();
     if (! forward) {
-      residues = com.affymetrix.genoviz.util.DNAUtils.reverseComplement(residues);
+      residues = DNAUtils.reverseComplement(residues);
     }
     return residues;
   }

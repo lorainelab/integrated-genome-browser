@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.swing.ColorIcon;
 import java.awt.*;
 import java.awt.event.*;

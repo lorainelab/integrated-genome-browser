@@ -23,6 +23,11 @@ public class SimpleAnnotStyle implements IAnnotStyleExtended {
   public SimpleAnnotStyle(String name) {
     this.uName = name;
   }
+  
+  public SimpleAnnotStyle(String name, boolean is_graph) {
+    this.uName = name;
+    this.is_graph = is_graph;
+  }
 
   public String getUniqueName() { return uName; }
   
@@ -74,10 +79,8 @@ public class SimpleAnnotStyle implements IAnnotStyleExtended {
   public boolean getExpandable() { return expandable; }
   public void setExpandable(boolean b) { expandable = b; }
   
-  /** Always returns false. 
-   *  @return false
-   */
-  public boolean isGraphTier() { return false; }
+  boolean is_graph = false;
+  public boolean isGraphTier() { return is_graph; }
   
   Map transientProperties = new HashMap();
   public Map getTransientPropertyMap() {

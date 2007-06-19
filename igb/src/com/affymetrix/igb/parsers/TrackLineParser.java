@@ -17,10 +17,10 @@ import java.awt.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 
 public class TrackLineParser {
 
@@ -118,7 +118,7 @@ public class TrackLineParser {
    *  A default track name must be provided in case none is specified by the
    *  track line itself.
    */
-  public static AnnotStyle createAnnotStyle(Map track_hash, String default_track_name) {
+  public static IAnnotStyle createAnnotStyle(Map track_hash, String default_track_name) {
     String name = (String) track_hash.get(NAME);
     if (name == null) {
       track_hash.put(NAME, default_track_name);
@@ -126,7 +126,6 @@ public class TrackLineParser {
     }
 
     AnnotStyle style = AnnotStyle.getInstance(name, false); // should the style be persistent?
-
     applyTrackProperties(track_hash, style);
     return style;
   }
@@ -176,8 +175,8 @@ public class TrackLineParser {
       }
     }
     
-    if (style instanceof AnnotStyle) { // for non-graph tiers
-      AnnotStyle annot_style = (AnnotStyle) style;
+    if (style instanceof IAnnotStyleExtended) { // for non-graph tiers
+      IAnnotStyleExtended annot_style = (IAnnotStyleExtended) style;
       String url = (String) track_hash.get(URL);
       if (url != null) {
         annot_style.setUrl(url);
@@ -203,7 +202,7 @@ public class TrackLineParser {
    *  Applies the UCSC track properties that it understands to the GraphState 
    *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
    */
-  public static void applyTrackProperties(Map track_hash, GraphState gstate) {
+  public static void applyTrackProperties(Map track_hash, GraphStateI gstate) {
     applyTrackProperties(track_hash, gstate.getTierStyle());
     
     String view_limits = (String) track_hash.get("viewlimits");
@@ -220,10 +219,10 @@ public class TrackLineParser {
     String graph_type = (String) track_hash.get("graphtype");
     // UCSC browser supports only the types "points" and "bar"
     if ("points".equalsIgnoreCase(graph_type)) {
-      gstate.setGraphStyle(GraphGlyph.DOT_GRAPH);
+      gstate.setGraphStyle(GraphStateI.DOT_GRAPH);
     }
     else if ("bar".equalsIgnoreCase(graph_type)) {
-      gstate.setGraphStyle(GraphGlyph.BAR_GRAPH);
+      gstate.setGraphStyle(GraphStateI.BAR_GRAPH);
     }
   }
 }

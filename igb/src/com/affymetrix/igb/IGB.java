@@ -42,6 +42,7 @@ import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.igb.das.DasDiscovery;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -57,12 +58,12 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
   public static boolean REPLACE_REPAINT_MANAGER = false;
   public static boolean REPORT_GRAPHICS_CONFIG = false;
 
-  public static boolean USE_QUICKLOAD = false;
-  public static boolean USE_DATALOAD = true;
+  public static boolean USE_QUICKLOAD = false;  // if false, QuickLoadView2 may still be used by DataLoadView
+  public static boolean USE_DATALOAD = true;  //  DataLoadView may also use QuickLoadView2
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
-  
+
   // Whether to allow users to delete data from the loaded AnnotatedSeqGroup.
   // This should not be turned on until all the caching and optimization features
   // are aware of how to deal with it.  Specifically, QuickLoad needs to know
@@ -148,7 +149,8 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
   DataLoadView data_load_view = null;
   AltSpliceView slice_view = null;
 
-  java.util.List plugin_list;
+  java.util.List plugins_info = new ArrayList(16);
+  java.util.List plugins = new ArrayList(16);
 
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
@@ -197,10 +199,10 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     // if laf == null, then apply the windows look and feel
     if (laf == null) try {
       // It this is Windows, then use the Windows look and feel.
-      
+
       Class cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
       LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-      
+
       if (look_and_feel.isSupportedLookAndFeel()) {
         UIManager.setLookAndFeel(look_and_feel);
       }
@@ -230,6 +232,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     QuickLoadView2.processDasServersList(quick_load_url);
+    //    processDasServersList(quick_load_url);
 
     singleton_igb = new IGB();
     singleton_igb.init();
@@ -264,6 +267,26 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
 
 
   public IGB() { }
+
+  /**
+   * Adds the DAS servers from the URL gl_url to the
+   *  persistent list managed by DasDiscovery.  If the file doesn't exist,
+   *  or can't be loaded, a warning is printed to stdout, but that is all,
+   *  since it isn't a fatal error.
+   *  Meant to replace QuickLoadView2.processDasServerList()
+   *  @param ql_url The root URL for the QuickLoad server, ending with "/".
+   */
+  public static void processDasServersList(String ql_url) {
+    String server_loc_list = ql_url + "das_servers.txt";
+    try {
+      System.out.println("Trying to load DAS Server list: " + server_loc_list);
+      DasDiscovery.addServersFromTabFile(server_loc_list);
+    }
+    catch (Exception ex) {
+      System.out.println("WARNING: Failed to load DAS Server list: " + ex);
+    }
+  }
+
 
   public static boolean isSequenceAccessible() {
     //return UnibrowPrefsUtil.getBooleanParam(PREF_SEQUENCE_ACCESSIBLE, default_sequence_accessible);
@@ -342,7 +365,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
   /**
    * Returns the value of the argument indicated by label.
    * If arguments are
-   *   "-flag_2 -foo bar", then get_arg("foo", args) 
+   *   "-flag_2 -foo bar", then get_arg("foo", args)
    * returns "bar", get_arg("flag_2") returns a non-null string,
    * and get_arg("flag_5") returns null.
    */
@@ -551,7 +574,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     tools_menu = MenuUtil.getMenu("Tools");
     tools_menu.setMnemonic('T');
     //mbar.add(tools_menu);
-    
+
     help_menu = MenuUtil.getMenu("Help");
     help_menu.setMnemonic('H');
     //mbar.add(help_menu);
@@ -646,7 +669,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
 
     web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
-    
+
     preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
     preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
     preferences_item.addActionListener(this);
@@ -705,7 +728,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
       MenuUtil.addToMenu(help_menu, gc_item);
       MenuUtil.addToMenu(help_menu, memory_item);
     }
-    
+
     gc_item.addActionListener(this);
     memory_item.addActionListener(this);
     about_item.addActionListener(this);
@@ -753,7 +776,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setTopComponent(map_view);
-    
+
     boolean tab_panel_in_a_window = (UnibrowPrefsUtil.getComponentState(TABBED_PANES_TITLE).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
     if (tab_panel_in_a_window) {
       openTabbedPanelInNewWindow(tab_pane);
@@ -803,21 +826,19 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     //    frm.resize(1000, 750);
     frm.setVisible(true);
 
-
-    ArrayList plugin_list = new ArrayList(16);
     if (USE_QUICKLOAD) {
       PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
-      plugin_list.add(quickload);
+      plugins_info.add(quickload);
     }
     if (USE_DATALOAD)  {
       PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
-      plugin_list.add(dataload);
+      plugins_info.add(dataload);
     }
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
-    plugin_list.add(selection_info);
+    plugins_info.add(selection_info);
 
-    plugin_list.addAll(getPluginsFromXmlPrefs(getIGBPrefs()));
+    plugins_info.addAll(getPluginsFromXmlPrefs(getIGBPrefs()));
     //plugin_list = null;
     //try {
     //  plugin_list = Plugin>Info.getAllPlugins();
@@ -825,20 +846,23 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
     //}
 
-    if (plugin_list == null || plugin_list.isEmpty()) {
+    if (plugins_info == null || plugins_info.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
     } else {
-      Iterator iter = plugin_list.iterator();
+      Iterator iter = plugins_info.iterator();
       while (iter.hasNext()) {
         PluginInfo pi = (PluginInfo) iter.next();
-        setUpPlugIn(pi);
+        Object plugin = setUpPlugIn(pi);
+        plugins.add(plugin);
       }
     }
 
-    // We need to let the QuickLoad system get started-up before starting
-    // the control server that listens to ping requests.
-    if (data_load_view != null) {
-      data_load_view.initialize();
+    for (int i=0; i<plugins.size(); i++)  {
+        Object plugin = plugins.get(i);
+        if (plugin instanceof DataLoadView) {
+            data_load_view = (DataLoadView)plugin;
+            data_load_view.initialize();
+        }
     }
 
     if (slice_view != null) {
@@ -846,9 +870,12 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
       export_slice_item.setEnabled(true);
     }
 
+    // bootstrap bookmark from Preferences for last genome / sequence / region
     WebLink.autoLoad();
-    
-    // Start listining for http requests only after all set-up is done.
+
+    // Need to let the QuickLoad system get started-up before starting
+    //   the control server that listens to ping requests?
+    // Therefore start listening for http requests only after all set-up is done.
     startControlServer();
 
     initialized = true;
@@ -863,9 +890,9 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
    *  Puts the given component either in the tab pane or in its own window,
    *  depending on saved user preferences.
    */
-  void setUpPlugIn(PluginInfo pi) {
+  Object setUpPlugIn(PluginInfo pi) {
 
-    if (! pi.shouldLoad()) return;
+    if (! pi.shouldLoad()) return null;
 
     String class_name = pi.getClassName();
     if (class_name == null || class_name.trim().length()==0) {
@@ -873,7 +900,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
         "Cannot create plugin '"+pi.getPluginName()+"' because it has no class name.",
         this.frm);
       PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
-      return;
+      return null;
     }
 
     Object plugin = null;
@@ -890,7 +917,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
         "Could not create plugin '"+pi.getPluginName()+"'.",
         this.frm, t);
       PluginInfo.getNodeForName(pi.getPluginName()).putBoolean("load", false);
-      return;
+      return null;
     }
 
     ImageIcon icon = null;
@@ -920,6 +947,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
         tab_pane.addTab(title, icon, comp, tool_tip);
       }
     }
+    return plugin;
   }
 
   public void setPluginInstance(Class c, IPlugin plugin) {
@@ -1255,7 +1283,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     final String title;
     final String display_name;
     final String tool_tip = comp.getToolTipText();
-    
+
     if (comp2plugin.get(comp) instanceof PluginInfo) {
       PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
       title = pi.getPluginName();
@@ -1349,7 +1377,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
       frame.setVisible(true);
-      
+
       final Runnable return_panes_to_main_window = new Runnable() {
         public void run() {
           // save the current size into the preferences, so the window
@@ -1368,7 +1396,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
           }
         }
       };
-      
+
       frame.addWindowListener( new WindowAdapter() {
         public void windowClosing(WindowEvent evt) {
           SwingUtilities.invokeLater(return_panes_to_main_window);
@@ -1379,7 +1407,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
        JMenu menu1 = new JMenu("Windows");
        menu1.setMnemonic('W');
        mbar.add( menu1 );
-       
+
        menu1.add(new AbstractAction("Return Tabbed Panes to Main Window") {
         public void actionPerformed(ActionEvent evt) {
           SwingUtilities.invokeLater(return_panes_to_main_window);
@@ -1397,7 +1425,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     }
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
   }
-  
+
   public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
     popup.add(popup_windowsM);
   }

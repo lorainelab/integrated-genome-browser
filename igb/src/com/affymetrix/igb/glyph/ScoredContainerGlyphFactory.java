@@ -88,7 +88,7 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
       
       SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), gis.getGraphState());
       graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
-      GraphState gstate = graph_glyph.getGraphState();
+      GraphStateI gstate = graph_glyph.getGraphState();
       
       IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
       graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());

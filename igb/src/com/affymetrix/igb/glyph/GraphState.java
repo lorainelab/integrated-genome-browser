@@ -23,7 +23,7 @@ import java.util.*;
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public class GraphState {
+public class GraphState implements GraphStateI {
 
   String graph_path;
   String unique_id;
@@ -179,7 +179,7 @@ public class GraphState {
   }
 
   /** Copy all the properties, except ID and label, of the given state into this state. */
-  public void copyProperties(GraphState ostate) {
+  public void copyProperties(GraphStateI ostate) {
     setUrl(ostate.getUrl());
     setGraphStyle(ostate.getGraphStyle());
 //    setColor(ostate.getColor());

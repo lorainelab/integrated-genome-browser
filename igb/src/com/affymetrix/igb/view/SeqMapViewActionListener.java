@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.IAnnotStyle;
@@ -152,7 +153,7 @@ public class SeqMapViewActionListener implements ActionListener {
         Application.errorPanel("No symmetry selected");
       } else if (sym instanceof GraphSym) {
         GraphSym gs = (GraphSym) sym;
-        GraphState gstate = gs.getGraphState();
+        GraphStateI gstate = gs.getGraphState();
         IAnnotStyle style = gstate.getTierStyle();
         System.out.println("Graph: " + gs.getGraphName());
         Map m = gs.getProperties();

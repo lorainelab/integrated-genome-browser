@@ -57,7 +57,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
    *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
    */
   public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
-    GraphState state = graf.getGraphState();
+    GraphState state = (GraphState) graf.getGraphState();
     
 
     AnnotatedBioSeq aseq = smv.getAnnotatedSeq();
@@ -117,7 +117,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     }
     graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
     
-    GraphState gstate = graf.getGraphState();
+    GraphStateI gstate = graf.getGraphState();
     IAnnotStyle tier_style = gstate.getTierStyle();
     
     Rectangle2D cbox = map.getCoordBounds();
@@ -166,7 +166,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv,
     java.awt.Color col, double yloc, double height, boolean use_floater) {
     
-    GraphState gstate = graf.getGraphState();
+    GraphStateI gstate = graf.getGraphState();
     IAnnotStyle gstyle = gstate.getTierStyle();
     gstyle.setColor(col);
     gstyle.setY(yloc);

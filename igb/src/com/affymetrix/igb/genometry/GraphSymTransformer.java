@@ -15,7 +15,6 @@ package com.affymetrix.igb.genometry;
 
 import java.util.*;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.GraphSym;

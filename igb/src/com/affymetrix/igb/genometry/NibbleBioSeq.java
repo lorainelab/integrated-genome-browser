@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.genometry;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 
 import com.affymetrix.igb.util.SearchableCharIterator;

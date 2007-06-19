@@ -14,7 +14,6 @@
 package com.affymetrix.igb.event;
 
 import java.util.EventObject;
-import java.util.*;
 
 import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 

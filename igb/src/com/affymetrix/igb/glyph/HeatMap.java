@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -13,12 +13,11 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Color;
 import java.util.*;
 
 public class HeatMap {
-  
+
   /** Name of the Black-and-White Standard HeatMap. */
   public static final String HEATMAP_0 = "Black/White";
 
@@ -33,10 +32,10 @@ public class HeatMap {
 
   /** Name of the second Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_4 = "Blue/Yellow 2";
-  
+
   /** Name of the Transparent Black-and-White Standard HeatMap. */
   public static final String HEATMAP_T_0 = "Transparent B/W";
-  
+
   /** Name of the Transparent Violet Standard HeatMap. */
   public static final String HEATMAP_T_1 = "Transparent Blue";
 
@@ -48,30 +47,30 @@ public class HeatMap {
 
   public static final String PREF_HEATMAP_NAME = "Default Heatmap";
   public static final String def_heatmap_name = HEATMAP_2;
-    
+
   public static String[] HEATMAP_NAMES = {
     HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4,
     HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1
   };
-  
-  static Map name_to_color_array = new HashMap();  
-  
+
+  static Map name_to_color_array = new HashMap();
+
   String name;
   Color[] colors;
-  
+
   public HeatMap(String name, Color[] colors) {
     this.name = name;
     this.colors = colors;
   }
-  
+
   public String getName() {
     return name;
   }
-  
+
   public Color[] getColors() {
     return colors;
   }
-  
+
   /**
    *  Returns one of the standard pre-defined heat maps using the names in
    *  HEATMAP_NAMES, or null if one with the given name does not exist.
@@ -82,7 +81,7 @@ public class HeatMap {
       int r,g,b;
       int bins = 256;
       Color[] cc = new Color[bins];
-      
+
       if (HEATMAP_0.equals(name)) {
         r=0; g=0; b=0;
         for (int i=0; i<bins; i++) {
@@ -112,8 +111,8 @@ public class HeatMap {
           cc[i] = new Color(r++, g++, b);
           if (i % 2 == 0)  { b--; }
         }
-      } 
-      
+      }
+
       // Now the transparent ones
       else if (HEATMAP_T_0.equals(name)) {
         r=0; g=0; b=0;
@@ -144,20 +143,10 @@ public class HeatMap {
         name_to_color_array.put(name, hm);
       }
     }
-    
+
     return hm;
   }
-    
-  public static HeatMap getDefaultHeatmap() {
-    String name = UnibrowPrefsUtil.getTopNode().get(PREF_HEATMAP_NAME, def_heatmap_name);
-    
-    HeatMap result = getStandardHeatMap(name);
-    if (result == null) {
-      result = getStandardHeatMap(def_heatmap_name);
-    }
-    return result;
-  }  
-  
+
   /** Make a HeatMap that interpolates linearly between the two given colors. */
   public static HeatMap makeLinearHeatmap(String name, Color low, Color high) {
     Color[] colors = new Color[256];
@@ -167,11 +156,11 @@ public class HeatMap {
       float x = (i*1.0f)/255.0f;
       colors[i] = interpolateColor(low, high, x);
     }
-    
+
     return heat_map;
   }
-  
-  
+
+
   /**
    *  Creates a new color inbetween c1 and c2.
    *  @param x  The fraction of the new color (0.00 to 1.00) that

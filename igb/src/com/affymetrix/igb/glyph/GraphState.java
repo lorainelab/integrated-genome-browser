@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -17,7 +17,9 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
@@ -203,13 +205,23 @@ public class GraphState implements GraphStateI {
     
     getTierStyle().copyPropertiesFrom(ostate.getTierStyle());
   }
+  
+  public static HeatMap getUserPrefHeatmap(Preferences node) {
+    String name = node.get(HeatMap.PREF_HEATMAP_NAME, HeatMap.def_heatmap_name);
+
+    HeatMap result = HeatMap.getStandardHeatMap(name);
+    if (result == null) {
+      result = HeatMap.getStandardHeatMap(HeatMap.def_heatmap_name);
+    }
+    return result;
+  }
 
 
   public final String getUrl() { return graph_path; }
   public final int getGraphStyle() { return graph_style; }
-  public final HeatMap getHeatMap() { 
+  public final HeatMap getHeatMap() {
     if (heat_map == null) {
-      heat_map = HeatMap.getDefaultHeatmap();
+      heat_map = getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode());
     }
     if (heat_map == null) {
       heat_map = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);

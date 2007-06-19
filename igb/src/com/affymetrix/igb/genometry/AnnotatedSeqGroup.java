@@ -403,6 +403,70 @@ public class AnnotatedSeqGroup {
     sym_map_change_listeners.remove(l);
   }
 
+  /**
+   *  Returns input id if no GraphSyms on any seq in the given seq group
+   *  are already using that id.
+   *  Otherwise uses id to build a new unique id.
+   *  The id returned is unique for GraphSyms on all seqs in the given group.
+   */
+  public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+    String result = id;
+    Iterator iter = seq_group.getSeqList().iterator();
+    while (iter.hasNext()) {
+      AnnotatedBioSeq seq = (AnnotatedBioSeq) iter.next();
+      result = getUniqueGraphID(result, seq);
+    }
+    return result;
+  }
+
+  /**
+   *  Returns input id if no GraphSyms on seq with given id.
+   *  Otherwise uses id to build a new id that is not used by a GraphSym (or top-level container sym )
+   *     currently on the seq.
+   *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
+   */
+  public static String getUniqueGraphID(String id, BioSeq seq) {
+    if (id == null) { return null; }
+    String newid = id;
+    if (seq instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sab = (SmartAnnotBioSeq)seq;
+      int prevcount = 0;
+      while (sab.getAnnotation(newid) != null) {
+        prevcount++;
+        newid = id + "." + prevcount;
+      }
+    }
+    else if (seq instanceof AnnotatedBioSeq)  {
+      AnnotatedBioSeq aseq = (AnnotatedBioSeq)seq;
+      // check every annotation on seq, but assume graphs are directly attached to seq, so
+      //   don't have to do recursive descent into children?
+      // potentially really bad performance, but this is just a fallback -- most
+      //      seqs that GraphSyms are being attached to will be SmartAnnotBioSeqs and dealt with
+      //      in the other branch of the conditional
+      int prevcount = 0;
+      int acount = aseq.getAnnotationCount();
+      boolean hit = true;
+      while (hit) {
+        hit = false;
+        for (int i=0; i<acount; i++) {
+          SeqSymmetry sym = aseq.getAnnotation(i);
+          if ((sym instanceof GraphSym) && (newid.equals(sym.getID()))) {
+              prevcount++;
+              newid = id + "." + prevcount;
+              hit = true;
+              break;
+          }
+        }
+      }
+    }
+    else {
+      // if not an AnnotatedBioSeq, just return original ID for now.
+      newid = id;
+    }
+
+    return newid;
+  }
+
   public static class ListmakingHashMap extends TreeMap {
     public Object put(Object key, Object value) {
       Object x = this.get(key);

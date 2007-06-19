@@ -27,6 +27,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphState;
 import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
@@ -101,7 +102,7 @@ public abstract class BookmarkController {
     int default_minrun_thresh = 30;
     int default_maxgap_thresh = 100;
     boolean default_show_thresh = false;
-    int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
+    int default_thresh_direction = GraphStateI.THRESHOLD_DIRECTION_GREATER;
     Map combos = new HashMap();
     
     //System.err.println("I am in loadGraphs!!!!");

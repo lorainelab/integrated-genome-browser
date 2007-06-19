@@ -31,6 +31,7 @@ import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.util.EPSWriter;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -143,7 +144,7 @@ public class GTCBrowser extends Application implements ActionListener {
 
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
-    dlookup.loadSynonyms(quick_load_url + "synonyms.txt");
+    LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
 
     GTCBrowser singleton_gtcbrowser = new com.affymetrix.igb.GTCBrowser();
     singleton_gtcbrowser.init();

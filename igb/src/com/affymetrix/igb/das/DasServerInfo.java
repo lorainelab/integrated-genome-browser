@@ -24,6 +24,7 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.ErrorHandler;
 
   //  just for testing via main()
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 
 public class DasServerInfo {
@@ -203,7 +204,7 @@ public class DasServerInfo {
     String test_url = "http://205.217.46.81:9091/QueryServlet/das";
 
     SynonymLookup dlookup = new SynonymLookup();
-    dlookup.loadSynonyms("http://147.208.165.250/quickload_data/synonyms.txt");
+    LocalUrlCacher.loadSynonyms(dlookup, "http://147.208.165.250/quickload_data/synonyms.txt");
     
     SynonymLookup.setDefaultLookup(dlookup);
     DasServerInfo test = new DasServerInfo(test_url, "name unknown", true);

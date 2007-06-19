@@ -731,7 +731,7 @@ public class QuickLoadView2 extends JComponent
       result = QuickLoadServerModel.getQLModelForURL(the_url);
 
       if (result != null) {
-        SynonymLookup.getDefaultLookup().loadSynonyms(result.getRootUrl()+"synonyms.txt");
+        LocalUrlCacher.loadSynonyms(SynonymLookup.getDefaultLookup(), result.getRootUrl()+"synonyms.txt");
       }
     } catch (Exception e) {
       ErrorHandler.errorPanel("ERROR", "Error opening QuickLoad server:\n server='"+the_url_string+"'"
@@ -798,7 +798,7 @@ class QuickLoadServerModel {
     if (ql_server == null) {
       ql_server = new QuickLoadServerModel(ql_http_root);
       url2quickload.put(ql_http_root, ql_server);
-      SynonymLookup.getDefaultLookup().loadSynonyms(ql_http_root+"synonyms.txt");
+      LocalUrlCacher.loadSynonyms(SynonymLookup.getDefaultLookup(), ql_http_root+"synonyms.txt");
     }
     return ql_server;
   }

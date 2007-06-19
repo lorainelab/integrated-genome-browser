@@ -228,7 +228,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
 
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
-    dlookup.loadSynonyms(quick_load_url + "synonyms.txt");
+    LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     QuickLoadView2.processDasServersList(quick_load_url);
 
     singleton_igb = new IGB();

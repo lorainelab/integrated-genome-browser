@@ -17,7 +17,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.genoviz.util.Memer;
+import com.affymetrix.igb.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;

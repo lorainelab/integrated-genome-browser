@@ -22,7 +22,6 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  *  This class (and file format) have been replaced by ScoredIntervalParser (and sin file format)
@@ -40,7 +39,7 @@ public class ScoredMapParser {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
 
-      String unique_container_name = GraphSymUtils.getUniqueGraphID(stream_name, seq_group);
+      String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
       ScoredContainerSym parent = new ScoredContainerSym();
       parent.setID(unique_container_name);
       parent.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));

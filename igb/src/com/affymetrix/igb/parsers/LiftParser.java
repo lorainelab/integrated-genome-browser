@@ -22,7 +22,7 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 
 public class LiftParser {
   static Pattern re_tab = Pattern.compile("\t");

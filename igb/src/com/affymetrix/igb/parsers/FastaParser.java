@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
 
-import com.affymetrix.genoviz.util.Memer;
+import com.affymetrix.igb.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
@@ -144,7 +144,7 @@ public class FastaParser {
     System.out.println("using buffer directly: " + use_buffer_directly);
     System.out.println("using fixed length buffer: " + fixed_length_buffer);
 
-    com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
+    com.affymetrix.igb.util.Timer tim = new com.affymetrix.igb.util.Timer();
     tim.start();
     MutableAnnotatedBioSeq seq = aseq;
     String seqid = ("unknown");
@@ -331,7 +331,7 @@ public class FastaParser {
       buf = new StringBuffer();
     }
     //    StringBuffer buf = new StringBuffer(10);
-    com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
+    com.affymetrix.igb.util.Timer tim = new com.affymetrix.igb.util.Timer();
     tim.start();
     Memer mem = new Memer();
     int line_count = 0;

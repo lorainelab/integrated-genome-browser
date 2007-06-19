@@ -16,7 +16,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;

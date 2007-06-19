@@ -15,7 +15,7 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.util.Memer;
+import com.affymetrix.igb.util.Memer;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;

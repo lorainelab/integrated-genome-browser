@@ -17,7 +17,7 @@ import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;

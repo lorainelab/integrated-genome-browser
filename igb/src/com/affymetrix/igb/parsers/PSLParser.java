@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
-import com.affymetrix.genoviz.util.Memer;
+import com.affymetrix.igb.util.Memer;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;

@@ -16,13 +16,12 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 /**
  * Parser for files in BAR format.
@@ -487,7 +486,7 @@ public class BarParser implements AnnotationWriter  {
 			       ", seq = " + seq.getID());
 	    System.out.println("      graph id: " + graph_id);
 	  }
-	  if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, seq); }
+	  if (ensure_unique_id) { graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq); }
 	  checkSeqLength(seq, xcoords);
           GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
@@ -526,8 +525,8 @@ public class BarParser implements AnnotationWriter  {
           String pm_name = graph_id + " : pm";
           String mm_name = graph_id + " : mm";
 	  if (ensure_unique_id) {
-	    pm_name = GraphSymUtils.getUniqueGraphID(pm_name, seq);
-	    mm_name = GraphSymUtils.getUniqueGraphID(mm_name, seq);
+	    pm_name = AnnotatedSeqGroup.getUniqueGraphID(pm_name, seq);
+	    mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
 	  }
 	  checkSeqLength(seq, xcoords);
           GraphSym pm_graf =

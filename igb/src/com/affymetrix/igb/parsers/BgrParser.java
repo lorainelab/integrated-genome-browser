@@ -19,7 +19,6 @@ import java.util.*;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 public class BgrParser {
 
@@ -97,7 +96,7 @@ public class BgrParser {
 
   public static GraphSym parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
     throws IOException  {
-    com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
+    com.affymetrix.igb.util.Timer tim = new com.affymetrix.igb.util.Timer();
     tim.start();
     int count = 0;
     BufferedInputStream bis = new BufferedInputStream(istr);
@@ -154,7 +153,7 @@ public class BgrParser {
     }
     
     // need to replace seq_name with name of graph (some combo of group name and conditions...)
-    if (ensure_unique_id) { graph_name = GraphSymUtils.getUniqueGraphID(graph_name, seq); }
+    if (ensure_unique_id) { graph_name = AnnotatedSeqGroup.getUniqueGraphID(graph_name, seq); }
     GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
     graf.setProperties(props);
     double load_time = tim.read()/1000f;

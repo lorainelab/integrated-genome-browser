@@ -16,7 +16,7 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;

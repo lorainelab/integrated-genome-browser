@@ -16,7 +16,7 @@ package com.affymetrix.igb.parsers;
 import java.io.*;
 import com.affymetrix.genometry.*;
 
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 
 import com.affymetrix.igb.util.NibbleIterator;
 import com.affymetrix.igb.genometry.NibbleBioSeq;

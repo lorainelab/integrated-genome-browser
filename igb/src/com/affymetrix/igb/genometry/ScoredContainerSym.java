@@ -17,11 +17,11 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.IntList;
 import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
  *  A SeqSymmetry that can only accept children that are instances of
@@ -232,7 +232,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     GraphState gs = GraphState.getGraphState(id);
     gs.setFloatGraph(false);
     gs.setGraphStyle(GraphGlyph.HEAT_MAP);
-    gs.setHeatMap(HeatMap.getDefaultHeatmap());
+    gs.setHeatMap(GraphState.getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode()));
     gs.getTierStyle().setHumanName(score_name);
     gs.setComboStyle(getContainerStyle(strand));
     return gs;

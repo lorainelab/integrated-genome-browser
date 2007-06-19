@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.menuitem.FileTracker;
 import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
@@ -54,10 +53,6 @@ public class UniFileChooser extends JFileChooser {
    */
   public UniFileChooser(String description, String extension) {
     this();
-    File f = FileTracker.OUTPUT_DIR_TRACKER.getFile();
-    if (f != null) {
-      setSelectedFile(f);
-    }
     reinitialize(description, extension);
   }
 
@@ -90,7 +85,7 @@ public class UniFileChooser extends JFileChooser {
    *
    *  <p>Example: reinitialize("AXML file", "axml");
    */
-  protected void reinitialize(final String description, final String extension) {
+  public void reinitialize(final String description, final String extension) {
     if (description==null || extension==null || "".equals(extension)) throw new 
       IllegalArgumentException("description and extension cannot be null");
 

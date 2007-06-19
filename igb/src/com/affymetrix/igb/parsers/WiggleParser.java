@@ -18,13 +18,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkPropertyParser;
 import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.util.GraphSymUtils;
-import java.net.URL;
+import com.affymetrix.igb.glyph.GraphStateI;
 
 /**
  *  A parser for graph data in the UCSC browser Wiggle format.
@@ -72,13 +68,14 @@ public class WiggleParser {
       // (If there is no format line, BED4 format is assumed.)
       
       if (line.length() == 0) { continue; }
-      else if (line.startsWith(Bookmark.IGB_GRAPHS_PRAGMA)) {
-        try {
-          Bookmark.parseIGBGraphsPragma(graph_props_map, line, false);
-        } catch (Exception e) {
-          throw new IOException("Couldn't parse IGB-graphs pragma");
-        }
-      }
+//TODO:
+//      else if (line.startsWith(Bookmark.IGB_GRAPHS_PRAGMA)) {
+//        try {
+//          Bookmark.parseIGBGraphsPragma(graph_props_map, line, false);
+//        } catch (Exception e) {
+//          throw new IOException("Couldn't parse IGB-graphs pragma");
+//        }
+//      }
       else if (line.startsWith("#")) { continue; } 
       else if (line.startsWith("%")) { continue; } 
       else if (line.startsWith("browser")) { continue; } 
@@ -160,7 +157,7 @@ public class WiggleParser {
       }
     }
 
-    BookmarkPropertyParser.applyGraphProperties(grafs, graph_props_map);
+//    BookmarkPropertyParser.applyGraphProperties(grafs, graph_props_map);
     
     return grafs;
   }
@@ -195,11 +192,11 @@ public class WiggleParser {
       graph_id = stream_name;
     }
     if (ensure_unique_id) {
-      graph_id = GraphSymUtils.getUniqueGraphID(graph_id, seq_group);
+      graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);
     }
     track_hash.put(TrackLineParser.NAME, graph_id);
     
-    GraphState gstate = GraphState.getGraphState(graph_id);
+    GraphStateI gstate = GraphState.getGraphState(graph_id);
     track_line_parser.applyTrackProperties(track_hash, gstate);
     
     Iterator iter = m.keySet().iterator();
@@ -273,7 +270,7 @@ public class WiggleParser {
       String seq_id = (seq == null ? "." : seq.getID());
       String human_name = graf.getGraphState().getTierStyle().getHumanName();
       String gname = graf.getGraphName();
-      GraphState state = graf.getGraphState();
+      GraphStateI state = graf.getGraphState();
       Color color = state.getTierStyle().getColor();
 
       if (genome_version != null) {

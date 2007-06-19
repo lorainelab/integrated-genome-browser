@@ -22,6 +22,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 
 /**
  *  Parses "sin" file format into genometry model of ScoredContainerSyms
@@ -112,7 +113,7 @@ public class ScoredIntervalParser {
   public void parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group)
   throws IOException {
     //boolean attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
-    String unique_container_name = com.affymetrix.igb.util.GraphSymUtils.getUniqueGraphID(stream_name, seq_group);
+    String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
     
     BufferedReader br= null;
     int line_count = 0;
@@ -338,7 +339,7 @@ public class ScoredIntervalParser {
         container.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
         // Force the AnnotStyle for the container to have glyph depth of 1
-        AnnotStyle style = AnnotStyle.getInstance(unique_container_name);
+        IAnnotStyleExtended style = AnnotStyle.getInstance(unique_container_name);
         style.setGlyphDepth(1);
 
 	//	seq2container.put(seqid, container);

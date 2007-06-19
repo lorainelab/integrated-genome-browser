@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
-public class AnnotStyle implements IAnnotStyle {
+public class AnnotStyle implements IAnnotStyleExtended {
 
   static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
 

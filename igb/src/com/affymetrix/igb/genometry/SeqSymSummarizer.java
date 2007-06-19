@@ -21,7 +21,6 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.util.FloatList;
 import com.affymetrix.igb.util.IntList;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 public class SeqSymSummarizer {
 
@@ -170,7 +169,7 @@ public class SeqSymSummarizer {
     // Originally, this returned a GraphSym with just x and y, but now has widths.
     // Since the x and y values are not changed, all old code that relies on them
     // does not need to change.
-    String uid = GraphSymUtils.getUniqueGraphID(gid, seq);
+    String uid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq);
     GraphIntervalSym gsym =
       new GraphIntervalSym(x_positions, widths, transition_ypos.copyToArray(), uid, seq);
     return gsym;

@@ -3,7 +3,7 @@ package com.affymetrix.igb.genometry;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.igb.util.Timer;
 
 /**
  *   CompositeGraphSym.

@@ -214,7 +214,9 @@ public class QuickLoadView2 extends JComponent
 
   public void itemStateChanged(ItemEvent evt) {
     Object src = evt.getSource();
-    if (DEBUG_EVENTS)  { System.out.println("QuickLoadView2 received itemStateChanged event: " + evt); }
+    if (DEBUG_EVENTS)  { 
+      System.out.println("####### QuickLoadView2 received itemStateChanged event: " + evt); 
+    }
 
     try {
     
@@ -513,6 +515,7 @@ public class QuickLoadView2 extends JComponent
    *   was shut down.
    */
   void initialize() {
+    //    System.out.println("##### called QuickLoadView2.intialize()");
     // tries to reset the quickload server back to the one used when the program last shut-down
     // Must be done only after IGB has finished initializing, so the SeqMapView is ready
     // Run on the Swing Thread, so we are sure necessary initialization is finished

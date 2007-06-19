@@ -27,7 +27,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
@@ -248,7 +248,7 @@ public abstract class BookmarkController {
           Iterator graf_iter = grafs.iterator();
           while (graf_iter.hasNext()) {
             GraphSym graf = (GraphSym) graf_iter.next();
-            GraphState gstate = graf.getGraphState();
+            GraphStateI gstate = graf.getGraphState();
             graf.setGraphName(graph_name);
             if (graph_style_num != null)  {
               gstate.setGraphStyle(graph_style_num.intValue());

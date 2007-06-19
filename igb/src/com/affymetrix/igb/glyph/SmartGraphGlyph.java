@@ -121,11 +121,11 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+  public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphStateI gstate) {
     this(xcoords, null, ycoords, gstate);
   }
   
-  public SmartGraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphState gstate) {
+  public SmartGraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphStateI gstate) {
     super(xcoords, wcoords, ycoords, gstate);
     setDrawOrder(Glyph.DRAW_SELF_FIRST);
 

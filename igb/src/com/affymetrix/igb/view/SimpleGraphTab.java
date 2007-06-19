@@ -26,7 +26,7 @@ import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
-import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
@@ -842,7 +842,7 @@ implements SeqSelectionListener, SymSelectionListener {
       // Now apply that combo style to all the selected graphs
       for (int i=0; i<gcount; i++) {
         GraphSym gsym = (GraphSym) grafs.get(i);
-        GraphState gstate = gsym.getGraphState();
+        GraphStateI gstate = gsym.getGraphState();
         gstate.setComboStyle(combo_style);
         gstate.getTierStyle().setHeight(combo_style.getHeight());
         gstate.setFloatGraph(false); // ignored since combo_style is set
@@ -861,7 +861,7 @@ implements SeqSelectionListener, SymSelectionListener {
       
       for (int i=0; i<gcount; i++) {
         GraphSym gsym = (GraphSym) grafs.get(i);
-        GraphState gstate = gsym.getGraphState();
+        GraphStateI gstate = gsym.getGraphState();
 
         gstate.setComboStyle(null);
 
@@ -925,7 +925,7 @@ implements SeqSelectionListener, SymSelectionListener {
       boolean something_changed = false;
       for (int i=0; i<glyphs.size(); i++) {
         GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-        GraphState gstate = gl.getGraphState();
+        GraphStateI gstate = gl.getGraphState();
         if (gstate.getComboStyle() != null) {
           gstate.setComboStyle(null);
           something_changed = true;

@@ -15,6 +15,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.genometry.GraphSym;
 import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
@@ -38,7 +39,7 @@ public class BookmarkPropertyParser {
   static int default_minrun_thresh = 30;
   static int default_maxgap_thresh = 100;
   static boolean default_show_thresh = false;
-  static int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
+  static int default_thresh_direction = GraphStateI.THRESHOLD_DIRECTION_GREATER;
 
     
   public static void applyGraphProperties(Collection grafs, Map map) {
@@ -46,7 +47,7 @@ public class BookmarkPropertyParser {
     Iterator graf_iter = grafs.iterator();
     while (graf_iter.hasNext()) {
       GraphSym graf = (GraphSym) graf_iter.next();
-      GraphState gstate = graf.getGraphState();
+      GraphStateI gstate = graf.getGraphState();
       states.add(gstate);
     }
     applyGraphPropertiesToStates(states, map);
@@ -59,7 +60,7 @@ public class BookmarkPropertyParser {
       int i = -1;
 
       while (states_iter.hasNext()) {
-        GraphState gstate = (GraphState) states_iter.next();
+        GraphStateI gstate = (GraphStateI) states_iter.next();
         i++;
 
         String graph_path = UnibrowControlServlet.getStringParameter(map, "graph_source_url_" + i);

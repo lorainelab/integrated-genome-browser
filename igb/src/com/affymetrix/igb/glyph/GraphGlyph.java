@@ -39,12 +39,11 @@ public class GraphGlyph extends Glyph {
   static NumberFormat nformat = new DecimalFormat();
   static double axis_bins = 10;
 
-  //TODO: move these to GraphState interface
-  public static final int LINE_GRAPH = 1;
-  public static final int BAR_GRAPH = 2;
-  public static final int DOT_GRAPH = 3;
-  public static final int STAIRSTEP_GRAPH = 5;
-  public static final int HEAT_MAP = 7;
+  public static final int LINE_GRAPH = GraphStateI.LINE_GRAPH;
+  public static final int BAR_GRAPH = GraphStateI.BAR_GRAPH;
+  public static final int DOT_GRAPH = GraphStateI.DOT_GRAPH;
+  public static final int STAIRSTEP_GRAPH = GraphStateI.STAIRSTEP_GRAPH;
+  public static final int HEAT_MAP = GraphStateI.HEAT_MAP;
 
   int xpix_offset = 0;
   Point zero_point = new Point(0,0);
@@ -81,14 +80,14 @@ public class GraphGlyph extends Glyph {
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 
-  GraphState state;
+  GraphStateI state;
   LinearTransform scratch_trans = new LinearTransform();
 
-  public GraphGlyph(int[] xcoords, float[] ycoords, GraphState gstate) {
+  public GraphGlyph(int[] xcoords, float[] ycoords, GraphStateI gstate) {
     this(xcoords, null, ycoords, gstate);
   }
 
-  public GraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphState gstate) {
+  public GraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphStateI gstate) {
     super();
     state = gstate;
     if (state == null) {
@@ -142,7 +141,7 @@ public class GraphGlyph extends Glyph {
     return ident;
   }
 
-  public GraphState getGraphState() { return state; }
+  public GraphStateI getGraphState() { return state; }
 
   // temporary variables used in draw()
   Point2D x_plus_width2D = new Point2D(0,0);

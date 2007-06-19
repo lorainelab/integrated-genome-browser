@@ -17,9 +17,8 @@ import java.util.Vector;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.util.SeqUtils;
 
-import com.affymetrix.genoviz.util.DNAUtils;
+import com.affymetrix.genometry.util.DNAUtils;
 
 public class SimpleCompAnnotBioSeq
   //  extends SimpleCompositeBioSeq 

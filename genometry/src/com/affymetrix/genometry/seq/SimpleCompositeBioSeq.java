@@ -13,10 +13,6 @@
 
 package com.affymetrix.genometry.seq;
 
-import java.util.Vector;
-
-import com.affymetrix.genoviz.util.DNAUtils;
-
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;

@@ -28,10 +28,8 @@ import com.affymetrix.igb.genometry.NibbleBioSeq;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SingletonSymWithProps;
 import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.SymWithProps;
-
-import com.affymetrix.igb.util.GenometryViewer; // for testing main
-import com.affymetrix.igb.view.SeqMapView;
 
 /**
  *
@@ -674,7 +672,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   }
 
   public static void main(String[] args) {
-    boolean use_viewer = true;
+    //boolean use_viewer = true;
     Das1FeatureSaxParser test = new Das1FeatureSaxParser();
     try {
       String user_dir = System.getProperty("user.dir");
@@ -694,11 +692,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       System.out.println("first annotation:");
       SeqUtils.printSymmetry(first_sym);
       
-      if (use_viewer) {
-        AnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
-        GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
-        viewer.setAnnotatedSeq(seq);
-      }
+//      if (use_viewer) {
+//        AnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
+//        GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
+//        viewer.setAnnotatedSeq(seq);
+//      }
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -755,7 +753,11 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
 
-    return result;
+    if (negative) {
+      return -result;
+    } else {
+      return result;
+    }
   }
 
   public static void writeDasFeatHeader(SeqSpan qspan, PrintWriter pw) {
@@ -790,7 +792,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   
   public static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
     if (feat_type == null) {
-      feat_type = SeqMapView.determineMethod(annot);
+      feat_type = SmartAnnotBioSeq.determineMethod(annot);
     }
     String group_id = "unknown";
     if (annot instanceof SymWithProps) {

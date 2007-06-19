@@ -30,33 +30,6 @@ public class SynonymLookup {
     default_lookup = lookup;
   }
 
-  public void loadSynonyms(String synonym_loc) {
-    System.out.println("url to load synonyms from: " + synonym_loc);
-    InputStream syn_stream = null;
-    try {
-      syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
-    } catch (IOException ioe) {
-      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
-      syn_stream = null;
-    }
-
-    if (syn_stream == null) {
-      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
-      return;
-    }
-
-    try {
-      loadSynonyms(syn_stream);
-    }
-    catch (final Throwable t) {
-      // use Throwable so out-of-memory exceptions can be caught
-      System.out.println("WARNING: Error while loading synonym data from: " + synonym_loc);
-      t.printStackTrace();
-    } finally {
-      if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
-    }
-  }
-
   public void loadSynonyms(InputStream istream) throws IOException {
     InputStreamReader ireader = new InputStreamReader(istream);
     BufferedReader br = new BufferedReader(ireader);

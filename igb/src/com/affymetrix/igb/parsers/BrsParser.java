@@ -85,23 +85,28 @@ public class BrsParser implements AnnotationWriter  {
       File fil = new File(file_name);
       long blength = fil.length();
       fis = new FileInputStream(fil);
-      result = parse(fis, annot_type, seq_group, blength);
+      result = parse(fis, annot_type, seq_group, true, blength);
     } finally {
       if (fis != null) try { fis.close(); } catch (Exception e) {}
     }
     return result;
   }
 
-  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
+  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group) 
   throws IOException {
-    return parse(istr, annot_type, seq_group, -1);
+    return parse(istr, annot_type, seq_group, true);
+  }
+
+  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq) 
+  throws IOException {
+    return parse(istr, annot_type, seq_group, annotate_seq, -1);
   }
 
   /**
    *  @param blength  buffer length, if unknown use -1;
    */
   public java.util.List parse(InputStream istr, String annot_type,
-                              AnnotatedSeqGroup seq_group, long blength)
+                              AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength)
   throws IOException {
     Timer tim = new Timer();
     tim.start();
@@ -170,18 +175,6 @@ public class BrsParser implements AnnotationWriter  {
           if (chromseq == null) {
             chromseq = seq_group.addSeq(chrom_name, tmax);
           }
-	  if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
-
-	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-	  if (parent_sym == null) {
-	    parent_sym = new SimpleSymWithProps();
-	    parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-	    parent_sym.setProperty("method", annot_type);
-	    parent_sym.setProperty("preferred_formats", pref_list);
-            parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	    annots.add(parent_sym);
-	    chrom2sym.put(chrom_name, parent_sym);
-	  }
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
 					      tmin, tmax, cmin, cmax, emins, emaxs);
 	  if (seq_group != null) {
@@ -192,8 +185,25 @@ public class BrsParser implements AnnotationWriter  {
               seq_group.addToIndex(name, sym);
             }
 	  }
-	  parent_sym.addChild(sym);
+
 	  results.add(sym);
+	  if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
+
+	  if (annotate_seq) {
+	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+	    if (parent_sym == null) {
+	      parent_sym = new SimpleSymWithProps();
+	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+	      parent_sym.setProperty("method", annot_type);
+	      parent_sym.setProperty("preferred_formats", pref_list);
+	      parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+	      annots.add(parent_sym);
+	      chrom2sym.put(chrom_name, parent_sym);
+	    }
+	    parent_sym.addChild(sym);
+	  }
+
+
 	  total_exon_count += ecount;
 	  count++;
 	}
@@ -203,10 +213,12 @@ public class BrsParser implements AnnotationWriter  {
       // System.out.println("end of file reached, file successfully loaded");
     }
 
-    for (int i=0; i<annots.size(); i++) {
-      SeqSymmetry annot = (SeqSymmetry)annots.get(i);
-      MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
-      chromseq.addAnnotation(annot);
+    if (annotate_seq) {
+      for (int i=0; i<annots.size(); i++) {
+	SeqSymmetry annot = (SeqSymmetry)annots.get(i);
+	MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+	chromseq.addAnnotation(annot);
+      }
     }
     System.out.println("load time: " + tim.read()/1000f);
     System.out.println("transcript count = " + count);

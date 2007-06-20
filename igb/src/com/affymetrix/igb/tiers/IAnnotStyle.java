@@ -38,7 +38,9 @@ public interface IAnnotStyle {
   public boolean getCollapsed();
   public void setCollapsed(boolean b);
 
+  /** Gets maximum rows of annotations to stack in the tier. */
   public int getMaxDepth();
+  /** Sets maximum rows of annotations to stack in the tier. */
   public void setMaxDepth(int m);
 
   public void setHeight(double h);

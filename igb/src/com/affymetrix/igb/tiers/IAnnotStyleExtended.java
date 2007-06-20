@@ -15,9 +15,12 @@ package com.affymetrix.igb.tiers;
 public interface IAnnotStyleExtended extends IAnnotStyle {
   void setUrl(String url);
   String getUrl();
+
   void setColorByScore(boolean b);
   boolean getColorByScore();
 
+  /** Controls a parameter of the GenericAnnotGlyphFactory. */
   void setGlyphDepth(int i);
+  /** Returns a parameter useb by the GenericAnnotGlyphFactory. */
   int getGlyphDepth();
 }

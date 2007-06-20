@@ -13,13 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.tiers.SimpleAnnotStyle;
 import java.util.*;
-import java.util.prefs.Preferences;
 
 /**
  *  Encapsulates information needed to restore the visual appearance of
@@ -79,7 +75,7 @@ public class GraphState implements GraphStateI {
 
   // if float_graph, then graph should float above annotations in tiers
   // if !float_graph, then graph should be in its own tier
-  boolean float_graph = true;
+  boolean float_graph = false;
   boolean show_threshold = false;
   boolean show_axis = false;
 
@@ -90,10 +86,12 @@ public class GraphState implements GraphStateI {
   
   HeatMap heat_map;
   IAnnotStyle tier_style;
-  IAnnotStyle combo_tier_style = null;  
+  IAnnotStyle combo_tier_style = null;
+
+  public static float default_graph_height = 100.0f;
   
-  public static Map gstyle2num = new HashMap();
-  public static Map num2gstyle = new HashMap();
+  static Map gstyle2num = new HashMap();
+  static Map num2gstyle = new HashMap();
 
   static {
     gstyle2num.put("line", new Integer(SmartGraphGlyph.LINE_GRAPH));
@@ -144,7 +142,7 @@ public class GraphState implements GraphStateI {
     }
     return state;
   }
-  
+
   static int temp_state_count = 0;
 
   public static GraphState getTemporaryGraphState() {
@@ -155,36 +153,19 @@ public class GraphState implements GraphStateI {
     super();
     this.unique_id = id;
     
-    tier_style = new DefaultIAnnotStyle(id, true);
+    tier_style = new SimpleAnnotStyle(id, true);
     
     // Graph Tiers with a single graph in them are not collapsible/expandible
     tier_style.setExpandable(false);
-    //tier_style.setHumanName(id);
+    tier_style.setHeight(default_graph_height);
     
-    boolean use_floating_graphs = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
-      GraphGlyphUtils.PREF_USE_FLOATING_GRAPHS, GraphGlyphUtils.default_use_floating_graphs);
-    setFloatGraph(use_floating_graphs);
-
-    
-    // graph height is in coords if graph is attached, 
-    // but must be converted to pixels if graph is floating
-    double coord_height = GraphGlyphUtils.default_coord_height;
-    if (getFloatGraph()) {
-      double pix_height = coord_height; //TODO:
-      tier_style.setHeight(pix_height);
-    }
-    else {
-      tier_style.setHeight(coord_height);
-    }
-
-    tier_style.setColor(AnnotStyle.getDefaultInstance().getColor());
+    setFloatGraph(false);
   }
-
+  
   /** Copy all the properties, except ID and label, of the given state into this state. */
   public void copyProperties(GraphStateI ostate) {
     setUrl(ostate.getUrl());
     setGraphStyle(ostate.getGraphStyle());
-//    setColor(ostate.getColor());
     setVisibleMinY(ostate.getVisibleMinY());
     setVisibleMaxY(ostate.getVisibleMaxY());
     setFloatGraph(ostate.getFloatGraph());
@@ -205,24 +186,10 @@ public class GraphState implements GraphStateI {
     
     getTierStyle().copyPropertiesFrom(ostate.getTierStyle());
   }
-  
-  public static HeatMap getUserPrefHeatmap(Preferences node) {
-    String name = node.get(HeatMap.PREF_HEATMAP_NAME, HeatMap.def_heatmap_name);
-
-    HeatMap result = HeatMap.getStandardHeatMap(name);
-    if (result == null) {
-      result = HeatMap.getStandardHeatMap(HeatMap.def_heatmap_name);
-    }
-    return result;
-  }
-
 
   public final String getUrl() { return graph_path; }
   public final int getGraphStyle() { return graph_style; }
-  public final HeatMap getHeatMap() {
-    if (heat_map == null) {
-      heat_map = getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode());
-    }
+  public HeatMap getHeatMap() {
     if (heat_map == null) {
       heat_map = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
     }

@@ -28,8 +28,8 @@ import com.affymetrix.swing.DisplayUtils;
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  static boolean USE_QUICKLOAD = true;
-  static boolean USE_DAS2_VIEW = true;
+  static boolean USE_QUICKLOAD = false;
+  static boolean USE_DAS2_VIEW = false;
   static boolean USE_DAS2_VIEW3 = true;
   static boolean USE_DAS1_VIEW = false;
 
@@ -66,7 +66,7 @@ public class DataLoadView extends JComponent  {
     }
     if (USE_DAS2_VIEW3) {
       das2_view3 = new Das2LoadView3();
-      tpane.addTab("New DAS/2", das2_view3);
+      tpane.addTab("Annotation Types", das2_view3);
     }
     if (USE_DAS1_VIEW) {
       das1_view = new DasLoadView();

@@ -19,13 +19,15 @@ import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 public class Das2Discovery {
 
-  static Map name2server = new LinkedHashMap();
+  static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
   static Map name2url = new LinkedHashMap();
+  static Map name2server = new LinkedHashMap();
+  static Map url2server = new LinkedHashMap();
   static boolean servers_initialized = false;
 
   static {
+    name2url.put(DEFAULT_DAS2_SERVER_NAME, "http://netaffxdas.affymetrix.com/das2/sources");
     //    name2url.put("localhost", "http://localhost:9092/das2/genome");
-    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
     name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
     //name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
@@ -49,20 +51,43 @@ public class Das2Discovery {
     return name2server;
   }
 
+  /**
+   *  Given an id string which should be the resolvable root URL for a DAS/2 server 
+   *     (but may optionally be the server name) 
+   *  Return the Das2ServerInfo object for the DAS/2 server, creating it if doesn't
+   *    already exist
+   */
+  public static Das2ServerInfo getDas2Server(String id) {
+    Map servers = getDas2Servers();
+    Das2ServerInfo server = (Das2ServerInfo)url2server.get(id);
+    if (server == null) { server = (Das2ServerInfo)name2server.get(id); }
+    if (server == null) {
+      server = initServer(id, id);
+    }
+    return server;
+  }
+
   protected static void initServers() {
     Iterator names = name2url.keySet().iterator();
     while (names.hasNext()) {
       String name = (String)names.next();
       String url = (String)name2url.get(name);
-      try {
-        Das2ServerInfo server = new Das2ServerInfo(url, name, false);
-        name2server.put(name, server);
-      } catch (Exception e) {
-        System.out.println("WARNING: Could not initialize DAS/2 server with address: " + url);
-        e.printStackTrace(System.out);
-      }
+      initServer(url, name);
     }
     servers_initialized = true;
+  }
+
+  protected static Das2ServerInfo initServer(String url, String name) {
+    Das2ServerInfo server = null;
+    try {
+      server = new Das2ServerInfo(url, name, false);
+      name2server.put(name, server);
+      url2server.put(url, server);
+    } catch (Exception e) {
+      System.out.println("WARNING: Could not initialize DAS/2 server with address: " + url);
+      e.printStackTrace(System.out);
+    }
+    return server;
   }
 
   /**

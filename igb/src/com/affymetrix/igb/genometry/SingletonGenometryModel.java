@@ -99,6 +99,8 @@ public class SingletonGenometryModel {
     return selected_group;
   }
 
+  // TODO: modify so that fireGroupSelectionEvent() is only called if 
+  //     gropu arg is different than previous selected_group
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {
       System.out.println("SingletonGenometryModel.setSelectedSeqGroup() called, ");

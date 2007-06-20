@@ -48,7 +48,7 @@ public class Das2ServerInfo  {
    *  @param init  whether or not to initialize the data right away.  If false
    *    will not contact the server to initialize data until needed.
    */
-  public Das2ServerInfo(String uri, String name, boolean init) 
+  public Das2ServerInfo(String uri, String name, boolean init)
   throws URISyntaxException {
     String root_string = uri;
     // FIXME: if you remove the trailing slash then relative URI resolution doesn't work
@@ -78,7 +78,7 @@ public class Das2ServerInfo  {
     if (!initialized) { initialize(); }
     return sources;
   }
-  
+
   /** DAS/2 version is not currently used */
   protected void setDasVersion(String version) {
     das_version = version;
@@ -96,9 +96,9 @@ public class Das2ServerInfo  {
 
 
   /**
-   *  getVersionedSource() 
+   *  getVersionedSource()
    *    assumes there is only one versioned source for each AnnotatedSeqGroup
-   *    if server allows multiple versioned sources per group, then should 
+   *    if server allows multiple versioned sources per group, then should
    *    use getVersionedSources()
    **/
   public Das2VersionedSource getVersionedSource(AnnotatedSeqGroup group) {
@@ -127,6 +127,18 @@ public class Das2ServerInfo  {
       }
     }
     return results;
+  }
+
+  public Das2VersionedSource getVersionedSource(String version_id) {
+    Iterator siter = this.getSources().values().iterator();
+    while (siter.hasNext()) {
+      Das2Source source = (Das2Source)siter.next();
+      Das2VersionedSource version = (Das2VersionedSource)source.getVersion(version_id);
+      if (version != null) {
+	return version;
+      }
+    }
+    return null;
   }
 
 //  public String getDescription() { return description; }

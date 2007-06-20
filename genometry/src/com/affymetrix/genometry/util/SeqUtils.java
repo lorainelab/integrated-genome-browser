@@ -1877,7 +1877,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     if (print_props && sym instanceof Propertied) {
       Propertied pp = (Propertied) sym;
       Map<String,Object> props = pp.getProperties();
-      if (props != null) {
+      if (props != null && props.size() > 0) {
         Iterator<Map.Entry<String,Object>> iter = props.entrySet().iterator();
         while (iter.hasNext()) {
           Map.Entry<String,Object> entry = iter.next();
@@ -1886,6 +1886,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
           System.out.println(indent + spacer + key + " --> " + value);
         }
       }
+      else { System.out.println(indent + spacer + " no properties"); }
     }
     for (int i=0; i<sym.getSpanCount(); i++) {
       SeqSpan span = sym.getSpan(i);

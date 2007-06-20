@@ -131,7 +131,7 @@ public class Das2VersionedSource  {
       String groupid = this.getName();
       if (groupid == null) { groupid = this.getID(); }
       //      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
-      genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+      genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible
       if (genome == null && coords_uri != null) { // try coordinates
 	//	System.out.println("tring to match up coordinates: " + coords_uri);
 	genome = gmodel.getSeqGroup(coords_uri.toString());

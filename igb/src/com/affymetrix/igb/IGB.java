@@ -18,13 +18,17 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.prefs.*;
 
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -43,6 +47,10 @@ import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.das.DasDiscovery;
+import com.affymetrix.igb.das2.*;
+
+
+
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -74,6 +82,27 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
 
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
+
+
+  /*
+  public static String DEFAULT_GENOME_SERVER = "NetAffx";
+  public static String DEFAULT_GENOME_SOURCE = "H_sapiens";
+  public static String DEFAULT_GENOME_VERSION = "Human_Mar_2006";
+  public static String DEFAULT_SEQ_ID = "chr21";
+  */
+
+  // For now need to use full URIs for genome autoload defaults
+  public static String DEFAULT_GENOME_SERVER = "http://netaffxdas.affymetrix.com/das2/sources";
+  public static String DEFAULT_GENOME_SOURCE = "http://netaffxdas.affymetrix.com/das2/H_sapiens";
+  public static String DEFAULT_GENOME_VERSION = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006";
+  public static String DEFAULT_SEQ_ID = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006/chr21";
+
+  public String GENOME_SERVER_PREF = "GENOME_SERVER_PREF";
+  public String GENOME_SOURCE_PREF = "GENOME_SOURCE_PREF";
+  public String GENOME_VERSION_PREF = "GENOME_VERSION_PREF";
+  public String SEQ_ID_PREF = "SEQ_ID_PREF";
+  public String SEQ_MIN_PREF = "SEQ_MIN_PREF";
+  public String SEQ_MAX_PREF = "SEQ_MAX_PREF";
 
   final static String TABBED_PANES_TITLE = "Tabbed Panes";
 
@@ -231,8 +260,7 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
-    QuickLoadView2.processDasServersList(quick_load_url);
-    //    processDasServersList(quick_load_url);
+    processDasServersList(quick_load_url);
 
     singleton_igb = new IGB();
     singleton_igb.init();
@@ -870,8 +898,11 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
       export_slice_item.setEnabled(true);
     }
 
-    // bootstrap bookmark from Preferences for last genome / sequence / region
+
     WebLink.autoLoad();
+
+    // bootstrap bookmark from Preferences for last genome / sequence / region
+    restoreGenome();
 
     // Need to let the QuickLoad system get started-up before starting
     //   the control server that listens to ping requests?
@@ -1234,8 +1265,26 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
       }
       WebLink.autoSave();
       saveWindowLocations();
+      saveModelState();
       System.exit(0);
     }
+  }
+
+  public void saveModelState() {
+    Preferences lnode = UnibrowPrefsUtil.getLocationsNode();
+    lnode.put(GENOME_SERVER_PREF, DEFAULT_GENOME_SERVER);
+    lnode.put(GENOME_SOURCE_PREF, DEFAULT_GENOME_SOURCE);
+    lnode.put(GENOME_VERSION_PREF, DEFAULT_GENOME_VERSION);
+    lnode.put(SEQ_ID_PREF, DEFAULT_SEQ_ID);
+    /*
+    Das2VersionedSource version = getGenome(server_url, source_id, version_id);
+    Das2Region segment = (Das2Region)version.getSegments().get(seq_id);
+    AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
+    MutableAnnotatedBioSeq seq = segment.getAnnotatedSeq();
+    */
+    SeqSpan visible_span = map_view.getVisibleSpan();
+    lnode.putInt(SEQ_MIN_PREF, visible_span.getMin());
+    lnode.putInt(SEQ_MAX_PREF, visible_span.getMax());
   }
 
   /**
@@ -1532,4 +1581,61 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
   public String getVersion() {
     return APP_VERSION;
   }
+
+  public AnnotatedSeqGroup restoreGenome() {
+    Preferences lnode = UnibrowPrefsUtil.getLocationsNode();
+    String server_url = lnode.get(GENOME_SERVER_PREF, DEFAULT_GENOME_SERVER);
+    String source_id = lnode.get(GENOME_SOURCE_PREF, DEFAULT_GENOME_SOURCE);
+    String version_id = lnode.get(GENOME_VERSION_PREF, DEFAULT_GENOME_VERSION);
+    String seq_id = lnode.get(SEQ_ID_PREF, DEFAULT_SEQ_ID);
+    Das2VersionedSource version = getGenome(server_url, source_id, version_id);
+    Das2Region segment = (Das2Region)version.getSegments().get(seq_id);
+    AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
+    MutableAnnotatedBioSeq seq = segment.getAnnotatedSeq();
+    int seq_min = lnode.getInt(SEQ_MIN_PREF, 0);
+    int seq_max = lnode.getInt(SEQ_MAX_PREF, seq.getLength());
+
+    System.out.println("@@@@@ restoring last genome: " + group.getID());
+    if (gmodel.getSelectedSeqGroup() != group)  {
+        gmodel.setSelectedSeqGroup(group);
+    }
+    System.out.println("@@@@@ restoring last seq: " + seq.getID());
+    if (gmodel.getSelectedSeq() != seq) {
+        gmodel.setSelectedSeq(seq);
+    }
+    SeqSpan span = new SimpleSeqSpan(seq_min, seq_max, seq);
+    map_view.zoomTo(span);
+    return group;
+  }
+
+  /*
+  public void groupSelectionChanged(GroupSelectionEvent evt) {
+    AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
+    Preferences lnode = UnibrowPrefsUtil.getLocationsNode();
+    String server_url = selected_group.getSourceURL();
+    lnode.put(GENOME_SERVER_PREF, server_url);
+    lnode.put(GENOME_ID_PREF, selected_group.getID());
+  }
+
+  public void seqSelectionChanged(SeqSelectionEvent evt) {
+    BioSeq selected_seq = evt.getSelectedSeq();
+    Preferences lnode = UnibrowPrefsUtil.getLocationsNode();
+    lnode.put(SEQ_ID_PREF, selected_seq.getID());
+  }
+  */
+
+  //  Assumes retrieving server, genome, seq via DAS/2
+  //
+  // also adds genome to singleton genometry model if not already present
+  //
+  public Das2VersionedSource getGenome(String server_url, String source_id, String version_id)  {
+    Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
+    Das2Source source = (Das2Source)server.getSources().get(source_id);
+    Das2VersionedSource version = (Das2VersionedSource)source.getVersions().get(version_id);
+    // AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
+    // return group;
+    return version;
+  }
+
+
 }

@@ -252,7 +252,7 @@ public class Das2ClientOptimizer {
       overlap_filter = region.getPositionString(overlap_span, false);
       if (inside_span != null)  { inside_filter = region.getPositionString(inside_span, false); }
     }
-    request_log.addLogMessage("in Das2Region.getFeatures(), overlap = " + overlap_filter +
+    request_log.addLogMessage("^^^^^^^  in Das2ClientOptimizer.optimizedLoadFeatures(), overlap = " + overlap_filter +
                        ", inside = " + inside_filter);
     Das2Type type = request_sym.getDas2Type();
     String format = null;
@@ -409,7 +409,7 @@ public class Das2ClientOptimizer {
           request_log.addLogMessage("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
           BrsParser parser = new BrsParser();
           DataInputStream dis = new DataInputStream(bis);
-          feats = parser.parse(dis, type.getID(), seq_group);
+          feats = parser.parse(dis, type.getID(), seq_group, false);
         }
 	else if (content_subtype.equals("bar")) {
 	  request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");

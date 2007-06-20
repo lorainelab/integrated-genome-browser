@@ -183,13 +183,8 @@ public class ChpParser {
       String seqid = aseq.getID();
       // Don't make LazyChpSym if can't find sequence on DAS/2 server
       Das2Region das_segment = vsource.getSegment(aseq);
-      // hack to get around problems with LazyChpSyms on virtual genome seq (and potentially encode regions as well)
       // I think above test for presence of sequence on server will handle skipping the genome and encode regions
       //  (at least as long as the DAS/2 coord server does not serve virtual seqs for these)
-      //      if (seqid.equals(QuickLoadView2.GENOME_SEQ_ID) ||
-      //	  seqid.equals(QuickLoadView2.ENCODE_REGIONS_ID) ) {
-      //	continue;
-      //      }
       if (das_segment != null) {
 	// LazyChpSym constructor handles adding span to itself for aseq
 	LazyChpSym chp_sym = new LazyChpSym(aseq, chp_array_type, id2data, name2data, int_entries);

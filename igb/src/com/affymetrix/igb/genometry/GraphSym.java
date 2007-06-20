@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -17,6 +17,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.glyph.GraphState;
+import com.affymetrix.igb.glyph.GraphStateI;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -64,16 +65,12 @@ public class GraphSym extends SimpleSymWithProps {
   }
 
   public void setGraphName(String name) {
-    //    System.out.println("called GraphSym.setGraphName(): " + name);
-    GraphState state = GraphState.getGraphState(this.gid);
-    state.getTierStyle().setHumanName(name);
+    getGraphState().getTierStyle().setHumanName(name);
     setProperty("name", name);
   }
 
   public String getGraphName() {
-    //    System.out.println("called GraphSym.getGraphName()");
-    GraphState state = GraphState.getGraphState(this.gid);
-    String gname = state.getTierStyle().getHumanName();
+    String gname = getGraphState().getTierStyle().getHumanName();
     if (gname == null) {
       gname = this.getID();
     }
@@ -81,7 +78,6 @@ public class GraphSym extends SimpleSymWithProps {
   }
 
   public String getID() {
-    //    System.out.println("called GraphSym.getID()");
     return gid;
   }
 
@@ -125,7 +121,7 @@ public class GraphSym extends SimpleSymWithProps {
   /**
    *  Returns the graph state.  Will never be null.
    */
-  public GraphState getGraphState() {
+  public GraphStateI getGraphState() {
     GraphState state = GraphState.getGraphState(this.gid);
     return state;
   }

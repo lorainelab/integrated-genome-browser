@@ -36,6 +36,7 @@ public class Das2Source {
   protected String info_url;
   protected String taxon;
   protected Map versions = new LinkedHashMap();
+  protected Map name2version = new LinkedHashMap();
   Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;
@@ -82,8 +83,21 @@ public class Das2Source {
     return versions;
   }
 
+  /*
+   *  Given an id string which should be the URI for a DAS/2 versioned source
+   *     (but may optionally be the versioned source name)
+   *  Return the Das2VersionedSource object for the DAS/2 versioned source
+   *  Will return null if this Das2Source has no Das2VersionedSource with that id or name
+   */
+  public synchronized Das2VersionedSource getVersion(String id) {
+    Das2VersionedSource version = (Das2VersionedSource)versions.get(id);
+    if (version == null) { version = (Das2VersionedSource)name2version.get(id); }
+    return version;
+  }
+
   public synchronized void addVersion(Das2VersionedSource version) {
     versions.put(version.getID(), version);
+    name2version.put(version.getName(), version);
   }
 
 

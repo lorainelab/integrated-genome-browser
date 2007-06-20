@@ -174,7 +174,9 @@ public class BgnParser implements AnnotationWriter  {
 	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
 					    tmin, tmax, cmin, cmax, emins, emaxs);
 
-          seq_group.addToIndex(name, sym);
+	  if (seq_group != null) {
+	    seq_group.addToIndex(name, sym);
+	  }
           results.add(sym);
 
           if (tmax > chromseq.getLength()) {

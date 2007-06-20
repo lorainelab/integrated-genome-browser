@@ -439,7 +439,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".brs")) {
         BrsParser parser = new BrsParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-        java.util.List alist = parser.parse(str, annot_type, selected_group, -1);
+        java.util.List alist = parser.parse(str, annot_type, selected_group);
         aseq = input_seq;
         parser = null;
       }

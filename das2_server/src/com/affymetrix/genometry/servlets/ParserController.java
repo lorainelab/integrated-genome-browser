@@ -75,7 +75,7 @@ public class ParserController {
 	BrsParser refseq_reader = new BrsParser();
 	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".brs"));
 	//	String annot_type = "das_" + stream_name.substring(0, stream_name.lastIndexOf(".brs"));
-	results = refseq_reader.parse(str, annot_type, seq_group, -1);
+	results = refseq_reader.parse(str, annot_type, seq_group);
       }
       else if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
 	System.out.println("loading via Bprobe1Parser: " + stream_name);

@@ -114,6 +114,9 @@ public class Das2LoadView3 extends JComponent
     gviewer.addDataRequestListener(this);
 
     tree = new JTree();
+    tree.setRootVisible(false);
+    clearTreeView();
+
     /**
      *  If set TREE_DIG = true, then will need to debug
      *    skt.swing.tree.check.CheckTreeSelectionModel.isDescendant(), which is throwing
@@ -137,19 +140,12 @@ public class Das2LoadView3 extends JComponent
     types_table = new JTable();
     types_table.setModel(types_table_model);
 
-    /*
-    TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
-    stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
-    TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
-    progcol.setCellRenderer(new ProgressRenderer());
-    */
-
     table_scroller = new JScrollPane(types_table);
 
     this.setLayout(new BorderLayout());
 
     JPanel types_panel = new JPanel(new BorderLayout());
-    types_panel.setBorder(new TitledBorder("Available Annotation Types"));
+    types_panel.setBorder(new TitledBorder("Recently Accessed Annotation Types"));
 
     JPanel namesearchP = new JPanel();
 
@@ -473,11 +469,10 @@ public class Das2LoadView3 extends JComponent
       System.out.println("********** resetting table **********");
       types_table_model = new Das2TypesTableModel(check_tree_manager);
       types_table.setModel(types_table_model);
-      //      types_table.getColumn("Progress").setCellRenderer(new ProgressRenderer());
       TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
       stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
-      TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
-      progcol.setCellRenderer(new ProgressRenderer());
+      //      TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
+      //      progcol.setCellRenderer(new ProgressRenderer());
 
 
       types_table.validate();
@@ -526,6 +521,7 @@ public class Das2LoadView3 extends JComponent
 			public Object construct() {
 			  if (ADD_DELAYS)  { try { thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
 			  if (ADD_DELAYS)  { System.out.println("--------  types worker woke up from sleep"); }
+			  // version.getTypes() will trigger call to DAS/2 server if necessary
 			  Map types = version.getTypes();
 			  return types;
 			}
@@ -537,6 +533,15 @@ public class Das2LoadView3 extends JComponent
 			  //    This is likely to usually be the case when initializing types via this SwingWorker, since
 			  //    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
 			  int tcount = version_node.getChildCount(); // triggers tree and table population with types info
+
+			  // If Das2VersionedSource is from IGB's default DAS/2 server for this genome, then 
+			  //     want to automatically expand tree to show it's available types
+			  if (version.getSource().getServerInfo() == 
+			      Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
+			    TreeNode[] path_array = version_node.getPath(); 
+			    TreePath path = new TreePath(path_array); 
+			    tree.expandPath(path);
+			  }
 			  if (prev_seq != gmodel.getSelectedSeq()) {
 			    System.out.println("selected seq: " + gmodel.getSelectedSeq() + ", prev_seq: " + prev_seq);
 			    // seq changed while types were being retrieved?  Load annotations with type = WHOLE_SEQUENCE?
@@ -908,21 +913,13 @@ class Das2TypeState {
 }  // END Das2TypeState
 
 
-//  class ProgressRenderer extends JProgressBar implements TableCellRenderer {
-  class ProgressRenderer implements TableCellRenderer {
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
-      return (JProgressBar)value;
-      //      return this;
-    }
-  }
-
 /**
  *
  *  Das2TypesTableModel
  *
  */
 class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  {
-  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server", "Progress" };
+  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server"};
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
   static int ID_COLUMN = 2;
@@ -931,21 +928,13 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
   static int LOAD_STRATEGY_COLUMN = 5;
   static int VSOURCE_COLUMN = 6;
   static int SERVER_COLUMN = 7;
-  static int LOAD_PROGRESS_COLUMN = 8;
 
   java.util.List type_states = new ArrayList();
-  JProgressBar currently_loading;
-  JProgressBar currently_resting;
 
   CheckTreeManager ctm;
 
   public Das2TypesTableModel(CheckTreeManager ctm) {
     this.ctm = ctm;
-    currently_loading = new JProgressBar(0, 100);
-    currently_loading.setIndeterminate(true);
-    currently_resting = new JProgressBar(0, 100);
-    currently_resting.setValue(100);
-
   }
 
   public boolean addTypeState(Das2TypeState state) {
@@ -1017,13 +1006,6 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     }
     else if (col == SERVER_COLUMN) {
       result = type.getVersionedSource().getSource().getServerInfo().getName();
-    }
-    else if (col == LOAD_PROGRESS_COLUMN) {
-      //      if (state.isCurrentlyLoading()) {
-      //      	return currently_loading;
-      //      }
-      //      else { return currently_resting; }
-      return currently_loading;
     }
     //    System.out.println("Das2TypesTableModel.getValueAt() called, row = " + row + ", col = " + col +
     //		       ", value = " + result);

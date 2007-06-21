@@ -6,33 +6,81 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 
 public class SeqComboBoxView extends JComponent
-  implements ItemListener, GroupSelectionListener, SeqSelectionListener {
+  implements ItemListener, ActionListener,
+	     GroupSelectionListener, SeqSelectionListener {
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedBioSeq selected_seq = null;
   JLabel seqL;
   JComboBox seqCB;
-  static final String SELECT_A_SEQUENC = "Select a sequence";
+  JButton genomeB;
+  static final String SELECT_A_SEQUENC = "Select a seq";
   static final String NO_SEQUENCES = "No seqs to select";
-  static final String NO_SEQ_SELECTED = "No sequence selected";
+  static final String NO_SEQ_SELECTED = "No seq selected";
 
   public SeqComboBoxView() {
     // need to set maximum x size of seqL and seqCB (or entire SeqComboBoxView), so doesn't grab space needed by other parts of GUI
-    seqL = new JLabel("Sequence: ");
+    JLabel genomeL = new JLabel("Genome: ");
+    JComboBox genomeCB = new JComboBox();
+    genomeB = new JButton("Pick Genome");
+    genomeCB.addItem("unknown");
+    seqL = new JLabel("Sequence: ", SwingConstants.RIGHT);
     seqCB = new JComboBox();
     seqCB.addItem(NO_SEQUENCES);
-    this.setLayout(new BorderLayout());
-    this.add("West", seqL);
-    this.add("Center", seqCB);
+    this.setLayout(new GridLayout(1, 3));
+    //    this.add(genomeL);
+    //    this.add(genomeCB);
+    this.add(genomeB);
+    this.add(seqL);
+    this.add(seqCB);
+      // this.setLayout(new BorderLayout());
+    //    this.add("West", seqL);
+    //    this.add("Center", seqCB);
     seqCB.addItemListener(this);
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
+    genomeB.addActionListener(this);
+  }
+
+  public void actionPerformed(ActionEvent evt) {
+    Object src = evt.getSource();
+    if (src == genomeB) {
+      IGB.errorPanel("Genome Chooser is not yet implemented");
+      /*
+      JTree genome_tree = new JTree();
+      JButton okayB = new JButton("OK");
+      JButton cancelB = new JButton("Cancel");
+      JPanel pan1 = new JPanel(new GridLayout(1, 2));
+      pan1.add(okayB);
+      pan1.add(cancelB);
+      JPanel ok_cancel_panel = new JPanel();
+      ok_cancel_panel.add(pan1);
+
+      final JOptionPane opt_pane = new JOptionPane(
+						   test_tree,
+						   JOptionPane.PLAIN_MESSAGE,
+						   JOptionPane.OK_CANCEL_OPTION
+						   );
+      final JDialog dialog = new JDialog(IGB.getSingleton().getFrame(), "Genome Chooser", true);
+
+      //      dialog.setContentPane(opt_pane);
+      dialog.getContentPane().add("Center", test_tree);
+      dialog.getContentPane().add("South", ok_cancel_panel);
+      
+      dialog.setSize(new Dimension(300, 600));
+      //      dialog.pack();
+      System.out.println("***** in showDasDialog(), showing dialog");
+      dialog.show();
+      //   dialog.setVisible(true);
+      */
+    }
   }
 
 
@@ -67,8 +115,8 @@ public class SeqComboBoxView extends JComponent
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     AnnotatedBioSeq aseq = evt.getSelectedSeq();
 
-    if (this.DEBUG_EVENTS)  { 
-      System.out.println("SeqComboBoxView received seqSelectionChanged() event: " + (aseq == null ? "null" : aseq.getID())); 
+    if (this.DEBUG_EVENTS)  {
+      System.out.println("SeqComboBoxView received seqSelectionChanged() event: " + (aseq == null ? "null" : aseq.getID()));
     }
 
     if (aseq == null)  {
@@ -108,6 +156,11 @@ public class SeqComboBoxView extends JComponent
 	}
       }
     }
+    //    else if (src == genomeB) {
+    //      System.out.println("&&&&&&&& SeqComboBoxView genome selection button pressed");
+    //    }
   }
+
+  
 
 }

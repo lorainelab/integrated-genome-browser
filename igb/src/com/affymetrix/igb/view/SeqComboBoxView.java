@@ -52,34 +52,7 @@ public class SeqComboBoxView extends JComponent
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == genomeB) {
-      IGB.errorPanel("Genome Chooser is not yet implemented");
-      /*
-      JTree genome_tree = new JTree();
-      JButton okayB = new JButton("OK");
-      JButton cancelB = new JButton("Cancel");
-      JPanel pan1 = new JPanel(new GridLayout(1, 2));
-      pan1.add(okayB);
-      pan1.add(cancelB);
-      JPanel ok_cancel_panel = new JPanel();
-      ok_cancel_panel.add(pan1);
-
-      final JOptionPane opt_pane = new JOptionPane(
-						   test_tree,
-						   JOptionPane.PLAIN_MESSAGE,
-						   JOptionPane.OK_CANCEL_OPTION
-						   );
-      final JDialog dialog = new JDialog(IGB.getSingleton().getFrame(), "Genome Chooser", true);
-
-      //      dialog.setContentPane(opt_pane);
-      dialog.getContentPane().add("Center", test_tree);
-      dialog.getContentPane().add("South", ok_cancel_panel);
-      
-      dialog.setSize(new Dimension(300, 600));
-      //      dialog.pack();
-      System.out.println("***** in showDasDialog(), showing dialog");
-      dialog.show();
-      //   dialog.setVisible(true);
-      */
+      Das2GenomeLoader.showGenomeChooserDialog();
     }
   }
 

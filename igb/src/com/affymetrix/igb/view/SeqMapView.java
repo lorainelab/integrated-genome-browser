@@ -403,7 +403,10 @@ public class SeqMapView extends JPanel
     this.setLayout(new BorderLayout());
 
     xzoombox = Box.createHorizontalBox();
-    //    xzoombox.add(new SeqComboBoxView());
+    SeqComboBoxView seq_chooser = new SeqComboBoxView();
+    //    seq_chooser.setSize(new Dimension(5, 10));
+    //    xzoombox.add(seq_chooser);
+    //    seq_chooser.setSize(new Dimension(5, 10));
 
     map_range_box = new MapRangeBox(this);
     xzoombox.add(map_range_box.range_box);
@@ -421,7 +424,11 @@ public class SeqMapView extends JPanel
 
     boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
     if (x_above) {
-      this.add(BorderLayout.NORTH, xzoombox);
+      JPanel pan = new JPanel(new BorderLayout());
+      pan.add("West", seq_chooser);
+      pan.add("Center", xzoombox);
+      this.add(BorderLayout.NORTH, pan);
+      //      this.add(BorderLayout.NORTH, xzoombox);
     } else {
       this.add(BorderLayout.SOUTH, xzoombox);
     }

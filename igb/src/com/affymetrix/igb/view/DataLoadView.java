@@ -37,13 +37,11 @@ public class DataLoadView extends JComponent  {
   Das2LoadView3 das2_view3;
   DasLoadView das1_view;
   QuickLoadView2 quick_view;
-  SeqGroupView group_view;
+  //  SeqGroupView group_view;
 
   public DataLoadView() {
-    group_view = new SeqGroupView();
+    //    group_view = new SeqGroupView();
     
-    //gmodel.addModelChangeListener(group_view);
-
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     
     JPanel main_panel = new JPanel();
@@ -51,7 +49,7 @@ public class DataLoadView extends JComponent  {
     this.setBorder(BorderFactory.createEtchedBorder());
     
     main_panel.setLayout(new BorderLayout());
-    main_panel.add("West", group_view);
+    //    main_panel.add("West", group_view);
     
     JTabbedPane tpane = new JTabbedPane();
     main_panel.add("Center", tpane);

@@ -115,6 +115,7 @@ public class Das2LoadView3 extends JComponent
 
     tree = new JTree();
     tree.setRootVisible(false);
+    tree.setShowsRootHandles(true);
     clearTreeView();
 
     /**

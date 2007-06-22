@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.igb.util.GraphSymUtils;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -171,7 +170,7 @@ public class CntParser {
   String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
     String gid = (String) unique_gids.get(column_id);
     if (gid == null) {
-      gid = GraphSymUtils.getUniqueGraphID(column_id, seq_group);
+      gid = AnnotatedSeqGroup.getUniqueGraphID(column_id, seq_group);
       unique_gids.put(column_id, gid);
     }
     return gid;

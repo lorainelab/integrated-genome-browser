@@ -15,9 +15,9 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -230,7 +230,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   GraphState initializeGraphState(String id, String score_name, char strand) {
     GraphState gs = GraphState.getGraphState(id);
     gs.setFloatGraph(false);
-    gs.setGraphStyle(GraphGlyph.HEAT_MAP);
+    gs.setGraphStyle(GraphStateI.HEAT_MAP);
     // don't bother setting preferred heat map style, it should happen automatically.
     //gs.setHeatMap(GraphState.getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode()));
     gs.getTierStyle().setHumanName(score_name);

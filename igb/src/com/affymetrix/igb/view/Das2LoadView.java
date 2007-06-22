@@ -31,7 +31,7 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GenometryViewer;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;

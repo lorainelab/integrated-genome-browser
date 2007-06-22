@@ -23,7 +23,7 @@ import javax.swing.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genoviz.util.Memer;
+import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 /**

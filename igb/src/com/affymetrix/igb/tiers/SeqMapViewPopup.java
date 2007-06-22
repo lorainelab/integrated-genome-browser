@@ -21,7 +21,6 @@ import javax.swing.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;

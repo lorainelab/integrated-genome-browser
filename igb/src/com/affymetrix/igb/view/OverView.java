@@ -30,7 +30,6 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.TypedSym;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;

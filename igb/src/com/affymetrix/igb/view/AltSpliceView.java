@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.igb.tiers;
+package com.affymetrix.genometryImpl.style;
 
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.awt.Color;
@@ -36,8 +36,8 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   public DefaultIAnnotStyle() {
     super();
     this.unique_name = Integer.toHexString(hashCode()); // a unique name, just in case it is ever needed
-    this.fg = AnnotStyle.getDefaultInstance().getColor();
-    this.bg = AnnotStyle.getDefaultInstance().getBackground();
+    this.fg = SimpleAnnotStyle.getDefaultInstance().getColor();
+    this.bg = SimpleAnnotStyle.getDefaultInstance().getBackground();
   }
   
   public DefaultIAnnotStyle(String name, boolean graph) {

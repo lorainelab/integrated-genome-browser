@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.SimpleAnnotStyle;
 import java.util.*;
@@ -26,7 +25,7 @@ public class GraphState implements GraphStateI {
 
   String graph_path;
   String unique_id;
-  int graph_style = SmartGraphGlyph.MINMAXAVG;
+  int graph_style = GraphState.MINMAXAVG;
 
   /**
    *  The minimum score the ycoord of a point must be >= in order to be counted
@@ -95,12 +94,12 @@ public class GraphState implements GraphStateI {
   static Map num2gstyle = new HashMap();
 
   static {
-    gstyle2num.put("line", new Integer(SmartGraphGlyph.LINE_GRAPH));
-    gstyle2num.put("bar", new Integer(SmartGraphGlyph.BAR_GRAPH));
-    gstyle2num.put("dot", new Integer(SmartGraphGlyph.DOT_GRAPH));
-    gstyle2num.put("stairstep", new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
-    gstyle2num.put("heatmap", new Integer(SmartGraphGlyph.HEAT_MAP));
-    gstyle2num.put("minmaxavg", new Integer(SmartGraphGlyph.MINMAXAVG));
+    gstyle2num.put("line", new Integer(GraphStateI.LINE_GRAPH));
+    gstyle2num.put("bar", new Integer(GraphStateI.BAR_GRAPH));
+    gstyle2num.put("dot", new Integer(GraphStateI.DOT_GRAPH));
+    gstyle2num.put("stairstep", new Integer(GraphStateI.STAIRSTEP_GRAPH));
+    gstyle2num.put("heatmap", new Integer(GraphStateI.HEAT_MAP));
+    gstyle2num.put("minmaxavg", new Integer(GraphStateI.MINMAXAVG));
     //    gstyle2num.put("span", new Integer(SmartGraphGlyph.SPAN_GRAPH));  // SPAN_GRAPH is deprecated
     
     Iterator iter = gstyle2num.entrySet().iterator();

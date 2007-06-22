@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.*;
 import java.util.*;

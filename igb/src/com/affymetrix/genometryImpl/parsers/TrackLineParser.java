@@ -18,9 +18,9 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.style.GraphStateI;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.SimpleAnnotStyle;
 
 public class TrackLineParser {
 
@@ -125,7 +125,7 @@ public class TrackLineParser {
       name = default_track_name;
     }
 
-    AnnotStyle style = AnnotStyle.getInstance(name, false); // should the style be persistent?
+    IAnnotStyleExtended style = SimpleAnnotStyle.getInstance(name);
     applyTrackProperties(track_hash, style);
     return style;
   }

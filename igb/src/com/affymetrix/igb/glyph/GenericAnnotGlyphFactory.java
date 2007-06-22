@@ -14,7 +14,6 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.GFF3Sym;

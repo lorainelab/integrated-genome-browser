@@ -46,7 +46,6 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;

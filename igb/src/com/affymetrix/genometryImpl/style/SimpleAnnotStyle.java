@@ -13,7 +13,8 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.igb.tiers.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
 
@@ -25,11 +26,31 @@ public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleE
     super(name, is_graph);
   }
 
+  static Map instances = new HashMap();
+
+  /**
+   *  Returns a style for the given name.  These styles remain associated
+   * with the given name while the program is running, but do not get
+   * persisted to a permanent storage.
+   */
+  public static IAnnotStyleExtended getInstance(String name) {
+    IAnnotStyleExtended style = (IAnnotStyleExtended) instances.get(name);
+    if (style == null) {
+      style = new SimpleAnnotStyle(name);
+      instances.put(name.toLowerCase(), style);
+    }
+    return style;
+  }
+  
+  public static IAnnotStyleExtended getDefaultInstance() {
+    return getInstance("* default *");
+  }
+  
   String url;
   public void setUrl(String url) {this.url = url;}
   public String getUrl() { return url; }
   
-  boolean colorByScore;
+  boolean colorByScore = false;
   public void setColorByScore(boolean b) {this.colorByScore = b;}
   public boolean getColorByScore() { return this.colorByScore;}
   

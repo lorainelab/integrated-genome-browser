@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.igb.util.*;
 
 /**
  * This is a replacement for org.apache.regexp.StringCharacterIterator, 

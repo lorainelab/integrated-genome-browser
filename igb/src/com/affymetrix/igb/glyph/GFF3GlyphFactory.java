@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;

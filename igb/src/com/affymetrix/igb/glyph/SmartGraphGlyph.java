@@ -65,7 +65,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   boolean CALC_GRAPH_CACHE = true;
   boolean CACHE_DIRECT_DRAW = false;
 
-  public static final int MINMAXAVG = 4;
+  public static final int MINMAXAVG = GraphStateI.MINMAXAVG;
   public static final int MINMAXAVG_BARS = 101;  // NOT YET IMPLEMENTED
   public static final int MINMAXAVG_STAIRSTEP = 102;  // NOT YET IMPLEMENTED
 

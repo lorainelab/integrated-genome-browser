@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.NibbleBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import java.awt.Insets;
 
 import java.awt.event.*;

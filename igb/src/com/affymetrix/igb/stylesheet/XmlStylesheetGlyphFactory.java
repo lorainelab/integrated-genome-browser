@@ -13,12 +13,11 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;

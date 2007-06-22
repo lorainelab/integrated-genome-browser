@@ -30,12 +30,12 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.style.AnnotStyle;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;

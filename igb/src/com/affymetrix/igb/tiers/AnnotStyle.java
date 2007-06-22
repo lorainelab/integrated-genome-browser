@@ -10,8 +10,9 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-package com.affymetrix.genometryImpl.style;
+package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.*;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;

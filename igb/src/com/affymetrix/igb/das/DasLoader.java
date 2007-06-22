@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
 /**

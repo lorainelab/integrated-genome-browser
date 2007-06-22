@@ -17,9 +17,11 @@ import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.*;
 import java.util.prefs.Preferences;
 

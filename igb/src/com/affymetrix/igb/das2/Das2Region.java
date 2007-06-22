@@ -20,7 +20,7 @@ import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
 public class Das2Region {

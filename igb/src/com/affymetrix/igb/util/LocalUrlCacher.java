@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.net.*;
 import java.util.*;

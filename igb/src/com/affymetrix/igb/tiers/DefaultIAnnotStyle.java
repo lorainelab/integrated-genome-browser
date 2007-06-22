@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.AnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;

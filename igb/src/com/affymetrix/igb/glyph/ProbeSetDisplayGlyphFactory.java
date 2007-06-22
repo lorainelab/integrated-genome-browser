@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.style.AnnotStyle;
+import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.*;
 import java.util.*;
 
@@ -21,8 +23,8 @@ import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.*;

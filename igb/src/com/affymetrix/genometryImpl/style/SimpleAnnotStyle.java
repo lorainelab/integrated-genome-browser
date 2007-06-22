@@ -1,0 +1,49 @@
+/**
+ *   Copyright (c) 2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
+
+package com.affymetrix.genometryImpl.style;
+
+import com.affymetrix.igb.tiers.*;
+
+public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
+
+  public SimpleAnnotStyle(String name) {
+    super(name, false);
+  }
+  
+  public SimpleAnnotStyle(String name, boolean is_graph) {
+    super(name, is_graph);
+  }
+
+  String url;
+  public void setUrl(String url) {this.url = url;}
+  public String getUrl() { return url; }
+  
+  boolean colorByScore;
+  public void setColorByScore(boolean b) {this.colorByScore = b;}
+  public boolean getColorByScore() { return this.colorByScore;}
+  
+  int depth=2;
+  public void setGlyphDepth(int i) {this.depth = i;}
+  public int getGlyphDepth() {return this.depth;}
+
+  public void copyPropertiesFrom(IAnnotStyle g) {
+    super.copyPropertiesFrom(g);  
+    if (g instanceof IAnnotStyleExtended) {
+      IAnnotStyleExtended as = (IAnnotStyleExtended) g;
+      setUrl(as.getUrl());
+      setColorByScore(as.getColorByScore());
+      setGlyphDepth(as.getGlyphDepth());
+    }
+  }
+}

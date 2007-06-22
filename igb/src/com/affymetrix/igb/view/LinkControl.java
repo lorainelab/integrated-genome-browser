@@ -13,11 +13,11 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.util.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.WebBrowserControl;

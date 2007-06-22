@@ -1,16 +1,20 @@
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.genometryImpl.SingletonSymWithIntId;
+import com.affymetrix.genometryImpl.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.IndexedSym;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.genometryImpl.style.AnnotStyle;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
-import com.affymetrix.igb.util.StringUtils;
+import com.affymetrix.genometryImpl.util.StringUtils;
 
 import affymetrix.calvin.data.*;
 

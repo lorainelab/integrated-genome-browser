@@ -27,11 +27,11 @@ import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.util.UniFileFilter;
-import com.affymetrix.igb.parsers.Streamer;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.tiers.IAnnotStyle;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometryImpl.parsers.Streamer;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
@@ -173,7 +173,7 @@ public class OpenGraphAction extends AbstractAction {
       String graph_name = getGraphNameForURL(furl);
       // Now set the graph names (either the URL or the filename, possibly with an integer appended)
       for (int i=0; i<graphs.size(); i++) {
-        com.affymetrix.igb.genometry.GraphSym gg = (com.affymetrix.igb.genometry.GraphSym) graphs.get(i);
+                com.affymetrix.genometryImpl.GraphSym gg = (com.affymetrix.genometryImpl.GraphSym) graphs.get(i);
 
         IAnnotStyle style = gg.getGraphState().getTierStyle();
         

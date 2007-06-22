@@ -13,6 +13,13 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.parsers.Xml2GenometryParser;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.BrptParser;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -23,8 +30,8 @@ import javax.swing.*;
 import org.xml.sax.InputSource;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.swing.threads.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;

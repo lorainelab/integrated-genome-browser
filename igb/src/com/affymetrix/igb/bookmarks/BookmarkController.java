@@ -13,32 +13,30 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import javax.swing.SwingUtilities;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.*;
 import java.io.*;
-import java.net.URL;
-
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.glyph.GraphStateI;
-import com.affymetrix.igb.glyph.HeatMap;
-import com.affymetrix.igb.servlets.UnibrowControlServlet;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
-import com.affymetrix.igb.tiers.IAnnotStyle;
-import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.GraphSymUtils;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.igb.util.*;
+import com.affymetrix.igb.servlets.*;
 import com.affymetrix.igb.view.SeqMapView;
+import java.net.URL;
+import javax.swing.SwingUtilities;
 
 /**
  *  Allows creation of bookmarks based on a SeqSymmetry, and viewing of

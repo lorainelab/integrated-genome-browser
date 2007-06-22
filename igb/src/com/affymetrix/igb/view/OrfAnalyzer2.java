@@ -26,9 +26,9 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
-import com.affymetrix.igb.util.IntList;
+import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 

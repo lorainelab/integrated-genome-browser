@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.swing.ColorIcon;
 import java.awt.*;
 import java.awt.event.*;

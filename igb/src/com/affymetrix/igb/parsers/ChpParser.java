@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.parsers.*;
 import java.io.*;
 import java.util.*;
 
@@ -22,11 +23,19 @@ import affymetrix.calvin.parameter.ParameterNameValue;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.IndexedSingletonSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.style.AnnotStyle;
+
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;

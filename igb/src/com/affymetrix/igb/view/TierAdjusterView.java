@@ -21,11 +21,11 @@ import javax.swing.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.Application;
 
 /**
  *  A view that allows adjusting the visibility of annotations in selected tiers 

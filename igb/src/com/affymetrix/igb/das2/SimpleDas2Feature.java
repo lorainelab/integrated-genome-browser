@@ -14,8 +14,8 @@ package com.affymetrix.igb.das2;
 
 import java.net.URI;
 import java.util.*;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.TypedSym;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.TypedSym;
 
 public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
   String id;

@@ -18,8 +18,8 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.UniFileChooser;
-import com.affymetrix.igb.util.UniFileFilter;
+import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 

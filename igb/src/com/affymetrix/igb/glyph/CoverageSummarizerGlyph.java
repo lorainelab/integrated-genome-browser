@@ -22,8 +22,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.SeqSpanComparator;
-import com.affymetrix.igb.genometry.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
 
 /**
  *  Intended for dynamically summarizing coverage of a collection of spans.

@@ -27,8 +27,8 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.event.UrlLoaderThread;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.swing.DisplayUtils;
 
 /**

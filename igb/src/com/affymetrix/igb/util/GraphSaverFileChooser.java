@@ -13,8 +13,10 @@
 
 package com.affymetrix.igb.util;
 
-import com.affymetrix.igb.genometry.GraphIntervalSym;
-import com.affymetrix.igb.genometry.GraphSym;
+import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 

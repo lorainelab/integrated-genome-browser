@@ -13,21 +13,23 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.GraphIntervalSym;
-import com.affymetrix.igb.parsers.ScoredIntervalParser;
-import com.affymetrix.igb.parsers.Streamer;
-import com.affymetrix.igb.parsers.SgrParser;
-import com.affymetrix.igb.parsers.BarParser;
-import com.affymetrix.igb.parsers.GrParser;
-import com.affymetrix.igb.parsers.BgrParser;
-import com.affymetrix.igb.parsers.WiggleParser;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.util.FloatList;
+import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.parsers.Streamer;
+import com.affymetrix.genometryImpl.parsers.SgrParser;
+import com.affymetrix.genometryImpl.parsers.BarParser;
+import com.affymetrix.genometryImpl.parsers.GrParser;
+import com.affymetrix.genometryImpl.parsers.BgrParser;
+import com.affymetrix.genometryImpl.parsers.WiggleParser;
 
 public class GraphSymUtils {
 

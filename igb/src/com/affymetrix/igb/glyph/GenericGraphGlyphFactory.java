@@ -13,15 +13,19 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.GraphIntervalSym;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+
+import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {

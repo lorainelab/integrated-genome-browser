@@ -15,9 +15,9 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
-import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.genometryImpl.style.AnnotStyle;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.*;
 import java.net.URLEncoder;

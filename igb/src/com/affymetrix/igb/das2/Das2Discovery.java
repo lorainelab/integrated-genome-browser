@@ -15,7 +15,7 @@ package com.affymetrix.igb.das2;
 
 import java.util.*;
 
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 public class Das2Discovery {
 

@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -21,9 +22,8 @@ import java.util.*;
 
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.igb.event.SymSelectionEvent;
-import com.affymetrix.igb.event.SymSelectionListener;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.prefs.IPlugin;
@@ -35,7 +35,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.swing.DisplayUtils;
 
 /**

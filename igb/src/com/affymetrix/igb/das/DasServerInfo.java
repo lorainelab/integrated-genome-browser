@@ -19,8 +19,8 @@ import java.util.regex.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.igb.util.SynonymLookup;  //  just for testing via main()
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;  //  just for testing via main()
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.ErrorHandler;
 
   //  just for testing via main()

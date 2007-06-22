@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.style.GraphState;
 import java.awt.*;
 import java.util.*;
 
@@ -20,8 +21,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.NeoMap;
 
-import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.IntList;
+import com.affymetrix.genometryImpl.util.FloatList;
+import com.affymetrix.genometryImpl.util.IntList;
 
 public class GlyphSummarizer {
   public static boolean USE_TIMER = true;

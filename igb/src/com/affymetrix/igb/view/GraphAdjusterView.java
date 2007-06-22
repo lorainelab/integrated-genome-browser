@@ -19,17 +19,20 @@ import javax.swing.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.FloatTransformer;
+import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.igb.util.GraphSaverFileChooser;
 import com.affymetrix.igb.util.GraphSymUtils;
 

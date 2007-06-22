@@ -13,14 +13,17 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.AnnotStyle;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.*;
 

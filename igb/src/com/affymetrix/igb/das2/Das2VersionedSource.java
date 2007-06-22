@@ -23,8 +23,8 @@ import java.net.URI.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;

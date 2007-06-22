@@ -15,8 +15,8 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
 import java.util.Iterator;

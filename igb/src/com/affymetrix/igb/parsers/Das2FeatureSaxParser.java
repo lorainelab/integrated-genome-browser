@@ -24,7 +24,11 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.igb.das2.*;
 
 import com.affymetrix.igb.util.GenometryViewer; // for testing main

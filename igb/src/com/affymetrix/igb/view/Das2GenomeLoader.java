@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
 
@@ -20,7 +20,7 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
   JDialog dial;
 
   public static void showGenomeChooserDialog() {
-    final JDialog dialog = new JDialog(IGB.getSingleton().getFrame(), "Genome Chooser", true);
+    final JDialog dialog = new JDialog(Application.getSingleton().getFrame(), "Genome Chooser", true);
     Das2GenomeLoader loader = new Das2GenomeLoader(dialog);
     dialog.setSize(new Dimension(300, 600));
     System.out.println("***** in showDasDialog(), showing dialog");

@@ -76,7 +76,7 @@ implements SeqSelectionListener, SymSelectionListener {
   JButton colorB = new JButton("Color");
   JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
 
-  Action select_all_graphs_action =  new AbstractAction("Select All Graphs") {
+  public Action select_all_graphs_action =  new AbstractAction("Select All Graphs") {
     public void actionPerformed(ActionEvent e) {
         if (gviewer != null) { 
           gviewer.selectAllGraphs();
@@ -84,19 +84,19 @@ implements SeqSelectionListener, SymSelectionListener {
       }
    };
 
-  Action delete_selected_graphs_action =  new AbstractAction("Delete Selected Graphs") {
+  public Action delete_selected_graphs_action =  new AbstractAction("Delete Selected Graphs") {
     public void actionPerformed(ActionEvent e) {
         GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
       }
    };
    
-  Action save_selected_graphs_action =  new AbstractAction("Save Selected Graphs...") {
+  public Action save_selected_graphs_action =  new AbstractAction("Save Selected Graphs...") {
     public void actionPerformed(ActionEvent e) {
         GraphAdjusterView.saveGraphs(gviewer, grafs);
       }
    };
    
-  Action graph_threshold_action =  new AbstractAction("Graph Thresholding...") {
+  public Action graph_threshold_action =  new AbstractAction("Graph Thresholding...") {
     public void actionPerformed(ActionEvent e) {
         showGraphScoreThreshSetter();
       }

@@ -212,7 +212,7 @@ public class LocalUrlCacher {
       InputStream fstr = null;
       URL furl = new URL(url);
       fstr = furl.openConnection().getInputStream();
-      System.out.println("URL is file url, so not caching: " + furl);
+      //System.out.println("URL is file url, so not caching: " + furl);
       return fstr;
     }
     File fil = new File(cache_root);

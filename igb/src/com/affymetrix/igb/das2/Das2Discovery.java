@@ -90,13 +90,27 @@ public class Das2Discovery {
     return server;
   }
 
+
   /**
    *  Given an AnnotatedSeqGroup, return a list of Das2VersionedSources that
    *    provide annotations for the group [ versioned_source.getGenome() = group ]
    *  if (try_unloaded_servers) then force retrieval of versioned sources info for
-   *       all known server, otherwise only check versioned sources whose info is already loaded??
+   *       all known servers, otherwise only check versioned sources whose info is already loaded
    */
   public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+    return getVersionedSources(group, try_unloaded_servers, null);
+  }
+
+  /**
+   *  Given an AnnotatedSeqGroup, return a list of Das2VersionedSources that
+   *    provide annotations for the group [ versioned_source.getGenome() = group ]
+   *  if (try_unloaded_servers) then force retrieval of versioned sources info for
+   *       all known server, otherwise only check versioned sources whose info is already loaded
+   *  CAPABILITY arg specified a capability that the versioned source must have to be included in the returned list
+   *       if CAPABILITY is null, then no capability filter is applied
+   */
+  public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers, String capability) {
+
     List matches = new ArrayList();
     if (group != null) {
       Iterator servers = getDas2Servers().values().iterator();
@@ -117,7 +131,9 @@ public class Das2Discovery {
 	      Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
 	      //	    System.out.println("     version: " + version.getName());
 	      if (version.getGenome() == group) {
-		matches.add(version);
+		if ((capability == null) || (version.getCapability(capability) != null)) {
+		  matches.add(version);
+		}
 	      }
 	    }
 	  }

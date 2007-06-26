@@ -10,6 +10,8 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.util.ViewPersistenceUtils;
 
 public class Das2GenomeLoader extends JComponent implements ActionListener {
 
@@ -18,16 +20,22 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
   JTree tree;  // DAS/2 server / source / version tree for selecting a genome
   DefaultMutableTreeNode treetop = null;
   JDialog dial;
+  SeqMapView gviewer;
+  
 
   public static void showGenomeChooserDialog() {
-    final JDialog dialog = new JDialog(Application.getSingleton().getFrame(), "Genome Chooser", true);
-    Das2GenomeLoader loader = new Das2GenomeLoader(dialog);
+    showGenomeChooserDialog(Application.getSingleton().getMapView());
+  }
+
+  public static void showGenomeChooserDialog(SeqMapView gviewer) {
+    final JDialog dialog = new JDialog(gviewer.getFrame(), "Genome Chooser", true);
+    Das2GenomeLoader loader = new Das2GenomeLoader(gviewer, dialog);
     dialog.setSize(new Dimension(300, 600));
-    System.out.println("***** in showDasDialog(), showing dialog");
     dialog.show();
   }
 
-  public Das2GenomeLoader(JDialog dialog) {
+  public Das2GenomeLoader(SeqMapView gviewer, JDialog dialog) {
+    this.gviewer = gviewer;
       dial = dialog;
       tree = new JTree();
       tree.setRootVisible(false);
@@ -78,13 +86,22 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 	  Das2VersionedSource version = vnode.getVersion();
 	  // call to Das2VersionedSource.getSegments() triggers population of genome group with sequences if not already populated
 	  Iterator segments = version.getSegments().values().iterator();
-	  Das2Region first_region = (Das2Region)segments.next();
-	  MutableAnnotatedBioSeq first_seq = first_region.getAnnotatedSeq();
 	  AnnotatedSeqGroup new_genome = version.getGenome();
 	  if (new_genome != prev_genome) {
 	    System.out.println("CHOOSING GENOME: " + version);
 	    gmodel.setSelectedSeqGroup(new_genome);
-	    gmodel.setSelectedSeq(first_seq);
+
+	    MutableAnnotatedBioSeq selected_seq = ViewPersistenceUtils.restoreSeqSelection(new_genome);
+	    if (selected_seq == null)  {
+	      // if no seq selection stored, the just select first one
+	      Das2Region first_region = (Das2Region)segments.next();
+	      MutableAnnotatedBioSeq first_seq = first_region.getAnnotatedSeq();
+	      gmodel.setSelectedSeq(first_seq);
+	    }
+	    SeqSpan visible_span = ViewPersistenceUtils.restoreSeqVisibleSpan(gviewer);
+	    if (visible_span == null)  {
+	      // if no seq visible span, then leave zoomed out to whole chromosome, or zoom into smaller region?
+	    }
 	  }
 	}
       }
@@ -152,8 +169,11 @@ class SourceNode extends LazyPopulatingTreeNode {
       Iterator versions = source.getVersions().values().iterator();
       while (versions.hasNext()) {
 	Das2VersionedSource version = (Das2VersionedSource)versions.next();
-	VersionNode version_node = new VersionNode(version);
-	add(version_node);
+	// only want to add versions from which genome sequence info can be retrieved
+	if (version.getCapability(Das2VersionedSource.SEGMENTS_CAP_QUERY) != null) {
+	  VersionNode version_node = new VersionNode(version);
+	  add(version_node);
+	}
       }
     }
   }
@@ -214,52 +234,3 @@ class VersionNode extends DefaultMutableTreeNode {
 
 }
 
-
-/*
-class VersionNode extends DefaultMutableTreeNode {
-  Das2VersionedSource version;
-
-  public VersionNode(Das2VersionedSource version) { this.version = version; }
-  public Das2VersionedSource getVersionedSource() { return version; }
-  public String toString() { return version.getName(); }
-
-  // using Vector instead of generic List because TreeNode interface requires children() to return Enumeration
-  Vector child_nodes = null;
-
-  public int getChildCount() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.size();
-  }
-
-  public TreeNode getChildAt(int childIndex) {
-    if (child_nodes == null) { populate(); }
-    return (TreeNode)child_nodes.get(childIndex);
-  }
-
-  public Enumeration children() {
-    if (child_nodes == null) { populate(); }
-    return child_nodes.elements();
-  }
-
-   //  First time children are accessed, this will trigger dynamic access to DAS2 server.
-  protected void populate() {
-    if (child_nodes == null) {
-      Map types = version.getTypes();
-      child_nodes = new Vector(types.size());
-      Iterator iter = types.values().iterator();
-      while (iter.hasNext()) {
-	Das2Type type = (Das2Type)iter.next();
-	TypeNode child = new TypeNode(type);
-	child_nodes.add(child);
-      }
-    }
-  }
-
-  public boolean getAllowsChildren() { return true; }
-  public boolean isLeaf() { return false; }
-  public int getIndex(TreeNode node) {
-    System.out.println("Das2VersionNode.getIndex() called: " + toString());
-    return -1;
-  }
-}
-*/

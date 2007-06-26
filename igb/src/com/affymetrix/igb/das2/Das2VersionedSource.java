@@ -34,14 +34,12 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
  *  started with com.affymetrix.igb.das.DasSource and modified
  */
 public class Das2VersionedSource  {
+  public static String SEGMENTS_CAP_QUERY = "segments";
+  public static String TYPES_CAP_QUERY = "types";
+  public static String FEATURES_CAP_QUERY = "features";
+
   static boolean DEBUG_TYPES_QUERY = false;
   static boolean DEBUG_SEGMENTS_QUERY = false;
-
-  static boolean DO_FILE_TEST = false;
-  static String test_file = "file:/C:/data/das2_responses/alan_server/regions.xml";
-  static String SEGMENTS_CAP_QUERY = "segments";
-  static String TYPES_CAP_QUERY = "types";
-  static String FEATURES_CAP_QUERY = "features";
 
   static String ID = Das2FeatureSaxParser.ID;
   static String URID = Das2FeatureSaxParser.URID;
@@ -142,12 +140,14 @@ public class Das2VersionedSource  {
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
 	  System.out.println("@@@@  Adding genome: " + groupid);
-	  genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
+	  genome = gmodel.addSeqGroup(groupid); 
 	}
 	else {
 	  System.out.println("@@@@  Adding genome: " + coords_uri);
 	  genome = gmodel.addSeqGroup(coords_uri.toString());
 	}
+	
+
       }
     }
     return genome;
@@ -228,13 +228,8 @@ public class Das2VersionedSource  {
   /** Get regions from das server. */
   protected synchronized void initSegments() {
     String region_request;
-    if (DO_FILE_TEST)  {
-      region_request = test_file;
-    }
-    else {
-      Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_CAP_QUERY);
-      region_request = segcap.getRootURI().toString();
-    }
+    Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_CAP_QUERY);
+    region_request = segcap.getRootURI().toString();
     try {
       System.out.println("Das Segments Request: " + region_request);
       Document doc = DasLoader.getDocument(region_request);

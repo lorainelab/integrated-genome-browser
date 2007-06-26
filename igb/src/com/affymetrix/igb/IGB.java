@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -28,7 +29,6 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -48,6 +48,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.tiers.AnnotStyle;
 
 
 
@@ -1582,6 +1583,10 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     return APP_VERSION;
   }
 
+  public ResourceBundle getResourceBundle() {
+    return ResourceBundle.getBundle("com/affymetrix/igb/IGB");
+  }
+
   public AnnotatedSeqGroup restoreGenome() {
     Preferences lnode = UnibrowPrefsUtil.getLocationsNode();
     String server_url = lnode.get(GENOME_SERVER_PREF, DEFAULT_GENOME_SERVER);
@@ -1635,6 +1640,11 @@ public class IGB extends Application implements ActionListener, ContextualPopupL
     // AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
     // return group;
     return version;
+  }
+
+  public IAnnotStyleExtended getStyleForMethod(String meth, boolean is_graph) {
+    AnnotStyle style = AnnotStyle.getInstance(meth);
+    return style;
   }
 
 

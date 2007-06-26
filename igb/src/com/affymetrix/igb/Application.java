@@ -1,12 +1,14 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 import javax.swing.*;
 
 public abstract class Application {
@@ -51,9 +53,13 @@ public abstract class Application {
   abstract public String getApplicationName();
   abstract public String getVersion();
 
+  abstract public ResourceBundle getResourceBundle();
+  
   public static boolean isSequenceAccessible() {
     return true;
   }
+  
+  abstract public IAnnotStyleExtended getStyleForMethod(String meth, boolean is_graph);
 
   /** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.

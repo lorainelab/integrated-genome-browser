@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb;
 
+import com.affymetrix.igb.tiers.SimpleAnnotStyle;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -29,6 +30,7 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import com.affymetrix.igb.util.EPSWriter;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -42,10 +44,6 @@ import com.affymetrix.swing.DisplayUtils;
  *  Main class for Genotyping Console browser.
  */
 public class GTCBrowser extends Application implements ActionListener {
-
-  public static String APP_NAME = "Genotyping Console Browser (Prototype)";
-  public static String APP_SHORT_NAME = "GTC Browser";
-  public static String APP_VERSION = "0.02";
 
   public static boolean REPLACE_REPAINT_MANAGER = false;
 
@@ -84,6 +82,8 @@ public class GTCBrowser extends Application implements ActionListener {
   JMenuItem view_ucsc_item;
 
   SeqMapView map_view;
+  KaryotypeView karyotype_view;
+  SimpleGraphTab simple_graph_tab;
 
   java.util.List plugin_list;
 
@@ -136,8 +136,8 @@ public class GTCBrowser extends Application implements ActionListener {
     // be captured there.
     ConsoleView.init();
 
-    System.out.println("Starting \"" + APP_NAME + "\"");
-    System.out.println("Version: " + APP_VERSION);
+    System.out.println("Starting \"" + ResourceBundle.getBundle("com/affymetrix/igb/GTCBrowser").getString("app_name") + "\"");
+    System.out.println("Version: " + ResourceBundle.getBundle("com/affymetrix/igb/GTCBrowser").getString("app_version"));
     System.out.println();
 
     main_args = args;
@@ -161,11 +161,29 @@ public class GTCBrowser extends Application implements ActionListener {
   public SeqMapView getMapView() {
     return map_view;
   }
+  
+  public KaryotypeView geKaryotypeView() {
+    return karyotype_view;
+  }
 
   public JFrame getFrame() { return frm; }
 
+  JPanel tool_bar_container;
+//  Component viewer_component = null;
+//
+//  /** Set the main viewer component, such as a SeqMapView, for example. */
+//  public void setViewerComponent(Component c) {
+//    viewer_component = c;
+//    tool_bar_container.add(BorderLayout.CENTER, c);
+//  }
+//  
+//  public Component getViewerComponent() {
+//    return viewer_component;
+//  }
+
+  
   protected void init() {
-    frm = new JFrame(APP_NAME);
+    frm = new JFrame(getApplicationName());
     RepaintManager rm = RepaintManager.currentManager(frm);
     /*
     if (REPLACE_REPAINT_MANAGER) {
@@ -189,16 +207,27 @@ public class GTCBrowser extends Application implements ActionListener {
 
     mbar = MenuUtil.getMainMenuBar();
     frm.setJMenuBar(mbar);
-    file_menu = MenuUtil.getMenu("File");
+    file_menu = MenuUtil.getMenu(getResourceBundle().getString("file_menu"));
     file_menu.setMnemonic('F');
 
-    tools_menu = MenuUtil.getMenu("Tools");
+    tools_menu = MenuUtil.getMenu(getResourceBundle().getString("tools_menu"));
     tools_menu.setMnemonic('T');
     
-    help_menu = MenuUtil.getMenu("Help");
+    help_menu = MenuUtil.getMenu(getResourceBundle().getString("help_menu"));
     help_menu.setMnemonic('H');
 
-    map_view = new SeqMapView(true, false, false);
+    tool_bar_container = new JPanel(); // contains tool-bar and map_view
+    tool_bar_container.setLayout(new BorderLayout());
+    
+    map_view = new SeqMapView(true, false, false);    
+    karyotype_view = new KaryotypeView();
+    JTabbedPane viewers_tab_pane = new JTabbedPane();
+    viewers_tab_pane.add(getResourceBundle().getString("seqmap_view_menu"), map_view);
+    viewers_tab_pane.add(getResourceBundle().getString("karyotype_view_menu"), karyotype_view);
+    
+
+    simple_graph_tab = new SimpleGraphTab(this);
+
 
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
@@ -208,9 +237,9 @@ public class GTCBrowser extends Application implements ActionListener {
     map_view.setFrame(frm);
 
     open_file_action = new LoadFileAction(map_view, load_directory);
-    clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
-    clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
-    open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
+    clear_item = new JMenuItem(getResourceBundle().getString("clear_all_menu"), KeyEvent.VK_C);
+    clear_graphs_item = new JMenuItem(getResourceBundle().getString("clear_graphs_menu"), KeyEvent.VK_L);
+    open_file_item = new JMenuItem(getResourceBundle().getString("open_file_menu"), KeyEvent.VK_O);
     open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
@@ -220,12 +249,12 @@ public class GTCBrowser extends Application implements ActionListener {
     export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
     export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
 
-    exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
+    exit_item = new JMenuItem(getResourceBundle().getString("exit_menu"), KeyEvent.VK_E);
 
     view_ucsc_item = new JMenuItem("View Region in UCSC Browser", KeyEvent.VK_R);
     view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
-    boolean use_hairline_label = true;
+    boolean use_hairline_label = false;
     if (map_view.isHairlineLabeled() != use_hairline_label) {
       map_view.toggleHairlineLabel();
     }
@@ -249,9 +278,10 @@ public class GTCBrowser extends Application implements ActionListener {
     strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 
     MenuUtil.addToMenu(tools_menu, view_ucsc_item);
+    MenuUtil.addToMenu(tools_menu, new JMenuItem(GTCBrowserActions.makeKaryotypeAction()));
 
 
-    about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
+    about_item = new JMenuItem("About " + getApplicationName() + "...", KeyEvent.VK_A);
     about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
     console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
     console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
@@ -275,6 +305,22 @@ public class GTCBrowser extends Application implements ActionListener {
 
     view_ucsc_item.addActionListener(this);
 
+    MenuUtil.addToMenu(getResourceBundle().getString("graphs_menu"), new JMenuItem(GTCBrowserActions.select_all_graphs_action));
+    MenuUtil.addToMenu(getResourceBundle().getString("graphs_menu"), new JMenuItem(GTCBrowserActions.delete_selected_graphs_action));
+    MenuUtil.addToMenu(getResourceBundle().getString("graphs_menu"), new JMenuItem(GTCBrowserActions.save_selected_graphs_action));
+    MenuUtil.addToMenu(getResourceBundle().getString("graphs_menu"), new JMenuItem(GTCBrowserActions.graph_threshold_action));
+    
+    JToolBar tool_bar = new JToolBar(JToolBar.HORIZONTAL);
+    tool_bar.setFloatable(false);
+    tool_bar_container.add(BorderLayout.NORTH, tool_bar);
+    tool_bar.add(simple_graph_tab.select_all_graphs_action);
+    tool_bar.add(simple_graph_tab.delete_selected_graphs_action);
+    tool_bar.add(simple_graph_tab.save_selected_graphs_action);
+    tool_bar.add(simple_graph_tab.graph_threshold_action);
+    tool_bar.addSeparator();
+
+    tool_bar_container.add(BorderLayout.CENTER, viewers_tab_pane);
+    
     Container cpane = frm.getContentPane();
     int table_height = 250;
     int fudge = 55;
@@ -290,7 +336,7 @@ public class GTCBrowser extends Application implements ActionListener {
     splitpane.setOneTouchExpandable(true);
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
-    splitpane.setTopComponent(map_view);
+    splitpane.setTopComponent(tool_bar_container);
     
     splitpane.setBottomComponent(tab_pane);
     
@@ -320,7 +366,8 @@ public class GTCBrowser extends Application implements ActionListener {
     //    frm.resize(1000, 750);
     frm.setVisible(true);
 
-
+    //tab_pane.add("Graphs", simple_graph_tab);
+    
     ArrayList plugin_list = new ArrayList(16);
 
     plugin_list.addAll(getPluginsForGCViewer());
@@ -523,10 +570,10 @@ public class GTCBrowser extends Application implements ActionListener {
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
-    about_text.append(APP_NAME + ", version: " + APP_VERSION + "\n");
+    about_text.append(getApplicationName() + ", version: " + getVersion() + "\n");
     about_text.append("Copyright 2001-2007 Affymetrix Inc." + "\n");
     about_text.append("\n");
-    about_text.append(APP_NAME + " uses the Xerces\n");
+    about_text.append(getApplicationName() + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");
     about_text.append("the Fusion SDK from Affymetrix,  \n");
     about_text.append("and the Vector Graphics package from java.FreeHEP.org \n");
@@ -574,7 +621,7 @@ public class GTCBrowser extends Application implements ActionListener {
 
     final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
      JOptionPane.DEFAULT_OPTION);
-    final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
+    final JDialog dialog = pane.createDialog(frm, "About " + getApplicationName());
     //dialog.setResizable(true);
     dialog.setVisible(true);
   }
@@ -770,25 +817,40 @@ public class GTCBrowser extends Application implements ActionListener {
     comp2menu_item.put(comp, popupMI);
     //popup_windowsM.add(new JCheckBoxMenuItem("foo"));
   }
-
+  
   java.util.List getPluginsForGCViewer() {
     ArrayList plugin_list = new ArrayList(16);
 
-    //plugin_list.add(new PluginInfo(GCViewerBottomView.class.getName(), "Data", true));
+    plugin_list.add(new PluginInfo(GCViewerBottomView.class.getName(), "Data", true));
     //plugin_list.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
     plugin_list.add(new PluginInfo(SymTableView.class.getName(), "Selections", true));
 
     return plugin_list;
   }
 
+  final Map styles = new HashMap();
+  
+  public IAnnotStyleExtended getStyleForMethod(String meth, boolean is_graph) {
+    IAnnotStyleExtended style = (IAnnotStyleExtended) styles.get(meth);
+    if (style == null) {
+      style = new SimpleAnnotStyle(meth, false);
+      styles.put(meth, style);
+    }
+    return style;
+  }
+
   public String getApplicationName() {
-    return APP_NAME;
+    return getResourceBundle().getString("app_name");
   }
   
   public String getVersion() {
-    return APP_VERSION;
+    return getResourceBundle().getString("app_version");
   }
 
+  public ResourceBundle getResourceBundle() {
+    return ResourceBundle.getBundle("com/affymetrix/igb/GTCBrowser");
+  }
+  
   public void setBookmarkManager(Object o) {
     throw new UnsupportedOperationException("Not supported yet.");
   }

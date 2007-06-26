@@ -12,15 +12,27 @@
  */
 package com.affymetrix.igb.tiers;
 
+import java.awt.Color;
+
 public interface IAnnotStyleExtended extends IAnnotStyle {
   void setUrl(String url);
   String getUrl();
 
   void setColorByScore(boolean b);
   boolean getColorByScore();
+  
+  Color getScoreColor(float f);
 
   /** Controls a parameter of the GenericAnnotGlyphFactory. */
   void setGlyphDepth(int i);
   /** Returns a parameter useb by the GenericAnnotGlyphFactory. */
   int getGlyphDepth();
+  
+  /** Controls whether plus and minus strands will be drawn separately. */
+  void setSeparate(boolean b);
+  boolean getSeparate();
+  
+  /** Determines which data field in the symmetries will be used to pick the labels. */
+  void setLabelField(String s);
+  String getLabelField();
 }

@@ -517,12 +517,12 @@ public class AnnotStyle implements IAnnotStyleExtended {
       IAnnotStyleExtended as = (IAnnotStyleExtended) g;
       setColorByScore(as.getColorByScore());
       setGlyphDepth(as.getGlyphDepth());
+      setLabelField(as.getLabelField());
+      setSeparate(as.getSeparate());
     }
     if (g instanceof AnnotStyle) {
       AnnotStyle as = (AnnotStyle) g;
       setCustomizable(as.getCustomizable());
-      setLabelField(as.getLabelField());
-      setSeparate(as.getSeparate());
     }
 
     getTransientPropertyMap().putAll(g.getTransientPropertyMap());

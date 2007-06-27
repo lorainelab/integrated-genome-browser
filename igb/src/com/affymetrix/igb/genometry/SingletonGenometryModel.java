@@ -76,7 +76,7 @@ public class SingletonGenometryModel {
     if (group == null) {
       //      System.out.println("  adding new seq group: " + group_id);
       group = new AnnotatedSeqGroup(group_id);
-      seq_groups.put(group.getID(), group);
+      addSeqGroup(group);
       //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
     }
     else {
@@ -85,7 +85,7 @@ public class SingletonGenometryModel {
     return group;
   }
 
-  protected void addSeqGroup(AnnotatedSeqGroup group) {
+  public void addSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.put(group.getID(), group);
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
   }
@@ -99,7 +99,7 @@ public class SingletonGenometryModel {
     return selected_group;
   }
 
-  // TODO: modify so that fireGroupSelectionEvent() is only called if 
+  // TODO: modify so that fireGroupSelectionEvent() is only called if
   //     gropu arg is different than previous selected_group
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {

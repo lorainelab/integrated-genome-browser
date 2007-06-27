@@ -408,7 +408,7 @@ public class SeqMapView extends JPanel
     this.setLayout(new BorderLayout());
 
     xzoombox = Box.createHorizontalBox();
-    SeqComboBoxView seq_chooser = new SeqComboBoxView();
+    SeqComboBoxView seq_chooser = new SeqComboBoxView(this);
     //    seq_chooser.setSize(new Dimension(5, 10));
     //    xzoombox.add(seq_chooser);
     //    seq_chooser.setSize(new Dimension(5, 10));
@@ -472,7 +472,6 @@ public class SeqMapView extends JPanel
 
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
   }
-
 
 
     // This preference change listener can reset some things, like whether
@@ -2933,34 +2932,42 @@ public class SeqMapView extends JPanel
     tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
   }
 
+
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
-    AnnotatedSeqGroup group = evt.getSelectedGroup();
-    if (Application.DEBUG_EVENTS) {
-      if (group != null) {
-        System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
-      }
-      else {
-        System.out.println("SeqMapView received seqGroupSelected() call, but group = null");
-      }
+    AnnotatedSeqGroup current_group = null;
+    AnnotatedSeqGroup new_group = evt.getSelectedGroup();
+    if (aseq instanceof SmartAnnotBioSeq) {
+      current_group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
     }
 
-    if ((aseq != null) && (aseq instanceof SmartAnnotBioSeq) &&
-        (((SmartAnnotBioSeq)aseq).getSeqGroup() == group) ) {
-      // don't clear if seq belongs to seq group...
+    if (Application.DEBUG_EVENTS) {
+        System.out.println("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
     }
-    else  {
+
+    if ((new_group != current_group) && (current_group != null))  {
+      //      ViewPersistenceUtils.saveGroupView(this);
+      //      ViewPersistenceUtils.saveSeqView(this);
       clear();
     }
   }
 
+
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-//    if (Application.DEBUG_EVENTS)  {
-      System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
-//    }
+    //    if (Application.DEBUG_EVENTS)  {
+    System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+    //    }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     // Don't worry if newseq is null, setAnnotatedSeq can handle that
     // (It can also handle the case where newseq is same as old seq.)
-    setAnnotatedSeq(newseq);
+    SeqSpan visible_span = this.getVisibleSpan();
+    BioSeq visible_seq = visible_span.getBioSeq();
+    if (visible_seq != newseq) {
+      //      ViewPersistenceUtils.saveSeqView(this);
+      setAnnotatedSeq(newseq);
+    }
+    // trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
+    // Maybe should change SingletonGenometryModel.setSelectedSeq() to only fire if seq changes...
+    //    setAnnotatedSeq(newseq);
   }
 
   public void seqModified(SeqModifiedEvent evt) {
@@ -2977,7 +2984,6 @@ public class SeqMapView extends JPanel
 
 
   JMenu navigation_menu = null;
-
   public JMenu getNavigationMenu(String menu_name) {
     if (navigation_menu == null) {
       navigation_menu = new JMenu(menu_name);

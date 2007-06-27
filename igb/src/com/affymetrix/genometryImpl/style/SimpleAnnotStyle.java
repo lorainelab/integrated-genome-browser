@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,9 +55,20 @@ public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleE
   public void setColorByScore(boolean b) {this.colorByScore = b;}
   public boolean getColorByScore() { return this.colorByScore;}
   
+  /** Default implementation returns the same as {@link #getColor()}. */
+  public Color getScoreColor(float f) { return getColor(); }
+  
   int depth=2;
   public void setGlyphDepth(int i) {this.depth = i;}
   public int getGlyphDepth() {return this.depth;}
+
+  boolean separate = true;
+  public void setSeparate(boolean b) { this.separate = b; }
+  public boolean getSeparate() { return this.separate; }
+  
+  String labelField = "id";
+  public void setLabelField(String s) { this.labelField = s; }
+  public String getLabelField() { return labelField; }
 
   public void copyPropertiesFrom(IAnnotStyle g) {
     super.copyPropertiesFrom(g);  
@@ -65,6 +77,9 @@ public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleE
       setUrl(as.getUrl());
       setColorByScore(as.getColorByScore());
       setGlyphDepth(as.getGlyphDepth());
+      setSeparate(as.getSeparate());
+      setLabelField(as.getLabelField());
     }
   }
+
 }

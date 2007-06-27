@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -33,10 +33,17 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.ContextualPopupListener;
+import com.affymetrix.igb.view.SeqMapView;
 
+
+/**
+ *  This class provides a popup menu for a SeqMapView to allow certain graph manipulations.
+ *  It is mostly an obsolete class, since most of the manipulations are now done without
+ *  using pop-up menus.
+ */
 public class GraphSelectionManager
   implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
   ContextualPopupListener, TierLabelManager.PopupListener {
@@ -127,18 +134,11 @@ public class GraphSelectionManager
   SeqMapView gviewer;
   JFrame frm;
 
-
-  public GraphSelectionManager(NeoWidgetI widg, JFrame f) {
-    this();
-    current_source = widg;
-    frm = f;
-  }
-
   public GraphSelectionManager(SeqMapView smv) {
     this();
     gviewer = smv;
-    current_source = smv.getSeqMap();
-    frm = gviewer.getFrame();
+    current_source = gviewer.getSeqMap();
+    frm = Application.getSingleton().getFrame();
   }
 
   protected GraphSelectionManager() {
@@ -277,7 +277,7 @@ public class GraphSelectionManager
       else if (src == thresh_graph) {
         if (current_graph instanceof SmartGraphGlyph) {
           if (second_current_graph != null || current_graph == null) {
-            ErrorHandler.errorPanel("ERROR", "Must select exactly one graph", gviewer.getSeqMap());
+            Application.errorPanel("ERROR", "Must select exactly one graph");
           } else {
             SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
             boolean show = ! sgg.getShowThreshold();
@@ -501,21 +501,23 @@ public class GraphSelectionManager
         }
       }
       catch (Exception ex) {
-         ErrorHandler.errorPanel("ERROR", "Error saving graph", gviewer.getSeqMap(), ex);
+         Application.errorPanel("Error saving graph", ex);
       } finally {
         if (ostr != null) try { ostr.close(); } catch (IOException ioe) {}
       }
     }
     else {
-      ErrorHandler.errorPanel("Can't Save", "Graph does not have associated GraphSym data model",
-        gviewer.getSeqMap());
+      Application.errorPanel("Can't Save", "Graph does not have associated GraphSym data model");
     }
   }
 
   void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
+    if (gviewer == null) {
+      Application.errorPanel("This action is invalid at this time");
+    }
     if (graphA == null || graphB == null) {
       // This error condition is likely never triggered
-      ErrorHandler.errorPanel("ERROR", "Must select exactly two graphs.", gviewer.getSeqMap());
+      Application.errorPanel("Must select exactly two graphs.");
     }
     String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
     if (error != null) {
@@ -715,6 +717,14 @@ public class GraphSelectionManager
   }
 
   public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SymWithProps primary_sym) {
+    
+    if (current_source == null) {
+      // if there is no NeoWidgetI set for the current_source, then we cannot convert
+      // selected symmetries into GlyphI's, so there is no point in adding items to
+      // a popup menu.
+      return;
+    }
+    
     Vector selected_graph_glyphs = new Vector(0);
     current_graph = null;
     second_current_graph = null;
@@ -723,7 +733,7 @@ public class GraphSelectionManager
     Iterator iter = selected_syms.iterator();
     while (iter.hasNext()) {
       SeqSymmetry sym = (SeqSymmetry) iter.next();
-      GlyphI g = gviewer.getSeqMap().getItem(sym);
+      GlyphI g = current_source.getItem(sym);
       if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add(g);
       }

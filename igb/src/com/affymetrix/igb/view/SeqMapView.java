@@ -133,24 +133,10 @@ public class SeqMapView extends JPanel
       AnnotatedBioSeq's annotations */
   boolean SHRINK_WRAP_MAP_BOUNDS = false;
 
-  /**
-   *  booleans for zooming performance testing.
-   *  strange results -- seeing a dramatic slowdown in zoom responsiveness when
-   *     the xzoomer is put in same JPanel as map, with borderlayout and
-   *     xzoomer "North" of map.  And it doesn't matter
-   *     whether it's a NeoScrollbar or an AdjustableJSlider, still see the slowdown.
-   *  BUT, if xzoomer is put "South" of map, don't see slowdown
-   *  AND, if internal xscroller is supressed, then don't see the slowdown even
-   *           if xzoomer is "North"
-   *  AND, if map is put in a JPanel (with BorderLayout, map at "Center"), and that
-   *     JPanel is nested within this (with BorderLayout, map_container_panel at
-   *     "Center"), and xzoomer is put in this at "North", don't see slowdown
-   */
   boolean NEO_XZOOMER = false;
   boolean NEO_YZOOMER = false;
   boolean INTERNAL_XSCROLLER = true;
   boolean INTERNAL_YSCROLLER = true;
-  boolean XZOOMER_IN_MAP_CONTAINER = false;
 
   JFrame frm;
   AffyTieredMap seqmap;
@@ -241,9 +227,6 @@ public class SeqMapView extends JPanel
   JMenuItem printMI = empty_menu_item;
   JMenuItem zoomclampMI = empty_menu_item;
   JMenuItem selectParentMI = empty_menu_item;
-  JMenuItem renumberMinMI = empty_menu_item;
-  JMenuItem renumberMaxMI = empty_menu_item;
-  JMenuItem revertCoordsMI = empty_menu_item;
   JMenuItem printSymmetryMI = empty_menu_item;
   JMenuItem slicendiceMI = empty_menu_item;
 
@@ -2846,7 +2829,7 @@ public class SeqMapView extends JPanel
    *    The array may instead contain two copies of one mixed-direction tier;
    *    in this case place glyphs for both forward and revers items into it.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
     return getTiers(meth, next_to_axis, style, true);
   }
 
@@ -2856,7 +2839,7 @@ public class SeqMapView extends JPanel
    *  be used.  Note: if style.isGraphTier() is true, then the given value of
    *  constant_height will be ignored and re-set to false.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style, boolean constant_heights) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
       if (style == null) {
         throw new NullPointerException();
       }

@@ -13,12 +13,13 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.genometry.SimpleSymWithProps;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
@@ -29,6 +30,9 @@ import java.util.*;
  *  GlyphElement.
  */
 public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
+
+  static final Class STYLE_PROPERTY_CLASS = IAnnotStyleExtended.class;
+  static final Class TIER_PROPERTY_CLASS = TierGlyph.class;
 
   Stylesheet stylesheet = null;
   PropertyMap context = new PropertyMap();
@@ -68,9 +72,9 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     // same as the contained items method
     String meth = SeqMapView.determineMethod(sym);
     //    if (meth == null)  { SeqUtils.printSymmetry(sym, "   ", true); }
-    AnnotStyle style = AnnotStyle.getInstance(meth);
+    IAnnotStyleExtended style = Application.getSingleton().getStyleForMethod(meth, false);
 
-    if (isContainer(sym)) {
+   if (isContainer(sym)) {
       for (int i=0; i<sym.getChildCount(); i++) {
         createGlyph(sym.getChild(i), gviewer, next_to_axis);
       }
@@ -89,10 +93,9 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     // the stylesheet may over-ride them.
 
     // Allow StyleElement access to the AnnotStyle if it needs it.
-    context.put(AnnotStyle.class.getName(), style);
-    context.put(TierGlyph.class.getName(), the_tier);
+    context.put(STYLE_PROPERTY_CLASS.getName(), style);
+    context.put(TIER_PROPERTY_CLASS.getName(), the_tier);
 
     drawable.symToGlyph(gviewer, sym, the_tier, stylesheet, context);
   }
-
 }

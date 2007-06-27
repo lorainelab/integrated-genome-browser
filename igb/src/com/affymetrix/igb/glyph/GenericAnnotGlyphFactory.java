@@ -196,7 +196,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
-  static Color getSymColor(SeqSymmetry insym, AnnotStyle style) {
+  static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
     boolean use_score_colors = style.getColorByScore();
     boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
     
@@ -279,8 +279,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     double thick_height = DEFAULT_THICK_HEIGHT;
     double thin_height = DEFAULT_THIN_HEIGHT;
     
-    // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
-    AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
+    IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
     
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;

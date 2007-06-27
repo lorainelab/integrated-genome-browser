@@ -27,8 +27,8 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.igb.genometry.SymWithProps;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.ExpandPacker;
+import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
@@ -233,7 +233,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
     
     GlyphI gl = null;
     if (knownGlyphType(type)) {
-      TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
+      TierGlyph tier_glyph = (TierGlyph) context.getProperty(XmlStylesheetGlyphFactory.TIER_PROPERTY_CLASS.getName());
       
       //SeqSymmetry transformed_sym = gviewer.transformForViewSeq(insym);
       //SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
@@ -344,7 +344,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
   static Color findColor(PropertyMap pm) {
     Color color = (Color) pm.getColor(PROP_KEY_COLOR);
     if (color == null || "".equals(color)) {
-      AnnotStyle style = (AnnotStyle) pm.get(AnnotStyle.class.getName());
+      IAnnotStyleExtended style = (IAnnotStyleExtended) pm.get(XmlStylesheetGlyphFactory.STYLE_PROPERTY_CLASS.getName());
       if (style != null) {
         color = style.getColor();
       }

@@ -1,5 +1,7 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GraphSliceOptimizer;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,7 +10,7 @@ import javax.swing.*;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.igb.Application;
 
 public class GraphSliceTester extends JComponent

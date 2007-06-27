@@ -22,17 +22,20 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.swing.threads.SwingWorker;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.GenometryViewer;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.swing.threads.SwingWorker;
 import javax.swing.treetable.*;
 
 import javax.swing.event.*;  // temporary visualization till hooked into IGB

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.das.DasLoader;
 import java.io.*;
 import java.net.*;

@@ -20,7 +20,8 @@ import javax.swing.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.glyph.GraphGlyph;
 
 public class TierLabelManager {

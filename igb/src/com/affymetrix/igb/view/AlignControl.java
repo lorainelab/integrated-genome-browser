@@ -19,12 +19,12 @@ import javax.swing.*;
 import java.io.*;
 import java.net.*;
 
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-// import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.genometry.*;
 
 /**
  *  AlignControl tries to display other seq of a pairwise alignment in

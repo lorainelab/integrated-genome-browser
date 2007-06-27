@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.glyph.GraphStateI;
-import com.affymetrix.igb.glyph.HeatMap;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
-import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.Color;
 import java.util.*;

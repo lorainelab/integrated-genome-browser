@@ -17,10 +17,6 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.IntList;
 
 /**
  *  NO LONGER USED, USE GraphSymUtils.transformGraphSym() instead

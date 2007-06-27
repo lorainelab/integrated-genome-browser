@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 public class Das2ServerInfo  {
   static boolean DEBUG_SOURCES_QUERY = false;

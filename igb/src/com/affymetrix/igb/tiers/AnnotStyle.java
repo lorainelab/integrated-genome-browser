@@ -12,12 +12,13 @@
 */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.*;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.igb.glyph.HeatMap;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class AnnotStyle implements IAnnotStyleExtended {

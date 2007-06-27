@@ -13,6 +13,9 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -29,7 +32,6 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
 public class SeqSearchView extends JComponent implements ActionListener  {

@@ -20,8 +20,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 
-import com.affymetrix.igb.util.CharIterator;
-import com.affymetrix.igb.util.ImprovedStringCharIter;
+import com.affymetrix.genometryImpl.util.CharIterator;
+import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 
 /**
  * Modified version of {@link com.affymetrix.genoviz.glyph.SequenceGlyph}.

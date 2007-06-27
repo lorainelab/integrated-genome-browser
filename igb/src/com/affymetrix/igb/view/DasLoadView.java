@@ -13,15 +13,18 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.AnnotatedBioSeq;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 import javax.swing.*;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.das.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.swing.threads.SwingWorker;
 

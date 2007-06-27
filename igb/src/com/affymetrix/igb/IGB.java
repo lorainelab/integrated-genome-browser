@@ -21,34 +21,39 @@ import java.util.*;
 import java.util.prefs.*;
 
 import com.affymetrix.genoviz.util.Memer;
-import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.tiers.MultiWindowTierMap;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
+import com.affymetrix.igb.das2.*;
+import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.util.EPSWriter;
+import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.ViewPersistenceUtils;
 import com.affymetrix.swing.DisplayUtils;
-import com.affymetrix.igb.das.DasDiscovery;
-import com.affymetrix.igb.das2.*;
 
 
 

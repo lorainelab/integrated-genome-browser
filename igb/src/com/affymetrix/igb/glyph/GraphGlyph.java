@@ -20,6 +20,8 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.HeatMap;
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles

@@ -13,10 +13,9 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;

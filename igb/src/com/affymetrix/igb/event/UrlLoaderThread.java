@@ -19,15 +19,13 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.parsers.BpsParser;
-import com.affymetrix.igb.parsers.Das1FeatureSaxParser;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
-import com.affymetrix.igb.parsers.PSLParser;
 import org.xml.sax.InputSource;
 
 public class UrlLoaderThread extends Thread {

@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
-import com.affymetrix.igb.util.IntList;
+import com.affymetrix.genometryImpl.util.IntList;
 
 public class GenotypeGlyph extends SolidGlyph {
 

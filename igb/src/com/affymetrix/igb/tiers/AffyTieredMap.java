@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;

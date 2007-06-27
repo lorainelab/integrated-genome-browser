@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.FileTracker;

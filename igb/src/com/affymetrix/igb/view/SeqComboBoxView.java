@@ -6,9 +6,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.*;
+
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.ViewPersistenceUtils;
 

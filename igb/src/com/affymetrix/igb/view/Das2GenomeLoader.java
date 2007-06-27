@@ -1,5 +1,7 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -8,7 +10,7 @@ import javax.swing.tree.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ViewPersistenceUtils;

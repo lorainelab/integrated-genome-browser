@@ -13,14 +13,17 @@
 
 package com.affymetrix.igb.das;
 
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.SeqSpanComparator;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 

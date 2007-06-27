@@ -5,6 +5,9 @@ import java.util.prefs.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.view.SeqMapView;

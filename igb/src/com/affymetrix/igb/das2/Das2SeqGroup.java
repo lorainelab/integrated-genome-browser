@@ -3,7 +3,8 @@ package com.affymetrix.igb.das2;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 
 /**
  *  

@@ -18,8 +18,6 @@ import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
-import java.util.prefs.Preferences;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genoviz.awt.*;
@@ -34,34 +32,40 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
-import com.affymetrix.igb.genometry.Versioned;
+import com.affymetrix.genometryImpl.Versioned;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.util.CharIterator;
-import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.UnibrowControlUtils;
-import com.affymetrix.igb.util.ObjectUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SeqSymStartComparator;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
-import com.affymetrix.igb.genometry.TypeContainerAnnot;
-import com.affymetrix.igb.genometry.ScoredContainerSym;
-import com.affymetrix.igb.parsers.CytobandParser;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.parsers.*;
+import com.affymetrix.genometryImpl.util.CharIterator;
+import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.ObjectUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.util.UnibrowControlUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.WebBrowserControl;
+import java.util.prefs.PreferenceChangeEvent;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,

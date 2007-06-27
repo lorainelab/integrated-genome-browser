@@ -17,7 +17,7 @@ import java.io.*;
 import java.net.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
 
 
 public class UnibrowControlUtils {

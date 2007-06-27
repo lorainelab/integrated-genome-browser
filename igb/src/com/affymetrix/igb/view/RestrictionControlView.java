@@ -22,7 +22,7 @@ import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;

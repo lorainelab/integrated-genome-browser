@@ -16,18 +16,21 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.xml.sax.InputSource;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.parsers.*;
-
-import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;  // just need for diagnostics
-import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for diagnostics
+import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SeqSymSummarizer;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.CompositeGraphSym;
+import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.igb.menuitem.DasFeaturesAction2;
+import com.affymetrix.igb.parsers.*;
 
 /*
  * Desired optimizations:
@@ -48,6 +51,9 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;  // just need for
  *  Chain together with a CompositeOptimizer?
  *
  */
+import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import org.xml.sax.InputSource;
 public class Das2ClientOptimizer {
   static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
   static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;

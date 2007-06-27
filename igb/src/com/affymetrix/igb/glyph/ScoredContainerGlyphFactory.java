@@ -13,18 +13,26 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.IndexedSym;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.parsers.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
+
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.util.FloatList;
+import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.IntList;
+import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 

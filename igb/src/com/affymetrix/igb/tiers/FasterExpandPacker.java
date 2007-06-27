@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.igb.util.DoubleList;
+import com.affymetrix.genometryImpl.util.DoubleList;
 
 /**
  *

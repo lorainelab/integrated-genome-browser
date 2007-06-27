@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.das2;
 
-import com.affymetrix.igb.genometry.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 
 /**
  *  NOT YET USED

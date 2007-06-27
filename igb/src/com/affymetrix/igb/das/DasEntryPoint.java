@@ -15,7 +15,7 @@ package com.affymetrix.igb.das;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 
 public class DasEntryPoint {

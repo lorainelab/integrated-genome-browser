@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 import java.io.*;
 import java.util.*;
 import java.net.MalformedURLException;
@@ -21,9 +20,10 @@ import com.affymetrix.igb.bookmarks.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
-import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.servlets.UnibrowControlServer;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.event.*;
 
 /**
  *  A class for reading and parsing a file of Bookmarks.

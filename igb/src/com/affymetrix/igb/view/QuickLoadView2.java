@@ -27,18 +27,25 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.*;
 
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.event.*;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.*;
-import com.affymetrix.igb.parsers.LiftParser;
-import com.affymetrix.igb.parsers.ChromInfoParser;
-import com.affymetrix.igb.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class QuickLoadView2 extends JComponent

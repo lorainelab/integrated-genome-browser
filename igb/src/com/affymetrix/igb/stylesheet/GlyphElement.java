@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.glyph.ArrowGlyph;
 import com.affymetrix.genoviz.glyph.BridgeGlyph;
 import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.ExpandPacker;

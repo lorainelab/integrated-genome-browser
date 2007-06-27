@@ -22,8 +22,8 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 

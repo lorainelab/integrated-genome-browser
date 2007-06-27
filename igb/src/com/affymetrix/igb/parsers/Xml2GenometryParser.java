@@ -36,8 +36,8 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.igb.das.DasLoader;
 
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SeqSymStartComparator;
 
 import com.affymetrix.igb.util.GenometryViewer;  // for testing main
 

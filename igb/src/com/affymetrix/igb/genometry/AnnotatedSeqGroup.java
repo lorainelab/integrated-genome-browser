@@ -232,6 +232,9 @@ public class AnnotatedSeqGroup {
     return aseq;
   }
 
+  /**
+   *  Adds seq if don't already have a seq with same ID
+   */
   public void addSeq(MutableAnnotatedBioSeq seq) {
     // It would be nice to require that all children seqs be SmartAnnotBioSeqs,
     // but there is still some code in the internal Affy code that might be

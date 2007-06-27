@@ -47,8 +47,15 @@ public class Das2Region {
     versioned_source = source;
     AnnotatedSeqGroup genome = versioned_source.getGenome();
     // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
-    aseq = genome.getSeq(name);
-    if (aseq == null) { aseq = genome.getSeq(this.getID()); }
+    //   check for prior existence of BioSeq for Das2Region only if genome group is _not_ a Das2SeqGroup
+    //      if group is a Das2SeqGroup, then calling getSeq() will trigger infinite loop as group attempts
+    //      to initialize sequences via Das2VersionedSources.getSegments()
+    //   But if genome is a Das2SeqGroup, then can assume that no seqs are in group that aren't
+    //      being put there in this constructor, and these will be unique, so can skip check for prior existence
+    if (! (genome instanceof Das2SeqGroup)) {
+      aseq = genome.getSeq(name);
+      if (aseq == null) { aseq = genome.getSeq(this.getID()); }
+    }
     // b) if can't find a previously seen genome for this DasSource, then
     //     create a new genome entry
     if (aseq == null) {
@@ -76,7 +83,7 @@ public class Das2Region {
 
 
   /**
-   *  Basic retrieval of DAS/2 features, without optimizations 
+   *  Basic retrieval of DAS/2 features, without optimizations
    *  (see {@link Das2ClientOptimizer} for that).
    *  Retrieves features from a DAS2 server based on inforation in the Das2FeatureRequestSym.
    *  Takes an uninitialized Das2FeatureRequestSym as an argument,
@@ -147,7 +154,7 @@ public class Das2Region {
 	String response_message = query_con.getResponseMessage();
 
         request_log.setHttpResponse(response_code, response_message);
-        
+
 	InputStream istr = query_con.getInputStream();
 	BufferedInputStream bis = new BufferedInputStream(istr);
 	List feats = parser.parse(new InputSource(bis), feature_query, getVersionedSource().getGenome(), false);

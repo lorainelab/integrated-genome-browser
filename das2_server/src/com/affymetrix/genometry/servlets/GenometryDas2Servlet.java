@@ -16,10 +16,16 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
-import com.affymetrix.igb.genometry.*;
+// import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
-import com.affymetrix.igb.util.SynonymLookup;
+// import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.das2.Das2Coords;
+
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+
+
 
 
 /**
@@ -113,7 +119,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     genomeid2coord.put("Drosophila_Apr_2004",
 		     new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
 				    "BDGP", "7227", "4", "Chromosome", null));
-    
+
     WINDOWS_OS_TEST = System.getProperty("os.name").startsWith("Windows");
   }
 
@@ -517,10 +523,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
     String type_name;
     String new_type_prefix;
     if (type_prefix == null)  {  // special-casing for top level genome directory, don't want genome name added to type name path
-      type_name = file_name; 
-      new_type_prefix = ""; 
+      type_name = file_name;
+      new_type_prefix = "";
     }
-    else  { 
+    else  {
       type_name = type_prefix + file_name;
       new_type_prefix = type_name + "/";
     }
@@ -989,7 +995,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
        *      of the results of each of these filters individually
        *  Then take intersection of results of each different filter name
        *  (OR similar filters, AND different filters [ except excludes ] )
-       *  
+       *
        *  General query strategy:
        *  [NOT SURE WHAT TO DO YET ABOUT COORDINATES FILTERS]
        *    if any link, note, or prop filter, then return empty results
@@ -1000,14 +1006,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
        *       if 1 type, then make sure server supports returning that type in that format
        *    if just name filter:
        *        special case to search for names...
-       *    else: 
+       *    else:
        *      if no type given, then return "REQUEST TOO LARGE" error
        *      else for each type:
-       *       for each segment:  
+       *       for each segment:
        *          for each overlap:
        *               collect (top-level) RESULTS syms with given type, segment, and overlap range
        *    for each sym in RESULTS
-       *        filter by inside(s) 
+       *        filter by inside(s)
        *        filter by exclude(s)
        *        filter by name(s)
        *
@@ -1181,9 +1187,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
 	//	if (query_type.endsWith(".bar")) {
-	if ((graph_name2dir.get(query_type) != null) || 
+	if ((graph_name2dir.get(query_type) != null) ||
 	    (graph_name2file.get(query_type) != null)  ||
-	    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  || 
+	    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
 	    (query_type.endsWith(".bar")) )   {
 	  handleGraphRequest(request, response, query_type, overlap_span);
 	  return;
@@ -1321,7 +1327,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *  1) looks for graph files in graph seq grouping directories (".graphs.seqs")
    *  if not 1), then
    *     2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
-   *     if not 2), then 
+   *     if not 2), then
    *        3) tries to directly access file
    */
   public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response,
@@ -1335,15 +1341,15 @@ public class GenometryDas2Servlet extends HttpServlet  {
     String graph_name = type;   // for now using graph_name as graph type
 
     boolean use_graph_dir = false;
-    String file_path = (String)graph_name2dir.get(graph_name);  
-    if (file_path != null) { use_graph_dir = true; }  
+    String file_path = (String)graph_name2dir.get(graph_name);
+    if (file_path != null) { use_graph_dir = true; }
     if (file_path == null) { file_path = (String)graph_name2file.get(graph_name); }
     if (file_path == null) { file_path = graph_name; }
 
     if (use_graph_dir) {
       file_path += "/" + seqid + ".bar";
     }
-    
+
     if (file_path.startsWith("file:")) {  // if file_path is URI string, strip off "file:" prefix
       if (WINDOWS_OS_TEST) {
 	file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);

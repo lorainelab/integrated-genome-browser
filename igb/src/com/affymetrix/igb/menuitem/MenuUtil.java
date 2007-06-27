@@ -13,10 +13,14 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.Application;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import java.awt.event.InputEvent;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 public abstract class MenuUtil {
 
@@ -136,5 +140,60 @@ public abstract class MenuUtil {
       // It isn't a big deal if we can't find the icon, just return null
     }
     return icon;    
+  }
+
+  public static Action configureAction(Action a, String key) {
+    ResourceBundle bundle = Application.getSingleton().getResourceBundle();
+    
+    String name = null;
+    try {
+      name = bundle.getString(key + "_menu");
+    } catch (MissingResourceException mre) {
+      System.out.println("mre: " + mre.getKey());
+    }
+    String icon_name = null;
+    try {
+      icon_name = bundle.getString(key + "_icon");
+    } catch (MissingResourceException mre) {
+      System.out.println("mre: " + mre.getKey());
+    }
+
+    String description = null;
+    try {
+      description = bundle.getString(key + "_desc");
+    } catch (MissingResourceException mre) {
+      System.out.println("mre: " + mre.getKey());
+    }
+    int mnemonic = 0;
+
+    String accel_string = null;
+    try {
+      bundle.getString(key + "_stroke");
+    } catch (MissingResourceException mre) {
+      System.out.println("mre: " + mre.getKey());
+    }
+    KeyStroke accel = null;
+    if (accel_string != null && accel_string.length() > 0) {
+      Character accel_key = new Character(accel_string.charAt(0));
+      accel = KeyStroke.getKeyStroke(accel_key, InputEvent.CTRL_DOWN_MASK);
+    }
+
+    if (name != null) { 
+      a.putValue(Action.NAME, name); 
+    }    
+    if (icon_name != null) {
+      a.putValue(Action.SMALL_ICON, MenuUtil.getIcon(icon_name));
+    }
+    if (description != null) { 
+      a.putValue(Action.SHORT_DESCRIPTION, description);
+    }
+    if (mnemonic != 0) { 
+      a.putValue(Action.MNEMONIC_KEY, new Integer(mnemonic));
+    }
+    if (accel != null) { 
+      a.putValue(Action.ACCELERATOR_KEY, accel);
+    }
+
+    return a;
   }
 }

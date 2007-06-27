@@ -30,6 +30,7 @@ import com.affymetrix.igb.glyph.GraphStateI;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
 import com.affymetrix.igb.tiers.IAnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -102,7 +103,6 @@ implements SeqSelectionListener, SymSelectionListener {
       }
    };
    
-   
   JButton selectAllB = new JButton(select_all_graphs_action);
   JButton saveB = new JButton(save_selected_graphs_action);
   JButton deleteB = new JButton(delete_selected_graphs_action);
@@ -131,6 +131,11 @@ implements SeqSelectionListener, SymSelectionListener {
     } else {
       this.gviewer = app.getMapView();
     }
+
+    MenuUtil.configureAction(delete_selected_graphs_action, "delete_selected_graphs");
+    MenuUtil.configureAction(graph_threshold_action, "graph_threshold");
+    MenuUtil.configureAction(save_selected_graphs_action, "save_selected_graphs");
+    MenuUtil.configureAction(select_all_graphs_action, "select_all_graphs");
 
     Vector v = new Vector(8);
     v.add(HeatMap.HEATMAP_0);

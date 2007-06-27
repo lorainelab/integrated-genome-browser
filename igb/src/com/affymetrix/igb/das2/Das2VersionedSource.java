@@ -140,14 +140,15 @@ public class Das2VersionedSource  {
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
 	  System.out.println("@@@@  Adding genome: " + groupid);
-	  genome = gmodel.addSeqGroup(groupid); 
+	  //	  genome = gmodel.addSeqGroup(groupid); 
+	  genome = new Das2SeqGroup(this, groupid);
 	}
 	else {
 	  System.out.println("@@@@  Adding genome: " + coords_uri);
-	  genome = gmodel.addSeqGroup(coords_uri.toString());
+	  // genome = gmodel.addSeqGroup(coords_uri.toString());
+	  genome = new Das2SeqGroup(this, coords_uri.toString());
 	}
-	
-
+	gmodel.addSeqGroup(genome);
       }
     }
     return genome;

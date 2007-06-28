@@ -4,7 +4,7 @@
  *
  * Created on August 24, 2006, 10:28 AM
  */
-package com.affymetrix.igb.genometry;
+package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.GFF3Sym;
 import junit.framework.*;

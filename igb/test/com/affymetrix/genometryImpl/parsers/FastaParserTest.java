@@ -1,8 +1,8 @@
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import junit.framework.*;
 import java.io.*;
 

@@ -1,14 +1,12 @@
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SimpleSeqSymmetry;
+import com.affymetrix.genometryImpl.*;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.SimpleSeqSymmetry;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.UcscBedSym;
 
 public class BedParserTest extends TestCase {
   

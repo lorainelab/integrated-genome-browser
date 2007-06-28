@@ -5,14 +5,14 @@
  * Created on October 6, 2006, 3:19 PM
  */
 
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SymWithProps;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SymWithProps;
 
 /**
  *

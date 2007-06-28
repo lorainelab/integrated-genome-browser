@@ -1,15 +1,11 @@
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.UcscGffSym;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import java.util.regex.*;
-import com.affymetrix.genoviz.util.Memer;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometry.util.*;
-import com.affymetrix.igb.genometry.*;
 
 public class GFFParserTest extends TestCase {
   

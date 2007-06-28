@@ -5,16 +5,17 @@
  * Created on October 18, 2006, 2:36 PM
  */
 
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.Scored;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.style.GraphStateI;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.glyph.GraphState;
 
 /**
  *
@@ -72,7 +73,7 @@ public class WiggleParserTest extends TestCase {
     assertEquals("variableStep", gr1.getID());
     assertEquals("fixedStep", gr2.getID());
 
-    GraphState state = gr1.getGraphState();
+    GraphStateI state = gr1.getGraphState();
     assertEquals(0.0, state.getVisibleMinY(), 0.00001);
     assertEquals(25.0, state.getVisibleMaxY(), 0.00001);
     

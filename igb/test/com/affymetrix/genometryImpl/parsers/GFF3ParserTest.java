@@ -4,15 +4,15 @@
  *
  * Created on August 18, 2006, 4:49 PM
  */
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GFF3Sym;
 import junit.framework.*;
 import java.io.*;
 import java.util.*;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.*;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.GFF3Sym;
 
 /**
  * Tests of class {@link com.affymetrix.igb.parsers.GFF3Parser}.

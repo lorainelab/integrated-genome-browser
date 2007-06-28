@@ -1,4 +1,4 @@
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.util.*;

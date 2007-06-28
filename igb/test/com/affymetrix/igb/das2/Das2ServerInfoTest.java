@@ -8,13 +8,7 @@
 package com.affymetrix.igb.das2;
 
 import junit.framework.*;
-import java.io.*;
-import java.net.*;
 import java.util.*;
-import org.w3c.dom.*;
-import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 /**
  *

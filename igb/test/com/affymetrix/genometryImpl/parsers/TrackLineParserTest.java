@@ -5,13 +5,9 @@
  * Created on October 13, 2006, 5:08 PM
  */
 
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
 import junit.framework.*;
-import java.awt.*;
-import java.util.*;
-import java.util.regex.*;
-import com.affymetrix.igb.tiers.AnnotStyle;
 
 public class TrackLineParserTest extends TestCase {
 

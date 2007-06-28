@@ -77,7 +77,7 @@ public class Das2ServerInfoTest extends TestCase {
             assertNotNull(version.getID());
             
             //regions
-            Map regions = version.getRegions();
+            Map regions = version.regions;
             Iterator riter = regions.values().iterator();
             while (riter.hasNext()) {
               Das2Region region = (Das2Region)riter.next();

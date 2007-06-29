@@ -1,7 +1,7 @@
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.igb.tiers.IAnnotStyleExtended;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;

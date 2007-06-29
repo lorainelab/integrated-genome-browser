@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.swing.ColorIcon;
 import java.awt.*;
 import java.awt.event.*;
@@ -35,6 +36,7 @@ import javax.swing.*;
 
   public static final String COMPONENT_STATE_TAB = "TAB";
   public static final String COMPONENT_STATE_WINDOW = "WINDOW";
+
 
   /** The name of a boolean preference. */
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
@@ -356,6 +358,10 @@ import javax.swing.*;
   
   public static Preferences getLocationsNode() {
     return UnibrowPrefsUtil.getTopNode().node("locations");
+  }
+
+  public static Preferences getGenomesNode() {
+    return UnibrowPrefsUtil.getTopNode().node("genomes");
   }
 
   public static String getLocation(String name, String default_value) {

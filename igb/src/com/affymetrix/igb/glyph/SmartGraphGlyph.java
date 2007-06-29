@@ -22,13 +22,15 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.util.FloatList;
+import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.igb.util.FloatList;
-import com.affymetrix.igb.util.IntList;
 
 /**
  *  A smarter graph glyph.
@@ -63,7 +65,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   boolean CALC_GRAPH_CACHE = true;
   boolean CACHE_DIRECT_DRAW = false;
 
-  public static final int MINMAXAVG = 4;
+  public static final int MINMAXAVG = GraphStateI.MINMAXAVG;
   public static final int MINMAXAVG_BARS = 101;  // NOT YET IMPLEMENTED
   public static final int MINMAXAVG_STAIRSTEP = 102;  // NOT YET IMPLEMENTED
 

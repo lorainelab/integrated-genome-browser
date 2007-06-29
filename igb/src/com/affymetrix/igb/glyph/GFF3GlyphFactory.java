@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.GFF3Sym;
-import com.affymetrix.igb.genometry.TypeContainerAnnot;
-import com.affymetrix.igb.parsers.GFF3Parser;
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;

@@ -14,6 +14,9 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.event.UrlLoaderThread;
 
 // Java
@@ -35,11 +38,11 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.NibbleBioSeq; // should replace with Versioned interface...
+import com.affymetrix.genometryImpl.NibbleBioSeq; // should replace with Versioned interface...
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.SynonymLookup;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler implements ActionListener {

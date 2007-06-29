@@ -1,12 +1,14 @@
 package com.affymetrix.igb.servlets;
 
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
 
 public class Das2WritebackDevel extends HttpServlet  {

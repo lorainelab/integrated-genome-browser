@@ -1,8 +1,8 @@
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.UcscGffSym;
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.tiers.*;
 import java.awt.*;
 

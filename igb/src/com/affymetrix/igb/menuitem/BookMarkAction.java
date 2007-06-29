@@ -25,14 +25,17 @@ import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.genometry.*;
 
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.*;
 
-import com.affymetrix.igb.util.UniFileFilter;
+import com.affymetrix.genometryImpl.util.UniFileFilter;
 
 import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.igb.util.ErrorHandler;

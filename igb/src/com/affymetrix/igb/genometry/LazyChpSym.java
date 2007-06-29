@@ -4,13 +4,14 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
-import com.affymetrix.igb.util.StringUtils;
+import com.affymetrix.genometryImpl.util.StringUtils;
 
 import affymetrix.calvin.data.*;
 

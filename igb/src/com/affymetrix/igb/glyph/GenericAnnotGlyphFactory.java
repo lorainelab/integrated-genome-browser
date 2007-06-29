@@ -13,6 +13,10 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.SupportsCdsSpan;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.Scored;
+import com.affymetrix.genometryImpl.GFF3Sym;
 import java.awt.*;
 import java.util.*;
 
@@ -24,9 +28,10 @@ import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 

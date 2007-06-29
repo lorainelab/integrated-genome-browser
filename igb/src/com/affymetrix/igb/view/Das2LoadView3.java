@@ -159,7 +159,10 @@ public class Das2LoadView3 extends JComponent
     final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     splitpane.setLeftComponent(new JScrollPane(tree));
-    splitpane.setRightComponent(types_panel);
+    tpane.addTab("Load by Location", types_panel);
+    tpane.addTab("Name Search", namesearchP);
+    //    splitpane.setRightComponent(types_panel);
+    splitpane.setRightComponent(tpane);
 
     // As soon as this component becomes visible, set the splitpane position
     this.addComponentListener(new ComponentAdapter() {
@@ -514,8 +517,11 @@ public class Das2LoadView3 extends JComponent
 		  Executor vexec = ThreadUtils.getPrimaryExecutor(version);
 		  final Das2VersionTreeNode version_node = addVersionToTree(version);
 		  boolean type_load = Das2TypeState.checkLoadStatus(version);
-		  if (type_load) {
+		  if (type_load || 
+		      server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME))  {
 		    // at least one annotation type for this genome (version) has pref set to {load = true}
+		    //   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded 
+		    //         in the tree regardless of type load status...)
 		    //   therefore calling version.getTypes() on separate thread (in case it triggers long access to DAS/2 server)
 		    // once types are populated then in event thread call version_node.getChildCount(),
 		    //   which trigger version_node.populate() to add type nodes to tree structure
@@ -540,8 +546,9 @@ public class Das2LoadView3 extends JComponent
 
 			  // If Das2VersionedSource is from IGB's default DAS/2 server for this genome, then 
 			  //     want to automatically expand tree to show it's available types
-			  if (version.getSource().getServerInfo() == 
-			      Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
+			  //			  if (version.getSource().getServerInfo() == 
+			  //  Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
+			  if (server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
 			    TreeNode[] path_array = version_node.getPath(); 
 			    TreePath path = new TreePath(path_array); 
 			    tree.expandPath(path);
@@ -673,6 +680,7 @@ public class Das2LoadView3 extends JComponent
 	  Object src = evt.getSource();
 	  if (src instanceof Das2TypeState) {
 	    Das2TypeState tstate = (Das2TypeState)src;
+	    Das2Type dtype = tstate.getDas2Type();
 	    DefaultMutableTreeNode node = (DefaultMutableTreeNode)tstate2node.get(tstate);
 	    TreePath node_path = new TreePath(node.getPath());
 	    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
@@ -681,6 +689,24 @@ public class Das2LoadView3 extends JComponent
 	    if (checked != load) {
 	      if (load) { ctmodel.addSelectionPath(node_path); }
 	      else { ctmodel.removeSelectionPath(node_path); }
+	    }
+	    if (load) {
+	      // either load turned on or change in load strategy, 
+	      //    but either way if load strategy is WHOLE_SEQUENCE, fire off DAS/2 whole seq 
+	      //        request for this type 
+	      //    (if this annotation type for whole seq already loaded then request will get supressed in optimizer)
+	      if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
+		MutableAnnotatedBioSeq seq = gmodel.getSelectedSeq();
+		Das2Region region= version.getSegment(seq);
+		SeqSpan overlap = new SimpleSeqSpan(0, seq.getLength(), seq);
+		if (region != null) {
+		  Das2FeatureRequestSym request_sym =
+		    new Das2FeatureRequestSym(dtype, region, overlap, null);
+		  ArrayList requests = new ArrayList();
+		  requests.add(request_sym);
+		  processFeatureRequests(requests, true);
+		}
+	      }
 	    }
 	  }
 	}

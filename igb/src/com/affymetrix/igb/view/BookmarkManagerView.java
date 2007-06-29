@@ -121,7 +121,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
   
   public void setApplication(Application app) {
-    if (app != null) {
+    if (app != null && app.getPluginInstance(this.getClass()) != this) {
       app.setPluginInstance(this.getClass(), this);
     }
     thing.setApplication(app);

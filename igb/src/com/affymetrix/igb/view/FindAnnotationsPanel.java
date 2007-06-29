@@ -15,10 +15,10 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.SynonymLookup;
 
 import java.awt.event.*;
 import java.util.*;

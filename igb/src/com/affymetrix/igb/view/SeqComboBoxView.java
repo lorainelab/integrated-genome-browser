@@ -6,26 +6,32 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
 
-import com.affymetrix.igb.IGB;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.event.*;
+
 import com.affymetrix.genometry.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.util.ViewPersistenceUtils;
 
 public class SeqComboBoxView extends JComponent
   implements ItemListener, ActionListener,
 	     GroupSelectionListener, SeqSelectionListener {
 
   static boolean DEBUG_EVENTS = false;
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  AnnotatedBioSeq selected_seq = null;
-  JLabel seqL;
-  JComboBox seqCB;
-  JButton genomeB;
   static final String SELECT_A_SEQUENC = "Select a seq";
   static final String NO_SEQUENCES = "No seqs to select";
   static final String NO_SEQ_SELECTED = "No seq selected";
 
-  public SeqComboBoxView() {
+  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  AnnotatedBioSeq selected_seq = null;
+  SeqMapView gviewer;
+  JLabel seqL;
+  JComboBox seqCB;
+  JButton genomeB;
+
+  public SeqComboBoxView(SeqMapView gviwer) {
+    this.gviewer = gviwer;
     // need to set maximum x size of seqL and seqCB (or entire SeqComboBoxView), so doesn't grab space needed by other parts of GUI
     JLabel genomeL = new JLabel("Genome: ");
     JComboBox genomeCB = new JComboBox();
@@ -52,7 +58,7 @@ public class SeqComboBoxView extends JComponent
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == genomeB) {
-      Das2GenomeLoader.showGenomeChooserDialog();
+      Das2GenomeLoader.showGenomeChooserDialog(gviewer);
     }
   }
 
@@ -126,6 +132,13 @@ public class SeqComboBoxView extends JComponent
         if (group != null) { aseq = group.getSeq(seqid); }
 	if (gmodel.getSelectedSeq() != aseq) {  // to catch bounces from seqSelectionChanged() setting of selected item
 	  gmodel.setSelectedSeq(aseq);
+	  SeqSpan span = ViewPersistenceUtils.restoreSeqVisibleSpan(gviewer);
+	  if (span == null) {
+	    // if no stored visible span pref, then what?
+	    //   a) zoom to full chromosome span
+	    //   b) zoom to soem smaller region
+	    //   c) do nothing (SeqMapView might then force zoom to full chromosome span?)
+	  }
 	}
       }
     }
@@ -134,6 +147,6 @@ public class SeqComboBoxView extends JComponent
     //    }
   }
 
-  
+
 
 }

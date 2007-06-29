@@ -19,12 +19,12 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.glyph.GraphState;
-import com.affymetrix.igb.glyph.GraphStateI;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.IAnnotStyle;
 
 import java.awt.Adjustable;
 import java.awt.event.*;

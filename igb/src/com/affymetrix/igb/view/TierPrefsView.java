@@ -23,8 +23,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.*;
 

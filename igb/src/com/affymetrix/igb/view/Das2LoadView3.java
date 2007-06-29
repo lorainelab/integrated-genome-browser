@@ -22,17 +22,20 @@ import javax.swing.table.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
 
-import com.affymetrix.igb.Application;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.swing.threads.SwingWorker;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.ThreadUtils;  // for calling getPrimaryExecutor()
+import com.affymetrix.swing.threads.SwingWorker;
 import javax.swing.event.*;
 
 import skt.swing.tree.check.CheckTreeManager;
@@ -467,7 +470,7 @@ public class Das2LoadView3 extends JComponent
 
       // need to reset table before populating tree
       //    (because tree population may trigger table population)
-      System.out.println("********** resetting table **********");
+      //      System.out.println("********** resetting table **********");
       types_table_model = new Das2TypesTableModel(check_tree_manager);
       types_table.setModel(types_table_model);
       TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
@@ -494,7 +497,7 @@ public class Das2LoadView3 extends JComponent
 
 	SwingWorker server_worker = new SwingWorker() {
 	    public Object construct() {
-	      if (ADD_DELAYS)  { try { thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
+	      if (ADD_DELAYS)  { try { Thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
 	      Collection vers = server.getVersionedSources(cgroup);
 	      return vers;
 	    }
@@ -520,7 +523,7 @@ public class Das2LoadView3 extends JComponent
 		    //     types with preferences {load = true}
 		    SwingWorker types_worker = new SwingWorker() {
 			public Object construct() {
-			  if (ADD_DELAYS)  { try { thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
+			  if (ADD_DELAYS)  { try { Thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
 			  if (ADD_DELAYS)  { System.out.println("--------  types worker woke up from sleep"); }
 			  // version.getTypes() will trigger call to DAS/2 server if necessary
 			  Map types = version.getTypes();
@@ -611,7 +614,7 @@ public class Das2LoadView3 extends JComponent
   }
 
   public synchronized void clearTreeView() {
-    System.out.println("*********** clearTreeView() called *********");
+    //    System.out.println("*********** clearTreeView() called *********");
     server2node.clear();
     source2node.clear();
     version2node.clear();

@@ -18,7 +18,6 @@ import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 import com.affymetrix.genoviz.awt.*;
@@ -33,34 +32,39 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
-import com.affymetrix.igb.genometry.SimpleSymWithProps;
-import com.affymetrix.igb.genometry.GraphSym;
-import com.affymetrix.igb.genometry.NibbleBioSeq;
-import com.affymetrix.igb.genometry.Versioned;
+import com.affymetrix.genometryImpl.Versioned;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.util.CharIterator;
-import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.SynonymLookup;
-import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.UnibrowControlUtils;
-import com.affymetrix.igb.util.ObjectUtils;
-import com.affymetrix.igb.genometry.SymWithProps;
-import com.affymetrix.igb.genometry.SeqSymStartComparator;
-import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
-import com.affymetrix.igb.genometry.SmartAnnotBioSeq;
-import com.affymetrix.igb.genometry.TypeContainerAnnot;
-import com.affymetrix.igb.genometry.ScoredContainerSym;
-import com.affymetrix.igb.parsers.CytobandParser;
+import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.genometryImpl.util.CharIterator;
+import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.ObjectUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.util.UnibrowControlUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.WebBrowserControl;
+import java.util.prefs.PreferenceChangeEvent;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -386,7 +390,7 @@ public class SeqMapView extends JPanel
     this.setLayout(new BorderLayout());
 
     xzoombox = Box.createHorizontalBox();
-    SeqComboBoxView seq_chooser = new SeqComboBoxView();
+    SeqComboBoxView seq_chooser = new SeqComboBoxView(this);
     //    seq_chooser.setSize(new Dimension(5, 10));
     //    xzoombox.add(seq_chooser);
     //    seq_chooser.setSize(new Dimension(5, 10));
@@ -450,7 +454,6 @@ public class SeqMapView extends JPanel
 
     UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
   }
-
 
 
     // This preference change listener can reset some things, like whether
@@ -2911,34 +2914,42 @@ public class SeqMapView extends JPanel
     tg.setMaxExpandDepth(tg.getAnnotStyle().getMaxDepth());
   }
 
+
   public void groupSelectionChanged(GroupSelectionEvent evt)  {
-    AnnotatedSeqGroup group = evt.getSelectedGroup();
-    if (Application.DEBUG_EVENTS) {
-      if (group != null) {
-        System.out.println("SeqMapView received seqGroupSelected() call: " + group.getID() + ",  " + group);
-      }
-      else {
-        System.out.println("SeqMapView received seqGroupSelected() call, but group = null");
-      }
+    AnnotatedSeqGroup current_group = null;
+    AnnotatedSeqGroup new_group = evt.getSelectedGroup();
+    if (aseq instanceof SmartAnnotBioSeq) {
+      current_group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
     }
 
-    if ((aseq != null) && (aseq instanceof SmartAnnotBioSeq) &&
-        (((SmartAnnotBioSeq)aseq).getSeqGroup() == group) ) {
-      // don't clear if seq belongs to seq group...
+    if (Application.DEBUG_EVENTS) {
+        System.out.println("SeqMapView received seqGroupSelected() call: " + ((new_group != null) ? new_group.getID() : "null"));
     }
-    else  {
+
+    if ((new_group != current_group) && (current_group != null))  {
+      //      ViewPersistenceUtils.saveGroupView(this);
+      //      ViewPersistenceUtils.saveSeqView(this);
       clear();
     }
   }
 
+
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-//    if (Application.DEBUG_EVENTS)  {
-      System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
-//    }
+    //    if (Application.DEBUG_EVENTS)  {
+    System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+    //    }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     // Don't worry if newseq is null, setAnnotatedSeq can handle that
     // (It can also handle the case where newseq is same as old seq.)
-    setAnnotatedSeq(newseq);
+    SeqSpan visible_span = this.getVisibleSpan();
+    BioSeq visible_seq = visible_span.getBioSeq();
+    if (visible_seq != newseq) {
+      //      ViewPersistenceUtils.saveSeqView(this);
+      setAnnotatedSeq(newseq);
+    }
+    // trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
+    // Maybe should change SingletonGenometryModel.setSelectedSeq() to only fire if seq changes...
+    //    setAnnotatedSeq(newseq);
   }
 
   public void seqModified(SeqModifiedEvent evt) {
@@ -2955,7 +2966,6 @@ public class SeqMapView extends JPanel
 
 
   JMenu navigation_menu = null;
-
   public JMenu getNavigationMenu(String menu_name) {
     if (navigation_menu == null) {
       navigation_menu = new JMenu(menu_name);

@@ -20,18 +20,18 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
-import org.xml.sax.InputSource;
-
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.igb.genometry.*;
-import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.CurationSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
+import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.util.ErrorHandler;
+import org.xml.sax.InputSource;
 
 
 /**

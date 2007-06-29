@@ -27,33 +27,40 @@ import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.*;
 
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genometryImpl.event.*;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.util.*;
-import com.affymetrix.igb.parsers.LiftParser;
-import com.affymetrix.igb.parsers.ChromInfoParser;
-import com.affymetrix.igb.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class QuickLoadView2 extends JComponent
          implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener  {
 
   static boolean DEBUG_EVENTS = false;
-  static public boolean build_virtual_genome = true;
-  static public boolean build_virtual_encode = true;
+  static public boolean build_virtual_genome = false;
+  static public boolean build_virtual_encode = false;
   // hardwiring names for genome and encode virtual seqs, need to generalize this soon
   static public String GENOME_SEQ_ID = "genome";
   static public String ENCODE_REGIONS_ID = "encode_regions";
 
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
+  static public final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
 
   static final String SELECT_A_GENOME = "Select a genome";
   static final String SELECT_A_SERVER = "Select a server";

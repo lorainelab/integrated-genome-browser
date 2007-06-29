@@ -16,8 +16,6 @@ package com.affymetrix.igb.view;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -30,16 +28,27 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.IndexedSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.igb.Application;
+
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 public class ExperimentPivotView extends JComponent
       implements SymSelectionListener, ActionListener, AnnotatedSeqViewer, SeqSelectionListener

@@ -14,12 +14,13 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.genometry.SingletonGenometryModel;
 import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;

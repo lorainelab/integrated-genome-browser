@@ -1,17 +1,6 @@
 <!-- ===========================================================================
 
-To build the source, you will need to build a copy of genoviz.jar 
-and place it in the expected location.
-If this build.xml file is in 
-  /<directory>/genometry/build.xml
-Then the GenoViz jar should be at
-  /<directory>/genoviz/genoviz.jar
-
-
-You can also specify any other location of the GenoViz classes
-on the ant command line, like so:
-  "ant -Dgenoviz.classes=$HOME/some/path/genoviz.jar all"
-
+The genometry package is independent of all other classes and jar files.
 
 To build the genometry project and create library file genometry.jar
 in this directory, execute:
@@ -57,26 +46,6 @@ in this directory, execute:
     <filter token="year" value="${year}"/>
     <filter token="date" value="${TODAY}"/>
 
-
-<!-- If DNAUtils.class is found in genoviz.jar, set genoviz.classes to genoviz.jar  -->
-    <property name="genoviz.jar" value="../genoviz_sdk/genoviz.jar"/>
-    <available classname="com.affymetrix.genoviz.util.DNAUtils" property="genoviz.classes" value="${genoviz.jar}">
-      <classpath>
-        <pathelement location="${genoviz.jar}"/>
-      </classpath>
-    </available>
-
-    <!-- 
-     If DNAUtils.class is found in genoviz.classes set "genoviz_found" to true.
-     This check permits the user to re-define the value of genoviz.classes 
-     on the command line using "jar -Dgenoviz.classes=foo"  
-     -->
-    <available classname="com.affymetrix.genoviz.util.DNAUtils" property="genoviz_found">
-      <classpath>
-        <pathelement location="${genoviz.classes}"/>
-      </classpath>
-    </available>
-
   </target>
 
   <!-- =================================================================== -->
@@ -101,9 +70,6 @@ in this directory, execute:
   </target>
 
   <target name="prepare" depends="init">
-
-    <fail unless="genoviz_found">Cannot find the GenoViz classes</fail>
-
   </target>
 
 
@@ -117,7 +83,6 @@ in this directory, execute:
            deprecation="${deprecation}" 
            optimize="${optimize}">
       <classpath>
-        <pathelement location="${genoviz.classes}"/>
       </classpath>
     </javac>
   </target>
@@ -171,7 +136,6 @@ in this directory, execute:
            splitindex="false"
            >
       <classpath>
-        <pathelement location="${genoviz.classes}"/>
       </classpath>
       <packageset dir="${genometry.src.dir}"/>
       <doctitle><![CDATA[<h1>${Name} API</h1>]]></doctitle>

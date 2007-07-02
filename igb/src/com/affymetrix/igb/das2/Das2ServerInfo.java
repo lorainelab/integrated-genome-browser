@@ -22,12 +22,11 @@ import org.w3c.dom.*;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 public class Das2ServerInfo  {
   static boolean DEBUG_SOURCES_QUERY = false;
 
-  protected static boolean DO_FILE_TEST = false;
-  protected static String test_file = "file:/C:/data/das2_responses/alan_server/sources.xml";
   protected static String SOURCES_QUERY = "sequence";
 
   protected URI server_uri;
@@ -148,54 +147,35 @@ public class Das2ServerInfo  {
    * Return true if successfully initialized.
    */
   public synchronized boolean initialize() {
-    //TODO: think about whether this needs synchronization.
     //TODO: clean-up streams in finally block
     try {
-      //      System.out.println("in DasUtils.findDasSource()");
-      //      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      URL das_request = null;
-      if (DO_FILE_TEST)  {
-        das_request = new URL(test_file);
-      }
-      else {
-	// GAH 2006-02-10
-	//  changed to assuming the root_string is the full URL for a sources (sequence?)
-	//  done for compatibility with
-	//	das_request = new URL(root_string+"/" + SOURCES_QUERY);
-        if (server_uri == null) {
-          return false;
-        }
-        das_request = server_uri.toURL();
-      }
-      if (DEBUG_SOURCES_QUERY)  { System.out.println("Das Request: " + das_request); }
-      URLConnection request_con = das_request.openConnection();
-      String content_type = request_con.getHeaderField("Content-Type");
+      if (server_uri == null) { return false; }
+      //      das_request = server_uri.toURL();
+      String das_query = server_uri.toString();
+
+      if (DEBUG_SOURCES_QUERY)  { System.out.println("Das Request: " + server_uri); }
+      Map headers = new LinkedHashMap();
+      InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
+
+      String content_type = (String)headers.get("content-type");
       if (DEBUG_SOURCES_QUERY) { System.out.println("Das Response content type: " + content_type); }
 
-      String das_query = "";
-      if (das_request != null) {
-        das_query = das_request.toExternalForm();
-      }
 
-      if (content_type == null) {
-        content_type = ""; // necessary to work with "file://" URLs on Windows XP
-      }
-
+      if (content_type != null) {
       // setting DAS version if present in content type header -- currently not used
-      int vindex = content_type.indexOf("version=");
-      if (vindex >= 0) {
-	String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
-	setDasVersion(das_version);
+	int vindex = content_type.indexOf("version=");
+	if (vindex >= 0) {
+	  String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
+	  setDasVersion(das_version);
+	}
       }
-      //      String das_status = request_con.getHeaderField("X-DAS-Status"); //FIXME: not available anymore?
-      //GAH March 2006:
-      //   HACK: Affy das server barfs w/ a trailing slash, URI resolution
-      //      doesn't work without trailing slash, so adding it back in
-      //      here.
-      if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
 
-      // System.out.println("DAS server version: " + das_version + ", status: " + das_status);
-      Document doc = DasLoader.getDocument(request_con);
+      //GAH March 2006:
+      //   HACK: Affy das server has problems  w/ a trailing slash, but URI resolution
+      //      doesn't work without trailing slash, so adding it back in here.
+      if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
+      //       Document doc = DasLoader.getDocument(request_con);
+      Document doc = DasLoader.getDocument(response);
 
       Element top_element = doc.getDocumentElement();
       NodeList sources= doc.getElementsByTagName("SOURCE");

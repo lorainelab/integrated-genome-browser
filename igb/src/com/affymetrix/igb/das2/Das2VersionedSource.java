@@ -26,6 +26,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 
@@ -233,7 +234,11 @@ public class Das2VersionedSource  {
     region_request = segcap.getRootURI().toString();
     try {
       System.out.println("Das Segments Request: " + region_request);
-      Document doc = DasLoader.getDocument(region_request);
+      Map headers = new LinkedHashMap();
+      InputStream response = LocalUrlCacher.getInputStream(region_request, headers);
+
+      // Document doc = DasLoader.getDocument(region_request);
+      Document doc = DasLoader.getDocument(response);
       Element top_element = doc.getDocumentElement();
       NodeList regionlist = doc.getElementsByTagName("SEGMENT");
       System.out.println("segments: " + regionlist.getLength());
@@ -287,7 +292,11 @@ public class Das2VersionedSource  {
     //    if (filter != null) { types_request = types_request+"?ontology="+filter; }
     try {
       System.out.println("Das Types Request: " + types_request);
-      Document doc = DasLoader.getDocument(types_request);
+      Map headers = new LinkedHashMap();
+      InputStream response = LocalUrlCacher.getInputStream(types_request, headers);
+
+      //      Document doc = DasLoader.getDocument(types_request);
+      Document doc = DasLoader.getDocument(response);
       Element top_element = doc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");
       System.out.println("types: " + typelist.getLength());
@@ -312,7 +321,8 @@ public class Das2VersionedSource  {
         //FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         // temporary workaround for getting type ending, rather than full URI
-	//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          //if these characters are one the beginning, take off the 1st 2 characters...
+	//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          
+	// if these characters are one the beginning, take off the 1st 2 characters...
 	//FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         String ontid = typenode.getAttribute("ontology");

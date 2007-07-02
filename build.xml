@@ -34,6 +34,8 @@ Make sure that the 'ext' directory exists and includes
     <property name="genoviz.src.dir" value="${genoviz.dir}/src"/>
     <property name="genometry.dir" value="${root.dir}/genometry"/>
     <property name="genometry.src.dir" value="${genometry.dir}/src"/>
+    <property name="genometryImpl.dir" value="${root.dir}/genometryImpl"/>
+    <property name="genometryImpl.src.dir" value="${genometryImpl.dir}/src"/>
     <property name="igb.dir" value="${root.dir}/igb"/>
     <property name="igb.src.dir" value="${igb.dir}/src"/>
     <property name="das2_server.dir" value="${root.dir}/das2_server"/>
@@ -89,6 +91,7 @@ Make sure that the 'ext' directory exists and includes
     <path id="project.class.path">
       <pathelement path="genoviz_sdk/genoviz.jar" />
       <pathelement path="genometry/genometry.jar" />
+      <pathelement path="genometryImpl/genometryImpl.jar" />
       <fileset dir="${lib.dir}">
         <include name="**/*.jar"/>
       </fileset>
@@ -121,22 +124,30 @@ Make sure that the 'ext' directory exists and includes
   <!-- =================================================================== -->
   <target name="compile-genoviz" depends="init" 
     description="Compiles GenoViz">
-    <ant dir="${genoviz.dir}" target="all" inheritAll="false"/>
+    <ant dir="${genoviz.dir}" target="jar" inheritAll="false"/>
   </target>
 
   
   <!-- =================================================================== -->
   <!-- Compiles Genometry                                                  -->
   <!-- =================================================================== -->
-  <target name="compile-genometry" depends="init,compile-genoviz" 
-    description="Compiles Genometry">
+  <target name="compile-genometry" depends="init" 
+    description="Compiles Genometry (Interfaces)">
     <ant dir="${genometry.dir}" target="all" inheritAll="false"/>
+  </target>
+  
+  <!-- =================================================================== -->
+  <!-- Compiles GenometryImpl                                              -->
+  <!-- =================================================================== -->
+  <target name="compile-genometry-impl" depends="init,compile-genometry" 
+    description="Compiles Genometry Implementations">
+    <ant dir="${genometryImpl.dir}" target="all" inheritAll="false"/>
   </target>
   
   <!-- =================================================================== -->
   <!-- Compiles All                                                        -->
   <!-- =================================================================== -->
-  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry" 
+  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl" 
     description="Compiles IGB">
     <mkdir dir="${classes.dir}"/>
     <javac destdir="${classes.dir}"
@@ -189,6 +200,7 @@ Make sure that the 'ext' directory exists and includes
       <metainf file="NOTICES.txt"/>
       <zipfileset src="${igb.jar}"/>
       <zipfileset src="genometry/genometry.jar"/>
+      <zipfileset src="genometryImpl/genometryImpl.jar"/>
       <zipfileset src="genoviz_sdk/genoviz.jar"/>
       <zipgroupfileset dir="${lib.dir}">
         <include name="**/*.jar"/>
@@ -203,6 +215,7 @@ Make sure that the 'ext' directory exists and includes
     description="Restores distribution to its original state">
     <ant dir="${genoviz.dir}" target="clean" inheritAll="false"/>
     <ant dir="${genometry.dir}" target="clean" inheritAll="false"/>
+    <ant dir="${genometryImpl.dir}" target="clean" inheritAll="false"/>
     <ant dir="${das2_server.dir}" target="clean" inheritAll="false"/>
     <delete file="${igb.jar}"/>
     <delete file="${igb_exe.jar}"/>
@@ -252,6 +265,7 @@ Make sure that the 'ext' directory exists and includes
       <packageset dir="${igb.src.dir}"/>
       <packageset dir="${genoviz.src.dir}"/>
       <packageset dir="${genometry.src.dir}"/>
+      <packageset dir="${genometryImpl.src.dir}"/>
       <doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
     </javadoc>

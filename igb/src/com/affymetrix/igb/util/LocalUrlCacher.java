@@ -21,7 +21,9 @@ import java.util.*;
 import javax.swing.*;
 
 public class LocalUrlCacher {
-  static String cache_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache";
+  public static String cache_content_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache/";
+  public static String cache_header_root = cache_content_root + "headers/";
+  public static String HTTP_STATUS_HEADER = "HTTP_STATUS";
   static boolean DEBUG_CONNECTION = false;
   static boolean REPORT_LONG_URLS = false;
   static boolean CACHE_FILE_URLS = false;
@@ -36,23 +38,35 @@ public class LocalUrlCacher {
   public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 
+
   static boolean offline = false;
-    
+
+  // make sure both content and header directories exist
+  static {
+    File fil = new File(cache_content_root);
+    if (! fil.exists()) {
+      System.out.println("creating new content cache directory: " + fil.getAbsolutePath());
+      fil.mkdirs();
+    }
+    File hfil = new File(cache_header_root);
+    if (! hfil.exists()) {
+      System.out.println("creating new header cache directory: " + hfil.getAbsolutePath());
+      hfil.mkdirs();
+    }
+  }
+
   /** Sets the cacher to off-line mode, in which case only cached data will
    *  be used, will never try to get data from the web.
    */
   public static void setOffLine(boolean b) {
     offline = b;
   }
-  
+
   /** Returns the value of the off-line flag. */
   public static boolean getOffLine() {
     return offline;
   }
 
-  public static InputStream getInputStream(String url) throws IOException  {
-    return getInputStream(url, getPreferredCacheUsage(), true);
-  }
 
   /** Determines whether the given URL string represents a file URL. */
   public static boolean isFile(String url) {
@@ -71,34 +85,35 @@ public class LocalUrlCacher {
    *  The File object returned is created by getCacheFileForURL, but the actual on-disk file is not created --
    *     that is up to other methods in LocalUrlCacher
    */
-  static File getCacheFileForURL(String url) {
+  static File getCacheContentFile(String url) {
     String encoded_url = UrlToFileName.encode(url);
-    String cache_file_name = cache_root + "/" + encoded_url;
-
-    // Need to make sure that full path of file is < 255 characters to ensure 
-    //    cross-platform compatibility (some OS allow any length, some only restrict file name 
+    String cache_file_name = cache_content_root + encoded_url;
+    // Need to make sure that full path of file is < 255 characters to ensure
+    //    cross-platform compatibility (some OS allow any length, some only restrict file name
     //    length (last path segment), but there are some that restrict full path to <= 255 characters
     if (cache_file_name.length() > 255) {
-      if (REPORT_LONG_URLS) {
-	System.out.println("WARNING! Trying to encode file, but full file path > 255 characters: " +
-			   cache_file_name.length());
-	System.out.println("    " + cache_file_name);
-      }
-      cache_file_name = cache_root + "/" + UrlToFileName.toMd5(encoded_url);
-      if (REPORT_LONG_URLS)  {  System.out.println("new file path: " + cache_file_name); }
+      cache_file_name = cache_content_root + UrlToFileName.toMd5(encoded_url);
     }
     File cache_file = new File(cache_file_name);
-      //  File parent_dir = cache_file.getParentFile();
-      //    if (! parent_dir.exists()) {
-      //      // if directories are missing, create them for this file's path
-      //      parent_dir.mkdirs();
-      //    }
+    return cache_file;
+  }
+
+  static File getCacheHeaderFile(String url) {
+    String encoded_url = UrlToFileName.encode(url);
+    String cache_file_name = cache_header_root + encoded_url;
+    // Need to make sure that full path of file is < 255 characters to ensure
+    //    cross-platform compatibility (some OS allow any length, some only restrict file name
+    //    length (last path segment), but there are some that restrict full path to <= 255 characters
+    if (cache_file_name.length() > 255) {
+      cache_file_name = cache_header_root + UrlToFileName.toMd5(encoded_url);
+    }
+    File cache_file = new File(cache_file_name);
     return cache_file;
   }
 
   /** Returns the cache directory, creating it if necessary. */
   static File getCacheDirectory() {
-    File fil = new File(cache_root);
+    File fil = new File(cache_content_root);
     if (! fil.exists()) {
       System.out.println("creating new cache directory: " + fil.getAbsolutePath());
       fil.mkdirs();
@@ -106,6 +121,7 @@ public class LocalUrlCacher {
     }
     return fil;
   }
+
 
   public static final String TYPE_FILE = "In Filesystem";
   public static final String TYPE_CACHED = "Cached";
@@ -138,9 +154,7 @@ public class LocalUrlCacher {
       }
     }
 
-    File cache_dir = getCacheDirectory(); // Make sure cache directory exists. Maybe not needed.
-
-    File cache_file = getCacheFileForURL(url);
+    File cache_file = getCacheContentFile(url);
     boolean cached = cache_file.exists();
 
     if (offline || cache_option == ONLY_CACHE) {
@@ -201,6 +215,14 @@ public class LocalUrlCacher {
     }
   }
 
+  public static InputStream getInputStream(String url) throws IOException  {
+    return getInputStream(url, getPreferredCacheUsage(), true);
+  }
+
+  public static InputStream getInputStream(String url, Map headers) throws IOException  {
+    return getInputStream(url, getPreferredCacheUsage(), true, headers);
+  }
+
   public static InputStream getInputStream(String url, boolean write_to_cache)
        throws IOException {
     return getInputStream(url, getPreferredCacheUsage(), write_to_cache);
@@ -208,7 +230,22 @@ public class LocalUrlCacher {
 
   public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
        throws IOException {
+    return getInputStream(url, cache_option, write_to_cache, null);
+  }
 
+
+ /**
+  *  headers arg is a Map which when getInputStream() returns will be populated with any headers returned from the url
+  *      Each entry will be either: { header name ==> header value }
+  *        OR if multiple headers have same name, then value of entry will be a List of the header values:
+  *                                 { header name ==> [header value 1, header value 2, ...] }
+  *
+  *
+  *  headers will get cleared of any entries it had before getting passed as arg
+  */
+  public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map headers)
+       throws IOException {
+    if (headers != null) { headers.clear(); }
     // if url is a file url, and not caching files, then just directly return stream
     if ((! CACHE_FILE_URLS) && isFile(url)) {
       InputStream fstr = null;
@@ -217,7 +254,7 @@ public class LocalUrlCacher {
       //System.out.println("URL is file url, so not caching: " + furl);
       return fstr;
     }
-    File fil = new File(cache_root);
+    File fil = new File(cache_content_root);
     if (! fil.exists()) {
       System.out.println("creating new cache directory: " + fil.getAbsolutePath());
       fil.mkdirs();
@@ -231,13 +268,13 @@ public class LocalUrlCacher {
     //      if content is returned, check last-modified header just to be sure (some servers might ignore
     //        if-modified-since header?)
     InputStream result_stream = null;
-
-    File cache_file = getCacheFileForURL(url);
+    File cache_file = getCacheContentFile(url);
+    File header_cache_file = getCacheHeaderFile(url);
     boolean cached = cache_file.exists();
+    boolean headers_cached = header_cache_file.exist();
     long local_timestamp = -1;
     if (cached) { local_timestamp = cache_file.lastModified(); }
     URLConnection conn = null;
-
     long remote_timestamp = 0;
     int content_length = -1;
     String content_type = null;
@@ -257,17 +294,14 @@ public class LocalUrlCacher {
       try {
 	URL theurl = new URL(url);
 	conn = theurl.openConnection();
-	if (cached) {
-	  conn.setIfModifiedSince(local_timestamp);
-	}
+	if (cached) { conn.setIfModifiedSince(local_timestamp); }
 	// adding a conn.connect() call here to force throwing of error here if can't open connection
 	//    because some method calls on URLConnection like those below don't always throw errors
 	//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
 	///   even when there's no connection
 	conn.connect();
-	if (DEBUG_CONNECTION) {
-	  reportHeaders(conn);
-	}
+	if (DEBUG_CONNECTION) { reportHeaders(conn); }
+
 	remote_timestamp = conn.getLastModified();
 	has_timestamp = (remote_timestamp > 0);
 	content_type = conn.getContentType();
@@ -304,18 +338,43 @@ public class LocalUrlCacher {
           result_stream = null;
         }
       }
-      else { // url is reachable
+      else { // url is not reachable
         if (cache_option != ONLY_CACHE) {
           System.out.println("Remote URL not reachable.");
         }
 	System.out.println("Loading cached file for URL: " + url);
 	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
       }
+      // using cached content, so should also use cached headers
+      //   eventuallly want to improve so headers get updated if server is accessed and url is reachable
+      if (result_stream != null && headers != null && headers_cached)  {
+	BufferedInputStream hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
+	Properties headerprops = new Properties();
+	headerprops.load(hbis);
+	headers.putAll(headerprops);
+	hbis.close();
+      }
     }
 
-    // if cache_option == ONLY_CACHE, then don't even try to retrieve from url
+    // Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
     if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {
-      // no cache hit, or stale, or cache_option set to IGNORE_CACHE...
+      // populating header Properties (for persisting) and header input Map
+      Map headermap = conn.getHeaderFields();
+      Properties headerprops = new Properties();
+      Iterator heads = headermap.entrySet().iterator();
+      while (heads.hasNext()) {
+	Map.Entry ent = (Map.Entry)heads.next();
+	String key = (String)ent.getKey();;  // making all header names lower-case
+	java.util.List vals = (java.util.List)ent.getValue();
+	if (vals.size() > 0) {
+	  String val = (String)vals.get(0);
+	  if (key == null) { key = HTTP_STATUS_HEADER; }  // HTTP status code line has a null key, change so can be stored
+          key = key.toLowerCase();
+	  headerprops.setProperty(key, val);
+	  if (headers != null) { headers.put(key, val); }
+	}
+      }
+
       InputStream connstr = conn.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(connstr);
       byte[] content = null;
@@ -327,9 +386,7 @@ public class LocalUrlCacher {
 	  int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
 	  total_bytes_read += bytes_read;
 	}
-	if (total_bytes_read != content_length) {
-	  System.out.println("%%%% problem: bytes read != content length %%%%");
-	}
+	if (total_bytes_read != content_length) { System.out.println("%%%% problem: bytes read != content length %%%%"); }
       }
       else {
 	if (DEBUG_CONNECTION) { System.out.println("No content length header, so doing piecewise loading"); }
@@ -344,9 +401,7 @@ public class LocalUrlCacher {
 	while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
 	  byte[] chunk = new byte[chunk_size];
 	  bytes_read = bis.read(chunk, 0, chunk_size);
-	  if (DEBUG_CONNECTION) {
-	    System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-	  }
+	  if (DEBUG_CONNECTION) { System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read); }
 	  if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
 	    total_byte_count += bytes_read;
 	    chunks.add(chunk);
@@ -354,10 +409,7 @@ public class LocalUrlCacher {
 	  }
 	  chunk_count++;
 	}
-	if (DEBUG_CONNECTION) {
-	  System.out.println("total bytes: " + total_byte_count +
-			     ", total chunks with > 0 bytes: " + chunks.size());
-	}
+	if (DEBUG_CONNECTION) {System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size()); }
 
 	content_length = total_byte_count;
 	content = new byte[content_length];
@@ -373,31 +425,41 @@ public class LocalUrlCacher {
       }
       bis.close();
       connstr.close();
-      if (write_to_cache && content != null && content.length > 0) {
-        System.out.println("writing to cache: " + cache_file.getPath());
-        // write data from URL into a File
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
-        // no API for returning number of bytes successfully written, so write all in one shot...
-        bos.write(content, 0, content.length);
-        bos.close();
+      if (write_to_cache)  {
+	if (content != null && content.length > 0) {
+	  System.out.println("writing content to cache: " + cache_file.getPath());
+	  // write data from URL into a File
+	  BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
+	  // no API for returning number of bytes successfully written, so write all in one shot...
+	  bos.write(content, 0, content.length);
+	  bos.close();
+	}
+
+	// cache headers also -- in [cache_dir]/headers ?
+	System.out.println("writing headers to cache: " + header_cache_file.getPath());
+	BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
+	headerprops.store(hbos, null);
+	hbos.close();
       }
       result_stream = new ByteArrayInputStream(content);
     }
 
-    if (result_stream == null) {
-      String message;
-      if (cache_option == ONLY_CACHE) {
-        message = "Local cache file not found.  You may wish to change your caching preferences in QuickLoad options.";
-      } else if (cache_option == IGNORE_CACHE) {
-        message = "Remote URL could not be opened.";
-      } else {
-        message = "Either the remote URL or the local cached copy could not be opened.";
-      }
-      throw new IOException(message);
-    }
-
-    //    System.out.println("returning stream: " + result_stream);
+    if (headers != null) { reportHeaders(url, headers); }
+    if (result_stream == null) { System.out.println("WARNING: LocalUrlCacher couldn't get content for: " + url); }
+    // if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
     return result_stream;
+  }
+
+
+  public static reportHeaders(String url, Map headers) {
+    if (headers != null) {
+      System.out.println("   HEADERS for URL: " + url);
+      Iterator heads = headers.entrySet().iterator();
+      while (heads.hasNext()) {
+	Map.Entry ent = (Map.Entry)heads.next();
+	System.out.println("   key: " + ent.getKey() + ", val: " + ent.getValue());
+      }
+    }
   }
 
   public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
@@ -419,7 +481,7 @@ public class LocalUrlCacher {
     }
 
     String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
-    
+
     String short_filename = "selected file";
     int index = filename.lastIndexOf('/');
     if (index > 0) {
@@ -461,12 +523,12 @@ public class LocalUrlCacher {
     }
 
     else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
-      
+
       if (getOffLine()) {
         ErrorHandler.errorPanel("You are running in off-line mode and this file is not cached locally: " + short_filename);
         return null;
       }
-      
+
       String[] options = { "OK", "Cancel" };
       String message = "Load " + short_filename + " from the remote server?";
 
@@ -489,7 +551,16 @@ public class LocalUrlCacher {
    *  Simply removes all cached files.
    */
   public static void clearCache() {
-    File cache_dir = new File(cache_root);
+    File cache_header_dir = new File(cache_header_root);
+    if (cache_header_dir.exists()) {
+      File[] fils =  cache_header_dir.listFiles();
+      int file_count = fils.length;
+      for (int i=0; i<file_count; i++) {
+	File fil = fils[i];
+	fil.delete();
+      }
+    }
+    File cache_dir = new File(cache_content_root);
     if (cache_dir.exists()) {
       File[] fils =  cache_dir.listFiles();
       int file_count = fils.length;
@@ -502,7 +573,7 @@ public class LocalUrlCacher {
 
   /** Returns the location of the root directory of the cache. */
   public static String getCacheRoot() {
-    return cache_root;
+    return cache_content_root;
   }
 
   /** Returns the current value of the persistent user preference PREF_CACHE_USAGE. */
@@ -537,6 +608,7 @@ public class LocalUrlCacher {
       if (is != null) try { is.close(); } catch (IOException ioe) {}
     }
   }
+
 
   public static void reportHeaders(URLConnection query_con) {
     try {

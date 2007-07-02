@@ -1,0 +1,188 @@
+<!-- ===========================================================================
+
+To build the source, you will need to build a copy of genometry.jar 
+and place it in the expected location.
+If this build.xml file is in 
+  /<directory>/genometryImpl/build.xml
+Then the genometry jar should be at
+  /<directory>/genometry/genometry.jar
+
+
+You can also specify any other location of the Genometry classes
+on the ant command line, like so:
+  "ant -Dgenometry.classes=$HOME/some/path/genometry.jar all"
+
+
+To build the genometry project and create library file genometry.jar
+in this directory, execute:
+
+  "ant all"
+
+-->
+
+<project name="GenometryImpl" default="usage" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <property name="Name" value="GenometryImpl"/>
+    <property name="name" value="genometryImpl"/>
+    <property name="year" value="2007"/>
+
+    <echo message="----------- ${Name} [${year}] ------------"/>
+
+    <property name="build.compiler" value="modern"/>
+    <property name="debug" value="on"/>
+    <property name="optimize" value="off"/>
+    <property name="deprecation" value="off"/>
+    <property name="packages" value=".*"/>
+
+    <!-- Define the source directories -->
+    <property name="root.dir" value="."/>
+    <property name="genometryImpl.src.dir" value="${root.dir}/src"/>
+
+    <!-- Define the source build directories -->
+    <!--   (The source and class directories are the same)  -->
+    <property name="classes.dir" value="${root.dir}/src"/>
+
+    <property name="doc.dir" value="${root.dir}/docs"/>
+    
+    <property name="xerces.jar" value="../ext/xerces.jar"/>
+    <property name="xercesImpl.jar" value="../ext/xercesImpl.jar"/>
+
+    <!-- Define the jar files -->
+    <property name="genometryImpl.jar" value="genometryImpl.jar"/>
+
+    <filter token="Copyright" value="Copyright (C) ${year} by Affymetrix, Inc, USA All rights reserved."/> 
+    <filter token="year" value="${year}"/>
+    <filter token="date" value="${TODAY}"/>
+
+
+<!-- If DNAUtils.class is found in genometry.jar, set genometry.classes to genometry.jar  -->
+    <property name="genometry.jar" value="../genometry/genometry.jar"/>
+    <available classname="com.affymetrix.genometry.util.DNAUtils" property="genometry.classes" value="${genometry.jar}">
+      <classpath>
+        <pathelement location="${genometry.jar}"/>
+      </classpath>
+    </available>
+
+    <!-- 
+     If DNAUtils.class is found in genometry.classes set "genometry_found" to true.
+     This check permits the user to re-define the value of genometry.classes 
+     on the command line using "jar -Dgenometry.classes=foo"  
+     -->
+    <available classname="com.affymetrix.genometry.util.DNAUtils" property="genometry_found">
+      <classpath>
+        <pathelement location="${genometry.classes}"/>
+      </classpath>
+    </available>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage" description="(default) displays build menu">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="GenometryImpl Build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" available targets are:"/>
+    <echo message=""/>
+    <echo message="   all        --> builds class and jar files in ./build"/>
+    <echo message="   clean      --> restores distribution to original state"/>
+    <echo message="   usage      --> (default) displays build menu"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+
+  <target name="prepare" depends="init">
+
+    <fail unless="genometry_found">Cannot find the Genometry (Interface) classes</fail>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Compiles the genometry directory                                    -->
+  <!-- =================================================================== -->
+  <target name="compile-genometry-impl" depends="prepare">
+    <javac srcdir="${genometryImpl.src.dir}"
+           destdir="${classes.dir}"
+           debug="${debug}"
+           deprecation="${deprecation}" 
+           optimize="${optimize}">
+      <classpath>
+        <pathelement location="${genometry.classes}"/>
+        <pathelement location="${xerces.jar}"/>
+        <pathelement location="${xercesImpl.jar}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the genometryImpl.jar                                           -->
+  <!-- =================================================================== -->
+  <target name="genometryImpl-jar" depends="compile-genometry-impl">
+    <jar jarfile="${genometryImpl.jar}" update="false">
+      <fileset dir="${classes.dir}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/package.html"/>
+        <exclude name="**/.*"/>
+      </fileset>
+    </jar>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Build all jars                                                      -->
+  <!-- =================================================================== -->
+  <target name="all" depends="genometryImpl-jar"
+    description="builds all the jars in ./build"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Clean restores distribution to original state                       -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init"
+    description="restores distribution to original state">
+    <delete file="${genometryImpl.jar}"/>
+    <delete dir="${doc.dir}"/>
+    <delete>
+      <fileset dir="${root.dir}">
+        <include name="**/*.class"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="docs" depends="init" description="builds javadocs">
+    <mkdir dir="${doc.dir}"/>
+    <javadoc 
+           destdir="${doc.dir}"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="${Name} API"
+           maxmemory="64m"
+           access="private"
+           verbose="false"
+           splitindex="false"
+           >
+      <classpath>
+        <pathelement location="${genometry.classes}"/>
+      </classpath>
+      <packageset dir="${genometryImpl.src.dir}"/>
+      <doctitle><![CDATA[<h1>${Name} API</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${year} Affymetrix, Inc., USA. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+</project>
+
+<!-- End of file -->

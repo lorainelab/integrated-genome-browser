@@ -68,8 +68,6 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
  *    [ C)  maybe ]
  *       XML renderer (tree) showing full XML for type selected in tree view (A)
  *
- *   The above strategy requires changes to how preferences for DAS2 servers/sources/versions/types are handled
- *     via Preferences nodes and UnibrowPrefsUtil
  */
 public class Das2LoadView3 extends JComponent
   implements ActionListener,
@@ -573,47 +571,6 @@ public class Das2LoadView3 extends JComponent
     }
   }
 
-  /*  listening to events on DAS/2 server/source/version/type tree
-  public void valueChanged(TreeSelectionEvent evt) {
-    //    System.out.println("TreeSelectionEvent: " + evt);
-  }
-  */
-
-
-  /* listening to events on DAS/2 loaded (and recently loaded) types table
-  public void tableChanged(TableModelEvent evt) {
-    if (DEBUG_EVENTS)  {
-      System.out.println("Das2LoadView3 received table model changed event: " + evt);
-    }
-    Das2TypesTableModel type_model = (Das2TypesTableModel)evt.getSource();
-    int col = evt.getColumn();
-    int firstrow = evt.getFirstRow();
-    int lastrow = evt.getLastRow();
-    Das2TypeState  tstate = type_model.getTypeState(firstrow);
-
-    if ((current_seq != null) && (col == Das2TypesTableModel.LOAD_STRATEGY_COLUMN ||
-         col == Das2TypesTableModel.LOAD_BOOLEAN_COLUMN)) {
-      // All attributes of TableModelEvent are in the TableModel coordinates, not
-      // necessarily the same as the JTable coordinates, so use the model
-      //      Object val = type_model.getValueAt(firstrow, col);
-      //      System.out.println("value of changed table cell: " + val);
-
-      SeqSpan overlap = new SimpleSeqSpan(0, current_seq.getLength(), current_seq);
-      Das2Region region = current_version.getSegment(current_seq);
-
-      Das2Type dtype = tstate.getDas2Type();
-      if (tstate.getLoad() && tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
-	System.out.println("type to load for entire sequence range: " + dtype.getID());
-	Das2FeatureRequestSym request_sym =
-	  new Das2FeatureRequestSym(dtype, region, overlap, null);
-	ArrayList requests = new ArrayList();
-	requests.add(request_sym);
-	processFeatureRequests(requests, true);
-      }
-    }
-  }
-  */
-
   public boolean dataRequested(DataRequestEvent evt) {
     System.out.println("Das2LoadView3 recieved DataRequestEvent: " + evt);
     loadFeaturesInView();
@@ -663,6 +620,15 @@ public class Das2LoadView3 extends JComponent
     return version_node;
   }
 
+  /*  listening to events on DAS/2 server/source/version/type tree
+  public void valueChanged(TreeSelectionEvent evt) {
+    //    System.out.println("TreeSelectionEvent: " + evt);
+  }
+  */
+
+  /* listening to events on DAS/2 loaded (and recently loaded) types table
+  public void tableChanged(TableModelEvent evt) {   }
+  */
 
   /**
    *

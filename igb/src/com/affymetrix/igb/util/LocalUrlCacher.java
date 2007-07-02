@@ -271,7 +271,7 @@ public class LocalUrlCacher {
     File cache_file = getCacheContentFile(url);
     File header_cache_file = getCacheHeaderFile(url);
     boolean cached = cache_file.exists();
-    boolean headers_cached = header_cache_file.exist();
+    boolean headers_cached = header_cache_file.exists();
     long local_timestamp = -1;
     if (cached) { local_timestamp = cache_file.lastModified(); }
     URLConnection conn = null;
@@ -451,7 +451,7 @@ public class LocalUrlCacher {
   }
 
 
-  public static reportHeaders(String url, Map headers) {
+  public static void reportHeaders(String url, Map headers) {
     if (headers != null) {
       System.out.println("   HEADERS for URL: " + url);
       Iterator heads = headers.entrySet().iterator();

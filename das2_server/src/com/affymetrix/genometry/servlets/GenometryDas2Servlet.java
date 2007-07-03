@@ -26,8 +26,6 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 
-
-
 /**
  *  experimental genometry-based DAS2 server
  *    (started with GenometryDasServlet (pseudo-DAS1 servlet), modifying for DAS2
@@ -235,6 +233,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     try {
       super.init();
+      //      testXSLT();
       System.out.println("GenometryDas2Servlet version: " + RELEASE_VERSION);
       if (! (new File(data_root)).isDirectory()) {
         throw new ServletException("Aborting: Specified directory does not exist: '"+data_root+"'");
@@ -1497,6 +1496,30 @@ public class GenometryDas2Servlet extends HttpServlet  {
     if (xml_base != null) { return xml_base; }
     else { return request.getRequestURL().toString(); }
   }
+
+
+  public void testXSLT() {
+    try {
+      System.out.println("testing XSLT processing via JAXP");
+      //    File xsltFile = new File(data_root + "types.xslt");
+      File xsltFile = new File("c:/projects/genoviz/das2_server/config/types.xslt");
+      File xmlFile = new File("c:/data/das2_testing/NetAffx/sample_types.xml");
+      System.out.println("creating XLST, XML, output StreamSources");
+      javax.xml.transform.Source xsltSource = new javax.xml.transform.stream.StreamSource(xsltFile);
+      javax.xml.transform.Source xmlSource = new javax.xml.transform.stream.StreamSource(xmlFile);
+      javax.xml.transform.Result result = new javax.xml.transform.stream.StreamResult(System.out);
+      // create an instance of TransformerFactory
+      System.out.println("creating TransformerFactory");
+      javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
+      System.out.println("creating Transformer");
+      javax.xml.transform.Transformer trans = transFact.newTransformer(xsltSource);
+      System.out.println("running transformation\n");
+      trans.transform(xmlSource, result);
+      System.out.println("done testing XSLT processing via JAXP");
+    }
+    catch (Exception ex) { ex.printStackTrace(); }
+  }
+
 
   /**
    *  Start of attempt to add dynamic feature submission / addition to DAS server

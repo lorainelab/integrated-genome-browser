@@ -331,8 +331,8 @@ public class Das2VersionedSource  {
 	String type_name = typenode.getAttribute(NAME);
 	if (type_name.length() == 0) { type_name = typenode.getAttribute(TITLE); }
 
-	NodeList flist = typenode.getElementsByTagName("FORMAT");               //FIXME: I don't even know if these are in the XML yet.
-	LinkedHashMap formats = new LinkedHashMap();                            //I don't think that this has ever been used yet.
+	NodeList flist = typenode.getElementsByTagName("FORMAT");              
+	LinkedHashMap formats = new LinkedHashMap();                           
 	HashMap props = new HashMap();
 	for (int k=0; k<flist.getLength(); k++) {
 	  Element fnode = (Element)flist.item(k);
@@ -345,7 +345,7 @@ public class Das2VersionedSource  {
           formats.put(formatid, mimetype);
 	}
 
-	NodeList plist = typenode.getElementsByTagName("PROP");                 //What IS this?  I am not sure if this is used either.
+	NodeList plist = typenode.getElementsByTagName("PROP");                
 	for (int k=0; k<plist.getLength(); k++) {
 	  Element pnode = (Element)plist.item(k);
 	  String key = pnode.getAttribute("key");
@@ -353,7 +353,6 @@ public class Das2VersionedSource  {
 	  props.put(key, val);
 	}
 
-	//	ontologyStuff2();
 	// System.out.println("type id att: " + typeid);
 	// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
 

@@ -1,43 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns="http://biodas.org/documents/das2"  
+    xmlns:das2="http://biodas.org/documents/das2"  
+>
+<xsl:output method="xml" encoding="UTF-8"/> 
 
-<!-- should really make this an XSLT document and apply transformation to DAS/2 output XML, but for now taking a more primitive route... -->
-<TYPE name="cytoBand" />
-   <PROP load_hint="Whole Sequence" />
-</TYPE>
-
-<TYPE name="refseq" >
-   <PROP load_hint="Whole Sequence" />
-</TYPE>
-
-<TYPE name="knownGene" />
-   <PROP load_hint="Whole Sequence" />
-</TYPE>
-
-<TYPE name="mgcGenes" />
-   <PROP load_hint="Whole Sequence" />
-</TYPE>
-
-<TYPE name="genscan" />
-   <PROP load_hint="Whole Sequence" />
-</TYPE>
-
-
-<!-- possible XSLT approach? -->
-<!-- identity transform, see http://www.dpawson.co.uk/xsl/sect2/identity.html -->
-<!-- <xsl:template match="type[@name='cytoBand' or @name='refseq' or @name='knownGene' or @name='mgcGenes' or @name='genscan']" > -->
-
-<!--  
-<xsl:template match="node()|@*">
-   <xsl:copy>
-   <xsl:apply-templates select="@*"/>
-   <xsl:apply-templates/>
-   </xsl:copy>
- </xsl:template>
-
-<xsl:template match="/types/type[@name='cytoBand' or @name='refseq' or @name='knownGene' or @name='mgcGenes' or @name='genscan']" >
+<xsl:template match="/das2:TYPES/das2:TYPE[@title='cytoBand' or 
+                                           @title='refseq' or
+                                           @title='knownGene' or 
+					   @title='ensGene' or 
+                                           @title='mgcGenes' or
+                                           @title='genscan']"  >
    <xsl:copy>
        <xsl:apply-templates select="@*|node()"/>
        <PROP key="load_hint" value="Whole Sequence" />
    </xsl:copy>
 </xsl:template>
 
+<xsl:template match="node()|@*">
+  <xsl:copy>
+  <xsl:apply-templates select="@*|node()"/>
+  </xsl:copy>
+</xsl:template>
+
+<!-- 
+<xsl:namespace-alias
+  stylesheet-prefix="das2"
+  result-prefix=""
+/>
 -->
+
+</xsl:stylesheet> 
+

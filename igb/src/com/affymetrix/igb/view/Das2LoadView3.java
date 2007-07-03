@@ -788,6 +788,19 @@ class Das2TypeState {
     return tstate;
   }
 
+  public static int getLoadStrategy(String strat) {
+    int result = -1;
+    if (strat != null) {
+      for (int i=0; i<LOAD_STRINGS.length; i++) {
+	if (strat.equalsIgnoreCase(LOAD_STRINGS[i])) {
+	  result = i;
+	  break;
+	}
+      }
+    }
+    return result;
+  }
+
   /**
    *  checks previous status (in Preferences) of Das2TypeStates, returns true if
    *  _any_ DAS/2 type for given Das2VersionedSource have stored preference of { load = true }
@@ -843,7 +856,11 @@ class Das2TypeState {
 	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
 	//	String id = type_node.get("id", null);
 	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
-	load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY);
+
+	// check for "load_hint" property in Das2Type, if present use it as default if STRATEGYKEY has not been set
+	int load_hint = getLoadStrategy((String)type.getProperty("load_hint"));
+	if (load_hint > -1) { load_strategy = type_node.getInt(STRATEGYKEY, load_hint); }
+	else { load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY); }
 	String id = type_node.get("id", null);
 	// backfilling for prefs created before "id" key was added
 	if (id == null) { type_node.put("id", type.getID()); }
@@ -868,13 +885,10 @@ class Das2TypeState {
     return load;
   }
 
-  public void setLoadStrategy(String strat) {
-    for (int i=0; i<LOAD_STRINGS.length; i++) {
-      if (strat.equals(LOAD_STRINGS[i])) {
-	setLoadStrategy(i);
-	break;
-      }
-    }
+  public int setLoadStrategy(String strat) {
+    int load_int = getLoadStrategy(strat);
+    if (load_int > -1) { setLoadStrategy(load_int); }
+    return load_int;
   }
 
   public void setLoadStrategy(int strategy) {
@@ -889,6 +903,13 @@ class Das2TypeState {
     }
 
   }
+
+  //
+  //   if DAS/2 type has a "load_hint" property, return it;
+  ///
+  //  public String getLoadStrategyHint() {
+  //    return (String)type.getProperty("load_hint");
+  //  }
 
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }

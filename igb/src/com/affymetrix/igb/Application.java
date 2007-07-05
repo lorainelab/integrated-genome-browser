@@ -7,6 +7,8 @@ import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public abstract class Application {
@@ -50,6 +52,9 @@ public abstract class Application {
   abstract public SeqMapView getMapView();
   abstract public String getApplicationName();
   abstract public String getVersion();
+  
+  /** Allows you to get arbitrary parameter strings, possibly from a ResourceBundle. */
+  abstract public String getResourceString(String key);
 
   public static boolean isSequenceAccessible() {
     return true;
@@ -124,4 +129,25 @@ public abstract class Application {
     JOptionPane.showMessageDialog(frame, message, "Inform", JOptionPane.INFORMATION_MESSAGE);
   }
 
+  public abstract Logger getLogger();  
+
+  public static Logger getApplicationLogger() {
+    return getSingleton().getLogger();
+  }
+  
+  public static void logError(String msg) {
+    getApplicationLogger().severe(msg);
+  }
+  
+  public static void logWarning(String msg) {
+    getApplicationLogger().warning(msg);
+  }
+  
+  public static void logInfo(String msg) {
+    getApplicationLogger().info(msg);
+  }
+  
+  public static void logDebug(String msg) {
+    getApplicationLogger().fine(msg);
+  }
 }

@@ -14,16 +14,15 @@ package com.affymetrix.igb;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.logging.Logger;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.prefs.*;
 
 import com.affymetrix.genoviz.util.Memer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -35,17 +34,14 @@ import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.servlets.UnibrowControlServer;
-import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.util.EPSWriter;
-import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
@@ -1558,6 +1554,11 @@ public class IGB extends Application
   public String getVersion() {
     return APP_VERSION;
   }
+  
+  /** Not yet implemented. */
+  public String getResourceString(String key) {
+    return null;
+  }
 
 
   AnnotatedSeqGroup prev_selected_group = null;
@@ -1580,8 +1581,9 @@ public class IGB extends Application
     prev_selected_seq = selected_seq;
   }
 
-
-
-
-
+  //public static final Logger APP = Logger.getLogger("app", RESOURCE_BUNDLE_NAME);
+  public static final Logger APP = Logger.getLogger("app");
+  public Logger getLogger() {
+    return APP;
+  }
 }

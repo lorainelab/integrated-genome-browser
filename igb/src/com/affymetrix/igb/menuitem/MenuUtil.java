@@ -21,15 +21,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 public abstract class MenuUtil {
 
   static JMenuBar main_menu_bar = new JMenuBar();
-  
-  static {
-    // Pre-initialize certain menus so that they will be in a predictable order
-    getMenu("File");
-    getMenu("View");
-    //getMenu("Tools");
-    getMenu("Help");
-  }
-  
+    
   /** Sets the accelerator for the given JMenuItem based on
    *  the preference associated with the action command.
    *  The action command Strings should be unique across the whole application.

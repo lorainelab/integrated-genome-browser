@@ -138,15 +138,7 @@ public class SeqMapViewActionListener implements ActionListener {
         gviewer.clampToGlyph((GlyphI) selected_glyphs.lastElement());
       }
     } else if (command.equals(gviewer.selectParentMI.getText())) {
-      if (seqmap.getSelected().isEmpty()) {
-        Application.errorPanel("Nothing selected");
-      } else if (seqmap.getSelected().size() == 1) {
-        // one selection: select its parent, not recursively
-        gviewer.selectParents(false);
-      } else {
-        // multiple selections: select parents recursively
-        gviewer.selectParents(true);
-      }
+      gviewer.selectParents();
     } else if (command.equals(gviewer.printSymmetryMI.getText())) {
       SeqSymmetry sym = gviewer.getSelectedSymmetry();
       if (sym == null) {

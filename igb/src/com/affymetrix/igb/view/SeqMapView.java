@@ -2515,6 +2515,19 @@ public class SeqMapView extends JPanel
     return mi;
   }
 
+  /** Select the parents of the current selections */
+  public void selectParents() {
+    if (seqmap.getSelected().isEmpty()) {
+      Application.errorPanel("Nothing selected");
+    } else if (seqmap.getSelected().size() == 1) {
+      // one selection: select its parent, not recursively
+      selectParents(false);
+    } else {
+      // multiple selections: select parents recursively
+      selectParents(true);
+    }
+  }
+  
   /** For each current selection, deselect it and select its parent instead.
    *  @param top_level if true, will select only top-level parents
    */
@@ -2600,7 +2613,7 @@ public class SeqMapView extends JPanel
     Application.getSingleton().setStatus(title, false);
   }
 
-  private SymWithProps sym_used_for_title = null;
+  SymWithProps sym_used_for_title = null;
 
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
@@ -2667,28 +2680,26 @@ public class SeqMapView extends JPanel
     return id;
   }
 
-
-  private final int xoffset_pop = 10;
-  private final int yoffset_pop = 0;
-
-  void showPopup(NeoMouseEvent nevt) {
-    sym_popup.setVisible(false); // in case already showing
-    sym_popup.removeAll();
-
+  /** Prepares the given popup menu to be shown.  The popup menu should have 
+   *  items added to it by this method.  Display of the popup menu will be
+   *  handled by showPopup(), which calls this method.
+   */
+  protected void preparePopup(JPopupMenu popup) {
     java.util.List selected_glyphs = seqmap.getSelected();
 
     setPopupMenuTitle(sym_info, selected_glyphs);
-    sym_popup.add(sym_info);
-    sym_popup.add(printMI);
+
+    popup.add(sym_info);
+    popup.add(printMI);
     if (! selected_glyphs.isEmpty()) {
-      sym_popup.add(zoomtoMI);
+      popup.add(zoomtoMI);
     }
     java.util.List selected_syms = getSelectedSyms();
     if (selected_syms.size() > 0) {
-      sym_popup.add(selectParentMI);
+      popup.add(selectParentMI);
     }
     if (selected_syms.size() == 1) {
-      sym_popup.add(printSymmetryMI);
+      popup.add(printSymmetryMI);
     }
     if (DEBUG_STYLESHEETS) {
       Action reload_stylesheet = new AbstractAction("Re-load user stylesheet") {
@@ -2700,14 +2711,24 @@ public class SeqMapView extends JPanel
         }
       };
 
-      sym_popup.add(reload_stylesheet);
+      popup.add(reload_stylesheet);
     }
-
 
     for (int i=0; i<popup_listeners.size(); i++) {
       ContextualPopupListener listener = (ContextualPopupListener)popup_listeners.get(i);
-      listener.popupNotify(sym_popup, selected_syms, sym_used_for_title);
+      listener.popupNotify(popup, selected_syms, sym_used_for_title);
     }
+  }
+
+  private final int xoffset_pop = 10;
+  private final int yoffset_pop = 0;
+
+  void showPopup(NeoMouseEvent nevt) {
+    sym_popup.setVisible(false); // in case already showing
+    sym_popup.removeAll();
+    
+    preparePopup(sym_popup);
+    
     if (sym_popup.getComponentCount() > 0) {
 
       if (nevt == null) {
@@ -2751,6 +2772,9 @@ public class SeqMapView extends JPanel
     popup_listeners.remove(listener);
   }
 
+  public java.util.List getPopupListeners() {
+    return Collections.unmodifiableList(popup_listeners);
+  }
 
   /** Recurse through glyphs and collect those that are instanceof GraphGlyph. */
   public java.util.List collectGraphs() {

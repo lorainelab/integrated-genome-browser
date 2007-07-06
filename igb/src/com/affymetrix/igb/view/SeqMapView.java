@@ -255,8 +255,8 @@ public class SeqMapView extends JPanel
   // for right-click on background
   JMenuItem renumberMI = empty_menu_item;
 
-  private final SeqMapViewActionListener action_listener;
-  private final SeqMapViewMouseListener mouse_listener;
+  SeqMapViewActionListener action_listener;
+  SeqMapViewMouseListener mouse_listener;
 
   CharSeqGlyph seq_glyph = null;
 
@@ -273,13 +273,11 @@ public class SeqMapView extends JPanel
 
   SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  /** Constructor. By default, does not add popup menu items. */
-  public SeqMapView() {
-    this(false);
-  }
-
-  public SeqMapView(boolean add_popups) {
-    this(add_popups, false);
+  /** Constructor provided for subclasses.
+   *  In other cases, use {@link #makeSeqMapView}.
+   */
+  protected SeqMapView() {
+    super();
   }
 
   class SeqMapViewComponentListener extends ComponentAdapter {
@@ -297,20 +295,9 @@ public class SeqMapView extends JPanel
       });
     }
   };
-
+  
   /**
-   * Constructor.
-   * @param add_popups  Whether to add some popup menus to the tier label manager
-   *  that control tier hiding and collapsing and so forth.  It is probably best
-   *  NOT to set this to true in any view other than the main view; it should
-   *  be false in the AltSpliceView, for instance.
-   */
-  public SeqMapView(boolean add_popups, boolean split_win)  {
-    this(add_popups, split_win, false);
-  }
-
-  /**
-   * Constructor.
+   * Creates an instance.
    * @param add_popups  Whether to add some popup menus to the tier label manager
    *  that control tier hiding and collapsing and so forth.  It is probably best
    *  NOT to set this to true in any view other than the main view; it should
@@ -320,7 +307,13 @@ public class SeqMapView extends JPanel
    *  components that are doing partial data-loading based on current view
    *  (DAS client controls, graph slice loaders, etc.)
    */
-  public SeqMapView(boolean add_popups, boolean split_win, boolean use_refresh_button) {
+  public static SeqMapView makeSeqMapView(boolean add_popups, boolean split_win, boolean use_refresh_button) {
+    SeqMapView smv = new SeqMapView();
+    smv.init(add_popups, split_win, use_refresh_button);
+    return smv;
+  }
+  
+  protected void init(boolean add_popups, boolean split_win, boolean use_refresh_button) {
 
     SPLIT_WINDOWS = split_win;
     if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }

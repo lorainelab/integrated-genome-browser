@@ -46,7 +46,8 @@ public class AltSpliceView extends JComponent
 
   class AltSpliceSeqMapView extends SeqMapView {
     public AltSpliceSeqMapView(boolean b) {
-      super(b);
+      super();
+      init(b, false, false);
       if (tier_manager != null) {
         tier_manager.setDoGraphSelections(false);
       }

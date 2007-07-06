@@ -618,7 +618,7 @@ public class IGB extends Application
     // WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
     //    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
-    map_view = new SeqMapView(true, USE_MULTI_WINDOW_MAP, USE_REFRESH_BUTTON);
+    map_view = SeqMapView.makeSeqMapView(true, USE_MULTI_WINDOW_MAP, USE_REFRESH_BUTTON);
     map_view.setFrame(frm);
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);

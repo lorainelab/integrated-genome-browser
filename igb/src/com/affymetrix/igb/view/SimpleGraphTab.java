@@ -127,7 +127,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public SimpleGraphTab(Application app) {
     if (app == null) {
-      this.gviewer = new SeqMapView(); // for testing only
+      this.gviewer = SeqMapView.makeSeqMapView(true, false, false); // for testing only
     } else {
       this.gviewer = app.getMapView();
     }

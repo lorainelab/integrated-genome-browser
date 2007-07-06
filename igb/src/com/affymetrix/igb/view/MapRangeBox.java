@@ -31,7 +31,7 @@ import java.util.regex.*;
 import javax.swing.*;
 
 /** A Text Box for displaying and setting the range of a SeqMapView. */
-class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
+public class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
   
   NeoMap map;
   SeqMapView gview;

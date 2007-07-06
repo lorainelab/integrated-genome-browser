@@ -66,7 +66,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
   SeqMapView smv;
   AffyTieredMap map;
 
-  SeqMapViewMouseListener(SeqMapView smv) {
+  public SeqMapViewMouseListener(SeqMapView smv) {
     this.smv = smv;
     this.map = smv.seqmap;
   }

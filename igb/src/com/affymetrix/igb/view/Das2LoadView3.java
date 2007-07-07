@@ -852,18 +852,22 @@ class Das2TypeState {
       Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
       Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
       types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
+
+      // check for "load_hint" property in Das2Type, if present use it as default if STRATEGYKEY has not been set
+      String load_hint_str = (String)type.getProperty("load_hint");
+      if (load_hint_str != null) { System.out.println("%%%% creating Das2Type: " + type.getName() + ", load_hint: " + load_hint_str); }
+      int load_hint = getLoadStrategy(load_hint_str);
       if (types_node.nodeExists(type_name)) {
 	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
-	//	String id = type_node.get("id", null);
 	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
-
-	// check for "load_hint" property in Das2Type, if present use it as default if STRATEGYKEY has not been set
-	int load_hint = getLoadStrategy((String)type.getProperty("load_hint"));
 	if (load_hint > -1) { load_strategy = type_node.getInt(STRATEGYKEY, load_hint); }
 	else { load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY); }
 	String id = type_node.get("id", null);
 	// backfilling for prefs created before "id" key was added
 	if (id == null) { type_node.put("id", type.getID()); }
+      }
+      else {  // if no pre-existing node for type, still set load strategy if Das2Type has "load_hint" property
+	if (load_hint > -1) { setLoadStrategy(load_hint); }
       }
     }
     catch (Exception ex) { ex.printStackTrace(); }

@@ -649,8 +649,27 @@ public class SeqMapView extends JPanel
         cytoband_glyph.setHitable(false);
         cytoband_glyph.setCoords(0.0, 0.0, viewseq.getLength(), cyto_height + 4);
 
+	// handling two cases:
+	//  1. cytoband syms are children of TypeContainerAnnot
+	//  2. cytoband syms are grandchildren of TypeContainerAnnot 
+	//        (should expect this when cytobands are loaded via DAS/2 -- then child of TypeContainerAnnot 
+	//         will be a Das2FeatureRequestSym, which will have cytoband children of its own
+	java.util.List bands = new ArrayList();
         for (int q=0; q<cyto_container.getChildCount(); q++) {
-          SeqSymmetry sym  = cyto_container.getChild(q);
+	  SeqSymmetry child  = cyto_container.getChild(q);
+	  if (child instanceof CytobandParser.CytobandSym) { bands.add(child); }
+	  else {
+	    for (int subindex=0; subindex<child.getChildCount(); subindex++) {
+	      SeqSymmetry grandchild = child.getChild(subindex);
+	      if (grandchild instanceof CytobandParser.CytobandSym) { bands.add(grandchild); }
+	    }
+	  }
+	}
+
+	//        for (int q=0; q<cyto_container.getChildCount(); q++) {
+        for (int q=0; q<bands.size(); q++) {
+	  //          SeqSymmetry sym  = cyto_container.getChild(q);
+          SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
           SeqSymmetry sym2 = transformForViewSeq(sym, aseq);
 
           SeqSpan cyto_span = sym2.getSpan(viewseq);

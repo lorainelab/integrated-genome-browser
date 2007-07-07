@@ -8,6 +8,13 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.text.SimpleDateFormat;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.Result;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 
 // import com.affymetrix.igb.test.SearchSymTest;
 import com.affymetrix.genoviz.util.Memer;
@@ -178,6 +185,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   // there is one there.  If it ends up with two "/" characters, that hurts nothing.
 
   static String synonym_file = data_root + "synonyms.txt";
+  static String types_xslt_file = data_root + "types.xslt";
 
   /**
    *  Map of commands to plugins, for extending DAS server to
@@ -222,6 +230,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
   ArrayList graph_formats = new ArrayList();
   String xml_base = null;
   String xml_base_trimmed = null;
+  Transformer types_transformer;
+  boolean USE_TYPES_XSLT = true;
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
@@ -233,7 +243,11 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     try {
       super.init();
-      //      testXSLT();
+
+      Source type_xslt = new javax.xml.transform.stream.StreamSource(types_xslt_file);
+      javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
+      types_transformer = transFact.newTransformer(type_xslt);
+
       System.out.println("GenometryDas2Servlet version: " + RELEASE_VERSION);
       if (! (new File(data_root)).isDirectory()) {
         throw new ServletException("Aborting: Specified directory does not exist: '"+data_root+"'");
@@ -563,6 +577,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       InputStream istr = null;
       try {
 	istr = new BufferedInputStream(new FileInputStream(current_file));
+	System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_name);
 	loadAnnotsFromStream(istr, type_name, seq_group);
       }
       catch (Exception ex)  {
@@ -630,7 +645,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     log.add("servlet path = " + request.getServletPath());
 
     //    PrintWriter pw = response.getWriter();
-    addDasHeaders(response);
+    //    addDasHeaders(response);
 
     if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {
       handleSourcesRequest(request, response);
@@ -708,19 +723,19 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *  All DAS-specific headers have been eliminated in DAS/2 spec (as of 2006-02-02)
    *  Therefore, this call currently does nothing
    */
-  protected static void addDasHeaders(HttpServletResponse response) {
+  //  protected static void addDasHeaders(HttpServletResponse response) {
     //    response.setHeader("X-Das-Version", "DAS_Affy_experimental/2.0");
     //    response.setHeader("X-Das-Status", DAS_STATUS_OK);
     //    response.setHeader("X-Das-Capabilities",
     //		       "dsn/1.0; types/1.0; entry_points/1.0; bps_features/2.0; minmin_maxmax/2.0");
     //		       "dsn/1.0; types/1.0; entry_points/1.0; bps_features/2.0");
-  }
+  //  }
 
   public void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException  {
     log.add("received data source query");
     setContentType(response, SOURCES_CONTENT_TYPE);
-    addDasHeaders(response);
+    //    addDasHeaders(response);
     PrintWriter pw = response.getWriter();
     //    String xbase = request.getRequestURL().toString();
     //    static String xbase = request.getRequestUri();
@@ -795,7 +810,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     //    response.setContentType(SEGMENTS_CONTENT_TYPE);
     setContentType(response, SEGMENTS_CONTENT_TYPE);
-    addDasHeaders(response);
+    // addDasHeaders(response);
     PrintWriter pw = response.getWriter();
     printXmlDeclaration(pw);
     //    String xbase = request.getRequestURL().toString();
@@ -839,70 +854,69 @@ public class GenometryDas2Servlet extends HttpServlet  {
    */
   public void handleTypesRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException  {
+
     log.add("received types request");
     AnnotatedSeqGroup genome = getGenome(request);
-
     if (genome == null) {
       log.add("Unknown genome version");
       response.setStatus(response.SC_BAD_REQUEST);
       return;
     }
-
     //    response.setContentType(TYPES_CONTENT_TYPE);
     setContentType(response, TYPES_CONTENT_TYPE);
-    addDasHeaders(response);
-    PrintWriter pw = response.getWriter();
+    //    addDasHeaders(response);
+    Map types_hash = getTypes(genome);
+
+    //    StringWriter buf = new StringWriter(types_hash.size() * 1000);
+    ByteArrayOutputStream buf = null;
+    PrintWriter pw = null;
+    if (USE_TYPES_XSLT)  { 
+      buf = new ByteArrayOutputStream(types_hash.size() * 1000);
+      pw = new PrintWriter(buf);
+    }
+    else { 
+      pw = response.getWriter();
+    }
 
     printXmlDeclaration(pw);
-    //    String xbase = request.getRequestURL().toString();
-    //    String xbase = getXmlBase(request);
     String xbase = getXmlBase(request) + genome.getID() + "/";
-    //    String types_uri = xbase + types_query;
-    //    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
     //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
     pw.println("<TYPES ");
     pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
     pw.println("    xml:base=\"" + xbase + "\" >");
-    //    pw.println("    xml:base=\"" + xbase + "\" ");
-    //    pw.println("    " + URID + "=\"" + types_uri + "\" >");
 
-    Map types_hash = getTypes(genome);
     //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
     //    Iterator types_iter = types.iterator();
     Iterator types_iter = types_hash.keySet().iterator();
     while (types_iter.hasNext()) {
       String feat_type = (String) types_iter.next();
       java.util.List formats = (java.util.List) types_hash.get(feat_type);
-
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
-
       pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type +
 		 "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
       if (! formats.isEmpty()) {
         for (int k=0; k<formats.size(); k++) {
           String format = (String)formats.get(k);
-          // pw.println("       <FORMAT id=\"" + format + "\" />");
 	  pw.println("       <FORMAT name=\"" + format + "\" />");
         }
       }
       pw.println("   </TYPE>");
-      /*
-      if (! formats.isEmpty()) {
-        pw.print("   <TYPE id=\"" + feat_type + "\" preferred_format=\"");
-        for (int k=0; k<formats.size(); k++) {
-          String format = (String)formats.get(k);
-          pw.print(format + ";");
-        }
-        pw.println("\" />");
-      }
-      else {
-        pw.println("   <TYPE id=\"" + feat_type + "\" />");
-      }
-      */
-
-      // types_hash.put(feat_type, feat_type);
     }
     pw.println("</TYPES>");
+
+    if (USE_TYPES_XSLT) {
+      pw.flush();
+      byte[] buf_array = buf.toByteArray();
+      ByteArrayInputStream bais = new ByteArrayInputStream(buf_array);
+      Source types_doc = new StreamSource(bais);
+      Result result = new StreamResult(response.getWriter());
+      try {
+	types_transformer.transform(types_doc, result);
+      }
+      catch (TransformerException ex) {
+	ex.printStackTrace();
+      }
+    }
   }
 
 
@@ -1027,7 +1041,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
       return;
     }
-    addDasHeaders(response);
+    //    addDasHeaders(response);
     String path_info = request.getPathInfo();
     String query = request.getQueryString();
 
@@ -1508,6 +1522,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       javax.xml.transform.Source xsltSource = new javax.xml.transform.stream.StreamSource(xsltFile);
       javax.xml.transform.Source xmlSource = new javax.xml.transform.stream.StreamSource(xmlFile);
       javax.xml.transform.Result result = new javax.xml.transform.stream.StreamResult(System.out);
+
       // create an instance of TransformerFactory
       System.out.println("creating TransformerFactory");
       javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
@@ -1642,6 +1657,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
   }
   */
+
 
 
 }

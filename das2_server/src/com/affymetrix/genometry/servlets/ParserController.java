@@ -115,6 +115,11 @@ public class ParserController {
 	//    particular "source" on each particular seq
         results = parser.parse(str, seq_group, true);
       }
+      else if (stream_name.endsWith(".cyt")) {
+	System.out.println("loading via CytobandParser: " + stream_name);
+	CytobandParser parser = new CytobandParser();
+	results = parser.parse(str, seq_group, true);
+      }
       else if (stream_name.endsWith(".bgr") ||
 	       stream_name.endsWith(".bar") ) {
 	// stream_name.endsWith(".gr") ||   can't use .gr yet, because doesn't

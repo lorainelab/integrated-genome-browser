@@ -96,7 +96,7 @@ public class SeqMapView extends JPanel
    */
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
-  boolean LABEL_TIERMAP = true;
+  public boolean LABEL_TIERMAP = true;
 
   boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
@@ -112,7 +112,7 @@ public class SeqMapView extends JPanel
   java.util.List popup_listeners = new ArrayList();
   java.util.List data_request_listeners = new ArrayList();
 
-  XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
+  protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 
   /**
    *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
@@ -151,14 +151,14 @@ public class SeqMapView extends JPanel
    *     JPanel is nested within this (with BorderLayout, map_container_panel at
    *     "Center"), and xzoomer is put in this at "North", don't see slowdown
    */
-  boolean NEO_XZOOMER = false;
-  boolean NEO_YZOOMER = false;
-  boolean INTERNAL_XSCROLLER = true;
-  boolean INTERNAL_YSCROLLER = true;
-  boolean XZOOMER_IN_MAP_CONTAINER = false;
+  protected boolean NEO_XZOOMER = false;
+  protected boolean NEO_YZOOMER = false;
+  protected boolean INTERNAL_XSCROLLER = true;
+  protected boolean INTERNAL_YSCROLLER = true;
+  protected boolean XZOOMER_IN_MAP_CONTAINER = false;
 
   JFrame frm;
-  AffyTieredMap seqmap;
+  protected AffyTieredMap seqmap;
   UnibrowHairline hairline = null;
 
   AnnotatedBioSeq aseq;
@@ -177,9 +177,6 @@ public class SeqMapView extends JPanel
   // mapping of annotated seq to virtual "view" seq
   MutableSeqSymmetry seq2viewSym;
   SeqSymmetry[] transform_path;
-
-  Adjustable xzoomer;
-  Adjustable yzoomer;
 
   public static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
 
@@ -255,20 +252,20 @@ public class SeqMapView extends JPanel
   // for right-click on background
   JMenuItem renumberMI = empty_menu_item;
 
-  SeqMapViewActionListener action_listener;
-  SeqMapViewMouseListener mouse_listener;
+  protected SeqMapViewActionListener action_listener;
+  protected SeqMapViewMouseListener mouse_listener;
 
   CharSeqGlyph seq_glyph = null;
 
   SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
   Vector match_glyphs = new Vector();
-  TierLabelManager tier_manager;
+  protected TierLabelManager tier_manager;
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
 
-  Box xzoombox;
-  Box yzoombox;
-  MapRangeBox map_range_box;
+  protected Box xzoombox;
+  protected Box yzoombox;
+  protected MapRangeBox map_range_box;
   JButton refreshB = new JButton("Refresh Data");
 
   SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -280,7 +277,7 @@ public class SeqMapView extends JPanel
     super();
   }
 
-  class SeqMapViewComponentListener extends ComponentAdapter {
+  public class SeqMapViewComponentListener extends ComponentAdapter {
     // When the map is resized, make sure the graphs are still visible.
     public void componentResized(ComponentEvent e) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -351,6 +348,9 @@ public class SeqMapView extends JPanel
     //    map.getLabelMap().getNeoCanvas().setDoubleBuffered(false);
 
     seqmap.setScrollIncrementBehavior(seqmap.X, seqmap.AUTO_SCROLL_HALF_PAGE);
+
+    Adjustable xzoomer;
+    Adjustable yzoomer;
 
     if (NEO_XZOOMER) {
       xzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
@@ -1064,7 +1064,9 @@ public class SeqMapView extends JPanel
       setZoomSpotX(old_zoom_spot_x);
       setZoomSpotY(old_zoom_spot_y);
 
-      doEdgeMatching(seqmap.getSelected(), false);
+      if (show_edge_matches) {
+        doEdgeMatching(seqmap.getSelected(), false);
+      }
 
     } else {
       // do selection based on what the genometry model thinks is selected
@@ -1074,7 +1076,9 @@ public class SeqMapView extends JPanel
       String title = getSelectionTitle(seqmap.getSelected());
       setStatus(title);
 
-      doEdgeMatching(seqmap.getSelected(), false);
+      if (show_edge_matches) {
+        doEdgeMatching(seqmap.getSelected(), false);
+      }
     }
 
     if (SHRINK_WRAP_MAP_BOUNDS) {
@@ -2334,6 +2338,8 @@ public class SeqMapView extends JPanel
 
   public void doEdgeMatching(java.util.List query_glyphs, boolean update_map) {
 
+    if (! show_edge_matches) { return; }
+    
     if (match_glyphs != null && match_glyphs.size() > 0) {
       seqmap.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
     }
@@ -2976,9 +2982,7 @@ public class SeqMapView extends JPanel
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     // Don't worry if newseq is null, setAnnotatedSeq can handle that
     // (It can also handle the case where newseq is same as old seq.)
-    SeqSpan visible_span = this.getVisibleSpan();
-    BioSeq visible_seq = visible_span.getBioSeq();
-    if (visible_seq != newseq) {
+    if (aseq != newseq) {
       //      ViewPersistenceUtils.saveSeqView(this);
       setAnnotatedSeq(newseq);
     }

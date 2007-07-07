@@ -93,7 +93,7 @@ public class Das2ClientOptimizer {
   // assume for now one type, one overlap span
   public static List loadFeatures(Das2FeatureRequestSym request_sym) {
     Das2RequestLog request_log = request_sym.getLog();
-    
+
     //    request_log.addLogMessage("called Das2ClientOptimizer.loadFeatures()");
     //  public static List optimizeFeatureRequests(List input_requests) {
     List output_requests = new ArrayList();
@@ -155,7 +155,7 @@ public class Das2ClientOptimizer {
 	}
 	else {
 	  SeqSpan split_query_span = split_query.getSpan(aseq);
-	  request_log.addLogMessage("DAS/2 optimizer, split query: " + 
+	  request_log.addLogMessage("DAS/2 optimizer, split query: " +
               SeqUtils.symToString(split_query));
 	  // figure out min/max within bounds based on location of previous queries relative to new query
 	  int first_within_min;
@@ -182,7 +182,7 @@ public class Das2ClientOptimizer {
 
 	  int split_count = split_query.getChildCount();
 	  if (split_count == 0) {
-            request_log.addLogMessage("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN"); 
+            request_log.addLogMessage("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN");
           }
 	  else {
 	    int cur_within_min;
@@ -217,7 +217,7 @@ public class Das2ClientOptimizer {
 	//	output_requests.add(request_sym);
       }
     }
-    
+
     for (int i=0; i<output_requests.size(); i++) {
       Das2FeatureRequestSym request = (Das2FeatureRequestSym)output_requests.get(i);
       optimizedLoadFeatures(request);
@@ -244,7 +244,7 @@ public class Das2ClientOptimizer {
   static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
     Das2RequestLog request_log = request_sym.getLog();
     request_log.setSuccess(true);
-    
+
     Das2Region region = request_sym.getRegion();
     SeqSpan overlap_span = request_sym.getOverlapSpan();
     SeqSpan inside_span = request_sym.getInsideSpan();
@@ -344,7 +344,7 @@ public class Das2ClientOptimizer {
 	String response_message = query_con.getResponseMessage();
 
         request_log.setHttpResponse(response_code, response_message);
-        
+
 	request_log.addLogMessage("http response code: " + response_code + ", " + response_message);
 
 	//      Map headers = query_con.getHeaderFields();
@@ -437,6 +437,11 @@ public class Das2ClientOptimizer {
 	  GFFParser parser = new GFFParser();
 	  feats = parser.parse(bis, ".", seq_group, false, false);
 	}
+	else if (content_subtype.equals("cyt")) {
+	  request_log.addLogMessage("PARSING CYT FORMAT FOR DAS2 FEATURE RESPONSE");
+	  CytobandParser parser = new CytobandParser();
+	  feats = parser.parse(bis, seq_group, false);
+	}
 	else {
 	  request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
 	  request_log.setSuccess(false);
@@ -475,8 +480,8 @@ public class Das2ClientOptimizer {
 	}
 
       }  // end if (success) conditional
-      if (bis != null) try { 
-        bis.close(); 
+      if (bis != null) try {
+        bis.close();
       } catch (Exception e) {
         e.printStackTrace();
         // This type of exception shouldn't be included in the response status

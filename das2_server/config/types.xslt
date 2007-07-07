@@ -8,10 +8,15 @@
 <xsl:output method="xml" encoding="UTF-8"/> 
 
 <xsl:template match="/das2:TYPES/das2:TYPE[@title='cytoBand' or 
-                                           @title='refseq' or
-                                           @title='knownGene' or 
-					   @title='ensGene' or 
-                                           @title='mgcGenes' or
+                                           @title='cytoband' or 
+                                           @title='__cytobands' or 
+                                           @title='refseq' or 
+                                           @title='knownGene' or  
+                                           @title='knowngene' or 
+					   @title='ensGene' or  
+					   @title='ensgene' or  
+                                           @title='mgcGenes' or 
+                                           @title='mgcgenes' or 
                                            @title='genscan']"  >
    <xsl:copy>
        <xsl:apply-templates select="@*|node()"/>

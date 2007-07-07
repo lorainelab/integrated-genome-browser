@@ -25,6 +25,8 @@ import java.awt.Color;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -47,16 +49,26 @@ public class CytobandParser {
   public static final float GVAR_SCORE = 100.0f;
   public static final float ACEN_SCORE = 600.0f;
   public static final float STALK_SCORE = 500.0f;
+
+  static java.util.List pref_list = new ArrayList();
+  static {
+    pref_list.add("cyt");
+  }
   
   public CytobandParser() {
   }
 
   public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
   throws IOException  {
+    parse(dis, seq_group, true);
+  }
+
+  public List parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq) 
+  throws IOException  {
+
     int band_alternator = 1; // toggles dark/light when band color is missing
-    
+    List results = new ArrayList(100);
     String line;
-    
     Thread thread = Thread.currentThread();
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
     while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
@@ -104,14 +116,17 @@ public class CytobandParser {
           seq.setLength(end);
         }
         
-        CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);    
-        ((SmartAnnotBioSeq) seq).addAnnotation(sym, CYTOBAND_TIER_NAME);
-        
-        if (annot_name != null) {
-          seq_group.addToIndex(annot_name, sym);
-        }
+        CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);   
+	if (annotate_seq) {
+	  ((SmartAnnotBioSeq) seq).addAnnotation(sym, CYTOBAND_TIER_NAME);
+	  if (annot_name != null) {
+	    seq_group.addToIndex(annot_name, sym);
+	  }
+	}
+	results.add(sym);
       }  // end of line.startsWith() else
     }   // end of line-reading loop
+    return results;
   }
 
   public static final String BAND_STALK = "stalk";

@@ -37,9 +37,7 @@ import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
 
 public class LoadFileAction {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  static String user_dir = System.getProperty("user.dir");
   SeqMapView gviewer;
   FileTracker load_dir_tracker;
   static int unknown_group_count = 1;
@@ -118,7 +116,12 @@ public class LoadFileAction {
     return chooser;
   }
 
+  /** Load a file into the global singleton genometry model. */
   public MutableAnnotatedBioSeq loadFile()  {
+    return loadFile(SingletonGenometryModel.getGenometryModel());
+  }
+
+  public MutableAnnotatedBioSeq loadFile(SingletonGenometryModel gmodel)  {
 
     MergeOptionFileChooser chooser = getFileChooser();
     chooser.setCurrentDirectory(load_dir_tracker.getFile());
@@ -170,7 +173,7 @@ public class LoadFileAction {
           System.out.println("Loading from a URL is not currently supported.");
         }
         else {
-          new_seq = load(gviewer, cfil, gmodel.getSelectedSeq());
+          new_seq = load(gviewer, cfil, gmodel, gmodel.getSelectedSeq());
         }
       }
 
@@ -211,11 +214,11 @@ public class LoadFileAction {
     return gmodel.getSelectedSeq();
   }
 
-  public MutableAnnotatedBioSeq load(File annotfile) {
-    return load(gviewer, annotfile, gmodel.getSelectedSeq());
-  }
+//  public MutableAnnotatedBioSeq load(File annotfile) {
+//    return load(gviewer, annotfile, gmodel.getSelectedSeq());
+//  }
 
-  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, File annotfile, MutableAnnotatedBioSeq input_seq) {
+  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, File annotfile, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
     MutableAnnotatedBioSeq aseq = null;
     InputStream fistr = null;
     try {
@@ -249,7 +252,7 @@ public class LoadFileAction {
 	  }
 	}
 	else {
-	  aseq = load(gviewer, fistr, stripped_name, input_seq);
+	  aseq = load(gviewer, fistr, stripped_name, gmodel, input_seq);
 	}
       }
     }
@@ -262,7 +265,9 @@ public class LoadFileAction {
     return aseq;
   }
 
-  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, MutableAnnotatedBioSeq input_seq)
+  // This seems to be unused.
+  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, 
+      SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     IOException ioe = null;
     MutableAnnotatedBioSeq result = null;
@@ -270,7 +275,7 @@ public class LoadFileAction {
     try {
       URL loadurl = new URL(url_name);
       istr = new BufferedInputStream(loadurl.openStream());
-      result = load(gviewer, istr, url_name, input_seq);
+      result = load(gviewer, istr, url_name, gmodel, input_seq);
     }
     catch (IOException ex) {
       ioe = ex;
@@ -292,7 +297,7 @@ public class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
-        String stream_name, MutableAnnotatedBioSeq input_seq)
+        String stream_name, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     System.out.println("loading file: " + stream_name);
 

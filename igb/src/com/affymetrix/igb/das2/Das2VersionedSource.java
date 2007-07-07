@@ -141,7 +141,7 @@ public class Das2VersionedSource  {
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
 	  System.out.println("@@@@  Adding genome: " + groupid);
-	  //	  genome = gmodel.addSeqGroup(groupid); 
+	  //	  genome = gmodel.addSeqGroup(groupid);
 	  genome = new Das2SeqGroup(this, groupid);
 	}
 	else {
@@ -321,7 +321,7 @@ public class Das2VersionedSource  {
         //FIXME: quick hack to get the type IDs to be kind of right (for now)
 
         // temporary workaround for getting type ending, rather than full URI
-	//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }          
+	//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }
 	// if these characters are one the beginning, take off the 1st 2 characters...
 	//FIXME: quick hack to get the type IDs to be kind of right (for now)
 
@@ -331,8 +331,8 @@ public class Das2VersionedSource  {
 	String type_name = typenode.getAttribute(NAME);
 	if (type_name.length() == 0) { type_name = typenode.getAttribute(TITLE); }
 
-	NodeList flist = typenode.getElementsByTagName("FORMAT");              
-	LinkedHashMap formats = new LinkedHashMap();                           
+	NodeList flist = typenode.getElementsByTagName("FORMAT");
+	LinkedHashMap formats = new LinkedHashMap();
 	HashMap props = new HashMap();
 	for (int k=0; k<flist.getLength(); k++) {
 	  Element fnode = (Element)flist.item(k);
@@ -345,11 +345,12 @@ public class Das2VersionedSource  {
           formats.put(formatid, mimetype);
 	}
 
-	NodeList plist = typenode.getElementsByTagName("PROP");                
+	NodeList plist = typenode.getElementsByTagName("PROP");
 	for (int k=0; k<plist.getLength(); k++) {
 	  Element pnode = (Element)plist.item(k);
 	  String key = pnode.getAttribute("key");
 	  String val = pnode.getAttribute("value");
+	  if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
 	  props.put(key, val);
 	}
 

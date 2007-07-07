@@ -14,6 +14,7 @@
 package com.affymetrix.igb.prefs;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
@@ -27,9 +28,10 @@ import com.affymetrix.igb.view.UnibrowHairline;
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
-public class OptionsView extends JPanel implements IPrefEditorComponent  {
+public class OptionsView extends JPanel implements IPrefEditorComponent, ActionListener  {
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
+  JButton clear_prefsB = new JButton("Clear all stored preferences");
 
   public OptionsView() {
     super();
@@ -77,6 +79,9 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Enable Curation Testing (requires restart)", UnibrowPrefsUtil.getTopNode(),
       CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations));
+
+    misc_box.add(clear_prefsB);
+    clear_prefsB.addActionListener(this);
 
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
@@ -171,6 +176,13 @@ public class OptionsView extends JPanel implements IPrefEditorComponent  {
     main_box.add(misc_box);
 
     validate();
+  }
+
+  public void actionPerformed(ActionEvent evt) {
+    Object src = evt.getSource();
+    if (src == clear_prefsB) {
+      UnibrowPrefsUtil.clearPreferences(this);
+    }
   }
 
   public void destroy() {

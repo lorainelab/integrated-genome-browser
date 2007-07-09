@@ -34,11 +34,10 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.*;
-import com.affymetrix.igb.view.*;
 
 public class LoadFileAction {
 
-  SeqMapView gviewer;
+  JFrame gviewerFrame;
   FileTracker load_dir_tracker;
   static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
@@ -50,8 +49,8 @@ public class LoadFileAction {
    *  Constructor.
    *  @param ft  a FileTracker used to keep track of directory to load from
    */
-  public LoadFileAction(SeqMapView gviewer, FileTracker ft) {
-    this.gviewer = gviewer;
+  public LoadFileAction(JFrame gviewerFrame, FileTracker ft) {
+    this.gviewerFrame = gviewerFrame;
     load_dir_tracker = ft;
   }
 
@@ -117,11 +116,12 @@ public class LoadFileAction {
   }
 
   /** Load a file into the global singleton genometry model. */
-  public MutableAnnotatedBioSeq loadFile()  {
-    return loadFile(SingletonGenometryModel.getGenometryModel());
+  public File[] loadFile()  {
+    return loadFile(SingletonGenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
   }
 
-  public MutableAnnotatedBioSeq loadFile(SingletonGenometryModel gmodel)  {
+  static public File[] loadFile(SingletonGenometryModel gmodel, 
+      FileTracker load_dir_tracker, JFrame gviewerFrame)  {
 
     MergeOptionFileChooser chooser = getFileChooser();
     chooser.setCurrentDirectory(load_dir_tracker.getFile());
@@ -140,11 +140,12 @@ public class LoadFileAction {
     chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
     chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " +(unknown_group_count++));
 
-    int option = chooser.showOpenDialog(gviewer.getFrame());
+    int option = chooser.showOpenDialog(gviewerFrame);
 
+    File[] fils = new File[0];
     if (option == JFileChooser.APPROVE_OPTION) {
       load_dir_tracker.setFile(chooser.getCurrentDirectory());
-      File[] fils = chooser.getSelectedFiles();
+      fils = chooser.getSelectedFiles();
 
       AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
       MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
@@ -168,12 +169,12 @@ public class LoadFileAction {
           // trim off the beginning stuff AND add back the double slash "//" after http.
 //          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
 //          System.out.println("detected url input: " + url_name);
-//          loadFromUrl(gviewer, url_name, aseq);
+//          loadFromUrl(gviewerFrame, url_name, aseq);
           //TODO: maybe support this again?
           System.out.println("Loading from a URL is not currently supported.");
         }
         else {
-          new_seq = load(gviewer, cfil, gmodel, gmodel.getSelectedSeq());
+          new_seq = load(gviewerFrame, cfil, gmodel, gmodel.getSelectedSeq());
         }
       }
 
@@ -211,14 +212,14 @@ public class LoadFileAction {
       }
     }
 
-    return gmodel.getSelectedSeq();
+    return fils;
   }
 
 //  public MutableAnnotatedBioSeq load(File annotfile) {
-//    return load(gviewer, annotfile, gmodel.getSelectedSeq());
+//    return load(gviewerFrame, annotfile, gmodel.getSelectedSeq());
 //  }
 
-  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, File annotfile, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
+  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
     MutableAnnotatedBioSeq aseq = null;
     InputStream fistr = null;
     try {
@@ -244,7 +245,7 @@ public class LoadFileAction {
 	if (GraphSymUtils.isAGraphFilename(stripped_name)) {
 	  AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
 	  if (seq_group == null) {
-	    ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Must select a a genome before loading a graph.  " +
+	    ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
 				    "Graph data must be merged with already loaded genomic data.", null);
 	  } else {
 	    URL url = annotfile.toURI().toURL();
@@ -252,12 +253,12 @@ public class LoadFileAction {
 	  }
 	}
 	else {
-	  aseq = load(gviewer, fistr, stripped_name, gmodel, input_seq);
+	  aseq = load(gviewerFrame, fistr, stripped_name, gmodel, input_seq);
 	}
       }
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
+      ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
     }
     finally {
       if (fistr != null) try {fistr.close();} catch (Exception e) {}
@@ -266,7 +267,7 @@ public class LoadFileAction {
   }
 
   // This seems to be unused.
-  public static MutableAnnotatedBioSeq loadFromUrl(SeqMapView gviewer, String url_name, 
+  public static MutableAnnotatedBioSeq loadFromUrl(JFrame gviewerFrame, String url_name, 
       SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     IOException ioe = null;
@@ -275,7 +276,7 @@ public class LoadFileAction {
     try {
       URL loadurl = new URL(url_name);
       istr = new BufferedInputStream(loadurl.openStream());
-      result = load(gviewer, istr, url_name, gmodel, input_seq);
+      result = load(gviewerFrame, istr, url_name, gmodel, input_seq);
     }
     catch (IOException ex) {
       ioe = ex;
@@ -296,7 +297,7 @@ public class LoadFileAction {
    *  The stream will be passed through uncompression routines in the Streamer
    *  class if necessary.
    */
-  public static MutableAnnotatedBioSeq load(SeqMapView gviewer, InputStream instr,
+  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
         String stream_name, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     System.out.println("loading file: " + stream_name);
@@ -395,12 +396,12 @@ public class LoadFileAction {
               options = new Object[] { "Query", "Target"};
             }
             if (javax.swing.SwingUtilities.isEventDispatchThread()) {
-              psl_option = JOptionPane.showOptionDialog(gviewer.getFrame(), "Annotate which sequence?",
+              psl_option = JOptionPane.showOptionDialog(gviewerFrame, "Annotate which sequence?",
                                                       "PSL annotation options", JOptionPane.DEFAULT_OPTION,
                                                       JOptionPane.QUESTION_MESSAGE, null,
                                                       options, "Target");
             } else {
-              psl_option = InvokeUtils.invokeOptionDialog(gviewer.getFrame(), "Annotate which sequence?",
+              psl_option = InvokeUtils.invokeOptionDialog(gviewerFrame, "Annotate which sequence?",
                                                       "PSL annotation options", JOptionPane.DEFAULT_OPTION,
                                                       JOptionPane.QUESTION_MESSAGE, null,
                                                       options, "Target");
@@ -523,12 +524,12 @@ public class LoadFileAction {
           }
         }
         else {
-          ErrorHandler.errorPanel(gviewer.getFrame(), "ABORTED LOADING BNIB FILE",
+          ErrorHandler.errorPanel(gviewerFrame, "ABORTED LOADING BNIB FILE",
             "The currently loaded sequence is not the correct type to merge with a bnib file", null);
         }
       }
       else {
-	ErrorHandler.errorPanel(gviewer.getFrame(), "FORMAT NOT RECOGNIZED",
+	ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED",
           "Format not recognized for file: " + stream_name, null);
       }
 
@@ -536,7 +537,7 @@ public class LoadFileAction {
     }
     catch (Exception ex) {
       the_exception = ex;
-      //ErrorHandler.errorPanel(gviewer.getFrame(), "ERROR", "Error loading file", ex);
+      //ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
     } finally {
       if (str != null) try {str.close();} catch (Exception e) {}
     }

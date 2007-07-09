@@ -22,16 +22,12 @@ import java.io.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.style.*;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphStateI;
-import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
-import com.affymetrix.igb.tiers.DefaultIAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.servlets.*;
 import com.affymetrix.igb.view.SeqMapView;

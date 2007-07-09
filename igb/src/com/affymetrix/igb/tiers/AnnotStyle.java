@@ -424,11 +424,20 @@ public class AnnotStyle implements IAnnotStyleExtended {
     expandable = b;
   }
 
-  /** Always returns false.  This class is only intended for annotation tiers,
+  boolean is_graph = false;
+  
+  /** Returns false by default.  This class is only intended for annotation tiers,
    *  not graph tiers.
    */
   public boolean isGraphTier() {
-    return false;
+    return is_graph;
+  }
+  
+  /** Avoid setting to anything but false.  This class is only intended for annotation tiers,
+   *  not graph tiers.
+   */
+  public void setGraphTier(boolean b) {
+    is_graph = b;
   }
 
   Map transient_properties;

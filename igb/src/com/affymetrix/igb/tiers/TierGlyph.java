@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.*;
 import java.awt.*;
 import java.util.*;
 

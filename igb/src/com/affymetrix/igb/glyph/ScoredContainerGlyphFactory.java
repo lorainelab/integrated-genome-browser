@@ -83,12 +83,13 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     }
     GraphIntervalSym[] the_graph_syms = null;
     DerivedSeqSymmetry derived_sym = null;
+    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
     if (aseq != vseq) {
       derived_sym = SeqUtils.copyToDerived(original_container);
       SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
-      the_graph_syms = makeGraphsFromDerived(derived_sym, vseq);
+      the_graph_syms = makeGraphsFromDerived(derived_sym, seq_group, vseq);
     } else { // aseq == vseq, so no transformation needed
-      the_graph_syms = makeGraphs(original_container, SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup());
+      the_graph_syms = makeGraphs(original_container, seq_group);
     }
     Rectangle2D cbox = map.getCoordBounds();
     for (int q=0; q<the_graph_syms.length; q++) {
@@ -164,7 +165,8 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   }
   
   
-  public static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym, BioSeq seq) {
+  public static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym, 
+      AnnotatedSeqGroup seq_group, BioSeq seq) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
     
     int score_count = original_container.getScoreCount();
@@ -178,16 +180,16 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     for (int i=0; i<score_count; i++) {
       String score_name = original_container.getScoreName(i);
       if (separate_by_strand)  {
-        GraphSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq, '+');
+        GraphSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '+');
         if (forward_gsym != null) {
           results.add(forward_gsym);
         }
-        GraphSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq, '-');
+        GraphSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '-');
         if (reverse_gsym != null) {
           results.add(reverse_gsym);
         }
       } else {
-        GraphSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq, '.');
+        GraphSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '.');
         if (gsym != null) {
           results.add(gsym);
         }
@@ -199,14 +201,15 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   
   // strands should be one of '+', '-' or '.'
   // name -- should be a score name in the original ScoredContainerSym
-  static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name, BioSeq seq, final char strands) {
+  static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name, 
+      AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
     
     float[] original_scores = original_container.getScores(name);
     
     // Simply knowing the correct graph ID is the key to getting the correct
     // graph state, with the accompanying tier style and tier combo style.
-    String id = original_container.getGraphID(name, strands);
+    String id = original_container.getGraphID(seq_group, name, strands);
     
     if (original_scores == null) {
       System.err.println("ScoreContainerSym.makeGraphSym() called, but no scores found for: " + name);

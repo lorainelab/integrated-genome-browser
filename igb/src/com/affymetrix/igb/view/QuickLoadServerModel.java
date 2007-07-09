@@ -432,9 +432,7 @@ public class QuickLoadServerModel {
             }
           }
           else {
-            // really should remove LoadFileAction's requirement for SeqMapView argument...
-            LoadFileAction lfa = new LoadFileAction(Application.getSingleton().getMapView(), null);
-            lfa.load(Application.getSingleton().getMapView(), bis, filename, gmodel, gmodel.getSelectedSeq());
+            LoadFileAction.load(Application.getSingleton().getFrame(), bis, filename, gmodel, gmodel.getSelectedSeq());
           }
 
           setLoadState(current_group, filename, true);

@@ -637,7 +637,7 @@ public class IGB extends Application
       curation_control = new CurationControl(map_view);
     }
 
-    open_file_action = new LoadFileAction(map_view, load_directory);
+    open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
     load_das_action = new DasFeaturesAction2(map_view);
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);

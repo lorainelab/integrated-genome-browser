@@ -13,14 +13,13 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.style.*;
+
 import java.awt.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.style.GraphStateI;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.style.SimpleAnnotStyle;
 
 public class TrackLineParser {
 
@@ -118,14 +117,16 @@ public class TrackLineParser {
    *  A default track name must be provided in case none is specified by the
    *  track line itself.
    */
-  public static IAnnotStyle createAnnotStyle(Map track_hash, String default_track_name) {
+  public static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group, 
+      Map track_hash, String default_track_name) {
     String name = (String) track_hash.get(NAME);
     if (name == null) {
       track_hash.put(NAME, default_track_name);
       name = default_track_name;
     }
 
-    IAnnotStyleExtended style = SimpleAnnotStyle.getInstance(name);
+    StateProvider provider = seq_group.getStateProvider();
+    IAnnotStyle style = provider.getAnnotStyle(name);
     applyTrackProperties(track_hash, style);
     return style;
   }

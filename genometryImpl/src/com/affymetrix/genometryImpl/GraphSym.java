@@ -13,11 +13,9 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 
 /**
@@ -123,7 +121,7 @@ public class GraphSym extends SimpleSymWithProps {
    *  Returns the graph state.  Will never be null.
    */
   public GraphStateI getGraphState() {
-    GraphState state = GraphState.getGraphState(this.gid);
+    GraphStateI state = AnnotatedSeqGroup.getGlobalStateProvider().getGraphState(this.gid);
     return state;
   }
 

@@ -162,7 +162,15 @@ public class PSLParser implements AnnotationWriter  {
             }
           } else {
             track_line_parser.parseTrackLine(line);
-            track_line_parser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), annot_type);
+            AnnotatedSeqGroup seq_group;
+            if (annotate_query) {
+              seq_group = query_group;
+            } else if (annotate_target) {
+              seq_group = target_group;
+            } else {
+              seq_group = other_group;
+            }
+            track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), annot_type);              
           }
           // You can later get the track properties with getCurrentTrackHash();
 	  continue;

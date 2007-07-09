@@ -13,8 +13,7 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.SimpleAnnotStyle;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.util.*;
 
 /**
@@ -132,28 +131,20 @@ public class GraphState implements GraphStateI {
     return (String)num2gstyle.get(new Integer(style_int));
   }
 
-  static Map id2state = new HashMap();
-  
-  public static GraphState getGraphState(String id) {
-    GraphState state = (GraphState) id2state.get(id);
-    if (state == null) {
-      state = new GraphState(id);
-      id2state.put(id, state);
-    }
-    return state;
-  }
-
   static int temp_state_count = 0;
 
   public static GraphState getTemporaryGraphState() {
     return new GraphState("temporary:" + (temp_state_count++));
   }
 
-  GraphState(String id) {
+  protected GraphState(String id) {
     super();
     this.unique_id = id;
     
-    tier_style = new SimpleAnnotStyle(id, true);
+    
+    StateProvider provider = AnnotatedSeqGroup.getGlobalStateProvider();
+    tier_style = provider.getAnnotStyle(id);
+    tier_style.setGraphTier(true);
     
     // Graph Tiers with a single graph in them are not collapsible/expandible
     tier_style.setExpandable(false);

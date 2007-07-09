@@ -33,23 +33,22 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   boolean is_graph = false;
   Map transient_properties = null;
   
+  /** Should only be called by subclasses or a StateProvider. */
   public DefaultIAnnotStyle() {
     super();
     this.unique_name = Integer.toHexString(hashCode()); // a unique name, just in case it is ever needed
-    this.fg = SimpleAnnotStyle.getDefaultInstance().getColor();
-    this.bg = SimpleAnnotStyle.getDefaultInstance().getBackground();
   }
   
+  /** Should only be called by subclasses or a StateProvider. */
   public DefaultIAnnotStyle(String name, boolean graph) {
     this();
-    this.unique_name = name;
+    this.unique_name = name.toLowerCase();
     this.human_name = name;
-    this.is_graph = graph;
+    this.setGraphTier(graph);
   }
   
-  public boolean isGraphTier() {
-    return is_graph;
-  }
+  public boolean isGraphTier() { return is_graph; }
+  public void setGraphTier(boolean b) { this.is_graph = b; }
   
   public Color getColor() { return fg; }
   public void setColor(Color c) { fg = c; }
@@ -92,6 +91,7 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
    *  including the transient properties. 
    */
   public void copyPropertiesFrom(IAnnotStyle g) {
+    setGraphTier(g.isGraphTier());
     setColor(g.getColor());
     setShow(g.getShow());
     // don't copy unique name

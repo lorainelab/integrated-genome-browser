@@ -161,7 +161,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       }
       else if (line.startsWith("track")) {
         track_line_parser.parseTrackLine(line);
-        track_line_parser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_type);
+        track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_type);
         type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
         String item_rgb_string = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
         use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);

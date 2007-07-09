@@ -109,7 +109,7 @@ public class GFF3Parser {
         }
         if (line.startsWith("##track")) {
           track_line_parser.parseTrackLine(line);
-          track_line_parser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_source);
+          track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
           track_name = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
           continue;
         }

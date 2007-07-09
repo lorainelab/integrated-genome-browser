@@ -198,7 +198,7 @@ public class WiggleParser {
     }
     track_hash.put(TrackLineParser.NAME, graph_id);
     
-    GraphStateI gstate = GraphState.getGraphState(graph_id);
+    GraphStateI gstate = seq_group.getStateProvider().getGraphState(graph_id);
     track_line_parser.applyTrackProperties(track_hash, gstate);
     
     Iterator iter = m.keySet().iterator();

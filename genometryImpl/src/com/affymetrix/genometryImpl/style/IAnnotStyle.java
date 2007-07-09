@@ -56,7 +56,9 @@ public interface IAnnotStyle {
   public boolean getExpandable();
   public void setExpandable(boolean b);
   
+  /** Indicated whether this tier will be used for a graph. */
   public boolean isGraphTier();
+  public void setGraphTier(boolean b);
 
   /**
    *  Gets a reference to a Map that can be used to store any arbitrary 

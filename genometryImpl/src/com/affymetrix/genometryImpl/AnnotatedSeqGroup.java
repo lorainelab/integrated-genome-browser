@@ -17,6 +17,8 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 public class AnnotatedSeqGroup {
@@ -463,6 +465,19 @@ public class AnnotatedSeqGroup {
     }
 
     return newid;
+  }
+  
+  static StateProvider globalAnnotStyleProvider = new DefaultStateProvider();
+  
+  public static StateProvider getGlobalStateProvider() {
+    return globalAnnotStyleProvider;
+  }
+
+  /** By default, simply returns the global StateProvider, but subclasses
+   *  can implement a different one for each seq group.
+   */
+  public StateProvider getStateProvider() {
+    return getGlobalStateProvider();
   }
 
   public static class ListmakingHashMap extends TreeMap {

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,8 +15,6 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -143,7 +141,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
       return null;
     }
 
-    String id = getGraphID(name, '.');
+    String id = getGraphID(seq_group, name, '.');
     GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
     gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_BOTH);
     return gsym;
@@ -194,9 +192,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     else {
       String id;
       if (orientation) {
-        id = getGraphID(name, '+');
+        id = getGraphID(seq_group, name, '+');
       } else {
-        id = getGraphID(name, '-');
+        id = getGraphID(seq_group, name, '-');
       }
       int[] xcoords = xlist.copyToArray();
       int[] wcoords = wlist.copyToArray();
@@ -217,18 +215,18 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   // this score will map to this same graph ID for all other
   // ScoredContainerSym's that have the same ID, even if they
   // are on other BioSeq's.
-  public String getGraphID(String score_name, char strand) {
+  public String getGraphID(AnnotatedSeqGroup seq_group, String score_name, char strand) {
     // I'm just assuming that this combination will be unique
     String id = getID() + ":" + strand + ":" + score_name;
     if (id2gstate.get(id) == null) {
-      GraphState gs = initializeGraphState(id, score_name, strand);
+      GraphStateI gs = initializeGraphState(id, seq_group, score_name, strand);
       id2gstate.put(id, gs);
     }
     return id;
   }
 
-  GraphState initializeGraphState(String id, String score_name, char strand) {
-    GraphState gs = GraphState.getGraphState(id);
+  GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
+    GraphStateI gs = seq_group.getStateProvider().getGraphState(id);
     gs.setFloatGraph(false);
     gs.setGraphStyle(GraphStateI.HEAT_MAP);
     // don't bother setting preferred heat map style, it should happen automatically.
@@ -278,7 +276,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   }
 
   static IAnnotStyle newComboStyle(String name) {
-    IAnnotStyle style = new DefaultIAnnotStyle(name, true);
+    IAnnotStyle style = AnnotatedSeqGroup.getGlobalStateProvider().getAnnotStyle(name);
+    style.setGraphTier(true);
     style.setExpandable(true);
     style.setCollapsed(false);
     return style;

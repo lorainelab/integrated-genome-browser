@@ -19,32 +19,9 @@ import java.util.Map;
 
 public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
 
-  public SimpleAnnotStyle(String name) {
-    super(name, false);
-  }
-  
-  public SimpleAnnotStyle(String name, boolean is_graph) {
+  // Should be called only from within package or from StateProvider.
+  protected SimpleAnnotStyle(String name, boolean is_graph) {
     super(name, is_graph);
-  }
-
-  static Map instances = new HashMap();
-
-  /**
-   *  Returns a style for the given name.  These styles remain associated
-   * with the given name while the program is running, but do not get
-   * persisted to a permanent storage.
-   */
-  public static IAnnotStyleExtended getInstance(String name) {
-    IAnnotStyleExtended style = (IAnnotStyleExtended) instances.get(name);
-    if (style == null) {
-      style = new SimpleAnnotStyle(name);
-      instances.put(name.toLowerCase(), style);
-    }
-    return style;
-  }
-  
-  public static IAnnotStyleExtended getDefaultInstance() {
-    return getInstance("* default *");
   }
   
   String url;

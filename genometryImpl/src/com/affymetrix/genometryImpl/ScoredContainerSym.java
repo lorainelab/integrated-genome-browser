@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -276,7 +277,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   }
 
   static IAnnotStyle newComboStyle(String name) {
-    IAnnotStyle style = AnnotatedSeqGroup.getGlobalStateProvider().getAnnotStyle(name);
+    IAnnotStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
     style.setGraphTier(true);
     style.setExpandable(true);
     style.setCollapsed(false);

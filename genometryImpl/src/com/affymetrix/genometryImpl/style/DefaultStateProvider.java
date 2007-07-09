@@ -19,6 +19,7 @@ public class DefaultStateProvider implements StateProvider {
 
   Map id2annotState;
   Map id2graphState;
+  static StateProvider globalStateProvider = new DefaultStateProvider();
   public static final String DEFAULT_INSTANCE_NAME = "* default *";
   SimpleAnnotStyle default_instance = new SimpleAnnotStyle(DEFAULT_INSTANCE_NAME, false);
   
@@ -26,6 +27,14 @@ public class DefaultStateProvider implements StateProvider {
   public DefaultStateProvider() {
     id2annotState = new HashMap();
     id2graphState = new HashMap();
+  }  
+  
+  public static StateProvider getGlobalStateProvider() {
+    return globalStateProvider;
+  }
+  
+  public static void setGlobalStateProvider(StateProvider sp) {
+    globalStateProvider = sp;
   }
   
   /**

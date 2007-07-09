@@ -142,7 +142,7 @@ public class GraphState implements GraphStateI {
     this.unique_id = id;
     
     
-    StateProvider provider = AnnotatedSeqGroup.getGlobalStateProvider();
+    StateProvider provider = DefaultStateProvider.getGlobalStateProvider();
     tier_style = provider.getAnnotStyle(id);
     tier_style.setGraphTier(true);
     

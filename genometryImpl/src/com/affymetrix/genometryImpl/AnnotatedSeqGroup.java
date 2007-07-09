@@ -467,17 +467,11 @@ public class AnnotatedSeqGroup {
     return newid;
   }
   
-  static StateProvider globalAnnotStyleProvider = new DefaultStateProvider();
-  
-  public static StateProvider getGlobalStateProvider() {
-    return globalAnnotStyleProvider;
-  }
-
   /** By default, simply returns the global StateProvider, but subclasses
    *  can implement a different one for each seq group.
    */
   public StateProvider getStateProvider() {
-    return getGlobalStateProvider();
+    return DefaultStateProvider.getGlobalStateProvider();
   }
 
   public static class ListmakingHashMap extends TreeMap {

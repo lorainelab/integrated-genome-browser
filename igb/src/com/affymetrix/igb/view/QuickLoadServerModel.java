@@ -36,7 +36,7 @@ public class QuickLoadServerModel {
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  SingletonGenometryModel gmodel;
 
   static Pattern tab_regex = Pattern.compile("\t");
 
@@ -57,7 +57,8 @@ public class QuickLoadServerModel {
   static Map group2states = new HashMap();
 
 
-  public QuickLoadServerModel(String url) {
+  public QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
+    this.gmodel = gmodel;
     root_url = url;
     if (! root_url.endsWith("/")) {
       root_url = root_url + "/";
@@ -70,14 +71,14 @@ public class QuickLoadServerModel {
 
   static Map url2quickload = new HashMap();
 
-  public static QuickLoadServerModel getQLModelForURL(URL url) {
+  public static QuickLoadServerModel getQLModelForURL(SingletonGenometryModel gmodel, URL url) {
     String ql_http_root = url.toExternalForm();
     if (! ql_http_root.endsWith("/")) {
       ql_http_root = ql_http_root + "/";
     }
     QuickLoadServerModel ql_server = (QuickLoadServerModel) url2quickload.get(ql_http_root);
     if (ql_server == null) {
-      ql_server = new QuickLoadServerModel(ql_http_root);
+      ql_server = new QuickLoadServerModel(gmodel, ql_http_root);
       url2quickload.put(ql_http_root, ql_server);
       LocalUrlCacher.loadSynonyms(SynonymLookup.getDefaultLookup(), ql_http_root+"synonyms.txt");
     }
@@ -95,7 +96,7 @@ public class QuickLoadServerModel {
   public String getRootUrl() { return root_url; }
   public java.util.List getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
-  public static AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
+  public AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
 
   /** Returns the name that this QuickLoad server uses to refer to the given AnnotatedSeqGroup.
    *  Because of synonyms, different QuickLoad servers may use different names to
@@ -277,7 +278,7 @@ public class QuickLoadServerModel {
     try {
       InputStream istr= LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
       //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-      java.util.List regions = parser.parse(istr, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
+      java.util.List regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
       int rcount = regions.size();
       //      System.out.println("Encode regions: " + rcount);
       SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
@@ -340,11 +341,11 @@ public class QuickLoadServerModel {
       boolean annot_contigs = false;
       if (lift_stream != null) {
         LiftParser lift_loader = new LiftParser();
-        group = lift_loader.parse(lift_stream, genome_name, annot_contigs);
+        group = lift_loader.parse(lift_stream, gmodel, genome_name, annot_contigs);
       }
       else if (cinfo_stream != null) {
         ChromInfoParser chrominfo_loader = new ChromInfoParser();
-        group = chrominfo_loader.parse(cinfo_stream, genome_name);
+        group = chrominfo_loader.parse(cinfo_stream, gmodel, genome_name);
       }
       System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);

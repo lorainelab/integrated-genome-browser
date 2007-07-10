@@ -497,7 +497,7 @@ public class GraphSelectionManager
         if (option == JFileChooser.APPROVE_OPTION) {
           output_file_tracker.setFile(chooser.getCurrentDirectory());
           File fil = chooser.getSelectedFile();
-          GraphSymUtils.writeGraphFile(gsym, fil.getName());
+          GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getName());
         }
       }
       catch (Exception ex) {

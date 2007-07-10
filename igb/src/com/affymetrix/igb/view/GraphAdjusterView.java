@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.genometryImpl.style.GraphStateI;
@@ -91,7 +91,7 @@ public class GraphAdjusterView {
     return newgrafs;
   }
 
-  public static void deleteGraphs(SingletonGenometryModel gmodel, SeqMapView gviewer, java.util.List grafs) {
+  public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, java.util.List grafs) {
     int gcount = grafs.size();
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
@@ -108,7 +108,7 @@ public class GraphAdjusterView {
    *  happens to be a child of a tier in the widget, and the tier has no children
    *  left after deleting the graph, then delete the tier as well.
    */
-  public static void deleteGraph(SingletonGenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
+  public static void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
     //System.out.println("deleting graph: " + gsym);
 
     AnnotatedBioSeq aseq = (AnnotatedBioSeq)gsym.getGraphSeq();
@@ -152,7 +152,7 @@ public class GraphAdjusterView {
   }
 
 
-  public static void saveGraphs(SeqMapView gviewer, java.util.List grafs) {
+  public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, java.util.List grafs) {
     int gcount = grafs.size();
     if (gcount > 1) {
       // actually shouldn't get here, since save button is disabled if more than one graph
@@ -167,7 +167,7 @@ public class GraphAdjusterView {
         if (option == JFileChooser.APPROVE_OPTION) {          
           load_dir_tracker.setFile(chooser.getCurrentDirectory());
           File fil = chooser.getSelectedFile();
-          GraphSymUtils.writeGraphFile(gsym, fil.getAbsolutePath());
+          GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getAbsolutePath());
         }
       }
       catch (Exception ex) {

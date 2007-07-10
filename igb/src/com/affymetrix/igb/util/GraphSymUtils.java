@@ -20,8 +20,9 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.Streamer;
@@ -214,8 +215,8 @@ public class GraphSymUtils {
    *  Reads one or more graphs from an input stream.
    *  Equivalent to a call to the other readGraphs() method using seq = null.
    */
-  public static List readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException  {
-    return readGraphs(istr, stream_name, seq_group, (MutableAnnotatedBioSeq) null);
+  public static List readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
+    return readGraphs(istr, stream_name, gmodel, seq_group, (MutableAnnotatedBioSeq) null);
   }
 
   /**
@@ -227,19 +228,20 @@ public class GraphSymUtils {
    *  are instances of MutableAnnotatedBioSeq.
    *  @param seq  Ignored in most cases.  But for "gr" files that
    *   do not specify a BioSeq, use this parameter to specify it.  If null
-   *   then SingletonGenometryModel.getSelectedSeq() will be used.
+   *   then GenometryModel.getSelectedSeq() will be used.
    */
-  public static List readGraphs(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
+  public static List readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
     List grafs = null;
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
     String sname = stripped_name.toString().toLowerCase();
 
     if (seq == null) {
-      seq = SingletonGenometryModel.getGenometryModel().getSelectedSeq();
+      seq = gmodel.getSelectedSeq();
     }
+
     if (sname.endsWith(".bar"))  {
-      grafs = BarParser.parse(newstr, seq_group, stream_name);
+      grafs = BarParser.parse(newstr, gmodel, seq_group, stream_name);
     }
     else if (sname.endsWith(".gr")) {
       // If this is a newly-created seq group, then go ahead and add a new 
@@ -312,7 +314,8 @@ public class GraphSymUtils {
   public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
     // This method is used only by affy *internal* version of IGB.
     //TODO: Maybe this should throw an exception if the file contains more than one graph?
-    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
       MutableAnnotatedBioSeq gseq = seq_group.getSeq(seq.getID());
       if (gseq == null)  { seq_group.addSeq( (MutableAnnotatedBioSeq) seq); }
@@ -323,7 +326,7 @@ public class GraphSymUtils {
       }
       // if seq is already part of AnnotatedSeqGroup, don't need to add to group
     }
-    List grafs = readGraphs(istr, stream_name, seq_group, seq);
+    List grafs = readGraphs(istr, stream_name, gmodel, seq_group, seq);
     GraphSym graf = null;
     if (grafs.size() > 0) {
       graf = (GraphSym) grafs.get(0);
@@ -406,9 +409,10 @@ public class GraphSymUtils {
   /** Writes out in a variety of possible formats depending
    *  on the suffix of the filename.
    *  Formats include ".gr", ".sgr", ".sin" == ".egr", ".bgr".
+   *  @param seq_group the AnnotatedSeqGroup the graph is on, needed for ".wig", ".egr", and ".sin" formats.
    *  @return true if the file was written sucessfully
    */
-  public static boolean writeGraphFile(GraphSym gsym, String file_name) throws IOException {
+  public static boolean writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group, String file_name) throws IOException {
     boolean result = false;
     BufferedOutputStream bos = null;
     try {
@@ -424,7 +428,6 @@ public class GraphSymUtils {
         result = SgrParser.writeSgrFormat(gsym, bos);
       } else if (file_name.endsWith(".egr") || file_name.endsWith(".sin")) {
         if (gsym instanceof GraphIntervalSym) {
-          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
           String genome_name = null;
           if (seq_group != null) {
             genome_name = seq_group.getID();
@@ -437,7 +440,6 @@ public class GraphSymUtils {
       } else if (file_name.endsWith(".wig")) {
         if (gsym instanceof GraphIntervalSym) {
           GraphIntervalSym gisym = (GraphIntervalSym) gsym;
-          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
           String genome_name = null;
           if (seq_group != null) {
             genome_name = seq_group.getID();

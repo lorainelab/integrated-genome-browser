@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
@@ -242,6 +243,8 @@ public class Das2ClientOptimizer {
 
 
   static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
     Das2RequestLog request_log = request_sym.getLog();
     request_log.setSuccess(true);
 
@@ -419,7 +422,7 @@ public class Das2ClientOptimizer {
         }
 	else if (content_subtype.equals("bar")) {
 	  request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
-	  feats = BarParser.parse(bis, seq_group, type.getName(), false);
+	  feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
 	}
 	else if (content_subtype.equals("bp2")) {
 	  request_log.addLogMessage("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");

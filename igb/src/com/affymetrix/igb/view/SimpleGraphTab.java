@@ -91,7 +91,7 @@ implements SeqSelectionListener, SymSelectionListener {
    
   public Action save_selected_graphs_action =  new AbstractAction("Save Selected Graphs...") {
     public void actionPerformed(ActionEvent e) {
-        GraphAdjusterView.saveGraphs(gviewer, grafs);
+        GraphAdjusterView.saveGraphs(gviewer, gmodel, grafs);
       }
    };
    

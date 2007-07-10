@@ -18,6 +18,7 @@ import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.NibbleBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
@@ -120,7 +121,7 @@ public class LoadFileAction {
     return loadFile(SingletonGenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
   }
 
-  static public File[] loadFile(SingletonGenometryModel gmodel, 
+  static public File[] loadFile(GenometryModel gmodel, 
       FileTracker load_dir_tracker, JFrame gviewerFrame)  {
 
     MergeOptionFileChooser chooser = getFileChooser();
@@ -219,7 +220,7 @@ public class LoadFileAction {
 //    return load(gviewerFrame, annotfile, gmodel.getSelectedSeq());
 //  }
 
-  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
+  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, GenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
     MutableAnnotatedBioSeq aseq = null;
     InputStream fistr = null;
     try {
@@ -243,7 +244,7 @@ public class LoadFileAction {
 	//String suffix = null;
 	//if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
 	if (GraphSymUtils.isAGraphFilename(stripped_name)) {
-	  AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+	  AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
 	  if (seq_group == null) {
 	    ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
 				    "Graph data must be merged with already loaded genomic data.", null);
@@ -268,7 +269,7 @@ public class LoadFileAction {
 
   // This seems to be unused.
   public static MutableAnnotatedBioSeq loadFromUrl(JFrame gviewerFrame, String url_name, 
-      SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
+      GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     IOException ioe = null;
     MutableAnnotatedBioSeq result = null;
@@ -298,7 +299,7 @@ public class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
-        String stream_name, SingletonGenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
+        String stream_name, GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
     System.out.println("loading file: " + stream_name);
 
@@ -438,7 +439,7 @@ public class LoadFileAction {
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
         BedParser parser = new BedParser();
         // really need to switch create_container (last argument) to true soon!
-        parser.parse(str, selected_group, true, annot_type, false);
+        parser.parse(str, gmodel, selected_group, true, annot_type, false);
         aseq = input_seq;
         parser = null;
       }

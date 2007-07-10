@@ -19,11 +19,10 @@ import java.net.MalformedURLException;
 import com.affymetrix.igb.bookmarks.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.event.*;
 
 /**
  *  A class for reading and parsing a file of Bookmarks.
@@ -42,7 +41,8 @@ public class BookmarksParser {
     int format = getFormat(f);
     if (DEBUG) System.out.println("Format of '"+f.getAbsolutePath()+"' is "+format);
     if (format == BED_FORMAT) {
-      parseBEDFormat(bookmarks, f);
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      parseBEDFormat(bookmarks, f, gmodel);
     } else if (format == NETSCAPE_FORMAT) {
       parseNetscapeBookmarks(bookmarks, f);
     } else if (format == SIMPLE_HTML_FORMAT) {
@@ -192,12 +192,12 @@ public class BookmarksParser {
   /** Parses bookmarks from a given file (formatted in BED format)
    *  and adds them to the given BookmarkList.
    */
-  public static void parseBEDFormat(BookmarkList bookmarks, File f) throws IOException {
+  public static void parseBEDFormat(BookmarkList bookmarks, File f, SingletonGenometryModel gmodel) throws IOException {
     if (DEBUG) System.out.println("loading bookmarks in BED format from '"+f.getAbsolutePath()+"'");
     FileInputStream fis = new FileInputStream(f);
     BufferedInputStream bis = new BufferedInputStream(fis);
     try {
-      parseBEDFormat(bookmarks, bis);
+      parseBEDFormat(bookmarks, bis, gmodel);
     } finally {
       if (bis != null) {bis.close();}
       if (fis != null) {fis.close();}
@@ -205,13 +205,13 @@ public class BookmarksParser {
     return;
   }
   
-  public static void parseBEDFormat(BookmarkList bookmarks, BufferedInputStream istr) throws IOException {
+  public static void parseBEDFormat(BookmarkList bookmarks, BufferedInputStream istr, SingletonGenometryModel gmodel) throws IOException {
     boolean had_errors = false;
 
     BedParser bparser = new BedParser();
     
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
-    java.util.List annots = bparser.parse(istr, seq_group, true, "bookmarks", false);
+    java.util.List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
     
     if ((annots != null) && (annots.size() > 0)) {
       for (int k=0; k<annots.size(); k++) {

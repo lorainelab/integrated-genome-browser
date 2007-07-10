@@ -229,7 +229,7 @@ public abstract class BookmarkController {
           URL graphurl = new URL(graph_path);
           istr = graphurl.openStream();
         }
-        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
         istr.close();
         //        displayGraph(graf, col, ypos, 60, true);
         //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),

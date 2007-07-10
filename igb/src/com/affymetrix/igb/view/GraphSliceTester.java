@@ -64,7 +64,7 @@ public class GraphSliceTester extends JComponent
 	int prev_point_count = gsym.getPointCount();
 	boolean new_points = false;
         try {
-          new_points = GraphSliceOptimizer.loadSlice(gsym, viewspan);
+          new_points = GraphSliceOptimizer.loadSlice(gsym, gmodel, viewspan);
         } catch (IOException ioe) {
           ioe.printStackTrace(System.err);
         }

@@ -738,7 +738,7 @@ public class QuickLoadView2 extends JComponent
     QuickLoadServerModel result = null;
     if (the_url_string != null && ! "".equals(the_url_string.trim())) try {
       URL the_url = new URL(the_url_string);
-      result = QuickLoadServerModel.getQLModelForURL(the_url);
+      result = QuickLoadServerModel.getQLModelForURL(gmodel, the_url);
 
       if (result != null) {
         LocalUrlCacher.loadSynonyms(SynonymLookup.getDefaultLookup(), result.getRootUrl()+"synonyms.txt");

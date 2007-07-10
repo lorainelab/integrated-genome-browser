@@ -168,7 +168,7 @@ public class OpenGraphAction extends AbstractAction {
         fis = furl.openStream();
       }
 
-      graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), seq_group);
+      graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), gmodel, seq_group);
       
       String graph_name = getGraphNameForURL(furl);
       // Now set the graph names (either the URL or the filename, possibly with an integer appended)

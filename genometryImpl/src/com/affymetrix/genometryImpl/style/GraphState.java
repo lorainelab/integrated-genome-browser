@@ -137,7 +137,11 @@ public class GraphState implements GraphStateI {
     return new GraphState("temporary:" + (temp_state_count++));
   }
 
-  protected GraphState(String id) {
+  /** Creates a new GraphState.  Uses the global state provider to generate
+   *  an initial IAnnotStyle for the tier_style, but you can replace that style if
+   *  necessary.
+   */
+  public GraphState(String id) {
     super();
     this.unique_id = id;
     

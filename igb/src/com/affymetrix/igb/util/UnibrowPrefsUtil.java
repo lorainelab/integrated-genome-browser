@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -37,11 +37,13 @@ import javax.swing.*;
   public static final String COMPONENT_STATE_TAB = "TAB";
   public static final String COMPONENT_STATE_WINDOW = "WINDOW";
 
+   public static String SLASH_STANDIN = "%";
+
 
   /** The name of a boolean preference. */
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
   public static final boolean default_ask_before_exiting = false;
-  
+
   private static Vector FILENAMES;
   static {
     FILENAMES = new Vector();
@@ -61,7 +63,7 @@ import javax.swing.*;
   public static Preferences getTopNode() {
     return Preferences.userRoot().node("/com/affymetrix/igb");
   }
-  
+
    public static void saveIntParam(String param_name, int param) {
      try {
        getTopNode().putInt(param_name, param);
@@ -234,10 +236,10 @@ import javax.swing.*;
     }
   }
 
-  /** Exports the preferences subtree to a file. 
+  /** Exports the preferences subtree to a file.
    *  Calls {@link Preferences#exportSubtree(OutputStream)}.
    */
-  public static void exportPreferences(Preferences prefs, File f) 
+  public static void exportPreferences(Preferences prefs, File f)
   throws IOException, BackingStoreException {
     FileOutputStream fos = null;
     try {
@@ -278,7 +280,7 @@ import javax.swing.*;
    *  user's preferences.
    *  @see Preferences#importPreferences(InputStream)
    */
-  public static void importPreferences(File f) 
+  public static void importPreferences(File f)
   throws IOException, InvalidPreferencesFormatException {
     FileInputStream fis = null;
     try {
@@ -289,8 +291,15 @@ import javax.swing.*;
       try { fis.close(); } catch (Exception e) {}
     }
   }
-  
-  /** 
+
+ 
+   public static void main(String[] args) {
+     clearPreferences(null);
+     System.exit(0);
+   }
+
+
+  /**
    *  Clears ALL stored preferences under the top node of {@link #getTopNode()}.
    *  Since this could have serious consequences, first asks for confirmation
    *  from the user via a JOptionPane.
@@ -320,16 +329,16 @@ import javax.swing.*;
   }
 
   static SortedSet keystroke_node_names = new TreeSet();
-  
+
   public static Collection getKeystrokesNodeNames() {
     return Collections.unmodifiableSet(new TreeSet(keystroke_node_names));
   }
-  
+
   /** Finds the KeyStroke that was specified in the preferences
    *  for the given action_command String.
    *  @param action_command  a String used to uniquely identify an action
    *    both in the program and in the preferences file;  these names
-   *    need to be globably unique within the application  
+   *    need to be globably unique within the application
    *  @return null if no preference was set or the given String is null
    */
   public static KeyStroke getAccelerator(String action_command) {
@@ -338,7 +347,7 @@ import javax.swing.*;
     KeyStroke ks = KeyStroke.getKeyStroke(str);
 
     keystroke_node_names.add(action_command);
-    
+
     if (ks == null) {
       if ("".equals(str)) {
         //System.out.println("No accelerator set for '"+ action_command +"'");
@@ -352,10 +361,10 @@ import javax.swing.*;
       // Set is being used to keep track of these.)
       getKeystrokesNode().put(action_command, "");
     }
-    
+
     return ks;
   }
-  
+
   public static Preferences getLocationsNode() {
     return UnibrowPrefsUtil.getTopNode().node("locations");
   }
@@ -376,12 +385,12 @@ import javax.swing.*;
       getLocationsNode().put(name, default_value);
       str = default_value;
     }
-    
+
     return str;
   }
 
   static String app_dir = null;
-  
+
   /** Returns the location of the application data directory.
    *  The String will always end with "/".
    */
@@ -402,7 +411,7 @@ import javax.swing.*;
   }
 
   static boolean bse_already_warned_once = false;
-  
+
   /** Will issue a stern warning message the first time a BackingStoreException
    *  is passed to this method, but will be silent about all future ones.
    */
@@ -411,7 +420,7 @@ import javax.swing.*;
       return;
     } else {
       JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, parent);
-      ErrorHandler.errorPanel(frame, "BackingStoreException", 
+      ErrorHandler.errorPanel(frame, "BackingStoreException",
         "Cannot communicate with the preference storage system.  \n" +
         "Changes to preferences may not become permanent.  \n" +
         "It may be a good idea to restart the program.  \n", null);
@@ -419,7 +428,7 @@ import javax.swing.*;
     }
     System.out.println("BackingStoreException: "+bse.getMessage());
   }
-  
+
   /**
    *  Stores a color preference, encoded as a String.
    */
@@ -430,9 +439,9 @@ import javax.swing.*;
       s = "0"+s;
     }
     s = "0x"+s;
-    node.put(key, s); 
+    node.put(key, s);
   }
-  
+
   /**
    *  Retrieves a color preference that was stored with {@link #putColor(Preferences, String, Color)}.
    */
@@ -448,16 +457,16 @@ import javax.swing.*;
     }
     return result;
   }
-  
+
   /**
    *  Creates a JCheckBox associated with a boolean preference.
    *  Will initialize itself with the value of the given
    *  preference and will update itself, via a PreferenceChangeListener,
    *  if the preference value changes.
    */
-  public static JCheckBox createCheckBox(String title, final Preferences node, 
+  public static JCheckBox createCheckBox(String title, final Preferences node,
     final String pref_name, boolean default_val) {
-    final JCheckBox check_box = new JCheckBox(title); 
+    final JCheckBox check_box = new JCheckBox(title);
     check_box.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         node.putBoolean(pref_name, check_box.isSelected());
@@ -482,10 +491,10 @@ import javax.swing.*;
    *  preference and will update itself, via a PreferenceChangeListener,
    *  if the preference value changes.
    */
-  public static JTextField createTextField(final Preferences node, 
+  public static JTextField createTextField(final Preferences node,
     final String pref_name, String default_val) {
     String initial_value = node.get(pref_name, default_val);
-    final JTextField text_box = new JTextField(initial_value); 
+    final JTextField text_box = new JTextField(initial_value);
     text_box.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         String current_value = text_box.getText();
@@ -518,16 +527,16 @@ import javax.swing.*;
    *  if the preference value changes.
    *  @param class_type one of Double, Long, Short, Integer, or Float
    */
-  public static JTextField createNumberTextField(final Preferences node, 
+  public static JTextField createNumberTextField(final Preferences node,
     final String pref_name, final String default_val, final Class class_type) {
-      
+
     String initial_value = node.get(pref_name, default_val);
-    final JTextField text_box = new JTextField(initial_value); 
+    final JTextField text_box = new JTextField(initial_value);
     text_box.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         String previous_value = node.get(pref_name, default_val);
         String typed_value = text_box.getText();
-        String new_value = normalizeStringToNumber(typed_value, previous_value, class_type);       
+        String new_value = normalizeStringToNumber(typed_value, previous_value, class_type);
         node.put(pref_name, new_value);
       }
     });
@@ -546,7 +555,7 @@ import javax.swing.*;
     });
     return text_box;
   }
-  
+
   /**
    *  Makes sure that a given String is parseable as a particular Class of Number.
    *  @param new_val  The value you to be tested.
@@ -596,9 +605,9 @@ import javax.swing.*;
    *  preference and will update itself, via a PreferenceChangeListener,
    *  if the preference value changes.
    */
-  public static JComboBox createComboBox(final Preferences node, 
+  public static JComboBox createComboBox(final Preferences node,
     final String pref_name, String[] options, String default_value) {
-      
+
     final String[] interned_options = new String[options.length];
     for (int i=0; i<options.length; i++) {
       interned_options[i] = options[i].intern();
@@ -606,13 +615,13 @@ import javax.swing.*;
     default_value.intern();
 
     final JComboBox combo_box = new JComboBox(interned_options);
-        
+
     // Note that no check is made that the given default_value is
     // actually one of the given options.  The combo_box will ignore
     // an attempt to set itself to a value that isn't in its option list.
     String current_stored_value = node.get(pref_name, default_value).intern();
     combo_box.setSelectedItem(current_stored_value);
-    
+
     combo_box.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         String selection = (String) combo_box.getSelectedItem();
@@ -621,12 +630,12 @@ import javax.swing.*;
         }
       }
     });
-        
+
     node.addPreferenceChangeListener(new PreferenceChangeListener() {
       public void preferenceChange(PreferenceChangeEvent evt) {
         if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
           if (! combo_box.getSelectedItem().equals(evt.getNewValue())) {
-            // Note: checking that selection differs from new value prevents infinite loop.            
+            // Note: checking that selection differs from new value prevents infinite loop.
             combo_box.setSelectedItem( ((String) evt.getNewValue()).intern() );
           }
         }
@@ -643,14 +652,14 @@ import javax.swing.*;
    *  @param title  The title of the JButton and of the JColorChooser that will
    *    be opened when the button is pressed.  This is optional, null is ok.
    */
-  public static JButton createColorButton(String title, final Preferences node, 
+  public static JButton createColorButton(String title, final Preferences node,
     final String pref_name, final Color default_val) {
-    
-    Color initial_color = getColor(node, pref_name, default_val);  
+
+    Color initial_color = getColor(node, pref_name, default_val);
     final ColorIcon icon = new ColorIcon(11, initial_color);
     final String panel_title = (title == null ? "Choose a color" : title);
-      
-    final JButton button = new JButton(title, icon); 
+
+    final JButton button = new JButton(title, icon);
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         Color c = JColorChooser.showDialog(button, panel_title, getColor(node, pref_name, default_val));
@@ -684,45 +693,59 @@ import javax.swing.*;
     return short_s;
   }
 
-   //   public static String shortNodeName(String s, boolean remove_slash)  {
+
 
    public static String shortNodeName(String s)  {
+     return shortNodeName(s, false);
+   }
+
+   public static String shortNodeName(String s, boolean remove_slash)  {
     String short_s;
     if (s.length() >= Preferences.MAX_NAME_LENGTH) {
       short_s = UrlToFileName.toMd5(s);
     } else {
       short_s = s;
     }
+    if (remove_slash) {
+      short_s = short_s.replaceAll("/", SLASH_STANDIN);
+    }
     return short_s;
    }
-  
+
+
   /** Create a subnode, making sure to shorten the name if necessary. */
   public static Preferences getSubnode(Preferences parent, String name) {
-    return parent.node(shortNodeName(name));
+    return getSubnode(parent, name, false);
   }
-  
+
+  /** Create a subnode, making sure to shorten the name if necessary. */
+  public static Preferences getSubnode(Preferences parent, String name, boolean remove_slash) {
+    String short_name = shortNodeName(name, remove_slash);
+    return parent.node(short_name);
+  }
+
   public static JFrame createFrame(String name, JPanel panel) {
     final JFrame frame;
-    
+
     if (name.length() > 70) {
       throw new IllegalArgumentException("Title of the frame must be less than 70 chars.");
     }
-    
+
     // If not already open in a new window, make a new window
     frame = new JFrame(name);
     frame.setName(name);
-    
+
     frame.getContentPane().add(panel);
     frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    
+
     panel.setVisible(true);
     frame.pack(); // pack() to set frame to its preferred size
-    
+
     Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(frame.getTitle(), frame.getBounds());
     if (pos != null) {
       UnibrowPrefsUtil.setWindowSize(frame, pos);
     }
-    
+
     frame.setVisible(true);
     frame.addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent evt) {
@@ -731,7 +754,7 @@ import javax.swing.*;
         UnibrowPrefsUtil.saveWindowLocation(frame, frame.getTitle());
       }
     });
-    
+
     // window already exists, but may not be visible
     return frame;
   }

@@ -72,7 +72,7 @@ public class OpenGraphAction extends AbstractAction {
   throws MalformedURLException {
     URL[] urls = new URL[files.length];
     for (int i=0; i<files.length; i++) {
-      urls[i] = files[i].toURL();
+      urls[i] = files[i].toURI().toURL();
     }
     return loadAndShowGraphs(urls, aseq, gviewer);
   }

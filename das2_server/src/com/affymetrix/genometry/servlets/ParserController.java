@@ -2,13 +2,10 @@ package com.affymetrix.genometry.servlets;
 
 import java.io.*;
 import java.util.*;
-
-import com.affymetrix.genometry.*;
-// import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.GraphSymUtils;
-// import com.affymetrix.igb.genometry.AnnotatedSeqGroup;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
 
 
@@ -21,7 +18,7 @@ public class ParserController {
   //  setCreateContainerAnnotation()
   //
 
-  public static List parse(InputStream instr, String stream_name, AnnotatedSeqGroup seq_group) {
+  public static List parse(InputStream instr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
     InputStream str = null;
     List results = null;
     try {
@@ -57,7 +54,7 @@ public class ParserController {
 	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bed"));
 	BedParser parser = new BedParser();
 	// specifying via boolean arg that BedParser should build container syms
-	results = parser.parse(str, seq_group, true, annot_type, true);
+	results = parser.parse(str, gmodel, seq_group, true, annot_type, true);
       }
       else if (stream_name.endsWith(".bps")) {
 	System.out.println("loading via BpsParser: " + stream_name);
@@ -126,7 +123,7 @@ public class ParserController {
 	//    specify _which_ seq to annotate (format to be upgraded soon to allow this)
 
 	// parsing a graph
-        results = GraphSymUtils.readGraphs(str, stream_name, seq_group);
+        results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
       }
       else {
 	System.out.println("Can't parse, format not recognized: " + stream_name);

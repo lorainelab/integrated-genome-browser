@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Result;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
@@ -23,9 +22,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
-// import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.parsers.*;
-// import com.affymetrix.igb.util.SynonymLookup;
 import com.affymetrix.igb.das2.Das2Coords;
 
 import com.affymetrix.genometryImpl.*;
@@ -368,7 +365,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       System.out.println("parsing in chromosome data from mod_chromInfo file for genome: " + genome_version);
       InputStream chromstream = new FileInputStream(chrom_info_file);
       //      seqhash = chrom_parser.parse(chromstream, genome_version);
-      chrom_parser.parse(chromstream, genome_version);
+      chrom_parser.parse(chromstream, gmodel, genome_version);
     }
     else {
       System.out.println("couldn't find mod_chromInfo file for genome: " + genome_version);
@@ -378,7 +375,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	System.out.println("parsing in chromosome data from liftAll file for genome: " + genome_version);
 	InputStream liftstream = new FileInputStream(lift_file);
 	//	seqhash = lift_parser.parse(liftstream, genome_version);
-	lift_parser.parse(liftstream, genome_version);
+	lift_parser.parse(liftstream, gmodel, genome_version);
       }
     }
 
@@ -519,7 +516,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
   }
 
   public void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) {
-    ParserController.parse(istr, stream_name, seq_group);
+    ParserController.parse(istr, stream_name, gmodel, seq_group);
   }
 
   String graph_dir_suffix = ".graphs.seqs";
@@ -1376,7 +1373,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     log.add("####    file:  " + file_path);
     GraphSym graf = null;
     try  {
-      graf = BarParser.getSlice(file_path, span);
+      graf = BarParser.getSlice(file_path, gmodel, span);
     }
     catch (Exception ex)  { ex.printStackTrace(); }
     if (graf != null) {

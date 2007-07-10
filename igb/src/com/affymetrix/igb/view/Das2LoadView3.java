@@ -515,10 +515,10 @@ public class Das2LoadView3 extends JComponent
 		  Executor vexec = ThreadUtils.getPrimaryExecutor(version);
 		  final Das2VersionTreeNode version_node = addVersionToTree(version);
 		  boolean type_load = Das2TypeState.checkLoadStatus(version);
-		  if (type_load || 
+		  if (type_load ||
 		      server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME))  {
 		    // at least one annotation type for this genome (version) has pref set to {load = true}
-		    //   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded 
+		    //   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded
 		    //         in the tree regardless of type load status...)
 		    //   therefore calling version.getTypes() on separate thread (in case it triggers long access to DAS/2 server)
 		    // once types are populated then in event thread call version_node.getChildCount(),
@@ -542,13 +542,13 @@ public class Das2LoadView3 extends JComponent
 			  //    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
 			  int tcount = version_node.getChildCount(); // triggers tree and table population with types info
 
-			  // If Das2VersionedSource is from IGB's default DAS/2 server for this genome, then 
+			  // If Das2VersionedSource is from IGB's default DAS/2 server for this genome, then
 			  //     want to automatically expand tree to show it's available types
-			  //			  if (version.getSource().getServerInfo() == 
+			  //			  if (version.getSource().getServerInfo() ==
 			  //  Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
 			  if (server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
-			    TreeNode[] path_array = version_node.getPath(); 
-			    TreePath path = new TreePath(path_array); 
+			    TreeNode[] path_array = version_node.getPath();
+			    TreePath path = new TreePath(path_array);
 			    tree.expandPath(path);
 			  }
 			  if (prev_seq != gmodel.getSelectedSeq()) {
@@ -657,9 +657,9 @@ public class Das2LoadView3 extends JComponent
 	      else { ctmodel.removeSelectionPath(node_path); }
 	    }
 	    if (load) {
-	      // either load turned on or change in load strategy, 
-	      //    but either way if load strategy is WHOLE_SEQUENCE, fire off DAS/2 whole seq 
-	      //        request for this type 
+	      // either load turned on or change in load strategy,
+	      //    but either way if load strategy is WHOLE_SEQUENCE, fire off DAS/2 whole seq
+	      //        request for this type
 	      //    (if this annotation type for whole seq already loaded then request will get supressed in optimizer)
 	      if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
 		MutableAnnotatedBioSeq seq = gmodel.getSelectedSeq();
@@ -775,7 +775,7 @@ class Das2TypeState {
   Das2Type type;
   Preferences type_node;
   Preferences types_node;
-  String type_name;
+  String type_node_name;
   ArrayList listeners = new ArrayList();
 
 
@@ -812,21 +812,21 @@ class Das2TypeState {
       Das2Source source = version.getSource();
       Das2ServerInfo server = source.getServerInfo();
 
-      String server_name = UnibrowPrefsUtil.shortNodeName(server.getID().replaceAll("/", "%"));
-      String source_name = UnibrowPrefsUtil.shortNodeName(source.getID().replaceAll("/", "%"));
-      String version_name = UnibrowPrefsUtil.shortNodeName(version.getID().replaceAll("/", "%"));
+      String server_name = UnibrowPrefsUtil.shortNodeName(server.getID(), true);
+      String source_name = UnibrowPrefsUtil.shortNodeName(source.getID(), true);
+      String version_name = UnibrowPrefsUtil.shortNodeName(version.getID(), true);
 
-      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
-      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
-      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
+      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name, true);
+      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name, true);
+      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name, true);
 
       Preferences types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
 
       String[] types = types_node.childrenNames();
       for (int i=0; i<types.length; i++) {
-	String type_name = types[i];
-	Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_name);
-	// System.out.println("type pref name: " + type_name + ", id: " + tnode.get("id", "NA"));
+	String type_node_name = types[i];
+	Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_node_name);
+	// System.out.println("type pref name: " + type_node_name + ", id: " + tnode.get("id", "NA"));
 	//	if (tnode.getBoolean(LOADKEY, false)) { return true; }
 	if (tnode.getBoolean(LOADKEY, false)) { found_load = true; }
       }
@@ -841,24 +841,24 @@ class Das2TypeState {
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
 
-    String server_name = UnibrowPrefsUtil.shortNodeName(server.getID().replaceAll("/", "%"));
-    String source_name = UnibrowPrefsUtil.shortNodeName(source.getID().replaceAll("/", "%"));
-    String version_name = UnibrowPrefsUtil.shortNodeName(version.getID().replaceAll("/", "%"));
-    // MUST transform type_name via shortNodeName() or nodeExists() below can fail!
-    type_name = UnibrowPrefsUtil.shortNodeName(type.getID().replaceAll("/", "%"));
+    String server_name = UnibrowPrefsUtil.shortNodeName(server.getID(), true);
+    String source_name = UnibrowPrefsUtil.shortNodeName(source.getID(), true);
+    String version_name = UnibrowPrefsUtil.shortNodeName(version.getID(), true);
+    // MUST transform type_node_name via shortNodeName() or nodeExists() below can fail!
+    type_node_name = UnibrowPrefsUtil.shortNodeName(type.getID(), true);
 
     try {
-      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name);
-      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name);
-      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name);
+      Preferences server_node = UnibrowPrefsUtil.getSubnode(das2_node, server_name, true);
+      Preferences source_node = UnibrowPrefsUtil.getSubnode(server_node, source_name, true);
+      Preferences version_node = UnibrowPrefsUtil.getSubnode(source_node, version_name, true);
       types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
 
       // check for "load_hint" property in Das2Type, if present use it as default if STRATEGYKEY has not been set
       String load_hint_str = (String)type.getProperty("load_hint");
       if (load_hint_str != null) { System.out.println("%%%% creating Das2Type: " + type.getName() + ", load_hint: " + load_hint_str); }
       int load_hint = getLoadStrategy(load_hint_str);
-      if (types_node.nodeExists(type_name)) {
-	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+      if (types_node.nodeExists(type_node_name)) {
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_node_name);
 	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
 	if (load_hint > -1) { load_strategy = type_node.getInt(STRATEGYKEY, load_hint); }
 	else { load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY); }
@@ -877,7 +877,7 @@ class Das2TypeState {
     if (load != b) {
       load = b;
       if (type_node == null) {
-	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_node_name, true);
 	type_node.put("id", type.getID());
       }
       type_node.putBoolean(LOADKEY, load);
@@ -899,7 +899,7 @@ class Das2TypeState {
     if (load_strategy != strategy) {
       load_strategy = strategy;
       if (type_node == null) {
-	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_name);
+	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_node_name, true);
 	type_node.put("id", type.getID());
       }
       type_node.putInt(STRATEGYKEY, load_strategy);

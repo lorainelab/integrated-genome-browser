@@ -41,7 +41,7 @@ public class ViewPersistenceUtils  {
    *  Using Preferences node: [igb_root_pref]/genomes/[group_id]
    *  Using UnibrowPrefsUtils to convert node names if they are too long
    *  tagvals:
-   *      GENOME_ID 
+   *      GENOME_ID
    *      SEQ_ID
    *      SELECTED_GENOME_PREF
    *      SELECTED_SEQ_PREF
@@ -68,8 +68,10 @@ public class ViewPersistenceUtils  {
   public static void saveGroupSelection(AnnotatedSeqGroup group) {
     Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
     genomes_node.put(SELECTED_GENOME_PREF, group.getID());
-    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID());  //  encodes id via MD5 if too long
-    group_node.put(GENOME_ID, group.getID());  // in case node name is MD5 encoded
+
+    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
+       //  encodes id via MD5 if too long, also remove forward slashes ("/")
+    group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
 
     //  get all accessed Das2VersionedSources that support SEGMENTS query
     java.util.List versions = Das2Discovery.getVersionedSources(group, false, Das2VersionedSource.SEGMENTS_CAP_QUERY);
@@ -88,7 +90,9 @@ public class ViewPersistenceUtils  {
   public static AnnotatedSeqGroup restoreGroupSelection() {
     Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
     String group_id = genomes_node.get(SELECTED_GENOME_PREF, DEFAULT_SELECTED_GENOME);
-    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group_id);
+
+    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group_id, true);
+       //  encodes id via MD5 if too long, also remove forward slashes ("/")
 
     String server_url = group_node.get(DAS2_SERVER_URL_PREF, DEFAULT_DAS2_SERVER_URL);
     String source_id = group_node.get(DAS2_SOURCE_URI_PREF, DEFAULT_DAS2_SOURCE_URI);
@@ -118,7 +122,8 @@ public class ViewPersistenceUtils  {
     if (seq instanceof SmartAnnotBioSeq) {
       AnnotatedSeqGroup current_group = ((SmartAnnotBioSeq)seq).getSeqGroup();
       Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-      Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, current_group.getID());  //  encodes id via MD5 if too long
+      Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, current_group.getID(), true);
+        //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
       group_node.put(SELECTED_SEQ_PREF, seq.getID());
     }
   }
@@ -126,7 +131,8 @@ public class ViewPersistenceUtils  {
 
   public static MutableAnnotatedBioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
     Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID());
+    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
+         //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
     String seq_id = group_node.get(SELECTED_SEQ_PREF, DEFAULT_SELECTED_SEQ);
     MutableAnnotatedBioSeq seq = group.getSeq(seq_id);
     if (gmodel.getSelectedSeq() != seq) {
@@ -152,8 +158,9 @@ public class ViewPersistenceUtils  {
       if (seq instanceof SmartAnnotBioSeq) {
 	AnnotatedSeqGroup group = ((SmartAnnotBioSeq)seq).getSeqGroup();
 	Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-	Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID());  //  encodes id via MD5 if too long
-	Preferences seq_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs/" + seq.getID());  //  encodes id via MD5 if too long
+	Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+        Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
+        Preferences seq_node = UnibrowPrefsUtil.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
 	seq_node.put(SEQ_ID, seq.getID());   // in case node name is MD5 encoded
 	seq_node.putInt(SEQ_MIN_PREF, visible_span.getMin());
 	seq_node.putInt(SEQ_MAX_PREF, visible_span.getMax());
@@ -171,8 +178,9 @@ public class ViewPersistenceUtils  {
     if (seq instanceof SmartAnnotBioSeq) {
       AnnotatedSeqGroup group = ((SmartAnnotBioSeq)seq).getSeqGroup();
       Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-      Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID());  //  encodes id via MD5 if too long
-      Preferences seq_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs/" + seq.getID());  //  encodes id via MD5 if too long
+      Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
+      Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
+      Preferences seq_node = UnibrowPrefsUtil.getSubnode(seqs_node, seq.getID(), true);  //  encodes id via MD5 if too long
       int seq_min = seq_node.getInt(SEQ_MIN_PREF, 0);
       int seq_max = seq_node.getInt(SEQ_MAX_PREF, seq.getLength());
       span = new SimpleSeqSpan(seq_min, seq_max, seq);

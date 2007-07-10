@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,8 +24,9 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.Timer;
 
 public class LiftParser {
@@ -49,7 +50,7 @@ public class LiftParser {
     template_seq = template;
   }
 
-  public AnnotatedSeqGroup loadChroms(String file_name, String genome_version) 
+  public AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version) 
   throws IOException {
     System.out.println("trying to load lift file: " + file_name);
     FileInputStream fistr = null;
@@ -57,7 +58,7 @@ public class LiftParser {
     try {
       File fil = new File(file_name);
       fistr = new FileInputStream(fil);
-      result = this.parse(fistr, genome_version);
+      result = this.parse(fistr, gmodel, genome_version);
     }
     finally {
        if (fistr != null) try { fistr.close(); } catch (Exception e) {} 
@@ -71,24 +72,23 @@ public class LiftParser {
    *  @return  A Map with chromosome ids as keys, and CompositeBioSeqs representing
    *     chromosomes in the lift file as values.
    */
-  public AnnotatedSeqGroup parse(InputStream istr, String genome_version) throws IOException {
-    return parse(istr, genome_version, true);
+  public AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version) throws IOException {
+    return parse(istr, gmodel, genome_version, true);
   }
 
   /**
    *  Reads lift-format from the input stream and creates a new AnnotatedSeqGroup.
-   *  The new AnnotatedSeqGroup will be inserted into the SingletonGenometryModel.
+   *  The new AnnotatedSeqGroup will be inserted into the GenometryModel.
    *  @return an AnnotatedSeqGroup containing CompositeBioSeqs representing
    *     chromosomes in the lift file.
    */
-  public AnnotatedSeqGroup parse(InputStream istr, String genome_version, boolean annotate_seq)
+  public AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
     throws IOException {
     System.out.println("parsing in lift file");
     Timer tim = new Timer();
     tim.start();
     int contig_count = 0;
     int chrom_count = 0;
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
 
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));

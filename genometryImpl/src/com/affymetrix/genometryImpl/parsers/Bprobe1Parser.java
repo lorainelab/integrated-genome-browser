@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,7 +18,6 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
@@ -68,7 +67,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *</pre>
  */
 public class Bprobe1Parser implements AnnotationWriter {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
   static boolean DEBUG = true;
   static java.util.List pref_list = new ArrayList();
   static {

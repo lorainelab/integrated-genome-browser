@@ -22,6 +22,7 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 
@@ -81,7 +82,6 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
   static Pattern comma_regex = Pattern.compile(",");
   static Pattern tagval_regex = Pattern.compile("=");
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   protected Map name_counts = new HashMap();
   java.util.List symlist = new ArrayList();
@@ -108,8 +108,9 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     parse_listeners.remove(listener);
   }
 
-  public java.util.List parse(InputStream istr, AnnotatedSeqGroup group, boolean annot_seq,
-			      String stream_name, boolean create_container)
+  public java.util.List parse(InputStream istr,  GenometryModel gmodel, 
+      AnnotatedSeqGroup group, boolean annot_seq,
+      String stream_name, boolean create_container)
     throws IOException {
     System.out.println("BED parser called, annotate seq: " + annotate_seq +
 		       ", create_container_annot: " + create_container);
@@ -140,13 +141,13 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     }
     DataInputStream dis = new DataInputStream(bis);
     addParserListener(this);
-    parseWithEvents(dis, group, default_type);
+    parseWithEvents(dis, gmodel, group, default_type);
     removeParserListener(this);
     System.out.println("BED annot count: " + symlist.size());
     return symlist;
   }
 
-  public void parseWithEvents(DataInputStream dis, AnnotatedSeqGroup seq_group, String default_type)
+  public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
      throws IOException  {
     System.out.println("called BedParser.parseWithEvents()");
     String line;
@@ -514,6 +515,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 
   /** Tests parsing of the file passed as a parameter. */
   public static void main(String[] args) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     String file_name = args[0];
     try {
       BedParser test = new BedParser();
@@ -523,7 +525,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       // to mean 'current genome', but that is no longer true.
       AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
       
-      java.util.List annots = test.parse(fis, seq_group, true, file_name, true);
+      java.util.List annots = test.parse(fis, gmodel, seq_group, true, file_name, true);
       System.out.println("total annots: " + annots.size());
     }
     catch (Exception ex) {

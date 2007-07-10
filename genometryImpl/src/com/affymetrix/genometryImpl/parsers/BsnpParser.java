@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.EfficientSnpSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.Timer;
@@ -152,8 +153,7 @@ public class BsnpParser {
 	 chr1	XbaI	SNP_A-1507333	219135381	219135381	.	+	.
    *</pre>
    */
-  public java.util.List readGffFormat(InputStream istr) throws IOException {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  public java.util.List readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
     
     List results = new ArrayList();
@@ -317,9 +317,9 @@ public class BsnpParser {
   static boolean TEST_BINARY_PARSE = false;
 
   public static void main(String[] args) {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     try {
       if (TEST_BINARY_PARSE) {
-        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
         AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
         
 	String binfile = args[0];
@@ -359,7 +359,7 @@ public class BsnpParser {
 	  else if (text_infile.endsWith(".gff")) {
 	    InputStream istr = new FileInputStream(ifil);
 	    System.out.println("reading in gff data from: " + text_infile);
-	    parent_syms = tester.readGffFormat(istr);
+	    parent_syms = tester.readGffFormat(istr, gmodel);
 	    istr.close();
 	  }
 

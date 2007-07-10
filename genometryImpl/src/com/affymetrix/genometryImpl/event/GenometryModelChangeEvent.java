@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.event;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.util.EventObject;
 
 public class GenometryModelChangeEvent extends EventObject {
@@ -22,14 +22,14 @@ public class GenometryModelChangeEvent extends EventObject {
   EventType type;
   transient AnnotatedSeqGroup seq_group;
   
-  public GenometryModelChangeEvent(SingletonGenometryModel gmodel, EventType type, AnnotatedSeqGroup group) {
+  public GenometryModelChangeEvent(GenometryModel gmodel, EventType type, AnnotatedSeqGroup group) {
     super(gmodel);
     this.type = type;
     this.seq_group = group;
   }
   
-  public SingletonGenometryModel getGenometryModel() {
-    return (SingletonGenometryModel) getSource();
+  public GenometryModel getGenometryModel() {
+    return (GenometryModel) getSource();
   }
   
   public EventType getType() {

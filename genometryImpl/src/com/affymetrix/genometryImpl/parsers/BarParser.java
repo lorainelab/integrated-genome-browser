@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2006 Affymetrix, Inc.
+*   Copyright (c) 2006-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
@@ -112,7 +113,7 @@ public class BarParser implements AnnotationWriter  {
    *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
    *  be used only inside a CompositeGraphSym.
    */
-  public static GraphSym getSlice(String file_name, SeqSpan span) throws IOException {
+  public static GraphSym getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {
     Timer tim = new Timer();
     tim.start();
     boolean USE_RANDOM_ACCESS = false;
@@ -129,7 +130,7 @@ public class BarParser implements AnnotationWriter  {
     //     but rather extracted from a field (or set of fields) in the bar file, so can be shared
     //     across bar files that have the exact same base coords
     int[] chunk_mins = (int[])coordset2seqs.get(file_name);
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
     //    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     AnnotatedSeqGroup seq_group;
     if (aseq instanceof SmartAnnotBioSeq) {
@@ -140,7 +141,7 @@ public class BarParser implements AnnotationWriter  {
     }
     System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
     if (chunk_mins == null) {
-      buildIndex(file_name, file_name, seq_group);
+      buildIndex(file_name, file_name, gmodel, seq_group);
       // index??
       chunk_mins = (int[])coordset2seqs.get(file_name);
     }
@@ -192,7 +193,7 @@ public class BarParser implements AnnotationWriter  {
 	dis = new DataInputStream(new BufferedInputStream(fis));
       }
       BarFileHeader bar_header = parseBarHeader(dis);
-      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, bar_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, bar_header);
       int bytes_per_point = bar_header.bytes_per_point;
       int points_per_index = points_per_chunk;
       int points_to_skip = min_index * points_per_index;
@@ -277,21 +278,22 @@ public class BarParser implements AnnotationWriter  {
     }
     //    testFullRead(test_file);
 
-    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
-    buildIndex(test_file, test_file, seq_group);
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Seq Group");
+    buildIndex(test_file, test_file, gmodel, seq_group);
     BioSeq testseq = new SimpleBioSeq("test", 150200300);
     //    getSlice(test_file, "temp", 0, 2000000);
-    getSlice(test_file, new SimpleSeqSpan(67000000, 68000000, testseq));
-    getSlice(test_file, new SimpleSeqSpan(67000000, 68000000, testseq));  // 1 MB
-    getSlice(test_file, new SimpleSeqSpan(62000000, 65000000, testseq));  // 3 MB
-    getSlice(test_file, new SimpleSeqSpan(51000000, 56000000, testseq));  // 5 MB
-    getSlice(test_file, new SimpleSeqSpan(120300400, 130400500, testseq)); // 10 MB
-    getSlice(test_file, new SimpleSeqSpan(100300400, 110400500, testseq)); // 20 MB
-    getSlice(test_file, new SimpleSeqSpan(20300400, 60400500, testseq));   // 40 MB
-    //    getSlice(test_file, new SimpleSeqSpan(158000000, 158400000, testseq));
-    //    getSlice(test_file, new SimpleSeqSpan(157999267, 158400000, testseq));
-    //    getSlice(test_file, new SimpleSeqSpan(158400000, 159000000, testseq));
-    //    getSlice(test_file, new SimpleSeqSpan(158500000, 159000000, testseq));
+    getSlice(test_file, gmodel, new SimpleSeqSpan(67000000, 68000000, testseq));
+    getSlice(test_file, gmodel, new SimpleSeqSpan(67000000, 68000000, testseq));  // 1 MB
+    getSlice(test_file, gmodel, new SimpleSeqSpan(62000000, 65000000, testseq));  // 3 MB
+    getSlice(test_file, gmodel, new SimpleSeqSpan(51000000, 56000000, testseq));  // 5 MB
+    getSlice(test_file, gmodel, new SimpleSeqSpan(120300400, 130400500, testseq)); // 10 MB
+    getSlice(test_file, gmodel, new SimpleSeqSpan(100300400, 110400500, testseq)); // 20 MB
+    getSlice(test_file, gmodel, new SimpleSeqSpan(20300400, 60400500, testseq));   // 40 MB
+    //    getSlice(test_file, gmodel, new SimpleSeqSpan(158000000, 158400000, testseq));
+    //    getSlice(test_file, gmodel, new SimpleSeqSpan(157999267, 158400000, testseq));
+    //    getSlice(test_file, gmodel, new SimpleSeqSpan(158400000, 159000000, testseq));
+    //    getSlice(test_file, gmodel, new SimpleSeqSpan(158500000, 159000000, testseq));
   }
 
   public static void testFullRead(String test_file) throws IOException {
@@ -349,7 +351,7 @@ public class BarParser implements AnnotationWriter  {
    *    least 10x > N), so overhead for reading extra data will be minor.
    * </pre>
    */
-  public static void buildIndex(String file_name, String coord_set_id, AnnotatedSeqGroup seq_group)
+  public static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
   throws IOException {
     Timer tim = new Timer();
     tim.start();
@@ -360,7 +362,7 @@ public class BarParser implements AnnotationWriter  {
       BarFileHeader file_header = parseBarHeader(dis);
       int[] val_types = file_header.val_types;
       int bytes_per_point = file_header.bytes_per_point;
-      BarSeqHeader seq_header = parseSeqHeader(dis, seq_group, file_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, file_header);
       int total_points = seq_header.data_point_count;
 
       int point_count = 0;
@@ -414,14 +416,15 @@ public class BarParser implements AnnotationWriter  {
   }
 
   /** Parse a file in BAR format. */
-  public static List parse(InputStream istr, AnnotatedSeqGroup seq_group, String stream_name)
+  public static List parse(InputStream istr, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String stream_name)
       throws IOException  {
-    return parse(istr, seq_group, stream_name, true);
+    return parse(istr, gmodel, seq_group, stream_name, true);
   }
 
   /** Parse a file in BAR format. */
-  public static List parse(InputStream istr, AnnotatedSeqGroup default_seq_group, String stream_name,
-			   boolean ensure_unique_id)
+  public static List parse(InputStream istr, GenometryModel gmodel,
+      AnnotatedSeqGroup default_seq_group, String stream_name,
+      boolean ensure_unique_id)
     throws IOException {
 
     BufferedInputStream bis = null;
@@ -452,7 +455,7 @@ public class BarParser implements AnnotationWriter  {
       graph_id += ":" + (String)file_tagvals.get("file_type");
     }
     for (int k=0; k<total_seqs; k++) {
-      BarSeqHeader seq_header = parseSeqHeader(dis, default_seq_group, bar_header);
+      BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
       int total_points = seq_header.data_point_count;
       Map seq_tagvals = seq_header.tagvals;
       //      MutableAnnotatedBioSeq seq = seq_header.aseq;
@@ -648,7 +651,7 @@ public class BarParser implements AnnotationWriter  {
     }
   }
 
-  public static BarSeqHeader parseSeqHeader(DataInput dis, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
+  public static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
       int namelength = dis.readInt();
       //      String
       byte[] barray = new byte[namelength];
@@ -696,7 +699,7 @@ public class BarParser implements AnnotationWriter  {
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
 
-      AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, default_seq_group);
+      AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
       // trying standard AnnotatedSeqGroup seq id resolution first
 
       seq = seq_group.getSeq(seqname);
@@ -758,8 +761,7 @@ public class BarParser implements AnnotationWriter  {
    *  otherwise try an match with an existing AnnotatedSeqGroup
    *  if existing AnnotatedSeqGroup can't be found, create a new one?
    */
-  public static AnnotatedSeqGroup getSeqGroup(String groupname, String version, AnnotatedSeqGroup default_seq_group) {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  public static AnnotatedSeqGroup getSeqGroup(String groupname, String version, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group) {
     AnnotatedSeqGroup group = null;
     if (((version == null)  || version.equals("")) && 
 	((groupname == null) || groupname.equals("") )) {

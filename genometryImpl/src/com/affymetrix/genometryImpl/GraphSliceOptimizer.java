@@ -33,7 +33,7 @@ public class GraphSliceOptimizer {
    *    by previous requests.
    *
    */
-  public static boolean loadSlice(CompositeGraphSym gsym, SeqSpan slice_span) throws IOException {
+  public static boolean loadSlice(CompositeGraphSym gsym, GenometryModel gmodel, SeqSpan slice_span) throws IOException {
     boolean new_points = true;
     BioSeq aseq = slice_span.getBioSeq();
 
@@ -77,7 +77,7 @@ public class GraphSliceOptimizer {
       SeqSymmetry subslice = (SeqSymmetry)subslices.get(slice_index);
       SeqSpan subspan = subslice.getSpan(aseq);
       // graphsym span is also set correctly in BarParser.getSlice()
-      GraphSym child = BarParser.getSlice(TEST_BAR_FILE, subspan);
+      GraphSym child = BarParser.getSlice(TEST_BAR_FILE, gmodel, subspan);
       gsym.addChild(child);
     }
     return new_points;

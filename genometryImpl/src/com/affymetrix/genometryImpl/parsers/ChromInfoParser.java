@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,18 +14,16 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import java.io.*;
-import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 
 public class ChromInfoParser {
   static final Pattern tab_regex = Pattern.compile("\t");
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
 
   MutableAnnotatedBioSeq template_seq = default_seq_template;
@@ -39,9 +37,9 @@ public class ChromInfoParser {
 
   /**
    *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
-   *  adds it to the SingletonGenometryModel.
+   *  adds it to the GenometryModel.
    */
-  public AnnotatedSeqGroup parse(InputStream istr, String genome_version)
+  public AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
     throws IOException {
 
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);

@@ -114,7 +114,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  */
 public class ExonArrayDesignParser implements AnnotationWriter {
   static boolean USE_FULL_HIERARCHY = false;
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
   static boolean DEBUG = false;
   static java.util.List pref_list = new ArrayList();
   static {
@@ -586,6 +586,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *</pre>
    */
   public static void main(String[] args) throws IOException {
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     boolean WRITE = false;
     boolean READ = true;
     Memer mem = new Memer();

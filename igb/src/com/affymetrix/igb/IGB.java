@@ -28,6 +28,8 @@ import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -40,10 +42,12 @@ import com.affymetrix.igb.servlets.UnibrowControlServer;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.util.EPSWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -560,6 +564,9 @@ public class IGB extends Application
     //   is created without call to main(), will force loading of prefs here...
     getIGBPrefs();
 
+    StateProvider stateProvider = new IGBStateProvider();
+    DefaultStateProvider.setGlobalStateProvider(stateProvider);
+    
     // when HTTP authentication is needed, getPasswordAuthentication will
     //    be called on the authenticator set as the default
     Authenticator.setDefault(new UnibrowAuthenticator(frm));

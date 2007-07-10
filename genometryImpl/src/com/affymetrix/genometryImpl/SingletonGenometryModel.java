@@ -13,11 +13,9 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.event.*;
-
 
 public class SingletonGenometryModel {
   static public boolean DEBUG = false;
@@ -384,7 +382,7 @@ public class SingletonGenometryModel {
       list.clear();
     }
   }
-
+  
 //  public void addModelChangeListener(GenometryModelChangeListener listener) {
 //    model_change_listeners.add(listener);
 //  }

@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -35,7 +35,6 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   
   NeoMap map;
   SeqMapView gview;
-
   
   public JTextField range_box = new JTextField("") {
     public Dimension getPreferredSize() {
@@ -44,7 +43,7 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
     }
     public Dimension getMaximumSize() {
       Dimension d = super.getMaximumSize();
-      return new Dimension(200, d.height);
+      return new Dimension(200, getPreferredSize().height);
     }
   };
 

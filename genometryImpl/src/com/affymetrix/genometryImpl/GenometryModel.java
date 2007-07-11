@@ -104,6 +104,13 @@ public class GenometryModel {
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
 
+  public void removeAllSeqGroups() {
+    this.setSelectedSeq(null);
+    this.setSelectedSeqGroup(null);
+    seq_groups.clear();
+    //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
+  }
+  
   public AnnotatedSeqGroup getSelectedSeqGroup() {
     return selected_group;
   }

@@ -12,7 +12,6 @@
 */
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometryImpl.parsers.*;
 import java.io.*;
 import java.util.*;
 
@@ -30,12 +29,13 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
@@ -182,7 +182,7 @@ public class ChpParser {
 
     String type_name = OpenGraphAction.getGraphNameForFile(file_name);
     // Force the AnnotStyle for the container to have glyph depth of 1
-    AnnotStyle style = AnnotStyle.getInstance(type_name);
+    IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
     style.setGlyphDepth(1);
 
     List results = new ArrayList();
@@ -479,7 +479,7 @@ public class ChpParser {
 
     String type_name = OpenGraphAction.getGraphNameForFile(file_name);
     // Force the AnnotStyle for the container to have glyph depth of 1
-    AnnotStyle style = AnnotStyle.getInstance(type_name);
+    IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
     style.setGlyphDepth(1);
 
     // now for each sequence seen, sort the SinEntry list by span min/max
@@ -589,7 +589,7 @@ public class ChpParser {
 
       String type_name = OpenGraphAction.getGraphNameForFile(file_name);
       // Force the AnnotStyle for the container to have glyph depth of 1
-      AnnotStyle style = AnnotStyle.getInstance(type_name);
+      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
       style.setGlyphDepth(1);
 
       // now for each sequence seen, sort the SinEntry list by span min/max
@@ -759,6 +759,7 @@ public class ChpParser {
 	//	System.out.println("   param:  name = " + pname + ", val = " + pval);
 	gsym.setProperty(pname, pval);
       }
+
 
       // add all seq_prop_hash entries as gsym properties
       results.add(gsym);

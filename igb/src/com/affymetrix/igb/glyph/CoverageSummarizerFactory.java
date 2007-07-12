@@ -18,6 +18,7 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.tiers.*;
 
@@ -61,7 +62,7 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
     SeqSpan span = sym.getSpan(0);
 
     String meth = gviewer.determineMethod(sym);
-    AnnotStyle annot_style = AnnotStyle.getInstance(meth , false);
+    IAnnotStyleExtended annot_style = AnnotStyle.getInstance(meth , false);
 
     if (meth != null) {
       TierGlyph[] tiers = gviewer.getTiers(meth,

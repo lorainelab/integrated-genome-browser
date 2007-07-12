@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.GFF3Sym;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.util.*;
 
@@ -136,7 +138,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     String meth = gviewer.determineMethod(sym);
     if (meth != null) {
-      AnnotStyle style = AnnotStyle.getInstance(meth);
+      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       glyph_depth = style.getGlyphDepth();
       
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
@@ -200,7 +202,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
   
-  static Color getSymColor(SeqSymmetry insym, AnnotStyle style) {
+  static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
     boolean use_score_colors = style.getColorByScore();
     boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
     
@@ -284,7 +286,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     double thin_height = DEFAULT_THIN_HEIGHT;
     
     // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
-    AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
+    IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
     
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;
@@ -464,8 +466,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     
     GlyphI pglyph = null;
     
-    // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
-    AnnotStyle the_style = (AnnotStyle) the_tier.getAnnotStyle();
+    // I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
+    IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
         
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities

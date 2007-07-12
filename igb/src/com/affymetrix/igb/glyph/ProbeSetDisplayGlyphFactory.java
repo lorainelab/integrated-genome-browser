@@ -14,6 +14,8 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.util.*;
 
@@ -111,7 +113,7 @@ the probeset, probe and pieces of probes
       if (n>0) meth = meth.substring(0, n);
     }
     if (meth != null) {
-      AnnotStyle style = AnnotStyle.getInstance(meth);
+      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       label_field = style.getLabelField();
       
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);

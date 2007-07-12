@@ -1,5 +1,6 @@
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
@@ -8,7 +9,6 @@ import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.util.StringUtils;
@@ -244,7 +244,7 @@ public class LazyChpSym extends ScoredContainerSym {
       System.out.println("found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
 
       // Set the human name on the tier to the short type name, not the long URL ID
-      AnnotStyle.getInstance(das_type.getID()).setHumanName(das_type.getName());
+      DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());
 
       SeqSpan whole_span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
       Das2FeatureRequestSym request_sym = new Das2FeatureRequestSym(das_type, das_segment, whole_span, null);

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -191,7 +192,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       // place annotation tiers next to axis...
       gviewer.addAnnotationGlyphs(curation_sym);
       AffyTieredMap tmap = gviewer.getSeqMap();
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(current_type));
       TierGlyph tgl = (curation_sym.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
       tgl.pack(tmap.getView());
       tmap.stretchToFit(false, false);
@@ -227,7 +228,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       gviewer.addAnnotationGlyphs(curation_sym);
 
       AffyTieredMap tmap = gviewer.getSeqMap();
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(current_type));
       TierGlyph tgl = (curation_sym.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
 
       if (! KEEP_PREVIOUS_CURATION) {
@@ -267,7 +268,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       prev_curation.setSuccessor(curation_sym);
       curation_sym.setProperty("method", current_type);
 
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(current_type));
       TierGlyph tgl = (prev_curation.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
 
       //      SeqUtils.intersection(prev_curation, inverted_annot, curation_sym, aseq);
@@ -367,7 +368,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       aseq.removeAnnotation(current_curation);
       aseq.addAnnotation(prev_curation);
       AffyTieredMap tmap = gviewer.getSeqMap();
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(current_type));
       TierGlyph tgl = (current_curation.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
       GlyphI curgl = tmap.getItem(current_curation);
       if (curgl != null) { tmap.removeItem(curgl); }
@@ -393,7 +394,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       aseq.removeAnnotation(current_curation);
       aseq.addAnnotation(next_curation);
       AffyTieredMap tmap = gviewer.getSeqMap();
-      TierGlyph[] tiers = gviewer.getTiers(current_type, true, AnnotStyle.getInstance(current_type));
+      TierGlyph[] tiers = gviewer.getTiers(current_type, true, DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(current_type));
       TierGlyph tgl = (next_curation.getSpan(aseq).isForward() ? tiers[0] : tiers[1]);
       GlyphI curgl = tmap.getItem(current_curation);
       if (curgl != null) { tmap.removeItem(curgl); }

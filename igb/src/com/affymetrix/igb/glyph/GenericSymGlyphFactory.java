@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.util.*;
 
@@ -80,7 +82,7 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     if (meth != null) {
-      AnnotStyle style = AnnotStyle.getInstance(meth);
+      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       int tier_index = (sym.getSpan(0).isForward()) ? 0 : 1;
       glyphifySymmetry(smv, sym, tiers[tier_index], 0, glyph_height);

@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -31,7 +33,6 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GenometryViewer;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -389,7 +390,7 @@ public class Das2LoadView extends JComponent
             // Create an AnnotStyle so that we can automatically set the
             // human-readable name to the DAS2 name, rather than the ID, which is a URI
             Das2Type type = request_sym.getDas2Type();
-            AnnotStyle style = AnnotStyle.getInstance(type.getID());
+            IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
             style.setHumanName(type.getName());
 
             if (USE_DAS2_OPTIMIZER) {

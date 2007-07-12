@@ -16,8 +16,9 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
-import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
@@ -67,7 +68,7 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     // same as the contained items method
     String meth = SeqMapView.determineMethod(sym);
     //    if (meth == null)  { SeqUtils.printSymmetry(sym, "   ", true); }
-    AnnotStyle style = AnnotStyle.getInstance(meth);
+    IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
 
     if (isContainer(sym)) {
       for (int i=0; i<sym.getChildCount(); i++) {
@@ -88,7 +89,7 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     // the stylesheet may over-ride them.
 
     // Allow StyleElement access to the AnnotStyle if it needs it.
-    context.put(AnnotStyle.class.getName(), style);
+    context.put(IAnnotStyleExtended.class.getName(), style);
     context.put(TierGlyph.class.getName(), the_tier);
 
     drawable.symToGlyph(gviewer, sym, the_tier, stylesheet, context);

@@ -33,12 +33,12 @@ import com.affymetrix.genometryImpl.TypedSym;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
@@ -565,8 +565,8 @@ public class OverView extends JPanel
       }
       if (fortier != null) {
         String label;
-        if (style instanceof AnnotStyle) {
-          if (((AnnotStyle) style).getSeparate()) {
+        if (style instanceof IAnnotStyleExtended) {
+          if (((IAnnotStyleExtended) style).getSeparate()) {
             //fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
             label = style.getHumanName() + " (+)";
           } else {
@@ -595,7 +595,7 @@ public class OverView extends JPanel
         method2rtier.put(meth.toLowerCase(), revtier);
       }
       if (revtier != null) {
-        if (style instanceof AnnotStyle) {
+        if (style instanceof IAnnotStyleExtended) {
           revtier.setLabel(style.getHumanName() + " (-)");
         } else { // style is a graph style or is null (this may not even be possible)
           revtier.setLabel(meth + " (-)");

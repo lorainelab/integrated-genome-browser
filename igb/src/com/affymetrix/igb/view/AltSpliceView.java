@@ -22,8 +22,8 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.tiers.*;
 
 public class AltSpliceView extends JComponent
@@ -69,7 +69,7 @@ public class AltSpliceView extends JComponent
     // override so that the tier glyph in the splice view has a different
     // AnnotStyle from the TierGlyph in the main view.  (So that if we hide it,
     // it won't become hidden in the main view.)
-    public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+    public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
       // Create a temporary style with all the properties of the given style.
       // Thus any changes to this copy in the slice view 
       // will not affect the original in the main view

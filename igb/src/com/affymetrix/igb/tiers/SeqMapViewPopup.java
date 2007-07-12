@@ -32,6 +32,7 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -326,8 +327,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = (TierGlyph) tlg.getInfo();
       IAnnotStyle style = tier.getAnnotStyle();
-      if (style instanceof AnnotStyle) {
-        ((AnnotStyle) style).setSeparate(b);
+      if (style instanceof IAnnotStyleExtended) {
+        ((IAnnotStyleExtended) style).setSeparate(b);
       }
     }
     refreshMap(false);
@@ -497,8 +498,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
-      if (style instanceof AnnotStyle) {
-        AnnotStyle astyle = (AnnotStyle) style;
+      if (style instanceof IAnnotStyleExtended) {
+        IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
         astyle.setColorByScore(b);
       }
     }
@@ -745,8 +746,8 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
       TierGlyph glyph = label.getReferenceTier();
       IAnnotStyle style = glyph.getAnnotStyle();
-      if (style instanceof AnnotStyle) {
-        AnnotStyle astyle = (AnnotStyle) style;
+      if (style instanceof IAnnotStyleExtended) {
+        IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
         any_are_color_on |= astyle.getColorByScore();
         any_are_color_off |= (! astyle.getColorByScore());
         any_are_separate_tiers |= astyle.getSeparate();

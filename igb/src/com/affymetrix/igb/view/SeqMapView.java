@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
@@ -2892,7 +2893,7 @@ public class SeqMapView extends JPanel
    *    The array may instead contain two copies of one mixed-direction tier;
    *    in this case place glyphs for both forward and revers items into it.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style) {
     return getTiers(meth, next_to_axis, style, true);
   }
 
@@ -2902,7 +2903,7 @@ public class SeqMapView extends JPanel
    *  be used.  Note: if style.isGraphTier() is true, then the given value of
    *  constant_height will be ignored and re-set to false.
    */
-  public TierGlyph[] getTiers(String meth, boolean next_to_axis, AnnotStyle style, boolean constant_heights) {
+  public TierGlyph[] getTiers(String meth, boolean next_to_axis, IAnnotStyleExtended style, boolean constant_heights) {
       if (style == null) {
         throw new NullPointerException();
       }

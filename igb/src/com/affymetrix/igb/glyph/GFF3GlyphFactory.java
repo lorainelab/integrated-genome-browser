@@ -15,6 +15,9 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.GFF3Sym;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometry.*;
@@ -76,7 +79,7 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
       return;
     }
     else { // meth != null
-      AnnotStyle style = AnnotStyle.getInstance(meth);
+      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       TierGlyph[] tiers = gviewer.getTiers(meth, next_to_axis, style);
       glyphifySymmetry(sym, style, tiers[0], tiers[1]);
     }
@@ -85,13 +88,13 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
   double thick_height = GenericAnnotGlyphFactory.DEFAULT_THICK_HEIGHT;
   double thin_height = GenericAnnotGlyphFactory.DEFAULT_THIN_HEIGHT;
   
-  GlyphI glyphifySymmetry(SeqSymmetry insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier) {
+  GlyphI glyphifySymmetry(SeqSymmetry insym, IAnnotStyleExtended style, TierGlyph ftier, TierGlyph rtier) {
     return glyphifySymmetry((GFF3Sym) insym, style, ftier, rtier, null);
   }  
 
   GenericAnnotGlyphFactory default_glyph_factory = new GenericAnnotGlyphFactory();
   
-  GlyphI glyphifySymmetry(GFF3Sym insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier, GlyphI parent_glyph) {
+  GlyphI glyphifySymmetry(GFF3Sym insym, IAnnotStyleExtended style, TierGlyph ftier, TierGlyph rtier, GlyphI parent_glyph) {
 
     if (insym == null) { return null; }
     
@@ -127,7 +130,7 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
     return gl;
   }
   
-  GlyphI drawMRNA(GFF3Sym insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier) {
+  GlyphI drawMRNA(GFF3Sym insym, IAnnotStyleExtended style, TierGlyph ftier, TierGlyph rtier) {
     
     GlyphI gl = null;
     
@@ -162,7 +165,7 @@ public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
   // Draws a CDS group feature
   // (If this is a group of something other than CDS segments, this just recurses
   //  down to the children and draws them in their normal way.)
-  GlyphI drawGroup(GFF3Sym insym, AnnotStyle style, TierGlyph ftier, TierGlyph rtier) {
+  GlyphI drawGroup(GFF3Sym insym, IAnnotStyleExtended style, TierGlyph ftier, TierGlyph rtier) {
     // Theoretically, this method could be simplified because the "group" symmetries
     // created from multi-line features should have children that are all of the same type,
     // and which have no children of their own.  (The group itself can have other children.)

@@ -97,9 +97,6 @@ public class SeqMapView extends JPanel
    */
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
-  public boolean LABEL_TIERMAP = true;
-
-  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;
   boolean rev_comp = false;
@@ -307,28 +304,36 @@ public class SeqMapView extends JPanel
    */
   public static SeqMapView makeSeqMapView(boolean add_popups, boolean split_win, boolean use_refresh_button) {
     SeqMapView smv = new SeqMapView();
-    smv.init(add_popups, split_win, use_refresh_button);
+    smv.init(add_popups, split_win, true, use_refresh_button);
     return smv;
   }
-  
-  protected void init(boolean add_popups, boolean split_win, boolean use_refresh_button) {
 
-    SPLIT_WINDOWS = split_win;
-    if (SPLIT_WINDOWS) { LABEL_TIERMAP = false; }
-
-
-    if (SPLIT_WINDOWS) {
+  /** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
+   *  will be done in init()
+   */
+  protected AffyTieredMap createSeqMap(boolean splitWindows, boolean labelTiermap,
+      boolean internalXScroller, boolean internalYScroller) {
+    AffyTieredMap seqmap;
+    if (splitWindows) {
       seqmap = new MultiWindowTierMap(false, false);
     }
-    else if (LABEL_TIERMAP) {
-      seqmap = new AffyLabelledTierMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
+    else if (labelTiermap) {
+      seqmap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
       NeoMap label_map = ((AffyLabelledTierMap)seqmap).getLabelMap();
       label_map.setSelectionAppearance( SceneI.SELECT_OUTLINE );
       label_map.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
     }
     else {
-      seqmap = new AffyTieredMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
+      seqmap = new AffyTieredMap(internalXScroller, internalYScroller);
     }
+    return seqmap;
+  }
+  
+  protected void init(boolean add_popups, boolean split_win, boolean label_tiermap, boolean use_refresh_button) {
+
+    if (split_win) { label_tiermap = false; }
+
+    seqmap = createSeqMap(split_win, label_tiermap, INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
 
     seqmap.setReshapeBehavior(NeoWidgetI.X, NeoWidgetI.NONE);
     seqmap.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
@@ -366,7 +371,7 @@ public class SeqMapView extends JPanel
     seqmap.setZoomer(NeoMap.X, xzoomer);
     seqmap.setZoomer(NeoMap.Y, yzoomer);
 
-    if (LABEL_TIERMAP)  {
+    if (label_tiermap)  {
       tier_manager = new TierLabelManager((AffyLabelledTierMap)seqmap);
       tier_manager.setDoGraphSelections(true);
       if (add_popups) {
@@ -384,7 +389,7 @@ public class SeqMapView extends JPanel
     seqmap.setSelectionAppearance( SceneI.SELECT_OUTLINE );
     seqmap.addMouseListener(mouse_listener);
 
-    if (LABEL_TIERMAP) {
+    if (label_tiermap) {
       tier_manager.setDoGraphSelections(true);
     }
     // A "Smart" rubber band is necessary becaus we don't want our attempts
@@ -442,8 +447,8 @@ public class SeqMapView extends JPanel
     }
 
     // experimenting with transcriptarium split windows
-    if (SPLIT_WINDOWS) {
-      // don't display map if SPLIT_WINDOWS, display is via multiple separate windows controlled by seqmap
+    if (split_win) {
+      // don't display map if split_win, display is via multiple separate windows controlled by seqmap
       NeoScrollbar xscroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
       NeoScrollbar yscroller = new NeoScrollbar(NeoScrollbar.VERTICAL);
       //      xscroller.setSendEvents(true);  // not sure if this is necessary or desired

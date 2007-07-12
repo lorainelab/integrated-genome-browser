@@ -74,6 +74,11 @@ public class LocalUrlCacher {
     return (url.substring(0,5).compareToIgnoreCase("file:") == 0);
   }
 
+  public static boolean isJarUrl(String url) {
+    if (url == null || url.length() < 5)  { return false; }
+    return ( url.substring(0,4).compareToIgnoreCase("jar:") == 0 );
+  }
+  
   /** Returns the local File object for the given URL;
    *  you must check File.exists() to determine if the file exists in the cache.
    *
@@ -136,7 +141,7 @@ public class LocalUrlCacher {
    *  {@link #TYPE_UNREACHABLE}.
    */
   protected static String getLoadType(String url, int cache_option) {
-
+    
     // if url is a file url, and not caching files, then just directly return stream
     if (isFile(url)) {
       try {
@@ -505,13 +510,18 @@ public class LocalUrlCacher {
     }
 
     else if (LocalUrlCacher.TYPE_STALE_CACHE.equals(cache_type)) {
-      String[] options = { "Load remote file", "Use local cache", "Cancel" };
-      String message = "The remote file \"" + short_filename +
-          "\"is more recent than the local copy.";
 
-      int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
-            JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, options, options[0]);
+      int choice = 0;
+      if (isJarUrl(filename)) {
+        choice = 0;
+      } else {
+        String[] options = { "Load remote file", "Use local cache", "Cancel" };
+        String message = "The remote file \"" + short_filename +
+            "\"is more recent than the local copy.";
+        choice = JOptionPane.showOptionDialog(null, message, "Load file?",
+              JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+              null, options, options[0]);
+      }
 
       if (choice == 0) {
         return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
@@ -529,17 +539,22 @@ public class LocalUrlCacher {
         return null;
       }
 
-      String[] options = { "OK", "Cancel" };
-      String message = "Load " + short_filename + " from the remote server?";
-
-      int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
+      if (isJarUrl(filename)) {
+        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
+      }
+      else {
+        String[] options = { "OK", "Cancel" };
+        String message = "Load " + short_filename + " from the remote server?";
+        
+        int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
             JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
             null, options, options[0]);
-
-      if (choice == JOptionPane.OK_OPTION) {
-        return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-      } else {
-        return null;
+        
+        if (choice == JOptionPane.OK_OPTION) {
+          return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
+        } else {
+          return null;
+        }
       }
     }
 

@@ -24,6 +24,7 @@ public class FormatPriorities {
     "brs",
     "bgn",
     "bps",
+    "cyt",
     "bed",
     "psl",
     "gff",

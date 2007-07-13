@@ -213,7 +213,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
-  
+
   Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
       java.util.List current_tiers = handler.getSelectedTierLabels();
@@ -225,7 +225,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
   };
-  
+
   JMenu showMenu = new JMenu("Show...");
   JMenu changeMenu = new JMenu("Change...");
   JMenu strandsMenu = new JMenu("Strands...");
@@ -506,15 +506,15 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     refreshMap(false);
   }
-  
+
   void removeTiers(java.util.List tier_labels) {
     gmodel.setSelectedSymmetries(Collections.EMPTY_LIST, this);
     Set types_to_remove = new TreeSet();
-    
+
     for (int i=0; i<tier_labels.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);      
+      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
       java.util.List graphs = handler.getContainedGraphs(tlg);
-      
+
       if (graphs.isEmpty()) {
         IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
         String type = style.getUniqueName();
@@ -543,7 +543,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
     refreshMap(true);
   }
-  
+
 
   /*
   public void outputWritebackTestFile(OutputStream ostr) {

@@ -20,6 +20,8 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.util.prefs.PreferenceChangeListener;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -96,6 +98,10 @@ public class SeqMapView extends JPanel
    * other ways.
    */
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
+
+  public static Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
+  //  public boolean LABEL_TIERMAP = true;
+  //  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
 
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;
@@ -290,7 +296,7 @@ public class SeqMapView extends JPanel
       });
     }
   };
-  
+
   /**
    * Creates an instance.
    * @param add_popups  Whether to add some popup menus to the tier label manager
@@ -307,6 +313,7 @@ public class SeqMapView extends JPanel
     smv.init(add_popups, split_win, true, use_refresh_button);
     return smv;
   }
+
 
   /** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
    *  will be done in init()
@@ -620,6 +627,8 @@ public class SeqMapView extends JPanel
 
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 
+
+
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
 
@@ -645,7 +654,13 @@ public class SeqMapView extends JPanel
 
     if (aseq instanceof SmartAnnotBioSeq) {
       SmartAnnotBioSeq sma = (SmartAnnotBioSeq) aseq;
-      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
+      //      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
+      SymWithProps cyto_annots = null;
+      java.util.List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+      if (cyto_tiers.size() > 0) {
+	cyto_annots = (SymWithProps)cyto_tiers.get(0);
+	//	SeqUtils.printSymmetry(cyto_annots);
+      }
 
       int cyto_height = 10;
       if (cyto_annots instanceof TypeContainerAnnot) {
@@ -657,8 +672,8 @@ public class SeqMapView extends JPanel
 
 	// handling two cases:
 	//  1. cytoband syms are children of TypeContainerAnnot
-	//  2. cytoband syms are grandchildren of TypeContainerAnnot 
-	//        (should expect this when cytobands are loaded via DAS/2 -- then child of TypeContainerAnnot 
+	//  2. cytoband syms are grandchildren of TypeContainerAnnot
+	//        (should expect this when cytobands are loaded via DAS/2 -- then child of TypeContainerAnnot
 	//         will be a Das2FeatureRequestSym, which will have cytoband children of its own
 	java.util.List bands = new ArrayList();
         for (int q=0; q<cyto_container.getChildCount(); q++) {
@@ -671,6 +686,7 @@ public class SeqMapView extends JPanel
 	    }
 	  }
 	}
+	System.out.println("   band count: " + bands.size());
 
 	//        for (int q=0; q<cyto_container.getChildCount(); q++) {
         for (int q=0; q<bands.size(); q++) {
@@ -1265,7 +1281,8 @@ public class SeqMapView extends JPanel
       // skip over any cytoband data.  It is show in a different way
       if (annotSym instanceof TypeContainerAnnot) {
         TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-        if (tca.getType().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
+	//        if (tca.getType().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
+	if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
           continue;
         }
       }
@@ -2364,7 +2381,7 @@ public class SeqMapView extends JPanel
   public void doEdgeMatching(java.util.List query_glyphs, boolean update_map) {
 
     if (! show_edge_matches) { return; }
-    
+
     if (match_glyphs != null && match_glyphs.size() > 0) {
       seqmap.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
     }
@@ -2551,7 +2568,7 @@ public class SeqMapView extends JPanel
       selectParents(true);
     }
   }
-  
+
   /** For each current selection, deselect it and select its parent instead.
    *  @param top_level if true, will select only top-level parents
    */
@@ -2704,7 +2721,7 @@ public class SeqMapView extends JPanel
     return id;
   }
 
-  /** Prepares the given popup menu to be shown.  The popup menu should have 
+  /** Prepares the given popup menu to be shown.  The popup menu should have
    *  items added to it by this method.  Display of the popup menu will be
    *  handled by showPopup(), which calls this method.
    */
@@ -2750,9 +2767,9 @@ public class SeqMapView extends JPanel
   void showPopup(NeoMouseEvent nevt) {
     sym_popup.setVisible(false); // in case already showing
     sym_popup.removeAll();
-    
+
     preparePopup(sym_popup);
-    
+
     if (sym_popup.getComponentCount() > 0) {
 
       if (nevt == null) {

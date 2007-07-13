@@ -18,6 +18,8 @@ import com.affymetrix.genometryImpl.NibbleBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
@@ -38,7 +40,8 @@ import com.affymetrix.genometryImpl.event.SeqModifiedListener;
  *
  */
 public class SmartAnnotBioSeq extends NibbleBioSeq  {
-  Map type2sym = null;   // lazy instantiation of type2sym hash...
+  Map type_id2sym = null;   // lazy instantiation of type ids to container annotations
+  Map type_name2sym = null;   // also keeping a hash of type _names_ to container annotations
   List modified_listeners = null;
   AnnotatedSeqGroup seq_group;
   boolean modify_events_enabled = true;
@@ -71,10 +74,10 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    * {@link #getAnnotation(String)}.
    */
   public Set getTypeIds() {
-    if (type2sym == null) {
+    if (type_id2sym == null) {
       return Collections.EMPTY_SET;
     } else {
-      return Collections.unmodifiableSet(type2sym.keySet());
+      return Collections.unmodifiableSet(type_id2sym.keySet());
     }
   }
 
@@ -85,8 +88,26 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    *     so GraphSyms can be retrieved with graph id given as type
    */
   public SymWithProps getAnnotation(String type) {
-    if (type2sym == null) { return null; }
-    return (SymWithProps)type2sym.get(type.toLowerCase());
+    if (type_id2sym == null) { return null; }
+    return (SymWithProps)type_id2sym.get(type.toLowerCase());
+  }
+
+  public List getAnnotations(Pattern regex) {
+    List results = new ArrayList();
+    if (type_id2sym != null)  {
+      Matcher match = regex.matcher(null);
+      Iterator entries = type_id2sym.entrySet().iterator();
+      while (entries.hasNext()) {
+	Map.Entry entry = (Map.Entry) entries.next();
+	String type = (String) entry.getKey();
+	//	System.out.println("  type: " + type);
+	if (match.reset(type).matches()) {
+	  SeqSymmetry sym = (SeqSymmetry) entry.getValue();
+	  results.add(sym);
+	}
+      }
+    }
+    return results;
   }
 
   public void addModifiedListener(SeqModifiedListener listener) {
@@ -152,12 +173,12 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized MutableSeqSymmetry addAnnotation(String type) {
     type = type.toLowerCase();
-    if (type2sym == null) { type2sym = new HashMap(); }
+    if (type_id2sym == null) { type_id2sym = new HashMap(); }
     MutableSeqSymmetry container = new TypeContainerAnnot(type);
     ((SymWithProps)container).setProperty("method", type);
     SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
     container.addSpan(span);
-    type2sym.put(type, container);
+    type_id2sym.put(type, container);
     super.addAnnotation(container);
     notifyModified();
     return container;
@@ -170,8 +191,8 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized void addAnnotation(SeqSymmetry sym, String type) {
     type = type.toLowerCase();
-    if (type2sym == null) { type2sym = new HashMap(); }
-    MutableSeqSymmetry container = (MutableSeqSymmetry)type2sym.get(type);
+    if (type_id2sym == null) { type_id2sym = new HashMap(); }
+    MutableSeqSymmetry container = (MutableSeqSymmetry)type_id2sym.get(type);
     if (container == null) {
       container = addAnnotation(type);
     }
@@ -200,13 +221,13 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized void addAnnotation(SeqSymmetry sym) {
     if (! needsContainer(sym)) {
-      if (type2sym == null) { type2sym = new HashMap(); }
+      if (type_id2sym == null) { type_id2sym = new HashMap(); }
       String id = sym.getID();
       if (id == null) {
 	System.out.println("WARNING: ID is null!!!  sym: " + sym);
 	throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation, sym.getID() == null && (! needsContainer(sym)), this should never happen!");
       }
-      type2sym.put(id.toLowerCase(), sym);
+      type_id2sym.put(id.toLowerCase(), sym);
       super.addAnnotation(sym);
       notifyModified();
       return;
@@ -237,7 +258,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       if ((type != null) && (getAnnotation(type) != null)) {
 	MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
 	if (container == annot) {
-	  type2sym.remove(type);
+	  type_id2sym.remove(type);
 	  super.removeAnnotation(annot);
 	  notifyModified();
 	  //	  return;
@@ -255,7 +276,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
       type = type.toLowerCase();
       MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
       if (container != null) {
-        type2sym.remove(type);
+        type_id2sym.remove(type);
         super.removeAnnotation(container);
         notifyModified();
       }

@@ -275,6 +275,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       output_registry.put(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE, Das2FeatureSaxParser.class);
       output_registry.put("bp2", Bprobe1Parser.class);
       output_registry.put("ead", ExonArrayDesignParser.class);
+      output_registry.put("cyt", CytobandParser.class);
 
       graph_formats.add("bar");
 
@@ -439,7 +440,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *     check for multiple top-level annotations of the same type, and combine
    *       if found so there is only one top-level annotation per type for each seq
    *
-   *     subclass AnnotatedBioSeq to add retrieval of top-level annotation by type
    */
   public void optimizeSeq(MutableAnnotatedBioSeq aseq) {
     if (DEBUG)  { System.out.println("optimizing seq = " + aseq.getID()); }
@@ -488,7 +488,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
     int temp_count = temp_annots.size();
-    // iterate through all annotations on this sequence that are not IntervalSearchSyms,
+    //    System.out.println("optimizing for: " + container.getType() + ", seq: " + aseq.getID() + ", count: " + temp_count);
+    // iterate through all annotations from TypeContainerAnnot on this sequence that are not IntervalSearchSyms,
     //    convert them to IntervalSearchSyms.
     for (int i=temp_count-1; i>=0; i--) {
       SeqSymmetry annot_sym = (SeqSymmetry)temp_annots.get(i);
@@ -947,8 +948,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
               SymWithProps first_child = (SymWithProps)tannot.getChild(0);
               if (first_child != null) {
                 java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
-                //	      System.out.println("   child count: " + tannot.getChildCount() +
-                //				 ", format info: " + formats);
+		System.out.println("   child count: " + tannot.getChildCount() +
+				   ", format info: " + formats);
                 if (formats != null) { flist = formats; }
               }
               genome_types.put(type, flist);

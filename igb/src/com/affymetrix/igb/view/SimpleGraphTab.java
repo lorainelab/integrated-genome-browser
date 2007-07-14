@@ -35,6 +35,9 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
+import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
+import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
+import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 
 import java.awt.*;

@@ -43,8 +43,8 @@ public class LoadFileAction {
   static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
-  static final boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
-  static final boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
+  protected static boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
+  protected static boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
 
   /**
    *  Constructor.

@@ -95,7 +95,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
   public List getAnnotations(Pattern regex) {
     List results = new ArrayList();
     if (type_id2sym != null)  {
-      Matcher match = regex.matcher(null);
+      Matcher match = regex.matcher("");
       Iterator entries = type_id2sym.entrySet().iterator();
       while (entries.hasNext()) {
 	Map.Entry entry = (Map.Entry) entries.next();

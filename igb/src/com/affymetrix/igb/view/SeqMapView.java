@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.awt.event.*;
@@ -99,6 +100,8 @@ public class SeqMapView extends JPanel
    */
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
+  protected boolean view_cytobands_in_axis = true;
+  protected boolean view_cytobands_as_tiers = false;
   public static Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
   //  public boolean LABEL_TIERMAP = true;
   //  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
@@ -652,10 +655,12 @@ public class SeqMapView extends JPanel
     axis_tier.setForegroundColor(axis_fg);
     setAxisFormatFromPrefs(axis);
 
-    GlyphI cytoband_glyph = makeCytobandGlyph(this);
-    if (cytoband_glyph != null) {
-      axis_tier.addChild(cytoband_glyph);        
-      axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
+    if (view_cytobands_in_axis) {
+      GlyphI cytoband_glyph = makeCytobandGlyph(this);
+      if (cytoband_glyph != null) {
+        axis_tier.addChild(cytoband_glyph);        
+        axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
+      }
     }
 
     axis_tier.addChild(axis);
@@ -1300,8 +1305,14 @@ public class SeqMapView extends JPanel
       // skip over any cytoband data.  It is show in a different way
       if (annotSym instanceof TypeContainerAnnot) {
         TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-	//        if (tca.getType().equals(CytobandParser.CYTOBAND_TIER_NAME)) {
-	if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
+
+        if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
+          if (view_cytobands_as_tiers) {
+            GlyphI gl = makeCytobandGlyph(this, tca);
+            IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle("cytobands");
+            TierGlyph[] tg = getTiers("cytobands", true, style);
+            tg[0].addChild(gl);
+          }
           continue;
         }
       }
@@ -2338,32 +2349,18 @@ public class SeqMapView extends JPanel
     int end = (int)(vbox.x + vbox.width);
     SeqSpan span = new SimpleSeqSpan(start, end, aseq);
     UnibrowControlUtils.sendLocationCommand(remote_address, span);
-    System.out.println("sent span to: " + remote_address);
+    Application.getApplicationLogger().finest("sent span to: " + remote_address);
   }
 
-  public void invokeUcscView() {
-    // links to UCSC look like this:
-    //  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
-    String ucsc_url = null;
-    if (! (aseq instanceof NibbleBioSeq)) {
-      Application.errorPanel("Can't call UCSC", "Sequence has no version info");
-    }
-    else if (slicing_in_effect) {
-      Application.errorPanel("Can't call UCSC", "Currently looking at sliced view, can't call UCSC");
-    }
-    else {
-      Rectangle2D vbox = seqmap.getView().getCoordBox();
-      int start = (int)vbox.x;
-      int end = (int)(vbox.x + vbox.width);
-      String ucsc_root = "http://genome.ucsc.edu/cgi-bin/hgTracks?";
+  /** Returns the genome version in UCSC two-letter plus number format, like "hg17". */
+  public String getUcscGenomeVersion() {
+    String ucsc_version = null;
+    if (aseq instanceof Versioned && ! slicing_in_effect) {
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      // hardwiring to try and find synonym with "hg" prefix -- will only work for
-      //  human genome versions !
-      String seqid = aseq.getID();
-      String version = ((NibbleBioSeq)aseq).getVersion();
+
+      String version = ((Versioned)aseq).getVersion();
       java.util.List syns = lookup.getSynonyms(version);
-      //      System.out.println("syns: " + syns);
-      String ucsc_version = null;
+
       if (syns == null) {
 	syns = new ArrayList();
 	syns.add(version);
@@ -2380,22 +2377,62 @@ public class SeqMapView extends JPanel
 	  break;
 	}
       }
-      if (ucsc_version != null) {
-	String postfix = "db=" + ucsc_version + "&position=" +
-	  seqid + ":" + start + "-" + end;
-	ucsc_url = ucsc_root + postfix;
-	WebBrowserControl.displayURLEventually(ucsc_url);
-	System.out.println("UCSC URL: " + ucsc_url);
-      }
-      //    ?db=hg11&position=chr22:15916196-31832390
-      //    ucsc_url = "http://
-      else {
-	System.out.println("Can't call UCSC, couldn't figure out how to access genome version");
-	Application.errorPanel("Can't call UCSC, couldn't figure out how to access genome version");
-      }
+    }
+    return ucsc_version;
+  }
+
+  /** 
+   *  Returns the current position in the format used by the UCSC browser.
+   *  This format is also understood by GBrowse and the MapRangeBox of IGB.
+   *  @return a String such as "chr22:15916196-31832390", or null.
+   */
+  public String getRegionString() {
+    String region = null;
+    if (! slicing_in_effect) {
+      Rectangle2D vbox = seqmap.getView().getCoordBox();
+      int start = (int) vbox.x;
+      int end = (int) (vbox.x + vbox.width);
+      String seqid = aseq.getID();
+
+      region = seqid + ":" + start + "-" + end;      
+    }
+    return region;
+  }
+  
+  public void invokeUcscView() {
+    // links to UCSC look like this:
+    //  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
+    String version = getUcscGenomeVersion();
+    String region = getRegionString();
+    
+    if (version != null && region != null) {
+      String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?"
+        + "db=" + getUcscGenomeVersion() + "&position=" + getRegionString();
+      WebBrowserControl.displayURLEventually(ucsc_url);
+    } else {
+      Application.errorPanel("Can't invoke hyperlink for version="+version+",  region="+region);
     }
   }
 
+  /** 
+   * Invokes a link to the toronto database of genomic variants.
+   */
+  public void invokeTorontoView() {
+    // links to Toronto look like this:
+    // "http://projects.tcag.ca/variation/cgi-bin/gbrowse/hg17?name=chr1:13108649..13311697";
+    
+    String version = getUcscGenomeVersion();
+    String region = getRegionString();
+    
+    if (version != null && region != null) {
+      String url = "http://projects.tcag.ca/variation/cgi-bin/gbrowse/"
+        + version + "?name=" + region;
+      WebBrowserControl.displayURLEventually(url);
+    }
+    else {
+      Application.errorPanel("Can't invoke hyperlink for version="+version+",  region="+region);
+    }
+  }
 
   public void doEdgeMatching(java.util.List query_glyphs, boolean update_map) {
 
@@ -2673,7 +2710,7 @@ public class SeqMapView extends JPanel
     Application.getSingleton().setStatus(title, false);
   }
 
-  SymWithProps sym_used_for_title = null;
+  protected SymWithProps sym_used_for_title = null;
 
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry

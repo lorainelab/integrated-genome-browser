@@ -420,13 +420,7 @@ public class GlyphElement implements Cloneable, XmlAppender {
       //der.setOriginalSymmetry(insym);
     }
 
-    SeqSpan result_span = der.getSpan(gviewer.getViewSeq());
-
-    // I can't remember what the purpose of this was supposed to be,
-    // but it doesn't seem necessary
-    //if (result_span == null) {
-    //  result_span = new SimpleSeqSpan(0, 0, gviewer.getViewSeq());
-    //}
+    SeqSpan result_span = gviewer.getViewSeqSpan(der);
 
     return result_span;
   }

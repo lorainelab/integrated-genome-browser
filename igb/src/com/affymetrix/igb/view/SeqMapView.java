@@ -652,80 +652,10 @@ public class SeqMapView extends JPanel
     axis_tier.setForegroundColor(axis_fg);
     setAxisFormatFromPrefs(axis);
 
-    if (aseq instanceof SmartAnnotBioSeq) {
-      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) aseq;
-      //      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
-      SymWithProps cyto_annots = null;
-      java.util.List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
-      if (cyto_tiers.size() > 0) {
-	cyto_annots = (SymWithProps)cyto_tiers.get(0);
-	//	SeqUtils.printSymmetry(cyto_annots);
-      }
-
-      int cyto_height = 10;
-      if (cyto_annots instanceof TypeContainerAnnot) {
-        TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
-        EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
-        cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
-        cytoband_glyph.setHitable(false);
-        cytoband_glyph.setCoords(0.0, 0.0, viewseq.getLength(), cyto_height + 4);
-
-	// handling two cases:
-	//  1. cytoband syms are children of TypeContainerAnnot
-	//  2. cytoband syms are grandchildren of TypeContainerAnnot
-	//        (should expect this when cytobands are loaded via DAS/2 -- then child of TypeContainerAnnot
-	//         will be a Das2FeatureRequestSym, which will have cytoband children of its own
-	java.util.List bands = new ArrayList();
-        for (int q=0; q<cyto_container.getChildCount(); q++) {
-	  SeqSymmetry child  = cyto_container.getChild(q);
-	  if (child instanceof CytobandParser.CytobandSym) { bands.add(child); }
-	  else {
-	    for (int subindex=0; subindex<child.getChildCount(); subindex++) {
-	      SeqSymmetry grandchild = child.getChild(subindex);
-	      if (grandchild instanceof CytobandParser.CytobandSym) { bands.add(grandchild); }
-	    }
-	  }
-	}
-	System.out.println("   band count: " + bands.size());
-
-	//        for (int q=0; q<cyto_container.getChildCount(); q++) {
-        for (int q=0; q<bands.size(); q++) {
-	  //          SeqSymmetry sym  = cyto_container.getChild(q);
-          SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
-          SeqSymmetry sym2 = transformForViewSeq(sym, aseq);
-
-          SeqSpan cyto_span = sym2.getSpan(viewseq);
-          if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
-            CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
-
-            //float score = ((Scored) cyto_sym).getScore();
-            GlyphI efg;
-            if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-              efg = new PointedGlyph();
-              efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-              ((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
-            } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-              efg = new DoublePointedGlyph();
-              efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-            } else if ("".equals(cyto_sym.getBand())) {
-              efg = new EfficientOutlinedRectGlyph();
-              efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-            } else {
-              efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
-              efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
-              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
-              ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
-            }
-            efg.setColor(cyto_sym.getColor());
-            seqmap.setDataModelFromOriginalSym(efg, cyto_sym);
-            cytoband_glyph.addChild(efg);
-          }
-        }
-
-        axis_tier.addChild(cytoband_glyph);
-
-        axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + cyto_height + 4);
-      }
+    GlyphI cytoband_glyph = makeCytobandGlyph(this);
+    if (cytoband_glyph != null) {
+      axis_tier.addChild(cytoband_glyph);        
+      axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
     }
 
     axis_tier.addChild(axis);
@@ -835,7 +765,96 @@ public class SeqMapView extends JPanel
 //    seqmap.repack();
     return axis_tier;
   }
+  
+  public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer) {
+    EfficientFillRectGlyph cytoband_glyph = null;
+    if (gviewer.getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) gviewer.getAnnotatedSeq();
+      //      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
+      SymWithProps cyto_annots = null;
+      java.util.List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+      if (cyto_tiers.size() > 0) {
+        cyto_annots = (SymWithProps)cyto_tiers.get(0);
+        //	SeqUtils.printSymmetry(cyto_annots);
+      }
 
+      if (cyto_annots instanceof TypeContainerAnnot) {
+        TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
+        return makeCytobandGlyph(gviewer, cyto_container);
+      }
+    }
+    return null;
+  }
+  
+  /**
+   *  Creates a cytoband glyph.  Handling two cases:
+   * 1. cytoband syms are children of TypeContainerAnnot;
+   * 2. cytoband syms are grandchildren of TypeContainerAnnot
+   *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
+   *         will be a Das2FeatureRequestSym, which will have cytoband children).
+   */
+  public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer, TypeContainerAnnot cyto_container) {
+    int cyto_height = 10;
+
+    EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
+    cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
+    cytoband_glyph.setHitable(false);
+    cytoband_glyph.setCoords(0.0, 0.0, gviewer.getViewSeq().getLength(), cyto_height + 4);
+    
+    java.util.List bands = new ArrayList();
+    for (int q=0; q<cyto_container.getChildCount(); q++) {
+      SeqSymmetry child  = cyto_container.getChild(q);
+      if (child instanceof CytobandParser.CytobandSym) { 
+        bands.add(child); 
+      }
+      else {
+        for (int subindex=0; subindex<child.getChildCount(); subindex++) {
+          SeqSymmetry grandchild = child.getChild(subindex);
+          if (grandchild instanceof CytobandParser.CytobandSym) {
+            bands.add(grandchild); 
+          }
+        }
+      }
+    }
+    //System.out.println("   band count: " + bands.size());
+    
+    //        for (int q=0; q<cyto_container.getChildCount(); q++) {
+    for (int q=0; q<bands.size(); q++) {
+      //          SeqSymmetry sym  = cyto_container.getChild(q);
+      SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
+      SeqSymmetry sym2 = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
+      
+      SeqSpan cyto_span = gviewer.getViewSeqSpan(sym2);
+      
+      if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
+        CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
+        
+        //float score = ((Scored) cyto_sym).getScore();
+        GlyphI efg;
+        if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
+          efg = new PointedGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+          ((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
+        } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
+          efg = new DoublePointedGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+        } else if ("".equals(cyto_sym.getBand())) {
+          efg = new EfficientOutlinedRectGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+        } else {
+          efg = new com.affymetrix.genoviz.glyph.LabelledRectGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+          ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
+          ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
+        }
+        efg.setColor(cyto_sym.getColor());
+        gviewer.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
+        cytoband_glyph.addChild(efg);
+      }
+    }
+    return cytoband_glyph;
+  }
+  
   /** Sets the axis label format from the value in the persistent preferences. */
   public static void setAxisFormatFromPrefs(AxisGlyph axis) {
     // It might be good to move this to AffyTieredMap

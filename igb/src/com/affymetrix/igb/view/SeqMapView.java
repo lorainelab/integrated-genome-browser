@@ -3085,6 +3085,10 @@ public class SeqMapView extends JPanel
     return false;
 
   }
-
+  
+  /** Get the span of the symmetry that is on the seq being viewed. */
+  public SeqSpan getViewSeqSpan(SeqSymmetry sym) {
+    return sym.getSpan(viewseq);
+  }
 }
 

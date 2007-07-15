@@ -137,6 +137,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     
     String meth = gviewer.determineMethod(sym);
+
     if (meth != null) {
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       glyph_depth = style.getGlyphDepth();
@@ -272,8 +273,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (! same_seq) {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
-    
-    SeqSpan pspan = sym.getSpan(coordseq);
+        
+    SeqSpan pspan = gviewer.getViewSeqSpan(sym);
+
     if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;
@@ -334,7 +336,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       tempsym.addSpan(new SimpleMutableSeqSpan(cdsSpan));
       if (! same_seq) {
         SeqUtils.transformSymmetry(tempsym, gviewer.getTransformPath());
-        cdsSpan = tempsym.getSpan(coordseq);
+        cdsSpan = gviewer.getViewSeqSpan(tempsym);
       }
       cds_sym = tempsym;
     }
@@ -346,7 +348,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         SeqSymmetry child = null;
         SeqSpan cspan = null;
         child = sym.getChild(i);
-        cspan = child.getSpan(coordseq);
+
+        cspan = gviewer.getViewSeqSpan(child);
         
         if (cspan == null) {
 
@@ -394,7 +397,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
             if (! same_seq) {
               cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
             }
-            SeqSpan cds_span = cds_sym_3.getSpan(coordseq);
+            SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_3);
             if (cds_span != null) {
               GlyphI cds_glyph;
               if (cspan.getLength() == 0) {
@@ -457,7 +460,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
     
-    SeqSpan pspan = sym.getSpan(coordseq);
+    SeqSpan pspan = gviewer.getViewSeqSpan(sym);
     if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;

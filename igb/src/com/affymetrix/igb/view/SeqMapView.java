@@ -101,7 +101,6 @@ public class SeqMapView extends JPanel
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
   protected boolean view_cytobands_in_axis = true;
-  protected boolean view_cytobands_as_tiers = false;
   public static Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
   //  public boolean LABEL_TIERMAP = true;
   //  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
@@ -859,7 +858,12 @@ public class SeqMapView extends JPanel
     }
     return cytoband_glyph;
   }
-  
+
+  /** By default, this does nothing.  Subclasses can implement. */
+  public void addCytobandAsTier(TypeContainerAnnot tca) {
+    return;
+  }
+
   /** Sets the axis label format from the value in the persistent preferences. */
   public static void setAxisFormatFromPrefs(AxisGlyph axis) {
     // It might be good to move this to AffyTieredMap
@@ -1292,6 +1296,10 @@ public class SeqMapView extends JPanel
   }
 
   void addAnnotationTiers() {
+    if (aseq == null) {
+      // This shouldn't happen, but I've seen it during startup: eee july 2007
+      return;
+    }
     if (DEBUG_COMP)  {
       System.out.println("$$$$$$$ called SeqMapView.addAnnotationTiers(), aseq: " + aseq.getID() + " $$$$$$$");
     }
@@ -1307,12 +1315,7 @@ public class SeqMapView extends JPanel
         TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 
         if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
-          if (view_cytobands_as_tiers) {
-            GlyphI gl = makeCytobandGlyph(this, tca);
-            IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle("cytobands");
-            TierGlyph[] tg = getTiers("cytobands", true, style);
-            tg[0].addChild(gl);
-          }
+          addCytobandAsTier(tca);
           continue;
         }
       }
@@ -1365,7 +1368,7 @@ public class SeqMapView extends JPanel
       transform_path = cached_path;
     }
   }
-
+  
   /**
    * @deprecate Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
    */

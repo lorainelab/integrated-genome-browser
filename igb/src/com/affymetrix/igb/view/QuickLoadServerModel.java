@@ -148,10 +148,12 @@ public class QuickLoadServerModel {
     load_states.put(stripFilenameExtensions(file_name), Boolean.valueOf(loaded));
   }
 
+  public boolean allow_reinitialization = false;
+  
   public void initGenome(String genome_name) {
     if (genome_name == null) { return; }
     Boolean init = (Boolean)genome2init.get(genome_name);
-    if (init != Boolean.TRUE) {
+    if (allow_reinitialization || init != Boolean.TRUE) {
       System.out.println("initializing data for genome: " + genome_name);
       boolean seq_init = loadSeqInfo(genome_name);
       boolean annot_init = loadAnnotationNames(genome_name);

@@ -94,7 +94,7 @@ public class CytobandParser implements AnnotationWriter  {
         seq_name = fields[0]; // seq id field
         MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
         if (seq == null) {
-          System.out.println("seq not recognized, creating new seq: " + seq_name);
+          //System.out.println("seq not recognized, creating new seq: " + seq_name);
           seq = seq_group.addSeq(seq_name, 0);
         }
 

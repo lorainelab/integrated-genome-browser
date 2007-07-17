@@ -224,7 +224,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	  }
 
 	  if (seq == null) {
-	    System.out.println("seq not recognized, creating new seq: " + seq_name);
+	    //System.out.println("seq not recognized, creating new seq: " + seq_name);
 	    seq = seq_group.addSeq(seq_name, 0);
 	  }
 	  int beg = Integer.parseInt(fields[findex++]);  // start field

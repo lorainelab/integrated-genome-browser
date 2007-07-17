@@ -747,7 +747,7 @@ public class BarParser implements AnnotationWriter  {
 	if (bar2 && groupname != null) {
 	  seqversion = groupname + ":" + seqversion;
 	}
-	System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
+	//System.out.println("seq not found, creating new seq:  name = " + seqname + ", version = " + seqversion);
 	//        seq = seq_group.addSeq(seqname, 500000000);
         seq = seq_group.addSeq(seqname, 1000);
       }

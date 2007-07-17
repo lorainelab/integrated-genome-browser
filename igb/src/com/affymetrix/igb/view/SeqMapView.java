@@ -803,7 +803,7 @@ public class SeqMapView extends JPanel
     EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
     cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
     cytoband_glyph.setHitable(false);
-    cytoband_glyph.setCoords(0.0, 0.0, gviewer.getViewSeq().getLength(), cyto_height + 4);
+    cytoband_glyph.setCoords(0.0, 0.0, 0, cyto_height + 4);
     
     java.util.List bands = new ArrayList();
     for (int q=0; q<cyto_container.getChildCount(); q++) {
@@ -854,6 +854,7 @@ public class SeqMapView extends JPanel
         efg.setColor(cyto_sym.getColor());
         gviewer.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
         cytoband_glyph.addChild(efg);
+        cytoband_glyph.getCoordBox().add(efg.getCoordBox());
       }
     }
     return cytoband_glyph;

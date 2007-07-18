@@ -2652,13 +2652,32 @@ public class SeqMapView extends JPanel
     postSelections();
   }
 
+  /** Find the top-most parent glyphs of the given glyphs. 
+   *  @childGlyphs a list of GlyphI objects, typically the selected glyphs
+   *  @return a list where each child is replaced by its top-most parent, if it
+   *  has a parent, or else the child itself is included in the list
+   */
+  public static java.util.List getParents(java.util.List childGlyphs) {
+    boolean top_level = true;
+    // linked hash set keeps parents in same order as child list so that comparison
+    // like childList.equals(parentList) can be used.
+    java.util.Set results = new LinkedHashSet(childGlyphs.size());
+    Iterator iter = childGlyphs.iterator();
+    while (iter.hasNext()) {
+      GlyphI child = (GlyphI) iter.next();
+      GlyphI pglyph = getParent(child, top_level);
+      results.add(pglyph);
+    }
+    return new ArrayList(results);
+  }
+
   /** Get the parent, or top-level parent, of a glyph, with certain restictions.
    *  Will not return a TierGlyph or RootGlyph or a glyph that isn't hitable, but
    *  will return the original GlyphI instead.
    *  @param top_level if true, will recurse up to the top-level parent, with
    *  certain restrictions: recursion will stop before reaching a TierGlyph
    */
-  public GlyphI getParent(GlyphI g, boolean top_level) {
+  public static GlyphI getParent(GlyphI g, boolean top_level) {
     GlyphI result = g;
     GlyphI pglyph = g.getParent();
     // the test for isHitable will automatically exclude seq_glyph

@@ -18,6 +18,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
+import com.affymetrix.igb.util.TableSorter2;
 
 public class PropertySheet extends JPanel {
 
@@ -29,7 +30,8 @@ public class PropertySheet extends JPanel {
   int columnwidth;
 
   boolean by_rows = false;
-
+  boolean sortable = false;
+  
   public static final String PROPERTY = "property";
   public static final String DEFAULT_TITLE = "Property Sheet";
 
@@ -52,6 +54,16 @@ public class PropertySheet extends JPanel {
    */
   public void byRows(boolean by_rows) {
     this.by_rows = by_rows;
+  }
+  
+  /**
+   *  Specifies whether the user should be able to sort the columns by clicking on the headers.
+   *  Note that the sort-order will be lost each time the data is updated because there
+   *  is no guarantee that the same type of data, with the same column names, will
+   *  be used each time showProperties() is called.
+   */
+  public void setSortable(boolean b) {
+    this.sortable = b;
   }
 
   /**
@@ -198,8 +210,15 @@ public class PropertySheet extends JPanel {
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);
     this.table = new JTable();
-    TableModel model = new DefaultTableModel(rows,col_headings);
-    table.setModel(model);
+    TableModel unsorted_model = new DefaultTableModel(rows,col_headings);
+    
+    if (sortable) {
+      TableSorter2 sort_model = new TableSorter2(unsorted_model);
+      sort_model.setTableHeader(table.getTableHeader());
+      table.setModel(sort_model);
+    } else {
+      table.setModel(unsorted_model);
+    }
 
     table.setEnabled( true );  // to allow selection, etc.
     this.size.height = table.getSize().height;
@@ -219,6 +238,9 @@ public class PropertySheet extends JPanel {
     }
   }
 
+  public JTable getTable() {
+    return table;
+  }
 
   public void destroy() {
     removeAll();

@@ -34,8 +34,10 @@ public class CytobandParser implements AnnotationWriter  {
   static Pattern line_regex = Pattern.compile("\\t");
 
   static final HeatMap cyto_heat_map = HeatMap.makeLinearHeatmap("cytobands", Color.WHITE, Color.BLACK);
-  static final Color cyto_acen_color = new Color(198,64,64); // dark red
-  static final Color cyto_stalk_color = Color.GRAY;
+//  static final Color cyto_acen_color = new Color(198,64,64); // dark red
+  static final Color cyto_acen_color = new Color(198,96,96); // red
+  static final Color cyto_stalk_color = new Color(128,128,160); // pale blue
+      /*Color.GRAY;*/
 
   /** This is the name that is used to identify the cytobands data.  It is not
    *  intended to be displayed to the user.  It should be some String that they

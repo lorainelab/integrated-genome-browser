@@ -25,12 +25,14 @@ public class PropertySheet extends JPanel {
   // the table showing name-value pairs
   JTable table;
   JScrollPane scroll_pane;
-
+  JTableCutPasteAdapter cutPaster;
+  
   Dimension size = new Dimension ( 1000, 1000 );
   int columnwidth;
 
   boolean by_rows = false;
   boolean sortable = false;
+  boolean useDefaultKeystrokes = true;
   
   public static final String PROPERTY = "property";
   public static final String DEFAULT_TITLE = "Property Sheet";
@@ -38,11 +40,14 @@ public class PropertySheet extends JPanel {
   /**
    * Create a new PropertySheet containing no data.
    */
-  public PropertySheet() {
+  public PropertySheet(boolean useDefaultKeystrokes) {
     super();
     scroll_pane = new JScrollPane();
     JViewport jvp = new JViewport();
     scroll_pane.setColumnHeaderView(jvp);
+    table = new JTable();
+    this.useDefaultKeystrokes = useDefaultKeystrokes;
+    cutPaster = new JTableCutPasteAdapter(table, useDefaultKeystrokes);
   }
 
 
@@ -66,6 +71,10 @@ public class PropertySheet extends JPanel {
     this.sortable = b;
   }
 
+  public void setUseDefaultKeystrokes(boolean b) {
+    this.useDefaultKeystrokes = b;
+  }
+  
   /**
    * Return headings for columns.  If we're laying out
    * values in a row, then column headings will be the
@@ -209,7 +218,7 @@ public class PropertySheet extends JPanel {
     }
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);
-    this.table = new JTable();
+
     TableModel unsorted_model = new DefaultTableModel(rows,col_headings);
     
     if (sortable) {
@@ -229,7 +238,6 @@ public class PropertySheet extends JPanel {
     scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
     table.setCellSelectionEnabled(true);
-    JTableCutPasteAdapter cut_paster = new JTableCutPasteAdapter(table);
 
     validate();
     for (int i=0; i<table.getColumnCount(); i++) {
@@ -240,6 +248,11 @@ public class PropertySheet extends JPanel {
 
   public JTable getTable() {
     return table;
+  }
+  
+  /** Returns the current JTableCutPasteAdapter.  May be null. */
+  public JTableCutPasteAdapter getCutPasteAdapter() {
+    return cutPaster;
   }
 
   public void destroy() {

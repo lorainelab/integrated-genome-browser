@@ -44,7 +44,11 @@ public abstract class Application {
   }
   
   public static Application getSingleton() {
-    return singleton;
+    if (singleton == null) {
+      return new NullApplication();
+    } else {
+      return singleton;
+    }
   }
   
   abstract public Image getIcon();
@@ -90,7 +94,9 @@ public abstract class Application {
    *  as its parent.
    */
   public static void errorPanel(String title, String message) {
-    ErrorHandler.errorPanel(Application.getSingleton().getFrame(), title, message, null);
+    Application app = getSingleton();
+    JFrame frame = (app==null) ? null : app.getFrame();
+    ErrorHandler.errorPanel(frame, title, message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
@@ -103,14 +109,18 @@ public abstract class Application {
    *  a stack trace might be printed on standard error.
    */
   public static void errorPanel(String message) {
-    ErrorHandler.errorPanel(Application.getSingleton().getFrame(), "ERROR", message, null);
+    Application app = getSingleton();
+    JFrame frame = (app==null) ? null : app.getFrame();
+    ErrorHandler.errorPanel(frame, "ERROR", message, null);
   }
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent, and the title "ERROR".
    */
   public static void errorPanel(String message, Throwable e) {
-    ErrorHandler.errorPanel(Application.getSingleton().getFrame(), "ERROR", message, e);
+    Application app = getSingleton();
+    JFrame frame = (app==null) ? null : app.getFrame();
+    ErrorHandler.errorPanel(frame, "ERROR", message, e);
   }
 
   /** Shows a panel asking for the user to confirm something.
@@ -129,7 +139,7 @@ public abstract class Application {
     JOptionPane.showMessageDialog(frame, message, "Inform", JOptionPane.INFORMATION_MESSAGE);
   }
 
-  public abstract Logger getLogger();  
+  public abstract Logger getLogger();
 
   public static Logger getApplicationLogger() {
     return getSingleton().getLogger();
@@ -150,4 +160,19 @@ public abstract class Application {
   public static void logDebug(String msg) {
     getApplicationLogger().fine(msg);
   }
+  
+  /** A very basic implementation of Application.  It returns null from most methods. */
+  static class NullApplication extends Application {
+    public Image getIcon() { return null;}
+    public JFrame getFrame() { return null;}
+    public SeqMapView getMapView() {return null;}
+    public String getApplicationName() {return "Null Application";}
+    public String getVersion() {return "0.0";}
+    public String getResourceString(String key) { return null; }
+
+    /** Returns a non-null Logger. */
+    public Logger getLogger() {
+      return Logger.getLogger("Null Logger");
+    }
+  };
 }

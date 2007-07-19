@@ -20,6 +20,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.*;
+import javax.swing.event.*;
 
 /**
  *  An adapter to add Excel-like cut and paste facilities to JTable.
@@ -48,6 +49,13 @@ public class JTableCutPasteAdapter {
     if (registerDefaultKeyStrokes) {
       registerKeyStrokes();
     }
+    
+    myJTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        copyAction.setEnabled(isValidSelectionForCopy());
+        pasteAction.setEnabled(true);
+      }
+    });
   }
   
   /** Registers the default keyboard actions for Copy (control C) and Paste (control V). */

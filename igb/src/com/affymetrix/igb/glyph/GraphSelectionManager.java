@@ -334,11 +334,13 @@ public class GraphSelectionManager
       else if (src == change_color) {
         Color col = JColorChooser.showDialog(frm,
           "Graph Color Chooser", current_graph.getColor());
-        current_graph.setColor(col);
-        // if graph is in a tier, change foreground color of tier also
-        //   (which in turn triggers change in color for TierLabelGlyph...)
-        if (current_graph.getParent() instanceof TierGlyph) {
-          current_graph.getParent().setForegroundColor(col);
+        if (col != null) {
+          current_graph.setColor(col);
+          // if graph is in a tier, change foreground color of tier also
+          //   (which in turn triggers change in color for TierLabelGlyph...)
+          if (current_graph.getParent() instanceof TierGlyph) {
+            current_graph.getParent().setForegroundColor(col);
+          }
         }
       }
       else if (src == show_bounds) {

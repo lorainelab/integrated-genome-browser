@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -37,7 +37,11 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
   }
 
   public SymTableView() {
-    super();
+    this(true);
+  }
+
+  public SymTableView(boolean useDefaultKeystrokes) {
+    super(useDefaultKeystrokes);
     setPreferredSize(new java.awt.Dimension(100, 250));
     setMinimumSize(new java.awt.Dimension(100, 250));
     SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);

@@ -115,6 +115,7 @@ public class DisplayUtils {
 
   /** Makes sure that the JFrame and JTabbedPane containing this component is visible. */
   public static void ensureComponentIsShowing(final Component c) {
+    
     final JTabbedPane tab_pane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, c);
     
     if (tab_pane != null && tab_pane.indexOfComponent(c) >= 0) {
@@ -127,7 +128,13 @@ public class DisplayUtils {
 
     // If the view has been opened in a new window and that window is
     // now minimized or not on top, re-display the window
-    JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
+    JFrame frame = null;
+    if (c instanceof JFrame) {
+      frame = (JFrame) c;
+    }
+    else {
+      frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
+    }
 
     //TODO: if frame is null, create one?
     DisplayUtils.bringFrameToFront(frame);

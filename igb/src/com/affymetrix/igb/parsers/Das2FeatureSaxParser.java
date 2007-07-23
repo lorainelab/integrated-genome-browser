@@ -48,7 +48,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   static boolean REPORT_RESULTS = false;
   static boolean REPORT_MULTI_LOC = true;
   static boolean REQUIRE_DAS2_NAMESPACE = false;
-  
+
   // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
   static boolean ADD_NEW_SEQS_TO_GROUP = true;
 
@@ -268,7 +268,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   /**
    *  implementing sax content handler interface.
    */
-  public void startElement(String uri, String localName, String qname, Attributes atts) 
+  public void startElement(String uri, String localName, String qname, Attributes atts)
   throws SAXException {
     // to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
     //     should make sure that the uri is the DAS/2 namespace URI
@@ -632,7 +632,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
       pw.println("</" + FEATURES + ">");
       pw.println("</" + WRITEBACK + ">");
-      
+
       pw.flush();
     }
     catch (Exception ex) {
@@ -713,12 +713,29 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         feat_type = SmartAnnotBioSeq.determineMethod(annot);
       }
       String feat_id = getChildID(annot, parent_id, parent_index);
+      String feat_title = null;
+      if (annot instanceof Propertied) {
+	Propertied swp = (Propertied)annot;
+	feat_title = (String)swp.getProperty("name");
+	if (feat_title == null) { feat_title = (String)swp.getProperty("title"); }
+	if (feat_title == null) { feat_title = (String)swp.getProperty("gene_name"); }
+      }
+      if (feat_title == null && annot.getChildCount() > 0) {
+	feat_title = feat_id;
+      }
+      /*
+      if (annot instanceof Named) {
+	feat_title = ((Named)annot).getName();
+      }
+      */
 
       // print <FEATURE ...> line
       pw.print("  <FEATURE uri=\"");
       pw.print(URLEncoder.encode(feat_id));
-      pw.print("\" title=\"");
-      pw.print(feat_id);
+      if (feat_title != null) {
+	pw.print("\" title=\"");
+	pw.print(feat_title);
+      }
       pw.print("\" type=\"");
       pw.print(feat_type);
       pw.print("\" >");
@@ -901,7 +918,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       if (ADD_NEW_SEQS_TO_GROUP) {
         // this will both create the seq and stretch its length if necessary.
         seq = group.addSeq(seqid, max);
-      }      
+      }
       else {
         seq = group.getSeq(seqid);
         if (seq == null) {

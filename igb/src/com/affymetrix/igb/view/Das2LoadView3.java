@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.prefs.*;
+import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.border.*;
@@ -70,23 +71,24 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
  *
  */
 public class Das2LoadView3 extends JComponent
-  implements ActionListener,
+  implements
+             // ActionListener,
 	     // TableModelListener,
 	     // TreeSelectionListener,
 	     SeqSelectionListener,
 	     GroupSelectionListener,
 	     DataRequestListener {
 
-  static boolean INCLUDE_NAME_SEARCH = false;
+  static boolean INCLUDE_NAME_SEARCH = true;
   static boolean USE_DAS2_OPTIMIZER = true;
   static boolean DEBUG_EVENTS = false;
   static boolean ADD_DELAYS = false;  // inserting delays on worker threads to test threading
   static boolean DEFAULT_THREAD_FEATURE_REQUESTS = true;
   static SeqMapView gviewer = null;
-
+  static Pattern path_separator_regex = Pattern.compile("/");
 
   JTabbedPane tpane = new JTabbedPane();
-  JTextField searchTF = new JTextField(40);
+
   JComboBox typestateCB;
   JTable types_table;
   JTable types_tree_table;
@@ -96,6 +98,7 @@ public class Das2LoadView3 extends JComponent
   CheckTreeManager check_tree_manager; // manager for tree with checkboxes
   Das2TypesTableModel types_table_model;
   DefaultMutableTreeNode treetop = null;
+  Das2SearchView namesearch;
 
   Map das_servers;
   Map server2node = new HashMap();
@@ -106,7 +109,7 @@ public class Das2LoadView3 extends JComponent
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedSeqGroup current_group = null;
   AnnotatedBioSeq current_seq = null;
-  Das2VersionedSource current_version = null;
+  //   Das2VersionedSource current_version = null;
 
   TypesTreeCheckListener tree_check_listener = new TypesTreeCheckListener();
 
@@ -126,12 +129,24 @@ public class Das2LoadView3 extends JComponent
      *    (looks like it needs a path length comparison added)
      */
     boolean TREE_DIG = false;
-    TreePathSelectable threeplus = new TreePathSelectable(){
-      public boolean isSelectable(TreePath path){
-	return path.getPathCount() >= 5;
+    //    TreePathSelectable threeplus = new TreePathSelectable(){
+    TreePathSelectable just_typestates = new TreePathSelectable(){
+      public boolean isSelectable(TreePath path) {
+	boolean selectable = false;
+	Object last_obj = path.getLastPathComponent();
+	if (last_obj instanceof DefaultMutableTreeNode) {
+	  DefaultMutableTreeNode last_node = (DefaultMutableTreeNode)last_obj;
+	  Object user_obj = last_node.getUserObject();
+	  if (user_obj instanceof Das2TypeState) {
+	    selectable = true;
+	  }
+	}
+	//	return path.getPathCount() >= 5;
+	return selectable;
       }
     } ;
-    check_tree_manager = new CheckTreeManager(tree, TREE_DIG, threeplus);
+    //    check_tree_manager = new CheckTreeManager(tree, TREE_DIG, threeplus);
+    check_tree_manager = new CheckTreeManager(tree, TREE_DIG, just_typestates);
     types_table_model = new Das2TypesTableModel(check_tree_manager);
 
     typestateCB = new JComboBox();
@@ -149,16 +164,14 @@ public class Das2LoadView3 extends JComponent
     JPanel types_panel = new JPanel(new BorderLayout());
     types_panel.setBorder(new TitledBorder("Recently Accessed Annotation Types"));
 
-    JPanel namesearchP = new JPanel();
+    namesearch = new Das2SearchView();
 
-    namesearchP.add(new JLabel("name search: "));
-    namesearchP.add(searchTF);
     types_panel.add("Center", table_scroller);
     final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
     splitpane.setLeftComponent(new JScrollPane(tree));
     tpane.addTab("Load by Location", types_panel);
-    tpane.addTab("Name Search", namesearchP);
+    tpane.addTab("Name Search", namesearch);
     //    splitpane.setRightComponent(types_panel);
     splitpane.setRightComponent(tpane);
 
@@ -180,7 +193,6 @@ public class Das2LoadView3 extends JComponent
       (TreeSelectionModel.SINGLE_TREE_SELECTION);
     //    tree.addTreeSelectionListener(this);
     check_tree_manager.getSelectionModel().addTreeSelectionListener(tree_check_listener);
-    searchTF.addActionListener(this);
   }
 
   //
@@ -229,24 +241,6 @@ public class Das2LoadView3 extends JComponent
   }
 
 
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-    if (src == searchTF) {
-      String name = searchTF.getText();
-      System.out.println("trying to search for annotation name: " + name);
-      loadFeaturesByName(name);
-      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-      gviewer.setAnnotatedSeq(aseq, true, true);
-    }
-  }
-
-
-  public void loadFeaturesByName(String name) {
-    if (current_version != null) {
-      // Das2VersionedSource.getFeaturesByName() should also add features as annotations to seqs...
-      java.util.List feats = current_version.getFeaturesByName(name);
-    }
-  }
 
   public void loadFeaturesInView() {
     loadFeatures(Das2TypeState.VISIBLE_RANGE, false);
@@ -256,6 +250,7 @@ public class Das2LoadView3 extends JComponent
     loadFeatures(load_strategy, false);
   }
 
+/** restrict_to_current_version boolean flag is currently NOT IMPLMENTED */
   public void loadFeatures(int load_strategy, boolean restrict_to_current_version) {
     MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
@@ -298,7 +293,7 @@ public class Das2LoadView3 extends JComponent
       Das2Type dtype = tstate.getDas2Type();
       Das2VersionedSource version = dtype.getVersionedSource();
       // if restricting to types from "current" version, then skip if verion != current_version
-      if (restrict_to_current_version && (version != current_version)) { continue; }
+      //      if (restrict_to_current_version && (version != current_version)) { continue; }
 
       Das2Region region = version.getSegment(selected_seq);
       if ((region != null)  &&
@@ -710,16 +705,36 @@ public class Das2LoadView3 extends JComponent
       if (! populated) {
 	populated = true;
 	Map types = version.getTypes();
+	// intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
+	Map internodes = new HashMap();
 	Iterator iter = types.values().iterator();
 	while (iter.hasNext()) {
 	  Das2Type type = (Das2Type)iter.next();
 	  Das2TypeState tstate = Das2TypeState.getState(type);
+	  String type_name = type.getName();
+	  String[] path_elements = path_separator_regex.split(type_name);
+	  int path_length = path_elements.length;
+	  int path_index = 1;
+	  DefaultMutableTreeNode parent = this;
+	  while (path_index < path_length) {
+	    String pathel = path_elements[path_index-1];
+	    DefaultMutableTreeNode internode = (DefaultMutableTreeNode)internodes.get(pathel);
+	    if (internode == null) {
+	      // intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
+	      internode = new DefaultMutableTreeNode(pathel);
+	      internodes.put(pathel, internode);
+	      parent.add(internode);
+	    }
+	    parent = internode;
+	    path_index++;
+	  }
 	  //	  System.out.println("type: " + tstate + ", load: " + tstate.getLoad());
 	  //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
 	  DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
 	  tstate2node.put(tstate, child);
 	  child.setAllowsChildren(false);
-	  this.add(child);
+	  //	  this.add(child);
+	  parent.add(child);
 	  if (tstate.getLoad()) {
 	    //	    System.out.println("  setting type to loaded");
 	    TreePath child_path = new TreePath(child.getPath());
@@ -776,6 +791,7 @@ class Das2TypeState {
   Preferences type_node;
   Preferences types_node;
   String type_node_name;
+  String short_name;
   ArrayList listeners = new ArrayList();
 
 
@@ -837,6 +853,10 @@ class Das2TypeState {
 
   protected Das2TypeState(Das2Type dtype) {
     this.type = dtype;
+    short_name = type.getName();
+    int slash_index = type.getName().lastIndexOf("/");
+    if (slash_index >= 0 && slash_index < (short_name.length()-1)) { short_name = type.getName().substring(slash_index+1); }
+
     Das2VersionedSource version = type.getVersionedSource();
     Das2Source source = version.getSource();
     Das2ServerInfo server = source.getServerInfo();
@@ -918,7 +938,8 @@ class Das2TypeState {
   public int getLoadStrategy() { return load_strategy; }
   public String getLoadString() { return LOAD_STRINGS[load_strategy]; }
   public Das2Type getDas2Type() { return type; }
-  public String toString() { return getDas2Type().toString(); }
+  //  public String toString() { return getDas2Type().toString(); }
+  public String toString() { return short_name; }
 
   public void addChangeListener(ChangeListener listener) { listeners.add(listener); }
   public void removeChangeListener(ChangeListener listener) { listeners.remove(listener); }

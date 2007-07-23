@@ -868,11 +868,11 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    StringWriter buf = new StringWriter(types_hash.size() * 1000);
     ByteArrayOutputStream buf = null;
     PrintWriter pw = null;
-    if (USE_TYPES_XSLT)  { 
+    if (USE_TYPES_XSLT)  {
       buf = new ByteArrayOutputStream(types_hash.size() * 1000);
       pw = new PrintWriter(buf);
     }
-    else { 
+    else {
       pw = response.getWriter();
     }
 
@@ -1078,15 +1078,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //   so if any of these are encountered and the response is not an error for some other reason,
       //   the response should be a FEATURES doc with zero features.
 
-      /* support for single name, single format, no other filters
-        else if (names != null  && names.length == 1) {
-	 String name = names[0];
-	 // GAH 11-2006
-	 //   need to enhance this to support multiple name parameters OR'd together
-	 //   need to enhance this to support "*" wild-card search as defined in spec
-	 result = genome.findSyms(name);
-	 }
-       */
       String[] query_array = query_splitter.split(query);
       boolean has_segment = false;
       boolean known_query = true;
@@ -1142,6 +1133,16 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	  props.size() > 0) {
 	result = new ArrayList();
       }
+      /* support for single name, single format, no other filters */
+      else if (names != null  && names.size() == 1) {
+	 String name = (String)names.get(0);
+	 // GAH 11-2006
+	 //   need to enhance this to support multiple name parameters OR'd together
+	 //   need to enhance this to support "*" wild-card search as defined in spec
+	 result = genome.findSyms(name);
+      }
+
+
       // handling one type, one segment, one overlaps, optionally one inside
       /*
       else if (types.size() == 1 &&      // one and only one type

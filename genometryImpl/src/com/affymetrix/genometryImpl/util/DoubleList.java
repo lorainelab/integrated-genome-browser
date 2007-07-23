@@ -31,9 +31,9 @@ public class DoubleList {
 
   public DoubleList(int initialCapacity) {
     super();
-    if (initialCapacity < 0)
-      throw new IllegalArgumentException("Illegal Capacity: "+
-					 initialCapacity);
+    if (initialCapacity < 0) {
+      throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.primData = new double[initialCapacity];
   }
 
@@ -55,8 +55,9 @@ public class DoubleList {
     if (minCapacity > oldCapacity) {
       double oldData[] = primData;
       int newCapacity = (oldCapacity * 3)/2 + 1;
-      if (newCapacity < minCapacity)
-	newCapacity = minCapacity;
+      if (newCapacity < minCapacity) {
+        newCapacity = minCapacity;
+      }
       primData = new double[newCapacity];
       System.arraycopy(oldData, 0, primData, 0, size);
     }
@@ -117,12 +118,10 @@ public class DoubleList {
 
   public void add(int index, double val) {
     if (index > size || index < 0)
-      throw new IndexOutOfBoundsException(
-					  "Index: "+index+", Size: "+size);
+      throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
 
     ensureCapacity(size+1); 
-    System.arraycopy(primData, index, primData, index + 1,
-		     size - index);
+    System.arraycopy(primData, index, primData, index + 1, size - index);
     primData[index] = val;
     size++;
   }
@@ -133,8 +132,7 @@ public class DoubleList {
 
     int numMoved = size - index - 1;
     if (numMoved > 0)
-      System.arraycopy(primData, index+1, primData, index,
-		       numMoved);
+      System.arraycopy(primData, index+1, primData, index, numMoved);
     size--;
     return oldValue;
   }

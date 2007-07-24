@@ -23,7 +23,7 @@ public class AffyDataSet {
   long pos_next_data_element;
   String name;
   int param_count;
-  List<AffyChpParameter> params;
+  Map<String,AffyChpParameter> params;
   long num_columns;
   List<AffyChpColumnType> columns;
   long num_rows;
@@ -40,9 +40,10 @@ public class AffyDataSet {
     a.pos_next_data_element = dis.readInt();
     a.name = AffyGenericChpFile.parseWString(dis);
     a.param_count = dis.readInt();
-    a.params = new ArrayList<AffyChpParameter>(a.param_count);
+    a.params = new LinkedHashMap<String,AffyChpParameter>(a.param_count);
     for (int i=0; i<a.param_count; i++) {
-      a.params.add(AffyGenericChpFile.parseParameter(dis));
+      AffyChpParameter param = AffyChpParameter.parse(dis);
+      a.params.put(param.name, param);
     }
     
     a.num_columns = dis.readInt();
@@ -84,7 +85,7 @@ public class AffyDataSet {
     str.println("  num_rows: " + num_rows);
     str.println("  Parameters:  ");
     
-    for (AffyChpParameter param : params) {
+    for (AffyChpParameter param : params.values()) {
       param.dump(str);
     }
     

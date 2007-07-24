@@ -63,7 +63,7 @@ public class AffyGenericDataHeader {
     int param_count = dis.readInt();
     
     for (int i=0; i<param_count; i++) {
-      AffyChpParameter p = AffyGenericChpFile.parseParameter(dis);
+      AffyChpParameter p = AffyChpParameter.parse(dis);
       header.paramMap.put(p.name, p);
     }
     

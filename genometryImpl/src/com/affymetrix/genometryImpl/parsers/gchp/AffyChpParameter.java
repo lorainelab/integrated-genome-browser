@@ -13,7 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.parsers.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -23,12 +24,62 @@ class AffyChpParameter {
   byte[] valueBytes;
   AffyDataType type;
 
+  public static AffyChpParameter parse(DataInputStream dis) throws IOException {
+   AffyChpParameter param = new AffyChpParameter();
+   param.name = AffyGenericChpFile.parseWString(dis);
+   param.valueBytes = parseValueString(dis);
+   param.type = AffyDataType.getType(AffyGenericChpFile.parseWString(dis));
+   return param;
+  }
+
+  /** Parses a byte array specified as length (int) follwed by bytes.
+   *  In practice, length seems to always be 16.
+   */
+  static byte[] parseValueString(DataInputStream istr) throws IOException {
+    int len = istr.readInt();
+    byte bytes[] = new byte[len];
+    istr.readFully(bytes);
+    return bytes;
+  }
+
   public String toString() {
     return this.getClass().toString() + 
         ":  Name: " + name + " type: " + type.affyMimeType + " value: " + getValue();
   }
   
   public Object getValue() {
+    Object result = valueBytes;
+    
+    ByteBuffer bb = ByteBuffer.wrap(valueBytes);
+    bb.order(ByteOrder.BIG_ENDIAN);
+    
+    switch (type) {
+      case INT8:
+        result = new Integer((int) (char) valueBytes[0]); break; // untested
+      case UINT8:
+        result = new Integer((int) (char) valueBytes[0]); break; // untested (seems to be wrong)
+      case INT16:
+        result = new Short(bb.getShort()); break; // untested
+      case UINT16:
+        result = new Integer((int) (char) bb.getShort()); break; // untested
+      case INT32:
+        result = new Integer(bb.getInt(0)); break; //OK
+      case UINT32:
+        throw new RuntimeException("Can't do type UINT32");
+      case FLOAT:
+        result = new Float(bb.getFloat(0)); break; //OK
+      case TEXT_ASCII:
+        result = AffyGenericChpFile.makeString(valueBytes, AffyDataType.UTF8); break;//OK
+      case TEXT_UTF16BE:
+        result = AffyGenericChpFile.makeString(valueBytes, AffyDataType.UTF16); break;//OK
+      default:
+        result = valueBytes; break;
+    }
+    
+    return result;
+  }
+
+  public Object getValueString() {
     Object result = valueBytes;
     
     ByteBuffer bb = ByteBuffer.wrap(valueBytes);
@@ -61,7 +112,7 @@ class AffyChpParameter {
   }
 
   public void dump(PrintStream str) {
-    str.println(this.toString());
+    str.println(this.toString() + "<" + this.getValue().getClass().getName() + ">");
   }
   
 }

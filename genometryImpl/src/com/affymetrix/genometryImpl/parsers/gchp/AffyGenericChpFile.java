@@ -48,16 +48,6 @@ public class AffyGenericChpFile {
     istr.readFully(bytes);
     return makeString(bytes, AffyDataType.UTF8);
   }
-
-  /** Parses a byte array specified as length (int) follwed by bytes.
-   *  In practice, length seems to always be 16.
-   */
-  static byte[] parseValueString(DataInputStream istr) throws IOException {
-    int len = istr.readInt();
-    byte bytes[] = new byte[len];
-    istr.readFully(bytes);
-    return bytes;
-  }
     
   /** Parses the file.  Does not close the stream. 
    *  @param headerOnly if true, will read the complete header, but will not
@@ -110,15 +100,7 @@ public class AffyGenericChpFile {
       }
     }
   }
-  
-  public static AffyChpParameter parseParameter(DataInputStream dis) throws IOException {
-   AffyChpParameter param = new AffyChpParameter();
-   param.name = parseWString(dis);
-   param.valueBytes = parseValueString(dis);
-   param.type = AffyDataType.getType(parseWString(dis));
-   return param;
-  }
-  
+    
   /** Creates a String from the given bytes, using the given Charset and
    *  trimming off any trailing '\0' characters.
    */

@@ -28,13 +28,17 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
     super(start, end, seq);
   }
 
+  public SingletonSymWithProps(CharSequence id, int start, int end, BioSeq seq) {
+    super(id, start, end, seq);
+  }
+
   /** Returns the properties map, or null. */
   public Map getProperties() {
     return props;
   }
 
   public String getID() {
-    if (id != null) { return id; };
+    if (id != null) { return id.toString(); };
     if (props != null) { return (String)props.get("id"); }
     return null;
   }

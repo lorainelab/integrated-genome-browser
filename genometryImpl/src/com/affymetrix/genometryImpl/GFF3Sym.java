@@ -103,7 +103,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     // we do NOT want to check for a property named "id".  This is because GFF3
     // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
     // only has meaning while processing the file and should be ignored later.
-    return this.id; 
+    return this.id.toString(); 
   }
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }

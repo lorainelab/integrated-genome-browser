@@ -24,9 +24,12 @@ public class AffyDataSet {
   String name;
   int param_count;
   Map<String,AffyChpParameter> params;
-  long num_columns;
+  int num_columns;
   List<AffyChpColumnType> columns;
   long num_rows;
+  
+  Map<Byte, AffySingleChromData> byte2chromData = new LinkedHashMap<Byte,AffySingleChromData>();
+  
   
   
   /** Creates a new instance of AffyDataSet */
@@ -40,6 +43,7 @@ public class AffyDataSet {
     a.pos_next_data_element = dis.readInt();
     a.name = AffyGenericChpFile.parseWString(dis);
     a.param_count = dis.readInt();
+
     a.params = new LinkedHashMap<String,AffyChpParameter>(a.param_count);
     for (int i=0; i<a.param_count; i++) {
       AffyChpParameter param = AffyChpParameter.parse(dis);
@@ -47,25 +51,46 @@ public class AffyDataSet {
     }
     
     a.num_columns = dis.readInt();
-    a.columns = new ArrayList<AffyChpColumnType>((int) a.num_columns); // TODO:  what if really "long", not "int"?
+    a.columns = new ArrayList<AffyChpColumnType>(a.num_columns);
     for (int i=0; i<a.num_columns; i++) {
       AffyChpColumnType col = new AffyChpColumnType(
-        AffyGenericChpFile.parseWString(dis),
-        dis.readByte(),
-        dis.readInt());
+        AffyGenericChpFile.parseWString(dis), dis.readByte(), dis.readInt());
       a.columns.add(col);
     }
         
     a.num_rows = dis.readInt();
     for (int row=0; row < a.num_rows; row++) {
-      for (AffyChpColumnType col : a.columns) {
+      CharSequence probeSetName = AffyGenericChpFile.parseString(dis);
+      byte chromNum = dis.readByte(); //treat as unsigned, but doesn't matter here
+      int position = dis.readInt(); //to be interpreted as unsigned, but store for now as int
+      
+      AffySingleChromData chromData = a.byte2chromData.get(chromNum);
+      if (chromData == null) {
+        Integer start = (Integer) a.params.get(chromNum + ":start").getValue();
+        Integer count = (Integer) a.params.get(chromNum + ":count").getValue();
+        String name = (String) a.params.get(chromNum + ":display").getValue();
+        
+        List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>();
+        for (AffyChpColumnType setColumn : a.columns.subList(3, a.columns.size())) {
+          chromDataColumns.add(new AffyChpColumnData(setColumn.name, setColumn.type, setColumn.size));
+        }
+        
+        chromData = new AffySingleChromData(name, start, count, chromDataColumns);
+        a.byte2chromData.put(chromNum, chromData);
+        System.out.println("Made new SingleChromosomeData for chrom: " + chromNum);
+      }
+      
+      chromData.positions.add(position);
+      chromData.probeSetNames.add(probeSetName);
+                  
+      for (AffyChpColumnData col : chromData.columns) {
         col.addData(dis);
       }
     }
     
     return a;
   }
-  
+
   public String toString() {
     return "AffyDataSet: first_element: " + pos_first_data_element +
         " next_element: " + pos_next_data_element +
@@ -89,10 +114,10 @@ public class AffyDataSet {
       param.dump(str);
     }
     
-    str.println("  Columns:  ");
-    for (AffyChpColumnType column : columns) {
-      column.dump(str);
+    str.println("  Column descriptions:  ");
+    for (int i=0; i<num_columns; i++) {
+      AffyChpColumnType col = columns.get(i);
+      col.dump(str);
     }
-   
   }    
 }

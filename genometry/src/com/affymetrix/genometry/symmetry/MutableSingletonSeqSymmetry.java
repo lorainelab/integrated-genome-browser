@@ -26,7 +26,7 @@ public class MutableSingletonSeqSymmetry
     implements MutableSeqSymmetry
 {
 
-  protected String id;
+  protected CharSequence id;
 
   public MutableSingletonSeqSymmetry(SeqSpan span) {
     super(span);
@@ -36,7 +36,7 @@ public class MutableSingletonSeqSymmetry
     super(start, end, seq);
   }
 
-  public MutableSingletonSeqSymmetry(String id, int start, int end, BioSeq seq) {
+  public MutableSingletonSeqSymmetry(CharSequence id, int start, int end, BioSeq seq) {
     this(start, end, seq);
     this.id = id;
   }
@@ -91,7 +91,7 @@ public class MutableSingletonSeqSymmetry
     throw new RuntimeException("Operation Not Allowed. Can't set the span of a SingletonSeqSymmetry.");
   }
 
-  public String getID() { return id; }
+  public String getID() { return id.toString(); }
 
   /**
    *  Sorts child syms based on the given comparator.

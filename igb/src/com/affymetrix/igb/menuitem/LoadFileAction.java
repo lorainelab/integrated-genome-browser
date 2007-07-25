@@ -32,6 +32,7 @@ import org.xml.sax.InputSource;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.*;
@@ -91,6 +92,8 @@ public class LoadFileAction {
         "Scored Interval Files"));
       if (PARSE_CNT) {
         chooser.addChoosableFileFilter(new UniFileFilter("cnt", "Copy Number Files"));
+        chooser.addChoosableFileFilter(new UniFileFilter(
+          new String[] {"cnchp", "lohchp"},  "Copy Number CHP Files"));
       }
       if (PARSE_VAR) {
         chooser.addChoosableFileFilter(new UniFileFilter("var", "Genomic Variation Files"));
@@ -347,6 +350,12 @@ public class LoadFileAction {
       else if (PARSE_VAR && lcname.endsWith(".var")) {
         VarParser parser = new VarParser();
         parser.parse(str, selected_group);
+        aseq = input_seq;
+        parser = null;
+      }
+      else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
+        AffyCnChpParser parser = new AffyCnChpParser();
+        parser.parse(str, stream_name,selected_group,true,true);
         aseq = input_seq;
         parser = null;
       }

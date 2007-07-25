@@ -23,8 +23,8 @@ import java.util.Map;
 
 public class AffyGenericDataHeader {
 
-  public String data_type_guid;
-  public String unique_id;
+  public CharSequence data_type_guid;
+  public CharSequence unique_id;
   public String date_time;
   public String locale;
   public Map<String,AffyChpParameter> paramMap = new LinkedHashMap<String,AffyChpParameter>();

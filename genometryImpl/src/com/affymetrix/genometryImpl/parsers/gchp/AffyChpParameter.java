@@ -13,11 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.io.*;
+import java.nio.*;
 
 class AffyChpParameter {
   String name;
@@ -43,8 +40,7 @@ class AffyChpParameter {
   }
 
   public String toString() {
-    return this.getClass().toString() + 
-        ":  Name: " + name + " type: " + type.affyMimeType + " value: " + getValue();
+    return "Parameter:  Name: " + name + " type: " + type.affyMimeType + " value: " + getValue();
   }
   
   public Object getValue() {
@@ -79,8 +75,8 @@ class AffyChpParameter {
     return result;
   }
 
-  public Object getValueString() {
-    Object result = valueBytes;
+  public CharSequence getValueString() {
+    CharSequence result;
     
     ByteBuffer bb = ByteBuffer.wrap(valueBytes);
     bb.order(ByteOrder.BIG_ENDIAN);
@@ -99,7 +95,7 @@ class AffyChpParameter {
       case UINT32:
         result = type.name() + ": " + valueBytes; break;
       case FLOAT:
-        result = new Float(bb.getFloat(0)); break; //OK
+        result = type.name() + ": " + bb.getFloat(0); break; //OK
       case TEXT_ASCII:
         result = AffyGenericChpFile.makeString(valueBytes, AffyDataType.UTF8); break;//OK
       case TEXT_UTF16BE:

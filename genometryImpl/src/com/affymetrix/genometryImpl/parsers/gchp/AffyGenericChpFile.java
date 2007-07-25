@@ -42,7 +42,7 @@ public class AffyGenericChpFile {
   }
   
   /** Parses a string in UTF-8 format, with the length specified first as an int. */
-  public static String parseString(DataInputStream istr) throws IOException {
+  public static CharSequence parseString(DataInputStream istr) throws IOException {
     int len = istr.readInt();
     byte bytes[] = new byte[len];
     istr.readFully(bytes);
@@ -161,7 +161,7 @@ public class AffyGenericChpFile {
   /** Tests the parsing of the given filename. */
   public static void main(String[] args) {
     AffyGenericChpFile parser = new AffyGenericChpFile();
-    String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\NA06985_GW6_C.CHP";
+    String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\NA06985_GW6_C.cnchp";
     if (args.length > 0) {
       fileName = args[0];
     }

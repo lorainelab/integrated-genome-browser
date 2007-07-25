@@ -125,6 +125,7 @@ public class QuickLoadServerModel {
    */
   public java.util.List getFilenames(String genome_name) {
     initGenome(genome_name);
+    loadAnnotationNames(genome_name);
     java.util.List filenames = (java.util.List) genome2file_names.get(genome_name);
     if (filenames == null) return Collections.EMPTY_LIST;
     else return filenames;

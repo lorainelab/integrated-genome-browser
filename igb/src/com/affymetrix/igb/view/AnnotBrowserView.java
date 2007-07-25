@@ -57,9 +57,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
 
-  public Action search_action = getSearchAction();
-
-  JButton go_b = new JButton(search_action);
+  Action search_action = null;
 
   JLabel status_bar = new JLabel("0 results");
   
@@ -69,6 +67,14 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   FindAnnotationsPanel finder;
   
   public AnnotBrowserView() {
+    this(true);
+  }
+
+  /** Constructor.
+   *  @param addActionsToMenu whether to add the "Find Annotations" action to the
+   *  "tools" menu automatically.
+   */
+  public AnnotBrowserView(boolean addActionsToMenu) {
     super();
     super.setName("Annotation Browser");
 
@@ -81,6 +87,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     Box top_row = Box.createHorizontalBox();
     this.add(top_row, BorderLayout.NORTH);
     
+    JButton go_b = new JButton(getSearchAction());
     top_row.add(Box.createRigidArea(new Dimension(6, 30)));
     top_row.add(go_b);
     top_row.add(Box.createRigidArea(new Dimension(6, 30)));
@@ -131,7 +138,9 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     AnnotatedSeqGroup.addSymMapChangeListener(this);
     SingletonGenometryModel.getGenometryModel().addGroupSelectionListener(this);
     
-    MenuUtil.addToMenu("Tools", new JMenuItem(search_action));
+    if (addActionsToMenu) {
+      MenuUtil.addToMenu("Tools", new JMenuItem(getSearchAction()));
+    }
   }
 
   public static final int THE_LIMIT = Integer.MAX_VALUE;
@@ -186,7 +195,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     final String end = "";
     Thread thread = new Thread() {
       public void run() {
-        search_action.setEnabled(false);
+        getSearchAction().setEnabled(false);
         clearTable("Working...");        
         
         java.util.List results = Collections.EMPTY_LIST;
@@ -207,7 +216,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
             } else {
               setStatus("" + rows.size() + " results");
             }
-            search_action.setEnabled(true);
+            getSearchAction().setEnabled(true);
             
             DisplayUtils.ensureComponentIsShowing(AnnotBrowserView.this);
           }
@@ -284,7 +293,15 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     }
   };
 
-  public Action getSearchAction() {
+    
+  public synchronized Action getSearchAction() {
+    if (search_action == null) {
+      search_action = createSearchAction();
+    }
+    return search_action;
+  }
+  
+  Action createSearchAction() {
     String name = "Find Annotations...";
     Action a = new AbstractAction(name) {
       public void actionPerformed(ActionEvent e) {

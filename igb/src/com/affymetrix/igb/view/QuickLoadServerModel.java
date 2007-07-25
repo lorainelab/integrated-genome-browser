@@ -1,4 +1,15 @@
-
+/**
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.*;
@@ -15,16 +26,9 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class QuickLoadServerModel {
@@ -160,6 +164,10 @@ public class QuickLoadServerModel {
       if (seq_init && annot_init) {
 	genome2init.put(genome_name, Boolean.TRUE);
       }
+      java.util.List file_names = (java.util.List) genome2file_names.get(genome_name);
+      if (file_names != null) {
+        file_names.clear();
+      }
     }
   }
 
@@ -177,6 +185,10 @@ public class QuickLoadServerModel {
     System.out.println("loading list of available annotations for genome: " + genome_name);
     String filename = genome_root + "annots.txt";
 
+    // Make a new list of filenames, in case this is being re-initialized
+    java.util.List file_names = new ArrayList();
+    genome2file_names.put(genome_name, file_names);
+
     InputStream istr = null;
     BufferedReader br = null;
     try {
@@ -188,11 +200,6 @@ public class QuickLoadServerModel {
         if (fields.length >= 1) {
           String annot_file_name = fields[0];
           //          System.out.println("    " + annot_file_name);
-          java.util.List file_names = (java.util.List) genome2file_names.get(genome_name);
-          if (file_names == null) {
-            file_names = new ArrayList();
-            genome2file_names.put(genome_name, file_names);
-          }
           file_names.add(annot_file_name);
 	  if (QuickLoadView2.build_virtual_encode &&
 	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&

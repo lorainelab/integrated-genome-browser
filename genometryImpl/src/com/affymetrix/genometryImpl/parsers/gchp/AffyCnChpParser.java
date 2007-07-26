@@ -91,8 +91,7 @@ public class AffyCnChpParser {
 
           for (AffyChpColumnData colData : data.columns) {
             if (colData.type == AffyDataType.FLOAT) {
-              System.out.println("It is a float column named: " + colData.name);
-              String graphId = "<<" + stream_name + ":" + colData.name + ">>";
+              String graphId = colData.name;
               FloatList flist = colData.dataFloat;
               flist.trimToSize();
               GraphSym gsym = new GraphSym(positions.getInternalArray(), flist.getInternalArray(), graphId, seq);

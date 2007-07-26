@@ -77,7 +77,7 @@ public class AffyDataSet {
         
         chromData = new AffySingleChromData(name, start, count, chromDataColumns);
         a.byte2chromData.put(chromNum, chromData);
-        System.out.println("Made new SingleChromosomeData for chrom: " + chromNum);
+        //System.out.println("Made new SingleChromosomeData for chrom: " + chromNum);
       }
       
       chromData.positions.add(position);

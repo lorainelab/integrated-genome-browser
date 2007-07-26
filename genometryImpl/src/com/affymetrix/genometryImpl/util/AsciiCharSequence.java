@@ -13,7 +13,9 @@
 
 package com.affymetrix.genometryImpl.util;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 
 /** Holds ASCII data in a CharSequence that takes less memory than a String. */
@@ -28,9 +30,20 @@ public class AsciiCharSequence implements CharSequence {
   }
   
   public AsciiCharSequence(String s) {
-    this(s.getBytes(charset));
+    this(getAsciiBytes(s));
   }
 
+  static byte[] getAsciiBytes(String s) {
+    byte[] bytes;
+    try {
+      bytes = s.getBytes(charset.name());
+    } catch (UnsupportedEncodingException ex) {
+      ex.printStackTrace();
+      bytes = s.getBytes();
+    }
+    return bytes;
+  }
+  
   public int length() {
     return bytes.length;
   }
@@ -40,12 +53,18 @@ public class AsciiCharSequence implements CharSequence {
     return (char) b;
   }
 
-  public CharSequence subSequence(int start, int end) {
-    return new AsciiCharSequence(Arrays.copyOfRange(bytes, start, end));
+  public CharSequence subSequence(int from, int to) {
+    int newLength = to - from;
+    if (newLength < 0)
+        throw new IllegalArgumentException(from + " > " + to);
+    byte[] copy = new byte[newLength];
+    System.arraycopy(bytes, from, copy, 0,
+                     Math.min(bytes.length - from, newLength));
+    return new AsciiCharSequence(copy);
   }
   
   public String toString() {
-    return new String(bytes, charset);
+    return new String(bytes); // should be new String(bytes,charset) for jdk1.6
   }
   
   /**

@@ -26,7 +26,7 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   boolean collapsed = false;
   boolean expandable = true;
   int max_depth = 0;
-  String unique_name = "";
+  protected String unique_name = "";
   String human_name = "";
   double height = 60;
   double y = 0.0f;

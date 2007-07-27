@@ -60,8 +60,12 @@ public class AffyGenericChpFile {
     BufferedInputStream bis = new BufferedInputStream(istr);
     DataInputStream dis = new DataInputStream(bis);
     
-    chpFile.magic = dis.readUnsignedByte();    
+    chpFile.magic = dis.readUnsignedByte();
     chpFile.version = dis.readUnsignedByte();
+    
+    if (chpFile.magic != 59) {
+      throw new IOException("Error in file format: wrong magic number");
+    }
     
     chpFile.num_groups = dis.readInt();
     chpFile.group_0_pos = dis.readInt(); // TODO: signed vs unsigned?
@@ -167,5 +171,17 @@ public class AffyGenericChpFile {
     }
     System.out.println("Testing reading of file: " + fileName);
     parser.testFullRead(fileName);
+  }
+
+  /** Reades the affymetrix-algorithm-param-genome-version header value.
+   *  @return a CharSequence or null
+   */
+  public CharSequence getHeaderVersion() {
+    AffyChpParameter param = header.paramMap.get("affymetrix-algorithm-param-genome-version");    
+    if (param == null) {
+      return null;
+    } else {
+      return param.getValueString();
+    }
   }
 }

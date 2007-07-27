@@ -81,6 +81,24 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
+  public Set getGraphTypeIds() {
+    if (type_id2sym == null) {
+      return Collections.EMPTY_SET;
+    } else {
+      Set all_ids = type_id2sym.keySet();
+      Set graph_ids = new HashSet();
+      Iterator all_ids_iter = all_ids.iterator();
+      while (all_ids_iter.hasNext()) {
+        String id = (String) all_ids_iter.next();
+        SeqSymmetry sym = (SeqSymmetry) type_id2sym.get(id);
+        if (sym instanceof GraphSym) {
+          graph_ids.add(id);
+        }
+      }
+      return Collections.unmodifiableSet(graph_ids);
+    }
+  }
+
   /**
    *  Returns a top-level symmetry or null.
    *  Used to return a TypeContainerAnnot, but now returns a SymWithProps which is

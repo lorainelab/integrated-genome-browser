@@ -77,6 +77,19 @@ public class AnnotatedSeqGroup {
     return types;
   }
   
+  public Set getGraphTypeIds() {
+    Set types = new TreeSet();
+    List seq_list = getSeqList();
+    Iterator iter = seq_list.iterator();
+    while (iter.hasNext()) {
+      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+      if (seq instanceof SmartAnnotBioSeq) {
+        types.addAll(((SmartAnnotBioSeq) seq).getGraphTypeIds());
+      }
+    }
+    return types;
+  }
+
   /**
    *  Returns true if any seq in the group contains an annotation of the given type.
    *  Equivalent to getTypeIds().contains(type), but usually faster.

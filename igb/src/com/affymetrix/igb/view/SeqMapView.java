@@ -567,7 +567,6 @@ public class SeqMapView extends JPanel
 //    this.registerKeyboardAction(al, "",
 //       KeyStroke.getKeyStroke(525, 0, false),
 //       JComponent.WHEN_IN_FOCUSED_WINDOW);
-
     sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
     zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
@@ -811,7 +810,7 @@ public class SeqMapView extends JPanel
       if (child instanceof CytobandParser.CytobandSym) { 
         bands.add(child); 
       }
-      else {
+      else if (child != null) {
         for (int subindex=0; subindex<child.getChildCount(); subindex++) {
           SeqSymmetry grandchild = child.getChild(subindex);
           if (grandchild instanceof CytobandParser.CytobandSym) {

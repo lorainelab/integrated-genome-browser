@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,6 +14,7 @@
 package com.affymetrix.igb.event;
 
 import java.awt.Component;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
 import java.util.Vector;
 
@@ -60,22 +61,24 @@ public class ThreadProgressMonitor {
     );
     this.dialog = opt_pane.createDialog(c, title);
     this.dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    opt_pane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-      public void propertyChange(java.beans.PropertyChangeEvent evt) {
-        String prop = evt.getPropertyName();
-        Object value = opt_pane.getValue();
-        if ((evt.getSource() == opt_pane)
-          && (prop.equals(JOptionPane.VALUE_PROPERTY)) && value != null) {
-            if (value.equals(cancel)) {
-              cancelPressed();
-            } else if (value.equals(ok)) {
-              okPressed();
-            }
-        }
-      }
-    });
+    opt_pane.addPropertyChangeListener(pcl);
   }
 
+  PropertyChangeListener pcl = new java.beans.PropertyChangeListener() {
+    public void propertyChange(java.beans.PropertyChangeEvent evt) {
+      String prop = evt.getPropertyName();
+      Object value = opt_pane.getValue();
+      if ((evt.getSource() == opt_pane)
+      && (prop.equals(JOptionPane.VALUE_PROPERTY)) && value != null) {
+        if (value.equals(UIManager.getString("OptionPane.cancelButtonText"))) {
+          cancelPressed();
+        } else if (value.equals(UIManager.getString("OptionPane.okButtonText"))) {
+          okPressed();
+        }
+      }
+    }
+  };
+  
   public void setMessage(Object o) {
     if (is_closed) return;
     opt_pane.setMessage(o);
@@ -114,6 +117,10 @@ public class ThreadProgressMonitor {
   public void closeDialog() {
     is_closed = true;
     dialog.setVisible(false);
+    opt_pane.removePropertyChangeListener(pcl);
+    pcl = null;
+    opt_pane = null;
+    dialog = null;
   }
 
   public void closeDialogEventually() {

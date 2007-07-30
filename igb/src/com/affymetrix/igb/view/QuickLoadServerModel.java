@@ -213,6 +213,7 @@ public class QuickLoadServerModel {
     }
     catch (Exception ex) {
       System.out.println("Couldn't find or couldn't process file "+filename);
+      ex.printStackTrace();
     } finally {
       if (istr != null) try { istr.close(); } catch (Exception e) {}
       if (br != null) try {br.close(); } catch (Exception e) {}
@@ -360,7 +361,7 @@ public class QuickLoadServerModel {
       System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
       success = true;
-      if (QuickLoadView2.build_virtual_genome) {  addGenomeVirtualSeq(group); }
+      if (QuickLoadView2.build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);

@@ -109,7 +109,14 @@ public class AffyGenericChpFile {
    *  trimming off any trailing '\0' characters.
    */
   public static String makeString(byte[] bytes, Charset charset) {
-    String s = new String(bytes, charset);
+    String s = null;
+    try {
+      //TODO: use new String(byte[], Charset) when we convert all to JDK 1.6
+      s = new String(bytes, charset.name());
+    } catch (UnsupportedEncodingException ex) {
+      ex.printStackTrace();
+      return "String could not be parsed: charset " + charset.name() + " not known";
+    }
     int index = s.indexOf('\0');
     if (index >= 0) {
       s = new String(s.substring(0, index)); // new String() potentially saves memory
@@ -146,7 +153,8 @@ public class AffyGenericChpFile {
     istr.readFully(bytes);
     System.out.println("Length: " + count);
       try{
-        System.out.print(new String(bytes, AffyDataType.UTF8));
+        //TODO: use new String(byte[], Charset) when we convert all to JDK 1.6
+        System.out.print(new String(bytes, AffyDataType.UTF8.name()));
       } catch (Exception e) {
         e.printStackTrace();
       }

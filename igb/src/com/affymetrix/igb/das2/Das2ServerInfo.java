@@ -32,7 +32,8 @@ public class Das2ServerInfo  {
   protected URI server_uri;
   protected String das_version;
   protected String name;
-  protected Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
+  protected Map sources = new LinkedHashMap();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
+  protected Map name2source = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
   protected boolean initialized = false;
 
   static String URID = "uri";
@@ -91,8 +92,20 @@ public class Das2ServerInfo  {
 
   protected void addDataSource(Das2Source ds) {
     sources.put(ds.getID(), ds);
+    name2source.put(ds.getName(), ds);
   }
 
+  /**
+   *  source_id may be either the URI for the source or optionally the source name
+   *  If multiple sources in this server have the same name, then this method will only 
+   *     return one of the sources that match
+   */
+  public Das2Source getSource(String id) {
+    if (!initialized) { initialize(); }
+    Das2Source source = (Das2Source)sources.get(id);
+    if (source == null) { source = (Das2Source)name2source.get(id); }
+    return source;
+  }
 
   /**
    *  getVersionedSource()

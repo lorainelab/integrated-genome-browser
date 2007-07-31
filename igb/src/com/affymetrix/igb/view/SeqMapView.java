@@ -1573,7 +1573,6 @@ public class SeqMapView extends JPanel
     }
   }
 
-  // This version of select() is not currently used
   void select(SeqSymmetry sym, boolean add_to_previous,
 		     boolean call_listeners, boolean update_widget) {
     if (sym == null) {
@@ -2246,6 +2245,11 @@ public class SeqMapView extends JPanel
   }
 
   public void zoomTo(SeqSpan span) {
+    BioSeq zseq = span.getBioSeq();
+    if ((zseq instanceof MutableAnnotatedBioSeq) && 
+	(zseq != this.getAnnotatedSeq())) {
+      gmodel.setSelectedSeq((MutableAnnotatedBioSeq)zseq);
+    }
     zoomTo(span.getMin(), span.getMax());
   }
 

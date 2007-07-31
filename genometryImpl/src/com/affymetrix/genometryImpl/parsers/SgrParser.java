@@ -19,8 +19,9 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
@@ -102,7 +103,7 @@ public class SgrParser {
       float[] ycoords = ylist.copyToArray();
       ylist = null;
 
-      GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
+      GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, gid, aseq);
       results.add(graf);
     }
 
@@ -176,7 +177,7 @@ public class SgrParser {
     String seq_id = seq.getID();
     
     int xpos[] = graf.getGraphXCoords();
-    float ypos[] = graf.getGraphYCoords();
+    //float ypos[] = (float[]) graf.getGraphYCoords();
       
     BufferedOutputStream bos = null;
     DataOutputStream dos = null;
@@ -185,7 +186,7 @@ public class SgrParser {
       dos = new DataOutputStream(bos);
       
       for (int i=0; i<xpos.length; i++) {
-        dos.writeBytes(seq_id + "\t" + xpos[i] + "\t" + ypos[i] + "\n");
+        dos.writeBytes(seq_id + "\t" + xpos[i] + "\t" + graf.getGraphYCoordString(i) + "\n");
       }
       dos.flush();
     } finally {

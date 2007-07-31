@@ -12,6 +12,7 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import java.awt.Color;
@@ -205,7 +206,7 @@ public class WiggleParser {
     while (iter.hasNext()) {
       String seq_id = (String) iter.next();
       WiggleData wig = (WiggleData) m.get(seq_id);
-      GraphSym gsym = wig.createGraph(graph_id);
+      GraphSymFloat gsym = wig.createGraph(graph_id);
     
       if (gsym != null) {
         grafs.add(gsym);
@@ -225,6 +226,7 @@ public class WiggleParser {
    *   chromStartA  dataValueA
    *   chromStartB  dataValueB
    *</pre>
+   *  @param graphs  a Collection of GraphSym objects.  (They do not have to be GraphSymFloat objects.)
    */
   public static boolean writeVariableStep(java.util.Collection graphs, OutputStream outstream) {
     try {
@@ -239,11 +241,11 @@ public class WiggleParser {
         bw.write("variableStep\tchrom=" + seqid + "\n");
         int pcount = graf.getPointCount();
         int[] xcoords = graf.getGraphXCoords();
-        float[] ycoords = graf.getGraphYCoords();
+        //float[] ycoords = (float[]) graf.getGraphYCoords();
         for (int i=0; i<pcount; i++) {
           bw.write(Integer.toString(xcoords[i]));
           bw.write("\t");
-          bw.write(Float.toString(ycoords[i]));
+          bw.write(graf.getGraphYCoordString(i));
           bw.write("\n");
         }
       }
@@ -259,7 +261,7 @@ public class WiggleParser {
   public static boolean writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {    
     int xpos[] = graf.getGraphXCoords();
     int widths[] = graf.getGraphWidthCoords();
-    float ypos[] = graf.getGraphYCoords();
+    //float ypos[] = (float[]) graf.getGraphYCoords();
 
     OutputStreamWriter osw = null;
     BufferedWriter bw = null;
@@ -288,7 +290,7 @@ public class WiggleParser {
       
       for (int i=0; i<xpos.length; i++) {
         int x2 = xpos[i] + widths[i];
-        bw.write(seq_id + ' ' + xpos[i] + ' ' +  x2  + ' ' + ypos[i] + '\n');
+        bw.write(seq_id + ' ' + xpos[i] + ' ' +  x2  + ' ' + graf.getGraphYCoord(i) + '\n');
       }
       bw.flush();
     } finally {

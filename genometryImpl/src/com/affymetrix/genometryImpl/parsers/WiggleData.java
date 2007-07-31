@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import java.util.*;
@@ -37,7 +37,7 @@ public abstract class WiggleData {
    *  Creates a GraphSym from the stored data, or returns null if no data
    *  has been stored yet.
    */
-  public abstract GraphSym createGraph(String graph_id);
+  public abstract GraphSymFloat createGraph(String graph_id);
 
   void sortData(int graph_length, int[] xcoords, int[] wcoords, float ycoords[]) {
     
@@ -97,7 +97,7 @@ class FixedStepWiggleData extends WiggleData {
     ylist = new FloatList();
   }
   
-  public GraphSym createGraph(String graph_id) {
+  public GraphSymFloat createGraph(String graph_id) {
     if (ylist.size() == 0) {
       return null;
     }
@@ -118,10 +118,10 @@ class FixedStepWiggleData extends WiggleData {
     }
     
     BioSeq seq = seq_group.addSeq(seq_id, x_vals[x_vals.length-1] + x_span);
-    GraphSym gsym = null;
+    GraphSymFloat gsym = null;
     // fixed-step data never needs sorting
     if (x_span == 0 || x_span == 1) {
-      gsym = new GraphSym(x_vals, ylist.copyToArray(), graph_id, seq);
+      gsym = new GraphSymFloat(x_vals, ylist.copyToArray(), graph_id, seq);
     } else {
       gsym = new GraphIntervalSym(x_vals, w_vals, ylist.copyToArray(), graph_id, seq);
     }
@@ -142,7 +142,7 @@ class VariableStepWiggleData extends WiggleData {
     ylist = new FloatList();
   }
   
-  public GraphSym createGraph(String graph_id) {
+  public GraphSymFloat createGraph(String graph_id) {
     if (xlist.size() == 0) {
       return null;
     }
@@ -160,10 +160,10 @@ class VariableStepWiggleData extends WiggleData {
     
     int largest_x = xlist.get(xlist.size()-1) + span;
     BioSeq seq = seq_group.addSeq(seq_id, largest_x);
-    GraphSym gsym = null;
+    GraphSymFloat gsym = null;
     sortData(xlist.size(), xlist.getInternalArray(), widths, ylist.getInternalArray());
     if (widths == null) {
-      gsym = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
+      gsym = new GraphSymFloat(xlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
     } else {
       gsym = new GraphIntervalSym(xlist.copyToArray(), widths, ylist.copyToArray(), graph_id, seq);
     }
@@ -186,7 +186,7 @@ class BedWiggleData extends WiggleData {
     ylist = new FloatList();
   }
   
-  public GraphSym createGraph(String graph_id) {
+  public GraphSymFloat createGraph(String graph_id) {
     if (xlist.size() == 0) {
       return null;
     }
@@ -196,7 +196,7 @@ class BedWiggleData extends WiggleData {
     BioSeq seq = seq_group.addSeq(seq_id, largest_x);
     
     sortData(xlist.size(), xlist.getInternalArray(), wlist.getInternalArray(), ylist.getInternalArray());
-    GraphSym gsym = new GraphIntervalSym(xlist.copyToArray(), wlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
+    GraphSymFloat gsym = new GraphIntervalSym(xlist.copyToArray(), wlist.copyToArray(), ylist.copyToArray(), graph_id, seq);
     
     return gsym;
   }    

@@ -15,6 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
@@ -28,14 +29,14 @@ public class GrParser {
 
   public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
     int xpos[] = graf.getGraphXCoords();
-    float ypos[] = graf.getGraphYCoords();
+    //float ypos[] = (float[]) graf.getGraphYCoords();
     BufferedOutputStream bos = null;
     DataOutputStream dos = null;
     try {
       bos = new BufferedOutputStream(ostr);
       dos = new DataOutputStream(bos);
       for (int i=0; i<xpos.length; i++) {
-        dos.writeBytes("" + xpos[i] + "\t" + ypos[i] + "\n");
+        dos.writeBytes("" + xpos[i] + "\t" + graf.getGraphYCoordString(i) + "\n");
       }
       dos.flush();
     } finally {
@@ -44,12 +45,12 @@ public class GrParser {
     return true;
   }
 
-  public static GraphSym parse(InputStream istr, BioSeq aseq, String name) throws IOException {
+  public static GraphSymFloat parse(InputStream istr, BioSeq aseq, String name) throws IOException {
     return parse(istr, aseq, name, true);
   }
-  public static GraphSym parse(InputStream istr, BioSeq aseq, String name, boolean ensure_unique_id)
+  public static GraphSymFloat parse(InputStream istr, BioSeq aseq, String name, boolean ensure_unique_id)
     throws IOException {
-    GraphSym graf = null;
+    GraphSymFloat graf = null;
     String line = null;
     String headerstr = null;
     boolean hasHeader = false;
@@ -154,7 +155,7 @@ public class GrParser {
     }
     //    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
     if (ensure_unique_id)  { name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq); }
-    graf = new GraphSym(xcoords, ycoords, name, aseq);
+    graf = new GraphSymFloat(xcoords, ycoords, name, aseq);
     System.out.println("loaded graph data, total points = " + count);
     return graf;
   }

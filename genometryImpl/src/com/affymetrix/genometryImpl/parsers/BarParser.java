@@ -22,6 +22,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -113,11 +114,11 @@ public class BarParser implements AnnotationWriter  {
    *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
    *  be used only inside a CompositeGraphSym.
    */
-  public static GraphSym getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {
+  public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {
     Timer tim = new Timer();
     tim.start();
     boolean USE_RANDOM_ACCESS = false;
-    GraphSym graf = null;
+    GraphSymFloat graf = null;
     BioSeq aseq = span.getBioSeq();
     String seq_name = aseq.getID();
     int min_base = span.getMin();
@@ -255,7 +256,7 @@ public class BarParser implements AnnotationWriter  {
       checkSeqLength(aseq, graph_xcoords);
       // don't need a unique id for this GraphSym, since slices are not added directly as annotations
       //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...      
-      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
+      graf = new GraphSymFloat(graph_xcoords, graph_ycoords, "slice", aseq);
       graf.removeSpan(graf.getSpan(aseq));
       graf.addSpan(span);
       long t1 = tim.read();
@@ -495,7 +496,7 @@ public class BarParser implements AnnotationWriter  {
 	  }
 	  if (ensure_unique_id) { graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq); }
 	  checkSeqLength(seq, xcoords);
-          GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
+          GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, graph_id, seq);
 	  //          graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(graf, file_tagvals);
 	  if (bar2)  { copyProps(graf, seq_tagvals); }
@@ -536,10 +537,10 @@ public class BarParser implements AnnotationWriter  {
 	    mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
 	  }
 	  checkSeqLength(seq, xcoords);
-          GraphSym pm_graf =
-            new GraphSym(xcoords, ycoords, pm_name, seq);
-          GraphSym mm_graf =
-            new GraphSym(xcoords, zcoords, mm_name, seq);
+          GraphSymFloat pm_graf =
+            new GraphSymFloat(xcoords, ycoords, pm_name, seq);
+          GraphSymFloat mm_graf =
+            new GraphSymFloat(xcoords, zcoords, mm_name, seq);
 	  //          mm_graf.setProperties(new HashMap(file_tagvals));
 	  //          pm_graf.setProperties(new HashMap(file_tagvals));
 	  copyProps(pm_graf, file_tagvals);
@@ -814,7 +815,7 @@ public class BarParser implements AnnotationWriter  {
 
     // for now assume just outputting one graph?
     Iterator iter = syms.iterator();
-    GraphSym graf = (GraphSym)iter.next();
+    GraphSym graf = (GraphSym) iter.next();
     // should check to make sure seq is same as graf.getGraphSeq()??
 
     AnnotatedSeqGroup group = null;
@@ -848,13 +849,13 @@ public class BarParser implements AnnotationWriter  {
       dos.writeInt(0);
 
       int[] xcoords = graf.getGraphXCoords();
-      float[] ycoords = graf.getGraphYCoords();
+      //float[] ycoords = (float[]) graf.getGraphYCoords();
       int total_points = xcoords.length;
 
       dos.writeInt(total_points);
       for (int i=0; i<total_points; i++) {
 	dos.writeInt(xcoords[i]);
-	dos.writeFloat(ycoords[i]);
+	dos.writeFloat(graf.getGraphYCoord(i));
       }
       dos.close();  // or should responsibility for closing stream be left to the caller??
       success = true;

@@ -19,6 +19,7 @@ import java.util.*;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.Timer;
 
 public class BgrParser {
@@ -53,7 +54,7 @@ public class BgrParser {
     BufferedOutputStream bos = new BufferedOutputStream(ostr);
     DataOutputStream dos = new DataOutputStream(bos);
     int[] xcoords = graf.getGraphXCoords();
-    float[] ycoords = graf.getGraphYCoords();
+    //float[] ycoords = (float[]) graf.getGraphYCoords();
     int total_points = xcoords.length;
 
     Map headers = graf.getProperties();
@@ -88,14 +89,14 @@ public class BgrParser {
     dos.writeInt(total_points);
     for (int i=0; i<total_points; i++) {
       dos.writeInt((int)xcoords[i]);
-      dos.writeFloat((float)ycoords[i]);
+      dos.writeFloat(graf.getGraphYCoord(i));
     }
     //      dos.flush();
     dos.close();
     return true;
   }
 
-  public static GraphSym parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
+  public static GraphSymFloat parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group, boolean ensure_unique_id)
     throws IOException  {
     Timer tim = new Timer();
     tim.start();
@@ -155,7 +156,7 @@ public class BgrParser {
     
     // need to replace seq_name with name of graph (some combo of group name and conditions...)
     if (ensure_unique_id) { graph_name = AnnotatedSeqGroup.getUniqueGraphID(graph_name, seq); }
-    GraphSym graf = new GraphSym(xcoords, ycoords, graph_name, seq);
+    GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, graph_name, seq);
     graf.setProperties(props);
     double load_time = tim.read()/1000f;
     System.out.println("loaded graf, total points = " + count);

@@ -515,7 +515,7 @@ public class ScoredIntervalParser {
   public static boolean writeEgrFormat(GraphIntervalSym graf, String genome_version, OutputStream ostr) throws IOException {    
     int xpos[] = graf.getGraphXCoords();
     int widths[] = graf.getGraphWidthCoords();
-    float ypos[] = graf.getGraphYCoords();
+    //float ypos[] = (float[]) graf.getGraphYCoords();
     BufferedOutputStream bos = null;
     DataOutputStream dos = null;
     
@@ -549,7 +549,7 @@ public class ScoredIntervalParser {
       
       for (int i=0; i<xpos.length; i++) {
         int x2 = xpos[i] + widths[i];
-        dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand_char + '\t' + ypos[i] + '\n');
+        dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand_char + '\t' + graf.getGraphYCoordString(i) + '\n');
       }
       dos.flush();
     } finally {

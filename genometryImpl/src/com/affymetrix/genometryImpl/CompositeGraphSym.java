@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.Timer;
 
 /**
@@ -16,7 +17,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
  *      been populated from
  */
-public class CompositeGraphSym extends GraphSym  {
+public class CompositeGraphSym extends GraphSymFloat  {
   // extends GraphSym  {
   //  public Object clone()  // Does clone need to be reimplemented here?  Not sure yet...
 
@@ -37,7 +38,12 @@ public class CompositeGraphSym extends GraphSym  {
     if (sym instanceof GraphSym) {
       GraphSym slice = (GraphSym)sym;
       int[] slice_xcoords = slice.getGraphXCoords();
-      float[] slice_ycoords = slice.getGraphYCoords();
+      float[] slice_ycoords;
+      if (sym instanceof GraphSymFloat) {
+        slice_ycoords = ((GraphSymFloat) slice).getGraphYCoords();
+      } else {
+        slice_ycoords = slice.copyGraphYCoords();
+      }
 
       if (xcoords == null && ycoords == null) { // first GraphSym child, so just set xcoords and ycoords
 	xcoords = slice_xcoords;
@@ -82,7 +88,7 @@ public class CompositeGraphSym extends GraphSym  {
 	  slice_xcoords = null;
 	  slice.xcoords = null;
 
-	  float[] new_ycoords = new float[ycoords.length + slice_ycoords.length];
+	  float[] new_ycoords = new float[getPointCount() + slice_ycoords.length];
 	  new_index = 0;
 	  //    old ycoord array entries up to "A-1"
 	  if (slice_index > 0)  {
@@ -93,8 +99,8 @@ public class CompositeGraphSym extends GraphSym  {
 	  System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
 	  new_index += slice_ycoords.length;
 	  //    old ycoord array entries from "A" to end of old ycoord array
-	  if (slice_index < ycoords.length) {
-	    System.arraycopy(ycoords, slice_index, new_ycoords, new_index, ycoords.length - slice_index);
+	  if (slice_index < getPointCount()) {
+	    System.arraycopy(slice_ycoords, slice_index, new_ycoords, new_index, getPointCount() - slice_index);
 	  }
 
 	  ycoords = new_ycoords;

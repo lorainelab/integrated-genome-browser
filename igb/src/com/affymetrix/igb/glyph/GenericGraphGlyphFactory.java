@@ -63,7 +63,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
     GraphState state = (GraphState) graf.getGraphState();
     
-
     AnnotatedBioSeq aseq = smv.getAnnotatedSeq();
     BioSeq vseq = smv.getViewSeq();
     BioSeq graph_seq = graf.getGraphSeq();
@@ -98,9 +97,9 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
       newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
     }
-    if (newgraf == null || newgraf.getGraphXCoords() == null || newgraf.getGraphYCoords() == null) {
+    if (newgraf == null || newgraf.getGraphXCoords() == null) {
       return null;
-    } else if (newgraf.getGraphXCoords().length == 0 || newgraf.getGraphYCoords().length == 0) {
+    } else if (newgraf.getGraphXCoords().length == 0 || newgraf.getPointCount() == 0) {
       return null;
     }
 
@@ -114,10 +113,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     GraphGlyph graph_glyph;
     if (newgraf instanceof GraphIntervalSym) {
       GraphIntervalSym gis = (GraphIntervalSym) newgraf;
-      graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
+      graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, state);
       //graph_glyph = new GraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
     } else {
-      graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf.getGraphYCoords(), state);
+      graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf, state);
     }
     graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
     

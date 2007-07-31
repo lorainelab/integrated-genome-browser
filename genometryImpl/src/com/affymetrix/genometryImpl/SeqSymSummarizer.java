@@ -189,7 +189,7 @@ public class SeqSymSummarizer {
     java.util.List spanlist = new ArrayList();
     BioSeq seq = landscape.getGraphSeq();
     int xcoords[] = landscape.getGraphXCoords();
-    float ycoords[] = landscape.getGraphYCoords();
+    //float ycoords[] = (float[]) landscape.getGraphYCoords();
     int num_points = xcoords.length;
 
     int current_region_start = 0;
@@ -197,7 +197,7 @@ public class SeqSymSummarizer {
     boolean in_region = false;
     for (int i=0; i<num_points; i++) {
       int xpos = xcoords[i];
-      float ypos = ycoords[i];
+      float ypos = landscape.getGraphYCoord(i);
       if (in_region) {
 	if (ypos <= 0) { // reached end of region, make SeqSpan
 	  in_region = false;
@@ -229,7 +229,7 @@ public class SeqSymSummarizer {
     BioSeq seq = landscape.getGraphSeq();
     SimpleSymWithProps psym = new SimpleSymWithProps();
     int xcoords[] = landscape.getGraphXCoords();
-    float ycoords[] = landscape.getGraphYCoords();
+    //float ycoords[] = (float[]) landscape.getGraphYCoords();
     int num_points = xcoords.length;
 
     int current_region_start = 0;
@@ -237,7 +237,7 @@ public class SeqSymSummarizer {
     boolean in_region = false;
     for (int i=0; i<num_points; i++) {
       int xpos = xcoords[i];
-      float ypos = ycoords[i];
+      float ypos = landscape.getGraphYCoord(i);
       if (in_region) {
 	if (ypos <= 0) { // reached end of region, make SeqSpan
 	  in_region = false;
@@ -313,7 +313,7 @@ public class SeqSymSummarizer {
 
     // so any regions with depth == 2 are intersection
     int xcoords[] = combo_graph.getGraphXCoords();
-    float ycoords[] = combo_graph.getGraphYCoords();
+    //float ycoords[] = (float[]) combo_graph.getGraphYCoords();
     int num_points = xcoords.length;
 
     int current_region_start = 0;
@@ -321,7 +321,7 @@ public class SeqSymSummarizer {
     boolean in_region = false;
     for (int i=0; i<num_points; i++) {
       int xpos = xcoords[i];
-      float ypos = ycoords[i];
+      float ypos = combo_graph.getGraphYCoord(i);
       if (in_region) {
 	if (ypos < 2) { // reached end of intersection region, make SeqSpan
 	  in_region = false;
@@ -387,7 +387,7 @@ public class SeqSymSummarizer {
 
     // so any regions with depth == 1 are XOR regions
     int xcoords[] = combo_graph.getGraphXCoords();
-    float ycoords[] = combo_graph.getGraphYCoords();
+    //float ycoords[] = (float[]) combo_graph.getGraphYCoords();
     int num_points = xcoords.length;
 
     int current_region_start = 0;
@@ -395,7 +395,7 @@ public class SeqSymSummarizer {
     boolean in_region = false;
     for (int i=0; i<num_points; i++) {
       int xpos = xcoords[i];
-      float ypos = ycoords[i];
+      float ypos = combo_graph.getGraphYCoord(i);
       if (in_region) {
 	if (ypos < 1 || ypos > 1) { // reached end of xor region, make SeqSpan
 	  in_region = false;

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -482,9 +483,11 @@ public class ExperimentPivotView extends JComponent
       }
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
+      GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, null, null);
+      
       // Each graph has its own, un-named, GraphState object
       // (so they can have different minima and maxima)
-      gl = new GraphGlyph(xcoords, ycoords, GraphState.getTemporaryGraphState());
+      gl = new GraphGlyph(xcoords, graf, GraphState.getTemporaryGraphState());
       gl.setHeatMap(current_heatmap);
       gl.setGraphStyle(experiment_style_int);
       gl.setShowHandle(false);

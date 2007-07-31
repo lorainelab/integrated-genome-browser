@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
@@ -47,16 +48,16 @@ public class GraphAdjusterView {
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
 
-      float[] old_ycoords = graf.getGraphYCoords();
+      //float[] old_ycoords = graf.getGraphYCoords();
       float[] new_ycoords;
       
-      if (transformer instanceof IdentityTransform) {
-        new_ycoords = old_ycoords;
+      if (transformer instanceof IdentityTransform && graf instanceof GraphSymFloat) {
+        new_ycoords = ((GraphSymFloat) graf).getGraphYCoords();
       } else {
-        int pcount = old_ycoords.length;
+        int pcount = graf.getPointCount();
         new_ycoords = new float[pcount];
         for (int k=0; k<pcount; k++) {
-          new_ycoords[k] = transformer.transform(old_ycoords[k]);
+          new_ycoords[k] = transformer.transform(graf.getGraphYCoord(k));
         }
       }
       String newname = trans_name + " (" + graf.getGraphName() + ") ";
@@ -70,7 +71,7 @@ public class GraphAdjusterView {
           ((GraphIntervalSym) graf).getGraphWidthCoords(),
           new_ycoords, newid, graf.getGraphSeq());
       } else {
-        newgraf = new GraphSym(graf.getGraphXCoords(), 
+        newgraf = new GraphSymFloat(graf.getGraphXCoords(), 
           new_ycoords, newid, graf.getGraphSeq());
       }
       

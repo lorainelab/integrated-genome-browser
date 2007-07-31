@@ -22,14 +22,14 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *  A SeqSymmetry for holding graph for graphs that have y values that apply to
  *  intervals.  So instead of (x,y) there is (x_start, x_width, y).
  */
-public class GraphIntervalSym extends GraphSym {
+public class GraphIntervalSym extends GraphSymFloat {
   int wcoords[];
   
   public GraphIntervalSym(int[] x, int[] width, float[] y, String id, BioSeq seq) {
     super(x,y,id,seq);
     this.wcoords = width;
     
-    if (xcoords.length != ycoords.length || xcoords.length != wcoords.length) {
+    if (xcoords.length != y.length || xcoords.length != wcoords.length) {
       throw new IllegalArgumentException("X,W, and Y arrays must have the same length");
     }
 
@@ -52,6 +52,6 @@ public class GraphIntervalSym extends GraphSym {
    *  The returned SeqSymmetry will implement the {@link Scored} interface.
    */
   public SeqSymmetry getChild(int index) {
-    return new ScoredSingletonSym(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq, ycoords[index]);
+    return new ScoredSingletonSym(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq, getGraphYCoord(index));
   }
 }

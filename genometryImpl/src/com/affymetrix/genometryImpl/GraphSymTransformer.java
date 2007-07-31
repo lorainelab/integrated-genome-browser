@@ -17,7 +17,6 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 

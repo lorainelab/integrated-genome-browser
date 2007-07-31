@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -128,7 +129,7 @@ public class GraphGlyphUtils {
     for (int i=0; i<grafs.size(); i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphState gstate = GraphState.getTemporaryGraphState();
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf.getGraphYCoords(), gstate);
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf, gstate);
       // graph_glyph.setFasterDraw(true);
       // graph_glyph.setCalcCache(true);
       graph_glyph.setSelectable(false);
@@ -216,7 +217,7 @@ public class GraphGlyphUtils {
    *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.
    *  During division, indefinite values are replaced by zero.
    */
-  public static GraphSym graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+  public static GraphSymFloat graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
     String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
     
     if (error != null) {
@@ -225,32 +226,32 @@ public class GraphGlyphUtils {
     }
     
     int numpoints = graphA.getPointCount();
-    float[] yA = graphA.getYCoords();
-    float[] yB = graphB.getYCoords();
+    //float[] yA = graphA.getYCoords();
+    //float[] yB = graphB.getYCoords();
     float newY[] = new float[numpoints];
     
     String symbol = ",";
     if (MATH_SUM.equals(operation)) {
       for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] + yB[i];
+        newY[i] = graphA.getYCoord(i) + graphB.getYCoord(i);
       }
       symbol = "+";
     } else if (MATH_DIFFERENCE.equals(operation)) {
       for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] - yB[i];
+        newY[i] = graphA.getYCoord(i) - graphB.getYCoord(i);
       }
       symbol = "-";
     } else if (MATH_PRODUCT.equals(operation)) {
       for (int i=0; i<numpoints; i++) {
-        newY[i] = yA[i] * yB[i];
+        newY[i] = graphA.getYCoord(i) * graphB.getYCoord(i);
       }
       symbol = "*";
     } else if (MATH_RATIO.equals(operation)) {
       for (int i=0; i<numpoints; i++) {
-        if (yB[i] == 0) {
+        if (graphB.getYCoord(i)== 0) {
           newY[i] = 0; // hack to avoid infinities
         } else {
-          newY[i] = yA[i] / yB[i];
+          newY[i] = graphA.getYCoord(i) / graphB.getYCoord(i);
         }
         if (Float.isInfinite(newY[i]) || Float.isNaN(newY[i])) {
           newY[i] = 0.0f;
@@ -265,9 +266,9 @@ public class GraphGlyphUtils {
     MutableAnnotatedBioSeq aseq =
         (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
     newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-    GraphSym newsym;
+    GraphSymFloat newsym;
     if (graphA.getWCoords() == null) {
-      newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
+      newsym = new GraphSymFloat(graphA.getXCoords(), newY, newname, aseq);
     } else {
       newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);
     }

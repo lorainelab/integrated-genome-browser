@@ -13,13 +13,14 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -64,26 +65,26 @@ public class GraphSymUtils {
    *     (including the original_graf, if it's one of seq's annotations)
    *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
    */
-  public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
+  public static GraphSymFloat transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
     //    System.out.println("called GraphGlyphUtils.transformGraphSym(), mapping sym:");
     //    SeqUtils.printSymmetry(mapsym);
     //    System.out.println("");
     
     BioSeq fromseq = original_graf.getGraphSeq();
     SeqSpan fromspan = mapsym.getSpan(fromseq);
-    GraphSym new_graf = null;
+    GraphSymFloat new_graf = null;
     if (fromseq != null && fromspan != null) {
       BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
       
       SeqSpan tospan = mapsym.getSpan(toseq);
       if (toseq != null && tospan != null) {
 	int[] xcoords = original_graf.getGraphXCoords();
-	float[] ycoords = original_graf.getGraphYCoords();
+	//float[] ycoords = original_graf.getGraphYCoords();
         int[] wcoords = null;
         if (original_graf instanceof GraphIntervalSym) {
           wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
         }
-	if (xcoords != null && ycoords != null) {
+	if (xcoords != null && original_graf.getPointCount() != 0) {
 	  double graf_base_length = xcoords[xcoords.length-1] - xcoords[0];
           
 	  // calculating graf length from xcoords, since graf's span
@@ -170,7 +171,7 @@ public class GraphSymUtils {
               }
               
               new_xcoords.add(new_xcoord);
-	      new_ycoords.add(ycoords[k]);
+	      new_ycoords.add(original_graf.getGraphYCoord(k));
               if (wcoords != null) {
                 int new_wcoord = new_x2coord - new_xcoord;
                 new_wcoords.add(new_wcoord);
@@ -181,7 +182,7 @@ public class GraphSymUtils {
           if (ensure_unique_id)  { newid = GraphSymUtils.getUniqueGraphID(newid, toseq); }
           
           if (new_wcoords == null) {
-            new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+            new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
                 newid, toseq);
           } else {
             new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
@@ -362,7 +363,7 @@ public class GraphSymUtils {
   static void processGraphSyms(List grafs, String original_stream_name) {
     if (grafs != null)  {
       for (int i=0; i<grafs.size(); i++) {
-        GraphSym gsym = (GraphSym)grafs.get(i);
+        GraphSym gsym = (GraphSym) grafs.get(i);
         BioSeq gseq = gsym.getGraphSeq();
         if (gseq instanceof BioSeq) {
 	  String gid = gsym.getID();
@@ -387,21 +388,21 @@ public class GraphSymUtils {
   }
 
 
-  public static GraphSym revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
+  public static GraphSymFloat revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
     int xpos[] = gsym.getGraphXCoords();
-    float ypos[] = gsym.getGraphYCoords();
+
     int rcxpos[] = new int[xpos.length];
-    float rcypos[] = new float[ypos.length];
+    float rcypos[] = new float[xpos.length];
     int seqlength = symseq.getLength();
     for (int i=0; i<xpos.length; i++) {
       rcxpos[i] = seqlength - xpos[xpos.length - i -1];
     }
-    for (int i=0; i<ypos.length; i++) {
-      rcypos[i] = ypos[ypos.length - i -1];
+    for (int i=0; i<gsym.getPointCount(); i++) {
+      rcypos[i] = gsym.getGraphYCoord(xpos.length - i -1);
     }
     String newid = "rev_comp ( " + gsym.getID() + " )";
     String unique_newid = GraphSymUtils.getUniqueGraphID(newid, revcomp_symseq);
-    GraphSym revcomp_gsym = new GraphSym(rcxpos, rcypos, unique_newid, revcomp_symseq);
+    GraphSymFloat revcomp_gsym = new GraphSymFloat(rcxpos, rcypos, unique_newid, revcomp_symseq);
     revcomp_gsym.setGraphName(newid);
     return revcomp_gsym;
   }
@@ -547,12 +548,12 @@ public class GraphSymUtils {
   }
 
 
-  public static GraphSym convertTransFragGraph(GraphSym trans_frag_graph) {
+  public static GraphSymFloat convertTransFragGraph(GraphSym trans_frag_graph) {
     //    System.out.println("$$$ GraphSymUtils.convertTransFragGraph() called $$$");
     int transfrag_max_spacer = 20;
     BioSeq seq = trans_frag_graph.getGraphSeq();
     int[] xcoords = trans_frag_graph.getGraphXCoords();
-    float[] ycoords = trans_frag_graph.getGraphYCoords();
+    //float[] ycoords = trans_frag_graph.getGraphYCoords();
     IntList newx = new IntList();
     FloatList newy = new FloatList();
     int xcount = xcoords.length;
@@ -560,15 +561,15 @@ public class GraphSymUtils {
 
     // transfrag ycoords should be irrelevant
     int xmin = xcoords[0];
-    float y_at_xmin = ycoords[0];
+    float y_at_xmin = trans_frag_graph.getGraphYCoord(0);
     int prevx = xcoords[0];
-    float prevy = ycoords[0];
+    float prevy = trans_frag_graph.getGraphYCoord(0);
     int curx = xcoords[0];
-    float cury = ycoords[0] ;
+    float cury = trans_frag_graph.getGraphYCoord(0);
     //    System.out.println("xcount: " + xcount);
     for (int i=1; i<xcount; i++) {
       curx = xcoords[i];
-      cury = ycoords[i];
+      cury = trans_frag_graph.getGraphYCoord(i);
       if ((curx - prevx) > transfrag_max_spacer) {
 	//	System.out.println("adding xmin = " + xmin + ", xmax = " + prevx + ", length = " + (prevx-xmin));
 	newx.add(xmin);
@@ -587,7 +588,7 @@ public class GraphSymUtils {
 	i++;
       }
       prevx = xcoords[i];
-      prevy = ycoords[i];
+      prevy = trans_frag_graph.getGraphYCoord(i);
     }
     //    System.out.println("adding xmin = " + xmin + ", curx = " + prevx + ", length = " + (curx-xmin));
     newx.add(xmin);
@@ -595,7 +596,7 @@ public class GraphSymUtils {
     newx.add(curx);
     newy.add(cury);
     String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
-    GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(), newid, seq);
+    GraphSymFloat span_graph = new GraphSymFloat(newx.copyToArray(), newy.copyToArray(), newid, seq);
 
     // copy properties over...
     span_graph.setProperties(trans_frag_graph.cloneProperties());

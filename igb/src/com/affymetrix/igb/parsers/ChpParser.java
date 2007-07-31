@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -743,7 +743,7 @@ public class ChpParser {
       }
       String graph_id = OpenGraphAction.getGraphNameForFile(tchp.getFileName());
       if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq); }
-      GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
+      GraphSymFloat gsym = new GraphSymFloat(xcoords, ycoords, graph_id, aseq);
 
       Iterator fiter = file_prop_hash.entrySet().iterator();
       while (fiter.hasNext()) {
@@ -783,7 +783,7 @@ public class ChpParser {
     if (results != null)  {
         System.out.println("graphs parsed: " + results.size());
         for (int i = 0; i < results.size(); i++) {
-            GraphSym gsym = (GraphSym) results.get(i);
+            GraphSymFloat gsym = (GraphSymFloat) results.get(i);
             System.out.println(gsym.getGraphName() + ",  " + gsym.getID() +
                                ",  points = " + gsym.getPointCount());
         }

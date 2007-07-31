@@ -384,6 +384,9 @@ public class Das2VersionedSource  {
   }
 
 
+  public synchronized List getFeaturesByName(String name) {
+    return getFeaturesByName(name, false);
+  }
   /**
    *  Use the name feature filter in DAS/2 to retrieve features by name or id (maybe alias).
    *  this method should also add any feature retrieved to the appropriate seq(s) in the AnnotatedSeqGroup
@@ -393,7 +396,7 @@ public class Das2VersionedSource  {
    *       For now, trying to just add features directly to seq...)
    *   For now, not allowing combination with any other filters
    */
-  public synchronized List getFeaturesByName(String name) {
+  public synchronized List getFeaturesByName(String name, boolean annotate_seq) {
     List feats = null;
     try {
       Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
@@ -411,15 +414,9 @@ public class Das2VersionedSource  {
       InputStream istr = query_con.getInputStream();
       BufferedInputStream bis = new BufferedInputStream(istr);
       //      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
-      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), true);
+      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
       int feat_count = feats.size();
       System.out.println("parsed query results, annot count = " + feat_count);
-      /*
-      for (int k=0; k<feat_count; k++) {
-	SeqSymmetry feat = (SeqSymmetry)feats.get(k);
-	//	request_sym.addChild(feat);
-      }
-      */
       bis.close();
       istr.close();
     }

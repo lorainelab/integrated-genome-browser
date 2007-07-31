@@ -86,6 +86,14 @@ public class AffyChpColumnData {
     }
   }
   
+  /** 
+   *  Returns the data as an instance of FloatList, IntList, ShortList, 
+   *  ByteList, DoubleList or ArrayList<CharSequence>.
+   */
+  public Object getData() {
+    return theData;
+  }
+  
   public String toString() {
     String s = this.getClass().getName() +
         ": " + name + ", " + type + ", " + size + ", " + theData.getClass().getName() + ":  ";

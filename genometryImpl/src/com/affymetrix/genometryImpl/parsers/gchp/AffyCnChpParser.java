@@ -17,7 +17,8 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
+import com.affymetrix.genometryImpl.GraphSymInt;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -90,11 +91,16 @@ public class AffyCnChpParser {
           }          
 
           for (AffyChpColumnData colData : data.columns) {
-            if (colData.type == AffyDataType.FLOAT) {
-              String graphId = colData.name;
-              FloatList flist = colData.dataFloat;
+            String graphId = colData.name;
+            if (colData.getData() instanceof FloatList) {
+              FloatList flist = (FloatList) colData.getData();
               flist.trimToSize();
-              GraphSym gsym = new GraphSym(positions.getInternalArray(), flist.getInternalArray(), graphId, seq);
+              GraphSymFloat gsym = new GraphSymFloat(positions.getInternalArray(), flist.getInternalArray(), graphId, seq);
+              seq.addAnnotation(gsym);
+            } else if (colData.getData() instanceof IntList) {
+              IntList ilist = (IntList) colData.getData();
+              ilist.trimToSize();
+              GraphSymInt gsym = new GraphSymInt(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
               seq.addAnnotation(gsym);
             } else {
               System.out.println("Don't know how to make a graph for data of type: " + colData.type);

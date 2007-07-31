@@ -37,6 +37,10 @@ public class GraphSymInt extends GraphSym {
   public String getGraphYCoordString(int i) {
     return Integer.toString(int_y[i]);
   }
+  
+  public int[] getGraphYCoords() {
+    return int_y;
+  }
 
   public float[] copyGraphYCoords() {
     int pcount = getPointCount();

@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.style.GraphStateI;
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public class GraphSym extends SimpleSymWithProps {
+public abstract class GraphSym extends SimpleSymWithProps {
 
   /** A property that can optionally be set to give a hint about the graph strand for display. */
   public static final String PROP_GRAPH_STRAND = "Graph Strand";
@@ -32,7 +32,7 @@ public class GraphSym extends SimpleSymWithProps {
   public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
   
   int xcoords[];
-  float ycoords[];
+  Object ycoords; // should be an array of float or int, etc.
   BioSeq graph_original_seq;
   String gid;
 
@@ -44,12 +44,7 @@ public class GraphSym extends SimpleSymWithProps {
    */
   boolean id_locked = false;
 
-  ///** add a constructor to explicitly set span? */
-  //  this would be for slices, which need a span that expresses the bounds of the slice
-  //     (which will often be slightly bigger than the xcoord min and max)
-  //  public GraphSym(int[] x, float[] y, String name, BioSeq seq, SeqSpan span) {
-
-  public GraphSym(int[] x, float[] y, String id, BioSeq seq) {
+  protected GraphSym(int[] x, Object y, String id, BioSeq seq) {
     super();
     this.graph_original_seq = seq;
 
@@ -106,10 +101,16 @@ public class GraphSym extends SimpleSymWithProps {
   public int[] getGraphXCoords() {
     return xcoords;
   }
+  
+  public abstract float getGraphYCoord(int i);
 
-  public float[] getGraphYCoords() {
-    return ycoords;
-  }
+  public abstract String getGraphYCoordString(int i);
+
+  /** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
+   *  were originally specified as non-floats.
+   */
+  public abstract float[] copyGraphYCoords();
+  
 
   /**
    *  Get the seq that the graph's xcoords are specified in
@@ -150,35 +151,4 @@ public class GraphSym extends SimpleSymWithProps {
       return super.setProperty(name, val);
     }
   }
-
-
-
-
-  //  List thresh_names = null;
-  //  FloatList thresh_vals = null;
-
-  /*
-  public void addStoredThreshold(String thresh_name, float score_thresh) {
-    if (thresh_names == null) { thresh_names = new ArrayList(); }
-    if (thresh_vals == null) { thresh_vals = new FloatList(); }
-    thresh_names.add(thresh_name);
-    thresh_vals.add(score_thresh);
-  }
-
-  public int getStoredThreshCount() {
-    if (thresh_vals == null) { return 0; }
-    return thresh_vals.size();
-  }
-
-  public String getStoredThreshName(int i) {
-    if (thresh_names == null) { return null; }
-    return (String)thresh_names.get(i);
-  }
-
-  public float getStoredThreshValue(int i) {
-    if (thresh_vals == null) { return Float.NEGATIVE_INFINITY; }
-    return thresh_vals.get(i);
-  }
-  */
-
 }

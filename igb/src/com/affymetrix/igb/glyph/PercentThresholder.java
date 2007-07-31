@@ -176,13 +176,12 @@ public class PercentThresholder extends JPanel
 
   public float[] calcPercents2Scores(GraphGlyph sgg) {
     // System.out.println("calculating percentages");
-    float[] scores = sgg.getYCoords();
-    int num_scores = scores.length;
+    //float[] scores = sgg.getYCoords();
+    int num_scores = sgg.graf.getPointCount();;
     //    int num_percents = max_percent - min_percent + 1;
     int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
     System.out.println("num_percents: " + num_percents);
-    float[] ordered_scores = new float[num_scores];
-    System.arraycopy(scores, 0, ordered_scores, 0, num_scores);
+    float[] ordered_scores = sgg.graf.copyGraphYCoords();
     System.out.println("score array copied");
     Arrays.sort(ordered_scores);
     System.out.println("scores sorted");

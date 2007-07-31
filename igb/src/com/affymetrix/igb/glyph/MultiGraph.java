@@ -13,7 +13,10 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
 import java.awt.*;
 import java.util.*;
 
@@ -76,7 +79,7 @@ public class MultiGraph extends SmartGraphGlyph {
       float ymin = Float.POSITIVE_INFINITY;
       float ymax = Float.NEGATIVE_INFINITY;
       for (int k=0; k<num_graphs; k++) {
-	float yval = (((GraphGlyph)graphs.get(k)).getYCoords())[i];
+	float yval = (((GraphGlyph)graphs.get(k)).getYCoord(i));
 	yavg += yval;
 	ymin = Math.min(ymin, yval);
 	ymax = Math.max(ymax, yval);
@@ -90,9 +93,14 @@ public class MultiGraph extends SmartGraphGlyph {
     GraphState avg_gstate = GraphState.getTemporaryGraphState();
     GraphState min_gstate = GraphState.getTemporaryGraphState();
     GraphState max_gstate = GraphState.getTemporaryGraphState();
-    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_ycoords, avg_gstate);
-    min_graph = new SmartGraphGlyph(shared_xcoords, min_ycoords, min_gstate);
-    max_graph = new SmartGraphGlyph(shared_xcoords, max_ycoords, max_gstate);
+    BioSeq seq = ((GraphGlyph) graphs.get(0)).graf.getGraphSeq();
+    GraphSymFloat avg_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, avg_ycoords, seq);
+    GraphSymFloat min_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, min_ycoords, seq);
+    GraphSymFloat max_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, max_ycoords, seq);
+    
+    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_gsym, avg_gstate);
+    min_graph = new SmartGraphGlyph(shared_xcoords, min_gsym, min_gstate);
+    max_graph = new SmartGraphGlyph(shared_xcoords, max_gsym, max_gstate);
     stat_graphs.add(avg_graph);
     stat_graphs.add(min_graph);
     stat_graphs.add(max_graph);
@@ -263,4 +271,5 @@ public class MultiGraph extends SmartGraphGlyph {
     }
   }
 
+  
 }

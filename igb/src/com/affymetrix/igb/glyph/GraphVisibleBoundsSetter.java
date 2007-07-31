@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -766,10 +767,19 @@ public class GraphVisibleBoundsSetter extends JPanel
    */
   float[] getPercents2Scores(GraphGlyph gl) {
     Object info = gl.getInfo();
-    if (info == null) { System.err.println("Graph has no info! " + gl); }
+    if (info == null) { 
+      System.err.println("Graph has no info! " + gl); 
+    }
     float[] p2score = (float[]) info2pscores.get(info);
+    
     if (p2score == null) {
-      p2score = GraphSymUtils.calcPercents2Scores(gl.getYCoords(), sliders_per_percent);
+      float[] ycoords;
+      if (gl.graf instanceof GraphSymFloat) {
+        ycoords = ((GraphSymFloat) gl.graf).getGraphYCoords();
+      } else {
+        ycoords = gl.graf.copyGraphYCoords();
+      }
+      p2score = GraphSymUtils.calcPercents2Scores(ycoords, sliders_per_percent);
       info2pscores.put(info, p2score);
     }
     return p2score;

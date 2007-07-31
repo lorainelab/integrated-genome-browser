@@ -148,8 +148,9 @@ public class GlyphSummarizer {
       transitions++;
       max_depth = Math.max(depth, max_depth);
     }
-    GraphState gstate = GraphState.getTemporaryGraphState();
-    SmartGraphGlyph sgg = new SmartGraphGlyph(transition_xpos.copyToArray(), transition_ypos.copyToArray(), gstate);
+    GraphSymFloatWithTemporaryState xxx = 
+        new GraphSymFloatWithTemporaryState(transition_xpos.copyToArray(), transition_ypos.copyToArray(), null);
+    SmartGraphGlyph sgg = new SmartGraphGlyph(transition_xpos.copyToArray(), xxx, xxx.getGraphState());
     Rectangle2D cbox = map.getCoordBounds();
 //    sgg.setPointCoords(transition_xpos.copyToArray(), transition_ypos.copyToArray());
     sgg.setGraphStyle(GraphGlyph.STAIRSTEP_GRAPH);

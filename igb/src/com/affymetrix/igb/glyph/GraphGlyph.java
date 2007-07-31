@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.*;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
@@ -74,7 +75,8 @@ public class GraphGlyph extends Glyph {
   // assumes sorted points, each x corresponding to y
   int xcoords[];
   int wcoords[];
-  float ycoords[];
+  GraphSym graf;
+//  float ycoords[];
 
   int handle_width = 10;  // width of handle in pixels
   int handle_height = 5;  // height of handle in pixels
@@ -85,11 +87,15 @@ public class GraphGlyph extends Glyph {
   GraphStateI state;
   LinearTransform scratch_trans = new LinearTransform();
 
-  public GraphGlyph(int[] xcoords, float[] ycoords, GraphStateI gstate) {
-    this(xcoords, null, ycoords, gstate);
+  public float getYCoord(int i) {
+    return graf.getGraphYCoord(i);
+  }
+  
+  public GraphGlyph(int[] xcoords, GraphSym graf, GraphStateI gstate) {
+    this(xcoords, null, graf, gstate);
   }
 
-  public GraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphStateI gstate) {
+  public GraphGlyph(int[] xcoords, int[] wcoords, GraphSym graf, GraphStateI gstate) {
     super();
     state = gstate;
     if (state == null) {
@@ -100,18 +106,21 @@ public class GraphGlyph extends Glyph {
     setColor(state.getTierStyle().getColor());
     setGraphStyle(state.getGraphStyle());
 
-    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    if (xcoords == null || xcoords.length <=0 || graf.getPointCount() <= 0) { return; }
     if (wcoords != null) {
-      if (wcoords.length != xcoords.length || wcoords.length != ycoords.length) { return; }
+      if (wcoords.length != xcoords.length || wcoords.length != graf.getPointCount()) { return; }
     }
     this.xcoords = xcoords;
     this.wcoords = wcoords;
-    this.ycoords = ycoords;
+    //this.ycoords = ycoords;
+    this.graf = graf;
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
-    for (int i=0; i<ycoords.length; i++) {
-      if (ycoords[i] < point_min_ycoord) { point_min_ycoord = ycoords[i]; }
-      if (ycoords[i] > point_max_ycoord) { point_max_ycoord = ycoords[i]; }
+    float f;
+    for (int i=0; i<graf.getPointCount(); i++) {
+      f = graf.getGraphYCoord(i);
+      if (f < point_min_ycoord) { point_min_ycoord = f; }
+      if (f > point_max_ycoord) { point_max_ycoord = f; }
     }
     if (point_max_ycoord == point_min_ycoord) {
       point_min_ycoord = point_max_ycoord - 1;
@@ -183,7 +192,7 @@ public class GraphGlyph extends Glyph {
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
-    if (getShowGraph() && xcoords != null && ycoords != null)  {
+    if (getShowGraph() && graf != null && xcoords != null  && graf.getPointCount() == xcoords.length)  {
       int beg_index = 0;
       //int end_index = xcoords.length-1;
 
@@ -219,9 +228,9 @@ public class GraphGlyph extends Glyph {
 
       // set up prev_point before starting loop
       coord.x = xcoords[beg_index];
-      coord.y = offset - ((ycoords[beg_index] - getVisibleMinY()) * yscale);
+      coord.y = offset - ((graf.getGraphYCoord(beg_index) - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
-      float prev_ytemp = ycoords[beg_index];
+      float prev_ytemp = graf.getGraphYCoord(beg_index);
 
       Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
@@ -271,7 +280,7 @@ public class GraphGlyph extends Glyph {
         // flipping about yaxis... should probably make this optional
         // also offsetting to place within glyph bounds
         coord.x = xcoords[i];
-        ytemp = ycoords[i];
+        ytemp = graf.getGraphYCoord(i);
         // flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 	if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); } 
 	else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }
@@ -385,7 +394,7 @@ public class GraphGlyph extends Glyph {
 //	  }
 //	}
         else if (graph_style == STAIRSTEP_GRAPH) {
-          if (i<=0 || (ycoords[i-1] != 0)) {
+          if (i<=0 || (graf.getGraphYCoord(i-1) != 0)) {
             int stairwidth = curr_point.x - prev_point.x;
             if ((stairwidth < 0) || (stairwidth > 10000)) {
               // skip drawing if width > 10000?  testing fix for linux problem
@@ -700,7 +709,7 @@ public class GraphGlyph extends Glyph {
   public int getGraphStyle() { return state.getGraphStyle(); }
 
   public int[] getXCoords() { return xcoords; };
-  public float[] getYCoords() { return ycoords; }
+  //public float[] getYCoords() { return ycoords; }
   
   /** Returns the width coordinate array or null. */
   public int[] getWCoords() { return wcoords; }

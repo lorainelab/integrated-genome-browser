@@ -77,7 +77,7 @@ public class QueryableMultiGraph extends MultiGraph  {
 	float ymax = (float)(qbox.y + qbox.height);
 	// binary search to find index of first point that overlaps xbounds of query box
 	int[] gxcoords = graph.getXCoords();
-	float[] gycoords = graph.getYCoords();
+	//float[] gycoords = graph.getYCoords();
 	int point_beg_index = Arrays.binarySearch(gxcoords, xmin);
 	if (point_beg_index < 0) {
 	  // want point_beg_index to be index of min xcoord >= xmin
@@ -87,7 +87,7 @@ public class QueryableMultiGraph extends MultiGraph  {
 	int pindex = point_beg_index;
 	POINT_LOOP:
 	while ((pindex < gxcoords.length-1) && (gxcoords[pindex] < xmax)) {
-	  float yval = gycoords[pindex];
+	  float yval = (float) graph.graf.getGraphYCoord(pindex);
 	  if ((yval < ymin) || (yval > ymax)) {
 	    graph_satisfies_query = false;
 	    break QUERYBOX_LOOP;

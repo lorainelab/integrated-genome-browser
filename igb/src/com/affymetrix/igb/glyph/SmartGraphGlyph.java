@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -123,12 +125,12 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph(int[] xcoords, float[] ycoords, GraphStateI gstate) {
-    this(xcoords, null, ycoords, gstate);
+  public SmartGraphGlyph(int[] xcoords, GraphSym graf, GraphStateI gstate) {
+    this(xcoords, null, graf, gstate);
   }
   
-  public SmartGraphGlyph(int[] xcoords, int[] wcoords, float[] ycoords, GraphStateI gstate) {
-    super(xcoords, wcoords, ycoords, gstate);
+  public SmartGraphGlyph(int[] xcoords, int[] wcoords, GraphSym graf, GraphStateI gstate) {
+    super(xcoords, wcoords, graf, gstate);
     setDrawOrder(Glyph.DRAW_SELF_FIRST);
 
     //    thresh_glyph = new ThreshGlyph();
@@ -137,15 +139,20 @@ public class SmartGraphGlyph extends GraphGlyph {
     if (thresh_color != null)  { thresh_glyph.setColor(thresh_color); }
     this.addChild(thresh_glyph);
 
-    if (xcoords == null || ycoords == null || xcoords.length <=0 || ycoords.length <= 0) { return; }
+    if (xcoords == null || graf == null || xcoords.length <=0 || graf.getPointCount() <= 0) { return; }
     caches.clear();
     if (CALC_GRAPH_CACHE) {
       double graph_coord_length = xcoords[xcoords.length-1] - xcoords[0];
       double avg_bases_per_point = graph_coord_length / ((double)xcoords.length);
       int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
 
-      GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ycoords);
-      caches.add(graph_cache);
+      if (graf instanceof GraphSymFloat) {
+        GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ((GraphSymFloat) graf).getGraphYCoords());
+        caches.add(graph_cache);
+      } else {
+        GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, graf.copyGraphYCoords());
+        caches.add(graph_cache);
+      }
     }
     //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
     //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
@@ -520,7 +527,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
       coord.x = xcoords[draw_beg_index];
       //      coord.y = offset - (ycoords[draw_beg_index] * yscale);
-      coord.y = offset - ((ycoords[draw_beg_index] - getVisibleMinY()) * yscale);
+      coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
 
       int ymin_pixel = prev_point.y;;
@@ -533,7 +540,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       g.setColor(darker);
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
-	coord.y = offset - ((ycoords[i] - getVisibleMinY()) * yscale);
+	coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
 	view.transformToPixels(coord, curr_point);
 	if (prev_point.x == curr_point.x) {
 	  // collect ymin, ymax, y_average for all coord points that transform to
@@ -808,7 +815,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       if (wcoords != null) {
         w = wcoords[i];
       }
-      y = ycoords[i];
+      y = graf.getGraphYCoord(i);
 
       //      pass_score_thresh = ((y >= min_score_threshold) &&
       // GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline

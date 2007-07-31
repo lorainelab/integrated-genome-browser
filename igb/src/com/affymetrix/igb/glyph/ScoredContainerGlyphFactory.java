@@ -95,7 +95,7 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     for (int q=0; q<the_graph_syms.length; q++) {
       GraphIntervalSym gis = the_graph_syms[q];
       
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), gis.getGraphState());
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, gis.getGraphState());
       graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
       GraphStateI gstate = graph_glyph.getGraphState();
       

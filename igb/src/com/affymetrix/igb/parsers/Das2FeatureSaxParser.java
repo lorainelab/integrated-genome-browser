@@ -478,10 +478,12 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     //    }
   }
 
+  int dup_count = 0;
   public void addFeature() {
     // checking to make sure feature with same id doesn't already exist
     //   (ids _should_ be unique, but want to make sure)
     if (id2sym.get(feat_id) != null) {
+      dup_count++;
       System.out.println("WARNING, duplicate feature id: " + feat_id);
       return;
     }

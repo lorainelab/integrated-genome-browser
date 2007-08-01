@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
+import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.event.*;
@@ -276,6 +277,35 @@ public class AnnotatedSeqGroup {
   /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
   public Date getVersionDate() { return version_date; }
 
+  /** NOT YET IMPLEMENTED */
+  public List findSyms(Pattern regex) {
+    HashSet symset = new HashSet();
+    Matcher matcher = regex.matcher("");
+    Set all_syms = id2sym_hash.entrySet();
+    Iterator entries = all_syms.iterator();
+    
+    while (entries.hasNext()) {
+      Map.Entry ent = (Map.Entry)entries.next();
+      String id = (String)ent.getKey();
+      Object val = ent.getValue();
+      if (id != null && val != null) {
+	matcher.reset(id);
+	if (matcher.matches()) {
+	  if (val instanceof List) {
+	    symset.addAll((List)val);
+	  }
+	  else {
+	    symset.add(val);
+	  }
+	}
+      }
+    }
+    System.out.println("!!!! AnnotatedSeqGroup.findSyms(Pattern) called, syms found: " + symset.size());
+    return new ArrayList(symset);
+  }
+
+
+
   /** Finds all symmetries with the given case-insensitive ID.
    *  @return a non-null List, possibly an empty one.
    */
@@ -487,6 +517,15 @@ public class AnnotatedSeqGroup {
     return DefaultStateProvider.getGlobalStateProvider();
   }
 
+  /**
+   *  A subclass of TreeMap that changes the behavior of put(key, value)
+   *  If the given key is already associated with a value, 
+   *  rather than replacing the previous value with the new value:
+   *     if previous value is a List, add new value to end of list
+   *     otherwise create new list, add previous value and new value to list, 
+   *        and make the new list the value associated with the key
+   *     
+   */
   public static class ListmakingHashMap extends TreeMap {
     public Object put(Object key, Object value) {
       Object x = this.get(key);

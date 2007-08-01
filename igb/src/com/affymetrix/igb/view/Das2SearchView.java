@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import java.util.*;
+
+import javax.swing.EditableComboBox;
 
 import com.affymetrix.igb.*;
 import com.affymetrix.genometry.*;
@@ -32,18 +35,24 @@ public class Das2SearchView extends JPanel implements ActionListener {
 
   static {
     default_server = Das2Discovery.getDas2Server("localhost");
+    //    default_server = Das2Discovery.getDas2Server("NetAffx");  
     System.out.println("default_server: " + default_server);
-    default_source = default_server.getSource("Human");
+    //    default_source = default_server.getSource("H_sapiens");  // use if default server is NetAffx
+    default_source = default_server.getSource("Human");  // use if default server is localhost
+
     System.out.println("default_source: " + default_source);
     default_version = default_source.getVersion("H_sapiens_Mar_2006");
     System.out.println("default_version: " + default_version);
   }
 
   JTextField searchTF = new JTextField(40);
+  EditableComboBox searchCB = new EditableComboBox();
+
   //  Das2VersionedSource current_version = null;
   SeqMapView gviewer;
   JTable results_table;
   Das2LoadView3 parent_view;
+  Map search_results_history = new LinkedHashMap();  // keeping history of search results 
 
   public Das2SearchView(Das2LoadView3 view) {
     super();
@@ -55,9 +64,11 @@ public class Das2SearchView extends JPanel implements ActionListener {
     //    this.add(searchTF);
     JPanel pan1 = new JPanel();
     pan1.add(new JLabel("Name searcH: "));
-    pan1.add(searchTF);
+    //    pan1.add(searchTF);
+    pan1.add(searchCB);
     this.add("North", pan1);
     searchTF.addActionListener(this);
+    searchCB.addActionListener(this);
 
     results_table = new JTable();
     results_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -99,24 +110,38 @@ public class Das2SearchView extends JPanel implements ActionListener {
     gviewer.zoomTo(span);
   }
 
+
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
+    String command = evt.getActionCommand();
+    String name = null;
     if (src == searchTF) {
-      String name = searchTF.getText();
-      System.out.println("trying to search for annotation name: " + name);
+      name = searchTF.getText();
+    }
+    else if ((src == searchCB) && (command.equalsIgnoreCase("comboBoxChanged"))) {
+      name = (String)searchCB.getSelectedItem();
+    }
+    if (name != null) {
+      System.out.println("@@@@@  trying to search for annotation name: " + name + "  @@@@@") ;
       searchFeaturesByName(name);
-      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-      gviewer.setAnnotatedSeq(aseq, true, true);
     }
   }
 
   public java.util.List searchFeaturesByName(String name) {
+    if (name == null || name.equals(""))  { return null; }
     //    if (current_version != null) {
     // Das2VersionedSource.getFeaturesByName() should also add features as annotations to seqs...
     //    java.util.List feats = default_version.getFeaturesByName(default_query_name, false);
-    java.util.List feats = default_version.getFeaturesByName(name, false);
+
+    // if already searched with this name, then use cached results
+    java.util.List feats = (java.util.List)search_results_history.get(name); 
+    if (feats == null) {
+      feats = default_version.getFeaturesByName(name, false); 
+      MutableComboBoxModel mcb = (MutableComboBoxModel)searchCB.getModel();
+      mcb.addElement(name);
+      search_results_history.put(name, feats);
+    }
     System.out.println("features found: " + feats.size());
-    //    }
     SearchResultsTableModel tmodel = new SearchResultsTableModel(feats);
     results_table.setModel(tmodel);
     return feats;

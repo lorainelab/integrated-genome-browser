@@ -61,7 +61,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
  */
 public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
-  static String RELEASE_VERSION = "2.1";
+  static String RELEASE_VERSION = "2.40";
   static boolean MAKE_LANDSCAPES = false;
   static boolean TIME_RESPONSES = true;
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
@@ -1139,7 +1139,38 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 // GAH 11-2006
 	 //   need to enhance this to support multiple name parameters OR'd together
 	 //   need to enhance this to support "*" wild-card search as defined in spec
-	 result = genome.findSyms(name);
+	 
+	 //   DAS/2 specification defines glob-style searches:
+	 //   The string searches may be exact matches, substring, prefix or suffix searches. 
+	 //   The query type depends on if the search value starts and/or ends with a '*'.
+	 //   
+	 //    ABC -- field exactly matches "ABC"
+	 //    *ABC -- field ends with "ABC"
+	 //    ABC* -- field starts with "ABC"
+	 //    *ABC* -- field contains the substring "ABC"
+	 boolean glob_start = name.startsWith("*");
+	 boolean glob_end = name.endsWith("*");
+
+
+	 Pattern name_pattern = null; 
+	 if (glob_start || glob_end)  {
+	   String name_regex = name.toLowerCase();
+	   if (glob_start)  {
+	     // do replacement of first "*" with ".*" ?
+	     name_regex = ".*" + name_regex.substring(1); 
+	   }
+	   if (glob_end) {
+	     // do replacement of last "*" with ".*" ?
+	     name_regex = name_regex.substring(0, name_regex.length()-1) + ".*";
+	   }
+	   System.out.println("!!!! name arg: " + name);
+	   System.out.println("!!!! regex to use for pattern-matching: " + name_regex);
+	   name_pattern = Pattern.compile(name_regex);
+	   result = genome.findSyms(name_pattern);
+	 }
+	 else {  // ABC -- field exactly matches "ABC"
+	   result = genome.findSyms(name);
+	 }
       }
 
 

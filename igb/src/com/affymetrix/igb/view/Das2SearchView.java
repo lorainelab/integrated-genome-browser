@@ -175,8 +175,8 @@ class SearchResultsTableModel extends AbstractTableModel {
     else if (col == ID_COLUMN) { result = feat.getID(); }
     else if (col == TYPE_COLUMN) { result = feat.getType(); }
     else if (col == CHROM_COLUMN) { result = span.getBioSeq().getID(); }
-    else if (col == MIN_COLUMN) { result = span.getMin(); }
-    else if (col == MAX_COLUMN) { result = span.getMax(); }
+    else if (col == MIN_COLUMN) { result = new Integer(span.getMin()); }
+    else if (col == MAX_COLUMN) { result = new Integer(span.getMax()); }
     else if (col == STRAND_COLUMN) { result = (span.isForward() ? "+" : "-"); }
     return result;
   }

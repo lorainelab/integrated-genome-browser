@@ -142,6 +142,7 @@ public class Das2SearchView extends JPanel implements ActionListener {
       search_results_history.put(name, feats);
     }
     System.out.println("features found: " + feats.size());
+    Collections.sort(feats, new Das2FeatureComparator(true));  // sort based on name / ID
     SearchResultsTableModel tmodel = new SearchResultsTableModel(feats);
     results_table.setModel(tmodel);
     return feats;

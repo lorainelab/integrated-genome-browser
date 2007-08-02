@@ -443,7 +443,11 @@ public class SeqMapView extends JPanel
       this.add(BorderLayout.NORTH, pan);
       //      this.add(BorderLayout.NORTH, xzoombox);
     } else {
-      this.add(BorderLayout.SOUTH, xzoombox);
+      JPanel pan = new JPanel(new BorderLayout());
+      pan.add("West", seq_chooser);
+      pan.add("Center", xzoombox);
+      this.add(BorderLayout.SOUTH, pan);
+      //      this.add(BorderLayout.SOUTH, xzoombox);
     }
 
     yzoombox = Box.createVerticalBox();

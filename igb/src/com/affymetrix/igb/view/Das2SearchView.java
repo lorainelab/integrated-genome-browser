@@ -34,11 +34,11 @@ public class Das2SearchView extends JPanel implements ActionListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   static {
-    default_server = Das2Discovery.getDas2Server("localhost");
-    //    default_server = Das2Discovery.getDas2Server("NetAffx");  
+    //    default_server = Das2Discovery.getDas2Server("localhost");
+    default_server = Das2Discovery.getDas2Server("NetAffx");  
     System.out.println("default_server: " + default_server);
-    //    default_source = default_server.getSource("H_sapiens");  // use if default server is NetAffx
-    default_source = default_server.getSource("Human");  // use if default server is localhost
+    default_source = default_server.getSource("H_sapiens");  // use if default server is NetAffx
+    //    default_source = default_server.getSource("Human");  // use if default server is localhost
 
     System.out.println("default_source: " + default_source);
     default_version = default_source.getVersion("H_sapiens_Mar_2006");

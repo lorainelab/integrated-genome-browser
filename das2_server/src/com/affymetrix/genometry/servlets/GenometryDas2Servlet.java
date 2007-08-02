@@ -1163,28 +1163,19 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	     // do replacement of last "*" with ".*" ?
 	     name_regex = name_regex.substring(0, name_regex.length()-1) + ".*";
 	   }
-	   System.out.println("!!!! name arg: " + name);
-	   System.out.println("!!!! regex to use for pattern-matching: " + name_regex);
+	   System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
 	   name_pattern = Pattern.compile(name_regex);
 	   result = genome.findSyms(name_pattern);
+	   //	   Collections.sort(result, new SeqSymIdComparator());
+	   System.out.println("!!!! regex matches: " + result.size());
 	 }
 	 else {  // ABC -- field exactly matches "ABC"
 	   result = genome.findSyms(name);
 	 }
       }
-
-
       // handling one type, one segment, one overlaps, optionally one inside
-      /*
-      else if (types.size() == 1 &&      // one and only one type
-	       segments.size() == 1 &&   // one and only one segment
-	       overlaps.size() <= 1 &&   // one and only one overlaps
-	       insides.size() <= 1 &&    // zere or one inside
-	       excludes.size() == 0 &&   // zero excludes
-	       names.size() == 0) {
-      */
       else if (types.size() >= 1 &&      // one and only one type
-	       // need to support 0, 1, or multiple segments   segments.size() >= 1 &&   // one and only one segment
+	       segments.size() == 1 &&   // one and only one segment
 	       overlaps.size() <= 1 &&   // one and only one overlaps
 	       insides.size() <= 1 &&    // zere or one inside
 	       excludes.size() == 0 &&   // zero excludes

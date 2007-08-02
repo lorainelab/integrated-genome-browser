@@ -300,7 +300,7 @@ public class AnnotatedSeqGroup {
 	}
       }
     }
-    System.out.println("!!!! AnnotatedSeqGroup.findSyms(Pattern) called, syms found: " + symset.size());
+    //    System.out.println("!!!! AnnotatedSeqGroup.findSyms(Pattern) called, syms found: " + symset.size());
     return new ArrayList(symset);
   }
 

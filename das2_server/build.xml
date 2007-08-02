@@ -1,13 +1,15 @@
 <!-- ===========================================================================
 
 To build the source, you will need to build a copy of genometry.jar,
-genoviz.jar, and igb.jar and place it in the expected location.
+genometryImpl.jar, genoviz.jar, and igb.jar and place it in the expected location.
 If this build.xml file is in 
   /<directory>/das2_server/build.xml
 Then the GenoViz jar should be at
   /<directory>/genoviz/genoviz.jar
 and the Genometry jar should be at
-  /<directory>/genometry/genoviz.jar
+  /<directory>/genometry/genometry.jar
+and the GenometryImpl jar should be at
+  /<directory>/genometryImpl/genometryImpl.jar
 and the IGB jar should be at
   /<directory>/igb.jar
 
@@ -66,6 +68,7 @@ in this directory, execute:
 
     <property name="genoviz.jar" value="../genoviz_sdk/genoviz.jar"/>
     <property name="genometry.jar" value="../genometry/genometry.jar"/>
+    <property name="genometryImpl.jar" value="../genometryImpl/genometryImpl.jar"/>
     <property name="igb.jar" value="../igb.jar"/>
 
   </target>
@@ -107,15 +110,16 @@ in this directory, execute:
        <available file="${lib.dir}/xml-apis.jar"/>
        <available file="${genoviz.jar}"/>
        <available file="${genometry.jar}"/>
+       <available file="${genometryImpl.jar}"/>
        <available file="${igb.jar}"/>
       </and>
     </condition>
     <fail unless="all.jars.present" message="*** Cannot find one or more needed jars"/>
 
-
   <path id="project.class.path">
     <pathelement location="${genoviz.jar}"/>
     <pathelement location="${genometry.jar}"/>
+    <pathelement location="${genometryImpl.jar}"/>
     <pathelement location="${igb.jar}" />
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>

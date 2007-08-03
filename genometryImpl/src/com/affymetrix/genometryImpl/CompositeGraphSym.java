@@ -26,7 +26,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
   }
 
   /**
-   *  Overriding addChild() to only accept GraphSym children,
+   *  Overriding addChild() to only accept GraphSymFloat children,
    *     integrates x and y coord arrays of child into composite's coord arrays
    *     (and nulls old ones out for gc)
    *  Assumes that slices can abut but do _not_ overlap
@@ -35,8 +35,8 @@ public class CompositeGraphSym extends GraphSymFloat  {
    *
    */
   public void addChild(SeqSymmetry sym)  {
-    if (sym instanceof GraphSym) {
-      GraphSym slice = (GraphSym)sym;
+    if (sym instanceof GraphSymFloat) {
+      GraphSymFloat slice = (GraphSymFloat) sym;
       int[] slice_xcoords = slice.getGraphXCoords();
       float[] slice_ycoords;
       if (sym instanceof GraphSymFloat) {
@@ -45,11 +45,11 @@ public class CompositeGraphSym extends GraphSymFloat  {
         slice_ycoords = slice.copyGraphYCoords();
       }
 
-      if (xcoords == null && ycoords == null) { // first GraphSym child, so just set xcoords and ycoords
+      if (xcoords == null && float_y == null) { // first GraphSym child, so just set xcoords and ycoords
 	xcoords = slice_xcoords;
-	ycoords = slice_ycoords;
+	ycoords = float_y = slice_ycoords;
 	slice.xcoords = null;
-	slice.ycoords = null;
+	slice.ycoords = slice.float_y = null;
       }
       else {
 
@@ -92,7 +92,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
 	  new_index = 0;
 	  //    old ycoord array entries up to "A-1"
 	  if (slice_index > 0)  {
-	    System.arraycopy(ycoords, 0, new_ycoords, new_index, slice_index);
+	    System.arraycopy(float_y, 0, new_ycoords, new_index, slice_index);
 	    new_index += slice_index;
 	  }
 	  //    all of slice_ycoords entries
@@ -103,9 +103,9 @@ public class CompositeGraphSym extends GraphSymFloat  {
 	    System.arraycopy(slice_ycoords, slice_index, new_ycoords, new_index, getPointCount() - slice_index);
 	  }
 
-	  ycoords = new_ycoords;
+	  ycoords = float_y = new_ycoords;
 	  slice_ycoords = null;
-	  slice.ycoords = null;
+	  slice.ycoords = float_y = null;
 	  // trying to encourage garbage collection of old coord arrays
 	  //	System.gc();
 	}
@@ -210,5 +210,8 @@ public class CompositeGraphSym extends GraphSymFloat  {
   }
   */
 
+  public float getGraphYCoord(int i) {
+    return float_y[i];
+  }
 
 }

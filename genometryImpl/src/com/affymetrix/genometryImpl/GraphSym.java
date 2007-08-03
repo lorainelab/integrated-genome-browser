@@ -102,6 +102,10 @@ public abstract class GraphSym extends SimpleSymWithProps {
     return xcoords;
   }
   
+  public void setGraphYCoords(Object object) {
+    this.ycoords = object;
+  }
+
   public abstract float getGraphYCoord(int i);
 
   public abstract String getGraphYCoordString(int i);

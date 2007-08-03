@@ -24,9 +24,20 @@ public class GraphSymFloat extends GraphSym {
   
   public GraphSymFloat(int[] x, float[] y, String id, BioSeq seq) {
     super(x, y, id, seq);
-    this.float_y = y;
+    setGraphYCoords(y);
   }
 
+  public void setGraphYCoords(Object y) {
+    this.setGraphYCoords((float[]) y);
+  }
+  
+  public void setGraphYCoords(float[] y) {
+    // for speed, this class and the superclass use different names 
+    // to refer to the same object.
+    super.setGraphYCoords((Object) y);
+    this.float_y = y;
+  }
+  
   public float getGraphYCoord(int i) {
     return float_y[i];
   }
@@ -36,12 +47,12 @@ public class GraphSymFloat extends GraphSym {
   }
   
   public float[] getGraphYCoords() {
-    return (float[]) this.ycoords;
+    return float_y;
   }
 
   public float[] copyGraphYCoords() {
     float[] dest = new float[float_y.length];
-    System.arraycopy(ycoords, 0, dest, 0, float_y.length);
+    System.arraycopy(float_y, 0, dest, 0, float_y.length);
     return dest;
   }
 }

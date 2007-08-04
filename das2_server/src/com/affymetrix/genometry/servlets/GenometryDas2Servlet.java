@@ -222,8 +222,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
   SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd");
   long date_initialized = 0;
   String date_init_string = null;
-  Map graph_name2file = new LinkedHashMap();  // mapping to graph files when there is one file for all seqs
-  Map graph_name2dir = new LinkedHashMap();   // mapping to graph directories when multiple files under dir, one for each seq
+  Map genome2graphfiles = new LinkedHashMap();
+  Map genome2graphdirs = new LinkedHashMap();
+  //  Map graph_name2file = new LinkedHashMap();  // mapping to graph files when there is one file for all seqs
+  //  Map graph_name2dir = new LinkedHashMap();   // mapping to graph directories when multiple files under dir, one for each seq
   ArrayList graph_formats = new ArrayList();
   String xml_base = null;
   String xml_base_trimmed = null;
@@ -381,6 +383,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
     AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
+    genome2graphdirs.put(genome, new LinkedHashMap());
+    genome2graphfiles.put(genome, new LinkedHashMap());
     genome.setOrganism(organism);
     List versions = (List)organisms.get(organism);
     if (versions == null) {
@@ -506,18 +510,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
   }
 
 
-  public void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup seq_group) {
+  public void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
     try {
       URL annot_url = new URL(url);
       InputStream istr = new BufferedInputStream(annot_url.openStream());
       // may need to trim down url_name here, but how much?
-      loadAnnotsFromStream(istr, annot_name, seq_group);
+      loadAnnotsFromStream(istr, annot_name, genome);
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }
 
-  public void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) {
-    ParserController.parse(istr, stream_name, gmodel, seq_group);
+  public void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
+    ParserController.parse(istr, stream_name, gmodel, genome);
   }
 
   String graph_dir_suffix = ".graphs.seqs";
@@ -528,7 +532,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
    *   if not directory, see if can parse as annotation file.
    *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
    */
-  public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup seq_group, String type_prefix) {
+  public void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix) {
     String file_name = current_file.getName();
     String file_path = current_file.getPath();
     String type_name;
@@ -554,13 +558,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 	String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 	System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
+	Map graph_name2dir = (Map)genome2graphdirs.get(genome);
 	graph_name2dir.put(graph_name, file_path);
       }
       else {
 	System.out.println("checking for annotations in directory: " + current_file);
 	File[] child_files = current_file.listFiles();
 	for (int i=0; i<child_files.length; i++) {
-	  loadAnnotsFromFile(child_files[i], seq_group, new_type_prefix);
+	  loadAnnotsFromFile(child_files[i], genome, new_type_prefix);
 	}
       }
     }
@@ -569,6 +574,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       // special casing so bar files are seen in types request, but not parsed in on startup
       //    (because using graph slicing so don't have to pull all bar file graphs into memory)
       System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
+      Map graph_name2file = (Map)genome2graphfiles.get(genome);
       graph_name2file.put(type_name, file_path);
     }
     else {  // current file is not a directory, so try and recognize as annotation file
@@ -576,7 +582,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       try {
 	istr = new BufferedInputStream(new FileInputStream(current_file));
 	System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_name);
-	loadAnnotsFromStream(istr, type_name, seq_group);
+	loadAnnotsFromStream(istr, type_name, genome);
       }
       catch (Exception ex)  {
 	ex.printStackTrace();
@@ -964,12 +970,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
     // adding in any graph files as additional types (with type id = file name)
     // this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
     //    show up in seq.getTypes(), but without actually being loaded??
+    Map graph_name2file = (Map)genome2graphfiles.get(genome);
     Iterator giter = graph_name2file.keySet().iterator();
     while (giter.hasNext()) {
       String gname = (String)giter.next();
       genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
     }
 
+    Map graph_name2dir = (Map)genome2graphdirs.get(genome);
     giter = graph_name2dir.keySet().iterator();
     while (giter.hasNext()) {
       String gname = (String)giter.next();
@@ -1221,6 +1229,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
 	if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
 	//	if (query_type.endsWith(".bar")) {
+	Map graph_name2dir = (Map)genome2graphdirs.get(genome);
+	Map graph_name2file = (Map)genome2graphfiles.get(genome);
 	if ((graph_name2dir.get(query_type) != null) ||
 	    (graph_name2file.get(query_type) != null)  ||
 	    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
@@ -1375,6 +1385,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
     String graph_name = type;   // for now using graph_name as graph type
 
     boolean use_graph_dir = false;
+    Map graph_name2dir = (Map)genome2graphdirs.get(genome);
+    Map graph_name2file = (Map)genome2graphfiles.get(genome);
     String file_path = (String)graph_name2dir.get(graph_name);
     if (file_path != null) { use_graph_dir = true; }
     if (file_path == null) { file_path = (String)graph_name2file.get(graph_name); }

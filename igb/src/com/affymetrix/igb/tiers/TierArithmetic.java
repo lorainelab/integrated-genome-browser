@@ -32,14 +32,14 @@ import com.affymetrix.igb.view.AnnotatedSeqViewer;
  *  tiers based on selected annotation tiers.  Is not used on graph tiers.
  */
 public class TierArithmetic implements TierLabelManager.PopupListener {
-  
+
   static final boolean DEBUG = false;
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;
-  
+
   JMenu combineMenu = new JMenu("Combine Selected Tiers");
   JMenuItem intersectMI = new JMenuItem("Intersect");
   JMenuItem unionMI = new JMenuItem("Union");
@@ -129,10 +129,8 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
 
 
   public void addNotTier(TierGlyph tierA) {
-    int index = handler.getTierIndex(tierA);
-    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    //    int index = handler.getTierIndex(tierA);
     String method = "not: " + tierA.getLabel();
-    //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     java.util.List listA = new ArrayList();
@@ -140,33 +138,26 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
-	//	symA.addChild(csym);
 	listA.add(csym);
       }
     }
-    if (DEBUG) {
-      System.out.println("listA children: " + listA.size());
-    }
     if (listA.isEmpty()) {
-      ErrorHandler.errorPanel("Illegal Operation", 
+      ErrorHandler.errorPanel("Illegal Operation",
           "Cannot perform this operation on this tier.");
       return;
     }
-    //    listA.add(symA);
-    //    SeqSymmetry inverse_sym = SeqUtils.inverse(symA, aseq);
     SeqSymmetry inverse_sym = SeqSymSummarizer.getNot(listA, aseq);
-    if (DEBUG) {System.out.println("inverseSym children: " + inverse_sym.getChildCount());}
-
-    makeNonPersistentStyle(wrapperSym, method);
-    wrapperSym.addChild(inverse_sym);
-    aseq.addAnnotation(wrapperSym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
+    if (inverse_sym != null) {
+      System.out.println("not result count: " + inverse_sym.getChildCount());
+      makeNonPersistentStyle((SymWithProps)inverse_sym, method);
+      aseq.addAnnotation(inverse_sym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
+    }
   }
 
 
   public void addExclusiveTier(TierGlyph tierA, TierGlyph tierB, boolean exclusiveA) {
-    int index = handler.getTierIndex(tierB);
-    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    //    int index = handler.getTierIndex(tierB);
     String method;
     if (exclusiveA) {
       method = "A not B:" + tierA.getLabel() + ", " + tierB.getLabel();
@@ -174,22 +165,16 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     else {
       method = "B not A:" + tierB.getLabel() + ", " + tierA.getLabel();
     }
-
-    //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
-    //    MutableSeqSymmetry symB = new SimpleMutableSeqSymmetry();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     java.util.List listA = new ArrayList();
     java.util.List listB = new ArrayList();
 
-    //    BioSeq iseq = tempsym.getSpan(0).getBioSeq();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listA.add(csym);
-	//	symA.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
     for (int i=0; i<tierB.getChildCount(); i++) {
@@ -197,58 +182,37 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listB.add(csym);
-	//	symB.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
-    if (DEBUG) {
-    System.out.println("listA children: " + listA.size());
-    System.out.println("listB children: " + listB.size());
-    }
     SeqSymmetry exclusive_sym;
-    //    listA.add(symA);
-    //    listB.add(symB);
     if (exclusiveA) {
-      //      exclusive_sym = SeqUtils.exclusive(symA, symB, aseq);
       exclusive_sym = SeqSymSummarizer.getExclusive(listA, listB, aseq);
     }
     else {
-      //      exclusive_sym = SeqUtils.exclusive(symB, symA, aseq);
       exclusive_sym = SeqSymSummarizer.getExclusive(listB, listA, aseq);
     }
-    if (DEBUG) {
-    System.out.println("exclusive_sym children: " + exclusive_sym.getChildCount());
+    if (exclusive_sym != null) {
+      System.out.println("exclusive result children: " + exclusive_sym.getChildCount());
+      makeNonPersistentStyle((SymWithProps)exclusive_sym, method);
+      aseq.addAnnotation(exclusive_sym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
     }
-
-    makeNonPersistentStyle(wrapperSym, method);
-    wrapperSym.addChild(exclusive_sym);
-    aseq.addAnnotation(wrapperSym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
 
-
-
-
   public void addXorTier(TierGlyph tierA, TierGlyph tierB) {
-    int index = handler.getTierIndex(tierB);
-    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    //    int index = handler.getTierIndex(tierB);
     String method = "xor: " + tierA.getLabel() + ", " + tierB.getLabel();
-    //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
-    //    MutableSeqSymmetry symB = new SimpleMutableSeqSymmetry();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     java.util.List listA = new ArrayList();
     java.util.List listB = new ArrayList();
 
-    //    BioSeq iseq = tempsym.getSpan(0).getBioSeq();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listA.add(csym);
-	//	symA.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
     for (int i=0; i<tierB.getChildCount(); i++) {
@@ -256,37 +220,26 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listB.add(csym);
-	//	symB.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
-    if (DEBUG) {
-    System.out.println("listA children: " + listA.size());
-    System.out.println("listB children: " + listB.size());
-    }
-    //    listA.add(symA);
-    //    listB.add(symB);
     SeqSymmetry xor_sym = SeqSymSummarizer.getXor(listA, listB, aseq);
-    //    SeqSymmetry xor_sym = SeqUtils.xor(symA, symB, aseq);
-    if (DEBUG) {
-    System.out.println("xorSym children: " + xor_sym.getChildCount());
+    if (xor_sym != null) {
+      System.out.println("xor result count: " + xor_sym.getChildCount()); 
+      makeNonPersistentStyle((SymWithProps)xor_sym, method);
+      aseq.addAnnotation(xor_sym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
     }
-    
-    makeNonPersistentStyle(wrapperSym, method);
-    wrapperSym.addChild(xor_sym);
-    aseq.addAnnotation(wrapperSym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
   }
 
 
   public void addUnionTier(java.util.List tiers) {
-    if (DEBUG) {System.out.println("making new union tier");}
-    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
-
+    StringBuffer meth = new StringBuffer();
+    meth.append("union: ");
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     java.util.List syms = new ArrayList();
     for (int t=0; t<tiers.size(); t++) {
       TierGlyph tier = (TierGlyph) tiers.get(t);
+      meth.append(tier.getLabel() + ", ");
       for (int i=0; i<tier.getChildCount(); i++) {
         GlyphI child = tier.getChild(i);
         SeqSymmetry csym = (SeqSymmetry)child.getInfo();
@@ -294,35 +247,20 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       }
     }
     SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
-
     if (union_sym != null) {
-      makeNonPersistentStyle(wrapperSym, "union");
-      wrapperSym.addChild(union_sym);
-      aseq.addAnnotation(wrapperSym);
+      System.out.println("union result count: " + union_sym.getChildCount());
+      makeNonPersistentStyle((SymWithProps)union_sym, meth.toString());
+      aseq.addAnnotation(union_sym);
       gviewer.setAnnotatedSeq(aseq, true, true);
     }
   }
 
 
-
-  /**
-   *  Warning: Currently very dangerous.
-   *  may muck with parent child relationships in SeqSymmetries, and not restore them!!
-   */
   public void addIntersectTier(TierGlyph tierA, TierGlyph tierB) {
-    int index = handler.getTierIndex(tierB);
-    SimpleSymWithProps wrapperSym = new SimpleSymWithProps();
+    //    int index = handler.getTierIndex(tierB);
     String method = "intersect: " + tierA.getLabel() + ", " + tierB.getLabel();
 
-    // this is how it should work, but right now tier info isn't set correctly
-    //    SeqSymmetry symA = (SeqSymmetry)tierA.getInfo();
-    //    SeqSymmetry symB = (SeqSymmetry)tierB.getInfo();
-
-    //    MutableSeqSymmetry symA = new SimpleMutableSeqSymmetry();
-    //    MutableSeqSymmetry symB = new SimpleMutableSeqSymmetry();
-    SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    //    BioSeq iseq = tempsym.getSpan(0).getBioSeq();
     java.util.List listA = new ArrayList();
     java.util.List listB = new ArrayList();
     for (int i=0; i<tierA.getChildCount(); i++) {
@@ -330,8 +268,6 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listA.add(csym);
-	//	symA.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
     for (int i=0; i<tierB.getChildCount(); i++) {
@@ -339,24 +275,15 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
       if (csym != null) {
 	listB.add(csym);
-	//	symB.addChild(csym);
-	//	SeqUtils.printSymmetry(csym);
       }
     }
-    if (DEBUG) {
-    System.out.println("listA children: " + listA.size());
-    System.out.println("listB children: " + listB.size());
-    }
-    //    SeqSymmetry intersect_sym = SeqUtils.intersection(symA, symB, aseq);
-    //    SeqUtils.printSymmetry(intersect_sym);
     SeqSymmetry intersect_sym = SeqSymSummarizer.getIntersection(listA, listB, aseq);
-
-    makeNonPersistentStyle(wrapperSym, method);
-    wrapperSym.addChild(intersect_sym);
-    aseq.addAnnotation(wrapperSym);
-    gviewer.setAnnotatedSeq(aseq, true, true);
-
-    // place right below tierB
+    if (intersect_sym != null) {
+      System.out.println("intersect result count: " + intersect_sym.getChildCount());
+      makeNonPersistentStyle((SymWithProps)intersect_sym, method);
+      aseq.addAnnotation(intersect_sym);
+      gviewer.setAnnotatedSeq(aseq, true, true);
+    }
 
   }
 
@@ -366,7 +293,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     }
     java.util.List labels = handler.getSelectedTierLabels();
     int num_selected = labels.size();
-    
+
     boolean all_are_annotations = true;
     for (int i=0; i<num_selected; i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) labels.get(i);
@@ -375,7 +302,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
         break;
       }
     }
-    
+
     intersectMI.setEnabled(all_are_annotations && num_selected==2);
     unionMI.setEnabled(all_are_annotations && num_selected > 0);
     a_not_b_MI.setEnabled(all_are_annotations && num_selected==2);
@@ -383,10 +310,10 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     notMI.setEnabled(all_are_annotations && num_selected==1);
     xorMI.setEnabled(all_are_annotations && num_selected==2);
     combineMenu.setEnabled(all_are_annotations && num_selected > 0);
-    
-    popup.add(combineMenu);    
-  }  
-  
+
+    popup.add(combineMenu);
+  }
+
   public static AnnotStyle makeNonPersistentStyle(SymWithProps sym, String human_name) {
     // Needs a unique name so that if any later tier is produced with the same
     // human name, it will not automatically get the same color, etc.
@@ -397,10 +324,11 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     style.setGlyphDepth(1);
     style.setSeparate(false); // there are not separate (+) and (-) strands
     style.setCustomizable(false); // the user can change the color, but not much else is meaningful
+    System.out.println("making non-persistent style, id = " + unique_name + ", name = " + human_name);
     return style;
   }
 
-  ActionListener action_listener = new ActionListener() {  
+  ActionListener action_listener = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
 
@@ -424,5 +352,5 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       }
     }
   };
-  
+
 }

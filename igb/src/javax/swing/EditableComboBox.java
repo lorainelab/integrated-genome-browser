@@ -18,6 +18,10 @@ import javax.swing.event.DocumentListener;
 public class EditableComboBox extends JComboBox {
 
   public EditableComboBox() {
+    reset();
+  }
+
+  public void reset() {
     setModel(new FilterableComboBoxModel(new ArrayList()));
     setEditor(new MyEditor());
     setEditable(true);

@@ -47,7 +47,7 @@ public class GraphSymFloat extends GraphSym {
   }
   
   public float[] getGraphYCoords() {
-    return float_y;
+    return float_y; 
   }
 
   public float[] copyGraphYCoords() {

@@ -40,7 +40,11 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
   Map search_results_history = new LinkedHashMap();  // keeping history of search results 
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
+    System.out.println("Das2SearchView.groupSelectionChanged() called");
     // need to clear table, search history, combo box
+    search_results_history = new LinkedHashMap();
+    searchCB.reset();
+    results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList())); 
   }
 
   public Das2SearchView(Das2LoadView3 view) {

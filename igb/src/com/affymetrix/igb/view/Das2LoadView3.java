@@ -877,17 +877,22 @@ class Das2TypeState {
       String load_hint_str = (String)type.getProperty("load_hint");
       if (load_hint_str != null) { System.out.println("%%%% creating Das2Type: " + type.getName() + ", load_hint: " + load_hint_str); }
       int load_hint = getLoadStrategy(load_hint_str);
+      String typeid = dtype.getID();
       if (types_node.nodeExists(type_node_name)) {
 	type_node = UnibrowPrefsUtil.getSubnode(types_node, type_node_name);
 	load = type_node.getBoolean(LOADKEY, DEFAULT_LOAD);
 	if (load_hint > -1) { load_strategy = type_node.getInt(STRATEGYKEY, load_hint); }
 	else { load_strategy = type_node.getInt(STRATEGYKEY, DEFAULT_LOAD_STRATEGY); }
-	String id = type_node.get("id", null);
+	String type_node_id = type_node.get("id", null);
 	// backfilling for prefs created before "id" key was added
-	if (id == null) { type_node.put("id", type.getID()); }
+	if (type_node_id == null) { type_node.put("id", typeid); }
       }
       else {  // if no pre-existing node for type, still set load strategy if Das2Type has "load_hint" property
 	if (load_hint > -1) { setLoadStrategy(load_hint); }
+	// temporary solution for making sure refseq and cytobands are loaded by default (unless user unselects them)
+	if (typeid.endsWith("refseq") || typeid.endsWith("cytobands")) { 
+	  setLoad(true);
+	}
       }
     }
     catch (Exception ex) { ex.printStackTrace(); }

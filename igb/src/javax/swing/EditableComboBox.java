@@ -25,6 +25,7 @@ public class EditableComboBox extends JComboBox {
     setModel(new FilterableComboBoxModel(new ArrayList()));
     setEditor(new MyEditor());
     setEditable(true);
+    removeAllItems();
   }
 
   public class FilterableComboBoxModel extends AbstractListModel

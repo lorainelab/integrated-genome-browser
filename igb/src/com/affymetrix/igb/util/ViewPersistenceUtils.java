@@ -14,7 +14,6 @@ import com.affymetrix.igb.view.SeqMapView;
 
 
 public class ViewPersistenceUtils  {
-
   // For now need to use full URIs for DAS2 genome autoload defaults
   public static String DEFAULT_DAS2_SERVER_URL = "http://netaffxdas.affymetrix.com/das2/sources";
   public static String DEFAULT_DAS2_SOURCE_URI = "http://netaffxdas.affymetrix.com/das2/H_sapiens";

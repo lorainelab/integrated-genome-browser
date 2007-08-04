@@ -943,13 +943,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
             java.util.List flist = Collections.EMPTY_LIST;
             if (genome_types.get(type) == null) {
               SymWithProps tannot = aseq.getAnnotation(type);
-              //	    System.out.println("type: " + type + ", format info: " +
-              //			       tannot.getProperty("preferred_formats"));
+	      //	      System.out.println("type: " + type + ", format info: " +
+	      //				 tannot.getProperty("preferred_formats"));
               SymWithProps first_child = (SymWithProps)tannot.getChild(0);
               if (first_child != null) {
                 java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
-		System.out.println("   child count: " + tannot.getChildCount() +
-				   ", format info: " + formats);
+		// System.out.println("   child count: " + tannot.getChildCount() +
+		//				   ", format info: " + formats);
                 if (formats != null) { flist = formats; }
               }
               genome_types.put(type, flist);

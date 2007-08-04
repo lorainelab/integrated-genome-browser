@@ -35,6 +35,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
    *
    */
   public void addChild(SeqSymmetry sym)  {
+    // System.out.println("called CompositeGraphSym.addChild(): " + sym);
     if (sym instanceof GraphSymFloat) {
       GraphSymFloat slice = (GraphSymFloat) sym;
       int[] slice_xcoords = slice.getGraphXCoords();
@@ -47,15 +48,15 @@ public class CompositeGraphSym extends GraphSymFloat  {
 
       if (xcoords == null && float_y == null) { // first GraphSym child, so just set xcoords and ycoords
 	xcoords = slice_xcoords;
-	ycoords = float_y = slice_ycoords;
+	ycoords = slice_ycoords;
+	float_y = (float[])ycoords;
 	slice.xcoords = null;
-	slice.ycoords = slice.float_y = null;
+	slice.ycoords = null;
+	slice.float_y = null;
       }
       else {
-
         // if no data points in slice, then just keep old coords
         if ((slice_xcoords != null) && (slice_xcoords.length > 0))  {
-
 	  // use binary search to figure out what index "A" that slice_xcoords array should insert
 	  //    into existing xcoord array
 	  int slice_min = slice_xcoords[0];
@@ -87,9 +88,9 @@ public class CompositeGraphSym extends GraphSymFloat  {
 	  xcoords = new_xcoords;
 	  slice_xcoords = null;
 	  slice.xcoords = null;
-
-	  float[] new_ycoords = new float[getPointCount() + slice_ycoords.length];
+	  float[] new_ycoords = new float[float_y.length + slice_ycoords.length];
 	  new_index = 0;
+
 	  //    old ycoord array entries up to "A-1"
 	  if (slice_index > 0)  {
 	    System.arraycopy(float_y, 0, new_ycoords, new_index, slice_index);
@@ -99,13 +100,15 @@ public class CompositeGraphSym extends GraphSymFloat  {
 	  System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
 	  new_index += slice_ycoords.length;
 	  //    old ycoord array entries from "A" to end of old ycoord array
-	  if (slice_index < getPointCount()) {
-	    System.arraycopy(slice_ycoords, slice_index, new_ycoords, new_index, getPointCount() - slice_index);
+	  if (slice_index < float_y.length) {
+	    System.arraycopy(float_y, slice_index, new_ycoords, new_index, float_y.length - slice_index);
 	  }
-
-	  ycoords = float_y = new_ycoords;
+	  ycoords = new_ycoords;
+	  float_y = (float[])ycoords;
+	  slice.ycoords = null;
 	  slice_ycoords = null;
-	  slice.ycoords = float_y = null;
+	  slice.float_y = null;
+	  System.out.println("composite graph points: " + float_y.length);
 	  // trying to encourage garbage collection of old coord arrays
 	  //	System.gc();
 	}
@@ -210,8 +213,10 @@ public class CompositeGraphSym extends GraphSymFloat  {
   }
   */
 
+  /*
   public float getGraphYCoord(int i) {
     return float_y[i];
   }
+  */
 
 }

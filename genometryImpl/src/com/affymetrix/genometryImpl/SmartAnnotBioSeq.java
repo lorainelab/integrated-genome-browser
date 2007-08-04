@@ -191,7 +191,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized MutableSeqSymmetry addAnnotation(String type) {
     type = type.toLowerCase();
-    if (type_id2sym == null) { type_id2sym = new HashMap(); }
+    if (type_id2sym == null) { type_id2sym = new LinkedHashMap(); }
     MutableSeqSymmetry container = new TypeContainerAnnot(type);
     ((SymWithProps)container).setProperty("method", type);
     SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
@@ -209,7 +209,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized void addAnnotation(SeqSymmetry sym, String type) {
     type = type.toLowerCase();
-    if (type_id2sym == null) { type_id2sym = new HashMap(); }
+    if (type_id2sym == null) { type_id2sym = new LinkedHashMap(); }
     MutableSeqSymmetry container = (MutableSeqSymmetry)type_id2sym.get(type);
     if (container == null) {
       container = addAnnotation(type);
@@ -239,7 +239,7 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
    */
   public synchronized void addAnnotation(SeqSymmetry sym) {
     if (! needsContainer(sym)) {
-      if (type_id2sym == null) { type_id2sym = new HashMap(); }
+      if (type_id2sym == null) { type_id2sym = new LinkedHashMap(); }
       String id = sym.getID();
       if (id == null) {
 	System.out.println("WARNING: ID is null!!!  sym: " + sym);

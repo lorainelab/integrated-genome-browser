@@ -1147,11 +1147,11 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 // GAH 11-2006
 	 //   need to enhance this to support multiple name parameters OR'd together
 	 //   need to enhance this to support "*" wild-card search as defined in spec
-	 
+
 	 //   DAS/2 specification defines glob-style searches:
-	 //   The string searches may be exact matches, substring, prefix or suffix searches. 
+	 //   The string searches may be exact matches, substring, prefix or suffix searches.
 	 //   The query type depends on if the search value starts and/or ends with a '*'.
-	 //   
+	 //
 	 //    ABC -- field exactly matches "ABC"
 	 //    *ABC -- field ends with "ABC"
 	 //    ABC* -- field starts with "ABC"
@@ -1160,12 +1160,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 boolean glob_end = name.endsWith("*");
 
 
-	 Pattern name_pattern = null; 
+	 Pattern name_pattern = null;
 	 if (glob_start || glob_end)  {
 	   String name_regex = name.toLowerCase();
 	   if (glob_start)  {
 	     // do replacement of first "*" with ".*" ?
-	     name_regex = ".*" + name_regex.substring(1); 
+	     name_regex = ".*" + name_regex.substring(1);
 	   }
 	   if (glob_end) {
 	     // do replacement of last "*" with ".*" ?

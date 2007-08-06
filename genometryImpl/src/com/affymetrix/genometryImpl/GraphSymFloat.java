@@ -20,21 +20,21 @@ import com.affymetrix.genometry.BioSeq;
  */
 public class GraphSymFloat extends GraphSym {
   
-  float[] float_y;
+  private float[] float_y;
   
   public GraphSymFloat(int[] x, float[] y, String id, BioSeq seq) {
-    super(x, y, id, seq);
-    setGraphYCoords(y);
-  }
-
-  public void setGraphYCoords(Object y) {
-    this.setGraphYCoords((float[]) y);
+    super(x, id, seq);
+    setCoords(x, y);
   }
   
-  public void setGraphYCoords(float[] y) {
-    // for speed, this class and the superclass use different names 
-    // to refer to the same object.
-    super.setGraphYCoords((Object) y);
+  public void setCoords(int[] x, float[] y) {
+    if (y == null && xcoords != null) {
+      throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
+    }
+    if (y.length  != xcoords.length) {
+      throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
+    }
+    this.xcoords = x;
     this.float_y = y;
   }
   

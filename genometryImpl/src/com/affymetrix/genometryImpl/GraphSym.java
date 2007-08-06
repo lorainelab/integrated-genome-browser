@@ -32,7 +32,6 @@ public abstract class GraphSym extends SimpleSymWithProps {
   public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
   
   int xcoords[];
-  Object ycoords; // should be an array of float or int, etc.
   BioSeq graph_original_seq;
   String gid;
 
@@ -44,17 +43,19 @@ public abstract class GraphSym extends SimpleSymWithProps {
    */
   boolean id_locked = false;
 
-  protected GraphSym(int[] x, Object y, String id, BioSeq seq) {
+  /** Constructor.  Subclasses should provide a constructor that specifies the
+   *  y-coordinate array.
+   */
+  protected GraphSym(int[] x, String id, BioSeq seq) {
     super();
     this.graph_original_seq = seq;
 
     SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
     this.addSpan(span);
     this.xcoords = x;
-    this.ycoords = y;
     this.gid = id;
   }
-
+  
   public void lockID() {
     id_locked = true;
   }
@@ -101,13 +102,16 @@ public abstract class GraphSym extends SimpleSymWithProps {
   public int[] getGraphXCoords() {
     return xcoords;
   }
-  
-  public void setGraphYCoords(Object object) {
-    this.ycoords = object;
-  }
 
+  /**
+   *  Returns the y coordinate as a float, even if it is internally stored
+   *  as an integer or in some other form.
+   */
   public abstract float getGraphYCoord(int i);
 
+  /**
+   *  Returns the y coordinate as a String.
+   */
   public abstract String getGraphYCoordString(int i);
 
   /** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates

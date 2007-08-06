@@ -20,14 +20,22 @@ import com.affymetrix.genometry.BioSeq;
  */
 public class GraphSymInt extends GraphSym {
   
-  int[] int_y;
+  private int[] int_y;
   
-  public GraphSymInt(int[] x, Object y, String id, BioSeq seq) {
-    super(x, y, id, seq);
-    if (! (y instanceof int[])) {
-      throw new IllegalArgumentException();
+  public GraphSymInt(int[] x, int[] y, String id, BioSeq seq) {
+    super(x, id, seq);
+    setCoords(x, y);
+  }
+
+  public void setCoords(int[] x, int[] y) {
+    if (y == null && xcoords != null) {
+      throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
     }
-    int_y = (int[]) y;
+    if (y.length  != xcoords.length) {
+      throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
+    }
+    this.xcoords = x;
+    this.int_y = y;
   }
 
   public float getGraphYCoord(int i) {

@@ -3,23 +3,19 @@ package com.affymetrix.genometryImpl;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.Timer;
 
 /**
  *   CompositeGraphSym.
- *   Was originally envisioning that a CompositeGraphSym would have a set of GraphSym children
+ *   Was originally envisioning that a CompositeGraphSym would have a set of GraphSym children.
  *   But, this causes lots of problems for calculations that need to cross transitions between children,
- *      for example percentile binning or dynamic thresholding
+ *      for example percentile binning or dynamic thresholding.
  *   So, new plan is to keep composite graph x and y coords each in single array, and every time
- *      more coords are added make new array and populate with old and new coords via System.arraycopy()
+ *      more coords are added make new array and populate with old and new coords via System.arraycopy().
  *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
- *      been populated from
+ *      been populated from.
  */
-public class CompositeGraphSym extends GraphSymFloat  {
-  // extends GraphSym  {
-  //  public Object clone()  // Does clone need to be reimplemented here?  Not sure yet...
+public class CompositeGraphSym extends GraphSymFloat {
 
   public CompositeGraphSym(String id, BioSeq seq) {
     super(null, null, id, seq);
@@ -28,8 +24,8 @@ public class CompositeGraphSym extends GraphSymFloat  {
   /**
    *  Overriding addChild() to only accept GraphSymFloat children,
    *     integrates x and y coord arrays of child into composite's coord arrays
-   *     (and nulls old ones out for gc)
-   *  Assumes that slices can abut but do _not_ overlap
+   *     (and nulls old ones out for gc).
+   *  Assumes that slices can abut but do _not_ overlap;
    *    "abut" in this case means that (sliceA.span.max == sliceB.span.min)
    *    since these are half-open half-closed intervals, this is not actually overlap but abutment...
    *
@@ -46,13 +42,9 @@ public class CompositeGraphSym extends GraphSymFloat  {
         slice_ycoords = slice.copyGraphYCoords();
       }
 
-      if (xcoords == null && float_y == null) { // first GraphSym child, so just set xcoords and ycoords
-	xcoords = slice_xcoords;
-	ycoords = slice_ycoords;
-	float_y = (float[])ycoords;
-	slice.xcoords = null;
-	slice.ycoords = null;
-	slice.float_y = null;
+      if (getGraphXCoords() == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
+        setCoords(null, null);
+        slice.setCoords(null, null);
       }
       else {
         // if no data points in slice, then just keep old coords
@@ -88,27 +80,24 @@ public class CompositeGraphSym extends GraphSymFloat  {
 	  xcoords = new_xcoords;
 	  slice_xcoords = null;
 	  slice.xcoords = null;
-	  float[] new_ycoords = new float[float_y.length + slice_ycoords.length];
+	  float[] new_ycoords = new float[getGraphYCoords().length + slice_ycoords.length];
 	  new_index = 0;
 
 	  //    old ycoord array entries up to "A-1"
 	  if (slice_index > 0)  {
-	    System.arraycopy(float_y, 0, new_ycoords, new_index, slice_index);
+	    System.arraycopy(getGraphYCoords(), 0, new_ycoords, new_index, slice_index);
 	    new_index += slice_index;
 	  }
 	  //    all of slice_ycoords entries
 	  System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
 	  new_index += slice_ycoords.length;
 	  //    old ycoord array entries from "A" to end of old ycoord array
-	  if (slice_index < float_y.length) {
-	    System.arraycopy(float_y, slice_index, new_ycoords, new_index, float_y.length - slice_index);
+	  if (slice_index < getGraphYCoords().length) {
+	    System.arraycopy(getGraphYCoords(), slice_index, new_ycoords, new_index, getGraphYCoords().length - slice_index);
 	  }
-	  ycoords = new_ycoords;
-	  float_y = (float[])ycoords;
-	  slice.ycoords = null;
-	  slice_ycoords = null;
-	  slice.float_y = null;
-	  System.out.println("composite graph points: " + float_y.length);
+          setCoords(xcoords, new_ycoords);
+          slice.setCoords(null, null);
+	  //System.out.println("composite graph points: " + float_y.length);
 	  // trying to encourage garbage collection of old coord arrays
 	  //	System.gc();
 	}

@@ -25,7 +25,7 @@ import java.util.Iterator;
 public class Das2RequestLog {
 
   boolean ECHO_LOG_TO_SYS_OUT = true;
-  java.util.List status_strings = new ArrayList();
+  private java.util.List status_strings = new ArrayList();
 
   boolean success = false;
   Exception exception = null;
@@ -42,6 +42,10 @@ public class Das2RequestLog {
 
   public void setException(Exception exception) {
     this.exception = exception;
+    addLogMessage("Exception occurred at this point: " + exception.toString());
+    if (ECHO_LOG_TO_SYS_OUT) {
+      exception.printStackTrace(System.out);
+    }
   }
 
   /** Returns the value that was stored by {@link #setSuccess()}. */
@@ -83,6 +87,10 @@ public class Das2RequestLog {
     while (iter.hasNext()) {
       String s = (String) iter.next();
       stream.println(s);
+    }
+    if (exception != null) {
+      System.out.println("And there was an exception!");
+      exception.printStackTrace(stream);
     }
   }
 }

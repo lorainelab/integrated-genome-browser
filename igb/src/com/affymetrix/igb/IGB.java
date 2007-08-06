@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.das.DasDiscovery;
+import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
@@ -249,6 +250,7 @@ public class IGB extends Application
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     processDasServersList(quick_load_url);
+    processDas2ServersList(quick_load_url);
 
     singleton_igb = new IGB();
     singleton_igb.init();
@@ -297,6 +299,17 @@ public class IGB extends Application
     try {
       System.out.println("Trying to load DAS Server list: " + server_loc_list);
       DasDiscovery.addServersFromTabFile(server_loc_list);
+    }
+    catch (Exception ex) {
+      System.out.println("WARNING: Failed to load DAS Server list: " + ex);
+    }
+  }
+
+  public static void processDas2ServersList(String ql_url) {
+    String server_loc_list = ql_url + "das2_servers.txt";
+    try {
+      System.out.println("Trying to load DAS Server list: " + server_loc_list);
+      Das2Discovery.addServersFromTabFile(server_loc_list);
     }
     catch (Exception ex) {
       System.out.println("WARNING: Failed to load DAS Server list: " + ex);

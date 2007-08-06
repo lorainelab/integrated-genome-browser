@@ -27,11 +27,25 @@ public class GraphSymInt extends GraphSym {
     setCoords(x, y);
   }
 
+  /**
+   *  Sets the x and y coordinates.
+   *  @param x an array of int, or null.
+   *  @param y must be an array of int of same length as x, or null if x is null.
+   */
+  public void setCoords(int[] x, Object y) {
+    setCoords(x, (int[]) y);
+  }
+  
+  /**
+   *  Sets the x and y coordinates.
+   *  @param x an array of int, or null.
+   *  @param y must be an array of int of same length as x, or null if x is null.
+   */
   public void setCoords(int[] x, int[] y) {
-    if (y == null && xcoords != null) {
+    if ((y == null && x != null) || (x == null && y != null)) {
       throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
     }
-    if (y.length  != xcoords.length) {
+    if (y != null && x != null && y.length  != x.length) {
       throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
     }
     this.xcoords = x;

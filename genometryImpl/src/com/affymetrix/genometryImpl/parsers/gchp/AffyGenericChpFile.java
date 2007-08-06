@@ -57,14 +57,13 @@ public class AffyGenericChpFile {
 
     AffyGenericChpFile chpFile = new AffyGenericChpFile();
     
-    BufferedInputStream bis = new BufferedInputStream(istr);
-    DataInputStream dis = new DataInputStream(bis);
+    DataInputStream dis = new DataInputStream(istr);
     
     chpFile.magic = dis.readUnsignedByte();
     chpFile.version = dis.readUnsignedByte();
     
     if (chpFile.magic != 59) {
-      throw new IOException("Error in file format: wrong magic number");
+      throw new IOException("Error in chp file format: wrong magic number: " + chpFile.magic);
     }
     
     chpFile.num_groups = dis.readInt();

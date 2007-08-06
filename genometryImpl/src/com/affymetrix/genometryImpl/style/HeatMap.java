@@ -70,6 +70,21 @@ public class HeatMap {
   public Color[] getColors() {
     return colors;
   }
+  
+  /** Gets the color at the given index value.
+   * @param heatmap_index an integer in the range 0 to 255.  If the specified
+   *  index is outside this range, the color corresponding to index 0 or 255
+   *  will be returned.
+   */
+  public Color getColor(int heatmap_index) {
+    if (heatmap_index < 0) { 
+      return colors[0];
+    } else if (heatmap_index > 255) { 
+      return colors[255];
+    } else {
+      return colors[heatmap_index];
+    }
+  }
 
   /**
    *  Returns one of the standard pre-defined heat maps using the names in

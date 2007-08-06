@@ -15,7 +15,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
  *      been populated from.
  */
-public class CompositeGraphSym extends GraphSymFloat {
+public class CompositeGraphSym extends GraphSymFloat  {
 
   public CompositeGraphSym(String id, BioSeq seq) {
     super(null, null, id, seq);
@@ -25,14 +25,14 @@ public class CompositeGraphSym extends GraphSymFloat {
    *  Overriding addChild() to only accept GraphSymFloat children,
    *     integrates x and y coord arrays of child into composite's coord arrays
    *     (and nulls old ones out for gc).
-   *  Assumes that slices can abut but do _not_ overlap;
+   *  Assumes that slices can abut but do _not_ overlap
    *    "abut" in this case means that (sliceA.span.max == sliceB.span.min)
    *    since these are half-open half-closed intervals, this is not actually overlap but abutment...
    *
    */
   public void addChild(SeqSymmetry sym)  {
     // System.out.println("called CompositeGraphSym.addChild(): " + sym);
-    if (sym instanceof GraphSymFloat) {
+    if (sym instanceof GraphSym) {
       GraphSymFloat slice = (GraphSymFloat) sym;
       int[] slice_xcoords = slice.getGraphXCoords();
       float[] slice_ycoords;
@@ -42,8 +42,8 @@ public class CompositeGraphSym extends GraphSymFloat {
         slice_ycoords = slice.copyGraphYCoords();
       }
 
-      if (getGraphXCoords() == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
-        setCoords(null, null);
+      if (xcoords == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
+        setCoords(slice_xcoords, slice_ycoords);
         slice.setCoords(null, null);
       }
       else {
@@ -97,7 +97,7 @@ public class CompositeGraphSym extends GraphSymFloat {
 	  }
           setCoords(xcoords, new_ycoords);
           slice.setCoords(null, null);
-	  //System.out.println("composite graph points: " + float_y.length);
+	  //System.out.println("composite graph points: " + getGraphYCoords().length);
 	  // trying to encourage garbage collection of old coord arrays
 	  //	System.gc();
 	}
@@ -108,6 +108,8 @@ public class CompositeGraphSym extends GraphSymFloat {
       }
       // assuming GraphSym seq span is bounds of graph slice, add GraphSym as child
       // but remember coords are nulled out!
+      // NOTE: the slice coordniates do not HAVE to be set to null, they could
+      // be set to some sub-array of the composite graph arrays backed by the same data.
       super.addChild(slice);
     }
 

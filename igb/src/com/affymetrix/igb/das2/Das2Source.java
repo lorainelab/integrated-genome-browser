@@ -45,6 +45,7 @@ public class Das2Source {
 
   public Das2Source(Das2ServerInfo source_server, URI src_uri, String source_name,
 		    String source_href, String source_taxid, String desc) {
+    //    System.out.println("source: name = " + source_name + ", uri = " + src_uri);
     source_uri = src_uri;
     server = source_server;
     name = source_name;

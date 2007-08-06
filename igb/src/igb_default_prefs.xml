@@ -10,6 +10,7 @@
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 -->
 
+
 <boolean tag="USE_QUICK_LOADER" val="true" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />
@@ -33,7 +34,7 @@
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   /> 
 
-  <annotation_style annot_type="Probesets" 
+  <annotation_style annot_type="Probesets"  
     child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   /> 
   <annotation_style annot_type="PSRs" 
@@ -51,7 +52,7 @@
      style="coverage" />
 
 <!-- Files named "snpMap_Mapping10K", etc., have been renamed as "Mapping10K", etc. -->
-<annotation_style annot_type_starts_with="snpMap_"
+<annotation_style annot_type_regex="(?i)snpMap_"
      factory="com.affymetrix.igb.glyph.CoverageSummarizerFactory"
      height="200"
      style="coverage" />
@@ -75,6 +76,10 @@
     "HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
 -->
 
+  <annotation_style annot_type_regex="(?i).*RefSeq$"
+      label_field="gene_name" 
+  />
+
 <annotation_style annot_type_regex="^.*Ex-1_0-st.*Probes$"
   child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
   label_field="id"
@@ -93,38 +98,56 @@
 <!-- End: configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
 
 
+
+
   <!-- <annotation_url> associates a "method" type regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)
          url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->
-  <annotation_url annot_type_regex="RefSeq\S*"
+<!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
+  <annotation_url annot_type_regex="(?i)RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="mRNA\S*"
+  <annotation_url annot_type_regex="(?i).*mRNA$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="TAIR\S*" 
+  <annotation_url annot_type_regex="(?i)TAIR$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
-  <annotation_url annot_type_regex="EnsGene"
+  <annotation_url annot_type_regex="(?i).*EnsGene$"
     name="Ensembl Human ID search"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
   />
 
-  <annotation_url annot_type_regex="EnsGene" 
+  <annotation_url annot_type_regex="(?i).*EnsGene$" 
      name="Ensembl Human GeneView"
      url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
   />
 
-  <annotation_url annot_type_regex=".* netaffx consensus"
+  <annotation_url annot_type_regex="(?i).* netaffx consensus"
     name="NetAffx"
     url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$"
   />
+
+  <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Probes$"
+    name="NetAffx Probeset Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
+  />
+  <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Transcripts$"
+    name="NetAffx Transcript Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
+  />
+  <annotation_url annot_type_regex="genbank:gene\S*"
+    name="Entrez"
+    url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
+  />    
+
+<!--
   <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"
     name="NetAffx Probeset Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
@@ -133,9 +156,9 @@
     name="NetAffx Transcript Details"
     url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
   />
-  <annotation_url annot_type_regex="genbank:gene\S*"
-    name="Entrez"
-    url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
-  />    
+-->
+
+
+
 </prefs>
 

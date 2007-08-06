@@ -13,31 +13,38 @@
 
 package com.affymetrix.igb.das2;
 
+import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.igb.util.*;
 
 public class Das2Discovery {
 
+    static Pattern tab_splitter = Pattern.compile("\t");
+    static int DAS_NAME = 0;
+    static int DAS_URI = 1;
+    static int INFO_URI = 2;
+
+  //  static public String DEFAULT_DAS2_SERVER_NAME = "localhost";
   static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
   static Map name2url = new LinkedHashMap();
   static Map name2server = new LinkedHashMap();
   static Map url2server = new LinkedHashMap();
-  static boolean servers_initialized = false;
 
   static {
-    name2url.put(DEFAULT_DAS2_SERVER_NAME, "http://netaffxdas.affymetrix.com/das2/sources");
+    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
     //    name2url.put("localhost", "http://localhost:9092/das2/genome");
     name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
-    //name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
+    //    name2url.put("HapMap-test", "http://brie5.cshl.edu:9191/hapmap/das2/sources");
+
+    //    name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
     //    name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sequence");
-    //    name2url.put("Affy Test Server, Nov 11 2006", "http://netaffxdas.affymetrix.com/das2/test/sources");
-    //    name2url.put("Affy-test", "http://205.217.46.81:9091/das2/sequence");
-    //    name2url.put("Affy-test", "http://unibrow.dmz2.ev.affymetrix.com:9091/das2/sequence");
-    //    name2url.put("das.biopackages.net", "http://das.biopackages.net/das");
     //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");
+    initServers();
   }
 
   /**
@@ -45,25 +52,47 @@ public class Das2Discovery {
    *  Map is from Strings (server names) to Das2ServerInfo's.
    */
   public static Map getDas2Servers() {
-    if (! servers_initialized)  {
-      initServers();
-    }
     return name2server;
   }
 
+  public static void addServersFromTabFile(String server_loc_url) {
+    // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
+    /*
+    InputStream is = null;
+    BufferedReader br = null;
+    try {
+      is = LocalUrlCacher.getInputStream(server_loc_url);
+      if (is == null) {
+        System.out.println("DasDiscovery: could not open this file: "+server_loc_url);
+        return;
+      }
+      br = new BufferedReader(new InputStreamReader(is));
+      String line;
+      while ((line = br.readLine()) != null) {
+        if (line.startsWith("#")) { continue; }
+        String[] server_info = tab_splitter.split(line);
+        String server_name = server_info[DAS_NAME];
+        String server_url = server_info[DAS_URI];
+        addDas2Server(server_name, server_url);
+      }
+    }
+    catch (Exception ex) { ex.printStackTrace(); }
+    finally {
+      try {br.close();} catch (Exception ioe) {}
+      try {is.close();} catch (Exception ioe) {}
+    }
+    */
+  }
+
   /**
-   *  Given an id string which should be the resolvable root URL for a DAS/2 server 
-   *     (but may optionally be the server name) 
-   *  Return the Das2ServerInfo object for the DAS/2 server, creating it if doesn't
-   *    already exist
+   *  Given an id string which should be the resolvable root URL for a DAS/2 server
+   *     (but may optionally be the server name)
+   *  Return the Das2ServerInfo object for the DAS/2 server
    */
   public static Das2ServerInfo getDas2Server(String id) {
     Map servers = getDas2Servers();
     Das2ServerInfo server = (Das2ServerInfo)url2server.get(id);
     if (server == null) { server = (Das2ServerInfo)name2server.get(id); }
-    if (server == null) {
-      server = initServer(id, id);
-    }
     return server;
   }
 
@@ -74,8 +103,17 @@ public class Das2Discovery {
       String url = (String)name2url.get(name);
       initServer(url, name);
     }
-    servers_initialized = true;
   }
+
+  public static Das2ServerInfo addDas2Server(String name, String url)  {
+    if (name2url.get(name) == null) {
+      return initServer(url, name);
+    }
+    else {
+      return null;
+    }
+  }
+
 
   protected static Das2ServerInfo initServer(String url, String name) {
     Das2ServerInfo server = null;
@@ -145,9 +183,9 @@ public class Das2Discovery {
 
 
   /**
-   *  Given an AnnotatedSeqGroup, return a list of Das2Sources that have at least one Das2VersionedSource that 
+   *  Given an AnnotatedSeqGroup, return a list of Das2Sources that have at least one Das2VersionedSource that
    *    provides annotations for the group
-   *  if (try_unloaded_servers) then force search of 
+   *  if (try_unloaded_servers) then force search of
    *       all known servers, otherwise only check info that is already loaded??
    */
   public static List getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
@@ -164,10 +202,10 @@ public class Das2Discovery {
   }
 
   /**
-   *  Given an AnnotatedSeqGroup, return a list of Das2ServerInfos that have at least one Das2Source that has 
-   *    at least one Das2VersionedSource that 
+   *  Given an AnnotatedSeqGroup, return a list of Das2ServerInfos that have at least one Das2Source that has
+   *    at least one Das2VersionedSource that
    *    provides annotations for the group
-   *  if (try_unloaded_servers) then force search of 
+   *  if (try_unloaded_servers) then force search of
    *       all known servers, otherwise only check info that is already loaded??
    */
   public static List getServers(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
@@ -183,9 +221,6 @@ public class Das2Discovery {
     return results;
   }
 
-  /** NOT YET IMPLEMENTED
-  public static void addDas2Server(String name, String url)  { }
-  */
 
   /** NOT YET IMPLEMENTED
   public void removeDas2Server(String url) { }

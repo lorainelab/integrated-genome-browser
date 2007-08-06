@@ -380,6 +380,10 @@ public class Das2LoadView3 extends JComponent
 	      Das2Type type = request_sym.getDas2Type();
 	      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 	      style.setHumanName(type.getName());
+	      if (type.getName().endsWith("refseq")) {
+		style.setLabelField("gene_name");
+	      }
+	      //	      style.setMaxDepth(3);
 
 	      if (USE_DAS2_OPTIMIZER) {
 		result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));

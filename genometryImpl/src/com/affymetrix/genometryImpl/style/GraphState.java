@@ -82,6 +82,7 @@ public class GraphState implements GraphStateI {
   boolean show_graph = true;
   boolean show_bounds = false;
   boolean show_label = true;
+  boolean show_label_on_right = false;
   
   HeatMap heat_map;
   IAnnotStyle tier_style;
@@ -170,6 +171,7 @@ public class GraphState implements GraphStateI {
     setShowGraph(ostate.getShowGraph());
     setShowBounds(ostate.getShowBounds());
     setShowLabel(ostate.getShowLabel());
+    setShowLabelOnRight(ostate.getShowLabelOnRight());
     setThresholdDirection(ostate.getThresholdDirection());
     setMinScoreThreshold(ostate.getMinScoreThreshold());
     setMaxScoreThreshold(ostate.getMaxScoreThreshold());
@@ -201,6 +203,7 @@ public class GraphState implements GraphStateI {
   public final boolean getShowGraph() { return show_graph; }
   public final boolean getShowBounds() { return show_bounds; }
   public final boolean getShowLabel() { return show_label; }
+  public final boolean getShowLabelOnRight() { return show_label_on_right; }
 
   public float getMinScoreThreshold() { return min_score_threshold; }
   public float getMaxScoreThreshold() { return max_score_threshold; }
@@ -228,6 +231,7 @@ public class GraphState implements GraphStateI {
   public final void setShowGraph(boolean b) { show_graph = b;}    // check
   public final void setShowBounds(boolean b) { show_bounds = b;}  // check
   public final void setShowLabel(boolean b) { show_label = b;}    // check
+  public final void setShowLabelOnRight(boolean b) { show_label_on_right = b;}    // check
 
   public void setMinScoreThreshold(float thresh) { min_score_threshold = thresh;}
   public void setMaxScoreThreshold(float thresh) { max_score_threshold = thresh;}

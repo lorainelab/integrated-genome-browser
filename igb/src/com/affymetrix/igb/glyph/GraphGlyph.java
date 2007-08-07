@@ -63,7 +63,6 @@ public class GraphGlyph extends Glyph {
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
   boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
-  boolean drawLabelOnRight = false;
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -453,17 +452,8 @@ public class GraphGlyph extends Glyph {
     if (TIME_DRAWING) { System.out.println("graph draw time: " + tim.read()); }
   }
 
-  
-  public void setDrawLabelOnRight(boolean b) {
-    this.drawLabelOnRight = b;
-  }
-  
-  public boolean getDrawLabelOnRight() {
-    return this.drawLabelOnRight;
-  }
-
   public void drawLabel(ViewI view) {
-    if (drawLabelOnRight) {
+    if (state.getShowLabelOnRight()) {
       drawLabelRight(view);
     } else {
       drawLabelLeft(view);
@@ -506,13 +496,16 @@ public class GraphGlyph extends Glyph {
     }
   }
 
+  //Color handleColor = new Color(128, 128, 128, 64);
+  
   public void drawHandle(ViewI view) {
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
-      g.setColor(this.getColor());
+      Color c = new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 64);
+      g.setColor(c);
       g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
-      g.setColor(Color.gray);
+//      g.setColor(Color.gray);
       g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
     }
   }
@@ -537,13 +530,18 @@ public class GraphGlyph extends Glyph {
       double mark_ypix = min_ypix;
       g.setColor(this.getColor());
       for (int i=0; i<=axis_bins; i++) {
-	g.fillRect(hpix.x + 10, (int)(mark_ypix), 10, 1);
+        if (i==0 || i == axis_bins) {
+          g.fillRect(hpix.x + hpix.width, (int)(mark_ypix) - 1, 12, 2);
+        } else {
+          g.fillRect(hpix.x + hpix.width, (int)(mark_ypix), 8, 1);
+        }
 	mark_ypix += spacing;
       }
       g.setColor(this.getColor());
       g.setFont(axis_font);
-      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 20, (int)max_ypix - 2);
-      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 20, (int)min_ypix + 12);
+      FontMetrics fm = g.getFontMetrics();
+      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int)max_ypix - fm.getDescent());
+      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int)min_ypix + fm.getAscent() + 1);
     }
   }
 

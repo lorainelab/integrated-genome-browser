@@ -34,6 +34,8 @@ public interface GraphStateI {
   public static final int STAIRSTEP_GRAPH = 5;
   public static final int HEAT_MAP = 7;
 
+  public static final int MINMAXAVG_HEATMAP = HEAT_MAP;
+
   /** Copy all the properties, except ID and label, of the given state into this state. */
   public void copyProperties(GraphStateI ostate);
 
@@ -52,6 +54,7 @@ public interface GraphStateI {
   public boolean getShowGraph();
   public boolean getShowBounds();
   public boolean getShowLabel();
+  public boolean getShowLabelOnRight();
 
   public float getMinScoreThreshold();
   public float getMaxScoreThreshold();
@@ -79,6 +82,7 @@ public interface GraphStateI {
   public void setShowGraph(boolean b);
   public void setShowBounds(boolean b);
   public void setShowLabel(boolean b);
+  public void setShowLabelOnRight(boolean b);
   public void setMinScoreThreshold(float thresh);
   public void setMaxScoreThreshold(float thresh);
   public void setMaxGapThreshold(int thresh);

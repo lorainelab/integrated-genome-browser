@@ -186,7 +186,7 @@ public class QuickLoadServerModel {
    *  You can retrieve the filenames with {@link #getFilenames(String)}
    */
   public boolean loadAnnotationNames(String genome_name) {
-    boolean success = true;
+    boolean success = false;
     String genome_root = root_url + genome_name + "/";
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
     Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
@@ -359,14 +359,15 @@ public class QuickLoadServerModel {
       if (lift_stream != null) {
         LiftParser lift_loader = new LiftParser();
         group = lift_loader.parse(lift_stream, gmodel, genome_name, annot_contigs);
+        success = true;
       }
       else if (cinfo_stream != null) {
         ChromInfoParser chrominfo_loader = new ChromInfoParser();
         group = chrominfo_loader.parse(cinfo_stream, gmodel, genome_name);
+        success = true;
       }
       Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
-      success = true;
       if (QuickLoadView2.build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {

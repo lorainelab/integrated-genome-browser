@@ -178,7 +178,11 @@ public class LoadFileAction {
           System.out.println("Loading from a URL is not currently supported.");
         }
         else {
-          new_seq = load(gviewerFrame, cfil, gmodel, gmodel.getSelectedSeq());
+          try {
+            new_seq = load(gviewerFrame, cfil, gmodel, gmodel.getSelectedSeq());
+          } catch (Exception ex) {
+            ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
+          }
         }
       }
 
@@ -219,11 +223,10 @@ public class LoadFileAction {
     return fils;
   }
 
-//  public MutableAnnotatedBioSeq load(File annotfile) {
-//    return load(gviewerFrame, annotfile, gmodel.getSelectedSeq());
-//  }
 
-  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, GenometryModel gmodel, MutableAnnotatedBioSeq input_seq) {
+  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, 
+      GenometryModel gmodel, MutableAnnotatedBioSeq input_seq) 
+  throws IOException {
     MutableAnnotatedBioSeq aseq = null;
     InputStream fistr = null;
     try {
@@ -261,9 +264,7 @@ public class LoadFileAction {
 	}
       }
     }
-    catch (Exception ex) {
-      ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
-    }
+    // Don't catch exception, just throw it
     finally {
       if (fistr != null) try {fistr.close();} catch (Exception e) {}
     }
@@ -329,7 +330,6 @@ public class LoadFileAction {
       else {
         str = new BufferedInputStream(str);
       }
-
       if (lcname.endsWith(".cyt")) {
         CytobandParser parser = new CytobandParser();
         parser.parse(str, selected_group);
@@ -573,12 +573,6 @@ public class LoadFileAction {
     return aseq;
   }
 
-//  private static AnnotatedSeqGroup getNewGroup() {
-//    unknown_group_count++;
-//    String new_name = UNKNOWN_GROUP_PREFIX + " " + unknown_group_count;
-//    AnnotatedSeqGroup new_group= gmodel.addSeqGroup(new_name);
-//    return new_group;
-//  }
 
   /** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
   private static MutableAnnotatedBioSeq getFirstSeq(java.util.List syms) {

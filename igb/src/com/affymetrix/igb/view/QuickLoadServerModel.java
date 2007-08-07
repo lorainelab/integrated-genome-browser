@@ -159,7 +159,7 @@ public class QuickLoadServerModel {
     if (genome_name == null) { return; }
     Boolean init = (Boolean)genome2init.get(genome_name);
     if (allow_reinitialization || init != Boolean.TRUE) {
-      System.out.println("initializing data for genome: " + genome_name);
+      Application.getApplicationLogger().fine("initializing data for genome: " + genome_name);
       boolean seq_init = loadSeqInfo(genome_name);
       boolean annot_init = loadAnnotationNames(genome_name);
       if (seq_init && annot_init) {
@@ -172,6 +172,12 @@ public class QuickLoadServerModel {
     }
   }
 
+  /** Returns true if the given genome has already been initialized via initGenome(String). */
+  public boolean isInitialized(String genome_name) {
+    Boolean b = (Boolean) genome2init.get(genome_name);
+    return (Boolean.TRUE.equals(b));
+  }
+  
   /**
    *  Determines the list of annotation files available in the genome directory.
    *  Looks for ~genome_dir/annots.txt file which lists annotation files
@@ -183,7 +189,7 @@ public class QuickLoadServerModel {
     boolean success = true;
     String genome_root = root_url + genome_name + "/";
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
-    System.out.println("loading list of available annotations for genome: " + genome_name);
+    Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
     String filename = genome_root + "annots.txt";
 
     // Make a new list of filenames, in case this is being re-initialized
@@ -200,7 +206,7 @@ public class QuickLoadServerModel {
         String[] fields = tab_regex.split(line);
         if (fields.length >= 1) {
           String annot_file_name = fields[0];
-          //          System.out.println("    " + annot_file_name);
+          //          Application.getApplicationLogger().fine("    " + annot_file_name);
           file_names.add(annot_file_name);
 	  if (QuickLoadView2.build_virtual_encode &&
 	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
@@ -234,7 +240,7 @@ public class QuickLoadServerModel {
       return;
     }
 
-    System.out.println("$$$$$ adding virtual genome seq to seq group");
+    Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
     if (QuickLoadView2.build_virtual_genome &&
 	(group.getSeq(QuickLoadView2.GENOME_SEQ_ID) == null) ) {
       SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
@@ -248,7 +254,7 @@ public class QuickLoadServerModel {
 	  //	genome_seq.setLength(new_glength);
 	  genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
 	  if (DEBUG_VIRTUAL_GENOME)  {
-	    System.out.println("added seq: " + seq.getID() + ", new genome bounds: min = " + genome_seq.getMin() +
+	    Application.getApplicationLogger().fine("added seq: " + seq.getID() + ", new genome bounds: min = " + genome_seq.getMin() +
 			       ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
 	  }
 
@@ -283,7 +289,7 @@ public class QuickLoadServerModel {
    *  assumes urlpath resolves to bed file for ENCODE regions
    */
   public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
-    System.out.println("$$$$$ adding virtual encode seq to seq group");
+    Application.getApplicationLogger().fine("$$$$$ adding virtual encode seq to seq group");
     // assume it's a bed file...
     BedParser parser = new BedParser();
     try {
@@ -291,7 +297,7 @@ public class QuickLoadServerModel {
       //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
       java.util.List regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
       int rcount = regions.size();
-      //      System.out.println("Encode regions: " + rcount);
+      //      Application.getApplicationLogger().fine("Encode regions: " + rcount);
       SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
       MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
 
@@ -324,19 +330,19 @@ public class QuickLoadServerModel {
     boolean success = false;
     String genome_root = root_url + genome_name + "/";
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
-    System.out.println("loading list of chromosomes for genome: " + genome_name);
+    Application.getApplicationLogger().fine("loading list of chromosomes for genome: " + genome_name);
     InputStream lift_stream = null;
     InputStream cinfo_stream = null;
     try {
 
-      System.out.println("lift URL: " + genome_root + "liftAll.lft");
+      Application.getApplicationLogger().fine("lift URL: " + genome_root + "liftAll.lft");
       String lift_path = genome_root + "liftAll.lft";
       String cinfo_path = genome_root + "mod_chromInfo.txt";
       try {
         lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots());
       }
       catch (Exception ex) {
-        System.out.println("couldn't find lift file, looking instead for mod_chromInfo file");
+        Application.getApplicationLogger().fine("couldn't find lift file, looking instead for mod_chromInfo file");
         lift_stream = null;
       }
       if (lift_stream == null) {
@@ -358,7 +364,7 @@ public class QuickLoadServerModel {
         ChromInfoParser chrominfo_loader = new ChromInfoParser();
         group = chrominfo_loader.parse(cinfo_stream, gmodel, genome_name);
       }
-      System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
+      Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
       success = true;
       if (QuickLoadView2.build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
@@ -401,7 +407,7 @@ public class QuickLoadServerModel {
           group = gmodel.addSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
           genome_names.add(genome_name);
           group2name.put(group, genome_name);
-          // System.out.println("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
+          // Application.getApplicationLogger().fine("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
         }
         // if quickload server has description, and group is new or doesn't yet have description, add description to group
         if ((fields.length >= 2) && (group.getDescription() == null)) {
@@ -421,11 +427,11 @@ public class QuickLoadServerModel {
   public void loadAnnotations(AnnotatedSeqGroup current_group, String filename) {
     boolean loaded = getLoadState(current_group, filename);
     if (loaded) {
-      System.out.println("already loaded: " + filename);
+      Application.getApplicationLogger().fine("already loaded: " + filename);
     }
     else {
       String annot_url = root_url + getGenomeName(current_group) + "/" + filename;
-      System.out.println("need to load: " + annot_url);
+      Application.getApplicationLogger().fine("need to load: " + annot_url);
       InputStream istr = null;
       BufferedInputStream bis = null;
 

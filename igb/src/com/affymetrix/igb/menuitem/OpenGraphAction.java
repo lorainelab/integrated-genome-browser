@@ -151,6 +151,7 @@ public class OpenGraphAction extends AbstractAction {
     return graphs;
   }
 
+  //TODO: Make a version that works with an InputStream instead of a url
   public static List loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
     List graphs = Collections.EMPTY_LIST;
     InputStream fis = null;

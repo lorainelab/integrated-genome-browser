@@ -63,6 +63,7 @@ public class GraphGlyph extends Glyph {
   boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
   boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
+  boolean drawLabelOnRight = false;
 
   /**
    *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -452,7 +453,48 @@ public class GraphGlyph extends Glyph {
     if (TIME_DRAWING) { System.out.println("graph draw time: " + tim.read()); }
   }
 
+  
+  public void setDrawLabelOnRight(boolean b) {
+    this.drawLabelOnRight = b;
+  }
+  
+  public boolean getDrawLabelOnRight() {
+    return this.drawLabelOnRight;
+  }
+
   public void drawLabel(ViewI view) {
+    if (drawLabelOnRight) {
+      drawLabelRight(view);
+    } else {
+      drawLabelLeft(view);
+    }
+  }
+  
+  public void drawLabelRight(ViewI view) {
+    if (getLabel() == null) { return; }
+
+    // if full view differs from current view, and current view doesn't right align with full view,
+    //   don't draw handle (only want handle at right side of full view)
+    if (view.getFullView().getCoordBox().x + view.getFullView().getCoordBox().width 
+        != view.getCoordBox().x + view.getCoordBox().width)  {
+      return;
+    }
+
+    view.transformToPixels(coordbox, pixelbox);
+    Rectangle view_pixbox = view.getPixelBox();
+    
+    if (view_pixbox != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(this.getColor());
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      java.awt.geom.Rectangle2D sb = fm.getStringBounds(getLabel(), g);
+      int stringWidth = (int) sb.getWidth() + 1;
+      g.drawString(getLabel(), (pixelbox.x + pixelbox.width - stringWidth), (pixelbox.y + fm.getMaxAscent() - 1));
+    }
+  }
+
+  public void drawLabelLeft(ViewI view) {
     if (getLabel() == null) { return; }
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {

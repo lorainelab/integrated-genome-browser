@@ -92,10 +92,14 @@ public class AffyCnChpParser {
 
           for (AffyChpColumnData colData : data.columns) {
             String graphId = colData.name;
-            if (colData.getData() instanceof FloatList) {
-              FloatList flist = (FloatList) colData.getData();
+            if (colData.getData() instanceof FloatList) {              
+              List<Object> trimmedXandY = trimNaN(positions, (FloatList) colData.getData());
+              IntList xlist = (IntList) trimmedXandY.get(0);
+              FloatList flist = (FloatList) trimmedXandY.get(1);
+              
+              xlist.trimToSize();
               flist.trimToSize();
-              GraphSymFloat gsym = new GraphSymFloat(positions.getInternalArray(), flist.getInternalArray(), graphId, seq);
+              GraphSymFloat gsym = new GraphSymFloat(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
               seq.addAnnotation(gsym);
             } else if (colData.getData() instanceof IntList) {
               IntList ilist = (IntList) colData.getData();
@@ -120,6 +124,38 @@ public class AffyCnChpParser {
     }
     
     return results;
+  }
+  
+  
+  /** Removes x,y pairs where the y-value is invalid (NaN or Infinite).
+   *  Returns a List containing one IntList and one FloatList. 
+   *  If there were no invalid values of y, the output IntList and FloatList
+   *  will be the same objects as the input, otherwise they will both be
+   *  new objects.
+   */
+  List<Object> trimNaN(IntList x, FloatList y) {
+    if (x.size() != y.size()) {
+      throw new IllegalArgumentException("Lists must be the same size");
+    }
+
+    boolean had_bad_values = false;
+    IntList x_out = new IntList(x.size());
+    FloatList y_out = new FloatList(y.size());
+        
+    for (int i=0; i<x.size(); i++) {
+      float f = y.get(i);
+      if (! Float.isNaN(f) && ! Float.isInfinite(f)) {
+        had_bad_values = true;
+        x_out.add(x.get(i));
+        y_out.add(f);
+      }
+    }
+    
+    if (had_bad_values) {
+      return Arrays.<Object>asList(x_out, y_out);
+    } else {
+      return Arrays.<Object>asList(x, y);
+    }
   }
   
   private MutableAnnotatedBioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {

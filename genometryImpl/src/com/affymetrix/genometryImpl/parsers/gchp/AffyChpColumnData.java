@@ -37,7 +37,7 @@ public class AffyChpColumnData {
       case INT8:
         theData = dataByte = new ByteList(); break;
       case UINT8:
-        theData = dataInt = new IntList(); break;
+        theData = dataShort = new ShortList(); break;
       case INT16:
         theData = dataShort = new ShortList(); break;
       case UINT16:
@@ -64,7 +64,7 @@ public class AffyChpColumnData {
       case INT8:
         dataByte.add(dis.readByte()); break;
       case UINT8:
-        dataInt.add(dis.readUnsignedByte()); break;
+        dataShort.add((short) dis.readUnsignedByte()); break;
       case INT16:
         dataShort.add(dis.readShort()); break;
       case UINT16:

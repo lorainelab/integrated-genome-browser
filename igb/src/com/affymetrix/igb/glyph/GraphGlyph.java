@@ -480,7 +480,7 @@ public class GraphGlyph extends Glyph {
       FontMetrics fm = g.getFontMetrics();
       java.awt.geom.Rectangle2D sb = fm.getStringBounds(getLabel(), g);
       int stringWidth = (int) sb.getWidth() + 1;
-      g.drawString(getLabel(), (pixelbox.x + pixelbox.width - stringWidth), (pixelbox.y + fm.getMaxAscent() - 1));
+      g.drawString(getLabel(), (view_pixbox.x + view_pixbox.width - stringWidth), (pixelbox.y + fm.getMaxAscent() - 1));
     }
   }
 

@@ -16,7 +16,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.ErrorHandler;
 
@@ -314,9 +314,9 @@ public class FindAnnotationsPanel extends JPanel {
     SEQ_all_RB.setSelected(true);
   }
   
-  SingletonGenometryModel gmodel;
+  GenometryModel gmodel;
 
-  public void reinitialize(SingletonGenometryModel gmodel) {
+  public void reinitialize(GenometryModel gmodel) {
     // set-up the sequence combo_box
     sequence_CB.removeAllItems();
     this.gmodel = gmodel;

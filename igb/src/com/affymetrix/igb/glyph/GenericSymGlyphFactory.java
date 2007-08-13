@@ -35,7 +35,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *     (usually the leaf nodes and their parents).
  */
 public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
-  ExpandedTierPacker packer;
+  protected ExpandedTierPacker packer;
   int min_height = 10;
   int diff_height = 6;
   int yoffset = 20;
@@ -100,7 +100,7 @@ public class GenericSymGlyphFactory implements MapViewGlyphFactoryI  {
 
     SeqSymmetry transformed_sym = gviewer.transformForViewSeq(insym);
 
-    SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
+    SeqSpan span = gviewer.getViewSeqSpan(transformed_sym);
     if (span == null) { return null; }
 
     Color col = symcolors[depth % symcolors.length];   // cycle through colors

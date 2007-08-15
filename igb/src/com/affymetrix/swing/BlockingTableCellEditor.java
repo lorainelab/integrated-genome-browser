@@ -22,7 +22,6 @@ import javax.swing.*;
  */
 public class BlockingTableCellEditor extends AbstractCellEditor implements TableCellEditor {
   
-  JLabel comp = new JLabel("");
   Object original = null;
   
   public BlockingTableCellEditor() {
@@ -37,9 +36,7 @@ public class BlockingTableCellEditor extends AbstractCellEditor implements Table
       Object value, boolean isSelected, int row, int column) {
 
     original = value;
-    
-    comp.setText(value == null ? "" : value.toString());    
-    return comp;
+    return null;
   }
 
   public boolean isCellEditable(EventObject anEvent) {
@@ -49,5 +46,20 @@ public class BlockingTableCellEditor extends AbstractCellEditor implements Table
   public boolean shouldSelectCell(EventObject anEvent) {
     return true;
   }
+
+//  public boolean stopCellEditing() {
+//    super.stopCellEditing();
+//    return false;
+//  }
+
+//  public void cancelCellEditing() {
+//    super.cancelCellEditing();
+//  }
+
+//  public void addCellEditorListener(CellEditorListener l) {
+//  }
+//
+//  public void removeCellEditorListener(CellEditorListener l) {
+//  }
 }
 

@@ -14,6 +14,7 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.Application;
+import com.affymetrix.swing.BlockingTableCellEditor;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.TableCellEditor;
 
 /**
  *  An adapter to add Excel-like cut and paste facilities to JTable.
@@ -191,8 +193,13 @@ public class JTableCutPasteAdapter {
 
     JTable test_table = new JTable(data, cols);
     test_table.setCellSelectionEnabled(true);
+    
+    TableCellEditor tce = new BlockingTableCellEditor();
+    test_table.setDefaultEditor(Object.class, tce);
+    test_table.setCellEditor(tce);
 
     JFrame frm = new JFrame("JTableCutPasteAdapter test");
+    frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", test_table);

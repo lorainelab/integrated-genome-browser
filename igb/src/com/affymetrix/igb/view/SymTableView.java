@@ -23,18 +23,7 @@ import com.affymetrix.genometryImpl.event.*;
 
 public class SymTableView extends PropertySheet implements SymSelectionListener {
   static int testcount = 0;
-  static Vector default_order;
-
-  static  {
-    default_order = new Vector();
-    default_order.add("gene name");
-    default_order.add("name");
-    default_order.add("id");
-    default_order.add("type");
-    default_order.add("start");
-    default_order.add("end");
-    default_order.add("length");
-  }
+  Vector default_order;
 
   public SymTableView() {
     this(true);
@@ -45,6 +34,18 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     setPreferredSize(new java.awt.Dimension(100, 250));
     setMinimumSize(new java.awt.Dimension(100, 250));
     SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);
+    default_order = new Vector(8);
+    default_order.add("gene name");
+    default_order.add("name");
+    default_order.add("id");
+    default_order.add("type");
+    default_order.add("start");
+    default_order.add("end");
+    default_order.add("length");
+  }
+  
+  public void setDefaultColumnOrder(List columns) {
+    default_order = new Vector(columns);
   }
 
   public void symSelectionChanged(SymSelectionEvent evt) {
@@ -78,12 +79,8 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       if (symid != null)  {
         props.put("id", symid);
       }
-      BioSeq seq = null;
       if (src instanceof SeqMapView) {
-	seq = ((SeqMapView)src).getAnnotatedSeq();
-      }
-      if (seq != null) {
-        SeqSpan span = sym.getSpan(seq);
+        SeqSpan span = ((SeqMapView) src).getViewSeqSpan(sym);
 	if (span != null) {
 	  props.put("start", String.valueOf(span.getStart()));
 	  props.put("end", String.valueOf(span.getEnd()));
@@ -95,7 +92,8 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     }
     Map[] prop_array = new Map[propvec.size()];
     propvec.copyInto(prop_array);
-    this.showProperties(prop_array, default_order);
+    
+    this.showProperties(prop_array, default_order, "");
   }
 
   public static void printMap(Map hash)  {

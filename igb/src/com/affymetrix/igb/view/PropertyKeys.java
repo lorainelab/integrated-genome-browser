@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -38,13 +38,12 @@ public class PropertyKeys {
    * Fills up a Vector with arrays containing names and values
    * for each of the given Properties.
    * e.g., {name,value0,value1,value2,...,valueN} for
-   * N different Properties Objects representing a list of
-   * If one of the Properties has no value set for a particular
-   * name key, then the value for this name is set to ND.
-   * @param props - the list of Properties derived from
-   *   SeqFeatures.
+   * N different Properties Objects.
+   * @param props  the list of Properties derived from SeqFeatures.
+   * @param noData  the String value to use to represent cases where
+   *   there is no value of the property for a given key
    */
-  public Vector getNameValues(Map[] props) {
+  public Vector getNameValues(Map[] props, String noData) {
     Vector result = new Vector();
     // collect all possible names from the given Properties
     int num_props = props.length;
@@ -73,7 +72,7 @@ public class PropertyKeys {
 	    if (props[j] != null) {
 	      val = props[j].get(name);
 	    }
-            val = (val == null ? "ND" : val);
+            val = (val == null ? noData : val);
 	    // if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.]
 	    //   string representation
             name_value[j+1] = val.toString();

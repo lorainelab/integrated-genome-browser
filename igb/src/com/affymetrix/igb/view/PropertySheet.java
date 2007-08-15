@@ -207,12 +207,25 @@ public class PropertySheet extends JPanel {
    * Uses buildRows() to retrieve ordered
    * name-value pairs.
    * @param props  the given Properties
+   * @param preferred_prop_order the preferred order of columns
    * @see #buildRows(Vector, Map[])
    */
   public void showProperties(Map[] props, Vector preferred_prop_order) {
+    this.showProperties(props, preferred_prop_order, "ND");
+  }
+  /**
+   * Show data associated with the given properties.
+   * Uses buildRows() to retrieve ordered
+   * name-value pairs.
+   * @param props  the given Properties
+   * @param preferred_prop_order the preferred order of columns
+   * @param noData the value to use when a property value is null
+   * @see #buildRows(Vector, Map[])
+   */
+  public void showProperties(Map[] props, Vector preferred_prop_order, String noData) {
     PropertyKeys propkeys = new PropertyKeys();
 
-    Vector name_values = propkeys.getNameValues(props);
+    Vector name_values = propkeys.getNameValues(props, noData);
     if (preferred_prop_order != null) {
       name_values = reorderNames(name_values, preferred_prop_order);
     }

@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.swing.BlockingTableCellEditor;
 
 public class PropertySheet extends JPanel {
 
@@ -251,6 +252,10 @@ public class PropertySheet extends JPanel {
     scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
     table.setCellSelectionEnabled(true);
+    
+    TableCellEditor tce = new BlockingTableCellEditor();    
+    table.setDefaultEditor(Object.class, tce);
+    table.setCellEditor(tce);
 
     validate();
     for (int i=0; i<table.getColumnCount(); i++) {

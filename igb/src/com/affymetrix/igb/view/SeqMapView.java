@@ -789,6 +789,17 @@ public class SeqMapView extends JPanel
         TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
         return makeCytobandGlyph(gviewer, cyto_container);
       }
+    } else {
+      for (int i=0; i<gviewer.getAnnotatedSeq().getAnnotationCount(); i++) {
+        SeqSymmetry annotSym = gviewer.getAnnotatedSeq().getAnnotation(i);
+        if (annotSym instanceof TypeContainerAnnot) {
+          TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
+
+          if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
+            return makeCytobandGlyph(gviewer, tca);
+          }
+        }
+      }
     }
     return null;
   }

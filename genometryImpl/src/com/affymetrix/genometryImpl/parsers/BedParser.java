@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -457,7 +458,9 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 	  out.write('\t');
 	  if ((propsym != null)  && (propsym.getProperty("score") != null))  {
 	    out.write(propsym.getProperty("score").toString());
-	  }
+	  } else if (sym instanceof Scored) {
+            out.write(Float.toString(((Scored) sym).getScore()));
+          }
 	  else { out.write('0'); }
 	  out.write('\t');
 	  if (span.isForward()) { out.write('+'); }
@@ -511,6 +514,95 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       //      System.out.println("trying to write sym: " + sym);
       writeBedFormat(wr, sym, seq);
     }
+  }
+
+  /**
+   *  Writes a simple bed file format.  Uses the SeqSpan at index 0.
+   */
+  public static void writeSimpleBedFormat(Writer wr, List syms, boolean writeCDS)
+    throws IOException  {
+    int symcount = syms.size();
+    for (int i=0; i<symcount; i++) {
+      SeqSymmetry sym = (SeqSymmetry)syms.get(i);
+      writeSimpleBedFormat(wr, sym, writeCDS);
+    }
+  }
+  
+  /**
+   *  Writes bed file format.  Uses the span at index 0.
+   */
+  public static void writeSimpleBedFormat(Writer out, SeqSymmetry sym, boolean writeCDS)
+    throws IOException {
+
+      SeqSpan span = sym.getSpan(0);
+      BioSeq seq = span.getBioSeq();
+      SymWithProps propsym = null;
+      if (sym instanceof SymWithProps) {
+	propsym = (SymWithProps)sym;
+      }
+      if (span != null) {
+	int childcount = sym.getChildCount();
+	out.write(seq.getID());
+	out.write('\t');
+	int min = span.getMin();
+	int max = span.getMax();
+	out.write(Integer.toString(min));
+	out.write('\t');
+	out.write(Integer.toString(max));
+	if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
+	  out.write('\t');
+	  if (propsym != null) {
+	    if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
+	    else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
+	  }
+	  out.write('\t');
+	  if ((propsym != null)  && (propsym.getProperty("score") != null))  {
+	    out.write(propsym.getProperty("score").toString());
+	  } else if (sym instanceof Scored) {
+            out.write(Float.toString(((Scored) sym).getScore()));
+          }
+	  else { out.write('0'); }
+	  out.write('\t');
+	  if (span.isForward()) { out.write('+'); }
+	  else { out.write('-'); }
+	  if (childcount > 0 && writeCDS) {
+	    out.write('\t');
+	    if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
+	      out.write(propsym.getProperty("cds min").toString());
+	    }
+	    else { out.write(Integer.toString(min)); }
+	    out.write('\t');
+	    if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
+	      out.write(propsym.getProperty("cds max").toString());
+	    }
+	    else { out.write(Integer.toString(max)); }
+	    out.write('\t');
+	    out.write('0');
+	    out.write('\t');
+	    out.write(Integer.toString(childcount));
+	    out.write('\t');
+	    int[] blockSizes = new int[childcount];
+	    int[] blockStarts = new int[childcount];
+	    for (int i=0; i<childcount; i++) {
+	      SeqSymmetry csym = sym.getChild(i);
+	      SeqSpan cspan = csym.getSpan(seq);
+	      blockSizes[i] = cspan.getLength();
+	      blockStarts[i] = cspan.getMin() - min;
+	    }
+	    for (int i=0; i<childcount; i++) {
+	      out.write(Integer.toString(blockSizes[i]));
+	      out.write(',');
+	    }
+	    out.write('\t');
+	    for (int i=0; i<childcount; i++) {
+	      out.write(Integer.toString(blockStarts[i]));
+	      out.write(',');
+	    }
+	  }  // END "if (childcount > 0)"
+	}  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+
+	out.write('\n');
+      }   // END "if (span != null)"
   }
 
   /** Tests parsing of the file passed as a parameter. */

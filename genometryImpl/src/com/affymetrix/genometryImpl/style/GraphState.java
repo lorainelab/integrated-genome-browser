@@ -83,6 +83,7 @@ public class GraphState implements GraphStateI {
   boolean show_bounds = false;
   boolean show_label = true;
   boolean show_label_on_right = false;
+  boolean show_zero_line = true;
   
   HeatMap heat_map;
   IAnnotStyle tier_style;
@@ -172,6 +173,7 @@ public class GraphState implements GraphStateI {
     setShowBounds(ostate.getShowBounds());
     setShowLabel(ostate.getShowLabel());
     setShowLabelOnRight(ostate.getShowLabelOnRight());
+    setShowZeroLine(ostate.getShowZeroLine());
     setThresholdDirection(ostate.getThresholdDirection());
     setMinScoreThreshold(ostate.getMinScoreThreshold());
     setMaxScoreThreshold(ostate.getMaxScoreThreshold());
@@ -262,5 +264,13 @@ public class GraphState implements GraphStateI {
 
   public void setComboStyle(IAnnotStyle s) {
     this.combo_tier_style = s;
+  }
+
+  public void setShowZeroLine(boolean b) {
+    this.show_zero_line = b;
+  }
+  
+  public boolean getShowZeroLine() {
+    return show_zero_line;
   }
 }

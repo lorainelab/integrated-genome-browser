@@ -60,7 +60,6 @@ public class GraphGlyph extends Glyph {
 
   com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
 
-  boolean show_zero_line = true;
   boolean LARGE_HANDLE = true;
   boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
 
@@ -216,8 +215,7 @@ public class GraphGlyph extends Glyph {
       view.transformToPixels(coord, zero_point);
       //      if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
       //      else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
-      //      else if (show_zero_line && graph_style != HEAT_MAP) {
-      if (show_zero_line && 
+      if (getGraphState().getShowZeroLine() && 
 	  graph_style != HEAT_MAP && 
 	  yzero == 0)  {// zero_point within min/max, so draw
 	g.setColor(Color.gray);

@@ -55,6 +55,7 @@ public interface GraphStateI {
   public boolean getShowBounds();
   public boolean getShowLabel();
   public boolean getShowLabelOnRight();
+  public boolean getShowZeroLine();
 
   public float getMinScoreThreshold();
   public float getMaxScoreThreshold();
@@ -83,6 +84,7 @@ public interface GraphStateI {
   public void setShowBounds(boolean b);
   public void setShowLabel(boolean b);
   public void setShowLabelOnRight(boolean b);
+  public void setShowZeroLine(boolean b);
   public void setMinScoreThreshold(float thresh);
   public void setMaxScoreThreshold(float thresh);
   public void setMaxGapThreshold(int thresh);

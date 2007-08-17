@@ -147,6 +147,9 @@ public class SmartGraphGlyph extends GraphGlyph {
       int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
 
       if (graf instanceof GraphSymFloat) {
+        if (xcoords.length != (((GraphSymFloat) graf).getGraphYCoords()).length) {
+          throw new RuntimeException("Not same length");
+        }
         GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ((GraphSymFloat) graf).getGraphYCoords());
         caches.add(graph_cache);
       } else {
@@ -341,7 +344,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     //      g.setColor(Color.gray);
     //      g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
     //    }
-    if (show_zero_line && yzero == 0) {
+    if (getGraphState().getShowZeroLine() && yzero == 0) {
       g.setColor(Color.gray);
       g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
     }

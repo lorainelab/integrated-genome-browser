@@ -212,13 +212,17 @@ public class LazyChpSym extends ScoredContainerSym {
     ArrayList chp_array_syns = lookup.getSynonyms(chp_array_type);
     if (chp_array_syns == null) { chp_array_syns = new ArrayList(); chp_array_syns.add(chp_array_type); }
     for (int i=0; i<chp_array_syns.size(); i++) {
+      //      String synonym = (String)chp_array_syns.get(i);
       String synonym = (String)chp_array_syns.get(i);
+      String lcsyn = synonym.toLowerCase();
+      //      System.out.println("   synonym: " + synonym);
       Iterator titer = types.entrySet().iterator();
       while (titer.hasNext())  {
 	Map.Entry ent = (Map.Entry)titer.next();
 	Das2Type type = (Das2Type)ent.getValue();
 	String tname = type.getName();
-	if (tname.startsWith(synonym) && (matched_types.get(type) == null)) {
+	if ((tname.startsWith(synonym) || tname.startsWith(lcsyn))
+	    && (matched_types.get(type) == null)) {
 	  matched_types.put(type, type);
 	}
       }

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
+import java.awt.MediaTracker;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
@@ -127,6 +128,11 @@ public abstract class MenuUtil {
     } catch (Exception e) {
       // It isn't a big deal if we can't find the icon, just return null
     }
+    if (icon == null || icon.getImageLoadStatus() == MediaTracker.ABORTED ||
+        icon.getIconHeight() <= 0 || icon.getIconWidth() <= 0) {
+      icon = null;
+    }
+    
     return icon;    
   }
 }

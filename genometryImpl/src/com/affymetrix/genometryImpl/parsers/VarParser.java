@@ -14,9 +14,13 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 // VariationID	Landmark	Chr	Start	End	VariationType	
@@ -29,6 +33,9 @@ import java.util.regex.Pattern;
  *  A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
  */
 public class VarParser {
+  
+  public static final String GENOMIC_VARIANTS = "Genomic Variants";
+  public static final String GENOMIC_VARIANT_LOCUS = "Genomic Variant Loci";
 
   static Pattern line_regex = Pattern.compile("\\t");
 
@@ -50,6 +57,8 @@ public class VarParser {
     if (column_names == null) {
       throw new IOException("Column names were missing or malformed");
     }
+    
+    Map<String,SingletonSymWithProps> loci = new HashMap<String,SingletonSymWithProps>();
 
     int line_count = 1;
     String[] fields;
@@ -73,19 +82,43 @@ public class VarParser {
         if (start > aseq.getLength()) { aseq.setLength(start); }
         if (end > aseq.getLength()) { aseq.setLength(end); }
 
-        SingletonSymWithProps child = new SingletonSymWithProps(start, end, aseq);
-        child.setProperty("id", variationId);
-        child.setProperty("VariationID", variationId);
-        child.setProperty("method", "Genomic Variants");
+        SingletonSymWithProps child = new SingletonSymWithProps(variationId, start, end, aseq);
+        //child.setProperty("id", variationId);
+        //child.setProperty("VariationID", variationId);
+        child.setProperty("method", GENOMIC_VARIANTS);
         child.setProperty(column_names[1], fields[1]);
         for (int c=5; c < fields.length; c++) {
           child.setProperty(column_names[c], fields[c]);
         }
+
+//        aseq.addAnnotation(child);
+        seq_group.addToIndex(fields[0], child); // variation id
+        //seq_group.addToIndex(fields[1], child); // landmark
+        //seq_group.addToIndex(fields[6], child); // locus id
         
-        aseq.addAnnotation(child);
-        seq_group.addToIndex(fields[0], child);
-        seq_group.addToIndex(fields[1], child);
-        seq_group.addToIndex(fields[6], child);
+        String locusId = fields[6];
+        String locusSeqId = fields[7];
+        int locusStart = Integer.parseInt(fields[8]);
+        int locusEnd = Integer.parseInt(fields[9]);
+
+        MutableAnnotatedBioSeq locusSeq = seq_group.getSeq(locusSeqId);
+        if (locusSeq == null) { locusSeq = seq_group.addSeq(locusSeqId, end); }
+        if (start > locusSeq.getLength()) { locusSeq.setLength(start); }
+        if (end > locusSeq.getLength()) { locusSeq.setLength(end); }
+        
+        SingletonSymWithProps locus = loci.get(locusId);
+        if (locus == null) {
+          locus = new SingletonSymWithProps(locusId, locusStart, locusEnd, locusSeq);
+          loci.put(locusId, locus);
+            
+          locus.setProperty("id", locusId);
+          locus.setProperty("method", GENOMIC_VARIANT_LOCUS);
+
+          aseq.addAnnotation(locus);
+          seq_group.addToIndex(locusId, locus);
+        }
+        locus.addChild(child);
+        
     }   // end of line-reading loop    
   }
 }

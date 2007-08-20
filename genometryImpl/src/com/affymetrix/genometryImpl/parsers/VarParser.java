@@ -83,7 +83,7 @@ public class VarParser {
         if (end > aseq.getLength()) { aseq.setLength(end); }
 
         SingletonSymWithProps child = new SingletonSymWithProps(variationId, start, end, aseq);
-        //child.setProperty("id", variationId);
+        child.setProperty("id", variationId);
         //child.setProperty("VariationID", variationId);
         child.setProperty("method", GENOMIC_VARIANTS);
         child.setProperty(column_names[1], fields[1]);

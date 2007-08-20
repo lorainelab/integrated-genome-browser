@@ -18,7 +18,7 @@ public abstract class Application {
   public static boolean CACHE_GRAPHS = true;
 
   public final static boolean DEBUG_EVENTS = false;
-  StatusBar status_bar;
+  protected StatusBar status_bar;
 
   static Application singleton = null;
   
@@ -85,7 +85,7 @@ public abstract class Application {
    */
   public void setStatus(String s, boolean echo) {
     if (USE_STATUS_BAR && status_bar != null) {
-      status_bar.setStatus(s);
+      status_bar.setStatus("  " + s);
     }
     if (echo && s != null) {System.out.println(s);}
   }

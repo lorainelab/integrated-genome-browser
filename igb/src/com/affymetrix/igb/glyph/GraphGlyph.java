@@ -473,11 +473,23 @@ public class GraphGlyph extends Glyph {
     
     if (view_pixbox != null) {
       Graphics g = view.getGraphics();
-      g.setColor(this.getColor());
       g.setFont(default_font);
       FontMetrics fm = g.getFontMetrics();
       java.awt.geom.Rectangle2D sb = fm.getStringBounds(getLabel(), g);
       int stringWidth = (int) sb.getWidth() + 1;
+      
+//      int stringHeight = fm.getMaxAscent() - 1;
+//      int x = view_pixbox.x + view_pixbox.width - stringWidth;
+//      int width = view_pixbox.x + view_pixbox.width - x;
+//      
+//      Color c = new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 64);
+//      Color c = new Color(0, 0, 0, 64);
+//      g.setColor(c);
+//      g.fillRect(x, pixelbox.y, width, stringHeight);
+//      g.setColor(getColor());
+//      g.drawString(getLabel(), x, pixelbox.y + stringHeight);
+      
+      g.setColor(getColor());
       g.drawString(getLabel(), (view_pixbox.x + view_pixbox.width - stringWidth), (pixelbox.y + fm.getMaxAscent() - 1));
     }
   }
@@ -784,14 +796,14 @@ public class GraphGlyph extends Glyph {
 
   protected double getUpperYCoordInset(ViewI view) {
     double top_ycoord_inset = 0;
-//    if (getShowLabel()) {
-//      Graphics g = view.getGraphics();
-//      g.setFont(default_font);
-//      FontMetrics fm = g.getFontMetrics();
-//      label_pix_box.height = fm.getAscent() + fm.getDescent();
-//      view.transformToCoords(label_pix_box, label_coord_box);
-//      top_ycoord_inset = label_coord_box.height;
-//    }
+    if (getShowLabel()) {
+      Graphics g = view.getGraphics();
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      label_pix_box.height = fm.getAscent() + fm.getDescent();
+      view.transformToCoords(label_pix_box, label_coord_box);
+      top_ycoord_inset = label_coord_box.height;
+    }
     return top_ycoord_inset;
   }
 

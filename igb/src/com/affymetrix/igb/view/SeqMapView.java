@@ -101,7 +101,7 @@ public class SeqMapView extends JPanel
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
   protected boolean view_cytobands_in_axis = true;
-  public static Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
+  public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
   //  public boolean LABEL_TIERMAP = true;
   //  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
 
@@ -812,7 +812,7 @@ public class SeqMapView extends JPanel
    *         will be a Das2FeatureRequestSym, which will have cytoband children).
    */
   public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer, TypeContainerAnnot cyto_container) {
-    int cyto_height = 10;
+    int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
     EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
     cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
@@ -906,6 +906,7 @@ public class SeqMapView extends JPanel
     stopSlicingThread();
     seqmap.clearWidget();
     aseq = null;
+    viewseq = null;
     clearSelection();
     method2rtier = new HashMap();
     method2ftier = new HashMap();

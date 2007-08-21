@@ -18,6 +18,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.igb.Application;
 
 /**
  *  A SeqSymmetry for holding graph data.
@@ -59,7 +60,15 @@ public abstract class GraphSym extends SimpleSymWithProps {
   public abstract void setCoords(int[] x, Object y);
 
   public void lockID() {
-    id_locked = true;
+    setLockID(true);
+  }
+  
+  public void setLockID(boolean b) {
+    id_locked = b;
+  }
+  
+  public boolean isLockID() {
+    return id_locked;
   }
 
   public void setGraphName(String name) {
@@ -83,12 +92,8 @@ public abstract class GraphSym extends SimpleSymWithProps {
    *  Not allowed to call GraphSym.setID(), id
    */
   public void setID(String id) {
-    if (id_locked) {
-      System.out.println("%%%%%%% WARNING: called GraphSym.setID(), not allowed!");
-      //      SmartAnnotBioSeq sab = (SmartAnnotBioSeq)getGraphSeq();
-      //      System.out.println("   seq = " + sab.getID() + ", group = " + sab.getSeqGroup().getID());
-      System.out.println("    old id: " + this.getID());
-      System.out.println("    new id: " + id);
+    if (isLockID()) {
+      Application.getApplicationLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
     }
     else {
       gid = id;

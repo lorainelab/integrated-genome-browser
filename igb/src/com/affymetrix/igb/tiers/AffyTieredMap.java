@@ -89,7 +89,11 @@ public class AffyTieredMap extends NeoMap {
   }
 
   public AffyTieredMap(boolean hscroll, boolean vscroll) {
-    super(hscroll, vscroll);
+    this(hscroll, vscroll, NeoMap.HORIZONTAL);
+  }
+
+  public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
+    super(hscroll, vscroll, orient, new LinearTransform());
     show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
     show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
     show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));

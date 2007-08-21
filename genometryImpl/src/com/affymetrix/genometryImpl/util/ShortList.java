@@ -28,7 +28,7 @@ public class ShortList {
   /**
    * The size of the *List (the number of primitive values it contains).
    */
-  private short size;
+  private int size;
 
   public ShortList(int initialCapacity) {
     super();

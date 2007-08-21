@@ -28,7 +28,7 @@ public class ByteList {
   /**
    * The size of the *List (the number of primitive values it contains).
    */
-  private byte size;
+  private int size;
 
   public ByteList(int initialCapacity) {
     super();

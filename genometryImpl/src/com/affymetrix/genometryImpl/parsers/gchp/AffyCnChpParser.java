@@ -14,14 +14,17 @@
 /** A parser for the Affymetrix Generic CHP files containing copy number data. */
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSymByte;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GraphSymInt;
+import com.affymetrix.genometryImpl.GraphSymShort;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
+import com.affymetrix.genometryImpl.util.ShortList;
 import java.io.*;
 import java.util.*;
 
@@ -106,6 +109,16 @@ public class AffyCnChpParser {
               ilist.trimToSize();
               GraphSymInt gsym = new GraphSymInt(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
               seq.addAnnotation(gsym);
+            } else if (colData.getData() instanceof ShortList) {
+              ShortList ilist = (ShortList) colData.getData();
+              ilist.trimToSize();
+              GraphSymShort gsym = new GraphSymShort(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
+              seq.addAnnotation(gsym);
+            } else if (colData.getData() instanceof ByteList) {
+              ByteList ilist = (ByteList) colData.getData();
+              ilist.trimToSize();
+              GraphSymByte gsym = new GraphSymByte(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
+              seq.addAnnotation(gsym);
             } else {
               System.out.println("Don't know how to make a graph for data of type: " + colData.type);
             }
@@ -118,6 +131,7 @@ public class AffyCnChpParser {
     } catch (Exception e) {
       if (! (e instanceof IOException)) {
         IOException ioe = new IOException("IOException for file: " + stream_name);
+        e.printStackTrace();
         ioe.initCause(e);
         throw ioe;
       }

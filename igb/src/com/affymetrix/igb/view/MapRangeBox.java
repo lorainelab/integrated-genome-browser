@@ -65,6 +65,7 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   public static final int FORMAT_START_END = 0;
   public static final int FORMAT_START_WIDTH = 1;
   public static final int FORMAT_CENTER = 2;
+  public static final int FORMAT_CHROM_START_END = 3;
   
   public MapRangeBox(SeqMapView gview) {
     this.gview = gview;
@@ -92,7 +93,7 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {
     com.affymetrix.genoviz.bioviews.Rectangle2D vbox = e.getCoordBox();
-    setRangeText(FORMAT_START_END, vbox.x, vbox.width + vbox.x);
+    setRangeText(FORMAT_CHROM_START_END, vbox.x, vbox.width + vbox.x);
   }
   
   public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -100,7 +101,14 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   }
     
   void setRangeText(int format, double start, double end) {
-    if (format == FORMAT_START_END) {
+    if (format == FORMAT_CHROM_START_END) {
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      if (gmodel.getSelectedSeq() != null) {
+        range_box.setText(gmodel.getSelectedSeq().getID() + ": " +  nformat.format(start) + " - " + nformat.format(end));
+      } else {
+        range_box.setText(nformat.format(start) + " - " + nformat.format(end));
+      }
+    } else if (format == FORMAT_START_END) {
       range_box.setText(nformat.format(start) + " : " + nformat.format(end));
     } else if (format == FORMAT_START_WIDTH) {
       range_box.setText(nformat.format(start) + " + " + nformat.format(end-start));      

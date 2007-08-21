@@ -30,12 +30,25 @@ import com.affymetrix.igb.view.SeqMapView;
 
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
+  boolean check_same_seq = true;
+  
+  /** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE. 
+   *  Determines whether the glyph factory will try to determine whether the GraphSym
+   *  that it is drawing is defined on the currently-displayed bioseq.
+   *  In some cases, you may want to intentionally display a graph on a seq that 
+   *  has a different ID without checking to see if the ID's match.
+   */
+  static final public String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
 
   public GenericGraphGlyphFactory() {
   }
 
-  /** Does nothing. */
+  /** Allows you to set the parameter CHECK_SAME_SEQ_OPTION. */
   public void init (Map options) {
+    Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
+    if (ccs != null) {
+      check_same_seq = ccs.booleanValue();
+    }
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
@@ -60,7 +73,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
    *     will go into an attached tier, never a floating glyph.
    *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
    */
-  public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
+  public GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
     GraphState state = (GraphState) graf.getGraphState();
     
     AnnotatedBioSeq aseq = smv.getAnnotatedSeq();
@@ -68,8 +81,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     BioSeq graph_seq = graf.getGraphSeq();
     AffyTieredMap map = smv.getSeqMap();
     
-    if (graph_seq != aseq) {
-      // System.out.println("################## ERROR, graph_seq != aseq #################");
+    if (check_same_seq && graph_seq != aseq) {
       // may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
       return null;
     }
@@ -91,9 +103,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     //       ???
 
     GraphSym newgraf = graf;
-    if (graph_seq != vseq) {
+    if (check_same_seq && graph_seq != vseq) {
       // The new graph doesn't need a new GraphState or a new ID.  
       // Changing any graph properties will thus apply to the original graph.
+      
       SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
       newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
     }
@@ -114,7 +127,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     if (newgraf instanceof GraphIntervalSym) {
       GraphIntervalSym gis = (GraphIntervalSym) newgraf;
       graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, state);
-      //graph_glyph = new GraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis.getGraphYCoords(), state);
     } else {
       graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf, state);
     }
@@ -163,21 +175,21 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     return graph_glyph;
   }
 
- /**
-  *  Displays a graph.
-  */
-  public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv,
-    java.awt.Color col, double yloc, double height, boolean use_floater) {
-    
-    GraphStateI gstate = graf.getGraphState();
-    IAnnotStyle gstyle = gstate.getTierStyle();
-    gstyle.setColor(col);
-    gstyle.setY(yloc);
-    gstyle.setHeight(height);
-    gstate.setFloatGraph(use_floater);
-    
-    return displayGraph(graf, smv, true);
-  }
+// /**
+//  *  Displays a graph.
+//  */
+//  public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv,
+//    java.awt.Color col, double yloc, double height, boolean use_floater) {
+//    
+//    GraphStateI gstate = graf.getGraphState();
+//    IAnnotStyle gstyle = gstate.getTierStyle();
+//    gstyle.setColor(col);
+//    gstyle.setY(yloc);
+//    gstyle.setHeight(height);
+//    gstate.setFloatGraph(use_floater);
+//    
+//    return displayGraph(graf, smv, true);
+//  }
 
   public static void report(String str, GraphState state, GraphGlyph graph_glyph) {
     if (DEBUG) {

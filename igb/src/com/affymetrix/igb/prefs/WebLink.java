@@ -14,6 +14,8 @@
 package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
@@ -209,6 +211,9 @@ public class WebLink {
   /** A pattern that matches the string "$$". */
   static final Pattern DOUBLE_DOLLAR_PATTERN = Pattern.compile("[$][$]");
   
+  /** A pattern that matches the string "$:genome:$". */
+  static final Pattern DOLLAR_GENOME_PATTERN = Pattern.compile("[$][:]genome[:][$]");
+  
   public static String replacePlaceholderWithId(String url, String id) {
     // Now replace all "$$" in the url pattern with the given id, URLEncoded
     if (url != null && id != null) {
@@ -218,14 +223,32 @@ public class WebLink {
     return url;
   }
   
+  public static String replaceGenomeId(String url) {
+    // Now replace all "$:genome:$" in the url pattern with the current seqGroup id, URLEncoded
+    if (url != null) {
+      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+      if (group != null) {
+        String encoded_id = URLEncoder.encode(group.getID());
+        url = DOLLAR_GENOME_PATTERN.matcher(url).replaceAll(encoded_id);
+      }
+    }
+    return url;
+  }
+
   public String getURLForSym(SeqSymmetry sym) {
+    String url = getURLForSym_(sym);
+    return replaceGenomeId(url);
+  }
+
+  String getURLForSym_(SeqSymmetry sym) {
     // Currently this just replaces any "$$" with the ID, but it could
     // do something more sophisticated later, like replace "$$" with
     // some other sym property.
     if (id_field_name == null) {
       return replacePlaceholderWithId(getUrl(), sym.getID());
     }
-    
+        
     Object field_value = null;
     if (id_field_name != null && sym instanceof SymWithProps) {
       field_value = ((SymWithProps) sym).getProperty(id_field_name);

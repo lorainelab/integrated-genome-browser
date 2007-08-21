@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
 // LocusID	LocusChr	LocusStart	LocusEnd	
 // Reference	PubMedID	Method/platform	Gain	Loss	TotalGainLossInv
 
-// Add links to PubMed !
-
 /**
  *  A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
  */
@@ -97,6 +95,12 @@ public class VarParser {
         //seq_group.addToIndex(fields[6], child); // locus id
         
         String locusId = fields[6];
+        if (locusId.startsWith("LC")) {
+          // The Toronto DB needs the ID's to be of the form Locus001234 in order
+          // for web-links to work
+          locusId = "Locus" + locusId.substring(2);
+        }
+        
         String locusSeqId = fields[7];
         int locusStart = Integer.parseInt(fields[8]);
         int locusEnd = Integer.parseInt(fields[9]);

@@ -117,7 +117,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return show_outline;
   }
 
-  public void draw(ViewI view) {
+  public void draw(ViewI view) {    
     Color bgcolor = null;
     Color fgcolor = null;
 
@@ -133,18 +133,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     
     Graphics g = view.getGraphics();
     g.setPaintMode();
-    if ( null != fnt ) {
-      g.setFont(fnt);
-    }
-    FontMetrics fm = g.getFontMetrics();
-    int text_width = 0;
-    String label = getLabelString();
-    if ( null != label ) {
-      text_width = fm.stringWidth(label);
-    }
-    int text_height = fm.getAscent() + fm.getDescent();
-    int blank_width = fm.charWidth ('z')*2;
-
+    
     view.transformToPixels(coordbox, pixelbox);
     if (DEBUG_PIXELBOX) {
       debug_rect.setBounds(pixelbox.x, pixelbox.y,
@@ -180,6 +169,35 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       }
     }
 
+    g.setColor( fgcolor );
+    drawLabel(g);
+    
+    if (DEBUG_PIXELBOX) {
+      // testing pixbox...
+      g.setColor(Color.red);
+      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+      g.setColor(Color.yellow);
+      g.drawRect(debug_rect.x, debug_rect.y,
+		 debug_rect.width, debug_rect.height);
+    }
+    super.draw(view);
+  }
+
+  void drawLabel(Graphics g) {
+    // assumes that pixelbox coordinates are already computed
+    
+    if ( null != fnt ) {
+      g.setFont(fnt);
+    }
+    FontMetrics fm = g.getFontMetrics();
+    int text_width = 0;
+    String label = getLabelString();
+    if ( null != label ) {
+      text_width = fm.stringWidth(label);
+    }
+    int text_height = fm.getAscent() + fm.getDescent();
+    int blank_width = fm.charWidth ('z')*2;
+
     // only show text if it will fit in pixelbox (and it's not null)...
     if ((text_height <= pixelbox.height)  && (label != null)) {
 
@@ -214,24 +232,16 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       // least one pixel below them
 
       // display string
-      g.setColor( fgcolor );
+      //g.setColor( fgcolor );
       //g.setColor( getForegroundColor() );
       // define adjust such that: ascent-adjust = descent+adjust
       // (But see comment above about the extra -1 pixel)
       int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
       g.drawString (label, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
     }
-    if (DEBUG_PIXELBOX) {
-      // testing pixbox...
-      g.setColor(Color.red);
-      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-      g.setColor(Color.yellow);
-      g.drawRect(debug_rect.x, debug_rect.y,
-		 debug_rect.width, debug_rect.height);
-    }
-    super.draw(view);
   }
-
+  
+  
   /** Draws the outline in a way that looks good for tiers.  With other glyphs,
    *  the outline is usually drawn a pixel or two larger than the glyph.
    *  With TierGlyphs, it is better to draw the outline inside of or contiguous

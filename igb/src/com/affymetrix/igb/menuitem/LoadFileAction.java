@@ -358,8 +358,8 @@ public class LoadFileAction {
         parser = null;
       }
       else if (PARSE_VAR && lcname.endsWith(".rpt")) {
-        TabDelimitedParser parser = new TabDelimitedParser(0, 1, 9, 10, -1, -1, -1, true, true, true);
-        parser.parse(str, selected_group);
+        SegmenterRptParser parser = new SegmenterRptParser();
+        parser.parse(str, stream_name, selected_group);
         aseq = input_seq;
         parser = null;
       }

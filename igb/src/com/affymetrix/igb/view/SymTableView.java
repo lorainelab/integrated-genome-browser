@@ -52,8 +52,20 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
     if (src == this) { return; }
-
     List selected_syms = evt.getSelectedSyms();
+    SeqMapView mapView = null;
+    if (src instanceof SeqMapView) {
+       mapView = (SeqMapView) src;
+    }
+    showSyms(selected_syms, mapView);
+  }
+  
+  List currentSyms = Collections.EMPTY_LIST;
+
+  public void showSyms(List selected_syms, SeqMapView seqMap) {
+
+    currentSyms = selected_syms;
+    
     int symCount = selected_syms.size();
     Vector propvec = new Vector();
     for (int i=0; i<symCount; i++) {
@@ -79,8 +91,8 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       if (symid != null)  {
         props.put("id", symid);
       }
-      if (src instanceof SeqMapView) {
-        SeqSpan span = ((SeqMapView) src).getViewSeqSpan(sym);
+      if (seqMap != null) {
+        SeqSpan span = seqMap.getViewSeqSpan(sym);
 	if (span != null) {
 	  props.put("start", String.valueOf(span.getStart()));
 	  props.put("end", String.valueOf(span.getEnd()));
@@ -102,6 +114,14 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       System.out.println(iter.next());
     }
 
+  }
+  
+  public List getCurrentSyms() {
+    return new ArrayList(currentSyms);
+  }
+  
+  public void destroy() {
+    currentSyms = Collections.EMPTY_LIST;
   }
 }
 

@@ -210,6 +210,9 @@ public class GenometryModel {
   }
 
   void fireSymSelectionEvent(Object src, List syms) {
+    if (DEBUG) {
+      System.out.println("Firing event: " + syms.size());
+    }
     SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
     for (int i=sym_selection_listeners.size()-1; i>=0; i--) {
       SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
@@ -282,6 +285,11 @@ public class GenometryModel {
    *  @return The List of sequences with selections on them after this operation.
    */
   List setSelectedSymmetries(List syms) {
+    
+    if (DEBUG) {
+      System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
+    }
+
     HashMap seq2SymsHash = new HashMap();
 
     // for each ID found in the ID2sym hash, add it to the owning sequences
@@ -313,6 +321,9 @@ public class GenometryModel {
     for(Iterator i=seq2SymsHash.keySet().iterator(); i.hasNext();) {
       MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) i.next();
       List symslist = (List) seq2SymsHash.get(seq);
+      if (DEBUG) {
+        System.out.println("Syms " + symslist.size() + " on seq " + seq.getID());
+      }
       setSelectedSymmetries(symslist, seq); // do not send an event yet
     }
 

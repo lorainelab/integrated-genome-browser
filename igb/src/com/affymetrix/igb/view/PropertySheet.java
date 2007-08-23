@@ -63,6 +63,15 @@ public class PropertySheet extends JPanel {
   }
   
   /**
+   * Whether values for SeqFeature
+   * properties should be presented in a row or a column.
+   * The default is to present them in a column.
+   */
+  public boolean isByRows() {
+    return this.by_rows;
+  }
+  
+  /**
    *  Specifies whether the user should be able to sort the columns by clicking on the headers.
    *  Note that the sort-order will be lost each time the data is updated because there
    *  is no guarantee that the same type of data, with the same column names, will

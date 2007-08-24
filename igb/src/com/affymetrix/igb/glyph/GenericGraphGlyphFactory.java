@@ -31,6 +31,8 @@ import com.affymetrix.igb.view.SeqMapView;
 public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
   boolean check_same_seq = true;
+  double sgg_transition = SmartGraphGlyph.default_transition_scale;
+  
   
   /** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE. 
    *  Determines whether the glyph factory will try to determine whether the GraphSym
@@ -40,6 +42,12 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
    */
   static final public String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
 
+  /** Name of a parameter for the init() method.  Set to an instance of Double.
+   *  Controls a parameter of the SmartGraphGlyph.
+   *  @see SmartGraphGlyph#setTransitionScale(double)
+   */
+  public final static String TRANSITION_POINT_FOR_SMART_GLYPH = "SGG Transition Point";
+
   public GenericGraphGlyphFactory() {
   }
 
@@ -48,6 +56,11 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
     if (ccs != null) {
       check_same_seq = ccs.booleanValue();
+    }
+    
+    if (options.get(TRANSITION_POINT_FOR_SMART_GLYPH) instanceof Double) {
+      Double d = (Double) options.get(TRANSITION_POINT_FOR_SMART_GLYPH);
+      sgg_transition = d.doubleValue();
     }
   }
 
@@ -123,7 +136,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       newgraf.setGraphName(graph_name);
     }
 
-    GraphGlyph graph_glyph;
+    SmartGraphGlyph graph_glyph;
     if (newgraf instanceof GraphIntervalSym) {
       GraphIntervalSym gis = (GraphIntervalSym) newgraf;
       graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, state);
@@ -131,6 +144,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf, state);
     }
     graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
+    graph_glyph.setTransitionScale(sgg_transition);
     
     GraphStateI gstate = graf.getGraphState();
     IAnnotStyle tier_style = gstate.getTierStyle();

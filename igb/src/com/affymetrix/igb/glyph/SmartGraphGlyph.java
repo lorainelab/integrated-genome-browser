@@ -54,13 +54,15 @@ public class SmartGraphGlyph extends GraphGlyph {
   public boolean NEWDEBUG = false;
   public boolean THRESH_DEBUG = false;
 
+  public static final double default_transition_scale = 100;
+  
   /*
    *  The x scale at which to transition from MinMaxAvg drawing to Bar drawing
    *   (if graph_style is set to MINMAXAVG)
    *   specified in coords_per_pixel
    *   (note that view's transform scale is expressed differently, in pixels_per_coord...)
    */
-  double transition_scale = 100;  // specified in coords_per_pixel
+  double transition_scale = default_transition_scale;  // specified in coords_per_pixel
   boolean TRANSITION_TO_BARS = true;
   boolean SHOW_CACHE_INDICATOR = false;
   boolean USE_GRAPH_CACHE = true;
@@ -84,31 +86,8 @@ public class SmartGraphGlyph extends GraphGlyph {
   // still need to make thresh_glyph draw as a fixed-pixel (1 or 2) line instead of as a variable-pixel fillRect...
   ThreshGlyph thresh_glyph = new ThreshGlyph();
 
-  // eventually want hierarchy of graph compression caches at multiple compression levels...
-  //  GraphCache[] caches;
-  //  GraphCache graph_cache;
-  //  GraphCache2 graph_cache;
   ArrayList caches = new ArrayList();  // the hiearchy of graph caches (well really just one for now...)
-  //  int compression_level = 100;  // average # of points per entry in flat graph compression cache
   int compression_level = 20;  // average # of points per entry in flat graph compression cache
-
-  /*
-   *  Want to eventually support many drawing options:
-   *
-   *    The simple ones (just like GraphGlyph)
-   *      SIMPLE_LINE_GRAPH
-   *      SIMPLE_BAR_GRAPH
-   *      SIMPLE_DOT_GRAPH
-   *
-   *    AVG_LINE_GRAPH
-   *    AVG_BAR_GRAPH
-   *    AVG_DOT_GRAPH
-   *    AVG_HIDDEN
-   *
-   *    MIN_MAX_BAR
-   *    MIN_MAX_HIDDEN
-   *
-   */
 
   /*
    *  may need to try a new approach to minimize switching graphics color
@@ -197,19 +176,18 @@ public class SmartGraphGlyph extends GraphGlyph {
       double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
       double xcoords_per_pixel = 1 / xpixels_per_coord;
       if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
-	// if at resolution where bars should be displayed, then temporarily set
-	//   graph_style to BAR_GRAPH and invoke bar drawing by calling super.draw(),
-	//   then reset to MINMAXAVG after drawing has occurred
-	state.setGraphStyle(BAR_GRAPH);
-	super.draw(view);
-	state.setGraphStyle(MINMAXAVG);
+	// if at resolution where bars should be displayed, then draw as BIG_DOT_GRAPH style
+        super.draw(view, GraphStateI.LINE_GRAPH);
       }
       else {
-	drawMinMaxAvg(view);
+        drawMinMaxAvg(view);
       }
+
     } else {
+      // Not one of the special styles, so default to regular GraphGlyph.draw method.
       super.draw(view);
     }
+
     if (getShowThreshold()) {
       drawThresholdedRegions(view);
       //      thresh_glyph.draw(view);

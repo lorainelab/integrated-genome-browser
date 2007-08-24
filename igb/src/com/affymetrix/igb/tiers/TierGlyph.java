@@ -14,6 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.*;
 import java.util.*;
 
@@ -61,6 +62,21 @@ public class TierGlyph extends SolidGlyph {
    */
   public static final int DIRECTION_AXIS = -2;
   
+  /** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
+   *  Boolean.TRUE, the tier will draw a label next to where the handle
+   *  would be.
+   *  Note: You probably do NOT want the TierGlyph to draw a label and for the
+   *  included GraphGlyph to also draw a label.
+   */
+  public static final String SHOW_TIER_LABELS_PROPERTY = "Show Tier Labels";
+
+  /** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
+   *  Boolean.TRUE, the tier will draw a handle on the left side.
+   *  Note: You probably do NOT want the TierGlyph to draw a handle and for the
+   *  included GraphGlyph to also draw a handle.
+   */
+  public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Tier Handles";
+
   protected double spacer = 2;
 
   /*
@@ -365,9 +381,81 @@ public class TierGlyph extends SolidGlyph {
     // not messing with clipbox until need to
     //        g.setClip ( oldClipbox );
 
+    if (! style.isGraphTier()) {
+      // graph tiers take care of drawing their own handles and labels.
+      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY))) {
+        drawLabel(view);
+      }
+      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
+        drawHandle(view);
+      }
+    }
+    
     super.draw(view);
   }
     
+  public void drawLabel(ViewI view) {
+    drawLabelLeft(view);
+  }
+  
+  static Font default_font = new Font("Courier", Font.PLAIN, 12);
+
+  public void drawLabelLeft(ViewI view) {
+    if (getLabel() == null) { return; }
+    Rectangle hpix = calcHandlePix(view);
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      g.setColor(this.getColor());
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+    }
+  }
+
+  static final boolean LARGE_HANDLE = false;
+  Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
+  Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
+
+  protected Rectangle calcHandlePix(ViewI view) {
+    // could cache pixelbox of handle, but then will have problems if try to
+    //    have multiple views on same scene / glyph hierarchy
+    // therefore reconstructing handle pixel bounds here... (although reusing same object to
+    //    cut down on object creation)
+    //    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
+    //		       ", view cbox.x: " + view.getCoordBox().x);
+
+    // if full view differs from current view, and current view doesn't left align with full view,
+    //   don't draw handle (only want handle at left side of full view)
+    if (view.getFullView().getCoordBox().x != view.getCoordBox().x)  {
+      return null;
+    }
+      view.transformToPixels(coordbox, pixelbox);
+      Rectangle view_pixbox = view.getPixelBox();
+      int xbeg = Math.max(view_pixbox.x, pixelbox.x);
+      Graphics g = view.getGraphics();
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      int h = Math.min(fm.getMaxAscent(), pixelbox.height);
+      if (LARGE_HANDLE) {
+        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, pixelbox.height);
+      }
+      else {
+        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
+      }
+      return handle_pixbox;
+  }
+
+  public void drawHandle(ViewI view) {
+    Rectangle hpix = calcHandlePix(view);
+    if (hpix != null) {
+      Graphics g = view.getGraphics();
+      Color c = new Color(style.getColor().getRed(), style.getColor().getGreen(), style.getColor().getBlue(), 64);
+      g.setColor(c);
+      g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
+      g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    }
+  }
+
   /**
    *  Remove all children of the glyph, including those added with
    *  addMiddleGlyph(GlyphI).

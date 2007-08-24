@@ -129,6 +129,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   }
   
   boolean useRefTierColors = true;
+  boolean useInvertedRefTierColors = false;
   
   /** Whether to use the same color as the reference TierGlyph,
    *  and thus ignore any setting of the colors on this Glyph.
@@ -148,14 +149,27 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return this.useRefTierColors;
   }
   
+  public void setInvertRefTierColors(boolean b) {
+    useInvertedRefTierColors = b;
+  }
+
+  public boolean getInvertRefTierColors() {
+    return useInvertedRefTierColors;
+  }
+
   public void draw(ViewI view) {    
     Color bgcolor = null;
     Color fgcolor = null;
 
     TierGlyph reftier = this.getReferenceTier();
     if (useRefTierColors) {
-      bgcolor = reftier.getFillColor();
-      fgcolor = reftier.getForegroundColor();
+      if (useInvertedRefTierColors) {
+        fgcolor = reftier.getFillColor();
+        bgcolor = reftier.getForegroundColor();
+      } else {
+        bgcolor = reftier.getFillColor();
+        fgcolor = reftier.getForegroundColor();
+      }
     } else {
       bgcolor = getBackgroundColor();
       fgcolor = getForegroundColor();

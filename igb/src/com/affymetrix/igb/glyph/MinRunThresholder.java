@@ -23,7 +23,7 @@ import javax.swing.event.ChangeEvent;
 import com.affymetrix.genoviz.widget.*;
 
 public class MinRunThresholder extends JPanel
-  implements ChangeListener, ActionListener  {
+  implements ChangeListener, ActionListener, FocusListener  {
 
   static int frm_width = 400;
   static int frm_height = 200;
@@ -87,6 +87,8 @@ public class MinRunThresholder extends JPanel
 
     tslider.addChangeListener(this);
     minrunTF.addActionListener(this);
+    
+    minrunTF.addFocusListener(this);
   }
 
   public void setGraphs(java.util.List newgraphs) {
@@ -164,8 +166,12 @@ public class MinRunThresholder extends JPanel
   }
 
   public void actionPerformed(ActionEvent evt) {
-    if (graphs.size() <= 0) { return; }
     Object src = evt.getSource();
+    doAction(src);
+  }
+  
+  public void doAction(Object src) {
+    if (graphs.size() <= 0) { return; }
     if (src == minrunTF) try {
       int new_thresh = Integer.parseInt(minrunTF.getText());
       if (new_thresh != minrun_thresh) {
@@ -203,6 +209,16 @@ public class MinRunThresholder extends JPanel
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
     setGraphs(new ArrayList(graphs));
+  }
+
+  public void focusGained(FocusEvent e) {
+  }
+
+  public void focusLost(FocusEvent e) {
+    Object src = e.getSource();
+    if (src instanceof JTextField) {
+      doAction(src);
+    }
   }
 
 

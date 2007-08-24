@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
 
 
 public class MaxGapThresholder extends JPanel
-  implements ChangeListener, ActionListener  {
+  implements ChangeListener, ActionListener, FocusListener  {
 
   static int frm_width = 400;
   static int frm_height = 200;
@@ -90,6 +90,8 @@ public class MaxGapThresholder extends JPanel
 
     tslider.addChangeListener(this);
     maxgapTF.addActionListener(this);
+    
+    maxgapTF.addFocusListener(this);
   }
 
 
@@ -167,8 +169,12 @@ public class MaxGapThresholder extends JPanel
   }
 
   public void actionPerformed(ActionEvent evt) {
+    doAction(evt.getSource());
+  }
+
+  public void doAction(Object src) {
     if (graphs.size() <= 0) { return; }
-    Object src = evt.getSource();
+
     if (src == maxgapTF) try {
       int new_thresh = Integer.parseInt(maxgapTF.getText());
       if (new_thresh != maxgap_thresh) {
@@ -208,5 +214,14 @@ public class MaxGapThresholder extends JPanel
     setGraphs(new ArrayList(graphs));
   }
 
+  public void focusGained(FocusEvent e) {
+  }
+
+  public void focusLost(FocusEvent e) {
+    Object src = e.getSource();
+    if (src instanceof JTextField) {
+      doAction(src);
+    }
+  }
 
 }

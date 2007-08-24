@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,7 +30,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   private int placement;
   private boolean show_background = false;
   private boolean show_outline = false;
-
+  private boolean show_label = true;
+  
   static final boolean THICK_OUTLINE = true;
   static final boolean DRAW_COLLAPSED_EXPANDED_ICONS = false;
 
@@ -117,6 +118,16 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return show_outline;
   }
 
+  /** Sets whether or not to draw the label string. Default is true. */
+  public void setShowLabel(boolean show) {
+    show_label = show;
+  }
+
+  /** Whether or not to draw the label string. Default is true. */
+  public boolean getShowLabel() {
+    return show_label;
+  }
+  
   public void draw(ViewI view) {    
     Color bgcolor = null;
     Color fgcolor = null;
@@ -169,8 +180,10 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       }
     }
 
-    g.setColor( fgcolor );
-    drawLabel(g);
+    if (show_label) {
+      g.setColor( fgcolor );
+      drawLabel(g);
+    }
     
     if (DEBUG_PIXELBOX) {
       // testing pixbox...

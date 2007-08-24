@@ -68,8 +68,6 @@ public class SmartGraphGlyph extends GraphGlyph {
   boolean CACHE_DIRECT_DRAW = false;
 
   public static final int MINMAXAVG = GraphStateI.MINMAXAVG;
-  public static final int MINMAXAVG_BARS = 101;  // NOT YET IMPLEMENTED
-  public static final int MINMAXAVG_STAIRSTEP = 102;  // NOT YET IMPLEMENTED
 
 
   boolean AVGLINE = true;
@@ -193,30 +191,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	thresh_glyph.setColor(thresh_color);
       }
       this.addChild(thresh_glyph);
-      /*
-      double thresh_ycoord;
-      if (getMinScoreThreshold() != Float.NEGATIVE_INFINITY) {
-	thresh_ycoord = getCoordValue(view, getMinScoreThreshold());
-      }
-      else if (getMaxScoreThreshold() != Float.POSITIVE_INFINITY) {
-	thresh_ycoord = getCoordValue(view, getMaxScoreThreshold());
-      }
-      else {
-	System.out.println("in SmartGraphGlyph.draw(), problem with setting up threshold line!");
-	thresh_ycoord = 0;
-      }
-      thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
-      */
     }
 
-    if (graph_style == LINE_GRAPH ||
-	graph_style == BAR_GRAPH ||
-	graph_style == DOT_GRAPH ||
-	graph_style == STAIRSTEP_GRAPH ||
-	graph_style == HEAT_MAP) {
-        super.draw(view);
-    }
-    else if (graph_style == MINMAXAVG) {
+    if (graph_style == MINMAXAVG) {
       double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
       double xcoords_per_pixel = 1 / xpixels_per_coord;
       if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
@@ -230,6 +207,8 @@ public class SmartGraphGlyph extends GraphGlyph {
       else {
 	drawMinMaxAvg(view);
       }
+    } else {
+      super.draw(view);
     }
     if (getShowThreshold()) {
       drawThresholdedRegions(view);
@@ -240,6 +219,13 @@ public class SmartGraphGlyph extends GraphGlyph {
     }
   }
 
+  /** Sets the scale at which the drawing routine will switch between the
+   *  style that is optimized for large genomic regions and the normal style.
+   */
+  public void setTransitionScale(double d) {
+    transition_scale = d;
+  }
+  
   public void drawMinMaxAvg(ViewI view) {
     // could size cache to just the view's pixelbox, but then may end up creating a
     //   new int array every time the pixelbox changes (which with view damage or

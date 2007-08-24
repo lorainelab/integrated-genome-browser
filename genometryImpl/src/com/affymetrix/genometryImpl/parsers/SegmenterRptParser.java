@@ -13,6 +13,9 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import java.awt.Color;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -128,6 +131,11 @@ public class SegmenterRptParser {
         }
         
         String chromName = cols[chromosome_col];
+        if (! chromName.startsWith("chr")) {
+          // Add prefix "chr" to chromosome name.  This is important to make sure there are not
+          // some chromosomes named "1" and some others named "chr1".
+          chromName = "chr" + chromName;
+        }
         MutableAnnotatedBioSeq seq = seq_group.getSeq(chromName);
         if (seq == null) {
           seq = seq_group.addSeq(chromName, 0);
@@ -146,12 +154,20 @@ public class SegmenterRptParser {
         }
         
         String change_type = cols[cn_change_col];
+        String THE_METHOD = sample;
         
         SingletonSymWithProps sym = new SingletonSymWithProps(start, end, seq);
-        sym.setProperty("method", change_type);
-        String id = sample + " " + seq.getID() + ":" + start + "-" + end;
+        sym.setProperty("method", THE_METHOD.toLowerCase());
+        //String id = sample + " " + change_type + " " + seq.getID() + ":" + start + "-" + end;
+        String id = change_type + " " + seq.getID() + ":" + start + "-" + end;
         sym.setProperty("id", id);
-
+        
+//        sym.setProperty(TrackLineParser.ITEM_RGB, DUP.equalsIgnoreCase(change_type) ? Color.MAGENTA : Color.YELLOW);
+//        IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(THE_METHOD);
+//        style.getTransientPropertyMap().put(TrackLineParser.ITEM_RGB, "on");
+//        style.setColor(Color.CYAN);
+//System.out.println("Set colro for style: " + style.getUniqueName());
+        
         if (make_props) {
           for (int i=0; i<cols.length && i<col_names.size(); i++) {
             String name = (String)col_names.get(i);

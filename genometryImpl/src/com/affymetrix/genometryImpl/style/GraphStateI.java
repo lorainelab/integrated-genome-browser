@@ -33,6 +33,7 @@ public interface GraphStateI {
   public static final int MINMAXAVG = 4;
   public static final int STAIRSTEP_GRAPH = 5;
   public static final int HEAT_MAP = 7;
+  public static final int BIG_DOT_GRAPH = 8;
 
   public static final int MINMAXAVG_HEATMAP = HEAT_MAP;
 

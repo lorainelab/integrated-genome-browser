@@ -128,18 +128,38 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return show_label;
   }
   
+  boolean useRefTierColors = true;
+  
+  /** Whether to use the same color as the reference TierGlyph,
+   *  and thus ignore any setting of the colors on this Glyph.
+   *  Default is TRUE.
+   *  @see getReferenceTier()
+   */
+  public void setUseRefTierColors(boolean b) {
+    this.useRefTierColors = b;
+  }
+  
+  /** Whether to use the same color as the reference TierGlyph,
+   *  and thus ignore any setting of the colors on this Glyph.
+   *  Default is TRUE.
+   *  @see getReferenceTier()
+   */
+  public boolean getUseRefTierColors() {
+    return this.useRefTierColors;
+  }
+  
   public void draw(ViewI view) {    
     Color bgcolor = null;
     Color fgcolor = null;
 
     TierGlyph reftier = this.getReferenceTier();
-    // We COULD call setForegroundColor() and setBackgroundColor(), 
-    // but no other object is ever likely to ask for it and
-    // it seems inefficient here
-    //      setBackgroundColor(reftier.getFillColor());
-    //      setForegroundColor(reftier.getForegroundColor());
-    bgcolor = reftier.getFillColor();
-    fgcolor = reftier.getForegroundColor();
+    if (useRefTierColors) {
+      bgcolor = reftier.getFillColor();
+      fgcolor = reftier.getForegroundColor();
+    } else {
+      bgcolor = getBackgroundColor();
+      fgcolor = getForegroundColor();
+    }
     boolean collapsed = reftier.getAnnotStyle().getCollapsed();
     
     Graphics g = view.getGraphics();

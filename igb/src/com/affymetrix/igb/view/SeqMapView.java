@@ -2291,6 +2291,9 @@ public class SeqMapView extends JPanel
     Vector selections = seqmap.getSelected();
     if (selections.size()>0) {
       zoomToRectangle(getRegionForGlyphs(selections));
+    } else if (getSelectedRegion() != null) {
+      SeqSpan span = getViewSeqSpan(getSelectedRegion());
+      zoomTo(span);
     }
   }
 
@@ -3039,7 +3042,7 @@ public class SeqMapView extends JPanel
 
       TierGlyph axis_tier = this.getAxisTier();
       if (fortier == null) {
-        fortier = new TierGlyph(style);
+        fortier = makeTierGlyph(style);
         setUpTierPacker(fortier, true, constant_heights);
         method2ftier.put(meth.toLowerCase(), fortier);
       }
@@ -3060,7 +3063,7 @@ public class SeqMapView extends JPanel
       }
 
       if (revtier == null)  {
-        revtier = new TierGlyph(style);
+        revtier = makeTierGlyph(style);
         revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
         setUpTierPacker(revtier, false, constant_heights);
         method2rtier.put(meth.toLowerCase(), revtier);
@@ -3083,6 +3086,10 @@ public class SeqMapView extends JPanel
       }
   }
 
+  public TierGlyph makeTierGlyph(IAnnotStyle style) {
+    return new TierGlyph(style);
+  }
+  
   void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
     FasterExpandPacker ep = new FasterExpandPacker();
     ep.setConstantHeights(constantHeights);

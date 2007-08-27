@@ -44,7 +44,7 @@ public class SegmenterRptParser {
   int length_col;  // should need only end_col or length_col, not both
   int strand_col;  // column to use for determining strand
   int cn_change_col;  // column to use for determining cn change type ("dup", "del", etc.)
-  int sample_col;  // column to use for sample name
+  int file_col;  // column to use for sample file name
   
   boolean addToIndex; // whether to add annotation id's to the index on the seq group
   
@@ -70,24 +70,31 @@ public class SegmenterRptParser {
   
   public SegmenterRptParser(boolean props, boolean addToIndex) {
     
+//File	Chr	
+//Cytoband_Start_Pos	Cytoband_End_Pos	
+//CN_ChangeType	CN_State	Size(kb)	#ProbeSet	
+ //Avg_DistBetweenProbeSets(kB)	%ProbeSets_withCNV	
+ //Start_ProbeSet	End_ProbeSet	Start_Linear_Pos	End_Linear_Position	CNV_Annotation
+
+    this.file_col = 0;
     this.chromosome_col = 1;
-    this.start_col = 9;
-    this.end_col = 10;
-    this.length_col = -1;
-    this.sample_col = 0;
-    this.strand_col = 0;
     this.cn_change_col = 4;
-    this.addToIndex = addToIndex;
+    this.start_col = 11;
+    this.end_col = 12;
+
+    this.length_col = -1;
+    this.strand_col = -1;
     
     this.has_header = true;
         
     this.use_length = (this.length_col >= 0);
     this.use_strand = (this.strand_col >= 0);
     
+    this.addToIndex = addToIndex;
     this.make_props = props;
   }
   
-  public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) { 
+  public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
     
     HashMap group_hash = new HashMap();
     MutableSeqSpan union_span = new SimpleMutableSeqSpan();
@@ -96,16 +103,35 @@ public class SegmenterRptParser {
     try {
       InputStreamReader asr = new InputStreamReader(istr);
       BufferedReader br = new BufferedReader(asr);
-      String line;
-      if (has_header) {
+
+      
+      // skip any comment lines
+      String line = br.readLine();
+      while (line != null && line.startsWith("#") || line.startsWith("[")) {
         line = br.readLine();
+      }
+      
+      if (line == null) {
+        return;
+      }
+
+      // read header
+      if (has_header) {
         String[] cols = line_splitter.split(line);
         col_names = new ArrayList(cols.length);
         for (int i=0; i<cols.length; i++) {
           col_names.add(cols[i]);
         }
       }
-      while ((line = br.readLine()) != null) {
+      
+      // skip any other comment lines
+      line = br.readLine();
+      while (line != null && line.startsWith("#") || line.startsWith("[")) {
+        line = br.readLine();
+      }
+      
+      // read data
+      while (line != null) {
         
         String[] cols = line_splitter.split(line);
         if (cols.length <= 0) { continue; }
@@ -148,17 +174,16 @@ public class SegmenterRptParser {
           seq.setLength(start);
         }
         
-        String sample = cols[sample_col];
-        if (sample == null || sample.trim().length() == 0) {
-          sample = default_type;
+        String type = cols[file_col];
+        if (type == null || type.trim().length() == 0) {
+          type = default_type;
         }
         
         String change_type = cols[cn_change_col];
-        String THE_METHOD = sample;
+        String THE_METHOD = type;
         
         SingletonSymWithProps sym = new SingletonSymWithProps(start, end, seq);
-        sym.setProperty("method", THE_METHOD.toLowerCase());
-        //String id = sample + " " + change_type + " " + seq.getID() + ":" + start + "-" + end;
+        sym.setProperty("method", THE_METHOD); // typically the value of the "file" column
         String id = change_type + " " + seq.getID() + ":" + start + "-" + end;
         sym.setProperty("id", id);
         
@@ -178,6 +203,8 @@ public class SegmenterRptParser {
         
         seq.addAnnotation(sym);
         seq_group.addToIndex(id, sym);
+
+        line = br.readLine();
       }
     } catch (Exception ex) {
       ex.printStackTrace();
@@ -201,7 +228,7 @@ public class SegmenterRptParser {
 // 12 %ProbeSets_withCNV
 // 13 CNV_Annotation
     
-    String filname = System.getProperty("user.dir") + "/data/copy_number/DUKE_US_DukeCNV_NSP_T24_1_1.rpt";
+    String filname = System.getProperty("user.dir") + "/data/copy_number/region_example_1.region";
     File file = new File(filname);
     // type, start, end, length, strand, group, boolean props, boolean has_header
     SegmenterRptParser tester = new SegmenterRptParser();

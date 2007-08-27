@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.Xml2GenometryParser;
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.BrptParser;
@@ -176,10 +177,10 @@ public class LoadFileAction {
           // it will come out as "/home/user/http:/www.google.com", so we have to
           // trim off the beginning stuff AND add back the double slash "//" after http.
 //          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
-//          System.out.println("detected url input: " + url_name);
+//          Application.getSingleton().logInfo("detected url input: " + url_name);
 //          loadFromUrl(gviewerFrame, url_name, aseq);
           //TODO: maybe support this again?
-          System.out.println("Loading from a URL is not currently supported.");
+          Application.getSingleton().logError("Loading from a URL is not currently supported.");
         }
         else {
           try {
@@ -240,7 +241,7 @@ public class LoadFileAction {
       //
       // Also cannot handle compressed chp files, so don't bother with the Streamer class.
       if (annotfile.getName().toLowerCase().endsWith(".chp")) {
-        //System.out.println("%%%%% received load request for CHP file: " + annotfile.getPath());
+        //Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
         java.util.List results = ChpParser.parse(annotfile.getPath());
 	// aseq = getLastSeq(results);
       }
@@ -309,7 +310,7 @@ public class LoadFileAction {
   public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
         String stream_name, GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
-    System.out.println("loading file: " + stream_name);
+    Application.getSingleton().logInfo("loading file: " + stream_name);
 
     Exception the_exception = null;
     MutableAnnotatedBioSeq aseq = null;
@@ -430,7 +431,7 @@ public class LoadFileAction {
           boolean annotate_query = (psl_option == 0);
           boolean annotate_target = (psl_option == 1);
           boolean annotate_other = (psl_option == 2);
-          System.out.println("annotate: query = " + annotate_query +
+          Application.getSingleton().logDebug("annotate: query = " + annotate_query +
                              ", target = " + annotate_target +
                              ", other = " + annotate_other);
           if (annotate_query) {
@@ -480,7 +481,7 @@ public class LoadFileAction {
         BsnpParser parser = new BsnpParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
         java.util.List alist = parser.parse(str, annot_type, selected_group, true);
-        System.out.println("total snps loaded: " + alist.size());
+        Application.getSingleton().logDebug("total snps loaded: " + alist.size());
         aseq = input_seq;
         parser = null;
       }
@@ -488,7 +489,7 @@ public class LoadFileAction {
         BrptParser parser = new BrptParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
         java.util.List alist = parser.parse(str, annot_type, selected_group, true);
-        System.out.println("total repeats loaded: " + alist.size());
+        Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
         aseq = input_seq;
         parser = null;
       }
@@ -540,7 +541,7 @@ public class LoadFileAction {
           aseq = NibbleResiduesParser.parse(str, selected_group);
           if (aseq != gmodel.getSelectedSeq()) {
             //TODO: maybe set the current seq to this seq
-            System.out.println("WARNING: this is not the currently-selected sequence.");
+            Application.getSingleton().logWarning("This is not the currently-selected sequence.");
           }
         }
         else {

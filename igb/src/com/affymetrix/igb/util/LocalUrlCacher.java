@@ -15,6 +15,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
+import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -45,12 +46,12 @@ public class LocalUrlCacher {
   static {
     File fil = new File(cache_content_root);
     if (! fil.exists()) {
-      System.out.println("creating new content cache directory: " + fil.getAbsolutePath());
+      Application.getSingleton().logInfo("creating new content cache directory: " + fil.getAbsolutePath());
       fil.mkdirs();
     }
     File hfil = new File(cache_header_root);
     if (! hfil.exists()) {
-      System.out.println("creating new header cache directory: " + hfil.getAbsolutePath());
+      Application.getSingleton().logInfo("creating new header cache directory: " + hfil.getAbsolutePath());
       hfil.mkdirs();
     }
   }
@@ -120,7 +121,7 @@ public class LocalUrlCacher {
   static File getCacheDirectory() {
     File fil = new File(cache_content_root);
     if (! fil.exists()) {
-      System.out.println("creating new cache directory: " + fil.getAbsolutePath());
+      Application.getSingleton().logInfo("Creating new cache directory: " + fil.getAbsolutePath());
       fil.mkdirs();
       // It is possible that mkdirs() will fail.  Do what then?
     }
@@ -147,14 +148,14 @@ public class LocalUrlCacher {
       try {
         URI file_url = new URI(url);
         File f = new File(file_url);
-        System.out.println("Checking for existence of: " + f.getPath());
+        Application.getSingleton().logDebug("Checking for existence of: " + f.getPath());
         if (f.exists()) {
           return TYPE_FILE;
         } else {
           return TYPE_UNREACHABLE;
         }
       } catch (URISyntaxException use) {
-        System.out.println("URISyntaxException: " + url);
+        Application.getSingleton().logWarning("URISyntaxException: " + url);
         return TYPE_FILE;
       }
     }
@@ -256,12 +257,12 @@ public class LocalUrlCacher {
       InputStream fstr = null;
       URL furl = new URL(url);
       fstr = furl.openConnection().getInputStream();
-      //System.out.println("URL is file url, so not caching: " + furl);
+      //Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
       return fstr;
     }
     File fil = new File(cache_content_root);
     if (! fil.exists()) {
-      System.out.println("creating new cache directory: " + fil.getAbsolutePath());
+      Application.getSingleton().logInfo("Creating new cache directory: " + fil.getAbsolutePath());
       fil.mkdirs();
     }
     fil = null;
@@ -319,7 +320,7 @@ public class LocalUrlCacher {
 	url_reachable = true;
       }
       catch (IOException ioe) {
-	System.out.println("URL not reachable: " + url);
+	Application.getSingleton().logWarning("URL not reachable: " + url);
 	url_reachable = false;
         if (! cached) { throw ioe; }
       }
@@ -330,24 +331,24 @@ public class LocalUrlCacher {
       if (url_reachable) {
 	//  response contents not modified since local cached copy last modified, so use local
 	if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-	  System.out.println("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+	  Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
 	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
 	}
 	//        long local_timestamp = cache_file.lastModified();
 	else if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
-	  System.out.println("Cache exists and is more recent, using cache: " + cache_file);
+	  Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
 	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
         }
         else {
-	  System.out.println("cached file exists, but URL is more recent, so reloading cache");
+	  Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache");
           result_stream = null;
         }
       }
       else { // url is not reachable
         if (cache_option != ONLY_CACHE) {
-          System.out.println("Remote URL not reachable.");
+          Application.getSingleton().logWarning("Remote URL not reachable: " + url);
         }
-	System.out.println("Loading cached file for URL: " + url);
+	Application.getSingleton().logInfo("Loading cached file for URL: " + url);
 	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
       }
       // using cached content, so should also use cached headers
@@ -391,10 +392,15 @@ public class LocalUrlCacher {
 	  int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
 	  total_bytes_read += bytes_read;
 	}
-	if (total_bytes_read != content_length) { System.out.println("%%%% problem: bytes read != content length %%%%"); }
+	if (total_bytes_read != content_length) { 
+          Application.getSingleton().logWarning("Bytes read not same as content length"); 
+        }
       }
       else {
-	if (DEBUG_CONNECTION) { System.out.println("No content length header, so doing piecewise loading"); }
+	if (DEBUG_CONNECTION) { 
+          Application.getSingleton().logDebug("No content length header, so doing piecewise loading"); 
+        }
+        
 	// if no content_length header, then need to load a chunk at a time
 	//   till find end, then piece back together into content byte array
 	ArrayList chunks = new ArrayList(100);
@@ -406,7 +412,9 @@ public class LocalUrlCacher {
 	while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
 	  byte[] chunk = new byte[chunk_size];
 	  bytes_read = bis.read(chunk, 0, chunk_size);
-	  if (DEBUG_CONNECTION) { System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read); }
+          if (DEBUG_CONNECTION) { 
+            Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read); 
+          }
 	  if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
 	    total_byte_count += bytes_read;
 	    chunks.add(chunk);
@@ -414,7 +422,9 @@ public class LocalUrlCacher {
 	  }
 	  chunk_count++;
 	}
-	if (DEBUG_CONNECTION) {System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size()); }
+	if (DEBUG_CONNECTION) {
+          Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size()); 
+        }
 
 	content_length = total_byte_count;
 	content = new byte[content_length];
@@ -432,7 +442,7 @@ public class LocalUrlCacher {
       connstr.close();
       if (write_to_cache)  {
 	if (content != null && content.length > 0) {
-	  System.out.println("writing content to cache: " + cache_file.getPath());
+	  Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
 	  // write data from URL into a File
 	  BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
 	  // no API for returning number of bytes successfully written, so write all in one shot...
@@ -441,7 +451,7 @@ public class LocalUrlCacher {
 	}
 
 	// cache headers also -- in [cache_dir]/headers ?
-	System.out.println("writing headers to cache: " + header_cache_file.getPath());
+	Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
 	BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
 	headerprops.store(hbos, null);
 	hbos.close();
@@ -450,7 +460,9 @@ public class LocalUrlCacher {
     }
 
     if (headers != null) { reportHeaders(url, headers); }
-    if (result_stream == null) { System.out.println("WARNING: LocalUrlCacher couldn't get content for: " + url); }
+    if (result_stream == null) { 
+      Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url); 
+    }
     // if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
     return result_stream;
   }
@@ -458,11 +470,11 @@ public class LocalUrlCacher {
 
   public static void reportHeaders(String url, Map headers) {
     if (headers != null) {
-      System.out.println("   HEADERS for URL: " + url);
+      Application.getSingleton().logInfo("   HEADERS for URL: " + url);
       Iterator heads = headers.entrySet().iterator();
       while (heads.hasNext()) {
 	Map.Entry ent = (Map.Entry)heads.next();
-	System.out.println("   key: " + ent.getKey() + ", val: " + ent.getValue());
+	Application.getSingleton().logInfo("   key: " + ent.getKey() + ", val: " + ent.getValue());
       }
     }
   }
@@ -605,8 +617,8 @@ public class LocalUrlCacher {
           updateCacheUrlAndWait(url);
         } catch (IOException ioe) {
           // Don't worry about these exceptions.  It only means the cache will remain stale.
-          //System.out.println("Problem while trying to update cache for: " + url);
-          //System.out.println("Caused by: " + ioe.toString());
+          //Application.getSingleton().logInfo("Problem while trying to update cache for: " + url);
+          //Application.getSingleton().logInfo("Caused by: " + ioe.toString());
         }
       }
     };
@@ -618,7 +630,7 @@ public class LocalUrlCacher {
     InputStream is = null;
     try {
       getInputStream(url, NORMAL_CACHE, true);
-      System.out.println("Updated cache for: " + url);
+      Application.getSingleton().logInfo("Updated cache for: " + url);
     } finally {
       if (is != null) try { is.close(); } catch (IOException ioe) {}
     }
@@ -627,7 +639,7 @@ public class LocalUrlCacher {
 
   public static void reportHeaders(URLConnection query_con) {
     try {
-      System.out.println("URL: " + query_con.getURL().toString());
+      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
       int hindex = 0;
       while (true) {
 	String val = query_con.getHeaderField(hindex);
@@ -635,7 +647,7 @@ public class LocalUrlCacher {
 	if (val == null && key == null) {
 	  break;
 	}
-	System.out.println("   header:   key = " + key + ", val = " + val);
+	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
 	hindex++;
       }
     }
@@ -643,7 +655,7 @@ public class LocalUrlCacher {
   }
 
   public static void loadSynonyms(SynonymLookup lookup, String synonym_loc) {
-    System.out.println("url to load synonyms from: " + synonym_loc);
+    Application.getSingleton().logInfo("URL for synonyms: " + synonym_loc);
     InputStream syn_stream = null;
     try {
       syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
@@ -653,7 +665,7 @@ public class LocalUrlCacher {
     }
 
     if (syn_stream == null) {
-      System.out.println("WARNING: Unable to load synonym data from: " + synonym_loc);
+      Application.getSingleton().logWarning("Unable to load synonym data from: " + synonym_loc);
       return;
     }
 
@@ -662,7 +674,7 @@ public class LocalUrlCacher {
     }
     catch (final Throwable t) {
       // use Throwable so out-of-memory exceptions can be caught
-      System.out.println("WARNING: Error while loading synonym data from: " + synonym_loc);
+      Application.getSingleton().logWarning("Error while loading synonym data from: " + synonym_loc);
       t.printStackTrace();
     } finally {
       if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}

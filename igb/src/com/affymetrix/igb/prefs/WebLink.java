@@ -84,9 +84,9 @@ public class WebLink {
     int index = weblink_list.indexOf(wl);
     if ( index >= 0 ) {
       if (wl.getName() == null || wl.getName().trim().length() == 0) {
-        //System.out.println("Not adding duplicate web link for regex: '" + wl.getRegex() + "'");
+        //Application.getSingleton().logInfo("Not adding duplicate web link for regex: '" + wl.getRegex() + "'");
       } else {
-        //System.out.println("---------- Renaming Web Link To: " + wl.getName());
+        //Application.getSingleton().logInfo("---------- Renaming Web Link To: " + wl.getName());
         weblink_list.removeElementAt(index);
         weblink_list.addElement(wl);
       }
@@ -254,7 +254,7 @@ public class WebLink {
       field_value = ((SymWithProps) sym).getProperty(id_field_name);
     }
     if (field_value == null) {
-      System.out.println("WARNING: Selected item has no value for property '"+id_field_name+
+      Application.getSingleton().logWarning("Selected item has no value for property '"+id_field_name+
           "' which is needed to construct the web link.");
       return replacePlaceholderWithId(getUrl(), "");
     }
@@ -373,12 +373,12 @@ public class WebLink {
     File f = getLinksFile();
     String filename = f.getAbsolutePath();
     if (f.exists()) try {
-      System.out.println("Loading web links from file \""+filename+"\"");
+      Application.getSingleton().logInfo("Loading web links from file \""+filename+"\"");
 
       WebLink.importWebLinks(f);
     } catch (Exception ioe) {
       
-      System.err.println("Could not load web links from file \""
+      Application.getSingleton().logError("Could not load web links from file \""
         +filename + "\"");
     }
   }
@@ -393,7 +393,7 @@ public class WebLink {
     File f = getLinksFile();
     String filename = f.getAbsolutePath();
     try {
-      System.out.println("Saving web links to file \""+filename+"\"");
+      Application.getSingleton().logInfo("Saving web links to file \""+filename+"\"");
       File parent_dir = f.getParentFile();
       if (parent_dir != null) {
         parent_dir.mkdirs();
@@ -401,7 +401,7 @@ public class WebLink {
       WebLink.exportWebLinks(f, true);
       saved = true;
     } catch (IOException ioe) {
-      System.err.println("Error while saving web links to \"" +filename + "\"");
+      Application.getSingleton().logError("Error while saving web links to \"" +filename + "\"");
     }
     return saved;
   }

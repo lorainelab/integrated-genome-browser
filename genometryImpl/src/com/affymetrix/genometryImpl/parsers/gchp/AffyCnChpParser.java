@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.GraphSymByte;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GraphSymInt;
 import com.affymetrix.genometryImpl.GraphSymShort;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -38,7 +39,7 @@ public class AffyCnChpParser {
   public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
       boolean annotate_seq, boolean ensure_unique_id)
       throws IOException {
-    System.out.println("Parsing with " + this.getClass().getName() + ": " + stream_name);
+    SingletonGenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
     
     ArrayList results = new ArrayList();
     
@@ -120,7 +121,7 @@ public class AffyCnChpParser {
               GraphSymByte gsym = new GraphSymByte(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
               seq.addAnnotation(gsym);
             } else {
-              System.out.println("Don't know how to make a graph for data of type: " + colData.type);
+              SingletonGenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
             }
           }
         }

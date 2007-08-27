@@ -273,4 +273,10 @@ public class GraphState implements GraphStateI {
   public boolean getShowZeroLine() {
     return show_zero_line;
   }
+  
+  public static boolean isHeatMapStyle(int graph_style) {
+    return (graph_style == GraphStateI.HEAT_MAP || graph_style == GraphStateI.AVG_HEAT_MAP
+        || graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.MIN_HEAT_MAP
+        || graph_style == GraphStateI.EXT_HEAT_MAP);
+  }
 }

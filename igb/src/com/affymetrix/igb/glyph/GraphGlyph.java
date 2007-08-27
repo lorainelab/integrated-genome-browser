@@ -60,7 +60,7 @@ public class GraphGlyph extends Glyph {
 
   com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
 
-  boolean LARGE_HANDLE = true;
+  static final boolean LARGE_HANDLE = true;
   boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
 
   /**
@@ -77,8 +77,7 @@ public class GraphGlyph extends Glyph {
   GraphSym graf;
 //  float ycoords[];
 
-  int handle_width = 10;  // width of handle in pixels
-  int handle_height = 5;  // height of handle in pixels
+  public static final int handle_width = 0;  // width of handle in pixels
 
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
@@ -158,8 +157,11 @@ public class GraphGlyph extends Glyph {
   Point curr_x_plus_width = new Point(0,0);
 
   public void draw(ViewI view) {
+    draw(view, getGraphStyle());
+  }
+
+  public void draw(ViewI view, int graph_style) {
     if (TIME_DRAWING) { tim.start(); }
-    int graph_style = getGraphStyle();
     view.transformToPixels(coordbox, pixelbox);
     int pbox_yheight = pixelbox.y + pixelbox.height;
     Graphics g = view.getGraphics();
@@ -222,7 +224,7 @@ public class GraphGlyph extends Glyph {
  	g.drawLine( pixelbox.x, zero_point.y, ( pixelbox.x + pixelbox.width ), zero_point.y );
       }
 
-      g.setColor(this.getColor());
+      g.setColor(this.getColor());  
 
       // set up prev_point before starting loop
       coord.x = xcoords[beg_index];
@@ -336,12 +338,21 @@ public class GraphGlyph extends Glyph {
             g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
           }
         }
-	else if (graph_style == DOT_GRAPH) {
+	else if (graph_style == GraphStateI.DOT_GRAPH || graph_style == GraphStateI.BIG_DOT_GRAPH) {
           if (wcoords == null) {
-            g.fillRect(curr_point.x, curr_point.y, 1, 1);
+            if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
+              g.fillRect(curr_point.x-1, curr_point.y-1, 3, 3);
+            } else {
+              g.fillRect(curr_point.x, curr_point.y, 1, 1);
+            }
           }
           else {
-            g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
+            if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
+              final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
+              g.fillRect(curr_point.x, curr_point.y-1, width, 3);
+            } else {
+              g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
+            }
           }
         } else if (graph_style == HEAT_MAP) {
 
@@ -541,9 +552,9 @@ public class GraphGlyph extends Glyph {
       g.setColor(this.getColor());
       for (int i=0; i<=axis_bins; i++) {
         if (i==0 || i == axis_bins) {
-          g.fillRect(hpix.x + hpix.width, (int)(mark_ypix) - 1, 12, 2);
+          g.fillRect(hpix.x, (int)(mark_ypix) - 1, hpix.width + 12, 2);
         } else {
-          g.fillRect(hpix.x + hpix.width, (int)(mark_ypix), 8, 1);
+          g.fillRect(hpix.x, (int)(mark_ypix), hpix.width + 8, 1);
         }
 	mark_ypix += spacing;
       }
@@ -642,12 +653,15 @@ public class GraphGlyph extends Glyph {
       view.transformToPixels(coordbox, pixelbox);
       Rectangle view_pixbox = view.getPixelBox();
       int xbeg = Math.max(view_pixbox.x, pixelbox.x);
+      Graphics g = view.getGraphics();
+      g.setFont(default_font);
+      FontMetrics fm = g.getFontMetrics();
+      int h = Math.min(fm.getMaxAscent(), pixelbox.height);
       if (LARGE_HANDLE) {
 	handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, pixelbox.height);
       }
       else {
-	handle_pixbox.setBounds(xbeg, pixelbox.y + (pixelbox.height/2) - handle_width/2,
-			      handle_width, handle_height);
+	handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, h);
       }
       return handle_pixbox;
   }

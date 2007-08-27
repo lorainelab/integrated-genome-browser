@@ -97,7 +97,7 @@ public class BpsParser implements AnnotationWriter  {
 	  String in_path = fil.getPath();
 	  String in_name = fil.getName();
 	  if (in_name.endsWith(".psl")) {
-	    System.out.println("processing PSL file: " + in_path);
+	    SingletonGenometryModel.logInfo("processing PSL file: " + in_path);
 	    String barename;
 	    if (in_name.endsWith(".psl.psl")) {
 	      barename = in_name.substring(0, in_name.lastIndexOf(".psl.psl"));
@@ -130,7 +130,7 @@ public class BpsParser implements AnnotationWriter  {
       String bin_file = args[0];
       java.util.List syms = parse(bin_file, default_annot_type, seq_group);
       int symcount = syms.size();
-      System.out.println("total sym count: " + symcount);
+      SingletonGenometryModel.logInfo("total sym count: " + symcount);
       int[] blockcount = new int[100];
       for (int i=0; i<symcount; i++) {
 	SeqSymmetry sym = (SeqSymmetry)syms.get(i);
@@ -139,7 +139,7 @@ public class BpsParser implements AnnotationWriter  {
       }
       for (int i=0; i<blockcount.length; i++) {
 	if (blockcount[i] != 0) {
-	  System.out.println("syms with " + i + " children: " + blockcount[i]);
+	  SingletonGenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
 	}
       }
     }
@@ -159,7 +159,7 @@ public class BpsParser implements AnnotationWriter  {
 
   public static java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
   throws IOException {
-    System.out.println("loading file: " + file_name);
+    SingletonGenometryModel.logInfo("loading file: " + file_name);
     java.util.List results = null;
     FileInputStream fis = null;
     DataInputStream dis = null;
@@ -315,23 +315,23 @@ public class BpsParser implements AnnotationWriter  {
 
     long timecount = tim.read();
     if (REPORT_LOAD_STATS) {
-      System.out.println("PSL binary file load time: " + timecount/1000f);
+      SingletonGenometryModel.logInfo("PSL binary file load time: " + timecount/1000f);
       if (! reached_EOF) {
-        System.out.println("File loading was terminated early.");
+        SingletonGenometryModel.logInfo("File loading was terminated early.");
       }
     }
     if (count <= 0) {
-      System.out.println("PSL total counts <= 0 ???");
+      SingletonGenometryModel.logInfo("PSL total counts <= 0 ???");
     }
     else {
       tim.start();
       UcscPslComparator comp = new UcscPslComparator();
       Collections.sort(results, comp);
       if (REPORT_LOAD_STATS) {
-	System.out.println("PSL sort time: " + tim.read()/1000f);
-	System.out.println("PSL alignment count = " + count);
-	System.out.println("PSL total block count = " + total_block_count);
-	System.out.println("PSL average blocks / alignment = " +
+	SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
+	SingletonGenometryModel.logInfo("PSL alignment count = " + count);
+	SingletonGenometryModel.logInfo("PSL total block count = " + total_block_count);
+	SingletonGenometryModel.logInfo("PSL average blocks / alignment = " +
 			   ((double)total_block_count/(double)count));
       }
     }
@@ -368,7 +368,7 @@ public class BpsParser implements AnnotationWriter  {
       ex.printStackTrace();
     }
     long timecount = tim.read();
-    System.out.println("finished reading PSL file, time to read = " + (tim.read()/1000f));
+    SingletonGenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read()/1000f));
     return results;
   }
 
@@ -397,7 +397,7 @@ public class BpsParser implements AnnotationWriter  {
    **/
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
 				  String type, OutputStream outstream) {
-    //    System.out.println("in BpsParser.writeAnnotations()");
+    //    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
     boolean success = true;
     try {
       DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));

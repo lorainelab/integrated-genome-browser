@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -30,6 +31,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.Timer;
 
 public class LiftParser {
+  
   static Pattern re_tab = Pattern.compile("\t");
   static Pattern re_name = Pattern.compile("/");
   static int CHROM_START = 0;
@@ -52,7 +54,7 @@ public class LiftParser {
 
   public AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version) 
   throws IOException {
-    System.out.println("trying to load lift file: " + file_name);
+    SingletonGenometryModel.logInfo("trying to load lift file: " + file_name);
     FileInputStream fistr = null;
     AnnotatedSeqGroup result = null;
     try {
@@ -84,7 +86,7 @@ public class LiftParser {
    */
   public AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
     throws IOException {
-    System.out.println("parsing in lift file");
+    SingletonGenometryModel.logInfo("parsing in lift file");
     Timer tim = new Timer();
     tim.start();
     int contig_count = 0;
@@ -140,7 +142,7 @@ public class LiftParser {
       }
     }
     catch (EOFException ex) {
-      System.out.println("reached end of lift file");
+      SingletonGenometryModel.logDebug("reached end of lift file");
     }
 
     Collection chroms = seq_group.getSeqList();
@@ -153,9 +155,9 @@ public class LiftParser {
 	comp.addSpan(chromspan);
       }
     }
-    System.out.println("chroms loaded, load time = " + tim.read()/1000f);
-    System.out.println("contig count: " + contig_count);
-    System.out.println("chrom count: " + chrom_count);
+    SingletonGenometryModel.logInfo("chroms loaded, load time = " + tim.read()/1000f);
+    SingletonGenometryModel.logInfo("contig count: " + contig_count);
+    SingletonGenometryModel.logInfo("chrom count: " + chrom_count);
     return seq_group;
   }
 

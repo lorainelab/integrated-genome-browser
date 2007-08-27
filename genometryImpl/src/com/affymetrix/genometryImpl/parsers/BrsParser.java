@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -220,11 +221,11 @@ public class BrsParser implements AnnotationWriter  {
 	chromseq.addAnnotation(annot);
       }
     }
-    System.out.println("load time: " + tim.read()/1000f);
-    System.out.println("transcript count = " + count);
-    System.out.println("exon count = " + total_exon_count);
+    SingletonGenometryModel.logInfo("load time: " + tim.read()/1000f);
+    SingletonGenometryModel.logInfo("transcript count = " + count);
+    SingletonGenometryModel.logInfo("exon count = " + total_exon_count);
     if (count > 0)  {
-        System.out.println("average exons / transcript = " +
+        SingletonGenometryModel.logInfo("average exons / transcript = " +
                            ((double) total_exon_count / (double) count));
     }
     return results;
@@ -275,7 +276,7 @@ public class BrsParser implements AnnotationWriter  {
   }
 
   public void convertTextToBinary(String file_name, String bin_file) {
-    System.out.println("loading file: " + file_name);
+    SingletonGenometryModel.logInfo("loading file: " + file_name);
     int count = 0;
     long flength = 0;
     //    int bread = 0;
@@ -401,6 +402,7 @@ public class BrsParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
+
     System.out.println("load time: " + tim.read()/1000f);
     System.out.println("line count = " + count);
     System.out.println("file length = " + flength);
@@ -501,7 +503,7 @@ public class BrsParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
-    System.out.println("load time: " + tim.read()/1000f);
+    SingletonGenometryModel.logInfo("load time: " + tim.read()/1000f);
   }
 
   public void readObjTest(String object_file) {

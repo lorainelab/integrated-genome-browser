@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.igb.Application;
 import java.io.*;
 import java.util.*;
 
@@ -123,7 +124,7 @@ public class BarParser implements AnnotationWriter  {
     String seq_name = aseq.getID();
     int min_base = span.getMin();
     int max_base = span.getMax();
-    if (DEBUG_SLICE)  { System.out.println("trying to get slice, min = " + min_base + ", max = " + max_base); }
+    if (DEBUG_SLICE)  { SingletonGenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base); }
     // first check and see if the file is already indexed
     //  if not already indexed, index it (unless it's too small?)
     //
@@ -140,7 +141,9 @@ public class BarParser implements AnnotationWriter  {
     else {
       seq_group = gmodel.getSelectedSeqGroup();
     }
-    System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
+    if (DEBUG_SLICE) {
+      System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
+    }
     if (chunk_mins == null) {
       buildIndex(file_name, file_name, gmodel, seq_group);
       // index??
@@ -260,7 +263,9 @@ public class BarParser implements AnnotationWriter  {
       graf.removeSpan(graf.getSpan(aseq));
       graf.addSpan(span);
       long t1 = tim.read();
-      System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1/1000f));
+      if (DEBUG_SLICE) {
+        System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1/1000f));
+      }
       if (DEBUG_SLICE)  { System.out.println("made graph for slice: " + graf); }
 
       // now output bar file slice??
@@ -314,7 +319,7 @@ public class BarParser implements AnnotationWriter  {
       try {dis.close();} catch (Exception e) {}
     }
     long time_taken = tim.read();
-    System.out.println("time to fully read file: " + time_taken/1000f);
+    SingletonGenometryModel.logInfo("time to fully read file: " + time_taken/1000f);
   }
 
 
@@ -372,10 +377,12 @@ public class BarParser implements AnnotationWriter  {
       int total_chunks = (total_points / points_per_chunk) + 1;
       int[] chunk_mins = new int[total_chunks];
 
-      System.out.println("total points: " + total_points);
-      System.out.println("bytes per data point: " + bytes_per_point);
-      System.out.println("points_per_chunk: " + points_per_chunk);
-      System.out.println("expected chunk count: " + total_chunks);
+      if (DEBUG_READ) {
+        System.out.println("total points: " + total_points);
+        System.out.println("bytes per data point: " + bytes_per_point);
+        System.out.println("points_per_chunk: " + points_per_chunk);
+        System.out.println("expected chunk count: " + total_chunks);
+      }
 
       int skip_offset = (points_per_chunk * bytes_per_point) - 4;  // -4 to account for read of 4-byte integer for base coord
       CHUNK_LOOP:
@@ -399,8 +406,10 @@ public class BarParser implements AnnotationWriter  {
       }
       // just making sure edge case doesn't mess things up...
       if (chunk_mins[total_chunks-1] == 0) { chunk_mins[total_chunks-1] = seq_header.aseq.getLength(); }
-      System.out.println("chunk count: " + chunk_count);
-      System.out.println("expected chunk count: " + total_chunks);
+      if (DEBUG_READ) {
+        System.out.println("chunk count: " + chunk_count);
+        System.out.println("expected chunk count: " + total_chunks);
+      }
 
       //      coordset2indexmap.put(coord_set_id, indexmap);
       //      indexmap.put(seqid, chunk_mins);
@@ -412,8 +421,10 @@ public class BarParser implements AnnotationWriter  {
       try {dis.close();} catch (Exception e) {}
     }
     long index_time = tim.read();
-    System.out.println("time to index: " + index_time/1000f);
-    System.out.println(" ");
+    if (DEBUG_READ) {
+      System.out.println("time to index: " + index_time/1000f);
+      System.out.println(" ");
+    }
   }
 
   /** Parse a file in BAR format. */
@@ -549,9 +560,11 @@ public class BarParser implements AnnotationWriter  {
 	    copyProps(pm_graf, seq_tagvals);
 	    copyProps(mm_graf, seq_tagvals);
 	  }
-          System.out.println("done reading graph data: ");
-          System.out.println("pmgraf, yval = column1: " + pm_graf);
-          System.out.println("mmgraf, yval = column2: " + mm_graf);
+          if (DEBUG_READ) {
+            System.out.println("done reading graph data: ");
+            System.out.println("pmgraf, yval = column1: " + pm_graf);
+            System.out.println("mmgraf, yval = column2: " + mm_graf);
+          }
 	  pm_graf.setProperty("probetype", "PM (perfect match)");
 	  mm_graf.setProperty("probetype", "MM (mismatch)");
           graphs.add(pm_graf);
@@ -563,7 +576,7 @@ public class BarParser implements AnnotationWriter  {
       }
     }
     long t1 = tim.read();
-    System.out.println("bar load time: " + t1/1000f);
+    Application.getSingleton().logDebug("bar load time: " + t1/1000f);
     }
     finally {
       try { bis.close(); } catch (Exception e) {}
@@ -694,9 +707,11 @@ public class BarParser implements AnnotationWriter  {
       }
 
       int total_points = dis.readInt();
+      if (DEBUG_READ) {
       System.out.println("   seqname = " + seqname + ", version = " + seqversion +
 			 ", group = " + groupname +
 			 ", data points = " + total_points);
+      }
       //      System.out.println("total data points for graph " + k + ": " + total_points);
       MutableAnnotatedBioSeq seq = null;
 
@@ -788,7 +803,9 @@ public class BarParser implements AnnotationWriter  {
 	  new_group_name = groupname;
 	}
 	else { new_group_name = version; }
-	System.out.println("group not found, creating new seq group: " + new_group_name);
+        if (DEBUG_READ) {
+	  System.out.println("group not found, creating new seq group: " + new_group_name);
+        }
 	group = gmodel.addSeqGroup(new_group_name);
       }
 

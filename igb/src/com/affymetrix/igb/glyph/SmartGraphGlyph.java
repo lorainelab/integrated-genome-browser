@@ -144,14 +144,6 @@ public class SmartGraphGlyph extends GraphGlyph {
     resetThreshLabel();
   }
 
-  /*
-  public void setGraphState(GraphState state) {
-    super.setGraphState(state);
-    //   setMinScoreThreshold(state.getMinScoreThreshold());  // to trigger setting of threshold glyph's label
-    resetThreshLabel();
-  }
-  */
-
   public void draw(ViewI view) {
     if (NEWDEBUG) {
       System.out.println("called SmartGraphGlyph.draw(), coords = " + coordbox);
@@ -183,6 +175,19 @@ public class SmartGraphGlyph extends GraphGlyph {
         drawMinMaxAvg(view);
       }
 
+    } else if (graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP 
+        || graph_style == GraphStateI.AVG_HEAT_MAP || graph_style == GraphStateI.EXT_HEAT_MAP) {
+
+//      double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
+//      double xcoords_per_pixel = 1 / xpixels_per_coord;
+//      if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
+//	// if at resolution where bars should be displayed, then draw as BIG_DOT_GRAPH style
+//        super.draw(view, GraphStateI.HEAT_MAP);
+//      }
+//      else {
+        drawMinMaxAvg(view);
+//      }
+
     } else {
       // Not one of the special styles, so default to regular GraphGlyph.draw method.
       super.draw(view);
@@ -190,7 +195,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 
     if (getShowThreshold()) {
       drawThresholdedRegions(view);
-      //      thresh_glyph.draw(view);
     }
     else {
       thresh_glyph.setVisibility(false);
@@ -245,8 +249,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       System.out.println("smart graph draw time: " + drawtime);
     }
   }
-
-
+  
   public void drawGraph(ViewI view) {
     int graph_style = getGraphStyle();
     view.transformToPixels(coordbox, pixelbox);
@@ -289,30 +292,37 @@ public class SmartGraphGlyph extends GraphGlyph {
     view.transformToPixels(coord, scratch_point);
     int plot_bottom_ypixel = scratch_point.y; // replaces pbox_yheight
 
+    //int quarter = (plot_bottom_ypixel - plot_top_ypixel) / 4;
+
+    Color[] heatmap_colors = null;
+    double heatmap_scaling = 1;
+    if (state.getHeatMap() != null) {
+      heatmap_colors = state.getHeatMap().getColors();
+      //heatmap_scaling = (double)(heatmap_colors.length - 1) / (getVisibleMaxY() - getVisibleMinY());
+      // scale based on pixel position, not cooord position, since most calculations below are in pixels
+      heatmap_scaling = (double)(heatmap_colors.length - 1) / (- plot_top_ypixel + plot_bottom_ypixel);
+    }
+
     float yzero = 0;
     if (getVisibleMinY() > yzero) { yzero = getVisibleMinY(); }
     else if (getVisibleMaxY() < yzero) { yzero = getVisibleMaxY(); }
     coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
     view.transformToPixels(coord, zero_point);
 
-    if (show_min_max) {
-      g.setColor(Color.yellow);
-      g.drawLine(pixelbox.x, plot_bottom_ypixel, pixelbox.width, plot_bottom_ypixel);
-      g.setColor(Color.blue);
-      g.drawLine(pixelbox.x, plot_top_ypixel, pixelbox.width, plot_top_ypixel);
+    if (graph_style == MINMAXAVG) {
+      if (show_min_max) {
+        g.setColor(Color.yellow);
+        g.drawLine(pixelbox.x, plot_bottom_ypixel, pixelbox.width, plot_bottom_ypixel);
+        g.setColor(Color.blue);
+        g.drawLine(pixelbox.x, plot_top_ypixel, pixelbox.width, plot_top_ypixel);
+      }
+      
+      if (getGraphState().getShowZeroLine() && yzero == 0) {
+        g.setColor(Color.gray);
+        g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
+      }
+      g.setColor(darker);
     }
-
-    //    if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
-    //    else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
-    //    else if (show_zero_line) {
-    //      g.setColor(Color.gray);
-    //      g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
-    //    }
-    if (getGraphState().getShowZeroLine() && yzero == 0) {
-      g.setColor(Color.gray);
-      g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
-    }
-    g.setColor(darker);
 
     /*
      * GAH 8-7-2002
@@ -322,18 +332,14 @@ public class SmartGraphGlyph extends GraphGlyph {
      *     cache entry at that level) is still less than avg_points_per_pixel)
      */
     double graph_coord_length = xcoords[end_index] - xcoords[beg_index];
-    //    double avg_coords_between_points = graph_coord_length / ((double)xcoords.length);
-    //    double avg_points_per_coord = 1.0f / avg_coords_between_points;
     double avg_coords_between_points = graph_coord_length / xcoords.length;
     double avg_points_per_coord = 1.0 / avg_coords_between_points;
-    // want points_per_coord * coords_per_pixel   ( = points_per_pixel)
-    //    double avg_points_per_pixel = avg_coords_per_point / coords_per_pixel;
     double avg_points_per_pixel = avg_points_per_coord * coords_per_pixel;
     /*
      *  first implementation of graph compression caching, just using a flat caching
      *      (one level of compression / summation)
      */
-    if ((avg_points_per_pixel > compression_level) && USE_GRAPH_CACHE) {
+    if (USE_GRAPH_CACHE && (avg_points_per_pixel > compression_level)) {
       int draw_beg_index;
       int draw_end_index;
 
@@ -378,28 +384,10 @@ public class SmartGraphGlyph extends GraphGlyph {
       int last_ymin = 0;
       int last_ymax = 0;
       // trying first with just min/max drawing...
-      if (CACHE_DIRECT_DRAW) {
-	g.setColor(darker);
-	for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	  coord.x = (graph_cache.xmin[i] + graph_cache.xmax[i]) / 2.0f;
-	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
-	  view.transformToPixels(coord, curr_point);
-	  // flipping -- hmm...
-	  //	ymin_pixel = curr_point.y;
-	  ymax_pixel = curr_point.y;
-
-	  coord.y = offset - ((graph_cache.ymax[i] - getVisibleMinY()) * yscale);
-	  view.transformToPixels(coord, curr_point);
-	  // flipping -- hmm...
-	  //	ymax_pixel = curr_point.y;
-	  ymin_pixel = curr_point.y;
-
-	  g.fillRect(curr_point.x, ymin_pixel, 1, (ymax_pixel - ymin_pixel + 1));
-	  draw_count++;
-	}
-      }
-      else {  // using cache, but still collecting values per pixel...
-	g.setColor(darker);
+      {  // using cache, but still collecting values per pixel...
+	if (graph_style == MINMAXAVG) {
+          g.setColor(darker);
+        }
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
@@ -428,17 +416,38 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  }
 
 	  else {  // draw previous pixel position
-	    if ((graph_style == MINMAXAVG) && MINMAXBAR) {
-	      //	      int ystart = Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y);
-	      //	      int yheight = Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight) - ystart;
-	      int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
-	      int yheight = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel) - ystart;
-	      g.fillRect(prev_point.x, ystart, 1, yheight);
-	      //	      g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
-	      //			 prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
+	    yavg_pixel = ysum / points_in_pixel;
+            
+	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
+                graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
+                || graph_style == GraphStateI.EXT_HEAT_MAP) {
+              // this does NOT apply to AVG_HEAT_MAP
+
+              int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+              int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+	      int yheight = yend - ystart;
+              
+              if (graph_style == MINMAXAVG) {
+                g.fillRect(prev_point.x, ystart, 1, yheight);
+              } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
+                g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
+                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);              
+              } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+                g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
+                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);              
+              } else if (graph_style == GraphStateI.EXT_HEAT_MAP) {
+                int sss = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
+                int eee = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
+                
+                if (Math.abs(sss-127) > Math.abs(eee-127)) { // Pick the most extreme value out of max and min
+                  g.setColor(state.getHeatMap().getColor(sss));
+                } else {
+                  g.setColor(state.getHeatMap().getColor(eee));
+                }
+                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+              }
 	      draw_count++;
 	    }
-	    yavg_pixel = ysum / points_in_pixel;
 	    if (AVGLINE) {
 	      // cache for drawing later
 	      if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
@@ -459,7 +468,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
       }
       if (SHOW_CACHE_INDICATOR) {
-	g.setColor(Color.white);
+	g.setColor(Color.RED);
 	g.fillRect(20, ymin_pixel-5, 25, 10);
       }
     }
@@ -504,7 +513,9 @@ public class SmartGraphGlyph extends GraphGlyph {
       int points_in_pixel = 1;
       int draw_count = 0;
 
-      g.setColor(darker);
+      if (graph_style == MINMAXAVG) {
+        g.setColor(darker);
+      }
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
 	coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
@@ -518,15 +529,34 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  points_in_pixel++;
 	}
 	else {  // draw previous pixel position
-	  if ((graph_style == MINMAXAVG) && MINMAXBAR)  {
-	    int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
+                graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
+                || graph_style == GraphStateI.EXT_HEAT_MAP) {
+              // Does not apply to AVG_HEAT_MAP
+
+            int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 	    int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	    int yheight = yend - ystart;
-	    g.fillRect(prev_point.x, ystart, 1, yheight);
-	    //	    g.fillRect(prev_point.x, ystart, 1, 1);
-	    //	    g.fillRect(prev_point.x, yend, 1, 1);
-	    //	    g.drawLine(prev_point.x, Math.max(Math.min(ymin_pixel, pbox_yheight), pixelbox.y),
-	    //		       prev_point.x, Math.min(Math.max(ymax_pixel, pixelbox.y), pbox_yheight));
+
+            if (graph_style == MINMAXAVG) {
+              g.fillRect(prev_point.x, ystart, 1, yheight);
+            } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
+              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
+              g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+            } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
+              g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+            } else if (graph_style == GraphStateI.EXT_HEAT_MAP) { 
+                int max = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
+                int min = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
+                
+                if (Math.abs(max-127) > Math.abs(min-127)) { // Pick the most extreme value out of max and min
+                  g.setColor(state.getHeatMap().getColor(max));
+                } else {
+                  g.setColor(state.getHeatMap().getColor(min));
+                }
+                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+            }
 	    draw_count++;
 	  }
 	  yavg_pixel = ysum / points_in_pixel;
@@ -549,7 +579,9 @@ public class SmartGraphGlyph extends GraphGlyph {
     }
 
     if (AVGLINE) {
-      g.setColor(lighter);
+      if (graph_style == MINMAXAVG) {
+        g.setColor(lighter);
+      }
       int prev_index = 0;
       // find the first pixel position that has a real value in pixel_cache
       while ((prev_index < pixel_cache.length) && (pixel_cache[prev_index] == Integer.MIN_VALUE)) {
@@ -559,18 +591,27 @@ public class SmartGraphGlyph extends GraphGlyph {
 	int yval;
 	for (int i=prev_index+1; i<pixel_cache.length; i++) {
 	  yval = pixel_cache[i];
-	  if (yval != Integer.MIN_VALUE) {
-	    if (pixel_cache[i-1] == Integer.MIN_VALUE &&
-		coords_per_pixel > 30) {
-	      // last pixel had no datapoints, so just draw a point at current pixel
-	      g.drawLine(i, yval, i, yval);
-	    }
-	    else {
-	      // last pixel had at least one datapoint, so connect with line
-	      g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
-	    }
-	    prev_index = i;
-	  }
+          if (graph_style == GraphStateI.AVG_HEAT_MAP) {
+            if (yval != Integer.MIN_VALUE) {
+              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yval))));
+              g.fillRect(i, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+              prev_index = i;
+            }
+          }
+          if (graph_style == GraphStateI.MINMAXAVG) {
+            if (yval != Integer.MIN_VALUE) {
+              if (pixel_cache[i-1] == Integer.MIN_VALUE &&
+                  coords_per_pixel > 30) {
+                // last pixel had no datapoints, so just draw a point at current pixel
+                g.drawLine(i, yval, i, yval);
+              }
+              else {
+                // last pixel had at least one datapoint, so connect with line
+                g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
+              }
+              prev_index = i;
+            }
+          }
 	}
       }
     }

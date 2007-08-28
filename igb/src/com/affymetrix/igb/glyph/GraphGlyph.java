@@ -77,7 +77,7 @@ public class GraphGlyph extends Glyph {
   GraphSym graf;
 //  float ycoords[];
 
-  public static final int handle_width = 0;  // width of handle in pixels
+  public static final int handle_width = 5;  // width of handle in pixels
 
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection

@@ -35,8 +35,10 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
  *  (This was based on the TabDelimitedParser, but then specialized.)
  */
 public class SegmenterRptParser {
-  public static final String DEL = "del";
-  public static final String DUP = "dup";
+  //public static final String DEL = "del";
+  //public static final String DUP = "dup";
+  public static final String CN_REGION_FILE_EXT = "cn_regions";
+  public static final String LOH_REGION_FILE_EXT = "loh_regions";
 
   int chromosome_col;
   int start_col;
@@ -79,8 +81,8 @@ public class SegmenterRptParser {
     this.file_col = 0;
     this.chromosome_col = 1;
     this.cn_change_col = 4;
-    this.start_col = 11;
-    this.end_col = 12;
+    this.start_col = 12;
+    this.end_col = 13;
 
     this.length_col = -1;
     this.strand_col = -1;
@@ -228,7 +230,14 @@ public class SegmenterRptParser {
 // 12 %ProbeSets_withCNV
 // 13 CNV_Annotation
     
-    String filname = System.getProperty("user.dir") + "/data/copy_number/region_example_1.region";
+//0// File	Chr	Cytoband_Start_Pos	Cytoband_End_Pos	CN_ChangeType	CN_State	
+//6// Size(kb)	#ProbeSet	Avg_DistBetweenProbeSets(kB)	%ProbeSets_withCNV	
+//10// Start_ProbeSet	End_ProbeSet	
+//12// Start_Linear_Pos	End_Linear_Position	CNV_Annotation
+    
+    
+    
+    String filname = System.getProperty("user.dir") + "/data/copy_number/786-O.cn_regions";
     File file = new File(filname);
     // type, start, end, length, strand, group, boolean props, boolean has_header
     SegmenterRptParser tester = new SegmenterRptParser();

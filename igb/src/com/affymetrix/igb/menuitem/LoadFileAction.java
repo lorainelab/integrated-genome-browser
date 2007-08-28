@@ -46,7 +46,7 @@ public class LoadFileAction {
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
   protected static boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
-  protected static boolean PARSE_REGION = false; // whether to parse ".region" files from Genotype Console Segmenter
+  protected static boolean PARSE_REGION = false; // whether to parse files from Genotype Console Segmenter
   protected static boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
 
   /**
@@ -101,7 +101,7 @@ public class LoadFileAction {
         chooser.addChoosableFileFilter(new UniFileFilter("var", "Genomic Variation Files"));
       }
       if (PARSE_REGION) {
-        chooser.addChoosableFileFilter(new UniFileFilter("region", "Segmenter Tabular Reports"));
+        chooser.addChoosableFileFilter(new UniFileFilter(SegmenterRptParser.CN_REGION_FILE_EXT, "Segmenter Tabular Reports"));
       }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
@@ -358,7 +358,7 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (PARSE_VAR && lcname.endsWith(".region")) {
+      else if (PARSE_VAR && lcname.endsWith("." +SegmenterRptParser.CN_REGION_FILE_EXT)) {
         SegmenterRptParser parser = new SegmenterRptParser();
         parser.parse(str, stream_name, selected_group);
         aseq = input_seq;

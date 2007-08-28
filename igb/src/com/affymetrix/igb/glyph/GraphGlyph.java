@@ -561,8 +561,8 @@ public class GraphGlyph extends Glyph {
       g.setColor(this.getColor());
       g.setFont(axis_font);
       FontMetrics fm = g.getFontMetrics();
-      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int)max_ypix - fm.getDescent());
-      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int)min_ypix + fm.getAscent() + 1);
+      //g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int)max_ypix - fm.getDescent());
+      //g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int)min_ypix + fm.getAscent() + 1);
     }
   }
 
@@ -746,6 +746,9 @@ public class GraphGlyph extends Glyph {
       // if no label was set, try using ID
       lab = getID();
     }
+    
+    lab += " (" + nformat.format(state.getVisibleMinY()) + ", " + nformat.format(state.getVisibleMaxY()) + ")";
+    
     return lab;
   }
 

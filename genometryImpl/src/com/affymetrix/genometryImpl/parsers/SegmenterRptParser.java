@@ -80,9 +80,9 @@ public class SegmenterRptParser {
 
     this.file_col = 0;
     this.chromosome_col = 1;
+    this.start_col = 2;
+    this.end_col = 3;
     this.cn_change_col = 4;
-    this.start_col = 12;
-    this.end_col = 13;
 
     this.length_col = -1;
     this.strand_col = -1;

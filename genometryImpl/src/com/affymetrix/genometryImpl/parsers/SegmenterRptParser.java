@@ -182,7 +182,7 @@ public class SegmenterRptParser {
         }
         
         String change_type = cols[cn_change_col];
-        String THE_METHOD = type;
+        String THE_METHOD = default_type; // should be file name with proper extension
         
         SingletonSymWithProps sym = new SingletonSymWithProps(start, end, seq);
         sym.setProperty("method", THE_METHOD); // typically the value of the "file" column

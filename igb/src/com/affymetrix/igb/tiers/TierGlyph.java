@@ -315,6 +315,16 @@ public class TierGlyph extends SolidGlyph {
     return label;
   }
 
+  boolean shouldDrawLabel() {
+    if (! style.isGraphTier()) {
+      // graph tiers take care of drawing their own handles and labels.
+      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY))) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
   // overriding pack to ensure that tier is always the full width of the scene
   public void pack(ViewI view) {
     if (isTimed) { timecheck.start(); }
@@ -324,7 +334,21 @@ public class TierGlyph extends SolidGlyph {
       super.pack(view);
       Rectangle2D mbox = scene.getCoordBox();
       Rectangle2D cbox = this.getCoordBox();
-      this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
+      
+      if (shouldDrawLabel()) {
+        // Add extra space to make room for the label.
+//        FontMetrics fm = view.getGraphics().getFontMetrics();
+//        int h_pix = fm.getAscent() + fm.getDescent();
+//        com.affymetrix.genoviz.bioviews.Point2D p = new com.affymetrix.genoviz.bioviews.Point2D(0,0);
+//        view.transformToCoords(new Point(0,h_pix), p);
+//        this.setCoords(mbox.x, cbox.y - p.y, mbox.width, cbox.height + p.y);
+        
+        // Although the space SHOULD be computed based on font metrics, etc,
+        // that doesn't really work any better than a fixed coord value
+        this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
+      } else {
+        this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);        
+      }
       //    if (isTimed && label.startsWith("whatever (+)")) {
     }
     if (isTimed) {
@@ -332,7 +356,21 @@ public class TierGlyph extends SolidGlyph {
       System.out.println("######## time to pack " + label + ": " + tim/cycles);
     }
   }
-  
+
+  public void drawTraversal(ViewI view) {
+    super.drawTraversal(view);
+
+    if (! style.isGraphTier()) {
+      // graph tiers take care of drawing their own handles and labels.
+      if (shouldDrawLabel()) {
+        drawLabel(view);
+      }
+      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
+        drawHandle(view);
+      }
+    }
+  }
+   
   /**
    *  Overriden to allow background shading by a collection of non-child
    *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -381,19 +419,10 @@ public class TierGlyph extends SolidGlyph {
     // not messing with clipbox until need to
     //        g.setClip ( oldClipbox );
 
-    if (! style.isGraphTier()) {
-      // graph tiers take care of drawing their own handles and labels.
-      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY))) {
-        drawLabel(view);
-      }
-      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
-        drawHandle(view);
-      }
-    }
     
     super.draw(view);
   }
-    
+  
   public void drawLabel(ViewI view) {
     drawLabelLeft(view);
   }
@@ -405,10 +434,17 @@ public class TierGlyph extends SolidGlyph {
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
-      g.setColor(this.getColor());
       g.setFont(default_font);
       FontMetrics fm = g.getFontMetrics();
+
+//      java.awt.geom.Rectangle2D rect2d = g.getFontMetrics().getStringBounds(getLabel(), g);
+//      g.setColor(Color.CYAN);
+//      g.fillRect((hpix.x + hpix.width + 1), (hpix.y  + 1), 
+//          (int) rect2d.getWidth(), (int) rect2d.getHeight());
+      
+      g.setColor(this.getColor());
       g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
+      //g.drawString(getLabel(), (hpix.x + hpix.width + 1), (int) (hpix.y + rect2d.getHeight()));
     }
   }
 

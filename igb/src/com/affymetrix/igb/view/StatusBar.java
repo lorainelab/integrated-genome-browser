@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005-2006 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.Application;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -33,16 +34,47 @@ public class StatusBar extends JPanel {
   static int timer_delay_ms = 5000;
   
   public StatusBar() {
+    Application app = Application.getSingleton();
+    
+    String gc_name = app.getResourceString("perform_garbage_collection");
+    if (gc_name != null && gc_name.length() > 0) {
+      performGcAction.putValue(Action.NAME, gc_name);
+    }
+    
+    String tt_hairline = app.getResourceString("status_bar_hairline_desc");
+    String tt_status = app.getResourceString("status_bar_desc");
+    String tt_status_memory = app.getResourceString("status_bar_memory_desc");
+    if (tt_hairline == null || tt_hairline.length() == 0) {
+      tt_hairline = "Hairline Position";
+    }
+    
+    if (tt_status == null || tt_status.length() == 0 ) {
+      tt_status = "Shows Selected Item, or other Message";
+    }
+    
+    if (tt_status_memory == null || tt_status_memory.length() == 0) {
+      tt_status_memory = "Memory Used / Available";
+    }
+    
     position_ta = new JLabel("");
     status_ta = new JLabel("");
     memory_ta = new JLabel("");
     position_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
     status_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
-    memory_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
+    // this border leaves some extra space, especially on the right side,
+    // so the Mac OS can put the "resize window" gui there
+    memory_ta.setBorder(
+        BorderFactory.createCompoundBorder(
+          BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+          BorderFactory.createEmptyBorder(0,12,0,15)
+        ));
     
-    position_ta.setToolTipText("Hairline Position");
-    status_ta.setToolTipText("Shows Selected Item, or other Message");
-    memory_ta.setToolTipText("Memory Used / Available");
+    position_ta.setToolTipText(tt_hairline);
+    status_ta.setToolTipText(tt_status);
+    memory_ta.setToolTipText(tt_status_memory);
+    
+//    Box memory_ta_container = Box.createHorizontalBox();
+//    memory_ta_container.add(Box.c)
     
     //num_format = NumberFormat.getIntegerInstance();
     num_format = new DecimalFormat();
@@ -56,14 +88,9 @@ public class StatusBar extends JPanel {
     this.add(status_ta, BorderLayout.CENTER);
     this.add(memory_ta, BorderLayout.EAST);
 
-    JMenuItem gc_MI = new JMenuItem("Release Unused Memory");
+    JMenuItem gc_MI = new JMenuItem(performGcAction);
     popup_menu.add(gc_MI);
     
-    gc_MI.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        System.gc();
-      }
-    });
     
     memory_ta.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
@@ -106,6 +133,12 @@ public class StatusBar extends JPanel {
     
     updateSafely(position_ta, s);
   }
+  
+  Action performGcAction = new AbstractAction("Release Unused Memory") {
+    public void actionPerformed(ActionEvent ae) {
+      System.gc();      
+    }
+  };
   
   /**
    *  Causes the memory indicator to update its value.  Normally you do not

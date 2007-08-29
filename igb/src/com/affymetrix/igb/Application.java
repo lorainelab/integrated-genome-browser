@@ -1,3 +1,15 @@
+/**
+*   Copyright (c) 2007 Affymetrix, Inc.
+*    
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.  
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
@@ -5,9 +17,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.*;
 import java.util.logging.Logger;
 import javax.swing.*;
 
@@ -23,10 +33,11 @@ public abstract class Application {
   static Application singleton = null;
   
   public Application() {
+    singleton = this;
     if (USE_STATUS_BAR) {
+      // must define singleton variable before instantiating StatusBar()
       status_bar = new StatusBar();
     }
-    singleton = this;
   }
   
   Map plugin_hash = new HashMap();

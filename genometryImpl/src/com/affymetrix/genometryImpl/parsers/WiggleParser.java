@@ -228,31 +228,50 @@ public class WiggleParser {
    *</pre>
    *  @param graphs  a Collection of GraphSym objects.  (They do not have to be GraphSymFloat objects.)
    */
-  public static boolean writeVariableStep(java.util.Collection graphs, OutputStream outstream) {
-    try {
-      OutputStreamWriter osw = new OutputStreamWriter(outstream);
-      BufferedWriter bw = new BufferedWriter(osw);
-      Iterator iter = graphs.iterator();
-      while (iter.hasNext()) {
-        GraphSym graf = (GraphSym)iter.next();
-        String seqid = graf.getGraphSeq().getID();
-        String gname = graf.getGraphName();
-        bw.write("track type=wiggle_0 name=\"" + gname + "\"\n");
-        bw.write("variableStep\tchrom=" + seqid + "\n");
-        int pcount = graf.getPointCount();
-        int[] xcoords = graf.getGraphXCoords();
-        //float[] ycoords = (float[]) graf.getGraphYCoords();
-        for (int i=0; i<pcount; i++) {
-          bw.write(Integer.toString(xcoords[i]));
-          bw.write("\t");
-          bw.write(graf.getGraphYCoordString(i));
-          bw.write("\n");
-        }
-      }
-    } catch (Exception ex) {
-      ex.printStackTrace();
+  public static void writeVariableStep(Collection graphs, OutputStream outstream)
+  throws IOException {
+    OutputStreamWriter osw = new OutputStreamWriter(outstream);
+    BufferedWriter bw = new BufferedWriter(osw);
+    Iterator iter = graphs.iterator();
+
+    while (iter.hasNext()) {
+      GraphSym graf = (GraphSym)iter.next();
+      String gname = graf.getGraphName();
+      String desc = ""; 
+      writeVariableStep(graf, Integer.MIN_VALUE, Integer.MAX_VALUE, 
+        gname, desc, bw);
+      bw.flush();
     }
-    return true;
+    bw.close();
+  }
+
+  /**
+   *  Writes a set of graphs to a variable-step Wiggle format, outputting
+   *  only data within the given range of x-values.
+   */
+  public static void writeVariableStep(GraphSym graf, 
+      final int x_start, final int x_end, 
+      String name, String description,
+      BufferedWriter bw) throws IOException {
+    
+    
+    String seqid = graf.getGraphSeq().getID();
+    bw.write("track type=wiggle_0 name=\"" + name + "\" description=\"" + description + "\"");
+    bw.write('\n');
+    bw.write("variableStep\tchrom=" + seqid);
+    bw.write('\n');
+    final int pcount = graf.getPointCount();
+    final int[] xcoords = graf.getGraphXCoords();
+    
+    for (int i=0; i<pcount; i++) {
+      final int x = xcoords[i];
+      if (x >= x_start && x <= x_end) {
+        bw.write(Integer.toString(x));
+        bw.write('\t');
+        bw.write(graf.getGraphYCoordString(i));
+        bw.write('\n');
+      }
+    }
   }
 
   /** Writes the given GraphIntervalSym in wiggle-BED format.  

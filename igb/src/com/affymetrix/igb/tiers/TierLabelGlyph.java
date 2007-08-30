@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
@@ -35,6 +36,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   static final boolean THICK_OUTLINE = true;
   static final boolean DRAW_COLLAPSED_EXPANDED_ICONS = false;
 
+  public static boolean draw_graph_ticks = false;
+  
   public String toString() {
     return ("TierLabelGlyph: label: \""+getLabelString()+"\"  +coordbox: "+coordbox);
   }
@@ -157,23 +160,31 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return useInvertedRefTierColors;
   }
 
-  public void draw(ViewI view) {    
-    Color bgcolor = null;
-    Color fgcolor = null;
-
+  Color[] getFgAndBg() {
     TierGlyph reftier = this.getReferenceTier();
+    Color[] c = new Color[2];
     if (useRefTierColors) {
       if (useInvertedRefTierColors) {
-        fgcolor = reftier.getFillColor();
-        bgcolor = reftier.getForegroundColor();
+        c[0] = reftier.getFillColor();
+        c[1] = reftier.getForegroundColor();
       } else {
-        bgcolor = reftier.getFillColor();
-        fgcolor = reftier.getForegroundColor();
+        c[1] = reftier.getFillColor();
+        c[0] = reftier.getForegroundColor();
       }
     } else {
-      bgcolor = getBackgroundColor();
-      fgcolor = getForegroundColor();
+      c[1] = getBackgroundColor();
+      c[0] = getForegroundColor();
     }
+    return c;
+  }
+  
+  
+  public void draw(ViewI view) {
+    Color[] colors = getFgAndBg();
+    Color fgcolor = colors[0];
+    Color bgcolor = colors[1];
+
+    TierGlyph reftier = this.getReferenceTier();
     boolean collapsed = reftier.getAnnotStyle().getCollapsed();
     
     Graphics g = view.getGraphics();
@@ -227,6 +238,8 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
       g.drawRect(debug_rect.x, debug_rect.y,
 		 debug_rect.width, debug_rect.height);
     }
+    
+    drawGraphTicks(view);
     super.draw(view);
   }
 
@@ -340,4 +353,51 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     return getForegroundColor();
   }
 
+  static double axis_bins = 10;
+  int xpix_offset = 0;
+  Point zero_point = new Point(0,0);
+  Point2D coord = new Point2D(0,0);
+  Point curr_point = new Point(0,0);
+  Point prev_point = new Point(0,0);
+  Point scratch_point = new Point(0,0);
+  LinearTransform scratch_trans = new LinearTransform();
+
+  Rectangle2D label_coord_box = new Rectangle2D();
+  Rectangle label_pix_box = new Rectangle();
+
+  public void drawGraphTicks(ViewI view) {
+    // draws bars to indicate the range of the graph in pixels.
+    // may also draw 10 tick marks.
+    
+    if (! draw_graph_ticks) {
+      return;
+    }
+    
+    if (this.getReferenceTier().getChildCount() == 0) {
+      return;
+    }
+    
+    GlyphI glyph = this.getReferenceTier().getChild(0);
+    if (! (glyph instanceof GraphGlyph)) {
+      return;
+    }
+    GraphGlyph gglyph = (GraphGlyph) glyph;
+    
+    view.transformToPixels(coordbox, pixelbox);
+    double[] tick_ys = gglyph.calculateTickYValues(view, 10);
+    
+    Graphics g = view.getGraphics();
+    Color[] colors = getFgAndBg();
+    g.setColor(colors[0]);
+    for (int i=0; i<tick_ys.length; i++) {
+      double mark_ypix = tick_ys[i];
+      if (i==0 || i == tick_ys.length-1) {
+        g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix), pixelbox.width/2, 2);
+      } else {
+        //g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix) + 1, pixelbox.width/2, 1);
+      }
+    }
+    g.fillRect(pixelbox.x + pixelbox.width/2-1, (int) tick_ys[0],
+               1, (int) (tick_ys[tick_ys.length-1] - tick_ys[0]));
+  }
 }

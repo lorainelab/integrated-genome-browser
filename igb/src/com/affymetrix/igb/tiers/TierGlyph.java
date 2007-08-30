@@ -359,16 +359,6 @@ public class TierGlyph extends SolidGlyph {
 
   public void drawTraversal(ViewI view) {
     super.drawTraversal(view);
-
-    if (! style.isGraphTier()) {
-      // graph tiers take care of drawing their own handles and labels.
-      if (shouldDrawLabel()) {
-        drawLabel(view);
-      }
-      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
-        drawHandle(view);
-      }
-    }
   }
    
   /**
@@ -419,6 +409,15 @@ public class TierGlyph extends SolidGlyph {
     // not messing with clipbox until need to
     //        g.setClip ( oldClipbox );
 
+    if (! style.isGraphTier()) {
+      // graph tiers take care of drawing their own handles and labels.
+      if (shouldDrawLabel()) {
+        drawLabel(view);
+      }
+      if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
+        drawHandle(view);
+      }
+    }
     
     super.draw(view);
   }

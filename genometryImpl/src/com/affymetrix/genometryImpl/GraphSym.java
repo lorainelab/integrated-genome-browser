@@ -51,7 +51,13 @@ public abstract class GraphSym extends SimpleSymWithProps {
     super();
     this.graph_original_seq = seq;
 
-    SeqSpan span = new SimpleSeqSpan(0, seq.getLength(), seq);
+    int start = 0;
+    int end = seq.getLength();
+    if (x != null && x.length >= 1) {
+      start = x[0];
+      end = x[x.length-1];
+    }
+    SeqSpan span = new SimpleSeqSpan(start, end, seq);
     this.addSpan(span);
     this.xcoords = x;
     this.gid = id;

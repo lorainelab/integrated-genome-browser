@@ -40,7 +40,7 @@ public class GraphGlyph extends Glyph {
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
-  static double axis_bins = 10;
+  static int axis_bins = 10;
 
   public static final int LINE_GRAPH = GraphStateI.LINE_GRAPH;
   public static final int BAR_GRAPH = GraphStateI.BAR_GRAPH;
@@ -77,7 +77,8 @@ public class GraphGlyph extends Glyph {
   GraphSym graf;
 //  float ycoords[];
 
-  public static final int handle_width = 5;  // width of handle in pixels
+  public static int handle_width = 10;  // width of handle in pixels
+  public static final int pointer_width = 10;
 
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
   Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
@@ -516,15 +517,16 @@ public class GraphGlyph extends Glyph {
       g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
     }
   }
-
-  //Color handleColor = new Color(128, 128, 128, 64);
   
   public void drawHandle(ViewI view) {
+    if (handle_width <= 0) {
+      return;
+    }
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
-      Color c = new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 64);
-      g.setColor(c);
+      //Color c = new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 64);
+      g.setColor(this.getColor());
       g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 //      g.setColor(Color.gray);
       g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
@@ -536,34 +538,47 @@ public class GraphGlyph extends Glyph {
     Rectangle hpix = calcHandlePix(view);
 
     if (hpix != null) {
-      getInternalLinearTransform(view, scratch_trans);
-      double yscale = scratch_trans.getScaleY();
-      double yoffset = scratch_trans.getOffsetY();
-
-      coord.y = yoffset;
-      view.transformToPixels(coord, curr_point);
-      double max_ypix = curr_point.y;
-      coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-      view.transformToPixels(coord, curr_point);
-      double min_ypix = curr_point.y;
-      double pix_height = max_ypix - min_ypix;
-      double spacing = pix_height / axis_bins;
-      double mark_ypix = min_ypix;
-      g.setColor(this.getColor());
-      for (int i=0; i<=axis_bins; i++) {
-        if (i==0 || i == axis_bins) {
-          g.fillRect(hpix.x, (int)(mark_ypix) - 1, hpix.width + 12, 2);
+      double[] tick_ys = calculateTickYValues(view, axis_bins);
+      for (int i=0; i<tick_ys.length; i++) {
+        double mark_ypix = tick_ys[i];
+        if (i==0 || i == tick_ys.length-1) {
+          g.fillRect(hpix.x, (int)(mark_ypix), hpix.width + 12, 2);
         } else {
-          g.fillRect(hpix.x, (int)(mark_ypix), hpix.width + 8, 1);
+          g.fillRect(hpix.x, (int)(mark_ypix) + 1, hpix.width + 8, 1);
         }
-	mark_ypix += spacing;
       }
-      g.setColor(this.getColor());
-      g.setFont(axis_font);
-      FontMetrics fm = g.getFontMetrics();
+      //g.setColor(this.getColor());
+      //g.setFont(axis_font);
+      //FontMetrics fm = g.getFontMetrics();
       //g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int)max_ypix - fm.getDescent());
       //g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int)min_ypix + fm.getAscent() + 1);
     }
+  }
+
+  public double[] calculateTickYValues(ViewI view, int bins) {
+    Graphics g = view.getGraphics();
+    Rectangle hpix = calcHandlePix(view);
+    
+    getInternalLinearTransform(view, scratch_trans);
+    double yscale = scratch_trans.getScaleY();
+    double yoffset = scratch_trans.getOffsetY();
+    
+    coord.y = yoffset;
+    view.transformToPixels(coord, curr_point);
+    double max_ypix = curr_point.y;
+    coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+    view.transformToPixels(coord, curr_point);
+    double min_ypix = curr_point.y;
+    double pix_height = max_ypix - min_ypix;
+    double spacing = pix_height / bins;
+    double mark_ypix = min_ypix;
+    
+    double[] tick_ys = new double[bins+1];
+    for (int i=0; i<=bins; i++) {
+      tick_ys[i] = mark_ypix;
+      mark_ypix += spacing;
+    }
+    return tick_ys;
   }
 
   /** Draws the outline in a way that looks good for tiers.  With other glyphs,
@@ -578,7 +593,8 @@ public class GraphGlyph extends Glyph {
     draw(view);
     Rectangle view_pixbox = view.getPixelBox();
     Graphics g = view.getGraphics();
-    g.setColor(view.getScene().getSelectionColor());
+    Color sel_color = view.getScene().getSelectionColor();
+    g.setColor(sel_color);
     view.transformToPixels(getPositiveCoordBox(), pixelbox);
 //    g.drawRect(view_pixbox.x, pixelbox.y,
 //               view_pixbox.width-1, pixelbox.height-1);
@@ -588,16 +604,24 @@ public class GraphGlyph extends Glyph {
 //    }
     
     // only outline the handle, not the whole graph
-    g.drawRect(view_pixbox.x, pixelbox.y,
-               handle_width-1, pixelbox.height-1);
-    if (THICK_OUTLINE) {
-      g.drawRect(view_pixbox.x+1, pixelbox.y+1,
-               handle_width-3, pixelbox.height-3);
+    if (handle_width > 0) {
+      g.drawRect(view_pixbox.x, pixelbox.y,
+                 handle_width-1, pixelbox.height-1);
+      if (THICK_OUTLINE) {
+        g.drawRect(view_pixbox.x+1, pixelbox.y+1,
+                 handle_width-3, pixelbox.height-3);
+      }
     }
     
     // also draw a little pointing triangle to make the selection stand-out more
-    int[] xs = {view_pixbox.x + handle_width, view_pixbox.x + 2*handle_width, view_pixbox.x + handle_width};
-    int[] ys = {pixelbox.y,  pixelbox.y + (int) (0.5*(pixelbox.height-1)), pixelbox.y + pixelbox.height-1};
+    int[] xs = {view_pixbox.x + handle_width, 
+                view_pixbox.x + handle_width + pointer_width, 
+                view_pixbox.x + handle_width};
+    int[] ys = {pixelbox.y,  
+                pixelbox.y + (int) (0.5*(pixelbox.height-1)), 
+                pixelbox.y + pixelbox.height-1};
+    Color c = new Color(sel_color.getRed(), sel_color.getGreen(), sel_color.getBlue(), 128);
+    g.setColor(c);
     g.fillPolygon(xs, ys, 3);
   }
 

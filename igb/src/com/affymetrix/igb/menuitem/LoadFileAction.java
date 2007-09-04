@@ -101,7 +101,9 @@ public class LoadFileAction {
         chooser.addChoosableFileFilter(new UniFileFilter("var", "Genomic Variation Files"));
       }
       if (PARSE_REGION) {
-        chooser.addChoosableFileFilter(new UniFileFilter(SegmenterRptParser.CN_REGION_FILE_EXT, "Segmenter Tabular Reports"));
+        chooser.addChoosableFileFilter(new UniFileFilter(
+          new String[] {SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, 
+            "Regions Files"));
       }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
@@ -358,7 +360,9 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (PARSE_VAR && lcname.endsWith("." +SegmenterRptParser.CN_REGION_FILE_EXT)) {
+      else if (PARSE_REGION && (
+          lcname.endsWith("." +SegmenterRptParser.CN_REGION_FILE_EXT)
+          || lcname.endsWith("." +SegmenterRptParser.LOH_REGION_FILE_EXT))) {
         SegmenterRptParser parser = new SegmenterRptParser();
         parser.parse(str, stream_name, selected_group);
         aseq = input_seq;

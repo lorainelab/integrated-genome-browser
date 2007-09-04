@@ -13,13 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import java.awt.Color;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
@@ -27,16 +20,25 @@ import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+
+import java.awt.Color;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 /**
- *  Parses tab-delimited output data from the Copy Number "Segmenter" program.
- *  The file extension is usually ".rpt".
+ *  Parses tab-delimited output data from the Copy Number "Segmenter".
+ *  The file extension is either {@link #CN_REGION_FILE_EXT} or
+ *  {@link #LOH_REGION_FILE_EXT}.
  *
  *  (This was based on the TabDelimitedParser, but then specialized.)
  */
 public class SegmenterRptParser {
-  //public static final String DEL = "del";
-  //public static final String DUP = "dup";
+  public static final String GAIN = "Gain";
+  public static final String LOSS = "Loss";
+  //public static final String LOH = "LOH";
   public static final String CN_REGION_FILE_EXT = "cn_regions";
   public static final String LOH_REGION_FILE_EXT = "loh_regions";
 
@@ -72,11 +74,7 @@ public class SegmenterRptParser {
   
   public SegmenterRptParser(boolean props, boolean addToIndex) {
     
-//File	Chr	
-//Cytoband_Start_Pos	Cytoband_End_Pos	
-//CN_ChangeType	CN_State	Size(kb)	#ProbeSet	
- //Avg_DistBetweenProbeSets(kB)	%ProbeSets_withCNV	
- //Start_ProbeSet	End_ProbeSet	Start_Linear_Pos	End_Linear_Position	CNV_Annotation
+//File	Chr Start	End	Change  (plus some other columns I treat as text)
 
     this.file_col = 0;
     this.chromosome_col = 1;

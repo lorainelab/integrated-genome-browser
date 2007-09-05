@@ -48,6 +48,7 @@ public class LoadFileAction {
   protected static boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
   protected static boolean PARSE_REGION = false; // whether to parse files from Genotype Console Segmenter
   protected static boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
+  protected static boolean PARSE_FSH = false; // whether to parse ".fsh" files (fishClones.txt from UCSC)
 
   /**
    *  Constructor.
@@ -104,6 +105,10 @@ public class LoadFileAction {
         chooser.addChoosableFileFilter(new UniFileFilter(
           new String[] {SegmenterRptParser.CN_REGION_FILE_EXT, SegmenterRptParser.LOH_REGION_FILE_EXT}, 
             "Regions Files"));
+      }
+      if (PARSE_FSH) {
+        chooser.addChoosableFileFilter(new UniFileFilter(
+          FishClonesParser.FILE_EXT, "FishClones"));
       }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
       HashSet all_known_endings = new HashSet();
@@ -364,6 +369,13 @@ public class LoadFileAction {
           lcname.endsWith("." +SegmenterRptParser.CN_REGION_FILE_EXT)
           || lcname.endsWith("." +SegmenterRptParser.LOH_REGION_FILE_EXT))) {
         SegmenterRptParser parser = new SegmenterRptParser();
+        parser.parse(str, stream_name, selected_group);
+        aseq = input_seq;
+        parser = null;
+      }
+      else if (lcname.endsWith("." +FishClonesParser.FILE_EXT)) {
+        // Load these EVEN if PARSE_FSH == false
+        FishClonesParser parser = new FishClonesParser(true);
         parser.parse(str, stream_name, selected_group);
         aseq = input_seq;
         parser = null;

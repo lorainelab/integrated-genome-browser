@@ -282,7 +282,6 @@ public class BrsParser implements AnnotationWriter  {
     //    int bread = 0;
     int max_tlength = Integer.MIN_VALUE;
     int max_exons = Integer.MIN_VALUE;
-    int max_spliced_length = Integer.MIN_VALUE;
     int total_exon_count = 0;
     int biguns = 0;
     int big_spliced = 0;
@@ -411,7 +410,6 @@ public class BrsParser implements AnnotationWriter  {
     //    System.out.println("biguns: " + biguns);
     System.out.println("max exons in single transcript: " + max_exons);
     System.out.println("total exons: " + total_exon_count);
-    System.out.println("max spliced transcript length: " + max_spliced_length);
     System.out.println("spliced transcripts > 65000: " + big_spliced);
     //    Enumeration enum = name_hash.keys();
     //    int namecount = 0;
@@ -431,7 +429,6 @@ public class BrsParser implements AnnotationWriter  {
     //    int bread = 0;
     int max_tlength = Integer.MIN_VALUE;
     int max_exons = Integer.MIN_VALUE;
-    int max_spliced_length = Integer.MIN_VALUE;
     int total_exon_count = 0;
     int biguns = 0;
     int big_spliced = 0;

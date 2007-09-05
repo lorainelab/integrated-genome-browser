@@ -41,6 +41,7 @@ public class TabDelimitedParser {
   
   boolean addToIndex; // whether to add annotation id's to the index on the seq group
   
+  int id_col;
   int seq_col;
   int seq_col2;
   int start_col2;
@@ -56,8 +57,8 @@ public class TabDelimitedParser {
   boolean use_type = false;
   boolean use_strand = false;
   boolean has_header = false;
+  boolean has_id = false;
   
-  String default_type = "unknown_type";
   static final Pattern line_splitter = Pattern.compile("\t");
   
   public void setSeqColumn(int col) { seq_col = col; }
@@ -80,9 +81,14 @@ public class TabDelimitedParser {
    *  Constructor.
    *  Each argument tells which column to find a particular item in.
    *  -1 for any arg indicates that it is not present in the table.
+   *  @param props Whether to use the column names to construct properties.
+   *    Only valid if "header" is true.
+   *  @param header Whether there is a header line containing column names for properties
+   *  @param addToIndex Whether to add the ID of each item to the index on the
+   *    AnnotatedSeqGroup
    */
   public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
-      int strand, int group, boolean props, boolean header, boolean addToIndex) {
+      int strand, int group, int id, boolean props, boolean header, boolean addToIndex) {
     
     if (chromosome < 0) {
       throw new IllegalArgumentException("Chromosome column number must be 0 or greater.");
@@ -95,6 +101,7 @@ public class TabDelimitedParser {
     group_col = group;
     type_col = type;
     strand_col = strand;
+    id_col = id;
     this.addToIndex = addToIndex;
     
     has_header = header;
@@ -102,17 +109,20 @@ public class TabDelimitedParser {
     use_group = (group >= 0);
     use_type = (type >=0);
     use_strand = (strand >= 0);
+    has_id = (id >= 0);
     
     this.make_props = props;
   }
   
-  public TabDelimitedParser(String type, int chromosome, int start, int end, int length,
-      int strand, int group, boolean props, boolean header, boolean addToIndex) {
-    this(-1, chromosome, start, end, length, strand, group, props, header, addToIndex);
-    default_type = type;
-  }
   
-  public void parse(InputStream istr, AnnotatedSeqGroup seq_group) {
+ /**
+  *  Parses data into the given AnnotatedSeqGroup.
+  *  @param istr The source of the data
+  *  @param default_type  The name to use for the "type" or "method" if the
+  *    "type" column parameter in the constructor was -1.
+  *  @param seq_group  The AnnotatedSeqGroup on which to add the data.
+  */
+  public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
     
     HashMap group_hash = new HashMap();
     MutableSeqSpan union_span = new SimpleMutableSeqSpan();
@@ -159,6 +169,11 @@ public class TabDelimitedParser {
           //	  System.out.println("type = " + type);
         }
         
+        String id = null;
+        if (has_id) {
+          id = cols[id_col];
+        }
+        
         String chromName = cols[chromosome_col];
         MutableAnnotatedBioSeq seq = seq_group.getSeq(chromName);
         if (seq == null) {
@@ -174,7 +189,9 @@ public class TabDelimitedParser {
         
         SingletonSymWithProps child = new SingletonSymWithProps(start, end, seq);
         child.setProperty("method", type);
-        String id = type + " " + seq.getID() + ":" + start + "-" + end;
+        if (id == null) {
+          id = type + " " + seq.getID() + ":" + start + "-" + end;
+        }
         child.setProperty("id", id);
         if (make_props) {
           for (int i=0; i<cols.length && i<col_names.size(); i++) {
@@ -196,7 +213,9 @@ public class TabDelimitedParser {
             parent.addSpan(span);
             //	    System.out.println("parent type = " + type);
             parent.setProperty("method", type);
-            id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
+            if (id == null) {
+              id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
+            }
             
             parent.setProperty("id", id);
             group_hash.put(group, parent);
@@ -225,30 +244,16 @@ public class TabDelimitedParser {
     return;
   }
   
-  public static void main(String[] args) {
-// 0 Sample
-// 1 Chr
-// 2 Cytoband_Start_Pos
-// 3 Cytoband_End_Pos
-// 4 CN_ChangeType
-// 5 Size(kb)
-// 6 CN_State
-// 7 Start_ProbeSet
-// 8 End_ProbeSet
-// 9 Start_Physical_Pos
-// 10 End_Physical_Position
-// 11 #ProbeSet
-// 12 %ProbeSets_withCNV
-// 13 CNV_Annotation
-    
+  public static void main(String[] args) {    
     String fil = System.getProperty("user.dir") + "/data/copy_number/DUKE_US_DukeCNV_NSP_T24_1_1.rpt";
     // type, start, end, length, strand, group, boolean props, boolean has_header
-    TabDelimitedParser tester = new TabDelimitedParser(0, 1, 9, 10, -1, -1, -1, true, true, true);
+    TabDelimitedParser tester = new TabDelimitedParser(0, 1, 9, 10, -1, -1, -1, -1, true, true, true);
     try {
-      FileInputStream fis = new FileInputStream(new File(fil));
+      File file = new File(fil);
+      FileInputStream fis = new FileInputStream(file);
       AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
       
-      tester.parse(fis, seq_group);
+      tester.parse(fis, file.getName(), seq_group);
       
       for (int s=0; s<seq_group.getSeqCount(); s++) {
         MutableAnnotatedBioSeq aseq = seq_group.getSeq(s);

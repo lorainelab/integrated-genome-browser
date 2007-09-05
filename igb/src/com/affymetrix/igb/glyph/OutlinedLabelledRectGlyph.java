@@ -11,17 +11,19 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.glyph;
+package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.glyph.SolidGlyph;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.LabelledGlyphI;
 import java.awt.*;
 
-import com.affymetrix.genoviz.bioviews.ViewI;
 
 /**
  * Adds an internal label string to solid rectangle glyph.
  */
-public class OutlinedLabelledRectGlyph extends OutlineRectGlyph implements LabelledGlyphI {
-  String text;
+public class OutlinedLabelledRectGlyph extends SolidGlyph implements LabelledGlyphI {
+  String text = "";
 
   public void setText(String str) {
     this.text = str;
@@ -34,10 +36,16 @@ public class OutlinedLabelledRectGlyph extends OutlineRectGlyph implements Label
   public static final int min_width_needed_for_text = 32;
 
   public void draw(ViewI view) {
-    super.draw( view );
-    if( getText() != null ) {
-      Graphics g = view.getGraphics();
+    view.transformToPixels(coordbox, pixelbox);
+    if (pixelbox.width <= 2) { pixelbox.width = 2; }
+    if (pixelbox.height <= 2) { pixelbox.height = 2; }
 
+    Graphics g = view.getGraphics();
+    g.setColor(this.getForegroundColor());
+    g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+    
+    
+    if( getText() != null ) {
       if (pixelbox.width >= min_width_needed_for_text) {
         Font savefont = g.getFont();
         Font f2 = this.getFont();
@@ -49,7 +57,7 @@ public class OutlinedLabelledRectGlyph extends OutlineRectGlyph implements Label
           savefont = null;
         }
         FontMetrics fm = g.getFontMetrics();
-        int text_width = fm.stringWidth(this.text);
+        int text_width = fm.stringWidth(getText());
 
         int midline = pixelbox.y + pixelbox.height / 2;
 
@@ -57,8 +65,8 @@ public class OutlinedLabelledRectGlyph extends OutlineRectGlyph implements Label
           int mid = pixelbox.x + ( pixelbox.width / 2 ) - ( text_width / 2 );
           // define adjust such that: ascent-adjust = descent+adjust
           int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0);
-          g.setColor(this.getForegroundColor());
-          g.drawString(this.text, mid, midline + adjust );
+//          g.setColor(this.getForegroundColor());
+          g.drawString(getText(), mid, midline + adjust );
         }
         if (null != savefont) {
           g.setFont(savefont);

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-/** 
+/**
  * This is similar to, but <em>not</em> the same as the {java.awt.geom.Rectangle2D.Double},
  * which was not available at the time this class was written.
  * Some methods may change
@@ -167,7 +167,7 @@ public class Rectangle2D  {
 
   /**
    * Checks if two rectangles intersect.
-   * Just like Rectangle, we consider Rectangle2Ds that only 
+   * Just like Rectangle, we consider Rectangle2Ds that only
    * share an edge as <em>not</em> intersecting.
    */
   public boolean intersects(Rectangle2D r) {
@@ -194,13 +194,11 @@ public class Rectangle2D  {
    * Computes the union of two rectangles.
    */
   public Rectangle2D union(Rectangle2D r) {
-    // Using double casting to deal with doubleing point rounding errors.
-
-    double x1 = Math.min((double)x, (double)r.x);
-    double x2 = Math.max((double)x + (double)width, (double)r.x + (double)r.width);
-    double y1 = Math.min((double)y, (double)r.y);
-    double y2 = Math.max((double)y + (double)height, (double)r.y + (double)r.height);
-    return new Rectangle2D((double)x1, (double)y1, (double)(x2 - x1), (double)(y2 - y1));
+    double x1 = Math.min(x, r.x);
+    double x2 = Math.max(x + width, r.x + r.width);
+    double y1 = Math.min(y, r.y);
+    double y2 = Math.max(y + height, r.y + r.height);
+    return new Rectangle2D(x1, y1, (x2 - x1), (y2 - y1));
   }
 
   /**

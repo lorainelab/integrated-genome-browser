@@ -304,16 +304,6 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
     return line_spacing;
   }
 
-  /** @deprecated Use {@link #setShow(int,boolean)} instead. */
-  public void setShowComp(boolean show) {
-    setShow(COMPLEMENT, show);
-  }
-
-  /** @deprecated Use {@link #getShow(int)} instead. */
-  public boolean getShowComp() {
-    return getShow(COMPLEMENT);
-  }
-
   public void setShow(int type, boolean show) {
     allocateSpaceFor[type] = show;
     // do recalcs here???

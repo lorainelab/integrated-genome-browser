@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -186,41 +186,6 @@ public interface NeoAssemblerI extends NeoWidgetI {
    * @see #addSequence
    */
   public GlyphI setResidues(GlyphI seq_tag, String residues);
-
-  /**
-   * @deprecated Use addAlignedSpan().
-   *
-   * @see #addAlignedSpan
-   */
-  public GlyphI addUngappedSpan(GlyphI seq_tag, int seqstart, int seqend,
-      int alignstart, int alignend);
-
-  /**
-   * adds a new sequence to the alignment with a label of <code>name</code>
-   * that extends from <code>start</code> to <code>end</code> in the
-   * alignment coordinate system.  A string of letters, <code>residues</code>,
-   * contains the sequence.  If <code>residues</code> is an empty string
-   * then no letters are associated with the sequence.  The letters can
-   * be added later using <code>setResidues</code>.
-   *
-   * @deprecated in favor of <pre>
-   *   GlyphI gl = addSequence(start, end),
-   *   setLabel(gl, namestring);
-   *   setResidues(gl, residuestring);</pre>
-   *
-   * @param name the String label for this sequence
-   * @param start the starting position in the alignment coordinate
-   *   system of the first residue of this sequence.
-   * @param end  the final position in the alignment coordinate
-   *   system of the last residue of this sequence.
-   * @param residues a String of residues (letters) for this sequence.
-   *
-   * @return the <code>Glyph</code> for the sequence.
-   *
-   * @see #addAlignedSpan
-   * @see #setResidues
-   */
-  public GlyphI addSequence(String name, int start, int end, String residues);
 
   /**
    * returns the <code>Glyphs</code> beneath the coordinate
@@ -424,19 +389,6 @@ public interface NeoAssemblerI extends NeoWidgetI {
    * @return <code>true</code> if alignments are automatically sorted.
    */
   public boolean getAutoSort();
-
-
-  // Note that this assumes adding based on sequence!
-  //  so that it will _include_ the end -- thus if
-  //  start = 0, end = 1, really creating a sequence annotation that
-  //  starts at 0 and is 2 map units long
-  //
-  /**
-   * @deprecated in favor of <pre>
-   *   GlyphI gl = addSequence(start, end),
-   *   setLabel(gl, namestring);</pre>
-   */
-  public GlyphI addSequence(java.lang.String s, int i, int j);
 
   /**
    *  Pack (or repack) the aligned sequences

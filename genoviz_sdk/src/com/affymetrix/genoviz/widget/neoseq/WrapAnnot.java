@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.bioviews.*;
 public class WrapAnnot extends WrapGlyph {
 
   public WrapAnnot() {
-    children = new Vector();
+    children = new Vector<GlyphI>();
   }
 
   public void addChild(GlyphI glyph)  {

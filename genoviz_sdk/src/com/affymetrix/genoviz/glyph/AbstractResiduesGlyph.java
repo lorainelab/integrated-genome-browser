@@ -89,11 +89,6 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   public int getFontHeight() { return font_height; }
   public int getFontAscent() { return font_ascent; }
 
-  /** @deprecated Use {@link #setForegroundColor(Color)}. */
-  public void setResidueColor(Color col) { setForegroundColor( col );  }
-  /** @deprecated Use {@link #getForegroundColor}. */
-  public Color getResidueColor() { return getForegroundColor(); }
-
   public boolean supportsSubSelection() {
     return true;
   }
@@ -128,7 +123,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
       GlyphI child;
       Rectangle2D childbox;
       for (i=0; i<children.size(); i++) {
-        child = (GlyphI)children.elementAt(i);
+        child = children.elementAt(i);
         childbox = child.getCoordBox();
         child.setCoords(childbox.x, y, childbox.width, height);
       }

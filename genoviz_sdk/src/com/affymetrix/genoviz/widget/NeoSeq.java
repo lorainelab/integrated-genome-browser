@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -138,7 +138,7 @@ public class NeoSeq extends NeoContainerWidget
   protected int scroll_increment;
   protected ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   public NeoSeq() {
     super();
@@ -775,8 +775,7 @@ public class NeoSeq extends NeoContainerWidget
     if (fit_check) {
       int check_base = (int)num_map.getView().getCoordBox().y;
       if (start_base != check_base && residues_per_line != 0) {
-        start_base =
-          ((int)(check_base / residues_per_line)) * residues_per_line;
+        start_base = (check_base / residues_per_line) * residues_per_line;
       }
     }
 
@@ -934,15 +933,6 @@ public class NeoSeq extends NeoContainerWidget
 
   /**
    * Removes highlighting of selected range of sequence.
-   *
-   * @deprecated Use deselect() instead.
-   */
-  public void unhighlight() {
-    deselect();
-  }
-
-  /**
-   * Removes highlighting of selected range of sequence.
    */
   public void deselect() {
     residues_selected = false;
@@ -973,12 +963,13 @@ public class NeoSeq extends NeoContainerWidget
     residue_map.adjustScroller(residue_map.Y);
   }
 
-  /**
+ /**
    * sets the residues in the NeoSeq.
    *
    * @param seq_string contains the residues.
    * @deprecated Use setResidues(String residues) instead.
    */
+  @Deprecated
   public void setSequence(String seq_string) {
     setResidues(seq_string);
   }
@@ -1648,20 +1639,6 @@ public class NeoSeq extends NeoContainerWidget
   }
 
   /**
-   * @deprecated Use {@link #setShow(int, boolean)} instead.
-   */
-  public void setShowComp(boolean showComp) {
-    setShow(COMPLEMENT, showComp);
-  }
-
-  /**
-   * @deprecated Use {@link #getShow(int)} instead.
-   */
-  public boolean getShowComp() {
-    return getShow(COMPLEMENT);
-  }
-
-  /**
    * Turns display options on or off.
    *
    * @param type is one of
@@ -1747,8 +1724,8 @@ public class NeoSeq extends NeoContainerWidget
    * Get annotation glyphs that overlap a sequence range.
    * Note that this method filters out the glyph used for highlighting.
    */
-  public Vector getAnnotationItems(int start, int end) {
-    Vector resultVec = new Vector();
+  public Vector<GlyphI> getAnnotationItems(int start, int end) {
+    Vector<GlyphI> resultVec = new Vector<GlyphI>();
     Range sel_range = new Range(start, end);
     Range annot_range = new Range(0,0);
 
@@ -2019,10 +1996,9 @@ public class NeoSeq extends NeoContainerWidget
         // ignore viewbox coordbox, just use the NeoSeq's visible range
         Range r = getVisibleRange();
         NeoRangeEvent nevt = new NeoRangeEvent(this, r.beg, r.end);
-        NeoRangeListener rl;
+
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
-          rl.rangeChanged(nevt);
+          range_listeners.elementAt(i).rangeChanged(nevt);
         }
       }
     }

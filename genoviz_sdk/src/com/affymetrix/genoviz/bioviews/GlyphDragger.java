@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -56,7 +56,7 @@ public class GlyphDragger
 
   GlyphI dragged_glyph;
   NeoWidgetI widget;
-  Vector drag_listeners = new Vector();
+  Vector<NeoGlyphDragListener> drag_listeners = new Vector<NeoGlyphDragListener>();
   boolean force_within_parent = false;
 
   // a transform to use when mapping mouse drags to glyph coords
@@ -284,7 +284,7 @@ public class GlyphDragger
 
   public void notifyListeners(NeoGlyphDragEvent evt) {
     for (int i=0; i<drag_listeners.size(); i++) {
-      NeoGlyphDragListener listener = (NeoGlyphDragListener)drag_listeners.elementAt(i);
+      NeoGlyphDragListener listener = drag_listeners.elementAt(i);
       listener.heardGlyphDrag(evt);
     }
   }

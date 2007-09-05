@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,7 +21,8 @@ import java.util.Enumeration;
  */
 public class SubstitutionMatrix {
 
-  Hashtable outer = new Hashtable();
+  Hashtable<Character,Hashtable<Character,Double>> outer =
+    new Hashtable<Character,Hashtable<Character,Double>>();
 
   public SubstitutionMatrix() {
   }
@@ -34,16 +35,13 @@ public class SubstitutionMatrix {
    * @param score
    */
   public void put(char a, char b, double score) {
-    Character obja = new Character(a);
-    Character objb = new Character(b);
-    Hashtable inner = (Hashtable) outer.get(obja);
+    Hashtable<Character,Double> inner = outer.get(a);
 
     if (null == inner) {
-      inner = new Hashtable();
-      outer.put(obja, inner);
+      inner = new Hashtable<Character,Double>();
+      outer.put(a, inner);
     }
-    Float objscore = new Float(score);
-    inner.put(objb, objscore);
+    inner.put(b, score);
   }
 
   /**
@@ -55,10 +53,9 @@ public class SubstitutionMatrix {
    */
   public double get(char a, char b) {
     double score = 0;
-    Character obja = new Character(a);
-    Hashtable inner = (Hashtable) outer.get(obja);
+    Hashtable<Character,Double> inner = outer.get(a);
     if (null != inner) {
-      Float objscore = (Float) (inner.get(new Character(b)));
+      Double objscore = inner.get(b);
       if (null != objscore) {
         score = objscore.doubleValue();
       }
@@ -72,14 +69,14 @@ public class SubstitutionMatrix {
   public String toString() {
     StringBuffer s = new StringBuffer();
     s.append("Substitution Matrix\n");
-    Enumeration eo = outer.keys();
+    Enumeration<Character> eo = outer.keys();
     while (eo.hasMoreElements()) {
-      Character obja = (Character) eo.nextElement();
-      Hashtable inner = (Hashtable) outer.get(obja);
-      Enumeration ei = inner.keys();
+      Character obja = eo.nextElement();
+      Hashtable<Character,Double> inner = outer.get(obja);
+      Enumeration<Character> ei = inner.keys();
       s.append("" + obja + "\t");
       while (ei.hasMoreElements()) {
-        Character objb = (Character) ei.nextElement();
+        Character objb = ei.nextElement();
         double f = get(obja.charValue(), objb.charValue());
         s.append(" " + f);
       }

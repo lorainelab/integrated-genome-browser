@@ -53,7 +53,7 @@ public class IntSeqSpan implements SeqSpan, Cloneable {
    *                         T = base 3)
    */
   public int getLength() {
-    return (getMax() - getMin());
+    return (end > start ? end-start : start-end);
   }
 
   public BioSeq getBioSeq() {

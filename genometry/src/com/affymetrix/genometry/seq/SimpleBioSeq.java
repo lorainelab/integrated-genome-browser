@@ -15,7 +15,6 @@ package com.affymetrix.genometry.seq;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableBioSeq;
-
 import com.affymetrix.genometry.util.DNAUtils;
 
 public class SimpleBioSeq implements BioSeq, MutableBioSeq {

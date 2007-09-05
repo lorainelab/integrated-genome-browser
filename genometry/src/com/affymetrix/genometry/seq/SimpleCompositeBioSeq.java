@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -87,7 +87,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
       getResidues(residue_span, fillchar, rootsym, char_array, 0);
       result = new String(char_array);
       if (DEBUG_GET_RESIDUES)  {
-	System.out.println(result.substring(0, 15) + "..." + result.substring(result.length()-15));
+        System.out.println(result.substring(0, 15) + "..." + result.substring(result.length()-15));
       }
 
     }
@@ -95,60 +95,60 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   }
 
   protected void getResidues(SeqSpan this_residue_span, char fillchar,
-			     SeqSymmetry sym, char[] residues, int buf_offset) {
+                             SeqSymmetry sym, char[] residues, int buf_offset) {
     int symCount = sym.getChildCount();
     if (symCount == 0) {  // leaf symmetry, need to retrieve residues from other seq in sym
       SeqSpan this_comp_span = sym.getSpan(this);
       if (SeqUtils.intersects(this_comp_span, this_residue_span)) {
-	BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
-	SeqSpan other_comp_span = sym.getSpan(other_seq);
-	MutableSeqSpan ispan = new SimpleMutableSeqSpan();
-	boolean intersects = SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
-	MutableSeqSpan other_residue_span = new SimpleMutableSeqSpan();
-	// transform intersection to composition sym's other span, via composition sym.
-	// format: transformSpan(srcSpan, dstSpan, dstSeq, transformSym)
-	SeqUtils.transformSpan(ispan, other_residue_span, other_seq, sym);
+        BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
+        SeqSpan other_comp_span = sym.getSpan(other_seq);
+        MutableSeqSpan ispan = new SimpleMutableSeqSpan();
+        boolean intersects = SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
+        MutableSeqSpan other_residue_span = new SimpleMutableSeqSpan();
+        // transform intersection to composition sym's other span, via composition sym.
+        // format: transformSpan(srcSpan, dstSpan, dstSeq, transformSym)
+        SeqUtils.transformSpan(ispan, other_residue_span, other_seq, sym);
 
-	boolean opposite_strands = this_comp_span.isForward() ^ other_comp_span.isForward();
-	boolean resultForward = opposite_strands ^ this_residue_span.isForward();
-	String spanResidues;
+        boolean opposite_strands = this_comp_span.isForward() ^ other_comp_span.isForward();
+        boolean resultForward = opposite_strands ^ this_residue_span.isForward();
+        String spanResidues;
 
-	if (resultForward) {
-	  spanResidues = other_seq.getResidues(other_residue_span.getMin(),
-					       other_residue_span.getMax());
-	}
-	else {
-	  spanResidues = other_seq.getResidues(other_residue_span.getMax(),
-					       other_residue_span.getMin());
-	}
+        if (resultForward) {
+          spanResidues = other_seq.getResidues(other_residue_span.getMin(),
+                                               other_residue_span.getMax());
+        }
+        else {
+          spanResidues = other_seq.getResidues(other_residue_span.getMax(),
+                                               other_residue_span.getMin());
+        }
 
-	if (spanResidues != null) {
-	  if (DEBUG_GET_RESIDUES) {
-	    System.out.println(spanResidues.substring(0, 15) + "..." +
-			       spanResidues.substring(spanResidues.length()-15));
-	    System.out.println("desired span: " + SeqUtils.spanToString(this_residue_span));
-	    System.out.println("child residue span: " + SeqUtils.spanToString(this_comp_span));
-	    System.out.println("intersect(child_span, desired_span): " + SeqUtils.spanToString(ispan));
-	    System.out.println("other seq span: " + SeqUtils.spanToString(other_residue_span));
-	    System.out.println("opposite strands: " + opposite_strands);
-	    System.out.println("result forward: " + resultForward);
-	    System.out.println("start < end: " +
-			       (other_residue_span.getStart() < other_residue_span.getEnd()));
-	    System.out.println("");
-	  }
+        if (spanResidues != null) {
+          if (DEBUG_GET_RESIDUES) {
+            System.out.println(spanResidues.substring(0, 15) + "..." +
+                               spanResidues.substring(spanResidues.length()-15));
+            System.out.println("desired span: " + SeqUtils.spanToString(this_residue_span));
+            System.out.println("child residue span: " + SeqUtils.spanToString(this_comp_span));
+            System.out.println("intersect(child_span, desired_span): " + SeqUtils.spanToString(ispan));
+            System.out.println("other seq span: " + SeqUtils.spanToString(other_residue_span));
+            System.out.println("opposite strands: " + opposite_strands);
+            System.out.println("result forward: " + resultForward);
+            System.out.println("start < end: " +
+                               (other_residue_span.getStart() < other_residue_span.getEnd()));
+            System.out.println("");
+          }
 
-	  int offset = ispan.getMin() - this_residue_span.getMin();
-	  for (int j=0; j<spanResidues.length(); j++) {
-	    residues[offset+j] = spanResidues.charAt(j);
-	  }
-	}
+          int offset = ispan.getMin() - this_residue_span.getMin();
+          for (int j=0; j<spanResidues.length(); j++) {
+            residues[offset+j] = spanResidues.charAt(j);
+          }
+        }
       }
     }
     else {
       // recurse to children
       for (int i=0; i<symCount; i++) {
-	SeqSymmetry childSym = sym.getChild(i);
-	getResidues(this_residue_span, fillchar, childSym, residues, buf_offset);
+        SeqSymmetry childSym = sym.getChild(i);
+        getResidues(this_residue_span, fillchar, childSym, residues, buf_offset);
       }
     }
   }
@@ -172,9 +172,9 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
     else {
       boolean comp_complete = true;
       for (int i=0; i<comp_count; i++) {
-	SeqSymmetry comp_sym = rootsym.getChild(i);
-	BioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
-	comp_complete = (comp_complete & other_seq.isComplete());  // ignoring range -- would require a transform
+        SeqSymmetry comp_sym = rootsym.getChild(i);
+        BioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
+        comp_complete = (comp_complete & other_seq.isComplete());  // ignoring range -- would require a transform
       }
       return comp_complete;
     }

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,14 +13,14 @@
 
 package com.affymetrix.genometry.symmetry;
 
-import java.util.Vector;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSymmetry;
+import java.util.ArrayList;
 
-public class MutablePairSeqSymmetry extends EfficientPairSeqSymmetry 
+public class MutablePairSeqSymmetry extends EfficientPairSeqSymmetry
   implements MutableSeqSymmetry {
 
   public MutablePairSeqSymmetry(SeqSpan spanA, SeqSpan spanB) {
@@ -57,21 +57,21 @@ public class MutablePairSeqSymmetry extends EfficientPairSeqSymmetry
 
   public void addChild(SeqSymmetry sym) {
     if (children == null) {
-      children = new Vector();
+      children = new ArrayList<SeqSymmetry>();
     }
-    children.addElement(sym);
+    children.add(sym);
   }
 
   public void removeChild(SeqSymmetry sym) {
-    children.removeElement(sym);
+    children.remove(sym);
   }
 
   public void removeChildren() { children = null; }
-  public void removeSpans() { 
-    throw new RuntimeException("can't removeSpans(), MutablePairSeqSymmetry is not mutable itself, only its children"); 
+  public void removeSpans() {
+    throw new RuntimeException("can't removeSpans(), MutablePairSeqSymmetry is not mutable itself, only its children");
   }
   public void clear() {
-    throw new RuntimeException("can't clear(), MutablePairSeqSymmetry is not mutable itself, only its children"); 
+    throw new RuntimeException("can't clear(), MutablePairSeqSymmetry is not mutable itself, only its children");
   }
 
   public void addSpan(SeqSpan span) { throw new

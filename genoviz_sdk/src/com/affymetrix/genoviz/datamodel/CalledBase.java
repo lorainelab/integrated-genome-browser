@@ -59,6 +59,7 @@ public class CalledBase implements BaseCall {
    * @return the index into the trace where the peak is found.
    * @deprecated use getTracePoint()
    */
+  @Deprecated
   public final int getPeakIndex () { return getTracePoint(); }
   public final int getTracePoint() { return peak_index; }
 
@@ -72,13 +73,6 @@ public class CalledBase implements BaseCall {
   public final int getProbT () { return prob_T; }
   /** @return the base called. */
   public final char getBase() { return base; }
-
-  /**
-   * @deprecated use reverseComplement
-   */
-  public CalledBase complement(int trace_length) {
-    return (CalledBase)reverseComplement( trace_length );
-  }
 
   /**
    * produces a complement of this called base.

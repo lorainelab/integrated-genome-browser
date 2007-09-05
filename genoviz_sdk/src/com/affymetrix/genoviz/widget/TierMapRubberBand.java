@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -35,7 +35,7 @@ public class TierMapRubberBand extends RubberBand {
   protected int startedTier;
   protected int tier;
   protected MapTierGlyph glyph;
-  protected Vector other_maps;
+  protected Vector<AbstractTieredMap> other_maps;
   protected boolean somethingToErase = false;
 
   /**
@@ -45,13 +45,13 @@ public class TierMapRubberBand extends RubberBand {
    */
   public TierMapRubberBand(){
     super();
-    other_maps = new Vector();
+    other_maps = new Vector<AbstractTieredMap>();
   }
 
   public TierMapRubberBand(AbstractTieredMap ntm){
     super((java.awt.Component)ntm);
     tiermap = ntm;
-    other_maps = new Vector();
+    other_maps = new Vector<AbstractTieredMap>();
   }
 
   /**
@@ -153,7 +153,7 @@ public class TierMapRubberBand extends RubberBand {
     mystate = tiermap.isAbleToPackToMatch();
     tiermap.setAbleToPackToMatch(false);
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       states[i] = atm.isAbleToPackToMatch();
       atm.setAbleToPackToMatch(false);
     }
@@ -163,14 +163,14 @@ public class TierMapRubberBand extends RubberBand {
     }
 
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       atm.moveTier( from, to );
     }
 
 
     tiermap.setAbleToPackToMatch(mystate);
     for (i=0; i<size; i++){
-      atm = (AbstractTieredMap) other_maps.elementAt(i);
+      atm = other_maps.elementAt(i);
       atm.setAbleToPackToMatch(states[i]);
       atm.repack();
     }
@@ -192,7 +192,7 @@ public class TierMapRubberBand extends RubberBand {
           tiers[i+1] = tiers[i];
         }
         else {
-          tiers[i+1] = (int)(rect.y + rect.height);
+          tiers[i+1] = rect.y + rect.height;
         }
       }
       else {

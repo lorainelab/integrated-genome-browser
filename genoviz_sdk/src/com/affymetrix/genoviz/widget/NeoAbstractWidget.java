@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -32,31 +32,34 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   protected Dimension pref_widg_size = new Dimension(1, 1);
 
-  protected Vector mouse_listeners = new Vector();
-  protected Vector mouse_motion_listeners = new Vector();
-  protected Vector key_listeners = new Vector();
+  protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
+  protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
+  protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
 
-  protected Hashtable glyph_hash = new Hashtable();
-  protected Hashtable model_hash = new Hashtable();
-  
+  protected Hashtable<GlyphI,Object> glyph_hash = new Hashtable<GlyphI,Object>();
+
+  //TODO: This should maybe be Map<Object,List<GlyphI>>
+  protected Hashtable<Object,Object> model_hash = new Hashtable<Object,Object>();
+
   protected boolean models_have_multiple_glyphs = false;
 
-  protected static Hashtable colormap = GeneralUtils.getColorMap();
+  protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
   protected int scroll_behavior[] = new int[2];
 
   // a list of selected glyphs
-  protected Vector selected = new Vector();
+  protected Vector<GlyphI> selected = new Vector<GlyphI>();
 
   /**
    *  whether any models are represented by multiple glyphs
-   *  WARNING: once one model is represented by multiple glyphs, this flag will only 
+   *  WARNING: once one model is represented by multiple glyphs, this flag will only
    *     be reset to false when clearWidget() is called
   */
   public boolean hasMultiGlyphsPerModel() {
     return models_have_multiple_glyphs;
   }
 
+  @SuppressWarnings("unchecked")
   public void setDataModel(GlyphI gl, Object datamodel) {
     // glyph to datamodel must be one-to-one
     // datamodel to glyph can be one-to-many
@@ -77,8 +80,8 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
         ((Vector)previous).addElement(gl);
       }
       else {
-        Vector glyphs = new Vector();
-        glyphs.addElement(previous);
+        Vector<GlyphI> glyphs = new Vector<GlyphI>();
+        glyphs.addElement((GlyphI) previous);
         glyphs.addElement(gl);
         model_hash.put(datamodel, glyphs);
       }
@@ -106,7 +109,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     if (null == name) {
       throw new IllegalArgumentException("can't getColor without a name.");
     }
-    return (Color)colormap.get(name);
+    return colormap.get(name);
   }
   public String getColorName(Color theColor) {
     if (null == theColor) {
@@ -166,7 +169,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
   }
 
 
-  /** Subclasses should implement this. Default does nothing. 
+  /** Subclasses should implement this. Default does nothing.
    *  Implementations should add selections to the Vector 'selected',
    *  in addition to any other tasks specific to those classes.
    */
@@ -221,10 +224,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     }
   }
 
-  public Vector getSelected() {
+  public Vector<GlyphI> getSelected() {
     return selected;
   }
-  
+
   /** Clears all graphs from the widget.
    *  This default implementation simply removes all elements from the
    *  list of selections.  (It does this without calling clearSelected(),
@@ -238,10 +241,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
   public void clearWidget() {
     selected.removeAllElements();
     // reset glyph_hash
-    glyph_hash = new Hashtable();
+    glyph_hash = new Hashtable<GlyphI,Object>();
 
     // reset model_hash
-    model_hash = new Hashtable();
+    model_hash = new Hashtable<Object,Object>();
 
     models_have_multiple_glyphs = false;
   }
@@ -314,7 +317,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
               e.getKeyCode(), e.getKeyChar());
         KeyListener kl;
         for (int i=0; i<key_listeners.size(); i++) {
-          kl = (KeyListener)key_listeners.elementAt(i);
+          kl = key_listeners.elementAt(i);
           if (id == e.KEY_PRESSED) {
             kl.keyPressed(nevt);
           }
@@ -339,13 +342,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
    *
    *  @deprecated use {@link #setBounds(int,int,int,int)}.
    */
+  @Deprecated
   public void reshape(int x, int y, int width, int height) {
     pref_widg_size.setSize(width, height);
     super.reshape(x, y, width, height);
-  }
-
-  public Dimension preferredSize() {
-    return getPreferredSize();
   }
 
   public Dimension getPreferredSize() {

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometry.symmetry;
 
-import java.util.Vector;
+import java.util.*;
 
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
@@ -27,38 +27,38 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
 
   public void addSpan(SeqSpan span) {
     if (spans == null) {
-      spans = new Vector();
+      spans = new ArrayList<SeqSpan>();
     }
-    spans.addElement(span);
+    spans.add(span);
   }
 
   public void removeSpan(SeqSpan span) {
     if (spans != null) {
-      spans.removeElement(span);
+      spans.remove(span);
     }
   }
-  
+
   public void setSpan(int index, SeqSpan span) {
     if (spans == null) {
-      spans = new Vector();
+      spans = new ArrayList<SeqSpan>();
     }
-    spans.setElementAt(span, index);
+    spans.set(index, span);
   }
 
   public void addChild(SeqSymmetry sym) {
     if (children == null) {
-      children = new Vector();
+      children = new ArrayList<SeqSymmetry>();
     }
-    children.addElement(sym);
+    children.add(sym);
   }
 
   public void removeChild(SeqSymmetry sym) {
-    children.removeElement(sym);
+    children.remove(sym);
   }
 
   public SeqSymmetry getChild(int index) {
     if ((children == null) || (index >= children.size())) { return null; }
-    else { return (SeqSymmetry)children.elementAt(index); }
+    else { return children.get(index); }
   }
 
   public int getChildCount() {
@@ -70,7 +70,7 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
 
   public void removeSpans() { spans = null; }
 
-  public void clear() { 
+  public void clear() {
     removeChildren();
     removeSpans();
   }

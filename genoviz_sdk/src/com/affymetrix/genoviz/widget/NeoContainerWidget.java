@@ -19,9 +19,7 @@ import java.util.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
-import com.affymetrix.genoviz.pseudoswing.*;
 
 /**
  * Supports compositions of widgets into a more complex widget.
@@ -32,9 +30,9 @@ implements NeoWidgetI{
   // pixelblur is the amount of pixel space leeway given when finding overlaps
   protected int pixelblur = 2;
 
-  protected static Hashtable colormap = GeneralUtils.getColorMap();
+  protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
-  protected Vector widgets;
+  protected Vector<NeoWidgetI> widgets;
 
   public NeoContainerWidget() {
     super();
@@ -43,7 +41,7 @@ implements NeoWidgetI{
     //    setOpaque(true);
     //    setDoubleBuffered(true);
 
-    widgets = new Vector();
+    widgets = new Vector<NeoWidgetI>();
   }
 
   public void addWidget(NeoWidgetI widget) {
@@ -52,7 +50,7 @@ implements NeoWidgetI{
 
   public void destroy() {
     for ( int i = 0; i < widgets.size(); i++ ) {
-      ((NeoWidgetI)widgets.elementAt(i)).destroy();
+      widgets.elementAt(i).destroy();
     }
     widgets.removeAllElements();
     this.removeAll();
@@ -176,17 +174,17 @@ implements NeoWidgetI{
     }
   }
   public int getSelectionAppearance() {
-    return ((NeoWidgetI)widgets.firstElement()).getSelectionAppearance();
+    return widgets.firstElement().getSelectionAppearance();
   }
 
   public void setSelectionColor(Color col) {
-    Enumeration e = widgets.elements();
-    while (e.hasMoreElements()) {
-      ((NeoWidgetI)e.nextElement()).setSelectionColor(col);
+    for (NeoWidgetI w : widgets) {
+      w.setSelectionColor(col);
     }
   }
+
   public Color getSelectionColor() {
-    return ((NeoWidgetI)widgets.firstElement()).getSelectionColor();
+    return widgets.firstElement().getSelectionColor();
   }
 
   /**
@@ -238,7 +236,7 @@ implements NeoWidgetI{
         +"Not for "+ axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getExpansionBehavior(axisid);
+    return widgets.elementAt(0).getExpansionBehavior(axisid);
   }
 
   /** Subclasses must define getWidget() method. */
@@ -442,7 +440,7 @@ implements NeoWidgetI{
         +"Not " + axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getMaxZoom(axisid);
+    return widgets.elementAt(0).getMaxZoom(axisid);
   }
 
   /**
@@ -456,7 +454,7 @@ implements NeoWidgetI{
         +"Not " + axisid);
     // The following will throw an exception if widgets is empty.
     // This will do until we find out (and formalize) the default.
-    return ((NeoWidgetI)widgets.elementAt(0)).getMinZoom(axisid);
+    return widgets.elementAt(0).getMinZoom(axisid);
   }
 
   /*--------  End of Zooming Implementation --------*/
@@ -465,6 +463,7 @@ implements NeoWidgetI{
   /**
    * @see NeoWidgetI#scroll
    */
+  @SuppressWarnings("unchecked")
   public void scroll(int axisid, double value) {
     if (!(NeoWidgetI.X == axisid || NeoWidgetI.Y == axisid))
       throw new IllegalArgumentException(
@@ -478,12 +477,12 @@ implements NeoWidgetI{
     }
   }
 
-    public Vector getItems(Object datamodel) {
+  @SuppressWarnings("unchecked")
+  public Vector getItems(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;
-    }
-    else {
+    } else {
       Vector vec = new Vector();
       vec.addElement(result);
       return vec;
@@ -512,7 +511,7 @@ implements NeoWidgetI{
     Scene glyph_scene, widg_scene;
     NeoWidgetI widg;
     for (int i=0; i<widgets.size(); i++) {
-      widg = (NeoWidgetI)widgets.elementAt(i);
+      widg = widgets.elementAt(i);
       if (widg.getWidget(gl) == widg) { return widg; }
     }
     return null;
@@ -569,7 +568,7 @@ implements NeoWidgetI{
   }
 
   public void toBackOfSiblings(GlyphI glyph) {
-    NeoWidgetI widg = this.getWidget((GlyphI)glyph);
+    NeoWidgetI widg = getWidget(glyph);
     if (widg != null) {
       widg.toBackOfSiblings(glyph);
     }
@@ -638,7 +637,7 @@ implements NeoWidgetI{
       for (int i=0;
           (i <= last_listener) && (i < mouse_listeners.size());
           i++) {
-        MouseListener ml = (MouseListener)mouse_listeners.elementAt(i);
+        MouseListener ml = mouse_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -648,8 +647,7 @@ implements NeoWidgetI{
     }
     if (mouse_motion_listeners.size() > 0) {
       for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml =
-          (MouseMotionListener)mouse_motion_listeners.elementAt(i);
+        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

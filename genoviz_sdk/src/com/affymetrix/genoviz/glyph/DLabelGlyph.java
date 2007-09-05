@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,6 +33,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
  *
  * @deprecated use LabelGlyph.
  */
+  @Deprecated
 public class DLabelGlyph extends Glyph implements NeoConstants  {
   private static final boolean DEBUG_PIXELBOX = false;
   private static final boolean DEBUG_HIT = false;
@@ -314,13 +315,6 @@ public class DLabelGlyph extends Glyph implements NeoConstants  {
   }
 
   /**
-   * @deprecated use setLabeledGlyph
-   */
-  public void setLabelledGlyph(GlyphI lg) {
-    setLabeledGlyph((GlyphI) lg);
-  }
-
-  /**
    * associates this label with a labeled glyph.
    * Only one glyph can be labeled at a time.
    * Multiple labels can label the same glyph.
@@ -335,13 +329,6 @@ public class DLabelGlyph extends Glyph implements NeoConstants  {
     Rectangle2D lgbox = lg.getCoordBox();
     setCoords(lgbox.x, lgbox.y, lgbox.width, lgbox.height);
     prev_view = null;
-  }
-
-  /**
-   * @deprecated use getLabeledGlyph.
-   */
-  public GlyphI getLabelledGlyph() {
-    return getLabeledGlyph();
   }
 
   public GlyphI getLabeledGlyph() {

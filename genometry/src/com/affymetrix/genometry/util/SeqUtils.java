@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -181,20 +181,17 @@ public abstract class SeqUtils {
 
 
 
-  //  protected static int getFirstNonNull(SeqSpan[] spans) {
-  protected static int getFirstNonNull(List spans) {
-    //    for (int i=0; i<spans.length; i++) {
+  protected static int getFirstNonNull(List<SeqSpan> spans) {
     int spanCount = spans.size();
     for (int i=0; i<spanCount; i++) {
-      //      if (spans[i] != null) { return i; }
       if (spans.get(i) != null) { return i; }
     }
     return -1;
   }
 
 
-  protected static MutableSeqSpan mergeHelp(List spans, int index) {
-    SeqSpan curSpan = (SeqSpan)spans.get(index);
+  protected static MutableSeqSpan mergeHelp(List<SeqSpan> spans, int index) {
+    SeqSpan curSpan = spans.get(index);
     MutableSeqSpan result = new SimpleMutableSeqSpan(curSpan);
     boolean changed = true;
     while (changed) {
@@ -203,11 +200,11 @@ public abstract class SeqUtils {
     return result;
   }
 
-  protected static boolean mergeHelp(List spans, MutableSeqSpan result) {
+  protected static boolean mergeHelp(List<SeqSpan> spans, MutableSeqSpan result) {
     boolean changed = false;
     int spanCount = spans.size();
     for (int i=0; i<spanCount; i++) {
-      SeqSpan curSpan = (SeqSpan)spans.get(i);
+      SeqSpan curSpan = spans.get(i);
       if (curSpan == null) { continue; };
       //  Specifying that union should use loose overlap...
       boolean overlap = SeqUtils.union(result, curSpan, result, false);
@@ -220,13 +217,13 @@ public abstract class SeqUtils {
   }
 
 
-  public static List getLeafSpans(SeqSymmetry sym, BioSeq seq) {
-    ArrayList leafSpans = new ArrayList();
+  public static List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
+    ArrayList<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
     collectLeafSpans(sym, seq, leafSpans);
     return leafSpans;
   }
 
-  public static void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection leafs) {
+  public static void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
     if (sym.getChildCount() == 0) {
       SeqSpan span = sym.getSpan(seq);
       if (span != null) {
@@ -241,13 +238,13 @@ public abstract class SeqUtils {
     }
   }
 
-  public static List getLeafSyms(SeqSymmetry sym) {
-    ArrayList leafSyms = new ArrayList();
+  public static List<SeqSymmetry> getLeafSyms(SeqSymmetry sym) {
+    ArrayList<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
     collectLeafSyms(sym, leafSyms);
     return leafSyms;
   }
 
-  public static void collectLeafSyms(SeqSymmetry sym, Collection leafs) {
+  public static void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs) {
     if (sym.getChildCount() == 0) {
       leafs.add(sym);
     }
@@ -277,11 +274,11 @@ public abstract class SeqUtils {
    */
   public static SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq, boolean include_ends) {
     // put leaf syms in list
-    List spans = SeqUtils.getLeafSpans(symA, seq);
+    List<SeqSpan> spans = SeqUtils.getLeafSpans(symA, seq);
 
     // merge any overlaps
     MutableSeqSymmetry mergedSym = spanMerger(spans);
-    List mergedSpans = SeqUtils.getLeafSpans(mergedSym, seq);
+    List<SeqSpan> mergedSpans = SeqUtils.getLeafSpans(mergedSym, seq);
 
     // order them based on start
     Collections.sort(mergedSpans, new SeqUtils.StartSorter());
@@ -300,7 +297,7 @@ public abstract class SeqUtils {
         return invertedSym;
       }
       else {
-        SeqSpan firstSpan = (SeqSpan)mergedSpans.get(0);
+        SeqSpan firstSpan = mergedSpans.get(0);
         if (firstSpan.getMin() > 0) {
           SeqSymmetry beforeSym = new MutableSingletonSeqSymmetry(0, firstSpan.getMin(), seq);
           invertedSym.addChild(beforeSym);
@@ -308,14 +305,14 @@ public abstract class SeqUtils {
       }
     }
     for (int i=0; i<spanCount-1; i++) {
-      SeqSpan preSpan = (SeqSpan)mergedSpans.get(i);
-      SeqSpan postSpan = (SeqSpan)mergedSpans.get(i+1);
+      SeqSpan preSpan = mergedSpans.get(i);
+      SeqSpan postSpan = mergedSpans.get(i+1);
       SeqSymmetry gapSym =
         new MutableSingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
       invertedSym.addChild(gapSym);
     }
     if (include_ends) {
-      SeqSpan lastSpan = (SeqSpan)mergedSpans.get(spanCount-1);
+      SeqSpan lastSpan = mergedSpans.get(spanCount-1);
       if (lastSpan.getMax() < seq.getLength()) {
         SeqSymmetry afterSym = new MutableSingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
         invertedSym.addChild(afterSym);
@@ -325,8 +322,8 @@ public abstract class SeqUtils {
       invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
     }
     else {
-      int min = ((SeqSpan)mergedSpans.get(0)).getMax();
-      int max = ((SeqSpan)mergedSpans.get(spanCount-1)).getMin();
+      int min = (mergedSpans.get(0)).getMax();
+      int max = (mergedSpans.get(spanCount-1)).getMin();
       invertedSym.addSpan(new SimpleSeqSpan(min, max, seq));
     }
     return invertedSym;
@@ -363,7 +360,7 @@ public abstract class SeqUtils {
     return resultSym;
   }
 
-  public static MutableSeqSymmetry union(List syms, BioSeq seq) {
+  public static MutableSeqSymmetry union(List<SeqSymmetry> syms, BioSeq seq) {
     MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
     union(syms, resultSym, seq);
     return resultSym;
@@ -372,17 +369,16 @@ public abstract class SeqUtils {
   /**
    *  "Logical" OR of list of SeqSymmetries (relative to a particular BioSeq).
    */
-  public static boolean union(List syms, MutableSeqSymmetry resultSym, BioSeq seq) {
+  public static boolean union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, BioSeq seq) {
     resultSym.clear();
-    List leaves = new ArrayList();
-    for (int i=0; i<syms.size(); i++) {
-      SeqSymmetry sym = (SeqSymmetry)syms.get(i);
+    List<SeqSymmetry> leaves = new ArrayList<SeqSymmetry>();
+    for (SeqSymmetry sym : syms) {
       SeqUtils.collectLeafSyms(sym, leaves);
     }
     int leafCount = leaves.size();
-    ArrayList spans = new ArrayList(leafCount);
-    for (int i=0; i<leafCount; i++) {
-      spans.add(((SeqSymmetry)leaves.get(i)).getSpan(seq));
+    ArrayList<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
+    for (SeqSymmetry sym : leaves) {
+      spans.add(sym.getSpan(seq));
     }
     spanMerger(spans, resultSym);
     return true;
@@ -396,7 +392,7 @@ public abstract class SeqUtils {
   public static boolean union(SeqSymmetry symA, SeqSymmetry symB,
                               MutableSeqSymmetry resultSym, BioSeq seq) {
     resultSym.clear();
-    List spans = new ArrayList();
+    List<SeqSpan> spans = new ArrayList<SeqSpan>();
     collectLeafSpans(symA, seq, spans);
     collectLeafSpans(symB, seq, spans);
     spanMerger(spans, resultSym);
@@ -421,23 +417,23 @@ public abstract class SeqUtils {
     // Need to merge spans of symA with each other
     // and symB with each other (in case symA has overlapping
     // spans within itself, for example)
-    List tempA = getLeafSpans(symA, seq);
-    List tempB= getLeafSpans(symB, seq);
+    List<SeqSpan> tempA = getLeafSpans(symA, seq);
+    List<SeqSpan> tempB= getLeafSpans(symB, seq);
     MutableSeqSymmetry mergesymA = spanMerger(tempA);
     MutableSeqSymmetry mergesymB = spanMerger(tempB);
 
-    List leavesA = getLeafSpans(mergesymA, seq);
-    List leavesB = getLeafSpans(mergesymB, seq);
+    List<SeqSpan> leavesA = getLeafSpans(mergesymA, seq);
+    List<SeqSpan> leavesB = getLeafSpans(mergesymB, seq);
 
     int countA = leavesA.size();
     int countB = leavesB.size();
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     for (int i=0; i<countA; i++) {
-      SeqSpan spanA = (SeqSpan)leavesA.get(i);
+      SeqSpan spanA = leavesA.get(i);
       if (spanA == null) { continue; }
       for (int k=0; k<countB; k++) {
-        SeqSpan spanB = (SeqSpan)leavesB.get(k);
+        SeqSpan spanB = leavesB.get(k);
         if (spanB == null) { continue; }
         if (SeqUtils.overlap(spanA, spanB)) {
           SeqSpan spanI = SeqUtils.intersection(spanA, spanB);
@@ -468,7 +464,7 @@ public abstract class SeqUtils {
   }
 
   /** Inner class helper for inverse() method. */
-  static class StartSorter implements Comparator {
+  static class StartSorter implements Comparator<SeqSpan> {
     static StartSorter static_instance = null;
 
     public static StartSorter getInstance() {
@@ -478,16 +474,14 @@ public abstract class SeqUtils {
       return static_instance;
     }
 
-    public int compare(Object objA, Object objB) {
-      SeqSpan spanA = (SeqSpan)objA;
-      SeqSpan spanB = (SeqSpan)objB;
+    public int compare(SeqSpan spanA, SeqSpan spanB) {
       int minA = spanA.getMin();
       int minB = spanB.getMin();
       if (minA < minB) { return -1; } else if (minA > minB) { return 1; } else { return 0; }  // equal
     }
   }
 
-  protected static MutableSeqSymmetry spanMerger(List spans) {
+  protected static MutableSeqSymmetry spanMerger(List<SeqSpan> spans) {
     MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
     spanMerger(spans, resultSym);
     return resultSym;
@@ -498,13 +492,13 @@ public abstract class SeqUtils {
    * now ensures that spanMerger returns a resultSym whose children
    *    are sorted relative to span.getBioSeq()
    */
-  protected static boolean spanMerger(List spans, MutableSeqSymmetry resultSym) {
+  protected static boolean spanMerger(List<SeqSpan> spans, MutableSeqSymmetry resultSym) {
     int index;
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     // will probably be smaller, but specifying an initial capacity
     //   that won't be exceeded can be more efficient
-    ArrayList merged_spans = new ArrayList(spans.size());
+    ArrayList<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
 
     while ((index = getFirstNonNull(spans)) > -1) {
       MutableSeqSpan span = mergeHelp(spans, index);
@@ -513,7 +507,7 @@ public abstract class SeqUtils {
     }
     Collections.sort(merged_spans, SeqUtils.StartSorter.getInstance());
     for (int i=0; i<merged_spans.size(); i++) {
-      SeqSpan span = (SeqSpan)merged_spans.get(i);
+      SeqSpan span = merged_spans.get(i);
       MutableSingletonSeqSymmetry childSym =
         new MutableSingletonSeqSymmetry(span.getStart(), span.getEnd(), span.getBioSeq());
       min = Math.min(span.getMin(), min);
@@ -521,7 +515,7 @@ public abstract class SeqUtils {
       resultSym.addChild(childSym);
     }
     BioSeq seq;
-    if (merged_spans.size() > 0) { seq = ((SeqSpan)merged_spans.get(0)).getBioSeq(); }
+    if (merged_spans.size() > 0) { seq = (merged_spans.get(0)).getBioSeq(); }
     else { seq = null; }
     SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
     resultSym.addSpan(resultSpan);
@@ -577,7 +571,7 @@ public abstract class SeqUtils {
 
 
   public static MutableSeqSymmetry flattenSymmetry(SeqSymmetry sym) {
-    List leafSyms = SeqUtils.getLeafSyms(sym);
+    List<SeqSymmetry> leafSyms = SeqUtils.getLeafSyms(sym);
     MutableSeqSymmetry result = new SimpleMutableSeqSymmetry();
     //  spans in result should be same as input
     //    (so won't bother with getChildBounds(), since then would
@@ -590,7 +584,7 @@ public abstract class SeqUtils {
     }
     int leafCount = leafSyms.size();
     for (int k=0; k<leafCount; k++) {
-      SeqSymmetry child = (SeqSymmetry)leafSyms.get(k);
+      SeqSymmetry child = leafSyms.get(k);
       result.addChild(child);
     }
     return result;
@@ -677,7 +671,7 @@ public abstract class SeqUtils {
    *     AnnotatedSeqs and SeqSymmetries
    */
   public static boolean findPath(AnnotatedBioSeq srcSeq, BioSeq dstSeq,
-                                 Vector seqPath, Vector symmetryPath) {
+                                 List<BioSeq> seqPath, List<SeqSymmetry> symmetryPath) {
     // Vector annots = srcSeq.getAnnotations();
     int annotCount = srcSeq.getAnnotationCount();
     for (int i=0; i<annotCount; i++) {
@@ -689,16 +683,16 @@ public abstract class SeqUtils {
         BioSeq curSeq = curSpan.getBioSeq();
         if (curSeq == dstSeq) {
           // SUCCESS!
-          symmetryPath.addElement(annot);
-          seqPath.addElement(curSeq);
+          symmetryPath.add(annot);
+          seqPath.add(curSeq);
           return true;
         }
         else {
           // recurse as part of depth-first search?
           if (curSeq instanceof AnnotatedBioSeq) {
             if (findPath((AnnotatedBioSeq)curSeq, dstSeq, seqPath, symmetryPath)) {
-              symmetryPath.addElement(annot);
-              seqPath.addElement(srcSeq);
+              symmetryPath.add(annot);
+              seqPath.add(srcSeq);
               return true;
             }
           }
@@ -925,12 +919,12 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       // is mapSym leaf?  yes
       else {  // STEP3
         // STEP 3
-	//
-	// GAH 2006-03-28
-	// changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even
-	//   if they are already present in result sym.  This fixes bug encountered with shallow transforms
-	//   (result depth = 1, mapping depth = 1)
-	// Not sure how this will affect deep transformations, but so far appears to be working properly
+        //
+        // GAH 2006-03-28
+        // changed transformSymmetry() step3 to force _all_ spans to be trimmed to interspan, even
+        //   if they are already present in result sym.  This fixes bug encountered with shallow transforms
+        //   (result depth = 1, mapping depth = 1)
+        // Not sure how this will affect deep transformations, but so far appears to be working properly
 
         int spanCount = mapSym.getSpanCount();
         boolean success = false;
@@ -940,9 +934,9 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // find a linker span first -- a span in resSym that has same BioSeq as
         //    a span in mapSym
         SeqSpan linkSpan = null;
-	SeqSpan mapSpan = null;
+        SeqSpan mapSpan = null;
         for (int spandex=0; spandex < spanCount; spandex++) {
-	  //          SeqSpan mapspan = mapSym.getSpan(spandex);
+          //          SeqSpan mapspan = mapSym.getSpan(spandex);
           mapSpan = mapSym.getSpan(spandex);
           BioSeq seq = mapSpan.getBioSeq();
           SeqSpan respan = resultSym.getSpan(seq);
@@ -962,74 +956,74 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // for each spanX in mapSym that has no SeqSpan in resultSym with same
         //    BioSeq seqY
         else {  // have a linker span
-	  MutableSeqSpan interSpan = null;
+          MutableSeqSpan interSpan = null;
           for (int spandex=0; spandex < spanCount; spandex++) {
             //            SeqSpan mapSpan = mapSym.getSpan(spandex);
             SeqSpan newspan = mapSym.getSpan(spandex);
             BioSeq seq = newspan.getBioSeq();
             SeqSpan respan = resultSym.getSpan(seq);
-	    //            if (respan == null) {
-	    //	    MutableSeqSpan newResSpan = (MutableSeqSpan)respan;
-	    // GAH 5-17-2003
-	    // problem here when linkSpan is not contained within mapSym.getSpan(linkSpan.getBioSeq())!!!
-	    // transforSpan will transform _as if_ above were the case, therefore giving incorrect results
-	    // trying to fix by always calculating intersection: (interSpan) of
-	    //  interSpan = intersection(linkSpan and mapSym.getSpan(linkSpan.getBioSeq())),
-	    //  and doing tranform with interSpan instead of linkSpan...
-	    //
-	    success = false;
-	    //              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
-	    //              MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
-	    if (interSpan == null) {
-	      interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
-	      if (interSpan != null) {
-		// GAH 6-12-2003
-		// problem with using intersection!
-		// since intersection() obliterates orientation (span returned is _always_ forward),
-		//   need to set intersect_span orientation afterwards to be same as linkSpan
-		//   (so it has coorect orientation regardless of behavior of intersection());
-		if (linkSpan.isForward()) {
-		  interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-		}
-		else {
-		  interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-		}
-	      }
-	    }
-	    MutableSeqSpan newResSpan = null;
-	    if (interSpan != null) {
-	      if (respan == null) { newResSpan = new MutableDoubleSeqSpan(); }
-	      else { newResSpan = (MutableSeqSpan)respan; }
-	      success = transformSpan(interSpan, newResSpan, seq, mapSym);
-	    }
+            //            if (respan == null) {
+            //      MutableSeqSpan newResSpan = (MutableSeqSpan)respan;
+            // GAH 5-17-2003
+            // problem here when linkSpan is not contained within mapSym.getSpan(linkSpan.getBioSeq())!!!
+            // transforSpan will transform _as if_ above were the case, therefore giving incorrect results
+            // trying to fix by always calculating intersection: (interSpan) of
+            //  interSpan = intersection(linkSpan and mapSym.getSpan(linkSpan.getBioSeq())),
+            //  and doing tranform with interSpan instead of linkSpan...
+            //
+            success = false;
+            //              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
+            //              MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
+            if (interSpan == null) {
+              interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
+              if (interSpan != null) {
+                // GAH 6-12-2003
+                // problem with using intersection!
+                // since intersection() obliterates orientation (span returned is _always_ forward),
+                //   need to set intersect_span orientation afterwards to be same as linkSpan
+                //   (so it has coorect orientation regardless of behavior of intersection());
+                if (linkSpan.isForward()) {
+                  interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
+                }
+                else {
+                  interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
+                }
+              }
+            }
+            MutableSeqSpan newResSpan = null;
+            if (interSpan != null) {
+              if (respan == null) { newResSpan = new MutableDoubleSeqSpan(); }
+              else { newResSpan = (MutableSeqSpan)respan; }
+              success = transformSpan(interSpan, newResSpan, seq, mapSym);
+            }
 
-	    if (debug_step3) {
-	      System.out.println("in SeqUtils.transformSymmetry(), step3");
-	      System.out.print("  span to transform: "); printSpan(respan);
-	      System.out.print("  linkSpan:          "); printSpan(linkSpan);
-	      System.out.print("  mapping span:      "); printSpan(mapSpan);
-	      System.out.print("  intersection span: "); printSpan(interSpan);
-	      System.out.print("  transformed span:  "); printSpan(newResSpan);
-	    }
-	    if (success) {
-	      if ((respan == null) && (newResSpan != null))  {  // only add new span if respan was not reused for transformed span
-		resultSym.addSpan(newResSpan);
-	      }
-	    }
-	    else {
-	      //		System.out.println("unsuccessful trying to transform span: ");
-	      unsuccessful_count++;
-	      return false;
-	    }
-	    /*	    }
-		    else {
-		    if (debug_step3)  {
-		    System.out.println("in SeqUtils.transformSymmetry(), step3");
-		    System.out.print("  linkSpan:          "); printSpan(linkSpan);
-		    System.out.println("respan already exists: " + SeqUtils.spanToString(respan));
-		    }
-		    }
-	    */
+            if (debug_step3) {
+              System.out.println("in SeqUtils.transformSymmetry(), step3");
+              System.out.print("  span to transform: "); printSpan(respan);
+              System.out.print("  linkSpan:          "); printSpan(linkSpan);
+              System.out.print("  mapping span:      "); printSpan(mapSpan);
+              System.out.print("  intersection span: "); printSpan(interSpan);
+              System.out.print("  transformed span:  "); printSpan(newResSpan);
+            }
+            if (success) {
+              if ((respan == null) && (newResSpan != null))  {  // only add new span if respan was not reused for transformed span
+                resultSym.addSpan(newResSpan);
+              }
+            }
+            else {
+              //                System.out.println("unsuccessful trying to transform span: ");
+              unsuccessful_count++;
+              return false;
+            }
+            /*      }
+                    else {
+                    if (debug_step3)  {
+                    System.out.println("in SeqUtils.transformSymmetry(), step3");
+                    System.out.print("  linkSpan:          "); printSpan(linkSpan);
+                    System.out.println("respan already exists: " + SeqUtils.spanToString(respan));
+                    }
+                    }
+            */
           }
         }
       }  // end of STEP 3
@@ -1071,7 +1065,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         // first trying just deciding based on
         boolean USE_NEW_STEP1 = true;
         if (USE_NEW_STEP1) {
-          List map_child_list = null;
+          List<SeqSymmetry> map_child_list = null;
           // find a seq shared by both (linkseq);
           int res_span_count = resultSym.getSpanCount();
           for (int i=0; i<res_span_count; i++) {
@@ -1101,7 +1095,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
             NEW_STEP1_LOOP:
             for (int index = 0; index < new_child_count; index++) {  // start of loop through mapSym children
               //            SeqSymmetry map_child_sym = mapSym.getChild(index);
-              SeqSymmetry map_child_sym = (SeqSymmetry)map_child_list.get(index);
+              SeqSymmetry map_child_sym = map_child_list.get(index);
               MutableSeqSymmetry childResult = null;
               // STEP 1a "sit still"
               int spanCount = map_child_sym.getSpanCount();
@@ -1239,7 +1233,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
               //              MutableSeqSpan newResSpan = new SimpleMutableSeqSpan();
               MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
               success = false;
-	      SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
+              SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
               MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
               if (interSpan != null) {
                 if (linkSpan.isForward()) {
@@ -1263,17 +1257,17 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     return true;
   }
 
-  public static List getOverlappingChildren(SeqSymmetry sym, SeqSpan ospan) {
+  public static List<SeqSymmetry> getOverlappingChildren(SeqSymmetry sym, SeqSpan ospan) {
     int childcount = sym.getChildCount();
     if (childcount == 0) { return null; }
     else {
-      List results = null;
+      List<SeqSymmetry> results = null;
       BioSeq oseq = ospan.getBioSeq();
       for (int i=0; i<childcount; i++) {
         SeqSymmetry child = sym.getChild(i);
         SeqSpan cspan = child.getSpan(oseq);
         if (SeqUtils.overlap(ospan, cspan)) {
-          if (results == null) { results = new ArrayList(); }
+          if (results == null) { results = new ArrayList<SeqSymmetry>(); }
           results.add(child);
         }
       }
@@ -1882,12 +1876,12 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
      */
     if (print_props && sym instanceof Propertied) {
       Propertied pp = (Propertied) sym;
-      Map props = pp.getProperties();
+      Map<String,Object> props = pp.getProperties();
       if (props != null && props.size() > 0) {
-        Iterator iter = props.entrySet().iterator();
+        Iterator<Map.Entry<String,Object>> iter = props.entrySet().iterator();
         while (iter.hasNext()) {
-          Map.Entry entry = (Map.Entry) iter.next();
-          Object key = entry.getKey();
+          Map.Entry<String,Object> entry = iter.next();
+          String key = entry.getKey();
           Object value = entry.getValue();
           System.out.println(indent + spacer + key + " --> " + value);
         }
@@ -1899,7 +1893,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       System.out.println(indent + spacer  + spanToString(span));
     }
     for (int j=0; j<sym.getChildCount(); j++) {
-      SeqSymmetry child_sym = (SeqSymmetry)sym.getChild(j);
+      SeqSymmetry child_sym = sym.getChild(j);
       printSymmetry(indent + spacer, child_sym, spacer, print_props);
     }
   }
@@ -1943,22 +1937,24 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
     else if (USE_SHORT_FORMAT_FOR_SYMS) {
       String sym_class = sym.getClass().getName();
       int n = sym_class.lastIndexOf('.');
-      if (n>0 && n<sym_class.length()) sym_class = sym_class.substring(n+1);
+      if (n>0 && n<sym_class.length()) {
+        sym_class = sym_class.substring(n+1);
+      }
       String hex = Integer.toHexString(sym.hashCode());
       if (id == null) {
-	result = sym_class + " ("+hex+")";
+        result = sym_class + " ("+hex+")";
       }
       else {
-	result = id + " : " + sym_class + " ("+hex+")";
+        result = id + " : " + sym_class + " ("+hex+")";
       }
     } else {
       if (id == null) {
-	result = sym + ", children: " + sym.getChildCount()
-	  + ", depth: "+ getDepth(sym);
+        result = sym + ", children: " + sym.getChildCount()
+          + ", depth: "+ getDepth(sym);
       }
       else {
-	result = id + " : " + sym + ", children: " + sym.getChildCount()
-	  + ", depth: "+ getDepth(sym);
+        result = id + " : " + sym + ", children: " + sym.getChildCount()
+          + ", depth: "+ getDepth(sym);
       }
     }
     return result;

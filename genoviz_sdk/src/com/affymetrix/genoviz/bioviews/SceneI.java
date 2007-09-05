@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -81,11 +81,6 @@ public interface SceneI {
   public static final int SELECT_REVERSE = 104;
 
   /**
-   * @deprecated Use {@link #SELECT_FILL} instead.
-   */
-  public static final int HIGHLIGHT = SELECT_FILL;
-
-  /**
    *  returns the selection style to apply to glyphs within this scene
    *  possible return values: NONE, OUTLINE, FILL, HIGHLIGHT
    */
@@ -96,11 +91,6 @@ public interface SceneI {
    *  possible return values: NONE, OUTLINE, FILL, HIGHLIGHT
    */
   public int getSelectionAppearance();
-
-  /**
-   *  @deprecated replaced by {@link #getSelectionAppearance}.
-   */
-  public int getSelectionStyle();
 
   // needed in interface for Glyph implementation
   // (could remove by specifying Scene in glyph...)

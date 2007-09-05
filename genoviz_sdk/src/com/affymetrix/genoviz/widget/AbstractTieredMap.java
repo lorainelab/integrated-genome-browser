@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -45,8 +45,8 @@ public abstract class AbstractTieredMap
   public boolean debug_events = false; // for debugging only
   public String name; // for debugging only
 
-  protected Vector tiers            = new Vector();
-  private Vector tierEventListeners = new Vector();
+  protected Vector<MapTierGlyph> tiers = new Vector<MapTierGlyph>();
+  private Vector<TierEventListener> tierEventListeners = new Vector<TierEventListener>();
   private boolean notifyingListeners = false;
 
   /**
@@ -88,21 +88,21 @@ public abstract class AbstractTieredMap
   /**
    * Add a listener to the audience.
    */
-  public synchronized void addTierEventListener (TierEventListener tel) {
-    tierEventListeners.addElement (tel);
+  public synchronized void addTierEventListener(TierEventListener tel) {
+    tierEventListeners.addElement(tel);
   }
 
   /**
    * Remove a listener from the audience.
    */
-  public synchronized void removeTierEventListener (TierEventListener tel) {
-    tierEventListeners.removeElement (tel);
+  public synchronized void removeTierEventListener(TierEventListener tel) {
+    tierEventListeners.removeElement(tel);
   }
 
   /**
    * Tell all listeners of an event.
    */
-  public synchronized void notifyTierEventListeners (TierEvent evt) {
+  public synchronized void notifyTierEventListeners(TierEvent evt) {
     if (debug_events) {
       if (evt.getTier() == null) {
         System.out.println(name + " notifying listeners of event: " +
@@ -119,7 +119,7 @@ public abstract class AbstractTieredMap
     int tot = tierEventListeners.size();
     notifyingListeners = true;
     for (int i=0; i < tot; i++) {
-      ((TierEventListener) tierEventListeners.elementAt(i)).heardTierEvent(evt);
+      (tierEventListeners.elementAt(i)).heardTierEvent(evt);
     }
     notifyingListeners = false;
   }
@@ -187,7 +187,7 @@ public abstract class AbstractTieredMap
   public void packTiers(boolean full_repack, boolean stretch_map)  {
     if (full_repack) {
       for (int i=0; i<tiers.size(); i++) {
-        MapTierGlyph mtg = (MapTierGlyph) tiers.elementAt(i);
+        MapTierGlyph mtg = tiers.elementAt(i);
         mtg.pack(getView());
       }
     }
@@ -205,7 +205,7 @@ public abstract class AbstractTieredMap
       offset = mbox.y;
     }
     for (int i=0; i<tiers.size(); i++) {
-      mtg = (MapTierGlyph) tiers.elementAt(i);
+      mtg = tiers.elementAt(i);
 
       // don't make room if tier is'nt visible, or if it's hidden
 
@@ -229,7 +229,7 @@ public abstract class AbstractTieredMap
       mtg = null;
 
       for (int i=0; i<tiers.size(); i++) {
-        mtg = (MapTierGlyph) tiers.elementAt(i);
+        mtg = tiers.elementAt(i);
         if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
         else if ( newbox == null ) {
           newbox = new Rectangle2D();
@@ -263,8 +263,10 @@ public abstract class AbstractTieredMap
    * Get the tier at the given location, or null.
    * @param i the index, counting top-down, beginning with 0.
    */
-  public MapTierGlyph getTierAt (int i) {
-    if (i>=0 && i<tiers.size()) return (MapTierGlyph) tiers.elementAt(i);
+  public MapTierGlyph getTierAt(int i) {
+    if (i>=0 && i<tiers.size()) {
+      return tiers.elementAt(i);
+    }
     else return null;
   }
 
@@ -272,7 +274,7 @@ public abstract class AbstractTieredMap
    * Get all the tiers for the TieredNeoMap.
    * @return vector of tiers.
    */
-  public Vector getAllTiers ( ) {
+  public Vector getAllTiers( ) {
     return tiers;
   }
 
@@ -282,12 +284,12 @@ public abstract class AbstractTieredMap
 
   public void clearWidget() {
     for ( int i = 0; i < tiers.size(); i++ ) {
-       MapTierGlyph m = (MapTierGlyph) tiers.elementAt(i);
+       MapTierGlyph m = tiers.elementAt(i);
        m.removeAllTierStateChangeListeners();
        m.removeChildren();
     }
     super.clearWidget();
-    tiers = new Vector();
+    tiers = new Vector<MapTierGlyph>();
   }
 
   /**
@@ -301,7 +303,7 @@ public abstract class AbstractTieredMap
       return;
 
     for (int i=0; i<tiers.size(); i++) {
-      MapTierGlyph tier = (MapTierGlyph)tiers.elementAt(i);
+      MapTierGlyph tier = tiers.elementAt(i);
       Rectangle2D tbox = tier.getCoordBox();
       tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
     }
@@ -351,7 +353,7 @@ public abstract class AbstractTieredMap
     if ( from == to ) { // null operation
       return;
     }
-    MapTierGlyph mtg = (MapTierGlyph) tiers.elementAt( from );
+    MapTierGlyph mtg = tiers.elementAt( from );
     tiers.removeElementAt( from );
     tiers.insertElementAt( mtg, to );
 
@@ -380,12 +382,12 @@ public abstract class AbstractTieredMap
     if ( from == to ) { // null operation
       return;
     }
-    MapTierGlyph mtg = (MapTierGlyph) tiers.elementAt( from );
+    MapTierGlyph mtg = tiers.elementAt( from );
     tiers.removeElementAt( from );
     tiers.insertElementAt( mtg, to );
 
     // Then do the other map:
-    mtg = (MapTierGlyph) otherMap.tiers.elementAt(tierLocs[0]);
+    mtg = otherMap.tiers.elementAt(tierLocs[0]);
     if (mtg == null)
       return; // Why isn't an exception thrown?
     otherMap.tiers.removeElementAt(from);
@@ -409,7 +411,7 @@ public abstract class AbstractTieredMap
 
     // Remove the tier's children
 
-    MapTierGlyph toRemove = (MapTierGlyph) tiers.elementAt(loc);
+    MapTierGlyph toRemove = tiers.elementAt(loc);
 
     toRemove.removeChildren();
 
@@ -497,7 +499,7 @@ public abstract class AbstractTieredMap
 
     // And set the state of our corresponding tier appropriately.
 
-    MapTierGlyph ourTier = (MapTierGlyph) tiers.elementAt(loc);
+    MapTierGlyph ourTier = tiers.elementAt(loc);
 
     // Access the properties directly, rather than via access
     // methods -- avoid ping-pongs.

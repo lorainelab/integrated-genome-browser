@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -1089,7 +1089,7 @@ public class DNAUtils implements Translatable  {
     if (initial_string != null ) amino_acids.append(initial_string);
     // checking for no spaces, can build non-spaced faster by avoiding
     //     amino_acids.append("") calls
-    int extra_bases = (length-(int)Math.abs(frame)) % 3;
+    int extra_bases = (length - Math.abs(frame)) % 3;
     if (pre_string == null && post_string == null) {
       for (int i = frame; i < length-2; i += 3) {
         residue = genetic_code[basenums[i]][basenums[i+1]][basenums[i+2]];

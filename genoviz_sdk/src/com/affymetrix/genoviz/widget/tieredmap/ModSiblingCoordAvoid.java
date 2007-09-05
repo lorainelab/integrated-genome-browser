@@ -32,7 +32,7 @@ public class ModSiblingCoordAvoid extends AbstractCoordPacker {
 
     if (children == null) { return null; }
 
-    Vector sibsinrange = new Vector();
+    Vector<GlyphI> sibsinrange = new Vector<GlyphI>();
     boolean hit = true;
     GlyphI sibling;
     int i, j;
@@ -50,7 +50,7 @@ public class ModSiblingCoordAvoid extends AbstractCoordPacker {
     while (hit) {
       hit = false;
       for (j=0; j<sibsinrange.size(); j++) {
-        sibling = (GlyphI)sibsinrange.elementAt(j);
+        sibling = sibsinrange.elementAt(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
         if (child.hit(siblingbox, view)) {

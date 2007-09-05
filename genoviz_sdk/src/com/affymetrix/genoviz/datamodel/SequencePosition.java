@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -43,7 +43,7 @@ public class SequencePosition implements Position {
     notifyListeners();
   }
 
-  private Vector listeners = new Vector();
+  private Vector<PositionListener> listeners = new Vector<PositionListener>();
   public void addListener( PositionListener l ) {
     this.listeners.addElement( l );
   }
@@ -52,7 +52,7 @@ public class SequencePosition implements Position {
   }
   private void notifyListeners() {
     for ( int i = 0; i < this.listeners.size(); i++ ) {
-      PositionListener l = ( PositionListener ) this.listeners.elementAt( i );
+      PositionListener l = this.listeners.elementAt( i );
       l.positionChanged( this, this.offset );
     }
   }

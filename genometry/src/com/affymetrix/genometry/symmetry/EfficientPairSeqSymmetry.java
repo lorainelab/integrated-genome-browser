@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,41 +13,29 @@
 
 package com.affymetrix.genometry.symmetry;
 
-import java.util.Vector;
-
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import java.util.List;
 
 public class EfficientPairSeqSymmetry implements SeqSymmetry {
-  
+
   protected static final int count = 2;
   protected int startA, startB, endA, endB;
   protected BioSeq seqA, seqB;
-  protected Vector children;
+  protected List<SeqSymmetry> children;
   protected SeqSymmetry parent;
   protected String id;
-  
-  public EfficientPairSeqSymmetry(Vector spans) {
-    SeqSpan spanA = (SeqSpan)spans.elementAt(0);
-    SeqSpan spanB = (SeqSpan)spans.elementAt(1);
-    startA = spanA.getStart();
-    startB = spanB.getStart();
-    endA = spanA.getEnd();
-    endB = spanB.getEnd();
-    seqA = spanA.getBioSeq();
-    seqB = spanB.getBioSeq();
+
+  public EfficientPairSeqSymmetry(List<SeqSpan> spans) {
+    this(spans.get(0), spans.get(1));
   }
-  
+
   public EfficientPairSeqSymmetry(SeqSpan spanA, SeqSpan spanB) {
-    startA = spanA.getStart();
-    startB = spanB.getStart();
-    endA = spanA.getEnd();
-    endB = spanB.getEnd();
-    seqA = spanA.getBioSeq();
-    seqB = spanB.getBioSeq();
+    this(spanA.getStart(), spanA.getEnd(), spanA.getBioSeq(),
+      spanB.getStart(), spanB.getEnd(), spanB.getBioSeq());
   }
 
   public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
@@ -85,7 +73,7 @@ public class EfficientPairSeqSymmetry implements SeqSymmetry {
     else if (i == 1) { return seqB;  }
     else { return null; }
   }
-  
+
   public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
     if (seqA == seq) {
       span.setStart(startA);
@@ -150,7 +138,7 @@ public class EfficientPairSeqSymmetry implements SeqSymmetry {
         "EfficientPairSeqSymmetry.setSpan requires an index of 0 or 1");
     }
   }
-  
+
   public void stretchSpan(int index, int start, int end) {
     if (0 == index) {
       if (endA >= startA) {
@@ -219,12 +207,10 @@ public class EfficientPairSeqSymmetry implements SeqSymmetry {
 
   public SeqSymmetry getChild(int index) {
     if (null != children && index < children.size())
-      return (SeqSymmetry)(children.elementAt(index));
+      return children.get(index);
     else
       return null;
   }
 
   public String getID() { return id; }
 }
-
-

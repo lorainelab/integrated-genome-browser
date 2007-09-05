@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,8 +13,7 @@
 
 package com.affymetrix.genometry.symmetry;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.BioSeq;
@@ -23,8 +22,8 @@ import com.affymetrix.genometry.MutableSeqSpan;
 
 public class SimpleSeqSymmetry implements SeqSymmetry {
 
-  protected Vector spans;
-  protected Vector children = null;
+  protected List<SeqSpan> spans;
+  protected List<SeqSymmetry> children = null;
 
   public SimpleSeqSymmetry() {
   }
@@ -32,27 +31,28 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
   public SimpleSeqSymmetry(SeqSpan[] span_array) {
     this();
     if (span_array != null && span_array.length > 0) {
-      this.spans = new Vector();
+      this.spans = new ArrayList<SeqSpan>();
+      // ? spans = Arrays.asList(span_array);
       for (int i=0; i<span_array.length; i++) {
-	spans.addElement(span_array[i]);
+        spans.add(span_array[i]);
       }
     }
   }
 
   public SimpleSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan[] cspans1, SeqSpan[] cspans2) {
-    spans = new Vector();
-    spans.addElement(spanA);
-    spans.addElement(spanB);
-    children = new Vector();
+    spans = new ArrayList<SeqSpan>(2);
+    spans.add(spanA);
+    spans.add(spanB);
+    children = new ArrayList<SeqSymmetry>(2);
     for (int i=0; i<cspans1.length; i++) {
       SeqSpan span1 = cspans1[i];
       SeqSpan span2 = cspans2[i];
       SeqSymmetry childsym = new EfficientPairSeqSymmetry(span1, span2);
-      children.addElement(childsym);
+      children.add(childsym);
     }
   }
-  
-  public SimpleSeqSymmetry(Vector spans) {
+
+  public SimpleSeqSymmetry(List<SeqSpan> spans) {
     this();
     this.spans = spans;
   }
@@ -63,7 +63,7 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
     for (int i=0; i<max; i++) {
       span = getSpan(i);
       if (span.getBioSeq() == seq) {
-	return span;
+        return span;
       }
     }
     return null;
@@ -75,9 +75,9 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
   }
 
   public SeqSpan getSpan(int i) {
-    return (SeqSpan)spans.elementAt(i);
+    return spans.get(i);
   }
-  
+
   public BioSeq getSpanSeq(int i) {
     SeqSpan sp = getSpan(i);
     if (null != sp) { return sp.getBioSeq(); }
@@ -85,7 +85,7 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
   }
 
   public boolean getSpan(int index, MutableSeqSpan span) {
-    SeqSpan vspan = (SeqSpan)spans.elementAt(index);
+    SeqSpan vspan = spans.get(index);
     span.setStart(vspan.getStart());
     span.setEnd(vspan.getEnd());
     span.setBioSeq(vspan.getBioSeq());
@@ -94,12 +94,12 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
 
   public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
     for (int i=0; i<spans.size(); i++) {
-      SeqSpan vspan = (SeqSpan)spans.elementAt(i);
+      SeqSpan vspan = spans.get(i);
       if (vspan.getBioSeq() == seq) {
-	span.setStart(vspan.getStart());
-	span.setEnd(vspan.getEnd());
-	span.setBioSeq(vspan.getBioSeq());
-	return true;
+        span.setStart(vspan.getStart());
+        span.setEnd(vspan.getEnd());
+        span.setBioSeq(vspan.getBioSeq());
+        return true;
       }
     }
     return false;
@@ -114,7 +114,7 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
 
   public SeqSymmetry getChild(int index) {
     if (null != children)
-      return (SeqSymmetry)(children.elementAt(index));
+      return children.get(index);
     else
       return null;
   }

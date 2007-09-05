@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -77,8 +77,8 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   protected TraceI trace;
   protected TraceGlyph trace_glyph;
 
-  protected Vector base_calls_vector; // vector of BaseCalls;
-  protected Vector base_glyphs; // vector of TraceBaseGlyphs
+  protected Vector<BaseCalls> base_calls_vector; // vector of BaseCalls's;
+  protected Vector<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
   private AsymAxisGlyph base_axis;
   private TraceBaseGlyph activeBaseCallsGlyph;
 
@@ -87,7 +87,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   private Mapping cons_aligner; // aligns the consensus
   private Mapping active_aligner; // aligns the active BaseCalls object with the consensus
 
-  private Vector base_listeners = new Vector();
+  private Vector<NeoBaseSelectListener> base_listeners = new Vector<NeoBaseSelectListener>();
 
   protected Glyph line_glyph;
   protected FillRectGlyph left_trim_glyph, right_trim_glyph;
@@ -113,7 +113,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   protected boolean hscroll_show, hzoom_show, vzoom_show;
 
   protected Range range;
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   /**
    * constructs a NeoTracer using all the built-in controls.
@@ -154,8 +154,8 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     trace_map = new NeoMap(false, false);
     base_map = new NeoMap(false, false);
 
-    base_calls_vector = new Vector();
-    base_glyphs = new Vector();
+    base_calls_vector = new Vector<BaseCalls>();
+    base_glyphs = new Vector<TraceBaseGlyph>();
 
     this.setBackground(default_panel_background);
     trace_map.setMapColor(default_trace_background);
@@ -447,13 +447,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       "OFFSET_ZOOMER, TRACES, or BASES.");
   }
 
-  /**
-   * @deprecated use {@link #doLayout}.
-   */
-  public synchronized void layout() { // j1.0
-    doLayout(); // j1.0
-  } // j1.0
-
   public synchronized void doLayout() {
 
     Dimension dim = this.getSize();
@@ -627,7 +620,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       // Move the base calls out of the trace
       // and add them directly.
       this.base_count = trace.getBaseCount();
-      BaseCall[] b = trace.getBaseArray();
+      BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
       base_map.removeItem ( base_glyphs );
       base_calls_vector.removeAllElements();
       base_glyphs.removeAllElements();
@@ -671,7 +664,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
    */
   private void replaceBaseCalls( BaseCall[] theCalls, int bases_index ) {
     try {
-      BaseCalls bc = (BaseCalls)( base_calls_vector.elementAt( bases_index ) );
+      BaseCalls bc = base_calls_vector.elementAt( bases_index );
       bc.setBaseCalls( theCalls );
     } catch ( ArrayIndexOutOfBoundsException e ) {
     }
@@ -711,7 +704,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
     int iBaseGlyphs = base_glyphs.size();
     for( int i =0; i < iBaseGlyphs; i++ ) {
-      TraceBaseGlyph old_base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
+      TraceBaseGlyph old_base_glyph = base_glyphs.elementAt(i);
       old_base_height += old_base_glyph.getHeight() + 1;
     }
 
@@ -753,13 +746,13 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     // this is only called when about to replace the base calls with reverse complements.
     // To be correct,
     // we should remove all the base glyphs.
-    int iBaseGlyphs = this.base_glyphs.size();
+    int iBaseGlyphs = base_glyphs.size();
     for ( int i =0; i < iBaseGlyphs; i++ ) {
-      TraceBaseGlyph baseGlyph = (TraceBaseGlyph)(this.base_glyphs.elementAt(i));
-      this.base_map.getScene().removeGlyph(baseGlyph);
+      TraceBaseGlyph baseGlyph = base_glyphs.elementAt(i);
+      base_map.getScene().removeGlyph(baseGlyph);
     }
-    this.base_glyphs.removeAllElements();
-    this.base_calls_vector.removeAllElements();
+    base_glyphs.removeAllElements();
+    base_calls_vector.removeAllElements();
   }
 
   /**
@@ -767,22 +760,22 @@ implements NeoTracerI, Observer, NeoViewBoxListener
    */
   public void setActiveBaseCalls( BaseCalls bc ) {
     if ( null == bc || base_calls_vector.contains( bc ) ) {
-      ((Trace)this.trace).setActiveBaseCalls( bc );
+      trace.setActiveBaseCalls( bc );
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-        if ( base_glyph.getBaseCalls() == ((Trace)this.trace).getActiveBaseCalls() ) {
+        TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
+        if ( base_glyph.getBaseCalls() == trace.getActiveBaseCalls() ) {
           this.activeBaseCallsGlyph = base_glyph;
         }
         else {
           base_glyph.clearSelection();
         }
       }
-      base_axis.setBaseCalls( ((Trace)this.trace).getActiveBaseCalls() );
+      base_axis.setBaseCalls( trace.getActiveBaseCalls() );
     }
   }
 
   public final BaseCalls getActiveBaseCalls() {
-    return ((Trace)this.trace).getActiveBaseCalls();
+    return trace.getActiveBaseCalls();
   }
 
   public void scrollRange(double value) {
@@ -937,7 +930,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     }
     else {
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
+        TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
         base_map.select(base_glyph, start, end);
       }
     }
@@ -1015,23 +1008,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   /** Methods for dealing with selection **/
 
   /**
-   * Selects a region in the widget starting from one specified base
-   * to another.
-   *
-   * @param basenum_start the first base selected
-   * @param basenum_end   the last base selected
-   * @deprecated use {@link #selectResidues(int, int)}
-   */
-  public void selectBases(int basenum_start, int basenum_end) {
-    selectResidues(basenum_start, basenum_end);
-        // quick fix to deal with arrayindex exceptions 6-30-98  GAH
-    if (basenum_start < 0 || basenum_end < 0 || basenum_start > 10000 ||
-        basenum_end > 10000)  {
-               return;
-        }
-  }
-
-  /**
    * gets a base call from the active set of base calls.
    * For backward compatibility,
    * if there are no active base calls,
@@ -1043,10 +1019,11 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   private BaseCall getBaseCall( int theBaseIndex ) {
     BaseCalls bc = getActiveBaseCalls();
     if ( null == bc ) { // for backward compatibility
-      return this.trace.getBaseCall( theBaseIndex );
+      return this.trace.getActiveBaseCalls().getBaseCall(theBaseIndex);
     }
     return bc.getBaseCall( theBaseIndex );
   }
+
   private int getBaseCount() {
     BaseCalls bc = getActiveBaseCalls();
     if ( null == bc ) { // for backward compatibility
@@ -1191,14 +1168,13 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   }
 
   public final boolean getBaseVisibility(int baseID) {
-    return ((TraceBaseGlyph)(base_glyphs.firstElement())).getVisibility(baseID);
+    return base_glyphs.firstElement().getVisibility(baseID);
   }
 
   public void setBaseVisibility(int baseID, boolean visible) {
     if (!(getBaseVisibility(baseID) == visible)) {
       for( int i=0; i < base_glyphs.size(); i++ ) {
-        TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-        base_glyph.setVisibility(baseID, visible);
+        base_glyphs.elementAt(i).setVisibility(baseID, visible);
       }
       base_map.getScene().maxDamage();
     }
@@ -1285,19 +1261,16 @@ implements NeoTracerI, Observer, NeoViewBoxListener
     boolean cViz = getBaseVisibility( C );
     boolean gViz = getBaseVisibility( G );
     boolean tViz = getBaseVisibility( T );
-    Vector newBaseCalls = new Vector();
-    Enumeration e = base_calls_vector.elements();
-    while( e.hasMoreElements() ) {
-      BaseCalls bc = (BaseCalls)e.nextElement();
+    Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
+    Enumeration<BaseCalls> e = base_calls_vector.elements();
+    for (BaseCalls bc : base_calls_vector ) {
       newBaseCalls.addElement( bc.reverseComplement() );
     }
     // Remove the old.
     removeAllBaseCalls();
     // Add the new.
-    e = newBaseCalls.elements();
-    while( e.hasMoreElements() ) {
-      addBaseCalls( ( BaseCalls ) e.nextElement() );
-    }
+    base_calls_vector.addAll(newBaseCalls);
+
     // Switch the visibility of complimentary bases.
     setBaseVisibility( A, tViz );
     setBaseVisibility( T, aViz );
@@ -1412,35 +1385,6 @@ implements NeoTracerI, Observer, NeoViewBoxListener
         "currently only supports ids of TRACES or BASES");
   }
 
-  /**
-   * sets the background color behind the traces.
-   *
-   * @deprecated use setBackground(TRACES, theColor);
-   */
-  public void setTracesBackground(Color theColor) {
-    setBackground(TRACES, theColor);
-  }
-  /**
-   * @deprecated use getBackground(TRACES);
-   */
-  public Color getTracesBackground() {
-    return getBackground(TRACES);
-  }
-  /**
-   * sets the background color behind the bases.
-   *
-   * @deprecated use setBackground(BASES, theColor);
-   */
-  public void setBasesBackground(Color theColor) {
-    setBackground(BASES, theColor);
-  }
-  /**
-   * @deprecated use getBackground(BASES);
-   */
-  public Color getBasesBackground() {
-    return getBackground(BASES);
-  }
-
   public void update(Observable theObserved, Object theArgument) {
     if (theObserved instanceof Selection) {
       update((Selection)theObserved);
@@ -1526,8 +1470,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   public void setTraceColors(Color[] colors) {
     trace_glyph.setTraceColors(colors);
     for( int i=0; i < base_glyphs.size(); i++ ) {
-      TraceBaseGlyph base_glyph = (TraceBaseGlyph)(base_glyphs.elementAt(i));
-      base_glyph.setBaseColors(colors);
+      base_glyphs.elementAt(i).setBaseColors(colors);
     }
   }
 
@@ -1537,10 +1480,9 @@ implements NeoTracerI, Observer, NeoViewBoxListener
         Range visRange = getVisibleBaseRange();
         NeoRangeEvent nevt = new NeoRangeEvent(this,
             visRange.beg, visRange.end);
-        NeoRangeListener rl;
+
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
-          rl.rangeChanged(nevt);
+          range_listeners.elementAt(i).rangeChanged(nevt);
         }
       }
     }
@@ -1582,11 +1524,10 @@ implements NeoTracerI, Observer, NeoViewBoxListener
   }
 
   private void sendBaseSelectedEvent( int base_index ) {
-    Enumeration e = base_listeners.elements();
+    Enumeration<NeoBaseSelectListener> e = base_listeners.elements();
     NeoBaseSelectEvent event = new NeoBaseSelectEvent( (Object)this, base_index );
     while( e.hasMoreElements() ) {
-      NeoBaseSelectListener l = ( NeoBaseSelectListener ) e.nextElement();
-      l.baseSelected( event );
+      e.nextElement().baseSelected( event );
     }
   }
 
@@ -1612,7 +1553,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       active_base_calls = getActiveBaseCalls();
     }
     consensus = new BaseCalls();
-    Vector inserts = new Vector();
+    Vector<Character> inserts = new Vector<Character>();
     int last_pos=0;
 
     int calls_index = active_aligner.getMappedStart();
@@ -1661,7 +1602,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
         int span = position - last_pos;// amount of space we have to stuff in inserts
         double spacing = span / ( iSize + 1 ); // space inbetween edges
         for( int i=0; i < iSize; i++ ) {
-          char insert_base = ((Character)inserts.elementAt(i)).charValue();
+          char insert_base = inserts.elementAt(i).charValue();
           int insert_pos = last_pos + (int)( spacing * (i+1) );
           new_base_obj = new BaseConfidence( insert_base, conf, insert_pos );
           consensus.addBase( new_base_obj );

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,7 +33,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
   protected boolean dragging_outside = false;
   protected boolean grab_focus_on_click = true;
   protected boolean focus_traversable = true;
-  protected Vector paint_listeners = new Vector();
+  protected Vector<NeoPaintListener> paint_listeners = new Vector<NeoPaintListener>();
 
 
   /**
@@ -52,10 +52,10 @@ public class NeoCanvas extends NeoBufferedComponent  {
     if (paint_listeners.size() > 0) {
       Rectangle cliprect = g.getClipBounds();
       Rectangle paintrect = null;
-      // sometimes after a resize the cliprect starts out as null, so 
+      // sometimes after a resize the cliprect starts out as null, so
       //    checking to avoid NullPointerExceptions
       if (cliprect != null)  {
-        paintrect = new Rectangle(cliprect.x, cliprect.y, 
+        paintrect = new Rectangle(cliprect.x, cliprect.y,
                                   cliprect.width, cliprect.height);
       }
       NeoPaintEvent e = new NeoPaintEvent(this, paintrect, g);
@@ -79,7 +79,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
     int id = e.getID();
     NeoPaintListener pl;
     for (int i=0; i<paint_listeners.size(); i++) {
-      pl = (NeoPaintListener)paint_listeners.elementAt(i);
+      pl = paint_listeners.elementAt(i);
       pl.componentPainted(e);  // assume for now event id is always PAINT
     }
   }
@@ -119,34 +119,16 @@ public class NeoCanvas extends NeoBufferedComponent  {
   }
 
   /**
-   * @deprecated use NeoBufferedComponent.setDoubleBuffered() instead.
-   *
-   * @see NeoBufferedComponent#setDoubleBuffered
-   */
-  public void isBuffered(boolean buffered) {
-    setDoubleBuffered(buffered);
-  }
-
-  /**
-   * @deprecated use NeoBufferedComponent.isDoubleBuffered() instead.
-   *
-   * @see NeoBufferedComponent#isDoubleBuffered
-   */
-  public boolean getBuffered() {
-    return isDoubleBuffered();
-  }
-
-
-  /**
    * Overriding to ensure that NeoCanvas will be included
    * in Tab and Shift-Tab keyboard focus traversal.
    */
+  @Deprecated
   public boolean isFocusTraversable() {
     return focus_traversable;
   }
 
   /**
-   *  Overriding processMouseEvent to give NeoCanvas the focus on 
+   *  Overriding processMouseEvent to give NeoCanvas the focus on
    *  mouse press over it
    */
   public void processMouseEvent(MouseEvent e) {

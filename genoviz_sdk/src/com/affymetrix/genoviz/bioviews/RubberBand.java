@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,7 +27,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
   // need to resolve EventSourceI vs. Component !!!
   protected Component comp;
   protected Color color;
-  protected Vector listeners;
+  protected Vector<NeoRubberBandListener> listeners;
   protected Rectangle pixelbox;
   protected int xorigin, yorigin;
   protected boolean forward, drawn, started;
@@ -49,7 +49,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
    */
   public RubberBand() {
     color = Color.black;
-    listeners = new Vector();
+    listeners = new Vector<NeoRubberBandListener>();
     drawn = false;
     started = false;
     startEventID = MouseEvent.MOUSE_PRESSED;
@@ -192,7 +192,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
   protected void processEvent(NeoRubberBandEvent evt) {
     NeoRubberBandListener listener;
     for (int i = 0; i < listeners.size(); i++)  {
-      listener = (NeoRubberBandListener)listeners.elementAt(i);
+      listener = listeners.elementAt(i);
       listener.rubberBandChanged(evt);
     }
   }

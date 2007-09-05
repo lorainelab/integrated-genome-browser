@@ -22,7 +22,7 @@ import java.util.Stack;
  * Adapted from Blossom Associates West.
  */
 public class Debug {
-  private static Stack stack = new Stack();
+  private static Stack<Integer> stack = new Stack<Integer>();
   public final static int OFF = 0;
   public final static int WARN = OFF + 1;
   public final static int INFORM = WARN + 1;
@@ -91,7 +91,7 @@ public class Debug {
    * sets the debug level to newLevel and saves the old value in a stack.
    */
   public static void push(int newLevel) {
-    stack.push(new Integer(level));
+    stack.push(level);
     level = newLevel;
   }
 
@@ -99,7 +99,7 @@ public class Debug {
    * restores previous debug level
    */
   public static void pop() {
-    level = ((Integer) stack.pop()).intValue();
+    level = stack.pop();
   }
 
 }

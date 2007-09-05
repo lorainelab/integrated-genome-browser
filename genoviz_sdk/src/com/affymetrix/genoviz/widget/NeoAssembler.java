@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2006 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -86,10 +86,12 @@ implements NeoAssemblerI, NeoViewBoxListener,
   protected Scene align_scene, label_scene, cons_scene;
   // currently no vertical zooming, so no need for internal vzoom
   protected Adjustable hscroll, vscroll, hzoom;
+
   protected StretchContainerGlyph cglyph;
+
   protected AssemblyPacker apacker;
   protected Vector align_glyphs;
-  protected Vector adapters;
+  protected Vector<NeoDataAdapterI> adapters;
   boolean optimize_scrolling = false;
   boolean optimize_damage = false;
   boolean use_label_arrows = true;
@@ -98,9 +100,9 @@ implements NeoAssemblerI, NeoViewBoxListener,
   protected boolean all_sorted = false;
 
   // hash of alignment glyphs to label glyphs on label map
-  protected Hashtable labelhash = new Hashtable();
+  protected Hashtable<GlyphI,StringGlyph> labelhash = new Hashtable<GlyphI,StringGlyph>();
   // hash of alignment glyphs to arrow glyphs on label map
-  protected Hashtable arrowhash = new Hashtable();
+  protected Hashtable<GlyphI,ArrowGlyph> arrowhash = new Hashtable<GlyphI,ArrowGlyph>();
   // hash of alignment glyphs to alignment Mappings
   //  Hashtable alignhash = new Hashtable();
 
@@ -171,7 +173,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   private int assemblyType = NA_ASSEMBLY;
 
-  protected Vector range_listeners = new Vector();
+  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
   protected Character match_char = null;
 
@@ -346,7 +348,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
         int [] visible_offset = labelmap.getVisibleOffset();
         double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
         int font_height = getToolkit().getFontMetrics(residue_font).getHeight();
-        int visible_map_height = (int)(visible_offset[1]-visible_offset[0]);
+        int visible_map_height = visible_offset[1] - visible_offset[0];
         //visible_map_height is in coords
         visible_map_height = (int)(visible_map_height-(font_height/scale));
         //font_height is substracted from the visible_map_height to prevent scrolling past the last seq.
@@ -475,7 +477,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
     consmap.stretchToFit();
     consmap.setRubberBandBehavior(false);
-    axis_glyph = (AxisGlyph)consmap.addAxis(axis_offset);
+    axis_glyph = consmap.addAxis(axis_offset);
 
     axis_glyph.setVisibility(false);
     consmap.setReshapeBehavior(consmap.X, reshape_constraint[X]);
@@ -505,8 +507,8 @@ implements NeoAssemblerI, NeoViewBoxListener,
    * Makes sure that the range of the map takes into account orientation.
    */
   protected boolean checkRange(int start, int end) {
-    int orientedStart = (int)Math.min(start, end);
-    int orientedEnd = (int)Math.max(start, end);
+    int orientedStart = Math.min(start, end);
+    int orientedEnd = Math.max(start, end);
     if (orientedStart < range_start || orientedEnd > range_end) {
       if (orientedStart < range_start) { range_start = orientedStart; }
       if (orientedEnd > range_end) { range_end = orientedEnd; }
@@ -630,14 +632,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     }
 
     return aglyph;
-  }
-
-  /**
-   * @deprecated in favor of addAlignedSpan() (for naming consistency).
-   */
-  public GlyphI addUngappedSpan(GlyphI seq_tag, int seqstart, int seqend,
-      int alignstart, int alignend) {
-    return addAlignedSpan(seq_tag, seqstart, seqend, alignstart, alignend);
   }
 
   public GlyphI addAlignedSpan(GlyphI seq_tag, int seqstart, int seqend,
@@ -820,13 +814,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     return aglyph;
   }
 
-  /**
-   * @deprecated use <code>getAlignmentGlyphs()</code>.
-   */
-  public Vector getSequences() {
-    return getAlignmentGlyphs();
-  }
-
   public String getLabel(GlyphI seq_tag) {
     String label = null;
     AlignmentGlyph aglyph = (AlignmentGlyph)seq_tag;
@@ -834,8 +821,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       label = consensus_name;
     }
     else {
-      StringGlyph sglyph = (StringGlyph)labelhash.get(aglyph);
-      label = sglyph.getString();
+      label = labelhash.get(aglyph).getString();
     }
     return label;
   }
@@ -882,43 +868,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
     return sglyph;
   }
 
-
-  //
-  //  Note that this assumes adding based on sequence!
-  //  so that it will _include_ the end -- thus if
-  //  start = 0, end = 1, really creating a sequence annotation that
-  //  starts at 0 and is 2 map units long
-  //
-  /**
-   * @deprecated in favor of <pre>
-   *    Object obj = addSequence(start, end),
-   *    setLabel(obj, namestring);</pre>
-   */
-  public GlyphI addSequence(String name, int start, int end) {
-    GlyphI seq_glyph = (GlyphI)addSequence(start, end);
-    GlyphI label_glyph = (GlyphI)setLabel(seq_glyph, name);
-    return seq_glyph;
-  }
-
-
-
-  // want to be able to add sequence without knowing anything about
-  // the Sequence data model.  Therefore need separate methods to
-  // add the sequence residues & name, and ungapped alignment spans
-  /**
-   * @deprecated in favor of <pre>
-   *   Object obj = addSequence(start, end),
-   *   setLabel(obj, namestring);
-   *   setResidues(obj, residuestring);</pre>
-   */
-  public GlyphI addSequence(String name, int start, int end, String residues) {
-    AlignmentGlyph aglyph = (AlignmentGlyph)addSequence(name, start, end);
-    aglyph.setMatchChar ( match_char );
-    setResidues(aglyph, residues);
-    return aglyph;
-  }
-
-
   /**
    * makes sure that the labels are all matched up properly
    * with their corresponding sequences.
@@ -943,7 +892,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
             label.getCoordBox().width, acoords.height);
       }
       if (use_label_arrows) {
-        arrow = (ArrowGlyph)arrowhash.get(align);
+        arrow = arrowhash.get(align);
         if (arrow != null) {
           arrow.setCoords(arrow.getCoordBox().x, acoords.y,
               arrow.getCoordBox().width, acoords.height);
@@ -1011,16 +960,10 @@ implements NeoAssemblerI, NeoViewBoxListener,
    *
    * @deprecated use setBounds (but override reshape).
    */
+  @Deprecated
   public synchronized void reshape(int x, int y, int width, int height) {
     super.reshape(x, y, width, height);
     alignmap.adjustScroller(alignmap.Y);
-  }
-
-  /**
-   * @deprecated use doLayout.
-   */
-  public synchronized void layout() {
-    doLayout();
   }
 
   public synchronized void doLayout() {
@@ -1316,6 +1259,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   int select_start, select_end;
 
+  @SuppressWarnings("unchecked")
   public void heardMouseEvent(MouseEvent evt) {
     int id = evt.getID();
     Object source = evt.getSource();
@@ -1347,15 +1291,11 @@ implements NeoAssemblerI, NeoViewBoxListener,
           }
         }
 
-        Vector a = (Vector)alignmap.getSelected().clone();
+        Vector<GlyphI> a = (Vector<GlyphI>) alignmap.getSelected().clone();
         // Vector a must be a clone! getSelected() returns the real thing.
-        Enumeration e = consmap.getSelected().elements();
-        while (e.hasMoreElements()) {
-          a.addElement(e.nextElement());
-        }
-        this.selected.removeAllElements();
+        a.addAll(consmap.getSelected());
+        //this.selected.removeAllElements();
         this.selected = a;
-
       }
 
       else if (SELECT_RESIDUES == selection_behavior) {
@@ -1454,26 +1394,16 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   public void clearSelected() {
     for (int i=0; i<selected.size(); i++) {
-      GlyphI gl = (GlyphI)selected.elementAt(i);
-      Scene sc = gl.getScene();
-      sc.deselect(gl);
+      GlyphI gl = selected.elementAt(i);
+      gl.getScene().deselect(gl);
     }
     selected.removeAllElements();
   }
 
-  public Vector getSelected() {
+  public Vector<GlyphI> getSelected() {
     return selected;
   }
   //-------------------------------------------
-
-  /**
-   * @deprecated Use updateWidget().
-   */
-  public void updateMap() {
-    alignmap.updateWidget();
-    consmap.updateWidget();
-    labelmap.updateWidget();
-  }
 
   public void updateMap(boolean alignments, boolean consensus, boolean labels) {
     if (alignments)  alignmap.updateWidget();
@@ -1502,7 +1432,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       throw new NullPointerException("cannot add a null NeoDataAdapterI.");
     }
     if (adapters == null) {
-      adapters = new Vector();
+      adapters = new Vector<NeoDataAdapterI>();
     }
     adapters.addElement(adapter);
   }
@@ -1517,7 +1447,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
       throw new NullPointerException("cannot addData if adapters is null.");
     }
     for (int i=0; i<adapters.size(); i++) {
-      da = (NeoDataAdapterI)adapters.elementAt(i);
+      da = adapters.elementAt(i);
       if (da.accepts(obj)) {
         glyph = da.createGlyph(obj);
         return glyph;
@@ -2059,11 +1989,11 @@ implements NeoAssemblerI, NeoViewBoxListener,
       //   if switch to making a new matrix with each call to
       //   adjustColorMatrix()
 
-      Vector align_glyphs = this.getSequences();
+      Vector align_glyphs = this.getAlignmentGlyphs();
       AlignmentGlyph gar;
       if (color_matrix == bg_color_matrix) {
         for (int i=0; i<align_glyphs.size(); i++) {
-          gar = (AlignmentGlyph)align_glyphs.elementAt(i);
+          gar = (AlignmentGlyph) align_glyphs.elementAt(i);
           gar.setBackgroundColorMatrix(color_matrix);
         }
         if (colors_affect_cons && cons_glyph != null) {
@@ -2257,10 +2187,10 @@ implements NeoAssemblerI, NeoViewBoxListener,
     font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
     residue_color = col;
     if (apply_color_retro) {
-      Vector align_glyphs = this.getSequences();
+      Vector align_glyphs = this.getAlignmentGlyphs();
       AlignmentGlyph gar;
       for (int i=0; i<align_glyphs.size(); i++) {
-        gar = (AlignmentGlyph)align_glyphs.elementAt(i);
+        gar = (AlignmentGlyph) align_glyphs.elementAt(i);
         gar.setForegroundColor(residue_color);
       }
       if (colors_affect_cons && cons_glyph != null)  {
@@ -2277,7 +2207,7 @@ implements NeoAssemblerI, NeoViewBoxListener,
             vbox.x, vbox.x + vbox.width);
         NeoRangeListener rl;
         for (int i=0; i<range_listeners.size(); i++) {
-          rl = (NeoRangeListener)range_listeners.elementAt(i);
+          rl = range_listeners.elementAt(i);
           rl.rangeChanged(nevt);
         }
       }

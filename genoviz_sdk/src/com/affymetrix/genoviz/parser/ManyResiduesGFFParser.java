@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -65,7 +65,7 @@ public class ManyResiduesGFFParser implements ContentParser {
     OutputStream os = new PipedOutputStream( is );
     Parser p = new Parser( is );
     p.start();
-    Hashtable seqs = readByChar( os, r );
+    Hashtable<String,SequenceI> seqs = readByChar( os, r );
     try {
       p.join();
       o = p.getProduct();
@@ -90,9 +90,9 @@ public class ManyResiduesGFFParser implements ContentParser {
    * reads through the input, keeping the residues
    * and passing everything else on to the output stream.
    */
-  private Hashtable readByChar( OutputStream os, BufferedReader is ) throws IOException {
+  private Hashtable<String,SequenceI> readByChar( OutputStream os, BufferedReader is ) throws IOException {
 
-    Hashtable seqs = new Hashtable();
+    Hashtable<String,SequenceI> seqs = new Hashtable<String,SequenceI>();
     SequenceI seq = null;
 
     String s = is.readLine();
@@ -147,17 +147,18 @@ public class ManyResiduesGFFParser implements ContentParser {
 
   }
 
-  private Vector addSeqs( Object o, Hashtable theSeqs ) {
-    Vector v;
+  @SuppressWarnings("unchecked")
+  private Vector<AnnotatedSequence> addSeqs( Object o, Hashtable<String,SequenceI> theSeqs ) {
+    Vector<AnnotatedSequence> v;
     if ( null == o ) {
-      v = new Vector();
+      v = new Vector<AnnotatedSequence>();
     }
     else if ( o instanceof Vector ) {
-      v = ( Vector ) o;
+      v = ( Vector<AnnotatedSequence> ) o;
     }
     else if ( o instanceof AnnotatedSequence ) {
-      v = new Vector();
-      v.addElement( o );
+      v = new Vector<AnnotatedSequence>();
+      v.addElement( (AnnotatedSequence) o );
     }
     else {
       throw new IllegalArgumentException(
@@ -166,12 +167,12 @@ public class ManyResiduesGFFParser implements ContentParser {
     return addSeqs( v, theSeqs );
   }
 
-  private Vector addSeqs( Vector v, Hashtable theSeqs ) {
+  private Vector<AnnotatedSequence> addSeqs( Vector<AnnotatedSequence> v, Hashtable<String,SequenceI> theSeqs ) {
     if ( null == theSeqs || theSeqs.isEmpty() ) {
       return v;
     }
     // Go through the vector adding residues.
-    Vector done = new Vector();
+    Vector<String> done = new Vector<String>();
     Enumeration enu = v.elements();
     while ( enu.hasMoreElements() ) {
       Object o = enu.nextElement();

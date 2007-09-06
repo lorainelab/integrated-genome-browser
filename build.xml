@@ -154,7 +154,7 @@ Make sure that the 'ext' directory exists and includes
            debug="${debug}"
            deprecation="${deprecation}" 
            optimize="${optimize}"
-           source="1.4">
+           source="1.5">
       <src path="${igb.src.dir}"/>
       <classpath refid="project.class.path" />
     </javac>

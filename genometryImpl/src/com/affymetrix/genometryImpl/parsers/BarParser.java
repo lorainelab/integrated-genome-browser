@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.igb.Application;
 import java.io.*;
 import java.util.*;
 
@@ -29,6 +28,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
+import java.util.logging.Logger;
 
 /**
  * Parser for files in BAR format.
@@ -576,7 +576,7 @@ public class BarParser implements AnnotationWriter  {
       }
     }
     long t1 = tim.read();
-    Application.getSingleton().logDebug("bar load time: " + t1/1000f);
+    Logger.getAnonymousLogger().fine("bar load time: " + t1/1000f);
     }
     finally {
       try { bis.close(); } catch (Exception e) {}

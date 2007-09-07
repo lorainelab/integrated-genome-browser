@@ -189,21 +189,6 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     return graph_glyph;
   }
 
-// /**
-//  *  Displays a graph.
-//  */
-//  public static GraphGlyph displayGraph(GraphSym graf, SeqMapView smv,
-//    java.awt.Color col, double yloc, double height, boolean use_floater) {
-//    
-//    GraphStateI gstate = graf.getGraphState();
-//    IAnnotStyle gstyle = gstate.getTierStyle();
-//    gstyle.setColor(col);
-//    gstyle.setY(yloc);
-//    gstyle.setHeight(height);
-//    gstate.setFloatGraph(use_floater);
-//    
-//    return displayGraph(graf, smv, true);
-//  }
 
   public static void report(String str, GraphState state, GraphGlyph graph_glyph) {
     if (DEBUG) {

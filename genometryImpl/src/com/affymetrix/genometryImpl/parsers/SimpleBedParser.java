@@ -37,9 +37,9 @@ public class SimpleBedParser implements AnnotationWriter {
       for (int i=0; i<spancount; i++) {
         SeqSpan span = spanlist.get(i);
         bw.write(span.getBioSeq().getID());
-        bw.write("\t");
+        bw.write('\t');
         bw.write(Integer.toString(span.getMin()));;
-        bw.write("\t");
+        bw.write('\t');
         bw.write(Integer.toString(span.getMax()));;
         bw.write('\n');
       }
@@ -48,7 +48,8 @@ public class SimpleBedParser implements AnnotationWriter {
     }
     catch (Exception ex) {
       success = false;
-      IOException ioe = new IOException(ex);
+      IOException ioe = new IOException(ex.getMessage());
+      ioe.initCause(ex);
       throw ioe;
     }
     return success;

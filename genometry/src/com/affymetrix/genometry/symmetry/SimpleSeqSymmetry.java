@@ -121,8 +121,8 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
 
   public String getID() { return null; }
 
-  /**  to allow subclass access to children list without addressing it directly */
-  protected List getChildren() {
+  /** Allows subclasses direct access to the children list. */
+  protected List<SeqSymmetry> getChildren() {
     return children;
   }
 

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,12 +13,9 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
-import javax.swing.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
@@ -50,8 +47,8 @@ public class FastaParser {
    * Returns the List of sequences that were read from the file, which will be
    * a subset of the sequences in the group.
    */
-  public java.util.List parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-    ArrayList seqlist = new ArrayList();
+  public List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+    ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
     int line_count = 0;
     BufferedReader br = null;
     Matcher matcher = header_regex.matcher("");
@@ -62,22 +59,22 @@ public class FastaParser {
         if (header == null) { continue; }  // skip null lines
         matcher.reset(header);
         boolean matched = matcher.matches();
-        
+
         if (matched) {
           StringBuffer buf = new StringBuffer();
           String seqid = matcher.group(1);
           while (br.ready()) {
             String line = br.readLine();
             if (line == null) { continue; }  // skip null lines
-            
+
             if (line.charAt(0) == ';') { continue; } // skip comment lines
-            
+
             // break if hit header for another sequence --
             if (line.startsWith(">")) {
               header = line;
               break;
             }
-            
+
             buf.append(line);
           }
           String residues = buf.toString();
@@ -86,7 +83,7 @@ public class FastaParser {
             seq = group.addSeq(seqid, residues.length());
           }
           seq.setResidues(residues);
-          
+
           seqlist.add(seq);
           System.out.println("length of sequence: " + residues.length());
         }
@@ -98,7 +95,7 @@ public class FastaParser {
     System.out.println("done loading fasta file");
     return seqlist;
   }
-  
+
   /**
    *  Parse an input stream, creating a single new BioSeq.
    *  @param istr an InputStream that will be read and then closed
@@ -111,7 +108,7 @@ public class FastaParser {
   /**
    *  Parse an input stream into a BioSeq.
    *  @param istr an InputStream that will be read and then closed
-   *  @param aseq Usually null, but can be an existing seq that you want to load the 
+   *  @param aseq Usually null, but can be an existing seq that you want to load the
    *   residues into.  If not null, then the sequence in the file must have a name
    *   that is synonymous with aseq.
    */
@@ -126,12 +123,12 @@ public class FastaParser {
    *  the StringBuffer.toString() method to get residues without accidentally
    *  caching an array bigger than needed (see comments in method for more details...)
    *  @param istr an InputStream that will be read and then closed
-   *  @param aseq Usually null, but can be an existing seq that you want to load the 
+   *  @param aseq Usually null, but can be an existing seq that you want to load the
    *   residues into.  If not null, then the sequence in the file must have a name
    *   that is synonymous with aseq.
    */
   public MutableAnnotatedBioSeq oldparse(InputStream istr, MutableAnnotatedBioSeq aseq,
-				      int max_seq_length) {
+                                      int max_seq_length) {
     if (max_seq_length > 0) {
       fixed_length_buffer = true;
       use_buffer_directly = true;
@@ -165,50 +162,50 @@ public class FastaParser {
       //      System.out.println("trying to read");
       br = new BufferedReader(new InputStreamReader(istr));
       while (br.ready()) {  // loop through lines till find a header line
-	String header = br.readLine();
-	if (header == null) { continue; }  // skip null lines
+        String header = br.readLine();
+        if (header == null) { continue; }  // skip null lines
         matcher.reset(header);
-	boolean matched = matcher.matches();
-	//	if (! matched) { continue; }
-	if (matched) {
-	  seqid = matcher.group(1);
-	  break;
-	}
+        boolean matched = matcher.matches();
+        //        if (! matched) { continue; }
+        if (matched) {
+          seqid = matcher.group(1);
+          break;
+        }
       }
       while (br.ready()) {
-	String line = br.readLine();
-	if (line == null) { continue; }  // skip null lines
+        String line = br.readLine();
+        if (line == null) { continue; }  // skip null lines
 
         if (line.startsWith(";")) { continue; } // lines beginning with ";" are comments
         // see http://en.wikipedia.org/wiki/Fasta_format
-        
-	// end loop if hit header for another sequence --
-	//   currently only parsing first sequence in fasta file
-	if (line.startsWith(">")) {
-	  break;
-	}
-	//	buf.append(line.substring(0, line.length()-1));
-	buf.append(line);
-	line_count++;
-	/*
-	if (line_count % 100000 == 0) {
-	  System.out.println("line count: " + line_count);
-	  mem.printMemory();
-	}
-	*/
-	  //	    System.out.println("line count: " + line_count);
-	/*
-	boolean matched = seq_regex.match(line);
-	if (matched) {
-	  String line_residues = seq_regex.getParen(1);
-	  //  System.out.println("^^^" + line_residues + "$$$");
-	  buf.append(line_residues);
-	  line_count++;
-	  if (line_count % 10000 == 0) {
-	    //	    System.out.println("line count: " + line_count);
-	  }
-	}
-	*/
+
+        // end loop if hit header for another sequence --
+        //   currently only parsing first sequence in fasta file
+        if (line.startsWith(">")) {
+          break;
+        }
+        //        buf.append(line.substring(0, line.length()-1));
+        buf.append(line);
+        line_count++;
+        /*
+        if (line_count % 100000 == 0) {
+          System.out.println("line count: " + line_count);
+          mem.printMemory();
+        }
+        */
+          //            System.out.println("line count: " + line_count);
+        /*
+        boolean matched = seq_regex.match(line);
+        if (matched) {
+          String line_residues = seq_regex.getParen(1);
+          //  System.out.println("^^^" + line_residues + "$$$");
+          buf.append(line_residues);
+          line_count++;
+          if (line_count % 10000 == 0) {
+            //            System.out.println("line count: " + line_count);
+          }
+        }
+        */
       }
       //      System.out.println("Read entire sequence, length = " + buf.length());
       br.close();
@@ -295,8 +292,8 @@ public class FastaParser {
           seq.setResidues(residues);
       }
       else {
-	System.out.println("*****  ABORTING MERGE, sequence ids don't match: " +
-			   "old seq id = " + seq.getID() + ", new seq id = " + seqid);
+        System.out.println("*****  ABORTING MERGE, sequence ids don't match: " +
+                           "old seq id = " + seq.getID() + ", new seq id = " + seqid);
       }
     }
     System.out.println("time to execute: " + tim.read()/1000f);
@@ -313,7 +310,7 @@ public class FastaParser {
   //   is a lot better than aforementioned memory spike, which can temporarily double the amount of
   //   memory needed
   public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
-				      int max_seq_length) {
+                                      int max_seq_length) {
     return oldparse(istr, aseq, max_seq_length);
   }
 
@@ -321,7 +318,7 @@ public class FastaParser {
    *  trying a new strategy to speed parsing.
    */
   public MutableAnnotatedBioSeq newparse(InputStream istr, MutableAnnotatedBioSeq aseq,
-				      int max_seq_length) {
+                                      int max_seq_length) {
     StringBuffer buf;
     if (max_seq_length > 0) {
       buf = new StringBuffer(max_seq_length);
@@ -358,16 +355,16 @@ public class FastaParser {
     try {
       BufferedInputStream bis = new BufferedInputStream(istr, bisbuf_size);
       //      for (int i= 0; i<max_seq_length; i++) {
-      //      	int b = bis.read();
+      //              int b = bis.read();
       //      }
       for (int i= 0; i<max_seq_length-bytebuf_size; i+=bytebuf_size) {
-	//      for (int i= 0; i<max_seq_length; i+=bytebuf_size) {
-      	bytecount += bis.read(bytebuf);
-	for (int k=0; k<bytebuf.length; k++) {
-	  buf.append((char)bytebuf[k]);
-	}
-	//	System.out.println("buf length = " + buf.length());
-	//	System.out.println("buf: " + buf.substring(0, 100));
+        //      for (int i= 0; i<max_seq_length; i+=bytebuf_size) {
+              bytecount += bis.read(bytebuf);
+        for (int k=0; k<bytebuf.length; k++) {
+          buf.append((char)bytebuf[k]);
+        }
+        //        System.out.println("buf length = " + buf.length());
+        //        System.out.println("buf: " + buf.substring(0, 100));
       }
       System.out.println("bytes read: " + bytecount);
     }
@@ -378,12 +375,12 @@ public class FastaParser {
       char[] charbuf = new char[bytebuf_size];
       br = new BufferedReader(new InputStreamReader(istr));
       for (int i=0; i<max_seq_length-bytebuf_size; i+=bytebuf_size) {
-	//      for (int i=0; i<max_seq_length; i+=bytebuf_size) {
-	charcount += br.read(charbuf);
-	buf.append(charbuf);
-	//	for (int k=0; k<charbuf.length; k++) {
-	//	  buf.append(charbuf[k]);
-	//	}
+        //      for (int i=0; i<max_seq_length; i+=bytebuf_size) {
+        charcount += br.read(charbuf);
+        buf.append(charbuf);
+        //        for (int k=0; k<charbuf.length; k++) {
+        //          buf.append(charbuf[k]);
+        //        }
       }
       System.out.println("chars read: " + charcount);
     }
@@ -407,11 +404,11 @@ public class FastaParser {
     }
     else {  // try to merge with existing seq
       if (seq.getID().equals(seqid)) {
-	seq.setResidues(residues);
+        seq.setResidues(residues);
       }
       else {
-	System.out.println("ABORTING MERGE, sequence ids don't match: " +
-			   "old seq id = " + seq.getID() + ", new seq id = " + seqid);
+        System.out.println("ABORTING MERGE, sequence ids don't match: " +
+                           "old seq id = " + seq.getID() + ", new seq id = " + seqid);
       }
     }
     */
@@ -422,51 +419,13 @@ public class FastaParser {
     return seq;
   }
 
-  public static void main(String[] args) {
-    final FastaParser test = new FastaParser();
-    String test_file = System.getProperty("user.dir") + "/test.fa";
-    try {
-      printMemory();
-      //      test.bufTest();
-      File fl = new File(test_file);
-      FileInputStream fistr = new FileInputStream(fl);
-      MutableAnnotatedBioSeq seq = test.parse(fistr, null, (int)fl.length());
-      fistr.close();
-      System.gc();
-      printMemory();
-      JFrame frm = new JFrame();
-      JButton but = new JButton("Do Nothing");
-      but.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent evt) {
-	  System.gc();
-	  printMemory();
-	  String teststr = test.toString();
-	}
-      } );
-      frm.getContentPane().add(but);
-      frm.setSize(200, 100);
-      frm.addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		  Window w = e.getWindow();
-		  w.setVisible(false);
-		  w.dispose();
-		  System.exit(0); }
-      });
-      frm.setVisible(true);
-      //      viewer.setPrintSelection(false);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-  }
-
   static void printMemory() {
     Runtime rt = Runtime.getRuntime();
     long currFreeMem = rt.freeMemory();
     long currTotalMem = rt.totalMemory();
     long currMemUsed = currTotalMem - currFreeMem;
     System.out.println("memory used = " + currMemUsed/1000000 + " MB  ," +
-		       " total memory = " + currTotalMem/1000000 + " MB");
+                       " total memory = " + currTotalMem/1000000 + " MB");
   }
 }
 

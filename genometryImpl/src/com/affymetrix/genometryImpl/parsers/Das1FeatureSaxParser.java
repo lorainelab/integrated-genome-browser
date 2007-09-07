@@ -90,7 +90,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   boolean MAKE_TYPE_CONTAINER_SYM = true;
   boolean READER_DOES_INTERNING = false;
   boolean FILTER_OUT_BY_ID = true;
-  
+
   // Whether to keep the content of the <NOTE> elements.
   // <NOTE>s that have a "key=value" structure are always kept, but this
   // flag influences whether random textual notes are also kept.
@@ -108,21 +108,20 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   int featstrand = UNKNOWN;
   String featgroup = null;
   String featgroup_label = null;
-  java.util.List featlink_urls = new ArrayList();
-  java.util.List featlink_names = new ArrayList();
-  Map feat_notes = null;
-  Map group_notes = null;
+  List<String> featlink_urls = new ArrayList<String>();
+  List<String> featlink_names = new ArrayList<String>();
+  Map<String,String> feat_notes = null;
+  Map<String,String> group_notes = null;
 
-  Map grouphash = new HashMap();  // maps group id/strings to parent SeqSymmetries
-  Map typehash = new HashMap();  // maps type id/strings to type symmetries
+  Map<String,Map<String,Object>> grouphash = new HashMap<String,Map<String,Object>>();  // maps group id/strings to parent SeqSymmetries
+  Map<String,SeqSymmetry> typehash = new HashMap<String,SeqSymmetry>();  // maps type id/strings to type symmetries
 
   MutableSeqSpan unionSpan = new SimpleMutableSeqSpan();
 
   String current_elem = null;  // current element
   StringBuffer current_chars = null;
 
-  Stack elemstack = new Stack();
-  Stack symstack = new Stack();
+  Stack<String> elemstack = new Stack<String>();
 
   boolean prev_chars = false;
   int cached_int = Integer.MIN_VALUE;
@@ -137,14 +136,14 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
   /**
    *  A Map used to filter features with at particular "id" attribute value in "TYPE" element.
    */
-  Map filter_hash = new HashMap();
+  Map<String,String> filter_hash = new HashMap<String,String>();
 
   /**
    *  List of syms resulting from parse.
    *  These are the "low-level" results, _not_ the top-level "container" syms
    *    (two-level if features have group tags, one-level if features have no group tags)
    */
-  List result_syms = null;
+  List<SeqSymmetry> result_syms = null;
 
 
   public Das1FeatureSaxParser() {
@@ -178,18 +177,18 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      InputSource isrc = new InputSource(istr);
      return parse(isrc, seq_group);
   }
-  
+
   /**
    *  Parses a DAS/1 XML file and returns a List of SeqSymmetry's.
    */
-  public List parse(InputSource isrc, AnnotatedSeqGroup seq_group)
+  public List<SeqSymmetry> parse(InputSource isrc, AnnotatedSeqGroup seq_group)
   throws IOException {
     //  result_syms get populated via callbacks from reader.parse(),
     //    eventually leading to result_syms.add() calls in addFeatue();
-    
-    result_syms = new ArrayList();
+
+    result_syms = new ArrayList<SeqSymmetry>();
     this.seq_group = seq_group;
-    
+
     //  For now assuming the source XML contains only a single segment
     XMLReader reader = new org.apache.xerces.parsers.SAXParser();
     try {
@@ -227,7 +226,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     return result_syms;
   }
-  
+
   public void startDocument() {
   }
 
@@ -308,31 +307,31 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
       }
       if (link_name == null) {
-        link_name = (String) featlink_urls.get(featlink_urls.size() - 1);
+        link_name = featlink_urls.get(featlink_urls.size() - 1);
       }
       featlink_names.add(link_name);
-      
+
     } else if (iname == NOTE && current_chars != null) {
       String note_text = current_chars.toString();
 
       if (within_group_element) {
-        if (group_notes == null) { group_notes = new HashMap(); }
+        if (group_notes == null) { group_notes = new HashMap<String,String>(); }
         parseNote(note_text, group_notes);
       } else {
-        if (feat_notes == null) { feat_notes = new HashMap(); }
+        if (feat_notes == null) { feat_notes = new HashMap<String,String>(); }
         parseNote(note_text, feat_notes);
       }
     }
-    current_elem = (String)elemstack.pop();
+    current_elem = elemstack.pop();
     current_chars = null;
     prev_chars = false;
   }
 
-  /** Parse the text of a DAS-XML NOTE element and put the results in a map. 
+  /** Parse the text of a DAS-XML NOTE element and put the results in a map.
    *  If the note is of form, "tag=value", the tag and value are used as key and value
    *  in the map.  Otherwise, the string is put in the map using the key "note".
    */
-  static Map parseNote(String note_text, Map map) {
+  static Map<String,String> parseNote(String note_text, Map<String,String> map) {
     int split_pos = note_text.indexOf("=");
     if (split_pos > 0 && (split_pos < (note_text.length()-1))) {
       // assuming parsing out a tag-value pair...
@@ -354,7 +353,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     return map;
   }
-    
+
   public void clearFeature() {
     featid = null;
     feat_label = null;
@@ -370,8 +369,8 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     feat_notes = null;
     group_notes = null;
   }
-  
-  
+
+
   /**
    *  Get a parent SeqSymmetry for holding all children of a given group
    *  in a given feature type.  For example, the type may be "RefSeq" and
@@ -390,7 +389,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       return map.get(featgroup);
     }
   }
-  
+
   /**
    *  Store a SeqSymmetry object for holding all children of a given group
    *  in a given feature type.  For example, the type may be "RefSeq" and
@@ -399,14 +398,15 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *  @return the Object previously stored for that type and group, or null.
    */
   public Object putGroupSymmetryForType(String feattype, String featgroup, Object o) {
-    Map map = (Map) grouphash.get(feattype);
+    Map<String,Object> map = grouphash.get(feattype);
     if (map == null) {
-      map = new HashMap();
+      map = new HashMap<String,Object>();
       grouphash.put(feattype, map);
     }
     return map.put(featgroup, o);
   }
 
+  @SuppressWarnings("unchecked")
   public void addFeature() {
     boolean filter = false;
 
@@ -492,17 +492,17 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
       //    MutableSingletonSeqSymmetry parent_sym = null;
       SingletonSymWithProps parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
-        
+
         if (parent_sym == null) {
           groupcount++;
           //        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
           parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
-          if (featgroup_label != null && featgroup_label.trim().length() > 0) { 
+          if (featgroup_label != null && featgroup_label.trim().length() > 0) {
             parent_sym.setProperty(DAS_GROUP_ID, featgroup);
-            parent_sym.setProperty("id", featgroup_label); 
+            parent_sym.setProperty("id", featgroup_label);
           } else {
             //parent_sym.setProperty("das_group_id", featgroup);
-            parent_sym.setProperty("id", featgroup);          
+            parent_sym.setProperty("id", featgroup);
           }
           if (feattype != null)  { parent_sym.setProperty("method", feattype); }
           putGroupSymmetryForType(feattype, featgroup, parent_sym);
@@ -517,23 +517,14 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
         parent_sym.addChild(current_sym);
         if (feat_notes != null) {
-          Iterator iter = feat_notes.keySet().iterator();
-          while (iter.hasNext()) {
-            String key = (String)iter.next();
-            String val = (String)feat_notes.get(key);
-            //          System.out.println("key = " + key + ", val = " + val);
-            // for now, adding notes to parent instead of child...
-            current_sym.setProperty(key, val);
+          for (String key : feat_notes.keySet()) {
+            current_sym.setProperty(key, feat_notes.get(key));
           }
         }
         if (group_notes != null) {
-          Iterator iter = group_notes.keySet().iterator();
-          while (iter.hasNext()) {
-            String key = (String)iter.next();
-            String val = (String)group_notes.get(key);
-            //          System.out.println("key = " + key + ", val = " + val);
+          for (String key : group_notes.keySet()) {
             // for now, adding notes to parent instead of child...
-            parent_sym.setProperty(key, val);
+            parent_sym.setProperty(key, group_notes.get(key));
           }
         }
         /*
@@ -544,19 +535,19 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         */
         if (featlink_urls.size() > 0)  {
           Object prev_links = parent_sym.getProperty("link");
-          Map links_hash = null;
+          Map<String,String> links_hash = null;
           String prev_link = null;
 
           if (prev_links instanceof String) {
             prev_link = (String)prev_links;
           }
           else if (prev_links instanceof Map) {
-            links_hash = (Map)prev_links;
+            links_hash = (Map<String,String>) prev_links;
           }
           int linkcount = featlink_urls.size();
           if (linkcount == 1 &&
               ((prev_links == null) ||
-                ((prev_link != null) && prev_link.equals((String)featlink_urls.get(0))) )  )  {
+                ((prev_link != null) && prev_link.equals(featlink_urls.get(0))) )  )  {
             parent_sym.setProperty("link", featlink_urls.get(0));
             if (featlink_names.size() > 0) {
               parent_sym.setProperty("link_name", featlink_names.get(0));
@@ -566,7 +557,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
           }
           else {
             if (links_hash == null) {
-              links_hash = new HashMap();
+              links_hash = new HashMap<String,String>();
               parent_sym.setProperty("link", links_hash);
               if (prev_link != null) {
                 //                links_list.add(prev_link);
@@ -574,36 +565,36 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
               }
             }
             for (int i=0; i<linkcount; i++) {
-              String linkurl = (String)featlink_urls.get(i);
+              String linkurl = featlink_urls.get(i);
               //              links_list.add(linkurl);
-              String linkname = (String)featlink_names.get(i);
+              String linkname = featlink_names.get(i);
               links_hash.put(linkname, linkurl);
             }
           }
         }
       }
       else {  // if no group id, then no parent sym
-	//  so add annotation directly to AnnotatedBioSeq 
-	//  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM 
+        //  so add annotation directly to AnnotatedBioSeq
+        //  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM
         seq_group.addToIndex(featid, current_sym);
         //        if (featlink != null) { current_sym.setProperty("link", featlink); }
         if (featlink_urls.size() > 0)  {
           int linkcount = featlink_urls.size();
           for (int i=0; i<linkcount; i++) {
-            String linkurl = (String)featlink_urls.get(i);
-	    //            parent_sym.setProperty("link", linkurl);
+            String linkurl = featlink_urls.get(i);
+            //            parent_sym.setProperty("link", linkurl);
             current_sym.setProperty("link", linkurl);
           }
         }
-        if (feat_label != null && feat_label.trim().length() > 0) { 
+        if (feat_label != null && feat_label.trim().length() > 0) {
           if (featid != null) {
-	    //	    System.out.println("featid: " + featid);
+            //            System.out.println("featid: " + featid);
             current_sym.setProperty(DAS_FEATURE_ID, featid);
           }
-          current_sym.setProperty("id", feat_label); 
+          current_sym.setProperty("id", feat_label);
         } else if (featid != null) {
           //parent_sym.setProperty("das_group_id", featgroup);
-          current_sym.setProperty("id", featid);          
+          current_sym.setProperty("id", featid);
         }
         if (feattype != null) { current_sym.setProperty("method", feattype); }
         if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) { grandparent_sym.addChild(current_sym); }
@@ -625,7 +616,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *    a particular element is a single characters() call, BUT which can handle the cases where this
    *    content is split across multiple characters() calls
    */
-  public void characters(char[] ch, int start, int length) {    
+  public void characters(char[] ch, int start, int length) {
     //    System.out.println("***" + new String(ch, start, length) + "&&&");
     //    if (inStartElem || inEndElem) {
     if (current_elem == START || current_elem == END)  {  // parse out integer
@@ -685,13 +676,13 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
       AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Seq Group");
       List results = test.parse(fistr, seq_group);
-      
+
       SeqSymmetry first_sym = (SeqSymmetry) results.get(1);
-      
+
       System.out.println("result annotation count: " + results.size());
       System.out.println("first annotation:");
       SeqUtils.printSymmetry(first_sym);
-      
+
 //      if (use_viewer) {
 //        AnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
 //        GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
@@ -789,7 +780,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    */
   static final String DAS_GROUP_ID = "das_group_id";
   static final String DAS_FEATURE_ID = "das_feature_id";
-  
+
   public static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
     if (feat_type == null) {
       feat_type = SmartAnnotBioSeq.determineMethod(annot);

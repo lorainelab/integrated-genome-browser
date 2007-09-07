@@ -10,7 +10,6 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.Scored;
@@ -84,19 +83,19 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
   static Pattern comma_regex = Pattern.compile(",");
   static Pattern tagval_regex = Pattern.compile("=");
 
-  protected Map name_counts = new HashMap();
-  java.util.List symlist = new ArrayList();
-  Map seq2types = new HashMap();
+  protected Map<String,Integer> name_counts = new HashMap<String,Integer>();
+  List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+  Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
   boolean annotate_seq = true;
   boolean create_container_annot = false;
   String default_type = null;
 
 
   static Integer int1 = new Integer(1);
-  java.util.List parse_listeners = new ArrayList();
+  List<ParserListener> parse_listeners = new ArrayList<ParserListener>();
 
   TrackLineParser track_line_parser = new TrackLineParser();
-  
+
   public BedParser() {
     super();
   }
@@ -109,12 +108,12 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     parse_listeners.remove(listener);
   }
 
-  public java.util.List parse(InputStream istr,  GenometryModel gmodel, 
+  public List parse(InputStream istr,  GenometryModel gmodel,
       AnnotatedSeqGroup group, boolean annot_seq,
       String stream_name, boolean create_container)
     throws IOException {
     System.out.println("BED parser called, annotate seq: " + annotate_seq +
-		       ", create_container_annot: " + create_container);
+                       ", create_container_annot: " + create_container);
     /*
      *  seq2types is hash for making container syms (if create_container_annot == true)
      *  each entry in hash is: BioSeq ==> type2psym hash
@@ -123,9 +122,9 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
      *    Map type2csym = (Map)seq2types.get(seq);
      *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
      */
-    seq2types = new HashMap();
-    symlist = new ArrayList();
-    name_counts = new HashMap();
+    seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+    symlist = new ArrayList<SeqSymmetry>();
+    name_counts = new HashMap<String,Integer>();
     annotate_seq = annot_seq;
     this.create_container_annot = create_container;
     default_type = stream_name;
@@ -159,146 +158,146 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
     while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
       if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
-	continue;
+        continue;
       }
       else if (line.startsWith("track")) {
         track_line_parser.parseTrackLine(line);
         track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_type);
-        type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-        String item_rgb_string = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
+        type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+        String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
         use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
         continue;
       }
       else if (line.startsWith("browser")) {
-	// currently take no action for browser lines
+        // currently take no action for browser lines
       }
       else {
-	if (DEBUG) {
-	  System.out.println(line);
-	}
-	String[] fields = line_regex.split(line);
-	int field_count = fields.length;
-	String seq_name = null;
-	String annot_name = null;
-	int min, max;
+        if (DEBUG) {
+          System.out.println(line);
+        }
+        String[] fields = line_regex.split(line);
+        int field_count = fields.length;
+        String seq_name = null;
+        String annot_name = null;
+        int min, max;
         String itemRgb = "";
-	int thick_min = Integer.MIN_VALUE;  // Integer.MIN_VALUE signifies that thick_min is not used
-	int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
-	float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-	boolean forward;
-	int[] blockSizes = null;
-	int[] blockStarts = null;
-	int[] blockMins = null;
-	int[] blockMaxs = null;
+        int thick_min = Integer.MIN_VALUE;  // Integer.MIN_VALUE signifies that thick_min is not used
+        int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
+        float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
+        boolean forward;
+        int[] blockSizes = null;
+        int[] blockStarts = null;
+        int[] blockMins = null;
+        int[] blockMaxs = null;
 
-	if (fields != null && field_count >= 3) {
-	  boolean includes_bin_field = (field_count > 6 &&
-					(fields[6].startsWith("+") ||
-					 fields[6].startsWith("-") ||
-					 fields[6].startsWith(".") ) );
-	  int findex = 0;
-	  if (includes_bin_field) { findex++; }
-	  seq_name = fields[findex++]; // seq id field
-	  MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
-	  if ((seq == null) && (seq_name.indexOf(';') > -1)) {
-	    // if no seq found, try and split up seq_name by ";", in case it is in format
-	    //    "seqid;genome_version"
-	    String seqid = seq_name.substring(0, seq_name.indexOf(';'));
-	    String version = seq_name.substring(seq_name.indexOf(';')+1);
-	    //	    System.out.println("    seq = " + seqid + ", version = " + version);
-	    if ((gmodel.getSeqGroup(version) == seq_group) ||
-		seq_group.getID().equals(version)) {
-	      // for format [chrom_name];[genome_version]
-	      seq = seq_group.getSeq(seqid);
-	      if (seq != null) { seq_name = seqid; }
-	    }
-	    // try flipping seqid and version around
-	    else if ((gmodel.getSeqGroup(seqid) == seq_group) ||
-		seq_group.getID().equals(seqid)) {
-	      // for format [genome_version];[chrom_name]
-	      String temp = seqid;
-	      seqid = version;
-	      version = temp;
-	      seq = seq_group.getSeq(seqid);
-	      if (seq != null) { seq_name = seqid; }
-	    }
-	  }
+        if (fields != null && field_count >= 3) {
+          boolean includes_bin_field = (field_count > 6 &&
+                                        (fields[6].startsWith("+") ||
+                                         fields[6].startsWith("-") ||
+                                         fields[6].startsWith(".") ) );
+          int findex = 0;
+          if (includes_bin_field) { findex++; }
+          seq_name = fields[findex++]; // seq id field
+          MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+          if ((seq == null) && (seq_name.indexOf(';') > -1)) {
+            // if no seq found, try and split up seq_name by ";", in case it is in format
+            //    "seqid;genome_version"
+            String seqid = seq_name.substring(0, seq_name.indexOf(';'));
+            String version = seq_name.substring(seq_name.indexOf(';')+1);
+            //            System.out.println("    seq = " + seqid + ", version = " + version);
+            if ((gmodel.getSeqGroup(version) == seq_group) ||
+                seq_group.getID().equals(version)) {
+              // for format [chrom_name];[genome_version]
+              seq = seq_group.getSeq(seqid);
+              if (seq != null) { seq_name = seqid; }
+            }
+            // try flipping seqid and version around
+            else if ((gmodel.getSeqGroup(seqid) == seq_group) ||
+                seq_group.getID().equals(seqid)) {
+              // for format [genome_version];[chrom_name]
+              String temp = seqid;
+              seqid = version;
+              version = temp;
+              seq = seq_group.getSeq(seqid);
+              if (seq != null) { seq_name = seqid; }
+            }
+          }
 
-	  if (seq == null) {
-	    //System.out.println("seq not recognized, creating new seq: " + seq_name);
-	    seq = seq_group.addSeq(seq_name, 0);
-	  }
-	  int beg = Integer.parseInt(fields[findex++]);  // start field
-	  int end = Integer.parseInt(fields[findex++]);  // stop field
-	  if (field_count >= 4) {
+          if (seq == null) {
+            //System.out.println("seq not recognized, creating new seq: " + seq_name);
+            seq = seq_group.addSeq(seq_name, 0);
+          }
+          int beg = Integer.parseInt(fields[findex++]);  // start field
+          int end = Integer.parseInt(fields[findex++]);  // stop field
+          if (field_count >= 4) {
             annot_name = parseName(fields[findex++]);
-	  }
-	  if (field_count >=5) { 
+          }
+          if (field_count >=5) {
             score = parseScore(fields[findex++]);
           } // score field
-	  if (field_count >= 6) { forward = !(fields[findex++].equals("-")); }  // strand field
-	  else  { forward = (beg <= end); }
-	  min = (int)Math.min(beg, end);
-	  max = (int)Math.max(beg, end);
-          
-	  if (field_count >= 8) {
-	    thick_min = Integer.parseInt(fields[findex++]); // thickStart field
-	    thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
-	  }
-          
+          if (field_count >= 6) { forward = !(fields[findex++].equals("-")); }  // strand field
+          else  { forward = (beg <= end); }
+          min = Math.min(beg, end);
+          max = Math.max(beg, end);
+
+          if (field_count >= 8) {
+            thick_min = Integer.parseInt(fields[findex++]); // thickStart field
+            thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
+          }
+
           if (field_count >= 9) {
             itemRgb = fields[findex++];
           } else {
             findex++;
           }
-          
-	  findex++; // block count field is skipped because it is redundant
-          
-	  if (field_count >= 12) {
-	    blockSizes = parseIntArray(fields[findex++]); // blockSizes field
-	    blockStarts = parseIntArray(fields[findex++]); // blockStarts field
-	    blockMins = makeBlockMins(min, blockStarts);
-	    blockMaxs = makeBlockMaxs(blockSizes, blockMins);
-	  }
-	  else {
-	    /*
-	     * if no child blocks, make a single child block the same size as the parent
-	     * Very Inefficient, ideally wouldn't do this
-	     * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
-	     *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
-	     *     then factory will create a line container glyph to draw line connecting all the bed annots
-	     * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
-	     */
-	    blockMins = new int[1];
-	    blockMins[0] = min;
-	    blockMaxs = new int[1];
-	    blockMaxs[0] = max;
-	  }
 
-	  if (max > seq.getLength()) {
-	    seq.setLength(max);
-	  }
-	  if (DEBUG) {
-	    System.out.println("fields: "  + field_count + ", type = " + type + ", seq = " + seq_name +
-			       ", min = " + min + ", max = " + max +
-			       ", name = " + annot_name + ", score = " + score +
-			       ", forward = " + forward +
-			       ", thickmin = " + thick_min + ", thickmax = " + thick_max);
-	    if (blockMins != null) {
-	      int count = blockMins.length;
-	      if (blockSizes != null && blockStarts != null && blockMins != null && blockMaxs != null) {
-		for (int i=0; i<count; i++) {
-		  System.out.println("   " + i + ": blockSize = " + blockSizes[i] +
-				     ", blockStart = " + blockStarts[i] +
-				     ", blockMin = " + blockMins[i] +
-				     ", blockMax = " + blockMaxs[i]);
-		}
-	      }
-	    }
-	  }
-	  SymWithProps bedline_sym = null;
-	  bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward,
-				       thick_min, thick_max, blockMins, blockMaxs);
+          findex++; // block count field is skipped because it is redundant
+
+          if (field_count >= 12) {
+            blockSizes = parseIntArray(fields[findex++]); // blockSizes field
+            blockStarts = parseIntArray(fields[findex++]); // blockStarts field
+            blockMins = makeBlockMins(min, blockStarts);
+            blockMaxs = makeBlockMaxs(blockSizes, blockMins);
+          }
+          else {
+            /*
+             * if no child blocks, make a single child block the same size as the parent
+             * Very Inefficient, ideally wouldn't do this
+             * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
+             *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
+             *     then factory will create a line container glyph to draw line connecting all the bed annots
+             * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
+             */
+            blockMins = new int[1];
+            blockMins[0] = min;
+            blockMaxs = new int[1];
+            blockMaxs[0] = max;
+          }
+
+          if (max > seq.getLength()) {
+            seq.setLength(max);
+          }
+          if (DEBUG) {
+            System.out.println("fields: "  + field_count + ", type = " + type + ", seq = " + seq_name +
+                               ", min = " + min + ", max = " + max +
+                               ", name = " + annot_name + ", score = " + score +
+                               ", forward = " + forward +
+                               ", thickmin = " + thick_min + ", thickmax = " + thick_max);
+            if (blockMins != null) {
+              int count = blockMins.length;
+              if (blockSizes != null && blockStarts != null && blockMins != null && blockMaxs != null) {
+                for (int i=0; i<count; i++) {
+                  System.out.println("   " + i + ": blockSize = " + blockSizes[i] +
+                                     ", blockStart = " + blockStarts[i] +
+                                     ", blockMin = " + blockMins[i] +
+                                     ", blockMax = " + blockMaxs[i]);
+                }
+              }
+            }
+          }
+          SymWithProps bedline_sym = null;
+          bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward,
+                                       thick_min, thick_max, blockMins, blockMaxs);
           if (use_item_rgb && itemRgb != null) {
             java.awt.Color c = null;
             try {
@@ -310,33 +309,32 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
               bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
             }
           }
-          
-	  // if there are any ParserListeners registered, notify them of parse
-	  if (parse_listeners.size() > 0) {
-	    for (int i=0; i<parse_listeners.size(); i++) {
-	      ParserListener listener = (ParserListener)parse_listeners.get(i);
-	      listener.annotationParsed(bedline_sym);
-	    }
-	  }
+
+          // if there are any ParserListeners registered, notify them of parse
+          if (parse_listeners.size() > 0) {
+            for (int i=0; i<parse_listeners.size(); i++) {
+              parse_listeners.get(i).annotationParsed(bedline_sym);
+            }
+          }
           if (annot_name != null) {
             seq_group.addToIndex(annot_name, bedline_sym);
           }
-	}  // end field_count >= 3
+        }  // end field_count >= 3
       }  // end of line.startsWith() else
     }   // end of line-reading loop
   }
 
   /** Converts the data in the score field, if present, to a floating-point number. */
   public float parseScore(String s) {
-     return Float.parseFloat(s); 
+     return Float.parseFloat(s);
   }
-  
+
   /** Parses the name field from the file.  Ensures that names are unique by
    *  adding a ".1", ".2", etc., as needed.
    */
   public String parseName(String s) {
     String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
-    Integer count = (Integer)name_counts.get(annot_name);
+    Integer count = name_counts.get(annot_name);
     if (count == null) {
       name_counts.put(annot_name, int1);
     }
@@ -359,26 +357,26 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     if (annotate_seq) {
       MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
       if (create_container_annot) {
-        String type = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+        String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
         if (type == null) { type = default_type; }
-        Map type2csym = (Map)seq2types.get(seq);
+        Map<String,SeqSymmetry> type2csym = seq2types.get(seq);
         if (type2csym == null) {
-          type2csym = new HashMap();
+          type2csym = new HashMap<String,SeqSymmetry>();
           seq2types.put(seq, type2csym);
         }
         SimpleSymWithProps parent_sym = (SimpleSymWithProps)type2csym.get(type);
-	if (parent_sym == null) {
-	  parent_sym = new SimpleSymWithProps();
-	  parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-	  parent_sym.setProperty("method", type);
+        if (parent_sym == null) {
+          parent_sym = new SimpleSymWithProps();
+          parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+          parent_sym.setProperty("method", type);
           parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	  seq.addAnnotation(parent_sym);
-	  type2csym.put(type, parent_sym);
-	}
-	parent_sym.addChild(bedline_sym);
+          seq.addAnnotation(parent_sym);
+          type2csym.put(type, parent_sym);
+        }
+        parent_sym.addChild(bedline_sym);
       }
       else {
-	seq.addAnnotation(bedline_sym);
+        seq.addAnnotation(bedline_sym);
       }
     }
   }
@@ -430,7 +428,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     if ((sym instanceof UcscBedSym) && (sym.getSpan(seq) != null)) {
       UcscBedSym bedsym = (UcscBedSym)sym;
       if (seq == bedsym.getBioSeq()) {
-	bedsym.outputBedFormat(out);
+        bedsym.outputBedFormat(out);
       }
     }
     else {
@@ -438,75 +436,75 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       SeqSpan span = sym.getSpan(seq);
       SymWithProps propsym = null;
       if (sym instanceof SymWithProps) {
-	propsym = (SymWithProps)sym;
+        propsym = (SymWithProps)sym;
       }
       if (span != null) {
-	int childcount = sym.getChildCount();
-	out.write(seq.getID());
-	out.write('\t');
-	int min = span.getMin();
-	int max = span.getMax();
-	out.write(Integer.toString(min));
-	out.write('\t');
-	out.write(Integer.toString(max));
-	if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
-	  out.write('\t');
-	  if (propsym != null) {
-	    if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
-	    else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
-	  }
-	  out.write('\t');
-	  if ((propsym != null)  && (propsym.getProperty("score") != null))  {
-	    out.write(propsym.getProperty("score").toString());
-	  } else if (sym instanceof Scored) {
+        int childcount = sym.getChildCount();
+        out.write(seq.getID());
+        out.write('\t');
+        int min = span.getMin();
+        int max = span.getMax();
+        out.write(Integer.toString(min));
+        out.write('\t');
+        out.write(Integer.toString(max));
+        if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
+          out.write('\t');
+          if (propsym != null) {
+            if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
+            else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
+          }
+          out.write('\t');
+          if ((propsym != null)  && (propsym.getProperty("score") != null))  {
+            out.write(propsym.getProperty("score").toString());
+          } else if (sym instanceof Scored) {
             out.write(Float.toString(((Scored) sym).getScore()));
           }
-	  else { out.write('0'); }
-	  out.write('\t');
-	  if (span.isForward()) { out.write('+'); }
-	  else { out.write('-'); }
-	  if (childcount > 0) {
-	    out.write('\t');
-	    if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
-	      out.write(propsym.getProperty("cds min").toString());
-	    }
-	    else { out.write(Integer.toString(min)); }
-	    out.write('\t');
-	    if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
-	      out.write(propsym.getProperty("cds max").toString());
-	    }
-	    else { out.write(Integer.toString(max)); }
-	    out.write('\t');
-	    out.write('0');
-	    out.write('\t');
-	    out.write(Integer.toString(childcount));
-	    out.write('\t');
-	    int[] blockSizes = new int[childcount];
-	    int[] blockStarts = new int[childcount];
-	    for (int i=0; i<childcount; i++) {
-	      SeqSymmetry csym = sym.getChild(i);
-	      SeqSpan cspan = csym.getSpan(seq);
-	      blockSizes[i] = cspan.getLength();
-	      blockStarts[i] = cspan.getMin() - min;
-	    }
-	    for (int i=0; i<childcount; i++) {
-	      out.write(Integer.toString(blockSizes[i]));
-	      out.write(',');
-	    }
-	    out.write('\t');
-	    for (int i=0; i<childcount; i++) {
-	      out.write(Integer.toString(blockStarts[i]));
-	      out.write(',');
-	    }
-	  }  // END "if (childcount > 0)"
-	}  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+          else { out.write('0'); }
+          out.write('\t');
+          if (span.isForward()) { out.write('+'); }
+          else { out.write('-'); }
+          if (childcount > 0) {
+            out.write('\t');
+            if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
+              out.write(propsym.getProperty("cds min").toString());
+            }
+            else { out.write(Integer.toString(min)); }
+            out.write('\t');
+            if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
+              out.write(propsym.getProperty("cds max").toString());
+            }
+            else { out.write(Integer.toString(max)); }
+            out.write('\t');
+            out.write('0');
+            out.write('\t');
+            out.write(Integer.toString(childcount));
+            out.write('\t');
+            int[] blockSizes = new int[childcount];
+            int[] blockStarts = new int[childcount];
+            for (int i=0; i<childcount; i++) {
+              SeqSymmetry csym = sym.getChild(i);
+              SeqSpan cspan = csym.getSpan(seq);
+              blockSizes[i] = cspan.getLength();
+              blockStarts[i] = cspan.getMin() - min;
+            }
+            for (int i=0; i<childcount; i++) {
+              out.write(Integer.toString(blockSizes[i]));
+              out.write(',');
+            }
+            out.write('\t');
+            for (int i=0; i<childcount; i++) {
+              out.write(Integer.toString(blockStarts[i]));
+              out.write(',');
+            }
+          }  // END "if (childcount > 0)"
+        }  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
 
-	out.write('\n');
+        out.write('\n');
       }   // END "if (span != null)"
     }
   }
 
-  public static void writeBedFormat(Writer wr, java.util.List syms, BioSeq seq)
+  public static void writeBedFormat(Writer wr, List syms, BioSeq seq)
     throws IOException  {
     int symcount = syms.size();
     for (int i=0; i<symcount; i++) {
@@ -527,7 +525,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       writeSimpleBedFormat(wr, sym, writeCDS);
     }
   }
-  
+
   /**
    *  Writes bed file format.  Uses the span at index 0.
    */
@@ -538,70 +536,70 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       BioSeq seq = span.getBioSeq();
       SymWithProps propsym = null;
       if (sym instanceof SymWithProps) {
-	propsym = (SymWithProps)sym;
+        propsym = (SymWithProps)sym;
       }
       if (span != null) {
-	int childcount = sym.getChildCount();
-	out.write(seq.getID());
-	out.write('\t');
-	int min = span.getMin();
-	int max = span.getMax();
-	out.write(Integer.toString(min));
-	out.write('\t');
-	out.write(Integer.toString(max));
-	if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
-	  out.write('\t');
-	  if (propsym != null) {
-	    if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
-	    else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
-	  }
-	  out.write('\t');
-	  if ((propsym != null)  && (propsym.getProperty("score") != null))  {
-	    out.write(propsym.getProperty("score").toString());
-	  } else if (sym instanceof Scored) {
+        int childcount = sym.getChildCount();
+        out.write(seq.getID());
+        out.write('\t');
+        int min = span.getMin();
+        int max = span.getMax();
+        out.write(Integer.toString(min));
+        out.write('\t');
+        out.write(Integer.toString(max));
+        if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
+          out.write('\t');
+          if (propsym != null) {
+            if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
+            else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
+          }
+          out.write('\t');
+          if ((propsym != null)  && (propsym.getProperty("score") != null))  {
+            out.write(propsym.getProperty("score").toString());
+          } else if (sym instanceof Scored) {
             out.write(Float.toString(((Scored) sym).getScore()));
           }
-	  else { out.write('0'); }
-	  out.write('\t');
-	  if (span.isForward()) { out.write('+'); }
-	  else { out.write('-'); }
-	  if (childcount > 0 && writeCDS) {
-	    out.write('\t');
-	    if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
-	      out.write(propsym.getProperty("cds min").toString());
-	    }
-	    else { out.write(Integer.toString(min)); }
-	    out.write('\t');
-	    if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
-	      out.write(propsym.getProperty("cds max").toString());
-	    }
-	    else { out.write(Integer.toString(max)); }
-	    out.write('\t');
-	    out.write('0');
-	    out.write('\t');
-	    out.write(Integer.toString(childcount));
-	    out.write('\t');
-	    int[] blockSizes = new int[childcount];
-	    int[] blockStarts = new int[childcount];
-	    for (int i=0; i<childcount; i++) {
-	      SeqSymmetry csym = sym.getChild(i);
-	      SeqSpan cspan = csym.getSpan(seq);
-	      blockSizes[i] = cspan.getLength();
-	      blockStarts[i] = cspan.getMin() - min;
-	    }
-	    for (int i=0; i<childcount; i++) {
-	      out.write(Integer.toString(blockSizes[i]));
-	      out.write(',');
-	    }
-	    out.write('\t');
-	    for (int i=0; i<childcount; i++) {
-	      out.write(Integer.toString(blockStarts[i]));
-	      out.write(',');
-	    }
-	  }  // END "if (childcount > 0)"
-	}  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+          else { out.write('0'); }
+          out.write('\t');
+          if (span.isForward()) { out.write('+'); }
+          else { out.write('-'); }
+          if (childcount > 0 && writeCDS) {
+            out.write('\t');
+            if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
+              out.write(propsym.getProperty("cds min").toString());
+            }
+            else { out.write(Integer.toString(min)); }
+            out.write('\t');
+            if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
+              out.write(propsym.getProperty("cds max").toString());
+            }
+            else { out.write(Integer.toString(max)); }
+            out.write('\t');
+            out.write('0');
+            out.write('\t');
+            out.write(Integer.toString(childcount));
+            out.write('\t');
+            int[] blockSizes = new int[childcount];
+            int[] blockStarts = new int[childcount];
+            for (int i=0; i<childcount; i++) {
+              SeqSymmetry csym = sym.getChild(i);
+              SeqSpan cspan = csym.getSpan(seq);
+              blockSizes[i] = cspan.getLength();
+              blockStarts[i] = cspan.getMin() - min;
+            }
+            for (int i=0; i<childcount; i++) {
+              out.write(Integer.toString(blockSizes[i]));
+              out.write(',');
+            }
+            out.write('\t');
+            for (int i=0; i<childcount; i++) {
+              out.write(Integer.toString(blockStarts[i]));
+              out.write(',');
+            }
+          }  // END "if (childcount > 0)"
+        }  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
 
-	out.write('\n');
+        out.write('\n');
       }   // END "if (span != null)"
   }
 
@@ -616,8 +614,8 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       // Formerly, bookmarks with a seq-group of "unknown" would be interpreted
       // to mean 'current genome', but that is no longer true.
       AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
-      
-      java.util.List annots = test.parse(fis, gmodel, seq_group, true, file_name, true);
+
+      List annots = test.parse(fis, gmodel, seq_group, true, file_name, true);
       System.out.println("total annots: " + annots.size());
     }
     catch (Exception ex) {
@@ -630,15 +628,15 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
    *    to an output stream as "BED" format.
    **/
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     System.out.println("in BedParser.writeAnnotations()");
     boolean success = true;
     try {
       Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {
-	SeqSymmetry sym = (SeqSymmetry)iterator.next();
-	writeBedFormat(bw, sym, seq);
+        SeqSymmetry sym = (SeqSymmetry)iterator.next();
+        writeBedFormat(bw, sym, seq);
       }
       bw.flush();
     }

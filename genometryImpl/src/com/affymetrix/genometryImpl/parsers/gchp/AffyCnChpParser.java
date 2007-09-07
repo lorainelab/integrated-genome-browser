@@ -87,7 +87,7 @@ public class AffyCnChpParser {
             for (int i=0; i<positions.size(); i++) {
               //TODO: insn't there a class that accepts an IntList as the set of positions?
               final int start = positions.get(i);
-              SingletonSymWithProps sym = new SingletonSymWithProps(data.probeSetNames.get(i), (int) start, (int) start+1, seq);
+              SingletonSymWithProps sym = new SingletonSymWithProps(data.probeSetNames.get(i), start, start+1, seq);
               sym.setProperty("method", theMethod);
 //          tca.addChild(sym);
               seq.addAnnotation(sym);

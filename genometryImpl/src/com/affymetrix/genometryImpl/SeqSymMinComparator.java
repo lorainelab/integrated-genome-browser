@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,7 +22,7 @@ import com.affymetrix.genometry.*;
  *
  *  @see SeqSymStartComparator
  */
-public class SeqSymMinComparator implements Comparator {
+public class SeqSymMinComparator implements Comparator<SeqSymmetry> {
   boolean ascending;
   BioSeq seq;
 
@@ -40,9 +40,7 @@ public class SeqSymMinComparator implements Comparator {
     this.ascending = b;
   }
 
-  public int compare(Object obj1, Object obj2) {
-    SeqSymmetry sym1 = (SeqSymmetry)obj1;
-    SeqSymmetry sym2 = (SeqSymmetry)obj2;
+  public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
     SeqSpan span1 = sym1.getSpan(seq);
     SeqSpan span2 = sym2.getSpan(seq);
     final int min1 = span1.getMin();
@@ -66,5 +64,5 @@ public class SeqSymMinComparator implements Comparator {
       else { return 0; }
     }
   }
-  
+
 }

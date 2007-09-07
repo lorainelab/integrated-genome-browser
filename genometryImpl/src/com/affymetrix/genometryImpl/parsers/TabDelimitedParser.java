@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -38,45 +37,45 @@ public class TabDelimitedParser {
   int strand_col;  // column to use for determining strand
   int group_col;  // column to use for grouping features...
   int type_col;   // column to use for setting feature type
-  
+
   boolean addToIndex; // whether to add annotation id's to the index on the seq group
-  
+
   int id_col;
   int seq_col;
   int seq_col2;
   int start_col2;
   int end_col2;     // should need only end_col or length_col, not both
   int strand_col2;  // column to use for determining strand
-  
+
   // if makeProps, then each column (other than start, end, length, group) will become a
   //    property in the SymWithProps that is generated
   boolean make_props = true;
-  
+
   boolean use_length = false;
   boolean use_group = false;
   boolean use_type = false;
   boolean use_strand = false;
   boolean has_header = false;
   boolean has_id = false;
-  
+
   static final Pattern line_splitter = Pattern.compile("\t");
-  
+
   public void setSeqColumn(int col) { seq_col = col; }
   public void setStartColumn(int col) { start_col = col; }
   public void setEndColumn(int col) { end_col = col; }
   public void setStrandColumn(int col) { strand_col = col; }
   public void setLengthColumn(int col) { length_col = col; }
-  
+
   public void setSeqColumn2(int col) { seq_col2 = col; }
   public void setStartColumn2(int col) {  start_col2 = col; }
   public void setEndColumn2(int col) { end_col2 = col; }
-  
+
   public void setGroupColumn(int col) { group_col = col; }
   public void setTypeColumn(int col) { type_col = col; }
   public void setPropertyColumn(int col, String prop_name) {
-    
+
   }
-  
+
   /**
    *  Constructor.
    *  Each argument tells which column to find a particular item in.
@@ -89,11 +88,11 @@ public class TabDelimitedParser {
    */
   public TabDelimitedParser(int type, int chromosome, int start, int end, int length,
       int strand, int group, int id, boolean props, boolean header, boolean addToIndex) {
-    
+
     if (chromosome < 0) {
       throw new IllegalArgumentException("Chromosome column number must be 0 or greater.");
     }
-    
+
     chromosome_col = chromosome;
     start_col = start;
     end_col = end;
@@ -103,18 +102,18 @@ public class TabDelimitedParser {
     strand_col = strand;
     id_col = id;
     this.addToIndex = addToIndex;
-    
+
     has_header = header;
     use_length = (length >= 0);
     use_group = (group >= 0);
     use_type = (type >=0);
     use_strand = (strand >= 0);
     has_id = (id >= 0);
-    
+
     this.make_props = props;
   }
-  
-  
+
+
  /**
   *  Parses data into the given AnnotatedSeqGroup.
   *  @param istr The source of the data
@@ -123,10 +122,10 @@ public class TabDelimitedParser {
   *  @param seq_group  The AnnotatedSeqGroup on which to add the data.
   */
   public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
-    
-    HashMap group_hash = new HashMap();
+
+    HashMap<String,SeqSymmetry> group_hash = new HashMap<String,SeqSymmetry>();
     MutableSeqSpan union_span = new SimpleMutableSeqSpan();
-    ArrayList col_names = null;
+    ArrayList<String> col_names = null;
     //    System.out.println("use_type: " + use_type);
     try {
       InputStreamReader asr = new InputStreamReader(istr);
@@ -135,7 +134,7 @@ public class TabDelimitedParser {
       if (has_header) {
         line = br.readLine();
         String[] cols = line_splitter.split(line);
-        col_names = new ArrayList(cols.length);
+        col_names = new ArrayList<String>(cols.length);
         for (int i=0; i<cols.length; i++) {
           col_names.add(cols[i]);
         }
@@ -143,7 +142,7 @@ public class TabDelimitedParser {
       while ((line = br.readLine()) != null) {
         String[] cols = line_splitter.split(line);
         if (cols.length <= 0) { continue; }
-        
+
         int start = Integer.parseInt(cols[start_col]);
         int end;
         if (use_length) {
@@ -151,11 +150,11 @@ public class TabDelimitedParser {
           if (use_strand) {
             String strand = cols[strand_col];
             //	    boolean revstrand = strand.equals("-");
-            if (strand.equals("-")) { 
-              end = start - length; 
-            } 
+            if (strand.equals("-")) {
+              end = start - length;
+            }
             else {
-              end = start + length; 
+              end = start + length;
             }
           } else {
             end = start + length;
@@ -168,25 +167,25 @@ public class TabDelimitedParser {
           type = cols[type_col];
           //	  System.out.println("type = " + type);
         }
-        
+
         String id = null;
         if (has_id) {
           id = cols[id_col];
         }
-        
+
         String chromName = cols[chromosome_col];
         MutableAnnotatedBioSeq seq = seq_group.getSeq(chromName);
         if (seq == null) {
           seq = seq_group.addSeq(chromName, 0);
         }
-        
+
         if (seq.getLength() < end) {
           seq.setLength(end);
         }
         if (seq.getLength() < start) {
           seq.setLength(start);
         }
-        
+
         SingletonSymWithProps child = new SingletonSymWithProps(start, end, seq);
         child.setProperty("method", type);
         if (id == null) {
@@ -195,12 +194,12 @@ public class TabDelimitedParser {
         child.setProperty("id", id);
         if (make_props) {
           for (int i=0; i<cols.length && i<col_names.size(); i++) {
-            String name = (String)col_names.get(i);
+            String name = col_names.get(i);
             String val = cols[i];
             child.setProperty(name, val);
           }
         }
-        
+
         if (use_group) {
           String group = cols[group_col];
           //	  SingletonSymWithProps parent = (SingletonSymWithProps)group_hash.get(group);
@@ -216,7 +215,7 @@ public class TabDelimitedParser {
             if (id == null) {
               id = type + " " + span.getBioSeq().getID() + ":" + span.getStart() + "-" + span.getEnd();
             }
-            
+
             parent.setProperty("id", id);
             group_hash.put(group, parent);
             // or maybe should add all parents to a grandparent, and add _grandparent_ to aseq???
@@ -243,8 +242,8 @@ public class TabDelimitedParser {
     }
     return;
   }
-  
-  public static void main(String[] args) {    
+
+  public static void main(String[] args) {
     String fil = System.getProperty("user.dir") + "/data/copy_number/DUKE_US_DukeCNV_NSP_T24_1_1.rpt";
     // type, start, end, length, strand, group, boolean props, boolean has_header
     TabDelimitedParser tester = new TabDelimitedParser(0, 1, 9, 10, -1, -1, -1, -1, true, true, true);
@@ -252,9 +251,9 @@ public class TabDelimitedParser {
       File file = new File(fil);
       FileInputStream fis = new FileInputStream(file);
       AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-      
+
       tester.parse(fis, file.getName(), seq_group);
-      
+
       for (int s=0; s<seq_group.getSeqCount(); s++) {
         MutableAnnotatedBioSeq aseq = seq_group.getSeq(s);
         for (int i=0; i<aseq.getAnnotationCount(); i++) {
@@ -262,11 +261,11 @@ public class TabDelimitedParser {
           SeqUtils.printSymmetry(annot, "  ", true);
         }
       }
-      
+
     } catch (Exception ex) {
       ex.printStackTrace();
     }
   }
-  
-  
+
+
 }

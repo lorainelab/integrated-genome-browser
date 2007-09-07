@@ -13,13 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class AffyGenericDataHeader {
 

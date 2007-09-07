@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -17,26 +17,27 @@ import java.util.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 
 public class SeqSelectionEvent extends EventObject {
-  List selected_seqs;
+  List<AnnotatedBioSeq> selected_seqs;
   AnnotatedBioSeq primary_selection = null;
+  static final long serialVersionUID = 1L;
 
   /**
    *  Constructor.
    *  @param seqs a List of AnnotatedBioSeq's that have been selected.
    *   (If null, will default to {@link Collections#EMPTY_LIST}.)
    */
-  public SeqSelectionEvent(Object src, List seqs) {
+  public SeqSelectionEvent(Object src, List<AnnotatedBioSeq> seqs) {
     super(src);
     this.selected_seqs = seqs;
-    if (selected_seqs == null) { selected_seqs = Collections.EMPTY_LIST; }
+    if (selected_seqs == null) { selected_seqs = Collections.<AnnotatedBioSeq>emptyList(); }
     if (selected_seqs.size() > 0) {
-      primary_selection = (AnnotatedBioSeq) selected_seqs.get(0);
+      primary_selection = selected_seqs.get(0);
     }
   }
 
   public SeqSelectionEvent(Object src, AnnotatedBioSeq seq) {
     super(src);
-    selected_seqs = new ArrayList(1);
+    selected_seqs = new ArrayList<AnnotatedBioSeq>(1);
     if (seq != null) {
       primary_selection = seq;
       selected_seqs.add(seq);

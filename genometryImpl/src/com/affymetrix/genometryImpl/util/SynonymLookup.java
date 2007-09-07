@@ -24,7 +24,7 @@ public class SynonymLookup {
   static boolean DEBUG = false;
   static final Pattern line_regex = Pattern.compile("\t");
   static SynonymLookup default_lookup = new SynonymLookup();
-  LinkedHashMap lookup_hash = new LinkedHashMap();
+  LinkedHashMap<String,ArrayList<String>> lookup_hash = new LinkedHashMap<String,ArrayList<String>>();
 
   public static void setDefaultLookup(SynonymLookup lookup) {
     default_lookup = lookup;
@@ -69,11 +69,11 @@ public class SynonymLookup {
     //    System.out.println("$$$$$ called isSynonym for " + str1 + ", " + str2 + " $$$$$");
     if (str1 == null || str2 == null) { return false; }
     if (str1.equals(str2)) { return true; }
-    ArrayList al = getSynonyms(str1);
+    ArrayList<String> al = getSynonyms(str1);
     if (al != null) {
       int lcount = al.size();
       for (int i=0; i<lcount; i++) {
-        String curstr = (String)al.get(i);
+        String curstr = al.get(i);
         //        System.out.println("trying to match " + str2 + " to " + curstr);
         if (isCaseSensitive()) {
           if (str2.equals(curstr)) {
@@ -127,12 +127,12 @@ public class SynonymLookup {
     if (DEBUG) { System.out.println(""); }
   }
 
-  ArrayList getSharedList(String str1, String str2) {
-    ArrayList result = null;
+  ArrayList<String> getSharedList(String str1, String str2) {
+    ArrayList<String> result = null;
 
     // We want both synonyms to map to the *identical* List object
-    ArrayList list1 = (ArrayList) lookup_hash.get(str1);
-    ArrayList list2 = (ArrayList) lookup_hash.get(str2);
+    ArrayList<String> list1 = lookup_hash.get(str1);
+    ArrayList<String> list2 = lookup_hash.get(str2);
 
     if (list1 != null && list2 != null) {
       if (list1 == list2) {
@@ -140,10 +140,10 @@ public class SynonymLookup {
         result = list1;
       } else {
         // If the two strings map to different lists, then merge them into one
-        Set the_set = new TreeSet(list1);
+        Set<String> the_set = new TreeSet<String>(list1);
         the_set.addAll(list2);
-        
-        result = new ArrayList(the_set);
+
+        result = new ArrayList<String>(the_set);
       }
     }
     else if (list1 != null && list2 == null) {
@@ -153,7 +153,7 @@ public class SynonymLookup {
       result = list2;
     }
     else if (list1 == null && list2 == null) {
-      result = new ArrayList();
+      result = new ArrayList<String>();
     }
 
     lookup_hash.put(str1, result);
@@ -166,7 +166,7 @@ public class SynonymLookup {
     if (str1 == null || str2 == null || "".equals(str1.trim()) || "".equals(str2.trim())) {
       return;
     }
-    ArrayList list = getSharedList(str1, str2);
+    ArrayList<String> list = getSharedList(str1, str2);
     if (! list.contains(str1)) {
       list.add(str1);
     }
@@ -180,19 +180,21 @@ public class SynonymLookup {
    *  have the same cases as were given in the input, but the lookup to find the
    *  list of synonyms will be done in a case-insensitive way.
    */
-  public ArrayList getSynonyms(String str) {
+  public ArrayList<String> getSynonyms(String str) {
     if (isCaseSensitive()) {
-      return (ArrayList)lookup_hash.get(str);
+      return lookup_hash.get(str);
     } else {
       // If not case-sensitive
 
-      Object o = lookup_hash.get(str);
-      if (o != null) return (ArrayList) o;
+      ArrayList<String> o = lookup_hash.get(str);
+      if (o != null) {
+        return o;
+      }
 
-      Iterator iter = lookup_hash.keySet().iterator();
-      while (iter.hasNext()) {
-        String key = (String) iter.next();
-        if (key.equalsIgnoreCase(str)) { return (ArrayList) lookup_hash.get(key); }
+      for (String key : lookup_hash.keySet()) {
+        if (key.equalsIgnoreCase(str)) {
+          return lookup_hash.get(key);
+        }
       }
     }
     return null;
@@ -219,10 +221,8 @@ public class SynonymLookup {
 
   /** For debugging, prints all synonyms to stdout. */
   public void printAllSynonyms() {
-    Iterator iter = lookup_hash.keySet().iterator();
-    while (iter.hasNext()) {
-      String key = (String) iter.next();
-      ArrayList syns = (ArrayList) lookup_hash.get(key);
+    for (String key : lookup_hash.keySet()) {
+      ArrayList<String> syns = lookup_hash.get(key);
       System.out.println("KEY:  " + key);
       System.out.println("SYNONYMS:  (" + Integer.toHexString(syns.hashCode()) + ")");
       for (int i=0; i<syns.size(); i++) {

@@ -43,8 +43,8 @@ public class GraphState implements GraphStateI {
   public static int THRESHOLD_DIRECTION_LESS = -1;
 
   int threshold_direction = THRESHOLD_DIRECTION_GREATER;
-  
-  
+
+
   /**
    *  The maximum distance (in xcooords) allowed between points that
    *     exceed the min_score_threshold in order for region between points to be painted
@@ -84,15 +84,15 @@ public class GraphState implements GraphStateI {
   boolean show_label = true;
   boolean show_label_on_right = false;
   boolean show_zero_line = true;
-  
+
   HeatMap heat_map;
   IAnnotStyle tier_style;
   IAnnotStyle combo_tier_style = null;
 
   public static float default_graph_height = 100.0f;
-  
-  static Map gstyle2num = new HashMap();
-  static Map num2gstyle = new HashMap();
+
+  static Map<String,Integer> gstyle2num = new HashMap<String,Integer>();
+  static Map<Integer,String> num2gstyle = new HashMap<Integer,String>();
 
   static {
     gstyle2num.put("line", new Integer(GraphStateI.LINE_GRAPH));
@@ -102,12 +102,11 @@ public class GraphState implements GraphStateI {
     gstyle2num.put("heatmap", new Integer(GraphStateI.HEAT_MAP));
     gstyle2num.put("minmaxavg", new Integer(GraphStateI.MINMAXAVG));
     //    gstyle2num.put("span", new Integer(SmartGraphGlyph.SPAN_GRAPH));  // SPAN_GRAPH is deprecated
-    
+
     Iterator iter = gstyle2num.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry ent = (Map.Entry)iter.next();
-      Integer style_num = (Integer)ent.getValue();
-      String style_name = (String)ent.getKey();
+    for (Map.Entry<String,Integer> ent : gstyle2num.entrySet()) {
+      Integer style_num = ent.getValue();
+      String style_name = ent.getKey();
       num2gstyle.put(style_num, style_name);
     }
   }
@@ -116,9 +115,9 @@ public class GraphState implements GraphStateI {
    *  or null if no such style.
    */
   public static Integer getStyleNumber(String style_name) {
-    return (Integer)gstyle2num.get(style_name.toLowerCase());
+    return gstyle2num.get(style_name.toLowerCase());
   }
-  
+
   /** Convert a graph type name such as "line", "bar", "dot", etc., to an integer,
    *  or -1 if no such style.
    */
@@ -130,7 +129,7 @@ public class GraphState implements GraphStateI {
 
   /** Returns a simple name identifying a graph type, such as "line", "bar", "dot", etc. */
   public static String getStyleName(int style_int) {
-    return (String)num2gstyle.get(new Integer(style_int));
+    return num2gstyle.get(new Integer(style_int));
   }
 
   static int temp_state_count = 0;
@@ -146,19 +145,19 @@ public class GraphState implements GraphStateI {
   public GraphState(String id) {
     super();
     this.unique_id = id;
-    
-    
+
+
     StateProvider provider = DefaultStateProvider.getGlobalStateProvider();
     tier_style = provider.getAnnotStyle(id);
     tier_style.setGraphTier(true);
-    
+
     // Graph Tiers with a single graph in them are not collapsible/expandible
     tier_style.setExpandable(false);
     tier_style.setHeight(default_graph_height);
-    
+
     setFloatGraph(false);
   }
-  
+
   /** Copy all the properties, except ID and label, of the given state into this state. */
   public void copyProperties(GraphStateI ostate) {
     setUrl(ostate.getUrl());
@@ -182,7 +181,7 @@ public class GraphState implements GraphStateI {
     setThreshStartShift(ostate.getThreshStartShift());
     setThreshEndShift(ostate.getThreshEndShift());
     setHeatMap(ostate.getHeatMap());
-    
+
     getTierStyle().copyPropertiesFrom(ostate.getTierStyle());
   }
 
@@ -192,7 +191,7 @@ public class GraphState implements GraphStateI {
     if (heat_map == null) {
       heat_map = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
     }
-    return heat_map; 
+    return heat_map;
   }
   public final float getVisibleMinY() { return graph_visible_min; }
   public final float getVisibleMaxY() { return graph_visible_max; }
@@ -214,7 +213,7 @@ public class GraphState implements GraphStateI {
   public int getMinRunThreshold() { return min_run_threshold; }
   public double getThreshStartShift() { return span_start_shift; }
   public double getThreshEndShift() { return span_end_shift; }
-  
+
   /**
    *  Returns either {@link #THRESHOLD_DIRECTION_GREATER} or
    *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
@@ -223,7 +222,7 @@ public class GraphState implements GraphStateI {
 
   public final void setUrl(String url) { graph_path = url; }
   public final void setFloatGraph(boolean b) { float_graph = b; }
-  public final void setGraphStyle(int style) { graph_style = style;} 
+  public final void setGraphStyle(int style) { graph_style = style;}
   public final void setHeatMap(HeatMap hmap) { heat_map = hmap;}
   public final void setVisibleMinY(float vminy) { graph_visible_min = vminy;}  // check
   public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy;}  // check
@@ -241,7 +240,7 @@ public class GraphState implements GraphStateI {
   public void setMinRunThreshold(int thresh) { min_run_threshold = thresh;}
   public void setThreshStartShift(double d) { span_start_shift = d;}
   public void setThreshEndShift(double d) { span_end_shift = d;}
-  
+
   /**
    *  Set to either {@link #THRESHOLD_DIRECTION_GREATER} or
    *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
@@ -257,7 +256,7 @@ public class GraphState implements GraphStateI {
   public IAnnotStyle getTierStyle() {
       return tier_style;
   }
-  
+
   public IAnnotStyle getComboStyle() {
     return combo_tier_style;
   }
@@ -269,11 +268,11 @@ public class GraphState implements GraphStateI {
   public void setShowZeroLine(boolean b) {
     this.show_zero_line = b;
   }
-  
+
   public boolean getShowZeroLine() {
     return show_zero_line;
   }
-  
+
   public static boolean isHeatMapStyle(int graph_style) {
     return (graph_style == GraphStateI.HEAT_MAP || graph_style == GraphStateI.AVG_HEAT_MAP
         || graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.MIN_HEAT_MAP

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,20 +33,20 @@ public class NibbleIterator implements SearchableCharIterator {
  static final char[] nibble2char = {
                                       '-', // 0000 ==> no bases (gap?)
                                       'A', // 0001 ==> A
-				      'C', // 0010 ==> C
-				      // 0011 ==> C|A
-				      'G', // 0100 ==> G
-				      // 0101 ==> G|A
-				      // 0110 ==> G|C
-				      // 0111 ==> G|C|A
-				      'T', // 1000 ==> T
-				      // 1001 ==> T|A
-				      // 1010 ==> T|C
-				      // 1011 ==> T|C|A
-				      // 1100 ==> T|G
-				      // 1101 ==> T|G|A
-				      // 1110 ==> T|G|C
-				      'N', // 1111 ==> T|G|C|A
+                                      'C', // 0010 ==> C
+                                      // 0011 ==> C|A
+                                      'G', // 0100 ==> G
+                                      // 0101 ==> G|A
+                                      // 0110 ==> G|C
+                                      // 0111 ==> G|C|A
+                                      'T', // 1000 ==> T
+                                      // 1001 ==> T|A
+                                      // 1010 ==> T|C
+                                      // 1011 ==> T|C|A
+                                      // 1100 ==> T|G
+                                      // 1101 ==> T|G|A
+                                      // 1110 ==> T|G|C
+                                      'N', // 1111 ==> T|G|C|A
   */
   // or possibly rig it to reverse complements of a single base is just the
   //    bitwise NOT of the base ( revcomp(nibble) = ^ nibble ) :
@@ -54,26 +54,26 @@ public class NibbleIterator implements SearchableCharIterator {
   static final char[] nibble2char = {
                                       // 0000
                                       'A', // 0001 ==> A
-				      // 0010 ==> C
-				      // 0011 ==>
-				      // 0100 ==>
-				      // 0101 ==>
-				      // 0110 ==>
-				      // 0111 ==>
-				      // 1000 ==>
-				      // 1001 ==>
-				      // 1010 ==>
-				      // 1011 ==>
-				      // 1100 ==>
-				      // 1101 ==> G
-				      // 1110 ==> T
-				      // 1111 ==>
+                                      // 0010 ==> C
+                                      // 0011 ==>
+                                      // 0100 ==>
+                                      // 0101 ==>
+                                      // 0110 ==>
+                                      // 0111 ==>
+                                      // 1000 ==>
+                                      // 1001 ==>
+                                      // 1010 ==>
+                                      // 1011 ==>
+                                      // 1100 ==>
+                                      // 1101 ==> G
+                                      // 1110 ==> T
+                                      // 1111 ==>
    */
 
   static final char[] nibble2char = { 'A', 'C', 'G', 'T',
-				      'N', 'M', 'R', 'W',
-				      'S', 'Y', 'K', 'V',
-				      'H', 'D', 'B', 'U' };
+                                      'N', 'M', 'R', 'W',
+                                      'S', 'Y', 'K', 'V',
+                                      'H', 'D', 'B', 'U' };
 
   static final byte[] char2nibble= new byte[256];
 
@@ -146,7 +146,7 @@ public class NibbleIterator implements SearchableCharIterator {
      */
     //    if (pos == 30927828 || pos == 13698664) {
     if (pos == 30927828)  {
-      // System.out.println("hit weird NibbleIterator problem with 30927828"); 
+      // System.out.println("hit weird NibbleIterator problem with 30927828");
       // return 'N';
     }
 
@@ -190,15 +190,15 @@ public class NibbleIterator implements SearchableCharIterator {
 
   public int indexOf(String str, int fromIndex) {
 
-    //    	char v1[] = value;
-    //    	char v2[] = str.value;
+    //            char v1[] = value;
+    //            char v2[] = str.value;
     char querychars[] = str.toCharArray();
-    //    	int max = offset + (count - str.count);
+    //            int max = offset + (count - str.count);
     int max = length - str.length();
     if (fromIndex >= length) {
       if (length == 0 && fromIndex == 0 && str.length() == 0) {
-	/* There is an empty string at index 0 in an empty string. */
-	return 0;
+        /* There is an empty string at index 0 in an empty string. */
+        return 0;
       }
       /* Note: fromIndex might be near -1>>>1 */
       return -1;
@@ -210,7 +210,7 @@ public class NibbleIterator implements SearchableCharIterator {
       return fromIndex;
     }
 
-    //    	int strOffset = str.offset;
+    //            int strOffset = str.offset;
     int strOffset = 0;
     char first  = querychars[strOffset];
     //        int i = offset + fromIndex;
@@ -220,28 +220,28 @@ public class NibbleIterator implements SearchableCharIterator {
     while (true) {
 
       /* Look for first character. */
-      //	    while (i <= max && v1[i] != first) {
+      //            while (i <= max && v1[i] != first) {
       while (i <= max && this.charAt(i) != first) {
-	i++;
+        i++;
       }
       if (i > max) {
-	return -1;
+        return -1;
       }
 
       /* Found first character, now look at the rest of querychars */
       int j = i + 1;
-      //	    int end = j + str.count - 1;
+      //            int end = j + str.count - 1;
       int end = j + str.length() - 1;
       int k = strOffset + 1;
       while (j < end) {
-	//		if (v1[j++] != querychars[k++]) {
-	if (this.charAt(j++) != querychars[k++]) {
-	  i++;
-	  /* Look for str's first char again. */
-	  continue startSearchForFirstChar;
-	}
+        //                if (v1[j++] != querychars[k++]) {
+        if (this.charAt(j++) != querychars[k++]) {
+          i++;
+          /* Look for str's first char again. */
+          continue startSearchForFirstChar;
+        }
       }
-      //	    return i - offset;	/* Found whole string. */
+      //            return i - offset;        /* Found whole string. */
       return i;
     }
   }
@@ -252,7 +252,7 @@ public class NibbleIterator implements SearchableCharIterator {
       int extra_nibble = length & one_mask;
       //      System.out.println("extra nibble: " + extra_nibble);
       //      length = length / 2;
-      byte[] nibbles = new byte[((int)length/2) + extra_nibble];
+      byte[] nibbles = new byte[(length/2) + extra_nibble];
 
       //      for (int i=start; i<end; i++) {
       //      for (int i=0; i<length-1; i++) {
@@ -261,39 +261,39 @@ public class NibbleIterator implements SearchableCharIterator {
       if (extra_nibble > 0) { max = length - 1; }
       else { max = length; }
       for (int i=0; i<length-1; i++) {
-	int byte_index = i >> 1;
-	char ch1 = str.charAt(i + start);
-	i++;
-	char ch2 = str.charAt(i + start);
+        int byte_index = i >> 1;
+        char ch1 = str.charAt(i + start);
+        i++;
+        char ch2 = str.charAt(i + start);
 
-	byte hinib = char2nibble[ch1];
-	byte lonib = char2nibble[ch2];
-	byte two_nibbles = (byte)((hinib << 4) +  lonib);
-	//	System.out.println("" + hinib + ", " + lonib + ", " + two_nibbles);
-	//	byte two_nibbles = (byte)((hinib << 4) | lonib);
-	//	byte two_nibbles = nibbles2bytes[hinib][lonib];
-	nibbles[byte_index] = two_nibbles;
+        byte hinib = char2nibble[ch1];
+        byte lonib = char2nibble[ch2];
+        byte two_nibbles = (byte)((hinib << 4) +  lonib);
+        //        System.out.println("" + hinib + ", " + lonib + ", " + two_nibbles);
+        //        byte two_nibbles = (byte)((hinib << 4) | lonib);
+        //        byte two_nibbles = nibbles2bytes[hinib][lonib];
+        nibbles[byte_index] = two_nibbles;
       }
       if (extra_nibble > 0) {
-	int byte_index = (length-1) >> 1;
-	char ch1 = str.charAt(length-1 + start);
-	//	i++;
-	//	char ch2 = str.charAt(i + start);
+        int byte_index = (length-1) >> 1;
+        char ch1 = str.charAt(length-1 + start);
+        //        i++;
+        //        char ch2 = str.charAt(i + start);
 
-	byte hinib = char2nibble[ch1];
-	//	byte lonib = char2nibble[ch2];
-	//	byte two_nibbles = (byte)((hinib << 4) +  lonib);
-	byte singlet_nibble = (byte)(hinib << 4);
-	//	System.out.println("" + hinib + ", no lonib, " + singlet_nibble);
-	//	byte two_nibbles = (byte)((hinib << 4) | lonib);
-	//	byte two_nibbles = nibbles2bytes[hinib][lonib];
-	nibbles[byte_index] = singlet_nibble;
+        byte hinib = char2nibble[ch1];
+        //        byte lonib = char2nibble[ch2];
+        //        byte two_nibbles = (byte)((hinib << 4) +  lonib);
+        byte singlet_nibble = (byte)(hinib << 4);
+        //        System.out.println("" + hinib + ", no lonib, " + singlet_nibble);
+        //        byte two_nibbles = (byte)((hinib << 4) | lonib);
+        //        byte two_nibbles = nibbles2bytes[hinib][lonib];
+        nibbles[byte_index] = singlet_nibble;
       }
       return nibbles;
     }
     else {
       System.out.println("in NibbleIterator.stringToNibbles(), " +
-			 "start < end NOT YET IMPLEMENTED");
+                         "start < end NOT YET IMPLEMENTED");
     }
     return null;
   }

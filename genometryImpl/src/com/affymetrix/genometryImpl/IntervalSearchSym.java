@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -38,7 +38,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
   //     value up to (and including) that position
   //   currently using list of symmetries (max_sym_sofar),
   //   but could switch to array of ints (max_int_sofar)
-  ArrayList max_sym_sofar = null;
+  ArrayList<SeqSymmetry> max_sym_sofar = null;
   int[] max_int_sofar = null;
   SeqSymMinComparator comp = null;
 
@@ -81,23 +81,23 @@ public class IntervalSearchSym extends SimpleSymWithProps
     // make sure child symmetries are sorted by ascending min along search_seq
     // to avoid unecessary sort, first go through child list and see if it's
     //     already in ascending order -- if so, then no need to sort.
-    //     (Calling Collections.sort() always results in making a temporary copy 
+    //     (Calling Collections.sort() always results in making a temporary copy
     //      of an array, so best to avoid that when we can.)
     int child_count = this.getChildCount();
     boolean sorted = true;
     int prev_min = Integer.MIN_VALUE;
     for (int i=0; i<child_count; i++) {
-      SeqSymmetry child = (SeqSymmetry)this.getChild(i);
+      SeqSymmetry child = getChild(i);
       int min = child.getSpan(search_seq).getMin();
       if (prev_min > min) {
-	sorted = false;
-	break;
+        sorted = false;
+        break;
       }
       prev_min = min;
     }
     if (! sorted) {
       if (DEBUG) { System.out.println("sorting sym children of IntervalSearchSym, seq = " +
-				      search_seq.getID()); }
+                                      search_seq.getID()); }
       Collections.sort(this.getChildren(), comp);
       sorted = true;
     }
@@ -105,16 +105,16 @@ public class IntervalSearchSym extends SimpleSymWithProps
     if (DEBUG) {
       prev_min = Integer.MIN_VALUE;
       for (int i=0; i<child_count; i++) {
-	//	SeqSymmetry child = (SeqSymmetry)this.getChild(i);
-	SeqSymmetry child = getChild(i);
-	int min = child.getSpan(search_seq).getMin();
-	if (prev_min > min) {
-	  sorted = false;
-	  System.out.println("$$$$$  WARNING: children of IntervalSearchSym not sorted! index = " +
-			     i + ", seq = " + search_seq.getID() + "  $$$$$");
-	  break;
-	}
-	prev_min = min;
+        //        SeqSymmetry child = (SeqSymmetry)this.getChild(i);
+        SeqSymmetry child = getChild(i);
+        int min = child.getSpan(search_seq).getMin();
+        if (prev_min > min) {
+          sorted = false;
+          System.out.println("$$$$$  WARNING: children of IntervalSearchSym not sorted! index = " +
+                             i + ", seq = " + search_seq.getID() + "  $$$$$");
+          break;
+        }
+        prev_min = min;
       }
       if (sorted) { System.out.println("SORTED for seq: " + search_seq.getID()); }
     }
@@ -124,13 +124,13 @@ public class IntervalSearchSym extends SimpleSymWithProps
     //     value up to (and including) that position
 
     // as symmetries
-    max_sym_sofar = new ArrayList(child_count);
+    max_sym_sofar = new ArrayList<SeqSymmetry>(child_count);
     SeqSymmetry curMaxSym = this.getChild(0);
     for (int i=0; i<child_count; i++) {
       SeqSymmetry child = this.getChild(i);
       int max = child.getSpan(search_seq).getMax();
       if (max > curMaxSym.getSpan(search_seq).getMax()) {
-	curMaxSym = child;
+        curMaxSym = child;
       }
       max_sym_sofar.add(curMaxSym);
     }
@@ -150,8 +150,8 @@ public class IntervalSearchSym extends SimpleSymWithProps
     if (hitsyms != null) {
       int hitcount = hitsyms.size();
       for (int i=0; i<hitcount; i++) {
-	SeqSymmetry hit = (SeqSymmetry)hitsyms.get(i);
-	result.addChild(hit);
+        SeqSymmetry hit = (SeqSymmetry)hitsyms.get(i);
+        result.addChild(hit);
       }
     }
     return result;
@@ -196,31 +196,31 @@ public class IntervalSearchSym extends SimpleSymWithProps
     int backtrack_max_index = beg_index;
     while (backtrack_max_index > 0) {
       backtrack_max_index--;
-      SeqSymmetry back_sym = (SeqSymmetry)max_sym_sofar.get(backtrack_max_index);
+      SeqSymmetry back_sym = max_sym_sofar.get(backtrack_max_index);
       if (back_sym.getSpan(search_seq).getMax() < search_min) {
-	backtrack_max_index++;
-	break;
+        backtrack_max_index++;
+        break;
       }
     }
-    List results = new ArrayList(1000);
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(1000);
     for (int i=backtrack_max_index; i<=beg_index; i++) {
-      SeqSymmetry sym = (SeqSymmetry)children.get(i);
-      SeqSpan span = (SeqSpan)sym.getSpan(search_seq);
+      SeqSymmetry sym = children.get(i);
+      SeqSpan span = sym.getSpan(search_seq);
       if (span.getMax() > search_min && span.getMin() < search_max) {
-	results.add(sym);
+        results.add(sym);
       }
     }
     int cur_index = beg_index + 1;
     while (cur_index < child_count) {
-      SeqSymmetry sym = (SeqSymmetry)children.get(cur_index);
-      SeqSpan span = (SeqSpan)sym.getSpan(search_seq);
+      SeqSymmetry sym = children.get(cur_index);
+      SeqSpan span = sym.getSpan(search_seq);
       if (span.getMin() >= search_max) {
-	break;
+        break;
       }
       results.add(sym);
       cur_index++;
     }
-    //    return results; 
+    //    return results;
     return null;
   }
 
@@ -230,7 +230,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
    *  If there are no children that overlap/intersect qinterval,
    *    the getOverlappingChildren() will return null.
    */
-  public List getOverlappingChildren(SeqSpan qinterval) {
+  public List<SeqSymmetry> getOverlappingChildren(SeqSpan qinterval) {
     int child_count = getChildCount();
     if (child_count <= 0) { return null; }
     //    SymWithProps result = null;
@@ -241,8 +241,8 @@ public class IntervalSearchSym extends SimpleSymWithProps
     int search_min = qinterval.getMin();
     int search_max = qinterval.getMax();
     if (DEBUG)  { System.out.println("searching with interval: seqid = " + search_seq.getID() +
-				     ", min = " + search_min +
-				     ", max = " + search_max);
+                                     ", min = " + search_min +
+                                     ", max = " + search_max);
     }
 
     if (! ready_for_searching) { initForSearching(search_seq); }
@@ -276,15 +276,15 @@ public class IntervalSearchSym extends SimpleSymWithProps
     int backtrack_max_index = beg_index;
     while (backtrack_max_index > 0) {
       backtrack_max_index--;
-      SeqSymmetry back_sym = (SeqSymmetry)max_sym_sofar.get(backtrack_max_index);
+      SeqSymmetry back_sym = max_sym_sofar.get(backtrack_max_index);
       if (back_sym.getSpan(search_seq).getMax() < search_min) {
-	backtrack_max_index++;
-	break;
+        backtrack_max_index++;
+        break;
       }
     }
     if (DEBUG)  {
       System.out.println("done with max backtracking, backtrack_max_index = " +
-			 backtrack_max_index);
+                         backtrack_max_index);
     }
 
     // now should have bounds for overlap search
@@ -293,17 +293,17 @@ public class IntervalSearchSym extends SimpleSymWithProps
     //    iterate through children from backtrack_max_index to beg_index
     // and should have for just (min < search_max) search:
     //    iterate through children from beg_index+1 till first one with min >= max
-    List results = new ArrayList(1000);
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(1000);
     // just picking somewhat arbitrary size of 1000 for initial list, so that for most queries,
     //    (assuming most queries don't return > 1000 children) won't have to grow list's internal array
     //    result = new SimpleSymWithProps();
     for (int i=backtrack_max_index; i<=beg_index; i++) {
-      SeqSymmetry sym = (SeqSymmetry)children.get(i);
-      SeqSpan span = (SeqSpan)sym.getSpan(search_seq);
+      SeqSymmetry sym = children.get(i);
+      SeqSpan span = sym.getSpan(search_seq);
       if (span.getMax() > search_min && span.getMin() < search_max) {
-	//	if (span.getMax() > search_min)  {
-	//	result.addChild(sym);
-	results.add(sym);
+        //        if (span.getMax() > search_min)  {
+        //        result.addChild(sym);
+        results.add(sym);
       }
     }
     if (DEBUG)  {
@@ -312,15 +312,15 @@ public class IntervalSearchSym extends SimpleSymWithProps
     }
     int cur_index = beg_index + 1;
     while (cur_index < child_count) {
-      SeqSymmetry sym = (SeqSymmetry)children.get(cur_index);
-      SeqSpan span = (SeqSpan)sym.getSpan(search_seq);
+      SeqSymmetry sym = children.get(cur_index);
+      SeqSpan span = sym.getSpan(search_seq);
 
       if (DEBUG)  {
-	System.out.println(SeqUtils.getOtherSeq(sym, search_seq).getID() +
-			   ":" + SeqUtils.spanToString(span));
+        System.out.println(SeqUtils.getOtherSeq(sym, search_seq).getID() +
+                           ":" + SeqUtils.spanToString(span));
       }
       if (span.getMin() >= search_max) {
-	break;
+        break;
       }
       //      result.addChild(sym);
       results.add(sym);

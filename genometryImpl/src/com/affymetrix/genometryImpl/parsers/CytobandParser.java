@@ -49,10 +49,7 @@ public class CytobandParser implements AnnotationWriter  {
   public static final float ACEN_SCORE = 600.0f;
   public static final float STALK_SCORE = 500.0f;
 
-  static java.util.List pref_list = new ArrayList();
-  static {
-    pref_list.add("cyt");
-  }
+  static List<String> pref_list = Arrays.asList("cyt");
 
   public CytobandParser() {
   }
@@ -67,15 +64,15 @@ public class CytobandParser implements AnnotationWriter  {
    *    to the seq (and if seq is a SmartAnnotBioSeq, it will in turn create a TypeContainerSym as parent of the
    *    single SymWithProps)
    */
-  public List parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+  public List<SeqSymmetry> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq)
   throws IOException  {
 
     int band_alternator = 1; // toggles dark/light when band color is missing
-    List results = new ArrayList(100);
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(100);
     String line;
     Thread thread = Thread.currentThread();
     BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
-    Map seq2csym = new HashMap();
+    Map<MutableAnnotatedBioSeq,SeqSymmetry> seq2csym = new HashMap<MutableAnnotatedBioSeq,SeqSymmetry>();
     while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
       if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
         continue;
@@ -122,24 +119,24 @@ public class CytobandParser implements AnnotationWriter  {
         }
 
         CytobandSym sym = new CytobandSym(beg, end, seq, annot_name, band);
-	if (annotate_seq) {
-	  SimpleSymWithProps parent_sym = (SimpleSymWithProps)seq2csym.get(seq);
-	  if (parent_sym == null) {
-	    parent_sym = new SimpleSymWithProps();
-	    parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-	    parent_sym.setProperty("method", CYTOBAND_TIER_NAME);
-	    parent_sym.setProperty("preferred_formats", pref_list);
-	    parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	    seq2csym.put(seq, parent_sym);
-	    seq.addAnnotation(parent_sym);
-	  }
-	  parent_sym.addChild(sym);
-	  //	  ((SmartAnnotBioSeq) seq).addAnnotation(sym, CYTOBAND_TIER_NAME);
-	  if (annot_name != null) {
-	    seq_group.addToIndex(annot_name, sym);
-	  }
-	}
-	results.add(sym);
+        if (annotate_seq) {
+          SimpleSymWithProps parent_sym = (SimpleSymWithProps)seq2csym.get(seq);
+          if (parent_sym == null) {
+            parent_sym = new SimpleSymWithProps();
+            parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+            parent_sym.setProperty("method", CYTOBAND_TIER_NAME);
+            parent_sym.setProperty("preferred_formats", pref_list);
+            parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+            seq2csym.put(seq, parent_sym);
+            seq.addAnnotation(parent_sym);
+          }
+          parent_sym.addChild(sym);
+          //          ((SmartAnnotBioSeq) seq).addAnnotation(sym, CYTOBAND_TIER_NAME);
+          if (annot_name != null) {
+            seq_group.addToIndex(annot_name, sym);
+          }
+        }
+        results.add(sym);
       }  // end of line.startsWith() else
     }   // end of line-reading loop
     return results;
@@ -173,7 +170,7 @@ public class CytobandParser implements AnnotationWriter  {
   }
 
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     System.out.println("in CytobandParser.writeAnnotations()");
     boolean success = true;
     try {
@@ -274,10 +271,10 @@ public class CytobandParser implements AnnotationWriter  {
       else return super.getProperty(name);
     }
 
-    public Map cloneProperties() {
-      Map props = super.cloneProperties();
+    public Map<String,Object> cloneProperties() {
+      Map<String,Object> props = super.cloneProperties();
       if (props == null) {
-        props = new HashMap(4);
+        props = new HashMap<String,Object>(4);
       }
       if (id != null) {
         props.put("id", id);

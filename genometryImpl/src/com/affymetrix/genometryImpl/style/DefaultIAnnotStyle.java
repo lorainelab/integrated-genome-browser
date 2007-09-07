@@ -31,14 +31,14 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
   double height = 60;
   double y = 0.0f;
   boolean is_graph = false;
-  Map transient_properties = null;
-  
+  Map<String,Object> transient_properties = null;
+
   /** Should only be called by subclasses or a StateProvider. */
   public DefaultIAnnotStyle() {
     super();
     this.unique_name = Integer.toHexString(hashCode()); // a unique name, just in case it is ever needed
   }
-  
+
   /** Should only be called by subclasses or a StateProvider. */
   public DefaultIAnnotStyle(String name, boolean graph) {
     this();
@@ -46,30 +46,30 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
     this.human_name = name;
     this.setGraphTier(graph);
   }
-  
+
   public boolean isGraphTier() { return is_graph; }
   public void setGraphTier(boolean b) { this.is_graph = b; }
-  
+
   public Color getColor() { return fg; }
   public void setColor(Color c) { fg = c; }
-  
+
   public boolean getShow() { return show; }
   public void setShow(boolean b) { show = b; }
-  
+
   public String getUniqueName() { return unique_name; }
-  
+
   public String getHumanName() { return human_name; }
   public void setHumanName(String s) { human_name = s; }
-  
+
   public Color getBackground() { return bg; }
   public void setBackground(Color c) { bg = c; }
-  
+
   public boolean getCollapsed() { return collapsed; }
   public void setCollapsed(boolean b) { collapsed = b; }
-  
+
   public int getMaxDepth() { return max_depth; }
   public void setMaxDepth(int m) { max_depth = m; }
-      
+
   public void setHeight(double h) { height = h; }
   public double getHeight() { return height; }
 
@@ -78,17 +78,17 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
 
   public void setExpandable(boolean b) { this.expandable = b; }
   public boolean getExpandable() { return expandable; }
-    
 
-  public Map getTransientPropertyMap() {
+
+  public Map<String,Object> getTransientPropertyMap() {
     if (transient_properties == null) {
-      transient_properties = new HashMap();
+      transient_properties = new HashMap<String,Object>();
     }
     return transient_properties;
   }
-  
-  /** Copies all properties from the given style into this one, 
-   *  including the transient properties. 
+
+  /** Copies all properties from the given style into this one,
+   *  including the transient properties.
    */
   public void copyPropertiesFrom(IAnnotStyle g) {
     setGraphTier(g.isGraphTier());

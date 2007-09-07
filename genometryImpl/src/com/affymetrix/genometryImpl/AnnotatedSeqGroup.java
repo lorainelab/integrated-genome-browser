@@ -26,21 +26,18 @@ public class AnnotatedSeqGroup {
 
   String id;
   String organism;
-  String version; // not currently used
-  Date version_date;  // not currently used
+  String version; // not currently used?
+  //Date version_date;  // not currently used
   String description;
 
   boolean use_synonyms = true;
 
-  // Using a sorted map to get the chromosome numbers in a reasonable order.
-  // A better option may be to use a LinkedHashMap and simply make all users
-  // of this class sort the sequences id's before adding them.
-  //  SortedMap id2seq = new TreeMap(new ChromComparator());
-  Map id2seq = new LinkedHashMap();
-  ArrayList seqlist = new ArrayList();
+  Map<String,MutableAnnotatedBioSeq> id2seq = new LinkedHashMap<String,MutableAnnotatedBioSeq>();//TODO: require SmartAnnotBioSeq
+  ArrayList<MutableAnnotatedBioSeq> seqlist = new ArrayList<MutableAnnotatedBioSeq>();
 
-  static Vector sym_map_change_listeners = new Vector(1);
-  SortedMap id2sym_hash = new ListmakingHashMap();
+  static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
+  
+  SortedMap<String,Object> id2sym_hash = new ListmakingHashMap();
 
   public AnnotatedSeqGroup(String gid) {
     id = gid;
@@ -53,10 +50,10 @@ public class AnnotatedSeqGroup {
    *  Will not return null.  The list is in the same order as in
    *  {@link #getSeq(int)}.
    */
-  public List getSeqList() {
+  public List<MutableAnnotatedBioSeq> getSeqList() {
     if (seqlist.size() != id2seq.size()) {
       // lazily keep the seqlist up-to-date
-      seqlist = new ArrayList(id2seq.values());
+      seqlist = new ArrayList<MutableAnnotatedBioSeq>(id2seq.values());
     }
     return seqlist;
   }
@@ -65,12 +62,10 @@ public class AnnotatedSeqGroup {
    *  Returns the set of type id String's of all the types on all
    *  the SmartAnnotBioSeq's returned by getSeqList().
    */
-  public Set getTypeIds() {
-    Set types = new TreeSet();
-    List seq_list = getSeqList();
-    Iterator iter = seq_list.iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+  public Set<String> getTypeIds() {
+    Set<String> types = new TreeSet<String>();
+    List<MutableAnnotatedBioSeq> seq_list = getSeqList();
+    for (MutableAnnotatedBioSeq seq : seq_list) {
       if (seq instanceof SmartAnnotBioSeq) {
         types.addAll(((SmartAnnotBioSeq) seq).getTypeIds());
       }
@@ -78,12 +73,9 @@ public class AnnotatedSeqGroup {
     return types;
   }
   
-  public Set getGraphTypeIds() {
-    Set types = new TreeSet();
-    List seq_list = getSeqList();
-    Iterator iter = seq_list.iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+  public Set<String> getGraphTypeIds() {
+    Set<String> types = new TreeSet<String>();
+    for (MutableAnnotatedBioSeq seq : getSeqList()) {
       if (seq instanceof SmartAnnotBioSeq) {
         types.addAll(((SmartAnnotBioSeq) seq).getGraphTypeIds());
       }
@@ -168,25 +160,23 @@ public class AnnotatedSeqGroup {
    *  See {@link #setUseSynonyms(boolean)}.
    */
   public MutableAnnotatedBioSeq getSeq(String synonym) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)id2seq.get(synonym);
+    MutableAnnotatedBioSeq aseq = id2seq.get(synonym);
     if (use_synonyms && aseq == null) {
       // try and find a synonym
       SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-      Iterator iter = id2seq.values().iterator();
-      while (iter.hasNext()) {
-        MutableAnnotatedBioSeq synseq = (MutableAnnotatedBioSeq)iter.next();
+
+      for (MutableAnnotatedBioSeq synseq : id2seq.values()) {
         if (synseq instanceof SmartAnnotBioSeq)  {
-	  if (((SmartAnnotBioSeq)synseq).isSynonymous(synonym)) {
-	    aseq = synseq;
-	    break;
-	  }
-	}
-	else {
-	  if (lookup.isSynonym(synseq.getID(), synonym)) {
-	    aseq = synseq;
-	    break;
-	  }
-	}
+          if (((SmartAnnotBioSeq)synseq).isSynonymous(synonym)) {
+            aseq = synseq;
+            break;
+          }
+        } else {
+          if (lookup.isSynonym(synseq.getID(), synonym)) {
+            aseq = synseq;
+            break;
+          }
+        }
       }
     }
     return aseq;
@@ -203,14 +193,14 @@ public class AnnotatedSeqGroup {
     if (sym != null) {
       int spancount = sym.getSpanCount();
       for (int i=0; i<spancount; i++) {
-	SeqSpan span = sym.getSpan(i);
-	BioSeq seq1 = span.getBioSeq();
-	String id = seq1.getID();
-	MutableAnnotatedBioSeq seq2 = (MutableAnnotatedBioSeq)id2seq.get(id);
-	if ((seq2 != null) && (seq1 == seq2)) {
-	  result = seq2;
-	  break;
-	}
+        SeqSpan span = sym.getSpan(i);
+        BioSeq seq1 = span.getBioSeq();
+        String id = seq1.getID();
+        MutableAnnotatedBioSeq seq2 = id2seq.get(id);
+        if ((seq2 != null) && (seq1 == seq2)) {
+          result = seq2;
+          break;
+        }
       }
     }
     return result;
@@ -250,12 +240,12 @@ public class AnnotatedSeqGroup {
     // It would be nice to require that all children seqs be SmartAnnotBioSeqs,
     // but there is still some code in the internal Affy code that might be
     // adding Combosite BioSeq's instead.
-    MutableAnnotatedBioSeq oldseq = (MutableAnnotatedBioSeq)id2seq.get(seq.getID());
+    MutableAnnotatedBioSeq oldseq = id2seq.get(seq.getID());
     if (oldseq == null) {
       id2seq.put(seq.getID(), seq);
       //seqlist.add(seq); // don't add to seqlist, to keep it properly sorted, rebuild it only when needed
       if (seq instanceof SmartAnnotBioSeq) {
-	((SmartAnnotBioSeq)seq).setSeqGroup(this);
+        ((SmartAnnotBioSeq)seq).setSeqGroup(this);
       }
     }
     else {
@@ -274,34 +264,31 @@ public class AnnotatedSeqGroup {
   /** Not currently used, may want to move getVersion() to an AnnotatedGenome subclass */
   public String getVersion() { return version; }
 
-  /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
-  public Date getVersionDate() { return version_date; }
+//  /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
+//  public Date getVersionDate() { return version_date; }
 
-  /** NOT YET IMPLEMENTED */
-  public List findSyms(Pattern regex) {
-    HashSet symset = new HashSet();
+  /** NOT YET IMPLEMENTED */  //TODO: Isn't this implemented?
+  @SuppressWarnings("unchecked")
+  public List<SeqSymmetry> findSyms(Pattern regex) {
+    HashSet<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
     Matcher matcher = regex.matcher("");
-    Set all_syms = id2sym_hash.entrySet();
-    Iterator entries = all_syms.iterator();
-    
-    while (entries.hasNext()) {
-      Map.Entry ent = (Map.Entry)entries.next();
-      String id = (String)ent.getKey();
+
+    for (Map.Entry<String,Object> ent : id2sym_hash.entrySet()) {
+      String id = ent.getKey();
       Object val = ent.getValue();
       if (id != null && val != null) {
-	matcher.reset(id);
-	if (matcher.matches()) {
-	  if (val instanceof List) {
-	    symset.addAll((List)val);
-	  }
-	  else {
-	    symset.add(val);
-	  }
-	}
+        matcher.reset(id);
+        if (matcher.matches()) {
+          if (val instanceof List) {
+            symset.addAll((List<SeqSymmetry>) val);
+          } else {
+            symset.add((SeqSymmetry) val);
+          }
+        }
       }
     }
     //    System.out.println("!!!! AnnotatedSeqGroup.findSyms(Pattern) called, syms found: " + symset.size());
-    return new ArrayList(symset);
+    return new ArrayList<SeqSymmetry>(symset);
   }
 
 
@@ -309,19 +296,20 @@ public class AnnotatedSeqGroup {
   /** Finds all symmetries with the given case-insensitive ID.
    *  @return a non-null List, possibly an empty one.
    */
-  public java.util.List findSyms(String id) {
+  @SuppressWarnings("unchecked")
+  public List<SeqSymmetry> findSyms(String id) {
     if (id==null) {
-      return Collections.EMPTY_LIST;
+      return Collections.<SeqSymmetry>emptyList();
     }
-    java.util.List sym_list = null;
+    List<SeqSymmetry> sym_list = null;
     Object o = id2sym_hash.get(id.toLowerCase());
     if (o == null) {
-      sym_list = Collections.EMPTY_LIST;
-    } else if (o instanceof java.util.List) {
-      sym_list = (java.util.List) o;
+      sym_list = Collections.<SeqSymmetry>emptyList();
+    } else if (o instanceof List) {
+      sym_list = (List<SeqSymmetry>) o;
     } else {
-      sym_list = new ArrayList(1);
-      sym_list.add(o);
+      sym_list = new ArrayList<SeqSymmetry>(1);
+      sym_list.add((SeqSymmetry) o);
     }
     return sym_list;
   }
@@ -329,7 +317,7 @@ public class AnnotatedSeqGroup {
   /** Finds all symmetries with the given case-insensitive ID and add them to
    *  the given list.  Also looks for id + ".1", id + ".2", etc.
    */
-  public boolean findSyms(String id, java.util.List results) {
+  public boolean findSyms(String id, List<SeqSymmetry> results) {
     return findSyms(id, results, true);
   }
 
@@ -342,18 +330,18 @@ public class AnnotatedSeqGroup {
    *   id + ".1", id + ".2", etc.
    *  @return true if any symmetries were added to the list.
    */
-  public boolean findSyms(String id, java.util.List results, boolean try_appended_id) {
+  @SuppressWarnings("unchecked")
+  public boolean findSyms(String id, List<SeqSymmetry> results, boolean try_appended_id) {
     boolean success = false;
     if (id != null) {
       String lid = id.toLowerCase();
       Object obj = id2sym_hash.get(lid);
       if (obj instanceof SeqSymmetry) {
-        results.add(obj);
+        results.add((SeqSymmetry) obj);
         success = true;
       }
-      else if (obj instanceof java.util.List) {
-        java.util.List syms = (java.util.List) obj;
-        results.addAll(syms);
+      else if (obj instanceof List) {
+        results.addAll((List<SeqSymmetry>) obj);
         success = true;
       }
       // try id appended with ".n" where n is 0, 1, etc. till there is no match
@@ -362,15 +350,15 @@ public class AnnotatedSeqGroup {
         Object appendobj;
         while ( (appendobj = id2sym_hash.get(lid + "." + postfix)) != null) {
           if (appendobj instanceof SeqSymmetry) {
-            results.add(appendobj);
+            results.add((SeqSymmetry) appendobj);
             success = true;
           }
-          else if (appendobj instanceof java.util.List) {
-            java.util.List syms = (java.util.List) appendobj;
+          else if (appendobj instanceof List) {
+            List<SeqSymmetry> syms = (List<SeqSymmetry>) appendobj;
             results.addAll(syms);
             success = true;
           }
-	  postfix++;
+          postfix++;
         }
       }
     }
@@ -427,14 +415,14 @@ public class AnnotatedSeqGroup {
    *    the {@link SymMapChangeEvent}.
    */
   public void symHashChanged(Object source) {
-    java.util.List list = getSymMapChangeListeners();
+    List list = getSymMapChangeListeners();
     for (int i=0; i<list.size(); i++) {
       SymMapChangeListener l = (SymMapChangeListener) list.get(i);
       l.symMapModified(new SymMapChangeEvent(source, this));
     }
   }
 
-  public static java.util.List getSymMapChangeListeners() {
+  public static List getSymMapChangeListeners() {
     return sym_map_change_listeners;
   }
 
@@ -524,10 +512,14 @@ public class AnnotatedSeqGroup {
    *     if previous value is a List, add new value to end of list
    *     otherwise create new list, add previous value and new value to list, 
    *        and make the new list the value associated with the key
-   *     
+   *
    */
-  public static class ListmakingHashMap extends TreeMap {
-    public Object put(Object key, Object value) {
+  @SuppressWarnings("unchecked")
+  public static class ListmakingHashMap extends TreeMap<String,Object> {
+
+    static final long serialVersionUID = 1L;
+
+    public Object put(String key, Object value) {
       Object x = this.get(key);
       if (x == value) {
         return x; // do not store the same value twice
@@ -538,12 +530,12 @@ public class AnnotatedSeqGroup {
       } else if (x == null) {
         super.put(key, value);
       } else if (x instanceof List) {
-        List list_x = (List) x;
+        List<Object> list_x = (List<Object>) x;
         if (! list_x.contains(value)) {
           list_x.add(value);
         }
       } else {
-        ArrayList al = new ArrayList(2);
+        ArrayList<Object> al = new ArrayList<Object>(2);
         al.add(x);
         al.add(value);
         super.put(key, al);

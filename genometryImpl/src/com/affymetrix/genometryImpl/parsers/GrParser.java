@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -25,7 +25,7 @@ import java.util.*;
 
 public class GrParser {
 
-  static Comparator pointcomp = PointIntFloat.getComparator(true, true);
+  static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 
   public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
     int xpos[] = graf.getGraphXCoords();
@@ -129,7 +129,7 @@ public class GrParser {
       // sort using a Point.x comparator
       // build array of x and y
       System.err.println("input graph not sorted, sorting by base coord");
-      List points = new ArrayList(graph_length);
+      List<PointIntFloat> points = new ArrayList<PointIntFloat>(graph_length);
       for (int i=0; i<graph_length; i++) {
         x = xlist.get(i);
         y = ylist.get(i);
@@ -140,7 +140,7 @@ public class GrParser {
       xcoords = new int[graph_length];
       ycoords = new float[graph_length];
       for (int i=0; i<graph_length; i++) {
-        PointIntFloat pnt = (PointIntFloat)points.get(i);
+        PointIntFloat pnt = points.get(i);
         xcoords[i] = pnt.x;
         ycoords[i] = pnt.y;
       }

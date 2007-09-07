@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 
 public class BpsParser implements AnnotationWriter  {
 
-  static java.util.List pref_list = new ArrayList();
+  static List<String> pref_list = new ArrayList<String>();
   static {
     pref_list.add("bps");
     pref_list.add("psl");
@@ -90,57 +90,57 @@ public class BpsParser implements AnnotationWriter  {
     //    BpsParser test = new BpsParser();
     if (write_from_text) {
       if (main_batch_mode) {
-	File input_dir = new File(psl_input_dir);
-	File[] fils = input_dir.listFiles();
-	for (int i=0; i<fils.length; i++) {
-	  File fil = fils[i];
-	  String in_path = fil.getPath();
-	  String in_name = fil.getName();
-	  if (in_name.endsWith(".psl")) {
-	    SingletonGenometryModel.logInfo("processing PSL file: " + in_path);
-	    String barename;
-	    if (in_name.endsWith(".psl.psl")) {
-	      barename = in_name.substring(0, in_name.lastIndexOf(".psl.psl"));
-	    }
-	    else {
-	      barename = in_name.substring(0, in_name.lastIndexOf(".psl"));
-	    }
-	    System.out.println("bare name: " + barename);
-	    String out_path = bps_output_dir + barename + ".bps";
-	    System.out.println("output file: " + out_path);
-	    convertPslToBps(in_path, out_path);
-	  }
-	}
+        File input_dir = new File(psl_input_dir);
+        File[] fils = input_dir.listFiles();
+        for (int i=0; i<fils.length; i++) {
+          File fil = fils[i];
+          String in_path = fil.getPath();
+          String in_name = fil.getName();
+          if (in_name.endsWith(".psl")) {
+            SingletonGenometryModel.logInfo("processing PSL file: " + in_path);
+            String barename;
+            if (in_name.endsWith(".psl.psl")) {
+              barename = in_name.substring(0, in_name.lastIndexOf(".psl.psl"));
+            }
+            else {
+              barename = in_name.substring(0, in_name.lastIndexOf(".psl"));
+            }
+            System.out.println("bare name: " + barename);
+            String out_path = bps_output_dir + barename + ".bps";
+            System.out.println("output file: " + out_path);
+            convertPslToBps(in_path, out_path);
+          }
+        }
       }
       else {
-	if (args.length == 2) {
-	  String text_file = args[0];
-	  String bin_file = args[1];
-	  convertPslToBps(text_file, bin_file);
-	}
-	else {
-	  System.out.println("Usage:  java ... BpsParser <text infile> <binary outfile>");
-	  System.exit(1);
-	}
+        if (args.length == 2) {
+          String text_file = args[0];
+          String bin_file = args[1];
+          convertPslToBps(text_file, bin_file);
+        }
+        else {
+          System.out.println("Usage:  java ... BpsParser <text infile> <binary outfile>");
+          System.exit(1);
+        }
       }
     }
     if (read_from_bps) {
       AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Group");
-      
+
       String bin_file = args[0];
-      java.util.List syms = parse(bin_file, default_annot_type, seq_group);
+      List syms = parse(bin_file, default_annot_type, seq_group);
       int symcount = syms.size();
       SingletonGenometryModel.logInfo("total sym count: " + symcount);
       int[] blockcount = new int[100];
       for (int i=0; i<symcount; i++) {
-	SeqSymmetry sym = (SeqSymmetry)syms.get(i);
-	int childcount = sym.getChildCount();
-	blockcount[childcount]++;
+        SeqSymmetry sym = (SeqSymmetry)syms.get(i);
+        int childcount = sym.getChildCount();
+        blockcount[childcount]++;
       }
       for (int i=0; i<blockcount.length; i++) {
-	if (blockcount[i] != 0) {
-	  SingletonGenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
-	}
+        if (blockcount[i] != 0) {
+          SingletonGenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
+        }
       }
     }
   }
@@ -148,7 +148,7 @@ public class BpsParser implements AnnotationWriter  {
 
   public static void convertPslToBps(String psl_in, String bps_out)  {
     System.out.println("reading text psl file");
-    java.util.List psl_syms = readPslFile(psl_in);
+    List psl_syms = readPslFile(psl_in);
     System.out.println("done reading text psl file, annot count = " + psl_syms.size());
     System.out.println("writing binary psl file");
     //    writeBpsFile(psl_syms, bps_out);
@@ -157,10 +157,10 @@ public class BpsParser implements AnnotationWriter  {
   }
 
 
-  public static java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) 
+  public static List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
   throws IOException {
     SingletonGenometryModel.logInfo("loading file: " + file_name);
-    java.util.List results = null;
+    List results = null;
     FileInputStream fis = null;
     DataInputStream dis = null;
     try {
@@ -170,14 +170,14 @@ public class BpsParser implements AnnotationWriter  {
       BufferedInputStream bis = new BufferedInputStream(fis);
 
       if (use_byte_buffer) {
-	byte[] bytebuf = new byte[(int)flength];
-	bis.read(bytebuf);
-	//	fis.read(bytebuf);
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	dis = new DataInputStream(bytestream);
+        byte[] bytebuf = new byte[(int)flength];
+        bis.read(bytebuf);
+        //        fis.read(bytebuf);
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        dis = new DataInputStream(bytestream);
       }
       else {
-	dis = new DataInputStream(bis);
+        dis = new DataInputStream(bis);
       }
       results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
     }
@@ -187,30 +187,30 @@ public class BpsParser implements AnnotationWriter  {
     }
     return results;
   }
-    
+
   /** Reads binary PSL data from the given stream.  Note that this method <b>can</b>
    *  be interrupted early by Thread.interrupt().  The input stream will always be closed
    *  before exiting this method.
    */
-  public static java.util.List parse(DataInputStream dis, String annot_type,
-    AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, 
-    boolean annot_query, boolean annot_target) 
+  public static List<UcscPslSym> parse(DataInputStream dis, String annot_type,
+    AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
+    boolean annot_query, boolean annot_target)
   throws IOException {
-    
+
     // make temporary seq groups to avoid null pointers later
-    if (query_group == null) { 
-      query_group = new AnnotatedSeqGroup("Query"); 
+    if (query_group == null) {
+      query_group = new AnnotatedSeqGroup("Query");
       query_group.setUseSynonyms(false);
     }
-    if (target_group == null) { 
+    if (target_group == null) {
       target_group = new AnnotatedSeqGroup("Target");
       target_group.setUseSynonyms(false);
     }
-    
+
     int total_block_count = 0;
-    HashMap target2sym = new HashMap(); // maps target chrom name to top-level symmetry
-    HashMap query2sym = new HashMap(); // maps query chrom name to top-level symmetry
-    ArrayList results = new ArrayList(estimated_count);
+    HashMap<String,SeqSymmetry> target2sym = new HashMap<String,SeqSymmetry>(); // maps target chrom name to top-level symmetry
+    HashMap<String,SeqSymmetry> query2sym = new HashMap<String,SeqSymmetry>(); // maps query chrom name to top-level symmetry
+    ArrayList<UcscPslSym> results = new ArrayList<UcscPslSym>(estimated_count);
     int count = 0;
     int same_count = 0;
     Timer tim = new Timer();
@@ -221,91 +221,91 @@ public class BpsParser implements AnnotationWriter  {
       // Loop will usually be ended by EOFException, but
       // can also be interrupted by Thread.interrupt()
       while (! thread.isInterrupted()) {
-	int matches = dis.readInt();
-	int mismatches = dis.readInt();
-	int repmatches = dis.readInt();
-	int ncount = dis.readInt();
-	int qNumInsert = dis.readInt();
-	int qBaseInsert = dis.readInt();
-	int tNumInsert = dis.readInt();
-	int tBaseInsert = dis.readInt();
-	boolean qforward = dis.readBoolean();
-	String qname = dis.readUTF();
-	int qsize = dis.readInt();
-	int qmin = dis.readInt();
-	int qmax = dis.readInt();
-        
+        int matches = dis.readInt();
+        int mismatches = dis.readInt();
+        int repmatches = dis.readInt();
+        int ncount = dis.readInt();
+        int qNumInsert = dis.readInt();
+        int qBaseInsert = dis.readInt();
+        int tNumInsert = dis.readInt();
+        int tBaseInsert = dis.readInt();
+        boolean qforward = dis.readBoolean();
+        String qname = dis.readUTF();
+        int qsize = dis.readInt();
+        int qmin = dis.readInt();
+        int qmax = dis.readInt();
+
         MutableAnnotatedBioSeq queryseq = query_group.getSeq(qname);
-	if (queryseq == null)  {
+        if (queryseq == null)  {
           queryseq = query_group.addSeq(qname, qsize);
-	}
+        }
         if (queryseq.getLength() < qsize) { queryseq.setLength(qsize); }
 
-	String tname = dis.readUTF();
-	int tsize = dis.readInt();
-	int tmin = dis.readInt();
-	int tmax = dis.readInt();
-        
-        
-	MutableAnnotatedBioSeq targetseq = target_group.getSeq(tname);
-	if (targetseq == null) {
+        String tname = dis.readUTF();
+        int tsize = dis.readInt();
+        int tmin = dis.readInt();
+        int tmax = dis.readInt();
+
+
+        MutableAnnotatedBioSeq targetseq = target_group.getSeq(tname);
+        if (targetseq == null) {
           targetseq = target_group.addSeq(tname, tsize);
-	}
+        }
         if (targetseq.getLength() < tsize) { targetseq.setLength(tsize); }
 
-	int blockcount = dis.readInt();
-	int[] blockSizes = new int[blockcount];
-	int[] qmins = new int[blockcount];
-	int[] tmins = new int[blockcount];
-	for (int i=0; i<blockcount; i++) {
-	  blockSizes[i] = dis.readInt();
-	}
-	for (int i=0; i<blockcount; i++) {
-	  qmins[i] = dis.readInt();
-	}
-	for (int i=0; i<blockcount; i++) {
-	  tmins[i] = dis.readInt();
-	}
-	total_block_count += blockcount;
-	count++;
+        int blockcount = dis.readInt();
+        int[] blockSizes = new int[blockcount];
+        int[] qmins = new int[blockcount];
+        int[] tmins = new int[blockcount];
+        for (int i=0; i<blockcount; i++) {
+          blockSizes[i] = dis.readInt();
+        }
+        for (int i=0; i<blockcount; i++) {
+          qmins[i] = dis.readInt();
+        }
+        for (int i=0; i<blockcount; i++) {
+          tmins[i] = dis.readInt();
+        }
+        total_block_count += blockcount;
+        count++;
 
-	UcscPslSym sym =
-	  new UcscPslSym(annot_type, matches, mismatches, repmatches, ncount,
-			 qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, qforward,
-			 queryseq, qmin, qmax, targetseq, tmin, tmax,
-			 blockcount, blockSizes, qmins, tmins);
-	results.add(sym);
-        
+        UcscPslSym sym =
+          new UcscPslSym(annot_type, matches, mismatches, repmatches, ncount,
+                         qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, qforward,
+                         queryseq, qmin, qmax, targetseq, tmin, tmax,
+                         blockcount, blockSizes, qmins, tmins);
+        results.add(sym);
+
 
         if (annot_query) {
-	  SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
-	  if (query_parent_sym == null) {
-	    query_parent_sym = new SimpleSymWithProps();
-	    query_parent_sym.addSpan(new SimpleSeqSpan(0, queryseq.getLength(), queryseq));
-	    query_parent_sym.setProperty("method", annot_type);
-	    query_parent_sym.setProperty("preferred_formats", pref_list);
+          SimpleSymWithProps query_parent_sym = (SimpleSymWithProps)query2sym.get(qname);
+          if (query_parent_sym == null) {
+            query_parent_sym = new SimpleSymWithProps();
+            query_parent_sym.addSpan(new SimpleSeqSpan(0, queryseq.getLength(), queryseq));
+            query_parent_sym.setProperty("method", annot_type);
+            query_parent_sym.setProperty("preferred_formats", pref_list);
             query_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	    queryseq.addAnnotation(query_parent_sym);
-	    query2sym.put(qname, query_parent_sym);
-	  }
+            queryseq.addAnnotation(query_parent_sym);
+            query2sym.put(qname, query_parent_sym);
+          }
           query_group.addToIndex(sym.getID(), sym);
-	  query_parent_sym.addChild(sym);
-	}
+          query_parent_sym.addChild(sym);
+        }
 
-	if (annot_target) {
-	  SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)target2sym.get(tname);
-	  if (target_parent_sym == null) {
-	    target_parent_sym = new SimpleSymWithProps();
-	    target_parent_sym.addSpan(new SimpleSeqSpan(0, targetseq.getLength(), targetseq));
-	    target_parent_sym.setProperty("method", annot_type);
-	    target_parent_sym.setProperty("preferred_formats", pref_list);
+        if (annot_target) {
+          SimpleSymWithProps target_parent_sym = (SimpleSymWithProps)target2sym.get(tname);
+          if (target_parent_sym == null) {
+            target_parent_sym = new SimpleSymWithProps();
+            target_parent_sym.addSpan(new SimpleSeqSpan(0, targetseq.getLength(), targetseq));
+            target_parent_sym.setProperty("method", annot_type);
+            target_parent_sym.setProperty("preferred_formats", pref_list);
             target_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	    targetseq.addAnnotation(target_parent_sym);
-	    target2sym.put(tname, target_parent_sym);
-	  }
-	  target_parent_sym.addChild(sym);
+            targetseq.addAnnotation(target_parent_sym);
+            target2sym.put(tname, target_parent_sym);
+          }
+          target_parent_sym.addChild(sym);
           target_group.addToIndex(sym.getID(), sym);
-	}
+        }
       }
     }
     catch (EOFException ex) {
@@ -328,37 +328,37 @@ public class BpsParser implements AnnotationWriter  {
       UcscPslComparator comp = new UcscPslComparator();
       Collections.sort(results, comp);
       if (REPORT_LOAD_STATS) {
-	SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
-	SingletonGenometryModel.logInfo("PSL alignment count = " + count);
-	SingletonGenometryModel.logInfo("PSL total block count = " + total_block_count);
-	SingletonGenometryModel.logInfo("PSL average blocks / alignment = " +
-			   ((double)total_block_count/(double)count));
+        SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
+        SingletonGenometryModel.logInfo("PSL alignment count = " + count);
+        SingletonGenometryModel.logInfo("PSL total block count = " + total_block_count);
+        SingletonGenometryModel.logInfo("PSL average blocks / alignment = " +
+                           ((double)total_block_count/(double)count));
       }
     }
     return results;
   }
 
 
-  public static java.util.List readPslFile(String file_name) {
+  public static List readPslFile(String file_name) {
     Timer tim = new Timer();
     tim.start();
 
-    java.util.List results = null;
+    List results = null;
     try  {
       File fil = new File(file_name);
       double flength = fil.length();
       FileInputStream fis = new FileInputStream(fil);
       InputStream istr = null;
       if (use_byte_buffer) {
-	byte[] bytebuf = new byte[(int)flength];
-	BufferedInputStream bis = new BufferedInputStream(fis);
-	bis.read(bytebuf);
-	bis.close();
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	istr = bytestream;
+        byte[] bytebuf = new byte[(int)flength];
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        bis.read(bytebuf);
+        bis.close();
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        istr = bytestream;
       }
       else {
-	istr = fis;
+        istr = fis;
       }
       PSLParser parser = new PSLParser();
       // don't bother annotating the sequences, just get the list of syms
@@ -372,7 +372,7 @@ public class BpsParser implements AnnotationWriter  {
     return results;
   }
 
-  public static void writeBinary(String file_name, java.util.List syms)  {
+  public static void writeBinary(String file_name, List syms)  {
     try  {
       File outfile = new File(file_name);
       FileOutputStream fos = new FileOutputStream(outfile);
@@ -380,8 +380,8 @@ public class BpsParser implements AnnotationWriter  {
       DataOutputStream dos = new DataOutputStream(bos);
       int symcount = syms.size();
       for (int i=0; i<symcount; i++) {
-	UcscPslSym psl = (UcscPslSym)syms.get(i);
-	psl.outputBpsFormat(dos);
+        UcscPslSym psl = (UcscPslSym)syms.get(i);
+        psl.outputBpsFormat(dos);
       }
       dos.close();
     }
@@ -396,25 +396,25 @@ public class BpsParser implements AnnotationWriter  {
    *    to an output stream as "binary PSL".
    **/
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     //    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
     boolean success = true;
     try {
       DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {
-	SeqSymmetry sym = (SeqSymmetry)iterator.next();
-	if (! (sym instanceof UcscPslSym)) {
-	  int spancount = sym.getSpanCount();
-	  if (sym.getSpanCount() == 1) {
-	    sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
-	  }
-	  else {
-	    BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
-	    sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
-	  }
-	}
-	((UcscPslSym)sym).outputBpsFormat(dos);
+        SeqSymmetry sym = (SeqSymmetry)iterator.next();
+        if (! (sym instanceof UcscPslSym)) {
+          int spancount = sym.getSpanCount();
+          if (sym.getSpanCount() == 1) {
+            sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
+          }
+          else {
+            BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
+            sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
+          }
+        }
+        ((UcscPslSym)sym).outputBpsFormat(dos);
       }
       dos.flush();
     }

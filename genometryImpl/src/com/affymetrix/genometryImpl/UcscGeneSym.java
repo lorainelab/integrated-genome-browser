@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -50,7 +50,7 @@ import com.affymetrix.genometry.symmetry.*;
     *
  */
 public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWithProps {
-  
+
   String geneName;
   String name;
   int txMin;
@@ -62,12 +62,12 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
   int[] emaxs;
   BioSeq seq;
   String type;
-  Map props;
+  Map<String,Object> props;
 
   public UcscGeneSym(String type, String geneName, String name,
-		     BioSeq seq, boolean forward, int txMin, int txMax,
-		     int cdsMin, int cdsMax, int[] emins, int[] emaxs
-		     ) {
+                     BioSeq seq, boolean forward, int txMin, int txMax,
+                     int cdsMin, int cdsMax, int[] emins, int[] emaxs
+                     ) {
     this.type = type;
     this.geneName = geneName;
     this.name = name;
@@ -87,7 +87,7 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
 
   public boolean hasCdsSpan() {
     return (cdsMin >= 0 && cdsMax >= 0);
-  } 
+  }
 
   public SeqSpan getCdsSpan() {
     if (! hasCdsSpan())  { return null; }
@@ -116,10 +116,10 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
   public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
     if (bs.equals(this.seq)) {
       if (forward) {
-	span.set(txMin, txMax, seq);
+        span.set(txMin, txMax, seq);
       }
       else {
-	span.set(txMax, txMin, seq);
+        span.set(txMax, txMin, seq);
       }
       return true;
     }
@@ -129,10 +129,10 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
   public boolean getSpan(int index, MutableSeqSpan span) {
     if (index == 0) {
       if (forward) {
-	span.set(txMin, txMax, seq);
+        span.set(txMin, txMax, seq);
       }
       else {
-	span.set(txMax, txMin, seq);
+        span.set(txMax, txMin, seq);
       }
       return true;
     }
@@ -168,12 +168,12 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
 
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 
-  public Map cloneProperties() {
-    HashMap tprops = new HashMap();
+  public Map<String,Object> cloneProperties() {
+    HashMap<String,Object> tprops = new HashMap<String,Object>();
     tprops.put("id", name);
     tprops.put("type", type);
     tprops.put("gene name", geneName);
@@ -204,7 +204,7 @@ public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWi
 
   public boolean setProperty(String name, Object val) {
     if (props == null) {
-      props = new Hashtable();
+      props = new Hashtable<String,Object>();
     }
     props.put(name, val);
     return true;

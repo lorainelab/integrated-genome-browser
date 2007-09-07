@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2005 Affymetrix, Inc.
+*   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -12,10 +12,6 @@
 */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.SharedProbesetInfo;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.ParentOfLeafSym;
-import com.affymetrix.genometryImpl.IntId;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
 import java.util.*;
@@ -181,9 +177,9 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
    *  Returns a new Map instance with only two values:
    *  "method" maps to "HuEx-1_0-st-Probes"; and "id" maps to the value of getID().
    */
-  public Map getProperties() {
-    HashMap properties = new HashMap(1);
-    Map shared_props = info.getProps();
+  public Map<String,Object> getProperties() {
+    HashMap<String,Object> properties = new HashMap<String,Object>(1);
+    Map<String,Object> shared_props = info.getProps();
     if (shared_props != null && shared_props.get("method") != null) {
       properties.put("method", (String)shared_props.get("method"));
     }
@@ -205,7 +201,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
   }
 
   /** Returns a clone of the Map from getProperties(). */
-  public Map cloneProperties() {
+  public Map<String,Object> cloneProperties() {
     return getProperties();
   }
 

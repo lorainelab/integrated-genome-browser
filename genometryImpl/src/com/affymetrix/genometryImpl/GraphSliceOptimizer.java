@@ -1,13 +1,23 @@
-package com.affymetrix.genometryImpl;
+/**
+*   Copyright (c) 2007 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 
-import com.affymetrix.genometryImpl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.CompositeGraphSym;
-import com.affymetrix.genometryImpl.parsers.BarParser;
-import java.io.*;
-import java.util.*;
+package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.*;
+import com.affymetrix.genometryImpl.parsers.BarParser;
+import java.io.*;
+import java.util.*;
 
 /**
  *  GraphSliceOptimizer is intended to be used for piecewise loading of graph slices rather than
@@ -38,43 +48,43 @@ public class GraphSliceOptimizer {
     BioSeq aseq = slice_span.getBioSeq();
 
     int prevcount = gsym.getChildCount();
-    java.util.List subslices = new ArrayList();
+    List<SeqSymmetry> subslices = new ArrayList<SeqSymmetry>();
     SeqSymmetry slice_sym = new SingletonSeqSymmetry(slice_span);
 
     if (prevcount == 0) {
       subslices.add(slice_sym);
     }
     else {
-      ArrayList prev_slices = new ArrayList(prevcount);
+      ArrayList<SeqSymmetry> prev_slices = new ArrayList<SeqSymmetry>(prevcount);
       for (int i=0; i<prevcount; i++) {
-	SeqSymmetry prev_slice = gsym.getChild(i);
-	if (prev_slice instanceof GraphSym) {
-	  prev_slices.add(prev_slice);
-	}
+        SeqSymmetry prev_slice = gsym.getChild(i);
+        if (prev_slice instanceof GraphSym) {
+          prev_slices.add(prev_slice);
+        }
       }
 
-      //	System.out.println("number of previous slices: " + prev_slices.size());
+      //        System.out.println("number of previous slices: " + prev_slices.size());
       SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_slices, aseq);
-      //	System.out.println("union of previous slices: ");
-      //	SeqUtils.printSymmetry(prev_union);
-      ArrayList qnewlist = new ArrayList();
+      //        System.out.println("union of previous slices: ");
+      //        SeqUtils.printSymmetry(prev_union);
+      ArrayList<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
       qnewlist.add(slice_sym);
-      ArrayList qoldlist = new ArrayList();
+      ArrayList<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
       qoldlist.add(prev_union);
       SeqSymmetry split_slice = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
       if (split_slice == null)  {
-	System.out.println("split slice is null!");
-	return true;
+        System.out.println("split slice is null!");
+        return true;
       }
 
       int slice_count = split_slice.getChildCount();
       for (int i=0; i<slice_count; i++) {
-	subslices.add(split_slice.getChild(i));
+        subslices.add(split_slice.getChild(i));
       }
     }
 
     for (int slice_index=0; slice_index < subslices.size(); slice_index++) {
-      SeqSymmetry subslice = (SeqSymmetry)subslices.get(slice_index);
+      SeqSymmetry subslice = subslices.get(slice_index);
       SeqSpan subspan = subslice.getSpan(aseq);
       // graphsym span is also set correctly in BarParser.getSlice()
       GraphSym child = BarParser.getSlice(TEST_BAR_FILE, gmodel, subspan);

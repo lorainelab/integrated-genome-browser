@@ -69,7 +69,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 public class Bprobe1Parser implements AnnotationWriter {
 
   static boolean DEBUG = true;
-  static java.util.List pref_list = new ArrayList();
+  static List<String> pref_list = new ArrayList<String>();
   static {
     pref_list.add("bp2");
   }
@@ -83,12 +83,12 @@ public class Bprobe1Parser implements AnnotationWriter {
     boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
     System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
     BufferedInputStream bis;
-    Map tagvals = new LinkedHashMap();
-    Map seq2syms = new LinkedHashMap();
-    Map seq2lengths = new LinkedHashMap();
+    Map<String,Object> tagvals = new LinkedHashMap<String,Object>();
+    Map<String,Object> seq2syms = new LinkedHashMap<String,Object>();
+    Map<String,Integer> seq2lengths = new LinkedHashMap<String,Integer>();
     DataInputStream dis = null;
     String id_prefix = "";
-    List results = new ArrayList();
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
     try  {
       if (istr instanceof BufferedInputStream) {
         bis = (BufferedInputStream) istr;
@@ -106,13 +106,13 @@ public class Bprobe1Parser implements AnnotationWriter {
       // combining genome and version to get seq group id
       String seq_group_id = seq_group_name + seq_group_version;
       if (seq_group_id == null) {
-	System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
-	return null;
+        System.err.println("bprobe1 file does not specify a genome name or version, these are required!");
+        return null;
       }
       if (! group.isSynonymous(seq_group_id)) {
-	System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + group.getID() +
-			   " and group name+version in bprobe1 file: " + seq_group_id);
-	return null;
+        System.err.println("In Bprobe1Parser, mismatch between AnnotatedSeqGroup argument: " + group.getID() +
+                           " and group name+version in bprobe1 file: " + seq_group_id);
+        return null;
       }
       String specified_type = dis.readUTF();
       String annot_type;
@@ -124,19 +124,19 @@ public class Bprobe1Parser implements AnnotationWriter {
       }
       int probe_length = dis.readInt();
       if (version2) {
-	id_prefix = dis.readUTF();
-	if (! id_prefix.endsWith(":")) {
-	  id_prefix += ":";
-	}
+        id_prefix = dis.readUTF();
+        if (! id_prefix.endsWith(":")) {
+          id_prefix += ":";
+        }
       }
       int seq_count = dis.readInt();
       if (DEBUG) {
-	System.out.println("format: " + format + ", format_version: " + format_version);
-	System.out.println("seq_group_name: " + seq_group_name + ", seq_group_version: " + seq_group_version);
-	System.out.println("type: " + specified_type);
-	System.out.println("probe_length: " + probe_length);
-	System.out.println("id_prefix: " + id_prefix);
-	System.out.println("seq_count: " + seq_count);
+        System.out.println("format: " + format + ", format_version: " + format_version);
+        System.out.println("seq_group_name: " + seq_group_name + ", seq_group_version: " + seq_group_version);
+        System.out.println("type: " + specified_type);
+        System.out.println("probe_length: " + probe_length);
+        System.out.println("id_prefix: " + id_prefix);
+        System.out.println("seq_count: " + seq_count);
       }
 
       for (int i = 0; i < seq_count; i++) {
@@ -145,7 +145,7 @@ public class Bprobe1Parser implements AnnotationWriter {
         int probeset_count = dis.readInt();
         SeqSymmetry[] syms = new SeqSymmetry[probeset_count];
         seq2syms.put(seqid, syms);
-	seq2lengths.put(seqid, new Integer(seq_length));
+        seq2lengths.put(seqid, new Integer(seq_length));
       }
       int tagval_count = dis.readInt();
       for (int i = 0; i < tagval_count; i++) {
@@ -155,23 +155,21 @@ public class Bprobe1Parser implements AnnotationWriter {
       }
       tagvals.put("method", annot_type);
 
-      Iterator seqiter = seq2syms.keySet().iterator();
-      while (seqiter.hasNext()) {
-        String seqid = (String) seqiter.next();
+      for (String seqid : seq2syms.keySet()) {
         SeqSymmetry[] syms = (SeqSymmetry[]) seq2syms.get(seqid);
         int probeset_count = syms.length;
-	System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
+        System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
 
-	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)group.getSeq(seqid);
-	SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
+        MutableAnnotatedBioSeq aseq = group.getSeq(seqid);
+        SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
         if (aseq == null) {
-	  int seqlength = ((Integer)seq2lengths.get(seqid)).intValue();
-	  aseq = group.addSeq(seqid, seqlength);
-	}
-	SimpleSymWithProps container_sym = new SimpleSymWithProps(probeset_count);
-	container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq) );
-	container_sym.setProperty("method", annot_type);
-	container_sym.setProperty("preferred_formats", pref_list);
+          int seqlength = seq2lengths.get(seqid).intValue();
+          aseq = group.addSeq(seqid, seqlength);
+        }
+        SimpleSymWithProps container_sym = new SimpleSymWithProps(probeset_count);
+        container_sym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq) );
+        container_sym.setProperty("method", annot_type);
+        container_sym.setProperty("preferred_formats", pref_list);
         container_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 
         for (int i = 0; i < probeset_count; i++) {
@@ -183,23 +181,23 @@ public class Bprobe1Parser implements AnnotationWriter {
             // EfficientProbesetSymA does not allow probe sets with 0 probes
             throw new IOException("Probe_count is zero for '"+ nid+ "'");
           }
-	  int[] cmins = new int[probe_count];
+          int[] cmins = new int[probe_count];
           for (int k = 0; k < probe_count; k++) {
             int min = dis.readInt();
-	    cmins[k] = min;
+            cmins[k] = min;
           }
-	  SeqSymmetry psym = new EfficientProbesetSymA(shared_info, cmins, forward, nid);
-	  // SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
-	  syms[i]  = psym;
-	  container_sym.addChild(psym);
-	  results.add(psym);
-	  if (populate_id_hash) {
-	    group.addToIndex(psym.getID(), psym);
-	  }
+          SeqSymmetry psym = new EfficientProbesetSymA(shared_info, cmins, forward, nid);
+          // SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
+          syms[i]  = psym;
+          container_sym.addChild(psym);
+          results.add(psym);
+          if (populate_id_hash) {
+            group.addToIndex(psym.getID(), psym);
+          }
         }
-	if (annotate_seq) {
-	  aseq.addAnnotation(container_sym);
-	}
+        if (annotate_seq) {
+          aseq.addAnnotation(container_sym);
+        }
       }
       System.out.println("finished parsing probeset file");
     }
@@ -217,7 +215,7 @@ public class Bprobe1Parser implements AnnotationWriter {
    *      all syms share same probe_length, id_prefix
    */
   public boolean writeAnnotations(java.util.Collection syms, BioSeq aseq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     boolean success = false;
     AnnotatedSeqGroup group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
     String groupid = group.getID();
@@ -265,9 +263,9 @@ public class Bprobe1Parser implements AnnotationWriter {
       dos.writeInt(0);  // no tagval properties...
       Iterator siter = syms.iterator();
       while (siter.hasNext())  {
-	//	EfficientProbesetSymA psym  = (EfficientProbesetSymA)siter.next();
-	SeqSymmetry psym = (SeqSymmetry)siter.next();
-	writeProbeset(psym, aseq, dos);
+        //        EfficientProbesetSymA psym  = (EfficientProbesetSymA)siter.next();
+        SeqSymmetry psym = (SeqSymmetry)siter.next();
+        writeProbeset(psym, aseq, dos);
       }
       dos.flush();
       success = true;
@@ -283,11 +281,11 @@ public class Bprobe1Parser implements AnnotationWriter {
    *     25-mer probes (for now)
    */
   public static void convertGff(String gff_file, String output_file, String genome_id,
-				String version_id, String annot_type, String id_prefix)
+                                String version_id, String annot_type, String id_prefix)
     throws IOException {
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
     int probe_length = 25;
-    Map tagvals = new HashMap();
+    Map<String,String> tagvals = new HashMap<String,String>();
     tagvals.put("tagval_test_1", "testing1");
     tagvals.put("tagval_test_2", "testing2");
 
@@ -319,63 +317,61 @@ public class Bprobe1Parser implements AnnotationWriter {
       dos.writeInt(seq_count);
       Iterator iter = seq_group.getSeqList().iterator();
       while (iter.hasNext()) {
-	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
-	String seqid = aseq.getID();
-	int seq_length = aseq.getLength();
-	int container_count = aseq.getAnnotationCount();
-	int annot_count = 0;
-	for (int i=0; i<container_count; i++) {
-	  SeqSymmetry cont = aseq.getAnnotation(i);
-	  annot_count += cont.getChildCount();
-	}
-	System.out.println("seqid: " + seqid + ", annot count: " + annot_count );
-	dos.writeUTF(seqid);
-	dos.writeInt(seq_length);
-	dos.writeInt(annot_count);
+        AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+        String seqid = aseq.getID();
+        int seq_length = aseq.getLength();
+        int container_count = aseq.getAnnotationCount();
+        int annot_count = 0;
+        for (int i=0; i<container_count; i++) {
+          SeqSymmetry cont = aseq.getAnnotation(i);
+          annot_count += cont.getChildCount();
+        }
+        System.out.println("seqid: " + seqid + ", annot count: " + annot_count );
+        dos.writeUTF(seqid);
+        dos.writeInt(seq_length);
+        dos.writeInt(annot_count);
       }
       int tagval_count = tagvals.size();
       dos.writeInt(tagval_count);
       Iterator tviter = tagvals.entrySet().iterator();
       while (tviter.hasNext()) {
-	Map.Entry ent = (Map.Entry)tviter.next();
-	String tag = (String)ent.getKey();
-	String val = (String)ent.getValue();
-	dos.writeUTF(tag);
-	dos.writeUTF(val);
+        Map.Entry ent = (Map.Entry)tviter.next();
+        String tag = (String)ent.getKey();
+        String val = (String)ent.getValue();
+        dos.writeUTF(tag);
+        dos.writeUTF(val);
       }
       iter = seq_group.getSeqList().iterator();
       while (iter.hasNext()) {
-	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
-	int container_count = aseq.getAnnotationCount();
-	//	System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
-	for (int i=0; i<container_count; i++) {
-	  SeqSymmetry cont = aseq.getAnnotation(i);
-	  int annot_count = cont.getChildCount();
-	  for (int k=0; k<annot_count; k++) {
-	    //	    EfficientProbesetSymA psym = (EfficientProbesetSymA)cont.getChild(k);
-	    SeqSymmetry psym = (SeqSymmetry)cont.getChild(k);
-	    writeProbeset(psym, aseq, dos);
-	  }
-	  /*
-	  for (int k=0; k<annot_count; k++) {
-	    SeqSymmetry psym = cont.getChild(k);
-	    SeqSpan pspan = psym.getSpan(aseq);
-	    int child_count = psym.getChildCount();
-	    String symid = psym.getID();
-	    //          System.out.println("probeset_id: " + symid);
-	    int symint = Integer.parseInt(symid);
-	    //	    int symint = psym.getIntID();
-	    dos.writeInt(symint);  // probeset id representated as an integer
-	    // sign of strnad_and_count indicates forward (+) or reverse (-) strand
-	    byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
-	    dos.writeByte(strand_and_count);
-	    for (int m=0; m<child_count; m++) {
-	      SeqSymmetry csym = psym.getChild(m);
-	      dos.writeInt(csym.getSpan(aseq).getMin());
-	    }
+        AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+        int container_count = aseq.getAnnotationCount();
+        //        System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
+        for (int i=0; i<container_count; i++) {
+          SeqSymmetry cont = aseq.getAnnotation(i);
+          int annot_count = cont.getChildCount();
+          for (int k=0; k<annot_count; k++) {
+            writeProbeset(cont.getChild(k), aseq, dos);
           }
-	  */
-	}
+          /*
+          for (int k=0; k<annot_count; k++) {
+            SeqSymmetry psym = cont.getChild(k);
+            SeqSpan pspan = psym.getSpan(aseq);
+            int child_count = psym.getChildCount();
+            String symid = psym.getID();
+            //          System.out.println("probeset_id: " + symid);
+            int symint = Integer.parseInt(symid);
+            //            int symint = psym.getIntID();
+            dos.writeInt(symint);  // probeset id representated as an integer
+            // sign of strnad_and_count indicates forward (+) or reverse (-) strand
+            byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
+            dos.writeByte(strand_and_count);
+            for (int m=0; m<child_count; m++) {
+              SeqSymmetry csym = psym.getChild(m);
+              dos.writeInt(csym.getSpan(aseq).getMin());
+            }
+          }
+          */
+        }
       }
     }
     finally {

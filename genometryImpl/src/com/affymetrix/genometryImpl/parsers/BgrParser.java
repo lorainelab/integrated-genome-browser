@@ -58,14 +58,14 @@ public class BgrParser {
     int total_points = xcoords.length;
 
     Map headers = graf.getProperties();
-  
+
     if (headers == null) {
       headers = new HashMap(); // use an empty map
     }
     else {
-      if (headers.get("seq_name") == null) { 
+      if (headers.get("seq_name") == null) {
         if (graf.getGraphSeq() == null) {
-          dos.writeUTF("null"); 
+          dos.writeUTF("null");
         } else {
           dos.writeUTF(graf.getGraphSeq().getID());
         }
@@ -88,7 +88,7 @@ public class BgrParser {
     }
     dos.writeInt(total_points);
     for (int i=0; i<total_points; i++) {
-      dos.writeInt((int)xcoords[i]);
+      dos.writeInt(xcoords[i]);
       dos.writeFloat(graf.getGraphYCoord(i));
     }
     //      dos.flush();
@@ -103,7 +103,7 @@ public class BgrParser {
     int count = 0;
     BufferedInputStream bis = new BufferedInputStream(istr);
     DataInputStream dis = new DataInputStream(bis);
-    HashMap props = new HashMap();
+    HashMap<String,Object> props = new HashMap<String,Object>();
     String seq_name = dis.readUTF();
     String release_name = dis.readUTF();
     String analysis_group_name = dis.readUTF();
@@ -141,7 +141,7 @@ public class BgrParser {
       //System.out.println("seq not found, creating new seq: '"+seq_name+"'");
       seq = seq_group.addSeq(seq_name, largest_x);
     }
-    
+
     StringBuffer sb = new StringBuffer();
     append(sb, analysis_group_name);
     append(sb, value_type_name);
@@ -153,7 +153,7 @@ public class BgrParser {
     } else {
       graph_name = sb.toString();
     }
-    
+
     // need to replace seq_name with name of graph (some combo of group name and conditions...)
     if (ensure_unique_id) { graph_name = AnnotatedSeqGroup.getUniqueGraphID(graph_name, seq); }
     GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, graph_name, seq);
@@ -172,5 +172,5 @@ public class BgrParser {
       sb.append(s);
     }
   }
-  
+
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2006 Affymetrix, Inc.
+*   Copyright (c) 2006-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -48,16 +48,14 @@ public class GFF3Parser {
   public static final String GFF3_NOTE = "Note";
   public static final String GFF3_DBXREF = "Dbxref";
   public static final String GFF3_ONTOLOGY_TERM = "Ontology_term";
-  
+
   int gff_version = GFF3;
 
   // Must be exactly one tab between each column; not spaces or multiple tabs.
   static final Pattern line_regex = Pattern.compile("\\t");
 
-  Map gff3_id_hash = new HashMap();
-
   TrackLineParser track_line_parser = new TrackLineParser();
-  
+
   public GFF3Parser() {
   }
 
@@ -68,33 +66,32 @@ public class GFF3Parser {
   public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
     throws IOException {
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-    
+
     // Note that the parse(BufferedReader) method will call br.close(), so
     // don't worry about it.
     return parse(br, default_source, seq_group);
   }
-  
+
   boolean use_track_lines = true;
-  
+
   /**
    *  Parses GFF3 format and adds annotations to the appropriate seqs on the
    *  given seq group.
    */
-  public List parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
+  public List<SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
     throws IOException {
     System.out.println("starting GFF3 parse.");
 
     int line_count = 0;
 
-    gff3_id_hash = new HashMap();
-    java.util.List results = new ArrayList();
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 
     String line = null;
 
-    Map id2sym = new HashMap();
-    ArrayList all_syms = new ArrayList();
+    Map<String,SeqSymmetry> id2sym = new HashMap<String,SeqSymmetry>();
+    ArrayList<SeqSymmetry> all_syms = new ArrayList<SeqSymmetry>();
     String track_name = null;
-    
+
     try {
       Thread thread = Thread.currentThread();
       while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
@@ -110,7 +107,7 @@ public class GFF3Parser {
         if (line.startsWith("##track")) {
           track_line_parser.parseTrackLine(line);
           track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
-          track_name = (String) track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+          track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
           continue;
         }
         if (line.startsWith("##")) { processDirective(line); continue; }
@@ -137,7 +134,7 @@ public class GFF3Parser {
           String attributes_field = null;
           // last_field is "attributes" in both GFF2 and GFF3, but uses different format.
           if (fields.length>=9) { attributes_field = new String(fields[8]); } // creating a new String saves memory
-          
+
           float score = GFF3Sym.UNKNOWN_SCORE;
           if (! ".".equals(score_str)) { score = Float.parseFloat(score_str); }
 
@@ -145,7 +142,7 @@ public class GFF3Parser {
           if (seq == null) {
             seq = seq_group.addSeq(seq_name, 0);
           }
-          
+
 	  GFF3Sym sym = new GFF3Sym(seq, source, feature_type, coord_a, coord_b,
 					  score, strand_char, frame_char,
 					  attributes_field);
@@ -158,15 +155,15 @@ public class GFF3Parser {
 
           int max = sym.getMax();
           if (max > seq.getLength()) { seq.setLength(max); }
-          
+
 
           /*
            From GFF3 spec:
            The ID attributes are only mandatory for those features that have children,
-           or for those that span multiple lines.  The IDs do not have meaning outside 
+           or for those that span multiple lines.  The IDs do not have meaning outside
            the file in which they reside.
            */
-          Object the_id = sym.getProperty(GFF3_ID); // NOT: sym.getID()
+          String the_id = (String) sym.getProperty(GFF3_ID); // NOT: sym.getID()
           if (the_id == null) {
             all_syms.add(sym);
           } else if (the_id.equals("null") || "-".equals(the_id)) {
@@ -174,7 +171,7 @@ public class GFF3Parser {
             all_syms.add(sym);
           } else {
             // put it in the id2sym hash, or merge it with an existing item already in the hash
-            
+
             GFF3Sym old_sym = (GFF3Sym) id2sym.get(the_id);
             if (old_sym == null) {
               id2sym.put(the_id, sym);
@@ -187,7 +184,7 @@ public class GFF3Parser {
                 SeqUtils.encompass(old_sym, sym, old_sym);
               } else {
                 // Create a group symmetry, with the both existing symmetries as children
-                GFF3Sym group_sym = groupSyms((String) the_id, old_sym, sym);
+                GFF3Sym group_sym = groupSyms(the_id, old_sym, sym);
                 // Put the group symmetry in the id2sym hash, and also
                 // put the group symmetry in the all_syms list, replacing the one that was there.
                 id2sym.put(the_id, group_sym);
@@ -205,13 +202,13 @@ public class GFF3Parser {
     while (iter.hasNext()) {
       GFF3Sym sym = (GFF3Sym) iter.next();
       String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
-            
-      
+
+
       String id = sym.getID();
       if (id != null && ! "-".equals(id)) {
         seq_group.addToIndex(id, sym);
       }
-      
+
       if (parent_ids.length == 0) {
         // If no parents, then it is top-level
         results.add(sym);
@@ -234,7 +231,7 @@ public class GFF3Parser {
             // I'm not sure about this.
             // In Genometry, parent span usually encompasses spans of all children.
             // In GFF3, that isn't really required.
-            //SeqUtils.encompass(parent_sym, sym, parent_sym); 
+            //SeqUtils.encompass(parent_sym, sym, parent_sym);
           }
         }
       }
@@ -278,14 +275,14 @@ public class GFF3Parser {
       return;
     }
   }
-  
-  
+
+
   /**
    *  Utility to group GFF3 features that were specified on several lines with the same ID.
    *  Lines with the same ID are supposed to represent different parts of the same feature.
    *  CDS features are usually expressed this way.
    *  All properties specified on separate lines, except start, stop and frame,
-   *  are supposed to be equivalent on all lines. 
+   *  are supposed to be equivalent on all lines.
    *  In Genometry, we need to create a parent symmetry to hold the individual
    *  pieces.  This parent symmetry will be a MultiLineGFF3Sym with the type as specified
    *  (such as "cds") and the two given sym's will become its children with "-part"
@@ -311,7 +308,7 @@ public class GFF3Parser {
     sym2.feature_type = type + "-part";
     parent.addChild(sym1);
     parent.addChild(sym2);
-    
+
     return parent;
-  }  
+  }
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -39,11 +39,11 @@ public class SeqSymSummarizer {
    *  @param seq the sequence you want the summary computed for
    *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean, String)}
    */
-  public static GraphIntervalSym getSymmetrySummary(java.util.List syms, BioSeq seq, boolean binary_depth, String id)  {
+  public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id)  {
     int symcount = syms.size();
-    java.util.List leaf_spans = new ArrayList(symcount);
+    List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
     for (int i=0; i<symcount; i++) {
-      SeqSymmetry sym = (SeqSymmetry)syms.get(i);
+      SeqSymmetry sym = syms.get(i);
       SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
     }
     if (leaf_spans.isEmpty()) {
@@ -63,16 +63,16 @@ public class SeqSymSummarizer {
    *                  if true, then return a graph with flattened / binary depth information,
    *                  1 for covered, 0 for not covered
    */
-  public static GraphIntervalSym getSpanSummary(java.util.List spans, boolean binary_depth, String gid) {    
+  public static GraphIntervalSym getSpanSummary(List<SeqSpan> spans, boolean binary_depth, String gid) {
     //    System.out.println("SeqSymSummarizer: starting to summarize syms");
     //    System.out.println("binary depth: " + binary_depth);
-    BioSeq seq = ((SeqSpan)spans.get(0)).getBioSeq();
+    BioSeq seq = spans.get(0).getBioSeq();
     //int spancount = spans.size();
     int span_num = spans.size();
     int[] starts = new int[span_num];
     int[] stops = new int[span_num];
     for (int i=0; i<span_num; i++) {
-      SeqSpan span = (SeqSpan)spans.get(i);
+      SeqSpan span = spans.get(i);
       starts[i] = span.getMin();
       stops[i] = span.getMax();
     }
@@ -96,36 +96,36 @@ public class SeqSymSummarizer {
       // note that by design, if (next_start == next_stop), then both of the following
       //    conditionals will execute:
       if (next_start <= next_stop) {
-	while ((starts_index < span_num) && (starts[starts_index] == next_start)) {
-	  depth++;
-	  starts_index++;
-	}
+        while ((starts_index < span_num) && (starts[starts_index] == next_start)) {
+          depth++;
+          starts_index++;
+        }
       }
       if (next_start >= next_stop) {
-	while ((stops_index < span_num) && (stops[stops_index] == next_stop)) {
-	  depth--;
-	  stops_index++;
-	}
+        while ((stops_index < span_num) && (stops[stops_index] == next_stop)) {
+          depth--;
+          stops_index++;
+        }
       }
       if (binary_depth) {
-	if ((prev_depth <= 0) && (depth > 0)) {
-	  transition_xpos.add(next_transition);
-	  transition_ypos.add(1);
-	  transitions++;
-	  prev_depth = 1;
-	}
-	else if ((prev_depth > 0) && (depth <= 0)) {
-	  transition_xpos.add(next_transition);
-	  transition_ypos.add(0);
-	  transitions++;
-	  prev_depth = 0;
-	}
+        if ((prev_depth <= 0) && (depth > 0)) {
+          transition_xpos.add(next_transition);
+          transition_ypos.add(1);
+          transitions++;
+          prev_depth = 1;
+        }
+        else if ((prev_depth > 0) && (depth <= 0)) {
+          transition_xpos.add(next_transition);
+          transition_ypos.add(0);
+          transitions++;
+          prev_depth = 0;
+        }
       }
       else {
-	transition_xpos.add(next_transition);
-	transition_ypos.add(depth);
-	transitions++;
-	max_depth = Math.max(depth, max_depth);
+        transition_xpos.add(next_transition);
+        transition_ypos.add(depth);
+        transitions++;
+        max_depth = Math.max(depth, max_depth);
       }
     }
     // clean up last stops...
@@ -134,28 +134,28 @@ public class SeqSymSummarizer {
       int next_stop = stops[stops_index];
       int next_transition = next_stop;
       while ((stops_index < span_num) && (stops[stops_index] == next_stop)) {
-	depth--;
-	stops_index++;
+        depth--;
+        stops_index++;
       }
       if (binary_depth) {
-	if ((prev_depth <= 0) && (depth > 0)) {
-	  transition_xpos.add(next_transition);
-	  transition_ypos.add(1);
-	  transitions++;
-	  prev_depth = 1;
-	}
-	else if ((prev_depth > 0) && (depth <= 0)) {
-	  transition_xpos.add(next_transition);
-	  transition_ypos.add(0);
-	  transitions++;
-	  prev_depth = 0;
-	}
+        if ((prev_depth <= 0) && (depth > 0)) {
+          transition_xpos.add(next_transition);
+          transition_ypos.add(1);
+          transitions++;
+          prev_depth = 1;
+        }
+        else if ((prev_depth > 0) && (depth <= 0)) {
+          transition_xpos.add(next_transition);
+          transition_ypos.add(0);
+          transitions++;
+          prev_depth = 0;
+        }
       }
       else {
-	transition_xpos.add(next_transition);
-	transition_ypos.add(depth);
-	transitions++;
-	max_depth = Math.max(depth, max_depth);
+        transition_xpos.add(next_transition);
+        transition_ypos.add(depth);
+        transitions++;
+        max_depth = Math.max(depth, max_depth);
       }
     }
 
@@ -165,7 +165,7 @@ public class SeqSymSummarizer {
       widths[i] = x_positions[i+1] - x_positions[i];
     }
     widths[widths.length-1] = 1;
-    
+
     // Originally, this returned a GraphSym with just x and y, but now has widths.
     // Since the x and y values are not changed, all old code that relies on them
     // does not need to change.
@@ -179,14 +179,14 @@ public class SeqSymSummarizer {
   /**
    *  Assumes all spans refer to same BioSeq
    */
-  public static java.util.List getMergedSpans(java.util.List spans) {
+  public static List getMergedSpans(List<SeqSpan> spans) {
     GraphSym landscape = getSpanSummary(spans, true, null);
-    java.util.List merged_spans = projectLandscapeSpans(landscape);
+    List merged_spans = projectLandscapeSpans(landscape);
     return merged_spans;
   }
 
-  public static java.util.List projectLandscapeSpans(GraphSym landscape) {
-    java.util.List spanlist = new ArrayList();
+  public static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {
+    List<SeqSpan> spanlist = new ArrayList<SeqSpan>();
     BioSeq seq = landscape.getGraphSeq();
     int xcoords[] = landscape.getGraphXCoords();
     //float ycoords[] = (float[]) landscape.getGraphYCoords();
@@ -199,22 +199,19 @@ public class SeqSymSummarizer {
       int xpos = xcoords[i];
       float ypos = landscape.getGraphYCoord(i);
       if (in_region) {
-	if (ypos <= 0) { // reached end of region, make SeqSpan
-	  in_region = false;
-	  current_region_end = xpos;
-	  SeqSpan newspan = new SimpleSeqSpan(current_region_start, current_region_end, seq);
-	  spanlist.add(newspan);
-	}
-	else {  // still in region, do nothing
-	}
-      }
-      else {  // not already in_region
-	if (ypos > 0) {
-	  in_region = true;
-	  current_region_start = xpos;
-	}
-	else {  // still not in region, so do nothing
-	}
+        if (ypos <= 0) { // reached end of region, make SeqSpan
+          in_region = false;
+          current_region_end = xpos;
+          SeqSpan newspan = new SimpleSeqSpan(current_region_start, current_region_end, seq);
+          spanlist.add(newspan);
+        } else {  // still in region, do nothing
+        }
+      } else {  // not already in_region
+        if (ypos > 0) {
+          in_region = true;
+          current_region_start = xpos;
+        } else {  // still not in region, so do nothing
+        }
       }
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
@@ -239,23 +236,23 @@ public class SeqSymSummarizer {
       int xpos = xcoords[i];
       float ypos = landscape.getGraphYCoord(i);
       if (in_region) {
-	if (ypos <= 0) { // reached end of region, make SeqSpan
-	  in_region = false;
-	  current_region_end = xpos;
-	  SeqSymmetry newsym =
-	    new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
-	  psym.addChild(newsym);
-	}
-	else {  // still in region, do nothing
-	}
+        if (ypos <= 0) { // reached end of region, make SeqSpan
+          in_region = false;
+          current_region_end = xpos;
+          SeqSymmetry newsym =
+            new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
+          psym.addChild(newsym);
+        }
+        else {  // still in region, do nothing
+        }
       }
       else {  // not already in_region
-	if (ypos > 0) {
-	  in_region = true;
-	  current_region_start = xpos;
-	}
-	else {  // still not in region, so do nothing
-	}
+        if (ypos > 0) {
+          in_region = true;
+          current_region_start = xpos;
+        }
+        else {  // still not in region, so do nothing
+        }
       }
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
@@ -280,7 +277,7 @@ public class SeqSymSummarizer {
    *  Finds the Union of a List of SeqSymmetries.
    *  This will merge not only overlapping syms but also abutting syms (where symA.getMax() == symB.getMin())
    */
-  public static SeqSymmetry getUnion(java.util.List syms, BioSeq seq)  {
+  public static SeqSymmetry getUnion(List<SeqSymmetry> syms, BioSeq seq)  {
     //    MutableSeqSymmetry psym = new SimpleSymWithProps();
     // first get the landscape as a GraphSym
     GraphSym landscape = getSymmetrySummary(syms, seq, true, null);
@@ -297,11 +294,11 @@ public class SeqSymSummarizer {
   /**
    *  Finds the Intersection of a List of SeqSymmetries.
    */
-  public static SeqSymmetry getIntersection(java.util.List symsA, java.util.List symsB, BioSeq seq)  {
+  public static SeqSymmetry getIntersection(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq)  {
     MutableSeqSymmetry psym = new SimpleSymWithProps();
     SeqSymmetry unionA = getUnion(symsA, seq);
     SeqSymmetry unionB = getUnion(symsB, seq);
-    java.util.List symsAB = new ArrayList();
+    List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
     symsAB.add(unionA);
     symsAB.add(unionB);
     GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
@@ -323,23 +320,23 @@ public class SeqSymSummarizer {
       int xpos = xcoords[i];
       float ypos = combo_graph.getGraphYCoord(i);
       if (in_region) {
-	if (ypos < 2) { // reached end of intersection region, make SeqSpan
-	  in_region = false;
-	  current_region_end = xpos;
-	  SeqSymmetry newsym =
-	    new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
-	  psym.addChild(newsym);
-	}
-	else {  // still in region, do nothing
-	}
+        if (ypos < 2) { // reached end of intersection region, make SeqSpan
+          in_region = false;
+          current_region_end = xpos;
+          SeqSymmetry newsym =
+            new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
+          psym.addChild(newsym);
+        }
+        else {  // still in region, do nothing
+        }
       }
       else {  // not already in_region
-	if (ypos >= 2) {
-	  in_region = true;
-	  current_region_start = xpos;
-	}
-	else {  // still not in region, so do nothing
-	}
+        if (ypos >= 2) {
+          in_region = true;
+          current_region_start = xpos;
+        }
+        else {  // still not in region, so do nothing
+        }
       }
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
@@ -365,17 +362,17 @@ public class SeqSymSummarizer {
      *     intermediary creation of symsA union syms, and symsB union syms)
      *  GraphSym scapeA = getSymmetrySummary(symsA, seq, true);
      *  GraphSym scapeB = getSymmetrySummary(symsB, seq, true);
-     *  java.util.List scapes = new ArrayList();
+     *  List scapes = new ArrayList();
      *  scapes.add(scapeA); scapes.add(scapeB);
      *  GraphSym combo_graph = landscapeSummer(scapes, seq);
      */
   }
 
-  public static SeqSymmetry getXor(java.util.List symsA, java.util.List symsB, BioSeq seq) {
+  public static SeqSymmetry getXor(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq) {
     MutableSeqSymmetry psym = new SimpleSymWithProps();
     SeqSymmetry unionA = getUnion(symsA, seq);
     SeqSymmetry unionB = getUnion(symsB, seq);
-    java.util.List symsAB = new ArrayList();
+    List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
     symsAB.add(unionA);
     symsAB.add(unionB);
     GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
@@ -397,23 +394,23 @@ public class SeqSymSummarizer {
       int xpos = xcoords[i];
       float ypos = combo_graph.getGraphYCoord(i);
       if (in_region) {
-	if (ypos < 1 || ypos > 1) { // reached end of xor region, make SeqSpan
-	  in_region = false;
-	  current_region_end = xpos;
-	  SeqSymmetry newsym =
-	    new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
-	  psym.addChild(newsym);
-	}
-	else {  // still in region, do nothing
-	}
+        if (ypos < 1 || ypos > 1) { // reached end of xor region, make SeqSpan
+          in_region = false;
+          current_region_end = xpos;
+          SeqSymmetry newsym =
+            new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
+          psym.addChild(newsym);
+        }
+        else {  // still in region, do nothing
+        }
       }
       else {  // not already in_region
-	if (ypos == 1) {
-	  in_region = true;
-	  current_region_start = xpos;
-	}
-	else {  // still not in region, so do nothing
-	}
+        if (ypos == 1) {
+          in_region = true;
+          current_region_start = xpos;
+        }
+        else {  // still not in region, so do nothing
+        }
       }
     }
     if (in_region) {  // last point was still in_region, so make a span to end?
@@ -439,21 +436,21 @@ public class SeqSymSummarizer {
    *  creates a SeqSymmetry that contains children for regions covered by syms in symsA that
    *     are not covered by syms in symsB.
    */
-  public static SeqSymmetry getExclusive(java.util.List symsA, java.util.List symsB, BioSeq seq) {
+  public static SeqSymmetry getExclusive(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq) {
     SeqSymmetry xorSym = getXor(symsA, symsB, seq);
     //  if no spans for xor, then won't be any for one-sided xor either, so return null;
     if (xorSym == null)  { return null; }
-    java.util.List xorList = new ArrayList();
+    List<SeqSymmetry> xorList = new ArrayList<SeqSymmetry>();
     xorList.add(xorSym);
     SeqSymmetry a_not_b = getIntersection(symsA, xorList, seq);
     return a_not_b;
   }
 
-  public static SeqSymmetry getNot(java.util.List syms, BioSeq seq) {
+  public static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq) {
     return getNot(syms, seq, true);
   }
 
-  public static SeqSymmetry getNot(java.util.List syms, BioSeq seq, boolean include_ends) {
+  public static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq, boolean include_ends) {
     SeqSymmetry union = getUnion(syms, seq);
     int spanCount = union.getChildCount();
 
@@ -465,30 +462,30 @@ public class SeqSymSummarizer {
     //    invertedSym.addSpan(new SimpleSeqSpan(pSpan.getStart(), pSpan.getEnd(), seq));
     if (include_ends) {
       if (spanCount < 1) {
-	// no spans, so just return sym of whole range of seq
-	invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-	return invertedSym;
+        // no spans, so just return sym of whole range of seq
+        invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+        return invertedSym;
       }
       else {
-	SeqSpan firstSpan = union.getChild(0).getSpan(seq);
-	if (firstSpan.getMin() > 0) {
-	  SeqSymmetry beforeSym = new SingletonSeqSymmetry(0, firstSpan.getMin(), seq);
-	  invertedSym.addChild(beforeSym);
-	}
+        SeqSpan firstSpan = union.getChild(0).getSpan(seq);
+        if (firstSpan.getMin() > 0) {
+          SeqSymmetry beforeSym = new SingletonSeqSymmetry(0, firstSpan.getMin(), seq);
+          invertedSym.addChild(beforeSym);
+        }
       }
     }
     for (int i=0; i<spanCount-1; i++) {
       SeqSpan preSpan = union.getChild(i).getSpan(seq);
       SeqSpan postSpan = union.getChild(i+1).getSpan(seq);
       SeqSymmetry gapSym =
-	new SingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
+        new SingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
       invertedSym.addChild(gapSym);
     }
     if (include_ends) {
       SeqSpan lastSpan = union.getChild(spanCount-1).getSpan(seq);
       if (lastSpan.getMax() < seq.getLength()) {
-	SeqSymmetry afterSym = new SingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
-	invertedSym.addChild(afterSym);
+        SeqSymmetry afterSym = new SingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
+        invertedSym.addChild(afterSym);
       }
     }
     if (include_ends) {

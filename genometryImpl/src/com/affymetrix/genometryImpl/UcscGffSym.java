@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -14,45 +14,43 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.parsers.GFFParser;
-import com.affymetrix.genometryImpl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.Scored;
 import java.util.*;
 import com.affymetrix.genometry.*;
 import java.util.regex.*;
 
 /**
- *  A sym to efficiently store GFF 1.0 annotations. 
+ *  A sym to efficiently store GFF 1.0 annotations.
  *  See http://genome.ucsc.edu/goldenPath/help/customTrack.html#GTF
  */
-public class UcscGffSym extends SingletonSymWithProps implements Scored { 
+public class UcscGffSym extends SingletonSymWithProps implements Scored {
 
   public static final char UNKNOWN_FRAME = '.';
-  
-  /** 
+
+  /**
    *  A pattern used to test whether this is GFF1 or GFF2.
    *  If the pattern matches, then Matcher.group(1) will contain the GFF1 ID.
    *  <p>
    *  The pattern that matches a single string of non-whitespace characters,
-   *  either (1) all by themselves, or (2) follwed by any amount of whitespace 
+   *  either (1) all by themselves, or (2) follwed by any amount of whitespace
    *  and a "#" and any other text.  Case (2) allows for comments.
    *  </p>
    *
    *<pre>
-   *  Examples: 
+   *  Examples:
    *    "AFX382 # here is a comment"  matches.
    *    "AFX382" matches
    *    "AFX382  " matches (note that the extra white space is ok)
    *    "group_id "foo" ; transcript_id "bar""  does NOT match
-   *    Gotchas: 
+   *    Gotchas:
    *      "AFX382# this is a comment" matches, and the ID does not include the "#" character
    *      "AFX382#" matches, and the ID does include the "#" character
    *</pre>
    */
   public static final Pattern gff1_regex = Pattern.compile("^(\\S+)\\s*($|#.*)");
-  
+
   // old, wrong pattern, required a tab before the comment
   //public static final Pattern gff1_regex = Pattern.compile("^(\\S+)($|\\t#)");
-  
+
   String source;
   String method;
   String feature_type;
@@ -69,11 +67,11 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
    * those errors and will also convert from base-1 to interbase-0 coordinates.
    * @param a  The coordinate in column 4 of the GFF file.
    * @param b  The coordinate in column 5 of the GFF file.
-   * @param convert_base Whether to convert from base-1 to interbase-0 
+   * @param convert_base Whether to convert from base-1 to interbase-0
    *   numbering; this IS necessary with typical GFF files.
    */
-  public UcscGffSym(BioSeq seq, String source, String feature_type, int a, int b, 
-                    float score, char strand, char frame, String group_field, 
+  public UcscGffSym(BioSeq seq, String source, String feature_type, int a, int b,
+                    float score, char strand, char frame, String group_field,
                     boolean convert_base) {
     super(0, 0, seq);
 
@@ -83,13 +81,13 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
     if (convert_base) { // convert from base-1 numbering to interbase-0 numbering
       min--;
     }
-    
+
     if (strand == '-') {
       setCoords(max, min);
     } else {
       setCoords(min, max);
     }
-    
+
     this.source = source;
     this.feature_type = feature_type;
     this.score = score;
@@ -108,18 +106,18 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
       }
     }
   }
-  
+
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }
   public float getScore()  { return score; }
   public char getFrame()  { return frame; }
 
   /** Returns null for GFF2 or the group field for GFF1. */
-  public String getGroup()  { 
+  public String getGroup()  {
     if (is_gff1) return group;
     else return null;
   }
-  
+
   public boolean isGFF1() {
     return is_gff1;
   }
@@ -140,8 +138,8 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
       return m.get(name);
     }
   }
-  
-  /** 
+
+  /**
    *  Overriden such that certain properties will be stored more efficiently.
    *  Setting certain properties this way is not supported:
    *  these include "group", "score" and "frame".
@@ -173,7 +171,7 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
         return true;
       }
       else {
-        //source = null; 
+        //source = null;
         return false;
       }
     }
@@ -183,7 +181,7 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
         return true;
       }
       else {
-        //source = null; 
+        //source = null;
         return false;
       }
     }
@@ -199,14 +197,14 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
     return super.setProperty(name, val);
   }
 
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 
-  public Map cloneProperties() {
-    Map tprops = super.cloneProperties();
+  public Map<String,Object> cloneProperties() {
+    Map<String,Object> tprops = super.cloneProperties();
     if (tprops == null) {
-      tprops = new HashMap();
+      tprops = new HashMap<String,Object>();
     }
     if (getID() != null) {
       tprops.put("id", getID());
@@ -226,8 +224,8 @@ public class UcscGffSym extends SingletonSymWithProps implements Scored {
     } else {
       if (group != null) GFFParser.processAttributes(tprops, group);
     }
-    
+
     return tprops;
   }
-  
+
 }

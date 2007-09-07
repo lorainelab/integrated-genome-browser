@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -17,8 +17,6 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.*;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
 
 /**
  *  Holds a reference to a "parent" symmetry and an index within it.
@@ -43,26 +41,26 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements Indexed
   public void setID(String symid) { id = symid; }
   public String getID() { return id; }
 
-  public Map getProperties() { 
-    Map props;
+  public Map<String,Object> getProperties() {
+    Map<String,Object> props;
     if (id != null) {
       props = cloneProperties();
     }
     else {
-      props = parent.getProperties(); 
+      props = parent.getProperties();
     }
     return props;
   }
 
-  public Map cloneProperties() {
-    Map props = parent.cloneProperties();
+  public Map<String,Object> cloneProperties() {
+    Map<String,Object> props = parent.cloneProperties();
     if (id != null) {
       props.put("id", id);
     }
     return props;
   }
 
-  public Object getProperty(String key) { 
+  public Object getProperty(String key) {
     if (key.equals("id")) { return id; }
     else { return parent.getProperty(key); }
   }
@@ -70,19 +68,19 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements Indexed
   /** IndexedSingletonSym does not support setting properties, so this will
    *  return false.
    */
-  public boolean setProperty(String key, Object val) { 
-    if (key.equals("id")) { 
-      setID((String)val); 
+  public boolean setProperty(String key, Object val) {
+    if (key.equals("id")) {
+      setID((String)val);
       return true;
     }
     else  {
-      System.err.println("IndexedSingletonSym does not support setting properties, except for id"); 
+      System.err.println("IndexedSingletonSym does not support setting properties, except for id");
       return false;
     }
   }
 
   /*
-  public float[] getScores(java.util.List scorelist) {
+  public float[] getScores(List scorelist) {
     return this.getParent().getChildScores(this, scorelist);
   }
 
@@ -91,6 +89,6 @@ public class IndexedSingletonSym extends SingletonSeqSymmetry implements Indexed
   }
 
   public int getScoreCount() { return this.getParent().getScoreCount(); }
-  */  
+  */
 
 }

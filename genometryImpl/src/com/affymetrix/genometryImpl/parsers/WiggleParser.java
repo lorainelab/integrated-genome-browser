@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -21,7 +21,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import java.awt.Color;
 
@@ -33,43 +32,43 @@ import java.awt.Color;
  *  them, but ignores properties that don't easily apply to IGB.
  */
 public class WiggleParser {
-    
+
   public static final int BED4 = 1;
   public static final int VARSTEP = 2;
   public static final int FIXEDSTEP = 3;
-  
+
   static Pattern field_regex = Pattern.compile("\\s+");  // one or more whitespace
-  
+
   TrackLineParser track_line_parser;
   boolean ensure_unique_id = true;
-  
+
   public WiggleParser() {
     track_line_parser = new TrackLineParser();
   }
-  
+
   /**
    *  Reads a Wiggle-formatted file using any combination of the three formats
    *  {@link #BED4}, {@link #VARSTEP}, {@link #FIXEDSTEP}.
    *  The format must be specified on the first line following a track line,
    *  otherwise BED4 is assumed.
    */
-  public List parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq,
+  public List<GraphSym> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq,
       String stream_name) throws IOException {
-    
+
     int current_format = BED4;
-    List grafs = new ArrayList();
+    List<GraphSym> grafs = new ArrayList<GraphSym>();
     WiggleData current_data = null;
-    Map current_datamap = null; // Map: seq_id -> WiggleData
+    Map<String,WiggleData> current_datamap = null; // Map: seq_id -> WiggleData
     boolean previous_line_was_track_line = false;
-    
+
     BufferedReader br = new BufferedReader(new InputStreamReader(istr));
     String line;
     Map graph_props_map = new LinkedHashMap();
-    
+
     while ((line = br.readLine()) != null && ! Thread.currentThread().isInterrupted()) {
       // Generally should be "track" line, followed by optional "format" line
       // (If there is no format line, BED4 format is assumed.)
-      
+
       if (line.length() == 0) { continue; }
 //TODO:
 //      else if (line.startsWith(Bookmark.IGB_GRAPHS_PRAGMA)) {
@@ -79,18 +78,18 @@ public class WiggleParser {
 //          throw new IOException("Couldn't parse IGB-graphs pragma");
 //        }
 //      }
-      else if (line.startsWith("#")) { continue; } 
-      else if (line.startsWith("%")) { continue; } 
-      else if (line.startsWith("browser")) { continue; } 
+      else if (line.startsWith("#")) { continue; }
+      else if (line.startsWith("%")) { continue; }
+      else if (line.startsWith("browser")) { continue; }
       else if (line.startsWith("track")) {
         grafs.addAll(finishLine(seq_group, current_datamap, stream_name));
         // finish previous graph(s) using previous track properties
-        
+
         track_line_parser.parseTrackLine(line);
-                
+
         current_format = BED4; // unless there is a format line next, assume BED4
         current_data = null;
-        current_datamap = new HashMap(); // Map: seq_id -> WiggleData
+        current_datamap = new HashMap<String,WiggleData>(); // Map: seq_id -> WiggleData
         previous_line_was_track_line = true;
         continue;
       } else if (line.startsWith("variableStep")) {
@@ -108,49 +107,49 @@ public class WiggleParser {
         current_data = new FixedStepWiggleData(track_line_parser.getCurrentTrackHash(), line, seq_group);
         current_datamap.put("", current_data);
       }
-      
+
       // Else, it is a data line
       else {
         String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
-        
-        
+
+
         if (current_format == VARSTEP) {
-          
+
           current_data.xlist.add(Integer.parseInt(fields[0]));
           current_data.ylist.add(Float.parseFloat(fields[1]));
-          
+
         } else if (current_format == FIXEDSTEP) {
-          
+
           current_data.ylist.add(Float.parseFloat(fields[0]));
-          
+
         } else if (current_format == BED4) {
           // chrom  start end value
           String seq_id = fields[0];
-          
-          current_data = (WiggleData) current_datamap.get(seq_id);
+
+          current_data = current_datamap.get(seq_id);
           if (current_data == null) {
             current_data = new BedWiggleData(track_line_parser.getCurrentTrackHash(), seq_group, seq_id);
             current_datamap.put(seq_id, current_data);
           }
-          
+
           int x1 = Integer.parseInt(fields[1]);
           int x2 = Integer.parseInt(fields[2]);
           int start = Math.min(x1, x2);
           int width = Math.max(x1, x2) - start;
-          
+
           current_data.xlist.add(x1);
           current_data.wlist.add(width);
           current_data.ylist.add(Float.parseFloat(fields[3]));
-          
+
         } else {  // cannot happen
           throw new RuntimeException("Format undefined");
         }
       }
       previous_line_was_track_line = false;
     }
-    
+
     grafs.addAll(finishLine(seq_group, current_datamap, stream_name));
-    
+
     if (annotate_seq) {
       Iterator giter = grafs.iterator();
       while (giter.hasNext()) {
@@ -161,10 +160,10 @@ public class WiggleParser {
     }
 
 //    BookmarkPropertyParser.applyGraphProperties(grafs, graph_props_map);
-    
+
     return grafs;
   }
-  
+
   static String parseFormatLine(String name, String format_line, String default_val) {
     String val = default_val;
     String[] fields = field_regex.split(format_line);
@@ -177,20 +176,20 @@ public class WiggleParser {
   }
 
 
-  /** 
+  /**
    * Finishes the current data section and creates a list of GraphSym objects.
-   * (For the BED4 format, there can be multiple graphs in the list, for the 
+   * (For the BED4 format, there can be multiple graphs in the list, for the
    *  other formats there will only be one.)
    */
-  List finishLine(AnnotatedSeqGroup seq_group, Map m, String stream_name) {
+  List<GraphSym> finishLine(AnnotatedSeqGroup seq_group, Map m, String stream_name) {
     if (m == null) {
-      return Collections.EMPTY_LIST;
+      return Collections.<GraphSym>emptyList();
     }
 
-    List grafs = new ArrayList(m.size());
-    
-    Map track_hash = track_line_parser.getCurrentTrackHash();
-    String graph_id = (String) track_hash.get(TrackLineParser.NAME);
+    List<GraphSym> grafs = new ArrayList<GraphSym>(m.size());
+
+    Map<String,String> track_hash = track_line_parser.getCurrentTrackHash();
+    String graph_id = track_hash.get(TrackLineParser.NAME);
     if (graph_id == null) {
       graph_id = stream_name;
     }
@@ -198,16 +197,16 @@ public class WiggleParser {
       graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq_group);
     }
     track_hash.put(TrackLineParser.NAME, graph_id);
-    
+
     GraphStateI gstate = seq_group.getStateProvider().getGraphState(graph_id);
     track_line_parser.applyTrackProperties(track_hash, gstate);
-    
+
     Iterator iter = m.keySet().iterator();
     while (iter.hasNext()) {
       String seq_id = (String) iter.next();
       WiggleData wig = (WiggleData) m.get(seq_id);
       GraphSymFloat gsym = wig.createGraph(graph_id);
-    
+
       if (gsym != null) {
         grafs.add(gsym);
       }
@@ -215,8 +214,8 @@ public class WiggleParser {
 
     return grafs;
   }
-    
-  
+
+
   /**
    *  Writes out one particular wiggle format. Specifically:
    *     variableStep two-column data; started by a declaration line and followed with
@@ -237,8 +236,8 @@ public class WiggleParser {
     while (iter.hasNext()) {
       GraphSym graf = (GraphSym)iter.next();
       String gname = graf.getGraphName();
-      String desc = ""; 
-      writeVariableStep(graf, Integer.MIN_VALUE, Integer.MAX_VALUE, 
+      String desc = "";
+      writeVariableStep(graf, Integer.MIN_VALUE, Integer.MAX_VALUE,
         gname, desc, bw);
       bw.flush();
     }
@@ -249,12 +248,12 @@ public class WiggleParser {
    *  Writes a set of graphs to a variable-step Wiggle format, outputting
    *  only data within the given range of x-values.
    */
-  public static void writeVariableStep(GraphSym graf, 
-      final int x_start, final int x_end, 
+  public static void writeVariableStep(GraphSym graf,
+      final int x_start, final int x_end,
       String name, String description,
       BufferedWriter bw) throws IOException {
-    
-    
+
+
     String seqid = graf.getGraphSeq().getID();
     bw.write("track type=wiggle_0 name=\"" + name + "\" description=\"" + description + "\"");
     bw.write('\n');
@@ -262,7 +261,7 @@ public class WiggleParser {
     bw.write('\n');
     final int pcount = graf.getPointCount();
     final int[] xcoords = graf.getGraphXCoords();
-    
+
     for (int i=0; i<pcount; i++) {
       final int x = xcoords[i];
       if (x >= x_start && x <= x_end) {
@@ -274,10 +273,10 @@ public class WiggleParser {
     }
   }
 
-  /** Writes the given GraphIntervalSym in wiggle-BED format.  
-   *  Also writes a track line as a header. 
+  /** Writes the given GraphIntervalSym in wiggle-BED format.
+   *  Also writes a track line as a header.
    */
-  public static boolean writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {    
+  public static boolean writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
     int xpos[] = graf.getGraphXCoords();
     int widths[] = graf.getGraphWidthCoords();
     //float ypos[] = (float[]) graf.getGraphYCoords();
@@ -306,7 +305,7 @@ public class WiggleParser {
       bw.write(" viewLimits="+Float.toString(state.getVisibleMinY())+":"+Float.toString(state.getVisibleMaxY()));
       bw.write("");
       bw.write('\n');
-      
+
       for (int i=0; i<xpos.length; i++) {
         int x2 = xpos[i] + widths[i];
         bw.write(seq_id + ' ' + xpos[i] + ' ' +  x2  + ' ' + graf.getGraphYCoord(i) + '\n');

@@ -53,7 +53,7 @@ public class HeatMap {
     HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1
   };
 
-  static Map name_to_color_array = new HashMap();
+  static Map<String,HeatMap> name2heatmap = new HashMap<String,HeatMap>();
 
   String name;
   Color[] colors;
@@ -70,16 +70,16 @@ public class HeatMap {
   public Color[] getColors() {
     return colors;
   }
-  
+
   /** Gets the color at the given index value.
    * @param heatmap_index an integer in the range 0 to 255.  If the specified
    *  index is outside this range, the color corresponding to index 0 or 255
    *  will be returned.
    */
   public Color getColor(int heatmap_index) {
-    if (heatmap_index < 0) { 
+    if (heatmap_index < 0) {
       return colors[0];
-    } else if (heatmap_index > 255) { 
+    } else if (heatmap_index > 255) {
       return colors[255];
     } else {
       return colors[heatmap_index];
@@ -91,7 +91,7 @@ public class HeatMap {
    *  HEATMAP_NAMES, or null if one with the given name does not exist.
    */
   public static HeatMap getStandardHeatMap(String name) {
-    HeatMap hm = (HeatMap) name_to_color_array.get(name);
+    HeatMap hm = name2heatmap.get(name);
     if (hm == null) {
       int r,g,b;
       int bins = 256;
@@ -155,7 +155,7 @@ public class HeatMap {
 
       if (cc != null) {
         hm = new HeatMap(name, cc);
-        name_to_color_array.put(name, hm);
+        name2heatmap.put(name, hm);
       }
     }
 

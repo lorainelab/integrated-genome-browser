@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,16 +13,13 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.TypedSym;
-import java.util.*;
-import java.io.DataOutputStream;
-import java.io.Writer;
-import java.io.IOException;
-
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.EfficientPairSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
+
+import java.util.*;
+import java.io.*;
 
 /**
  *  A SeqSymmetry optimized for holding data from PSL files.
@@ -57,32 +54,32 @@ public class UcscPslSym
   int[] blockSizes;
   int[] qmins;
   int[] tmins;
-  Map props;
+  Map<String,Object> props;
 
   /**
    *  @param blockcount  ignored, uses blockSizes.length
    */
   public UcscPslSym(String type,
-		    int matches,
-		    int mismatches,
-		    int repmatches,
-		    int ncount,
-		    int qNumInsert,
-		    int qBaseInsert,
-		    int tNumInsert,
-		    int tBaseInsert,
-		    boolean same_orientation,
-		    BioSeq queryseq,
-		    int qmin,
-		    int qmax,
-		    BioSeq targetseq,
-		    int tmin,
-		    int tmax,
-		    int blockcount,  // now ignored, uses blockSizes.length
-		    int[] blockSizes,
-		    int[] qmins,
-		    int[] tmins
-		    ) {
+                    int matches,
+                    int mismatches,
+                    int repmatches,
+                    int ncount,
+                    int qNumInsert,
+                    int qBaseInsert,
+                    int tNumInsert,
+                    int tBaseInsert,
+                    boolean same_orientation,
+                    BioSeq queryseq,
+                    int qmin,
+                    int qmax,
+                    BioSeq targetseq,
+                    int tmin,
+                    int tmax,
+                    int blockcount,  // now ignored, uses blockSizes.length
+                    int[] blockSizes,
+                    int[] qmins,
+                    int[] tmins
+                    ) {
 
     this.type = type;
     this.matches = matches;
@@ -110,8 +107,8 @@ public class UcscPslSym
     int prevmin = 0;
     for (int i=0; i<count; i++) {
       if ((qmins[i] < prevmin) || ((qmins[i] + blockSizes[i]) > qmins[i+1])) {
-	  overlapping_query_coords = true;
-	  break;
+          overlapping_query_coords = true;
+          break;
       }
       prevmin = qmins[i];
     }
@@ -194,10 +191,10 @@ public class UcscPslSym
     }
     else if (span_seq == targetseq) {
       if (same_orientation) {
-	mutspan.set(tmins[child_index], tmins[child_index]+blockSizes[child_index], targetseq);
+        mutspan.set(tmins[child_index], tmins[child_index]+blockSizes[child_index], targetseq);
       }
       else {
-	mutspan.set(tmins[child_index]+blockSizes[child_index], tmins[child_index], targetseq);
+        mutspan.set(tmins[child_index]+blockSizes[child_index], tmins[child_index], targetseq);
       }
       success = true;
     }
@@ -207,18 +204,18 @@ public class UcscPslSym
   public SeqSymmetry getChild(int i) {
     if (same_orientation) {
       return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-					  tmins[i], tmins[i]+blockSizes[i], targetseq);
+                                          tmins[i], tmins[i]+blockSizes[i], targetseq);
     }
     else {
       return new EfficientPairSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-					  tmins[i] + blockSizes[i], tmins[i], targetseq);
+                                          tmins[i] + blockSizes[i], tmins[i], targetseq);
     }
   }
 
   // SearchableSeqSymmetry interface
-  public List getOverlappingChildren(SeqSpan input_span) {
+  public List<SeqSymmetry> getOverlappingChildren(SeqSpan input_span) {
     final boolean debug = false;
-    List results = null;
+    List<SeqSymmetry> results = null;
     if (input_span.getBioSeq() != this.getQuerySeq()) {
       results =  SeqUtils.getOverlappingChildren(this, input_span);
       if (debug) System.out.println("input span != query seq, doing normal SeqUtils.getOverlappingChildren() call");
@@ -233,38 +230,38 @@ public class UcscPslSym
       // do a simple binary search on qmins to find first qmin with coord >= input_span.getMin()
       // then scan till qmin coord >= input_span.getMax();
       // collect all qmins in between and use as basis for creating syms...
-      int input_min = (int)input_span.getMin();
-      int input_max = (int)input_span.getMax();
+      int input_min = input_span.getMin();
+      int input_max = input_span.getMax();
       int beg_index = Arrays.binarySearch(qmins, input_min);
       if (debug) {
-	System.out.println("map symmetry:");
-	SeqUtils.printSymmetry(this);
+        System.out.println("map symmetry:");
+        SeqUtils.printSymmetry(this);
       }
       if (debug) { System.out.println("initial beg_index: " + beg_index); }
       if (beg_index < 0)  { beg_index = -beg_index -1; }
       //      if (beg_index < 0)  { beg_index = (-beg_index -1) -1; }
       else {
-	// backtrack beg_index in case hit duplicates???
-	// well, only way this can happen when (! overlapping_query_coords) is when have weird
-	//   entries where blockSize is zero...
-	while ((beg_index > 0) && (qmins[beg_index-1] == qmins[beg_index])) { beg_index--; }
+        // backtrack beg_index in case hit duplicates???
+        // well, only way this can happen when (! overlapping_query_coords) is when have weird
+        //   entries where blockSize is zero...
+        while ((beg_index > 0) && (qmins[beg_index-1] == qmins[beg_index])) { beg_index--; }
       }
       while ((beg_index > 0) && ((qmins[beg_index-1] + blockSizes[beg_index-1]) > input_min)) {
-	beg_index--;
+        beg_index--;
       }
       if (debug) {
-	System.out.println("binary search, final beg_index: " + beg_index);
-	System.out.println("binary search, child count: " + this.getChildCount());
+        System.out.println("binary search, final beg_index: " + beg_index);
+        System.out.println("binary search, child count: " + this.getChildCount());
       }
 
       if ((beg_index < qmins.length) && (qmins[beg_index] < input_max)) {
-	results = new ArrayList();
-	int index = beg_index;
-	// now scan forward till qmin[index] >= input_max and collect list of symmetries
-	while ((index < qmins.length) && (qmins[index] < input_max)) {
-	  results.add(this.getChild(index));
-	  index++;
-	}
+        results = new ArrayList<SeqSymmetry>();
+        int index = beg_index;
+        // now scan forward till qmin[index] >= input_max and collect list of symmetries
+        while ((index < qmins.length) && (qmins[index] < input_max)) {
+          results.add(this.getChild(index));
+          index++;
+        }
       }
     }
     return results;
@@ -287,12 +284,12 @@ public class UcscPslSym
   public int getTargetMin() { return tmin; }
   public int getTargetMax() { return tmax; }
 
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 
-  public Map cloneProperties() {
-    HashMap tprops = new HashMap();
+  public Map<String,Object> cloneProperties() {
+    HashMap<String,Object> tprops = new HashMap<String,Object>();
 
     tprops.put("id", getQuerySeq().getID());
     tprops.put("type", type);
@@ -332,7 +329,7 @@ public class UcscPslSym
 
   public boolean setProperty(String name, Object val) {
     if (props == null) {
-      props = new Hashtable();
+      props = new Hashtable<String,Object>();
     }
     props.put(name, val);
     return true;
@@ -391,26 +388,26 @@ public class UcscPslSym
     out.write(Integer.toString(blockcount));
     out.write('\t');
       for (int i=0; i<blockcount; i++) {
-	out.write(Integer.toString(blockSizes[i]));
-	out.write(',');
+        out.write(Integer.toString(blockSizes[i]));
+        out.write(',');
       }
     out.write('\t');
 
       for (int i=0; i<blockcount; i++) {
-	if (same_orientation) {
-	  out.write(Integer.toString(qmins[i]));
-	}
-	else {
-	  // dealing with reverse issue
-	  int mod_qmin = queryseq.getLength() - qmins[i] - blockSizes[i];
-	  out.write(Integer.toString(mod_qmin));
-	}
-	out.write(',');
+        if (same_orientation) {
+          out.write(Integer.toString(qmins[i]));
+        }
+        else {
+          // dealing with reverse issue
+          int mod_qmin = queryseq.getLength() - qmins[i] - blockSizes[i];
+          out.write(Integer.toString(mod_qmin));
+        }
+        out.write(',');
       }
       out.write('\t');
       for (int i=0; i<blockcount; i++) {
-	out.write(Integer.toString(tmins[i]));
-	out.write(',');
+        out.write(Integer.toString(tmins[i]));
+        out.write(',');
       }
     out.write('\t');
     if (include_newline) {
@@ -422,11 +419,11 @@ public class UcscPslSym
     if (props != null) {
       Iterator iter = props.entrySet().iterator();
       while (iter.hasNext()) {
-	Map.Entry entry = (Map.Entry)iter.next();
-	out.write((String)entry.getKey());
-	out.write('=');
-	out.write(entry.getValue().toString());
-	out.write('\t');
+        Map.Entry entry = (Map.Entry)iter.next();
+        out.write((String)entry.getKey());
+        out.write('=');
+        out.write(entry.getValue().toString());
+        out.write('\t');
       }
     }
   }
@@ -493,34 +490,34 @@ public class UcscPslSym
       new_tmins = new int[bcount];
       for (int i=0; i<bcount; i++) {
         new_blockSizes[i] = blockSizes[bcount-i-1];
-	new_qmins[i] = tmins[bcount-i-1];
-	new_tmins[i] = qmins[bcount-i-1];
+        new_qmins[i] = tmins[bcount-i-1];
+        new_tmins[i] = qmins[bcount-i-1];
       }
     }
 
     UcscPslSym new_sym =
       new UcscPslSym(
-			  type, // String type,
-			  matches, // int matches,
-			  mismatches, // int mismatches,
-			  repmatches, // int repmatches,
-			  ncount, // int ncount,
-			  tNumInsert,     // int qNumInsert,
-			  tBaseInsert, // int qBaseInsert,
-			  qNumInsert, // int tNumInsert,
-			  qBaseInsert, // int tBaseInsert,
-			  same_orientation, // boolean same_orientation,
-			  targetseq, // BioSeq queryseq,
-			  tmin, // int qmin,
-			  tmax, // int qmax,
-			  queryseq, // BioSeq targetseq,
-			  qmin, // int tmin,
-			  qmax, // int tmax,
-			  blockSizes.length, // int blockcount
-			  new_blockSizes,  // int[] blockSizes,
-			  new_qmins,
-			  new_tmins
-			  );
+                          type, // String type,
+                          matches, // int matches,
+                          mismatches, // int mismatches,
+                          repmatches, // int repmatches,
+                          ncount, // int ncount,
+                          tNumInsert,     // int qNumInsert,
+                          tBaseInsert, // int qBaseInsert,
+                          qNumInsert, // int tNumInsert,
+                          qBaseInsert, // int tBaseInsert,
+                          same_orientation, // boolean same_orientation,
+                          targetseq, // BioSeq queryseq,
+                          tmin, // int qmin,
+                          tmax, // int qmax,
+                          queryseq, // BioSeq targetseq,
+                          qmin, // int tmin,
+                          qmax, // int tmax,
+                          blockSizes.length, // int blockcount
+                          new_blockSizes,  // int[] blockSizes,
+                          new_qmins,
+                          new_tmins
+                          );
     return new_sym;
   }
 }

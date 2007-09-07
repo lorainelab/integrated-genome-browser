@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -25,31 +25,31 @@ import java.io.*;
  *  uff.addCompressionEndings(new String[] {".gz", ".zip"});
  */
 public class UniFileFilter extends FileFilter {
-  
-  
-  private HashSet filters = null;
+
+
+  private HashSet<String> filters = null;
   private String description = null;
   private String fullDescription = null;
   private boolean useExtensionsInDescription = true;
-  
+
   public UniFileFilter() {
-    this.filters = new LinkedHashSet();
+    this.filters = new LinkedHashSet<String>();
   }
-  
+
   public UniFileFilter(String extension) {
     this(extension,null);
   }
-  
+
   public UniFileFilter(String extension, String description) {
     this();
     if(extension!=null) addExtension(extension);
     if(description!=null) setDescription(description);
   }
-  
+
   public UniFileFilter(String[] filters) {
     this(filters, null);
   }
-  
+
   /**
    *  This is the full constructor.
    *  <pre>
@@ -70,13 +70,13 @@ public class UniFileFilter extends FileFilter {
     }
     if(description!=null) setDescription(description);
   }
-  
+
   public boolean accept(File f) {
     if(f != null) {
       if(f.isDirectory()) {
         return true;
       }
-      
+
       // We used to use getExtension(f) and check whether filters.contains(extension)
       // but getExtension(f) can't return compound extensions like ".egr.txt"
 
@@ -92,7 +92,7 @@ public class UniFileFilter extends FileFilter {
     return false;
   }
 
-  List compression_endings = new ArrayList(4);
+  List<String> compression_endings = new ArrayList<String>(4);
 
   /** Adds a file extension that will be considered to represent
    *  compression types that the filter should
@@ -116,12 +116,12 @@ public class UniFileFilter extends FileFilter {
     if (compression_endings != null) {
       // The vector is so short that is is ok to use get(i)
       for (int i=0; i<compression_endings.size(); i++) {
-        name = stripCompressionEnding(name, (String) compression_endings.get(i));
+        name = stripCompressionEnding(name, compression_endings.get(i));
       }
     }
     return name;
   }
-  
+
   // Removes a compression file-type endings. If the ending isn't present,
   // the given filename is returned intact
   // Should supply both arguments in lower case
@@ -133,17 +133,17 @@ public class UniFileFilter extends FileFilter {
       return name;
     }
   }
-  
+
   /** Returns the file extension remaining after all compression endings have
    *  been removed from the name.  The returned file extension is lowercase.
    *  In the following examples,
    *  assume that setCompressionEnding(new String[] {".gz"}) has
    *  been called:
    *<ol>
-   *<li> "foo.bar" returns "bar".  
+   *<li> "foo.bar" returns "bar".
    *<li> "foo.BAR.gz" returns "bar".
-   *<li> "foo.egr.txt" returns "txt". (NOT "egr.txt" as you might wish)  
-   *<li> "foo" returns null. 
+   *<li> "foo.egr.txt" returns "txt". (NOT "egr.txt" as you might wish)
+   *<li> "foo" returns null.
    *<li> "foo.gz" returns null.
    *</ol>
    */
@@ -158,23 +158,23 @@ public class UniFileFilter extends FileFilter {
     }
     return null;
   }
-  
-  
+
+
   public void addExtension(String extension) {
     if(filters == null) {
-      filters = new LinkedHashSet(5);
+      filters = new LinkedHashSet<String>(5);
     }
     filters.add(extension.toLowerCase());
     fullDescription = null;
   }
-  
-  /** Returns an unmodifiable Set of the extensions added with 
+
+  /** Returns an unmodifiable Set of the extensions added with
    * {@link #addExtension(String)}.
    */
-  public Set getExtensions() {
-    return Collections.unmodifiableSet(filters);
+  public Set<String> getExtensions() {
+    return Collections.<String>unmodifiableSet(filters);
   }
-  
+
   public String getDescription() {
     if(fullDescription == null) {
       if(description == null || isExtensionListInDescription()) {
@@ -194,7 +194,7 @@ public class UniFileFilter extends FileFilter {
     }
     return fullDescription;
   }
-  
+
   /** Sets a short description for the file filter.  Example "Text files".
    *  The list of file endings may be added automatically.
    *  @see #setExtensionListInDescription(boolean)
@@ -203,7 +203,7 @@ public class UniFileFilter extends FileFilter {
     this.description = description;
     fullDescription = null;
   }
-  
+
   /** Set whether the description of the file type should have the list of
    *  file type extensions added to it automatically.  Default is true.
    *  For example  "Text files (*.txt, *.rtf)".
@@ -212,11 +212,11 @@ public class UniFileFilter extends FileFilter {
     useExtensionsInDescription = b;
     fullDescription = null;
   }
-  
-  /** Returns the value set in {@link #setExtensionListInDescription(boolean)}. 
+
+  /** Returns the value set in {@link #setExtensionListInDescription(boolean)}.
    */
   public boolean isExtensionListInDescription() {
     return useExtensionsInDescription;
   }
-  
+
 }

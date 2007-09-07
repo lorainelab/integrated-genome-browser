@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2005 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -25,7 +25,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    *  be applied to property values in setProperty().
    */
   static boolean OPT_CONVERT_OBJECTS = false;
-  
+
   /** Set this property to Boolean.TRUE to indicate that the Symmetry is being
    *  used simply to group other Symmetry's together, and that this Symmetry
    *  does not represent any biological feature and should typically not be drawn
@@ -33,7 +33,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    */
   public static final String CONTAINER_PROP = "container sym";
 
-  protected Map props;
+  protected Map<String,Object> props;
 
   public SimpleSymWithProps() {
     super();
@@ -41,11 +41,11 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 
   public SimpleSymWithProps(int estimated_child_count) {
     this();
-    children = new Vector(estimated_child_count);
+    children = new Vector<SeqSymmetry>(estimated_child_count);
   }
 
   /** Returns the properties map, or null. */
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return props;
   }
 
@@ -54,30 +54,31 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    *  Uses the same type of Map class (HashMap, TreeMap, etc.)
    *  as the original.
    */
-  public Map cloneProperties() {
+  @SuppressWarnings("unchecked")
+  public Map<String,Object> cloneProperties() {
     if (props == null) { return null; }
     // quick check for efficient Hashtable cloning
     else if (props instanceof Hashtable) {
-      return (Map)((Hashtable)props).clone();
+      return (Map<String,Object>)((Hashtable<String,Object>)props).clone();
     }
     // quick check for efficient HashMap cloning
     else if (props instanceof HashMap) {
-      return (Map)((HashMap)props).clone();
+      return (Map<String,Object>)((HashMap<String,Object>)props).clone();
     }
     // quick check for efficient TreeMap cloning
     else if (props instanceof TreeMap) {
-      return (Map)((TreeMap)props).clone();
+      return (Map<String,Object>)((TreeMap<String,Object>)props).clone();
     }
     else {
       try {
-	Map newprops = (Map)props.getClass().newInstance();
-	newprops.putAll(props);
-	return newprops;
+        Map<String,Object> newprops = (Map<String,Object>) props.getClass().newInstance();
+        newprops.putAll(props);
+        return newprops;
       }
       catch (Exception ex) {
-	System.out.println("problem trying to clone SymWithProps properties, " +
-			   "returning null instead");
-	return null;
+        System.out.println("problem trying to clone SymWithProps properties, " +
+          "returning null instead");
+        return null;
       }
     }
   }
@@ -88,7 +89,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
    *  @param propmap  a Map of String's to String's.  This class is designed to not throw exceptions
    *  if the map is null.
    */
-  public boolean setProperties(Map propmap) {
+  public boolean setProperties(Map<String,Object> propmap) {
     this.props = propmap;
     return true;
   }
@@ -100,7 +101,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
   public boolean setProperty(String name, Object val) {
     if (name == null)  { return false; }
     if (props == null) {
-      props = new HashMap();
+      props = new HashMap<String,Object>();
     }
     if (OPT_CONVERT_OBJECTS) {
       props.put(name, convertToObject(val));
@@ -146,8 +147,8 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
     Object result = val;
     if (val instanceof String) {
       String str = (String) val;
-      if ("".equals(str)) { 
-        result = ""; 
+      if ("".equals(str)) {
+        result = "";
       }
       else if (str.length() == 1) {
         return new Character(str.charAt(0));

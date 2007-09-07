@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -20,15 +20,14 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
 public class SimpleBedParser implements AnnotationWriter {
+
   public String getMimeType() { return "text/plain"; }
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq, 
-				  String type, OutputStream outstream) {
-    boolean success = true;
-    int symcount = syms.size();
-    ArrayList spanlist = new ArrayList(symcount);  // initialize to number of top-level syms, won't be lower...
-    Iterator iterator = syms.iterator();
-    while (iterator.hasNext()) {
-      SeqSymmetry sym = (SeqSymmetry)iterator.next();
+
+  public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+      String type, OutputStream outstream) throws IOException {
+    boolean success;
+    ArrayList<SeqSpan> spanlist = new ArrayList<SeqSpan>(syms.size());  // initialize to number of top-level syms, won't be lower...
+    for (SeqSymmetry sym : syms) {
       SeqUtils.collectLeafSpans(sym, seq, spanlist);
     }
 
@@ -36,19 +35,21 @@ public class SimpleBedParser implements AnnotationWriter {
       Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
       int spancount = spanlist.size();
       for (int i=0; i<spancount; i++) {
-	SeqSpan span = (SeqSpan)spanlist.get(i);
-	bw.write(span.getBioSeq().getID());
-	bw.write("\t");
-	bw.write(Integer.toString(span.getMin()));;
-	bw.write("\t");
-	bw.write(Integer.toString(span.getMax()));;
-	bw.write('\n');
+        SeqSpan span = spanlist.get(i);
+        bw.write(span.getBioSeq().getID());
+        bw.write("\t");
+        bw.write(Integer.toString(span.getMin()));;
+        bw.write("\t");
+        bw.write(Integer.toString(span.getMax()));;
+        bw.write('\n');
       }
       bw.flush();
+      success = true;
     }
     catch (Exception ex) {
-      ex.printStackTrace();
       success = false;
+      IOException ioe = new IOException(ex);
+      throw ioe;
     }
     return success;
   }

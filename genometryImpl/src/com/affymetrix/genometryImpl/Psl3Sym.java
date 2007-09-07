@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,36 +29,36 @@ public class Psl3Sym extends UcscPslSym {
   int[] omins;
   boolean overlapping_other_coords = false;
 
-  public Psl3Sym(String type, 
-		 int matches,
-		 int mismatches,
-		 int repmatches,
-		 int ncount,
-		 int qNumInsert,
-		 int qBaseInsert, 
-		 int tNumInsert, 
-		 int tBaseInsert,
-		 boolean same_target_orientation, 
-		 boolean same_other_orientation,
-		 BioSeq queryseq, 
-		 int qmin,
-		 int qmax,
-		 BioSeq targetseq, 
-		 int tmin,
-		 int tmax,
-		 BioSeq otherseq, 
-		 int omin, 
-		 int omax, 
-		 int blockcount,  // now ignored, uses blockSizes.length
-		 int[] blockSizes,
-		 int[] qmins,
-		 int[] tmins, 
-		 int[] omins
-		 ) {
-    super(type, matches, mismatches, repmatches, ncount, qNumInsert, qBaseInsert, 
-	  tNumInsert, tBaseInsert, same_target_orientation, queryseq, qmin, qmax, 
-	  targetseq, tmin, tmax, 
-	  blockcount, blockSizes, qmins, tmins);
+  public Psl3Sym(String type,
+                 int matches,
+                 int mismatches,
+                 int repmatches,
+                 int ncount,
+                 int qNumInsert,
+                 int qBaseInsert,
+                 int tNumInsert,
+                 int tBaseInsert,
+                 boolean same_target_orientation,
+                 boolean same_other_orientation,
+                 BioSeq queryseq,
+                 int qmin,
+                 int qmax,
+                 BioSeq targetseq,
+                 int tmin,
+                 int tmax,
+                 BioSeq otherseq,
+                 int omin,
+                 int omax,
+                 int blockcount,  // now ignored, uses blockSizes.length
+                 int[] blockSizes,
+                 int[] qmins,
+                 int[] tmins,
+                 int[] omins
+                 ) {
+    super(type, matches, mismatches, repmatches, ncount, qNumInsert, qBaseInsert,
+          tNumInsert, tBaseInsert, same_target_orientation, queryseq, qmin, qmax,
+          targetseq, tmin, tmax,
+          blockcount, blockSizes, qmins, tmins);
     this.otherseq = otherseq;
     this.omin = omin;
     this.omax = omax;
@@ -69,7 +69,7 @@ public class Psl3Sym extends UcscPslSym {
   }
 
   /** Always returns 3. */
-  public int getSpanCount() { return 3; }  
+  public int getSpanCount() { return 3; }
 
   public SeqSpan getSpan(BioSeq bs) {
     if (bs.equals(otherseq)) {
@@ -82,7 +82,7 @@ public class Psl3Sym extends UcscPslSym {
   }
 
   public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
-    if (bs.equals(otherseq)) { 
+    if (bs.equals(otherseq)) {
       if (same_other_orientation) { span.set(omin, omax, otherseq); }
       else { span.set(omax, omin, otherseq); }
       return true;
@@ -91,7 +91,7 @@ public class Psl3Sym extends UcscPslSym {
   }
 
   public boolean getSpan(int index, MutableSeqSpan span) {
-    if (index == OTHER_INDEX) { 
+    if (index == OTHER_INDEX) {
       if (same_other_orientation)  { span.set(omin, omax, otherseq); }
       else { span.set(omax, omin, otherseq); }
       return true;
@@ -116,7 +116,7 @@ public class Psl3Sym extends UcscPslSym {
     else { return super.getSpanSeq(index); }
   }
 
-  public SeqSymmetry getChild(int i) { 
+  public SeqSymmetry getChild(int i) {
     int t1, t2, o1, o2;
     if (same_orientation) {
       t1 = tmins[i];
@@ -135,11 +135,11 @@ public class Psl3Sym extends UcscPslSym {
       o2 = omins[i];
     }
     return new LeafTrioSeqSymmetry(qmins[i], qmins[i]+blockSizes[i], queryseq,
-				   t1, t2, targetseq, 
-				   o1, o2, otherseq);
+                                   t1, t2, targetseq,
+                                   o1, o2, otherseq);
   }
 
-  public List getOverlappingChildren(SeqSpan input_span) {
+  public List<SeqSymmetry> getOverlappingChildren(SeqSpan input_span) {
     if (input_span.getBioSeq() == otherseq) {
       return SeqUtils.getOverlappingChildren(this, input_span);
     }
@@ -153,8 +153,8 @@ public class Psl3Sym extends UcscPslSym {
   public int getOtherMax() { return omax; }
   public boolean getSameOtherOrientation() { return same_other_orientation; }
 
-  public Map cloneProperties() {
-    Map tprops = super.cloneProperties();
+  public Map<String,Object> cloneProperties() {
+    Map<String,Object> tprops = super.cloneProperties();
     tprops.put("other seq", getOtherSeq().getID());
     tprops.put("same other orientation", new Boolean(getSameOtherOrientation()));
     return tprops;

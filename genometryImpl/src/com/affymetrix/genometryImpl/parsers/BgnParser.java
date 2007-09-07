@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -33,7 +33,7 @@ public class BgnParser implements AnnotationWriter  {
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
 
-  static java.util.List pref_list = new ArrayList();
+  static List<String> pref_list = new ArrayList<String>();
   static {
     pref_list.add("bgn");
   }
@@ -62,7 +62,7 @@ public class BgnParser implements AnnotationWriter  {
   static final Pattern emin_regex = Pattern.compile(",");
   static final Pattern emax_regex = Pattern.compile(",");
 
-  ArrayList chromosomes = new ArrayList();
+  ArrayList<String> chromosomes = new ArrayList<String>();
 
   public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
     System.out.println("loading file: " + file_name);
@@ -97,13 +97,13 @@ public class BgnParser implements AnnotationWriter  {
     // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
     //    added as annotations to the annotated BioSeqs -- their children
     //    are then actual transcript annotations
-    ArrayList annots = new ArrayList();
+    ArrayList<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
     // results is list actual transcript annotations
-    ArrayList results = new ArrayList(15000);
+    ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
     // chrom2sym is temporary hash to put top-level parent syms in to map
     //     seq id to top-level symmetry, prior to adding these parent syms
     //     to the actual annotated seqs
-    HashMap chrom2sym = new HashMap(); // maps chrom name to top-level symmetry
+    HashMap<String,SeqSymmetry> chrom2sym = new HashMap<String,SeqSymmetry>(); // maps chrom name to top-level symmetry
 
     int total_exon_count = 0;
     int count = 0;
@@ -115,55 +115,55 @@ public class BgnParser implements AnnotationWriter  {
     try {
       //      BufferedInputStream bis = new BufferedInputStream(fis, 16384);
       if (use_byte_buffer && blength > 0) {
-	byte[] bytebuf = new byte[(int)blength];
-	bis.read(bytebuf);
-	//	fis.read(bytebuf);
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	dis = new DataInputStream(bytestream);
+        byte[] bytebuf = new byte[(int)blength];
+        bis.read(bytebuf);
+        //        fis.read(bytebuf);
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        dis = new DataInputStream(bytestream);
       }
       else {
-	dis = new DataInputStream(bis);
+        dis = new DataInputStream(bis);
       }
       if (true) {
-	/*
-	 *  "while (dis.available() > 0)" loop is not a good alternative
-	 *     when retrieving the data from a slow InputStream -- for example, over a
-	 *     wireless network connection.
-	 *  There may still be bytes to read from the stream even if they're not yet
-	 *     available -- basically if the processing here outpaces the speed of
-	 *     streaming the data from the network, then dis.available() will be <= 0
-	 *     and we need to _block_ on availability here rather than ending.
-	 *  Therefore switching to using EOFException throwing to catch when end of
-	 *     stream is reached
-	 *
-	 *  This seems to fix the problem, except I'm not sure what to do about cleanup --
-	 *  can't call close() on the inputstream(s)...
-	 *
-	 */
+        /*
+         *  "while (dis.available() > 0)" loop is not a good alternative
+         *     when retrieving the data from a slow InputStream -- for example, over a
+         *     wireless network connection.
+         *  There may still be bytes to read from the stream even if they're not yet
+         *     available -- basically if the processing here outpaces the speed of
+         *     streaming the data from the network, then dis.available() will be <= 0
+         *     and we need to _block_ on availability here rather than ending.
+         *  Therefore switching to using EOFException throwing to catch when end of
+         *     stream is reached
+         *
+         *  This seems to fix the problem, except I'm not sure what to do about cleanup --
+         *  can't call close() on the inputstream(s)...
+         *
+         */
         // Loop will usually be ended by EOFException, but
         // can also be interrupted by Thread.interrupt()
         Thread thread = Thread.currentThread();
         while (! thread.isInterrupted()) {
-	  //
-	  String name = dis.readUTF();
-	  String chrom_name = dis.readUTF();
-	  String strand = dis.readUTF();
-	  boolean forward = (strand.equals("+") || (strand.equals("++")));
-	  int tmin = dis.readInt();
-	  int tmax = dis.readInt();
-	  int tlength = tmax - tmin;
-	  int cmin = dis.readInt();
-	  int cmax = dis.readInt();
-	  int clength = cmax - cmin;
-	  int ecount = dis.readInt();
-	  int[] emins = new int[ecount];
-	  int[] emaxs = new int[ecount];
-	  for (int i=0; i<ecount; i++) {
-	    emins[i] = dis.readInt();
-	  }
-	  for (int i=0; i<ecount; i++) {
-	    emaxs[i] = dis.readInt();
-	  }
+          //
+          String name = dis.readUTF();
+          String chrom_name = dis.readUTF();
+          String strand = dis.readUTF();
+          boolean forward = (strand.equals("+") || (strand.equals("++")));
+          int tmin = dis.readInt();
+          int tmax = dis.readInt();
+          int tlength = tmax - tmin;
+          int cmin = dis.readInt();
+          int cmax = dis.readInt();
+          int clength = cmax - cmin;
+          int ecount = dis.readInt();
+          int[] emins = new int[ecount];
+          int[] emaxs = new int[ecount];
+          for (int i=0; i<ecount; i++) {
+            emins[i] = dis.readInt();
+          }
+          for (int i=0; i<ecount; i++) {
+            emaxs[i] = dis.readInt();
+          }
 
           MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
 
@@ -171,36 +171,36 @@ public class BgnParser implements AnnotationWriter  {
             chromseq = seq_group.addSeq(chrom_name, 0);
           }
 
-	  UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
-					    tmin, tmax, cmin, cmax, emins, emaxs);
+          UcscGeneSym sym = new UcscGeneSym(annot_type, name, name, chromseq, forward,
+                                            tmin, tmax, cmin, cmax, emins, emaxs);
 
-	  if (seq_group != null) {
-	    seq_group.addToIndex(name, sym);
-	  }
+          if (seq_group != null) {
+            seq_group.addToIndex(name, sym);
+          }
           results.add(sym);
 
           if (tmax > chromseq.getLength()) {
               chromseq.setLength(tmax);
           }
 
-	  if (annotate_seq)  {
-	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-	    if (parent_sym == null) {
-	      parent_sym = new SimpleSymWithProps();
-	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-	      parent_sym.setProperty("method", annot_type);
-	      //	      System.out.println("method: " + annot_type);
-	      parent_sym.setProperty("preferred_formats", pref_list);
+          if (annotate_seq)  {
+            SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+            if (parent_sym == null) {
+              parent_sym = new SimpleSymWithProps();
+              parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+              parent_sym.setProperty("method", annot_type);
+              //              System.out.println("method: " + annot_type);
+              parent_sym.setProperty("preferred_formats", pref_list);
               parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	      annots.add(parent_sym);
-	      chrom2sym.put(chrom_name, parent_sym);
-	    }
+              annots.add(parent_sym);
+              chrom2sym.put(chrom_name, parent_sym);
+            }
             //TODO: Make sure parent_sym is long enough to encompas all its children
-	    parent_sym.addChild(sym);
-	  }
-	  total_exon_count += ecount;
-	  count++;
-	}
+            parent_sym.addChild(sym);
+          }
+          total_exon_count += ecount;
+          count++;
+        }
       }
     }
     catch (EOFException ex) {
@@ -223,9 +223,9 @@ public class BgnParser implements AnnotationWriter  {
 
     if (annotate_seq) {
       for (int i=0; i<annots.size(); i++) {
-	SeqSymmetry annot = (SeqSymmetry)annots.get(i);
-	MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
-	chromseq.addAnnotation(annot);
+        SeqSymmetry annot = annots.get(i);
+        MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+        chromseq.addAnnotation(annot);
       }
     }
     System.out.println("bgn file load time: " + tim.read()/1000f);
@@ -296,8 +296,8 @@ public class BgnParser implements AnnotationWriter  {
       dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
       int acount = annots.size();
       for (int i=0; i<acount; i++) {
-	SeqSymmetry gsym = (SeqSymmetry) annots.get(i);
-	outputBgnFormat(gsym, dos);
+        SeqSymmetry gsym = (SeqSymmetry) annots.get(i);
+        outputBgnFormat(gsym, dos);
       }
     }
     finally {
@@ -326,89 +326,89 @@ public class BgnParser implements AnnotationWriter  {
       BufferedInputStream bis = new BufferedInputStream(fis);
       DataInputStream dis = null;
       if (use_byte_buffer) {
-	byte[] bytebuf = new byte[(int)flength];
-	bis.read(bytebuf);
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	dis = new DataInputStream(bytestream);
+        byte[] bytebuf = new byte[(int)flength];
+        bis.read(bytebuf);
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        dis = new DataInputStream(bytestream);
       }
       else {
-	dis = new DataInputStream(bis);
+        dis = new DataInputStream(bis);
       }
       String line;
 
       DataOutputStream dos = null;;
       if (write_from_text) {
-	File outfile = new File(bin_file);
-	FileOutputStream fos = new FileOutputStream(outfile);
-	BufferedOutputStream bos = new BufferedOutputStream(fos);
-	dos = new DataOutputStream(bos);
+        File outfile = new File(bin_file);
+        FileOutputStream fos = new FileOutputStream(outfile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        dos = new DataOutputStream(bos);
       }
 
       while ((line = dis.readLine()) != null) {
-      	count++;
-	String[] fields = line_regex.split(line);
-	String name = fields[0];
-	//	name_hash.put(name, null);
-	String chrom = fields[1];
+              count++;
+        String[] fields = line_regex.split(line);
+        String name = fields[0];
+        //        name_hash.put(name, null);
+        String chrom = fields[1];
     if (seq_group != null && seq_group.getSeq(chrom) == null) {
         System.out.println("sequence not recognized, ignoring: " + chrom);
         continue;
      }
-	String strand = fields[2];
-	String txStart = fields[3];  // min base of transcript on genome
-	String txEnd = fields[4];  // max base of transcript on genome
-	String cdsStart = fields[5];  // min base of CDS on genome
-	String cdsEnd = fields[6];  // max base of CDS on genome
-	String exonCount = fields[7]; // number of exons
-	String exonStarts = fields[8];
-	String exonEnds = fields[9];
-	int tmin = Integer.parseInt(txStart);
-	int tmax = Integer.parseInt(txEnd);
-	int tlength = tmax - tmin;
-	int cmin = Integer.parseInt(cdsStart);
-	int cmax = Integer.parseInt(cdsEnd);
-	int clength = cmax - cmin;
-	int ecount = Integer.parseInt(exonCount);
-	String[] emins = emin_regex.split(exonStarts);
-	String[] emaxs = emax_regex.split(exonEnds);
+        String strand = fields[2];
+        String txStart = fields[3];  // min base of transcript on genome
+        String txEnd = fields[4];  // max base of transcript on genome
+        String cdsStart = fields[5];  // min base of CDS on genome
+        String cdsEnd = fields[6];  // max base of CDS on genome
+        String exonCount = fields[7]; // number of exons
+        String exonStarts = fields[8];
+        String exonEnds = fields[9];
+        int tmin = Integer.parseInt(txStart);
+        int tmax = Integer.parseInt(txEnd);
+        int tlength = tmax - tmin;
+        int cmin = Integer.parseInt(cdsStart);
+        int cmax = Integer.parseInt(cdsEnd);
+        int clength = cmax - cmin;
+        int ecount = Integer.parseInt(exonCount);
+        String[] emins = emin_regex.split(exonStarts);
+        String[] emaxs = emax_regex.split(exonEnds);
 
-	if (write_from_text) {
-	  dos.writeUTF(name);
-	  dos.writeUTF(chrom);
-	  dos.writeUTF(strand);
-	  dos.writeInt(tmin);
-	  dos.writeInt(tmax);
-	  dos.writeInt(cmin);
-	  dos.writeInt(cmax);
-	  dos.writeInt(ecount);
-	}
+        if (write_from_text) {
+          dos.writeUTF(name);
+          dos.writeUTF(chrom);
+          dos.writeUTF(strand);
+          dos.writeInt(tmin);
+          dos.writeInt(tmax);
+          dos.writeInt(cmin);
+          dos.writeInt(cmax);
+          dos.writeInt(ecount);
+        }
 
-	if (ecount != emins.length || ecount != emaxs.length) {
-	  System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
-	}
-	else {
-	  int spliced_length = 0;
-	  for (int i=0; i<ecount; i++) {
-	    int emin = Integer.parseInt(emins[i]);
-	    if (write_from_text) { dos.writeInt(emin); }
-	  }
-	  for (int i=0; i<ecount; i++) {
-	    int emax = Integer.parseInt(emaxs[i]);
-	    if (write_from_text) { dos.writeInt(emax); }
-	  }
-	}
-	if (tlength >= 500000) {
-	  biguns++;
-	}
+        if (ecount != emins.length || ecount != emaxs.length) {
+          System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
+        }
+        else {
+          int spliced_length = 0;
+          for (int i=0; i<ecount; i++) {
+            int emin = Integer.parseInt(emins[i]);
+            if (write_from_text) { dos.writeInt(emin); }
+          }
+          for (int i=0; i<ecount; i++) {
+            int emax = Integer.parseInt(emaxs[i]);
+            if (write_from_text) { dos.writeInt(emax); }
+          }
+        }
+        if (tlength >= 500000) {
+          biguns++;
+        }
 
-	total_exon_count += ecount;
-	max_exons = Math.max(max_exons, ecount);
-	max_tlength = Math.max(max_tlength, tlength);
+        total_exon_count += ecount;
+        max_exons = Math.max(max_exons, ecount);
+        max_tlength = Math.max(max_tlength, tlength);
       }
 
       if (write_from_text) {
-	dos.flush();
-	dos.close();
+        dos.flush();
+        dos.close();
       }
     }
     catch (Exception ex) {
@@ -450,18 +450,18 @@ public class BgnParser implements AnnotationWriter  {
    *    to an output stream as "binary UCSC gene" (.bgn)
    **/
   public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) {
     System.out.println("in BgnParser.writeAnnotations()");
     boolean success = true;
     try {
       DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {
-	SeqSymmetry sym = (SeqSymmetry)iterator.next();
-	if (! (sym instanceof UcscGeneSym)) {
-	  System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
-	}
-	outputBgnFormat((UcscGeneSym)sym, dos);
+        SeqSymmetry sym = (SeqSymmetry)iterator.next();
+        if (! (sym instanceof UcscGeneSym)) {
+          System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
+        }
+        outputBgnFormat((UcscGeneSym)sym, dos);
       }
       dos.flush();
     }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,18 +13,18 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
-import com.affymetrix.genometryImpl.IndexedSingletonSym;
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.IndexedSingletonSym;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.util.FloatList;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometryImpl.util.FloatList;
 
 /**
  *  This class (and file format) have been replaced by ScoredIntervalParser (and sin file format)
@@ -37,7 +37,7 @@ public class ScoredMapParser {
 
   public void parse(InputStream istr, String stream_name, MutableAnnotatedBioSeq aseq, AnnotatedSeqGroup seq_group) {
     //attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
-	//					     ScoredIntervalParser.default_attach_graphs);
+        //                                             ScoredIntervalParser.default_attach_graphs);
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(istr));
       String line = null;
@@ -52,49 +52,49 @@ public class ScoredMapParser {
       // assuming first line is header
       line = br.readLine();
       String[] headers = line_regex.split(line);
-      java.util.List score_names = new ArrayList();
-      java.util.List score_arrays = new ArrayList();
+      List<String> score_names = new ArrayList<String>();
+      List<FloatList> score_arrays = new ArrayList<FloatList>();
       System.out.println("headers: " + line);
       for (int i=2; i<headers.length; i++) {
-	//	System.out.println("header " + i + ": " + headers[i]);
-	score_names.add(headers[i]);
-	score_arrays.add(new FloatList());
+        //        System.out.println("header " + i + ": " + headers[i]);
+        score_names.add(headers[i]);
+        score_arrays.add(new FloatList());
       }
 
       int line_count = 0;
       while ((line = br.readLine()) != null) {
-	String[] fields = line_regex.split(line);
-	int min = Integer.parseInt(fields[0]);
-	int max = Integer.parseInt(fields[1]);
-	SeqSymmetry child = new IndexedSingletonSym(min, max, aseq);
-	parent.addChild(child);   // ScoredContainerSym.addChild() handles setting of child index and parent fields
-	for (int field_index = 2; field_index < fields.length; field_index++) {
-	  FloatList flist = (FloatList)score_arrays.get(field_index-2);
-	  float score = Float.parseFloat(fields[field_index]);
-	  flist.add(score);
-	}
-	line_count++;
+        String[] fields = line_regex.split(line);
+        int min = Integer.parseInt(fields[0]);
+        int max = Integer.parseInt(fields[1]);
+        SeqSymmetry child = new IndexedSingletonSym(min, max, aseq);
+        parent.addChild(child);   // ScoredContainerSym.addChild() handles setting of child index and parent fields
+        for (int field_index = 2; field_index < fields.length; field_index++) {
+          FloatList flist = score_arrays.get(field_index-2);
+          float score = Float.parseFloat(fields[field_index]);
+          flist.add(score);
+        }
+        line_count++;
       }
       System.out.println("data lines in file: " + line_count);
       // System.out.println("child syms: " + parent.getChildCount());
       int score_count = score_names.size();
       for (int i=0; i<score_count; i++) {
-	String score_name = (String)score_names.get(i);
-	FloatList flist = (FloatList)score_arrays.get(i);
-	float[] scores = flist.copyToArray();
-	// System.out.println("adding scores for " + score_name + ", score count = " + scores.length);
-	// System.out.println("first 3 scores:\t" + scores[0] + "\t" + scores[1] + "\t" + scores[2]);
-	parent.addScores(score_name, scores);
+        String score_name = score_names.get(i);
+        FloatList flist = score_arrays.get(i);
+        float[] scores = flist.copyToArray();
+        // System.out.println("adding scores for " + score_name + ", score count = " + scores.length);
+        // System.out.println("first 3 scores:\t" + scores[0] + "\t" + scores[1] + "\t" + scores[2]);
+        parent.addScores(score_name, scores);
       }
       aseq.addAnnotation(parent);
 //      if (attach_graphs) {
-//	// make a GraphSym for each scores column, and add as an annotation to aseq
-//	for (int i=0; i<score_count; i++) {
-//	  String score_name = parent.getScoreName(i);
-//	  GraphSym gsym = parent.makeGraphSym(score_name, true);
-//	  aseq.addAnnotation(gsym);
-//	}
-//	// System.out.println("finished attaching graphs");
+//        // make a GraphSym for each scores column, and add as an annotation to aseq
+//        for (int i=0; i<score_count; i++) {
+//          String score_name = parent.getScoreName(i);
+//          GraphSym gsym = parent.makeGraphSym(score_name, true);
+//          aseq.addAnnotation(gsym);
+//        }
+//        // System.out.println("finished attaching graphs");
 //      }
     }
     catch (Exception ex) { ex.printStackTrace(); }

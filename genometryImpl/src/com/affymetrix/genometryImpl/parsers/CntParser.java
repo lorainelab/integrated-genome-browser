@@ -52,7 +52,7 @@ public class CntParser {
     Matcher section_regex_matcher = section_regex.matcher("");
     Matcher tag_val_matcher = tag_val.matcher("");
     String current_section = "";
-    Map headerData = new HashMap();
+    Map<String,Object> headerData = new HashMap<String,Object>();
 
 
     // First read the header
@@ -166,9 +166,9 @@ public class CntParser {
 
   }
 
-  Map unique_gids = new HashMap();
+  Map<String,String> unique_gids = new HashMap<String,String>();
   String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
-    String gid = (String) unique_gids.get(column_id);
+    String gid = unique_gids.get(column_id);
     if (gid == null) {
       gid = AnnotatedSeqGroup.getUniqueGraphID(column_id, seq_group);
       unique_gids.put(column_id, gid);
@@ -186,8 +186,8 @@ public class CntParser {
     return val;
   }
 
-  Map thing = new HashMap();
-  Map thing2 = new HashMap();
+  Map<String,Object> thing = new HashMap<String,Object>();
+  Map<String,Object> thing2 = new HashMap<String,Object>();
 
   FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
     FloatList[] floats = (FloatList[]) thing.get(seq.getID());

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,17 +13,17 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.util.Timer;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometryImpl.UcscGeneSym;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * BrsParser can convert UCSC-style RefFlat database table dumps into
@@ -41,7 +41,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
  */
 public class BrsParser implements AnnotationWriter  {
 
-  static java.util.List pref_list = new ArrayList();
+  static List<String> pref_list = new ArrayList<String>();
   static {
     pref_list.add("brs");
   }
@@ -77,10 +77,10 @@ public class BrsParser implements AnnotationWriter  {
   int max_genes = 50000;  // guesstimate...
   ArrayList chromosomes = new ArrayList();
 
-  public java.util.List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+  public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
   throws IOException {
     System.out.println("loading file: " + file_name);
-    java.util.List result = null;
+    List result = null;
     FileInputStream fis = null;
     try {
       File fil = new File(file_name);
@@ -93,12 +93,12 @@ public class BrsParser implements AnnotationWriter  {
     return result;
   }
 
-  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group) 
+  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
   throws IOException {
     return parse(istr, annot_type, seq_group, true);
   }
 
-  public java.util.List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq) 
+  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
   throws IOException {
     return parse(istr, annot_type, seq_group, annotate_seq, -1);
   }
@@ -106,7 +106,7 @@ public class BrsParser implements AnnotationWriter  {
   /**
    *  @param blength  buffer length, if unknown use -1;
    */
-  public java.util.List parse(InputStream istr, String annot_type,
+  public List<SeqSymmetry> parse(InputStream istr, String annot_type,
                               AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength)
   throws IOException {
     Timer tim = new Timer();
@@ -115,13 +115,13 @@ public class BrsParser implements AnnotationWriter  {
     // annots is list of top-level parent syms (max 1 per seq in seq_group) that get
     //    added as annotations to the annotated BioSeqs -- their children
     //    are then actual transcript annotations
-    ArrayList annots = new ArrayList();
+    ArrayList<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
     // results is list actual transcript annotations
-    ArrayList results = new ArrayList(15000);
+    ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
     // chrom2sym is temporary hash to put top-level parent syms in to map
     //     seq id to top-level symmetry, prior to adding these parent syms
     //     to the actual annotated seqs
-    HashMap chrom2sym = new HashMap(); // maps chrom name to top-level symmetry
+    HashMap<String,SeqSymmetry> chrom2sym = new HashMap<String,SeqSymmetry>(); // maps chrom name to top-level symmetry
 
     int total_exon_count = 0;
     int count = 0;
@@ -132,82 +132,82 @@ public class BrsParser implements AnnotationWriter  {
 
     try {
       if (use_byte_buffer && blength > 0) {
-	byte[] bytebuf = new byte[(int)blength];
-	bis.read(bytebuf);
-	//	fis.read(bytebuf);
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	dis = new DataInputStream(bytestream);
+        byte[] bytebuf = new byte[(int)blength];
+        bis.read(bytebuf);
+        //        fis.read(bytebuf);
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        dis = new DataInputStream(bytestream);
       }
       else {
-	dis = new DataInputStream(bis);
+        dis = new DataInputStream(bis);
       }
       if (true) {
-	// just keep looping till hitting end-of-file throws an EOFException
+        // just keep looping till hitting end-of-file throws an EOFException
         Thread thread = Thread.currentThread();
-	while (! thread.isInterrupted()) {
-	  String geneName = dis.readUTF();
-	  String name = dis.readUTF();
-	  String chrom_name = dis.readUTF();
+        while (! thread.isInterrupted()) {
+          String geneName = dis.readUTF();
+          String name = dis.readUTF();
+          String chrom_name = dis.readUTF();
 
-	  String strand = dis.readUTF();
-	  boolean forward = (strand.equals("+") || (strand.equals("++")));
-	  //	  System.out.println("forward: " + forward);
-	  //	  dis.skip(16);  // skip tmin, tmax, cmin, cmax (4 ints * 4bytes/int = 16 bytes);
-	  int tmin = dis.readInt();
-	  int tmax = dis.readInt();
-	  //	  tstarts[count] = tmin;
-	  int tlength = tmax - tmin;
-	  int cmin = dis.readInt();
-	  int cmax = dis.readInt();
-	  int clength = cmax - cmin;
-	  int ecount = dis.readInt();
-	  //	  pos += (20 + (ecount * 8));
-	  //	  dis.skip(ecount * 8);
-	  int[] emins = new int[ecount];
-	  int[] emaxs = new int[ecount];
-	  for (int i=0; i<ecount; i++) {
-	    emins[i] = dis.readInt();
-	  }
-	  for (int i=0; i<ecount; i++) {
-	    emaxs[i] = dis.readInt();
-	  }
+          String strand = dis.readUTF();
+          boolean forward = (strand.equals("+") || (strand.equals("++")));
+          //          System.out.println("forward: " + forward);
+          //          dis.skip(16);  // skip tmin, tmax, cmin, cmax (4 ints * 4bytes/int = 16 bytes);
+          int tmin = dis.readInt();
+          int tmax = dis.readInt();
+          //          tstarts[count] = tmin;
+          int tlength = tmax - tmin;
+          int cmin = dis.readInt();
+          int cmax = dis.readInt();
+          int clength = cmax - cmin;
+          int ecount = dis.readInt();
+          //          pos += (20 + (ecount * 8));
+          //          dis.skip(ecount * 8);
+          int[] emins = new int[ecount];
+          int[] emaxs = new int[ecount];
+          for (int i=0; i<ecount; i++) {
+            emins[i] = dis.readInt();
+          }
+          for (int i=0; i<ecount; i++) {
+            emaxs[i] = dis.readInt();
+          }
 
-	  MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
+          MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
           if (chromseq == null) {
             chromseq = seq_group.addSeq(chrom_name, tmax);
           }
-	  UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
-					      tmin, tmax, cmin, cmax, emins, emaxs);
-	  if (seq_group != null) {
+          UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
+                                              tmin, tmax, cmin, cmax, emins, emaxs);
+          if (seq_group != null) {
             if (geneName.length()!=0) {
               seq_group.addToIndex(geneName, sym);
             }
             if (name.length()!=0) {
               seq_group.addToIndex(name, sym);
             }
-	  }
+          }
 
-	  results.add(sym);
-	  if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
+          results.add(sym);
+          if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
 
-	  if (annotate_seq) {
-	    SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
-	    if (parent_sym == null) {
-	      parent_sym = new SimpleSymWithProps();
-	      parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
-	      parent_sym.setProperty("method", annot_type);
-	      parent_sym.setProperty("preferred_formats", pref_list);
-	      parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	      annots.add(parent_sym);
-	      chrom2sym.put(chrom_name, parent_sym);
-	    }
-	    parent_sym.addChild(sym);
-	  }
+          if (annotate_seq) {
+            SimpleSymWithProps parent_sym = (SimpleSymWithProps)chrom2sym.get(chrom_name);
+            if (parent_sym == null) {
+              parent_sym = new SimpleSymWithProps();
+              parent_sym.addSpan(new SimpleSeqSpan(0, chromseq.getLength(), chromseq));
+              parent_sym.setProperty("method", annot_type);
+              parent_sym.setProperty("preferred_formats", pref_list);
+              parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+              annots.add(parent_sym);
+              chrom2sym.put(chrom_name, parent_sym);
+            }
+            parent_sym.addChild(sym);
+          }
 
 
-	  total_exon_count += ecount;
-	  count++;
-	}
+          total_exon_count += ecount;
+          count++;
+        }
       }
     }
     catch (EOFException ex) {
@@ -216,9 +216,9 @@ public class BrsParser implements AnnotationWriter  {
 
     if (annotate_seq) {
       for (int i=0; i<annots.size(); i++) {
-	SeqSymmetry annot = (SeqSymmetry)annots.get(i);
-	MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
-	chromseq.addAnnotation(annot);
+        SeqSymmetry annot = annots.get(i);
+        MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+        chromseq.addAnnotation(annot);
       }
     }
     SingletonGenometryModel.logInfo("load time: " + tim.read()/1000f);
@@ -238,8 +238,8 @@ public class BrsParser implements AnnotationWriter  {
       dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
       int acount = annots.size();
       for (int i=0; i<acount; i++) {
-	UcscGeneSym gsym = (UcscGeneSym)annots.get(i);
-	outputBrsFormat(gsym, dos);
+        UcscGeneSym gsym = (UcscGeneSym)annots.get(i);
+        outputBrsFormat(gsym, dos);
       }
       dos.close();
     }
@@ -295,104 +295,104 @@ public class BrsParser implements AnnotationWriter  {
       BufferedInputStream bis = new BufferedInputStream(fis);
       DataInputStream dis = null;
       if (use_byte_buffer) {
-	byte[] bytebuf = new byte[(int)flength];
-	bis.read(bytebuf);
-	ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-	dis = new DataInputStream(bytestream);
+        byte[] bytebuf = new byte[(int)flength];
+        bis.read(bytebuf);
+        ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+        dis = new DataInputStream(bytestream);
       }
       else {
-	dis = new DataInputStream(bis);
+        dis = new DataInputStream(bis);
       }
       String line;
 
       DataOutputStream dos = null;;
       if (write_from_text) {
-	File outfile = new File(bin_file);
-	FileOutputStream fos = new FileOutputStream(outfile);
-	BufferedOutputStream bos = new BufferedOutputStream(fos);
-	dos = new DataOutputStream(bos);
+        File outfile = new File(bin_file);
+        FileOutputStream fos = new FileOutputStream(outfile);
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        dos = new DataOutputStream(bos);
       }
       // trying to handle both refFlat and refGene files
       //   if refGene, then file doesn't include geneName field (and can be detected because
       //   it has one fewer tab-delimited field)
       boolean text_includes_genename;
       while ((line = dis.readLine()) != null) {
-      	count++;
-	int field_index = 0;
-	String[] fields = line_regex.split(line);
-	text_includes_genename = (fields.length > 10);
-	String geneName = null;
-	if (text_includes_genename) { geneName = fields[field_index++]; }
-	String name = fields[field_index++];
-	//	gene_names[count] = geneName;
-	//	names[count] = name;
-	//	name_hash.put(geneName, null);
-	//	name_hash.put(name, null);
-	String chrom = fields[field_index++];
-	String strand = fields[field_index++];
-	String txStart = fields[field_index++];  // min base of transcript on genome
-	String txEnd = fields[field_index++];  // max base of transcript on genome
-	String cdsStart = fields[field_index++];  // min base of CDS on genome
-	String cdsEnd = fields[field_index++];  // max base of CDS on genome
-	String exonCount = fields[field_index++]; // number of exons
-	String exonStarts = fields[field_index++];
-	String exonEnds = fields[field_index++];
-	int tmin = Integer.parseInt(txStart);
-	int tmax = Integer.parseInt(txEnd);
-	int tlength = tmax - tmin;
-	int cmin = Integer.parseInt(cdsStart);
-	int cmax = Integer.parseInt(cdsEnd);
-	int clength = cmax - cmin;
-	int ecount = Integer.parseInt(exonCount);
-	String[] emins = emin_regex.split(exonStarts);
-	String[] emaxs = emax_regex.split(exonEnds);
+              count++;
+        int field_index = 0;
+        String[] fields = line_regex.split(line);
+        text_includes_genename = (fields.length > 10);
+        String geneName = null;
+        if (text_includes_genename) { geneName = fields[field_index++]; }
+        String name = fields[field_index++];
+        //        gene_names[count] = geneName;
+        //        names[count] = name;
+        //        name_hash.put(geneName, null);
+        //        name_hash.put(name, null);
+        String chrom = fields[field_index++];
+        String strand = fields[field_index++];
+        String txStart = fields[field_index++];  // min base of transcript on genome
+        String txEnd = fields[field_index++];  // max base of transcript on genome
+        String cdsStart = fields[field_index++];  // min base of CDS on genome
+        String cdsEnd = fields[field_index++];  // max base of CDS on genome
+        String exonCount = fields[field_index++]; // number of exons
+        String exonStarts = fields[field_index++];
+        String exonEnds = fields[field_index++];
+        int tmin = Integer.parseInt(txStart);
+        int tmax = Integer.parseInt(txEnd);
+        int tlength = tmax - tmin;
+        int cmin = Integer.parseInt(cdsStart);
+        int cmax = Integer.parseInt(cdsEnd);
+        int clength = cmax - cmin;
+        int ecount = Integer.parseInt(exonCount);
+        String[] emins = emin_regex.split(exonStarts);
+        String[] emaxs = emax_regex.split(exonEnds);
 
-	if (! text_includes_genename) { geneName = name; }
-	if (write_from_text) {
-	  dos.writeUTF(geneName);
-	  dos.writeUTF(name);
-	  /*
-	  dos.write((byte)geneName.length());
-	  dos.writeBytes(geneName);
-	  dos.write((byte)name.length());
-	  dos.writeBytes(name);
-	  */
-	  dos.writeUTF(chrom);
-	  dos.writeUTF(strand);
-	  dos.writeInt(tmin);
-	  dos.writeInt(tmax);
-	  dos.writeInt(cmin);
-	  dos.writeInt(cmax);
-	  dos.writeInt(ecount);
-	}
+        if (! text_includes_genename) { geneName = name; }
+        if (write_from_text) {
+          dos.writeUTF(geneName);
+          dos.writeUTF(name);
+          /*
+          dos.write((byte)geneName.length());
+          dos.writeBytes(geneName);
+          dos.write((byte)name.length());
+          dos.writeBytes(name);
+          */
+          dos.writeUTF(chrom);
+          dos.writeUTF(strand);
+          dos.writeInt(tmin);
+          dos.writeInt(tmax);
+          dos.writeInt(cmin);
+          dos.writeInt(cmax);
+          dos.writeInt(ecount);
+        }
 
-	if (ecount != emins.length || ecount != emaxs.length) {
-	  System.out.println("EXON COUNTS DON'T MATCH UP FOR " + geneName + " !!!");
-	}
-	else {
-	  int spliced_length = 0;
-	  for (int i=0; i<ecount; i++) {
-	    int emin = Integer.parseInt(emins[i]);
-	    if (write_from_text) { dos.writeInt(emin); }
-	  }
-	  for (int i=0; i<ecount; i++) {
-	    int emax = Integer.parseInt(emaxs[i]);
-	    if (write_from_text) { dos.writeInt(emax); }
-	  }
-	}
-	if (tlength >= 500000) {
-	  biguns++;
-	}
+        if (ecount != emins.length || ecount != emaxs.length) {
+          System.out.println("EXON COUNTS DON'T MATCH UP FOR " + geneName + " !!!");
+        }
+        else {
+          int spliced_length = 0;
+          for (int i=0; i<ecount; i++) {
+            int emin = Integer.parseInt(emins[i]);
+            if (write_from_text) { dos.writeInt(emin); }
+          }
+          for (int i=0; i<ecount; i++) {
+            int emax = Integer.parseInt(emaxs[i]);
+            if (write_from_text) { dos.writeInt(emax); }
+          }
+        }
+        if (tlength >= 500000) {
+          biguns++;
+        }
 
-	total_exon_count += ecount;
-	max_exons = Math.max(max_exons, ecount);
-	max_tlength = Math.max(max_tlength, tlength);
-	//	name_hash.put(fields[0], fields[0]);
+        total_exon_count += ecount;
+        max_exons = Math.max(max_exons, ecount);
+        max_tlength = Math.max(max_tlength, tlength);
+        //        name_hash.put(fields[0], fields[0]);
       }
 
       if (write_from_text) {
-	dos.flush();
-	dos.close();
+        dos.flush();
+        dos.close();
       }
       // simplest load, straight into a byte array
       //      byte[] bytebuf = new byte[(int)flength];
@@ -432,7 +432,7 @@ public class BrsParser implements AnnotationWriter  {
     int total_exon_count = 0;
     int biguns = 0;
     int big_spliced = 0;
-    Vector transvec = new Vector();
+    Vector<SerialTrans> transvec = new Vector<SerialTrans>();
 
     Timer tim = new Timer();
     tim.start();
@@ -454,44 +454,44 @@ public class BrsParser implements AnnotationWriter  {
       //   it has one fewer tab-delimited field)
       boolean text_includes_genename;
       while ((line = dis.readLine()) != null) {
-      	count++;
-	int field_index = 0;
-	String[] fields = line_regex.split(line);
-	text_includes_genename = (fields.length > 10);
-	String geneName = null;
-	if (text_includes_genename)  { geneName = fields[field_index++]; }
-	String name = fields[field_index++];
-	String chrom = fields[field_index++];
-	String strand = fields[field_index++];
-	String txStart = fields[field_index++];  // min base of transcript on genome
-	String txEnd = fields[field_index++];  // max base of transcript on genome
-	String cdsStart = fields[field_index++];  // min base of CDS on genome
-	String cdsEnd = fields[field_index++];  // max base of CDS on genome
-	String exonCount = fields[field_index++]; // number of exons
-	String exonStarts = fields[field_index++];
-	String exonEnds = fields[field_index++];
-	int tmin = Integer.parseInt(txStart);
-	int tmax = Integer.parseInt(txEnd);
-	int tlength = tmax - tmin;
-	int cmin = Integer.parseInt(cdsStart);
-	int cmax = Integer.parseInt(cdsEnd);
-	int clength = cmax - cmin;
-	int ecount = Integer.parseInt(exonCount);
-	String[] emins = emin_regex.split(exonStarts);
-	String[] emaxs = emax_regex.split(exonEnds);
+              count++;
+        int field_index = 0;
+        String[] fields = line_regex.split(line);
+        text_includes_genename = (fields.length > 10);
+        String geneName = null;
+        if (text_includes_genename)  { geneName = fields[field_index++]; }
+        String name = fields[field_index++];
+        String chrom = fields[field_index++];
+        String strand = fields[field_index++];
+        String txStart = fields[field_index++];  // min base of transcript on genome
+        String txEnd = fields[field_index++];  // max base of transcript on genome
+        String cdsStart = fields[field_index++];  // min base of CDS on genome
+        String cdsEnd = fields[field_index++];  // max base of CDS on genome
+        String exonCount = fields[field_index++]; // number of exons
+        String exonStarts = fields[field_index++];
+        String exonEnds = fields[field_index++];
+        int tmin = Integer.parseInt(txStart);
+        int tmax = Integer.parseInt(txEnd);
+        int tlength = tmax - tmin;
+        int cmin = Integer.parseInt(cdsStart);
+        int cmax = Integer.parseInt(cdsEnd);
+        int clength = cmax - cmin;
+        int ecount = Integer.parseInt(exonCount);
+        String[] emins = emin_regex.split(exonStarts);
+        String[] emaxs = emax_regex.split(exonEnds);
 
-	int[] emin_int = new int[ecount];
-	int[] emax_int = new int[ecount];
-	for (int i=0; i<ecount; i++) {
-	  int emin = Integer.parseInt(emins[i]);
-	  int emax = Integer.parseInt(emaxs[i]);
-	  emin_int[i] = emin;
-	  emax_int[i] = emax;
-	}
-	if (! text_includes_genename)  { geneName = name; }
-	SerialTrans trans = new SerialTrans(geneName, name, chrom, strand,
-					    tmin, tmax, cmin, cmax, emin_int, emax_int);
-	transvec.add(trans);
+        int[] emin_int = new int[ecount];
+        int[] emax_int = new int[ecount];
+        for (int i=0; i<ecount; i++) {
+          int emin = Integer.parseInt(emins[i]);
+          int emax = Integer.parseInt(emaxs[i]);
+          emin_int[i] = emin;
+          emax_int[i] = emax;
+        }
+        if (! text_includes_genename)  { geneName = name; }
+        SerialTrans trans = new SerialTrans(geneName, name, chrom, strand,
+                                            tmin, tmax, cmin, cmax, emin_int, emax_int);
+        transvec.add(trans);
       }
       sos.writeObject(transvec);
       sos.flush();
@@ -550,19 +550,19 @@ public class BrsParser implements AnnotationWriter  {
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "binary UCSC refseq gene". File extension ".brs".
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
-				  String type, OutputStream outstream) {
+  public boolean writeAnnotations(Collection syms, BioSeq seq,
+                                  String type, OutputStream outstream) {
     System.out.println("in BrsParser.writeAnnotations()");
     boolean success = true;
     try {
       DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
       Iterator iterator = syms.iterator();
       while (iterator.hasNext()) {
-	SeqSymmetry sym = (SeqSymmetry)iterator.next();
-	if (! (sym instanceof UcscGeneSym)) {
-	  System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
-	}
-	outputBrsFormat((UcscGeneSym)sym, dos);
+        SeqSymmetry sym = (SeqSymmetry)iterator.next();
+        if (! (sym instanceof UcscGeneSym)) {
+          System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
+        }
+        outputBrsFormat((UcscGeneSym)sym, dos);
       }
       dos.flush();
     }
@@ -581,6 +581,7 @@ public class BrsParser implements AnnotationWriter  {
 
 
   public class SerialHolder implements Serializable {
+    static final long serialVersionUID = 1L;
     Vector transvec;
     public SerialHolder(Vector transvec) {
       this.transvec = transvec;
@@ -588,6 +589,7 @@ public class BrsParser implements AnnotationWriter  {
   }
 
   public class SerialTrans implements Serializable {
+    static final long serialVersionUID = 1L;
     String geneName;
     String name;
     String chrom;
@@ -600,7 +602,7 @@ public class BrsParser implements AnnotationWriter  {
     int[] emaxs;
 
     public SerialTrans(String geneName, String name, String chrom, String strand,
-		int tmin, int tmax, int cmin, int cmax, int[] emins, int[] emaxs) {
+                int tmin, int tmax, int cmin, int cmax, int[] emins, int[] emaxs) {
       this.geneName = geneName;
       this.name = name;
       this.chrom = chrom;

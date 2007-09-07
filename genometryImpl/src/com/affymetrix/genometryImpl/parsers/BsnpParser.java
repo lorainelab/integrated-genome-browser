@@ -105,38 +105,38 @@ public class BsnpParser {
   Map source_hash = new HashMap();
   Map type_hash = new HashMap();
 
-  public void outputBsnpFormat(java.util.List parents, String genome_version, DataOutputStream dos) 
+  public void outputBsnpFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos) 
   throws IOException {
-    try	{
+    try        {
       int pcount = parents.size();
       dos.writeUTF(genome_version);
       dos.writeInt(pcount);  // how many seqs there are
       for (int i=0; i<pcount; i++) {
-	SeqSymmetry parent = (SeqSymmetry)parents.get(i);
-	BioSeq seq = parent.getSpanSeq(0);
-	String seqid = seq.getID();
-	int snp_count = parent.getChildCount();
-	dos.writeUTF(seqid);
-	dos.writeInt(snp_count);
+        SeqSymmetry parent = parents.get(i);
+        BioSeq seq = parent.getSpanSeq(0);
+        String seqid = seq.getID();
+        int snp_count = parent.getChildCount();
+        dos.writeUTF(seqid);
+        dos.writeInt(snp_count);
       }
 
       int total_snp_count = 0;
       for (int i=0; i<pcount; i++) {
-	SeqSymmetry parent = (SeqSymmetry)parents.get(i);
-	BioSeq seq = parent.getSpanSeq(0);
-	int snp_count = parent.getChildCount();
-	ArrayList snps = new ArrayList(snp_count);
-	for (int k=0; k<snp_count; k++) {
-	  // need to make sure SNPs are written out in sorted order!
-	  snps.add(parent.getChild(k));
-	}
-	Collections.sort(snps, new SeqSymMinComparator(seq, true));
-	for (int k=0; k<snp_count; k++) {
-	  EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
-	  int base_coord = snp.getSpan(0).getMin();
-	  dos.writeInt(base_coord);
-	  total_snp_count++;
-	}
+        SeqSymmetry parent = parents.get(i);
+        BioSeq seq = parent.getSpanSeq(0);
+        int snp_count = parent.getChildCount();
+        ArrayList<SeqSymmetry> snps = new ArrayList<SeqSymmetry>(snp_count);
+        for (int k=0; k<snp_count; k++) {
+          // need to make sure SNPs are written out in sorted order!
+          snps.add(parent.getChild(k));
+        }
+        Collections.sort(snps, new SeqSymMinComparator(seq, true));
+        for (int k=0; k<snp_count; k++) {
+          EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
+          int base_coord = snp.getSpan(0).getMin();
+          dos.writeInt(base_coord);
+          total_snp_count++;
+        }
       }
       System.out.println("total snps output to bsnp file: " + total_snp_count);
     }
@@ -149,52 +149,52 @@ public class BsnpParser {
    *  Reads a GFF document containing SNP data.
    *  Assumes specific GFF variant used to represent SNPs on Affy genotyping chips:
    *<pre>
-         #seqname	enzyme	probeset_id	start	end	score	strand	frame
-	 chr1	XbaI	SNP_A-1507333	219135381	219135381	.	+	.
+         #seqname        enzyme        probeset_id        start        end        score        strand        frame
+         chr1        XbaI        SNP_A-1507333        219135381        219135381        .        +        .
    *</pre>
    */
-  public java.util.List readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
+  public List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
     
-    List results = new ArrayList();
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
     try {
       GFFParser gff_parser = new GFFParser();
       gff_parser.parse(istr, seq_group, true);
       Iterator iter = seq_group.getSeqList().iterator();
       int problem_count = 0;
       while (iter.hasNext()) {
-	AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
-	int acount = aseq.getAnnotationCount();
-	String seqid = aseq.getID();
-	System.out.println("seq = " + seqid + ", annots = " + acount);
-	// for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
-	// therefore just taking first annotation
-	// need to debug this eventually...
-	if (acount >= 1) { 
-	  SimpleSymWithProps new_psym = new SimpleSymWithProps();
-	  MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
-	  new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+        AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+        int acount = aseq.getAnnotationCount();
+        String seqid = aseq.getID();
+        System.out.println("seq = " + seqid + ", annots = " + acount);
+        // for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
+        // therefore just taking first annotation
+        // need to debug this eventually...
+        if (acount >= 1) { 
+          SimpleSymWithProps new_psym = new SimpleSymWithProps();
+          MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+          new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
           new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	  for (int k=0; k<acount; k++) {
-	    SeqSymmetry psym = aseq.getAnnotation(k);
-	    int child_count = psym.getChildCount();
-	    System.out.println("    child annots: " + child_count);
+          for (int k=0; k<acount; k++) {
+            SeqSymmetry psym = aseq.getAnnotation(k);
+            int child_count = psym.getChildCount();
+            System.out.println("    child annots: " + child_count);
 
-	    for (int i=0; i<child_count; i++) {
-	      UcscGffSym csym = (UcscGffSym)psym.getChild(i);
-	      int coord = csym.getSpan(0).getMin();
-	      //	    String snp_name = csym.getID();
-	      String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
-	      //	    System.out.println("coord = " + coord + ", id = " + snp_name);
-	      // now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
-	      //	      int snpid = ...
-	      //	      EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord, snpid);
-	      EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord);
-	      new_psym.addChild(snp_sym);
-	    }
-	  }
-	  results.add(new_psym);
-	}
+            for (int i=0; i<child_count; i++) {
+              UcscGffSym csym = (UcscGffSym)psym.getChild(i);
+              int coord = csym.getSpan(0).getMin();
+              //            String snp_name = csym.getID();
+              String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
+              //            System.out.println("coord = " + coord + ", id = " + snp_name);
+              // now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
+              //              int snpid = ...
+              //              EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord, snpid);
+              EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord);
+              new_psym.addChild(snp_sym);
+            }
+          }
+          results.add(new_psym);
+        }
       }
       System.out.println("problems: " + problem_count);
     }
@@ -205,39 +205,39 @@ public class BsnpParser {
   }
 
 
-  public java.util.List readTextFormat(BufferedReader br) {
+  public List<SeqSymmetry> readTextFormat(BufferedReader br) {
     int snp_count = 0;
     int weird_length_count = 0;
-    Map id2psym = new HashMap();
-    ArrayList parent_syms = new ArrayList();
+    Map<String,SeqSymmetry> id2psym = new HashMap<String,SeqSymmetry>();
+    ArrayList<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
     try {
       String line;
       while ((line = br.readLine()) != null) {
-	String[] fields = line_regex.split(line);
-	String seqid = fields[1].intern();
-	MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
-	if (psym == null) {
-	  psym = new SimpleSymWithProps();
-	  MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
-	  psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+        String[] fields = line_regex.split(line);
+        String seqid = fields[1].intern();
+        MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
+        if (psym == null) {
+          psym = new SimpleSymWithProps();
+          MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+          psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
           ((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	  id2psym.put(seqid, psym);
-	  parent_syms.add(psym);
-	}
-	int min = Integer.parseInt(fields[2]);
-	int max = Integer.parseInt(fields[3]);
-	int length = (max - min);
-	if (length != 1) {
-	  System.out.println("length != 1: " + line);
-	  weird_length_count++;
-	}
-	String snpid = fields[4];
-	String snp_source = fields[5].intern();
-	String snp_type = fields[6].intern();
-	//	EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min, snpid);
-	EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min);
-	psym.addChild(snp_sym);
-	snp_count++;
+          id2psym.put(seqid, psym);
+          parent_syms.add(psym);
+        }
+        int min = Integer.parseInt(fields[2]);
+        int max = Integer.parseInt(fields[3]);
+        int length = (max - min);
+        if (length != 1) {
+          System.out.println("length != 1: " + line);
+          weird_length_count++;
+        }
+        String snpid = fields[4];
+        String snp_source = fields[5].intern();
+        String snp_type = fields[6].intern();
+        //        EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min, snpid);
+        EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min);
+        psym.addChild(snp_sym);
+        snp_count++;
       }
     }
     catch (Exception ex) {
@@ -248,12 +248,12 @@ public class BsnpParser {
     return parent_syms;
   }
 
-  public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
+  public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
   throws IOException {
     //System.out.println("parsing bsnp file");
     Timer tim = new Timer();
     tim.start();
-    java.util.List snp_syms = null;
+    List<SeqSymmetry> snp_syms = null;
 
     BufferedInputStream bis;
       if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
@@ -268,39 +268,39 @@ public class BsnpParser {
       //System.out.println("seqs: " + seq_count);
       int total_snp_count = 0;
       for (int i=0; i<seq_count; i++) {
-	String seqid = dis.readUTF();
-	seqids[i] = seqid;
-	MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+        String seqid = dis.readUTF();
+        seqids[i] = seqid;
+        MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
         if (aseq == null) {
           aseq = seq_group.addSeq(seqid, 0);
         }
-	seqs[i] = aseq;
-	snp_counts[i] = dis.readInt();
-	total_snp_count += snp_counts[i];
+        seqs[i] = aseq;
+        snp_counts[i] = dis.readInt();
+        total_snp_count += snp_counts[i];
       }
-      snp_syms = new ArrayList(total_snp_count);
+      snp_syms = new ArrayList<SeqSymmetry>(total_snp_count);
       EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
       // Object[] all_coord_arrays = new Object[seq_count];
       for (int i=0; i<seq_count; i++) {
-	MutableAnnotatedBioSeq aseq = seqs[i];
-	int snp_count = snp_counts[i];
-	//	System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
-	SimpleSymWithProps psym = new SimpleSymWithProps();
-	psym.setProperty("type", annot_type);
+        MutableAnnotatedBioSeq aseq = seqs[i];
+        int snp_count = snp_counts[i];
+        //        System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
+        SimpleSymWithProps psym = new SimpleSymWithProps();
+        psym.setProperty("type", annot_type);
         psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-	if (aseq != null) { psym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq)); }
-	else { psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq)); }
-	if (annot_seq && (aseq != null))  {
-	  aseq.addAnnotation(psym);
-	}
+        if (aseq != null) { psym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq)); }
+        else { psym.addSpan(new SimpleSeqSpan(0, 1000000000, aseq)); }
+        if (annot_seq && (aseq != null))  {
+          aseq.addAnnotation(psym);
+        }
         int[] coords = new int[snp_count];
         int base_coord = 0;
-	for (int k=0; k<snp_count; k++) {
+        for (int k=0; k<snp_count; k++) {
           base_coord = dis.readInt();
           EfficientSnpSym snp = new EfficientSnpSym(psym, base_coord);
           psym.addChild(snp);
           snp_syms.add(snp);
-	}
+        }
         // I'm assuming the snp coords are sorted from min to max, thus the last coord is the max
         if (aseq.getLength() < base_coord) {
           aseq.setLength(base_coord);
@@ -322,58 +322,58 @@ public class BsnpParser {
       if (TEST_BINARY_PARSE) {
         AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
         
-	String binfile = args[0];
-	System.out.println("parsing in snp data from .bsnp file: " + binfile);
-	BsnpParser tester = new BsnpParser();
-	File ifil = new File(binfile);
-	InputStream istr = new FileInputStream(ifil);
+        String binfile = args[0];
+        System.out.println("parsing in snp data from .bsnp file: " + binfile);
+        BsnpParser tester = new BsnpParser();
+        File ifil = new File(binfile);
+        InputStream istr = new FileInputStream(ifil);
         tester.parse(istr, "snp", seq_group, true);
-	System.out.println("finished parsing in snp data from .bsnp file");
-	istr.close();
+        System.out.println("finished parsing in snp data from .bsnp file");
+        istr.close();
       }
       else {
-	if (args.length >= 2) {
-	  String genome_version = args[0];
-	  String text_infile = args[1];
-	  String bin_outfile;
+        if (args.length >= 2) {
+          String genome_version = args[0];
+          String text_infile = args[1];
+          String bin_outfile;
 
-	  if (args.length >= 3) {
-	    bin_outfile = args[2];
-	  }
-	  else if (text_infile.endsWith(".txt") ||
-		   text_infile.endsWith(".gff") )  {
-	    bin_outfile = text_infile.substring(0, text_infile.length()-4)+ ".bsnp";
-	  }
-	  else {
-	    bin_outfile = text_infile + ".bsnp";
-	  }
-	  BsnpParser tester = new BsnpParser();
-	  File ifil = new File(text_infile);
-          java.util.List parent_syms = null;
-	  if (text_infile.endsWith(".txt")) {
-	    BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
-	    System.out.println("reading in text data from: " + text_infile);
-	    parent_syms = tester.readTextFormat(br);
-	    br.close();
-	  }
-	  else if (text_infile.endsWith(".gff")) {
-	    InputStream istr = new FileInputStream(ifil);
-	    System.out.println("reading in gff data from: " + text_infile);
-	    parent_syms = tester.readGffFormat(istr, gmodel);
-	    istr.close();
-	  }
+          if (args.length >= 3) {
+            bin_outfile = args[2];
+          }
+          else if (text_infile.endsWith(".txt") ||
+                   text_infile.endsWith(".gff") )  {
+            bin_outfile = text_infile.substring(0, text_infile.length()-4)+ ".bsnp";
+          }
+          else {
+            bin_outfile = text_infile + ".bsnp";
+          }
+          BsnpParser tester = new BsnpParser();
+          File ifil = new File(text_infile);
+          List<SeqSymmetry> parent_syms = null;
+          if (text_infile.endsWith(".txt")) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
+            System.out.println("reading in text data from: " + text_infile);
+            parent_syms = tester.readTextFormat(br);
+            br.close();
+          }
+          else if (text_infile.endsWith(".gff")) {
+            InputStream istr = new FileInputStream(ifil);
+            System.out.println("reading in gff data from: " + text_infile);
+            parent_syms = tester.readGffFormat(istr, gmodel);
+            istr.close();
+          }
 
-	  File ofil = new File(bin_outfile);
-	  DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
-	  System.out.println("outputing binary data to: " + bin_outfile);
-	  tester.outputBsnpFormat(parent_syms, genome_version, dos);
-	  dos.close();
-	  System.out.println("finished converting text data to binary .bsnp format");
-	}
-	else {
-	  System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");
-	  System.exit(1);
-	}
+          File ofil = new File(bin_outfile);
+          DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
+          System.out.println("outputing binary data to: " + bin_outfile);
+          tester.outputBsnpFormat(parent_syms, genome_version, dos);
+          dos.close();
+          System.out.println("finished converting text data to binary .bsnp format");
+        }
+        else {
+          System.out.println("Usage:  java ... BsnpParser <genome_version> <text infile> [<binary outfile>]");
+          System.exit(1);
+        }
       }
     }
     catch (Exception ex) {
@@ -384,7 +384,7 @@ public class BsnpParser {
 
   // Annotationwriter implementation
   //  public boolean writeAnnotations(Collection syms, BioSeq seq,
-  //				  String type, OutputStream outstream) {
+  //                                  String type, OutputStream outstream) {
   //  }
   // public String getMimeType()  { return "binary/bsnp"; }
 

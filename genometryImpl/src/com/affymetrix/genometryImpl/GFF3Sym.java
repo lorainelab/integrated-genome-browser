@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2006 Affymetrix, Inc.
+ *   Copyright (c) 2006-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -27,23 +27,23 @@ import java.util.regex.*;
  *
  *  See http://song.sourceforge.net/gff3.shtml
  */
-public class GFF3Sym extends SingletonSymWithProps implements Scored { 
+public class GFF3Sym extends SingletonSymWithProps implements Scored {
 
   public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;
   public static final String UNKNOWN_SOURCE = ".";
-  
+
   // Assuming that these feature types are not case-sensitive
   public static final String FEATURE_TYPE_GENE = "gene";
   public static final String FEATURE_TYPE_MRNA = "mrna";
   public static final String FEATURE_TYPE_EXON = "exon";
   public static final String FEATURE_TYPE_CDS = "cds";
-    
+
   // Assuming that these ontology types are not case-sensitive
   public static final String SOFA_GENE = "SO:0000704";
   public static final String SOFA_MRNA = "SO:0000234";
   public static final String SOFA_EXON = "SO:0000147";
   public static final String SOFA_CDS = "SO:0000316";
-  
+
   String source;
   String method;
   public String feature_type;
@@ -61,22 +61,22 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
    * @param b  The coordinate in column 5 of the GFF file.
    * @param attributes   Attributes, formatted in GFF3 style.
    */
-  public GFF3Sym(BioSeq seq, String source, String feature_type, int a, int b, 
+  public GFF3Sym(BioSeq seq, String source, String feature_type, int a, int b,
                     float score, char strand, char frame, String attributes) {
     super(0, 0, seq);
-    
+
     // GFF spec says coord_A <= coord_B, but this is not always obeyed
     int max = Math.max(a, b);
     int min = Math.min(a, b);
     // convert from base-1 numbering to interbase-0 numbering
     min--;
-    
+
     if (strand == '-') {
       setCoords(max, min);
     } else {
       setCoords(min, max);
     }
-    
+
     if (! UNKNOWN_SOURCE.equals(source)) {
       this.source = source;
     } else {
@@ -87,7 +87,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     this.score = score;
     this.frame = frame;
     this.attributes = attributes;
-    
+
     // in GFF3, the property "ID" is intended to have meaning only inside the file itself.
     // the property "Name" is more like what we think of as an ID in Genometry
     String[] possible_names = getGFF3PropertyFromAttributes(GFF3Parser.GFF3_NAME, attributes);
@@ -97,20 +97,20 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       this.id = null;
     }
   }
-  
-  public String getID() { 
+
+  public String getID() {
     // This is overridden because we only want to check the value of this.id,
     // we do NOT want to check for a property named "id".  This is because GFF3
     // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
     // only has meaning while processing the file and should be ignored later.
-    return this.id.toString(); 
+    return this.id.toString();
   }
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }
   public float getScore()  { return score; }
   public char getFrame()  { return frame; }
   public String getAttributes() { return attributes; }
-  
+
   public Object getProperty(String name) {
     if (name.equals("source") && source != null) { return source; }
     else if (name.equals("method")) { return method; }
@@ -118,7 +118,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     else if (name.equals("score") && score != UNKNOWN_SCORE) { return new Float(score); }
     else if (name.equals("frame") && frame != UNKNOWN_FRAME) { return new Character(frame); }
     else if (name.equals("id")) {
-      return getID(); 
+      return getID();
     }
     String[] temp = getGFF3PropertyFromAttributes(name, attributes);
     if (temp.length == 0) {
@@ -129,12 +129,12 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       return temp;
     }
   }
-  
+
   static final List bad_prop_names = Arrays.asList(new String[] {
     "feature_type", "type", "score", "frame"
   });
-  
-  /** 
+
+  /**
    *  Overriden such that certain properties will be stored more efficiently.
    *  Setting certain properties this way is not supported:
    *  these include "attributes", "score" and "frame".
@@ -157,7 +157,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
         return true;
       }
       else {
-        //source = null; 
+        //source = null;
         return false;
       }
     }
@@ -167,7 +167,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
         return true;
       }
       else {
-        //method = null; 
+        //method = null;
         return false;
       }
     }
@@ -179,27 +179,27 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     return super.setProperty(name, val);
   }
 
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 
-  public Map cloneProperties() {
-    Map tprops = super.cloneProperties();
+  public Map<String,Object> cloneProperties() {
+    Map<String,Object> tprops = super.cloneProperties();
     if (tprops == null) {
-      tprops = new HashMap();
+      tprops = new HashMap<String,Object>();
     }
     if (getID() != null) {
       tprops.put("id", getID());
     }
-    if (source != null) { 
+    if (source != null) {
       tprops.put("source", source);
     }
     if (method != null) {
-      tprops.put("method", method); 
+      tprops.put("method", method);
     }
-    if (feature_type != null) { 
-      tprops.put("feature_type", feature_type); 
-      tprops.put("type", feature_type); 
+    if (feature_type != null) {
+      tprops.put("feature_type", feature_type);
+      tprops.put("type", feature_type);
     }
     if (score != UNKNOWN_SCORE) {
       tprops.put("score", new Float(getScore()));
@@ -208,11 +208,11 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       tprops.put("frame", new Character(frame));
     }
     addAllAttributesFromGFF3(tprops, attributes);
-    
+
     return tprops;
   }
 
-  /** Returns the property GFF3Parser.GFF3_ID from the attributes. 
+  /** Returns the property GFF3Parser.GFF3_ID from the attributes.
    *  This will be a single String or null.  This ID is intended to be used
    *  during processing of the GFF3 file, and has no meaning outside the file.
    */
@@ -224,17 +224,17 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       return possible_ids[0];
     }
   }
-  
+
   static final Pattern equalsP = Pattern.compile("=");
   static final Pattern commaP = Pattern.compile(",");
-  
-  public static void addAllAttributesFromGFF3(Map m, String attributes) {
+
+  public static void addAllAttributesFromGFF3(Map<String,Object> m, String attributes) {
     if (attributes == null) {
       return;
     }
-    
+
     String[] tag_vals = attributes.split(";");
-    
+
     for (int i=0; i<tag_vals.length; i++) {
       if ("".equals(tag_vals[i])) {
         continue;
@@ -253,9 +253,9 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       }
     }
   }
-  
+
   static final String[] EMPTY_RESULT = new String[0];
-  
+
   /** Returns a non-null String[]. */
   public static String[] getGFF3PropertyFromAttributes(String prop_name, String attributes) {
     if (attributes == null) {
@@ -264,7 +264,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     String[] tag_vals = attributes.split(";");
     String prop_with_equals = prop_name + "=";
     String val = null;
-    
+
     for (int i=0; i<tag_vals.length; i++) {
       if (tag_vals[i].startsWith(prop_with_equals)) {
         val = tag_vals[i].substring(prop_with_equals.length());
@@ -280,13 +280,13 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     }
     return results;
   }
-  
+
   /**
    *  Converts feature types that IGB understands into one of the constant strings:
    *  {@link #FEATURE_TYPE_GENE}, etc.  Invalid ones, are simply interned.
    */
   public static String normalizeFeatureType(String s) {
-    
+
     if (FEATURE_TYPE_GENE.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_GENE;
     }
@@ -299,7 +299,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     if (FEATURE_TYPE_CDS.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_CDS;
     }
-        
+
     if (SOFA_GENE.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_GENE;
     }
@@ -312,21 +312,21 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     if (SOFA_CDS.equalsIgnoreCase(s)) {
       return FEATURE_TYPE_CDS;
     }
-   
+
     return s.intern();
   }
-  
+
   public String toString() {
     return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
         + " children=" + getChildCount();
   }
-  
+
   public boolean isMultiLine() {
     return false;
   }
-  
+
   public static class MultiLineGFF3Sym extends GFF3Sym {
-    public MultiLineGFF3Sym(BioSeq seq, String source, String feature_type, int a, int b, 
+    public MultiLineGFF3Sym(BioSeq seq, String source, String feature_type, int a, int b,
                     float score, char strand, char frame, String attributes) {
       super(seq, source, feature_type, a, b, score, strand, frame, attributes);
     }

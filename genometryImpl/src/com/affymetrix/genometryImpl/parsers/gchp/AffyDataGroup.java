@@ -16,8 +16,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometryImpl.parsers.*;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AffyDataGroup {
   

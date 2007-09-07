@@ -27,13 +27,12 @@ import com.affymetrix.genometryImpl.util.FloatList;
  *  Assumes that ScoredContainerSym has only one SeqSpan
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
-  // none of these hashmap's should be static
-  Map name2scores = new HashMap();
-  Map name2id = new HashMap(); // Maps score names to unique graph ids
-  Map name2id_plus = new HashMap();
-  Map name2id_minus = new HashMap();
-  java.util.List scorevals = new ArrayList();
-  java.util.List scorenames = new ArrayList();
+  Map<String,Object> name2scores = new HashMap<String,Object>();
+  Map<String,String> name2id = new HashMap<String,String>(); // Maps score names to unique graph ids
+  Map<String,String> name2id_plus = new HashMap<String,String>();
+  Map<String,String> name2id_minus = new HashMap<String,String>();
+  List<Object> scorevals = new ArrayList<Object>();
+  List<String> scorenames = new ArrayList<String>();
 
   /**
    *  Adds scores.
@@ -57,18 +56,18 @@ public class ScoredContainerSym extends SimpleSymWithProps {
   }
 
   public String getScoreName(int index)  {
-    return (String)scorenames.get(index);
+    return scorenames.get(index);
   }
 
-  public float[] getChildScores(IndexedSym child, java.util.List scorelist) {
+  public float[] getChildScores(IndexedSym child, List<Object> scorelist) {
     float[] result = null;
     if (child.getParent() == this) {
       int score_index = child.getIndex();  // position in each score array for score for this child
       int scores_count = scorelist.size();
       result = new float[scores_count];
       for (int i=0; i<scores_count; i++) {
-	float[] scores = (float[])scorelist.get(i);
-	result[i] = scores[score_index];
+        float[] scores = (float[])scorelist.get(i);
+        result[i] = scores[score_index];
       }
     }
     return result;
@@ -128,9 +127,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     for (int i=0; i<score_count; i++) {
       IndexedSym isym = (IndexedSym) this.getChild(i);
       if (isym.getIndex() != i) {
-	System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
-			   "child.getIndex() not same as child's index in parent child list: " +
-			   isym.getIndex() + ", " + i);
+        System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
+          "child.getIndex() not same as child's index in parent child list: " +
+          isym.getIndex() + ", " + i);
       }
       SeqSpan cspan = isym.getSpan(aseq);
       xcoords[i] = cspan.getMin();
@@ -174,16 +173,16 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     for (int i=0; i<score_count; i++) {
       IndexedSym isym = (IndexedSym)this.getChild(i);
       if (isym.getIndex() != i) {
-	System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
-			   "child.getIndex() not same as child's index in parent child list: " +
-			   isym.getIndex() + ", " + i);
+        System.err.println("problem in ScoredContainerSym.makeGraphSym(), " +
+          "child.getIndex() not same as child's index in parent child list: " +
+          isym.getIndex() + ", " + i);
       }
       SeqSpan cspan = isym.getSpan(aseq);
       if (cspan.isForward() == orientation) {
-	xlist.add(cspan.getMin());
-	wlist.add(cspan.getLength());
-	ylist.add(scores[i]);
-	correct_strand_count++;
+        xlist.add(cspan.getMin());
+        wlist.add(cspan.getLength());
+        ylist.add(scores[i]);
+        correct_strand_count++;
       }
     }
 
@@ -210,7 +209,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
   }
 
-  static Map id2gstate = new HashMap();
+  static Map<String,GraphStateI> id2gstate = new HashMap<String,GraphStateI>();
 
   // Returns the unique graph ID associated with the score name;
   // this score will map to this same graph ID for all other
@@ -237,9 +236,9 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     return gs;
   }
 
-  static Map id2combo_style_plus = new HashMap();
-  static Map id2combo_style_minus = new HashMap();
-  static Map id2combo_style_neutral = new HashMap();
+  static Map<String,IAnnotStyle> id2combo_style_plus = new HashMap<String,IAnnotStyle>();
+  static Map<String,IAnnotStyle> id2combo_style_minus = new HashMap<String,IAnnotStyle>();
+  static Map<String,IAnnotStyle> id2combo_style_neutral = new HashMap<String,IAnnotStyle>();
 
   IAnnotStyle getContainerStyle(char strand) {
     // There are separate combo style items for +, - and +/-.
@@ -255,19 +254,19 @@ public class ScoredContainerSym extends SimpleSymWithProps {
     }
 
     if (strand == '+') {
-      style = (IAnnotStyle) id2combo_style_plus.get(getID());
+      style = id2combo_style_plus.get(getID());
       if (style == null) {
         style = newComboStyle(name);
         id2combo_style_plus.put(getID(), style);
       }
     } else if (strand == '-') {
-      style = (IAnnotStyle) id2combo_style_minus.get(getID());
+      style = id2combo_style_minus.get(getID());
       if (style == null) {
         style = newComboStyle(name);
         id2combo_style_minus.put(getID(), style);
       }
     } else {
-      style = (IAnnotStyle) id2combo_style_neutral.get(getID());
+      style = id2combo_style_neutral.get(getID());
       if (style == null) {
         style = newComboStyle(name);
         id2combo_style_neutral.put(getID(), style);

@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
 import java.util.*;
 
@@ -79,7 +77,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   int[] blockMins; // "blockStarts" + "txMin"
   int[] blockMaxs; // "blockStarts" + "txMin" + "blockSizes"
   String type;
-  Map props;
+  Map<String,Object> props;
   boolean hasCdsSpan = false;
 
   /**
@@ -115,7 +113,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   /**
    *  Returns true if the cds was specified in the constructor with valid values.
    *  If cdsMin = cdsMax = Integer.MIN_VALUE, or if cdsMin = cdsMax, then there is no CDS.
-   *  
+   *
    */
   public boolean hasCdsSpan() { return hasCdsSpan; }
   public SeqSpan getCdsSpan() {
@@ -160,10 +158,10 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     }
     else { return false; }
   }
-  
+
   /** Always returns 1. */
   public int getSpanCount() { return 1; }
-  
+
   /** Returns null if index is not 1. */
   public BioSeq getSpanSeq(int index) {
     if (index == 0) { return seq; }
@@ -189,7 +187,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
       return new BedChildSingletonSeqSym(blockMaxs[index], blockMins[index], seq);
     }
   }
-  
+
   class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
     public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
       super(start, end, seq);
@@ -198,13 +196,13 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
     // For the web links to be constructed properly, this class must implement getID(),
     // or must NOT implement SymWithProps.
     public String getID() {return UcscBedSym.this.getID();}
-    public Map getProperties() {return UcscBedSym.this.getProperties();}
-    public Map cloneProperties() {return UcscBedSym.this.cloneProperties();}
+    public Map<String,Object> getProperties() {return UcscBedSym.this.getProperties();}
+    public Map<String,Object> cloneProperties() {return UcscBedSym.this.cloneProperties();}
     public Object getProperty(String key) {return UcscBedSym.this.getProperty(key);}
     public boolean setProperty(String key, Object val) {return UcscBedSym.this.setProperty(key, val);}
     public float getScore() {return UcscBedSym.this.getScore(); }
   }
-  
+
   // SeqSpan implementation
   public int getStart() { return (forward ? txMin : txMax); }
   public int getEnd() { return (forward ? txMax : txMin); }
@@ -219,15 +217,15 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
   public double getMinDouble() { return (double)getMin(); }
   public double getLengthDouble() { return (double)getLength(); }
   public boolean isIntegral() { return true; }
-  
+
   public float getScore() { return score; }
 
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 
-  public Map cloneProperties() {
-    HashMap tprops = new HashMap();
+  public Map<String,Object> cloneProperties() {
+    HashMap<String,Object> tprops = new HashMap<String,Object>();
     tprops.put("id", name);
     tprops.put("type", type);
     tprops.put("name", name);
@@ -264,7 +262,7 @@ public class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedS
 
   public boolean setProperty(String name, Object val) {
     if (props == null) {
-      props = new Hashtable();
+      props = new Hashtable<String,Object>();
     }
     props.put(name, val);
     return true;

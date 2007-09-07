@@ -108,7 +108,7 @@ public class BarParser implements AnnotationWriter  {
    */
   static int points_per_chunk = 1024;
 
-  protected static Map coordset2seqs = new HashMap();
+  protected static Map<String,Object> coordset2seqs = new HashMap<String,Object>();
 
   /**
    *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
@@ -433,23 +433,23 @@ public class BarParser implements AnnotationWriter  {
   }
 
   /** Parse a file in BAR format. */
-  public static List parse(InputStream istr, GenometryModel gmodel,
+  public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
       AnnotatedSeqGroup default_seq_group, String stream_name,
       boolean ensure_unique_id)
     throws IOException {
 
     BufferedInputStream bis = null;
     DataInputStream dis = null;
-    List graphs = null;
+    List<GraphSym> graphs = null;
 
     Timer tim = new Timer();
     tim.start();
     try {
       if (istr instanceof BufferedInputStream) {
-	bis = (BufferedInputStream)istr;
+        bis = (BufferedInputStream)istr;
       }
       else {
-	bis = new BufferedInputStream(istr);
+        bis = new BufferedInputStream(istr);
       }
     dis = new DataInputStream(bis);
     BarFileHeader bar_header = parseBarHeader(dis);
@@ -458,17 +458,17 @@ public class BarParser implements AnnotationWriter  {
     int total_seqs = bar_header.seq_count;
     int[] val_types = bar_header.val_types;
     int vals_per_point = bar_header.vals_per_point;
-    Map file_tagvals = bar_header.tagvals;
+    Map<String,String> file_tagvals = bar_header.tagvals;
 
     String graph_id = "unknown";
     if (stream_name != null) { graph_id = stream_name; }
     if (file_tagvals.get("file_type") != null) {
-      graph_id += ":" + (String)file_tagvals.get("file_type");
+      graph_id += ":" + file_tagvals.get("file_type");
     }
     for (int k=0; k<total_seqs; k++) {
       BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
       int total_points = seq_header.data_point_count;
-      Map seq_tagvals = seq_header.tagvals;
+      Map<String,String> seq_tagvals = seq_header.tagvals;
       //      MutableAnnotatedBioSeq seq = seq_header.aseq;
       SmartAnnotBioSeq seq = (SmartAnnotBioSeq)seq_header.aseq;
       if (vals_per_point == 1) {
@@ -477,7 +477,7 @@ public class BarParser implements AnnotationWriter  {
       else if (vals_per_point == 2) {
         if (val_types[0] == BYTE4_SIGNED_INT &&
             val_types[1] == BYTE4_FLOAT) {
-          if (graphs == null) { graphs = new ArrayList(); }
+          if (graphs == null) { graphs = new ArrayList<GraphSym>(); }
           //          System.out.println("reading graph data: " + k);
           int xcoords[] = new int[total_points];
           float ycoords[] = new float[total_points];
@@ -523,7 +523,7 @@ public class BarParser implements AnnotationWriter  {
         if (val_types[0] == BYTE4_SIGNED_INT &&
             val_types[1] == BYTE4_FLOAT &&
             val_types[2] == BYTE4_FLOAT) {
-          if (graphs == null) { graphs = new ArrayList(); }
+          if (graphs == null) { graphs = new ArrayList<GraphSym>(); }
           if (DEBUG_READ)  { System.out.println("reading graph data: " + k); }
           int xcoords[] = new int[total_points];
           float ycoords[] = new float[total_points];
@@ -593,8 +593,8 @@ public class BarParser implements AnnotationWriter  {
     dos.writeBytes(val);
   }
 
-  public static HashMap readTagValPairs(DataInput dis, int pair_count) throws IOException  {
-    HashMap tvpairs = new HashMap(pair_count);
+  public static HashMap<String,String> readTagValPairs(DataInput dis, int pair_count) throws IOException  {
+    HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
     if (DEBUG_READ) { System.out.println("reading tagvals: "); }
     for (int i=0; i<pair_count; i++) {
       int taglength = dis.readInt();
@@ -653,7 +653,7 @@ public class BarParser implements AnnotationWriter  {
       }
       int tvcount = dis.readInt();
       if (DEBUG_READ) { System.out.println("file tagval count: " + tvcount); }
-      HashMap file_tagvals = readTagValPairs(dis, tvcount);
+      HashMap<String,String> file_tagvals = readTagValPairs(dis, tvcount);
       BarFileHeader header = new BarFileHeader(version, total_seqs, val_types, file_tagvals);
       return header;
     } catch (Throwable t) {
@@ -698,7 +698,7 @@ public class BarParser implements AnnotationWriter  {
 	if (DEBUG_READ)  { System.out.println("seqname = " + seqname + ", seqversion = " + seqversion); }
       }
 
-      HashMap seq_tagvals = null;
+      HashMap<String,String> seq_tagvals = null;
       if (bar2) {
 	int seq_tagval_count = dis.readInt();
 	if (DEBUG_READ)  { System.out.println("seq tagval count: " + seq_tagval_count); }
@@ -904,9 +904,9 @@ public class BarParser implements AnnotationWriter  {
 class BarSeqHeader {
   MutableAnnotatedBioSeq aseq;
   int data_point_count;
-  Map tagvals;
+  Map<String,String> tagvals;
 
-  public BarSeqHeader(MutableAnnotatedBioSeq seq, int data_points, Map tagvals)  {
+  public BarSeqHeader(MutableAnnotatedBioSeq seq, int data_points, Map<String,String> tagvals)  {
     this.aseq = seq;
     this.data_point_count = data_points;
     this.tagvals = tagvals;
@@ -920,9 +920,9 @@ class BarFileHeader {
   int vals_per_point;
   int val_types[];
   int bytes_per_point = 0;
-  Map tagvals;
+  Map<String,String> tagvals;
 
-  public BarFileHeader(float version, int seq_count, int[] val_types, Map tagvals) {
+  public BarFileHeader(float version, int seq_count, int[] val_types, Map<String,String> tagvals) {
     this.version = version;
     this.seq_count = seq_count;
     this.val_types = val_types;

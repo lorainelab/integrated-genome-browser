@@ -37,7 +37,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
       int[] slice_xcoords = slice.getGraphXCoords();
       float[] slice_ycoords;
       if (sym instanceof GraphSymFloat) {
-        slice_ycoords = ((GraphSymFloat) slice).getGraphYCoords();
+        slice_ycoords = slice.getGraphYCoords();
       } else {
         slice_ycoords = slice.copyGraphYCoords();
       }

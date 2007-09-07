@@ -66,7 +66,7 @@ public interface IAnnotStyle {
    *  store all the properties of a UCSC track-line, for example.
    *  (These properties are not persisted in the java prefs system.)
    */
-  public Map getTransientPropertyMap();
+  public Map<String,Object> getTransientPropertyMap();
   
   public void copyPropertiesFrom(IAnnotStyle s);
 }

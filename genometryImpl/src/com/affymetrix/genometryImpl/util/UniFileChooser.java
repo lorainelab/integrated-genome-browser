@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -29,8 +29,9 @@ import javax.swing.filechooser.FileFilter;
  *
  */
 public class UniFileChooser extends JFileChooser {
+  static final long serialVersionUID = 1L;
 
-  /** 
+  /**
    *  A singleton UniFileChooser, re-used when possible.
    */
   private static UniFileChooser static_file_chooser;
@@ -44,9 +45,9 @@ public class UniFileChooser extends JFileChooser {
     // bare constructor.  Allows for subclassing.
     super();
   }
-  
-  /** 
-   *  Creates and returns a JFileChooser which accepts only filenames 
+
+  /**
+   *  Creates and returns a JFileChooser which accepts only filenames
    *  ending in period+extension when creating or writing to a file.
    *
    *  <p>Example: new UniFileChooser("AXML file", "axml");
@@ -65,28 +66,28 @@ public class UniFileChooser extends JFileChooser {
     return static_file_chooser;
   }
 
-  /** 
+  /**
    *  Reinitializes a singleton JFileChooser to accept only an ".axml" filename.
    */
   public static UniFileChooser getAXMLFileChooser() {
     return getFileChooser("AXML file", "axml");
   }
 
-  /** 
+  /**
    *  Reinitializes a singleton JFileChooser to accept only an ".xml" filename.
    */
   public static UniFileChooser getXMLFileChooser() {
     return getFileChooser("XML file", "xml");
   }
 
-  /** 
-   *  Resets such that it will accept only filenames 
+  /**
+   *  Resets such that it will accept only filenames
    *  ending in period+extension when creating or writing to a file.
    *
    *  <p>Example: reinitialize("AXML file", "axml");
    */
   public void reinitialize(final String description, final String extension) {
-    if (description==null || extension==null || "".equals(extension)) throw new 
+    if (description==null || extension==null || "".equals(extension)) throw new
       IllegalArgumentException("description and extension cannot be null");
 
     if (extension.indexOf('.') != -1) throw new
@@ -101,7 +102,7 @@ public class UniFileChooser extends JFileChooser {
         removeChoosableFileFilter(filters[i]);
       }
       current_file_filter = new UniFileFilter(extension, description);
-      
+
       addChoosableFileFilter(current_file_filter);
     }
 
@@ -114,9 +115,9 @@ public class UniFileChooser extends JFileChooser {
   }
 
 
-  /** 
-   *  If the selected file looks like a reasonable choice, then open it. 
-   *  Else suggest a new filename. 
+  /**
+   *  If the selected file looks like a reasonable choice, then open it.
+   *  Else suggest a new filename.
    */
   public void approveSelection() {
     File f = getSelectedFile();
@@ -126,7 +127,7 @@ public class UniFileChooser extends JFileChooser {
       setCurrentDirectory(f);
       return;
     }
-    
+
     FileFilter filter = getFileFilter();
     UniFileFilter uni_filter = null;
     Set extensions = Collections.EMPTY_SET;
@@ -193,7 +194,7 @@ public class UniFileChooser extends JFileChooser {
       }
     }
   }
-  
+
   /** Return a new file with the given extension at the end of the name. */
   private File applyExtension(File f, String extension) {
     String name = f.getName();

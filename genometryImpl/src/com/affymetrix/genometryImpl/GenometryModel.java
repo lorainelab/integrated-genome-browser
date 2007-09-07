@@ -1,14 +1,15 @@
-/////////////////////////////////////////////////////////////////////
-// (C) Copyright 2007, Affymetrix, Inc.
-// All rights reserved. Confidential. Except as pursuant
-// to a written agreement with Affymetrix, this software may
-// not be used or distributed. This software may be covered
-// by one or more patents.
-//
-// "GeneChip", "Affymetrix" and the Affymetrix logos, and
-// Affymetrix user interfaces are trademarks used by Affymetrix.
-//////////////////////////////////////////////////////////////////////*
-
+/**
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*   Distributions from Affymetrix, Inc., place this in the
+*   IGB_LICENSE.html file.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
@@ -23,46 +24,44 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import java.util.*;
 
 public class GenometryModel {
-  
+
   /** Creates a new instance of GenometryModel */
   public GenometryModel() {
   }
 
   static public boolean DEBUG = false;
-  
-  Map seq_groups = new LinkedHashMap();
+
+  Map<String,AnnotatedSeqGroup> seq_groups = new LinkedHashMap<String,AnnotatedSeqGroup>();
   // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
   // maps sequences to lists of selected symmetries
-  Map seq2selectedSymsHash = new HashMap();
+  Map<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
 
-  List seq_selection_listeners = new ArrayList();
-  List group_selection_listeners = new ArrayList();
-  List sym_selection_listeners = new ArrayList();
+  List<SeqSelectionListener> seq_selection_listeners = new ArrayList<SeqSelectionListener>();
+  List<GroupSelectionListener> group_selection_listeners = new ArrayList<GroupSelectionListener>();
+  List<SymSelectionListener> sym_selection_listeners = new ArrayList<SymSelectionListener>();
   //List model_change_listeners = new ArrayList();
 
   AnnotatedSeqGroup selected_group = null;
   MutableAnnotatedBioSeq selected_seq = null;
 
   /** Returns a Map of String names to AnnotatedSeqGroup objects. */
-  public Map getSeqGroups() {
+  public Map<String,AnnotatedSeqGroup> getSeqGroups() {
     return seq_groups;
   }
-  
-  public List getSeqGroupNames() {
-    List list = new ArrayList(getSeqGroups().keySet());
+
+  public List<String> getSeqGroupNames() {
+    List<String> list = new ArrayList<String>(getSeqGroups().keySet());
     Collections.sort(list);
     return Collections.unmodifiableList(list);
   }
 
   public AnnotatedSeqGroup getSeqGroup(String group_syn) {
     if (group_syn == null) { return null; }
-    AnnotatedSeqGroup group = (AnnotatedSeqGroup)seq_groups.get(group_syn);
+    AnnotatedSeqGroup group = seq_groups.get(group_syn);
     if (group == null) {
       // try and find a synonym
-      Iterator iter = seq_groups.values().iterator();
-      while (iter.hasNext()) {
-        AnnotatedSeqGroup curgroup = (AnnotatedSeqGroup)iter.next();
+      for (AnnotatedSeqGroup curgroup : seq_groups.values()) {
         if (curgroup.isSynonymous(group_syn)) {
           group = curgroup;
           break;
@@ -110,12 +109,12 @@ public class GenometryModel {
     seq_groups.clear();
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
-  
+
   public AnnotatedSeqGroup getSelectedSeqGroup() {
     return selected_group;
   }
 
-  // TODO: modify so that fireGroupSelectionEvent() is only called if 
+  // TODO: modify so that fireGroupSelectionEvent() is only called if
   //     gropu arg is different than previous selected_group
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {
@@ -125,7 +124,7 @@ public class GenometryModel {
 
     selected_group = group;
     selected_seq = null;
-    ArrayList glist = new ArrayList();
+    ArrayList<AnnotatedSeqGroup> glist = new ArrayList<AnnotatedSeqGroup>();
     glist.add(selected_group);
     fireGroupSelectionEvent(this, glist);
   }
@@ -142,10 +141,10 @@ public class GenometryModel {
     return group_selection_listeners;
   }
 
-  void fireGroupSelectionEvent(Object src, List glist) {
+  void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
     GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
     for (int i=group_selection_listeners.size()-1; i>=0; i--) {
-      GroupSelectionListener listener = (GroupSelectionListener) group_selection_listeners.get(i);
+      GroupSelectionListener listener = group_selection_listeners.get(i);
       listener.groupSelectionChanged(evt);
     }
   }
@@ -165,7 +164,7 @@ public class GenometryModel {
     }
 
     selected_seq = seq;
-    ArrayList slist = new ArrayList();
+    ArrayList<AnnotatedBioSeq> slist = new ArrayList<AnnotatedBioSeq>();
     slist.add(selected_seq);
     fireSeqSelectionEvent(src, slist);
   }
@@ -188,7 +187,7 @@ public class GenometryModel {
    *       for example in IGB some listeners assume main SeqMapView has been
    *       notified first)
    */
-  void fireSeqSelectionEvent(Object src, List slist) {
+  void fireSeqSelectionEvent(Object src, List<AnnotatedBioSeq> slist) {
     SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
     Iterator iter = seq_selection_listeners.iterator();
     while (iter.hasNext())  {
@@ -215,8 +214,7 @@ public class GenometryModel {
     }
     SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
     for (int i=sym_selection_listeners.size()-1; i>=0; i--) {
-      SymSelectionListener listener = (SymSelectionListener)sym_selection_listeners.get(i);
-      listener.symSelectionChanged(sevt);
+      sym_selection_listeners.get(i).symSelectionChanged(sevt);
     }
   }
 
@@ -224,17 +222,15 @@ public class GenometryModel {
    *  This may be different from the currently selected BioSeq's, because
    *  selection of sequence(s) and symmetries are independent.
    */
-  public List getSequencesWithSelections() {
-    Set sequences = new HashSet();
-    Iterator iter = seq2selectedSymsHash.keySet().iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
+  public List<MutableAnnotatedBioSeq> getSequencesWithSelections() {
+    Set<MutableAnnotatedBioSeq> sequences = new HashSet<MutableAnnotatedBioSeq>();
+    for (MutableAnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
       List list = (List) seq2selectedSymsHash.get(seq);
       if (! list.isEmpty()) {
         sequences.add(seq);
       }
     }
-    return new ArrayList(sequences);
+    return new ArrayList<MutableAnnotatedBioSeq>(sequences);
   }
 
   /**
@@ -245,8 +241,8 @@ public class GenometryModel {
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
    */
-  public void setSelectedSymmetries(List syms, Object src)  {
-    List seqs_with_selections = setSelectedSymmetries(syms);
+  public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src)  {
+    List<MutableAnnotatedBioSeq> seqs_with_selections = setSelectedSymmetries(syms);
     fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
   }
 
@@ -261,7 +257,7 @@ public class GenometryModel {
    *  @param syms A List of SeqSymmetry objects to select.
    *  @param src The object responsible for selecting the sequences.
    */
-  public void setSelectedSymmetriesAndSeq(List syms, Object src) {
+  public void setSelectedSymmetriesAndSeq(List<SeqSymmetry> syms, Object src) {
     List seqs_with_selections = setSelectedSymmetries(syms);
     if (! seqs_with_selections.contains(getSelectedSeq())) {
       if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
@@ -284,27 +280,27 @@ public class GenometryModel {
    *  @param src The object responsible for selecting the sequences.
    *  @return The List of sequences with selections on them after this operation.
    */
-  List setSelectedSymmetries(List syms) {
-    
+  List<MutableAnnotatedBioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
+
     if (DEBUG) {
       System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
     }
 
-    HashMap seq2SymsHash = new HashMap();
+    HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
 
     // for each ID found in the ID2sym hash, add it to the owning sequences
     //  list of selected symmetries
-    Iterator syms_iter = syms.iterator();
-    HashSet all_seqs = new HashSet(); // remember all seqs found
+    Iterator<SeqSymmetry> syms_iter = syms.iterator();
+    HashSet<MutableAnnotatedBioSeq> all_seqs = new HashSet<MutableAnnotatedBioSeq>(); // remember all seqs found
     while (syms_iter.hasNext()) {
-      SeqSymmetry sym = (SeqSymmetry) syms_iter.next();
+      SeqSymmetry sym = syms_iter.next();
       if (sym != null) {
         MutableAnnotatedBioSeq seq = getSelectedSeqGroup().getSeq(sym);
         if (seq != null) {
           // prepare the list to add the sym to based on the seq ID
-          ArrayList symlist = (ArrayList)seq2SymsHash.get(seq);
+          List<SeqSymmetry> symlist = seq2SymsHash.get(seq);
           if (symlist == null) {
-            symlist = new ArrayList();
+            symlist = new ArrayList<SeqSymmetry>();
             seq2SymsHash.put(seq, symlist);
           }
           // add the sym to the list for the correct seq ID
@@ -318,16 +314,15 @@ public class GenometryModel {
     clearSelectedSymmetries(); // do not send an event yet
 
     // now perform the selections for each sequence that was matched
-    for(Iterator i=seq2SymsHash.keySet().iterator(); i.hasNext();) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) i.next();
-      List symslist = (List) seq2SymsHash.get(seq);
+    for(  MutableAnnotatedBioSeq seq : seq2SymsHash.keySet()) {
+      List<SeqSymmetry> symslist = seq2SymsHash.get(seq);
       if (DEBUG) {
         System.out.println("Syms " + symslist.size() + " on seq " + seq.getID());
       }
       setSelectedSymmetries(symslist, seq); // do not send an event yet
     }
 
-    return new ArrayList(all_seqs);
+    return new ArrayList<MutableAnnotatedBioSeq>(all_seqs);
   }
 
   /**
@@ -338,14 +333,14 @@ public class GenometryModel {
    *  @param src The object responsible for selecting the sequences.
    *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
    */
-  void setSelectedSymmetries(List syms, Object src, MutableAnnotatedBioSeq seq ) {
+  void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, MutableAnnotatedBioSeq seq ) {
     setSelectedSymmetries(syms, seq);
     fireSymSelectionEvent(src, syms);
   }
 
   // Selects a List of SeqSymmetry objects for a particular BioSeq.
   // Does not send a selection event.
-  void setSelectedSymmetries(List syms, MutableAnnotatedBioSeq seq) {
+  void setSelectedSymmetries(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
     if (seq == null) { return; }
     // Should it complain if any of the syms are not on the specified seq?
     // (This is not an issue since this is not called from outside of this class.)
@@ -371,12 +366,12 @@ public class GenometryModel {
    *  Get the list of selected symmetries on the currently selected sequence.
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
-  public List getSelectedSymmetriesOnAllSeqs() {
-    List result = new ArrayList();
-    Iterator iter = seq2selectedSymsHash.values().iterator();
-    while (iter.hasNext()) {
-      result.addAll((List) iter.next());
+  public List<SeqSymmetry> getSelectedSymmetriesOnAllSeqs() {
+    List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
+    for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
+      result.addAll(list);
     }
+
     return result;
   }
 
@@ -384,11 +379,12 @@ public class GenometryModel {
    *  Get the list of selected symmetries on the specified sequence.
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
-  public List getSelectedSymmetries(AnnotatedBioSeq seq) {
-    List selections = (List) seq2selectedSymsHash.get(seq);
+  public List<SeqSymmetry> getSelectedSymmetries(AnnotatedBioSeq seq) {
+    MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq) seq; //TODO: change the method signature?
+    List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
     if (selections == null) {
-      selections = new ArrayList();
-      seq2selectedSymsHash.put(seq, selections);
+      selections = new ArrayList<SeqSymmetry>();
+      seq2selectedSymsHash.put(mseq, selections);
     }
     return selections;
   }
@@ -407,12 +403,11 @@ public class GenometryModel {
    *  Does not notifies the selection listeners.
    */
   void clearSelectedSymmetries() {
-    for(Iterator i=seq2selectedSymsHash.values().iterator(); i.hasNext();) {
-      List list = (List) i.next();
+    for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
       list.clear();
     }
   }
-  
+
 //  public void addModelChangeListener(GenometryModelChangeListener listener) {
 //    model_change_listeners.add(listener);
 //  }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -15,8 +15,8 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.*;
+import java.awt.Color;
 
-import java.awt.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -31,10 +31,10 @@ public class TrackLineParser {
   public static final String DESCRIPTION="description";
   public static final String VISIBILITY ="visibility";
   public static final String URL="url";
-  
+
   /** Value will be stored in the IAnnotStyle extended properties. */
   public static final String USE_SCORE="usescore";
-  
+
   /** If this property has the value "on" (case-insensitive) and the SeqSymmetry
    *  has a property {@link #ITEM_RGB}, then that color will be used for drawing that
    *  symmetry.  Value is stored in the IAnnotStyle extended properties.
@@ -53,12 +53,12 @@ public class TrackLineParser {
       + "(?:\\S+)"        // Any non-whitespace characters
     + ")");               //    ... end of group 2
 
-  Map track_hash = new TreeMap();
+  Map<String,String> track_hash = new TreeMap<String,String>();
 
   public TrackLineParser() {}
 
-  public Map getCurrentTrackHash() { return track_hash; }
-    
+  public Map<String,String> getCurrentTrackHash() { return track_hash; }
+
   /**
    *  Convert a color in string representation "RRR,GGG,BBB" into a Color.
    *  Note that this can throw an exception if the String is poorly formatted.
@@ -74,7 +74,7 @@ public class TrackLineParser {
       return null;
     }
   }
-  
+
   /** If the string starts and ends with '\"' characters, this removes them. */
   public static final String unquote(String str) {
     int length = str.length();
@@ -85,16 +85,16 @@ public class TrackLineParser {
       return str;
     }
   }
-  
+
   /** Parses a track line putting the keys and values into the current value
-   *  of getCurrentTrackHash(), but does not use these properties to change 
+   *  of getCurrentTrackHash(), but does not use these properties to change
    *  any settings of AnnotStyle, etc.
    *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
    *  Any old values are cleared from the existing track line hash first.
    */
-  public Map parseTrackLine(String track_line) {
+  public Map<String,String> parseTrackLine(String track_line) {
     track_hash.clear();
-    
+
     Matcher matcher = track_line_parser.matcher(track_line);
     // If performance becomes important, it is possible to save and re-use a Matcher,
     // but it isn't thread-safe
@@ -108,7 +108,7 @@ public class TrackLineParser {
         System.out.println("Couldn't parse this part of the track line: "+matcher.group(0));
       }
     }
-        
+
     return track_hash;
   }
 
@@ -117,9 +117,9 @@ public class TrackLineParser {
    *  A default track name must be provided in case none is specified by the
    *  track line itself.
    */
-  public static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group, 
-      Map track_hash, String default_track_name) {
-    String name = (String) track_hash.get(NAME);
+  public static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group,
+      Map<String,String> track_hash, String default_track_name) {
+    String name = track_hash.get(NAME);
     if (name == null) {
       track_hash.put(NAME, default_track_name);
       name = default_track_name;
@@ -130,41 +130,40 @@ public class TrackLineParser {
     applyTrackProperties(track_hash, style);
     return style;
   }
-    
+
   /**
    *  Copies the properties, such as color, into a given IAnnotStyle.
    *  (For a graph, the IAnnotStyle will be an instance of DefaultIAnnotStyle,
    *   for a non-graph, it will be an instance of AnnotStyle.)
    */
-  public static void applyTrackProperties(Map track_hash, IAnnotStyle style) {
+  public static void applyTrackProperties(Map<String,String> track_hash, IAnnotStyle style) {
     //System.out.println("setting track properties from: "+track_line);
-    
-    String description = (String) track_hash.get(DESCRIPTION);
+
+    String description = track_hash.get(DESCRIPTION);
     if (description != null) {
       style.setHumanName(description);
     } else {
       // Unless we explicitly set the human name, it will be the lower-case
       // version of the name used in AnnotStyle.getInstance().
       // Explicitly setting the name keeps the case intact.
-      String name = (String) track_hash.get(NAME);
+      String name = track_hash.get(NAME);
       if (name != null) {
         style.setHumanName(name);
       }
     }
-    String visibility = (String) track_hash.get(VISIBILITY);
-    
-    String color_string = (String) track_hash.get(COLOR);
+    String visibility = track_hash.get(VISIBILITY);
+
+    String color_string = track_hash.get(COLOR);
     if (color_string != null) {
       Color color = reformatColor(color_string);
       if (color != null) {
         style.setColor(color);
       }
     }
-    
-    java.util.List collapsed_modes = Arrays.asList(new String[] {"1", "dense"});
-    java.util.List expanded_modes = Arrays.asList(new String[]
-    {"2", "full", "3", "pack", "4", "squish"});
-    
+
+    List<String> collapsed_modes = Arrays.asList("1", "dense");
+    List<String> expanded_modes = Arrays.asList("2", "full", "3", "pack", "4", "squish");
+
     if (visibility != null) {
       // 0 - hide, 1 - dense, 2 - full, 3 - pack, and 4 - squish.
       // The numerical values or the words can be used, i.e. full mode may be
@@ -175,10 +174,10 @@ public class TrackLineParser {
         style.setCollapsed(false);
       }
     }
-    
+
     if (style instanceof IAnnotStyleExtended) { // for non-graph tiers
       IAnnotStyleExtended annot_style = (IAnnotStyleExtended) style;
-      String url = (String) track_hash.get(URL);
+      String url = track_hash.get(URL);
       if (url != null) {
         annot_style.setUrl(url);
       }
@@ -188,25 +187,23 @@ public class TrackLineParser {
         annot_style.setColorByScore(false);
       }
     }
-    
+
     // Probably shouldn't copy ALL keys to the extended values
     // since some are already included in the standard values above
-    Iterator iter = track_hash.keySet().iterator();
-    while (iter.hasNext()) {
-      String key = (String) iter.next();
+    for (String key : track_hash.keySet()) {
       Object value = track_hash.get(key);
       style.getTransientPropertyMap().put(key, value);
     }
   }
 
   /**
-   *  Applies the UCSC track properties that it understands to the GraphState 
+   *  Applies the UCSC track properties that it understands to the GraphState
    *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
    */
-  public static void applyTrackProperties(Map track_hash, GraphStateI gstate) {
+  public static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
     applyTrackProperties(track_hash, gstate.getTierStyle());
-    
-    String view_limits = (String) track_hash.get("viewlimits");
+
+    String view_limits = track_hash.get("viewlimits");
     if (view_limits != null) {
       String[] limits = view_limits.split(":");
       if (limits.length == 2) {
@@ -216,8 +213,8 @@ public class TrackLineParser {
         gstate.setVisibleMaxY(max);
       }
     }
-    
-    String graph_type = (String) track_hash.get("graphtype");
+
+    String graph_type = track_hash.get("graphtype");
     // UCSC browser supports only the types "points" and "bar"
     if ("points".equalsIgnoreCase(graph_type)) {
       gstate.setGraphStyle(GraphStateI.DOT_GRAPH);

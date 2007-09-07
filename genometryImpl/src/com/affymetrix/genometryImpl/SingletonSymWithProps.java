@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
-*    
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,7 +22,7 @@ import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
   implements SymWithProps {
 
-  Map props;
+  Map<String,Object> props;
 
   public SingletonSymWithProps(int start, int end, BioSeq seq) {
     super(start, end, seq);
@@ -33,7 +33,7 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
   }
 
   /** Returns the properties map, or null. */
-  public Map getProperties() {
+  public Map<String,Object> getProperties() {
     return props;
   }
 
@@ -44,34 +44,35 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
   }
 
   /**
-   *  Creates a clone of the properties Map. 
+   *  Creates a clone of the properties Map.
    *  Uses the same type of Map class (HashMap, TreeMap, etc.)
    *  as the original.
    */
-  public Map cloneProperties() {
+  @SuppressWarnings("unchecked")
+  public Map<String,Object> cloneProperties() {
     if (props == null) { return null; }
     // quick check for efficient Hashtable cloning
     else if (props instanceof Hashtable) {
-      return (Map)((Hashtable)props).clone();
+      return (Map<String,Object>)((Hashtable)props).clone();
     }
     // quick check for efficient HashMap cloning
     else if (props instanceof HashMap) {
-      return (Map)((HashMap)props).clone();
+      return (Map<String,Object>)((HashMap)props).clone();
     }
     // quick check for efficient TreeMap cloning
     else if (props instanceof TreeMap) {
-      return (Map)((TreeMap)props).clone();
+      return (Map<String,Object>)((TreeMap)props).clone();
     }
     else {
       try {
-	Map newprops = (Map)props.getClass().newInstance();
-	newprops.putAll(props);
-	return newprops;
+        Map<String,Object> newprops = (Map<String,Object>) props.getClass().newInstance();
+        newprops.putAll(props);
+        return newprops;
       }
       catch (Exception ex) {
-	System.out.println("problem trying to clone SymWithProps properties, " +
-			   "returning null instead");
-	return null;
+        System.out.println("problem trying to clone SymWithProps properties, " +
+          "returning null instead");
+        return null;
       }
     }
   }
@@ -82,13 +83,13 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
    *  @param propmap  a Map of String's to String's.  This class is designed to not throw exceptions
    *  if the map is null.
    */
-  public void setProperties(Map propmap) {
+  public void setProperties(Map<String,Object> propmap) {
     this.props = propmap;
   }
 
   public boolean setProperty(String name, Object val) {
     if (props == null) {
-      props = new Hashtable();
+      props = new Hashtable<String,Object>();
     }
     props.put(name, val);
     return true;
@@ -106,11 +107,10 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
   }
 
   public void printProps() {
-    if (props == null) { System.out.println("no props"); return; }
-    Set keys = props.keySet();
-    Iterator iter = keys.iterator();
-    while (iter.hasNext()) {
-      String key = (String)iter.next();
+    if (props == null) {
+      System.out.println("no props"); return;
+    }
+    for (String key : props.keySet()) {
       System.out.println(key + " --> " + props.get(key));
     }
   }

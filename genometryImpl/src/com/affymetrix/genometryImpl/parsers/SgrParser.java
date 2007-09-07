@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2006 Affymetrix, Inc.
+*   Copyright (c) 2006-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -28,29 +28,29 @@ import com.affymetrix.genometryImpl.util.PointIntFloat;
 
 public class SgrParser {
   static boolean DEBUG = false;
-  static Comparator pointcomp = PointIntFloat.getComparator(true, true);
+  static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
   static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
 
-  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+  public List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
                     boolean annotate_seq)
         throws IOException {
       return parse(istr, stream_name, seq_group, annotate_seq, true);
     }
 
-  public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+  public List<GraphSym> parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
                     boolean annotate_seq, boolean ensure_unique_id)
       throws IOException {
     System.out.println("Parsing with SgrParser: " + stream_name);
-    
-    ArrayList results = new ArrayList();
-    
+
+    ArrayList<GraphSym> results = new ArrayList<GraphSym>();
+
     try {
     InputStreamReader isr = new InputStreamReader(istr);
     BufferedReader br = new BufferedReader(isr);
 
     String line;
-    Map xhash = new HashMap();
-    Map yhash = new HashMap();
+    Map<String,IntList> xhash = new HashMap<String,IntList>();
+    Map<String,FloatList> yhash = new HashMap<String,FloatList>();
 
     String gid = stream_name;
     if (ensure_unique_id)  {
@@ -58,21 +58,21 @@ public class SgrParser {
       // will make sure the GraphState is also unique on the whole genome.
       gid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq_group);
     }
-    
+
     while ((line = br.readLine()) != null) {
       if (line.startsWith("#")) { continue; }
       if (line.startsWith("%")) { continue; }
       String[] fields = line_regex.split(line);
       String seqid = fields[0];
-      IntList xlist = (IntList)xhash.get(seqid);
+      IntList xlist = xhash.get(seqid);
       if (xlist == null) {
-	xlist = new IntList();
-	xhash.put(seqid, xlist);
+        xlist = new IntList();
+        xhash.put(seqid, xlist);
       }
-      FloatList ylist = (FloatList)yhash.get(seqid);
+      FloatList ylist = yhash.get(seqid);
       if (ylist == null) {
-	ylist = new FloatList();
-	yhash.put(seqid, ylist);
+        ylist = new FloatList();
+        yhash.put(seqid, ylist);
       }
       int x = Integer.parseInt(fields[1]);
       float y = Float.parseFloat(fields[2]);
@@ -86,13 +86,11 @@ public class SgrParser {
     // after populating all xlists, now make sure sorted
     sortAll(xhash, yhash);
 
-    Iterator iter = xhash.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry keyval = (Map.Entry)iter.next();
-      String seqid = (String)keyval.getKey();
+    for (Map.Entry<String,IntList> keyval : xhash.entrySet()) {
+      String seqid = keyval.getKey();
       BioSeq aseq = seq_group.getSeq(seqid);
-      IntList xlist = (IntList)keyval.getValue();
-      FloatList ylist = (FloatList)yhash.get(seqid);
+      IntList xlist = keyval.getValue();
+      FloatList ylist = yhash.get(seqid);
 
       if (aseq == null) {
         aseq = seq_group.addSeq(seqid, xlist.get(xlist.size()-1));
@@ -114,12 +112,12 @@ public class SgrParser {
         throw ioe;
       }
     }
-    
+
     return results;
   }
 
 
-  public static void sortAll(Map xhash, Map yhash) {
+  public static void sortAll(Map<String,IntList> xhash, Map<String,FloatList> yhash) {
     // after populating all xlists, now make sure sorted
     Iterator iter = xhash.entrySet().iterator();
     while (iter.hasNext()) {
@@ -131,26 +129,26 @@ public class SgrParser {
       boolean sorted = true;
       int prevx = Integer.MIN_VALUE;
       for (int i=0; i<xcount; i++) {
-	int x = xlist.get(i);
-	if (x < prevx) {
-	  sorted = false;
-	  break;
-	}
-	prevx = x;
+        int x = xlist.get(i);
+        if (x < prevx) {
+          sorted = false;
+          break;
+        }
+        prevx = x;
       }
       if (! sorted) {
-	pointSort(seqid, xhash, yhash);
+        pointSort(seqid, xhash, yhash);
       }
     }
   }
 
 
-  protected static void pointSort(String seqid, Map xhash, Map yhash) {
+  protected static void pointSort(String seqid, Map<String,IntList> xhash, Map<String,FloatList> yhash) {
     // System.out.println("points aren't sorted for seq = " + seqid + ", sorting now");
-    IntList xlist = (IntList)xhash.get(seqid);
-    FloatList ylist = (FloatList)yhash.get(seqid);
+    IntList xlist = xhash.get(seqid);
+    FloatList ylist = yhash.get(seqid);
     int graph_length = xlist.size();
-    List points = new ArrayList(graph_length);
+    List<PointIntFloat> points = new ArrayList<PointIntFloat>(graph_length);
     for (int i=0; i<graph_length; i++) {
       int x = xlist.get(i);
       float y = ylist.get(i);
@@ -161,7 +159,7 @@ public class SgrParser {
     IntList new_xlist = new IntList(graph_length);
     FloatList new_ylist = new FloatList(graph_length);
     for (int i=0; i<graph_length; i++) {
-      PointIntFloat pnt = (PointIntFloat) points.get(i);
+      PointIntFloat pnt = points.get(i);
       new_xlist.add(pnt.x);
       new_ylist.add(pnt.y);
     }
@@ -175,16 +173,16 @@ public class SgrParser {
       throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
     }
     String seq_id = seq.getID();
-    
+
     int xpos[] = graf.getGraphXCoords();
     //float ypos[] = (float[]) graf.getGraphYCoords();
-      
+
     BufferedOutputStream bos = null;
     DataOutputStream dos = null;
     try {
       bos = new BufferedOutputStream(ostr);
       dos = new DataOutputStream(bos);
-      
+
       for (int i=0; i<xpos.length; i++) {
         dos.writeBytes(seq_id + "\t" + xpos[i] + "\t" + graf.getGraphYCoordString(i) + "\n");
       }

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 public abstract class Application {
-  
+
   final static boolean USE_STATUS_BAR = true;
   public static boolean ALLOW_DELETING_DATA = false;
   public static boolean CACHE_GRAPHS = true;
@@ -31,7 +31,7 @@ public abstract class Application {
   protected StatusBar status_bar;
 
   static Application singleton = null;
-  
+
   public Application() {
     singleton = this;
     if (USE_STATUS_BAR) {
@@ -39,9 +39,9 @@ public abstract class Application {
       status_bar = new StatusBar();
     }
   }
-  
-  Map plugin_hash = new HashMap();
-  
+
+  Map<Class,IPlugin> plugin_hash = new HashMap<Class,IPlugin>();
+
   public void setPluginInstance(Class c, IPlugin plugin) {
     plugin_hash.put(c, plugin);
     //icon = (ImageIcon) plugin.getPluginProperty(IPlugin.TEXT_KEY_ICON);
@@ -51,9 +51,9 @@ public abstract class Application {
   }
 
   public IPlugin getPluginInstance(Class c) {
-    return (IPlugin) plugin_hash.get(c);
+    return plugin_hash.get(c);
   }
-  
+
   public static Application getSingleton() {
     if (singleton == null) {
       return new NullApplication();
@@ -61,13 +61,13 @@ public abstract class Application {
       return singleton;
     }
   }
-  
+
   abstract public Image getIcon();
   abstract public JFrame getFrame();
   abstract public SeqMapView getMapView();
   abstract public String getApplicationName();
   abstract public String getVersion();
-  
+
   /** Allows you to get arbitrary parameter strings, possibly from a ResourceBundle. */
   abstract public String getResourceString(String key);
 
@@ -155,23 +155,23 @@ public abstract class Application {
   public static Logger getApplicationLogger() {
     return getSingleton().getLogger();
   }
-  
+
   public static void logError(String msg) {
     getApplicationLogger().severe(msg);
   }
-  
+
   public static void logWarning(String msg) {
     getApplicationLogger().warning(msg);
   }
-  
+
   public static void logInfo(String msg) {
     getApplicationLogger().info(msg);
   }
-  
+
   public static void logDebug(String msg) {
     getApplicationLogger().fine(msg);
   }
-  
+
   /** A very basic implementation of Application.  It returns null from most methods. */
   static class NullApplication extends Application {
     public Image getIcon() { return null;}

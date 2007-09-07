@@ -81,7 +81,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
 
   Preferences node;
 
-  static Map static_map = new LinkedHashMap();
+  static Map<String,AnnotStyle> static_map = new LinkedHashMap<String,AnnotStyle>();
 
   public static AnnotStyle getInstance(String unique_name) {
     return getInstance(unique_name, true);
@@ -90,7 +90,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public static AnnotStyle getInstance(String unique_name, boolean persistent) {
       // if unique_name is null, maybe assign it "unknown" to avoid exceptions
       // if (unique_name == null)  { unique_name = "unknown";}
-    AnnotStyle style = (AnnotStyle) static_map.get(unique_name.toLowerCase());
+    AnnotStyle style = static_map.get(unique_name.toLowerCase());
     if (style == null) {
       AnnotStyle template = getDefaultInstance();
       style = new AnnotStyle(unique_name, persistent, template);
@@ -100,8 +100,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
   }
 
   /** Returns all (persistent and temporary) instances of AnnotStyle. */
-  public static java.util.List getAllLoadedInstances() {
-    return new ArrayList(static_map.values());
+  public static List<AnnotStyle> getAllLoadedInstances() {
+    return new ArrayList<AnnotStyle>(static_map.values());
   }
 
   /** If there is no AnnotStyle with the given name, just returns the given name;
@@ -440,11 +440,11 @@ public class AnnotStyle implements IAnnotStyleExtended {
     is_graph = b;
   }
 
-  Map transient_properties;
+  Map<String,Object> transient_properties;
 
-  public Map getTransientPropertyMap() {
+  public Map<String,Object> getTransientPropertyMap() {
     if (transient_properties == null) {
-      transient_properties = new HashMap();
+      transient_properties = new HashMap<String,Object>();
     }
     return transient_properties;
   }

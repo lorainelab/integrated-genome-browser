@@ -234,7 +234,8 @@ public abstract class Glyph implements GlyphI  {
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+//  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+    public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
                             ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
@@ -266,7 +267,8 @@ public abstract class Glyph implements GlyphI  {
    * to coordboxes and the call is
    * to <code>pickTraversal(<em>coordbox</em>, vec, view)</code>
    */
-  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+//  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+    public void pickTraversal(Rectangle pickRect, Vector pickVector,
                             ViewI view) {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {

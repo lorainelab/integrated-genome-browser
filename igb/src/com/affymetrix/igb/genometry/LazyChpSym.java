@@ -245,7 +245,7 @@ public class LazyChpSym extends ScoredContainerSym {
     while (titer.hasNext()) {
       Map.Entry ent = (Map.Entry)titer.next();
       Das2Type das_type = (Das2Type)ent.getValue();
-      System.out.println("found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
+      System.out.println("#### found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);
 
       // Set the human name on the tier to the short type name, not the long URL ID
       DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(das_type.getID()).setHumanName(das_type.getName());

@@ -257,7 +257,7 @@ public class BarParser implements AnnotationWriter  {
 
       checkSeqLength(aseq, graph_xcoords);
       // don't need a unique id for this GraphSym, since slices are not added directly as annotations
-      //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...      
+      //    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
       graf = new GraphSymFloat(graph_xcoords, graph_ycoords, "slice", aseq);
       graf.removeSpan(graf.getSpan(aseq));
       graf.addSpan(span);
@@ -778,7 +778,7 @@ public class BarParser implements AnnotationWriter  {
    */
   public static AnnotatedSeqGroup getSeqGroup(String groupname, String version, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group) {
     AnnotatedSeqGroup group = null;
-    if (((version == null)  || version.equals("")) && 
+    if (((version == null)  || version.equals("")) &&
 	((groupname == null) || groupname.equals("") )) {
       group = default_seq_group;
     }
@@ -787,10 +787,10 @@ public class BarParser implements AnnotationWriter  {
 	group = gmodel.getSeqGroup(groupname + ":" + version);
       }
       if (group == null && groupname != null) {
-	group = gmodel.getSeqGroup(groupname); 
+	group = gmodel.getSeqGroup(groupname);
       }
       if (group == null && version != null) {
-	group = gmodel.getSeqGroup(version); 
+	group = gmodel.getSeqGroup(version);
       }
       // no group found, so create a new one
       if (group == null)  {
@@ -823,7 +823,7 @@ public class BarParser implements AnnotationWriter  {
    * Writes bar format.
    * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
    */
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 				  String type, OutputStream ostr) {
     boolean success = false;
     BufferedOutputStream bos = new BufferedOutputStream(ostr);

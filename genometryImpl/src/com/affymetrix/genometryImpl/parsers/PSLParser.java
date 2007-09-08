@@ -519,7 +519,7 @@ public class PSLParser implements AnnotationWriter  {
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "PSL" format
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     return writeAnnotations(syms, seq, false, type, null, outstream);
   }
@@ -527,7 +527,7 @@ public class PSLParser implements AnnotationWriter  {
   /**
    *  This version of the method is able to write out track lines
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   boolean writeTrackLines, String type,
                                   String description, OutputStream outstream) {
     boolean success = true;

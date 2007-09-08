@@ -214,7 +214,7 @@ public class Bprobe1Parser implements AnnotationWriter {
    *      all syms in collection are EfficientProbesetSymA
    *      all syms share same probe_length, id_prefix
    */
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq aseq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
                                   String type, OutputStream outstream) {
     boolean success = false;
     AnnotatedSeqGroup group = ((SmartAnnotBioSeq)aseq).getSeqGroup();

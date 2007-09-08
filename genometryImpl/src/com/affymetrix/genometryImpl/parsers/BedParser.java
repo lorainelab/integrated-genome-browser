@@ -627,7 +627,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "BED" format.
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     System.out.println("in BedParser.writeAnnotations()");
     boolean success = true;

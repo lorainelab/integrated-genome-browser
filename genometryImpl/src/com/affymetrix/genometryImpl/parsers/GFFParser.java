@@ -538,7 +538,7 @@ public class GFFParser implements AnnotationWriter  {
      *    Map meth2csym = (Map)seq2meths.get(seq);
      *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
      */
-  static SimpleSymWithProps getContainer(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths, 
+  static SimpleSymWithProps getContainer(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths,
     MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
 
     Map<String,SimpleSymWithProps> meth2csym = seq2meths.get(seq);
@@ -1040,7 +1040,7 @@ public class GFFParser implements AnnotationWriter  {
    *    to an output stream as "GFF" format.
    *  @param type  currently ignored
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     boolean success = true;
     System.out.println("in GFFParser.writeAnnotations()");

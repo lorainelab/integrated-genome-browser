@@ -449,7 +449,7 @@ public class BgnParser implements AnnotationWriter  {
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "binary UCSC gene" (.bgn)
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     System.out.println("in BgnParser.writeAnnotations()");
     boolean success = true;

@@ -395,7 +395,7 @@ public class BpsParser implements AnnotationWriter  {
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "binary PSL".
    **/
-  public boolean writeAnnotations(java.util.Collection syms, BioSeq seq,
+  public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     //    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
     boolean success = true;

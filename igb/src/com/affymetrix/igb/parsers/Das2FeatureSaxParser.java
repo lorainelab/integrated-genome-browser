@@ -648,7 +648,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
      *  Implementing AnnotationWriter interface to write out annotations
      *    to an output stream as "DASGFF" XML format.
      */
-    public boolean writeAnnotations(java.util.Collection syms, BioSeq seq, String type, OutputStream outstream) {
+    public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
       // Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
       //  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 

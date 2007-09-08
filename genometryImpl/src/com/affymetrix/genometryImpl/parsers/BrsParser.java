@@ -550,7 +550,7 @@ public class BrsParser implements AnnotationWriter  {
    *  Implementing AnnotationWriter interface to write out annotations
    *    to an output stream as "binary UCSC refseq gene". File extension ".brs".
    **/
-  public boolean writeAnnotations(Collection syms, BioSeq seq,
+  public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
     System.out.println("in BrsParser.writeAnnotations()");
     boolean success = true;

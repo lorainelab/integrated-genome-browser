@@ -101,7 +101,7 @@ public class SeqMapView extends JPanel
   public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 
   protected boolean view_cytobands_in_axis = true;
-  public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*__cytobands");
+  public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
   //  public boolean LABEL_TIERMAP = true;
   //  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
 

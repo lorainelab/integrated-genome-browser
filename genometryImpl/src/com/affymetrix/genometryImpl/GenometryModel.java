@@ -380,11 +380,10 @@ public class GenometryModel {
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
   public List<SeqSymmetry> getSelectedSymmetries(AnnotatedBioSeq seq) {
-    AnnotatedBioSeq mseq = (AnnotatedBioSeq) seq; //TODO: change the method signature?
     List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
     if (selections == null) {
       selections = new ArrayList<SeqSymmetry>();
-      seq2selectedSymsHash.put(mseq, selections);
+      seq2selectedSymsHash.put(seq, selections);
     }
     return selections;
   }

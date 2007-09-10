@@ -35,7 +35,7 @@ public class GenometryModel {
   // LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
   // maps sequences to lists of selected symmetries
-  Map<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
+  Map<AnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<AnnotatedBioSeq,List<SeqSymmetry>>();
 
   List<SeqSelectionListener> seq_selection_listeners = new ArrayList<SeqSelectionListener>();
   List<GroupSelectionListener> group_selection_listeners = new ArrayList<GroupSelectionListener>();
@@ -222,15 +222,15 @@ public class GenometryModel {
    *  This may be different from the currently selected BioSeq's, because
    *  selection of sequence(s) and symmetries are independent.
    */
-  public List<MutableAnnotatedBioSeq> getSequencesWithSelections() {
-    Set<MutableAnnotatedBioSeq> sequences = new HashSet<MutableAnnotatedBioSeq>();
-    for (MutableAnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
+  public List<AnnotatedBioSeq> getSequencesWithSelections() {
+    Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
+    for (AnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
       List list = (List) seq2selectedSymsHash.get(seq);
       if (! list.isEmpty()) {
         sequences.add(seq);
       }
     }
-    return new ArrayList<MutableAnnotatedBioSeq>(sequences);
+    return new ArrayList<AnnotatedBioSeq>(sequences);
   }
 
   /**
@@ -380,7 +380,7 @@ public class GenometryModel {
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
   public List<SeqSymmetry> getSelectedSymmetries(AnnotatedBioSeq seq) {
-    MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq) seq; //TODO: change the method signature?
+    AnnotatedBioSeq mseq = (AnnotatedBioSeq) seq; //TODO: change the method signature?
     List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
     if (selections == null) {
       selections = new ArrayList<SeqSymmetry>();

@@ -213,6 +213,8 @@ public class CytobandParser implements AnnotationWriter  {
 
   public String getMimeType()  { return "txt/plain"; }
 
+  public static enum Arm {SHORT, LONG, UNKNOWN};
+  
   public class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
     String band;
 
@@ -228,6 +230,16 @@ public class CytobandParser implements AnnotationWriter  {
 
     public String getBand() {
       return band;
+    }    
+    
+    public Arm getArm() {
+      if (id.charAt(0) == 'p') {
+        return Arm.SHORT;
+      } else if (id.charAt(0) == 'q') {
+        return Arm.LONG;
+      } else {
+        return Arm.UNKNOWN;
+      }
     }
 
     public Color getColor() {

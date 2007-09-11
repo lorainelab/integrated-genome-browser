@@ -243,9 +243,9 @@ public class CytobandParser implements AnnotationWriter  {
     }
 
     public Color getColor() {
-      if ("acen".equals(band)) {
+      if (BAND_ACEN.equals(band)) {
         return cyto_acen_color;
-      } else if ("stalk".equals(band)) {
+      } else if (BAND_STALK.equals(band)) {
         return cyto_stalk_color;
       } else {
         float score = parseScore(band);

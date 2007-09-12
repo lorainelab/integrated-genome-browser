@@ -61,6 +61,7 @@ public class Das2ClientOptimizer {
   static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
   static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
 
+  static boolean DEBUG = false;
   static boolean DEBUG_HEADERS = false;
   static boolean OPTIMIZE_FORMAT = true;
   static boolean SHOW_DAS_QUERY_GENOMETRY = false;
@@ -120,19 +121,20 @@ public class Das2ClientOptimizer {
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
       // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
       if (cont_sym == null && typeid.endsWith(".bar")) {
-	request_log.addLogMessage("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
+	if (DEBUG)  {request_log.addLogMessage("trying to use type name for bar type, name: " + 
+					       type.getName() + ", id: " + typeid);}
 	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
-	request_log.addLogMessage("cont_sym: " + cont_sym);
+	if (DEBUG) {request_log.addLogMessage("cont_sym: " + cont_sym);}
       }
 
       if ((cont_sym == null) || (cont_sym.getChildCount() == 0)) {
-	request_log.addLogMessage("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);
+	if (DEBUG)  {request_log.addLogMessage("Can't optimize DAS/2 query, no previous annotations of type: " + typeid);}
 	output_requests.add(request_sym);
       }
 
       else {
 	int prevcount = cont_sym.getChildCount();
-	request_log.addLogMessage("  child count: " + prevcount);
+	if (DEBUG)  {request_log.addLogMessage("  child count: " + prevcount);}
 	ArrayList prev_overlaps = new ArrayList(prevcount);
 	for (int i=0; i<prevcount; i++) {
 	  SeqSymmetry prev_request = cont_sym.getChild(i);
@@ -152,12 +154,12 @@ public class Das2ClientOptimizer {
 	split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
 	if (split_query == null || split_query.getChildCount() == 0) {
 	  // all of current query overlap range covered by previous queries, so return empty list
-	  request_log.addLogMessage("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
+	  if (DEBUG)  {request_log.addLogMessage("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);}
 	}
 	else {
 	  SeqSpan split_query_span = split_query.getSpan(aseq);
-	  request_log.addLogMessage("DAS/2 optimizer, split query: " +
-              SeqUtils.symToString(split_query));
+	  if (DEBUG)  {request_log.addLogMessage("DAS/2 optimizer, split query: " +
+						 SeqUtils.symToString(split_query));}
 	  // figure out min/max within bounds based on location of previous queries relative to new query
 	  int first_within_min;
 	  int last_within_max;
@@ -197,7 +199,7 @@ public class Das2ClientOptimizer {
 	      else { cur_within_max = ospan.getMax(); }
 
 	      SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
-	      request_log.addLogMessage("   new request: " + SeqUtils.spanToString(ispan));
+	      if (DEBUG)  {request_log.addLogMessage("   new request: " + SeqUtils.spanToString(ispan));}
 	      Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
 	      output_requests.add(new_request);
 
@@ -261,8 +263,10 @@ public class Das2ClientOptimizer {
       overlap_filter = region.getPositionString(overlap_span, false);
       if (inside_span != null)  { inside_filter = region.getPositionString(inside_span, false); }
     }
-    request_log.addLogMessage("^^^^^^^  in Das2ClientOptimizer.optimizedLoadFeatures(), overlap = " + overlap_filter +
+    if (DEBUG)  {
+      request_log.addLogMessage("^^^^^^^  in Das2ClientOptimizer.optimizedLoadFeatures(), overlap = " + overlap_filter +
                        ", inside = " + inside_filter);
+    }
     Das2Type type = request_sym.getDas2Type();
     String format = null;
     if (OPTIMIZE_FORMAT) {
@@ -279,8 +283,10 @@ public class Das2ClientOptimizer {
     Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
     String request_root = featcap.getRootURI().toString();
 
-    request_log.addLogMessage("   request root: " + request_root);
-    request_log.addLogMessage("   preferred format: " + format);
+    if (DEBUG) {
+      request_log.addLogMessage("   request root: " + request_root);
+      request_log.addLogMessage("   preferred format: " + format);
+    }
 
     try {
       StringBuffer buf = new StringBuffer(200);
@@ -322,8 +328,10 @@ public class Das2ClientOptimizer {
 
       String query_part = buf.toString();
       String feature_query = request_root + "?" + query_part;
-      request_log.addLogMessage("feature query URL:  " + feature_query);
-      request_log.addLogMessage("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+      if (DEBUG) {
+	request_log.addLogMessage("feature query URL:  " + feature_query);
+	request_log.addLogMessage("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+      }
 
       /**
        *  Need to look at content-type of server response
@@ -340,7 +348,7 @@ public class Das2ClientOptimizer {
       }
       else {
 	URL query_url = new URL(feature_query);
-	request_log.addLogMessage("    opening connection");
+	if (DEBUG)  { request_log.addLogMessage("    opening connection"); }
 	// casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
 	HttpURLConnection query_con = (HttpURLConnection)query_url.openConnection();
 	int response_code = query_con.getResponseCode();
@@ -348,7 +356,7 @@ public class Das2ClientOptimizer {
 
         request_log.setHttpResponse(response_code, response_message);
 
-	request_log.addLogMessage("http response code: " + response_code + ", " + response_message);
+	if (DEBUG)  { request_log.addLogMessage("http response code: " + response_code + ", " + response_message); }
 
 	//      Map headers = query_con.getHeaderFields();
 	if (DEBUG_HEADERS) {

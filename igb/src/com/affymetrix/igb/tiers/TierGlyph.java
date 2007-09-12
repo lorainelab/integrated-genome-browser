@@ -603,7 +603,9 @@ public class TierGlyph extends SolidGlyph {
    *  @param col  A color, or null if no background color is desired.
    */
   public void setFillColor(Color col) {
-    style.setBackground(col);
+    if (style.getBackground() != col) {
+      style.setBackground(col);
+    }
 
     // Now set the "middleground" color based on the fill color
     if (col == null) {
@@ -635,7 +637,9 @@ public class TierGlyph extends SolidGlyph {
   }
 
   public void setForegroundColor(Color color) {
-    style.setColor(color);
+    if (style.getColor() != color) {
+      style.setColor(color);
+    }
     //super.setForegroundColor(color);
     //super.setColor(color); // NO: super.setColor calls setBackgroundColor()
   }

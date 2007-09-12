@@ -35,14 +35,16 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.stylesheet.PropertyMap;
 
 public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
+  static boolean DEBUG = true;
   static boolean USE_EFFICIENT_GLYPHS = true;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;
   static boolean ADD_CHILDREN = true;
   static boolean OPTIMIZE_CHILD_MODEL = false;
-  
+
   /** Set to true if the we can assume the container SeqSymmetry being passed
    *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
    */
@@ -67,6 +69,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   Class child_glyph_class;
   Class parent_labelled_glyph_class;
 
+
   public GenericAnnotGlyphFactory() {
     if (USE_EFFICIENT_GLYPHS) {
       parent_glyph_class = default_eparent_class;
@@ -81,11 +84,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void init(Map options) {
-
-    String glyph_depth_string = (String)options.get("glyph_depth");
-    if (glyph_depth_string != null) {
-      glyph_depth = Integer.parseInt(glyph_depth_string);
-    }
+    if (DEBUG) {System.out.println("     @@@@@@@@@@@@@     in GenericAnnotGlyphFactory.init(), props: " + options);}
 
     String parent_glyph_name = (String)options.get("parent_glyph");
     if (parent_glyph_name != null) {
@@ -126,7 +125,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
     createGlyph(sym, smv, false);
   }
-  
+
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
     //AffyTieredMap map = gviewer.getSeqMap();
@@ -135,13 +134,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       GFF3GlyphFactory.getInstance().createGlyph(sym, smv, next_to_axis);
       return;
     }
-    
+
     String meth = gviewer.determineMethod(sym);
 
     if (meth != null) {
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
       glyph_depth = style.getGlyphDepth();
-      
+
       TierGlyph[] tiers = smv.getTiers(meth, next_to_axis, style);
       if (style.getSeparate()) {
         addLeafsToTier(sym, tiers[0], tiers[1], glyph_depth);
@@ -202,21 +201,21 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       addToTier(sym, ftier, rtier, (depth >= 2));
     }
   }
-  
+
   static Color getSymColor(SeqSymmetry insym, IAnnotStyleExtended style) {
     boolean use_score_colors = style.getColorByScore();
     boolean use_item_rgb = "on".equalsIgnoreCase((String) style.getTransientPropertyMap().get(TrackLineParser.ITEM_RGB));
-    
+
     if (! (use_score_colors || use_item_rgb)) {
       return style.getColor();
     }
-    
+
     SeqSymmetry sym = insym;
     if (insym instanceof DerivedSeqSymmetry) {
       sym = (SymWithProps)  getMostOriginalSymmetry(insym);
       //sym = ((DerivedSeqSymmetry) insym).getOriginalSymmetry();
     }
-    
+
     if (use_item_rgb && sym instanceof SymWithProps) {
       Color cc = (Color) ((SymWithProps) sym).getProperty(TrackLineParser.ITEM_RGB);
       if (cc != null) return cc;
@@ -230,22 +229,22 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     return style.getColor();
   }
-  
+
   boolean allows_labels = true;
 
   /**
-   *  @param parent_and_child  Whether to draw this sym as a parent and 
-   *    also draw its children, or to just draw the sym itself 
+   *  @param parent_and_child  Whether to draw this sym as a parent and
+   *    also draw its children, or to just draw the sym itself
    *   (using the child glyph style).  If this is set to true, then
    *    the symmetry must have a depth of at least 2.
    */
   public GlyphI addToTier(SeqSymmetry insym,
                           TierGlyph forward_tier,
-                          TierGlyph reverse_tier, 
+                          TierGlyph reverse_tier,
                           boolean parent_and_child) {
-    
+
     GlyphI g = null;
-    
+
     try {
       if (parent_and_child && insym.getChildCount() > 0) {
         g = doTwoLevelGlyph(insym, forward_tier, reverse_tier);
@@ -259,21 +258,21 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     return g;
   }
-  
-  
+
+
   public GlyphI doTwoLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
   throws java.lang.InstantiationException, java.lang.IllegalAccessException {
-    
+
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
     boolean same_seq = (annotseq == coordseq);
-    
+
     if (! same_seq) {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
-        
+
     SeqSpan pspan = gviewer.getViewSeqSpan(sym);
 
     if (pspan == null || pspan.getLength() == 0) {
@@ -281,30 +280,30 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }  // if no span corresponding to seq, then return;
 
     TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
-    
+
     GlyphI pglyph = null;
-    
+
     double thick_height = DEFAULT_THICK_HEIGHT;
     double thin_height = DEFAULT_THIN_HEIGHT;
-    
+
     // I hate having to do this cast to AnnotStyle.  But how can I avoid it?
     IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
-    
+
     //double thick_height = the_style.getHeight();
     //double thin_height = the_style.getHeight() * 3.0/5.0;
-        
+
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
     double pheight = thick_height + 0.0001;
-    
+
     boolean use_label = false;
     String label_field = the_style.getLabelField();
     if (allows_labels) {
       use_label = (label_field != null && (label_field.trim().length()>0));
     }
-      
+
     if (use_label) {
       LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
       Object property = getTheProperty(insym, label_field);
@@ -326,10 +325,10 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (SET_PARENT_INFO) {
       map.setDataModelFromOriginalSym(pglyph, sym);
     }
-    
+
     SeqSpan cdsSpan = null;
     SeqSymmetry cds_sym = null;
-    
+
     if ((insym instanceof SupportsCdsSpan) && ((SupportsCdsSpan)insym).hasCdsSpan() )  {
       cdsSpan = ((SupportsCdsSpan)insym).getCdsSpan();
       MutableSeqSymmetry tempsym = new SimpleMutableSeqSymmetry();
@@ -340,7 +339,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       }
       cds_sym = tempsym;
     }
-    
+
     if (ADD_CHILDREN) {
       int childCount = sym.getChildCount();
 
@@ -350,7 +349,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         child = sym.getChild(i);
 
         cspan = gviewer.getViewSeqSpan(child);
-        
+
         if (cspan == null) {
 
           if (i == 0) {
@@ -385,13 +384,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         } else {
           cglyph = (GlyphI)child_glyph_class.newInstance();
         }
-        
+
         double cheight = thick_height;
         Color child_color = getSymColor(child, the_style);
         if (cdsSpan != null) {
           cheight = thin_height;
           if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } else if (SeqUtils.overlap(cdsSpan, cspan)) {
-            
+
             SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
             SeqSymmetry cds_sym_3 = cds_sym_2;
             if (! same_seq) {
@@ -422,7 +421,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         }
       }
     }
-    
+
     the_tier.addChild(pglyph);
     return pglyph;
   }
@@ -432,24 +431,24 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       return null;
     }
     SeqSymmetry original = getMostOriginalSymmetry(sym);
-    
+
     if (original instanceof SymWithProps) {
       return ((SymWithProps) original).getProperty(prop);
     }
     return null;
   }
 
-  
+
   static SeqSymmetry getMostOriginalSymmetry(SeqSymmetry sym) {
     if (sym instanceof DerivedSeqSymmetry) {
       return getMostOriginalSymmetry( ((DerivedSeqSymmetry) sym).getOriginalSymmetry() );
     }
     else return sym;
   }
-  
+
   GlyphI doSingleLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
     throws java.lang.InstantiationException, java.lang.IllegalAccessException {
-    
+
     AffyTieredMap map = gviewer.getSeqMap();
     BioSeq annotseq = gviewer.getAnnotatedSeq();
     BioSeq coordseq = gviewer.getViewSeq();
@@ -459,25 +458,25 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (! same_seq) {
       sym = gviewer.transformForViewSeq(insym, annotseq);
     }
-    
+
     SeqSpan pspan = gviewer.getViewSeqSpan(sym);
     if (pspan == null || pspan.getLength() == 0) {
       return null;
     }  // if no span corresponding to seq, then return;
-    
+
     TierGlyph the_tier = pspan.isForward() ? forward_tier : reverse_tier;
-    
+
     GlyphI pglyph = null;
-    
+
     // I hate having to do this cast to IAnnotStyleExtended.  But how can I avoid it?
     IAnnotStyleExtended the_style = (IAnnotStyleExtended) the_tier.getAnnotStyle();
-        
+
     // Note: Setting parent height (pheight) larger than the child height (cheight)
     // allows the user to select both the parent and the child as separate entities
     // in order to look at the properties associated with them.  Otherwise, the method
     // EfficientGlyph.pickTraversal() will only allow one to be chosen.
     double pheight = DEFAULT_THICK_HEIGHT + 0.0001;
-    
+
     boolean use_label = false;
     String label_field = the_style.getLabelField();
     if (allows_labels) {
@@ -491,20 +490,20 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
-      
+
       lglyph.setLabel(label);
       pheight = 2 * pheight;
       pglyph = lglyph;
     } else {
       pglyph = (GlyphI)child_glyph_class.newInstance();
     }
-    
+
     pglyph.setCoords(pspan.getMin(), 0, pspan.getLength(), pheight);
     pglyph.setColor(getSymColor(insym, the_style));
     if (SET_PARENT_INFO) {
       map.setDataModelFromOriginalSym(pglyph, sym);
     }
-    
+
     the_tier.addChild(pglyph);
     return pglyph;
   }
@@ -535,7 +534,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   /** Used to manage a re-usable object pool. */
   static java.util.Stack derived_stack = new Stack();
   static final int max_stack_size = 100;
-  
+
   /** Get an instance of DerivedSeqSymmetry from an object pool. */
   static DerivedSeqSymmetry getDerived() {
     if (derived_stack.isEmpty()) {
@@ -544,13 +543,13 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       return (DerivedSeqSymmetry) derived_stack.pop();
     }
   }
-  
+
   /** Indicate that the given object is no longer in use and can be re-used later. */
   static void recycleDerived(DerivedSeqSymmetry sym) {
     for (int i=sym.getChildCount()-1; i>=0; i--) {
       recycleDerived((DerivedSeqSymmetry) sym.getChild(i));
     }
-    
+
     sym.clear();
     sym.setOriginalSymmetry(null);
     if (derived_stack.size() < max_stack_size) {
@@ -558,8 +557,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
 
-  /** A small x-shaped glyph that can be used to indicate a deleted exon 
-   * in the slice view. 
+  /** A small x-shaped glyph that can be used to indicate a deleted exon
+   * in the slice view.
    */
   public static class DeletionGlyph extends SolidGlyph {
 
@@ -568,16 +567,16 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       Rectangle pixelbox = view.getScratchPixBox();
       view.transformToPixels(this.coordbox, pixelbox);
       Graphics g = view.getGraphics();
-      
+
       // Unlikely this will ever be big enough to need the fix.
       //EfficientSolidGlyph.fixAWTBigRectBug(view, pixelbox);
-      
+
       //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
       pixelbox.height = Math.max( pixelbox.height, min_pixels_height );
-      
+
       final int half_height = pixelbox.height/2;
       final int h = Math.min(half_height, 4);
-      
+
       final int x1 = pixelbox.x - h;
       final int x2 = pixelbox.x + h;
 
@@ -588,10 +587,10 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
       g.drawLine(x1, y1, x2, y2);
       g.drawLine(x1, y2, x2, y1);
-    
+
       super.draw(view);
     }
-    
+
     /** Overridden to always return false. */
     public boolean isHitable() {
       return false;

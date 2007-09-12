@@ -115,7 +115,7 @@ public class GenometryModel {
   }
 
   // TODO: modify so that fireGroupSelectionEvent() is only called if
-  //     gropu arg is different than previous selected_group
+  //     group arg is different than previous selected_group
   public void setSelectedSeqGroup(AnnotatedSeqGroup group) {
     if (DEBUG)  {
       System.out.println("GenometryModel.setSelectedSeqGroup() called, ");
@@ -157,6 +157,11 @@ public class GenometryModel {
     setSelectedSeq(seq, this);
   }
 
+  /** 
+   *  currently seq selection events _need_ to be fired even if seq is same as previously selected seq, 
+   *     because in some SeqSelectionListeners (such as SeqMapView) the side effects of receiving a 
+   *     SeqSelectionEvent are important even if selected seq is same. 
+   */
   public void setSelectedSeq(MutableAnnotatedBioSeq seq, Object src) {
     if (DEBUG)  {
       System.out.println("GenometryModel.setSelectedSeq() called, ");

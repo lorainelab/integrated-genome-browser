@@ -298,12 +298,13 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
       }
     }
 
-    Object obj = new Object();
     public Class getColumnClass(int c) {
-        Object val = getValueAt(0, c);
-        if (val == null)  { return obj.getClass(); }  // dummy Object.getClass() placeholder...
-        else  { return val.getClass(); }
-//      return getValueAt(0, c).getClass();
+      Object val = getValueAt(0, c);
+      if (val == null) {
+        return Object.class;
+      } else {
+        return val.getClass();
+      }
     }
 
     public int getColumnCount() {

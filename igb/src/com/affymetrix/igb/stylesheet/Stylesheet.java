@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
+  public static boolean DEBUG = false;
 
   LinkedHashMap/*<String, AssociationElement>*/ meth2association = new LinkedHashMap/*<String, AssociationElement>*/();
   LinkedHashMap/*<Pattern, AssociationElement>*/ regex2association = new LinkedHashMap/*<Pattern, AssociationElement>*/();
@@ -98,48 +99,51 @@ public class Stylesheet implements Cloneable, XmlAppender {
    *  Third looks for a match by feature "method" (i.e. the tier name).
    */
   public DrawableElement getDrawableForSym(SeqSymmetry sym) {
+    if (DEBUG) {
+      System.out.println("|||||||||||| in StyleSheet.getDrawableForSym(), method: " + SmartAnnotBioSeq.determineMethod(sym));
+      System.out.println("sym: " + sym);
+    }
     DrawableElement drawable = null;
     if (sym instanceof SymWithProps) {
       SymWithProps proper = (SymWithProps) sym;
       Object o = proper.getProperty(SYM_TO_STYLE_PROPERTY_KEY);
       if (o instanceof DrawableElement) {
         drawable = (DrawableElement) o;
+	if (DEBUG) { System.out.println("     retrieved drawable from sym's properties"); }
       }
     }
-
     if (drawable == null) {
       if (sym instanceof Das2FeatureRequestSym) {
         Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
         String type = d2r.getType();
         drawable = getAssociationForType(type);
+	if (DEBUG)  { System.out.println("      DAS/2 sym, trying getAssociationForType(), result: " + drawable); }
       } else if (sym instanceof GFF3Sym) {
         GFF3Sym gff = (GFF3Sym) sym;
         String type = gff.getFeatureType();
         drawable = getAssociationForType(type);
+	if (DEBUG)  { System.out.println("      GFF sym, trying getAssociationForType(), result: " + drawable); }
       }
     }
-
     if (drawable == null) {
       drawable = getAssociationForMethod(SmartAnnotBioSeq.determineMethod(sym));
+      if (DEBUG)  { System.out.println("      trying getAssociationForMethod(), result: " + drawable); }
     }
-
     if (drawable == null) {
       drawable = getDefaultStyleElement();
+      if (DEBUG)  { System.out.println("      no drawable found for refseq, using default: " + drawable); }
     }
-
     return drawable;
   }
+
 
   public AssociationElement getAssociationForMethod(String meth){
     if (meth == null) {
       return null;
     }
-
     AssociationElement association = null;
-
     // First try to match styleElement based on exact name match
     association = (AssociationElement) meth2association.get(meth);
-
     // Then try to match styleElement from regular expressions
     if (association == null) {
       java.util.List keyset = new ArrayList(regex2association.keySet());
@@ -151,13 +155,13 @@ public class Stylesheet implements Cloneable, XmlAppender {
       for (int j=keyset.size()-1 ; j >= 0 && association == null; j--) {
         java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
         if (regex.matcher(meth).find()) {
+	  if (DEBUG)  {System.out.println("   found style match, regex: " + regex.pattern() + ", matches: " + meth); }
           association = (AssociationElement) regex2association.get(regex);
           // Put the stylename in meth2stylename to speed things up next time through.
           meth2association.put(meth, association);
         }
       }
     }
-
     return association;
   }
 

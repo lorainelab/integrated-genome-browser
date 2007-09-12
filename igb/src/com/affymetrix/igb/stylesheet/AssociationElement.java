@@ -16,6 +16,7 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -31,7 +32,6 @@ public class AssociationElement implements DrawableElement {
   >
   */
 
-
   public static String ATT_STYLE="style";
 
   String elementName;
@@ -40,7 +40,7 @@ public class AssociationElement implements DrawableElement {
   String styleName;
   String paramName;  // method, type, or regex
   String paramValue;
-  
+
   // If the styleName starts with "com.", then try to instantiate an old-fashioned factory
   MapViewGlyphFactoryI factory = null;
 
@@ -54,12 +54,16 @@ public class AssociationElement implements DrawableElement {
     this.paramName = paramName;
     this.paramValue = paramValue;
     this.styleName = styleName;
-    
+
     if (styleName.startsWith("com.")) {
       this.factory = getFactoryByClassname(styleName);
     } else {
       this.factory = null;
     }
+    //    if (factory instanceof GenericAnnotGlyphFactory) {
+    //      GenericAnnotGlyphFactory gfac = (GenericAnnotGlyphFactory)factory;
+    //      gfac.setStyle(annot_style);
+    //    }
   }
 
   public static final String METHOD_ASSOCIATION = "METHOD_ASSOCIATION";
@@ -116,7 +120,7 @@ public class AssociationElement implements DrawableElement {
 
     return factory;
   }
-  
+
   public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container,
       Stylesheet stylesheet, PropertyMap context) {
     GlyphI glyph = null;
@@ -151,4 +155,7 @@ public class AssociationElement implements DrawableElement {
     sb.append(indent).append("</").append(elementName).append(">\n");
     return sb;
   }
+
+  public MapViewGlyphFactoryI getGlyphFactory() { return factory; }
+  public PropertyMap getPropertyMap() { return propertyMap; }
 }

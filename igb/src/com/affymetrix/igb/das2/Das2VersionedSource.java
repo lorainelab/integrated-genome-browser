@@ -140,12 +140,12 @@ public class Das2VersionedSource  {
 	// add new seq group -- if has global coordinates uri, then use that
 	//   otherwise, use groupid (version source name or URI)
 	if (coords_uri == null) {
-	  System.out.println("@@@@  Adding genome: " + groupid);
+	  // System.out.println("@@@@  Adding genome: " + groupid);
 	  //	  genome = gmodel.addSeqGroup(groupid);
 	  genome = new Das2SeqGroup(this, groupid);
 	}
 	else {
-	  System.out.println("@@@@  Adding genome: " + coords_uri);
+	  // System.out.println("@@@@  Adding genome: " + coords_uri);
 	  // genome = gmodel.addSeqGroup(coords_uri.toString());
 	  genome = new Das2SeqGroup(this, coords_uri.toString());
 	}
@@ -350,7 +350,7 @@ public class Das2VersionedSource  {
 	  Element pnode = (Element)plist.item(k);
 	  String key = pnode.getAttribute("key");
 	  String val = pnode.getAttribute("value");
-	  if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
+	  // if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
 	  props.put(key, val);
 	}
 

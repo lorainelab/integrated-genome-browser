@@ -337,7 +337,7 @@ public class SeqMapView extends JPanel
     }
     return seqmap;
   }
-  
+
   protected void init(boolean add_popups, boolean split_win, boolean label_tiermap, boolean use_refresh_button) {
 
     if (split_win) { label_tiermap = false; }
@@ -660,7 +660,7 @@ public class SeqMapView extends JPanel
     if (view_cytobands_in_axis) {
       GlyphI cytoband_glyph = makeCytobandGlyph(this);
       if (cytoband_glyph != null) {
-        axis_tier.addChild(cytoband_glyph);        
+        axis_tier.addChild(cytoband_glyph);
         axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
       }
     }
@@ -772,7 +772,7 @@ public class SeqMapView extends JPanel
 //    seqmap.repack();
     return axis_tier;
   }
-  
+
   public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer) {
     EfficientFillRectGlyph cytoband_glyph = null;
     if (gviewer.getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
@@ -803,7 +803,7 @@ public class SeqMapView extends JPanel
     }
     return null;
   }
-  
+
   /**
    *  Creates a cytoband glyph.  Handling two cases:
    * 1. cytoband syms are children of TypeContainerAnnot;
@@ -818,35 +818,35 @@ public class SeqMapView extends JPanel
     cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
     cytoband_glyph.setHitable(false);
     cytoband_glyph.setCoords(0.0, 0.0, 0, cyto_height + 4);
-    
+
     java.util.List bands = new ArrayList();
     for (int q=0; q<cyto_container.getChildCount(); q++) {
       SeqSymmetry child  = cyto_container.getChild(q);
-      if (child instanceof CytobandParser.CytobandSym) { 
-        bands.add(child); 
+      if (child instanceof CytobandParser.CytobandSym) {
+        bands.add(child);
       }
       else if (child != null) {
         for (int subindex=0; subindex<child.getChildCount(); subindex++) {
           SeqSymmetry grandchild = child.getChild(subindex);
           if (grandchild instanceof CytobandParser.CytobandSym) {
-            bands.add(grandchild); 
+            bands.add(grandchild);
           }
         }
       }
     }
     //System.out.println("   band count: " + bands.size());
-    
+
     //        for (int q=0; q<cyto_container.getChildCount(); q++) {
     for (int q=0; q<bands.size(); q++) {
       //          SeqSymmetry sym  = cyto_container.getChild(q);
       SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
       SeqSymmetry sym2 = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
-      
+
       SeqSpan cyto_span = gviewer.getViewSeqSpan(sym2);
-      
+
       if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
         CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
-        
+
         //float score = ((Scored) cyto_sym).getScore();
         GlyphI efg;
         if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
@@ -1384,7 +1384,7 @@ public class SeqMapView extends JPanel
       transform_path = cached_path;
     }
   }
-  
+
   /**
    * @deprecate Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
    */
@@ -2262,7 +2262,7 @@ public class SeqMapView extends JPanel
 
   public void zoomTo(SeqSpan span) {
     BioSeq zseq = span.getBioSeq();
-    if ((zseq instanceof MutableAnnotatedBioSeq) && 
+    if ((zseq instanceof MutableAnnotatedBioSeq) &&
 	(zseq != this.getAnnotatedSeq())) {
       gmodel.setSelectedSeq((MutableAnnotatedBioSeq)zseq);
     }
@@ -2407,7 +2407,7 @@ public class SeqMapView extends JPanel
     return ucsc_version;
   }
 
-  /** 
+  /**
    *  Returns the current position in the format used by the UCSC browser.
    *  This format is also understood by GBrowse and the MapRangeBox of IGB.
    *  @return a String such as "chr22:15916196-31832390", or null.
@@ -2420,17 +2420,17 @@ public class SeqMapView extends JPanel
       int end = (int) (vbox.x + vbox.width);
       String seqid = aseq.getID();
 
-      region = seqid + ":" + start + "-" + end;      
+      region = seqid + ":" + start + "-" + end;
     }
     return region;
   }
-  
+
   public void invokeUcscView() {
     // links to UCSC look like this:
     //  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
     String version = getUcscGenomeVersion();
     String region = getRegionString();
-    
+
     if (version != null && region != null) {
       String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?"
         + "db=" + getUcscGenomeVersion() + "&position=" + getRegionString();
@@ -2440,16 +2440,16 @@ public class SeqMapView extends JPanel
     }
   }
 
-  /** 
+  /**
    * Invokes a link to the toronto database of genomic variants.
    */
   public void invokeTorontoView() {
     // links to Toronto look like this:
     // "http://projects.tcag.ca/variation/cgi-bin/gbrowse/hg17?name=chr1:13108649..13311697";
-    
+
     String version = getUcscGenomeVersion();
     String region = getRegionString();
-    
+
     if (version != null && region != null) {
       String url = "http://projects.tcag.ca/variation/cgi-bin/gbrowse/"
         + version + "?name=" + region;
@@ -2674,7 +2674,7 @@ public class SeqMapView extends JPanel
     postSelections();
   }
 
-  /** Find the top-most parent glyphs of the given glyphs. 
+  /** Find the top-most parent glyphs of the given glyphs.
    *  @childGlyphs a list of GlyphI objects, typically the selected glyphs
    *  @return a list where each child is replaced by its top-most parent, if it
    *  has a parent, or else the child itself is included in the list
@@ -3089,7 +3089,7 @@ public class SeqMapView extends JPanel
   public TierGlyph makeTierGlyph(IAnnotStyle style) {
     return new TierGlyph(style);
   }
-  
+
   void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
     FasterExpandPacker ep = new FasterExpandPacker();
     ep.setConstantHeights(constantHeights);
@@ -3129,13 +3129,16 @@ public class SeqMapView extends JPanel
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     // Don't worry if newseq is null, setAnnotatedSeq can handle that
     // (It can also handle the case where newseq is same as old seq.)
-    if (aseq != newseq) {
-      //      ViewPersistenceUtils.saveSeqView(this);
-      setAnnotatedSeq(newseq);
-    }
+
     // trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
     // Maybe should change SingletonGenometryModel.setSelectedSeq() to only fire if seq changes...
-    //    setAnnotatedSeq(newseq);
+    //    if (aseq != newseq) {
+    //      setAnnotatedSeq(newseq);
+    //    }
+
+    // reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq, 
+    //    because often need to trigger repacking / rendering anyway
+    setAnnotatedSeq(newseq);
   }
 
   public void seqModified(SeqModifiedEvent evt) {
@@ -3190,7 +3193,7 @@ public class SeqMapView extends JPanel
     return false;
 
   }
-  
+
   /** Get the span of the symmetry that is on the seq being viewed. */
   public SeqSpan getViewSeqSpan(SeqSymmetry sym) {
     return sym.getSpan(viewseq);

@@ -79,7 +79,7 @@ public class LocalUrlCacher {
     if (url == null || url.length() < 5)  { return false; }
     return ( url.substring(0,4).compareToIgnoreCase("jar:") == 0 );
   }
-  
+
   /** Returns the local File object for the given URL;
    *  you must check File.exists() to determine if the file exists in the cache.
    *
@@ -142,7 +142,7 @@ public class LocalUrlCacher {
    *  {@link #TYPE_UNREACHABLE}.
    */
   protected static String getLoadType(String url, int cache_option) {
-    
+
     // if url is a file url, and not caching files, then just directly return stream
     if (isFile(url)) {
       try {
@@ -331,24 +331,34 @@ public class LocalUrlCacher {
       if (url_reachable) {
 	//  response contents not modified since local cached copy last modified, so use local
 	if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-	  Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+	  if (DEBUG_CONNECTION)  {
+	    Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+	  }
 	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
 	}
 	//        long local_timestamp = cache_file.lastModified();
 	else if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
-	  Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
+	  if (DEBUG_CONNECTION) {
+	    Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
+	  }
 	  result_stream = new BufferedInputStream(new FileInputStream(cache_file));
         }
         else {
-	  Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache");
+	  if (DEBUG_CONNECTION)  {
+	    Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache");
+	  }
           result_stream = null;
         }
       }
       else { // url is not reachable
         if (cache_option != ONLY_CACHE) {
-          Application.getSingleton().logWarning("Remote URL not reachable: " + url);
-        }
-	Application.getSingleton().logInfo("Loading cached file for URL: " + url);
+          if (DEBUG_CONNECTION)  { 
+	    Application.getSingleton().logWarning("Remote URL not reachable: " + url);
+	  }
+	}
+	if (DEBUG_CONNECTION)  { 
+	  Application.getSingleton().logInfo("Loading cached file for URL: " + url);
+	}
 	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
       }
       // using cached content, so should also use cached headers
@@ -442,16 +452,19 @@ public class LocalUrlCacher {
       connstr.close();
       if (write_to_cache)  {
 	if (content != null && content.length > 0) {
-	  Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
+	  if (DEBUG_CONNECTION)  { 
+	    Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
+	  }
 	  // write data from URL into a File
 	  BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
 	  // no API for returning number of bytes successfully written, so write all in one shot...
 	  bos.write(content, 0, content.length);
 	  bos.close();
 	}
-
 	// cache headers also -- in [cache_dir]/headers ?
-	Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
+	if (DEBUG_CONNECTION)  {
+	  Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
+	}
 	BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
 	headerprops.store(hbos, null);
 	hbos.close();
@@ -459,7 +472,7 @@ public class LocalUrlCacher {
       result_stream = new ByteArrayInputStream(content);
     }
 
-    if (headers != null) { reportHeaders(url, headers); }
+    if (headers != null && DEBUG_CONNECTION) { reportHeaders(url, headers); }
     if (result_stream == null) { 
       Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url); 
     }
@@ -557,11 +570,11 @@ public class LocalUrlCacher {
       else {
         String[] options = { "OK", "Cancel" };
         String message = "Load " + short_filename + " from the remote server?";
-        
+
         int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
             JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
             null, options, options[0]);
-        
+
         if (choice == JOptionPane.OK_OPTION) {
           return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
         } else {

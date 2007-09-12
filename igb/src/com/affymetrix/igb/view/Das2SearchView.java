@@ -27,6 +27,7 @@ import com.affymetrix.igb.das2.*;
 public class Das2SearchView extends JPanel implements ActionListener, GroupSelectionListener {
   static Das2ServerInfo default_server;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static boolean DEBUG_EVENTS = false;
 
   static {
     default_server = Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME);
@@ -37,14 +38,14 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
   SeqMapView gviewer;
   JTable results_table;
   Das2LoadView3 parent_view;
-  Map search_results_history = new LinkedHashMap();  // keeping history of search results 
+  Map search_results_history = new LinkedHashMap();  // keeping history of search results
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    System.out.println("Das2SearchView.groupSelectionChanged() called");
+    if (DEBUG_EVENTS)  {System.out.println("Das2SearchView.groupSelectionChanged() called");}
     // need to clear table, search history, combo box
     search_results_history = new LinkedHashMap();
     searchCB.reset();
-    results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList())); 
+    results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList()));
   }
 
   public Das2SearchView(Das2LoadView3 view) {
@@ -79,11 +80,11 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
 	    SimpleDas2Feature feat = mod.getSearchResult(row);
 	    displaySearchResult(feat);
 	    // loading of WHOLE_SEQUENCE strategy types already dealt with by Das2LoadView3.seqSelectionChanged
-	    //    but also want to at least for range of selected annot load annots of the 
+	    //    but also want to at least for range of selected annot load annots of the
 	    //       type that has been selected (including itself)
-	    //    maybe force type strategy of selected annot's type to change to VISIBLE_RANGE 
+	    //    maybe force type strategy of selected annot's type to change to VISIBLE_RANGE
 	    //       (or WHOLE_SEQ if type hint present)
-	    // parent_view.loadFeatures(Das2TypeState.WHOLE_SEQUENCE, false); 
+	    // parent_view.loadFeatures(Das2TypeState.WHOLE_SEQUENCE, false);
 	    // parent_view.loadFeatures(Das2TypeState.VISIBLE_RANGE, false);
 	  }
 	}
@@ -121,9 +122,9 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
     if (version == null) { return null; }
 
     // if already searched with this name, then use cached results
-    java.util.List feats = (java.util.List)search_results_history.get(name); 
+    java.util.List feats = (java.util.List)search_results_history.get(name);
     if (feats == null) {
-      feats = version.getFeaturesByName(name, false); 
+      feats = version.getFeaturesByName(name, false);
       MutableComboBoxModel mcb = (MutableComboBoxModel)searchCB.getModel();
       mcb.addElement(name);
       search_results_history.put(name, feats);

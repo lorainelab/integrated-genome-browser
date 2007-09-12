@@ -81,6 +81,7 @@ public class Das2LoadView3 extends JComponent
 
   static boolean INCLUDE_NAME_SEARCH = true;
   static boolean USE_DAS2_OPTIMIZER = true;
+  static boolean DEBUG = false;
   static boolean DEBUG_EVENTS = false;
   static boolean ADD_DELAYS = false;  // inserting delays on worker threads to test threading
   static boolean DEFAULT_THREAD_FEATURE_REQUESTS = true;
@@ -371,19 +372,14 @@ public class Das2LoadView3 extends JComponent
 	  public Object construct() {
 	    Iterator request_syms = request_set.iterator();
 	    while (request_syms.hasNext()) {
-	      //	    for (int i=0; i<request_syms.size(); i++) {
-	      //	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.get(i);
 	      Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.next();
 
 	      // Create an AnnotStyle so that we can automatically set the
 	      // human-readable name to the DAS2 name, rather than the ID, which is a URI
 	      Das2Type type = request_sym.getDas2Type();
+              if (DEBUG)  { System.out.println("$$$$$ in Das2LoadView3.processFeatureRequests(), getting style for: " + type.getName()); }
 	      IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 	      style.setHumanName(type.getName());
-	      if (type.getName().endsWith("refseq")) {
-		style.setLabelField("gene_name");
-	      }
-	      //	      style.setMaxDepth(3);
 
 	      if (USE_DAS2_OPTIMIZER) {
 		result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
@@ -435,11 +431,11 @@ public class Das2LoadView3 extends JComponent
    *    manual loading, which is handled in another method...
    */
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    //    if (DEBUG_EVENTS) {
+    if (DEBUG_EVENTS) {
           System.out.println("^^^^^^^^^^^^  Das2LoadView3 received SeqSelectionEvent");
 	  System.out.println("    selected seq: " + evt.getSelectedSeq());
 	  System.out.println("    visible seq: " + gviewer.getViewSeq());
-    //    }
+    }
     AnnotatedBioSeq newseq = evt.getSelectedSeq();
     if (current_seq != newseq) {
       current_seq = newseq;
@@ -458,12 +454,9 @@ public class Das2LoadView3 extends JComponent
    */
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     AnnotatedSeqGroup newgroup = evt.getSelectedGroup();
-    if (newgroup == null)  {
-        System.out.println("%%%%%%% Das2LoadView3 received GroupSelectionEvent:, group " + newgroup);
-    }
-    else {
-        System.out.println( "%%%%%%% Das2LoadView3 received GroupSelectionEvent, group: " +
-                newgroup.getID());
+    if (DEBUG_EVENTS) {
+      if (newgroup == null)  {System.out.println("%%%%%%% Das2LoadView3 received GroupSelectionEvent:, group " + newgroup);}
+      else {System.out.println( "%%%%%%% Das2LoadView3 received GroupSelectionEvent, group: " + newgroup.getID());}
     }
     if ((current_group != newgroup) || (newgroup == null)) {
       current_group = newgroup;
@@ -475,16 +468,10 @@ public class Das2LoadView3 extends JComponent
       types_table.setModel(types_table_model);
       TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
       stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
-      //      TableColumn progcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_PROGRESS_COLUMN);
-      //      progcol.setCellRenderer(new ProgressRenderer());
-
-
       types_table.validate();
       types_table.repaint();
-
       clearTreeView();
       if (current_group == null) { return; }
-
       //      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
       Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
       int current_sleep_time = 0;
@@ -879,7 +866,7 @@ class Das2TypeState {
 
       // check for "load_hint" property in Das2Type, if present use it as default if STRATEGYKEY has not been set
       String load_hint_str = (String)type.getProperty("load_hint");
-      if (load_hint_str != null) { System.out.println("%%%% creating Das2Type: " + type.getName() + ", load_hint: " + load_hint_str); }
+      // if (load_hint_str != null) { System.out.println("%%%% creating Das2Type: " + type.getName() + ", load_hint: " + load_hint_str); }
       int load_hint = getLoadStrategy(load_hint_str);
       String typeid = dtype.getID();
       if (types_node.nodeExists(type_node_name)) {
@@ -894,7 +881,7 @@ class Das2TypeState {
       else {  // if no pre-existing node for type, still set load strategy if Das2Type has "load_hint" property
 	if (load_hint > -1) { setLoadStrategy(load_hint); }
 	// temporary solution for making sure refseq and cytobands are loaded by default (unless user unselects them)
-	if (typeid.endsWith("refseq") || typeid.endsWith("cytobands")) { 
+	if (typeid.endsWith("refseq") || typeid.endsWith("cytobands")) {
 	  setLoad(true);
 	}
       }

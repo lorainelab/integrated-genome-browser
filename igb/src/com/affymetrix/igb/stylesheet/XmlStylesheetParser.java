@@ -50,6 +50,7 @@ public class XmlStylesheetParser {
   public static synchronized Stylesheet getSystemStylesheet() {
     if (system_stylesheet == null) {
       try {
+	System.out.println("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
         XmlStylesheetParser parser = new XmlStylesheetParser();
         // If using class.getResource... use name beginning with "/"
         InputStream istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
@@ -87,6 +88,8 @@ public class XmlStylesheetParser {
         parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 
         // then load the user stylesheet on top of that
+        System.out.println("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+
         user_stylesheet = parser.parse(istr);
 
       } catch (Exception e) {

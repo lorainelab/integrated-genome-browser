@@ -1,5 +1,5 @@
-/**
-*   Copyright (c) 2005-2007 Affymetrix, Inc.
+
+/**   Copyright (c) 2005-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -20,7 +20,25 @@ import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.stylesheet.AssociationElement;
+import com.affymetrix.igb.stylesheet.Stylesheet;
+import com.affymetrix.igb.stylesheet.PropertyMap;
 
+/**
+ *
+ *  When setting up an AnnotStyle, want to prioritize:
+ *
+ *  A) Start with default instance (from system stylesheet?)
+ *
+ *  B) Modify with user-set default parameters from default Preferences node
+ *
+ *  C) Modify with method-matching parameters from system stylesheet
+ *
+ *  D) Modify with user-set method parameters from Preferences nodes
+ *
+ *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
+ */
 public class AnnotStyle implements IAnnotStyleExtended {
 
   static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
@@ -57,6 +75,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
   static final double default_y = 0.0;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
 
+  public static boolean DEBUG = false;
+  public static boolean DEBUG_NODE_PUTS = false;
   // whether to create and use a java Preferences node object for this instance
   boolean is_persistent = true;
 
@@ -92,7 +112,11 @@ public class AnnotStyle implements IAnnotStyleExtended {
       // if (unique_name == null)  { unique_name = "unknown";}
     AnnotStyle style = static_map.get(unique_name.toLowerCase());
     if (style == null) {
+      if (DEBUG)  {System.out.println("    (((((((   in AnnotStyle.getInstance() creating AnnotStyle for name: " + unique_name); }
+      // apply any default stylesheet stuff
       AnnotStyle template = getDefaultInstance();
+      // at this point template should already have all modifications to default applied from stylesheets and preferences nodes (A & B)
+      // apply any stylesheet stuff...
       style = new AnnotStyle(unique_name, persistent, template);
       static_map.put(unique_name.toLowerCase(), style);
     }
@@ -125,6 +149,15 @@ public class AnnotStyle implements IAnnotStyleExtended {
   }
 
   /** Creates an instance associated with a case-insensitive form of the unique name.
+   *
+   *   When setting up an AnnotStyle, want to prioritize:
+ *
+ *  A) Start with default instance (from system stylesheet?)
+ *  B) Modify with user-set default parameters from default Preferences node
+ *  C) Modify with method-matching parameters from system stylesheet
+ *  D) Modify with user-set method parameters from Preferences nodes
+ *
+ *  Not sure yet where stylesheets from DAS/2 servers fits in yet -- between B/C or between C/D ?
    */
   protected AnnotStyle(String name, boolean is_persistent, AnnotStyle template) {
     this.human_name = name; // this is the default human name, and is not lower case
@@ -143,9 +176,22 @@ public class AnnotStyle implements IAnnotStyleExtended {
     }
 
     if (template != null) {
+        // calling initFromTemplate should take care of A) and B)
       initFromTemplate(template);
     }
+    // need to elminate these hardcoded defaults...
     applyHardCodedDefaults();
+
+    // now need to add use of stylesheet settings via AssociationElements, etc.
+    Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
+    AssociationElement assel = stylesheet.getAssociationForType(name);
+    if (assel == null)  { assel = stylesheet.getAssociationForMethod(name); }
+    if (assel != null)  {
+        PropertyMap props = assel.getPropertyMap();
+        if (props != null)  {
+            initFromPropertyMap(props);
+        }
+    }
     if (is_persistent) {
       try {
         node = UnibrowPrefsUtil.getSubnode(tiers_root_node, this.unique_name);
@@ -161,6 +207,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     } else {
       node = null;
     }
+    // color = Color.red;
   }
 
   // Apply a few hard-coded defaults
@@ -169,10 +216,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     if ("contig".equals(unique_name) || "contigs".equals(unique_name)
         || "repeats".equals(unique_name) || "repeat".equals(unique_name)
         || "encode regions".equals(unique_name) || "encoderegions".equals(unique_name) || "encode".equals(unique_name)) {
-      this.glyph_depth = 1;
-    }
-    else if ("refseq".equals(unique_name)) {
-      this.label_field = "gene_name";
+      setGlyphDepth(1);
     }
   }
 
@@ -181,8 +225,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
   // Make sure to set human_name to some default before calling this.
   // Properties set this way do NOT get put in persistent storage.
   void initFromNode(Preferences node) {
+    if (DEBUG)  { System.out.println("    ----------- called AnnotStyle.initFromNode() for: " + unique_name); }
     human_name = node.get(PREF_HUMAN_NAME, this.human_name);
-    //factory_instance = null;
 
     separate = node.getBoolean(PREF_SEPARATE, this.getSeparate());
     //show = node.getBoolean(PREF_SHOW, this.getShow());
@@ -193,6 +237,55 @@ public class AnnotStyle implements IAnnotStyleExtended {
 
     label_field = node.get(PREF_LABEL_FIELD, this.getLabelField());
     glyph_depth = node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth());
+    //    setGlyphDepth(node.getInt(PREF_GLYPH_DEPTH, this.getGlyphDepth()));
+  }
+
+  // Copies selected properties from a PropertyMap into this object, but does NOT persist
+  // these copied values -- if values were persisted, then if PropertyMap changed between sessions,
+  //      older values would override newer values since persisted nodes take precedence
+  //    (only want to persists when user sets preferences in GUI)
+   void initFromPropertyMap(PropertyMap props)  {
+
+     if (DEBUG)   { System.out.println("    +++++ initializing  AnnotStyle from PropertyMap: " + props); }
+      Color col = props.getColor("color");
+      if (col == null)  { col = props.getColor("foreground"); }
+      if (col != null)  { color = col; }
+      Color bgcol = props.getColor("background");
+      if (bgcol != null)  { background = bgcol; }
+
+      String gdepth_string = (String)props.getProperty("glyph_depth");
+      if (gdepth_string != null) {
+	int prev_glyph_depth = glyph_depth;
+	try { glyph_depth = Integer.parseInt(gdepth_string); }
+	catch (Exception ex)  { glyph_depth = prev_glyph_depth; }
+      }
+      String labfield = (String)props.getProperty("label_field");
+      if (labfield != null) { label_field = labfield; }
+
+      String mdepth_string = (String)props.getProperty("max_depth");
+      if (mdepth_string != null)  {
+          int prev_max_depth = max_depth;
+          try { max_depth = Integer.parseInt(mdepth_string); }
+          catch (Exception ex)  { max_depth = prev_max_depth; }
+      }
+
+      String sepstring = (String)props.getProperty("separate");
+      if (sepstring != null)  {
+	if (sepstring.equalsIgnoreCase("false"))  { separate = false; }
+	else if (sepstring.equalsIgnoreCase("true")) { separate = true; }
+      }
+      String showstring = (String)props.getProperty("show");
+      if (showstring != null) {
+	if (showstring.equalsIgnoreCase("false"))  { show = false; }
+	else if (showstring.equalsIgnoreCase("true")) { show = true; }
+      }
+      String collapstring = (String)props.getProperty("collapsed");
+      if (collapstring != null) {
+	if (collapstring.equalsIgnoreCase("false"))  { collapsed = false; }
+	else if (collapstring.equalsIgnoreCase("true")) { collapsed= true; }
+      }
+      if (DEBUG) { System.out.println("    +++++++  done initializing from PropertyMap"); }
+      // height???
   }
 
   // Copies properties from the template into this object, but does NOT persist
@@ -201,16 +294,15 @@ public class AnnotStyle implements IAnnotStyleExtended {
   void initFromTemplate(AnnotStyle template) {
     //human_name = this.unique_name;
     //factory_instance = null;
-
     separate = template.getSeparate();
     show = template.getShow();
     collapsed = template.getCollapsed();
-    max_depth = template.getMaxDepth();
+    max_depth = template.getMaxDepth();  // max stacking of annotations
     color = template.getColor();
     background = template.getBackground();
-
     label_field = template.getLabelField();
-    glyph_depth = template.getGlyphDepth();
+    glyph_depth = template.getGlyphDepth();  // depth of visible glyph tree
+    // setGlyphDepth(template.getGlyphDepth());
   }
 
   // Returns the preferences node, or null if this is a non-persistent instance.
@@ -233,6 +325,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
       default_instance.setHumanName("");
       default_instance.setShow(true);
       default_instance.setLabelField("");
+      default_instance.setMaxDepth(4);
       // Note that name will become lower-case
       static_map.put(default_instance.unique_name, default_instance);
     }
@@ -257,6 +350,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public void setHumanName(String human_name) {
     this.human_name = human_name;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setHumanName(): " + human_name); }
       getNode().put(PREF_HUMAN_NAME, human_name);
     }
   }
@@ -280,6 +374,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public void setSeparate(boolean b) {
     this.separate = b;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setSeparate(): " + human_name + ", " + b); }
       getNode().putBoolean(PREF_SEPARATE, b);
     }
   }
@@ -296,6 +391,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public void setCollapsed(boolean b) {
     this.collapsed = b;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setCollapsed(): " + human_name + ", " + b); }
       getNode().putBoolean(PREF_COLLAPSED, b);
     }
   }
@@ -315,6 +411,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     if (max > MAX_MAX_DEPTH) { max = MAX_MAX_DEPTH; }
     this.max_depth = max;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setMaxDepth(): " + human_name + ", " + max); }
       getNode().putInt(PREF_MAX_DEPTH, max);
     }
   }
@@ -331,6 +428,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     }
     this.color = c;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setColor(): " + human_name + ", " + c); }
       UnibrowPrefsUtil.putColor(getNode(), PREF_COLOR, c);
     }
   }
@@ -347,6 +445,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     }
     this.background = c;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setBackground(): " + human_name + ", " + c); }
       UnibrowPrefsUtil.putColor(getNode(), PREF_BACKGROUND, c);
     }
   }
@@ -363,6 +462,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     if (l == null || l.trim().length() == 0) { l = ""; }
     label_field = l;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setLabelField(): " + human_name + ", " + l); }
       getNode().put(PREF_LABEL_FIELD, l);
     }
   }
@@ -372,9 +472,12 @@ public class AnnotStyle implements IAnnotStyleExtended {
   }
 
   public void setGlyphDepth(int i) {
-    glyph_depth = i;
-    if (getNode() != null) {
-      getNode().putInt(PREF_GLYPH_DEPTH, i);
+    if (glyph_depth != i) {
+      glyph_depth = i;
+      if (getNode() != null) {
+	if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setGlyphDepth(): " + human_name + ", " + i); }
+	getNode().putInt(PREF_GLYPH_DEPTH, i);
+      }
     }
   }
 
@@ -385,6 +488,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public void setHeight(double h) {
     height = h;
     if (getNode() != null) {
+      if (DEBUG_NODE_PUTS) { System.out.println("   %%%%% node.put() in AnnotStyle.setHeight(): " + human_name + ", " + h); }
       getNode().putDouble(PREF_HEIGHT, h);
     }
   }
@@ -425,14 +529,14 @@ public class AnnotStyle implements IAnnotStyleExtended {
   }
 
   boolean is_graph = false;
-  
+
   /** Returns false by default.  This class is only intended for annotation tiers,
    *  not graph tiers.
    */
   public boolean isGraphTier() {
     return is_graph;
   }
-  
+
   /** Avoid setting to anything but false.  This class is only intended for annotation tiers,
    *  not graph tiers.
    */
@@ -522,7 +626,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     setHeight(g.getHeight());
     setY(g.getY());
     setExpandable(g.getExpandable());
-    
+
     if (g instanceof IAnnotStyleExtended) {
       IAnnotStyleExtended as = (IAnnotStyleExtended) g;
       setColorByScore(as.getColorByScore());

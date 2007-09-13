@@ -287,6 +287,7 @@ will not work well with these styles.
 <ASSOCIATIONS>
 
   <METHOD_ASSOCIATION  method='huex-1_0-st' style="WTA"/>
+
   <METHOD_ASSOCIATION method="Probesets"
      style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
     <PROPERTY key="child_glyph" value="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"/>
@@ -308,10 +309,33 @@ will not work well with these styles.
   <METHOD_REGEX_ASSOCIATION regex=".*netaffx consensus" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
   <!-- End of probe set display section -->
 
-  <METHOD_REGEX_ASSOCIATION regex="contig(s?)"
-     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory"
-  >
+  <METHOD_REGEX_ASSOCIATION regex="refseq$"
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+       <PROPERTY key="color" value="00FFFF" />  
+       <PROPERTY key="label_field" value="gene name" />
+       <PROPERTY key="max_depth" value="3" />
+       <!--   <PROPERTY key="annot_type" value="refseq" />  hmm  -->
+       <!-- <PROPERTY key="glyph_depth" value="1" /> -->
+       <!-- <PROPERTY key="background" value="BBA000" /> -->
+       <!--       <PROPERTY key="separate" value="false" /> -->
+  </METHOD_REGEX_ASSOCIATION>
+
+  <METHOD_REGEX_ASSOCIATION regex="contig(s?)$"
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
     <PROPERTY key="child_glyph" value="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"/>
+    <PROPERTY key="glyph_depth" value="1" />
+  </METHOD_REGEX_ASSOCIATION>
+
+  <METHOD_REGEX_ASSOCIATION regex="repeat(s?)$"
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+    <PROPERTY key="glyph_depth" value="1" />
+    <PROPERTY key="color" value="A0A000" />
+  </METHOD_REGEX_ASSOCIATION>
+
+  <METHOD_REGEX_ASSOCIATION regex="(encode|encode regions|encoderegions)$"
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+     <PROPERTY key="color" value="FF8000" />
+     <PROPERTY key="glyph_depth" value="1" />
   </METHOD_REGEX_ASSOCIATION>
 
   <METHOD_REGEX_ASSOCIATION regex="^coverage: .*"

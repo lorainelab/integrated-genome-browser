@@ -62,6 +62,14 @@ public class SegmenterRptParser {
 
   static final Pattern line_splitter = Pattern.compile("\t");
 
+  public static boolean isCnRegionsFilename(String s) {
+    return (s != null && s.toLowerCase().endsWith("." + CN_REGION_FILE_EXT.toLowerCase()));
+  }
+
+  public static boolean isLohRegionsFilename(String s) {
+    return (s != null && s.toLowerCase().endsWith("." + LOH_REGION_FILE_EXT.toLowerCase()));
+  }
+  
   public SegmenterRptParser() {
     this(true, true);
   }

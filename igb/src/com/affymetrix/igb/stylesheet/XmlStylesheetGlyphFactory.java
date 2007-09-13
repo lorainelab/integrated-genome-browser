@@ -66,7 +66,7 @@ public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer, boolean next_to_axis) {
       // fixing bug encountered when sym doesn't have span on sequence it is annotating --
       //   currently should only see these as "dummy" placeholder syms that are
-      //   children of Das2FeatureRequestSyms, in which case they have _no_ spans.
+      //   children of "empty" Das2FeatureRequestSyms, in which case they have _no_ spans.
       //   So for now skipping any sym with no spans...
       if (sym.getSpanCount() == 0)  { return; }
     // I'm assuming that for container glyphs, the container method is the

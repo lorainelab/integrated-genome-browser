@@ -179,8 +179,9 @@ public class AnnotStyle implements IAnnotStyleExtended {
         // calling initFromTemplate should take care of A) and B)
       initFromTemplate(template);
     }
-    // need to elminate these hardcoded defaults...
-    applyHardCodedDefaults();
+
+    // GAH eliminated hard-coded default settings for glyph_depth, can now set in stylesheet
+    //    applyHardCodedDefaults();  
 
     // now need to add use of stylesheet settings via AssociationElements, etc.
     Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
@@ -206,17 +207,6 @@ public class AnnotStyle implements IAnnotStyleExtended {
       }
     } else {
       node = null;
-    }
-    // color = Color.red;
-  }
-
-  // Apply a few hard-coded defaults
-  // This is a hack, but helps ease the transition away from the igb_default_prefs.xml file
-  void applyHardCodedDefaults() {
-    if ("contig".equals(unique_name) || "contigs".equals(unique_name)
-        || "repeats".equals(unique_name) || "repeat".equals(unique_name)
-        || "encode regions".equals(unique_name) || "encoderegions".equals(unique_name) || "encode".equals(unique_name)) {
-      setGlyphDepth(1);
     }
   }
 
@@ -246,7 +236,10 @@ public class AnnotStyle implements IAnnotStyleExtended {
   //    (only want to persists when user sets preferences in GUI)
    void initFromPropertyMap(PropertyMap props)  {
 
-     if (DEBUG)   { System.out.println("    +++++ initializing  AnnotStyle from PropertyMap: " + props); }
+     if (DEBUG)  { 
+       System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name); 
+       System.out.println("             props: " + props); 
+     }
       Color col = props.getColor("color");
       if (col == null)  { col = props.getColor("foreground"); }
       if (col != null)  { color = col; }

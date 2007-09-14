@@ -14,7 +14,6 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
@@ -28,6 +27,7 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class RoundRectMaskGlyph extends EfficientGlyph  {
 
+  static BasicStroke stroke = new BasicStroke(2);
   RoundRectangle2D rr2d = new RoundRectangle2D.Double();
     
   Shape getShapeInPixels(ViewI view) {
@@ -36,14 +36,10 @@ public class RoundRectMaskGlyph extends EfficientGlyph  {
 
     pixelbox = fixAWTBigRectBug(view, pixelbox);
 
-    if (pixelbox.width == 0) { pixelbox.width = 1; }
-    if (pixelbox.height == 0) { pixelbox.height = 1; }
+    if (pixelbox.width < min_pixels_width) { pixelbox.width = min_pixels_width; }
+    if (pixelbox.height < min_pixels_height) { pixelbox.height = min_pixels_height; }
     Graphics g = view.getGraphics();
     g.setColor(getBackgroundColor());
-
-    // temp fix for AWT drawing bug when rect gets too big -- GAH 2/6/98
-    Rectangle compbox = view.getComponentSizeRect();
-    pixelbox = GeometryUtils.intersection(compbox, pixelbox, pixelbox);
 
     //Point arcSize = view.transformToPixels(new Point2D(arcWidth, arcHeight), new Point());
     int arcSize = Math.min(pixelbox.width, pixelbox.height);
@@ -53,16 +49,18 @@ public class RoundRectMaskGlyph extends EfficientGlyph  {
     return rr2d;
   }
 
+  /** Draws the outline using a BasicStroke. */
   public void draw(ViewI view) {    
     Shape s = getShapeInPixels(view);
     
     Graphics2D g2 = (Graphics2D) view.getGraphics();
 
     g2.setColor(getColor());
-    g2.setStroke(new BasicStroke(2));
+    g2.setStroke(stroke);
     g2.draw(s);
   }
   
+  /** Draws the children, but clips them through a rounded window. */
   public void drawChildren(ViewI view) {    
     Shape s = getShapeInPixels(view);
     

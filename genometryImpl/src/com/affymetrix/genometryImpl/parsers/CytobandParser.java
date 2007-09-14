@@ -22,6 +22,8 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.TypedSym;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Paint;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -37,7 +39,9 @@ public class CytobandParser implements AnnotationWriter  {
 //  static final Color cyto_acen_color = new Color(198,64,64); // dark red
   static final Color cyto_acen_color = new Color(198,96,96); // red
   static final Color cyto_stalk_color = new Color(128,128,160); // pale blue
-      /*Color.GRAY;*/
+
+  static public final Paint acen_paint = new GradientPaint(0, 0, Color.DARK_GRAY, 1, 1, Color.WHITE, true);
+  static public final Paint stalk_paint = new GradientPaint(0, 1, Color.GRAY, 1, 0, Color.WHITE, true);
 
   /** This is the name that is used to identify the cytobands data.  It is not
    *  intended to be displayed to the user.  It should be some String that they

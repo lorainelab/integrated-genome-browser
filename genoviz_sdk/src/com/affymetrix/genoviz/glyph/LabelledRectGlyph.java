@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,7 +18,7 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 /**
- * Adds an internal label string to solid rectangle glyph.
+ * A solid rectangle glyph with an internal label.
  */
 public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
   String text;
@@ -32,7 +32,7 @@ public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
 
   // CLH: This is the constant that the glyph uses to decide
   //      if it should even bother checking to see if the label
-  //      will fit. Below this threshold it just assumest that
+  //      will fit. Below this threshold it just assumes that
   //      it will not fit.
   public static final int min_width_needed_for_text = 32;
 
@@ -57,10 +57,11 @@ public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
         }
         FontMetrics fm = g.getFontMetrics();
         int text_width = fm.stringWidth(this.text);
+        int text_height = fm.getAscent(); // this is just approximate for the height
 
         int midline = pixelbox.y + pixelbox.height / 2;
 
-        if(text_width <= pixelbox.width ) {
+        if(text_width <= pixelbox.width && text_height <= pixelbox.height) {
           int mid = pixelbox.x + ( pixelbox.width / 2 ) - ( text_width / 2 );
           // define adjust such that: ascent-adjust = descent+adjust
           int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0);
@@ -73,6 +74,4 @@ public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
       }
     }
   }
-
-
 }

@@ -37,9 +37,9 @@ public class GenometryModel {
   // maps sequences to lists of selected symmetries
   Map<AnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<AnnotatedBioSeq,List<SeqSymmetry>>();
 
-  List<SeqSelectionListener> seq_selection_listeners = new ArrayList<SeqSelectionListener>();
-  List<GroupSelectionListener> group_selection_listeners = new ArrayList<GroupSelectionListener>();
-  List<SymSelectionListener> sym_selection_listeners = new ArrayList<SymSelectionListener>();
+  List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
+  List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
+  List<SymSelectionListener> sym_selection_listeners = Collections.synchronizedList(new ArrayList<SymSelectionListener>());
   //List model_change_listeners = new ArrayList();
 
   AnnotatedSeqGroup selected_group = null;
@@ -143,9 +143,13 @@ public class GenometryModel {
 
   void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
     GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
-    for (int i=group_selection_listeners.size()-1; i>=0; i--) {
-      GroupSelectionListener listener = group_selection_listeners.get(i);
-      listener.groupSelectionChanged(evt);
+    synchronized (group_selection_listeners) {
+      // the "synchronized" block, by itself, doesn't seem to be enough,
+      // so also copying the list
+      ArrayList<GroupSelectionListener> xxx = new ArrayList<GroupSelectionListener>(group_selection_listeners);
+      for (int i=xxx.size()-1; i>=0; i--) {
+        xxx.get(i).groupSelectionChanged(evt);
+      }
     }
   }
 
@@ -194,10 +198,14 @@ public class GenometryModel {
    */
   void fireSeqSelectionEvent(Object src, List<AnnotatedBioSeq> slist) {
     SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
-    Iterator iter = seq_selection_listeners.iterator();
-    while (iter.hasNext())  {
-      SeqSelectionListener listener = (SeqSelectionListener)iter.next();
-      listener.seqSelectionChanged(evt);
+    synchronized (seq_selection_listeners) {
+      // the "synchronized" block, by itself, doesn't seem to be enough,
+      // so also copying the list
+      Iterator iter = (new ArrayList(seq_selection_listeners)).iterator();
+      while (iter.hasNext())  {
+        SeqSelectionListener listener = (SeqSelectionListener)iter.next();
+        listener.seqSelectionChanged(evt);
+      }
     }
   }
 
@@ -218,8 +226,13 @@ public class GenometryModel {
       System.out.println("Firing event: " + syms.size());
     }
     SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
-    for (int i=sym_selection_listeners.size()-1; i>=0; i--) {
-      sym_selection_listeners.get(i).symSelectionChanged(sevt);
+    synchronized (sym_selection_listeners) {
+      // the "synchronized" block, by itself, doesn't seem to be enough,
+      // so also copying the list
+      ArrayList<SymSelectionListener> xxx = new ArrayList<SymSelectionListener>(sym_selection_listeners);
+      for (int i=xxx.size()-1; i>=0; i--) {
+        xxx.get(i).symSelectionChanged(sevt);
+      }
     }
   }
 

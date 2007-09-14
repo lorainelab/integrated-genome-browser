@@ -164,7 +164,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       this.addChild(thresh_glyph);
     }
 
-    if (graph_style == MINMAXAVG) {
+    if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
       double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
       double xcoords_per_pixel = 1 / xpixels_per_coord;
       if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
@@ -178,15 +178,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     } else if (graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP 
         || graph_style == GraphStateI.AVG_HEAT_MAP || graph_style == GraphStateI.EXT_HEAT_MAP) {
 
-//      double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
-//      double xcoords_per_pixel = 1 / xpixels_per_coord;
-//      if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
-//	// if at resolution where bars should be displayed, then draw as BIG_DOT_GRAPH style
-//        super.draw(view, GraphStateI.HEAT_MAP);
-//      }
-//      else {
-        drawMinMaxAvg(view);
-//      }
+      drawMinMaxAvg(view);
 
     } else {
       // Not one of the special styles, so default to regular GraphGlyph.draw method.
@@ -309,7 +301,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
     view.transformToPixels(coord, zero_point);
 
-    if (graph_style == MINMAXAVG) {
+    if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
       if (show_min_max) {
         g.setColor(Color.yellow);
         g.drawLine(pixelbox.x, plot_bottom_ypixel, pixelbox.width, plot_bottom_ypixel);
@@ -321,7 +313,11 @@ public class SmartGraphGlyph extends GraphGlyph {
         g.setColor(Color.gray);
         g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
       }
-      g.setColor(darker);
+      if (graph_style == MINMAXAVG) {
+        g.setColor(darker);
+      } else {
+        g.setColor(getBackgroundColor());
+      }
     }
 
     /*
@@ -388,6 +384,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	if (graph_style == MINMAXAVG) {
           g.setColor(darker);
         }
+	if (graph_style == LINE_GRAPH) {
+          g.setColor(getBackgroundColor());
+        }
 	for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
 	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
@@ -415,10 +414,11 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    points_in_pixel++;
 	  }
 
-	  else {  // draw previous pixel position
+	  else {  // draw data for the previous pixel position
 	    yavg_pixel = ysum / points_in_pixel;
             
 	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
+                graph_style == LINE_GRAPH ||
                 graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
                 || graph_style == GraphStateI.EXT_HEAT_MAP) {
               // this does NOT apply to AVG_HEAT_MAP
@@ -427,7 +427,7 @@ public class SmartGraphGlyph extends GraphGlyph {
               int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	      int yheight = yend - ystart;
               
-              if (graph_style == MINMAXAVG) {
+              if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
                 g.fillRect(prev_point.x, ystart, 1, yheight);
               } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
                 g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
@@ -455,6 +455,11 @@ public class SmartGraphGlyph extends GraphGlyph {
 		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	      }
 	    }
+            
+            if (graph_style == GraphStateI.LINE_GRAPH) {
+              g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
+            }
+            
 	    last_xavg = prev_point.x;
 	    last_yavg = yavg_pixel;
 	    ymin_pixel = temp_ymin_pixel;
@@ -464,7 +469,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    points_in_pixel = 1;
 	    prev_point.x = curr_point.x;
 	    prev_point.y = curr_point.y;
-	  }
+	  } // end (prev_point.x != curr_point.x)
 	}
       }
       if (SHOW_CACHE_INDICATOR) {
@@ -516,6 +521,9 @@ public class SmartGraphGlyph extends GraphGlyph {
       if (graph_style == MINMAXAVG) {
         g.setColor(darker);
       }
+      if (graph_style == LINE_GRAPH) {
+        g.setColor(getBackgroundColor());
+      }
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
 	coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
@@ -530,6 +538,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	}
 	else {  // draw previous pixel position
 	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
+                graph_style == LINE_GRAPH ||
                 graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
                 || graph_style == GraphStateI.EXT_HEAT_MAP) {
               // Does not apply to AVG_HEAT_MAP
@@ -538,7 +547,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	    int yheight = yend - ystart;
 
-            if (graph_style == MINMAXAVG) {
+            if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
               g.fillRect(prev_point.x, ystart, 1, yheight);
             } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
               g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));

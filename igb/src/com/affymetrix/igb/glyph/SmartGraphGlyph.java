@@ -301,6 +301,8 @@ public class SmartGraphGlyph extends GraphGlyph {
     coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
     view.transformToPixels(coord, zero_point);
 
+    //drawHorizontalGridLines(view);
+
     if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
       if (show_min_max) {
         g.setColor(Color.yellow);
@@ -457,7 +459,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
             
             if (graph_style == GraphStateI.LINE_GRAPH) {
-              g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
+              int y1 = Math.max(Math.min(prev_point.y, plot_bottom_ypixel), plot_top_ypixel);
+              int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+              g.drawLine(prev_point.x, y1, curr_point.x, y2);
             }
             
 	    last_xavg = prev_point.x;

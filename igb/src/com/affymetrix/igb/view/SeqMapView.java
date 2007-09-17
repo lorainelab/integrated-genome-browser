@@ -12,18 +12,6 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import java.awt.*;
-import java.awt.event.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
-import java.awt.datatransfer.*;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
@@ -50,26 +38,34 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.util.CharIterator;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.parsers.*;
-import com.affymetrix.genometryImpl.util.CharIterator;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.ObjectUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowControlUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import java.util.prefs.PreferenceChangeEvent;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.prefs.*;
+import java.util.regex.Pattern;
+import javax.swing.*;
 
 public class SeqMapView extends JPanel
   implements AnnotatedSeqViewer, SymSelectionSource,
@@ -773,7 +769,7 @@ public class SeqMapView extends JPanel
     return axis_tier;
   }
 
-  public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer) {
+  public static EfficientSolidGlyph makeCytobandGlyph(SeqMapView gviewer) {
     EfficientFillRectGlyph cytoband_glyph = null;
     if (gviewer.getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
       SmartAnnotBioSeq sma = (SmartAnnotBioSeq) gviewer.getAnnotatedSeq();
@@ -811,32 +807,37 @@ public class SeqMapView extends JPanel
    *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
    *         will be a Das2FeatureRequestSym, which will have cytoband children).
    */
-  public static EfficientFillRectGlyph makeCytobandGlyph(SeqMapView gviewer, TypeContainerAnnot cyto_container) {
+  public static EfficientSolidGlyph makeCytobandGlyph(SeqMapView gviewer, TypeContainerAnnot cyto_container) {
     int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
-    EfficientFillRectGlyph cytoband_glyph = new EfficientFillRectGlyph();
-    cytoband_glyph.setBackgroundColor(Color.LIGHT_GRAY);
-    cytoband_glyph.setHitable(false);
-    cytoband_glyph.setCoords(0.0, 0.0, 0, cyto_height + 4);
+    RoundRectMaskGlyph cytoband_glyph_A = null;
+    RoundRectMaskGlyph cytoband_glyph_B = null;
 
-    java.util.List bands = new ArrayList();
+    java.util.List<CytobandParser.CytobandSym>  bands = new ArrayList<CytobandParser.CytobandSym>();
     for (int q=0; q<cyto_container.getChildCount(); q++) {
       SeqSymmetry child  = cyto_container.getChild(q);
       if (child instanceof CytobandParser.CytobandSym) {
-        bands.add(child);
+        bands.add((CytobandParser.CytobandSym) child);
       }
       else if (child != null) {
         for (int subindex=0; subindex<child.getChildCount(); subindex++) {
           SeqSymmetry grandchild = child.getChild(subindex);
           if (grandchild instanceof CytobandParser.CytobandSym) {
-            bands.add(grandchild);
+            bands.add((CytobandParser.CytobandSym) grandchild);
           }
         }
       }
     }
     //System.out.println("   band count: " + bands.size());
 
-    //        for (int q=0; q<cyto_container.getChildCount(); q++) {
+    int centromerePoint = -1;
+    for (int i=0; i<bands.size() -1; i++) {
+      if (bands.get(i).getArm() != bands.get(i+1).getArm()) {
+        centromerePoint = i;
+        break;
+      }
+    }
+
     for (int q=0; q<bands.size(); q++) {
       //          SeqSymmetry sym  = cyto_container.getChild(q);
       SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
@@ -850,12 +851,22 @@ public class SeqMapView extends JPanel
         //float score = ((Scored) cyto_sym).getScore();
         GlyphI efg;
         if (CytobandParser.BAND_ACEN.equals(cyto_sym.getBand())) {
-          efg = new PointedGlyph();
-          efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-          ((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
+          //efg = new PointedGlyph();
+          //efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+          //((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
+          
+          efg = new EfficientPaintRectGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+          ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
+          
         } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
-          efg = new DoublePointedGlyph();
-          efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+          //efg = new DoublePointedGlyph();
+          //efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
+          
+          efg = new EfficientPaintRectGlyph();
+          efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
+          ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
+
         } else if ("".equals(cyto_sym.getBand())) {
           efg = new EfficientOutlinedRectGlyph();
           efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
@@ -867,10 +878,38 @@ public class SeqMapView extends JPanel
         }
         efg.setColor(cyto_sym.getColor());
         gviewer.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
-        cytoband_glyph.addChild(efg);
-        cytoband_glyph.getCoordBox().add(efg.getCoordBox());
+
+      
+        if (q <= centromerePoint) {
+          if (cytoband_glyph_A ==  null) {
+            cytoband_glyph_A = new RoundRectMaskGlyph();
+            cytoband_glyph_A.setColor(Color.BLACK);
+            //cytoband_glyph_A.setHitable(false);
+            cytoband_glyph_A.setCoordBox(efg.getCoordBox());
+          }
+          cytoband_glyph_A.addChild(efg);
+          cytoband_glyph_A.getCoordBox().add(efg.getCoordBox());
+        } else {
+          if (cytoband_glyph_B == null) {
+            cytoband_glyph_B = new RoundRectMaskGlyph();
+            cytoband_glyph_B.setColor(Color.GRAY);
+            //cytoband_glyph_B.setHitable(false);
+            cytoband_glyph_B.setCoordBox(efg.getCoordBox());
+          }
+          cytoband_glyph_B.addChild(efg);
+          cytoband_glyph_B.getCoordBox().add(efg.getCoordBox());
+        }
+      
       }
     }
+
+    InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph();
+    cytoband_glyph.setMoveChildren(false);
+    cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
+    cytoband_glyph.addChild(cytoband_glyph_A);
+    cytoband_glyph.addChild(cytoband_glyph_B);
+    cytoband_glyph.getCoordBox().add(cytoband_glyph_B.getCoordBox());
+
     return cytoband_glyph;
   }
 
@@ -1664,6 +1703,7 @@ public class SeqMapView extends JPanel
    */
   void postSelections() {
     Vector selected_glyphs = seqmap.getSelected();
+
     java.util.List selected_syms = glyphsToSyms(selected_glyphs);
     // Note that seq_selected_sym (the selected residues) is not included in selected_syms
     gmodel.setSelectedSymmetries(selected_syms, this);

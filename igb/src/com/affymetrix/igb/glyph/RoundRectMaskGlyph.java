@@ -34,7 +34,10 @@ public class RoundRectMaskGlyph extends EfficientGlyph  {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
 
-    pixelbox = fixAWTBigRectBug(view, pixelbox);
+    // turning off fixAWTBigRectBug  because it is probably unnecessary and because
+    // it causes the glyph to draw the round edges at the edges of the view, even when
+    // zoomed in such that the edge of the view is not the edge of the coord space.
+    //pixelbox = fixAWTBigRectBug(view, pixelbox);
 
     if (pixelbox.width < min_pixels_width) { pixelbox.width = min_pixels_width; }
     if (pixelbox.height < min_pixels_height) { pixelbox.height = min_pixels_height; }

@@ -38,7 +38,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.stylesheet.PropertyMap;
 
 public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
-  static boolean DEBUG = true;
+  static boolean DEBUG = false;
   static boolean USE_EFFICIENT_GLYPHS = true;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;

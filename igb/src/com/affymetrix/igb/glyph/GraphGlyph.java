@@ -194,6 +194,8 @@ public class GraphGlyph extends Glyph {
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
+    //drawHorizontalGridLines(view);
+    
     if (getShowGraph() && graf != null && xcoords != null  && graf.getPointCount() == xcoords.length)  {
       int beg_index = 0;
       //int end_index = xcoords.length-1;
@@ -530,6 +532,30 @@ public class GraphGlyph extends Glyph {
       g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 //      g.setColor(Color.gray);
       g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+    }
+  }
+
+  /** A work in progress...... */
+  public void drawHorizontalGridLines(ViewI view) {
+    Graphics g = view.getGraphics();
+
+    Rectangle view_pixbox = view.getPixelBox();
+    int xbeg = Math.max(view_pixbox.x, pixelbox.x);
+    int xend = Math.max(view_pixbox.x + view_pixbox.width, pixelbox.x + view_pixbox.width);
+    g.setColor(Color.CYAN);
+    
+    for (int i=0; i<10; i+=5) {
+      coord.x = 0;
+      coord.y = i;
+      view.transformToPixels(coord, curr_point);
+      g.drawLine(xbeg, curr_point.y, xend, curr_point.y);
+    }
+    
+    g.setColor(this.getColor());
+    double[] tick_ys = calculateTickYValues(view, axis_bins);
+    for (int i=0; i<tick_ys.length; i++) {
+      int mark_ypix = (int) tick_ys[i];
+      g.drawLine(xbeg, mark_ypix, xend, mark_ypix);
     }
   }
 

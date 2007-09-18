@@ -42,6 +42,8 @@ public class DefaultStateProvider implements StateProvider {
    * with the given name while the program is running, but do not get
    * persisted to a permanent storage.  (Subclasses may choose to store
    * them in persistent storage.)
+   * @param name Unique name for a style
+   * @return A new or existing style
    */
   public IAnnotStyleExtended getAnnotStyle(String name) {
     IAnnotStyleExtended style = id2annotState.get(name.toLowerCase());

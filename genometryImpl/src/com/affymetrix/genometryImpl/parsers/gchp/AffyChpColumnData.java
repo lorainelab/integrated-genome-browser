@@ -94,6 +94,7 @@ public class AffyChpColumnData {
     return theData;
   }
   
+  @Override
   public String toString() {
     String s = this.getClass().getName() +
         ": " + name + ", " + type + ", " + size + ", " + theData.getClass().getName() + ":  ";

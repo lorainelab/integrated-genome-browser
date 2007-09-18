@@ -227,12 +227,15 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     return result_syms;
   }
 
+  @Override
   public void startDocument() {
   }
 
+  @Override
   public void endDocument() {
   }
 
+  @Override
   public void startElement(String uri, String name, String qname, Attributes atts) {
     //    System.out.println(name);
     elemstack.push(current_elem);
@@ -283,6 +286,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
   }
 
+  @Override
   public void endElement(String uri, String name, String qname)  {
     String iname = null;
     if (READER_DOES_INTERNING) {
@@ -616,6 +620,7 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
    *    a particular element is a single characters() call, BUT which can handle the cases where this
    *    content is split across multiple characters() calls
    */
+  @Override
   public void characters(char[] ch, int start, int length) {
     //    System.out.println("***" + new String(ch, start, length) + "&&&");
     //    if (inStartElem || inEndElem) {

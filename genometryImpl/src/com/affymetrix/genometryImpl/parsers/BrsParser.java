@@ -88,7 +88,7 @@ public class BrsParser implements AnnotationWriter  {
       fis = new FileInputStream(fil);
       result = parse(fis, annot_type, seq_group, true, blength);
     } finally {
-      if (fis != null) try { fis.close(); } catch (Exception e) {}
+      if (fis != null) {try { fis.close(); } catch (Exception e) {}}
     }
     return result;
   }
@@ -305,7 +305,7 @@ public class BrsParser implements AnnotationWriter  {
       }
       String line;
 
-      DataOutputStream dos = null;;
+      DataOutputStream dos = null;
       if (write_from_text) {
         File outfile = new File(bin_file);
         FileOutputStream fos = new FileOutputStream(outfile);

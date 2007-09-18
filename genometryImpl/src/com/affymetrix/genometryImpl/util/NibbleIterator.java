@@ -181,7 +181,7 @@ public class NibbleIterator implements SearchableCharIterator {
 
   public String substring(int offset, int length) {
     //    System.out.println("called NibbleIterator.substring(offset = " + offset + ", length = " + length + ")");
-    return this.nibblesToString(nibble_array, offset, offset+length);
+    return NibbleIterator.nibblesToString(nibble_array, offset, offset+length);
   }
 
   public int getLength() {

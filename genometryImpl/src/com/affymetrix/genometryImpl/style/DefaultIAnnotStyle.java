@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +38,10 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
     this.unique_name = Integer.toHexString(hashCode()); // a unique name, just in case it is ever needed
   }
 
-  /** Should only be called by subclasses or a StateProvider. */
+  /** Should only be called by subclasses or a StateProvider. 
+   * @param name unique name of the style
+   * @param graph whether this is a style for a graph tier
+   */
   public DefaultIAnnotStyle(String name, boolean graph) {
     this();
     this.unique_name = name.toLowerCase();
@@ -89,6 +91,7 @@ public class DefaultIAnnotStyle implements IAnnotStyle {
 
   /** Copies all properties from the given style into this one,
    *  including the transient properties.
+   * @param g style to copy properties from
    */
   public void copyPropertiesFrom(IAnnotStyle g) {
     setGraphTier(g.isGraphTier());

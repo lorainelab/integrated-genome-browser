@@ -30,7 +30,7 @@ public class Timer {
    * @return the time since the start method was called.
    */
   public long read() {
-    long read_time = System.currentTimeMillis();
+    read_time = System.currentTimeMillis();
     return read_time - start_time;
   }
 

@@ -98,7 +98,9 @@ public class SynonymLookup {
   // Will not change the case of the input, but if isCaseSensitive is false, will
   // also strip "_RanDom", etc.
   String stripRandom(String s) {
-    if (s == null) return null;
+    if (s == null) {
+      return null;
+    }
     String s2 = s;
     if (isCaseSensitive()) {
       if (s.endsWith("_random")) {

@@ -61,7 +61,9 @@ public class UniFileChooser extends JFileChooser {
     if (static_file_chooser == null) {
       static_file_chooser = new UniFileChooser(description, extension);
     }
-    else static_file_chooser.reinitialize(description, extension);
+    else {
+      static_file_chooser.reinitialize(description, extension);
+    }
 
     return static_file_chooser;
   }
@@ -87,11 +89,13 @@ public class UniFileChooser extends JFileChooser {
    *  <p>Example: reinitialize("AXML file", "axml");
    */
   public void reinitialize(final String description, final String extension) {
-    if (description==null || extension==null || "".equals(extension)) throw new
-      IllegalArgumentException("description and extension cannot be null");
+    if (description==null || extension==null || "".equals(extension)) {
+      throw new IllegalArgumentException("description and extension cannot be null");
+    }
 
-    if (extension.indexOf('.') != -1) throw new
-      IllegalArgumentException("extension should not contain '.'");
+    if (extension.indexOf('.') != -1) {
+      throw new IllegalArgumentException("extension should not contain \'.\'");
+    }
 
     if (this.description != description || this.extension != extension) {
       this.description = description;
@@ -119,6 +123,7 @@ public class UniFileChooser extends JFileChooser {
    *  If the selected file looks like a reasonable choice, then open it.
    *  Else suggest a new filename.
    */
+  @Override
   public void approveSelection() {
     File f = getSelectedFile();
 
@@ -130,7 +135,7 @@ public class UniFileChooser extends JFileChooser {
 
     FileFilter filter = getFileFilter();
     UniFileFilter uni_filter = null;
-    Set extensions = Collections.EMPTY_SET;
+    Set<String> extensions = Collections.<String>emptySet();
     if (filter instanceof UniFileFilter) {
       uni_filter = (UniFileFilter) filter;
       extensions = uni_filter.getExtensions();
@@ -149,10 +154,8 @@ public class UniFileChooser extends JFileChooser {
       }
       else if (! extensions.isEmpty()) { // if a similar filename with "."+extension exists, suggest that
         getToolkit().beep();
-        Iterator iter = extensions.iterator();
-        while (iter.hasNext()) {
-          String extension = (String) iter.next();
-          File file2 = applyExtension(f, extension);
+        for (String ext : extensions) {
+          File file2 = applyExtension(f, ext);
           if (file2.exists()) {
             setSelectedFile(file2);
             return;
@@ -162,10 +165,8 @@ public class UniFileChooser extends JFileChooser {
     }
 
     else if (getDialogType() == SAVE_DIALOG) {
-      Iterator iter = extensions.iterator();
-      while (iter.hasNext()) {
-        String extension = (String) iter.next();
-        if (f.getName().endsWith("."+extension)) {
+      for (String ext : extensions) {
+        if (f.getName().endsWith("."+ext)) {
           if (! f.exists()) {
             super.approveSelection();
             return;
@@ -189,7 +190,7 @@ public class UniFileChooser extends JFileChooser {
 
       if (! extensions.isEmpty()) { // Suggest to the user a new filename ending with "." + the first extension
         getToolkit().beep();
-        String first_extension = (String) extensions.iterator().next();
+        String first_extension = extensions.iterator().next();
         setSelectedFile(applyExtension(f, first_extension));
       }
     }
@@ -206,6 +207,8 @@ public class UniFileChooser extends JFileChooser {
     else if (! name.endsWith(dotExtension)) {
       return new File(name+dotExtension);
     }
-    else return f;
+    else {
+      return f;
+    }
   }
 }

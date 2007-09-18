@@ -39,6 +39,7 @@ class AffyChpParameter {
     return bytes;
   }
 
+  @Override
   public String toString() {
     return "Parameter:  Name: " + name + " type: " + type.affyMimeType + " value: " + getValue();
   }

@@ -31,9 +31,9 @@ public class FloatList {
 
   public FloatList(int initialCapacity) {
     super();
-    if (initialCapacity < 0)
-      throw new IllegalArgumentException("Illegal Capacity: "+
-					 initialCapacity);
+    if (initialCapacity < 0) {
+      throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.primData = new float[initialCapacity];
   }
 
@@ -55,8 +55,9 @@ public class FloatList {
     if (minCapacity > oldCapacity) {
       float oldData[] = primData;
       int newCapacity = (oldCapacity * 3)/2 + 1;
-      if (newCapacity < minCapacity)
-	newCapacity = minCapacity;
+      if (newCapacity < minCapacity) {
+        newCapacity = minCapacity;
+      }
       primData = new float[newCapacity];
       System.arraycopy(oldData, 0, primData, 0, size);
     }
@@ -70,6 +71,7 @@ public class FloatList {
     return size == 0;
   }
 
+  @Override
   public Object clone() {
     try { 
       FloatList v = (FloatList)super.clone();
@@ -116,9 +118,9 @@ public class FloatList {
   }
 
   public void add(int index, float val) {
-    if (index > size || index < 0)
-      throw new IndexOutOfBoundsException(
-					  "Index: "+index+", Size: "+size);
+    if (index > size || index < 0) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     ensureCapacity(size+1); 
     System.arraycopy(primData, index, primData, index + 1,
@@ -132,9 +134,9 @@ public class FloatList {
     float oldValue = primData[index];
 
     int numMoved = size - index - 1;
-    if (numMoved > 0)
-      System.arraycopy(primData, index+1, primData, index,
-		       numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(primData, index + 1, primData, index, numMoved);
+    }
     size--;
     return oldValue;
   }

@@ -63,7 +63,7 @@ public class LiftParser {
       result = this.parse(fistr, gmodel, genome_version);
     }
     finally {
-       if (fistr != null) try { fistr.close(); } catch (Exception e) {} 
+       if (fistr != null) {try { fistr.close(); } catch (Exception e) {}}
     }
     return result;
   }

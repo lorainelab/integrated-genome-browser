@@ -14,8 +14,6 @@
 package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
 
@@ -47,6 +45,7 @@ public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleE
   public void setLabelField(String s) { this.labelField = s; }
   public String getLabelField() { return labelField; }
 
+  @Override
   public void copyPropertiesFrom(IAnnotStyle g) {
     super.copyPropertiesFrom(g);  
     if (g instanceof IAnnotStyleExtended) {

@@ -39,6 +39,7 @@ public class NamedHash<K,V> extends TreeMap<K,V> {
 
   public String getName() { return name; }
 
+  @Override
   public String toString() { return getName(); }
 
 }

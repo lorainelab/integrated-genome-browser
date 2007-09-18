@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,7 +16,6 @@ package com.affymetrix.genometryImpl;
 import java.util.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
 public class CurationSym extends SimpleSymWithProps {
   CurationSym prev_curation;

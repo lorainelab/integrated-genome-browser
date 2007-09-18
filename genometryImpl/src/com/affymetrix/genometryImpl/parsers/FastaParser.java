@@ -89,8 +89,8 @@ public class FastaParser {
         }
       }
     } finally {
-      if (br != null) try {br.close();} catch (IOException ioe) {}
-      if (istr !=null) try {istr.close();} catch (IOException ioe) {}
+      if (br != null) {try {br.close();} catch (IOException ioe) {}}
+      if (istr !=null) {try {istr.close();} catch (IOException ioe) {}}
     }
     System.out.println("done loading fasta file");
     return seqlist;
@@ -214,8 +214,8 @@ public class FastaParser {
     catch (Exception ex) {
       ex.printStackTrace();
     } finally {
-      if (br != null) try {br.close();} catch (IOException ioe) {}
-      if (istr != null) try {istr.close();} catch (IOException ioe2) {}
+      if (br != null) {try {br.close();} catch (IOException ioe) {}}
+      if (istr != null) {try {istr.close();} catch (IOException ioe2) {}}
     }
     System.gc();
     //    try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
@@ -387,7 +387,7 @@ public class FastaParser {
     catch (Exception ex) {
       ex.printStackTrace();
     } finally {
-      if (br != null) try {br.close();} catch (IOException ioe) {}
+      if (br != null) {try {br.close();} catch (IOException ioe) {}}
     }
     /*
     System.gc();

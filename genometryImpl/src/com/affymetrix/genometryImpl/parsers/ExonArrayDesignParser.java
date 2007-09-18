@@ -307,7 +307,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       dis.close();
     }
     finally {
-      if (dis != null) try { dis.close(); } catch (Exception e) {}
+      if (dis != null) {try { dis.close(); } catch (Exception e) {}}
     }
     return results;
   }
@@ -323,6 +323,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *    Level 3: probeset annots (EfficieentProbesetSymA)
    *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
    */
+  @Override
   public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
                                   String type, OutputStream outstream) {
     boolean success = false;
@@ -341,7 +342,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       oneseq.add(aseq);
       SeqSymmetry tcluster_exemplar = null;
 
-      if (syms.size() > 0)  { tcluster_exemplar = (SeqSymmetry)syms.iterator().next(); }
+      if (syms.size() > 0)  { tcluster_exemplar = syms.iterator().next(); }
       writeEadHeader(tcluster_exemplar, type, oneseq, dos);
       writeSeqWithAnnots(syms, aseq, dos);
       dos.flush();

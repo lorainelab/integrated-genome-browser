@@ -39,6 +39,7 @@ public class PointDouble {
     /**
      * Checks whether two points are equal.
      */
+  @Override
     public boolean equals(Object obj) {
       if (obj instanceof PointDouble) {
         PointDouble pt = (PointDouble)obj;
@@ -54,6 +55,7 @@ public class PointDouble {
     /**
      * Returns the String representation of the coordinates.
      */
+  @Override
     public String toString() {
       return getClass().getName() + "[x=" + x + ",y=" + y + "]";
     }

@@ -13,21 +13,23 @@
 
 package com.affymetrix.genometryImpl.event;
 
+import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
 
 public class SymSelectionEvent extends EventObject {
-  List selected_syms;
+  List<SeqSymmetry> selected_syms;
   static final long serialVersionUID = 1L;
 
   /**
    *  Constructs a SymSelectionEvent.
+   *  @param src The source of the event
    *  @param syms a List of SeqSymmetry's.  Can be empty, but should not be null.
    *   (If null, will default to {@link Collections#EMPTY_LIST}.)
    */
-  public SymSelectionEvent(Object src, List syms) {
+  public SymSelectionEvent(Object src, List<SeqSymmetry> syms) {
     super(src);
     if (syms == null) {
-      this.selected_syms = Collections.EMPTY_LIST;
+      this.selected_syms = Collections.<SeqSymmetry>emptyList();
     } else {
       this.selected_syms = syms;
     }
@@ -35,7 +37,7 @@ public class SymSelectionEvent extends EventObject {
 
   /** @return a List of SeqSymmetry's.  May be empty, but will not be null.
    */
-  public List getSelectedSyms() {
+  public List<SeqSymmetry> getSelectedSyms() {
     return selected_syms;
   }
 

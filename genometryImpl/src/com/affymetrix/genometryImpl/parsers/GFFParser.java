@@ -321,7 +321,7 @@ public class GFFParser implements AnnotationWriter  {
         if (line.startsWith("#")) { continue; }
         if (line.startsWith("track")) {
           track_line_parser.parseTrackLine(line);
-          track_line_parser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
+          TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
           track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
           continue;
         }
@@ -967,7 +967,7 @@ public class GFFParser implements AnnotationWriter  {
         child_type = (String)cwp.getProperty("type");
       }
       if (child_type != null) { wr.write(child_type); }
-      else  { wr.write("unknown_feature_type"); };
+      else  { wr.write("unknown_feature_type"); }
       wr.write('\t');
 
       wr.write(Integer.toString(span.getMin()+1)); wr.write('\t');  // start

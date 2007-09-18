@@ -76,9 +76,15 @@ public abstract class WiggleData {
 
   class PointComp implements Comparator<Point3D> {
     public int compare(Point3D p1, Point3D p2) {
-      if (p1.x < p2.x) return -1;
-      else if (p1.x == p2.x) return 0;
-      else return +1;
+      if (p1.x < p2.x) {
+        return -1;
+      }
+      else if (p1.x == p2.x) {
+        return 0;
+      }
+      else {
+        return +1;
+      }
     }
   }
 }

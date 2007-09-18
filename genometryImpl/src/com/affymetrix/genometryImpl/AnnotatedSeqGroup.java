@@ -195,8 +195,8 @@ public class AnnotatedSeqGroup {
       for (int i=0; i<spancount; i++) {
         SeqSpan span = sym.getSpan(i);
         BioSeq seq1 = span.getBioSeq();
-        String id = seq1.getID();
-        MutableAnnotatedBioSeq seq2 = id2seq.get(id);
+        String seqid = seq1.getID();
+        MutableAnnotatedBioSeq seq2 = id2seq.get(seqid);
         if ((seq2 != null) && (seq1 == seq2)) {
           result = seq2;
           break;
@@ -274,10 +274,10 @@ public class AnnotatedSeqGroup {
     Matcher matcher = regex.matcher("");
 
     for (Map.Entry<String,Object> ent : id2sym_hash.entrySet()) {
-      String id = ent.getKey();
+      String seid = ent.getKey();
       Object val = ent.getValue();
-      if (id != null && val != null) {
-        matcher.reset(id);
+      if (seid != null && val != null) {
+        matcher.reset(seid);
         if (matcher.matches()) {
           if (val instanceof List) {
             symset.addAll((List<SeqSymmetry>) val);
@@ -519,6 +519,7 @@ public class AnnotatedSeqGroup {
 
     static final long serialVersionUID = 1L;
 
+    @Override
     public Object put(String key, Object value) {
       Object x = this.get(key);
       if (x == value) {
@@ -546,6 +547,7 @@ public class AnnotatedSeqGroup {
     // Does exactly the same thing as the superclass:
     // reports true if the value is contained directly as a value,
     // but not if the value is included inside one of the Lists
+    @Override
     public boolean containsValue(Object value) {
       return super.containsValue(value);
     }

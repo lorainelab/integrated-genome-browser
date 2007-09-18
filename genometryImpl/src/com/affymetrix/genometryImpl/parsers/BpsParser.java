@@ -182,8 +182,8 @@ public class BpsParser implements AnnotationWriter  {
       results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
     }
     finally {
-      if (dis != null) try { dis.close(); } catch (Exception e) {}
-      if (fis != null) try { fis.close(); } catch (Exception e) {}
+      if (dis != null) {try { dis.close(); } catch (Exception e) {}}
+      if (fis != null) {try { fis.close(); } catch (Exception e) {}}
     }
     return results;
   }

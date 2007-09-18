@@ -80,7 +80,7 @@ public class BgrParser {
       if (headers.get("method_name") == null)  { dos.writeUTF("null");}
       else  { dos.writeUTF((String)headers.get("method_name")); }
       if (headers.get("parameter_set_name") == null)  { dos.writeUTF("null");}
-      else  dos.writeUTF((String)headers.get("parameter_set_name"));
+      else  {dos.writeUTF((String)headers.get("parameter_set_name"));}
       if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
       else  { dos.writeUTF((String)headers.get("value_type_name")); }
       if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }

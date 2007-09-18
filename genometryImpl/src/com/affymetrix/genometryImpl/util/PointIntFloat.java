@@ -40,6 +40,7 @@ public class PointIntFloat {
     /**
      * Checks whether two points are equal.
      */
+  @Override
     public boolean equals(Object obj) {
       if (obj instanceof PointIntFloat) {
         PointIntFloat pt = (PointIntFloat)obj;
@@ -48,6 +49,14 @@ public class PointIntFloat {
       return false;
     }
 
+  @Override
+  public int hashCode() {
+    int hash = 3;
+    hash = 89 * hash + this.x;
+    hash = 89 * hash + Float.floatToIntBits(this.y);
+    return hash;
+  }
+
     public boolean equals(PointIntFloat pt) {
       return (x == pt.x) && (y == pt.y);
     }
@@ -55,6 +64,7 @@ public class PointIntFloat {
     /**
      * Returns the String representation of the coordinates.
      */
+    @Override
     public String toString() {
       return getClass().getName() + "[x=" + x + ",y=" + y + "]";
     }

@@ -220,8 +220,8 @@ import com.affymetrix.genometryImpl.SymWithProps;
     }
     }
     finally {
-      if (bis != null) try { bis.close(); } catch (Exception e) {}
-      if (dis != null) try { dis.close(); } catch (Exception e) {}
+      if (bis != null) {try { bis.close(); } catch (Exception e) {}}
+      if (dis != null) {try { dis.close(); } catch (Exception e) {}}
     }
     return rpt_syms;
   }

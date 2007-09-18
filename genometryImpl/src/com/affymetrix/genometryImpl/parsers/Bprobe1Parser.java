@@ -203,7 +203,7 @@ public class Bprobe1Parser implements AnnotationWriter {
     }
 
     finally {
-      if (dis != null) try { dis.close(); } catch (Exception e) {}
+      if (dis != null) {try { dis.close(); } catch (Exception e) {}}
     }
     return results;
   }
@@ -375,8 +375,8 @@ public class Bprobe1Parser implements AnnotationWriter {
       }
     }
     finally {
-      if (bos != null) try { bos.close(); } catch (Exception e) {}
-      if (dos != null) try { dos.close(); } catch (Exception e) {}
+      if (bos != null) {try { bos.close(); } catch (Exception e) {}}
+      if (dos != null) {try { dos.close(); } catch (Exception e) {}}
     }
   }
 

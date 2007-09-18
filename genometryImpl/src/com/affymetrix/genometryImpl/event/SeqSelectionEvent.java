@@ -23,6 +23,7 @@ public class SeqSelectionEvent extends EventObject {
 
   /**
    *  Constructor.
+   *  @param src The source of the event.
    *  @param seqs a List of AnnotatedBioSeq's that have been selected.
    *   (If null, will default to {@link Collections#EMPTY_LIST}.)
    */
@@ -59,6 +60,7 @@ public class SeqSelectionEvent extends EventObject {
     return primary_selection;
   }
 
+  @Override
   public String toString() {
     return "SeqSelectionEvent: seq count: " + selected_seqs.size() +
         " first seq: '" + (primary_selection == null ? "null" : primary_selection.getID()) +

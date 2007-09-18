@@ -32,9 +32,9 @@ public class IntList {
 
   public IntList(int initialCapacity) {
     super();
-    if (initialCapacity < 0)
-      throw new IllegalArgumentException("Illegal Capacity: "+
-					 initialCapacity);
+    if (initialCapacity < 0) {
+      throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.primData = new int[initialCapacity];
   }
 
@@ -56,8 +56,9 @@ public class IntList {
     if (minCapacity > oldCapacity) {
       int oldData[] = primData;
       int newCapacity = (oldCapacity * 3)/2 + 1;
-      if (newCapacity < minCapacity)
-	newCapacity = minCapacity;
+      if (newCapacity < minCapacity) {
+        newCapacity = minCapacity;
+      }
       primData = new int[newCapacity];
       System.arraycopy(oldData, 0, primData, 0, size);
     }
@@ -71,6 +72,7 @@ public class IntList {
     return size == 0;
   }
 
+  @Override
   public Object clone() {
     try { 
       IntList v = (IntList)super.clone();
@@ -122,9 +124,9 @@ public class IntList {
   }
 
   public void add(int index, int val) {
-    if (index > size || index < 0)
-      throw new IndexOutOfBoundsException(
-					  "Index: "+index+", Size: "+size);
+    if (index > size || index < 0) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     ensureCapacity(size+1); 
     System.arraycopy(primData, index, primData, index + 1,
@@ -138,9 +140,9 @@ public class IntList {
     int oldValue = primData[index];
 
     int numMoved = size - index - 1;
-    if (numMoved > 0)
-      System.arraycopy(primData, index+1, primData, index,
-		       numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(primData, index + 1, primData, index, numMoved);
+    }
     size--;
     return oldValue;
   }

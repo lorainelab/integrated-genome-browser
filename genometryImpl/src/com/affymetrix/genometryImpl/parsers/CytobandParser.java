@@ -170,7 +170,9 @@ public class CytobandParser implements AnnotationWriter  {
       }
       return pos;
     }
-    else return 0.0f;
+    else {
+        return 0.0f;
+    }
   }
 
   public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
@@ -262,9 +264,12 @@ public class CytobandParser implements AnnotationWriter  {
       Color col = getColor();
       int intensity = col.getRed() + col.getGreen() + col.getBlue();
       if (intensity > 255+128) { return Color.BLACK; }
-      else return Color.WHITE;
+      else {
+        return Color.WHITE;
+      }
     }
 
+    @Override
     public boolean setProperty(String name, Object val) {
       if ("band".equals(name)) {
         band = name;
@@ -274,6 +279,7 @@ public class CytobandParser implements AnnotationWriter  {
       return true;
     }
 
+    @Override
     public Object getProperty(String name) {
       if ("id".equals(name)) {
         return getID();
@@ -284,9 +290,12 @@ public class CytobandParser implements AnnotationWriter  {
       else if ("band".equals(name)) {
         return band;
       }
-      else return super.getProperty(name);
+      else {
+        return super.getProperty(name);
+      }
     }
 
+    @Override
     public Map<String,Object> cloneProperties() {
       Map<String,Object> props = super.cloneProperties();
       if (props == null) {

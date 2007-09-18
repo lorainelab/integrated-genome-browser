@@ -389,7 +389,7 @@ public class ScoredIntervalParser {
       throw ioe;
     }
     finally {
-      if (br != null) try { br.close(); } catch (Exception e) {}
+      if (br != null) {try { br.close(); } catch (Exception e) {}}
     }
 
     if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {

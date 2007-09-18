@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -12,8 +12,6 @@
 */
 
 package com.affymetrix.genometryImpl.util;
-
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 
 /**
  * This is a replacement for org.apache.regexp.StringCharacterIterator, 

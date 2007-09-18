@@ -74,7 +74,7 @@ public class BgnParser implements AnnotationWriter  {
       fis = new FileInputStream(fil);
       result = parse(fis, annot_type, seq_group, blength, true);
     } finally {
-      if (fis != null) try {fis.close();} catch (Exception e) {}
+      if (fis != null) {try {fis.close();} catch (Exception e) {}}
     }
     return result;
   }
@@ -336,7 +336,7 @@ public class BgnParser implements AnnotationWriter  {
       }
       String line;
 
-      DataOutputStream dos = null;;
+      DataOutputStream dos = null;
       if (write_from_text) {
         File outfile = new File(bin_file);
         FileOutputStream fos = new FileOutputStream(outfile);
@@ -423,10 +423,6 @@ public class BgnParser implements AnnotationWriter  {
     System.out.println("max spliced transcript length: " + max_spliced_length);
     System.out.println("spliced transcripts > 65000: " + big_spliced);
   }
-
-
-  static String text_file = user_dir + "/moredata/Drosophila_Jan_2003/bdgpNonCoding.gn";
-  static String bin_file = user_dir + "/query_server_dro/Drosophila_Jan_2003/bdgpNonCoding.bgn";
 
   /** For testing. */
   public static void main(String[] args) {

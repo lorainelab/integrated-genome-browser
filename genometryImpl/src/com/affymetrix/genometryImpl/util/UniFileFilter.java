@@ -42,8 +42,12 @@ public class UniFileFilter extends FileFilter {
 
   public UniFileFilter(String extension, String description) {
     this();
-    if(extension!=null) addExtension(extension);
-    if(description!=null) setDescription(description);
+    if (extension!=null) {
+      addExtension(extension);
+    }
+    if (description!=null) {
+      setDescription(description);
+    }
   }
 
   public UniFileFilter(String[] filters) {
@@ -68,7 +72,9 @@ public class UniFileFilter extends FileFilter {
       // add filters one by one
       addExtension(filters[i]);
     }
-    if(description!=null) setDescription(description);
+    if (description!=null) {
+      setDescription(description);
+    }
   }
 
   public boolean accept(File f) {
@@ -154,7 +160,7 @@ public class UniFileFilter extends FileFilter {
       int i = filename.lastIndexOf('.');
       if(i>0 && i<filename.length()-1) {
         return filename.substring(i+1).toLowerCase();
-      };
+      }
     }
     return null;
   }

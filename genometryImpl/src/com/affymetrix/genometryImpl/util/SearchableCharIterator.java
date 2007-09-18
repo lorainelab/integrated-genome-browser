@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.CharIterator;
-
 /**
  *  Extends CharIterator to include indexOf function.
  *

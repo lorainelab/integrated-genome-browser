@@ -24,7 +24,8 @@ public class GroupSelectionEvent extends EventObject {
 
   /**
    *  Constructor.
-   *  @param groups  a List of AnnotatedSeqGroup's that have been selected.
+   * @param src The source of the event
+   * @param groups  a List of AnnotatedSeqGroup's that have been selected.
    *   (If null, will default to {@link Collections#EMPTY_LIST}.)
    */
   public GroupSelectionEvent(Object src, List<AnnotatedSeqGroup> groups) {
@@ -65,6 +66,7 @@ public class GroupSelectionEvent extends EventObject {
     return primary_selection;
   }
 
+  @Override
   public String toString() {
     return "GroupSelectionEvent: group count: " + selected_groups.size() +
         " first group: '" + (primary_selection == null ? "null" : primary_selection.getID()) +

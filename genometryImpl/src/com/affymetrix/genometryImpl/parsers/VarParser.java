@@ -14,9 +14,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import java.io.*;
 import java.util.HashMap;

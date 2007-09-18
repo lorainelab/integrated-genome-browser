@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.IntList;
 import java.util.*;
 

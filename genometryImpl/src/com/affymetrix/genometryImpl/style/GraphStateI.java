@@ -12,8 +12,6 @@
 */
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-
 
 /**
  *  Encapsulates information needed to restore the visual appearance of

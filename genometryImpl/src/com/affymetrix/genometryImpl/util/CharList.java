@@ -72,6 +72,7 @@ public class CharList {
     return size == 0;
   }
 
+  @Override
   public Object clone() {
     try { 
       CharList v = (CharList)super.clone();

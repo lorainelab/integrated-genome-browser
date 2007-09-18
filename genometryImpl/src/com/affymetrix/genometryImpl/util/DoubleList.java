@@ -71,6 +71,7 @@ public class DoubleList {
     return size == 0;
   }
 
+  @Override
   public Object clone() {
     try { 
       DoubleList v = (DoubleList)super.clone();
@@ -117,8 +118,9 @@ public class DoubleList {
   }
 
   public void add(int index, double val) {
-    if (index > size || index < 0)
-      throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+    if (index > size || index < 0) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     ensureCapacity(size+1); 
     System.arraycopy(primData, index, primData, index + 1, size - index);
@@ -131,8 +133,9 @@ public class DoubleList {
     double oldValue = primData[index];
 
     int numMoved = size - index - 1;
-    if (numMoved > 0)
-      System.arraycopy(primData, index+1, primData, index, numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(primData, index + 1, primData, index, numMoved);
+    }
     size--;
     return oldValue;
   }

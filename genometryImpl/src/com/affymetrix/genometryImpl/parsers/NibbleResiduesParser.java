@@ -85,7 +85,7 @@ public class NibbleResiduesParser {
       System.out.println("time to read in bnib residues file: " + read_time);
     }
     finally {
-      if (dis != null) try {dis.close();} catch(Exception e) {}
+      if (dis != null) {try {dis.close();} catch(Exception e) {}}
     }
     return result_seq;
   }
@@ -100,7 +100,7 @@ public class NibbleResiduesParser {
       seq = parse(fis, seq_group);
     }
     finally {
-      if (fis != null) try {fis.close();} catch(Exception e) {}
+      if (fis != null) {try {fis.close();} catch(Exception e) {}}
     }
     return seq;
   }
@@ -153,7 +153,7 @@ public class NibbleResiduesParser {
       System.out.println("done writing out nibble file");
     }
     finally {
-      if (dos != null) try {dos.close();} catch(Exception e) {}
+      if (dos != null) {try {dos.close();} catch(Exception e) {}}
     }
   }
 

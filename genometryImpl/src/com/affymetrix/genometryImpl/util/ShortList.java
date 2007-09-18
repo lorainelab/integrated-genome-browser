@@ -32,8 +32,9 @@ public class ShortList {
 
   public ShortList(int initialCapacity) {
     super();
-    if (initialCapacity < 0)
+    if (initialCapacity < 0) {
       throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
+    }
     this.primData = new short[initialCapacity];
   }
 
@@ -71,6 +72,7 @@ public class ShortList {
     return size == 0;
   }
 
+  @Override
   public Object clone() {
     try { 
       ShortList v = (ShortList)super.clone();
@@ -122,8 +124,9 @@ public class ShortList {
   }
 
   public void add(int index, short val) {
-    if (index > size || index < 0)
-      throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+    if (index > size || index < 0) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
 
     ensureCapacity(size+1); 
     System.arraycopy(primData, index, primData, index + 1,
@@ -137,8 +140,9 @@ public class ShortList {
     short oldValue = primData[index];
 
     int numMoved = size - index - 1;
-    if (numMoved > 0)
-      System.arraycopy(primData, index+1, primData, index, numMoved);
+    if (numMoved > 0) {
+      System.arraycopy(primData, index + 1, primData, index, numMoved);
+    }
     size--;
     return oldValue;
   }

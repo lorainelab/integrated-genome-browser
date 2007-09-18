@@ -15,8 +15,6 @@ package com.affymetrix.genometryImpl.util;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.util.Arrays;
 
 /** Holds ASCII data in a CharSequence that takes less memory than a String. */
 public class AsciiCharSequence implements CharSequence {
@@ -55,14 +53,16 @@ public class AsciiCharSequence implements CharSequence {
 
   public CharSequence subSequence(int from, int to) {
     int newLength = to - from;
-    if (newLength < 0)
-        throw new IllegalArgumentException(from + " > " + to);
+    if (newLength < 0) {
+      throw new IllegalArgumentException(from + " > " + to);
+    }
     byte[] copy = new byte[newLength];
     System.arraycopy(bytes, from, copy, 0,
                      Math.min(bytes.length - from, newLength));
     return new AsciiCharSequence(copy);
   }
   
+  @Override
   public String toString() {
     return new String(bytes); // should be new String(bytes,charset) for jdk1.6
   }

@@ -629,7 +629,7 @@ public class BarParser implements AnnotationWriter  {
 
   }
 
-  public static BarFileHeader parseBarHeader(DataInput dis) throws IOException {
+  static BarFileHeader parseBarHeader(DataInput dis) throws IOException {
     try {
       // READING HEADER
       //    dis.readBytes("barr\r\n\032\n");  // char  "barr\r\n\032\n"
@@ -664,7 +664,7 @@ public class BarParser implements AnnotationWriter  {
     }
   }
 
-  public static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
+  static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
       int namelength = dis.readInt();
       //      String
       byte[] barray = new byte[namelength];

@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.style;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.util.*;
 
 /**
@@ -37,10 +36,6 @@ public class GraphState implements GraphStateI {
    *    as passing threshold
    */
   float max_score_threshold = Float.POSITIVE_INFINITY;  // POSITIVE_INFINITY means hasn't been set yet
-
-  public static int THRESHOLD_DIRECTION_GREATER = 1;
-  public static int THRESHOLD_DIRECTION_BETWEEN = 0;
-  public static int THRESHOLD_DIRECTION_LESS = -1;
 
   int threshold_direction = THRESHOLD_DIRECTION_GREATER;
 

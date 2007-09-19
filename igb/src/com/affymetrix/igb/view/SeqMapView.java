@@ -883,7 +883,7 @@ public class SeqMapView extends JPanel
         if (q <= centromerePoint) {
           if (cytoband_glyph_A ==  null) {
             cytoband_glyph_A = new RoundRectMaskGlyph();
-            cytoband_glyph_A.setColor(Color.BLACK);
+            cytoband_glyph_A.setColor(Color.GRAY);
             //cytoband_glyph_A.setHitable(false);
             cytoband_glyph_A.setCoordBox(efg.getCoordBox());
           }

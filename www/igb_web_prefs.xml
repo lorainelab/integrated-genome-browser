@@ -146,5 +146,10 @@ be used (if present).
     url="https://www.affymetrix.com/analysis/netaffx/exon/wtgene_transcript.affx?pk=1:$$"
   />
 
+ <annotation_url annot_type_regex="(?i).*sanger_pombe$"
+    name="GeneDB"
+    url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
+  />
+
 </prefs>
 

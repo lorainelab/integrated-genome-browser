@@ -137,6 +137,14 @@ Make sure that the 'ext' directory exists and includes
   </target>
   
   <!-- =================================================================== -->
+  <!-- Compiles DAS2 Server                                                -->
+  <!-- =================================================================== -->
+  <target name="compile-das2server" depends="init,compile-genoviz" 
+    description="Compiles DAS2 Server">
+    <ant dir="${das2_server.dir}" target="all" inheritAll="false"/>
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Compiles GenometryImpl                                              -->
   <!-- =================================================================== -->
   <target name="compile-genometry-impl" depends="init,compile-genometry" 
@@ -147,14 +155,16 @@ Make sure that the 'ext' directory exists and includes
   <!-- =================================================================== -->
   <!-- Compiles All                                                        -->
   <!-- =================================================================== -->
-  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl" 
+  <!-- target name="compile" -->
+  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl,das2_server"
     description="Compiles IGB">
     <mkdir dir="${classes.dir}"/>
     <javac destdir="${classes.dir}"
            debug="${debug}"
            deprecation="${deprecation}" 
            optimize="${optimize}"
-           source="1.5">
+           source="1.5"
+           >
       <src path="${igb.src.dir}"/>
       <classpath refid="project.class.path" />
     </javac>
@@ -276,6 +286,19 @@ Make sure that the 'ext' directory exists and includes
      ***********************************************
     </echo>
   </target> 
+
+  <!-- Note regarding javac-version target:
+  This is not the way to see what version of the JVM ant will use
+  to compile your source. Ant spawns it's own shell to do the
+  compiling and uses the JVM specified by your JAVA_HOME env
+  variable. Check this out by running ant like this:
+   $ ant -v -diagnostics | grep java.version 
+  -->
+  <target name="javac-version">
+    <exec executable="javac">
+      <arg value="-version"/>
+   </exec>
+  </target>
 
 </project>
 

@@ -156,7 +156,7 @@ Make sure that the 'ext' directory exists and includes
   <!-- Compiles All                                                        -->
   <!-- =================================================================== -->
   <!-- target name="compile" -->
-  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl,das2_server"
+  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl,compile-das2server"
     description="Compiles IGB">
     <mkdir dir="${classes.dir}"/>
     <javac destdir="${classes.dir}"

@@ -324,7 +324,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
    */
   public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
-                                  String type, OutputStream outstream) {
+                                  String type, OutputStream outstream) throws IOException {
     boolean success = false;
     DataOutputStream dos = null;
     try {
@@ -347,7 +347,11 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       dos.flush();
       success = true;
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    catch (Exception ex) { 
+      IOException ioe = new IOException(ex.getLocalizedMessage());
+      ioe.initCause(ex);
+      throw ioe;
+    }
     return success;
   }
 
@@ -364,7 +368,8 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
    *
    */
-  public boolean writeAnnotations(String annot_type, AnnotatedSeqGroup group, OutputStream outstream) {
+  public boolean writeAnnotations(String annot_type, AnnotatedSeqGroup group, OutputStream outstream)
+  throws IOException {
     boolean success = false;
     try {
       DataOutputStream dos;
@@ -409,7 +414,11 @@ public class ExonArrayDesignParser implements AnnotationWriter {
       dos.flush();
       success = true;
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    catch (Exception ex) {
+      IOException ioe = new IOException(ex.getLocalizedMessage());
+      ioe.initCause(ex);
+      throw ioe;
+    }
     return success;
   }
 

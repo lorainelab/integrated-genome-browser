@@ -323,7 +323,6 @@ public class ExonArrayDesignParser implements AnnotationWriter {
    *    Level 3: probeset annots (EfficieentProbesetSymA)
    *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
    */
-  @Override
   public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
                                   String type, OutputStream outstream) {
     boolean success = false;

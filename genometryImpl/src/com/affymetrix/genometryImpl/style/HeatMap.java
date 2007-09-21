@@ -33,6 +33,12 @@ public class HeatMap {
   /** Name of the second Blue/Yellow Standard HeatMap. */
   public static final String HEATMAP_4 = "Blue/Yellow 2";
 
+  /** Name of the Standard Rainbow HeatMap. */
+  public static final String HEATMAP_RAINBOW = "Rainbow";
+
+  /** Name of the Standard Rainbow HeatMap. */
+  public static final String HEATMAP_RED_GRAY_BLUE = "Red/Gray/Blue";
+
   /** Name of the Transparent Black-and-White Standard HeatMap. */
   public static final String HEATMAP_T_0 = "Transparent B/W";
 
@@ -50,7 +56,8 @@ public class HeatMap {
 
   public static String[] HEATMAP_NAMES = {
     HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4,
-    HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1
+    HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1,
+    HEATMAP_RAINBOW, HEATMAP_RED_GRAY_BLUE
   };
 
   static Map<String,HeatMap> name2heatmap = new HashMap<String,HeatMap>();
@@ -125,6 +132,23 @@ public class HeatMap {
         for (int i=0; i<bins; i++) {
           cc[i] = new Color(r++, g++, b);
           if (i % 2 == 0)  { b--; }
+        }
+      } else if (HEATMAP_RAINBOW.equals(name)) {
+        for (int i=0; i<bins; i++) {
+          // hues from red to blue
+          cc[i] = new Color(Color.HSBtoRGB(0.66f*(1.0f*i)/bins, 0.8f, 1.0f));
+        }
+      } else if (HEATMAP_RED_GRAY_BLUE.equals(name)) {
+        int gray_level = 128+64;
+        for (int i=0; i<bins; i++) {
+          // start with hues from red to green to blue
+          // then convert the green part into a background gray level
+          Color c = new Color(Color.HSBtoRGB(0.66f*(1.0f*i)/bins, 0.8f, 1.0f));
+          int gg = (gray_level * c.getGreen()) / 256;
+          cc[i] = new Color(
+              Math.max(c.getRed(), gg),
+              gg, 
+              Math.max(c.getBlue(), gg));
         }
       }
 

@@ -13,12 +13,8 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.Propertied;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.igb.view.SeqMapView;
-import java.awt.Color;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -50,7 +46,7 @@ public class XmlStylesheetParser {
   public static synchronized Stylesheet getSystemStylesheet() {
     if (system_stylesheet == null) {
       try {
-	System.out.println("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
+	Application.getSingleton().getLogger().info("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
         XmlStylesheetParser parser = new XmlStylesheetParser();
         // If using class.getResource... use name beginning with "/"
         InputStream istr = XmlStylesheetParser.class.getResourceAsStream(system_stylesheet_resource_name);
@@ -88,7 +84,7 @@ public class XmlStylesheetParser {
         parser.stylesheet = (Stylesheet) getSystemStylesheet().clone();
 
         // then load the user stylesheet on top of that
-        System.out.println("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
+        Application.getSingleton().getLogger().info("Loading user stylesheet from resource: " + default_user_stylesheet_resource_name);
 
         user_stylesheet = parser.parse(istr);
 
@@ -113,8 +109,8 @@ public class XmlStylesheetParser {
       stylesheet = parse(bistr);
     }
     finally {
-      if (bistr != null) try {bistr.close();} catch (Exception e) {}
-      if (fistr != null) try {fistr.close();} catch (Exception e) {}
+      if (bistr != null) {try {bistr.close();} catch (Exception e) {}}
+      if (fistr != null) {try {fistr.close();} catch (Exception e) {}}
     }
     return stylesheet;
   }

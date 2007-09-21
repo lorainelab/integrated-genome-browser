@@ -17,9 +17,6 @@ import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
-import com.affymetrix.genoviz.glyph.GlyphStyle;
-import com.affymetrix.genoviz.glyph.GlyphStyleFactory;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genoviz.bioviews.GlyphI {
   public static final int DRAW_SELF_FIRST = 0;
@@ -38,7 +35,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   protected Scene scene;
 
   protected GlyphI parent;
-  protected Vector children;  // want to move towards using List instead of Vector, will require fixing lots of other code though
+  protected Vector<GlyphI> children;  // want to move towards using List instead of Vector, will require fixing lots of other code though
 
   protected Color color = Color.black;    
   protected boolean isVisible;
@@ -71,8 +68,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
 
   public void setDrawOrder(int order) {
     if ((draw_order == DRAW_SELF_FIRST) ||
-        (draw_order == DRAW_CHILDREN_FIRST))
+        (draw_order == DRAW_CHILDREN_FIRST)) {
       draw_order = order;
+    }
   }
 
   public int getDrawOrder() {
@@ -107,11 +105,11 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       GlyphI child;
       int numChildren = getChildCount();
       for ( int i = 0; i < numChildren; i++ ) {
-	child = (GlyphI) children.get( i );
-	// TransientGlyphs are usually NOT drawn in standard drawTraversal
-	if (!(child instanceof TransientGlyph) || drawTransients()) {
-	  child.drawTraversal(view);
-	}
+        child = children.get(i);
+        // TransientGlyphs are usually NOT drawn in standard drawTraversal
+        if (!(child instanceof TransientGlyph) || drawTransients()) {
+          child.drawTraversal(view);
+        }
       }
     }
   }
@@ -184,7 +182,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector, ViewI view)  {
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
@@ -204,7 +202,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       if (children != null)  {
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          GlyphI child = (GlyphI) children.get( i );
+          GlyphI child = children.get(i);
           child.pickTraversal( pickRect, pickVector, view );
         }
       }
@@ -256,7 +254,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       prev_parent.removeChild(glyph);
     }
     if (children == null)  {
-      children = new Vector();
+      children = new Vector<GlyphI>();
     }
     if (position == children.size()) {
       children.add(glyph);
@@ -274,7 +272,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       prev_parent.removeChild(glyph);
     }
     if (children == null)  {
-      children = new Vector();
+      children = new Vector<GlyphI>();
     }
     children.add(glyph);
     glyph.setParent(this);
@@ -291,7 +289,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   public void removeAllChildren() {
     if (children != null)  {
       for (int i=0; i<children.size(); i++) {
-        ((GlyphI)children.get(i)).setScene(null);
+        children.get(i).setScene(null);
       }
     }
     children = null;
@@ -303,10 +301,10 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   }
 
   public GlyphI getChild(int index) {
-    return (GlyphI)children.get(index);
+    return children.get(index);
   }
 
-  public Vector getChildren()  {
+  public Vector<GlyphI> getChildren()  {
     return children;
   }
 
@@ -447,7 +445,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     if (children != null) {
       int numchildren = children.size();
       for (int i=0; i<numchildren; i++) {
-        ((GlyphI)children.get(i)).moveRelative(diffx, diffy);
+        children.get(i).moveRelative(diffx, diffy);
       }
     }
   }
@@ -463,7 +461,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     if (children != null) {
       int size = children.size();
       for (int i=0; i<size; i++) {
-        ((GlyphI)children.get(i)).setScene(s);
+        children.get(i).setScene(s);
       }
     }
   }
@@ -481,7 +479,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
    * @param selectability
    */
   public void setSelectable(boolean selectability) {
-    if (!selectability) setSelected(false);
+    if (!selectability) {
+      setSelected(false);
+    }
     this.selectable = selectability;
   }
 
@@ -512,7 +512,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
    * false otherwise.
    */
   public void setSelected(boolean selected) {
-    if (this.selectable) this.selected = selected;
+    if (this.selectable) {
+      this.selected = selected;
+    }
   }
 
   /**
@@ -542,7 +544,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   }
 
   public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
-    Stack glstack = new Stack();
+    Stack<GlyphI> glstack = new Stack<GlyphI>();
     GlyphI rootgl = ((Scene)view.getScene()).getGlyph();
     GlyphI gl = this;
     glstack.push(gl);
@@ -553,9 +555,8 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       glstack.push(gl);
     }
     trans.copyTransform((LinearTransform)view.getTransform());
-    while (! (glstack.empty())) {
-      gl = (GlyphI)glstack.pop();
-      gl.getChildTransform(view, trans);
+    while (! glstack.empty()) {
+      glstack.pop().getChildTransform(view, trans);
     }
     return true;
   }

@@ -14,7 +14,6 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.Rectangle;
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 

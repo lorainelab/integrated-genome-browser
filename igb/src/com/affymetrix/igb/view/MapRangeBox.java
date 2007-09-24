@@ -25,10 +25,11 @@ import com.affymetrix.igb.servlets.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
+
+import java.util.List;
 
 /** A Text Box for displaying and setting the range of a SeqMapView. */
 public class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
@@ -116,7 +117,18 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
       range_box.setText(nformat.format((start + end)/2));      
     }
   }
-    
+ 
+//  Set<String> allowedChromosomes = null;
+//  
+//  /** Set the list of chromosomes that the user is allowed to go
+//   *  to by typing the name in the box. 
+//   *  Set to null to allow all chromosomes.
+//   */
+//  public void setAllowedChromosomes(Collection<String> chromNames) {
+//    allowedChromosomes = new TreeSet<String>();
+//    allowedChromosomes.addAll(chromNames);
+//  }
+  
   ActionListener action_listener = new ActionListener() {
     public void actionPerformed(ActionEvent evt) {
       int[] current = map.getVisibleRange();
@@ -158,12 +170,16 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
           
           if (gmodel.getSelectedSeqGroup() != null) {
-            Map m = new HashMap();
-            m.put(Bookmark.SEQID, chrom_text);
-            m.put(Bookmark.START, Integer.toString((int) start));
-            m.put(Bookmark.END, Integer.toString((int) end));
-            m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
-            UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
+//            if (allowedChromosomes != null && !allowedChromosomes.contains(chrom_text)) {
+//              Application.errorPanel("Chrom: " + chrom_text + " not available.");
+//            } else {
+              Map<String,String> m = new HashMap<String,String>();
+              m.put(Bookmark.SEQID, chrom_text);
+              m.put(Bookmark.START, Integer.toString((int) start));
+              m.put(Bookmark.END, Integer.toString((int) end));
+              m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
+              UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
+//            }
           }
 
           //gview.zoomTo(start, end);

@@ -79,14 +79,12 @@ public class SmartGraphGlyph extends GraphGlyph {
   Rectangle2D thresh_coord_box = new Rectangle2D();  // for calculating where to draw thresholded regions
   Rectangle thresh_pix_box = new Rectangle();  // for calculating where to draw thresholded regions
 
-  Color lighter;
-  Color darker;
   Color thresh_color;
 
   // still need to make thresh_glyph draw as a fixed-pixel (1 or 2) line instead of as a variable-pixel fillRect...
   ThreshGlyph thresh_glyph = new ThreshGlyph();
 
-  ArrayList caches = new ArrayList();  // the hiearchy of graph caches (well really just one for now...)
+  ArrayList<GraphCache2> caches = new ArrayList<GraphCache2>();  // the hiearchy of graph caches (well really just one for now...)
   int compression_level = 20;  // average # of points per entry in flat graph compression cache
 
   /*
@@ -172,13 +170,13 @@ public class SmartGraphGlyph extends GraphGlyph {
         super.draw(view, GraphStateI.LINE_GRAPH);
       }
       else {
-        drawMinMaxAvg(view);
+        drawSmart(view);
       }
 
     } else if (graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP 
         || graph_style == GraphStateI.AVG_HEAT_MAP || graph_style == GraphStateI.EXT_HEAT_MAP) {
 
-      drawMinMaxAvg(view);
+      drawSmart(view);
 
     } else {
       // Not one of the special styles, so default to regular GraphGlyph.draw method.
@@ -200,7 +198,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     transition_scale = d;
   }
   
-  public void drawMinMaxAvg(ViewI view) {
+  protected void drawSmart(ViewI view) {
     // could size cache to just the view's pixelbox, but then may end up creating a
     //   new int array every time the pixelbox changes (which with view damage or
     //   scrolling optimizations turned on could be often)
@@ -218,6 +216,10 @@ public class SmartGraphGlyph extends GraphGlyph {
     }
     if (TIME_DRAWING) { tim.start(); }
     view.transformToPixels(coordbox, pixelbox);
+
+    if (getShowGrid() && ! GraphState.isHeatMapStyle(getGraphStyle())) {
+      drawHorizontalGridLines(view);
+    }
     if (getShowGraph())  {
       drawGraph(view);
     }
@@ -245,7 +247,7 @@ public class SmartGraphGlyph extends GraphGlyph {
   public void drawGraph(ViewI view) {
     int graph_style = getGraphStyle();
     view.transformToPixels(coordbox, pixelbox);
-    int pbox_yheight = pixelbox.y + pixelbox.height;
+
     Graphics g = view.getGraphics();
     double coords_per_pixel = 1.0f / ((LinearTransform)view.getTransform()).getScaleX();
     //    System.out.println("Coords per pixel: " + coords_per_pixel);
@@ -343,7 +345,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
       // first figure out which graph cache / compression level to use
       // defaulting to first cache for now...
-      GraphCache2 graph_cache = (GraphCache2)caches.get(0);
+      GraphCache2 graph_cache = caches.get(0);
 
       draw_beg_index = Arrays.binarySearch(graph_cache.xmin, (int)xmin);
       draw_end_index = Arrays.binarySearch(graph_cache.xmax, (int)xmax);
@@ -366,7 +368,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       coord.y = offset - ((graph_cache.ymin[draw_beg_index] - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
 
-      int ymin_pixel = prev_point.y;;
+      int ymin_pixel = prev_point.y;
       int ymax_pixel = prev_point.y;
       int temp_ymin_pixel = prev_point.y;
       int temp_ymax_pixel = prev_point.y;
@@ -377,10 +379,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 
       int points_in_pixel = 1;
       int draw_count = 0;
-      int last_xavg = 0;
-      int last_yavg = 0;
-      int last_ymin = 0;
-      int last_ymax = 0;
+
       // trying first with just min/max drawing...
       {  // using cache, but still collecting values per pixel...
 	if (graph_style == MINMAXAVG) {
@@ -464,8 +463,6 @@ public class SmartGraphGlyph extends GraphGlyph {
               g.drawLine(prev_point.x, y1, curr_point.x, y2);
             }
             
-	    last_xavg = prev_point.x;
-	    last_yavg = yavg_pixel;
 	    ymin_pixel = temp_ymin_pixel;
 	    ymax_pixel = temp_ymax_pixel;
 	    ysum = temp_ysum;
@@ -515,7 +512,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
       view.transformToPixels(coord, prev_point);
 
-      int ymin_pixel = prev_point.y;;
+      int ymin_pixel = prev_point.y;
       int ymax_pixel = prev_point.y;
       int yavg_pixel;
       int ysum = prev_point.y;
@@ -580,6 +577,15 @@ public class SmartGraphGlyph extends GraphGlyph {
 		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	    }
 	  }
+          
+          if (graph_style == LINE_GRAPH) {
+            if (graph_style == GraphStateI.LINE_GRAPH) {
+              int y1 = Math.max(Math.min(prev_point.y, plot_bottom_ypixel), plot_top_ypixel);
+              int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+              g.drawLine(prev_point.x, y1, curr_point.x, y2);
+            }
+          }
+          
 	  ymin_pixel = curr_point.y;
 	  ymax_pixel = curr_point.y;
 	  ysum = curr_point.y;
@@ -774,7 +780,7 @@ public class SmartGraphGlyph extends GraphGlyph {
     double x, w, y;
     double pass_thresh_start = 0;
     double pass_thresh_end = 0;
-    int pass_thresh_count = 0;
+
     boolean pass_threshold_mode = false;
     int min_index = 0;
     int max_index = xcoords.length-1;
@@ -959,8 +965,6 @@ public class SmartGraphGlyph extends GraphGlyph {
 
   public void setBackgroundColor(Color col) {
     super.setBackgroundColor(col);
-    lighter = col.brighter();
-    darker = col.darker();
     thresh_color = darker.darker();
     if (thresh_glyph != null)  { thresh_glyph.setColor(thresh_color); }
   }
@@ -1077,7 +1081,7 @@ class GraphCache2 {
   public GraphCache2(int bases_per_entry, int[] xcoords, float[] ycoords) {
     int count_guess = 1;
     if (bases_per_entry != 0) {
-      count_guess = (int)(Math.abs((xcoords[xcoords.length - 1] - xcoords[0])) / bases_per_entry);
+      count_guess = Math.abs(xcoords[xcoords.length - 1] - xcoords[0]) / bases_per_entry;
     }
     if (count_guess < 1)  { count_guess = 1; }
     IntList xmin_list = new IntList(count_guess);

@@ -21,6 +21,7 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.HeatMap;
 
@@ -75,7 +76,6 @@ public class GraphGlyph extends Glyph {
   int xcoords[];
   int wcoords[];
   GraphSym graf;
-//  float ycoords[];
 
   public static int handle_width = 10;  // width of handle in pixels
   public static final int pointer_width = 10;
@@ -164,7 +164,7 @@ public class GraphGlyph extends Glyph {
   public void draw(ViewI view, int graph_style) {
     if (TIME_DRAWING) { tim.start(); }
     view.transformToPixels(coordbox, pixelbox);
-    int pbox_yheight = pixelbox.y + pixelbox.height;
+
     Graphics g = view.getGraphics();
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
@@ -194,7 +194,9 @@ public class GraphGlyph extends Glyph {
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
 
-    //drawHorizontalGridLines(view);
+    if (getShowGrid() && ! GraphState.isHeatMapStyle(getGraphStyle())) {
+      drawHorizontalGridLines(view);
+    }
     
     if (getShowGraph() && graf != null && xcoords != null  && graf.getPointCount() == xcoords.length)  {
       int beg_index = 0;
@@ -393,18 +395,6 @@ public class GraphGlyph extends Glyph {
                 pixel_width, pixelbox.height+1);
           }
         }
-//	else if (graph_style == SPAN_GRAPH) {
-//	  // xstarts are even positions in xcoords array, xends are odd positions in xcoords array,
-//	  //   so only want to start drawing a rectangle on odd positions (and back-calculate xstart
-//	  if ((i % 2) != 0) {
-//	    int xpixend = curr_point.x;
-//	    coord.x = xcoords[i-1];
-//	    view.transformToPixels(coord, curr_point);
-//	    int xpixbeg = curr_point.x;
-//	    g.fillRect(xpixbeg, pixelbox.y+pixelbox.height/2,
-//		       Math.max((xpixend-xpixbeg), 1), pixelbox.height/2);
-//	  }
-//	}
         else if (graph_style == STAIRSTEP_GRAPH) {
           if (i<=0 || (graf.getGraphYCoord(i-1) != 0)) {
             int stairwidth = curr_point.x - prev_point.x;
@@ -535,28 +525,42 @@ public class GraphGlyph extends Glyph {
     }
   }
 
+  BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE, 
+      BasicStroke.JOIN_MITER,  10.0f,
+      new float[] {1.0f, 5.0f}, 0.0f);
+  
   /** A work in progress...... */
   public void drawHorizontalGridLines(ViewI view) {
-    Graphics g = view.getGraphics();
+    float[] grid = getGridLinesYValues();
+    if (grid == null || grid.length == 0) {
+      return;
+    }
+      
+    Graphics2D g = (Graphics2D) view.getGraphics();
 
+    view.transformToPixels(coordbox, pixelbox);
     Rectangle view_pixbox = view.getPixelBox();
+
     int xbeg = Math.max(view_pixbox.x, pixelbox.x);
     int xend = Math.max(view_pixbox.x + view_pixbox.width, pixelbox.x + view_pixbox.width);
-    g.setColor(Color.CYAN);
+    g.setColor(lighter);
+
+    getInternalLinearTransform(view, scratch_trans);
+    double yscale = scratch_trans.getScaleY();
+    double offset = scratch_trans.getOffsetY();
     
-    for (int i=0; i<10; i+=5) {
-      coord.x = 0;
-      coord.y = i;
-      view.transformToPixels(coord, curr_point);
-      g.drawLine(xbeg, curr_point.y, xend, curr_point.y);
+    Stroke old_stroke = g.getStroke();
+    g.setStroke(grid_stroke);
+    for (float gridY : grid) {
+      coord.x = 5;
+      coord.y = offset - ((gridY - getVisibleMinY()) * yscale);
+      if (gridY >= getVisibleMinY() && gridY <= getVisibleMaxY()) {
+        view.transformToPixels(coord, scratch_point);
+        g.drawLine(xbeg, scratch_point.y, xend, scratch_point.y);
+        g.drawString(Float.toString(gridY), xbeg+3, scratch_point.y);
+      }
     }
-    
-    g.setColor(this.getColor());
-    double[] tick_ys = calculateTickYValues(view, axis_bins);
-    for (int i=0; i<tick_ys.length; i++) {
-      int mark_ypix = (int) tick_ys[i];
-      g.drawLine(xbeg, mark_ypix, xend, mark_ypix);
-    }
+    g.setStroke(old_stroke); // reset to orignial stroke
   }
 
   public void drawAxisLabel(ViewI view) {
@@ -615,6 +619,7 @@ public class GraphGlyph extends Glyph {
    *  The left and right border are taken from the view's pixel box,
    *  the top and bottom border are from the coord box.
    **/
+  @Override
   protected void drawSelectedOutline(ViewI view) {
     draw(view);
     Rectangle view_pixbox = view.getPixelBox();
@@ -653,6 +658,7 @@ public class GraphGlyph extends Glyph {
 
 
   boolean mutable_xcoords = true;
+  @Override
   public void moveRelative(double xdelta, double ydelta) {
     super.moveRelative(xdelta, ydelta);
     state.getTierStyle().setHeight(coordbox.height);
@@ -665,6 +671,7 @@ public class GraphGlyph extends Glyph {
     }
   }
 
+  @Override
   public void setCoords(double newx, double newy, double newwidth, double newheight) {
     super.setCoords(newx, newy, newwidth, newheight);
     state.getTierStyle().setHeight(newheight);
@@ -676,6 +683,7 @@ public class GraphGlyph extends Glyph {
    *  If called outside of pickTraversal(), may get the wrong answer
    *      since won't currently take account of nested transforms, etc.
    */
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view) {
     // within bounds of graph ?
     if (getShowHandle() && isVisible() && coord_hitbox.intersects(coordbox)) {
@@ -717,35 +725,6 @@ public class GraphGlyph extends Glyph {
   }
 
   /**
-   *  This will replace any previous setting of maxy and miny!
-   *
-   */
-  /*
-  public void setPointCoords(int xcoords[], float ycoords[]) {
-    this.xcoords = xcoords;
-    this.ycoords = ycoords;
-    point_min_ycoord = Float.POSITIVE_INFINITY;
-    point_max_ycoord = Float.NEGATIVE_INFINITY;
-    for (int i=0; i<ycoords.length; i++) {
-      if (ycoords[i] < point_min_ycoord) { point_min_ycoord = ycoords[i]; }
-      if (ycoords[i] > point_max_ycoord) { point_max_ycoord = ycoords[i]; }
-    }
-    if (point_max_ycoord == point_min_ycoord) {
-      point_min_ycoord = point_max_ycoord - 1;
-    }
-    //    System.out.println("min: " + min_ycoord + ", max: " + getVisibleMaxY());
-    //    auto_adjust_visible = false;
-    if (getVisibleMinY() == Float.POSITIVE_INFINITY ||
-	getVisibleMinY() == Float.NEGATIVE_INFINITY ||
-	getVisibleMaxY() == Float.POSITIVE_INFINITY ||
-	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
-      setVisibleMaxY(point_max_ycoord);
-      setVisibleMinY(point_min_ycoord);
-    }
-  }
-  */
-
-  /**
    *  getGraphMaxY() returns max ycoord (in graph coords) of all points in graph.
    *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
    *     be modified (except for resetting the points by calling setPointCoords() again)
@@ -779,6 +758,7 @@ public class GraphGlyph extends Glyph {
     state.setVisibleMinY(ymin);
   }
 
+  @Override
   public void setColor( Color c ) {
     setBackgroundColor( c );
     setForegroundColor( c );
@@ -807,6 +787,7 @@ public class GraphGlyph extends Glyph {
   public boolean getShowHandle() { return state.getShowHandle(); }
   public boolean getShowLabel() { return state.getShowLabel(); }
   public boolean getShowAxis() { return state.getShowAxis(); }
+  public boolean getShowGrid() { return true; }
   public int getXPixelOffset() { return xpix_offset; }
 
 //  public void setLabel(String str) { state.setLabel(str); }
@@ -817,6 +798,23 @@ public class GraphGlyph extends Glyph {
   public void setShowAxis(boolean b) { state.setShowAxis(b); }
   public void setXPixelOffset(int offset) { xpix_offset = offset; }
 
+  public void setGridLinesYValues(float[] f) {
+    state.setGridLinesYValues(f);
+  }
+  
+  public float[] getGridLinesYValues() {
+    return state.getGridLinesYValues();
+  }
+
+  protected Color lighter;
+  protected Color darker;
+ 
+  public void setBackgroundColor(Color col) {
+    super.setBackgroundColor(col);
+    lighter = col.brighter();
+    darker = col.darker();
+  }
+  
   public void setGraphStyle(int type) {
     state.setGraphStyle(type);
     if (type == HEAT_MAP) {
@@ -844,6 +842,7 @@ public class GraphGlyph extends Glyph {
     return state.getHeatMap();
   }
 
+  @Override
   public void getChildTransform(ViewI view, LinearTransform trans) {
     double external_yscale = trans.getScaleY();
     double external_offset = trans.getOffsetY();

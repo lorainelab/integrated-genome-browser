@@ -268,6 +268,16 @@ public class GraphState implements GraphStateI {
     return show_zero_line;
   }
 
+  float[] gridLineYValues = null;
+  
+  public void setGridLinesYValues(float[] f) {
+    gridLineYValues = f;
+  }
+  
+  public float[] getGridLinesYValues() {
+    return gridLineYValues;
+  }
+
   public static boolean isHeatMapStyle(int graph_style) {
     return (graph_style == GraphStateI.HEAT_MAP || graph_style == GraphStateI.AVG_HEAT_MAP
         || graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.MIN_HEAT_MAP

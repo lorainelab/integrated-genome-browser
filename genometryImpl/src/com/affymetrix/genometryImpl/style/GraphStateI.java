@@ -110,6 +110,9 @@ public interface GraphStateI {
    *  {@link #THRESHOLD_DIRECTION_LESS} or {@link #THRESHOLD_DIRECTION_BETWEEN}.
    */
   public void setThresholdDirection(int d);
+  
+  public void setGridLinesYValues(float[] f);
+  public float[] getGridLinesYValues();
 
   public IAnnotStyle getTierStyle();
   

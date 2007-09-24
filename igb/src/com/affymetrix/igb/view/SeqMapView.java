@@ -905,10 +905,12 @@ public class SeqMapView extends JPanel
 
     InvisibleBoxGlyph cytoband_glyph = new InvisibleBoxGlyph();
     cytoband_glyph.setMoveChildren(false);
-    cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
-    cytoband_glyph.addChild(cytoband_glyph_A);
-    cytoband_glyph.addChild(cytoband_glyph_B);
-    cytoband_glyph.getCoordBox().add(cytoband_glyph_B.getCoordBox());
+    if (cytoband_glyph_A != null && cytoband_glyph_B != null) {
+      cytoband_glyph.setCoordBox(cytoband_glyph_A.getCoordBox());
+      cytoband_glyph.getCoordBox().add(cytoband_glyph_B.getCoordBox());
+      cytoband_glyph.addChild(cytoband_glyph_A);
+      cytoband_glyph.addChild(cytoband_glyph_B);
+    }
 
     return cytoband_glyph;
   }

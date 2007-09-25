@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -22,11 +22,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
  * A glyph used to display a text string.
  * Not to be confused with {@link LabelGlyph}
  * (which is used to label other glyphs with text).
- *
- * <p> There are currently some placement problems with StringGlyph.
- * If placement needs to be anything other than {@link NeoConstants#CENTER},
- * {@link NeoConstants#LEFT}, or {@link NeoConstants#WEST},
- * a LabelGlyph may be a better choice.
  */
 public class StringGlyph extends SolidGlyph implements NeoConstants  {
 
@@ -83,9 +78,9 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
       text_width = fm.stringWidth(str);
     }
     int text_height = fm.getAscent() + fm.getDescent();
-    int blank_width = fm.charWidth ('z')*2;
+    //int blank_width = fm.charWidth ('z')*2;
 
-    Rectangle2D view_box = view.getCoordBox();
+    //Rectangle2D view_box = view.getCoordBox();
     view.transformToPixels(coordbox, pixelbox);
     if (DEBUG_PIXELBOX) {
       debug_rect.setBounds(pixelbox.x, pixelbox.y,
@@ -95,7 +90,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
       pixelbox.x = pixelbox.x;
     }
     else if (placement == RIGHT) {
-      pixelbox.x = pixelbox.x + pixelbox.width + blank_width;
+      pixelbox.x = pixelbox.x + pixelbox.width - text_width;
     }
     else {
       pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
@@ -159,10 +154,20 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
     return this.fnt;
   }
 
+/**
+ * Sets alignment of text inside the coordbox.
+ * @param placement {@link NeoConstants#CENTER},
+ * {@link NeoConstants#LEFT}, or {@link NeoConstants#RIGHT}.
+ */
   public void setPlacement(int placement) {
     this.placement = placement;
   }
 
+/**
+ * Alignment of text inside the coordbox.
+ * @return {@link NeoConstants#CENTER},
+ * {@link NeoConstants#LEFT}, or {@link NeoConstants#RIGHT}.
+ */
   public int getPlacement() {
     return placement;
   }

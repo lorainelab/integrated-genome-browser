@@ -588,9 +588,13 @@ public class SeqMapView extends JPanel
   public JPopupMenu getSelectionPopup() { return sym_popup; }
 
   TransformTierGlyph axis_tier;
+  
+  public IAnnotStyleExtended getAxisAnnotStyle() {
+    return axis_annot_style;
+  }
 
   /** An un-collapsible instance.  It is hideable, though. */
-  public static AnnotStyle axis_annot_style = new AnnotStyle() {
+  static AnnotStyle axis_annot_style = new AnnotStyle() {
 
     { // a non-static initializer block
       setHumanName("Coordinates");
@@ -633,9 +637,7 @@ public class SeqMapView extends JPanel
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
 
-    IAnnotStyle blank_style = axis_annot_style;
-
-    axis_tier = new TransformTierGlyph(blank_style);
+    axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
     axis_tier.setFixedPixelHeight(true);
     axis_tier.setFixedPixHeight(45);
     axis_tier.setDirection(TierGlyph.DIRECTION_AXIS);
@@ -643,8 +645,8 @@ public class SeqMapView extends JPanel
     AxisGlyph axis = seqmap.addAxis(0);
     axis.setHitable(false);
 
-    Color axis_bg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
-    Color axis_fg = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
+    Color axis_bg = getAxisAnnotStyle().getBackground();
+    Color axis_fg = getAxisAnnotStyle().getColor();        
 
     axis.setBackgroundColor(axis_bg);
     axis_tier.setBackgroundColor(axis_bg);

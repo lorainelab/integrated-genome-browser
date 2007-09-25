@@ -371,7 +371,9 @@ public class AnnotatedSeqGroup {
    *  Niether argument should be null.
    */
   public void addToIndex(String id, SeqSymmetry sym) {
-    if (id==null || sym==null) throw new NullPointerException();
+    if (id==null || sym==null) {
+      throw new NullPointerException();
+    }
     id2sym_hash.put(id.toLowerCase(), sym);
   }
 
@@ -379,7 +381,7 @@ public class AnnotatedSeqGroup {
    *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
    *  Each of the keys can be used as a parameter for the findSyms(String) method.
    */
-  public Set getSymmetryIDs() {
+  public Set<String> getSymmetryIDs() {
     return id2sym_hash.keySet();
   }
 
@@ -392,7 +394,7 @@ public class AnnotatedSeqGroup {
    *  @param end    A String indicating the highest index value; null or empty end
    *   string will get all index strings above the given start value.
    */
-  public Set getSymmetryIDs(String start, String end) {
+  public Set<String> getSymmetryIDs(String start, String end) {
     if (start == null) { start = ""; }
     if (end == null) { end = ""; }
 

@@ -33,8 +33,8 @@ public class SegmenterRptParser {
   public static final String GAIN = "Gain";
   public static final String LOSS = "Loss";
   //public static final String LOH = "LOH";
-  public static final String CN_REGION_FILE_EXT = "cn_regions";
-  public static final String LOH_REGION_FILE_EXT = "loh_regions";
+  public static final String CN_REGION_FILE_EXT = "cn_segments";
+  public static final String LOH_REGION_FILE_EXT = "loh_segments";
 
   int chromosome_col;
   int start_col;
@@ -237,7 +237,7 @@ public class SegmenterRptParser {
 
 
 
-    String filname = System.getProperty("user.dir") + "/data/copy_number/786-O.cn_regions";
+    String filname = System.getProperty("user.dir") + "/data/copy_number/786-O.cn_segments";
     File file = new File(filname);
     // type, start, end, length, strand, group, boolean props, boolean has_header
     SegmenterRptParser tester = new SegmenterRptParser();

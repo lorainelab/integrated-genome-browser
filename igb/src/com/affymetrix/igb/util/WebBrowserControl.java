@@ -44,7 +44,6 @@ import javax.swing.SwingUtilities;
  * Note - you must include the url type, such as "http://" or "file://".
  */
 public class WebBrowserControl {
-  private static String unix_path = null;
 
   /** Calls {@link #displayURL(String)} on an independent Thread. */
   public static void displayURLEventually(final String url) {

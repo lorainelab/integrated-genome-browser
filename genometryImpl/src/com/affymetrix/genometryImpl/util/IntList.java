@@ -64,6 +64,9 @@ public class IntList {
     }
   }
 
+  /** The number of entries in the list.  The size of the internal array
+   *  may be larger than this.
+   */
   public int size() {
     return size;
   }

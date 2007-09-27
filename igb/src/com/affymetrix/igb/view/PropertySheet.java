@@ -80,6 +80,18 @@ public class PropertySheet extends JPanel {
   public void setSortable(boolean b) {
     this.sortable = b;
   }
+  
+  /** Converts a row index of the view into a row index of the model.
+   *  If {@link setSortable(boolean)} was false, then the two indices are
+   *  equivalent.
+   */
+  public int getModelIndex(int i) {
+    if (sortable) {
+      return ((TableSorter2) table.getModel()).modelIndex(i);
+    } else {
+      return i;
+    }
+  }
 
   public void setUseDefaultKeystrokes(boolean b) {
     this.useDefaultKeystrokes = b;
@@ -177,6 +189,7 @@ public class PropertySheet extends JPanel {
    *
    * @param name_values   a Vector of String[]'s
    */
+  @SuppressWarnings("unchecked")
   public static Vector reorderNames(Vector name_values, Vector preferred_ordering) {
     Vector reordered = new Vector(name_values.size());
     for (int i=0; i<preferred_ordering.size(); i++) {

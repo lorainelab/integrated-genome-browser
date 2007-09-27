@@ -23,18 +23,24 @@ import com.affymetrix.genometryImpl.event.*;
 
 public class SymTableView extends PropertySheet implements SymSelectionListener {
   static int testcount = 0;
-  Vector default_order;
+  Vector<String> default_order;
 
   public SymTableView() {
-    this(true);
+    this(true, true);
   }
 
   public SymTableView(boolean useDefaultKeystrokes) {
+    this(useDefaultKeystrokes, true);
+  }
+
+  public SymTableView(boolean useDefaultKeystrokes, boolean isSymSelectionListener) {
     super(useDefaultKeystrokes);
     setPreferredSize(new java.awt.Dimension(100, 250));
     setMinimumSize(new java.awt.Dimension(100, 250));
-    SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);
-    default_order = new Vector(8);
+    if (isSymSelectionListener) {
+      SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);
+    }
+    default_order = new Vector<String>(8);
     default_order.add("gene name");
     default_order.add("name");
     default_order.add("id");
@@ -44,15 +50,15 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     default_order.add("length");
   }
   
-  public void setDefaultColumnOrder(List columns) {
-    default_order = new Vector(columns);
+  public void setDefaultColumnOrder(List<String> columns) {
+    default_order = new Vector<String>(columns);
   }
 
   public void symSelectionChanged(SymSelectionEvent evt) {
     Object src = evt.getSource();
     // if selection event originally came from here, then ignore it...
     if (src == this) { return; }
-    List selected_syms = evt.getSelectedSyms();
+    List<SeqSymmetry> selected_syms = evt.getSelectedSyms();
     SeqMapView mapView = null;
     if (src instanceof SeqMapView) {
        mapView = (SeqMapView) src;
@@ -60,17 +66,17 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
     showSyms(selected_syms, mapView);
   }
   
-  List currentSyms = Collections.EMPTY_LIST;
+  List<SeqSymmetry> currentSyms = Collections.<SeqSymmetry>emptyList();
 
-  public void showSyms(List selected_syms, SeqMapView seqMap) {
+  public void showSyms(List<SeqSymmetry> selected_syms, SeqMapView seqMap) {
 
     currentSyms = selected_syms;
     
     int symCount = selected_syms.size();
-    Vector propvec = new Vector();
+    Vector<Map<String,Object>> propvec = new Vector<Map<String,Object>>();
     for (int i=0; i<symCount; i++) {
-      SeqSymmetry sym = (SeqSymmetry)selected_syms.get(i);
-      Map props = null;
+      SeqSymmetry sym = selected_syms.get(i);
+      Map<String,Object> props = null;
       if (sym instanceof SymWithProps) {
 	// using Propertied.cloneProperties() here instead of Propertied.getProperties()
 	//   because adding start, end, id, and length as additional key-val pairs to props Map
@@ -85,7 +91,7 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       }
       if (props == null) {
 	// make an empty hashtable if sym has no properties...
-	props = new Hashtable();
+	props = new Hashtable<String,Object>();
       }
       String symid = sym.getID();
       if (symid != null)  {
@@ -116,12 +122,16 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
 
   }
   
-  public List getCurrentSyms() {
-    return new ArrayList(currentSyms);
+  public List<SeqSymmetry> getCurrentSyms() {
+    return new ArrayList<SeqSymmetry>(currentSyms);
+  }
+  
+  public SeqSymmetry getSymForRow(int i) {
+    return currentSyms.get(getModelIndex(i));
   }
   
   public void destroy() {
-    currentSyms = Collections.EMPTY_LIST;
+    currentSyms = Collections.<SeqSymmetry>emptyList();
   }
 }
 

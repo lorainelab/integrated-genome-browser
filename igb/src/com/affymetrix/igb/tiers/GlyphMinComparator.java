@@ -18,10 +18,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public class GlyphMinComparator implements Comparator<GlyphI> {
 
-  public int compare(Object obj1, Object obj2) {
-    return compare((GlyphI)obj1, (GlyphI)obj2);
-  }
-
   public int compare(GlyphI g1, GlyphI g2) {
     if (g1.getCoordBox().x < g2.getCoordBox().x) { return -1; }
     else if (g1.getCoordBox().x > g2.getCoordBox().x) { return 1; }

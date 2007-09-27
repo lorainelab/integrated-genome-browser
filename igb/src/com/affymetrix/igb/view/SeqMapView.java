@@ -2484,6 +2484,29 @@ public class SeqMapView extends JPanel
     }
   }
 
+  public void invokeEnsemblView() {
+    // links to Ensembl look like this:
+    // http://www.ensembl.org/Homo_sapiens/contigview?chr={chromosome number}&region=&start={start base position}&end={end base position}
+
+    String ucsc_version = getUcscGenomeVersion();
+    String ensembl_site = "http://www.ensembl.org";
+    if ("hg17".equals(ucsc_version)) {
+      ensembl_site = "http://dec2005.archive.ensembl.org";
+    }
+    
+    String region = getRegionString();
+    if (region.startsWith("chr")) {
+      region = region.substring(3);
+    }
+
+    if (region != null) {
+      String url = ensembl_site + "/Homo_sapiens/contigview?l=" + region;
+      WebBrowserControl.displayURLEventually(url);
+    } else {
+      Application.errorPanel("Can't invoke hyperlink for region="+region);
+    }
+  }
+
   /**
    * Invokes a link to the toronto database of genomic variants.
    */

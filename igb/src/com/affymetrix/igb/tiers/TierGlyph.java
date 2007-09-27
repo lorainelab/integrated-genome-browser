@@ -35,7 +35,7 @@ public class TierGlyph extends SolidGlyph {
   boolean DEBUG_SEARCH = false;
   boolean sorted = true;
   boolean ready_for_searching = false;
-  static Comparator child_sorter = new GlyphMinComparator();
+  static Comparator<GlyphI> child_sorter = new GlyphMinComparator();
   boolean isTimed = false;
   int direction = DIRECTION_NONE;
 
@@ -45,7 +45,7 @@ public class TierGlyph extends SolidGlyph {
    *    in front of the solid background, but behind the child glyphs
    *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
    */
-  java.util.List middle_glyphs = new ArrayList();
+  java.util.List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
   public static final int HIDDEN = 100;
   public static final int COLLAPSED = 101;
@@ -115,7 +115,7 @@ public class TierGlyph extends SolidGlyph {
   protected PackerI collapse_packer = new CollapsePacker();
   //  protected PackerI summarize_packer = new SummarizePacker();
 
-  protected java.util.List max_child_sofar = null;
+  protected java.util.List<GlyphI> max_child_sofar = null;
 
   IAnnotStyle style;
 
@@ -179,7 +179,7 @@ public class TierGlyph extends SolidGlyph {
       //   for each entry in min sorted children list, the maximum max
       //     value up to (and including) that position
       // could do max list as int array or as symmetry list, for now doing symmetry list
-      max_child_sofar = new ArrayList(child_count);
+      max_child_sofar = new ArrayList<GlyphI>(child_count);
       GlyphI curMaxChild = getChild(0);
       Rectangle2D curbox = curMaxChild.getCoordBox();
       double max = curbox.x + curbox.width;
@@ -202,7 +202,7 @@ public class TierGlyph extends SolidGlyph {
       System.out.println("***** called TierGlyph.initForSearch() on tier: " + getLabel());
       for (int i=0; i<child_count; i++) {
 	GlyphI curchild = getChild(i);
-	GlyphI maxchild = (GlyphI)max_child_sofar.get(i);
+	GlyphI maxchild = max_child_sofar.get(i);
 	double max = maxchild.getCoordBox().x + maxchild.getCoordBox().width;
 	System.out.println("child " + i + ", min = " + getChild(i).getCoordBox().x +
 			   ", max including child: " + max);
@@ -251,7 +251,7 @@ public class TierGlyph extends SolidGlyph {
 
     while (cur_index > 0) {
       cur_index--;
-      GlyphI cur_max_glyph = (GlyphI)max_child_sofar.get(cur_index);
+      GlyphI cur_max_glyph = max_child_sofar.get(cur_index);
       Rectangle2D rect = cur_max_glyph.getCoordBox();
       double cur_max = rect.x + rect.width;
       if (cur_max < query_min) {
@@ -261,7 +261,7 @@ public class TierGlyph extends SolidGlyph {
     }
     if (cur_index == query_index) { return null; }
 
-    ArrayList result = new ArrayList();
+    ArrayList<GlyphI> result = new ArrayList<GlyphI>();
     for (int i=cur_index; i<query_index; i++) {
       GlyphI child = getChild(i);
       Rectangle2D rect = child.getCoordBox();
@@ -286,7 +286,7 @@ public class TierGlyph extends SolidGlyph {
       //      int prev_min = Integer.MIN_VALUE;
       double prev_min = Double.NEGATIVE_INFINITY;
       for (int i=0; i<child_count; i++) {
-	GlyphI child = (GlyphI)getChild(i);
+	GlyphI child = getChild(i);
 	// int min = child.getCoordBox().x;
 	double min = child.getCoordBox().x;
 	if (prev_min > min) {
@@ -395,7 +395,7 @@ public class TierGlyph extends SolidGlyph {
     //   then call mglyph.draw(view)
     int mcount = middle_glyphs.size();
     for (int i=0; i<mcount; i++) {
-      GlyphI mglyph = (GlyphI)middle_glyphs.get(i);
+      GlyphI mglyph = middle_glyphs.get(i);
       Rectangle2D mbox = mglyph.getCoordBox();
       mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
       mglyph.setColor(style.getBackground());
@@ -426,7 +426,10 @@ public class TierGlyph extends SolidGlyph {
     drawLabelLeft(view);
   }
   
-  static Font default_font = new Font("Courier", Font.PLAIN, 12);
+  static Font default_font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+  public static void setLabelFont(Font f) {
+    default_font = f;
+  }
 
   public void drawLabelLeft(ViewI view) {
     if (getLabel() == null) { return; }
@@ -697,9 +700,9 @@ public class TierGlyph extends SolidGlyph {
    *  @return true if the current expand packer allowed the max depth to be set.
    */
   public boolean setMaxExpandDepth(int max) {
-    PackerI packer = getExpandedPacker();
-    if (packer instanceof FasterExpandPacker) {
-      FasterExpandPacker fpacker = (FasterExpandPacker)packer;
+    PackerI epacker = getExpandedPacker();
+    if (epacker instanceof FasterExpandPacker) {
+      FasterExpandPacker fpacker = (FasterExpandPacker) epacker;
       fpacker.setMaxSlots(max);
       return true;
     }

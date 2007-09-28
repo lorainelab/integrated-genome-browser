@@ -891,6 +891,9 @@ public class GraphGlyph extends Glyph {
     lt.setOffsetY(yoffset);
   }
 
+  public static void setLabelFont(Font f) {
+    default_font = f;
+  }
 
 }
 

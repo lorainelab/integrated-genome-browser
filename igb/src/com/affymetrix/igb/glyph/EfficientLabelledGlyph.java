@@ -51,7 +51,10 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
   int label_loc = NORTH;
 
   static {
-    Font base_fnt = new Font("Monospaced", Font.PLAIN, 1);
+    setBaseFont(new Font("Monospaced", Font.PLAIN, 1));
+  }
+  
+  public static void setBaseFont(Font base_fnt) {
     Toolkit kit = Toolkit.getDefaultToolkit();
     // Dimension dim = kit.getScreenSize();
 

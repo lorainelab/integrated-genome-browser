@@ -632,7 +632,10 @@ public class SeqMapView extends JPanel
 
   public TransformTierGlyph getAxisTier() { return axis_tier; }
 
-
+  public static Font axisFont = new Font("Courrier", Font.BOLD, 12);
+  public static void setAxisFont(Font f) {
+    axisFont = f;
+  }
 
   /** Set up a tier with fixed pixel height and place axis in it. */
   TransformTierGlyph addAxisTier(int tier_index) {
@@ -644,6 +647,7 @@ public class SeqMapView extends JPanel
     //    axis_tier.setFixedPixelHeight(false);
     AxisGlyph axis = seqmap.addAxis(0);
     axis.setHitable(false);
+    axis.setFont(axisFont);
 
     Color axis_bg = getAxisAnnotStyle().getBackground();
     Color axis_fg = getAxisAnnotStyle().getColor();        
@@ -656,7 +660,7 @@ public class SeqMapView extends JPanel
     setAxisFormatFromPrefs(axis);
 
     if (view_cytobands_in_axis) {
-      GlyphI cytoband_glyph = makeCytobandGlyph(this);
+      GlyphI cytoband_glyph = makeCytobandGlyph();
       if (cytoband_glyph != null) {
         axis_tier.addChild(cytoband_glyph);
         axis_tier.setFixedPixHeight(axis_tier.getFixedPixHeight() + (int) cytoband_glyph.getCoordBox().height);
@@ -771,10 +775,9 @@ public class SeqMapView extends JPanel
     return axis_tier;
   }
 
-  public static EfficientSolidGlyph makeCytobandGlyph(SeqMapView gviewer) {
-    EfficientFillRectGlyph cytoband_glyph = null;
-    if (gviewer.getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
-      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) gviewer.getAnnotatedSeq();
+  public EfficientSolidGlyph makeCytobandGlyph() {
+    if (getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
+      SmartAnnotBioSeq sma = (SmartAnnotBioSeq) getAnnotatedSeq();
       //      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
       SymWithProps cyto_annots = null;
       java.util.List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
@@ -785,22 +788,24 @@ public class SeqMapView extends JPanel
 
       if (cyto_annots instanceof TypeContainerAnnot) {
         TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
-        return makeCytobandGlyph(gviewer, cyto_container);
+        return makeCytobandGlyph(cyto_container);
       }
     } else {
-      for (int i=0; i<gviewer.getAnnotatedSeq().getAnnotationCount(); i++) {
-        SeqSymmetry annotSym = gviewer.getAnnotatedSeq().getAnnotation(i);
+      for (int i=0; i<getAnnotatedSeq().getAnnotationCount(); i++) {
+        SeqSymmetry annotSym = getAnnotatedSeq().getAnnotation(i);
         if (annotSym instanceof TypeContainerAnnot) {
           TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 
           if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches())  {
-            return makeCytobandGlyph(gviewer, tca);
+            return makeCytobandGlyph(tca);
           }
         }
       }
     }
     return null;
   }
+
+  final static Font SMALL_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
   /**
    *  Creates a cytoband glyph.  Handling two cases:
@@ -809,7 +814,7 @@ public class SeqMapView extends JPanel
    *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
    *         will be a Das2FeatureRequestSym, which will have cytoband children).
    */
-  public static EfficientSolidGlyph makeCytobandGlyph(SeqMapView gviewer, TypeContainerAnnot cyto_container) {
+  public EfficientSolidGlyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
     int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
     RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -843,9 +848,9 @@ public class SeqMapView extends JPanel
     for (int q=0; q<bands.size(); q++) {
       //          SeqSymmetry sym  = cyto_container.getChild(q);
       SeqSymmetry sym  = (SeqSymmetry)bands.get(q);
-      SeqSymmetry sym2 = gviewer.transformForViewSeq(sym, gviewer.getAnnotatedSeq());
+      SeqSymmetry sym2 = transformForViewSeq(sym, getAnnotatedSeq());
 
-      SeqSpan cyto_span = gviewer.getViewSeqSpan(sym2);
+      SeqSpan cyto_span = getViewSeqSpan(sym2);
 
       if (cyto_span != null && sym instanceof CytobandParser.CytobandSym) {
         CytobandParser.CytobandSym cyto_sym = (CytobandParser.CytobandSym) sym;
@@ -877,9 +882,10 @@ public class SeqMapView extends JPanel
           efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
           ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setForegroundColor(cyto_sym.getTextColor());
           ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setText(cyto_sym.getID());
+          ((com.affymetrix.genoviz.glyph.LabelledRectGlyph) efg).setFont(SMALL_FONT);
         }
         efg.setColor(cyto_sym.getColor());
-        gviewer.getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
+        getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
 
       
         if (q <= centromerePoint) {
@@ -2842,7 +2848,11 @@ public class SeqMapView extends JPanel
         if (info instanceof SeqSymmetry) {
           sym = (SeqSymmetry) info;
         }
-        if (sym instanceof SymWithProps) {
+        if (sym instanceof MutableSingletonSeqSymmetry) {
+          id = ((LeafSingletonSymmetry) sym).getID();
+          sym_used_for_title = null;
+        }
+        if (id == null && sym instanceof SymWithProps) {
           id = (String) ((SymWithProps) sym).getProperty("id");
           sym_used_for_title = (SymWithProps) sym;
         }

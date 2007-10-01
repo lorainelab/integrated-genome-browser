@@ -22,7 +22,7 @@ import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.BlockingTableCellEditor;
 
 public class PropertySheet extends JPanel {
-
+    
   // the table showing name-value pairs
   JTable table;
   JScrollPane scroll_pane;
@@ -129,7 +129,7 @@ public class PropertySheet extends JPanel {
       for (int i = 0 ; i < num_items ; i++) {
         Object id_obj = props[i].get("id");
         String id;
-        if (id_obj == null) { id = "unknown"; }
+        if (id_obj == null) { id = "no ID"; }
         else {id = id_obj.toString(); } // in most cases the id already is a String
         col_headings[i+1] = id;
       }
@@ -188,9 +188,12 @@ public class PropertySheet extends JPanel {
    *  also assumes that there are no null entries in name_values Vector
    *
    * @param name_values   a Vector of String[]'s
+   * @param preferred_ordering a Vector of Strings with the preferred order of column names
+   * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
+   * whose names are listed. 
    */
   @SuppressWarnings("unchecked")
-  public static Vector reorderNames(Vector name_values, Vector preferred_ordering) {
+  Vector reorderNames(Vector name_values, Vector preferred_ordering, boolean useOnlySpecifiedColumns) {
     Vector reordered = new Vector(name_values.size());
     for (int i=0; i<preferred_ordering.size(); i++) {
       String request = (String)preferred_ordering.elementAt(i);
@@ -206,9 +209,11 @@ public class PropertySheet extends JPanel {
         }
       }
     }
-    for (int i=0; i<name_values.size(); i++) {
-      if (name_values.elementAt(i) != null) {
-        reordered.add(name_values.elementAt(i));
+    if (! useOnlySpecifiedColumns) {
+      for (int i = 0; i < name_values.size(); i++) {
+        if (name_values.elementAt(i) != null) {
+          reordered.add(name_values.elementAt(i));
+        }
       }
     }
     return reordered;
@@ -236,6 +241,19 @@ public class PropertySheet extends JPanel {
   public void showProperties(Map[] props, Vector preferred_prop_order) {
     this.showProperties(props, preferred_prop_order, "ND");
   }
+
+  /** If true, then the property sheet will display ONLY the properties
+   * whose names are listed. 
+   */
+  boolean useOnlyDefaultProperties = false;
+  
+  /** If true, then the property sheet will display ONLY the properties
+   * whose names are listed. 
+   */
+  public void setUseOnlyDefaultProperties(boolean b) {
+    useOnlyDefaultProperties = b;
+  }
+  
   /**
    * Show data associated with the given properties.
    * Uses buildRows() to retrieve ordered
@@ -250,7 +268,7 @@ public class PropertySheet extends JPanel {
 
     Vector name_values = propkeys.getNameValues(props, noData);
     if (preferred_prop_order != null) {
-      name_values = reorderNames(name_values, preferred_prop_order);
+      name_values = reorderNames(name_values, preferred_prop_order, useOnlyDefaultProperties);
     }
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);

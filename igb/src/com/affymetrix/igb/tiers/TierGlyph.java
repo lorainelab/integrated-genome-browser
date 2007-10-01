@@ -57,11 +57,11 @@ public class TierGlyph extends SolidGlyph {
   public static final int DIRECTION_REVERSE = -1;
   public static final int DIRECTION_BOTH = 2;
 
-  /** Use this direction for axis tiers, so they can be recognized as a 
-   *  special case when sorting tiers. 
+  /** Use this direction for axis tiers, so they can be recognized as a
+   *  special case when sorting tiers.
    */
   public static final int DIRECTION_AXIS = -2;
-  
+
   /** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
    *  Boolean.TRUE, the tier will draw a label next to where the handle
    *  would be.
@@ -151,7 +151,7 @@ public class TierGlyph extends SolidGlyph {
       throw new NullPointerException();
     }
   }
-    
+
   public IAnnotStyle getAnnotStyle() {
     return style;
   }
@@ -306,7 +306,7 @@ public class TierGlyph extends SolidGlyph {
     return sorted;
   }
 
-  
+
   public void setLabel(String str) {
     label = str;
   }
@@ -324,7 +324,7 @@ public class TierGlyph extends SolidGlyph {
     }
     return false;
   }
-  
+
   // overriding pack to ensure that tier is always the full width of the scene
   public void pack(ViewI view) {
     if (isTimed) { timecheck.start(); }
@@ -334,7 +334,7 @@ public class TierGlyph extends SolidGlyph {
       super.pack(view);
       Rectangle2D mbox = scene.getCoordBox();
       Rectangle2D cbox = this.getCoordBox();
-      
+
       if (shouldDrawLabel()) {
         // Add extra space to make room for the label.
 //        FontMetrics fm = view.getGraphics().getFontMetrics();
@@ -342,12 +342,12 @@ public class TierGlyph extends SolidGlyph {
 //        com.affymetrix.genoviz.bioviews.Point2D p = new com.affymetrix.genoviz.bioviews.Point2D(0,0);
 //        view.transformToCoords(new Point(0,h_pix), p);
 //        this.setCoords(mbox.x, cbox.y - p.y, mbox.width, cbox.height + p.y);
-        
+
         // Although the space SHOULD be computed based on font metrics, etc,
         // that doesn't really work any better than a fixed coord value
         this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
       } else {
-        this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);        
+        this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
       }
       //    if (isTimed && label.startsWith("whatever (+)")) {
     }
@@ -360,7 +360,7 @@ public class TierGlyph extends SolidGlyph {
   public void drawTraversal(ViewI view) {
     super.drawTraversal(view);
   }
-   
+
   /**
    *  Overriden to allow background shading by a collection of non-child
    *    "middleground" glyphs.  These are rendered after the solid background but before
@@ -418,15 +418,15 @@ public class TierGlyph extends SolidGlyph {
         drawHandle(view);
       }
     }
-    
+
     super.draw(view);
   }
-  
+
   public void drawLabel(ViewI view) {
     drawLabelLeft(view);
   }
-  
-  static Font default_font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+
+  static Font default_font = new Font("Monospaced", Font.PLAIN, 12);
   public static void setLabelFont(Font f) {
     default_font = f;
   }
@@ -441,9 +441,9 @@ public class TierGlyph extends SolidGlyph {
 
 //      java.awt.geom.Rectangle2D rect2d = g.getFontMetrics().getStringBounds(getLabel(), g);
 //      g.setColor(Color.CYAN);
-//      g.fillRect((hpix.x + hpix.width + 1), (hpix.y  + 1), 
+//      g.fillRect((hpix.x + hpix.width + 1), (hpix.y  + 1),
 //          (int) rect2d.getWidth(), (int) rect2d.getHeight());
-      
+
       g.setColor(this.getColor());
       g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
       //g.drawString(getLabel(), (hpix.x + hpix.width + 1), (int) (hpix.y + rect2d.getHeight()));
@@ -508,7 +508,7 @@ public class TierGlyph extends SolidGlyph {
     //     so it is not necessary to call setScene(null) on them.
     middle_glyphs.clear();
   }
-    
+
   public void setState(int newstate) {
     if (newstate == EXPANDED) {
       setPacker(expand_packer);
@@ -530,7 +530,7 @@ public class TierGlyph extends SolidGlyph {
       return;
     }
   }
-  
+
   /** Equivalent to setVisibility(true). */
   public void restoreState() {
     setVisibility(true);
@@ -621,18 +621,18 @@ public class TierGlyph extends SolidGlyph {
     }
   }
 
-  
+
   // very, very deprecated
   public Color getColor() {
     return getForegroundColor();
   }
-  
+
   // very, very deprecated
   public void setColor(Color c) {
     setForegroundColor(c);
   }
-  
-  
+
+
   /** Returns the color used to draw the tier background, or null
       if there is no background. */
   public Color getFillColor() {
@@ -650,17 +650,17 @@ public class TierGlyph extends SolidGlyph {
   public Color getForegroundColor() {
     return style.getColor();
   }
-  
+
   public void setBackgroundColor(Color color) {
     //super.setBackgroundColor(color);
     setFillColor(color);
   }
-  
+
   public Color getBackgroundColor() {
     //return super.getBackgroundColor();
     return getFillColor();
   }
-  
+
   /** Set whether or not the tier wants to allow itself to be hidden;
    *  The state of this flag has no effect on whether setState(HIDDEN)
    *  will work or not.
@@ -686,7 +686,7 @@ public class TierGlyph extends SolidGlyph {
    *  DIRECTION_BOTH or DIRECTION_NONE.
    */
   public void setDirection(int d) {
-    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE) 
+    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE)
         && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH) && (d != DIRECTION_AXIS)) {
       throw new IllegalArgumentException();
     }
@@ -721,11 +721,11 @@ public class TierGlyph extends SolidGlyph {
     } else if (packer == null) {
       str += "NULL PACKER";
     } else {
-      str += "PACKER = " + packer.getClass().getName(); 
+      str += "PACKER = " + packer.getClass().getName();
     }
     return str;
   }
-  
+
   /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
   protected void drawSelectedFill(ViewI view) {
     this.drawSelectedOutline(view);

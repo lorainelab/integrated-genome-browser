@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2005 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -21,14 +21,14 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genoviz.bioviews.GlyphI {
   public static final int DRAW_SELF_FIRST = 0;
   public static final int DRAW_CHILDREN_FIRST = 1;
-  
+
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
 
   // If true, apply corrections to avoid an AWT drawing bug that can happen
   // for very large glyphs (bigger than about 32000 pixels).
   static final boolean FIX_AWT_BIG_RECT_BUG = true;
-  
+
   static protected int min_pixels_width=1;
   static protected int min_pixels_height=1;
 
@@ -37,7 +37,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   protected GlyphI parent;
   protected Vector<GlyphI> children;  // want to move towards using List instead of Vector, will require fixing lots of other code though
 
-  protected Color color = Color.black;    
+  protected Color color = Color.black;
   protected boolean isVisible;
   protected Object info;
   protected PackerI packer;
@@ -182,7 +182,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector, ViewI view)  {
+  public void pickTraversal(Rectangle2D pickRect, Vector pickVector, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
@@ -319,9 +319,9 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
 
   /**
    *  Returns the pixelbox.
-   *  WARNING -- inefficient if called often, since 
-   *     it's making a new Rectangle object with each call.  A more efficient (but more 
-   *     risky) approach would be to just return the view's pixelbox after transformation, 
+   *  WARNING -- inefficient if called often, since
+   *     it's making a new Rectangle object with each call.  A more efficient (but more
+   *     risky) approach would be to just return the view's pixelbox after transformation,
    *     with the caveat that it will only be valid until the view's pixelbox is modified.
    *  @deprecate
    */
@@ -530,7 +530,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   }
 
   /**
-   *  Set trans to global transform for this glyph (based on 
+   *  Set trans to global transform for this glyph (based on
    *    getChildTransform() of parent).
    */
   public boolean  getGlobalTransform(ViewI view, LinearTransform trans) {
@@ -573,5 +573,5 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     }
     return pixelbox;
   }
-  
+
 }

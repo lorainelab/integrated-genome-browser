@@ -577,11 +577,11 @@ public class GraphGlyph extends Glyph {
           g.fillRect(hpix.x, (int)(mark_ypix) + 1, hpix.width + 8, 1);
         }
       }
-      //g.setColor(this.getColor());
-      //g.setFont(axis_font);
-      //FontMetrics fm = g.getFontMetrics();
-      //g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int)max_ypix - fm.getDescent());
-      //g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int)min_ypix + fm.getAscent() + 1);
+      g.setColor(this.getColor());
+      g.setFont(axis_font);
+      FontMetrics fm = g.getFontMetrics();
+      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int) tick_ys[tick_ys.length-1] + fm.getDescent());
+      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int) tick_ys[0] + fm.getDescent() * 2);
     }
   }
 

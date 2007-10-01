@@ -201,9 +201,9 @@ public class GenometryModel {
     synchronized (seq_selection_listeners) {
       // the "synchronized" block, by itself, doesn't seem to be enough,
       // so also copying the list
-      Iterator iter = (new ArrayList(seq_selection_listeners)).iterator();
+      Iterator<SeqSelectionListener> iter = (new ArrayList<SeqSelectionListener>(seq_selection_listeners)).iterator();
       while (iter.hasNext())  {
-        SeqSelectionListener listener = (SeqSelectionListener)iter.next();
+        SeqSelectionListener listener = iter.next();
         listener.seqSelectionChanged(evt);
       }
     }
@@ -221,7 +221,7 @@ public class GenometryModel {
     return sym_selection_listeners;
   }
 
-  void fireSymSelectionEvent(Object src, List syms) {
+  void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
     if (DEBUG) {
       System.out.println("Firing event: " + syms.size());
     }
@@ -412,7 +412,7 @@ public class GenometryModel {
    */
   public void clearSelectedSymmetries(Object src) {
     clearSelectedSymmetries();
-    fireSymSelectionEvent(src, Collections.EMPTY_LIST);
+    fireSymSelectionEvent(src, Collections.<SeqSymmetry>emptyList());
   }
 
   /**

@@ -76,13 +76,33 @@ public class SegmenterRptParser {
 
   public SegmenterRptParser(boolean props, boolean addToIndex) {
 
-//File	Chr Start	End	Change  (plus some other columns I treat as text)
+//File	Chr	Start_Linear_Pos	End_Linear_Position	ChangeType	
+//State	Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	
+//#ProbeSet	Avg_DistBetweenProbeSets(kb)	%ProbeSets_withCNV	
+//Start_ProbeSet	End_ProbeSet	CNV_Annotation
+//    this.file_col = 0;
+//    this.chromosome_col = 1;
+//    this.start_col = 2;
+//    this.end_col = 3;
+//    this.cn_change_col = 4;
 
+//Sample	Copy Number State	Loss/Gain	Chr	
+//Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	#Markers	
+//Avg_DistBetweenMarkers(kb)	%CNV_Overlap	
+//Start_Linear_Pos	End_Linear_Position	Start_Marker	End_Marker	
+//CNV_Annotation
+
+      
+//Sample	Copy Number State	Loss/Gain	Chr
+//Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	#Markers	
+//Avg_DistBetweenMarkers(kb)	%CNV_Overlap	
+//Start_Linear_Pos	End_Linear_Position	Start_Marker	End_Marker	
+//CNV_Annotation
     this.file_col = 0;
-    this.chromosome_col = 1;
-    this.start_col = 2;
-    this.end_col = 3;
-    this.cn_change_col = 4;
+    this.chromosome_col = 3;
+    this.start_col = 10;
+    this.end_col = 11;
+    this.cn_change_col = 2;
 
     this.length_col = -1;
     this.strand_col = -1;
@@ -98,8 +118,6 @@ public class SegmenterRptParser {
 
   public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
 
-    HashMap group_hash = new HashMap();
-    MutableSeqSpan union_span = new SimpleMutableSeqSpan();
     ArrayList<String> col_names = null;
 
     try {
@@ -213,7 +231,7 @@ public class SegmenterRptParser {
     }
     return;
   }
-
+  
   public static void main(String[] args) {
 // 0 Sample
 // 1 Chr

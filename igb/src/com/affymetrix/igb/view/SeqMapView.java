@@ -588,7 +588,7 @@ public class SeqMapView extends JPanel
   public JPopupMenu getSelectionPopup() { return sym_popup; }
 
   TransformTierGlyph axis_tier;
-  
+
   public IAnnotStyleExtended getAxisAnnotStyle() {
     return axis_annot_style;
   }
@@ -650,7 +650,7 @@ public class SeqMapView extends JPanel
     axis.setFont(axisFont);
 
     Color axis_bg = getAxisAnnotStyle().getBackground();
-    Color axis_fg = getAxisAnnotStyle().getColor();        
+    Color axis_fg = getAxisAnnotStyle().getColor();
 
     axis.setBackgroundColor(axis_bg);
     axis_tier.setBackgroundColor(axis_bg);
@@ -805,7 +805,7 @@ public class SeqMapView extends JPanel
     return null;
   }
 
-  final static Font SMALL_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+  final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 
   /**
    *  Creates a cytoband glyph.  Handling two cases:
@@ -861,15 +861,15 @@ public class SeqMapView extends JPanel
           //efg = new PointedGlyph();
           //efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
           //((PointedGlyph) efg).setForward(! cyto_sym.getID().startsWith("q"));
-          
+
           efg = new EfficientPaintRectGlyph();
           efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
           ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.acen_paint);
-          
+
         } else if (CytobandParser.BAND_STALK.equals(cyto_sym.getBand())) {
           //efg = new DoublePointedGlyph();
           //efg.setCoords(cyto_span.getStartDouble(), 2.0+2, cyto_span.getLengthDouble(), cyto_height-4);
-          
+
           efg = new EfficientPaintRectGlyph();
           efg.setCoords(cyto_span.getStartDouble(), 2.0, cyto_span.getLengthDouble(), cyto_height);
           ((EfficientPaintRectGlyph) efg).setPaint(CytobandParser.stalk_paint);
@@ -887,7 +887,7 @@ public class SeqMapView extends JPanel
         efg.setColor(cyto_sym.getColor());
         getSeqMap().setDataModelFromOriginalSym(efg, cyto_sym);
 
-      
+
         if (q <= centromerePoint) {
           if (cytoband_glyph_A ==  null) {
             cytoband_glyph_A = new RoundRectMaskGlyph();
@@ -907,7 +907,7 @@ public class SeqMapView extends JPanel
           cytoband_glyph_B.addChild(efg);
           cytoband_glyph_B.getCoordBox().add(efg.getCoordBox());
         }
-      
+
       }
     }
 
@@ -2499,7 +2499,7 @@ public class SeqMapView extends JPanel
     if ("hg17".equals(ucsc_version)) {
       ensembl_site = "http://dec2005.archive.ensembl.org";
     }
-    
+
     String region = getRegionString();
     if (region.startsWith("chr")) {
       region = region.substring(3);
@@ -3213,7 +3213,7 @@ public class SeqMapView extends JPanel
     //      setAnnotatedSeq(newseq);
     //    }
 
-    // reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq, 
+    // reverted to calling setAnnotatedSeq regardless of whether newly selected seq is same as previously selected seq,
     //    because often need to trigger repacking / rendering anyway
     setAnnotatedSeq(newseq);
   }

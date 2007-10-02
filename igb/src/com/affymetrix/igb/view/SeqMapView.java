@@ -1021,7 +1021,7 @@ public class SeqMapView extends JPanel
     //    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
     setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
   }
-
+  
   public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
    //   want to optimize for several situations:
    //       a) merging newly loaded data with existing data (adding more annotations to
@@ -1042,21 +1042,7 @@ public class SeqMapView extends JPanel
 
     stopSlicingThread();
 
-    if (frm != null) {
-      StringBuffer title = new StringBuffer(128);
-      if (seq != null) {
-        title.append(seq.getID());
-        String version_info = getVersionInfo(seq);
-        if (version_info != null) {
-          title.append("  (").append(version_info).append(')');
-        }
-      }
-      if (title.length() > 0) {
-        title.append(" - ");
-      }
-      title.append(Application.getSingleton().getApplicationName());
-      frm.setTitle(title.toString());
-    }
+    setTitleBar(seq);
 
     if (seq == null) {
       clear();
@@ -1281,6 +1267,37 @@ public class SeqMapView extends JPanel
     return version_info;
   }
 
+  /** Whether the Application name goes first in the title bar.
+   *  It seems to be standard in most application for the application name
+   *  to go last.  But marketing departments sometimes require otherwise.
+   */
+  protected boolean appNameFirstInTitle = false;
+  
+  protected void setTitleBar(AnnotatedBioSeq seq) {
+    if (frm != null) {
+      StringBuffer title = new StringBuffer(128);
+      if (appNameFirstInTitle) {
+        title.append(Application.getSingleton().getApplicationName());
+      }
+      if (seq != null) {
+        if (title.length() > 0) {
+          title.append(" - ");
+        }
+        title.append(seq.getID());
+        String version_info = getVersionInfo(seq);
+        if (version_info != null) {
+          title.append("  (").append(version_info).append(')');
+        }
+      }
+      if (! appNameFirstInTitle) {
+        if (title.length() > 0) {
+          title.append(" - ");
+        }
+        title.append(Application.getSingleton().getApplicationName());
+      }
+      frm.setTitle(title.toString());
+    }
+  }
 
   /**
    *  Returns all floating layers _except_ grid layer (which is supposed to stay

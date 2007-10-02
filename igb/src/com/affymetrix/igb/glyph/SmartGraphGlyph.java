@@ -468,9 +468,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    ysum = temp_ysum;
 
 	    points_in_pixel = 1;
-	    prev_point.x = curr_point.x;
-	    prev_point.y = curr_point.y;
 	  } // end (prev_point.x != curr_point.x)
+          prev_point.x = curr_point.x; // this line is sometimes redundant
+          prev_point.y = curr_point.y; // this line is not redundant
 	}
       }
       if (SHOW_CACHE_INDICATOR) {
@@ -590,9 +590,9 @@ public class SmartGraphGlyph extends GraphGlyph {
 	  ymax_pixel = curr_point.y;
 	  ysum = curr_point.y;
 	  points_in_pixel = 1;
-	  prev_point.x = curr_point.x;
-	  prev_point.y = curr_point.y;
 	}
+        prev_point.x = curr_point.x; // this line is sometimes redundant
+        prev_point.y = curr_point.y; // this line is not redundant
       }
       // can only show threshold if xy coords are also being shown (show_graph = true)
     }

@@ -1281,6 +1281,7 @@ public class SeqMapView extends JPanel
   protected boolean appNameFirstInTitle = false;
   
   protected void setTitleBar(AnnotatedBioSeq seq) {
+    Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
     if (frm != null) {
       StringBuffer title = new StringBuffer(128);
       if (appNameFirstInTitle) {
@@ -1290,7 +1291,12 @@ public class SeqMapView extends JPanel
         if (title.length() > 0) {
           title.append(" - ");
         }
-        title.append(seq.getID());
+        String seqid = seq.getID().trim();
+        if (pattern.matcher(seqid).matches()) {
+          seqid = seqid.replace("chr", "Chromosome ");
+        }
+            
+        title.append(seqid);
         String version_info = getVersionInfo(seq);
         if (version_info != null) {
           title.append("  (").append(version_info).append(')');

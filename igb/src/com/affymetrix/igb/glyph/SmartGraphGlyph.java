@@ -17,6 +17,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.*;
 
@@ -244,6 +245,9 @@ public class SmartGraphGlyph extends GraphGlyph {
     }
   }
   
+  /** A variable used to hold some temporary calculations for LINE_GRAPH. */
+  Point last_point_temp = new Point(0,0);
+
   public void drawGraph(ViewI view) {
     int graph_style = getGraphStyle();
     view.transformToPixels(coordbox, pixelbox);
@@ -449,7 +453,7 @@ public class SmartGraphGlyph extends GraphGlyph {
               }
 	      draw_count++;
 	    }
-	    if (AVGLINE) {
+	    if (AVGLINE || graph_style == GraphStateI.LINE_GRAPH) {
 	      // cache for drawing later
 	      if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 		pixel_cache[prev_point.x] =
@@ -458,7 +462,10 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
             
             if (graph_style == GraphStateI.LINE_GRAPH) {
-              int y1 = Math.max(Math.min(prev_point.y, plot_bottom_ypixel), plot_top_ypixel);
+              coord.x = xcoords[i];
+              coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
+              view.transformToPixels(coord, last_point_temp);
+              int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
               int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
               g.drawLine(prev_point.x, y1, curr_point.x, y2);
             }
@@ -524,7 +531,7 @@ public class SmartGraphGlyph extends GraphGlyph {
       }
       if (graph_style == LINE_GRAPH) {
         g.setColor(getBackgroundColor());
-      }
+      }      
       for (int i = draw_beg_index; i <= draw_end_index; i++) {
 	coord.x = xcoords[i];
 	coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
@@ -570,7 +577,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    draw_count++;
 	  }
 	  yavg_pixel = ysum / points_in_pixel;
-	  if (AVGLINE) {
+	  if (AVGLINE || graph_style == LINE_GRAPH) {
 	    // cache for drawing later
 	    if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 	      pixel_cache[prev_point.x] =
@@ -578,12 +585,14 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
 	  }
           
-          if (graph_style == LINE_GRAPH) {
-            if (graph_style == GraphStateI.LINE_GRAPH) {
-              int y1 = Math.max(Math.min(prev_point.y, plot_bottom_ypixel), plot_top_ypixel);
-              int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-              g.drawLine(prev_point.x, y1, curr_point.x, y2);
-            }
+          if (graph_style == GraphStateI.LINE_GRAPH) {
+            coord.x = xcoords[i-1];
+            coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
+            view.transformToPixels(coord, last_point_temp);
+
+            int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+            int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+            g.drawLine(prev_point.x, y1, curr_point.x, y2);
           }
           
 	  ymin_pixel = curr_point.y;

@@ -1264,6 +1264,13 @@ public class SeqMapView extends JPanel
     if ((version_info == null)  && (seq instanceof Versioned)) {
       version_info = ((Versioned)seq).getVersion();
     }
+    if ("hg17".equals(version_info)) {
+      version_info = "hg17 = NCBI35";
+    }
+    else if ("hg18".equals(version_info)) {
+      version_info = "hg18 = NCBI36";
+    }
+    
     return version_info;
   }
 

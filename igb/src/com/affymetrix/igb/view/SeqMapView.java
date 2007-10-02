@@ -2845,7 +2845,7 @@ public class SeqMapView extends JPanel
     Application.getSingleton().setStatus(title, false);
   }
 
-  protected SymWithProps sym_used_for_title = null;
+  protected SeqSymmetry sym_used_for_title = null;
 
   // Compare the code here with SymTableView.selectionChanged()
   // The logic about finding the ID from instances of DerivedSeqSymmetry
@@ -2867,17 +2867,21 @@ public class SeqMapView extends JPanel
         }
         if (sym instanceof MutableSingletonSeqSymmetry) {
           id = ((LeafSingletonSymmetry) sym).getID();
-          sym_used_for_title = null;
+          sym_used_for_title = sym;
         }
         if (id == null && sym instanceof SymWithProps) {
           id = (String) ((SymWithProps) sym).getProperty("id");
-          sym_used_for_title = (SymWithProps) sym;
+          sym_used_for_title = sym;
         }
         if (id == null && sym instanceof DerivedSeqSymmetry) {
           SeqSymmetry original = ((DerivedSeqSymmetry) sym).getOriginalSymmetry();
-          if (original instanceof SymWithProps) {
+          if (original instanceof MutableSingletonSeqSymmetry) {
+            id = ((LeafSingletonSymmetry) original).getID();
+            sym_used_for_title = original;
+          }
+          else if (original instanceof SymWithProps) {
             id = (String) ((SymWithProps) original).getProperty("id");
-            sym_used_for_title = (SymWithProps) original;
+            sym_used_for_title = original;
           }
         }
         if (id == null && topgl instanceof GraphGlyph) {
@@ -2893,11 +2897,9 @@ public class SeqMapView extends JPanel
           // If ID of item is null, check recursively for parent ID, or parent of that...
           GlyphI pglyph = topgl.getParent();
           if (pglyph != null && ! (pglyph instanceof TierGlyph) && !(pglyph instanceof RootGlyph)) {
-            ArrayList v = new ArrayList(1);
-            v.add(pglyph);
             // Add one ">" symbol for each level of getParent()
             sym_used_for_title = null; // may be re-set in the recursive call
-            id = "> "+getSelectionTitle(v);
+            id = "> "+getSelectionTitle(Arrays.asList(pglyph));
           }
           else {
             id = "Unknown Selection";

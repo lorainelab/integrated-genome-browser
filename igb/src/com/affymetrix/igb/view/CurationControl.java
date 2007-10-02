@@ -490,7 +490,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
    *  Implementing ContextualPopupListener to dynamicly modify
    *  right-click popup on SeqMapView to add a curation menu.
    */
-  public void popupNotify(JPopupMenu popup, java.util.List selected_items, SymWithProps primary_sym) {
+  public void popupNotify(JPopupMenu popup, java.util.List selected_items, SeqSymmetry primary_sym) {
     popup.add(curationM);
   }
 

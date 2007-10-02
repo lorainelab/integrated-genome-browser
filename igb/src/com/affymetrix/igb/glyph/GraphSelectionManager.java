@@ -728,7 +728,7 @@ public class GraphSelectionManager
     return result;
   }
 
-  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SymWithProps primary_sym) {
+  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SeqSymmetry primary_sym) {
     
     if (current_source == null) {
       // if there is no NeoWidgetI set for the current_source, then we cannot convert

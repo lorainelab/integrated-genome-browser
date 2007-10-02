@@ -1468,7 +1468,7 @@ public class IGB extends Application
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
   }
 
-  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SymWithProps primary_sym) {
+  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SeqSymmetry primary_sym) {
     popup.add(popup_windowsM);
   }
 

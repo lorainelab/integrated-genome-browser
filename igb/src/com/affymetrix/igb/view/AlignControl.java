@@ -190,7 +190,7 @@ public class AlignControl implements ActionListener, ContextualPopupListener  {
    *  implementing ContextualPopupListener to dynamicly modify
    *  right-click popup on SeqMapView to add a curation menu
    */
-  public void popupNotify(JPopupMenu popup, java.util.List selected_items, SymWithProps primary_sym) {
+  public void popupNotify(JPopupMenu popup, java.util.List selected_items, SeqSymmetry primary_sym) {
     if (selected_items.size() == 1) {
       SeqSymmetry selected_sym = (SeqSymmetry)selected_items.get(0);
       int spancount = selected_sym.getSpanCount();

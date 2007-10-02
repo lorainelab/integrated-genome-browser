@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,15 +27,22 @@ public class LinkControl implements ContextualPopupListener {
 
   public LinkControl() { }
 
-  public void popupNotify(JPopupMenu popup, List selected_syms, SymWithProps primary_sym) {
+  public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
+    if (primary_sym == null) System.out.println("if primary_sym is null!");
     if (selected_syms.size() == 1 && primary_sym != null) {
       
       Map menu_items = new LinkedHashMap(); // map of menu url->name, or url -> url if there is no name
       
       // DAS files can contain links for each individual feature.
       // These are stored in the "link" property
-      Object links = primary_sym.getProperty("link");
-      Object link_names = primary_sym.getProperty("link_name");
+      Object links = null;
+      if (primary_sym instanceof SymWithProps) {
+        links = ((SymWithProps) primary_sym).getProperty("link");
+      }
+      Object link_names = null;
+      if (primary_sym instanceof SymWithProps) {
+        link_names = ((SymWithProps) primary_sym).getProperty("link_name");
+      }
       if (links != null) {
         if (links instanceof String) {
           String url = (String) links;

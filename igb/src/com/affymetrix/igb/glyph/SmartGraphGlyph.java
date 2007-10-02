@@ -461,8 +461,8 @@ public class SmartGraphGlyph extends GraphGlyph {
 	      }
 	    }
             
-            if (graph_style == GraphStateI.LINE_GRAPH) {
-              coord.x = xcoords[i];
+            if (graph_style == GraphStateI.LINE_GRAPH && i>0 && i<=graf.getPointCount()) {
+              coord.x = xcoords[i-1];
               coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
               view.transformToPixels(coord, last_point_temp);
               int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
@@ -585,7 +585,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 	    }
 	  }
           
-          if (graph_style == GraphStateI.LINE_GRAPH) {
+         if (graph_style == GraphStateI.LINE_GRAPH && i>0 && i<=graf.getPointCount()) {
             coord.x = xcoords[i-1];
             coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
             view.transformToPixels(coord, last_point_temp);

@@ -79,7 +79,9 @@ import com.affymetrix.genometryImpl.SymWithProps;
  */
 public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
   static final boolean DEBUG = false;
-  static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
+  static Pattern line_regex = Pattern.compile("\\t");  // single tab, NOT multiple whitespace
+    // Multiple whitespace would fail to be able to parse files written by this parser
+    // when symmetry ID's are left blank.
   static Pattern comma_regex = Pattern.compile(",");
   static Pattern tagval_regex = Pattern.compile("=");
 
@@ -552,6 +554,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
           if (propsym != null) {
             if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
             else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
+//            else { out.write("."); }
           }
           out.write('\t');
           if ((propsym != null)  && (propsym.getProperty("score") != null))  {

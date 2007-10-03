@@ -265,8 +265,8 @@ public class SeqMapView extends JPanel
   PixelFloaterGlyph grid_layer = null;
   GridGlyph grid_glyph = null;
 
-  protected Box xzoombox;
-  protected Box yzoombox;
+  protected JComponent xzoombox;
+  protected JComponent yzoombox;
   protected MapRangeBox map_range_box;
   JButton refreshB = new JButton("Refresh Data");
 

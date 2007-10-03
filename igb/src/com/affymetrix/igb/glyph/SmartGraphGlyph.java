@@ -460,16 +460,7 @@ public class SmartGraphGlyph extends GraphGlyph {
 		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 	      }
 	    }
-            
-            if (graph_style == GraphStateI.LINE_GRAPH && i>0 && i<=graf.getPointCount()) {
-              coord.x = xcoords[i-1];
-              coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
-              view.transformToPixels(coord, last_point_temp);
-              int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
-              int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-              g.drawLine(prev_point.x, y1, curr_point.x, y2);
-            }
-            
+                        
 	    ymin_pixel = temp_ymin_pixel;
 	    ymax_pixel = temp_ymax_pixel;
 	    ysum = temp_ysum;
@@ -484,6 +475,31 @@ public class SmartGraphGlyph extends GraphGlyph {
 	g.setColor(Color.RED);
 	g.fillRect(20, ymin_pixel-5, 25, 10);
       }
+
+      //// LINE_GRAPH is basically just MIN/MAX/AVG graph without the AVG,
+      //// but then we have to draw the lines *between* the values in the pixel cache.
+      if (graph_style == GraphStateI.LINE_GRAPH) {
+        for (int i = draw_beg_index + 1; i <= draw_end_index; i++) {
+
+          int index = graph_cache.graph_index_max[i - 1];
+          coord.x = graph_cache.xmax[i-1];
+          coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
+          view.transformToPixels(coord, last_point_temp);
+          int x1 = last_point_temp.x;
+          int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+
+          index = graph_cache.graph_index_min[i];
+          coord.x = graph_cache.xmin[i];
+          coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
+          view.transformToPixels(coord, last_point_temp);
+          int x2 = last_point_temp.x;
+          int y2 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+
+          // x2 == curr_point.x ???
+          g.drawLine(x1, y1, x2, y2);
+        }
+      }
+
     }
     // not using graph "cache", because zoomed too far in (but not far enough to switch to bars)
     else  { // not using graph cache...
@@ -1078,6 +1094,8 @@ public class SmartGraphGlyph extends GraphGlyph {
 
 class GraphCache2 {
   public int bases_per_entry;
+  public int[] graph_index_min;
+  public int[] graph_index_max;
   public int[] xmin;
   public int[] xmax;
   public float[] ymin;
@@ -1093,6 +1111,8 @@ class GraphCache2 {
       count_guess = Math.abs(xcoords[xcoords.length - 1] - xcoords[0]) / bases_per_entry;
     }
     if (count_guess < 1)  { count_guess = 1; }
+    IntList graph_index_min_list = new IntList(count_guess);
+    IntList graph_index_max_list = new IntList(count_guess);
     IntList xmin_list = new IntList(count_guess);
     IntList xmax_list = new IntList(count_guess);
     FloatList ymin_list = new FloatList(count_guess);
@@ -1105,6 +1125,8 @@ class GraphCache2 {
     while (cur_index < xcoords.length) {
       float valmin = Float.POSITIVE_INFINITY;
       float valmax = Float.NEGATIVE_INFINITY;
+      int indexmin = Integer.MAX_VALUE;
+      int indexmax = Integer.MIN_VALUE;
       float valavg = 0;
       int entry_xmin = xcoords[cur_index];
       int entry_xlimit = entry_xmin + bases_per_entry;
@@ -1118,6 +1140,8 @@ class GraphCache2 {
 		(xcoords[cur_index] <= entry_xlimit) ) {
 	  float yval = ycoords[cur_index];
 	  entry_xmax = xcoords[cur_index];
+          indexmin = Math.min(indexmin, cur_index);
+          indexmax = Math.max(indexmax, cur_index);
 	  valmin = Math.min(valmin, yval);
 	  valmax = Math.max(valmax, yval);
 	  valavg += yval;
@@ -1126,6 +1150,8 @@ class GraphCache2 {
 	}
 	valavg = valavg / (float)entry_points;
 
+        graph_index_min_list.add(indexmin);
+        graph_index_max_list.add(indexmax);
 	xmin_list.add(entry_xmin);
 	xmax_list.add(entry_xmax);
 	num_points_list.add(entry_points);
@@ -1140,6 +1166,8 @@ class GraphCache2 {
       }
     }
 
+    graph_index_min = graph_index_min_list.copyToArray();
+    graph_index_max = graph_index_max_list.copyToArray();
     xmin = xmin_list.copyToArray();
     xmax = xmax_list.copyToArray();
     ymin = ymin_list.copyToArray();

@@ -2782,18 +2782,18 @@ public class SeqMapView extends JPanel
    *  @return a list where each child is replaced by its top-most parent, if it
    *  has a parent, or else the child itself is included in the list
    */
-  public static java.util.List getParents(java.util.List childGlyphs) {
+  public static java.util.List<GlyphI> getParents(java.util.List<GlyphI> childGlyphs) {
     boolean top_level = true;
     // linked hash set keeps parents in same order as child list so that comparison
     // like childList.equals(parentList) can be used.
-    java.util.Set results = new LinkedHashSet(childGlyphs.size());
-    Iterator iter = childGlyphs.iterator();
+    java.util.Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
+    Iterator<GlyphI> iter = childGlyphs.iterator();
     while (iter.hasNext()) {
-      GlyphI child = (GlyphI) iter.next();
+      GlyphI child = iter.next();
       GlyphI pglyph = getParent(child, top_level);
       results.add(pglyph);
     }
-    return new ArrayList(results);
+    return new ArrayList<GlyphI>(results);
   }
 
   /** Get the parent, or top-level parent, of a glyph, with certain restictions.

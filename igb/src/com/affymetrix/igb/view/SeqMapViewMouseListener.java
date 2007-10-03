@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 /**
  *  A MouseListener for the SeqMapView.
@@ -90,7 +91,9 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
 
     // process selections in mousePressed() or mouseReleased()
-    if (SELECT_ON_MOUSE_PRESSED) processSelections(evt, true);
+    if (SELECT_ON_MOUSE_PRESSED) {
+        processSelections(evt, true);
+    }
   }
 
   int num_last_selections = 0;
@@ -168,11 +171,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
     // seems no longer needed
     //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
-    Vector graphs = new Vector();
+    Vector<GraphGlyph> graphs = new Vector<GraphGlyph>();
     for (int i=0; i<hcount; i++) {
       Object obj = hits.get(i);
       if (obj instanceof GraphGlyph) {
-	graphs.add(obj);
+	graphs.add((GraphGlyph) obj);
       }
     }
     int gcount = graphs.size();
@@ -187,7 +190,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
         map.select(topgl);
       }
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	if (gl != topgl) {  // if gl == topgl, already handled above...
 	  if (toggle_event && gl.isSelected()) {
 	    map.deselect(gl);
@@ -273,9 +276,12 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
    */
   static boolean isOurPopupTrigger(MouseEvent evt) {
     if (evt == null) {return false;}
-    else if (isToggleSelectionEvent(evt)) return false;
-    else return (evt.isControlDown() ||  evt.isMetaDown() ||
-         ((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0 ));
+    else if (isToggleSelectionEvent(evt)) {
+      return false;
+    }
+    else {
+      return evt.isControlDown() || evt.isMetaDown() || ((evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0);
+    }
   }
 
   /** Checks whether this the sort of mouse click that should preserve
@@ -362,26 +368,30 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   boolean isInAxisTier(GlyphI g) {
     TierGlyph axis_tier = smv.getAxisTier();
-    if (axis_tier == null) return false;
+    if (axis_tier == null) {
+      return false;
+    }
 
     GlyphI p = g;
     while ( p != null) {
-      if (p == axis_tier) return true;
+      if (p == axis_tier) {
+        return true;
+      }
       p = p.getParent();
     }
     return false;
   }
 
-  void doTheSelection(Vector glyphs, MouseEvent evt) {
+  void doTheSelection(Vector<GlyphI> glyphs, MouseEvent evt) {
     boolean something_changed = true;
 
     // Remove any children of the axis tier (like contigs) from the selections.
     // Selecting contigs is something you usually do not want to do.  It is
     // much more likely that if someone dragged across the axis, they want to
     // select glyphs in tiers above and below but not IN the axis.
-    ListIterator li = glyphs.listIterator();
+    ListIterator<GlyphI> li = glyphs.listIterator();
     while (li.hasNext()) {
-      GlyphI g = (GlyphI) li.next();
+      GlyphI g = li.next();
       if (isInAxisTier(g)) {
         li.remove();
       }
@@ -389,9 +399,9 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     // Now correct for the fact that we might be zoomed way-out.  In that case
     // select only the parent glyphs (RNA's), not all the little children (Exons).
     Point2D.Double zoom_point = new Point2D.Double(0,0); // dummy variable, value not used
-    Vector corrected = new Vector(glyphs.size());
+    Vector<GlyphI> corrected = new Vector<GlyphI>(glyphs.size());
     for (int i=0; i<glyphs.size(); i++) {
-      GlyphI g = (GlyphI) glyphs.get(i);
+      GlyphI g = glyphs.get(i);
       GlyphI zc = zoomCorrectedGlyphChoice(g, zoom_point);
       if (! corrected.contains(zc)) {corrected.add(zc);}
     }
@@ -427,11 +437,11 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
   }
 
-  void toggleSelections(NeoMap map, Collection glyphs) {
-    java.util.List current_selections = map.getSelected();
-    Iterator iter = glyphs.iterator();
+  void toggleSelections(NeoMap map, Collection<GlyphI> glyphs) {
+    List<GlyphI> current_selections = map.getSelected();
+    Iterator<GlyphI> iter = glyphs.iterator();
     while (iter.hasNext()) {
-      GlyphI g = (GlyphI) iter.next();
+      GlyphI g = iter.next();
       if (current_selections.contains(g)) {
         map.deselect(g);
       } else {

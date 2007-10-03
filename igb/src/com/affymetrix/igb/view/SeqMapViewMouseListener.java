@@ -66,6 +66,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   SeqMapView smv;
   AffyTieredMap map;
+  public boolean onlySelectParentsDuringDrag = true;
 
   public SeqMapViewMouseListener(SeqMapView smv) {
     this.smv = smv;
@@ -268,7 +269,6 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     return topgl;
   }
 
-
   /** Checks whether the mouse event is something that we consider to be
    *  a pop-up trigger.  (This has nothing to do with MouseEvent.isPopupTrigger()).
    *  Checks for isMetaDown() and isControlDown() to try and
@@ -299,6 +299,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
 
   private transient MouseEvent rubber_band_start = null;
 
+  @Override
   public void rubberBandChanged(NeoRubberBandEvent evt) {
     /*
      * Note that because using SmartRubberBand, rubber banding will only happen
@@ -382,7 +383,8 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     return false;
   }
 
-  void doTheSelection(Vector<GlyphI> glyphs, MouseEvent evt) {
+  // This is called ONLY at the end of a rubber-band drag.
+  void doTheSelection(Vector<GlyphI> glyphs, MouseEvent evt) {      
     boolean something_changed = true;
 
     // Remove any children of the axis tier (like contigs) from the selections.
@@ -407,6 +409,10 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     }
     glyphs = corrected;
 
+    if (onlySelectParentsDuringDrag) {
+      glyphs = new Vector<GlyphI>(SeqMapView.getParents(glyphs));
+    }
+    
     if (isToggleSelectionEvent(evt)) {
       if (glyphs.isEmpty()) {
         something_changed = false;

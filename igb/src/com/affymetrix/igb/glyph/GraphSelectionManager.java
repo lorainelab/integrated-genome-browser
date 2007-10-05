@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -274,7 +273,7 @@ public class GraphSelectionManager
         if (current_graph instanceof SmartGraphGlyph) {
           SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
           if (DEBUG) System.out.println("setting up graph bounds adjuster");
-          GraphMinMaxSetter.showFramedAdjuster(graphlist, current_source);
+          GraphVisibleBoundsSetter.showFramedThresholder(current_graph, current_source);
         }
       }
       else if (src == adjust_percent) {

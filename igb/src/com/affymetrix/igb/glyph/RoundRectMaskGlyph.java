@@ -15,6 +15,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
+import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -29,8 +30,15 @@ public class RoundRectMaskGlyph extends EfficientGlyph  {
 
   static BasicStroke stroke = new BasicStroke(2);
   RoundRectangle2D rr2d = new RoundRectangle2D.Double();
-    
-  Shape getShapeInPixels(ViewI view) {
+  Color fillColor = Color.WHITE;
+  
+  public RoundRectMaskGlyph(Color fillColor) {
+    super();
+    this.fillColor = fillColor;
+    this.setDrawOrder(EfficientGlyph.DRAW_CHILDREN_FIRST);
+  }
+  
+  RoundRectangle2D getShapeInPixels(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
 
@@ -52,26 +60,21 @@ public class RoundRectMaskGlyph extends EfficientGlyph  {
     return rr2d;
   }
 
-  /** Draws the outline using a BasicStroke. */
+  /** Clears the region behind the glyph (a rectangle minus a rounded rectangle, 
+   *  then draws the outline using a BasicStroke.  This is designed such that
+   *  drawChildren() should be called before draw.
+   */
   public void draw(ViewI view) {    
-    Shape s = getShapeInPixels(view);
-    
+    RoundRectangle2D s = getShapeInPixels(view);
+    Area a = new Area(s.getFrame());
+    a.subtract(new Area(s));
+
     Graphics2D g2 = (Graphics2D) view.getGraphics();
+    g2.setColor(fillColor);
+    g2.fill(a);
 
     g2.setColor(getColor());
     g2.setStroke(stroke);
-    g2.draw(s);
-  }
-  
-  /** Draws the children, but clips them through a rounded window. */
-  public void drawChildren(ViewI view) {    
-    Shape s = getShapeInPixels(view);
-    
-    Graphics2D g2 = (Graphics2D) view.getGraphics();
-
-    Shape oldClip = g2.getClip();
-    g2.setClip(s);
-    super.drawChildren(view);
-    g2.setClip(oldClip);
+    g2.draw(s);    
   }
 }

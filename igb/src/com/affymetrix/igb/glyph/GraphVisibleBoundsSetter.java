@@ -114,6 +114,8 @@ public class GraphVisibleBoundsSetter extends JPanel
   boolean set_slider_sizepref = false;
   boolean set_textbox_sizepref = false;
   boolean show_min_and_max = false;
+  boolean includePercentileControls = true;
+  
 
   static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
@@ -144,6 +146,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
   public GraphVisibleBoundsSetter(NeoWidgetI w, boolean includePercentileControls) {
     super();
+    this.includePercentileControls = includePercentileControls;
 
     widg = w;
 
@@ -269,7 +272,9 @@ public class GraphVisibleBoundsSetter extends JPanel
       graphs.add(gl);
     }
     
-    initPercents();
+    if (includePercentileControls) {
+      initPercents();
+    }
     initValues();
     setEnabled(! graphs.isEmpty());    
     turnOnListening();
@@ -324,7 +329,7 @@ public class GraphVisibleBoundsSetter extends JPanel
     } else {
 
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float min = gl.getGraphMinY();
 	float max = gl.getGraphMaxY();
 	float vismin = gl.getVisibleMinY();
@@ -408,7 +413,7 @@ public class GraphVisibleBoundsSetter extends JPanel
         avg_of_vismins = avg_of_vismaxes = 0;
     } else {
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float vismin_val = gl.getVisibleMinY();
 	float vismax_val = gl.getVisibleMaxY();
 	float vismin_per = getPercentForValue(gl, vismin_val);
@@ -579,7 +584,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float avg_of_mins = 0;
       // set values
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float min_per = getPercentForValue(gl, val);
 	min_of_mins = Math.min(min_per, min_of_mins);
 	max_of_mins = Math.max(min_per, max_of_mins);
@@ -621,7 +626,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float max_of_maxes = Float.NEGATIVE_INFINITY;
       float avg_of_maxes = 0;
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float max_per = getPercentForValue(gl, val);
 	min_of_maxes = Math.min(max_per, min_of_maxes);
 	max_of_maxes = Math.max(max_per, max_of_maxes);
@@ -674,7 +679,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float avg_of_mins = 0;
       // set percentages
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float min_val = getValueForPercent(gl, percent);
 	min_of_mins = Math.min(min_val, min_of_mins);
 	max_of_mins = Math.max(min_val, max_of_mins);
@@ -733,7 +738,7 @@ public class GraphVisibleBoundsSetter extends JPanel
       float max_of_maxes = Float.NEGATIVE_INFINITY;
       float avg_of_maxes = 0;
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = (GraphGlyph)graphs.get(i);
+	GraphGlyph gl = graphs.get(i);
 	float max_val = getValueForPercent(gl, percent);
 	min_of_maxes = Math.min(max_val, min_of_maxes);
 	max_of_maxes = Math.max(max_val, max_of_maxes);

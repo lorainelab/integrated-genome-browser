@@ -48,8 +48,6 @@ public class GraphVisibleBoundsSetter extends JPanel
   JPanel valP = new JPanel();  // for adjust-by-value controls
   JPanel perP = new JPanel();  // for adjust-by-percent controls
 
-  JCheckBox syncCB;
-  boolean sync_min_max;
   int max_chars = 8;
   int max_pix_per_char = 6;
   int tf_min_xpix = max_chars * max_pix_per_char;
@@ -90,7 +88,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
   Map info2pscores = new HashMap();
-  java.util.List graphs = new ArrayList();
+  java.util.List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 
   /*
    *  Now trying to map slider values to percentages, such that each slider
@@ -120,7 +118,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
     GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-    java.util.List glist = new ArrayList();
+    java.util.List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
     glist.add(sgg);
     thresher.setGraphs(glist);
     JFrame frm = new JFrame("Graph Percentile Adjuster");
@@ -141,6 +139,10 @@ public class GraphVisibleBoundsSetter extends JPanel
   }
   
   public GraphVisibleBoundsSetter(NeoWidgetI w) {
+    this(w, true);
+  }
+
+  public GraphVisibleBoundsSetter(NeoWidgetI w, boolean includePercentileControls) {
     super();
 
     widg = w;
@@ -229,18 +231,20 @@ public class GraphVisibleBoundsSetter extends JPanel
     by_val_box.add(by_valRB);
     by_val_box.add(by_percentileRB);
     by_val_box.add(Box.createHorizontalGlue());
-
+    
     this.setBorder(new TitledBorder("Y-Axis Scale"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    this.add(by_val_box);
-    this.add(Box.createRigidArea(new Dimension(5,5)));
-    this.add(valP);
-    this.add(perP);
+    if (includePercentileControls) {
+      this.add(by_val_box);
+      this.add(Box.createRigidArea(new Dimension(5,5)));
+      this.add(valP);
+      this.add(perP);
+    } else {
+      this.add(valP);
+    }
     valP.setVisible(true);
     perP.setVisible(false);
     
-    syncCB = new JCheckBox("Sync Min/Max"); // not actually used
-
     turnOnListening();
   }
 
@@ -563,11 +567,6 @@ public class GraphVisibleBoundsSetter extends JPanel
 	max_perT.setText(per_format.format(prev_max_per));
       }
     }
-
-    else if (src == syncCB) {
-      System.out.println("percent sync not yet re-implemented");
-    }
-
   }
 
   public void setVisibleMinValue(float val) {
@@ -787,7 +786,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   
   public float getValueForPercent(GraphGlyph gl, float percent) {
     float[] percent2score = getPercents2Scores(gl);
-    int index = (int)Math.round(percent * sliders_per_percent);
+    int index = Math.round(percent * sliders_per_percent);
 
     // I have actually seen a case where index was calculated as -1,
     // and an exception was thrown. That is why I added this check. (Ed)
@@ -828,7 +827,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.removeFocusListener(this);
     min_valT.removeFocusListener(this);
     max_valT.removeFocusListener(this);
-    syncCB.removeActionListener(this);
   }
 
   public void turnOnListening() {
@@ -844,8 +842,6 @@ public class GraphVisibleBoundsSetter extends JPanel
     max_perT.addFocusListener(this);
     min_valT.addFocusListener(this);
     max_valT.addFocusListener(this);
-    
-    syncCB.addActionListener(this);
   }
 
   public void deleteGraph(GraphGlyph gl) {

@@ -81,6 +81,10 @@ public class PropertySheet extends JPanel {
     this.sortable = b;
   }
   
+  public boolean isSortable() {
+    return this.sortable;
+  }
+  
   /** Converts a row index of the view into a row index of the model.
    *  If {@link setSortable(boolean)} was false, then the two indices are
    *  equivalent.

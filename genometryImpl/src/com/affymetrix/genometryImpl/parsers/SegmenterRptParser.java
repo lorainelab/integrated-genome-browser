@@ -74,24 +74,15 @@ public class SegmenterRptParser {
     this(true, true);
   }
 
+  List<String> integerColumnNames = Arrays.asList(
+    "Copy Number", 
+    "Size(kb)", 
+    "#Markers", "Avg_DistBetweenMarkers(kb)", 
+    "Start_Linear_Pos", "End_Linear_Position"
+  );
+  
+  
   public SegmenterRptParser(boolean props, boolean addToIndex) {
-
-//File	Chr	Start_Linear_Pos	End_Linear_Position	ChangeType	
-//State	Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	
-//#ProbeSet	Avg_DistBetweenProbeSets(kb)	%ProbeSets_withCNV	
-//Start_ProbeSet	End_ProbeSet	CNV_Annotation
-//    this.file_col = 0;
-//    this.chromosome_col = 1;
-//    this.start_col = 2;
-//    this.end_col = 3;
-//    this.cn_change_col = 4;
-
-//Sample	Copy Number State	Loss/Gain	Chr	
-//Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	#Markers	
-//Avg_DistBetweenMarkers(kb)	%CNV_Overlap	
-//Start_Linear_Pos	End_Linear_Position	Start_Marker	End_Marker	
-//CNV_Annotation
-
       
 //Sample	Copy Number State	Loss/Gain	Chr
 //Cytoband_Start_Pos	Cytoband_End_Pos	Size(kb)	#Markers	
@@ -212,12 +203,21 @@ public class SegmenterRptParser {
 //        style.getTransientPropertyMap().put(TrackLineParser.ITEM_RGB, "on");
 //        style.setColor(Color.CYAN);
 //System.out.println("Set colro for style: " + style.getUniqueName());
-
+        
         if (make_props) {
           for (int i=0; i<cols.length && i<col_names.size(); i++) {
             String name = col_names.get(i);
-            String val = cols[i];
-            sym.setProperty(name, val);
+            String stringVal = cols[i];
+            if (integerColumnNames.contains(name)) {
+                try {
+                  Long intVal = Long.parseLong(stringVal);
+                  sym.setProperty(name, intVal);
+                } catch (Exception e) {
+                  sym.setProperty(name, stringVal);
+                }
+            } else {
+              sym.setProperty(name, stringVal);
+            }
           }
         }
 

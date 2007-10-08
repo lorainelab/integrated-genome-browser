@@ -28,10 +28,12 @@ public class LinkControl implements ContextualPopupListener {
   public LinkControl() { }
 
   public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
-    if (primary_sym == null) System.out.println("if primary_sym is null!");
+    if (primary_sym == null) {
+      System.out.println("if primary_sym is null!");
+    }
     if (selected_syms.size() == 1 && primary_sym != null) {
       
-      Map menu_items = new LinkedHashMap(); // map of menu url->name, or url -> url if there is no name
+      Map<String,String> menu_items = new LinkedHashMap<String,String>(); // map of menu url->name, or url -> url if there is no name
       
       // DAS files can contain links for each individual feature.
       // These are stored in the "link" property
@@ -75,15 +77,15 @@ public class LinkControl implements ContextualPopupListener {
       // Most links come from matching the tier name (i.e. method)
       // to a regular expression.
       String method = SeqMapView.determineMethod(primary_sym);
-      WebLink[] web_links = WebLink.getWebLinks(method);
+      List<WebLink> webLinks = WebLink.getWebLinks(method);
       // by using a Map to hold the urls, any duplicated urls will be filtered-out.
 
-      for (int i=0; i<web_links.length; i++) {
+      for (WebLink webLink : webLinks) {
         // Generally, just let any link replace an existing link that has the same URL.
         // But, if the new one has no name, and the old one does, then keep the old one.
-        String new_name = web_links[i].getName();
-        String url = web_links[i].getURLForSym(primary_sym);
-        String old_name = (String) menu_items.get(url);
+        String new_name = webLink.getName();
+        String url = webLink.getURLForSym(primary_sym);
+        String old_name = menu_items.get(url);
         if (old_name == null || "".equals(old_name)) {
           menu_items.put(url, new_name);
         }

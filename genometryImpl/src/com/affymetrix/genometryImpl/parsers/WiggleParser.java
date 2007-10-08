@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.awt.Color;
 
 /**
@@ -255,6 +256,12 @@ public class WiggleParser {
 
 
     String seqid = graf.getGraphSeq().getID();
+    // Add the prefix "chr" so that UCSC can read the file.
+    // (The WIG format is designed by and for the UCSC browser.)
+    if (SynonymLookup.getDefaultLookup().isSynonym("chr"+seqid, seqid))  {
+      seqid = "chr" + seqid;
+    }
+    
     bw.write("track type=wiggle_0 name=\"" + name + "\" description=\"" + description + "\"");
     bw.write('\n');
     bw.write("variableStep\tchrom=" + seqid);

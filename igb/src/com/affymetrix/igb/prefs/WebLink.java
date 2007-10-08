@@ -47,7 +47,7 @@ public class WebLink {
   }
 
   boolean equals(String s1, String s2) {
-    return ( s1 == s2 || (s1 != null && s1.equals(s2)));
+    return (s1 != null && s1.equals(s2));
   }
   
   public boolean equals(Object o) {
@@ -109,8 +109,12 @@ public class WebLink {
    *  array will have the same regular expression or point to the same URL.
    *  You may want to filter-out such duplicate results.
    */
-  public static WebLink[] getWebLinks(String method) {
-    ArrayList results = new ArrayList();
+  public static List<WebLink> getWebLinks(String method) {
+    if (method == null) { // rarely happens, but can
+      return Collections.<WebLink>emptyList();
+    }
+
+    ArrayList<WebLink> results = new ArrayList<WebLink>();
     
     // If the method name has already been used, then the annotStyle must have already been created
     AnnotStyle style = AnnotStyle.getInstance(method, false);
@@ -131,7 +135,7 @@ public class WebLink {
       }
     }
 
-    return (WebLink[]) results.toArray(new WebLink[results.size()]);
+    return results;
   }
   
   /** Returns a ListModel backed by the list of WebLink items. */
@@ -237,8 +241,8 @@ public class WebLink {
   }
 
   public String getURLForSym(SeqSymmetry sym) {
-    String url = getURLForSym_(sym);
-    return replaceGenomeId(url);
+    String url2 = getURLForSym_(sym);
+    return replaceGenomeId(url2);
   }
 
   String getURLForSym_(SeqSymmetry sym) {
@@ -254,7 +258,7 @@ public class WebLink {
       field_value = ((SymWithProps) sym).getProperty(id_field_name);
     }
     if (field_value == null) {
-      Application.getSingleton().logWarning("Selected item has no value for property '"+id_field_name+
+      Application.logWarning("Selected item has no value for property '"+id_field_name+
           "' which is needed to construct the web link.");
       return replacePlaceholderWithId(getUrl(), "");
     }
@@ -293,7 +297,7 @@ public class WebLink {
     Map map = parser.parse(st, "foo", new HashMap());
   }
   
-  static String separator = (String) System.getProperty("line.separator");
+  static String separator = System.getProperty("line.separator");
 
   public static void exportWebLinks(File f, boolean include_warning) throws IOException {
     FileWriter fw = null;
@@ -372,14 +376,15 @@ public class WebLink {
   public static void autoLoad() {
     File f = getLinksFile();
     String filename = f.getAbsolutePath();
-    if (f.exists()) try {
-      Application.getSingleton().logInfo("Loading web links from file \""+filename+"\"");
+    if (f.exists()) {
+      try {
+        Application.logInfo("Loading web links from file \"" + filename + "\"");
 
-      WebLink.importWebLinks(f);
-    } catch (Exception ioe) {
-      
-      Application.getSingleton().logError("Could not load web links from file \""
-        +filename + "\"");
+        WebLink.importWebLinks(f);
+      } catch (Exception ioe) {
+
+        Application.logError("Could not load web links from file \"" + filename + "\"");
+      }
     }
   }
 
@@ -393,7 +398,7 @@ public class WebLink {
     File f = getLinksFile();
     String filename = f.getAbsolutePath();
     try {
-      Application.getSingleton().logInfo("Saving web links to file \""+filename+"\"");
+      Application.logInfo("Saving web links to file \""+filename+"\"");
       File parent_dir = f.getParentFile();
       if (parent_dir != null) {
         parent_dir.mkdirs();
@@ -401,7 +406,7 @@ public class WebLink {
       WebLink.exportWebLinks(f, true);
       saved = true;
     } catch (IOException ioe) {
-      Application.getSingleton().logError("Error while saving web links to \"" +filename + "\"");
+      Application.logError("Error while saving web links to \"" +filename + "\"");
     }
     return saved;
   }

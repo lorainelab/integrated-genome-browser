@@ -18,6 +18,7 @@ import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -35,6 +36,12 @@ public class SegmenterRptParser {
   //public static final String LOH = "LOH";
   public static final String CN_REGION_FILE_EXT = "cn_segments";
   public static final String LOH_REGION_FILE_EXT = "loh_segments";
+  
+  /** The name of a property key used to store a Map<String,String> containing
+   *  the file's header.  Outside classes rarely need to use this; call
+   *  {@link #getHeaderValue(String)} instead.
+   */
+  public static final String HEADER_PROP_KEY_NAME = "SegmenterFileHeader";
 
   int chromosome_col;
   int start_col;
@@ -58,7 +65,7 @@ public class SegmenterRptParser {
 
   boolean use_length = false;
   boolean use_strand = false;
-  boolean has_header = false;
+  boolean has_column_names_header_line;
 
   static final Pattern line_splitter = Pattern.compile("\t");
 
@@ -98,7 +105,7 @@ public class SegmenterRptParser {
     this.length_col = -1;
     this.strand_col = -1;
 
-    this.has_header = true;
+    this.has_column_names_header_line = true;
 
     this.use_length = (this.length_col >= 0);
     this.use_strand = (this.strand_col >= 0);
@@ -107,6 +114,39 @@ public class SegmenterRptParser {
     this.make_props = props;
   }
 
+// Sample header
+//#MinimumMarkersInSegment=5
+//#MinimumGenomicSegmentSize=100
+//#MaximumOverlapOfCNVWithSNP=100
+//#State=CN
+//#Arrayset=GenomeWideSNP_6
+//#genome=hg18
+//#gender=Female
+//#gender_threshold_test=In Bounds
+//#madPairDiff=0.15253
+
+//Possible values as below
+
+  //#gender=Female, Male, Unknown
+  public static final String GENDER_KEY = "gender";
+  //#gender_threshold_test=In Bounds, Out of Bounds
+  public static final String BOUNDS_KEY = "gender_threshold_test";
+  public static final String OUT_OF_BOUNDS_VALUE = "Out of Bounds";
+  
+ 
+
+  Pattern headerPattern = Pattern.compile("^#(.*)=(.*)$");
+  HashMap<String,String> headerMap = new HashMap<String,String>();
+  
+  void parseHeaderLine(String line) {
+    Matcher m = headerPattern.matcher(line);
+    if (m.matches()) {
+      String key = m.group(1);
+      String val = m.group(2);
+      headerMap.put(key, val);
+    }
+  }
+  
   public void parse(InputStream istr, String default_type, AnnotatedSeqGroup seq_group) {
 
     ArrayList<String> col_names = null;
@@ -119,6 +159,7 @@ public class SegmenterRptParser {
       // skip any comment lines
       String line = br.readLine();
       while (line != null && line.startsWith("#") || line.startsWith("[")) {
+        parseHeaderLine(line);
         line = br.readLine();
       }
 
@@ -127,7 +168,7 @@ public class SegmenterRptParser {
       }
 
       // read header
-      if (has_header) {
+      if (has_column_names_header_line) {
         String[] cols = line_splitter.split(line);
         col_names = new ArrayList<String>(cols.length);
         for (int i=0; i<cols.length; i++) {
@@ -202,7 +243,7 @@ public class SegmenterRptParser {
 //        IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(THE_METHOD);
 //        style.getTransientPropertyMap().put(TrackLineParser.ITEM_RGB, "on");
 //        style.setColor(Color.CYAN);
-//System.out.println("Set colro for style: " + style.getUniqueName());
+//System.out.println("Set color for style: " + style.getUniqueName());
         
         if (make_props) {
           for (int i=0; i<cols.length && i<col_names.size(); i++) {
@@ -220,6 +261,8 @@ public class SegmenterRptParser {
             }
           }
         }
+        
+        sym.setProperty(HEADER_PROP_KEY_NAME, headerMap);
 
         seq.addAnnotation(sym);
         seq_group.addToIndex(id, sym);
@@ -230,6 +273,16 @@ public class SegmenterRptParser {
       ex.printStackTrace();
     }
     return;
+  }
+  
+  public String getHeaderValue(String key, SymWithProps sym) {
+    @SuppressWarnings("unchecked")
+    Map<String,String> map = (Map<String,String>) sym.getProperty(HEADER_PROP_KEY_NAME);
+    if (map != null) {
+      return map.get(key);
+    } else {
+      return null;
+    }
   }
   
   public static void main(String[] args) {
@@ -255,7 +308,7 @@ public class SegmenterRptParser {
 
 
 
-    String filname = System.getProperty("user.dir") + "/data/copy_number/786-O.cn_segments";
+    String filname = System.getProperty("user.dir") + "/data/copy_number/NA06985_GW6_C.cn_segments";
     File file = new File(filname);
     // type, start, end, length, strand, group, boolean props, boolean has_header
     SegmenterRptParser tester = new SegmenterRptParser();
@@ -278,5 +331,5 @@ public class SegmenterRptParser {
     }
   }
 
-
-}
+  
+  }

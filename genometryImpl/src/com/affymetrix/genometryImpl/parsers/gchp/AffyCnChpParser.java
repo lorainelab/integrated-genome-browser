@@ -146,7 +146,8 @@ public class AffyCnChpParser {
    *  Returns a List containing one IntList and one FloatList. 
    *  If there were no invalid values of y, the output IntList and FloatList
    *  will be the same objects as the input, otherwise they will both be
-   *  new objects.
+   *  new objects.  If the given FloatList contains ONLY invalid values,
+   *  then the returned IntList and FloatList will both be empty.
    */
   List<Object> trimNaN(IntList x, FloatList y) {
     if (x.size() != y.size()) {
@@ -159,8 +160,9 @@ public class AffyCnChpParser {
         
     for (int i=0; i<x.size(); i++) {
       float f = y.get(i);
-      if (! Float.isNaN(f) && ! Float.isInfinite(f)) {
+      if (Float.isNaN(f) || Float.isInfinite(f)) {
         had_bad_values = true;
+      } else {
         x_out.add(x.get(i));
         y_out.add(f);
       }

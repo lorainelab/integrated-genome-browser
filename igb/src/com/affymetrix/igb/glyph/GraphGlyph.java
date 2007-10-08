@@ -222,7 +222,7 @@ public class GraphGlyph extends Glyph {
       view.transformToPixels(coord, zero_point);
       //      if (zero_point.y < pixelbox.y)  { zero_point.y = pixelbox.y; }
       //      else if (zero_point.y > pbox_yheight) { zero_point.y = pbox_yheight; }
-      if (getGraphState().getShowZeroLine() && 
+      if (getGraphState().getShowZeroLine() &&
 	  graph_style != HEAT_MAP && 
 	  yzero == 0)  {// zero_point within min/max, so draw
 	g.setColor(Color.gray);
@@ -275,7 +275,7 @@ public class GraphGlyph extends Glyph {
       if (g instanceof Graphics2D) {
         Graphics2D g2 = (Graphics2D) g;
         original_render_hints = g2.getRenderingHints();
-        Map my_render_hints = new HashMap();
+        Map<Object,Object> my_render_hints = new HashMap<Object,Object>();
         my_render_hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         g2.addRenderingHints(my_render_hints);
       }
@@ -286,6 +286,11 @@ public class GraphGlyph extends Glyph {
         // also offsetting to place within glyph bounds
         coord.x = xcoords[i];
         ytemp = graf.getGraphYCoord(i);
+        
+        if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
+          continue; //The data shouldn't contain any bad values, but it might.
+        }
+        
         // flattening any points > getVisibleMaxY() or < getVisibleMinY()...
 	if (ytemp > getVisibleMaxY()) { ytemp = getVisibleMaxY(); } 
 	else if (ytemp < getVisibleMinY()) { ytemp = getVisibleMinY(); }

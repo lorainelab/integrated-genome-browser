@@ -33,5 +33,11 @@ public class AffySingleChromData {
     this.count = count;
     this.columns = columns;
   }
-  
+
+  @Override
+  public String toString() {
+    return this.getClass().getName() + " [displayName=" + displayName 
+      + ", start=" + start + ", count="
+      + count + ", columns=" + columns.size()+"]";
+  }
 }

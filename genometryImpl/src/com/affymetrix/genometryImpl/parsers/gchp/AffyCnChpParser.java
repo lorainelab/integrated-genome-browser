@@ -37,8 +37,7 @@ public class AffyCnChpParser {
   
   /** Returns a List of GraphSym objects. */
   public List parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
-      boolean annotate_seq, boolean ensure_unique_id)
-      throws IOException {
+      boolean ensure_unique_id) throws IOException {
     SingletonGenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
     
     ArrayList results = new ArrayList();
@@ -192,7 +191,7 @@ public class AffyCnChpParser {
       fis = new FileInputStream(fil);
       System.out.println("START Parse");
       
-      List results = parse(fis, test_file, seq_group, true, true);
+      List results = parse(fis, test_file, seq_group, true);
       System.out.println("END Parse");
       System.out.println("");
       

@@ -382,7 +382,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
         AffyCnChpParser parser = new AffyCnChpParser();
-        parser.parse(str, stream_name,selected_group,true,true);
+        parser.parse(str, stream_name,selected_group,true);
         aseq = input_seq;
         parser = null;
       }

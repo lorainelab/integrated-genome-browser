@@ -52,10 +52,9 @@ public class AffyCnChpParser {
       List<AffySingleChromData> chromDataList = new ArrayList<AffySingleChromData>(dataSet.byte2chromData.values());
       
       for (AffySingleChromData data : chromDataList) {
-        //System.out.println("Chromosome " + data.displayName);
-        //System.out.println("Start: " + data.start);
-        //System.out.println("Offset: " + data.count);
-        MutableAnnotatedBioSeq seq = getSeq(seq_group, data.displayName);
+        // Make sure that all the seq's mentioned in the header are
+        // present in the SeqGroup.  Adds them if necessary.
+        getSeq(seq_group, data.displayName);
       }
             
       //TODO: ids

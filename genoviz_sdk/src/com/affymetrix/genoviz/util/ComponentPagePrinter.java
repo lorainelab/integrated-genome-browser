@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,14 +13,12 @@
 
 package com.affymetrix.genoviz.util;
 
-// should probably be in com.affymetrix.??? but I'm putting it here for
-//     now because it requires Swing and GenoViz
-// GAH 1-2002
-
 import java.util.*;
 import java.awt.*;
 import java.awt.print.*;
 import javax.swing.*;
+
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 
@@ -34,7 +32,7 @@ import com.affymetrix.genoviz.awt.NeoBufferedComponent;
  * Turns off double-buffering in GenoViz components.
  */
 public class ComponentPagePrinter implements Printable {
-  boolean DEBUG = false;
+  static boolean DEBUG = false;
   boolean DISABLE_SWING_BUFFERING = true;
   boolean DISABLE_NEO_BUFFERING = true;
 
@@ -84,7 +82,7 @@ public class ComponentPagePrinter implements Printable {
       return Printable.NO_SUCH_PAGE;
     }
 
-    int orientation = format.getOrientation();
+    //int orientation = format.getOrientation();
 
     // get the bounds of the component
     Dimension dim = comp.getSize();
@@ -108,8 +106,8 @@ public class ComponentPagePrinter implements Printable {
     g2.translate(pXStart, pYStart);
     g2.scale(xRatio, yRatio);
 
-    Vector<NeoBufferedComponent> neo_comps = new Vector<NeoBufferedComponent>();
-    Vector<Boolean> buf_states = new Vector<Boolean>();
+    List<NeoBufferedComponent> neo_comps = new ArrayList<NeoBufferedComponent>();
+    List<Boolean> buf_states = new ArrayList<Boolean>();
     if (DISABLE_NEO_BUFFERING) {
       // turning double buffering off in NeoBufferedComponents
       turnNeoBufferingOff(comp, neo_comps, buf_states);
@@ -139,7 +137,7 @@ public class ComponentPagePrinter implements Printable {
   // recursively descend into children, searching for NeoBufferedComponents,
   //    recording their double-buffering status (in neo_comps and buf_states vectors),
   //    then turning double buffering off
-  public void turnNeoBufferingOff(Component com, Vector<NeoBufferedComponent> neo_comps, Vector<Boolean> buf_states) {
+  public static void turnNeoBufferingOff(Component com, List<NeoBufferedComponent> neo_comps, List<Boolean> buf_states) {
     if (com instanceof NeoBufferedComponent) {
       NeoBufferedComponent nbc = (NeoBufferedComponent)com;
       boolean buffered = nbc.isDoubleBuffered();
@@ -165,10 +163,10 @@ public class ComponentPagePrinter implements Printable {
 
   // restore buffer state of NeoBufferedComponents,
   //   based on neo_comps and buf_states Vectors
-  public void restoreNeoBuffering(Vector<NeoBufferedComponent> neo_comps, Vector<Boolean> buf_states) {
+  public static void restoreNeoBuffering(List<NeoBufferedComponent> neo_comps, List<Boolean> buf_states) {
     for (int i=0; i<neo_comps.size(); i++) {
-      NeoBufferedComponent nbc = neo_comps.elementAt(i);
-      boolean buffered = buf_states.elementAt(i);
+      NeoBufferedComponent nbc = neo_comps.get(i);
+      boolean buffered = buf_states.get(i).booleanValue();
       if (DEBUG)  {
         System.out.println("restoring buffering in " + nbc +
             ", buffer state: " + buffered);

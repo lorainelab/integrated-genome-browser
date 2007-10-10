@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import com.affymetrix.igb.Application;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.Charset;
@@ -61,6 +62,14 @@ public class AffyGenericChpFile {
   public static AffyGenericChpFile parse(File file, InputStream istr, boolean headerOnly) throws IOException  {
 
     AffyGenericChpFile chpFile = new AffyGenericChpFile(file);
+    
+    if (file != null) {
+      if (headerOnly) {
+        Application.logDebug("Parsing header of file: " + file.getName());
+      } else {
+        Application.logDebug("Parsing file: " + file.getName());
+      }
+    }
     
     DataInputStream dis = new DataInputStream(istr);
     

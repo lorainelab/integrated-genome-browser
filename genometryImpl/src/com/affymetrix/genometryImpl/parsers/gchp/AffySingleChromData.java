@@ -24,26 +24,34 @@ import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.ShortList;
+import com.affymetrix.igb.Application;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
 
 public class AffySingleChromData {
   
   int start;
-  int count;
-  String displayName;
-  List<CharSequence> probeSetNames = new ArrayList<CharSequence>();
+  int rowCount;
+  int chromNum; // in the chp file, a chromosome is indicated by an arbitrary number, actually a byte, not an int
+  String displayName; // AND by a display name.
+  ArrayList<CharSequence> probeSetNames = new ArrayList<CharSequence>();
   IntList positions = new IntList();
   
   List<AffyChpColumnData> columns = new ArrayList<AffyChpColumnData>();
   AffyGenericChpFile chpFile;
+  AffyDataSet dataSet;
   
   /** Creates a new instance of SingleChromosomeData */
-  public AffySingleChromData(AffyGenericChpFile chpFile, String chromDisplayName, int start, int count, List<AffyChpColumnData> columns) {
+  public AffySingleChromData(AffyGenericChpFile chpFile, AffyDataSet dataSet, 
+    int chromNum, String chromDisplayName, int start, int count, 
+    List<AffyChpColumnData> columns) {
     this.chpFile = chpFile;
+    this.dataSet = dataSet;
+    this.chromNum = chromNum;
     this.displayName = chromDisplayName;
     this.start = start;
-    this.count = count;
+    this.rowCount = count;
     this.columns = columns;
   }
 
@@ -51,9 +59,33 @@ public class AffySingleChromData {
   public String toString() {
     return this.getClass().getName() + " [displayName=" + displayName 
       + ", start=" + start + ", count="
-      + count + ", columns=" + columns.size()+"]";
+      + rowCount + ", columns=" + columns.size()+"]";
   }
   
+  void parse(DataInputStream dis) throws IOException {
+    Application.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
+    for (int row=0; row < rowCount; row++) {
+      CharSequence probeSetName = AffyGenericChpFile.parseString(dis);
+      byte readChromNum = dis.readByte(); //treat as unsigned, but doesn't matter here
+        // chromNum is redundant information.  We already know the chromosomeDisplayName
+      if (readChromNum != chromNum) {
+        throw new IOException("Chromosome number doesn't match expected value");
+      }
+      
+      
+      int position = dis.readInt(); //to be interpreted as unsigned, but store for now as int
+      
+      positions.add(position);
+      probeSetNames.add(probeSetName);
+
+      for (AffyChpColumnData col : columns) {
+        col.addData(dis);
+      }
+    }
+    positions.trimToSize();
+    probeSetNames.trimToSize();
+  }
+
   /** Creates a GraphSym and adds it as an annotation to the BioSeq. */
   void makeGraphs(MutableAnnotatedBioSeq seq) throws IOException {
     positions.trimToSize();
@@ -118,7 +150,7 @@ public class AffySingleChromData {
    */
   List<Object> trimNaN(IntList x, FloatList y) {
     if (x.size() != y.size()) {
-      throw new IllegalArgumentException("Lists must be the same size");
+      throw new IllegalArgumentException("Lists must be the same size " + x.size() + " != " + y.size());
     }
 
     boolean had_bad_values = false;

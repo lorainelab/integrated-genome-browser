@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.util.*;
+import com.affymetrix.igb.Application;
 import java.io.*;
 import java.util.*;
 
@@ -28,7 +29,7 @@ public class AffyDataSet {
   private List<AffyChpColumnType> columns;
   private long num_rows;
   
-  private Map<Byte, AffySingleChromData> byte2chromData = new LinkedHashMap<Byte,AffySingleChromData>();
+  private Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<Integer,AffySingleChromData>();
   private List<String> chromosomeNames = new ArrayList<String>();
   
   
@@ -39,62 +40,69 @@ public class AffyDataSet {
   protected AffyDataSet(AffyGenericChpFile chpFile) {
     this.chpFile = chpFile;
   }
+  
+  static boolean LOAD_NOW = false;
+  
+  public void parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
     
-  public static AffyDataSet parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
-    AffyDataSet a = new AffyDataSet(chpFile);
-    
-    a.pos_first_data_element = dis.readInt();
-    a.pos_next_data_element = dis.readInt();
-    a.name = AffyGenericChpFile.parseWString(dis);
-    a.param_count = dis.readInt();
+    pos_first_data_element = dis.readInt();
+    pos_next_data_element = dis.readInt();
+    name = AffyGenericChpFile.parseWString(dis);
+    param_count = dis.readInt();
 
-    a.params = new LinkedHashMap<String,AffyChpParameter>(a.param_count);
-    for (int i=0; i<a.param_count; i++) {
+    Application.logDebug("Parsing data set: name=" + name);
+    
+    params = new LinkedHashMap<String,AffyChpParameter>(param_count);
+    for (int i=0; i<param_count; i++) {
       AffyChpParameter param = AffyChpParameter.parse(dis);
-      a.params.put(param.name, param);
+      params.put(param.name, param);
     }
     
-    a.num_columns = dis.readInt();
-    a.columns = new ArrayList<AffyChpColumnType>(a.num_columns);
-    for (int i=0; i<a.num_columns; i++) {
+    num_columns = dis.readInt();
+    columns = new ArrayList<AffyChpColumnType>(num_columns);
+    for (int i=0; i<num_columns; i++) {
       AffyChpColumnType col = new AffyChpColumnType(
         AffyGenericChpFile.parseWString(dis), dis.readByte(), dis.readInt());
-      a.columns.add(col);
+      columns.add(col);
     }
         
-    a.num_rows = dis.readInt();
-    for (int row=0; row < a.num_rows; row++) {
-      CharSequence probeSetName = AffyGenericChpFile.parseString(dis);
-      byte chromNum = dis.readByte(); //treat as unsigned, but doesn't matter here
-      int position = dis.readInt(); //to be interpreted as unsigned, but store for now as int
-      AffySingleChromData chromData = a.byte2chromData.get(chromNum);
-      if (chromData == null) {
-//System.out.println("position = " + position + " chpFile = " + chpFile.getFile().getName());
-        Integer start = (Integer) a.params.get(chromNum + ":start").getValue();
-        Integer count = (Integer) a.params.get(chromNum + ":count").getValue();
-        String name = (String) a.params.get(chromNum + ":display").getValue();
-        a.chromosomeNames.add(name);
-        
+    num_rows = dis.readInt();
+
+    // look for header lines like "0:start", "1:start", etc., 
+    // until there are no more of them.  Sadly, we cannot expect that
+    // all numbers in a given range will be present.  The files typically
+    // skip number 23.
+    for (int chromNum = 0; chromNum < 100; chromNum++) {
+      if (params.containsKey(chromNum + ":start")) {
+        Integer start = (Integer) params.get(chromNum + ":start").getValue();
+        Integer count = (Integer) params.get(chromNum + ":count").getValue();
+        String chromName = (String) params.get(chromNum + ":display").getValue();
+        chromosomeNames.add(chromName);
+
         List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>();
-        for (AffyChpColumnType setColumn : a.columns.subList(3, a.columns.size())) {
-          chromDataColumns.add(new AffyChpColumnData(chromData, setColumn.name, setColumn.type, setColumn.size));
+        for (AffyChpColumnType setColumn : columns.subList(3, columns.size())) {
+          chromDataColumns.add(new AffyChpColumnData(null, setColumn.name, setColumn.type, setColumn.size));
         }
+        AffySingleChromData chromData = new AffySingleChromData(chpFile, this, 
+          chromNum, chromName, start, count, chromDataColumns);
+        Application.logDebug("Made chrom: " + chromData.toString());
         
-        chromData = new AffySingleChromData(chpFile, name, start, count, chromDataColumns);
-//System.out.println("Making new chromData: " + chromData.toString());
-        a.byte2chromData.put(chromNum, chromData);
-        //System.out.println("Made new SingleChromosomeData for chrom: " + chromNum);
-      }
-      
-      chromData.positions.add(position);
-      chromData.probeSetNames.add(probeSetName);
-      
-      for (AffyChpColumnData col : chromData.columns) {
-        col.addData(dis);
+        num2chromData.put(chromNum, chromData);
       }
     }
     
-    return a;
+    Application.logDebug("Chromosome Numbers: " + num2chromData.keySet());
+
+    // I am making the assumption that chromosome number n is always stored
+    // before chromosome number n+1.  I don't think the documentation makes that
+    // specific claim, though.
+    
+    for (int chromNum = 0; chromNum < 100; chromNum++) {
+      if (num2chromData.containsKey(chromNum)) {
+        AffySingleChromData chromData = num2chromData.get(chromNum);
+        chromData.parse(dis);
+      }
+    }
   }
 
   @Override
@@ -133,6 +141,6 @@ public class AffyDataSet {
   }
 
   List<AffySingleChromData> getSingleChromData() {
-    return new ArrayList<AffySingleChromData>(byte2chromData.values());
+    return new ArrayList<AffySingleChromData>(num2chromData.values());
   }
 }

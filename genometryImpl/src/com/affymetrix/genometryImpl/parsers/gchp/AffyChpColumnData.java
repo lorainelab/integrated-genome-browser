@@ -93,9 +93,37 @@ public class AffyChpColumnData {
     }
   }
   
-  /** 
+  /** Skip over, but do not store, data from the given stream. */
+  public void skipData(DataInputStream dis) throws IOException {
+    switch (this.type) {
+      case INT8:
+        dis.readByte(); break;
+      case UINT8:
+        dis.readUnsignedByte(); break;
+      case INT16:
+        dis.readShort(); break;
+      case UINT16:
+        dis.readUnsignedShort(); break;
+      case INT32:
+        dis.readInt(); break;
+      case UINT32:
+        dis.readInt(); break;
+      case FLOAT:
+        dis.readFloat(); break;
+      case DOUBLE:
+        dis.readDouble(); break;
+      case TEXT_ASCII:
+        AffyGenericChpFile.parseString(dis); break;
+      case TEXT_UTF16BE:
+        AffyGenericChpFile.parseWString(dis); break;
+      default:
+        throw new RuntimeException("Can't parse that type: " + type);
+    }
+  }
+
+  /**
    *  Returns the data as an instance of FloatList, IntList, ShortList, 
-   *  ByteList, DoubleList or ArrayList<CharSequence>.
+   *  ByteList, DoubleList, ArrayList<CharSequence>, or null.
    */
   public Object getData() {
     return theData;

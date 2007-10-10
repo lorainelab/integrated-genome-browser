@@ -16,16 +16,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymByte;
-import com.affymetrix.genometryImpl.GraphSymFloat;
-import com.affymetrix.genometryImpl.GraphSymInt;
-import com.affymetrix.genometryImpl.GraphSymShort;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.util.ByteList;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.util.ShortList;
 import java.io.*;
 import java.util.*;
 

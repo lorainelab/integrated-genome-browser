@@ -14,6 +14,7 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.igb.Application;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -51,11 +52,13 @@ public class AffyDataGroup {
   public static AffyDataGroup parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
     AffyDataGroup group = new AffyDataGroup(chpFile);
     
-    group.file_pos = dis.readInt(); // TODO: UINT32
-    group.file_first_dataset_pos = dis.readInt(); // TODO: UINT32
+    group.file_pos = dis.readInt(); //TODO: should be UINT32, but unlikely to matter
+    group.file_first_dataset_pos = dis.readInt(); // UINT32
     group.num_datasets = dis.readInt(); // INT32
     group.name = AffyGenericChpFile.parseWString(dis);
     
+    Application.logDebug("Parsing group: pos=" + group.file_pos + ", name=" + group.name + ", datasets=" + group.num_datasets);
+
     if (group.num_datasets > 1) {
       //TODO: figure out why there is a bug in parsing multiple datasets.
       // There seems to be some difference between the format specification and
@@ -64,7 +67,8 @@ public class AffyDataGroup {
     }
 
     for (int i=0; i<group.num_datasets; i++) {
-      AffyDataSet data = AffyDataSet.parse(chpFile, dis);
+      AffyDataSet data = new AffyDataSet(chpFile);
+      data.parse(chpFile, dis);
       group.dataSets.add(data);
     }
         

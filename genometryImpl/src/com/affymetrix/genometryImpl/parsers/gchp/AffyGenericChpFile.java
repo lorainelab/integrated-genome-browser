@@ -28,9 +28,11 @@ public class AffyGenericChpFile {
   Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
   AffyGenericDataHeader header;
   List<AffyDataGroup> groups;
+  File file;
 
   /** Creates a new instance of AffyCnChpParser */
-  protected AffyGenericChpFile() {
+  protected AffyGenericChpFile(File file) {
+    this.file = file;
   }
   
   /** Parses a string in UTF-16BE format, with the length specified first as an int. */
@@ -50,12 +52,15 @@ public class AffyGenericChpFile {
   }
     
   /** Parses the file.  Does not close the stream. 
+   *  @param file  The file that the input stream corresponds to, or null if it
+   *   does not come from a file.  If the file is not null, it may be possible
+   *   to defer loading some of the data until it is needed.
    *  @param headerOnly if true, will read the complete header, but will not
    *  read any data groups.
    */
-  public static AffyGenericChpFile parse(InputStream istr, boolean headerOnly) throws IOException  {
+  public static AffyGenericChpFile parse(File file, InputStream istr, boolean headerOnly) throws IOException  {
 
-    AffyGenericChpFile chpFile = new AffyGenericChpFile();
+    AffyGenericChpFile chpFile = new AffyGenericChpFile(file);
     
     DataInputStream dis = new DataInputStream(istr);
     
@@ -75,7 +80,7 @@ public class AffyGenericChpFile {
     chpFile.groups = new ArrayList<AffyDataGroup>(chpFile.num_groups);
     if (! headerOnly) {
       for (int i=0; i<chpFile.num_groups; i++) {
-        AffyDataGroup group = AffyDataGroup.parse(dis);
+        AffyDataGroup group = AffyDataGroup.parse(chpFile, dis);
         chpFile.groups.add(group);
       }
     }
@@ -103,6 +108,13 @@ public class AffyGenericChpFile {
       }
     }
   }
+  
+  /** The file that was provided in the constructor.
+   *  @return a file or null.
+   */
+  public File getFile() {
+    return file;
+  }
     
   /** Creates a String from the given bytes, using the given Charset and
    *  trimming off any trailing '\0' characters.
@@ -126,13 +138,15 @@ public class AffyGenericChpFile {
   
   public void testFullRead(String test_file) {
     FileInputStream fis = null;
+    BufferedInputStream bis = null;
     AffyGenericChpFile chpFile = null;
 
     try {
       File fil = new File(test_file);      
       fis = new FileInputStream(fil);
+      bis = new BufferedInputStream(fis);
       System.out.println("START Parse");
-      chpFile = parse(fis, false);
+      chpFile = parse(fil, bis, false);
       System.out.println("END Parse");
       System.out.println("");
       
@@ -143,6 +157,7 @@ public class AffyGenericChpFile {
     }
     finally {
       try {fis.close();} catch (Exception e) { e.printStackTrace(); }
+      try {bis.close();} catch (Exception e) { e.printStackTrace(); }
     }
   }
 
@@ -171,8 +186,9 @@ public class AffyGenericChpFile {
  
   /** Tests the parsing of the given filename. */
   public static void main(String[] args) {
-    AffyGenericChpFile parser = new AffyGenericChpFile();
-    String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\NA06985_GW6_C.cnchp";
+    String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\data\\copy_number\\NA06985_GW6_C.cnchp";
+    File file = new File(fileName);
+    AffyGenericChpFile parser = new AffyGenericChpFile(file);
     if (args.length > 0) {
       fileName = args[0];
     }

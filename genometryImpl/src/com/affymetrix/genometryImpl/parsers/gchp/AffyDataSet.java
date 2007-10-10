@@ -19,25 +19,29 @@ import java.util.*;
 
 public class AffyDataSet {
   
-  long pos_first_data_element;
-  long pos_next_data_element;
-  String name;
-  int param_count;
-  Map<String,AffyChpParameter> params;
-  int num_columns;
-  List<AffyChpColumnType> columns;
-  long num_rows;
+  private long pos_first_data_element;
+  private long pos_next_data_element;
+  private String name;
+  private int param_count;
+  private Map<String,AffyChpParameter> params;
+  private int num_columns;
+  private List<AffyChpColumnType> columns;
+  private long num_rows;
   
-  Map<Byte, AffySingleChromData> byte2chromData = new LinkedHashMap<Byte,AffySingleChromData>();
+  private Map<Byte, AffySingleChromData> byte2chromData = new LinkedHashMap<Byte,AffySingleChromData>();
+  private List<String> chromosomeNames = new ArrayList<String>();
   
+  
+  private AffyGenericChpFile chpFile;
   
   
   /** Creates a new instance of AffyDataSet */
-  protected AffyDataSet() {
+  protected AffyDataSet(AffyGenericChpFile chpFile) {
+    this.chpFile = chpFile;
   }
     
-  public static AffyDataSet parse(DataInputStream dis) throws IOException {
-    AffyDataSet a = new AffyDataSet();
+  public static AffyDataSet parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
+    AffyDataSet a = new AffyDataSet(chpFile);
     
     a.pos_first_data_element = dis.readInt();
     a.pos_next_data_element = dis.readInt();
@@ -63,26 +67,28 @@ public class AffyDataSet {
       CharSequence probeSetName = AffyGenericChpFile.parseString(dis);
       byte chromNum = dis.readByte(); //treat as unsigned, but doesn't matter here
       int position = dis.readInt(); //to be interpreted as unsigned, but store for now as int
-      
       AffySingleChromData chromData = a.byte2chromData.get(chromNum);
       if (chromData == null) {
+//System.out.println("position = " + position + " chpFile = " + chpFile.getFile().getName());
         Integer start = (Integer) a.params.get(chromNum + ":start").getValue();
         Integer count = (Integer) a.params.get(chromNum + ":count").getValue();
         String name = (String) a.params.get(chromNum + ":display").getValue();
+        a.chromosomeNames.add(name);
         
         List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>();
         for (AffyChpColumnType setColumn : a.columns.subList(3, a.columns.size())) {
-          chromDataColumns.add(new AffyChpColumnData(setColumn.name, setColumn.type, setColumn.size));
+          chromDataColumns.add(new AffyChpColumnData(chromData, setColumn.name, setColumn.type, setColumn.size));
         }
         
-        chromData = new AffySingleChromData(name, start, count, chromDataColumns);
+        chromData = new AffySingleChromData(chpFile, name, start, count, chromDataColumns);
+//System.out.println("Making new chromData: " + chromData.toString());
         a.byte2chromData.put(chromNum, chromData);
         //System.out.println("Made new SingleChromosomeData for chrom: " + chromNum);
       }
       
       chromData.positions.add(position);
       chromData.probeSetNames.add(probeSetName);
-                  
+      
       for (AffyChpColumnData col : chromData.columns) {
         col.addData(dis);
       }
@@ -120,5 +126,13 @@ public class AffyDataSet {
       AffyChpColumnType col = columns.get(i);
       col.dump(str);
     }
-  }    
+  }
+
+  List<String> getChromosomeNames() {
+    return new ArrayList<String>(chromosomeNames);
+  }
+
+  List<AffySingleChromData> getSingleChromData() {
+    return new ArrayList<AffySingleChromData>(byte2chromData.values());
+  }
 }

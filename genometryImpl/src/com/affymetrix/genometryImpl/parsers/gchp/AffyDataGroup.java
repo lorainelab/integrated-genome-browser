@@ -33,9 +33,12 @@ public class AffyDataGroup {
   String name;
 
   List<AffyDataSet> dataSets = new ArrayList<AffyDataSet>();
+
+  AffyGenericChpFile chpFile;
   
   /** Creates a new instance of AffyDataGroup */
-  protected AffyDataGroup() {
+  protected AffyDataGroup(AffyGenericChpFile chpFile) {
+    this.chpFile = chpFile;
   }
   
   public AffyDataGroup(int pos, int data_pos, int sets, String name) {
@@ -45,19 +48,26 @@ public class AffyDataGroup {
     this.name = name;
   }
   
-  public static AffyDataGroup parse(DataInputStream dis) throws IOException {
-    AffyDataGroup group = new AffyDataGroup();
+  public static AffyDataGroup parse(AffyGenericChpFile chpFile, DataInputStream dis) throws IOException {
+    AffyDataGroup group = new AffyDataGroup(chpFile);
     
     group.file_pos = dis.readInt(); // TODO: UINT32
     group.file_first_dataset_pos = dis.readInt(); // TODO: UINT32
     group.num_datasets = dis.readInt(); // INT32
     group.name = AffyGenericChpFile.parseWString(dis);
     
+    if (group.num_datasets > 1) {
+      //TODO: figure out why there is a bug in parsing multiple datasets.
+      // There seems to be some difference between the format specification and
+      // the actual file contents.
+      throw new IOException("Cannot parse CHP files with more than one dataset.");
+    }
+
     for (int i=0; i<group.num_datasets; i++) {
-      AffyDataSet data = AffyDataSet.parse(dis);
+      AffyDataSet data = AffyDataSet.parse(chpFile, dis);
       group.dataSets.add(data);
     }
-    
+        
     return group;
   }
   
@@ -65,6 +75,7 @@ public class AffyDataGroup {
     return dataSets;
   }
   
+  @Override
   public String toString() {
     return "AffyDataGroup: pos: " + file_pos + ", first_dataset_pos: " + file_first_dataset_pos 
         + ", datasets: " + num_datasets + ", name: " + name;

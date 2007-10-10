@@ -14,6 +14,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
+import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.FileTracker;
 import java.awt.*;
@@ -51,11 +52,11 @@ public class EPSWriter {
     int cHeight = (int) (dim.getHeight());
     int cWidth = (int) (dim.getWidth());
 
-    Vector neo_comps = new Vector();
-    Vector buf_states = new Vector();
+    ArrayList<NeoBufferedComponent> neo_comps = new ArrayList<NeoBufferedComponent>();
+    ArrayList<Boolean> buf_states = new ArrayList<Boolean>();
     if (DISABLE_NEO_BUFFERING) {
       // turning double buffering off in NeoBufferedComponents
-      turnNeoBufferingOff(comp, neo_comps, buf_states);
+      ComponentPagePrinter.turnNeoBufferingOff(comp, neo_comps, buf_states);
     }
 
     RepaintManager currentManager = RepaintManager.currentManager(comp);
@@ -71,7 +72,11 @@ public class EPSWriter {
     g.setCreator(Application.getSingleton().getApplicationName() + "  Version: " + Application.getSingleton().getVersion());
     g.setProperties(p);
     g.startExport();
-    comp.print(g);
+    if (comp instanceof JComponent) {
+        ((JComponent) comp).printComponents(g);
+    } else {
+        comp.print(g);
+    }
     g.endExport();
 
     
@@ -82,48 +87,7 @@ public class EPSWriter {
 
     if (DISABLE_NEO_BUFFERING) {
       // turning double buffering back on in NeoBufferedComponents
-      restoreNeoBuffering(neo_comps, buf_states);
-    }
-  }
-
-  // recursively descend into children, searching for NeoBufferedComponents,
-  //    recording their double-buffering status (in neo_comps and buf_states vectors),
-  //    then turning double buffering off
-  public static void turnNeoBufferingOff(Component com, Vector neo_comps, Vector buf_states) {
-    if (com instanceof NeoBufferedComponent) {
-      NeoBufferedComponent nbc = (NeoBufferedComponent)com;
-      boolean buffered = nbc.isDoubleBuffered();
-
-      if (DEBUG)  {
-	System.out.println("turning off buffering in " + nbc +
-			   ", previous buffered: " + buffered);
-      }
-
-      neo_comps.add(nbc);
-      buf_states.add(new Boolean(buffered));
-      nbc.setDoubleBuffered(false);
-    }
-    if (com instanceof Container) {
-      Container parent = (Container)com;
-      for (int i=0; i<parent.getComponentCount(); i++) {
-	Component child = parent.getComponent(i);
-	turnNeoBufferingOff(child, neo_comps, buf_states);
-      }
-    }
-    return;
-  }
-
-  // restore buffer state of NeoBufferedComponents,
-  //   based on neo_comps and buf_states Vectors
-  public static void restoreNeoBuffering(Vector neo_comps, Vector buf_states) {
-    for (int i=0; i<neo_comps.size(); i++) {
-      NeoBufferedComponent nbc = (NeoBufferedComponent)neo_comps.elementAt(i);
-      boolean buffered = ((Boolean)buf_states.elementAt(i)).booleanValue();
-      if (DEBUG)  {
-	System.out.println("restoring buffering in " + nbc +
-			   ", buffer state: " + buffered);
-      }
-      nbc.setDoubleBuffered(buffered);
+      ComponentPagePrinter.restoreNeoBuffering(neo_comps, buf_states);
     }
   }
 

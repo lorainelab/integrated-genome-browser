@@ -249,6 +249,9 @@ public class SmartGraphGlyph extends GraphGlyph {
   Point last_point_temp = new Point(0,0);
 
   public void drawGraph(ViewI view) {
+    if (xcoords.length <= 0) {
+      return; // there is nothing to draw!
+    }
     int graph_style = getGraphStyle();
     view.transformToPixels(coordbox, pixelbox);
 

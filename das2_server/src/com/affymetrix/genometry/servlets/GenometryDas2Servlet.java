@@ -230,22 +230,24 @@ public class GenometryDas2Servlet extends HttpServlet  {
   String xml_base = null;
   String xml_base_trimmed = null;
   Transformer types_transformer;
-  boolean USE_TYPES_XSLT = true;
+  boolean DEFAULT_USE_TYPES_XSLT = true;
+  boolean use_types_xslt;
 
   public void init() throws ServletException  {
     System.out.println("called GenometryDas2Servlet.init()");
 
-	Date nowdate = new Date();
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	String datestring = formatter.format(nowdate);
-
+    Date nowdate = new Date();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    String datestring = formatter.format(nowdate);
 
     try {
       super.init();
-
-      Source type_xslt = new javax.xml.transform.stream.StreamSource(types_xslt_file);
-      javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
-      types_transformer = transFact.newTransformer(type_xslt);
+      use_types_xslt  = DEFAULT_USE_TYPES_XSLT && (new File(types_xslt_file)).exists();
+      if (use_types_xslt) {
+	Source type_xslt = new javax.xml.transform.stream.StreamSource(types_xslt_file);
+	javax.xml.transform.TransformerFactory transFact = javax.xml.transform.TransformerFactory.newInstance();
+	types_transformer = transFact.newTransformer(type_xslt);
+      }
 
       System.out.println("GenometryDas2Servlet version: " + RELEASE_VERSION);
       if (! (new File(data_root)).isDirectory()) {
@@ -258,6 +260,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       //        output_registry.put("bps", new BpsParser());
       //        output_registry.put("psl", new PSLParser())
       //   B. hashing to AnnotationWriter Class object rather than instance of a writer object:
+      output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
       output_registry.put("bps", BpsParser.class);
       //      id2mime.put("bps", "binary/
       output_registry.put("psl", PSLParser.class);
@@ -874,7 +877,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //    StringWriter buf = new StringWriter(types_hash.size() * 1000);
     ByteArrayOutputStream buf = null;
     PrintWriter pw = null;
-    if (USE_TYPES_XSLT)  {
+    if (use_types_xslt)  {
       buf = new ByteArrayOutputStream(types_hash.size() * 1000);
       pw = new PrintWriter(buf);
     }
@@ -894,11 +897,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
     Iterator types_iter = types_hash.keySet().iterator();
     while (types_iter.hasNext()) {
       String feat_type = (String) types_iter.next();
+      String feat_type_encoded = URLEncoder.encode(feat_type);
       java.util.List formats = (java.util.List) types_hash.get(feat_type);
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
-      pw.println("   <TYPE " + URID + "=\"" + feat_type + "\" " + NAME + "=\"" + feat_type +
+      pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
 		 "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
-      if (! formats.isEmpty()) {
+      if ((formats != null) && (! formats.isEmpty())) {
         for (int k=0; k<formats.size(); k++) {
           String format = (String)formats.get(k);
 	  pw.println("       <FORMAT name=\"" + format + "\" />");
@@ -908,7 +912,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
     pw.println("</TYPES>");
 
-    if (USE_TYPES_XSLT) {
+    if (use_types_xslt) {
       pw.flush();
       byte[] buf_array = buf.toByteArray();
       ByteArrayInputStream bais = new ByteArrayInputStream(buf_array);
@@ -1194,7 +1198,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	int sindex = seqid.lastIndexOf("/");
 	if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
 
-	query_type = (String)types.get(0);
+	//	query_type = (String)types.get(0);
+	query_type = URLDecoder.decode((String)types.get(0));
 	// using end of URI for internal typeid if type is given as full URI
 	//    (as it should according to DAS/2 spec)
 	//    special-case exception is when need to know full URL for locating graph data,

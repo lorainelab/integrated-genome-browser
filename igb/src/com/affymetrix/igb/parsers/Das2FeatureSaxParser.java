@@ -739,7 +739,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	pw.print(feat_title);
       }
       pw.print("\" type=\"");
-      pw.print(feat_type);
+      pw.print(URLEncoder.encode(feat_type));
       pw.print("\" >");
       pw.println();
 

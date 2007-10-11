@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.igb.Application;
 import java.io.*;
 import java.util.zip.*;
 
@@ -87,6 +88,14 @@ public abstract class Streamer {
     }
     stripped_name.append(stream_name);
     return istr;
+  }
+  
+  public static void close(Closeable str) {
+    try {
+      str.close();
+    } catch (Exception e) {
+      Application.logDebug("Failed to close an input stream");
+    }
   }
 }
 

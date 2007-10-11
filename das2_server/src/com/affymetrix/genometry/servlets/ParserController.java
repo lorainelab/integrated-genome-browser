@@ -44,9 +44,11 @@ public class ParserController {
 	PSLParser parser = new PSLParser();
         if (stream_name.endsWith(".link.psl")) {
           annot_type = stream_name.substring(0, stream_name.lastIndexOf(".link.psl"));
+	  parser.setIsLinkPsl(true);
           parser.enableSharedQueryTarget(true);
         }
-        parser.setCreateContainerAnnot(true); // is this needed?
+	parser.setCreateContainerAnnot(true); // is this needed?
+	//	parser.setCreateContainerAnnot(false); // is this needed?
 	results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);  // annotate target
       }
       else if (stream_name.endsWith(".bed")) {

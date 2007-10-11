@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 public class PSLParser implements AnnotationWriter  {
 
   static List<String> psl_pref_list = Arrays.asList("bps", "psl");
+  static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
   static List<String> psl3_pref_list = Arrays.asList("psl3", "bps", "psl");
 
   boolean look_for_targets_in_query_group = false;
@@ -267,10 +268,13 @@ public class PSLParser implements AnnotationWriter  {
         if (qseq.getLength() < qsize) { qseq.setLength(qsize); }
 
 
-         MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
+	MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
+	boolean shared_query_target = false;
+
         if (tseq == null) {
           if (look_for_targets_in_query_group && (query_group.getSeq(tname) != null))  {
             tseq = query_group.getSeq(tname);
+	    shared_query_target = true;
           }
           else {
             if (look_for_targets_in_query_group && is_link_psl) {
@@ -337,7 +341,7 @@ public class PSLParser implements AnnotationWriter  {
 
           if (annotate_other) {
             if (create_container_annot) {
-              createContainerAnnot(other2types, oseq, type, sym, is_psl3);
+              createContainerAnnot(other2types, oseq, type, sym, is_psl3, is_link_psl);
             } else {
               oseq.addAnnotation(sym);
             }
@@ -367,16 +371,17 @@ public class PSLParser implements AnnotationWriter  {
 
         if (annotate_query) {
           if (create_container_annot) {
-            createContainerAnnot(query2types,qseq,type,sym,is_psl3);
+            createContainerAnnot(query2types,qseq,type,sym,is_psl3, is_link_psl);
           } else {
             qseq.addAnnotation(sym);
           }
           query_group.addToIndex(sym.getID(), sym);
         }
 
-        if (annotate_target) {
+        if (annotate_target || 
+	    (shared_query_target && is_link_psl)) {  // force annotation of target if query and target are shared and file is ".link.psl" format
           if (create_container_annot) {
-            createContainerAnnot(target2types, tseq, type, sym, is_psl3);
+            createContainerAnnot(target2types, tseq, type, sym, is_psl3, is_link_psl);
           }
           else {
             tseq.addAnnotation(sym);
@@ -417,7 +422,7 @@ public class PSLParser implements AnnotationWriter  {
     return results;
   }
 
-  static void createContainerAnnot(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3) {
+  static void createContainerAnnot(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
     //    If using a container sym, need to first hash (seq2types) from
     //    seq to another hash (type2csym) of types to container sym
     Map<String,SimpleSymWithProps> type2csym = seq2types.get(seq);
@@ -430,7 +435,10 @@ public class PSLParser implements AnnotationWriter  {
       parent_sym = new SimpleSymWithProps();
       parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
       parent_sym.setProperty("method", type);
-      if (is_psl3) {
+      if (is_link) {
+        parent_sym.setProperty("preferred_formats", link_psl_pref_list);
+      }
+      else if (is_psl3) {
         parent_sym.setProperty("preferred_formats", psl3_pref_list);
       } else {
         parent_sym.setProperty("preferred_formats", psl_pref_list);
@@ -550,6 +558,7 @@ public class PSLParser implements AnnotationWriter  {
       while (iterator.hasNext()) {
         SeqSymmetry sym = (SeqSymmetry)iterator.next();
         if (! (sym instanceof UcscPslSym)) {
+            SeqUtils.printSymmetry(sym);
           int spancount = sym.getSpanCount();
           if (spancount == 1) {
             sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq);

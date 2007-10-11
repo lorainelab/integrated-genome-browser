@@ -570,6 +570,10 @@ public class GraphGlyph extends Glyph {
   }
 
   public void drawAxisLabel(ViewI view) {
+    if (GraphState.isHeatMapStyle(getGraphStyle())) {
+      return;
+    }
+      
     Graphics g = view.getGraphics();
     Rectangle hpix = calcHandlePix(view);
 

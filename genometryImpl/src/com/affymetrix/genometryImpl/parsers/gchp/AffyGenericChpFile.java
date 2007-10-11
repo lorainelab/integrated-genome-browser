@@ -30,10 +30,12 @@ public class AffyGenericChpFile {
   AffyGenericDataHeader header;
   List<AffyDataGroup> groups;
   File file;
+  private ChromLoadPolicy loadPolicy;
 
   /** Creates a new instance of AffyCnChpParser */
-  protected AffyGenericChpFile(File file) {
+  protected AffyGenericChpFile(File file, ChromLoadPolicy loadPolicy) {
     this.file = file;
+    this.loadPolicy = loadPolicy;
   }
   
   /** Parses a string in UTF-16BE format, with the length specified first as an int. */
@@ -59,9 +61,9 @@ public class AffyGenericChpFile {
    *  @param headerOnly if true, will read the complete header, but will not
    *  read any data groups.
    */
-  public static AffyGenericChpFile parse(File file, InputStream istr, boolean headerOnly) throws IOException  {
+  public static AffyGenericChpFile parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, boolean headerOnly) throws IOException  {
 
-    AffyGenericChpFile chpFile = new AffyGenericChpFile(file);
+    AffyGenericChpFile chpFile = new AffyGenericChpFile(file, loadPolicy);
     
     if (file != null) {
       if (headerOnly) {
@@ -155,7 +157,7 @@ public class AffyGenericChpFile {
       fis = new FileInputStream(fil);
       bis = new BufferedInputStream(fis);
       System.out.println("START Parse");
-      chpFile = parse(fil, bis, false);
+      chpFile = parse(fil, loadPolicy, bis, false);
       System.out.println("END Parse");
       System.out.println("");
       
@@ -197,7 +199,8 @@ public class AffyGenericChpFile {
   public static void main(String[] args) {
     String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\data\\copy_number\\NA06985_GW6_C.cnchp";
     File file = new File(fileName);
-    AffyGenericChpFile parser = new AffyGenericChpFile(file);
+    ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
+    AffyGenericChpFile parser = new AffyGenericChpFile(file, loadPolicy);
     if (args.length > 0) {
       fileName = args[0];
     }
@@ -216,4 +219,9 @@ public class AffyGenericChpFile {
       return param.getValueString();
     }
   }
+  
+  public ChromLoadPolicy getLoadPolicy() {
+    return loadPolicy;
+  }
+  
 }

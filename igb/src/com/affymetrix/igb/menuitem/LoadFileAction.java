@@ -34,6 +34,7 @@ import org.xml.sax.InputSource;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
+import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.*;
@@ -187,7 +188,7 @@ public class LoadFileAction {
 //          Application.getSingleton().logInfo("detected url input: " + url_name);
 //          loadFromUrl(gviewerFrame, url_name, aseq);
           //TODO: maybe support this again?
-          Application.getSingleton().logError("Loading from a URL is not currently supported.");
+          Application.logError("Loading from a URL is not currently supported.");
         }
         else {
           try {
@@ -278,7 +279,7 @@ public class LoadFileAction {
     }
     // Don't catch exception, just throw it
     finally {
-      if (fistr != null) try {fistr.close();} catch (Exception e) {}
+      if (fistr != null) {try {fistr.close();} catch (Exception e) {}}
     }
     return aseq;
   }
@@ -298,7 +299,7 @@ public class LoadFileAction {
     catch (IOException ex) {
       ioe = ex;
     } finally {
-      if (istr != null) try {istr.close();} catch (Exception e) {}
+      if (istr != null) {try {istr.close();} catch (Exception e) {}}
     }
 
     if (ioe != null) {
@@ -382,7 +383,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
         AffyCnChpParser parser = new AffyCnChpParser();
-        parser.parse(null, str, stream_name, selected_group, true);
+        parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group, true);
         aseq = input_seq;
         parser = null;
       }

@@ -27,7 +27,7 @@ public class AffyCnChpParser {
   }
   
   /** Returns a List of GraphSym objects. */
-  public List parse(File file, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
+  public List parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
       boolean ensure_unique_id) throws IOException {
     SingletonGenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
     
@@ -35,7 +35,7 @@ public class AffyCnChpParser {
     
     try {
       
-      AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, istr, false);
+      AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);
       
       AffyDataGroup group = chpFile.groups.get(0);
       AffyDataSet dataSet = group.getDataSets().get(0);
@@ -86,11 +86,12 @@ public class AffyCnChpParser {
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
     try {
-      File fil = new File(test_file);      
+      File fil = new File(test_file);
+      ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
       fis = new FileInputStream(fil);
       bis = new BufferedInputStream(fis);
       System.out.println("START Parse");
-      List results = parse(fil, bis, test_file, seq_group, false);
+      List results = parse(fil, loadPolicy, bis, test_file, seq_group, false);
       System.out.println("END Parse");
       System.out.println("");
       

@@ -448,6 +448,23 @@ public class Das2ClientOptimizer {
 	  GFFParser parser = new GFFParser();
 	  feats = parser.parse(bis, ".", seq_group, false, false);
 	}
+	else if (content_subtype.equals("link.psl")) {
+	  request_log.addLogMessage("PARSING LINK.PSL FORMAT FOR DAS2 FEATURE RESPONSE");
+	  PSLParser parser = new PSLParser();
+	  parser.setIsLinkPsl(true);
+	  parser.enableSharedQueryTarget(true);
+	  // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
+	  feats = parser.parse(bis, 
+			       type.getName(), // The method name for the annotation to load from the file, 
+			                       // (if there is a track line in the file, track name will be used instead
+			       null, // An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
+                                     //  Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.
+			       seq_group,  // An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
+			       null,  // "other" AnnotatedSeqGroup, only for PSL3 files
+			       false, // do not annotate_query
+			       false,  // do not annotate_target
+			       false);   // do not annotate_other (not applicable since not PSL3)
+	}
 	else if (content_subtype.equals("cyt")) {
 	  request_log.addLogMessage("PARSING CYT FORMAT FOR DAS2 FEATURE RESPONSE");
 	  CytobandParser parser = new CytobandParser();

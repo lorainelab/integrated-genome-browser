@@ -487,7 +487,7 @@ public class ExperimentPivotView extends JComponent
       
       // Each graph has its own, un-named, GraphState object
       // (so they can have different minima and maxima)
-      gl = new GraphGlyph(xcoords, graf, GraphState.getTemporaryGraphState());
+      gl = new GraphGlyph(graf, GraphState.getTemporaryGraphState());
       gl.setHeatMap(current_heatmap);
       gl.setGraphStyle(experiment_style_int);
       gl.setShowHandle(false);

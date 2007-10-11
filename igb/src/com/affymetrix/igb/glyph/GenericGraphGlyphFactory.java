@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.GraphIntervalSym;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -136,13 +135,7 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       newgraf.setGraphName(graph_name);
     }
 
-    SmartGraphGlyph graph_glyph;
-    if (newgraf instanceof GraphIntervalSym) {
-      GraphIntervalSym gis = (GraphIntervalSym) newgraf;
-      graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, state);
-    } else {
-      graph_glyph = new SmartGraphGlyph(newgraf.getGraphXCoords(), newgraf, state);
-    }
+    SmartGraphGlyph graph_glyph = new SmartGraphGlyph(newgraf, state);
     graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
     graph_glyph.setTransitionScale(sgg_transition);
     

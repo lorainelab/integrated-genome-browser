@@ -69,7 +69,7 @@ public class GraphGlyphUtils {
    *  See {@link #checkPixelBounds(GraphGlyph, AffyTieredMap)}.
    */
   public static boolean checkPixelBounds(GraphGlyph gl, SeqMapView gviewer) {
-    AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
+    AffyTieredMap map = gviewer.getSeqMap();
     return checkPixelBounds(gl, map);
   }
 
@@ -129,7 +129,7 @@ public class GraphGlyphUtils {
     for (int i=0; i<grafs.size(); i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
       GraphState gstate = GraphState.getTemporaryGraphState();
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf.getGraphXCoords(), graf, gstate);
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(graf, gstate);
       // graph_glyph.setFasterDraw(true);
       // graph_glyph.setCalcCache(true);
       graph_glyph.setSelectable(false);

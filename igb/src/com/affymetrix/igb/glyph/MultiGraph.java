@@ -16,7 +16,6 @@ package com.affymetrix.igb.glyph;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphStateI;
 import java.awt.*;
 import java.util.*;
 
@@ -31,17 +30,17 @@ import com.affymetrix.genoviz.glyph.*;
  *       and CompositeGraphGlyph instead
  */
 public class MultiGraph extends SmartGraphGlyph {
-  java.util.List graphs = new ArrayList();
+  java.util.List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
   boolean all_graphs_added = false;
   SmartGraphGlyph avg_graph;
   SmartGraphGlyph min_graph;
   SmartGraphGlyph max_graph;
-  java.util.List stat_graphs = new ArrayList();
+  java.util.List<GraphGlyph> stat_graphs = new ArrayList<GraphGlyph>();
   LinearTransform childtrans = new LinearTransform();
   Rectangle2D childbox = new Rectangle2D();
 
   public MultiGraph() {
-    super(null, null, GraphState.getTemporaryGraphState());
+    super(null, GraphState.getTemporaryGraphState());
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
   }
@@ -67,7 +66,7 @@ public class MultiGraph extends SmartGraphGlyph {
     // calculate a new graph which is the average of all the graphs added via addGraph()
     //   this will get added as a child of the MultiGraph (so it gets rendered
     //   via standard draw(), etc.), but _not_ added to graphs list
-    int shared_xcoords[] = ((GraphGlyph)graphs.get(0)).getXCoords();
+    int shared_xcoords[] = graphs.get(0).getXCoords();
     int num_points = shared_xcoords.length;
     int num_graphs = graphs.size();
     //    double[][] ycoords_array = new double[num_graphs];
@@ -79,7 +78,7 @@ public class MultiGraph extends SmartGraphGlyph {
       float ymin = Float.POSITIVE_INFINITY;
       float ymax = Float.NEGATIVE_INFINITY;
       for (int k=0; k<num_graphs; k++) {
-	float yval = (((GraphGlyph)graphs.get(k)).getYCoord(i));
+	float yval = graphs.get(k).getYCoord(i);
 	yavg += yval;
 	ymin = Math.min(ymin, yval);
 	ymax = Math.max(ymax, yval);
@@ -93,14 +92,14 @@ public class MultiGraph extends SmartGraphGlyph {
     GraphState avg_gstate = GraphState.getTemporaryGraphState();
     GraphState min_gstate = GraphState.getTemporaryGraphState();
     GraphState max_gstate = GraphState.getTemporaryGraphState();
-    BioSeq seq = ((GraphGlyph) graphs.get(0)).graf.getGraphSeq();
+    BioSeq seq = graphs.get(0).graf.getGraphSeq();
     GraphSymFloat avg_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, avg_ycoords, seq);
     GraphSymFloat min_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, min_ycoords, seq);
     GraphSymFloat max_gsym = new GraphSymFloatWithTemporaryState(shared_xcoords, max_ycoords, seq);
     
-    avg_graph = new SmartGraphGlyph(shared_xcoords, avg_gsym, avg_gstate);
-    min_graph = new SmartGraphGlyph(shared_xcoords, min_gsym, min_gstate);
-    max_graph = new SmartGraphGlyph(shared_xcoords, max_gsym, max_gstate);
+    avg_graph = new SmartGraphGlyph(avg_gsym, avg_gstate);
+    min_graph = new SmartGraphGlyph(min_gsym, min_gstate);
+    max_graph = new SmartGraphGlyph(max_gsym, max_gstate);
     stat_graphs.add(avg_graph);
     stat_graphs.add(min_graph);
     stat_graphs.add(max_graph);
@@ -152,11 +151,11 @@ public class MultiGraph extends SmartGraphGlyph {
   public void setVisibleMaxY(float ymax) {
     super.setVisibleMaxY(ymax);
     for (int i=0; i<graphs.size(); i++) {
-      GraphGlyph gr = (GraphGlyph)graphs.get(i);
+      GraphGlyph gr = graphs.get(i);
       gr.setVisibleMaxY(ymax);
     }
     for (int i=0; i<stat_graphs.size(); i++) {
-      GraphGlyph gr = (GraphGlyph)stat_graphs.get(i);
+      GraphGlyph gr = stat_graphs.get(i);
       gr.setVisibleMaxY(ymax);
     }
   }
@@ -164,11 +163,11 @@ public class MultiGraph extends SmartGraphGlyph {
   public void setVisibleMinY(float ymin) {
     super.setVisibleMinY(ymin);
     for (int i=0; i<graphs.size(); i++) {
-      GraphGlyph gr = (GraphGlyph)graphs.get(i);
+      GraphGlyph gr = graphs.get(i);
       gr.setVisibleMinY(ymin);
     }
     for (int i=0; i<stat_graphs.size(); i++) {
-      GraphGlyph gr = (GraphGlyph)stat_graphs.get(i);
+      GraphGlyph gr = stat_graphs.get(i);
       gr.setVisibleMinY(ymin);
     }
   }
@@ -176,7 +175,7 @@ public class MultiGraph extends SmartGraphGlyph {
   public void setGraphStyle(int type) {
     super.setGraphStyle(type);
     for (int i=0; i<graphs.size(); i++) {
-      GraphGlyph gr = (GraphGlyph)graphs.get(i);
+      GraphGlyph gr = graphs.get(i);
       gr.setGraphStyle(type);
       if (type == MINMAXAVG) { gr.setVisibility(false); }
       else { gr.setVisibility(true); }
@@ -199,7 +198,7 @@ public class MultiGraph extends SmartGraphGlyph {
       int numchildren = children.size();
       for (int i=0; i<numchildren; i++) {
 	//        ((GlyphI)children.elementAt(i)).moveRelative(diffx, diffy);
-	GlyphI child = (GlyphI)children.elementAt(i);
+	GlyphI child = children.elementAt(i);
 	if (child instanceof GraphGlyph) {
 	  child.moveRelative(diffx, diffy);
 	}
@@ -249,7 +248,7 @@ public class MultiGraph extends SmartGraphGlyph {
       GlyphI child;
       int numChildren = children.size();
       for ( int i = 0; i < numChildren; i++ ) {
-	child = (GlyphI) children.elementAt( i );
+	child = children.elementAt(i);
 	if (!(child instanceof TransientGlyph) || drawTransients()) {
 	  if (child instanceof GraphGlyph) {
 	    child.drawTraversal(view);

@@ -21,6 +21,7 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.HeatMap;
@@ -90,11 +91,8 @@ public class GraphGlyph extends Glyph {
     return graf.getGraphYCoord(i);
   }
   
-  public GraphGlyph(int[] xcoords, GraphSym graf, GraphStateI gstate) {
-    this(xcoords, null, graf, gstate);
-  }
 
-  public GraphGlyph(int[] xcoords, int[] wcoords, GraphSym graf, GraphStateI gstate) {
+  public GraphGlyph(GraphSym graf, GraphStateI gstate) {
     super();
     state = gstate;
     if (state == null) {
@@ -105,13 +103,16 @@ public class GraphGlyph extends Glyph {
     setColor(state.getTierStyle().getColor());
     setGraphStyle(state.getGraphStyle());
 
-    if (xcoords == null || xcoords.length <=0 || graf.getPointCount() <= 0) { return; }
+    this.xcoords = graf.getGraphXCoords();
+    if (graf instanceof GraphIntervalSym) {
+      this.wcoords = ((GraphIntervalSym) graf).getGraphWidthCoords();
+    }
+
+    if (xcoords == null) { return; }
     if (wcoords != null) {
       if (wcoords.length != xcoords.length || wcoords.length != graf.getPointCount()) { return; }
     }
-    this.xcoords = xcoords;
-    this.wcoords = wcoords;
-    //this.ycoords = ycoords;
+
     this.graf = graf;
     point_min_ycoord = Float.POSITIVE_INFINITY;
     point_max_ycoord = Float.NEGATIVE_INFINITY;
@@ -198,7 +199,7 @@ public class GraphGlyph extends Glyph {
       drawHorizontalGridLines(view);
     }
     
-    if (getShowGraph() && graf != null && xcoords != null  && graf.getPointCount() == xcoords.length)  {
+    if (getShowGraph() && graf != null && xcoords != null  && graf.getPointCount() == xcoords.length && xcoords.length > 0)  {
       int beg_index = 0;
       //int end_index = xcoords.length-1;
 

@@ -56,7 +56,7 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
       if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
       // first draw the little rectangle that will go in an annotation tier
       // and be used to select regions for the pivot view
-      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(smv.determineMethod(sym));
+      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(SeqMapView.determineMethod(sym));
       if (annotation_factory != null) {
         annotation_factory.createGlyph(sym, smv);
       }
@@ -95,7 +95,7 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     for (int q=0; q<the_graph_syms.length; q++) {
       GraphIntervalSym gis = the_graph_syms[q];
       
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis.getGraphXCoords(), gis.getGraphWidthCoords(), gis, gis.getGraphState());
+      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis, gis.getGraphState());
       graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
       GraphStateI gstate = graph_glyph.getGraphState();
       
@@ -136,32 +136,32 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   
   static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
     int score_count = container.getScoreCount();
-    ArrayList results = null;
+    ArrayList<GraphIntervalSym> results = null;
     if (separate_by_strand) {
-      results = new ArrayList(score_count * 2);
+      results = new ArrayList<GraphIntervalSym>(score_count * 2);
     } else {
-      results = new ArrayList(score_count);
+      results = new ArrayList<GraphIntervalSym>(score_count);
     }
     
     for (int i=0; i<score_count; i++) {
       String score_name = container.getScoreName(i);
       if (separate_by_strand)  {
-        GraphSym forward_gsym = container.makeGraphSym(score_name, true, seq_group);
+        GraphIntervalSym forward_gsym = container.makeGraphSym(score_name, true, seq_group);
         if (forward_gsym != null) {
           results.add(forward_gsym);
         }
-        GraphSym reverse_gsym = container.makeGraphSym(score_name, false, seq_group);
+        GraphIntervalSym reverse_gsym = container.makeGraphSym(score_name, false, seq_group);
         if (reverse_gsym != null) {
           results.add(reverse_gsym);
         }
       } else {
-        GraphSym gsym = container.makeGraphSym(score_name, seq_group);
+        GraphIntervalSym gsym = container.makeGraphSym(score_name, seq_group);
         if (gsym != null) {
           results.add(gsym);
         }
       }
     }
-    return (GraphIntervalSym[]) results.toArray(new GraphIntervalSym[results.size()]);
+    return results.toArray(new GraphIntervalSym[results.size()]);
   }
   
   
@@ -170,33 +170,33 @@ public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
     
     int score_count = original_container.getScoreCount();
-    ArrayList results = null;
+    ArrayList<GraphIntervalSym> results = null;
     if (separate_by_strand) {
-      results = new ArrayList(score_count * 2);
+      results = new ArrayList<GraphIntervalSym>(score_count * 2);
     } else {
-      results = new ArrayList(score_count);
+      results = new ArrayList<GraphIntervalSym>(score_count);
     }
     
     for (int i=0; i<score_count; i++) {
       String score_name = original_container.getScoreName(i);
       if (separate_by_strand)  {
-        GraphSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '+');
+        GraphIntervalSym forward_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '+');
         if (forward_gsym != null) {
           results.add(forward_gsym);
         }
-        GraphSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '-');
+        GraphIntervalSym reverse_gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '-');
         if (reverse_gsym != null) {
           results.add(reverse_gsym);
         }
       } else {
-        GraphSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '.');
+        GraphIntervalSym gsym = makeGraphSymFromDerived(derived_parent_sym, score_name, seq_group, seq, '.');
         if (gsym != null) {
           results.add(gsym);
         }
       }
     }
     
-    return (GraphIntervalSym[]) results.toArray(new GraphIntervalSym[results.size()]);
+    return results.toArray(new GraphIntervalSym[results.size()]);
   }
   
   // strands should be one of '+', '-' or '.'

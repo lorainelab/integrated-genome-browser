@@ -101,12 +101,8 @@ public class SmartGraphGlyph extends GraphGlyph {
    */
   int pixel_cache[];
 
-  public SmartGraphGlyph(int[] xcoords, GraphSym graf, GraphStateI gstate) {
-    this(xcoords, null, graf, gstate);
-  }
-  
-  public SmartGraphGlyph(int[] xcoords, int[] wcoords, GraphSym graf, GraphStateI gstate) {
-    super(xcoords, wcoords, graf, gstate);
+  public SmartGraphGlyph(GraphSym graf, GraphStateI gstate) {
+    super(graf, gstate);
     setDrawOrder(Glyph.DRAW_SELF_FIRST);
 
     //    thresh_glyph = new ThreshGlyph();

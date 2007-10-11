@@ -33,10 +33,8 @@ public class AffySingleChromData {
   
   int start;
   int rowCount;
-  int chromNum; // in the chp file, a chromosome is indicated by an arbitrary number, actually a byte, not an int
+  int chromNum; // in chp file, chromosome is indicated both by an arbitrary byte
   String displayName; // AND by a display name.
-  ArrayList<CharSequence> probeSetNames = new ArrayList<CharSequence>();
-  IntList positions = new IntList();
   
   List<AffyChpColumnData> columns = new ArrayList<AffyChpColumnData>();
   AffyGenericChpFile chpFile;
@@ -65,32 +63,47 @@ public class AffySingleChromData {
   void parse(DataInputStream dis) throws IOException {
     Application.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
     for (int row=0; row < rowCount; row++) {
-      CharSequence probeSetName = AffyGenericChpFile.parseString(dis);
-      byte readChromNum = dis.readByte(); //treat as unsigned, but doesn't matter here
-        // chromNum is redundant information.  We already know the chromosomeDisplayName
-      if (readChromNum != chromNum) {
-        throw new IOException("Chromosome number doesn't match expected value");
-      }
-      
-      
-      int position = dis.readInt(); //to be interpreted as unsigned, but store for now as int
-      
-      positions.add(position);
-      probeSetNames.add(probeSetName);
-
       for (AffyChpColumnData col : columns) {
         col.addData(dis);
       }
     }
-    positions.trimToSize();
-    probeSetNames.trimToSize();
+  }
+  
+  int totalRowSize() {
+    int rowSize = 0;
+    for (AffyChpColumnData col : columns) {
+      rowSize += col.getByteLength();
+    }
+    return rowSize;
+  }
+  
+  void skip(DataInputStream dis) throws IOException {
+    int rowSize = totalRowSize();
+    long skipSize = rowCount * rowSize;
+
+    while (skipSize > 0) {
+      long skipped = dis.skip(skipSize);
+      skipSize -= skipped;
+    }
+        
   }
 
   /** Creates a GraphSym and adds it as an annotation to the BioSeq. */
   void makeGraphs(MutableAnnotatedBioSeq seq) throws IOException {
+    @SuppressWarnings("unchecked")
+    ArrayList<CharSequence> probeSetNames = (ArrayList<CharSequence>) columns.get(0).getData();
+    probeSetNames.trimToSize();
+    
+    // column 2 contains chromosome number, but we already know that information so ignore it.
+    
+    IntList positions = (IntList) columns.get(2).getData();
     positions.trimToSize();
+    
 
-    if (positions.size() > 0) {
+    if (positions.size() > -1) { 
+        // add a graph even if the data is of length 0
+        // because we want something to be visible in the display, even if it is
+        // simply a graph handle and axis with no graph data to draw.
       boolean addSingletonSyms = false;
       if (addSingletonSyms) {
         String theMethod = "posistions";
@@ -101,14 +114,17 @@ public class AffySingleChromData {
         for (int i = 0; i < positions.size(); i++) {
           //TODO: insn't there a class that accepts an IntList as the set of positions?
           final int start_pos = positions.get(i);
-          SingletonSymWithProps sym = new SingletonSymWithProps(this.probeSetNames.get(i), start_pos, start_pos + 1, seq);
+          SingletonSymWithProps sym = new SingletonSymWithProps(probeSetNames.get(i), start_pos, start_pos + 1, seq);
           sym.setProperty("method", theMethod);
 //          tca.addChild(sym);
           seq.addAnnotation(sym);
         }
       }
 
-      for (AffyChpColumnData colData : this.columns) {
+      // In a cnchp file, the first three columns contain non-graph data 
+      // so skip them and make graphs from all the other columns
+      //TODO: maybe make this more generic for all "generic" chp files
+      for (AffyChpColumnData colData : columns.subList(3,columns.size())) {
         String graphId = colData.name;
         if (colData.getData() instanceof FloatList) {
           List<Object> trimmedXandY = trimNaN(positions, (FloatList) colData.getData());

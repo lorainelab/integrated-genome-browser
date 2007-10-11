@@ -26,7 +26,7 @@ public class AffyDataSet {
   private int param_count;
   private Map<String,AffyChpParameter> params;
   private int num_columns;
-  private List<AffyChpColumnType> columns;
+  private List<AffyChpColumnType> columnTypes;
   private long num_rows;
   
   private Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<Integer,AffySingleChromData>();
@@ -59,11 +59,11 @@ public class AffyDataSet {
     }
     
     num_columns = dis.readInt();
-    columns = new ArrayList<AffyChpColumnType>(num_columns);
+    columnTypes = new ArrayList<AffyChpColumnType>(num_columns);
     for (int i=0; i<num_columns; i++) {
       AffyChpColumnType col = new AffyChpColumnType(
         AffyGenericChpFile.parseWString(dis), dis.readByte(), dis.readInt());
-      columns.add(col);
+      columnTypes.add(col);
     }
         
     num_rows = dis.readInt();
@@ -79,11 +79,12 @@ public class AffyDataSet {
         String chromName = (String) params.get(chromNum + ":display").getValue();
         chromosomeNames.add(chromName);
 
-        List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>();
-        for (AffyChpColumnType setColumn : columns.subList(3, columns.size())) {
+        List<AffyChpColumnData> chromDataColumns = new ArrayList<AffyChpColumnData>(columnTypes.size());
+        for (AffyChpColumnType setColumn : columnTypes) {
           chromDataColumns.add(new AffyChpColumnData(null, setColumn.name, setColumn.type, setColumn.size));
         }
-        AffySingleChromData chromData = new AffySingleChromData(chpFile, this, 
+
+        AffySingleChromData chromData = new AffySingleChromData(chpFile, this,
           chromNum, chromName, start, count, chromDataColumns);
         Application.logDebug("Made chrom: " + chromData.toString());
         
@@ -95,7 +96,8 @@ public class AffyDataSet {
 
     // I am making the assumption that chromosome number n is always stored
     // before chromosome number n+1.  I don't think the documentation makes that
-    // specific claim, though.
+    // specific claim, though.  May be more correct to sort by the ":start" values
+    // that were read above.
     
     for (int chromNum = 0; chromNum < 100; chromNum++) {
       if (num2chromData.containsKey(chromNum)) {
@@ -131,7 +133,7 @@ public class AffyDataSet {
     
     str.println("  Column descriptions:  ");
     for (int i=0; i<num_columns; i++) {
-      AffyChpColumnType col = columns.get(i);
+      AffyChpColumnType col = columnTypes.get(i);
       col.dump(str);
     }
   }

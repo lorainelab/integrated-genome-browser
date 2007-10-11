@@ -13,11 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-//import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-//import com.affymetrix.genometryImpl.GraphSymByte;
-//import com.affymetrix.genometryImpl.GraphSymFloat;
-//import com.affymetrix.genometryImpl.GraphSymInt;
-//import com.affymetrix.genometryImpl.GraphSymShort;
 import com.affymetrix.genometryImpl.util.*;
 import java.io.*;
 import java.util.*;
@@ -93,32 +88,9 @@ public class AffyChpColumnData {
     }
   }
   
-  /** Skip over, but do not store, data from the given stream. */
-  public void skipData(DataInputStream dis) throws IOException {
-    switch (this.type) {
-      case INT8:
-        dis.readByte(); break;
-      case UINT8:
-        dis.readUnsignedByte(); break;
-      case INT16:
-        dis.readShort(); break;
-      case UINT16:
-        dis.readUnsignedShort(); break;
-      case INT32:
-        dis.readInt(); break;
-      case UINT32:
-        dis.readInt(); break;
-      case FLOAT:
-        dis.readFloat(); break;
-      case DOUBLE:
-        dis.readDouble(); break;
-      case TEXT_ASCII:
-        AffyGenericChpFile.parseString(dis); break;
-      case TEXT_UTF16BE:
-        AffyGenericChpFile.parseWString(dis); break;
-      default:
-        throw new RuntimeException("Can't parse that type: " + type);
-    }
+  /** Gets the number of bytes required to store one data entry. */
+  public int getByteLength() {
+    return size;
   }
 
   /**
@@ -163,37 +135,6 @@ public class AffyChpColumnData {
     return s;
   }
 
-//  void makeGraph(MutableAnnotatedBioSeq seq) {
-//    String graphId = name;
-//    if (getData() instanceof FloatList) {
-//      List<Object> trimmedXandY = trimNaN(positions, (FloatList) getData());
-//      IntList xlist = (IntList) trimmedXandY.get(0);
-//      FloatList flist = (FloatList) trimmedXandY.get(1);
-//
-//      xlist.trimToSize();
-//      flist.trimToSize();
-//      GraphSymFloat gsym = new GraphSymFloat(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
-//      seq.addAnnotation(gsym);
-//    } else if (getData() instanceof IntList) {
-//      IntList ilist = (IntList) getData();
-//      ilist.trimToSize();
-//      GraphSymInt gsym = new GraphSymInt(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-//      seq.addAnnotation(gsym);
-//    } else if (getData() instanceof ShortList) {
-//      ShortList ilist = (ShortList) getData();
-//      ilist.trimToSize();
-//      GraphSymShort gsym = new GraphSymShort(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-//      seq.addAnnotation(gsym);
-//    } else if (getData() instanceof ByteList) {
-//      ByteList ilist = (ByteList) getData();
-//      ilist.trimToSize();
-//      GraphSymByte gsym = new GraphSymByte(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-//      seq.addAnnotation(gsym);
-//    } else {
-//      SingletonGenometryModel.logError("Don't know how to make a graph for data of type: " + type);
-//    }
-//  }
-//
 void dump(PrintStream str) {
     str.println(this.toString());
   }

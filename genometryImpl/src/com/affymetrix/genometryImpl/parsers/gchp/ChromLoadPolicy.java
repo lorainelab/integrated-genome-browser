@@ -23,18 +23,18 @@ public abstract class ChromLoadPolicy {
   
   public ChromLoadPolicy() {}
 
-  public abstract boolean shouldLoadChrom(int chromNum);
+  public abstract boolean shouldLoadChrom(String chromName);
   
   static final ChromLoadPolicy LOAD_ALL = new ChromLoadPolicy() {
     @Override
-    public boolean shouldLoadChrom(int chromNum) {
+    public boolean shouldLoadChrom(String chromName) {
       return true;
     }
   };
   
   static final ChromLoadPolicy LOAD_NOTHING = new ChromLoadPolicy() {
     @Override
-    public boolean shouldLoadChrom(int chromNum) {
+    public boolean shouldLoadChrom(String chromName) {
       return false;
     }
   };
@@ -47,12 +47,12 @@ public abstract class ChromLoadPolicy {
     return LOAD_NOTHING;
   }
   
-  public static ChromLoadPolicy getLoadListedChromosomesPolicy(List<Integer> list) {
-    final List<Integer> chromList = new ArrayList<Integer>(list);
+  public static ChromLoadPolicy getLoadListedChromosomesPolicy(List<String> list) {
+    final List<String> chromList = new ArrayList<String>(list);
     return new ChromLoadPolicy() {
       @Override 
-      public boolean shouldLoadChrom(int chromNum) {
-        return chromList.contains(chromNum);  
+      public boolean shouldLoadChrom(String chromName) {
+        return chromList.contains(chromName);
       }
     };
   }

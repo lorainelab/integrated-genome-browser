@@ -890,7 +890,7 @@ public class SeqMapView extends JPanel
 
         if (q <= centromerePoint) {
           if (cytoband_glyph_A ==  null) {
-            cytoband_glyph_A = new RoundRectMaskGlyph(seqmap.getMapColor());
+            cytoband_glyph_A = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
             cytoband_glyph_A.setColor(Color.GRAY);
             //cytoband_glyph_A.setHitable(false);
             cytoband_glyph_A.setCoordBox(efg.getCoordBox());
@@ -899,7 +899,7 @@ public class SeqMapView extends JPanel
           cytoband_glyph_A.getCoordBox().add(efg.getCoordBox());
         } else {
           if (cytoband_glyph_B == null) {
-            cytoband_glyph_B = new RoundRectMaskGlyph(seqmap.getMapColor());
+            cytoband_glyph_B = new RoundRectMaskGlyph(axis_tier.getBackgroundColor());
             cytoband_glyph_B.setColor(Color.GRAY);
             //cytoband_glyph_B.setHitable(false);
             cytoband_glyph_B.setCoordBox(efg.getCoordBox());

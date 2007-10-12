@@ -124,9 +124,10 @@ public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     }
     if (newgraf == null || newgraf.getGraphXCoords() == null) {
       return null;
-    } else if (newgraf.getGraphXCoords().length == 0 || newgraf.getPointCount() == 0) {
-      return null;
-    }
+    } 
+//    else if (newgraf.getGraphXCoords().length == 0 || newgraf.getPointCount() == 0) {
+//      return null;
+//    }
 
     String graph_name = newgraf.getGraphName();
     if (graph_name == null) {

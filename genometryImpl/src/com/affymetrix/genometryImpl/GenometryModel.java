@@ -83,7 +83,7 @@ public class GenometryModel {
     // otherwise create a new AnnotatedSeqGroup
     if (group == null) {
       //      System.out.println("  adding new seq group: " + group_id);
-      group = new AnnotatedSeqGroup(group_id);
+      group = createSeqGroup(group_id);
       seq_groups.put(group.getID(), group);
       //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
     }
@@ -91,6 +91,13 @@ public class GenometryModel {
       //      System.out.println("  already have seq group: " + group_id + ", actual id = " + group.getID());
     }
     return group;
+  }
+  
+  /** The routine that actually creates a new AnnotatedSeqGroup.
+   *  Override this to provide a specific subclass of AnnotatedSeqGroup.
+   */
+  protected AnnotatedSeqGroup createSeqGroup(String group_id) {
+    return new AnnotatedSeqGroup(group_id);
   }
 
   public void addSeqGroup(AnnotatedSeqGroup group) {

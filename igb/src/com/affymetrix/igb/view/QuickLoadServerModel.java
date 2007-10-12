@@ -60,6 +60,15 @@ public class QuickLoadServerModel {
    */
   static Map group2states = new HashMap();
 
+  
+  public void clear() {
+    group2states.clear();
+    genome_names.clear();
+    group2name.clear();
+    genome2init.clear();
+    genome2file_names.clear();
+    url2quickload.clear();
+  }
 
   public QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
     this.gmodel = gmodel;

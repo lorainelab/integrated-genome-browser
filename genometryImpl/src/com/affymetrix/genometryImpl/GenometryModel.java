@@ -45,6 +45,12 @@ public class GenometryModel {
   AnnotatedSeqGroup selected_group = null;
   MutableAnnotatedBioSeq selected_seq = null;
 
+  public void removeAllListeners() {
+    seq_selection_listeners.clear();
+    sym_selection_listeners.clear();
+    group_selection_listeners.clear();
+  }
+
   /** Returns a Map of String names to AnnotatedSeqGroup objects. */
   public Map<String,AnnotatedSeqGroup> getSeqGroups() {
     return seq_groups;
@@ -116,7 +122,7 @@ public class GenometryModel {
     seq_groups.clear();
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
-
+  
   public AnnotatedSeqGroup getSelectedSeqGroup() {
     return selected_group;
   }

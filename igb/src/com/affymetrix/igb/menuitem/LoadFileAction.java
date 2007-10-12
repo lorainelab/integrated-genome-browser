@@ -381,9 +381,9 @@ public class LoadFileAction {
         aseq = input_seq;
         parser = null;
       }
-      else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
+      else if (lcname.endsWith(".cnchp")) {
         AffyCnChpParser parser = new AffyCnChpParser();
-        parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group, true);
+        parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
         aseq = input_seq;
         parser = null;
       }

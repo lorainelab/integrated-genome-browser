@@ -13,7 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSymByte;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GraphSymInt;
@@ -84,12 +85,21 @@ public class AffySingleChromData {
     while (skipSize > 0) {
       long skipped = dis.skip(skipSize);
       skipSize -= skipped;
-    }
-        
+    }     
   }
 
-  /** Creates a GraphSym and adds it as an annotation to the BioSeq. */
-  void makeGraphs(MutableAnnotatedBioSeq seq) throws IOException {
+  void parseOrSkip(DataInputStream dis) throws IOException {
+    if (this.chpFile.getLoadPolicy().shouldLoadChrom(displayName)) {
+      parse(dis);
+    } else {
+      skip(dis);
+    }
+  }
+
+  /** Creates GraphSyms that can be added as annotations to the BioSeq. */
+  public List<SeqSymmetry> makeGraphs(AnnotatedBioSeq seq) throws IOException {
+    List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(columns.size());
+      
     @SuppressWarnings("unchecked")
     ArrayList<CharSequence> probeSetNames = (ArrayList<CharSequence>) columns.get(0).getData();
     probeSetNames.trimToSize();
@@ -110,14 +120,16 @@ public class AffySingleChromData {
 //        TypeContainerAnnot tca = new TypeContainerAnnot(theMethod);
 //        tca.setProperty("method", theMethod);
 //        tca.setID(theMethod);
-//        seq.addAnnotation(tca);
+//        results.add(sym);
+////        seq.addAnnotation(tca);
         for (int i = 0; i < positions.size(); i++) {
           //TODO: insn't there a class that accepts an IntList as the set of positions?
           final int start_pos = positions.get(i);
           SingletonSymWithProps sym = new SingletonSymWithProps(probeSetNames.get(i), start_pos, start_pos + 1, seq);
           sym.setProperty("method", theMethod);
 //          tca.addChild(sym);
-          seq.addAnnotation(sym);
+          results.add(sym);
+//          seq.addAnnotation(sym);
         }
       }
 
@@ -134,27 +146,33 @@ public class AffySingleChromData {
           xlist.trimToSize();
           flist.trimToSize();
           GraphSymFloat gsym = new GraphSymFloat(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
-          seq.addAnnotation(gsym);
+//          seq.addAnnotation(gsym);
+          results.add(gsym);
         } else if (colData.getData() instanceof IntList) {
           IntList ilist = (IntList) colData.getData();
           ilist.trimToSize();
           GraphSymInt gsym = new GraphSymInt(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-          seq.addAnnotation(gsym);
+//          seq.addAnnotation(gsym);
+          results.add(gsym);
         } else if (colData.getData() instanceof ShortList) {
           ShortList ilist = (ShortList) colData.getData();
           ilist.trimToSize();
           GraphSymShort gsym = new GraphSymShort(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-          seq.addAnnotation(gsym);
+//          seq.addAnnotation(gsym);
+          results.add(gsym);
         } else if (colData.getData() instanceof ByteList) {
           ByteList ilist = (ByteList) colData.getData();
           ilist.trimToSize();
           GraphSymByte gsym = new GraphSymByte(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
-          seq.addAnnotation(gsym);
+//          seq.addAnnotation(gsym);
+          results.add(gsym);
         } else {
           SingletonGenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
         }
       }
     }
+
+    return results;
   }
   
   /** Removes x,y pairs where the y-value is invalid (NaN or Infinite).

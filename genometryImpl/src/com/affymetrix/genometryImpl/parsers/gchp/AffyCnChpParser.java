@@ -15,8 +15,10 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.parsers.Streamer;
 import java.io.*;
 import java.util.*;
 
@@ -26,12 +28,10 @@ public class AffyCnChpParser {
   public AffyCnChpParser() {
   }
   
-  /** Returns a List of GraphSym objects. */
-  public List parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group,
-      boolean ensure_unique_id) throws IOException {
+  public void parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException {
     SingletonGenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
     
-    ArrayList results = new ArrayList();
+    //ArrayList results = new ArrayList();
     
     try {
       
@@ -45,19 +45,14 @@ public class AffyCnChpParser {
         // Make sure that all the seq's mentioned in the header are
         // present in the SeqGroup.  Adds them if necessary.
         getSeq(seq_group, seq_name);
-      }
-            
-      //TODO: ids
-      String gid = stream_name;
-      if (ensure_unique_id)  {
-        // Making sure the ID is unique on the whole genome, not just this seq
-        // will make sure the GraphState is also unique on the whole genome.
-        gid = AnnotatedSeqGroup.getUniqueGraphID(gid, seq_group);
-      }
+      }            
       
       for (AffySingleChromData data : dataSet.getSingleChromData()) {
         MutableAnnotatedBioSeq seq = getSeq(seq_group, data.displayName);
-        data.makeGraphs(seq);
+        List<SeqSymmetry> syms = data.makeGraphs(seq);
+        for (SeqSymmetry sym : syms) {
+          seq.addAnnotation(sym); 
+        }
       }
       
     } catch (Exception e) {
@@ -69,9 +64,48 @@ public class AffyCnChpParser {
       }
     }
     
+    //return results;
+  }
+
+  /** Parses the file, subject to the loadPolicy, and returns a 
+   *  list of AffySingleChromData objects. 
+   *  Does not create graphs or add any annotations to any BioSeq.
+   *  If you do not do keep a reference the returned data, it may be garbage collected.
+   */
+  public List<AffySingleChromData> parse2(File file, ChromLoadPolicy loadPolicy) throws IOException {
+    SingletonGenometryModel.logInfo("Parsing file with " + this.getClass().getName() + ": " + file.getName());
+    
+    ArrayList<AffySingleChromData> results = new ArrayList<AffySingleChromData>();
+    InputStream istr = new BufferedInputStream(new FileInputStream(file));
+    
+    try {
+      
+      AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);
+      
+      AffyDataGroup group = chpFile.groups.get(0);
+      AffyDataSet dataSet = group.getDataSets().get(0);
+      
+                  
+      for (AffySingleChromData data : dataSet.getSingleChromData()) {
+        if (loadPolicy.shouldLoadChrom(data.displayName)) {
+          results.add(data);
+        }
+      }
+      
+    } catch (Exception e) {
+      if (! (e instanceof IOException)) {
+        IOException ioe = new IOException("IOException for file: " + file);
+        ioe.initCause(e);
+        throw ioe;
+      }
+    } finally {
+      istr.close(); // if there is an exception, we probably do want to know about it.
+      // because it might prevent us from opening the file again later.
+    }
+    
     return results;
   }
-    
+
   private MutableAnnotatedBioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {
     MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
     if (aseq == null) {
@@ -91,7 +125,7 @@ public class AffyCnChpParser {
       fis = new FileInputStream(fil);
       bis = new BufferedInputStream(fis);
       System.out.println("START Parse");
-      List results = parse(fil, loadPolicy, bis, test_file, seq_group, false);
+      parse(fil, loadPolicy, bis, test_file, seq_group);
       System.out.println("END Parse");
       System.out.println("");
       

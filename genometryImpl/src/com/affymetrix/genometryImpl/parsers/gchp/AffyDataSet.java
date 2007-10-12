@@ -102,11 +102,7 @@ public class AffyDataSet {
     for (int chromNum = 0; chromNum < 100; chromNum++) {
       if (num2chromData.containsKey(chromNum)) {
         AffySingleChromData chromData = num2chromData.get(chromNum);
-        if (this.chpFile.getLoadPolicy().shouldLoadChrom(chromNum)) {
-          chromData.parse(dis);
-        } else {
-          chromData.skip(dis);
-        }
+        chromData.parseOrSkip(dis);
       }
     }
   }

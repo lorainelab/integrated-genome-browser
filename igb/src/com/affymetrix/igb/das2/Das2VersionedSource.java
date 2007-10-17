@@ -117,6 +117,9 @@ public class Das2VersionedSource  {
 
   public void addCapability(Das2Capability cap)  {
     capabilities.put(cap.getType(), cap);
+    cap.setVersionedSource(this);
+    //    System.out.println("Adding to cap map: " + cap.getRootURI().toString() + "  ,  version: " + this.getID());
+    Das2Discovery.getCapabilityMap().put(cap.getRootURI().toString(), this);
   }
 
   public Das2Capability getCapability(String type) {
@@ -299,7 +302,7 @@ public class Das2VersionedSource  {
       Document doc = DasLoader.getDocument(response);
       Element top_element = doc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");
-      System.out.println("types: " + typelist.getLength());
+      // System.out.println("types: " + typelist.getLength());
       int typeCounter = 0;
 
       //      ontologyStuff1();

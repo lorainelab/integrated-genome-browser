@@ -18,6 +18,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
@@ -26,6 +27,8 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.Das2LoadView3;
+import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -46,7 +49,9 @@ import com.affymetrix.swing.DisplayUtils;
  *</pre>
  */
 public class UnibrowControlServlet extends HttpServlet {
+  static boolean DEBUG_DAS2_LOAD = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
   Application uni;
 
@@ -55,7 +60,7 @@ public class UnibrowControlServlet extends HttpServlet {
   public void setUnibrowInstance(Application uni) {
     this.uni = uni;
   }
-  
+
   public void service(HttpServletRequest request, HttpServletResponse response) throws
     ServletException {
 
@@ -67,7 +72,7 @@ public class UnibrowControlServlet extends HttpServlet {
     } else {
       System.out.println("Received bookmark request");
     }
-    
+
     //  restore and focus on Application when a unibrow call is made
     try {
       DisplayUtils.bringFrameToFront(Application.getSingleton().getFrame());
@@ -136,15 +141,123 @@ public class UnibrowControlServlet extends HttpServlet {
       BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
     }
 
+    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    /*
+     AnnotatedSeqGroup seq_group = gmodel.getSeqGroup(version);
+    Das2VersionedSource das_version = null;
+    if (seq_group != null && (seq_group instanceof Das2SeqGroup)) {
+      das_version = ((Das2SeqGroup)seq_group).getOriginalVersionedSource();
+    }
+*/
+
+    String[] das2_query_urls = (String[]) parameters.get(Bookmark.DAS2_QUERY_URL);
+    String[] das2_server_urls = (String[]) parameters.get(Bookmark.DAS2_SERVER_URL);
     String[] data_urls = (String[]) parameters.get(Bookmark.DATA_URL);
     String[] url_file_extensions = (String[]) parameters.get(Bookmark.DATA_URL_FILE_EXTENSIONS);
     loadDataFromURLs(uni, data_urls, url_file_extensions, null);
-    
+    loadDataFromDas2(uni, das2_server_urls, das2_query_urls);
+
     String selectParam = getStringParameter(parameters, "select");
     if (selectParam != null){
       performSelection(selectParam);
     }
-    
+
+  }
+
+
+  /**
+   *  find Das2ServerInfo (or create if not already existing), based on das2_server_url
+   *       to add later?  If no
+   *  find Das2VersionedSource based on Das2ServerInfo and das2_query_url (search for version's FEATURE capability URL matching path of das2_query_url)
+   *  create Das2FeatureRequestSym
+   *  call processFeatureRequests(request_syms, update_display, thread_requests)
+   *       (which in turn call Das2ClientOptimizer.loadFeatures(request_sym))
+   */
+  public static void loadDataFromDas2(final Application uni, final String[] das2_server_urls, final String[] das2_query_urls) {
+    if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0) { return; }
+    else if (das2_server_urls.length != das2_query_urls.length) { return; }
+    if (DEBUG_DAS2_LOAD)  { System.out.println("UnibrowControlServlet.loadDataFromDas2 called"); }
+    ArrayList das2_requests = new ArrayList();
+    ArrayList opaque_requests = new ArrayList();
+    for (int i=0; i<das2_server_urls.length; i++) {
+      String das2_server_url = URLDecoder.decode(das2_server_urls[i]);
+      String das2_query_url = URLDecoder.decode(das2_query_urls[i]);
+
+      String cap_url = null;
+      String seg_uri = null;
+      String type_uri = null;
+      String overstr = null;
+      String format = null;
+
+      boolean use_optimizer = true;
+
+      int qindex = das2_query_url.indexOf('?');
+      if (qindex > -1) {
+	cap_url = das2_query_url.substring( 0, qindex );
+	if (DEBUG_DAS2_LOAD)  { System.out.println("     capability: " + cap_url); }
+	String query = das2_query_url.substring( qindex+1 );
+	String[] query_array = query_splitter.split(query);
+	for (int k=-0; k<query_array.length; k++)  {
+	  String tagval = query_array[k];
+	  int eqindex = tagval.indexOf('=');
+	  String tag = tagval.substring(0, eqindex);
+	  String val = tagval.substring(eqindex+1);
+	  if (DEBUG_DAS2_LOAD)  { System.out.println("     query param, tag = : " + tag + ", val = " + val); }
+	  if (tag.equals("format") && (format == null)) { format = val; }
+	  else if (tag.equals("type") && (type_uri == null)) { type_uri = val; }
+	  else if (tag.equals("segment") && (seg_uri == null)) { seg_uri = val; }
+	  else if (tag.equals("overlaps") && (overstr == null)) { overstr = val; }
+	  else {
+	    use_optimizer = false;
+	    break;
+	  }
+	}
+	if (type_uri == null || seg_uri== null || overstr == null) { use_optimizer = false; }
+      }
+      else { use_optimizer = false; }
+
+      //
+      // only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
+      // otherwise treat like any other opaque data url via loadDataFromURLs call
+      //
+      if (use_optimizer) {
+	try {
+	  Das2ServerInfo server = Das2Discovery.getDas2Server(das2_server_url);
+	  if (server == null) { server = Das2Discovery.addDas2Server(das2_server_url, das2_server_url); }
+	  if (DEBUG_DAS2_LOAD)  { System.out.println("     server: " + server.getID()); }
+	  server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
+
+	  Das2VersionedSource version = (Das2VersionedSource)Das2Discovery.getCapabilityMap().get(cap_url);
+	  if (DEBUG_DAS2_LOAD)  { System.out.println("     version: " + version.getID()); }
+	  Das2Type dtype = (Das2Type)version.getTypes().get(type_uri);
+	  Das2Region segment = (Das2Region)version.getSegments().get(seg_uri);
+	  String[] minmax = overstr.split(":");
+	  int min = Integer.parseInt(minmax[0]);
+	  int max = Integer.parseInt(minmax[1]);
+	  SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
+	  Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap, null);
+	  request.setFormat(format);
+	  if (DEBUG_DAS2_LOAD)  { System.out.println("adding das2 request: " + das2_query_url); }
+	  das2_requests.add(request);
+	}
+	catch (Exception ex)  {
+	  // something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
+	  ex.printStackTrace();
+	  use_optimizer = false;
+	  opaque_requests.add(das2_query_url);
+	}
+      }
+
+    }
+
+    if (das2_requests.size() > 0)  {
+      Das2LoadView3.processFeatureRequests(das2_requests, true);
+    }
+    if (opaque_requests.size() > 0) {
+      String[] data_urls = new String[opaque_requests.size()];
+      for (int r=0; r<opaque_requests.size(); r++)  { data_urls[r] = (String)opaque_requests.get(r); }
+      loadDataFromURLs(uni, data_urls, null, null);
+    }
   }
 
   public static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
@@ -211,7 +324,7 @@ public class UnibrowControlServlet extends HttpServlet {
   static boolean goToBookmark(final Application uni, final String seqid, final String version,
       final int start, final int end, final int selstart, final int selend,
       final String[] graph_files) {
-    
+
     final SeqMapView gviewer = uni.getMapView();
     final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
@@ -221,17 +334,17 @@ public class UnibrowControlServlet extends HttpServlet {
     } else {
       book_group = gmodel.getSeqGroup(version);
     }
-    
+
     if (book_group == null) {
       Application.errorPanel("Bookmark genome version seq group '"+version+"' not found.\n"+
           "You may need to choose a different QuickLoad server.");
       return false; // cancel
     }
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {
-          System.out.println("current group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
+          // System.out.println("current group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
           System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
           if (book_group != null && ! book_group.equals(selected_group)) {
             if (selected_group != null && ! selected_group.equals("null")) {
@@ -243,16 +356,16 @@ public class UnibrowControlServlet extends HttpServlet {
               gmodel.setSelectedSeqGroup(book_group);
             }
           }
-       
+
           // hopefully setting gmodel's selected seq group above triggered population of seqs
           //   for group if not already populated
           MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
           MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
-          
-          
-          System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
+
+
+          // System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
           System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
-          
+
           if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {
             book_seq = selected_seq;
             if (book_seq == null && gmodel.getSelectedSeqGroup().getSeqCount() > 0) {
@@ -261,7 +374,7 @@ public class UnibrowControlServlet extends HttpServlet {
           } else {
             book_seq = book_group.getSeq(seqid);
           }
-          
+
           if (book_seq == null) {
             Application.errorPanel("No seqid", "The bookmark did not specify a valid seqid: specified '"+seqid+"'");
           } else {
@@ -270,7 +383,7 @@ public class UnibrowControlServlet extends HttpServlet {
             if (book_seq != selected_seq)  {
               gmodel.setSelectedSeq(book_seq);
             }
-            
+
             final SingletonSeqSymmetry regionsym = new SingletonSeqSymmetry(selstart, selend, book_seq);
             final SeqSpan view_span = new SimpleSeqSpan(start, end, book_seq);
             final double middle = (start + end)/2.0;
@@ -301,30 +414,30 @@ public class UnibrowControlServlet extends HttpServlet {
     });
     return true; // was not cancelled, was sucessful
   }
-  
-  
+
+
   /**
-   * This handles the "select" API parameter.  The "select" parameter can be followed by one 
+   * This handles the "select" API parameter.  The "select" parameter can be followed by one
    * or more comma separated IDs in the form: &select=<id_1>,<id_2>,...,<id_n>
-   * Example:  "&select=EPN1,U2AF2,ZNF524" 
-   * Each ID that exists in IGB's ID to symmetry hash will be selected, even if the symmetries 
+   * Example:  "&select=EPN1,U2AF2,ZNF524"
+   * Each ID that exists in IGB's ID to symmetry hash will be selected, even if the symmetries
    * lie on different sequences.
    * @param selectParam The select parameter passed in through the API
    */
   private static void performSelection(String selectParam) {
 
     if (selectParam == null){return;}
-    
+
     // split the parameter by commas
     String[] ids = selectParam.split(",");
-    
+
     if (selectParam.length() == 0) {return;}
-    
+
     List sym_list = new ArrayList(ids.length);
     for (int i=0; i<ids.length; i++) {
       sym_list.addAll(gmodel.getSelectedSeqGroup().findSyms(ids[i]));
     }
-    
-    gmodel.setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);    
+
+    gmodel.setSelectedSymmetriesAndSeq(sym_list, UnibrowControlServlet.class);
   }
 }

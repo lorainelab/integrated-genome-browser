@@ -1150,7 +1150,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 String name = (String)names.get(0);
 	 // GAH 11-2006
 	 //   need to enhance this to support multiple name parameters OR'd together
-	 //   need to enhance this to support "*" wild-card search as defined in spec
 
 	 //   DAS/2 specification defines glob-style searches:
 	 //   The string searches may be exact matches, substring, prefix or suffix searches.
@@ -1184,9 +1183,19 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 else {  // ABC -- field exactly matches "ABC"
 	   result = genome.findSyms(name);
 	 }
+	 if (types.size() > 0) {
+	   // make sure result syms are of one of the specified types
+	   /*  NOT DONE YET
+	   Iterator iter = types.iterator();
+	   while (iter.hasNext()) {
+	     String type_full_uri = (String)iter.next();
+	     String type = getInternalType(type_full_uri, genome);
+	   }
+	   */
+	 }
       }
       // handling one type, one segment, one overlaps, optionally one inside
-      else if (types.size() >= 1 &&      // one and only one type
+      else if (types.size() == 1 &&      // one and only one type
 	       segments.size() == 1 &&   // one and only one segment
 	       overlaps.size() <= 1 &&   // one and only one overlaps
 	       insides.size() <= 1 &&    // zere or one inside
@@ -1197,21 +1206,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	 // using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
 	int sindex = seqid.lastIndexOf("/");
 	if (sindex >= 0) { seqid = seqid.substring(sindex+1); }
-
-	//	query_type = (String)types.get(0);
-	query_type = URLDecoder.decode((String)types.get(0));
-	// using end of URI for internal typeid if type is given as full URI
-	//    (as it should according to DAS/2 spec)
-	//    special-case exception is when need to know full URL for locating graph data,
-	if (!(query_type.endsWith(".bar"))) {
-	  String gid = genome.getID();
-	  int gindex = query_type.indexOf(gid);
-	  if (gindex >= 0) {
-	    query_type = query_type.substring(gindex + gid.length() + 1);
-	  }
-	  //	  int pindex = query_type.lastIndexOf("/");
-	  //	  if (pindex >= 0) { query_type = query_type.substring(pindex+1); }
-	}
+	String type_full_uri = (String)types.get(0);
+	query_type = getInternalType(type_full_uri, genome);
 
 	String overlap = null;
 	if (overlaps.size() == 1) {
@@ -1329,9 +1325,25 @@ public class GenometryDas2Servlet extends HttpServlet  {
       ex.printStackTrace();
     }
 
-
   }
 
+  public String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
+    //	query_type = (String)types.get(0);
+    String query_type = URLDecoder.decode(full_type_uri);
+    // using end of URI for internal typeid if type is given as full URI
+    //    (as it should according to DAS/2 spec)
+    //    special-case exception is when need to know full URL for locating graph data,
+    if (!(query_type.endsWith(".bar"))) {
+      String gid = genome.getID();
+      int gindex = query_type.indexOf(gid);
+      if (gindex >= 0) {
+	query_type = query_type.substring(gindex + gid.length() + 1);
+      }
+      //	  int pindex = query_type.lastIndexOf("/");
+      //	  if (pindex >= 0) { query_type = query_type.substring(pindex+1); }
+    }
+    return query_type;
+  }
 
   /**
    *  Differs from Das2FeatureSaxParser.getLocationSpan():

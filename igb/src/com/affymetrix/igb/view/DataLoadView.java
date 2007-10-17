@@ -41,16 +41,18 @@ public class DataLoadView extends JComponent  {
 
   public DataLoadView() {
     //    group_view = new SeqGroupView();
-    
-    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    
-    JPanel main_panel = new JPanel();
-    this.add(main_panel);
-    this.setBorder(BorderFactory.createEtchedBorder());
-    
-    main_panel.setLayout(new BorderLayout());
+    //    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    //    JPanel main_panel = new JPanel();
+    //    this.add(main_panel);
+    //    this.setBorder(BorderFactory.createEtchedBorder());
+    this.setLayout(new BorderLayout());
+    //    main_panel.setLayout(new BorderLayout());
     //    main_panel.add("West", group_view);
-    
+    das2_view3 = new Das2LoadView3();
+    //    main_panel.add("Center", das2_view3);
+    this.add("Center", das2_view3);
+
+    /*    
     JTabbedPane tpane = new JTabbedPane();
     main_panel.add("Center", tpane);
     if (USE_QUICKLOAD)  { 
@@ -66,6 +68,7 @@ public class DataLoadView extends JComponent  {
       das1_view = new DasLoadView();
       tpane.addTab("DAS/1", das1_view);
     }
+    */
   }
 
   public void initialize() {

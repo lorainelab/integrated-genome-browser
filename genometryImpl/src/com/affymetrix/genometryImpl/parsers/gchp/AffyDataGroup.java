@@ -63,10 +63,10 @@ public class AffyDataGroup {
       //TODO: figure out why there is a bug in parsing multiple datasets.
       // There seems to be some difference between the format specification and
       // the actual file contents.
-      throw new IOException("Cannot parse CHP files with more than one dataset.");
+      //throw new IOException("Cannot parse CHP files with more than one dataset.");
     }
 
-    for (int i=0; i<group.num_datasets; i++) {
+    for (int i=0; i<1 && i<group.num_datasets; i++) {
       AffyDataSet data = new AffyDataSet(chpFile);
       data.parse(chpFile, dis);
       group.dataSets.add(data);

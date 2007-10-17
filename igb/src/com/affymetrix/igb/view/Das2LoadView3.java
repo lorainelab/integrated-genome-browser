@@ -94,7 +94,7 @@ public class Das2LoadView3 extends JComponent
   JTable types_table;
   JTable types_tree_table;
   JScrollPane table_scroller;
-  JScrollPane tree_table_scroller;
+  JScrollPane tree_scroller;
   JTree tree;
   CheckTreeManager check_tree_manager; // manager for tree with checkboxes
   Das2TypesTableModel types_table_model;
@@ -159,6 +159,8 @@ public class Das2LoadView3 extends JComponent
     types_table.setModel(types_table_model);
 
     table_scroller = new JScrollPane(types_table);
+    tree_scroller = new JScrollPane(tree);
+    tree_scroller.setMinimumSize(new Dimension(300, 0));
 
     this.setLayout(new BorderLayout());
 
@@ -170,10 +172,10 @@ public class Das2LoadView3 extends JComponent
     types_panel.add("Center", table_scroller);
     final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
     splitpane.setOneTouchExpandable(true);
-    splitpane.setLeftComponent(new JScrollPane(tree));
+
     tpane.addTab("Load by Location", types_panel);
     tpane.addTab("Name Search", namesearch);
-    //    splitpane.setRightComponent(types_panel);
+    splitpane.setLeftComponent(tree_scroller);
     splitpane.setRightComponent(tpane);
 
     // As soon as this component becomes visible, set the splitpane position
@@ -720,6 +722,7 @@ public class Das2LoadView3 extends JComponent
 	    path_index++;
 	  }
 	  //	  System.out.println("type: " + tstate + ", load: " + tstate.getLoad());
+	  // System.out.println("type: " + type_name);
 	  //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
 	  DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
 	  tstate2node.put(tstate, child);

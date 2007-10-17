@@ -32,12 +32,13 @@ public class Das2Discovery {
   static Map name2url = new LinkedHashMap();
   static Map name2server = new LinkedHashMap();
   static Map url2server = new LinkedHashMap();
+  static Map cap2version = new LinkedHashMap();
 
   static {
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
-    //    name2url.put("localhost", "http://localhost:9092/das2/genome");
-    name2url.put("biopackages", "http://das.biopackages.net/das/genome");
-    name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
+    name2url.put("localhost", "http://localhost:9092/das2/genome");
+    //    name2url.put("biopackages", "http://das.biopackages.net/das/genome");
+    //    name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
     //    name2url.put("HapMap-test", "http://brie5.cshl.edu:9191/hapmap/das2/sources");
 
     //    name2url.put("File based", "file:///C:/Documents%20and%20Settings/Ed%20Erwin/My%20Documents/genoviz/igb/test/test_files/sources.xml");
@@ -54,6 +55,8 @@ public class Das2Discovery {
   public static Map getDas2Servers() {
     return name2server;
   }
+
+  public static Map getCapabilityMap() { return cap2version; }
 
   public static void addServersFromTabFile(String server_loc_url) {
     // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
@@ -128,6 +131,13 @@ public class Das2Discovery {
     return server;
   }
 
+  /**
+   *  Given a capability URI string, try to find a Das2VersionedSource that uses the input URI as a capability URI
+   *  This is useful since versioned source is not directly derivable from a DAS/2 query...
+   */
+//  public static Das2VersionedSource getVersionedSource(String capability_uri, boolean try_unloaded_servers) {
+//
+//  }
 
   /**
    *  Given an AnnotatedSeqGroup, return a list of Das2VersionedSources that

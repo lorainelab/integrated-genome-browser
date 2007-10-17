@@ -121,7 +121,7 @@ public class Das2ClientOptimizer {
       cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(typeid);
       // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
       if (cont_sym == null && typeid.endsWith(".bar")) {
-	if (DEBUG)  {request_log.addLogMessage("trying to use type name for bar type, name: " + 
+	if (DEBUG)  {request_log.addLogMessage("trying to use type name for bar type, name: " +
 					       type.getName() + ", id: " + typeid);}
 	cont_sym = (MutableSeqSymmetry)aseq.getAnnotation(type.getName());
 	if (DEBUG) {request_log.addLogMessage("cont_sym: " + cont_sym);}
@@ -268,9 +268,11 @@ public class Das2ClientOptimizer {
                        ", inside = " + inside_filter);
     }
     Das2Type type = request_sym.getDas2Type();
-    String format = null;
-    if (OPTIMIZE_FORMAT) {
+    String format = request_sym.getFormat();
+    // if format already specified in Das2FeatureRequestSym, don't optimize
+    if (OPTIMIZE_FORMAT && (format == null)) {
       format = FormatPriorities.getFormat(type);
+      request_sym.setFormat(format);
     }
 
     MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
@@ -330,7 +332,9 @@ public class Das2ClientOptimizer {
       String feature_query = request_root + "?" + query_part;
       if (DEBUG) {
 	request_log.addLogMessage("feature query URL:  " + feature_query);
+	request_log.addLogMessage("url-encoded query URL:  " + URLEncoder.encode(feature_query, UTF8));
 	request_log.addLogMessage("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+
       }
 
       /**
@@ -380,14 +384,14 @@ public class Das2ClientOptimizer {
 	  request_log.setSuccess(false);
 	}
 	else {
-	  request_log.addLogMessage("    getting content type");
+	  // request_log.addLogMessage("    getting content type");
 	  String content_type = query_con.getContentType();
-	  request_log.addLogMessage("    getting input stream");
+	  // request_log.addLogMessage("    getting input stream");
 	  InputStream istr = query_con.getInputStream();
 	  bis = new BufferedInputStream(istr);
-          request_log.addLogMessage("content type: " + content_type);
+          if (DEBUG)  { request_log.addLogMessage("content type: " + content_type); }
 	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
-          request_log.addLogMessage("content subtype: " + content_subtype);
+          // request_log.addLogMessage("content subtype: " + content_subtype);
 	  if (content_type == null ||
 	      content_subtype == null ||
 	      content_type.equals("unknown") ||
@@ -454,8 +458,8 @@ public class Das2ClientOptimizer {
 	  parser.setIsLinkPsl(true);
 	  parser.enableSharedQueryTarget(true);
 	  // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
-	  feats = parser.parse(bis, 
-			       type.getName(), // The method name for the annotation to load from the file, 
+	  feats = parser.parse(bis,
+			       type.getName(), // The method name for the annotation to load from the file,
 			                       // (if there is a track line in the file, track name will be used instead
 			       null, // An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
                                      //  Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.

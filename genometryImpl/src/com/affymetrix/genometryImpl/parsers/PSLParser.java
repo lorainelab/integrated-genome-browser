@@ -378,7 +378,7 @@ public class PSLParser implements AnnotationWriter  {
           query_group.addToIndex(sym.getID(), sym);
         }
 
-        if (annotate_target || 
+        if (annotate_target ||
 	    (shared_query_target && is_link_psl)) {  // force annotation of target if query and target are shared and file is ".link.psl" format
           if (create_container_annot) {
             createContainerAnnot(target2types, tseq, type, sym, is_psl3, is_link_psl);
@@ -415,10 +415,12 @@ public class PSLParser implements AnnotationWriter  {
     }
     System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
                        ", child count: " + total_child_count);
-    if (results.size() == 0) {
+   /*
+     if (results.size() == 0) {
       throw new IOException("The PSL file contianed no annotations.  "+
           "Check that the file is properly-formatted, using TABs rather than spaces.");
     }
+    */
     return results;
   }
 

@@ -11,13 +11,13 @@
 -->
 
 
-<boolean tag="USE_QUICK_LOADER" val="true" />
+<boolean tag="USE_QUICK_LOADER" val="false" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />
 <boolean tag="USE_PATTERN_SEARCHER" val="true" />
-<boolean tag="USE_ANNOT_BROWSER" val="true" />
+<boolean tag="USE_ANNOT_BROWSER" val="false" />
 <boolean tag="USE_BOOKMARK_MANAGER" val="true" />
-<boolean tag="USE_PIVOT_VIEW" val="true" />
+<boolean tag="USE_PIVOT_VIEW" val="false" />
 <boolean tag="USE_RESTRICTION_MAPPER" val="false" />
 
 
@@ -76,9 +76,11 @@
     "HuEx-1_0-st-chr1-Probes" (and chr2, etc.), "HuEx-1_0-st-chr1-Transcripts" (and chr2, etc.)
 -->
 
+<!--
   <annotation_style annot_type_regex="(?i).*RefSeq$"
       label_field="gene_name" 
   />
+-->
 
 <annotation_style annot_type_regex="^.*Ex-1_0-st.*Probes$"
   child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
@@ -107,10 +109,12 @@
                             substituted with the item ID when forming links.
   -->
 <!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
+<!--
   <annotation_url annot_type_regex="(?i)RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
+-->
   <annotation_url annot_type_regex="(?i).*mRNA$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
@@ -146,6 +150,10 @@
     name="Entrez"
     url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
   />    
+ <annotation_url annot_type_regex="(?i).*sanger_pombe$"
+    name="GeneDB"
+    url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
+  />
 
 <!--
   <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"

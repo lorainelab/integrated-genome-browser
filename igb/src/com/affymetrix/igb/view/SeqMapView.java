@@ -1504,6 +1504,7 @@ public class SeqMapView extends JPanel
     // Map symmetry subclass or method type to a factory, and call factory to make glyphs
     MapViewGlyphFactoryI factory = null;
     String meth = determineMethod(annotSym);
+    //    System.out.println("adding annotation glyphs for method: " + meth);
 
     if (annotSym instanceof ScoredContainerSym) {
       factory = getScoredContainerGlyphFactory();

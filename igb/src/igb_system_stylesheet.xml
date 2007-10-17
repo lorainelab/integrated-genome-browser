@@ -307,11 +307,12 @@ will not work well with these styles.
   <!-- Case-insensitive match of the ending ".link.psl" -->
   <METHOD_REGEX_ASSOCIATION regex="(?i).*\.link\.psl" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
   <METHOD_REGEX_ASSOCIATION regex=".*netaffx consensus" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
+  <METHOD_REGEX_ASSOCIATION regex=".*netaffx\+consensus" style="com.affymetrix.igb.glyph.ProbeSetDisplayGlyphFactory" />
   <!-- End of probe set display section -->
 
   <METHOD_REGEX_ASSOCIATION regex="refseq$"
      style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
-       <PROPERTY key="color" value="00FFFF" />  
+       <PROPERTY key="color" value="00FFFF" />
        <PROPERTY key="label_field" value="gene name" />
        <PROPERTY key="max_depth" value="3" />
        <!--   <PROPERTY key="annot_type" value="refseq" />  hmm  -->

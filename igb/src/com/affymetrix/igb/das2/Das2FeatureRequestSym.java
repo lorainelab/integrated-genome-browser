@@ -50,10 +50,11 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
   //  Das2ContainerAnnot parent_container;
   TypeContainerAnnot parent_container;
   BioSeq aseq;
-  MutableSeqSpan sum_child_spans = null;
+  MutableSeqSpan sum_child_spans;
+  String format;
 
   Das2RequestLog response = new Das2RequestLog();
-  
+
   //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
     das2_type = type;
@@ -63,6 +64,7 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
     overlap_span = new LeafSingletonSymmetry(overlap);
     inside_span = inside;
     aseq = overlap_span.getBioSeq();
+
     this.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
   }
 
@@ -100,6 +102,9 @@ public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSy
   public TypeContainerAnnot getParentContainer() { return parent_container; }
   public Das2Region getRegion() { return das2_region; }
   public Das2Type getDas2Type() { return das2_type; }
+  public String getFormat() { return format; }
+  public void setFormat(String format) { this.format = format; }
+
 
   /**
       overriding MutableSeqSymmetry addSpan(), reomoveSpan(), setSpan(), removeSpans(), clear() methods,

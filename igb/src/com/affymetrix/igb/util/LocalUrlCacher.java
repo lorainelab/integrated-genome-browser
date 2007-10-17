@@ -38,6 +38,7 @@ public class LocalUrlCacher {
   // the "quickload" part of the constant value is there for historical reasons
   public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
   public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
+  public static final String URL_NOT_REACHABLE = "URL_NOT_REACHABLE";
 
 
   static boolean offline = false;
@@ -321,6 +322,7 @@ public class LocalUrlCacher {
       }
       catch (IOException ioe) {
 	Application.getSingleton().logWarning("URL not reachable: " + url);
+	headers.put("LocalUrlCacher", URL_NOT_REACHABLE);
 	url_reachable = false;
         if (! cached) { throw ioe; }
       }

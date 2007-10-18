@@ -13,6 +13,7 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -113,6 +114,9 @@ public class GenometryModel {
 
   public void removeSeqGroup(AnnotatedSeqGroup group) {
     seq_groups.remove(group.getID());
+    for (BioSeq seq : group.getSeqList()) {
+      seq2selectedSymsHash.remove(seq);
+    }
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
 
@@ -120,6 +124,7 @@ public class GenometryModel {
     this.setSelectedSeq(null);
     this.setSelectedSeqGroup(null);
     seq_groups.clear();
+    seq2selectedSymsHash.clear();
     //fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
   }
   
@@ -256,7 +261,7 @@ public class GenometryModel {
   public List<AnnotatedBioSeq> getSequencesWithSelections() {
     Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
     for (AnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
-      List list = (List) seq2selectedSymsHash.get(seq);
+      List<SeqSymmetry> list = seq2selectedSymsHash.get(seq);
       if (! list.isEmpty()) {
         sequences.add(seq);
       }
@@ -381,7 +386,11 @@ public class GenometryModel {
       System.out.println("    syms = " + syms);
     }
     // set the selected syms for the sequence
-    seq2selectedSymsHash.put(seq, syms);
+    if (syms != null && ! syms.isEmpty()) {
+      seq2selectedSymsHash.put(seq, syms);
+    } else {
+      seq2selectedSymsHash.remove(seq); // to avoid memory leaks when a seq is deleted
+    }
   }
 
 
@@ -414,7 +423,7 @@ public class GenometryModel {
     List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
     if (selections == null) {
       selections = new ArrayList<SeqSymmetry>();
-      seq2selectedSymsHash.put(seq, selections);
+      // NO:  This is a memory leak: seq2selectedSymsHash.put(seq, selections);
     }
     return selections;
   }
@@ -436,6 +445,7 @@ public class GenometryModel {
     for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
       list.clear();
     }
+    seq2selectedSymsHash.clear();
   }
 
 //  public void addModelChangeListener(GenometryModelChangeListener listener) {

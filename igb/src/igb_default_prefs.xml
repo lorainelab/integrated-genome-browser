@@ -109,12 +109,10 @@
                             substituted with the item ID when forming links.
   -->
 <!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
-<!--
-  <annotation_url annot_type_regex="(?i)RefSeq$"
+  <annotation_url annot_type_regex="(?i).*RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
--->
   <annotation_url annot_type_regex="(?i).*mRNA$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"

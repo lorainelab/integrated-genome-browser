@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.event.*;
+import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.swing.DisplayUtils;
 
 public class DataLoadView extends JComponent  {
@@ -40,26 +41,22 @@ public class DataLoadView extends JComponent  {
   //  SeqGroupView group_view;
 
   public DataLoadView() {
+    // some of the options in DataLoadPrefsView are specific to QuickLoad, but still want to be able to see 
+    //     DataLoadPrefsView even when not using QuickLoad
+    PreferencesPanel pp = PreferencesPanel.getSingleton();
+    pp.addPrefEditorComponent(new DataLoadPrefsView());
+
     //    group_view = new SeqGroupView();
-    //    this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    //    JPanel main_panel = new JPanel();
-    //    this.add(main_panel);
     //    this.setBorder(BorderFactory.createEtchedBorder());
+
     this.setLayout(new BorderLayout());
-    //    main_panel.setLayout(new BorderLayout());
-    //    main_panel.add("West", group_view);
+    
     das2_view3 = new Das2LoadView3();
-    //    main_panel.add("Center", das2_view3);
     this.add("Center", das2_view3);
 
-    /*    
+    /*
     JTabbedPane tpane = new JTabbedPane();
-    main_panel.add("Center", tpane);
-    if (USE_QUICKLOAD)  { 
-      quick_view = new QuickLoadView2();
-      quick_view.setBorder(BorderFactory.createEtchedBorder());
-      tpane.addTab("QuickLoad", quick_view); 
-    }
+    this.add("Center", tpane);
     if (USE_DAS2_VIEW) {
       das2_view3 = new Das2LoadView3();
       tpane.addTab("Annotation Types", das2_view3);
@@ -67,6 +64,11 @@ public class DataLoadView extends JComponent  {
     if (USE_DAS1_VIEW) {
       das1_view = new DasLoadView();
       tpane.addTab("DAS/1", das1_view);
+    }
+    if (USE_QUICKLOAD)  {
+      quick_view = new QuickLoadView2();
+      quick_view.setBorder(BorderFactory.createEtchedBorder());
+      tpane.addTab("QuickLoad", quick_view);
     }
     */
   }
@@ -112,7 +114,7 @@ class SeqGroupView extends JComponent
     this.add(genomeCB);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
     this.add(scroller);
-    
+
     this.setBorder(BorderFactory.createTitledBorder("Current Genome"));
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
@@ -155,10 +157,10 @@ class SeqGroupView extends JComponent
     //TableSorter2 sort_model = new TableSorter2(mod);
     //sort_model.setTableHeader(seqtable.getTableHeader());
     //seqtable.setModel(sort_model);
-    
+
     seqtable.validate();
     seqtable.repaint();
-    
+
     if (group != null) {
       // When changing genomes, try to keep the same chromosome selected when possible
       MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
@@ -167,7 +169,7 @@ class SeqGroupView extends JComponent
       }
     }
   }
-  
+
   // add an item to a combo box iff it isn't already included
   void addItemToComboBox(JComboBox cb, Object item) {
     for (int i=0; i<cb.getItemCount(); i++) {
@@ -187,11 +189,11 @@ class SeqGroupView extends JComponent
 	//selected_seq = gmodel.getSelectedSeq();
         selected_seq = evt.getSelectedSeq();
 	if (selected_seq == null) {
-          seqtable.clearSelection(); 
+          seqtable.clearSelection();
         }
         else  {
           most_recent_seq_id = selected_seq.getID();
-          
+
           for (int i=0; i<seqtable.getRowCount(); i++) {
             // should be able to use == here instead of equals(), because table's model really returns seq.getID()
             if (most_recent_seq_id ==  seqtable.getValueAt(i, 0)) {
@@ -219,7 +221,7 @@ class SeqGroupView extends JComponent
       }
     });
   }
-  
+
   public void valueChanged(ListSelectionEvent evt) {
     Object src = evt.getSource();
     if ((src == lsm) && (! evt.getValueIsAdjusting())) { // ignore extra messages
@@ -253,7 +255,7 @@ class SeqGroupView extends JComponent
 //    if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_ADDED)) {
 //      genomeCB.addItem(group.getID());
 //    } else if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_REMOVED)) {
-//      genomeCB.removeItem(group.getID()); 
+//      genomeCB.removeItem(group.getID());
 //    }
 //  }
 
@@ -270,7 +272,7 @@ class SeqGroupTableModel extends AbstractTableModel  {
   public int getRowCount() { return (group == null ? 0 : group.getSeqCount()); }
 
   public int getColumnCount() { return 2; }
-  
+
   public Object getValueAt(int row, int col) {
     if (group != null) {
       MutableAnnotatedBioSeq seq = group.getSeq(row);
@@ -279,7 +281,7 @@ class SeqGroupTableModel extends AbstractTableModel  {
       }
       else if (col == 1) {
 	if (seq instanceof CompositeNegSeq) {
-	  return Long.toString((long)((CompositeNegSeq)seq).getLengthDouble()); 
+	  return Long.toString((long)((CompositeNegSeq)seq).getLengthDouble());
 	}
 	else {
 	  return Integer.toString(seq.getLength());

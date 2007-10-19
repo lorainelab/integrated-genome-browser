@@ -79,10 +79,8 @@ Make sure that the 'ext' directory exists and includes
        
     2. Place copies of those jar files in some directory.
     
-    3. Let "ant" know the location of that directory by using a
-       command like:
-       
-       "ant  -Dlib.dir=/home/gregg/lib  compile"
+    3. Run 'ant clean all' to build both igb.jar and das2_server.jar
+       Run 'ant clean jar' to build just igb.jar and dependent jars.
 
     *************************************************************
 
@@ -137,10 +135,10 @@ Make sure that the 'ext' directory exists and includes
   </target>
   
   <!-- =================================================================== -->
-  <!-- Compiles DAS2 Server                                                -->
+  <!-- Compiles and builds jar for DAS2 Server                             -->
   <!-- =================================================================== -->
-  <target name="compile-das2server" depends="init,compile-genoviz" 
-    description="Compiles DAS2 Server">
+  <target name="das2server" depends="init,compile-genoviz" 
+    description="Compiles and builds jar for DAS2 Server">
     <ant dir="${das2_server.dir}" target="all" inheritAll="false"/>
   </target>
 
@@ -156,7 +154,7 @@ Make sure that the 'ext' directory exists and includes
   <!-- Compiles All                                                        -->
   <!-- =================================================================== -->
   <!-- target name="compile" -->
-  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl,compile-das2server"
+  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl"
     description="Compiles IGB">
     <mkdir dir="${classes.dir}"/>
     <javac destdir="${classes.dir}"
@@ -175,7 +173,6 @@ Make sure that the 'ext' directory exists and includes
       </fileset>
     </copy>
   </target>
-
   
   <!-- =================================================================== -->
   <!-- Creates the igb.jar                                                 -->
@@ -194,6 +191,14 @@ Make sure that the 'ext' directory exists and includes
     </jar>
 
   </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates igb.jar and das2_server.jar (which it depends on igb.jar)   -->
+  <!-- =================================================================== -->
+  <target name="all" depends="jar,das2server" 
+    description="Builds the IGB and das2_server jars">
+  </target>
+
 
   <!-- =================================================================== -->
   <!-- Creates an executable, large .jar file                              -->

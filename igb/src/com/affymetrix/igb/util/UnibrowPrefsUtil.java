@@ -458,6 +458,10 @@ import javax.swing.*;
     return result;
   }
 
+  public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
+    return createCheckBox(title, getTopNode(), pref_name, default_val);
+  }
+
   /**
    *  Creates a JCheckBox associated with a boolean preference.
    *  Will initialize itself with the value of the given

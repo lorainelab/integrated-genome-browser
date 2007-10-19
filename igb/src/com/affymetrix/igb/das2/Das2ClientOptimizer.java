@@ -452,6 +452,22 @@ public class Das2ClientOptimizer {
 	  GFFParser parser = new GFFParser();
 	  feats = parser.parse(bis, ".", seq_group, false, false);
 	}
+	/*
+	else if (content_subtype.equals("bed")) {
+
+	}
+	else if (content_subtype.equals("simplebed")) {
+
+	}
+	else if (content_subtype.equals("psl")) {
+
+	}
+	else if (content_subtype.equals("dasxml") || 
+		 content_subtype.equals("dasgff") ) {
+
+	}
+	*/
+
 	else if (content_subtype.equals("link.psl")) {
 	  request_log.addLogMessage("PARSING LINK.PSL FORMAT FOR DAS2 FEATURE RESPONSE");
 	  PSLParser parser = new PSLParser();

@@ -37,6 +37,8 @@ import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
 import com.affymetrix.igb.util.GraphSaverFileChooser;
 import com.affymetrix.igb.util.GraphSymUtils;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class GraphAdjusterView {
 
@@ -223,12 +225,14 @@ public class GraphAdjusterView {
     }
   }
 
+  public static NumberFormat numberParser = NumberFormat.getNumberInstance();
+
   /** Parse a String floating-point number that may optionally end with a "%" symbol. */
-  public static float parsePercent(String text) throws NumberFormatException {
+  public static float parsePercent(String text) throws ParseException {
     if (text.endsWith("%")) {
       text = text.substring(0, text.length()-1);
     }
 
-    return Float.parseFloat(text);
+    return numberParser.parse(text).floatValue();
   }
 }

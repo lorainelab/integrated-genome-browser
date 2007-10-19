@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.view.GraphAdjusterView;
+import java.text.ParseException;
 
 public class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
@@ -523,7 +524,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 
     if (src == min_valT) {
       try {
-	float minval = Float.parseFloat(min_valT.getText());
+	float minval = GraphAdjusterView.numberParser.parse(min_valT.getText()).floatValue();
 	if (minval > prev_max_val - val_offset) { minval = prev_max_val - val_offset; }
         // do not enforce an absolute minimum in the text field.
         // let the user enter any value to get the desired scaling.
@@ -531,20 +532,20 @@ public class GraphVisibleBoundsSetter extends JPanel
 	//else if (minval < abs_min_val) { minval = abs_min_val; }
 	setVisibleMinValue(minval);
       }
-      catch (NumberFormatException ex) {
+      catch (ParseException ex) {
 	min_valT.setText(val_format.format(prev_min_val));
       }
     }
     else if (src == max_valT) {
       try {
-	float maxval = Float.parseFloat(max_valT.getText());
+	float maxval = GraphAdjusterView.numberParser.parse(max_valT.getText()).floatValue();
 	if (maxval < prev_min_val + val_offset) { maxval = prev_min_val + val_offset; }
         // do not enforce an absolute maximum in the text field.
         // let the user enter any value to get the desired scaling
 	//else if (maxval > abs_max_val) { maxval = abs_max_val; }
 	setVisibleMaxValue(maxval);
       }
-      catch (NumberFormatException ex) {
+      catch (ParseException ex) {
 	max_valT.setText(val_format.format(prev_max_val));
       }
     }
@@ -556,7 +557,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	else if (min_per > prev_max_per - per_offset) { min_per = prev_max_per - per_offset; }
 	setVisibleMinPercent(min_per);  // resets min_perT text also
       }
-      catch (NumberFormatException ex) {
+      catch (ParseException ex) {
 	min_perT.setText(per_format.format(prev_min_per));
       }
     }
@@ -568,7 +569,7 @@ public class GraphVisibleBoundsSetter extends JPanel
 	else if (max_per > 100) { max_per = 100; }
 	setVisibleMaxPercent(max_per);  // resets max_perT text also
       }
-      catch (NumberFormatException ex) {
+      catch (ParseException ex) {
 	max_perT.setText(per_format.format(prev_max_per));
       }
     }
@@ -772,7 +773,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   float[] getPercents2Scores(GraphGlyph gl) {
     Object info = gl.getInfo();
     if (info == null) { 
-      System.err.println("Graph has no info! " + gl); 
+      System.err.println("Graph has no info! " + gl);
     }
     float[] p2score = (float[]) info2pscores.get(info);
     

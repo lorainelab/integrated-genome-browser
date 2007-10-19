@@ -34,6 +34,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.*;
 
 
@@ -479,7 +480,7 @@ public class GraphScoreThreshSetter extends JPanel
 
     if (src == score_valT) {
       try {
-	float thresh = Float.parseFloat(score_valT.getText());
+	float thresh = GraphAdjusterView.numberParser.parse(score_valT.getText()).floatValue();
         // Do not limit the threshold to just the total range of this graph.
         // The user may set the thresholds of a set of graphs (on the same or
         // different chromosomes) to the same value even if the absolute 
@@ -488,7 +489,7 @@ public class GraphScoreThreshSetter extends JPanel
 	//else if (thresh > abs_max_val) { thresh = abs_max_val; }
         setScoreThreshold(thresh);  // also sets prev_thresh_val          
       }
-      catch (NumberFormatException ex) { // couldn't parse, keep same...
+      catch (ParseException ex) { // couldn't parse, keep same...
         //score_valT.setText(val_format.format(prev_thresh_val));
         setGraphs(new ArrayList(graphs));
       }
@@ -500,7 +501,7 @@ public class GraphScoreThreshSetter extends JPanel
 	else if (thresh_per > abs_max_per) { thresh_per = abs_max_per; }
 	setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
       }
-      catch (NumberFormatException ex) { // couldn't parse, keep same...
+      catch (ParseException ex) { // couldn't parse, keep same...
         //score_perT.setText(per_format.format(prev_thresh_per));
         setGraphs(new ArrayList(graphs));
       }

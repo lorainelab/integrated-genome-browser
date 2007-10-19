@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
@@ -61,19 +62,22 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     //misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
       UnibrowPrefsUtil.ASK_BEFORE_EXITING, UnibrowPrefsUtil.default_ask_before_exiting));
-
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place horizontal zoomer at top", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_X_ZOOMER_ABOVE, SeqMapView.default_x_zoomer_above));
-    
+
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place vertical zoomer at left", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));
-    
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+
+    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad",
+						 IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
+						 IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2) );
+
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
 
@@ -86,7 +90,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     //misc_box.add(UnibrowPrefsUtil.createCheckBox("Sequence accessible", UnibrowPrefsUtil.getTopNode(),
     //  IGB.PREF_SEQUENCE_ACCESSIBLE, IGB.default_sequence_accessible));
 
-    
+
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     if ( is_unix ) {
       misc_box.add(new JLabel("Browser command: "));
@@ -108,7 +112,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     colors_box.add(fg_color);
     colors_box.add(bg_color);
      */
-    
+
     /*
     JPanel customizer_box = new JPanel();
     customizer_box.setLayout(new FlowLayout());
@@ -117,10 +121,10 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
       public void actionPerformed(ActionEvent evt) {
         TierPrefsView.showFrame();
       }
-    };    
+    };
     customizer_box.add(new JButton(customizer_action));
      */
-    
+
     JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
@@ -162,12 +166,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
                                                   SeqMapView.VALUE_AXIS_LABEL_FORMAT_ABBREV};
     JComboBox axis_label_format_CB = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), "Axis label format", label_format_options, default_label_format);
     axis_box.add(axis_label_format_CB);
-    
+
     axis_box.setAlignmentX(0.0f);
     edge_match_box.setAlignmentX(0.0f);
     orf_box.setAlignmentX(0.0f);
     misc_box.setAlignmentX(0.0f);
-    
+
     //main_box.add(customizer_box);
     main_box.add(axis_box);
     main_box.add(edge_match_box);
@@ -233,7 +237,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     sb.append("Recommend: true.");
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Place horizontal zoomer at top</h2>\n");
     sb.append("Whether to place the slider used for horizontal zooming above the map ");
@@ -254,14 +258,14 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("Recommend: false.");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Enable Curation Testing</h2>\n");
     sb.append("Intended for advanced users, for alpha-testing of curation functions.  ");
     sb.append("Changes require re-start.  ");
     sb.append("Recommend: false.");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Browser Command (Unix Only)</h2>\n");
     sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");

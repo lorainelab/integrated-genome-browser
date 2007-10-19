@@ -322,7 +322,7 @@ public class LocalUrlCacher {
       }
       catch (IOException ioe) {
 	Application.getSingleton().logWarning("URL not reachable: " + url);
-	headers.put("LocalUrlCacher", URL_NOT_REACHABLE);
+	if (headers != null)  { headers.put("LocalUrlCacher", URL_NOT_REACHABLE); }
 	url_reachable = false;
         if (! cached) { throw ioe; }
       }
@@ -354,11 +354,11 @@ public class LocalUrlCacher {
       }
       else { // url is not reachable
         if (cache_option != ONLY_CACHE) {
-          if (DEBUG_CONNECTION)  { 
+          if (DEBUG_CONNECTION)  {
 	    Application.getSingleton().logWarning("Remote URL not reachable: " + url);
 	  }
 	}
-	if (DEBUG_CONNECTION)  { 
+	if (DEBUG_CONNECTION)  {
 	  Application.getSingleton().logInfo("Loading cached file for URL: " + url);
 	}
 	result_stream = new BufferedInputStream(new FileInputStream(cache_file));
@@ -404,15 +404,15 @@ public class LocalUrlCacher {
 	  int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
 	  total_bytes_read += bytes_read;
 	}
-	if (total_bytes_read != content_length) { 
-          Application.getSingleton().logWarning("Bytes read not same as content length"); 
+	if (total_bytes_read != content_length) {
+          Application.getSingleton().logWarning("Bytes read not same as content length");
         }
       }
       else {
-	if (DEBUG_CONNECTION) { 
-          Application.getSingleton().logDebug("No content length header, so doing piecewise loading"); 
+	if (DEBUG_CONNECTION) {
+          Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
         }
-        
+
 	// if no content_length header, then need to load a chunk at a time
 	//   till find end, then piece back together into content byte array
 	ArrayList chunks = new ArrayList(100);
@@ -424,8 +424,8 @@ public class LocalUrlCacher {
 	while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
 	  byte[] chunk = new byte[chunk_size];
 	  bytes_read = bis.read(chunk, 0, chunk_size);
-          if (DEBUG_CONNECTION) { 
-            Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read); 
+          if (DEBUG_CONNECTION) {
+            Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
           }
 	  if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
 	    total_byte_count += bytes_read;
@@ -435,7 +435,7 @@ public class LocalUrlCacher {
 	  chunk_count++;
 	}
 	if (DEBUG_CONNECTION) {
-          Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size()); 
+          Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
         }
 
 	content_length = total_byte_count;
@@ -454,7 +454,7 @@ public class LocalUrlCacher {
       connstr.close();
       if (write_to_cache)  {
 	if (content != null && content.length > 0) {
-	  if (DEBUG_CONNECTION)  { 
+	  if (DEBUG_CONNECTION)  {
 	    Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
 	  }
 	  // write data from URL into a File
@@ -475,8 +475,8 @@ public class LocalUrlCacher {
     }
 
     if (headers != null && DEBUG_CONNECTION) { reportHeaders(url, headers); }
-    if (result_stream == null) { 
-      Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url); 
+    if (result_stream == null) {
+      Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url);
     }
     // if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
     return result_stream;
@@ -620,9 +620,12 @@ public class LocalUrlCacher {
 
   /** Returns the current value of the persistent user preference PREF_CACHE_USAGE. */
   public static int getPreferredCacheUsage() {
-    int cache_usage =
-      UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
+    int cache_usage = UnibrowPrefsUtil.getIntParam(PREF_CACHE_USAGE, CACHE_USAGE_DEFAULT);
     return cache_usage;
+  }
+
+  public static void setPreferredCacheUsage(int usage) {
+    UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
   }
 
   public static void updateCacheUrlInBackground(final String url) {

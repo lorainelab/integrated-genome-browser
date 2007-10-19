@@ -13,15 +13,13 @@ be used (if present).
 -->
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 
-<boolean tag="USE_QUICK_LOADER" val="true" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />
 <boolean tag="USE_PATTERN_SEARCHER" val="true" />
-<boolean tag="USE_ANNOT_BROWSER" val="true" />
+<boolean tag="USE_ANNOT_BROWSER" val="false" />
 <boolean tag="USE_BOOKMARK_MANAGER" val="true" />
-<boolean tag="USE_PIVOT_VIEW" val="true" />
+<boolean tag="USE_PIVOT_VIEW" val="false" />
 <boolean tag="USE_RESTRICTION_MAPPER" val="false" />
-
 
   <!-- Configure the probe set display -->
   <!-- Case-insensitive match of the ending ".link.psl" -->

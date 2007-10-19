@@ -11,11 +11,9 @@
                                            @title='cytoband' or 
                                            @title='__cytobands' or 
                                            @title='refseq' or 
-                                           @title='knownGene' or  
+                                           @title='encoderegions' or 
                                            @title='knowngene' or 
-					   @title='ensGene' or  
 					   @title='ensgene' or  
-                                           @title='mgcGenes' or 
                                            @title='mgcgenes' or 
                                            @title='genscan']"  >
    <xsl:copy>

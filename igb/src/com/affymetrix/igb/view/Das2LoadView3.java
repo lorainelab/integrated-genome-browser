@@ -119,6 +119,12 @@ public class Das2LoadView3 extends JComponent
     gviewer.addDataRequestListener(this);
 
     tree = new JTree();
+    TreeCellRenderer tcr = tree.getCellRenderer();
+    // if possible, hide leaf icons (since have checkboxes too)
+    if (tcr instanceof DefaultTreeCellRenderer) {
+      DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer)tcr;
+      dtcr.setLeafIcon(null);
+    }
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     clearTreeView();

@@ -10,9 +10,11 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 
+
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.ViewPersistenceUtils;
+import com.affymetrix.igb.IGB;
 
 public class SeqComboBoxView extends JComponent
   implements ItemListener, ActionListener,
@@ -41,14 +43,13 @@ public class SeqComboBoxView extends JComponent
     seqCB = new JComboBox();
     seqCB.addItem(NO_SEQUENCES);
     this.setLayout(new GridLayout(1, 3));
-    //    this.add(genomeL);
-    //    this.add(genomeCB);
-    this.add(genomeB);
+
+    // if using QuickLoad view, then navigating genome within that view, so don't include genome selection button here
+    if (! IGB.useQuickLoad()) {
+      this.add(genomeB);
+    }
     this.add(seqL);
     this.add(seqCB);
-      // this.setLayout(new BorderLayout());
-    //    this.add("West", seqL);
-    //    this.add("Center", seqCB);
     seqCB.addItemListener(this);
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);

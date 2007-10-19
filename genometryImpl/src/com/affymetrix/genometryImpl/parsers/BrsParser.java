@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * Also used to read in binary refseq format.
  *
  * Typical Command-line Usage to convert from RefFlat text files to brs files
- * java -classpath igb.jar:genoviz.jar:genometry.jar com.affymetrix.igb.parsers.BrsParser
+ * java -classpath genometry.jar:genometryImpl.jar com.affymetrix.genometryImpl.parsers.BrsParser
  * reflat_input_file brs_output_file.brs
  *
  * This class can handle both "refFlat.txt" and "refGene.txt",
@@ -527,7 +527,7 @@ public class BrsParser implements AnnotationWriter  {
    *  Reads a text file and writes a binary file.
    *<p>
    *  Typical Command-line Usage to convert from RefFlat text files to brs files
-   *  <code>java -classpath igb.jar com.affymetrix.igb.parsers.BrsParser
+   *  <code>java -classpath genometry.jar:genometryImpl.jar com.affymetrix.genometryImpl.parsers.BrsParser
    *    refFlat.txt refseq.brs</code>
    *<p>
    */

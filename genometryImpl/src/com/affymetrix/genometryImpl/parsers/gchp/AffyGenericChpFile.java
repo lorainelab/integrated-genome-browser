@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.igb.Application;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.Charset;

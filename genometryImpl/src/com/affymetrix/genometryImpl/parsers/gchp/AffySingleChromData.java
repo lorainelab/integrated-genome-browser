@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.ShortList;
-import com.affymetrix.igb.Application;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;

@@ -25,6 +25,8 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
@@ -42,6 +44,7 @@ public class GraphGlyph extends Glyph {
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
   static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
   static NumberFormat nformat = new DecimalFormat();
+  static NumberFormat nformat2 = NumberFormat.getIntegerInstance();
   static int axis_bins = 10;
 
   public static final int LINE_GRAPH = GraphStateI.LINE_GRAPH;
@@ -534,7 +537,7 @@ public class GraphGlyph extends Glyph {
   BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE, 
       BasicStroke.JOIN_MITER,  10.0f,
       new float[] {1.0f, 5.0f}, 0.0f);
-  
+    
   /** A work in progress...... */
   public void drawHorizontalGridLines(ViewI view) {
     float[] grid = getGridLinesYValues();
@@ -557,18 +560,41 @@ public class GraphGlyph extends Glyph {
     
     Stroke old_stroke = g.getStroke();
     g.setStroke(grid_stroke);
-    for (float gridY : grid) {
+    g.setFont(axis_font);
+    FontMetrics fm = g.getFontMetrics();
+    
+    for (int i=0; i<grid.length; i++) {
+      float gridY = grid[i];
       coord.x = 5;
       coord.y = offset - ((gridY - getVisibleMinY()) * yscale);
       if (gridY >= getVisibleMinY() && gridY <= getVisibleMaxY()) {
         view.transformToPixels(coord, scratch_point);
         g.drawLine(xbeg, scratch_point.y, xend, scratch_point.y);
-        g.drawString(Float.toString(gridY), xbeg+3, scratch_point.y);
+        // Using an AttributedString to clear the background beneath the text
+        AttributedString attString = new AttributedString(nformat2.format(gridY));
+        attString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+        attString.addAttribute(TextAttribute.FOREGROUND, lighter);
+        attString.addAttribute(TextAttribute.FONT, axis_font);
+        
+        if (state.getShowAxis()) {
+          // we are already showing tick marks, so don't double-draw these labels
+          if (i != 0 && i != grid.length-1) {
+            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
+          }
+        }
+        else {
+          if (i == grid.length-1) {
+            // the top-most tick label needs a bit more space above it
+            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + 2 * fm.getDescent());
+          } else {
+            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
+          }
+        }
       }
     }
     g.setStroke(old_stroke); // reset to orignial stroke
   }
-
+  
   public void drawAxisLabel(ViewI view) {
     if (GraphState.isHeatMapStyle(getGraphStyle())) {
       return;
@@ -590,8 +616,16 @@ public class GraphGlyph extends Glyph {
       g.setColor(this.getColor());
       g.setFont(axis_font);
       FontMetrics fm = g.getFontMetrics();
-      g.drawString(nformat.format(getVisibleMinY()), hpix.x + 25, (int) tick_ys[tick_ys.length-1] + fm.getDescent());
-      g.drawString(nformat.format(getVisibleMaxY()), hpix.x + 25, (int) tick_ys[0] + fm.getDescent() * 2);
+      AttributedString minString = new AttributedString(nformat.format(getVisibleMinY()));
+      minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+      minString.addAttribute(TextAttribute.FOREGROUND, lighter);
+      minString.addAttribute(TextAttribute.FONT, axis_font);
+      g.drawString(minString.getIterator(), hpix.x + 15, (int) (tick_ys[tick_ys.length-1] + fm.getDescent()));
+      AttributedString maxString = new AttributedString(nformat.format(getVisibleMaxY()));
+      maxString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+      maxString.addAttribute(TextAttribute.FOREGROUND, lighter);
+      maxString.addAttribute(TextAttribute.FONT, axis_font);
+      g.drawString(maxString.getIterator(), hpix.x + 15, (int) (tick_ys[0] + fm.getDescent()));
     }
   }
 

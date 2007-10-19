@@ -27,9 +27,9 @@ import java.util.*;
 import javax.swing.*;
 
 public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
-  
+
   static final String PREF_SYN_FILE_URL = "Synonyms File URL";
-  
+
   static Map cache_usage_options;
   static Map usage2str;
 
@@ -56,11 +56,11 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     usage2str.put(ignore_cache, ignore);
     usage2str.put(cache_only, only);
   }
-    
+
   public DataLoadPrefsView() {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.setBorder(BorderFactory.createEtchedBorder());
-        
+
     Box url_box = new Box(BoxLayout.Y_AXIS);
     url_box.setBorder(new javax.swing.border.TitledBorder("Personal QuickLoad URL"));
     JTextField quickload_url_TF = UnibrowPrefsUtil.createTextField(
@@ -72,11 +72,11 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     url_box.setAlignmentX(0.0f);
     this.add(url_box);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
-    
+
     Box server_box = new Box(BoxLayout.X_AXIS);
     server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
-    JTextField das_dna_server_TF = 
-        UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), 
+    JTextField das_dna_server_TF =
+        UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(),
         QuickLoadView2.PREF_DAS_DNA_SERVER_URL, QuickLoadView2.DEFAULT_DAS_DNA_SERVER);
     das_dna_server_TF.setMaximumSize(new Dimension(das_dna_server_TF.getMaximumSize().width,
         das_dna_server_TF.getPreferredSize().height));
@@ -89,12 +89,12 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     server_box.setAlignmentX(0.0f);
     this.add(server_box);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
-    
+
 
     Box syn_box = Box.createVerticalBox();
     syn_box.setBorder(new javax.swing.border.TitledBorder("Personal Synonyms File"));
-    syn_file_TF = 
-        UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), 
+    syn_file_TF =
+        UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(),
         PREF_SYN_FILE_URL, "");
     syn_file_TF.setMaximumSize(new Dimension(syn_file_TF.getMaximumSize().width,
         syn_file_TF.getPreferredSize().height));
@@ -102,7 +102,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     browse_for_syn_fileB.addActionListener(browse_for_syn_file_al);
     syn_file_TF.setAlignmentX(0.0f);
     syn_box.add(syn_file_TF);
-    
+
     Box syn_box_line2 = new Box(BoxLayout.X_AXIS);
     syn_box_line2.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     syn_box_line2.add(browse_for_syn_fileB);
@@ -115,23 +115,23 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     syn_box.setAlignmentX(0.0f);
     this.add(syn_box);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
-    
+
     load_synonymsB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         processSynFile();
       }
     });
-    
-    
+
+
     cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
         UnibrowPrefsUtil.getTopNode(),
-        QuickLoadServerModel.PREF_QUICKLOAD_CACHE_ANNOTS, 
+        QuickLoadServerModel.PREF_QUICKLOAD_CACHE_ANNOTS,
         QuickLoadServerModel.CACHE_ANNOTS_DEFAULT);
     cache_residuesCB = UnibrowPrefsUtil.createCheckBox("Cache DNA Residues",
         UnibrowPrefsUtil.getTopNode(),
-        QuickLoadServerModel.PREF_QUICKLOAD_CACHE_RESIDUES, 
+        QuickLoadServerModel.PREF_QUICKLOAD_CACHE_RESIDUES,
         QuickLoadServerModel.CACHE_RESIDUES_DEFAULT);
-    
+
     clear_cacheB = new JButton("Clear Cache");
     cache_usage_selector = new JComboBox();
     Iterator iter = cache_usage_options.keySet().iterator();
@@ -142,12 +142,12 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     cache_usage_selector.setSelectedItem(usage2str.get(new Integer(LocalUrlCacher.getPreferredCacheUsage())));
     Dimension d = new Dimension(cache_usage_selector.getPreferredSize());
     cache_usage_selector.setMaximumSize(d);
-    
+
     JPanel cache_options_box = new JPanel();
     cache_options_box.setLayout(new BoxLayout(cache_options_box, BoxLayout.Y_AXIS));
     cache_options_box.setAlignmentX(0.0f);
     this.add(cache_options_box);
-    
+
     cache_annotsCB.setAlignmentX(0.0f);
     cache_options_box.add(cache_annotsCB);
     cache_residuesCB.setAlignmentX(0.0f);
@@ -161,7 +161,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     usageP.setAlignmentX(0.0f);
     usageP.setBorder(BorderFactory.createEmptyBorder(3,0,3,0));
     cache_options_box.add(usageP);
-    
+
     Box clear_cache_box = Box.createHorizontalBox();
     clear_cache_box.setBorder(BorderFactory.createEmptyBorder(3,0,3,0));
     //clear_cache_box.add(Box.createHorizontalGlue());
@@ -170,13 +170,13 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     clear_cache_box.add(Box.createHorizontalGlue());
     clear_cache_box.setAlignmentX(0.0f);
     cache_options_box.add(clear_cache_box);
-    
+
     cache_usage_selector.addItemListener(cache_usage_al);
     clear_cacheB.addActionListener(clear_cache_al);
-    
+
     this.add(Box.createVerticalGlue());
 
-    
+
 
     // Load the personal synonyms file, if one is specified.
     // It isn't crucial that this be run with SwingUtilities, but it doesn't hurt.
@@ -196,26 +196,26 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
         }
       }
     };
-  
+
     SwingUtilities.invokeLater(r);
-    
-  } 
- 
+
+  }
+
   ActionListener clear_cache_al = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
       LocalUrlCacher.clearCache();
     }
   };
-  
+
   ActionListener reset_das_dna_server_al = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
-      UnibrowPrefsUtil.getLocationsNode().put(QuickLoadView2.PREF_DAS_DNA_SERVER_URL, 
+      UnibrowPrefsUtil.getLocationsNode().put(QuickLoadView2.PREF_DAS_DNA_SERVER_URL,
           QuickLoadView2.DEFAULT_DAS_DNA_SERVER);
     }
   };
 
   JFileChooser chooser = null;
-  
+
   ActionListener browse_for_syn_file_al = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
       if (chooser == null) {
@@ -223,26 +223,27 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
       }
       chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
       chooser.rescanCurrentDirectory();
-      
+
       int option = chooser.showOpenDialog(DataLoadPrefsView.this);
-      
+
       if (option == JFileChooser.APPROVE_OPTION) {
         File f = chooser.getSelectedFile();
         UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, f.getPath());
       }
     }
   };
-  
+
   // the cache_usage_selector will probably go away later
   ItemListener cache_usage_al = new ItemListener() {
     public void itemStateChanged(ItemEvent e) {
       String usage_str = (String) cache_usage_selector.getSelectedItem();
       int usage = ((Integer) DataLoadPrefsView.cache_usage_options.get(usage_str)).intValue();
       //QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-      UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
+      LocalUrlCacher.setPreferredCacheUsage(usage);
+      // UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
     }
   };
-  
+
   void processSynFile() {
     String path = syn_file_TF.getText();
     try {
@@ -255,8 +256,8 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
       } else {
         FileInputStream fis = new FileInputStream(f);
         SynonymLookup.getDefaultLookup().loadSynonyms(fis);
-        
-        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(), 
+
+        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(),
             "Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
       }
     } catch (IOException ioe) {
@@ -265,26 +266,26 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
           this, ioe);
     }
   }
-  
-  
+
+
   public String getName() {
     return "Data Sources";
   }
-  
+
   public void refresh() {
     // the checkboxes and text fields refresh themselves automatically....
     cache_usage_selector.setSelectedItem(usage2str.get(
         new Integer(LocalUrlCacher.getPreferredCacheUsage())));
   }
-  
+
   public Icon getIcon() {
     return null;
   }
-  
+
   public String getToolTip() {
     return "Edit QuickLoad data sources and preferences";
   }
-  
+
   public String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
 
@@ -293,7 +294,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     sb.append("This panel allows you to change settings for data sources.  ");
     sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Personal QuickLoad URL</h2>\n");
     sb.append("Optional, generally left blank.  You can put the URL of a local or remote directory ");
@@ -303,7 +304,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     sb.append("It is possible to use a personal server and the NetAffx server in the same session. ");
     sb.append("Use the pull-down selector in the 'Data Access' 'QuickLoad' tab to switch between them. ");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Das DNA Server URL</h2>\n");
     sb.append("Optional. Specifies the DAS server where you wish to download DNA residues. ");
@@ -312,7 +313,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     sb.append("The most common value here is <pre>http://genome.cse.ucsc.edu/cgi-bin/das</pre> ");
     sb.append("but that server doesn't include data for all species.");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Personal Synonyms File</h2>\n");
     sb.append("Optional.  The location of a synonyms file to use to help resolve cases where ");
@@ -321,7 +322,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     sb.append("This is simply a tab-delimited file where entries on the same row are all synonymous. ");
     sb.append("Synonyms will be <b>merged</b> from the NetAffx QuickLoad server, your personal QuickLoad server, and the file listed here. ");
     sb.append("</p>\n");
-    
+
     sb.append("<p>\n");
     sb.append("<h2>Cache</h2>\n");
     sb.append("IGB stores files downloaded over the network in a local cache. ");
@@ -334,14 +335,14 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     sb.append("are not connected to the internet.  For most users, this is not necessary as ");
     sb.append("long as the cache already contains a few essential files. ");
     sb.append("</p>\n");
-        
+
     return sb.toString();
   }
-  
+
   public String getInfoURL() {
     return null;
   }
-  
+
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {
     DataLoadPrefsView p = new DataLoadPrefsView();

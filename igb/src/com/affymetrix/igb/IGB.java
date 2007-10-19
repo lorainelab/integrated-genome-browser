@@ -74,8 +74,10 @@ public class IGB extends Application
   public static boolean REPLACE_REPAINT_MANAGER = false;
   public static boolean REPORT_GRAPHICS_CONFIG = false;
 
-  public static boolean USE_QUICKLOAD = false;  // if false, QuickLoadView2 may still be used by DataLoadView
-  public static boolean USE_DATALOAD = true;  //  DataLoadView may also use QuickLoadView2
+  public static String USE_QUICKLOAD_INSTEAD_OF_DAS2 = "USE_QUICKLOAD_INSTEAD_OF_DAS2";
+  public static boolean DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2 = false;
+  //  public static boolean USE_QUICKLOAD = false;  // if false, QuickLoadView2 may still be used by DataLoadView
+  //  public static boolean USE_DATALOAD = true;  //  DataLoadView may also use QuickLoadView2
   public static final boolean DEBUG_EVENTS = false;
   public static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
@@ -247,6 +249,7 @@ public class IGB extends Application
     getIGBPrefs(); // force loading of prefs
 
     String quick_load_url = QuickLoadView2.getQuickLoadUrl();
+    //    String quick_load_url = "file:/C:/data/quickload/";
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     processDasServersList(quick_load_url);
@@ -579,7 +582,7 @@ public class IGB extends Application
 
     StateProvider stateProvider = new IGBStateProvider();
     DefaultStateProvider.setGlobalStateProvider(stateProvider);
-    
+
     // when HTTP authentication is needed, getPasswordAuthentication will
     //    be called on the authenticator set as the default
     Authenticator.setDefault(new UnibrowAuthenticator(frm));
@@ -863,13 +866,16 @@ public class IGB extends Application
     //    frm.resize(1000, 750);
     frm.setVisible(true);
 
-    if (USE_QUICKLOAD) {
-      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
+    if (useQuickLoad()) {
+      //      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
+      PluginInfo quickload = new PluginInfo(QuickLoadView2.class.getName(), "QuickLoad", true);
       plugins_info.add(quickload);
     }
-    if (USE_DATALOAD)  {
+    else {
+      //    if (USE_DATALOAD)  {
       PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
       plugins_info.add(dataload);
+
     }
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
@@ -900,13 +906,15 @@ public class IGB extends Application
             data_load_view = (DataLoadView)plugin;
             data_load_view.initialize();
         }
+        if (plugin instanceof QuickLoadView2)  {
+          ((QuickLoadView2)plugin).initialize();
+        }
     }
 
     if (slice_view != null) {
       MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
       export_slice_item.setEnabled(true);
     }
-
 
     WebLink.autoLoad();
 
@@ -920,6 +928,11 @@ public class IGB extends Application
 
     initialized = true;
   }
+
+  public static boolean useQuickLoad() {
+    return UnibrowPrefsUtil.getBooleanParam(USE_QUICKLOAD_INSTEAD_OF_DAS2, DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);
+  }
+
 
   /** Returns true if initialization has completed. */
   public boolean isInitialized() {
@@ -1574,7 +1587,7 @@ public class IGB extends Application
   public String getVersion() {
     return APP_VERSION;
   }
-  
+
   /** Not yet implemented. */
   public String getResourceString(String key) {
     return null;

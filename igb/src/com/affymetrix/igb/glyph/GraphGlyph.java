@@ -536,7 +536,7 @@ public class GraphGlyph extends Glyph {
 
   BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE, 
       BasicStroke.JOIN_MITER,  10.0f,
-      new float[] {1.0f, 5.0f}, 0.0f);
+      new float[] {1.0f, 10.0f}, 0.0f);
     
   /** A work in progress...... */
   public void drawHorizontalGridLines(ViewI view) {
@@ -570,26 +570,26 @@ public class GraphGlyph extends Glyph {
       if (gridY >= getVisibleMinY() && gridY <= getVisibleMaxY()) {
         view.transformToPixels(coord, scratch_point);
         g.drawLine(xbeg, scratch_point.y, xend, scratch_point.y);
-        // Using an AttributedString to clear the background beneath the text
-        AttributedString attString = new AttributedString(nformat2.format(gridY));
-        attString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
-        attString.addAttribute(TextAttribute.FOREGROUND, lighter);
-        attString.addAttribute(TextAttribute.FONT, axis_font);
-        
-        if (state.getShowAxis()) {
-          // we are already showing tick marks, so don't double-draw these labels
-          if (i != 0 && i != grid.length-1) {
-            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
-          }
-        }
-        else {
-          if (i == grid.length-1) {
-            // the top-most tick label needs a bit more space above it
-            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + 2 * fm.getDescent());
-          } else {
-            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
-          }
-        }
+//        // Using an AttributedString to clear the background beneath the text
+//        AttributedString attString = new AttributedString(nformat2.format(gridY));
+//        attString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+//        attString.addAttribute(TextAttribute.FOREGROUND, lighter);
+//        attString.addAttribute(TextAttribute.FONT, axis_font);
+//        
+//        if (state.getShowAxis()) {
+//          // we are already showing tick marks, so don't double-draw these labels
+////          if (i != 0 && i != grid.length-1) {
+////            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
+////          }
+//        }
+//        else {
+//          if (i == grid.length-1) {
+//            // the top-most tick label needs a bit more space above it
+//            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + 2 * fm.getDescent());
+//          } else if (i==0) {
+//            g.drawString(attString.getIterator(), xbeg + 15, scratch_point.y + fm.getDescent());
+//          }
+//        }
       }
     }
     g.setStroke(old_stroke); // reset to orignial stroke
@@ -604,56 +604,111 @@ public class GraphGlyph extends Glyph {
     Rectangle hpix = calcHandlePix(view);
 
     if (hpix != null) {
-      double[] tick_ys = calculateTickYValues(view, axis_bins);
-      for (int i=0; i<tick_ys.length; i++) {
-        double mark_ypix = tick_ys[i];
-        if (i==0 || i == tick_ys.length-1) {
-          g.fillRect(hpix.x, (int)(mark_ypix), hpix.width + 12, 2);
-        } else {
-          g.fillRect(hpix.x, (int)(mark_ypix) + 1, hpix.width + 8, 1);
-        }
-      }
       g.setColor(this.getColor());
       g.setFont(axis_font);
       FontMetrics fm = g.getFontMetrics();
-      AttributedString minString = new AttributedString(nformat.format(getVisibleMinY()));
-      minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
-      minString.addAttribute(TextAttribute.FOREGROUND, lighter);
-      minString.addAttribute(TextAttribute.FONT, axis_font);
-      g.drawString(minString.getIterator(), hpix.x + 15, (int) (tick_ys[tick_ys.length-1] + fm.getDescent()));
-      AttributedString maxString = new AttributedString(nformat.format(getVisibleMaxY()));
-      maxString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
-      maxString.addAttribute(TextAttribute.FOREGROUND, lighter);
-      maxString.addAttribute(TextAttribute.FONT, axis_font);
-      g.drawString(maxString.getIterator(), hpix.x + 15, (int) (tick_ys[0] + fm.getDescent()));
+      int font_height = fm.getHeight();
+      double last_pixel = Double.NaN; // the y-value at which the last tick String was drawn
+
+      Double[] tick_coords = determineYTickCoords();
+      double[] tick_pixels = convertToPixels(view, tick_coords);
+      for (int i = 0; i <tick_pixels.length; i++) {
+        double mark_ypix = tick_pixels[i];
+        g.fillRect(hpix.x, (int) mark_ypix, hpix.width + 8, 1);
+        // Always draw the lowest tick value, and indicate the others only
+        // if there is enough room between them that the text won't overlap
+        if (Double.isNaN(last_pixel) || Math.abs(mark_ypix - last_pixel) > font_height) {
+          AttributedString minString = new AttributedString(nformat.format(tick_coords[i]));
+          minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+          minString.addAttribute(TextAttribute.FOREGROUND, lighter);
+          minString.addAttribute(TextAttribute.FONT, axis_font);
+          g.drawString(minString.getIterator(), hpix.x + 15, (int) mark_ypix + fm.getDescent());
+          last_pixel = mark_ypix;
+        }
+      }
     }
   }
+  
+  /** Creates an array of about 4 to 10 coord values evenly spaced between 
+   * {@link #getVisibleMinY()} and {@link #getVisibleMaxY()}. 
+   */
+  public Double[] determineYTickCoords() {
+    float min = getVisibleMinY();
+    float max = getVisibleMaxY();
+    return determineYTickCoords(min, max);
+  }
 
-  public double[] calculateTickYValues(ViewI view, int bins) {
-    Graphics g = view.getGraphics();
-    Rectangle hpix = calcHandlePix(view);
+  /** Creates an array of about 4 to 10 coord values evenly spaced between min and max. */
+  public static Double[] determineYTickCoords(double min, double max) {
+    double range = max - min;
+    double interval = Math.pow(10, Math.floor(Math.log10(range)));    
+    double start = Math.floor(min/interval) * interval;
     
+    ArrayList<Double> coords = new ArrayList<Double>(10);
+    for (double d = start ; d <= max; d += interval) {
+      if (d >= min && d <= max) {
+        coords.add(d);
+      }
+    }
+    
+    // If there are not at least 4 ticks, then
+    if (coords.size() < 4) { // try original interval divided by 2
+      coords.clear();
+      interval = interval/2;
+      start = Math.floor(min/interval) * interval;
+      for (double d = start; d <= max; d += interval) {
+        if (d >= min && d <= max) {
+          coords.add(d);
+        }
+      }
+    }
+    
+    // If there are not at least 4 ticks, then
+    if (coords.size() < 4) { // take original interval divided by 5
+      coords.clear();
+      interval = (2*interval)/5;
+      start = Math.floor(min/interval) * interval;
+      for (double d = start; d <= max; d += interval) {
+        if (d >= min && d <= max) {
+          coords.add(d);
+        }
+      }
+    }
+    
+    return coords.toArray(new Double[coords.size()]);
+  }
+  
+  /** Calculate tick pixel positions based on tick coord positions. */
+  public double[] convertToPixels(ViewI view, Double[] y_coords) {
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
     double yoffset = scratch_trans.getOffsetY();
     
-    coord.y = yoffset;
-    view.transformToPixels(coord, curr_point);
-    double max_ypix = curr_point.y;
-    coord.y = yoffset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-    view.transformToPixels(coord, curr_point);
-    double min_ypix = curr_point.y;
-    double pix_height = max_ypix - min_ypix;
-    double spacing = pix_height / bins;
-    double mark_ypix = min_ypix;
-    
-    double[] tick_ys = new double[bins+1];
-    for (int i=0; i<=bins; i++) {
-      tick_ys[i] = mark_ypix;
-      mark_ypix += spacing;
+    double[] y_pixels = new double[y_coords.length];
+    for (int i=0; i < y_coords.length; i++) {
+      double tickY = y_coords[i];
+      
+      coord.y = yoffset - ((tickY - getVisibleMinY()) * yscale);
+      view.transformToPixels(coord, curr_point);
+      y_pixels[i] = curr_point.y;
     }
-    return tick_ys;
+    return y_pixels;
   }
+
+//  public double getGraphMinPixel(ViewI view) {
+//    double offset = scratch_trans.getOffsetY();
+//    coord.y = offset; // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
+//    view.transformToPixels(coord, scratch_point);
+//    return scratch_point.y;
+//  }
+//
+//  public int getGraphMaxPixel(ViewI view) {
+//    double offset = scratch_trans.getOffsetY();
+//    double yscale = scratch_trans.getScaleY();
+//    coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+//    view.transformToPixels(coord, scratch_point);
+//    return scratch_point.y;
+//  }
 
   /** Draws the outline in a way that looks good for tiers.  With other glyphs,
    *  the outline is usually drawn a pixel or two larger than the glyph.

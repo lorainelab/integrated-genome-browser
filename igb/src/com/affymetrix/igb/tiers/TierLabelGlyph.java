@@ -262,7 +262,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     if ((text_height <= pixelbox.height)  && (label != null)) {
 
       if (placement == LEFT ) {
-	pixelbox.x = pixelbox.x;
+	//pixelbox.x = pixelbox.x;
       }
       else if (placement == RIGHT) {
 	pixelbox.x = pixelbox.x + pixelbox.width + blank_width;
@@ -278,7 +278,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
 	}
       }
       if (placement == ABOVE) {
-	pixelbox.y = pixelbox.y;
+	//pixelbox.y = pixelbox.y;
       }
       else if (placement == BELOW) {
 	pixelbox.y = pixelbox.y + pixelbox.height;
@@ -384,20 +384,27 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     GraphGlyph gglyph = (GraphGlyph) glyph;
     
     view.transformToPixels(coordbox, pixelbox);
-    double[] tick_ys = gglyph.calculateTickYValues(view, 10);
+    Double[] tick_coords = gglyph.determineYTickCoords();
+    double[] tick_pixels = gglyph.convertToPixels(view, tick_coords);
     
     Graphics g = view.getGraphics();
     Color[] colors = getFgAndBg();
     g.setColor(colors[0]);
-    for (int i=0; i<tick_ys.length; i++) {
-      double mark_ypix = tick_ys[i];
-      if (i==0 || i == tick_ys.length-1) {
-        g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix), pixelbox.width/2, 2);
-      } else {
-        //g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix) + 1, pixelbox.width/2, 1);
-      }
+    for (int i=0; i<tick_pixels.length; i++) {
+      double mark_ypix = tick_pixels[i];
+      g.fillRect(pixelbox.x+pixelbox.width/4, (int)mark_ypix, pixelbox.width/2, 1);
     }
-    g.fillRect(pixelbox.x + pixelbox.width/2-1, (int) tick_ys[0],
-               1, (int) (tick_ys[tick_ys.length-1] - tick_ys[0]));
+
+//    Double[] min_max_coords = new Double[2];
+//    min_max_coords[0] = (double) gglyph.getGraphMinY();
+//    min_max_coords[1] = (double) gglyph.getGraphMaxY();
+//    double[] min_max_pixels = gglyph.convertToPixels(view, min_max_coords);
+//    for (int i=0; i<min_max_pixels.length; i++) {
+//      double mark_ypix = min_max_pixels[i];
+//      g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix), pixelbox.width/2, 2);
+//    }
+//
+//    g.fillRect(pixelbox.x + pixelbox.width/2-1, (int) min_max_pixels[0],
+//               1, (int) (min_max_pixels[1] - min_max_pixels[0]));
   }
 }

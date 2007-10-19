@@ -62,7 +62,7 @@ public class AffySingleChromData {
   }
   
   void parse(DataInputStream dis) throws IOException {
-    Application.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
+    SingletonGenometryModel.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
     for (int row=0; row < rowCount; row++) {
       for (AffyChpColumnData col : columns) {
         col.addData(dis);

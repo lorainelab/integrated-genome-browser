@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.Application;
 import java.io.*;
 import java.util.zip.*;
@@ -94,7 +95,7 @@ public abstract class Streamer {
     try {
       str.close();
     } catch (Exception e) {
-      Application.logDebug("Failed to close an input stream");
+      SingletonGenometryModel.logDebug("Failed to close an input stream");
     }
   }
 }

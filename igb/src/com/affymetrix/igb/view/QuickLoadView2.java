@@ -103,7 +103,7 @@ public class QuickLoadView2 extends JComponent
   int pref_tab_number = -1;
 
   boolean auto_select_first_seq_in_group = true;
-  
+
   static {
     default_types.put(default_annot_name, default_annot_name);
     default_types.put("cytoBand", "cytoBand");
@@ -113,7 +113,7 @@ public class QuickLoadView2 extends JComponent
 
     PreferencesPanel pp = PreferencesPanel.getSingleton();
     pref_tab_number = pp.addPrefEditorComponent(new DataLoadPrefsView());
-    UnibrowPrefsUtil.getLocationsNode().addPreferenceChangeListener(preferemce_change_listener);
+    UnibrowPrefsUtil.getLocationsNode().addPreferenceChangeListener(preference_change_listener);
 
     if (Application.getSingleton() != null) {
       gviewer = Application.getSingleton().getMapView();
@@ -221,12 +221,12 @@ public class QuickLoadView2 extends JComponent
 
   public void itemStateChanged(ItemEvent evt) {
     Object src = evt.getSource();
-    if (DEBUG_EVENTS)  { 
-      System.out.println("####### QuickLoadView2 received itemStateChanged event: " + evt); 
+    if (DEBUG_EVENTS)  {
+      System.out.println("####### QuickLoadView2 received itemStateChanged event: " + evt);
     }
 
     try {
-    
+
     if ((src == serverCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
       String selection = (String) serverCB.getSelectedItem();
 
@@ -242,7 +242,7 @@ public class QuickLoadView2 extends JComponent
       String old_group_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_GENOME, null);
       String old_seq_id = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_SEQ, null);
 
-      auto_select_first_seq_in_group = false; 
+      auto_select_first_seq_in_group = false;
         // Don't let the group selection trigger an automatic seq selection
         // because that could happen during start-up and would always force the breif display
         // of chr1 (or whatever chr is first in the group) before going to the old_group_id.
@@ -287,7 +287,7 @@ public class QuickLoadView2 extends JComponent
         }
       }
     }
-    
+
     } catch (Throwable t) {
       // some out-of-memory errors could happen during this code, so
       // this catch block will report that to the user.
@@ -344,6 +344,7 @@ public class QuickLoadView2 extends JComponent
       types_panel.removeAll();
 
       current_group = group;
+      if (DEBUG_EVENTS)  { System.out.println("current server: " + current_server); }
 
       if (current_group == null || current_server == null) {
         current_genome_name = null;
@@ -521,7 +522,7 @@ public class QuickLoadView2 extends JComponent
    *   Resets the server to the one that was in use the last time the program
    *   was shut down.
    */
-  void initialize() {
+  public void initialize() {
     //    System.out.println("##### called QuickLoadView2.intialize()");
     // tries to reset the quickload server back to the one used when the program last shut-down
     // Must be done only after IGB has finished initializing, so the SeqMapView is ready
@@ -688,7 +689,7 @@ public class QuickLoadView2 extends JComponent
     f.setVisible(true);
   }
 
-  PreferenceChangeListener preferemce_change_listener = new PreferenceChangeListener() {
+  PreferenceChangeListener preference_change_listener = new PreferenceChangeListener() {
     public void preferenceChange(PreferenceChangeEvent evt) {
       String value = evt.getNewValue();
       if (evt.getKey().equals(PREF_USER_DEFINED_QUICKLOAD_URL)) {

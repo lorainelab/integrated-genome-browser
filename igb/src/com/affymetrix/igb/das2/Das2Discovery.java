@@ -36,7 +36,7 @@ public class Das2Discovery {
 
   static {
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/sources");
-    name2url.put("localhost", "http://localhost:9092/das2/genome");
+    //    name2url.put("localhost", "http://localhost:9092/das2/genome");
     //    name2url.put("biopackages", "http://das.biopackages.net/das/genome");
     //    name2url.put("Sanger registry", "http://www.spice-3d.org/dasregistry/das2/sources");
     //    name2url.put("HapMap-test", "http://brie5.cshl.edu:9191/hapmap/das2/sources");

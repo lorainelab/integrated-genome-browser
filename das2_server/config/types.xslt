@@ -7,15 +7,29 @@
 >
 <xsl:output method="xml" encoding="UTF-8"/> 
 
-<xsl:template match="/das2:TYPES/das2:TYPE[@title='cytoBand' or 
+<xsl:template match="/das2:TYPES/das2:TYPE[@title='acembly' or 
+                                           @title='cytoBand' or 
                                            @title='cytoband' or 
                                            @title='__cytobands' or 
-                                           @title='refseq' or 
+                                           @title='encode' or 
                                            @title='encoderegions' or 
-                                           @title='knowngene' or 
 					   @title='ensgene' or  
+					   @title='exonerate' or  
+					   @title='flybasegene' or  
+					   @title='flybasenoncoding' or  
+                                           @title='geneid' or 
+                                           @title='genscan' or 
+                                           @title='knowngene' or 
                                            @title='mgcgenes' or 
-                                           @title='genscan']"  >
+                                           @title='refseq' or 
+                                           @title='sanger_pombe' or 
+                                           @title='sgdgene' or 
+                                           @title='sgpgene' or 
+					   @title='tair' or  
+                                           @title='trnascan' or 
+                                           @title='twinscan' or 
+                                           @title='xenorefgene']"  >
+
    <xsl:copy>
        <xsl:apply-templates select="@*|node()"/>
        <PROP key="load_hint" value="Whole Sequence" />

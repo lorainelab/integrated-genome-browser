@@ -15,6 +15,8 @@
                                            @title='encoderegions' or 
 					   @title='ensgene' or  
 					   @title='exonerate' or  
+					   @title='first_ef' or  
+					   @title='firstef' or  
 					   @title='flybasegene' or  
 					   @title='flybasenoncoding' or  
                                            @title='geneid' or 
@@ -25,6 +27,8 @@
                                            @title='sanger_pombe' or 
                                            @title='sgdgene' or 
                                            @title='sgpgene' or 
+                                           @title='snomrna' or 
+                                           @title='sno_mrna' or 
 					   @title='tair' or  
                                            @title='trnascan' or 
                                            @title='twinscan' or 

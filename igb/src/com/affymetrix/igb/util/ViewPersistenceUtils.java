@@ -15,13 +15,15 @@ import com.affymetrix.igb.view.SeqMapView;
 
 public class ViewPersistenceUtils  {
   // For now need to use full URIs for DAS2 genome autoload defaults
-  public static String DEFAULT_DAS2_SERVER_URL = "http://netaffxdas.affymetrix.com/das2/sources";
+//  public static String DEFAULT_DAS2_SERVER_URL = "http://netaffxdas.affymetrix.com/das2/sources";
+  public static String DEFAULT_DAS2_SERVER_URL = (String)Das2Discovery.getDas2Urls().get(Das2Discovery.DEFAULT_DAS2_SERVER_NAME);
   public static String DEFAULT_DAS2_SOURCE_URI = "http://netaffxdas.affymetrix.com/das2/H_sapiens";
   public static String DEFAULT_DAS2_VERSION_URI = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006";
   public static String DEFAULT_SELECTED_GENOME = "H_sapiens_Mar_2006";
   //  public static String DEFAULT_SELECTED_SEQ = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006/chr21";
   public static String DEFAULT_SELECTED_SEQ = "chr21";
 
+  public static boolean DEBUG = false;
 
   public static String GENOME_ID = "GENOME_ID";  // full genome ID if gets MD5-compressed in node creation
   public static String SEQ_ID = "SEQ_ID";  // full seq ID if gets MD5-compressed in node creation
@@ -97,6 +99,12 @@ public class ViewPersistenceUtils  {
     String source_id = group_node.get(DAS2_SOURCE_URI_PREF, DEFAULT_DAS2_SOURCE_URI);
     String version_id = group_node.get(DAS2_VERSION_URI_PREF, DEFAULT_DAS2_VERSION_URI);
 
+    if (DEBUG) {
+      System.out.println("Restoring group:");
+      System.out.println("     " + server_url);
+      System.out.println("     " + source_id);
+      System.out.println("     " + version_id);
+    }
     Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
     Das2Source source = (Das2Source)server.getSources().get(source_id);
     Das2VersionedSource version = (Das2VersionedSource)source.getVersions().get(version_id);
@@ -134,6 +142,8 @@ public class ViewPersistenceUtils  {
          //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
     String seq_id = group_node.get(SELECTED_SEQ_PREF, DEFAULT_SELECTED_SEQ);
     MutableAnnotatedBioSeq seq = group.getSeq(seq_id);
+    // if selected or default seq can't be found, use first seq in group
+    if (seq == null && group.getSeqCount() > 0) { seq = group.getSeq(0); }
     if (gmodel.getSelectedSeq() != seq) {
       gmodel.setSelectedSeq(seq);
     }

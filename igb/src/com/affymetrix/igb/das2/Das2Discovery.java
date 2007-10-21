@@ -56,6 +56,10 @@ public class Das2Discovery {
     return name2server;
   }
 
+  public static Map getDas2Urls() {
+    return name2url;
+  }
+
   public static Map getCapabilityMap() { return cap2version; }
 
   public static void addServersFromTabFile(String server_loc_url) {

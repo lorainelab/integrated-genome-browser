@@ -78,8 +78,6 @@ public class QuickLoadView2 extends JComponent
 
   public static final String PREF_USER_DEFINED_QUICKLOAD_URL = "QuickLoad URL";
 
-  public static final String PREF_DAS_DNA_SERVER_URL = "DAS DNA Server URL";
-  public static final String DEFAULT_DAS_DNA_SERVER = "http://genome.cse.ucsc.edu/cgi-bin/das";
 
   static boolean LOAD_DEFAULT_ANNOTS = true;
   static Map default_types = new HashMap();
@@ -182,19 +180,25 @@ public class QuickLoadView2 extends JComponent
     Object src = evt.getSource();
     /* handles residues loading based on partial or full sequence load buttons */
     if (src == partial_residuesB) {
-      if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); return; }
       SeqSpan viewspan = gviewer.getVisibleSpan();
-      if (viewspan.getBioSeq() != current_seq) {
+      if (current_group==null) { ErrorHandler.errorPanel("Error", "No sequence group selected.", gviewer); }
+      else if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); }
+      else if (viewspan.getBioSeq() != current_seq) {
         System.err.println("Error in QuickLoaderView: " +
                            "SeqMapView seq and QuickLoaderView current_seq not the same!");
       } else {
-        loadPartialResidues(viewspan);
+	SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
       }
     }
     else if (src == all_residuesB) {
-      if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); return; }
-      String seq_name = current_seq.getID();
-      loadAllResidues(seq_name);
+      if (current_group==null) { ErrorHandler.errorPanel("Error", "No sequence group selected.", gviewer); }
+      else if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); }
+      if (! (current_seq instanceof SmartAnnotBioSeq)) {
+	ErrorHandler.errorPanel("Error", "Can't do optimized full residues retrieval for this sequence.", gviewer); 
+      }
+      else {
+	SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq)current_seq);
+      }
     }
     else if (src == optionsB) {
       showOptions();
@@ -545,134 +549,6 @@ public class QuickLoadView2 extends JComponent
         }
       }
     });
-  }
-
-  /**
-   *  Load sequence residues for a span along a sequence.
-   *  Access residues via DAS reference server
-   *
-   *  DAS reference server can be specified by setting PREF_DAS_DNA_SERVER_URL preference value.
-   *  Currently defaults to UCSC DAS reference server (this will cause problems if genome is not
-   *     available at UCSC)
-   */
-  public void loadPartialResidues(SeqSpan span)  {
-    String das_dna_server = UnibrowPrefsUtil.getLocation(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
-    AnnotatedBioSeq aseq = (AnnotatedBioSeq)span.getBioSeq();
-    String seqid = aseq.getID();
-    System.out.println("trying to load residues for span: " + SeqUtils.spanToString(span));
-    System.out.println("current genome name: " + current_genome_name);
-    //    System.out.println("seq_id: " + seqid);
-    int min = span.getMin();
-    int max = span.getMax();
-    int length = span.getLength();
-
-    if ((min <= 0) && (max >= aseq.getLength())) {
-      System.out.println("loading all residues");
-      loadAllResidues(aseq.getID());
-    }
-    else if (aseq instanceof NibbleBioSeq)  {
-      String residues = null;
-      try {
-        String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
-        if (das_dna_source == null)  {
-          ErrorHandler.errorPanel("Error", "Couldn't find das source genome '"+current_genome_name
-            + "'\n on DAS server:\n"+ das_dna_server, gviewer);
-          return;
-        }
-        String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
-        if (das_seqid == null)  {
-          ErrorHandler.errorPanel("No sequence",
-            "Couldn't access sequence residues on DAS server\n" +
-            " seqid: '" + seqid +"'\n"+
-            " genome: '"+current_genome_name + "'\n" +
-            " DAS server: " + das_dna_server,
-            gviewer);
-          return;
-        }
-         residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid,
-                                                  min, max);
-        System.out.println("DAS DNA request length: " + length);
-        System.out.println("DAS DNA response length: " + residues.length());
-      }
-      catch (Exception ex) {
-        ErrorHandler.errorPanel("No sequence",
-          "Couldn't access sequence residues on DAS server\n" +
-          " seqid: '" + seqid +"'\n"+
-          " genome: '"+current_genome_name + "'\n" +
-          " DAS server: " + das_dna_server,
-          gviewer, ex);
-      }
-
-      if (residues != null) {
-        BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + min + "-" + max, residues);
-
-        SeqSpan span1 = new SimpleSeqSpan(0, length, subseq);
-        SeqSpan span2 = span;
-        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-        subsym.addSpan(span1);
-        subsym.addSpan(span2);
-
-        NibbleBioSeq compseq = (NibbleBioSeq)aseq;
-        MutableSeqSymmetry compsym = (MutableSeqSymmetry)compseq.getComposition();
-        if (compsym == null) {
-          //System.err.println("composite symmetry is null!");
-          compsym = new SimpleMutableSeqSymmetry();
-          compsym.addChild(subsym);
-          compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
-          compseq.setComposition(compsym);
-        }
-        else {
-          compsym.addChild(subsym);
-          SeqSpan compspan = compsym.getSpan(aseq);
-          int compmin = Math.min(compspan.getMin(), min);
-          int compmax = Math.max(compspan.getMax(), max);
-          SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-          compsym.removeSpan(compspan);
-          compsym.addSpan(new_compspan);
-          //        System.out.println("adding to composition: " );
-          //        SeqUtils.printSymmetry(compsym);
-          gviewer.setAnnotatedSeq(aseq, true, true, true);
-        }
-      }
-    }
-    else {
-      System.err.println("quickloaded seq is _not_ a NibbleBioSeq: " + aseq);
-    }
-  }
-
-  public void loadAllResidues(String seq_name) {
-    System.out.println("processing request to load residues for sequence: " +
-                       seq_name + ", version = " + current_genome_name);
-    if (current_seq.isComplete()) {
-      System.out.println("already have residues for " + seq_name);
-      return;
-    }
-    else {
-      InputStream istr = null;
-      //String http_root = getQuickLoadUrl();
-      String http_root = current_server.getRootUrl();
-      try {
-        String url_path = http_root + current_genome_name + "/" + seq_name + ".bnib";
-        System.out.println("location of bnib file: " + url_path);
-        System.out.println("current seq: id = " + current_seq.getID() + ", " + current_seq);
-        istr = LocalUrlCacher.getInputStream(url_path, QuickLoadServerModel.getCacheResidues());
-        //        istr = (new URL(url_path)).openStream();
-        // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
-        current_seq = NibbleResiduesParser.parse(istr, gmodel.getSelectedSeqGroup());
-      }
-      catch(Exception ex) {
-        ErrorHandler.errorPanel("Error", "cannot access sequence:\n" +
-          "seq = '" + seq_name + "'\n" +
-          "version = '" + current_genome_name +"'\n" +
-          "server = " + http_root,
-        gviewer, ex);
-      }
-      finally {
-        try { istr.close(); } catch (Exception e) {}
-      }
-
-      gviewer.setAnnotatedSeq(current_seq, true, true, true);
-    }
   }
 
   public DataLoadPrefsView getOptionsPanel() {

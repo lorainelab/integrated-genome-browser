@@ -16,6 +16,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.SeqResiduesLoader;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
@@ -77,7 +78,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
     JTextField das_dna_server_TF =
         UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(),
-        QuickLoadView2.PREF_DAS_DNA_SERVER_URL, QuickLoadView2.DEFAULT_DAS_DNA_SERVER);
+        SeqResiduesLoader.PREF_DAS_DNA_SERVER_URL, SeqResiduesLoader.DEFAULT_DAS_DNA_SERVER);
     das_dna_server_TF.setMaximumSize(new Dimension(das_dna_server_TF.getMaximumSize().width,
         das_dna_server_TF.getPreferredSize().height));
     server_box.add(das_dna_server_TF);
@@ -209,8 +210,8 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
   ActionListener reset_das_dna_server_al = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
-      UnibrowPrefsUtil.getLocationsNode().put(QuickLoadView2.PREF_DAS_DNA_SERVER_URL,
-          QuickLoadView2.DEFAULT_DAS_DNA_SERVER);
+      UnibrowPrefsUtil.getLocationsNode().put(SeqResiduesLoader.PREF_DAS_DNA_SERVER_URL,
+          SeqResiduesLoader.DEFAULT_DAS_DNA_SERVER);
     }
   };
 

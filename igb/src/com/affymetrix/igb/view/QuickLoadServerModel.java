@@ -98,11 +98,11 @@ public class QuickLoadServerModel {
     return ql_server;
   }
 
-  static boolean getCacheResidues() {
+  public static boolean getCacheResidues() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
   }
 
-  static boolean getCacheAnnots() {
+  public static boolean getCacheAnnots() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
   }
 

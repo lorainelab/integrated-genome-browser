@@ -16,6 +16,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.*;
@@ -31,11 +32,16 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
+import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.SeqResiduesLoader;
+import com.affymetrix.igb.view.QuickLoadView2;
 import com.affymetrix.swing.threads.SwingWorker;
 import javax.swing.event.*;
 
@@ -72,7 +78,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
  */
 public class Das2LoadView3 extends JComponent
   implements
-             // ActionListener,
+             ActionListener,
 	     // TableModelListener,
 	     // TreeSelectionListener,
 	     SeqSelectionListener,
@@ -96,6 +102,8 @@ public class Das2LoadView3 extends JComponent
   JScrollPane table_scroller;
   JScrollPane tree_scroller;
   JTree tree;
+  JButton all_residuesB;
+  JButton partial_residuesB;
   CheckTreeManager check_tree_manager; // manager for tree with checkboxes
   Das2TypesTableModel types_table_model;
   DefaultMutableTreeNode treetop = null;
@@ -119,12 +127,14 @@ public class Das2LoadView3 extends JComponent
     gviewer.addDataRequestListener(this);
 
     tree = new JTree();
+    /*
     TreeCellRenderer tcr = tree.getCellRenderer();
     // if possible, hide leaf icons (since have checkboxes too)
     if (tcr instanceof DefaultTreeCellRenderer) {
       DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer)tcr;
       dtcr.setLeafIcon(null);
     }
+    */
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     clearTreeView();
@@ -182,7 +192,22 @@ public class Das2LoadView3 extends JComponent
     tpane.addTab("Load by Location", types_panel);
     tpane.addTab("Name Search", namesearch);
     splitpane.setLeftComponent(tree_scroller);
-    splitpane.setRightComponent(tpane);
+    //    splitpane.setRightComponent(tpane);
+
+    JPanel buttons = new JPanel();
+    all_residuesB = new JButton("Load All Sequence");
+    buttons.add(all_residuesB);
+    all_residuesB.addActionListener(this);
+    partial_residuesB = new JButton("Load Sequence in View");
+    buttons.add(partial_residuesB);
+    partial_residuesB.addActionListener(this);
+    
+
+    JPanel pan1 = new JPanel();
+    pan1.setLayout(new BorderLayout());
+    pan1.add("Center", tpane);
+    pan1.add("South", buttons);
+    splitpane.setRightComponent(pan1);
 
     // As soon as this component becomes visible, set the splitpane position
     this.addComponentListener(new ComponentAdapter() {
@@ -624,6 +649,35 @@ public class Das2LoadView3 extends JComponent
   public void tableChanged(TableModelEvent evt) {   }
   */
 
+
+  public void actionPerformed(ActionEvent evt) {
+    Object src = evt.getSource();
+    /* handles residues loading based on partial or full sequence load buttons */
+    if (src == partial_residuesB) {
+      SeqSpan viewspan = gviewer.getVisibleSpan();
+      if (current_group==null) { ErrorHandler.errorPanel("Error", "No sequence group selected.", gviewer); }
+      else if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); }
+      else if (viewspan.getBioSeq() != current_seq) {
+        System.err.println("Error in QuickLoaderView: " +
+                           "SeqMapView seq and QuickLoaderView current_seq not the same!");
+      } 
+      else {
+	SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
+      }
+    }
+    else if (src == all_residuesB) {
+      if (current_group==null) { ErrorHandler.errorPanel("Error", "No sequence group selected.", gviewer); }
+      if (current_seq==null) { ErrorHandler.errorPanel("Error", "No sequence selected.", gviewer); }
+      if (! (current_seq instanceof SmartAnnotBioSeq)) {
+	ErrorHandler.errorPanel("Error", "Can't do optimized full residues retrieval for this sequence.", gviewer);  
+      }
+      else {
+	SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq)current_seq);
+      }
+    }
+  }
+
+
   /**
    *
    * Das2VersionTreeNode
@@ -747,6 +801,9 @@ public class Das2LoadView3 extends JComponent
     }
 
   } // END Das2VersionTreeNode
+
+
+
 
 
 }  // END Das2LoadView3 class

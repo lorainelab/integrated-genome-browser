@@ -391,7 +391,12 @@ public class Das2ClientOptimizer {
 	  bis = new BufferedInputStream(istr);
           if (DEBUG)  { request_log.addLogMessage("content type: " + content_type); }
 	  content_subtype = content_type.substring(content_type.indexOf("/")+1);
-          // request_log.addLogMessage("content subtype: " + content_subtype);
+	  int sindex = content_subtype.indexOf(';');
+	  if (sindex >= 0) { 
+	    content_subtype = content_subtype.substring(0, sindex);
+	    content_subtype = content_subtype.trim();
+	  }
+          request_log.addLogMessage("content subtype: " + content_subtype);
 	  if (content_type == null ||
 	      content_subtype == null ||
 	      content_type.equals("unknown") ||

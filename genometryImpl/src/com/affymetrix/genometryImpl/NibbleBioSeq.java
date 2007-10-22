@@ -129,7 +129,7 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
   }
 
   public String substring(int offset) {
-    System.out.println("called NibbleBioSeq.substring(offset)");
+    //    System.out.println("called NibbleBioSeq.substring(offset)");
     return substring(offset, getLength());
   }
 

@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -27,6 +27,7 @@ import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
+import com.affymetrix.igb.das2.Das2Discovery;
 
 /**
  *Class for parsing preferences for IGB.
@@ -98,7 +99,7 @@ Example:
     parent_glyph="com.affymetrix.igb.glyph.EfficientOutlineContGlyph"
     child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 
-"glyph_depth": 
+"glyph_depth":
    <b>IGNORED</b> starting with IGB 4.01.
 
 *</pre>
@@ -293,13 +294,24 @@ public class XmlPrefsParser {
             prefs_hash.put(name.trim(), val);
             //          System.out.println(tag + ",   " + val);
           }
-          else if (name.equalsIgnoreCase("das_server")) {
+          else if (name.equalsIgnoreCase("dasserver") || name.equalsIgnoreCase("das_server")) {
             //Map das_servers = getNamedMap(prefs_hash, DAS_SERVERS);
             String server_name = el.getAttribute("name");
             String server_url = el.getAttribute("url");
             //das_servers.put(server_name, server_url);
             com.affymetrix.igb.das.DasDiscovery.addDasServer(server_name, server_url);
           }
+	  else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
+	    String server_name = el.getAttribute("name");
+            String server_url = el.getAttribute("url");
+	    if (Das2Discovery.getDas2Server(server_url) == null) {
+	      System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
+	      com.affymetrix.igb.das2.Das2Discovery.addDas2Server(server_name, server_url);
+	    }
+	    else {
+	      System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
+	    }
+	  }
         } catch (Exception nfe) {
           System.err.println("ERROR setting preference '"+the_name+"':");
           System.err.println("  "+nfe.toString());
@@ -378,7 +390,7 @@ public class XmlPrefsParser {
         +"'  url='"+url+"'");
     }
   }
-  
+
   public void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
     /*  Builds two hash tables:
      *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI
@@ -398,7 +410,7 @@ public class XmlPrefsParser {
       String factory_name = null;
       try {
         factory_name = (String) attmap.get("factory");
-        
+
         factory_class = ObjectUtils.classForName(factory_name);
         //System.out.println("mapping annot_type to factory: "+annot_type+" --> "+factory_class.getName());
       }

@@ -52,7 +52,7 @@ http://sourceforge.net/docman/?group_id=129420
 ----------------- REQUIRED RESOURCES -----------------------
 
 IGB requires the Java 2 Platform, Standard Edition (J2SE), 
-  version 1.4.2 or higher.
+  version 1.5 or higher.
   http://java.sun.com/j2se/
 
 
@@ -121,10 +121,11 @@ near the corresponding *.java file.
 If you do not wish to use 'ant':
 
 Use any IDE to compile the java sources in these
-three directories, in this order:
+directories, in this order:
 1)  genoviz_sdk/src
 2)  genometry/src
-3)  igb/src
+3)  genometryImpl/src
+4)  igb/src
 
 
 ----------------- RUNNING IGB -----------------------------
@@ -148,12 +149,12 @@ Use the ant task 'run' to run the program from within ant.
 
 Running from the command line. Sample command:
 
-java -Xmx512m -classpath ext/xercesImpl.jar:ext/xml-apis.jar:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/commons-logging.jar:genometry/genometry.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb/src/igb_prefs.xml
+java -Xmx512m -classpath ext/xercesImpl.jar:ext/xml-apis.jar:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/commons-logging.jar:genometry/genometry.jar:genometryImpl/genometryImpl.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb/src/igb_prefs.xml
 
 This sample command assumes that:
 
-1) the genoviz.jar and genometry.jar are located in the genoviz_sdk
-   and genometry subdirectories, respectively, relative to the
+1) genoviz.jar, genometry.jar, genometryImpl.jar are located in the genoviz_sdk,
+   genometryImpl and genometry subdirectories, respectively, relative to the
    top-level IGB release directory (this happens automatically
    when building via the ant 'jar' task),
 2) all third-party required jars are in a subdirectory called 'ext'

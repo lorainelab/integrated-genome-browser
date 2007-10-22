@@ -307,7 +307,9 @@ public class LocalUrlCacher {
 	//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
 	///   even when there's no connection
 	conn.connect();
-	if (DEBUG_CONNECTION) { reportHeaders(conn); }
+	if (DEBUG_CONNECTION) {
+	  reportHeaders(conn);
+	}
 
 	remote_timestamp = conn.getLastModified();
 	has_timestamp = (remote_timestamp > 0);
@@ -318,13 +320,16 @@ public class LocalUrlCacher {
 	  hcon = (HttpURLConnection)conn;
 	  http_status = hcon.getResponseCode();
         }
-	url_reachable = true;
+	// if http_status > 500, then definitely a problem, consider the URL unreachable
+	url_reachable = (http_status < 500);
       }
       catch (IOException ioe) {
+	url_reachable = false;
+      }
+      if (! url_reachable) {
 	Application.getSingleton().logWarning("URL not reachable: " + url);
 	if (headers != null)  { headers.put("LocalUrlCacher", URL_NOT_REACHABLE); }
-	url_reachable = false;
-        if (! cached) { throw ioe; }
+        if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
       }
     }
 
@@ -347,7 +352,7 @@ public class LocalUrlCacher {
         }
         else {
 	  if (DEBUG_CONNECTION)  {
-	    Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache");
+	    Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache: " + url);
 	  }
           result_stream = null;
         }
@@ -657,7 +662,8 @@ public class LocalUrlCacher {
 
   public static void reportHeaders(URLConnection query_con) {
     try {
-      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
+      //      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
+      System.out.println("URL: " + query_con.getURL().toString());
       int hindex = 0;
       while (true) {
 	String val = query_con.getHeaderField(hindex);
@@ -665,7 +671,8 @@ public class LocalUrlCacher {
 	if (val == null && key == null) {
 	  break;
 	}
-	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
+	//	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
+	System.out.println("   header:   key = " + key + ", val = " + val);
 	hindex++;
       }
     }

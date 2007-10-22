@@ -24,6 +24,7 @@
                                            @title='knowngene' or 
                                            @title='mgcgenes' or 
                                            @title='refseq' or 
+                                           @title='rfam' or 
                                            @title='sanger_pombe' or 
                                            @title='sgdgene' or 
                                            @title='sgpgene' or 
@@ -31,6 +32,7 @@
                                            @title='sno_mrna' or 
 					   @title='tair' or  
                                            @title='trnascan' or 
+                                           @title='trnascan-se' or 
                                            @title='twinscan' or 
                                            @title='xenorefgene']"  >
 

@@ -22,11 +22,14 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.*;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.
@@ -35,7 +38,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
 
   private final JTable table = new JTable();
 
-  private static final String TIER_NAME = "Tier";
+  private static final String TIER_NAME = "Tier ID";
   private static final String COLOR = "Color";
   private static final String SEPARATE = "2 Tiers";
   private static final String COLLAPSED = "Collapsed";
@@ -44,24 +47,26 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   private static final String GLYPH_DEPTH = "Connected";
   private static final String LABEL_FIELD = "Label Field";
   private static final String HUMAN_NAME = "Display Name";
+  //  private static final String GRAPH_TIER = "Graph Tier";
 
   private final static String[] col_headings = {
-    TIER_NAME, HUMAN_NAME,
+    HUMAN_NAME,
     COLOR, BACKGROUND,
     SEPARATE, COLLAPSED,
-    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD,
+    MAX_DEPTH, GLYPH_DEPTH, LABEL_FIELD, TIER_NAME,
+    //    GRAPH_TIER,
   };
 
-  private final int COL_TIER_NAME = 0;
-  private final int COL_HUMAN_NAME = 1;
-  private final int COL_COLOR = 2;
-  private final int COL_BACKGROUND = 3;
-  private final int COL_SEPARATE = 4;
-  private final int COL_COLLAPSED = 5;
-  private final int COL_MAX_DEPTH = 6;
-  private final int COL_GLYPH_DEPTH = 7;
-  private final int COL_LABEL_FIELD = 8;
-
+  private final int COL_HUMAN_NAME = 0;
+  private final int COL_COLOR = 1;
+  private final int COL_BACKGROUND = 2;
+  private final int COL_SEPARATE = 3;
+  private final int COL_COLLAPSED = 4;
+  private final int COL_MAX_DEPTH = 5;
+  private final int COL_GLYPH_DEPTH = 6;
+  private final int COL_LABEL_FIELD = 7;
+  private final int COL_TIER_NAME = 8;
+  //  private final int COL_GRAPH_TIER = 9;
 
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
@@ -78,7 +83,6 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
 
   static final String AUTO_REFRESH = "Auto Refresh";
   static final String APPLY_DEFAULT_BG = "Apply Default Background";
-
 
   SeqMapView smv;
 
@@ -209,12 +213,38 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   }
 
   void refreshList() {
-    java.util.List styles = AnnotStyle.getAllLoadedInstances();
+    boolean only_displayed_tiers = true;
+    boolean include_graph_styles = false;
+    java.util.List styles;
+    // if only_displayed_tiers, then only put AnnotStyles in table that are being used in tiers currently displayed in main view
+    if (only_displayed_tiers) {
+      styles = new ArrayList();
+      styles.add(default_annot_style);
+      if (smv != null) {  
+	java.util.List tiers = smv.getSeqMap().getTiers();
+	LinkedHashMap stylemap = new LinkedHashMap();
+	Iterator titer = tiers.iterator();
+	while (titer.hasNext()) {
+	  TierGlyph tier = (TierGlyph)titer.next();
+	  IAnnotStyle style = tier.getAnnotStyle();
+	  if ((style instanceof AnnotStyle) &&
+	      (style.getShow()) && 
+	      (tier.getChildCount() > 0) ) {
+	    stylemap.put(style, style);
+	  }
+	}
+	styles.addAll(stylemap.values());
+      }
+    }
+    else { styles = AnnotStyle.getAllLoadedInstances(); }
     ArrayList customizables = new ArrayList(styles.size());
     for (int i=0; i<styles.size(); i++) {
       AnnotStyle the_style = (AnnotStyle) styles.get(i);
       if (the_style.getCustomizable()) {
-        customizables.add(the_style);
+	// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
+	if ((! the_style.isGraphTier()) || include_graph_styles) {
+	  customizables.add(the_style);
+	}
       }
     }
     this.setStyleList(customizables);
@@ -330,6 +360,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           return Boolean.valueOf(style.getCollapsed());
         case COL_TIER_NAME:
           String name = style.getUniqueName();
+	  if (name == null) { name = ""; }
           if (! style.getPersistent()) { name = "<html><i>" + name + "</i></html>"; }
           return name;
         case COL_MAX_DEPTH:
@@ -343,8 +374,10 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
         case COL_LABEL_FIELD:
           return style.getLabelField();
         case COL_HUMAN_NAME:
-          if (style == default_annot_style) { return ""; }
+          if (style == default_annot_style) { return "* default *"; }
           else { return style.getHumanName(); }
+	//        case COL_GRAPH_TIER:
+	//	  return style.isGraphTier();
         default:
           return null;
       }
@@ -386,7 +419,9 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
           style.setLabelField((String) value);
           break;
         case COL_HUMAN_NAME:
-          style.setHumanName((String) value);
+	  if (style != default_annot_style) {
+	    style.setHumanName((String) value);
+	  }
           break;
         default:
           System.out.println("Unknown column selected: " + col);;

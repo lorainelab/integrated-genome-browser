@@ -148,9 +148,13 @@ public class Das2VersionedSource  {
 	  genome = new Das2SeqGroup(this, groupid);
 	}
 	else {
-	  // System.out.println("@@@@  Adding genome: " + coords_uri);
-	  // genome = gmodel.addSeqGroup(coords_uri.toString());
-	  genome = new Das2SeqGroup(this, coords_uri.toString());
+	  // for now only use coords URI for group if version has no name (just ID), otherwise use name
+	  if (this.getName() == null) {
+	    genome = new Das2SeqGroup(this, coords_uri.toString());
+	  }
+	  else {
+	    genome = new Das2SeqGroup(this, groupid);
+	  }
 	}
 	gmodel.addSeqGroup(genome);
       }

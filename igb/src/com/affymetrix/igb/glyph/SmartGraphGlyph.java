@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.*;
 
+import com.affymetrix.igb.*;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSymmetry;
@@ -163,8 +164,14 @@ public class SmartGraphGlyph extends GraphGlyph {
       double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
       double xcoords_per_pixel = 1 / xpixels_per_coord;
       if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
-	// if at resolution where bars should be displayed, then draw as BIG_DOT_GRAPH style
-        super.draw(view, GraphStateI.LINE_GRAPH);
+	// if at resolution where bars should be displayed, then draw as LINE or BAR graph
+	if ((graph_style == MINMAXAVG)  && 
+	    (Application.getSingleton() instanceof IGB) ) {
+	  super.draw(view, GraphStateI.BAR_GRAPH);
+	}
+	else { 
+	  super.draw(view, GraphStateI.LINE_GRAPH);
+	}
       }
       else {
         drawSmart(view);

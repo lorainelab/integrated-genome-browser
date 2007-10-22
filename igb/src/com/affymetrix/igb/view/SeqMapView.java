@@ -3233,9 +3233,9 @@ public class SeqMapView extends JPanel
 
 
   public void seqSelectionChanged(SeqSelectionEvent evt)  {
-    //    if (Application.DEBUG_EVENTS)  {
-    System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
-    //    }
+    if (Application.DEBUG_EVENTS)  {
+      System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
+    }
     final AnnotatedBioSeq newseq = evt.getSelectedSeq();
     // Don't worry if newseq is null, setAnnotatedSeq can handle that
     // (It can also handle the case where newseq is same as old seq.)

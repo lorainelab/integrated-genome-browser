@@ -1519,7 +1519,7 @@ public class IGB extends Application
   java.util.List getPluginsFromXmlPrefs(Map prefs_hash) {
     ArrayList plugin_list = new ArrayList(16);
 
-    boolean USE_ANNOT_BROWSER = true;
+    boolean USE_ANNOT_BROWSER = false;
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;

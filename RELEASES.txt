@@ -4,6 +4,21 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-5.01
+  + The major change from previous versions is DAS/2 has replaced QuickLoad as 
+    the primary way to access remote data.
+  + DAS/2 allows access to wider selection of annotations than QuickLoad, 
+    more loading options, and better performance.
+  + Genome selection is now done via "Pick Genome" button in top ribbon
+  + Sequence selection is now done via Sequence drop-down in top ribbon
+  + IGB now keeps much better track of settings from previous sessions
+  + Annotation Browser tab is turned off by default 
+    (instead use DAS/2 search via "Name Search" subtab in "Data Access")
+  + Pivot View tab is turned off by default (use is deprecated)
+  + Can revert back to using QuickLoad instead of DAS/2 via a toggle in the 
+    "Data Sources" preferences tab
+
+
 IGB-4.56
   + Now displays cytobands when the information is available
   + Entire set of tabbed panels can use a new window to maximize space

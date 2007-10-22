@@ -146,10 +146,11 @@ public class AffyTieredMap extends NeoMap {
     return tindex;
   }
 
-  public java.util.List getTiers() {
-    return tiers;
-  }
+  // need to deprecate getTiers() or getAllTiers()
+  public java.util.List getTiers() { return tiers; }
 
+  // need to deprecate getTiers() or getAllTiers()
+  public Vector getAllTiers () { return (Vector)getTiers(); }
 
   public void repack() {
     // WARNING
@@ -292,8 +293,6 @@ public class AffyTieredMap extends NeoMap {
       System.out.println("time to pack: " + tim/1000f);
     }
   }
-
-  public Vector getAllTiers () { return tiers; }
 
   public void clearWidget() {
     super.clearWidget();

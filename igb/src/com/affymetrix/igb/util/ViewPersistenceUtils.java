@@ -17,8 +17,8 @@ public class ViewPersistenceUtils  {
   // For now need to use full URIs for DAS2 genome autoload defaults
 //  public static String DEFAULT_DAS2_SERVER_URL = "http://netaffxdas.affymetrix.com/das2/sources";
   public static String DEFAULT_DAS2_SERVER_URL = (String)Das2Discovery.getDas2Urls().get(Das2Discovery.DEFAULT_DAS2_SERVER_NAME);
-  public static String DEFAULT_DAS2_SOURCE_URI = "http://netaffxdas.affymetrix.com/das2/H_sapiens";
-  public static String DEFAULT_DAS2_VERSION_URI = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006";
+  public static String DEFAULT_DAS2_SOURCE_URI = "http://netaffxdas.affymetrix.com/das2/genome/H_sapiens";
+  public static String DEFAULT_DAS2_VERSION_URI = "http://netaffxdas.affymetrix.com/das2/genome/H_sapiens_Mar_2006";
   public static String DEFAULT_SELECTED_GENOME = "H_sapiens_Mar_2006";
   //  public static String DEFAULT_SELECTED_SEQ = "http://netaffxdas.affymetrix.com/das2/H_sapiens_Mar_2006/chr21";
   public static String DEFAULT_SELECTED_SEQ = "chr21";

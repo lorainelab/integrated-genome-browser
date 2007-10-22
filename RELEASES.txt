@@ -17,6 +17,7 @@ IGB-5.01
   + Pivot View tab is turned off by default (use is deprecated)
   + Can revert back to using QuickLoad instead of DAS/2 via a toggle in the 
     "Data Sources" preferences tab
+  + IGB 5.01 now requires Java version 1.5 or higher.
 
 
 IGB-4.56

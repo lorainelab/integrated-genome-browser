@@ -3,10 +3,10 @@ REM on a Windows system.
 
 REM You may need to edit it for your system.
 
-
+REM IGB REQUIRES JAVA 1.5 or higher
 
 REM This file assumes you have the 'java' program in your PATH.
-REM If not, see http://java.sun.com/j2se/1.4.2/install-windows.html
+REM If not, see http://java.sun.com/j2se/1.5/install-windows.html
 REM for instructions on setting the PATH variable.
 
 
@@ -24,6 +24,7 @@ set CLASSPATH=%CLASSPATH%;ext\jlfgr-1_0.jar
 set CLASSPATH=%CLASSPATH%;genoviz_sdk\genoviz.jar
 set CLASSPATH=%CLASSPATH%;genoviz.jar
 set CLASSPATH=%CLASSPATH%;genometry\genometry.jar
+set CLASSPATH=%CLASSPATH%;genometryImpl\genometryImpl.jar
 set CLASSPATH=%CLASSPATH%;genometry.jar
 set CLASSPATH=%CLASSPATH%;igb.jar
 set CLASSPATH=%CLASSPATH%;ext\freehep-base.jar

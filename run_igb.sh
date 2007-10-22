@@ -3,6 +3,8 @@
 # on a Unix/Linux system.
 # You may need to edit it for your system.
 
+# IGB requires java 1.5 or higher
+
 export CLASSPATH="ext/xercesImpl.jar"
 export CLASSPATH="$CLASSPATH:ext/xml-apis.jar"
 export CLASSPATH="$CLASSPATH:ext/javax.servlet.jar"
@@ -25,6 +27,11 @@ if [ -f genometry.jar ]; then
   export CLASSPATH="$CLASSPATH:genometry.jar"
 else
   export CLASSPATH="$CLASSPATH:genometry/genometry.jar"
+fi
+if [ -f genometryImpl.jar ]; then
+  export CLASSPATH="$CLASSPATH:genometryImpl.jar"
+else
+  export CLASSPATH="$CLASSPATH:genometryImpl/genometryImpl.jar"
 fi
 export CLASSPATH="$CLASSPATH:igb.jar"
 

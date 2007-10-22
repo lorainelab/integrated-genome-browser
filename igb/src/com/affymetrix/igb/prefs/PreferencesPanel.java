@@ -73,8 +73,6 @@ public class PreferencesPanel extends JPanel {
 
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
 
-      TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
-
       TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
 
       //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
@@ -82,6 +80,9 @@ public class PreferencesPanel extends JPanel {
       TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
 
       TAB_NUM_MISC_OPTIONS = singleton.addPrefEditorComponent(new OptionsView());
+
+      TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
+
     }
     return singleton;
   }

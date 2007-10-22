@@ -74,9 +74,11 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
 
+    /*
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad",
 						 IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
 						 IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2) );
+    */
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));

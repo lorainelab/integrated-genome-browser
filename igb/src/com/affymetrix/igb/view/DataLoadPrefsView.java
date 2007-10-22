@@ -14,6 +14,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.prefs.*;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SeqResiduesLoader;
@@ -35,6 +36,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
   static Map usage2str;
 
   JButton clear_cacheB;
+  JCheckBox use_quickloadCB;
   JCheckBox cache_annotsCB;
   JCheckBox cache_residuesCB;
   JComboBox cache_usage_selector;
@@ -123,7 +125,9 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
       }
     });
 
-
+    use_quickloadCB = UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad (requires restart)",
+						      IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
+						      IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);
     cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
         UnibrowPrefsUtil.getTopNode(),
         QuickLoadServerModel.PREF_QUICKLOAD_CACHE_ANNOTS,
@@ -149,6 +153,9 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     cache_options_box.setAlignmentX(0.0f);
     this.add(cache_options_box);
 
+    // adding quickload choicebox to cache options box for expediency
+    use_quickloadCB.setAlignmentX(0.0f);
+    cache_options_box.add(use_quickloadCB);
     cache_annotsCB.setAlignmentX(0.0f);
     cache_options_box.add(cache_annotsCB);
     cache_residuesCB.setAlignmentX(0.0f);

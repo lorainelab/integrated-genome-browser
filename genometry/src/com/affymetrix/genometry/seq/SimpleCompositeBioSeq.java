@@ -163,9 +163,13 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
     //    [which is an invalid assumption! Because that further assumes that composed seq
     //     is fully covered by the sequences that it is composed from...]
     SeqSymmetry rootsym = this.getComposition();
-    if (rootsym == null) { return false; }
+    // SeqUtils.printSymmetry(rootsym);
+    if (rootsym == null) {
+      return false;
+    }
     int comp_count = rootsym.getChildCount();
     if (comp_count == 0) {
+      //      System.out.println("    composition is only a single sym, no children");
       BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
       return other_seq.isComplete(start, end);
     }

@@ -22,10 +22,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class PreferencesPanel extends JPanel {
-  
+
   static final String WINDOW_NAME = "Preferences Window";
   static final String HELP_WINDOW_NAME = "Preferences Help Window";
-  
+
   JFrame frame = null;
   static PreferencesPanel singleton = null;
 
@@ -36,25 +36,25 @@ public class PreferencesPanel extends JPanel {
   //Action clear_action;
   Action help_action;
   Action help_for_tab_action;
-    
+
   protected PreferencesPanel() {
     this.setLayout(new BorderLayout());
     tab_pane = new JTabbedPane();
-    
+
     this.add(tab_pane, BorderLayout.CENTER);
-    
+
     // using SCROLL_TAB_LAYOUT would disable the tool-tips, due to a Swing bug.
     //tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
   }
-  
+
   public static int TAB_NUM_TIERS = -1;
   public static int TAB_NUM_DAS = -1;
   public static int TAB_NUM_KEY_STROKES = -1;
   public static int TAB_NUM_MISC_OPTIONS = -1;
   public static int TAB_NUM_GRAPHS_VIEW = -1;
-  
+
   TierPrefsView tpv = null;
-  
+
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
    *  JComponent you wish, but probably the best idea is to use
@@ -70,9 +70,9 @@ public class PreferencesPanel extends JPanel {
           singleton.tpv.removedFromView();
         }
       });
-      
+
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
-      
+
       TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
 
       TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
@@ -85,7 +85,7 @@ public class PreferencesPanel extends JPanel {
     }
     return singleton;
   }
-  
+
   /** Set the tab pane to the given index. */
   public void setTab(int i) {
     if (i < 0 || i >= tab_pane.getComponentCount()) {
@@ -98,14 +98,14 @@ public class PreferencesPanel extends JPanel {
       p.refresh();
     }
   }
-  
+
   /** Adds the given component as a panel to the tab pane of preference editors.
    *  @param pec  An implementation of PrefEditorComponent that must also be an
    *              instance of java.awt.Component.
    *  @return the index of the added tab in the tab pane.
    */
   public int addPrefEditorComponent(final IPrefEditorComponent pec) {
-    tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());    
+    tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());
     ((Component) pec).addComponentListener(new ComponentAdapter() {
       public void componentShown(ComponentEvent e) {
         pec.refresh();
@@ -113,7 +113,7 @@ public class PreferencesPanel extends JPanel {
     });
     return tab_pane.indexOfComponent((Component) pec);
   }
-  
+
   public IPrefEditorComponent[] getPrefEditorComponents() {
     int count = tab_pane.getTabCount();
     IPrefEditorComponent[] comps = new IPrefEditorComponent[count];
@@ -122,12 +122,12 @@ public class PreferencesPanel extends JPanel {
     }
     return comps;
   }
-  
+
   /** Gets a JFrame containing the PreferencesView */
   public JFrame getFrame() {
     if (frame == null) {
       //PreferencesView pv = new PreferencesView();
-      
+
       frame = new JFrame("Preferences");
       //final Image icon = IGB.getIcon();
       //if (icon != null) { frame.setIconImage(icon); }
@@ -151,7 +151,7 @@ public class PreferencesPanel extends JPanel {
 
       JMenuBar menubar = this.getMenuBar();
       frame.setJMenuBar(menubar);
-      
+
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
       Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(400, 400));
@@ -159,15 +159,15 @@ public class PreferencesPanel extends JPanel {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
     }
-    
+
     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
     if (icon != null) {
       frame.setIconImage(icon.getImage());
     }
-    
+
     return frame;
   }
-  
+
   JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu prefs_menu = new JMenu("Preferences");
@@ -178,19 +178,19 @@ public class PreferencesPanel extends JPanel {
     prefs_menu.add(getImportAction());
     //prefs_menu.addSeparator();
     //prefs_menu.add(getClearAction());
-    
+
     menu_bar.add(prefs_menu);
-    
+
     JMenu help_menu = new JMenu("Help");
     //help_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
     help_menu.setMnemonic('H');
     menu_bar.add(help_menu);
     help_menu.add(getHelpAction());
     help_menu.add(getHelpTabAction());
-    
+
     return menu_bar;
   }
-  
+
   void showHelp(String s) {
     JEditorPane text = new JEditorPane();
     text.setContentType("text/html");
@@ -200,7 +200,7 @@ public class PreferencesPanel extends JPanel {
     //text.setSelectionStart(0);
     JScrollPane scroller = new JScrollPane(text);
     scroller.setPreferredSize(new java.awt.Dimension(300, 400));
-    
+
     JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
     final JDialog dialog = new JDialog(frame, "Help", true);
     dialog.getContentPane().add(scroller, "Center");
@@ -217,7 +217,7 @@ public class PreferencesPanel extends JPanel {
     dialog.getContentPane().add(button_box, "South");
     dialog.pack();
     dialog.setLocationRelativeTo(this);
-    
+
     //ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
     //if (icon != null) {
       // It is impossible to set an image for a dialog window, but I wish I could.
@@ -235,11 +235,11 @@ public class PreferencesPanel extends JPanel {
         dialog.dispose();
       }
     });
-    
+
     dialog.setVisible(true);
   }
 
-  
+
   String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
 
@@ -250,7 +250,7 @@ public class PreferencesPanel extends JPanel {
     sb.append("In some cases, the changes will take effect immediately.  ");
     sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
     sb.append("</p>\n");
-    
+
     sb.append("<h2>Export</h2>\n");
     sb.append("<p>\n");
     sb.append("<b>Export</b> allows you to save all the persistent preferences in the program to an XML file.  ");
@@ -282,7 +282,7 @@ public class PreferencesPanel extends JPanel {
     sb.append("\n");
     return sb.toString();
   }
-  
+
   void showHelpForTab() {
     Component c = tab_pane.getSelectedComponent();
     String text = null;
@@ -291,7 +291,7 @@ public class PreferencesPanel extends JPanel {
       text = pec.getHelpTextHTML();
     }
     if (text == null) {
-      JOptionPane.showMessageDialog(this, "No help available for this tab", 
+      JOptionPane.showMessageDialog(this, "No help available for this tab",
         "No Help", JOptionPane.INFORMATION_MESSAGE);
     } else {
       showHelp(text);
@@ -319,7 +319,7 @@ public class PreferencesPanel extends JPanel {
     }
     return export_action;
   }
-  
+
   private Action getImportAction() {
     if (import_action == null) {
       import_action = new AbstractAction("Import Preferences ...") {
@@ -339,7 +339,7 @@ public class PreferencesPanel extends JPanel {
     }
     return import_action;
   }
-    
+
 //  private Action getClearAction() {
 //    if (clear_action == null) {
 //      clear_action = new AbstractAction("Clear Preferences ...") {
@@ -353,7 +353,7 @@ public class PreferencesPanel extends JPanel {
 //    }
 //    return clear_action;
 //  }
-  
+
   private Action getHelpAction() {
     if (help_action == null) {
       help_action = new AbstractAction("General Help") {
@@ -366,10 +366,10 @@ public class PreferencesPanel extends JPanel {
       help_action.putValue(Action.ACCELERATOR_KEY, UnibrowPrefsUtil.getAccelerator(HELP_ACTION_COMMAND));
       Icon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif");
       help_action.putValue(Action.SMALL_ICON, icon);
-    }    
+    }
     return help_action;
   }
-  
+
   private Action getHelpTabAction() {
     if (help_for_tab_action == null) {
       help_for_tab_action = new AbstractAction("Help for Current Tab") {
@@ -385,7 +385,7 @@ public class PreferencesPanel extends JPanel {
     }
     return help_for_tab_action;
   }
-  
+
   /** A simple method for testing an IPrefEditorComponent, which MUST also
    *  be a JComponent, by simply bringing it up in a JDialog.
    */
@@ -394,16 +394,16 @@ public class PreferencesPanel extends JPanel {
     d.setTitle(p.getName());
     d.getContentPane().add((JComponent) p);
     d.pack();
-    
+
     d.setVisible(true);
     d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     d.addWindowListener(new java.awt.event.WindowAdapter() {
       public void windowClosing(java.awt.event.WindowEvent e) {
         System.exit(0);
       }
-    });    
+    });
   }
-  
+
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {
     PreferencesPanel pp = getSingleton();

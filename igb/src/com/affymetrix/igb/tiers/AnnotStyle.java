@@ -181,7 +181,7 @@ public class AnnotStyle implements IAnnotStyleExtended {
     }
 
     // GAH eliminated hard-coded default settings for glyph_depth, can now set in stylesheet
-    //    applyHardCodedDefaults();  
+    //    applyHardCodedDefaults();
 
     // now need to add use of stylesheet settings via AssociationElements, etc.
     Stylesheet stylesheet = XmlStylesheetParser.getUserStylesheet();
@@ -236,9 +236,9 @@ public class AnnotStyle implements IAnnotStyleExtended {
   //    (only want to persists when user sets preferences in GUI)
    void initFromPropertyMap(PropertyMap props)  {
 
-     if (DEBUG)  { 
-       System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name); 
-       System.out.println("             props: " + props); 
+     if (DEBUG)  {
+       System.out.println("    +++++ initializing AnnotStyle from PropertyMap: " + unique_name);
+       System.out.println("             props: " + props);
      }
       Color col = props.getColor("color");
       if (col == null)  { col = props.getColor("foreground"); }

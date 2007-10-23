@@ -141,7 +141,6 @@ public class UnibrowControlServlet extends HttpServlet {
       BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
     }
 
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     /*
      AnnotatedSeqGroup seq_group = gmodel.getSeqGroup(version);
     Das2VersionedSource das_version = null;
@@ -326,7 +325,7 @@ public class UnibrowControlServlet extends HttpServlet {
       final String[] graph_files) {
 
     final SeqMapView gviewer = uni.getMapView();
-    final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    //final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
     final AnnotatedSeqGroup book_group;
     if (version == null || "unknown".equals(version) || version.trim().equals("")) {
@@ -345,7 +344,7 @@ public class UnibrowControlServlet extends HttpServlet {
       public void run() {
         try {
           // System.out.println("current group: " + ((selected_group == null) ? "null" : selected_group.getID()) );
-          System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
+          //System.out.println("bookmark group: " + ((book_group == null) ? "null" : book_group.getID()) );
           if (book_group != null && ! book_group.equals(selected_group)) {
             if (selected_group != null && ! selected_group.equals("null")) {
               // confirmation panel not needed since curations are not now possible
@@ -364,7 +363,7 @@ public class UnibrowControlServlet extends HttpServlet {
 
 
           // System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
-          System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
+          //System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
 
           if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {
             book_seq = selected_seq;
@@ -433,7 +432,7 @@ public class UnibrowControlServlet extends HttpServlet {
 
     if (selectParam.length() == 0) {return;}
 
-    List sym_list = new ArrayList(ids.length);
+    List<SeqSymmetry> sym_list = new ArrayList<SeqSymmetry>(ids.length);
     for (int i=0; i<ids.length; i++) {
       sym_list.addAll(gmodel.getSelectedSeqGroup().findSyms(ids[i]));
     }

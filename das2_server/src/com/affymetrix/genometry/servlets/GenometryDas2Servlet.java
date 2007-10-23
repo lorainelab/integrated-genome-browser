@@ -944,10 +944,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
       MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq)seqiter.next();
       if (mseq instanceof SmartAnnotBioSeq) {
         SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)mseq;
-        Set seq_types = aseq.getTypeIds();
-        if (seq_types != null) {
-	  //          Iterator titer = seq_types.keySet().iterator();
-          Iterator titer = seq_types.iterator();
+	Map typeid2sym = aseq.getTypeMap();
+        if (typeid2sym != null) {
+	  Iterator titer = typeid2sym.keySet().iterator();
           while (titer.hasNext()) {
             String type = (String)titer.next();
             java.util.List flist = Collections.EMPTY_LIST;
@@ -958,8 +957,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
               SymWithProps first_child = (SymWithProps)tannot.getChild(0);
               if (first_child != null) {
                 java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
-		// System.out.println("   child count: " + tannot.getChildCount() +
-		//				   ", format info: " + formats);
                 if (formats != null) { flist = formats; }
               }
               genome_types.put(type, flist);
@@ -1661,7 +1658,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
     int lcount = landscapes.size();
     for (int i=0; i<lcount; i++) {
-      aseq.addAnnotation((SeqSymmetry)landscapes.get(i));
+      aseq.addAnnotatio((SeqSymmetry)landscapes.get(i));
       aseq.addAnnotation((SeqSymmetry)projections.get(i));
     }
     System.out.println("DONE adding landscapes and projections for annotations on seq: " + aseq.getID());

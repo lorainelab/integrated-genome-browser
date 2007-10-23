@@ -93,8 +93,18 @@ public class TrackLineParser {
    *  Any old values are cleared from the existing track line hash first.
    */
   public Map<String,String> parseTrackLine(String track_line) {
-    track_hash.clear();
+    return parseTrackLine(track_line, null);
+  }
 
+  /** Parses a track line putting the keys and values into the current value
+   *  of getCurrentTrackHash(), but does not use these properties to change
+   *  any settings of AnnotStyle, etc.
+   *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
+   *  Any old values are cleared from the existing track line hash first.
+   *  If track_name_prefix arg is non-null, it is added as prefix to parsed in track name
+   */
+  public Map<String,String> parseTrackLine(String track_line, String track_name_prefix) {
+    track_hash.clear();
     Matcher matcher = track_line_parser.matcher(track_line);
     // If performance becomes important, it is possible to save and re-use a Matcher,
     // but it isn't thread-safe
@@ -108,7 +118,12 @@ public class TrackLineParser {
         System.out.println("Couldn't parse this part of the track line: "+matcher.group(0));
       }
     }
-
+    String track_name = (String)track_hash.get(NAME);
+    if (track_name != null && track_name_prefix != null) {
+      String new_track_name = track_name_prefix + track_name;
+      track_hash.put(NAME, new_track_name);
+      System.out.println("  modifying track name in TrackLineParser: " + new_track_name);
+    }
     return track_hash;
   }
 
@@ -124,7 +139,6 @@ public class TrackLineParser {
       track_hash.put(NAME, default_track_name);
       name = default_track_name;
     }
-
     StateProvider provider = seq_group.getStateProvider();
     IAnnotStyle style = provider.getAnnotStyle(name);
     applyTrackProperties(track_hash, style);

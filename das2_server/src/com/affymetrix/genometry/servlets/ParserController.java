@@ -47,6 +47,12 @@ public class ParserController {
 	  parser.setIsLinkPsl(true);
           parser.enableSharedQueryTarget(true);
         }
+	int sindex = annot_type.lastIndexOf("/");
+	if (sindex >= 0) {
+	  String type_prefix = annot_type.substring(0, sindex+1);  // include ending "/" in prefix
+	  System.out.println("Parsing PSL file, type prefix: " + type_prefix);
+	  parser.setTrackNamePrefix(type_prefix);
+	}
 	parser.setCreateContainerAnnot(true); // is this needed?
 	//	parser.setCreateContainerAnnot(false); // is this needed?
 	results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);  // annotate target

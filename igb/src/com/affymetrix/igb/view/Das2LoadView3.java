@@ -127,14 +127,12 @@ public class Das2LoadView3 extends JComponent
     gviewer.addDataRequestListener(this);
 
     tree = new JTree();
-    /*
     TreeCellRenderer tcr = tree.getCellRenderer();
     // if possible, hide leaf icons (since have checkboxes too)
     if (tcr instanceof DefaultTreeCellRenderer) {
       DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer)tcr;
       dtcr.setLeafIcon(null);
     }
-    */
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     clearTreeView();
@@ -1088,7 +1086,8 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
     Das2Type type = state.getDas2Type();
     Object result = "NOT_ASSIGNED";
     if (col == NAME_COLUMN) {
-      result = type.getName();
+      //      result = type.getName();
+      result = type.getShortName();
     }
     else if (col == ID_COLUMN) {
       result = type.getID();

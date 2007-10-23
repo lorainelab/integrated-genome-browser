@@ -183,6 +183,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
   static String synonym_file = data_root + "synonyms.txt";
   static String types_xslt_file = data_root + "types.xslt";
+  static String org_order_filename = data_root + "organism_order.txt";
 
   /**
    *  Map of commands to plugins, for extending DAS server to
@@ -290,7 +291,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
       Iterator giter = genomes.keySet().iterator();
       while (giter.hasNext()) {
 	String key = (String)giter.next();
-	System.out.println("key: " + key);
+	//	System.out.println("key: " + key);
 	AnnotatedSeqGroup group = (AnnotatedSeqGroup)genomes.get(key);
 	System.out.println("Genome: " + group.getID() + ", organism: " + group.getOrganism() +
 			   ", version: " + group.getVersion() + ", seq count: " + group.getSeqCount());
@@ -339,9 +340,63 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
       }
     }
+
+    // sort genomes based on "organism_order.txt" config file if present
+    sortGenomes();
     System.gc();
     mem.printMemory();
   }
+
+
+  protected void sortGenomes() {   
+    // sort genomes based on "organism_order.txt" config file if present
+    // get Map.Entry for organism, sort based on order in organism_order.txt,
+    //    put in order in new LinkedHashMap(), then replace as organisms field
+    File org_order_file = new File(org_order_filename);
+    if (org_order_file.exists()) {
+      List org_order = new ArrayList();
+      try {
+	BufferedReader dis = new BufferedReader(new FileReader(org_order_file));
+	String line;
+	while ((line = dis.readLine()) != null) {
+	  if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
+	  String org_name = line.trim();
+	  org_order.add(org_name);
+	}
+
+	// organisms Map is organism name to List of organism genome versions (as AnnotatedSeqGroups)
+	Map.Entry[] sorted_org_entries = new Map.Entry[org_order.size()];
+	List unknown_org_entries = new ArrayList();
+	Iterator org_entries = organisms.entrySet().iterator();
+	while (org_entries.hasNext()) {
+	  Map.Entry entry = (Map.Entry)org_entries.next();
+	  String org_name = (String)entry.getKey();
+	  int org_index = org_order.indexOf(org_name);
+	  if (org_index >= 0) { sorted_org_entries[org_index] = entry; }
+	  else { unknown_org_entries.add(entry); }
+	}
+	Map sorted_organisms = new LinkedHashMap();
+	for (int i=0; i<sorted_org_entries.length; i++) {
+	  Map.Entry entry = (Map.Entry)sorted_org_entries[i];
+	  if (entry != null) {
+	    System.out.println("adding organism to sorted list: " + entry.getKey());
+	    sorted_organisms.put(entry.getKey(), entry.getValue());
+	  }
+	}
+	for (int k=0; k<unknown_org_entries.size(); k++) {
+	  Map.Entry entry = (Map.Entry)unknown_org_entries.get(k);
+	  System.out.println("adding organism to sorted list: " + entry.getKey());
+	  sorted_organisms.put(entry.getKey(), entry.getValue());
+	}
+	organisms = sorted_organisms;
+      }
+      catch (Exception ex) {
+	System.out.println("Couldn't sort genomes, encountered error: ");
+	ex.printStackTrace();
+      }
+    }
+  }
+
 
 
   void loadSynonyms() {

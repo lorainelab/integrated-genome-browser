@@ -169,10 +169,14 @@ public class AnnotStyle implements IAnnotStyleExtended {
         unique_name = unique_name.substring(0, unique_name.length() -1);
       }
       unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
-      if (unique_name.length() > Preferences.MAX_NAME_LENGTH) {
-        unique_name = unique_name.substring(0, Preferences.MAX_NAME_LENGTH);
-        //System.out.println("Preferences node name trimmed to '"+unique_name+"'");
-      }
+      // transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH 
+      //   is now handled within UnibrowPrefsUtil.getSubnod() call 
+      /*
+         if (unique_name.length() > Preferences.MAX_NAME_LENGTH) {
+             unique_name = unique_name.substring(0, Preferences.MAX_NAME_LENGTH);
+             //System.out.println("Preferences node name trimmed to '"+unique_name+"'");
+	 }
+      */
     }
 
     if (template != null) {

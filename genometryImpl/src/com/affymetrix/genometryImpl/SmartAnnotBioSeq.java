@@ -79,6 +79,14 @@ public class SmartAnnotBioSeq extends NibbleBioSeq  {
     }
   }
 
+  /**
+   *  returns Map of type id to container sym for annotations of that type
+   */
+  public Map getTypeMap() {
+    return type_id2sym;
+  }
+
+
   public Set<String> getGraphTypeIds() {
     if (type_id2sym == null) {
       return Collections.<String>emptySet();

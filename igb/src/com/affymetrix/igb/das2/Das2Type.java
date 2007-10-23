@@ -20,6 +20,7 @@ public class Das2Type {
   protected Das2VersionedSource versioned_source;
   protected URI type_uri;
   protected String name;
+  protected String short_name;
   protected String ontology;
   protected String derivation;  // in DAS2 XML, this is source attribute
   protected String info_url;    // doc_href
@@ -38,6 +39,9 @@ public class Das2Type {
     this.formats = formats;
     this.props = props;
     this.name = name;
+    int sindex = name.lastIndexOf("/");
+    if (sindex >= 0) { short_name = name.substring(sindex+1); }
+    else { short_name = name; }
     //    this.parents = parents;
   }
 
@@ -45,6 +49,7 @@ public class Das2Type {
   public URI getURI() { return type_uri; }
   public String getID() { return type_uri.toString(); }
   public String getName() { return name; }
+  public String getShortName() { return short_name; }
   public String toString() {
     if (getName() == null) { return getID(); }
     else { return getName(); }

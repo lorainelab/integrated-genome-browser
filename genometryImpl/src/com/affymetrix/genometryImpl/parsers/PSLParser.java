@@ -46,6 +46,7 @@ public class PSLParser implements AnnotationWriter  {
   static Pattern non_digit = Pattern.compile("[^0-9-]");
 
   TrackLineParser track_line_parser = new TrackLineParser();
+  String track_name_prefix = null;
 
   public PSLParser() {
     super();
@@ -148,13 +149,13 @@ public class PSLParser implements AnnotationWriter  {
           // only set the AnnotStyle properties from it
           // if this is NOT a ".link.psl" file.
           if (is_link_psl) {
-            Map track_props = track_line_parser.parseTrackLine(line);
+            Map track_props = track_line_parser.parseTrackLine(line, track_name_prefix);
             String track_name = (String) track_props.get(TrackLineParser.NAME);
             if (track_name != null && track_name.endsWith("probesets")) {
               in_bottom_of_link_psl = true;
             }
           } else {
-            track_line_parser.parseTrackLine(line);
+            track_line_parser.parseTrackLine(line, track_name_prefix);
             AnnotatedSeqGroup seq_group;
             if (annotate_query) {
               seq_group = query_group;
@@ -163,7 +164,7 @@ public class PSLParser implements AnnotationWriter  {
             } else {
               seq_group = other_group;
             }
-            TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), annot_type);
+	    TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), annot_type);
           }
           // You can later get the track properties with getCurrentTrackHash();
           continue;
@@ -427,6 +428,7 @@ public class PSLParser implements AnnotationWriter  {
   static void createContainerAnnot(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
     //    If using a container sym, need to first hash (seq2types) from
     //    seq to another hash (type2csym) of types to container sym
+    //    System.out.println("in createContainerAnnot, type: " + type);
     Map<String,SimpleSymWithProps> type2csym = seq2types.get(seq);
     if (type2csym == null) {
       type2csym = new HashMap<String,SimpleSymWithProps>();
@@ -586,6 +588,9 @@ public class PSLParser implements AnnotationWriter  {
    *    to an output stream as "PSL" format
    **/
   public String getMimeType() { return "text/plain"; }
+
+  public void setTrackNamePrefix(String prefix) { track_name_prefix = prefix; }
+  public String getTrackNamePrefix() { return track_name_prefix; }
 
 
   public void calcLengthDistribution(String input_file) {

@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.regex.*;
 import javax.swing.*;
 
-import java.util.List;
 
 /** A Text Box for displaying and setting the range of a SeqMapView. */
 public class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
@@ -48,7 +47,10 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
     }
   };
 
-  static final NumberFormat nformat = NumberFormat.getIntegerInstance();
+  // Use the ENGLISH locale here because we want the user to be able to
+  // cut and paste this text into the UCSC browser.
+  // (Also, the Pattern's below were written to work for the English locale.)
+  static final NumberFormat nformat = NumberFormat.getIntegerInstance(Locale.ENGLISH);
   
   // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
   // (The chromosome name cannot contain any spaces.)

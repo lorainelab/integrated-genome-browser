@@ -253,6 +253,13 @@ public class Das2VersionedSource  {
 	Element reg = (Element)regionlist.item(i);
         String region_id = reg.getAttribute(URID);
 	if (region_id.length() == 0) { region_id = reg.getAttribute(ID); }
+	// GAH 10-24-2007  temporary hack to weed out bad seqs that are somehow
+	//   getting added to segments response from Affy DAS/2 server
+	if ((region_id.indexOf("|") >= 0) ||
+	    (region_id.charAt(region_id.length()-1) == '.') ) {
+	  System.out.println("@@@@@@@@@@@@@ caught bad seq id: " + region_id);
+	  continue;
+	}
 	URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
 
 	// GAH _TEMPORARY_ hack to strip down region_id

@@ -154,9 +154,22 @@ public class AffySingleChromData {
 //          seq.addAnnotation(gsym);
           results.add(gsym);
         } else if (colData.getData() instanceof ShortList) {
-          ShortList ilist = (ShortList) colData.getData();
-          ilist.trimToSize();
-          GraphSymShort gsym = new GraphSymShort(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
+          GraphSymShort gsym;
+          if (colData.name.startsWith("CNState")) {
+            // In the "CNStateMin" and "CNStateMax" graphs, the number "255"
+            // is used to represent "unknown".  These x,y pairs should be discarded.
+            List<Object> trimmedXandY = trim255(positions, (ShortList) colData.getData());
+            IntList xlist = (IntList) trimmedXandY.get(0);
+            ShortList ilist = (ShortList) trimmedXandY.get(1);
+            
+            xlist.trimToSize();
+            ilist.trimToSize();
+            gsym = new GraphSymShort(xlist.getInternalArray(), ilist.getInternalArray(), graphId, seq);
+          } else {
+            ShortList ilist = (ShortList) colData.getData();
+            ilist.trimToSize();
+            gsym = new GraphSymShort(positions.getInternalArray(), ilist.getInternalArray(), graphId, seq);
+          }
 //          seq.addAnnotation(gsym);
           results.add(gsym);
         } else if (colData.getData() instanceof ByteList) {
@@ -193,6 +206,39 @@ public class AffySingleChromData {
     for (int i=0; i<x.size(); i++) {
       float f = y.get(i);
       if (Float.isNaN(f) || Float.isInfinite(f)) {
+        had_bad_values = true;
+      } else {
+        x_out.add(x.get(i));
+        y_out.add(f);
+      }
+    }
+    
+    if (had_bad_values) {
+      return Arrays.<Object>asList(x_out, y_out);
+    } else {
+      return Arrays.<Object>asList(x, y);
+    }
+  }
+
+  /** Removes x,y pairs where the y-value is invalid (byte = 255).
+   *  Returns a List containing one IntList and one ShortList. 
+   *  If there were no invalid values of y, the output IntList and ShortList
+   *  will be the same objects as the input, otherwise they will both be
+   *  new objects.  If the given ShortList contains ONLY invalid values,
+   *  then the returned IntList and 3hortList will both be empty.
+   */
+  List<Object> trim255(IntList x, ShortList y) {
+    if (x.size() != y.size()) {
+      throw new IllegalArgumentException("Lists must be the same size " + x.size() + " != " + y.size());
+    }
+
+    boolean had_bad_values = false;
+    IntList x_out = new IntList(x.size());
+    ShortList y_out = new ShortList(y.size());
+        
+    for (int i=0; i<x.size(); i++) {
+      short f = y.get(i);
+      if (f == 255) {
         had_bad_values = true;
       } else {
         x_out.add(x.get(i));

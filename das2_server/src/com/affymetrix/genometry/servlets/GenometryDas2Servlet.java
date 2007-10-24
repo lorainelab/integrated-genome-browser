@@ -61,12 +61,14 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
  */
 public class GenometryDas2Servlet extends HttpServlet  {
   static boolean DEBUG = false;
-  static String RELEASE_VERSION = "2.40";
+  static String RELEASE_VERSION = "2.51";
   static boolean MAKE_LANDSCAPES = false;
   static boolean TIME_RESPONSES = true;
   static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
   static boolean USE_CREATED_ATT = true;
   static boolean WINDOWS_OS_TEST = false;
+  static boolean SORT_SOURCES_BY_ORGANISM = true;
+  static boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 
   static Pattern interval_splitter = Pattern.compile(":");
 
@@ -92,6 +94,22 @@ public class GenometryDas2Servlet extends HttpServlet  {
     "     0 or 1 format parameter \n" +
     "     0 other filters/parameters \n";
 
+
+  /**
+   *  For sorting
+   */
+  static String[] months = { "Jan",
+			     "Feb",
+			     "Mar",
+			     "Apr",
+			     "May",
+			     "Jun",
+			     "Jul",
+			     "Aug",
+			     "Sep",
+			     "Oct",
+			     "Nov",
+			     "Dec" };
 
   static Map genomeid2coord;
   static {
@@ -123,7 +141,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
 				    "BDGP", "7227", "4", "Chromosome", null));
 
     WINDOWS_OS_TEST = System.getProperty("os.name").startsWith("Windows");
+
+
   }
+
 
   static String DAS2_VERSION = "2.0";
   public static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
@@ -287,15 +308,28 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
       loadSynonyms();
       loadGenomes();
+      Iterator orgiter = organisms.entrySet().iterator();
+      while (orgiter.hasNext()) {
+	Map.Entry ent = (Map.Entry)orgiter.next();
+	String org = (String)ent.getKey();
+	System.out.println("Organism: " + org);
+	Iterator versions = ((List)ent.getValue()).iterator();
+	while (versions.hasNext()) {
+	  AnnotatedSeqGroup version = (AnnotatedSeqGroup)versions.next();
+	  System.out.println("    Genome version: " + version.getID() + ", organism: " + version.getOrganism() +
+			     ", sub-version: " + version.getVersion() + ", seq count: " + version.getSeqCount());
+	}
+      }
+      /*
       Map genomes = gmodel.getSeqGroups();
       Iterator giter = genomes.keySet().iterator();
       while (giter.hasNext()) {
 	String key = (String)giter.next();
-	//	System.out.println("key: " + key);
 	AnnotatedSeqGroup group = (AnnotatedSeqGroup)genomes.get(key);
 	System.out.println("Genome: " + group.getID() + ", organism: " + group.getOrganism() +
 			   ", version: " + group.getVersion() + ", seq count: " + group.getSeqCount());
       }
+      */
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -348,51 +382,31 @@ public class GenometryDas2Servlet extends HttpServlet  {
   }
 
 
-  protected void sortGenomes() {   
+  /** sorts genomes and versions within genomes */
+  protected void sortGenomes() {
     // sort genomes based on "organism_order.txt" config file if present
     // get Map.Entry for organism, sort based on order in organism_order.txt,
     //    put in order in new LinkedHashMap(), then replace as organisms field
     File org_order_file = new File(org_order_filename);
-    if (org_order_file.exists()) {
-      List org_order = new ArrayList();
-      try {
-	BufferedReader dis = new BufferedReader(new FileReader(org_order_file));
-	String line;
-	while ((line = dis.readLine()) != null) {
-	  if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
-	  String org_name = line.trim();
-	  org_order.add(org_name);
-	}
-
-	// organisms Map is organism name to List of organism genome versions (as AnnotatedSeqGroups)
-	Map.Entry[] sorted_org_entries = new Map.Entry[org_order.size()];
-	List unknown_org_entries = new ArrayList();
-	Iterator org_entries = organisms.entrySet().iterator();
-	while (org_entries.hasNext()) {
-	  Map.Entry entry = (Map.Entry)org_entries.next();
-	  String org_name = (String)entry.getKey();
-	  int org_index = org_order.indexOf(org_name);
-	  if (org_index >= 0) { sorted_org_entries[org_index] = entry; }
-	  else { unknown_org_entries.add(entry); }
-	}
-	Map sorted_organisms = new LinkedHashMap();
-	for (int i=0; i<sorted_org_entries.length; i++) {
-	  Map.Entry entry = (Map.Entry)sorted_org_entries[i];
-	  if (entry != null) {
-	    System.out.println("adding organism to sorted list: " + entry.getKey());
-	    sorted_organisms.put(entry.getKey(), entry.getValue());
-	  }
-	}
-	for (int k=0; k<unknown_org_entries.size(); k++) {
-	  Map.Entry entry = (Map.Entry)unknown_org_entries.get(k);
-	  System.out.println("adding organism to sorted list: " + entry.getKey());
-	  sorted_organisms.put(entry.getKey(), entry.getValue());
-	}
-	organisms = sorted_organisms;
+    if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
+      Comparator org_comp = new MatchToListComparator(org_order_filename);
+      List orglist = new ArrayList(organisms.keySet());
+      Collections.sort(orglist, org_comp);
+      Map sorted_organisms = new LinkedHashMap();
+      Iterator orgs = orglist.iterator();
+      while (orgs.hasNext()) {
+	String org = (String)orgs.next();
+	//	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
+	sorted_organisms.put(org, organisms.get(org));
       }
-      catch (Exception ex) {
-	System.out.println("Couldn't sort genomes, encountered error: ");
-	ex.printStackTrace();
+      organisms = sorted_organisms;
+    }
+    if (SORT_VERSIONS_BY_DATE_CONVENTION) {
+      Comparator date_comp = new GenomeVersionDateComparator();
+      Iterator org_versions = organisms.values().iterator();
+      while (org_versions.hasNext()) {
+	List versions = (List)org_versions.next();
+	Collections.sort(versions, date_comp);
       }
     }
   }
@@ -438,9 +452,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	//	seqhash = lift_parser.parse(liftstream, genome_version);
 	lift_parser.parse(liftstream, gmodel, genome_version);
       }
+      else {
+	System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
+      }
     }
 
     AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
+    if (genome == null) { return; }  // bail out if genome didn't get added to AnnotatedSeqGroups
     genome2graphdirs.put(genome, new LinkedHashMap());
     genome2graphfiles.put(genome, new LinkedHashMap());
     genome.setOrganism(organism);
@@ -826,8 +844,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
       while (giter.hasNext()) {
 	AnnotatedSeqGroup genome = (AnnotatedSeqGroup)giter.next();
 	Das2Coords coords = (Das2Coords)genomeid2coord.get(genome.getID());
-	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
-			   ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
+	//	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
+	//			   ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
 	//      pw.println("      <VERSION id=\"" + genome.getID() + "\" />" );
 	if (USE_CREATED_ATT) {
 	  pw.println("      <VERSION uri=\"" + genome.getID() + "\" title=\"" + genome.getID() +

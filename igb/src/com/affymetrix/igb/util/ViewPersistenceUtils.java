@@ -72,11 +72,14 @@ public class ViewPersistenceUtils  {
 
   public static void saveGroupSelection(AnnotatedSeqGroup group) {
     Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-    genomes_node.put(SELECTED_GENOME_PREF, group.getID());
+     if (genomes_node == null) {
+      return;
+     }
+     genomes_node.put(SELECTED_GENOME_PREF, group.getID());
 
-    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
+     Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
        //  encodes id via MD5 if too long, also remove forward slashes ("/")
-    group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
+     group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
 
     //  get all accessed Das2VersionedSources that support SEGMENTS query
     java.util.List versions = Das2Discovery.getVersionedSources(group, false, Das2VersionedSource.SEGMENTS_CAP_QUERY);
@@ -103,12 +106,13 @@ public class ViewPersistenceUtils  {
     String source_id = group_node.get(DAS2_SOURCE_URI_PREF, DEFAULT_DAS2_SOURCE_URI);
     String version_id = group_node.get(DAS2_VERSION_URI_PREF, DEFAULT_DAS2_VERSION_URI);
 
-    if (DEBUG) {
+    //HACK: steve, don't know how to activate debug mode....
+    //    if (DEBUG) {
       System.out.println("Restoring group:");
       System.out.println("     " + server_url);
       System.out.println("     " + source_id);
       System.out.println("     " + version_id);
-    }
+      //    }
     Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
     if (server == null) {
       return null;

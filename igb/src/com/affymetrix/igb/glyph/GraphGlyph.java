@@ -886,7 +886,7 @@ public class GraphGlyph extends Glyph {
   public boolean getShowHandle() { return state.getShowHandle(); }
   public boolean getShowLabel() { return state.getShowLabel(); }
   public boolean getShowAxis() { return state.getShowAxis(); }
-  public boolean getShowGrid() { return true; }
+  public boolean getShowGrid() { return state.getShowGrid(); }
   public int getXPixelOffset() { return xpix_offset; }
 
 //  public void setLabel(String str) { state.setLabel(str); }
@@ -895,6 +895,7 @@ public class GraphGlyph extends Glyph {
   public void setShowBounds(boolean show) { state.setShowBounds(show); }
   public void setShowLabel(boolean show) { state.setShowLabel(show); }
   public void setShowAxis(boolean b) { state.setShowAxis(b); }
+  public void setShowGrid(boolean b) { state.setShowGrid(b); }
   public void setXPixelOffset(int offset) { xpix_offset = offset; }
 
   public void setGridLinesYValues(float[] f) {

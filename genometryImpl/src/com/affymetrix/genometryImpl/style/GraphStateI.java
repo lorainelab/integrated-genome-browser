@@ -62,6 +62,7 @@ public interface GraphStateI {
   public boolean getFloatGraph();
   public boolean getShowThreshold();
   public boolean getShowAxis();
+  public boolean getShowGrid();
 
   public boolean getShowHandle();
   public boolean getShowGraph();
@@ -92,6 +93,7 @@ public interface GraphStateI {
   public void setVisibleMaxY(float vmaxy);
   public void setShowThreshold(boolean b);
   public void setShowAxis(boolean b);
+  public void setShowGrid(boolean b);
   public void setShowHandle(boolean b);
   public void setShowGraph(boolean b);
   public void setShowBounds(boolean b);

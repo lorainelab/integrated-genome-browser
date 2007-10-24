@@ -72,6 +72,7 @@ public class GraphState implements GraphStateI {
   boolean float_graph = false;
   boolean show_threshold = false;
   boolean show_axis = false;
+  boolean show_grid = false;
 
   boolean show_handle = true;
   boolean show_graph = true;
@@ -162,6 +163,7 @@ public class GraphState implements GraphStateI {
     setFloatGraph(ostate.getFloatGraph());
     setShowThreshold(ostate.getShowThreshold());
     setShowAxis(ostate.getShowAxis());
+    setShowGrid(ostate.getShowGrid());
     setShowHandle(ostate.getShowHandle());
     setShowGraph(ostate.getShowGraph());
     setShowBounds(ostate.getShowBounds());
@@ -194,6 +196,7 @@ public class GraphState implements GraphStateI {
   public final boolean getFloatGraph() { return  float_graph; }
   public final boolean getShowThreshold() { return show_threshold; }
   public final boolean getShowAxis() { return show_axis; }
+  public final boolean getShowGrid() { return show_grid; }
 
   public final boolean getShowHandle() { return show_handle; }
   public final boolean getShowGraph() { return show_graph; }
@@ -223,6 +226,7 @@ public class GraphState implements GraphStateI {
   public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy;}  // check
   public final void setShowThreshold(boolean b) { show_threshold = b;} // check
   public final void setShowAxis(boolean b) { show_axis = b;} // check
+  public final void setShowGrid(boolean b) { show_grid = b;} // check
   public final void setShowHandle(boolean b) { show_handle = b;}  // check
   public final void setShowGraph(boolean b) { show_graph = b;}    // check
   public final void setShowBounds(boolean b) { show_bounds = b;}  // check

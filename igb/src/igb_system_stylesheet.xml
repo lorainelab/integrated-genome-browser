@@ -333,6 +333,12 @@ will not work well with these styles.
     <PROPERTY key="color" value="A0A000" />
   </METHOD_REGEX_ASSOCIATION>
 
+  <METHOD_REGEX_ASSOCIATION regex="(?i)firstef$"
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
+    <PROPERTY key="glyph_depth" value="1" />
+    <PROPERTY key="color" value="A0A000" />
+  </METHOD_REGEX_ASSOCIATION>
+
   <METHOD_REGEX_ASSOCIATION regex="(encode|encode regions|encoderegions)$"
      style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory" >
      <PROPERTY key="color" value="FF8000" />

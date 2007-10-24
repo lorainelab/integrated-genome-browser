@@ -200,11 +200,12 @@ public class LazyChpSym extends ScoredContainerSym {
     }
 
     /**
-     *  May need to load multiple annotations from DAS/2 server -- 
+     *  May need to load multiple annotations from DAS/2 server --
      *     for instance, for exon arrays both probesets (in bp2 format) and transcripts (in bgn format)
      *     [moving towards single load, for example probesets/transcripts/etc. all in "ead" format]
      *  Assume that any annotation type whose name starts with chp_array_type,
      *     or starts with any synonym of chp_array_type, need to be loaded...-st
+     *     (caveat -- need to remove any path prefix from type name first) -- GAH
      */
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
     Map types = vsource.getTypes();
@@ -220,7 +221,9 @@ public class LazyChpSym extends ScoredContainerSym {
       while (titer.hasNext())  {
 	Map.Entry ent = (Map.Entry)titer.next();
 	Das2Type type = (Das2Type)ent.getValue();
-	String tname = type.getName();
+	//	String tname = type.getName();
+        //  Switched to type.getShortName() to fix problem with name matching when name has a path prefix...
+	String tname = type.getShortName();
 	if ((tname.startsWith(synonym) || tname.startsWith(lcsyn))
 	    && (matched_types.get(type) == null)) {
 	  matched_types.put(type, type);
@@ -281,12 +284,12 @@ public class LazyChpSym extends ScoredContainerSym {
     // should the syms be sorted here??
     Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
 
-    // Iterate through probeset annotations, if possible do integer id binary search, 
+    // Iterate through probeset annotations, if possible do integer id binary search,
     //     otherwise do hash for string ID
     for (int i=0; i<symcount; i++) {
       SeqSymmetry annot = (SeqSymmetry)symlist.get(i);
       Object data = null;
-      if (annot instanceof IntId) { 
+      if (annot instanceof IntId) {
 	// want to use integer id to avoid lots of String churn
 	IntId isym = (IntId)annot;
 	int nid = isym.getIntID();
@@ -387,7 +390,7 @@ public class LazyChpSym extends ScoredContainerSym {
     System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
   }
 
-   
+
   /**
    *  syms should be one of:
    *     EfficientProbesetSymA (for exon array probesets)

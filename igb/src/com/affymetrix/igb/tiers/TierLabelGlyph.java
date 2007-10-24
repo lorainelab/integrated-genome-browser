@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -367,11 +368,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
 
   public void drawGraphTicks(ViewI view) {
     // draws bars to indicate the range of the graph in pixels.
-    // may also draw 10 tick marks.
-    
-    if (! draw_graph_ticks) {
-      return;
-    }
+    // may also draw tick marks.
     
     if (this.getReferenceTier().getChildCount() == 0) {
       return;
@@ -383,6 +380,10 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
     }
     GraphGlyph gglyph = (GraphGlyph) glyph;
     
+    if (! draw_graph_ticks || GraphState.isHeatMapStyle(gglyph.getGraphStyle())) {
+      return;
+    }
+
     view.transformToPixels(coordbox, pixelbox);
     Double[] tick_coords = gglyph.determineYTickCoords();
     double[] tick_pixels = gglyph.convertToPixels(view, tick_coords);

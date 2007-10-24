@@ -28,6 +28,7 @@
                                            @title='sanger_pombe' or 
                                            @title='sgdgene' or 
                                            @title='sgpgene' or 
+                                           @title='sno_mirna' or 
                                            @title='snomrna' or 
                                            @title='sno_mrna' or 
 					   @title='tair' or  

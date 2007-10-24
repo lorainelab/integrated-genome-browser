@@ -377,7 +377,12 @@ public class LoadFileAction {
       else if (lcname.endsWith("." +FishClonesParser.FILE_EXT)) {
         // Load these EVEN if PARSE_FSH == false
         FishClonesParser parser = new FishClonesParser(true);
-        parser.parse(str, stream_name, selected_group);
+        String s = stream_name;
+        int index = s.lastIndexOf('.');
+        if (index > 0) {
+          s = s.substring(0, index);
+        }
+        parser.parse(str, s, selected_group);
         aseq = input_seq;
         parser = null;
       }

@@ -60,8 +60,12 @@ public class ViewPersistenceUtils  {
 
   public static AnnotatedSeqGroup restoreLastView(SeqMapView gviewer) {
     AnnotatedSeqGroup group = restoreGroupSelection();
-    restoreSeqSelection(group);
-    restoreSeqVisibleSpan(gviewer);
+    try {
+      restoreSeqSelection(group);
+      restoreSeqVisibleSpan(gviewer);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return group;
   }
 
@@ -106,6 +110,9 @@ public class ViewPersistenceUtils  {
       System.out.println("     " + version_id);
     }
     Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
+    if (server == null) {
+      return null;
+    }
     Das2Source source = (Das2Source)server.getSources().get(source_id);
     Das2VersionedSource version = (Das2VersionedSource)source.getVersions().get(version_id);
     AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present

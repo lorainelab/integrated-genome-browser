@@ -341,7 +341,7 @@ public class ScoredIntervalParser {
         int entry_count = entry_list.size();
         System.out.println("entry list count: " + entry_count);
         for (int k=0; k<entry_count; k++) {
-          container.addChild((SeqSymmetry) entry_list.get(k));
+          container.addChild(entry_list.get(k).sym);
         }
         System.out.println("container child count: " + container.getChildCount());
 

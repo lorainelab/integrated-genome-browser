@@ -334,7 +334,7 @@ will not work well with these styles.
   <!-- End of probe set display section -->
 
   <METHOD_REGEX_ASSOCIATION regex="(?i)refseq$"
-     Style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
+     style="com.affymetrix.igb.glyph.GenericAnnotGlyphFactory">
        <PROPERTY key="color" value="00FF00" > green </PROPERTY>
        <PROPERTY key="label_field" value="gene name" />
        <!--<PROPERTY key="max_depth" value="3" /> -->

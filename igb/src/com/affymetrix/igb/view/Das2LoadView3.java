@@ -1021,15 +1021,28 @@ class Das2TypeState {
  *
  */
 class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  {
-  static String[] column_names = { "load", "name", "ID", "ontology", "source", "range", "vsource", "server"};
+  static String[] column_names = new String[8];
   static int LOAD_BOOLEAN_COLUMN = 0;
   static int NAME_COLUMN = 1;
-  static int ID_COLUMN = 2;
-  static int ONTOLOGY_COLUMN = 3;
-  static int SOURCE_COLUMN = 4;
-  static int LOAD_STRATEGY_COLUMN = 5;
-  static int VSOURCE_COLUMN = 6;
-  static int SERVER_COLUMN = 7;
+  static int LOAD_STRATEGY_COLUMN = 2;
+  static int SOURCE_COLUMN = 3;
+  static int SERVER_COLUMN = 4;
+  static int VSOURCE_COLUMN = 5;
+  static int ID_COLUMN = 6;
+  static int ONTOLOGY_COLUMN = 7;
+
+  static {
+    column_names[LOAD_BOOLEAN_COLUMN] = "load";
+    column_names[NAME_COLUMN] = "name";
+    column_names[ID_COLUMN] = "ID";
+    column_names[ONTOLOGY_COLUMN] = "ontology";
+    column_names[SOURCE_COLUMN] = "source";
+    column_names[LOAD_STRATEGY_COLUMN] = "range";
+    column_names[VSOURCE_COLUMN] = "vsource";
+    column_names[SERVER_COLUMN] = "server";
+
+    
+  }
 
   java.util.List type_states = new ArrayList();
 

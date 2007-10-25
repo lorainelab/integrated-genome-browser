@@ -74,6 +74,11 @@ public class Bprobe1Parser implements AnnotationWriter {
     pref_list.add("bp2");
   }
 
+  String type_prefix = null;
+
+  public void setTypePrefix(String prefix) { type_prefix = prefix; }
+  public String getTypePrefix() { return type_prefix; }
+
   public List parse(InputStream istr, AnnotatedSeqGroup group,
     boolean annotate_seq, String default_type) throws IOException {
     return parse(istr, group, annotate_seq, default_type, false);
@@ -120,7 +125,13 @@ public class Bprobe1Parser implements AnnotationWriter {
         annot_type = default_type;
       }
       else {
-        annot_type = specified_type;
+	if (type_prefix == null) {
+	  annot_type = specified_type;
+	}
+	else {
+	  annot_type = type_prefix + specified_type; 
+	  System.out.println("old annot type: " + specified_type + ", new annot type: " + annot_type);
+	}
       }
       int probe_length = dis.readInt();
       if (version2) {

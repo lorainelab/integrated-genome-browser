@@ -60,11 +60,13 @@ public class ViewPersistenceUtils  {
 
   public static AnnotatedSeqGroup restoreLastView(SeqMapView gviewer) {
     AnnotatedSeqGroup group = restoreGroupSelection();
-    try {
-      restoreSeqSelection(group);
-      restoreSeqVisibleSpan(gviewer);
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (group != null) {
+      try {
+	restoreSeqSelection(group);
+	restoreSeqVisibleSpan(gviewer);
+      } catch (Exception e) {
+	e.printStackTrace();
+      }
     }
     return group;
   }
@@ -115,10 +117,25 @@ public class ViewPersistenceUtils  {
       //    }
     Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
     if (server == null) {
-      return null;
+      server = Das2Discovery.getDas2Server(DEFAULT_DAS2_SERVER_URL);
+      if (server == null) { return null; }
     }
     Das2Source source = (Das2Source)server.getSources().get(source_id);
+    if (source == null) {
+      source = (Das2Source)server.getSources().get(DEFAULT_DAS2_SOURCE_URI);
+      if (source == null) {
+	source = (Das2Source)server.getSources().values().iterator().next();
+	if (source == null) { return null; }
+      }
+    }
     Das2VersionedSource version = (Das2VersionedSource)source.getVersions().get(version_id);
+    if (version == null) {
+      version = (Das2VersionedSource)source.getVersions().get(DEFAULT_DAS2_VERSION_URI);
+      if (version == null) {
+	version = (Das2VersionedSource)source.getVersions().values().iterator().next();
+	if (version == null) { return null; }
+      }
+    }
     AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
     // Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
     //    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs

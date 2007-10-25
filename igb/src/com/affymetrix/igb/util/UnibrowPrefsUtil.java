@@ -312,12 +312,13 @@ import javax.swing.*;
     // that "No" is the default choice.
     String[] options = {"Yes", "No"};
     if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-      parent_comp, "Really clear all preferences?", "Clear preferences?",
+      parent_comp, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
       JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
       options, options[1])) {
 
       try {
         getTopNode().removeNode();
+	System.exit(0);
       } catch (Exception e) {
         ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
       }

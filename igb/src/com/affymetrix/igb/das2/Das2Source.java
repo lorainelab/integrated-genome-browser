@@ -80,6 +80,7 @@ public class Das2Source {
   }
   */
 
+  /** returns Map of version ID to Das2VersionedSource */
   public synchronized Map getVersions() {
     return versions;
   }

@@ -10,6 +10,8 @@
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 -->
 
+<das2_server name="local" url="http://localhost:9092/das2/genome" />
+<das2_server name="transcriptome" url="http://leno.ev.affymetrix.com:9092/das2/genome" />
 
 <boolean tag="USE_QUICK_LOADER" val="false" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
@@ -68,6 +70,10 @@
      height="200"
      style="coverage" />
 
+<annotation_style annot_type_regex="^.*genscan$" 
+  child_glyph="com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph"
+  label_field="id"
+/>
 
 <!-- Configure the All-Exon arrays "HuEx-1_0-st", "MuEx-1_0-st", "RaEx-1_0-st" -->
 <!-- 

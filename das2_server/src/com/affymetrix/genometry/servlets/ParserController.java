@@ -21,6 +21,12 @@ public class ParserController {
   public static List parse(InputStream instr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
     InputStream str = null;
     List results = null;
+    String type_prefix = null;
+    int sindex = stream_name.lastIndexOf("/");
+    if (sindex >= 0) {
+      type_prefix = stream_name.substring(0, sindex+1);  // include ending "/" in prefix
+      System.out.println("type prefix: " + type_prefix + ", full name: " + stream_name);
+    }
     try {
       if (instr instanceof BufferedInputStream)  {
 	str = (BufferedInputStream)instr;
@@ -47,12 +53,7 @@ public class ParserController {
 	  parser.setIsLinkPsl(true);
           parser.enableSharedQueryTarget(true);
         }
-	int sindex = annot_type.lastIndexOf("/");
-	if (sindex >= 0) {
-	  String type_prefix = annot_type.substring(0, sindex+1);  // include ending "/" in prefix
-	  System.out.println("Parsing PSL file, type prefix: " + type_prefix);
-	  parser.setTrackNamePrefix(type_prefix);
-	}
+	if (type_prefix != null) { parser.setTrackNamePrefix(type_prefix); }
 	parser.setCreateContainerAnnot(true); // is this needed?
 	//	parser.setCreateContainerAnnot(false); // is this needed?
 	results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);  // annotate target
@@ -89,6 +90,7 @@ public class ParserController {
       else if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
 	System.out.println("loading via Bprobe1Parser: " + stream_name);
 	Bprobe1Parser bp1_reader = new Bprobe1Parser();
+	if (type_prefix != null) { bp1_reader.setTypePrefix(type_prefix); }
 	String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bp"));
         // parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
         //   (to save memory)

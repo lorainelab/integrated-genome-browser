@@ -640,10 +640,17 @@ public class GenometryDas2Servlet extends HttpServlet  {
       else {
 	System.out.println("checking for annotations in directory: " + current_file);
 	File[] child_files = current_file.listFiles();
+	String[] child_file_names = current_file.list();
+	Arrays.sort(child_file_names);
 	for (int i=0; i<child_files.length; i++) {
-	  loadAnnotsFromFile(child_files[i], genome, new_type_prefix);
+	  String child_file_name = child_file_names[i];
+	  File child_file = new File(current_file, child_file_name);
+	  loadAnnotsFromFile(child_file, genome, new_type_prefix);
 	}
       }
+    }
+    else if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
+      // for loading annotations, ignore the genome sequence data files
     }
     else if (type_name.endsWith(".bar"))  {
       // String file_path = current_file.getPath();
@@ -967,11 +974,18 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
     //    Iterator types_iter = types.iterator();
-    Iterator types_iter = types_hash.keySet().iterator();
+    //    Iterator types_iter = types_hash.keySet().iterator();    
+    List sorted_types_list = new ArrayList(types_hash.keySet());
+    Collections.sort(sorted_types_list);
+    Iterator types_iter = sorted_types_list.iterator();
     while (types_iter.hasNext()) {
+      
       String feat_type = (String) types_iter.next();
-      String feat_type_encoded = URLEncoder.encode(feat_type);
       java.util.List formats = (java.util.List) types_hash.get(feat_type);
+      String feat_type_encoded = URLEncoder.encode(feat_type);
+      // URLEncoding replaces slashes, want to keep those...
+      feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
+
       if (DEBUG)  { log.add("feat_type: " + feat_type + ", formats: " + formats); }
       pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
 		 "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");

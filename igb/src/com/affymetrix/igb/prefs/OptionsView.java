@@ -32,7 +32,7 @@ import com.affymetrix.igb.view.UnibrowHairline;
 public class OptionsView extends JPanel implements IPrefEditorComponent, ActionListener  {
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
-  JButton clear_prefsB = new JButton("Clear all stored preferences");
+  JButton clear_prefsB = new JButton("Reset all preferences to defaults");
 
   public OptionsView() {
     super();

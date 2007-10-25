@@ -66,8 +66,9 @@ public class AnnotStyle implements IAnnotStyleExtended {
   static final boolean default_separate = true;
   static final boolean default_collapsed = false;
   static final boolean default_expandable = true;
-  static final int default_max_depth = 0;
-  static final Color default_color = Color.GREEN;
+  static final int default_max_depth = 4;
+  //  static final Color default_color = Color.GREEN;
+  static final Color default_color = Color.CYAN;
   static final Color default_background = Color.BLACK;
   static final String default_label_field = "";
   static final int default_glyph_depth = 2;
@@ -169,8 +170,8 @@ public class AnnotStyle implements IAnnotStyleExtended {
         unique_name = unique_name.substring(0, unique_name.length() -1);
       }
       unique_name = multiple_slashes.matcher(unique_name).replaceAll("/");
-      // transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH 
-      //   is now handled within UnibrowPrefsUtil.getSubnod() call 
+      // transforming to shortened but unique name if name exceeds Preferences.MAX_NAME_LENGTH
+      //   is now handled within UnibrowPrefsUtil.getSubnod() call
       /*
          if (unique_name.length() > Preferences.MAX_NAME_LENGTH) {
              unique_name = unique_name.substring(0, Preferences.MAX_NAME_LENGTH);
@@ -318,11 +319,11 @@ public class AnnotStyle implements IAnnotStyleExtended {
   public static AnnotStyle getDefaultInstance() {
     if (default_instance == null) {
       default_instance = new AnnotStyle(NAME_OF_DEFAULT_INSTANCE, true, null);
-      default_instance.setGlyphDepth(2);
+      //      default_instance.setGlyphDepth(2);
       default_instance.setHumanName("");
       default_instance.setShow(true);
-      default_instance.setLabelField("");
-      default_instance.setMaxDepth(4);
+      //      default_instance.setLabelField("");
+      //      default_instance.setMaxDepth(4);
       // Note that name will become lower-case
       static_map.put(default_instance.unique_name, default_instance);
     }

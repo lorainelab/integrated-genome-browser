@@ -7,7 +7,9 @@
 >
 <xsl:output method="xml" encoding="UTF-8"/> 
 
-<xsl:template match="/das2:TYPES/das2:TYPE[@title='acembly' or 
+<xsl:template match="/das2:TYPES/das2:TYPE[@title='acembly' or
+                                           @title='contig' or 
+                                           @title='contigs' or 		
                                            @title='cytoBand' or 
                                            @title='cytoband' or 
                                            @title='__cytobands' or 

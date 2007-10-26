@@ -666,7 +666,7 @@ public class IGB extends Application
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
     open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
-    load_das_item = new JMenuItem("Load DAS Features", KeyEvent.VK_D);
+    load_das_item = new JMenuItem("Access DAS/1 Servers", KeyEvent.VK_D);
     load_das_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));

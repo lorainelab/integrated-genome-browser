@@ -136,17 +136,17 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     return arrowDirection;
   }
 
-  public static final BasicStroke dashStroke0 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
-  public static final BasicStroke dashStroke1 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
-  public static final BasicStroke dashStroke2 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
-  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
-  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
-  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
       BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
 
   /**

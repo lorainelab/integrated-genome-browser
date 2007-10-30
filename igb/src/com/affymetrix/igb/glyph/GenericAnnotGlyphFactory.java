@@ -33,6 +33,7 @@ import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -63,6 +64,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   Class parent_glyph_class;
   Class child_glyph_class;
   Class parent_labelled_glyph_class;
+  public boolean DRAW_ARROWS = false;
 
 
   public GenericAnnotGlyphFactory() {
@@ -301,6 +303,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
       //          System.out.println("using label: " + label);
 
+      if (DRAW_ARROWS && lglyph instanceof EfficientLabelledLineGlyph) {
+        System.out.println(": " + SeqUtils.spanToString(insym.getSpan(0)));
+        ((EfficientLabelledLineGlyph) lglyph).setArrowDirection(
+            insym.getSpan(0).isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
+      }
+      
       lglyph.setLabel(label);
       pheight = 2 * pheight;
       pglyph = lglyph;
@@ -481,7 +489,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
       lglyph.setLabel(label);
       pheight = 2 * pheight;
-      pglyph = lglyph;
+      pglyph = lglyph;      
     } else {
       pglyph = (GlyphI)child_glyph_class.newInstance();
     }
@@ -551,6 +559,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   public static class DeletionGlyph extends SolidGlyph {
 
     /** Draws a small "X". */
+    @Override
     public void draw(ViewI view) {
       Rectangle pbox = view.getScratchPixBox();
       view.transformToPixels(this.coordbox, pbox);
@@ -580,6 +589,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
 
     /** Overridden to always return false. */
+    @Override
     public boolean isHitable() {
       return false;
     }

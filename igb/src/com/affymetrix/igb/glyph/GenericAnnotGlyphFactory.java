@@ -304,7 +304,6 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       //          System.out.println("using label: " + label);
 
       if (DRAW_ARROWS && lglyph instanceof EfficientLabelledLineGlyph) {
-        System.out.println(": " + SeqUtils.spanToString(insym.getSpan(0)));
         ((EfficientLabelledLineGlyph) lglyph).setArrowDirection(
             insym.getSpan(0).isForward() ? NeoConstants.RIGHT : NeoConstants.LEFT);
       }

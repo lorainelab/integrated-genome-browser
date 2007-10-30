@@ -35,11 +35,9 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.stylesheet.PropertyMap;
 
 public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static boolean DEBUG = false;
-  static boolean USE_EFFICIENT_GLYPHS = true;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;
   static boolean ADD_CHILDREN = true;
@@ -50,11 +48,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
    */
   static final boolean ASSUME_CONSTANT_DEPTH = true;
 
-  static Class default_parent_class = (new ImprovedLineContGlyph()).getClass();
-  static Class default_child_class = (new FillRectGlyph()).getClass();
   static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
   static Class default_echild_class = (new EfficientFillRectGlyph()).getClass();
-  static Class default_labelled_parent_class = (new LabelledLineContGlyph2()).getClass();
   static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 
   static int DEFAULT_THICK_HEIGHT = 25;
@@ -71,16 +66,9 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
 
   public GenericAnnotGlyphFactory() {
-    if (USE_EFFICIENT_GLYPHS) {
-      parent_glyph_class = default_eparent_class;
-      child_glyph_class = default_echild_class;
-      parent_labelled_glyph_class = default_elabelled_parent_class;
-    }
-    else {
-      parent_glyph_class = default_parent_class;
-      child_glyph_class = default_child_class;
-      parent_labelled_glyph_class = default_labelled_parent_class;
-    }
+    parent_glyph_class = default_eparent_class;
+    child_glyph_class = default_echild_class;
+    parent_labelled_glyph_class = default_elabelled_parent_class;
   }
 
   public void init(Map options) {
@@ -95,7 +83,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         System.err.println();
         System.err.println("WARNING: Class for parent glyph not found: " + parent_glyph_name);
         System.err.println();
-        parent_glyph_class = default_parent_class;
+        parent_glyph_class = default_eparent_class;
       }
     }
     String child_glyph_name = (String)options.get("child_glyph");
@@ -107,7 +95,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         System.err.println();
         System.err.println("WARNING: Class for child glyph not found: " + child_glyph_name);
         System.err.println();
-        child_glyph_class = default_child_class;
+        child_glyph_class = default_echild_class;
       }
     }
   }
@@ -135,7 +123,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       return;
     }
 
-    String meth = gviewer.determineMethod(sym);
+    String meth = SeqMapView.determineMethod(sym);
 
     if (meth != null) {
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
@@ -564,24 +552,24 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     /** Draws a small "X". */
     public void draw(ViewI view) {
-      Rectangle pixelbox = view.getScratchPixBox();
-      view.transformToPixels(this.coordbox, pixelbox);
+      Rectangle pbox = view.getScratchPixBox();
+      view.transformToPixels(this.coordbox, pbox);
       Graphics g = view.getGraphics();
 
       // Unlikely this will ever be big enough to need the fix.
       //EfficientSolidGlyph.fixAWTBigRectBug(view, pixelbox);
 
       //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
-      pixelbox.height = Math.max( pixelbox.height, min_pixels_height );
+      pbox.height = Math.max( pbox.height, min_pixels_height );
 
-      final int half_height = pixelbox.height/2;
+      final int half_height = pbox.height/2;
       final int h = Math.min(half_height, 4);
 
-      final int x1 = pixelbox.x - h;
-      final int x2 = pixelbox.x + h;
+      final int x1 = pbox.x - h;
+      final int x2 = pbox.x + h;
 
-      final int y1 = pixelbox.y + half_height - h;
-      final int y2 = pixelbox.y + half_height + h;
+      final int y1 = pbox.y + half_height - h;
+      final int y2 = pbox.y + half_height + h;
 
       g.setColor(getBackgroundColor()); // this is the tier foreground color
 

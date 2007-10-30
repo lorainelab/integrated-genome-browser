@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -20,15 +20,15 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 
 /**
- *  A glyph that displays as a centered line and manipulates children to center on the 
+ *  A glyph that displays as a centered line and manipulates children to center on the
  *  same line.
  *
- *  Very convenient for representing data that has a range but 
- *  has multiple sub-ranges within it, such as genes which have a known intron/exon 
+ *  Very convenient for representing data that has a range but
+ *  has multiple sub-ranges within it, such as genes which have a known intron/exon
  *  structure.
  *
- *  This is a new version of ImprovedLineContGlyph, 
- *     subclassed from EfficientGlyph instead of Glyph, 
+ *  This is a new version of ImprovedLineContGlyph,
+ *     subclassed from EfficientGlyph instead of Glyph,
  *     and renamed EfficientLineContGlyph.
  *
  *  Optimized to just draw a filled rect if glyph is small, and skip drawing children
@@ -39,15 +39,16 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
   static boolean DEBUG_OPTIMIZED_FILL = false;
   boolean move_children = true;
 
+  @Override
   public void drawTraversal(ViewI view)  {
     if (optimize_child_draw) {
       Rectangle pixelbox = view.getScratchPixBox();
       view.transformToPixels(this, pixelbox);
       if (withinView(view) && isVisible) {
         if (pixelbox.width <=3 || pixelbox.height <=3) {
-          // still ends up drawing children for selected, but in general 
+          // still ends up drawing children for selected, but in general
           //    only a few glyphs are ever selected at the same time, so should be fine
-          if (selected) { drawSelected(view); }  
+          if (selected) { drawSelected(view); }
           else  { fillDraw(view); }
         }
         else {
@@ -58,7 +59,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
     else {
       super.drawTraversal(view);  // no optimization, so draw children
     }
-  }    
+  }
 
   public void fillDraw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
@@ -72,7 +73,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
     else {
       g.setColor(color);
     }
-    
+
     pixelbox = fixAWTBigRectBug(view, pixelbox);
 
     if (pixelbox.width < 1) { pixelbox.width = 1; }
@@ -84,6 +85,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
     super.draw(view);
   }
 
+  @Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -103,6 +105,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
   /**
    *  If {@link #isMoveChildren()}, forces children to center on line.
    */
+  @Override
   public void addChild(GlyphI glyph) {
     if (isMoveChildren()) {
       double child_height = adjustChild(glyph);
@@ -117,6 +120,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
   }
 
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible ? coord_hitbox.intersects(this) : false;
   }
@@ -127,7 +131,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
    */
   public boolean isMoveChildren() {
     return this.move_children;
-  }  
+  }
 
   /**
    * Set whether {@link #addChild(GlyphI)} will automatically center the child vertically.
@@ -168,7 +172,8 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
       adjustChildren(); // have to adjust children again after a height change.
     }
   }
-  
+
+  @Override
   public void pack(ViewI view) {
     if ( isMoveChildren()) {
       this.adjustChildren();

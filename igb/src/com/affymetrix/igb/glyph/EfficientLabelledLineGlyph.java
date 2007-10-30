@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,6 +16,7 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 /** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
@@ -25,6 +26,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
 
   boolean move_children = true;
 
+  @Override
   public void draw(ViewI view) {
     //    super.draw(view);
     Rectangle2D full_view_cbox = view.getFullView().getCoordBox();
@@ -57,11 +59,12 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
         }
       }
       else {
+        // draw the line
         if (label_loc == NORTH) { // label occupies upper half, so center line in lower half
-          g.fillRect(pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, 1);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, this.arrowDirection);
         }
         else if (label_loc == SOUTH)  {  // label occupies lower half, so center line in upper half
-          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, 1);
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, this.arrowDirection);
         }
       }
 
@@ -104,18 +107,90 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     }
     else { // show_label = false, so center line within entire pixelbox
       if (getChildCount() <= 0) {
-        g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
-                   pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+        // if no children, draw a box
+        g.fillRect(pixelbox.x, pixelbox.y + (pixelbox.height / 2),
+                pixelbox.width, (int) Math.max(1, pixelbox.height / 2));
+      } else {
+        // if there are children, draw a line.
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, this.arrowDirection);
       }
-      else {
-        g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2), pixelbox.width, 1);
-      }
+    }
+  }
+
+  int arrowDirection = NeoConstants.NONE;
+
+  /**
+   *  Direction to use for drawing little arrows on the line.
+   *  @param direction should be {@link NeoConstants#RIGHT},
+   *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
+   */
+  public void setArrowDirection(int d) throws IllegalArgumentException {
+    if (d == NeoConstants.NONE || d == NeoConstants.LEFT || d == NeoConstants.RIGHT) {
+      arrowDirection = d;
+    } else {
+      throw new IllegalArgumentException();
+    }
+  }
+
+  public int getArrowDirection() {
+    return arrowDirection;
+  }
+
+  public static final BasicStroke dashStroke0 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
+  public static final BasicStroke dashStroke1 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
+  public static final BasicStroke dashStroke2 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
+  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
+  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
+  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
+
+  /**
+   *  Draws a line with little arrows to indicate the direction.
+   *  @param direction should be {@link NeoConstants#RIGHT},
+   *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
+   */
+  void drawDirectedLine(Graphics g, final int x, final int y, final int width, final int direction) {
+    switch (direction) {
+      case NeoConstants.RIGHT:
+        Graphics2D g2R = (Graphics2D) g;
+        Stroke old_strokeR = g2R.getStroke();
+        g2R.setStroke(dashStroke0);
+        g2R.drawLine(x, y, x + width, y);
+        g2R.setStroke(dashStroke1);
+        g2R.drawLine(x, y+1, x + width, y+1);
+        g2R.drawLine(x, y-1, x + width, y-1);
+        g2R.setStroke(dashStroke2);
+        g2R.drawLine(x, y+2, x + width, y+2);
+        g2R.drawLine(x, y-2, x + width, y-2);
+        g2R.setStroke(old_strokeR);
+        break;
+      case NeoConstants.LEFT:
+        Graphics2D g2L = (Graphics2D) g;
+        Stroke old_strokeL = g2L.getStroke();
+        g2L.setStroke(dashStrokeNeg0);
+        g2L.drawLine(x, y, x + width, y);
+        g2L.setStroke(dashStrokeNeg1);
+        g2L.drawLine(x, y+1, x + width, y+1);
+        g2L.drawLine(x, y-1, x + width, y-1);
+        g2L.setStroke(dashStrokeNeg2);
+        g2L.drawLine(x, y+2, x + width, y+2);
+        g2L.drawLine(x, y-2, x + width, y-2);
+        g2L.setStroke(old_strokeL);
+        break;
+      default:
+        g.fillRect(x, y, width, 1);
     }
   }
 
   /**
    *  Overriding addChild to force a call to adjustChildren().
    */
+  @Override
   public void addChild(GlyphI glyph) {
     if (isMoveChildren()) {
       double child_height = adjustChild(glyph);
@@ -136,7 +211,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
       final Rectangle2D cbox = child.getCoordBox();
       double ycenter;
       // use moveAbsolute or moveRelative to make sure children also get moved
-      
+
       if (show_label) {
         if (label_loc == NORTH) {
           ycenter = this.y + (0.75 * this.height);
@@ -148,7 +223,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
       } else {
         ycenter = this.y + this.height * 0.5;
       }
-      child.moveRelative(0, ycenter - (cbox.height * 0.5) - cbox.y);      
+      child.moveRelative(0, ycenter - (cbox.height * 0.5) - cbox.y);
       return cbox.height;
     } else {
       return this.height;
@@ -174,6 +249,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     }
   }
 
+  @Override
   public void pack(ViewI view) {
     if ( isMoveChildren()) {
       this.adjustChildren();
@@ -184,6 +260,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     }
   }
 
+  @Override
   public void setLabelLocation(int loc) {
     if (loc != getLabelLocation()) {
       adjustChildren();
@@ -191,6 +268,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     super.setLabelLocation(loc);
   }
 
+  @Override
   public void setShowLabel(boolean b) {
     if (b != getShowLabel()) {
       adjustChildren();

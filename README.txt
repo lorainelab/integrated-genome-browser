@@ -1,8 +1,10 @@
 ----------------- GENOVIZ ----------------------------
 
-The GenoViz project includes three components:
+The GenoViz project includes four components:
+
   GenoViz Graphical SDK
   Genometry
+  GenometryImpl
   IGB: Integrated Genome Browser
 
 The GenoViz SDK provides re-usable components for genomics 
@@ -18,16 +20,19 @@ annotations from multiple data sources.
 This source code is released under the Common Public License, v1.0, 
 an OSI approved open source license.
 
-See http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx
+See http://genoviz.sourceforge.net
+
 
 IGB uses other open source software packages that may be distributed 
 with the IGB source code release, including Xerces from Apache, 
-Jetty from Mortbay Consulting, Vector Graphics from FreeHEP
+Jetty from Mortbay Consulting, Vector Graphics from FreeHEP,
 and Fusion from Affymetrix.  
+
 Those packages are covered by their own open source licenses.
 
 IGB is Copyright (c) 2000-2007 Affymetrix, Inc.  
-Research and development of IGB is supported in part by NIH grant R01HG003040.
+
+Research and development of IGB was supported in part by NIH grant R01HG003040.
 
 GenoViz is hosted on SourceForge.net at 
 http://sourceforge.net/projects/genoviz
@@ -38,7 +43,7 @@ http://sourceforge.net/projects/genoviz
 An IGB user's manual is located in the 'documentation' directory
 of the source-file release.  It is not distributed with the
 jar-file release, but is available here:
-http://www.affymetrix.com/support/developer/tools/IGB_User_Guide.pdf
+http://sourceforge.net/projects/genoviz
 
 There are demos and tutorials for the GenoViz code inside
 the genoviz_sdk directory.  These are described later below.
@@ -52,9 +57,8 @@ http://sourceforge.net/docman/?group_id=129420
 ----------------- REQUIRED RESOURCES -----------------------
 
 IGB requires the Java 2 Platform, Standard Edition (J2SE), 
-  version 1.5 or higher.
+version 1.5 or higher.
   http://java.sun.com/j2se/
-
 
 IGB requires several additional resources.  These are included 
 in the 'ext' directory, and you do not need to download them
@@ -75,7 +79,11 @@ xerces.jar
 
 freehep-*.jar
   Several files from the FreeHEP Vector Graphics library
-  which allow the printing of EPS files.
+  which allow the printing of EPS files.  (We may combine
+  these into a single freehep.jar file.)
+
+myswing.jar
+  https://myswing.dev.java.net/
 
 ----------------- OPTIONAL RESOURCES -----------------------
 
@@ -83,6 +91,7 @@ This distribution contains a build.xml file which can be used along with
 'Apache Ant' to compile and run IGB.
 
 It is possible to compile and run IGB in other ways, such as in an IDE.
+
 If you wish to use the provided 'build.xml' file, you will need to obtain
 and install Apache Ant from http://ant.apache.org
 
@@ -97,14 +106,17 @@ The file, if present, will be named jlfgr-1_0.jar, in the "ext" directory.
 The license file is included in the "ext" directory.
 IGB can be used with or without this jar file.
 
-
 ----------------- COMPILING IGB ----------------------------
 
-
 If you wish to use 'ant':
- 
+
+'ant ext'
+  to compile all source code and package it, together
+  with all external resources, in a single executable file:
+  igb_exe.jar
+
 'ant jar' 
-  to compile the source and create the three jar files:
+  to compile the source and create independent jar files:
   igb.jar genoviz_sdk/genoviz.jar and genometry/genometry.jar
 
 'ant docs' 
@@ -117,9 +129,7 @@ The compiled code will be placed in the same directory structure
 as the java code, such that each *.class file will be placed
 near the corresponding *.java file.
 
-
 If you do not wish to use 'ant':
-
 Use any IDE to compile the java sources in these
 directories, in this order:
 1)  genoviz_sdk/src
@@ -127,8 +137,8 @@ directories, in this order:
 3)  genometryImpl/src
 4)  igb/src
 
-
 ----------------- RUNNING IGB -----------------------------
+
 
 You can run IGB from within ant or from the command line.
 The output is easier to read if you run it from the 
@@ -137,33 +147,20 @@ command line.
 Note that the following commands make use of the preferences
 file in igb/src/igb_prefs.xml.  If you have your own 
 preferences file(s), edit the commands below.
-(Few users need an igb_prefs.xml file with IGB 4.02 or higher.)
+(Most users do NOT need an igb_prefs.xml file with IGB 4.02 or higher.)
 
 
 Running with ant:
 
 Use the ant task 'run' to run the program from within ant.
- 
 'ant run'
 
-
 Running from the command line. Sample command:
-
-java -Xmx512m -classpath ext/xercesImpl.jar:ext/xml-apis.jar:ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:ext/commons-logging.jar:genometry/genometry.jar:genometryImpl/genometryImpl.jar:genoviz_sdk/genoviz.jar:igb.jar com.affymetrix.igb.IGB -prefs igb/src/igb_prefs.xml
-
-This sample command assumes that:
-
-1) genoviz.jar, genometry.jar, genometryImpl.jar are located in the genoviz_sdk,
-   genometryImpl and genometry subdirectories, respectively, relative to the
-   top-level IGB release directory (this happens automatically
-   when building via the ant 'jar' task),
-2) all third-party required jars are in a subdirectory called 'ext'
-   relative to the top-level IGB release directory, and
-3) it is executed in the top-level IGB release directory.
-
+java -Xmx512m -classpath igb_exe.jar com.affymetrix.igb.IGB -prefs igb/src/igb_prefs.xml
 
 
 ----------------- RUNNING GENOVIZ TUTORIALS ------------------
+
 
 IGB uses the GenoViz for much of the graphical interface.
 To learn the basics of the GenoViz, there are tutorials and
@@ -181,6 +178,4 @@ genoviz_sdk/index.html
 
 Run 'ant clean' or 'make clean' when finished viewing
 the demos, to remove compiled code.
-
-
 

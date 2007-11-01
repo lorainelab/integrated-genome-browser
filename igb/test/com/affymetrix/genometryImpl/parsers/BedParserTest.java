@@ -16,9 +16,11 @@ public class BedParserTest extends TestCase {
     super(testName);
   }
 
+  @Override
   protected void setUp() throws Exception {
   }
 
+  @Override
   protected void tearDown() throws Exception {
   }
 
@@ -39,7 +41,7 @@ public class BedParserTest extends TestCase {
     boolean create_container = true;
     
     BedParser parser = new BedParser();
-    List result = parser.parse(istr, group, annot_seq, stream_name, create_container);
+    List<SeqSymmetry> result = parser.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
 
     assertEquals(result.size(), 6);    
         
@@ -87,7 +89,7 @@ public class BedParserTest extends TestCase {
     boolean create_container = true;
     BedParser instance = new BedParser();
     
-    List result = instance.parse(istr, group, annot_seq, stream_name, create_container);
+    List<SeqSymmetry> result = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
 
     assertEquals(result.size(), 6);    
         
@@ -217,9 +219,9 @@ public class BedParserTest extends TestCase {
     boolean create_container = true;
     BedParser instance = new BedParser();
     
-    Collection syms = null;
+    Collection<SeqSymmetry> syms = null;
     try {
-      syms = instance.parse(istr, group, annot_seq, stream_name, create_container);
+      syms = instance.parse(istr,gmodel,group,annot_seq,stream_name,create_container);
     } catch (IOException ioe) {
       fail("Exception: " + ioe);
     }

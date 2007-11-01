@@ -110,7 +110,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     parse_listeners.remove(listener);
   }
 
-  public List parse(InputStream istr,  GenometryModel gmodel,
+  public List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
       AnnotatedSeqGroup group, boolean annot_seq,
       String stream_name, boolean create_container)
     throws IOException {

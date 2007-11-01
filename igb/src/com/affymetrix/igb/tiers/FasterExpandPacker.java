@@ -154,6 +154,7 @@ public class FasterExpandPacker extends EfficientExpandPacker
   }
 
   // PackerI interface (via inheritance from PaddedPackerI
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
     boolean REPORT_SLOT_CHECKS = false;
     Vector sibs = parent.getChildren();
@@ -247,12 +248,10 @@ public class FasterExpandPacker extends EfficientExpandPacker
 	if ((max_slots_allowed > 0) && slot_maxes.size() >= max_slots_allowed) {
           child.setVisibility(true);
 	  if (this.getMoveType() == NeoConstants.UP) {
-	    new_ycoord = - (((slot_maxes.size()-1) * slot_height) + spacing +
-			    (child.getCoordBox().height/2)) ;
+	    new_ycoord = - (((slot_maxes.size()) * slot_height) + spacing);
 	  }
 	  else {
-	    new_ycoord = ((slot_maxes.size()-1) * slot_height) + spacing +
-	      (child.getCoordBox().height/2);
+	    new_ycoord = ((slot_maxes.size()) * slot_height) + spacing;
 	  }
 	  child.moveAbsolute(child_min, new_ycoord);
 	  int slot_index = slot_maxes.size() - 1;

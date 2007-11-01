@@ -15,11 +15,9 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
-import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 
@@ -101,6 +99,7 @@ public class WebLinksManagerView extends JPanel {
   }
 
   ListCellRenderer list_renderer = new DefaultListCellRenderer() {
+    @Override
     public Component getListCellRendererComponent(JList list,
         Object value, int index, boolean isSelected, boolean cellHasFocus) {
       WebLink wl = (WebLink) value;
@@ -147,6 +146,7 @@ public class WebLinksManagerView extends JPanel {
   void setUpMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu links_menu = new JMenu("Web Links") {      
+      @Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
         menu_item.setToolTipText(null);
@@ -168,6 +168,7 @@ public class WebLinksManagerView extends JPanel {
 
   void setUpPopupMenu() {
     final JPopupMenu popup = new JPopupMenu() {      
+      @Override
       public JMenuItem add(Action a) {
         JMenuItem menu_item = super.add(a);
         menu_item.setToolTipText(null);
@@ -181,11 +182,13 @@ public class WebLinksManagerView extends JPanel {
     popup.add(import_action);
     popup.add(export_action);
     MouseAdapter mouse_adapter = new MouseAdapter() {
+      @Override
       public void mousePressed(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
           popup.show(the_list, e.getX(), e.getY());
         }
       }
+      @Override
       public void mouseReleased(MouseEvent e) {
         if (popup.isPopupTrigger(e)) {
           popup.show(the_list, e.getX(), e.getY());

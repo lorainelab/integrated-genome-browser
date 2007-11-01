@@ -109,6 +109,9 @@ public class EPSWriter {
   /** Show the export dialog that allows exporting in a variety of graphics 
    *  formats using the FreeHep libraries.  Some formats seem to be buggy, so
    *  I don't recommend using this.
+   *  @deprecate This will not work if the Freehep jars have been rolled into
+   *  a single jar, as we have done.  It is supposed to use the openide-lookup
+   *  jar as well, but we also don't include that in our distributions.
    */
   public static void showExportDialog(Component c) {
     ExportDialog export = new ExportDialog();

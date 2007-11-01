@@ -50,27 +50,27 @@ public class WebLink {
     return (s1 != null && s1.equals(s2));
   }
   
-  public boolean equals(Object o) {
+  /** Used to compute the hashCode and in the equals() method. */
+  String toComparisonString() {
     // Do NOT consider the "name" in tests of equality.
     // We do not want to allow two links that are identical except for name.
     // This is important in allowing users to over-ride the default links.
-    if (o instanceof WebLink) {
-      WebLink w = (WebLink) o;
-      return (
-          //equals(name, w.name) && 
-       equals(getRegex(), w.getRegex()) 
-       && equals(url, w.url) && equals(id_field_name, w.id_field_name));
-    }
-    return false;
+    return getRegex() + ", " + url.toString() + ", " + id_field_name;
   }
   
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof WebLink) {
+      WebLink w = (WebLink) o;
+      return toComparisonString().equals(w.toComparisonString());
+    } else {
+      return false;
+    }
+  }
+  
+  @Override
   public int hashCode() {
-    int hash = 1;
-    //if (name != null) { hash = 31*hash + name.hashCode(); }
-    if (pattern != null) { hash = 31*hash + getRegex().hashCode(); }
-    if (url != null) { hash = 31*hash + url.hashCode(); }
-    if (id_field_name != null) { hash = 31*hash + id_field_name.hashCode(); }
-    return hash;
+    return toComparisonString().hashCode();
   }
   
   /**
@@ -267,6 +267,7 @@ public class WebLink {
     }
   }
   
+  @Override
   public String toString() {
     return "WebLink: name=" + name + 
         ", regex=" + getRegex() + 

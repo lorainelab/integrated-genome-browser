@@ -104,6 +104,10 @@ be used (if present).
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
+  <annotation_url annot_type_regex="(?i).*KnownGene$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
   <annotation_url annot_type_regex="mRNA\S*"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"

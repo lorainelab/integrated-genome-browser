@@ -27,6 +27,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
@@ -64,18 +66,6 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.setBorder(BorderFactory.createEtchedBorder());
 
-    Box url_box = new Box(BoxLayout.Y_AXIS);
-    url_box.setBorder(new javax.swing.border.TitledBorder("Personal QuickLoad URL"));
-    JTextField quickload_url_TF = UnibrowPrefsUtil.createTextField(
-        UnibrowPrefsUtil.getLocationsNode(), QuickLoadView2.PREF_USER_DEFINED_QUICKLOAD_URL, "");
-    quickload_url_TF.setMaximumSize(new Dimension(quickload_url_TF.getMaximumSize().width,
-        quickload_url_TF.getPreferredSize().height));
-    url_box.add(quickload_url_TF);
-
-    url_box.setAlignmentX(0.0f);
-    this.add(url_box);
-    this.add(Box.createRigidArea(new Dimension(0, 5)));
-
     Box server_box = new Box(BoxLayout.X_AXIS);
     server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
     JTextField das_dna_server_TF =
@@ -85,7 +75,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
         das_dna_server_TF.getPreferredSize().height));
     server_box.add(das_dna_server_TF);
     server_box.add(Box.createRigidArea(new Dimension(6,0)));
-    JButton reset_das_dna_serverB = new JButton("Reset");
+    reset_das_dna_serverB = new JButton("Reset");
     server_box.add(reset_das_dna_serverB);
     server_box.add(Box.createRigidArea(new Dimension(2,0)));
     reset_das_dna_serverB.addActionListener(reset_das_dna_server_al);
@@ -156,6 +146,26 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     // adding quickload choicebox to cache options box for expediency
     use_quickloadCB.setAlignmentX(0.0f);
     cache_options_box.add(use_quickloadCB);
+
+    Box url_box = new Box(BoxLayout.Y_AXIS);
+    url_box.setBorder(new javax.swing.border.TitledBorder("Personal QuickLoad URL"));
+    final JTextField quickload_url_TF = UnibrowPrefsUtil.createTextField(
+        UnibrowPrefsUtil.getLocationsNode(), QuickLoadView2.PREF_USER_DEFINED_QUICKLOAD_URL, "");
+    quickload_url_TF.setMaximumSize(new Dimension(quickload_url_TF.getMaximumSize().width,
+        quickload_url_TF.getPreferredSize().height));
+    url_box.add(quickload_url_TF);
+
+    url_box.setAlignmentX(0.0f);
+    cache_options_box.add(url_box);
+    cache_options_box.add(Box.createRigidArea(new Dimension(0, 5)));
+    
+    quickload_url_TF.setEnabled(use_quickloadCB.isSelected());
+    use_quickloadCB.addChangeListener(new ChangeListener() {
+      public void stateChanged(ChangeEvent e) {
+        quickload_url_TF.setEnabled(use_quickloadCB.isSelected());
+      }
+    });
+
     cache_annotsCB.setAlignmentX(0.0f);
     cache_options_box.add(cache_annotsCB);
     cache_residuesCB.setAlignmentX(0.0f);
@@ -276,6 +286,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
   }
 
 
+  @Override
   public String getName() {
     return "Data Sources";
   }

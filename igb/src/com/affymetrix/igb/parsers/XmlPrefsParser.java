@@ -355,7 +355,7 @@ public class XmlPrefsParser {
    *  to require an exact match.
    */
   public void processLinkUrl(Element el) {
-    Map attmap = this.getAttributeMap(el);
+    Map attmap = XmlPrefsParser.getAttributeMap(el);
     String annot_type_regex_string = (String) attmap.get("annot_type_regex");
     if (annot_type_regex_string != null && annot_type_regex_string.trim().length()==0) {
       annot_type_regex_string = null;
@@ -367,15 +367,14 @@ public class XmlPrefsParser {
     String name = (String) attmap.get("name");
     if (annot_type_regex_string != null && url != null) {
      try {
-      Pattern regex = null;
       WebLink link = new WebLink();
       link.setName(name);
       link.setUrl(url);
       if ("false".equalsIgnoreCase((String) attmap.get("match_case"))) {
-        link.setRegex(annot_type_regex_string);
+        link.setRegex("(?-i)" + annot_type_regex_string);
         //regex = Pattern.compile(annot_type_regex_string);
       } else {
-        link.setRegex("(?i)" + annot_type_regex_string);
+        link.setRegex(annot_type_regex_string);
         //regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
       }
 
@@ -398,9 +397,9 @@ public class XmlPrefsParser {
      *      "annot_ends_with", and "annot_regex" fields mapped to MapViewGlyphFactoryI
      */
     Class factory_class = default_factory_class;
-    Map attmap = this.getAttributeMap(el);
+    Map attmap = XmlPrefsParser.getAttributeMap(el);
     // add colors
-    this.addColors(el, attmap);
+    XmlPrefsParser.addColors(el, attmap);
 
     // annotation_style element _must_ have and annot_type attribute
     // planning to relax this at some point to allow for element to have one (and only one) of:

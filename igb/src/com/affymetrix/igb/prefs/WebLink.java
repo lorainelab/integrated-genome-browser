@@ -32,6 +32,7 @@ public class WebLink {
   String url = null;
   String name = "";
   String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
+  String original_regex = null;
 
   Pattern pattern = null;
   static DefaultListModel weblink_list = new DefaultListModel();
@@ -46,16 +47,12 @@ public class WebLink {
     setUrl(url);
   }
 
-  boolean equals(String s1, String s2) {
-    return (s1 != null && s1.equals(s2));
-  }
-  
   /** Used to compute the hashCode and in the equals() method. */
   String toComparisonString() {
     // Do NOT consider the "name" in tests of equality.
     // We do not want to allow two links that are identical except for name.
     // This is important in allowing users to over-ride the default links.
-    return getRegex() + ", " + url.toString() + ", " + id_field_name;
+    return original_regex + ", " + url.toString() + ", " + id_field_name;
   }
   
   @Override
@@ -93,8 +90,31 @@ public class WebLink {
     } else {
       weblink_list.addElement(wl);
     }
+    sortList();
   }
 
+  public static void sortList() {
+    ArrayList<WebLink> link_list = new ArrayList<WebLink>(weblink_list.size() + 1);
+    for (Object w : weblink_list.toArray()) {
+      link_list.add((WebLink) w);
+    }
+    Collections.sort(link_list, webLinkComp);
+    weblink_list.removeAllElements();
+    for (WebLink w : link_list) {
+      weblink_list.addElement(w);
+    }
+  }
+
+  static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
+    String sortString(WebLink wl) {
+      return wl.name + ", " + wl.original_regex + ", " + wl.url.toString() + ", " + wl.id_field_name;
+    }
+    
+    public int compare(WebLink o1, WebLink o2) {
+      return (sortString(o1).compareTo(sortString(o2)));
+    }    
+  };
+  
   /**
    *  Remove a WebLink from the static list.
    */
@@ -134,7 +154,7 @@ public class WebLink {
         }
       }
     }
-
+    
     return results;
   }
   
@@ -156,16 +176,7 @@ public class WebLink {
   }
   
   public String getRegex() {
-    if (pattern == null) {
-      return null;
-    } else {
-      String re = pattern.pattern();
-      if (re.startsWith("(?i)")) {
-        return re.substring(4);
-      } else {
-        return re;
-      }
-    }
+    return original_regex;
   }
   
   /** Sets the regular expression that must be matched.
@@ -178,10 +189,16 @@ public class WebLink {
   public void setRegex(String regex) throws PatternSyntaxException {
     if (regex == null || ".*".equals(regex)|| "(?i).*".equals(regex)) {
       pattern = null;
+      original_regex = null;
     } else {
+      // delete any double, triple, etc., "(?i)" strings caused by a bug in a previous version
+      while (regex.startsWith("(?i)(?i)")) {
+        regex = regex.substring(4);
+      }
       if (! regex.startsWith("(?i)")) {
         regex = "(?i)" + regex; // force all web link matches to be case-insensitive
       }
+      original_regex = regex;
       pattern = Pattern.compile(regex);
     }
   }

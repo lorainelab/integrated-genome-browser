@@ -1154,7 +1154,6 @@ public class IGB extends Application
     about_text.append("\n");
     about_text.append(APP_NAME + " uses the Xerces\n");
     about_text.append("package from the Apache Software Foundation, \n");
-    about_text.append("the Jetty package from Mort Bay Consulting, \n");
     about_text.append("the Fusion SDK from Affymetrix,  \n");
     about_text.append("and the Vector Graphics package from java.FreeHEP.org \n");
     about_text.append("(released under the LGPL license).\n");
@@ -1182,7 +1181,6 @@ public class IGB extends Application
     message_pane.add(new JScrollPane(about_text));
     JButton licenseB = new JButton("View IGB License");
     JButton apacheB = new JButton("View Apache License");
-    JButton jettyB = new JButton("View Jetty License");
     JButton freehepB = new JButton("View FreeHEP Vector Graphics License");
     JButton fusionB = new JButton("View Fusion SDK License");
     licenseB.addActionListener(new ActionListener() {
@@ -1195,11 +1193,6 @@ public class IGB extends Application
           WebBrowserControl.displayURL("http://www.apache.org/licenses/LICENSE-2.0");
         }
       } );
-    jettyB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          WebBrowserControl.displayURL("http://jetty.mortbay.org/jetty/");
-        }
-      } );
     freehepB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           WebBrowserControl.displayURL("http://java.freehep.org/vectorgraphics/license.html");
@@ -1210,10 +1203,9 @@ public class IGB extends Application
           WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/fusion/index.affx");
         }
       } );
-    JPanel buttonP = new JPanel(new GridLayout(3,1));
+    JPanel buttonP = new JPanel(new GridLayout(2,2));
     buttonP.add(licenseB);
     buttonP.add(apacheB);
-    buttonP.add(jettyB);
     buttonP.add(freehepB);
     buttonP.add(fusionB);
     message_pane.add(buttonP);

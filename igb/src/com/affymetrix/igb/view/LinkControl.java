@@ -28,9 +28,6 @@ public class LinkControl implements ContextualPopupListener {
   public LinkControl() { }
 
   public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
-    if (primary_sym == null) {
-      System.out.println("if primary_sym is null!");
-    }
     if (selected_syms.size() == 1 && primary_sym != null) {
       
       Map<String,String> menu_items = new LinkedHashMap<String,String>(); // map of menu url->name, or url -> url if there is no name

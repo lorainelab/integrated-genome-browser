@@ -10,8 +10,9 @@ A)   This product includes software developed by the
      which may be distributed with this product includes:
      xerces.jar, xercesImpl.jar, xml-apis.jar, commons-logging.jar
 
-B)   This product includes portions of the Jetty package 
+B)   This product may include portions of the Jetty package 
      from Mort Bay Consulting.
+     (Starting with IGB 5.12, only the das2_server code relies on Jetty.)
      http://jetty.mortbay.org/jetty/
 
      Jetty also uses the Apache license found at
@@ -48,8 +49,7 @@ E)   This product includes portions of the Vector Graphics software library
 
      http://java.freehep.org/vectorgraphics/index.html
 
-     The files from this project include freehep-base.jar, and other jar files,
-     all begining with the letters "freehep".
+     The files from this project are bundled together in freehep.jar
      A copy of the license is included in the file FREEHEP_LICENSE_LGPL.txt.
 
 F)   This product may include myswing.jar from

@@ -39,7 +39,7 @@ import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
-import com.affymetrix.igb.servlets.UnibrowControlServer;
+import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -106,7 +106,7 @@ public class IGB extends Application
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
-  UnibrowControlServer web_control = null;
+  SimpleBookmarkServer web_control = null;
 
   JFrame frm;
   JMenuBar mbar;
@@ -354,7 +354,7 @@ public class IGB extends Application
 
     Runnable r = new Runnable() {
       public void run() {
-        web_control = new UnibrowControlServer(IGB.this);
+        web_control = new SimpleBookmarkServer(IGB.this);
       }
     };
 
@@ -367,7 +367,7 @@ public class IGB extends Application
     });
   }
 
-  public UnibrowControlServer getControlServer() {
+  public SimpleBookmarkServer getControlServer() {
     return web_control;
   }
 

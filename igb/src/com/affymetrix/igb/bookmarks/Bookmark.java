@@ -13,15 +13,11 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.*;
 
-import com.affymetrix.igb.servlets.UnibrowControlServer;
-import com.affymetrix.igb.servlets.UnibrowControlServlet;
 
 /**
  *  Holds a bookmark, which is simply a name associated with a URL.
@@ -170,7 +166,7 @@ public class Bookmark implements Serializable {
    *  key=value pair, with the same key name.)
    */
   public static String constructURL(Map props) {
-    return constructURL(UnibrowControlServer.DEFAULT_SERVLET_URL, props);
+    return constructURL(SimpleBookmarkServer.DEFAULT_SERVLET_URL, props);
   }
 
   /** Constructs a GENERIC Bookmark URL based on the properties
@@ -247,13 +243,13 @@ public class Bookmark implements Serializable {
    *  the Host is "localhost". 
    */
   public boolean isUnibrowControl() {
-    URL url = getURL();
-    String host = url.getHost();
-    String path = url.getPath();
+    String host = getURL().getHost();
+    String path = getURL().getPath();
     return (("localhost".equals(host) || "127.0.0.1".equals(host)) 
-      && (path.equals("/"+UnibrowControlServer.SERVLET_NAME) || path.equals("/"+UnibrowControlServer.SERVLET_NAME_OLD)));
+      && (path.equals("/"+SimpleBookmarkServer.SERVLET_NAME) || path.equals("/"+SimpleBookmarkServer.SERVLET_NAME_OLD)));
   }
 
+  @Override
   public String toString() {
     return "Bookmark: '"+this.name+"' -> '"+this.url.toExternalForm()+"'";
   }

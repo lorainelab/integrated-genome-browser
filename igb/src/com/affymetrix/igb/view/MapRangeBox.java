@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.servlets.UnibrowControlServlet;
+import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;

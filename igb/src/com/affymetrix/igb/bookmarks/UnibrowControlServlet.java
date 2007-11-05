@@ -11,31 +11,27 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.servlets;
+package com.affymetrix.igb.bookmarks;
 
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.Das2LoadView3;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.swing.DisplayUtils;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
+ *  (This used to be an implementation of HttpServlet, but it isn't now.)
  * <pre>
  *  Can specify:
  *      genome version
@@ -48,40 +44,15 @@ import com.affymetrix.swing.DisplayUtils;
  *      ask the user before switching.
  *</pre>
  */
-public class UnibrowControlServlet extends HttpServlet {
+public class UnibrowControlServlet {
   static boolean DEBUG_DAS2_LOAD = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static final Pattern query_splitter = Pattern.compile("[;\\&]");
 
   Application uni;
 
-  public void init() { }
-
   public void setUnibrowInstance(Application uni) {
     this.uni = uni;
-  }
-
-  public void service(HttpServletRequest request, HttpServletResponse response) throws
-    ServletException {
-
-    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-    if (request.getParameter("ping") != null) {
-      // query from another instance of unibrow to see if port is occupied...
-      System.out.println("Received ping request");
-      return;
-    } else {
-      System.out.println("Received bookmark request");
-    }
-
-    //  restore and focus on Application when a unibrow call is made
-    try {
-      DisplayUtils.bringFrameToFront(Application.getSingleton().getFrame());
-      goToBookmark(this.uni, request.getParameterMap());
-    } catch (Exception e) {
-      System.out.println("Error while processing bookmark: " + e.toString());
-      ServletException se = new ServletException("Exception while processing bookmark", e);
-      throw se;
-    }
   }
 
   /** Convenience method for retreiving a String parameter from a parameter map

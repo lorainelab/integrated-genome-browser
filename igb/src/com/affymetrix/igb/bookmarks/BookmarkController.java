@@ -1,5 +1,5 @@
 /**
- *   Copyright (c) 2001-2006 Affymetrix, Inc.
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
  *
  *   Licensed under the Common Public License, Version 1.0 (the "License").
  *   A copy of the license must be included with any distribution of
@@ -29,7 +29,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.util.*;
-import com.affymetrix.igb.servlets.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.net.URL;
 import javax.swing.SwingUtilities;
@@ -41,7 +40,7 @@ import javax.swing.SwingUtilities;
 public abstract class BookmarkController {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   private final static boolean DEBUG= false;
-  
+
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
    *  it will be opened in the viewer using
    *  {@link UnibrowControlServlet#goToBookmark}.  If it is an external
@@ -52,7 +51,7 @@ public abstract class BookmarkController {
     if (bm.isUnibrowControl()) {
       if (DEBUG) System.out.println("****** Viewing internal control bookmark: "+bm.getURL().toExternalForm());
       try {
-        Map props = bm.parseParameters(bm.getURL());
+        Map props = Bookmark.parseParameters(bm.getURL());
         UnibrowControlServlet.goToBookmark(app, props);
       } catch (Exception e) {
         String message = e.getClass().getName() + ": " + e.getMessage();
@@ -63,14 +62,14 @@ public abstract class BookmarkController {
       WebBrowserControl.displayURLEventually(bm.getURL().toExternalForm());
     }
   }
-  
+
   /** Causes a bookmark to be executed.
    *  @param gviewer  a useless, ignored parameter.
    */
   public static void viewBookmark(Application app, SeqMapView gviewer, Bookmark bm) {
     viewBookmark(app, bm);
   }
-  
+
   public static void loadGraphsEventually(final SeqMapView gviewer, final Map props) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -82,7 +81,7 @@ public abstract class BookmarkController {
       }
     });
   }
-  
+
   public static void loadGraphs(SeqMapView gviewer, Map map) {
     double default_ypos = 30;
     double default_yheight = 60;
@@ -98,9 +97,9 @@ public abstract class BookmarkController {
     boolean default_show_thresh = false;
     int default_thresh_direction = GraphStateI.THRESHOLD_DIRECTION_GREATER;
     Map combos = new HashMap();
-    
+
     //System.err.println("I am in loadGraphs!!!!");
-    
+
     // Figure out the "source_url" paths of all currently-loaded graphs
     java.util.List loaded_graphs = Collections.EMPTY_LIST;
     if (gviewer != null) {
@@ -114,19 +113,19 @@ public abstract class BookmarkController {
       String source_url = (String) graf_info.getProperty("source_url");
       loaded_graph_paths.add(source_url);
     }
-    
+
     InputStream istr = null;
     try {
       //      while (map.get("graph"+i) != null) {
       for (int i=0; map.get("graph_source_url_"+i) != null; i++) {
         //        String graph_path = UnibrowControlServlet.getStringParameter(map, "graph" + i);
         String graph_path = UnibrowControlServlet.getStringParameter(map, "graph_source_url_" + i);
-        
+
         // Don't load any graph we already have loaded
         if (loaded_graph_paths.contains(graph_path)) {
           continue;
         }
-        
+
         // for some parameters, testing more than one parameter name because how some params used to have
         //    slightly different names, and we need to support legacy bookmarks
         String graph_name = UnibrowControlServlet.getStringParameter(map, "graph_name_" + i);
@@ -135,7 +134,7 @@ public abstract class BookmarkController {
         }
         String graph_ypos = UnibrowControlServlet.getStringParameter(map, "graph_ypos_" + i);
         if (graph_ypos == null)  { graph_ypos = UnibrowControlServlet.getStringParameter(map, "graphypos" + i); }
-        
+
         String graph_height = UnibrowControlServlet.getStringParameter(map, "graph_yheight_" + i);
         if (graph_height == null) { graph_height = UnibrowControlServlet.getStringParameter(map, "graphyheight" + i); }
         // graph_col is String rep of RGB integer
@@ -144,10 +143,10 @@ public abstract class BookmarkController {
 
         String graph_bg_col = UnibrowControlServlet.getStringParameter(map, "graph_bg_" + i);
         // graph_bg_col will often be null
-        
+
         String graph_float = UnibrowControlServlet.getStringParameter(map, "graph_float_" + i);
         if (graph_float == null)  { graph_float = UnibrowControlServlet.getStringParameter(map, "graphfloat" + i); }
-        
+
         String show_labelstr = UnibrowControlServlet.getStringParameter(map, "graph_show_label_" + i);
         String show_axisstr = UnibrowControlServlet.getStringParameter(map, "graph_show_axis_" + i);
         String minvis_str = UnibrowControlServlet.getStringParameter(map, "graph_minvis_" + i);
@@ -157,13 +156,13 @@ public abstract class BookmarkController {
         String minrun_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_minrun_thresh_" + i);
         String show_threshstr = UnibrowControlServlet.getStringParameter(map, "graph_show_thresh_" + i);
         String thresh_directionstr = UnibrowControlServlet.getStringParameter(map, "graph_thresh_direction_" + i);
-        
+
         //        int graph_min = (graph_visible_min == null) ?
         String graph_style = UnibrowControlServlet.getStringParameter(map, "graph_style_" + i);
         String heatmap_name = UnibrowControlServlet.getStringParameter(map, "graph_heatmap_" + i);
-        
+
         String combo_name = UnibrowControlServlet.getStringParameter(map, "graph_combo_" + i);
-        
+
         double ypos = (graph_ypos == null) ? default_ypos : Double.parseDouble(graph_ypos);
         double yheight = (graph_height == null)  ? default_yheight : Double.parseDouble(graph_height);
         Color col = default_col;
@@ -195,14 +194,14 @@ public abstract class BookmarkController {
             (score_threshstr == null) ? default_score_thresh : Double.parseDouble(score_threshstr);
         int maxgap_thresh =
             (maxgap_threshstr == null) ? default_maxgap_thresh : Integer.parseInt(maxgap_threshstr);
-        
+
         int minrun_thresh =
             (minrun_threshstr == null) ? default_minrun_thresh : Integer.parseInt(minrun_threshstr);
         boolean show_thresh =
             (show_threshstr == null) ? default_show_thresh : (show_threshstr.equals("true"));
         int thresh_direction =
             (thresh_directionstr == null) ? default_thresh_direction : Integer.parseInt(thresh_directionstr);
-                
+
         if (DEBUG) {
           System.out.println("graph path: " + graph_path);
           System.out.println("red = " + col.getRed() +
@@ -218,11 +217,11 @@ public abstract class BookmarkController {
               + score_thresh+", "+maxgap_thresh+", "
               + show_thresh + ", " + thresh_direction);
         }
-        
+
         if (graph_name == null || graph_name.trim().length()==0) {
           graph_name = graph_path;
         }
-        
+
         if (Application.CACHE_GRAPHS)  {
           istr = LocalUrlCacher.getInputStream(graph_path);
         } else {
@@ -269,7 +268,7 @@ public abstract class BookmarkController {
             gstate.setMaxGapThreshold(maxgap_thresh);
             gstate.setShowThreshold(show_thresh);
             gstate.setThresholdDirection(thresh_direction);
-            
+
             if (combo_name != null) {
               IAnnotStyle combo_style = (IAnnotStyle) combos.get(combo_name);
               if (combo_style == null) {
@@ -289,14 +288,14 @@ public abstract class BookmarkController {
 //      gviewer.getSeqMap().packTiers(false, true, false);
 //      gviewer.getSeqMap().stretchToFit(false, false);
 //      gviewer.getSeqMap().updateWidget(true);
-      
+
       // Because of combo graphs, have to completely re-draw the display
       // Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
       // especially if the graphs are attached graphs.
       if (gviewer != null) {
         gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, false);
       }
-      
+
     } catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error while loading graphs", ex);
     } catch (Error er) {
@@ -305,17 +304,17 @@ public abstract class BookmarkController {
       if (istr != null) try {istr.close();} catch (IOException ioe) {}
     }
   }
-  
+
   public static void addGraphProperties(SymWithProps mark_sym, java.util.List graphs) {
     if (DEBUG) {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }
     int max = graphs.size();
     Map combo_styles = new HashMap();
-    
+
     // Holds a list of labels of graphs for which no url could be found.
     Set unfound_labels = new LinkedHashSet();
-    
+
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
     int i = -1;
@@ -339,7 +338,7 @@ public abstract class BookmarkController {
       } else {
         i++;
         Rectangle2D gbox = gr.getCoordBox();
-        
+
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
         mark_sym.setProperty("graph_source_url_" + i, source_url);
         mark_sym.setProperty("graph_ypos_" + i, Integer.toString((int)gbox.y));
@@ -347,7 +346,7 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_col_" + i, sixDigitHex(gr.getGraphState().getTierStyle().getColor()));
         mark_sym.setProperty("graph_bg_" + i, sixDigitHex(gr.getGraphState().getTierStyle().getBackground()));
         if (is_floating) { mark_sym.setProperty("graph_float_" + i, "true"); } else  {mark_sym.setProperty("graph_float_" + i, "false"); }
-        
+
         if (DEBUG) {
           System.out.println("setting bookmark prop graph_name_" + i + ": " + graf.getGraphName());
         }
@@ -375,22 +374,22 @@ public abstract class BookmarkController {
           }
           mark_sym.setProperty("graph_combo_"+i, combo_style_num.toString());
         }
-        
+
         // if graphs are in tiers, need to deal with tier ordering in here somewhere!
         // (the graph_ypos variable can be used for this)
       }
     }
 
     // TODO: Now save the colors and such of the combo graphs!
-    
+
     if (! unfound_labels.isEmpty()) {
       ErrorHandler.errorPanel("WARNING: Cannot bookmark some graphs",
           "Warning: could not bookmark some graphs.\n" +
           "No source URL was available for: " + unfound_labels.toString());
     }
-    
+
   }
-  
+
   /**
    *  Creates a Map containing bookmark properties.
    *  All keys and values are Strings.
@@ -410,13 +409,13 @@ public abstract class BookmarkController {
     props.put("end", Integer.toString(span.getMax()));
     return props;
   }
-  
+
   static public Bookmark makeBookmark(Map props, String name) throws java.net.MalformedURLException {
     String url = Bookmark.constructURL(props);
     return new Bookmark(name, url);
   }
-  
-  
+
+
   /**
    *  Constructs a bookmark from a SeqSymmetry.
    *  Assumes correct span is the first span in the sym.
@@ -426,8 +425,8 @@ public abstract class BookmarkController {
     Map props = constructBookmarkProperties(sym);
     return makeBookmark(props, name);
   }
-  
-  
+
+
   /** Returns a hexidecimal representation of the color with
    *  "0x" plus exactly 6 digits.  Example  Color.BLUE -> "0x0000FF".
    */

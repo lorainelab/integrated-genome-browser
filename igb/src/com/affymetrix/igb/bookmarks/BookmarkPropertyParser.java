@@ -15,7 +15,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.*;
-import com.affymetrix.igb.servlets.UnibrowControlServlet;
+import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import com.affymetrix.igb.util.ErrorHandler;
 import java.awt.Color;
 import java.util.*;

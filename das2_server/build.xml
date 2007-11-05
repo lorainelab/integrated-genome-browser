@@ -12,6 +12,8 @@ and the GenometryImpl jar should be at
   /<directory>/genometryImpl/genometryImpl.jar
 and the IGB jar should be at
   /<directory>/igb.jar
+and the jetty jars should be in
+  /<directory>/ext2/*.jar
 
 
 You can also specify any other location of the GenoViz classes
@@ -65,6 +67,7 @@ in this directory, execute:
 
 
   <property name="lib.dir" value="${root.dir}/../ext" />
+  <property name="lib2.dir" value="${root.dir}/../ext2" />
 
     <property name="genoviz.jar" value="../genoviz_sdk/genoviz.jar"/>
     <property name="genometry.jar" value="../genometry/genometry.jar"/>
@@ -104,8 +107,8 @@ in this directory, execute:
 
     <condition property="all.jars.present">
       <and>
-       <available file="${lib.dir}/javax.servlet.jar"/>
-       <available file="${lib.dir}/org.mortbay.jetty.jar"/>
+       <available file="${lib2.dir}/javax.servlet.jar"/>
+       <available file="${lib2.dir}/org.mortbay.jetty.jar"/>
        <available file="${lib.dir}/xercesImpl.jar"/>
        <available file="${lib.dir}/xml-apis.jar"/>
        <available file="${genoviz.jar}"/>
@@ -122,6 +125,9 @@ in this directory, execute:
     <pathelement location="${genometryImpl.jar}"/>
     <pathelement location="${igb.jar}" />
     <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib2.dir}">
       <include name="**/*.jar"/>
     </fileset>
   </path>

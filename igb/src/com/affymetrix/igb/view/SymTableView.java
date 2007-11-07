@@ -100,16 +100,22 @@ public class SymTableView extends PropertySheet implements SymSelectionListener 
       if (seqMap != null) {
         SeqSpan span = seqMap.getViewSeqSpan(sym);
 	if (span != null) {
+          String chromID = span.getBioSeq().getID();
+          props.put("chr", chromID);
 	  props.put("start", String.valueOf(span.getStart()));
 	  props.put("end", String.valueOf(span.getEnd()));
 	  props.put("length", String.valueOf(span.getLength()));
+          props.remove("seq id"); // this is redundant if "chromosome" proprety is set
+          if (props.containsKey("method") && ! props.containsKey("type")) {
+            props.put("type", props.get("method"));
+            props.remove("method");
+          }
 	}
       }
       testcount++;
       propvec.add(props);
     }
-    Map[] prop_array = new Map[propvec.size()];
-    propvec.copyInto(prop_array);
+    Map[] prop_array = propvec.toArray(new Map[propvec.size()]);
     
     this.showProperties(prop_array, default_order, "");
   }

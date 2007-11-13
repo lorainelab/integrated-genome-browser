@@ -16,9 +16,11 @@ package com.affymetrix.genoviz.awt;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.event.NeoPaintEvent;
 import com.affymetrix.genoviz.event.NeoPaintListener;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Extends java.awt.Container (via NeoBufferedComponent)
@@ -32,7 +34,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
   protected boolean dragging_outside = false;
   protected boolean grab_focus_on_click = true;
   protected boolean focus_traversable = true;
-  protected Vector<NeoPaintListener> paint_listeners = new Vector<NeoPaintListener>();
+  protected List<NeoPaintListener> paint_listeners = new CopyOnWriteArrayList<NeoPaintListener>();
 
 
   /**
@@ -76,8 +78,8 @@ public class NeoCanvas extends NeoBufferedComponent  {
    */
   public void postPaintEvent(NeoPaintEvent e) {
 
-    for (int i=0; i<paint_listeners.size(); i++) {
-      paint_listeners.elementAt(i).componentPainted(e);
+    for (NeoPaintListener npl : paint_listeners) {
+      npl.componentPainted(e);
       // assume for now event id is always PAINT
     }
   }
@@ -88,9 +90,9 @@ public class NeoCanvas extends NeoBufferedComponent  {
    *
    * @param pl the listener
    */
-  public void addNeoPaintListener(com.affymetrix.genoviz.event.NeoPaintListener pl) {
+  public void addNeoPaintListener(NeoPaintListener pl) {
     if (!paint_listeners.contains(pl)) {
-      paint_listeners.addElement(pl);
+      paint_listeners.add(pl);
     }
   }
 
@@ -101,17 +103,17 @@ public class NeoCanvas extends NeoBufferedComponent  {
    *
    * @param pl the listener
    */
-  public void removeNeoPaintListener(com.affymetrix.genoviz.event.NeoPaintListener pl) {
-    paint_listeners.removeElement(pl);
+  public void removeNeoPaintListener(NeoPaintListener pl) {
+    paint_listeners.remove(pl);
   }
 
   /**
    * gets the objects
    * that are listening for this NeoCanvas being painted.
    *
-   * @return a vector of all the NeoPaintListeners to this NeoCanvas.
+   * @return a List of all the NeoPaintListeners to this NeoCanvas.
    */
-  public Vector getNeoPaintListeners() {
+  public List<NeoPaintListener> getNeoPaintListeners() {
     return paint_listeners;
   }
 

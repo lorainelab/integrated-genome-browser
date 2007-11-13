@@ -27,8 +27,6 @@ import com.affymetrix.genoviz.widget.tieredmap.*;
  */
 public class TieredLabelMap extends AbstractTieredMap {
 
-  static final long serialVersionUID = 1L;
-
   private Color uniform_label_color = null;
   private Color uniform_background_color = Color.gray;
   private Color uniform_outline_color = Color.black;
@@ -109,10 +107,10 @@ public class TieredLabelMap extends AbstractTieredMap {
     this.addItem(mtg);
 
     if (ontop) {
-      tiers.insertElementAt(mtg, 0);
+      tiers.add(0, mtg);
     }
     else {
-      tiers.addElement(mtg);
+      tiers.add(mtg);
     }
 
     this.packTiers(true, true);
@@ -126,7 +124,7 @@ public class TieredLabelMap extends AbstractTieredMap {
   /**
    * Make a new MapTierGlyph as a label, appropriate to the given tier.
    */
-  private MapTierGlyph makeLabelTierFor (MapTierGlyph mtg) {
+  private MapTierGlyph makeLabelTierFor(MapTierGlyph mtg) {
 
     if (mtg == null)
       return null;
@@ -156,8 +154,10 @@ public class TieredLabelMap extends AbstractTieredMap {
     labelMTG.setCoords(0, 0, 100, 30);
     labelMTG.setSelectable ( isSubSelectionAllowed() );
 
-    Vector<String> v = mtg.getMoreStrings();
-    if ( v != null ) labelMTG.setMoreStrings( v );
+    List<String> v = mtg.getMoreStrings();
+    if ( v != null ) {
+      labelMTG.setMoreStrings( v );
+    }
 
     return labelMTG;
   }
@@ -220,17 +220,20 @@ public class TieredLabelMap extends AbstractTieredMap {
     return uniform_outline_color;
   }
 
+  @Override
   public void packTiers(boolean full_repack, boolean stretch_map)  {
 
     super.packTiers(full_repack, stretch_map);
   }
 
   /** Returns true if slection of individual tiers is allowed */
+  @Override
   public boolean isSubSelectionAllowed() {
     return subSelectionAllowed;
   }
 
   /** Sets whether slection of individual tiers is allowed */
+  @Override
   public void setSubSelectionAllowed(boolean allowed) {
     subSelectionAllowed = allowed;
   }

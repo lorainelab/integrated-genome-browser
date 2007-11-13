@@ -1,11 +1,11 @@
 /**
 *   Copyright (c) 1998-2007 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -39,8 +39,6 @@ import java.util.*;
  */
 public class TieredNeoMap extends AbstractTieredMap {
 
-  static final long serialVersionUID = 1L;
-
   /**
    * @param hscroll_show     If true, TieredNeoMap uses its own horizontal scrollbar
    * @param vscroll_show     If true, TieredNeoMap uses its own vertival scrollbar
@@ -65,9 +63,8 @@ public class TieredNeoMap extends AbstractTieredMap {
    * Repacks the tiers relative to each other.
    * @param full_repack determines if a complete repack of all tiers is forced
    */
+  @Override
   public void packTiers(boolean full_repack, boolean stretch_map)  {
-    if (full_repack) {
-    }
     super.packTiers(full_repack, stretch_map);
   }
 
@@ -86,11 +83,11 @@ public class TieredNeoMap extends AbstractTieredMap {
     // without the TierEvent.ADD below
 
     if (ontop) {
-      tiers.insertElementAt(mtg, 0);
+      tiers.add(0, mtg);
       evtid = TierEvent.ADD_TOP;
     }
     else {
-      tiers.addElement(mtg);
+      tiers.add(mtg);
       evtid = TierEvent.ADD_BOTTOM;
     }
 

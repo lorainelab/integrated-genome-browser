@@ -15,8 +15,9 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Keeps track of a visible range.
@@ -27,7 +28,7 @@ public class VisibleRange implements Cloneable {
 
   private double beginning;
   private double end;
-  private Vector<NeoRangeListener> listeners = new Vector<NeoRangeListener>();
+  private List<NeoRangeListener> listeners = new ArrayList<NeoRangeListener>();
   private boolean changed = false;
   private boolean reversed = false;
 
@@ -54,12 +55,13 @@ public class VisibleRange implements Cloneable {
    * @return a copy of this object,
    * but with a new (empty) set of listeners.
    */
+  @Override
   public Object clone() {
     Object o = null;
     try {
       o = super.clone();
       VisibleRange vr = ( VisibleRange ) o;
-      vr.listeners = new Vector<NeoRangeListener>();
+      vr.listeners = new CopyOnWriteArrayList<NeoRangeListener>();
       vr.changed = false;
     } catch ( CloneNotSupportedException e ) {
     }
@@ -105,19 +107,17 @@ public class VisibleRange implements Cloneable {
     if ( this.changed |! checkIfChanged ) {
       this.changed = false; // Needs to be done before notifying listeners to avoid possible loops.
       NeoRangeEvent evt = new NeoRangeEvent( this, this.beginning, this.end );
-      Enumeration e = this.listeners.elements();
-      while ( e.hasMoreElements() ) {
-        NeoRangeListener l = ( NeoRangeListener ) e.nextElement();
+      for (NeoRangeListener l : listeners) {
         l.rangeChanged( evt );
       }
     }
   }
 
   /**
-   * @return a shallow clone of the listeners vector.
+   * @return a shallow clone of the listeners list.
    */
-  public Vector getListeners() {
-    return (Vector)listeners.clone();
+  public List<NeoRangeListener> getListeners() {
+    return new ArrayList<NeoRangeListener>(listeners);
   }
 
   public final void setBeginning( double thePlace ) {
@@ -155,17 +155,20 @@ public class VisibleRange implements Cloneable {
   }
 
   public void addListener( NeoRangeListener theListener ) {
-    if ( ! this.listeners.contains ( theListener ) ) this.listeners.addElement( theListener );
+    if ( ! this.listeners.contains ( theListener ) ) {
+      this.listeners.add(theListener);
+    }
     NeoRangeEvent evt = new NeoRangeEvent( this, this.beginning, this.end) ;
     theListener.rangeChanged(evt);
   }
 
   public void removeListener( NeoRangeListener theListener ) {
     if ( null != this.listeners && null != theListener ) {
-      this.listeners.removeElement( theListener );
+      this.listeners.remove(theListener);
     }
   }
 
+  @Override
   public String toString() {
     return this.getClass().getName() + "[" + getBeginning() + ", " + getEnd() + "]";
   }

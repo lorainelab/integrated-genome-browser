@@ -13,17 +13,16 @@
 
 package com.affymetrix.genoviz.event;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
-import java.util.Vector;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.View;
 
 /**
  * a NeoMouseEvent whose source is a {@link View} rather than a Component.
  */
 public class NeoViewMouseEvent extends NeoMouseEvent {
-
-  static final long serialVersionUID = 1L;
 
   protected View view;
 
@@ -39,6 +38,7 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
    * This contortion is needed because NeoMouseEvent and MouseEvent
    * constructors require a Component, but View is not a component.
    */
+  @Override
   public Object getSource() {
     return view;
   }
@@ -47,7 +47,8 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
     return view;
   }
 
-  public Vector getItems() {
+  @Override
+  public List<GlyphI> getItems() {
     return null;
   }
 

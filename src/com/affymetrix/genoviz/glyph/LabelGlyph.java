@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -104,6 +105,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   }
 
 
+  @Override
   public void draw(ViewI view) {
     if (this.getFont() == null || this.text == null) { return; }
     Graphics g = view.getGraphics();
@@ -167,6 +169,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    * @see #calcPixels
    * @see GlyphI#getPixelBox
    */
+  @Override
   public void calcPixels(ViewI theView) {
 
     FontMetrics fm;
@@ -217,18 +220,21 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   }
 
 
+  @Override
   public boolean intersects(Rectangle rect, ViewI view) {
     this.calcPixels(view);
     return super.intersects(rect, view);
   }
 
 
+  @Override
   public boolean intersects(Rectangle2D rect, ViewI view) {
     this.calcPixels(view);
     this.coordbox = view.transformToCoords(this.pixelbox, this.coordbox);
     return super.intersects(rect, view);
   }
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     calcPixels(view);
     coordbox = view.transformToCoords(pixelbox, coordbox);
@@ -236,6 +242,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   }
 
 
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     if (view != prev_view) {
       calcPixels(view);
@@ -263,11 +270,13 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   }
 
 
+  @Override
   public void setFont(Font f) {
     this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), f );
     setFontExtras();
   }
 
+  @Override
   public Font getFont() {
     return this.style.getFont();
   }
@@ -279,11 +288,12 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   // NOTE that new font IS created in setFont() with no arguments though...
   //   might want to set up an external_font boolean so can have it both
   //   ways...
+  // xxx
   protected void setFontExtras() {
-    Font fnt = getFont();
-    font_name = fnt.getFamily();
-    font_size = fnt.getSize();
-    font_style = fnt.getStyle();
+    Font font = getFont();
+    font_name = font.getFamily();
+    font_size = font.getSize();
+    font_style = font.getStyle();
   }
 
   public void setFontName(String name) {
@@ -412,23 +422,23 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   /**
    * We override the superclass's version of this method
    * so that we can add both the labeling (this) and labeled glyph
-   * to the pickVector.
+   * to the pick list.
    */
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D pickRect, List<GlyphI> picks,
       ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
-        pickVector.addElement(this);
-        if (null != this.labeled && !pickVector.contains(this.labeled)) {
-          pickVector.addElement(this.labeled);
+        picks.add(this);
+        if (null != this.labeled && !picks.contains(this.labeled)) {
+          picks.add(this.labeled);
         }
       }
       if (children != null)  {
         GlyphI child;
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = children.elementAt(i);
-          child.pickTraversal(pickRect, pickVector, view);
+          child = children.get(i);
+          child.pickTraversal(pickRect, picks, view);
         }
       }
     }
@@ -437,16 +447,17 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   /**
    * We override the superclass's version of this method
    * so that we can add both the labeling (this) and labeled glyph
-   * to the pickVector.
+   * to the pick list.
    */
-  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+  @Override
+  public void pickTraversal(Rectangle pickRect, List<GlyphI> picks,
       ViewI view)
   {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
-        pickVector.addElement(this);
-        if (null != this.labeled && !pickVector.contains(this.labeled)) {
-          pickVector.addElement(this.labeled);
+        picks.add(this);
+        if (null != this.labeled && !picks.contains(this.labeled)) {
+          picks.add(this.labeled);
         }
       }
       if (children != null)  {
@@ -454,8 +465,8 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
         // We avoid object creation overhead by avoiding Enumeration.
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = children.elementAt(i);
-          child.pickTraversal(pickRect, pickVector, view);
+          child = children.get(i);
+          child.pickTraversal(pickRect, picks, view);
         }
       }
     }

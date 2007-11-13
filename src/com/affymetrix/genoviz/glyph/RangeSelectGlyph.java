@@ -13,11 +13,12 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.util.Vector;
 import java.awt.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * Glyph originally intended for representing partially loaded data along an
@@ -29,8 +30,8 @@ import com.affymetrix.genoviz.bioviews.Rectangle2D;
  */
 public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
 
-  Vector primary_selections = new Vector(5, 10);
-  Vector secondary_selections = new Vector (5, 10);
+  List<Range> primary_selections = new ArrayList<Range>();
+  List<Range> secondary_selections = new ArrayList<Range>();
   boolean clip_new_ranges = false;
   Color second_color = Color.gray,
     text_color = Color.black;
@@ -42,15 +43,9 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
    * Selects a range in coordiate space.  The range will be drawn in the foreground color.  Ranges converted
    * to a secondary selection will be drawn in the color set with setSeconaryColor (default gray).
    */
-  public void selectRange ( int[] range ) {
-    if ( range.length != 2 ) throw new IllegalArgumentException ( "argument for selectRange must contain two and only two ints" );
-    if ( range[0] > range[1] ) {  // flip ranges if necessary so all have start < end
-      int temp = range[0];
-      range[0] = range[1];
-      range[1] = temp;
-    }
-    if ( range[0] < coordbox.x ) range[0] = (int)coordbox.x;
-    if ( range[1] > coordbox.x + coordbox.width ) range[1] = (int)(coordbox.x + coordbox.width);
+  public void selectRange ( Range range ) {
+    if ( range.min < coordbox.x ) range.min = (int)coordbox.x;
+    if ( range.max > coordbox.x + coordbox.width ) range.max = (int)(coordbox.x + coordbox.width);
     mergeRange ( range );
   }
 
@@ -62,13 +57,12 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
     this.clip_new_ranges = clip_new_ranges;
   }
 
-  @SuppressWarnings("unchecked")
-  private void mergeRange( int[] new_range ) {
+  private void mergeRange( Range new_range ) {
     // first, make sure that the new range doesn't overlap with old secondary selections.  Clip and separate as necessary to prevent redundancy.
-    int[] old_range;
+    Range old_range;
     if ( clip_new_ranges ) {
       for ( int i = 0; i < secondary_selections.size(); i++ ) {
-        old_range = (int[])secondary_selections.elementAt(i);
+        old_range = secondary_selections.get(i);
         /* There are four possible relationships between the old range and the new range:
          * 1) They don't intersect, so continue.
          * 2) The new range is contained entirely within the old range, return and don't add the new range
@@ -77,18 +71,18 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
          */
 
         // case 1:
-        if ( old_range[1] < new_range[0] || old_range[0] > new_range[1] ) continue;
+        if ( old_range.max < new_range.min || old_range.min > new_range.max ) continue;
         // case 2:
-        if ( new_range[0] > old_range[0] && new_range[1] < old_range[1] ) return;
+        if ( new_range.min > old_range.min && new_range.max < old_range.max ) return;
         // case 3:
-        if ( new_range[0] < old_range[0] && new_range[1] > old_range[1] ) {
-          mergeRange ( new int[] { new_range[0], old_range[0] } );
-          mergeRange ( new int[] { old_range[1], new_range[1] } );
+        if ( new_range.min < old_range.min && new_range.max > old_range.max ) {
+          mergeRange( new Range(new_range.min, old_range.min) );
+          mergeRange( new Range(old_range.max, new_range.max) );
           return;
         }
         // case 4:
-        if ( new_range[0] > old_range[0] && new_range[1] > old_range[1] ) new_range[0] = old_range[1];
-        if ( new_range[0] < old_range[0] && new_range[1] < old_range[1] ) new_range[1] = old_range[0];
+        if ( new_range.min > old_range.min && new_range.max > old_range.max ) new_range.min = old_range.max;
+        if ( new_range.min < old_range.min && new_range.max < old_range.max ) new_range.max = old_range.min;
       }
     }
     /* ok, so that's the end of avoiding collsisons with secondary selections.
@@ -97,43 +91,43 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
      * only they are dealt with slightly differently.
      */
     for ( int i = 0; i < primary_selections.size(); i++ ) {
-      old_range = (int[])primary_selections.elementAt(i);
+      old_range = (Range)primary_selections.get(i);
       // case 1:
-      if ( old_range[1] < new_range[0] || old_range[0] > new_range[1] ) continue;
+      if ( old_range.max < new_range.min || old_range.min > new_range.max ) continue;
       // case 2:
-      if ( new_range[0] > old_range[0] && new_range[1] < old_range[1] ) return;
+      if ( new_range.min > old_range.min && new_range.max < old_range.max ) return;
       // case 3:
-      if ( new_range[0] < old_range[0] && new_range[1] > old_range[1] ) {
-        primary_selections.removeElementAt ( i );
-        primary_selections.addElement( new_range );
+      if ( new_range.min < old_range.min && new_range.max > old_range.max ) {
+        primary_selections.remove( i );
+        primary_selections.add( new_range );
         return;
       }
       // case 4:
-      if ( new_range[0] > old_range[0] && new_range[1] > old_range[1] ) {
-        old_range[1] = new_range[1];
+      if ( new_range.min > old_range.min && new_range.max > old_range.max ) {
+        old_range.max = new_range.max;
         return;
       }
-      if ( new_range[0] < old_range[0] && new_range[1] < old_range[1] ) {
-        old_range[0] = new_range[0];
+      if ( new_range.min < old_range.min && new_range.max < old_range.max ) {
+        old_range.min = new_range.min;
         return;
       }
     }
-    primary_selections.addElement ( new_range );
+    primary_selections.add( new_range );
   }
 
   /**
-   * @return a Vector of int[]'s that represent the coordinates (in coordinate space,
+   * @return a List of Range's that represent the coordinates (in coordinate space,
    * not pixel space) of the primary selections
    */
-  public Vector getPrimarySelections() {
+  public List<Range> getPrimarySelections() {
     return primary_selections;
   }
 
   /**
-   * @return a Vector of int[]'s that represent the coordinates (in coordinate space,
+   * @return a List of Range's that represent the coordinates (in coordinate space,
    * not pixel space) of the secondary selections
    */
-  public Vector getSecondarySelections() {
+  public List<Range> getSecondarySelections() {
     return secondary_selections;
   }
 
@@ -143,22 +137,22 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   @SuppressWarnings("unchecked")
   public void convertRanges () {
     secondary_selections.addAll(primary_selections);
-    primary_selections.removeAllElements();
+    primary_selections.clear();
   }
 
   /**
    * Clears all primary selections
    */
   public void clearPrimarySelections() {
-    primary_selections.removeAllElements();
+    primary_selections.clear();
   }
 
   /**
    * Deselects all primary/secondary ranges set with selectRange()
    */
   public void clearRanges() {
-    primary_selections.removeAllElements();
-    secondary_selections.removeAllElements();
+    primary_selections.clear();
+    secondary_selections.clear();
   }
 
   /**
@@ -176,26 +170,27 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
     return text_color;
   }
 
+  @Override
   public void draw ( ViewI view ) {
     super.draw ( view );
     Graphics g = view.getGraphics();
     Rectangle2D select_rect = new Rectangle2D();
-    int[] range;
+    Range range;
     select_rect.y = coordbox.y;
     select_rect.height = coordbox.height;
     g.setColor ( second_color );
     for ( int i = 0; i < secondary_selections.size(); i++ ) {
-      range = (int[])secondary_selections.elementAt ( i );
-      select_rect.x = range[0];
-      select_rect.width = range[1] - range[0];
+      range = (Range)secondary_selections.get ( i );
+      select_rect.x = range.min;
+      select_rect.width = range.max - range.min;
       view.transformToPixels ( select_rect, pixelbox );
       g.fillRect ( pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height );
     }
     g.setColor ( getForegroundColor() );
     for ( int i = 0; i < primary_selections.size(); i++ ) {
-      range = (int[])primary_selections.elementAt ( i );
-      select_rect.x = range[0];
-      select_rect.width = range[1] - range[0];
+      range = (Range)primary_selections.get ( i );
+      select_rect.x = range.min;
+      select_rect.width = range.max - range.min;
       view.transformToPixels ( select_rect, pixelbox );
       // if select_rect is at least 1 coordinate value wide,
       // then make sure the pixelbox is at least 1 pixel wide
@@ -236,6 +231,7 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
 
   public String getText() { return text; }
 
+  @Override
   public void setFont(java.awt.Font f) { font = f; }
 
   public void setText(java.lang.String str) { text = str; }

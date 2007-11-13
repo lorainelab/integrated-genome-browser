@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,16 +16,18 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DragMonitor
 implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
   NeoCanvas can;
-  Vector<NeoDragListener> listeners = new Vector<NeoDragListener>();
+  List<NeoDragListener> listeners = new CopyOnWriteArrayList<NeoDragListener>();
   boolean already_dragging_outside = false;
 
   protected NeoTimerEventClock timer = null;
@@ -99,21 +101,21 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
     if (!(arg instanceof Integer)) { return; }
     int direction = ((Integer)arg).intValue();
     NeoDragEvent new_event = new NeoDragEvent(this, direction);
-    for (int i=0; i<listeners.size(); i++) {
-      listeners.elementAt(i).heardDragEvent(new_event);
+    for (NeoDragListener listener : listeners) {
+      listener.heardDragEvent(new_event);
     }
     time_count++;
   }
 
   public void addDragListener(NeoDragListener listener) {
-    listeners.addElement(listener);
+    listeners.add(listener);
   }
 
   public void removeDragListener(NeoDragListener listener) {
-    listeners.removeElement(listener);
+    listeners.remove(listener);
   }
 
-  public Vector getDragListeners() {
+  public List<NeoDragListener> getDragListeners() {
     return listeners;
   }
 

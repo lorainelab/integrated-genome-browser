@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
@@ -37,6 +38,7 @@ import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * NeoMap is the <strong>implementation</strong> of NeoMapI.
@@ -87,10 +89,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   // not sure if foreground is used at all at the moment...
   protected static Color default_panel_foreground = Color.darkGray;
 
-  // a vector of axes added to the map
+  // a List of axes added to the map
   // this is maintained in order to stretch them
   // when the range coords of the map change.
-  private Vector<AxisGlyph> axes = new Vector<AxisGlyph>();
+  private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
 
   // fields for map glyph factories
   // a hashtable to map name strings to MapGlyphFactories
@@ -114,8 +116,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   boolean drag_scrolling_enabled = false;
 
   protected int selectionMethod = NO_SELECTION;
-  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
-  protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+  protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+  protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
   /**
    * Constructs a horizontal NeoMap with scrollbars.
@@ -131,8 +133,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    *  <p>  What is shared between the rootmap and the new map:
    *  <ul>
    *  <li> scene
-   *  <li> selected Vector
-   *  <li> axes Vector
+   *  <li> selected List
+   *  <li> axes List
    *  <li> glyph_hash
    *  <li> model_hash
    *  <li> selection appearance (by way of scene)
@@ -574,7 +576,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     if (axes != null) {
       for (int i=0; i<axes.size(); i++) {
-        axes.elementAt(i).rangeChanged(); // notify the axis of the range change.
+        axes.get(i).rangeChanged(); // notify the axis of the range change.
       }
     }
 
@@ -838,7 +840,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
     axis.setForegroundColor(Color.black);
     scene.getGlyph().addChild(axis);
-    axes.addElement(axis);
+    axes.add(axis);
     return axis;
   }
 
@@ -1007,7 +1009,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     scene.removeGlyph(gl);
     glyph_hash.remove(gl);
 
-    selected.removeElement(gl);
+    selected.remove(gl);
 
     Object model = gl.getInfo();
     if (model != null) {
@@ -1015,23 +1017,24 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       if (item2 == gl) {
         model_hash.remove(model);
       }
-      else if (item2 instanceof Vector) {
-        ((Vector)item2).removeElement(gl);
+      else if (item2 instanceof List) {
+        ((List)item2).remove(gl);
       }
     }
 
   }
 
-  public void removeItem(Vector vec) {
+  public void removeItem(List<GlyphI> vec) {
     /*
-     * Remove from end of child Vector instead of beginning! -- that way, won't
-     * get issues with trying to access elements off end of Vector as
-     * Vector shrinks during removal, if Vector is actually one of map/glyph/etc.
-     * internal Vectors
+     * Remove from end of child List instead of beginning! -- that way, won't
+     * get issues with trying to access elements off end of List as
+     * List shrinks during removal, if List is actually one of map/glyph/etc.
+     * internal Lists
      */
+    // xxx
     int count = vec.size();
     for (int i=count-1; i>=0; i--) {
-      GlyphI g = (GlyphI)vec.elementAt(i);
+      GlyphI g = vec.get(i);
       if (null != g) {
         removeItem(g);
       }
@@ -1063,7 +1066,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     model_hash = new Hashtable<Object,Object>();
 
     // reset axes
-    axes.removeAllElements();
+    axes.clear();
 
     // remove all the transient glyphs.
     scene.removeAllTransients();
@@ -1167,14 +1170,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     if ( gl.isSelected() ) { // Selection was not suppressed by an unselectable glyph!
       if (!(selected.contains(gl))) {
-        selected.addElement(gl);
+        selected.add(gl);
       }
     }
   }
 
-  public void select(Vector glyphs, int start, int end) {
-    for (int i=0; i<glyphs.size(); i++) {
-      select((GlyphI)glyphs.elementAt(i), start, end);
+  public void select(List<GlyphI> glyphs, int start, int end) {
+    for (GlyphI g : glyphs) {
+      select(g, start, end);
     }
   }
 
@@ -1492,21 +1495,21 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
           ON_MOUSE_DOWN == selectionMethod) ||
         (id == NeoMouseEvent.MOUSE_RELEASED &&
          ON_MOUSE_UP == selectionMethod)) {
-        Vector prev_items = this.getSelected();
+        List<GlyphI> prev_items = this.getSelected();
         int prev_items_size = prev_items.size();
         if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {
           this.deselect(prev_items);
         }
-        Vector<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
+        List<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
         if (candidates.size() > 0 && (shiftDown || controlDown)) {
 
-          Vector<GlyphI> in = new Vector<GlyphI>(), out = new Vector<GlyphI>();
+          List<GlyphI> in = new ArrayList<GlyphI>(), out = new ArrayList<GlyphI>();
           for (GlyphI obj : candidates) {
             if (prev_items.contains(obj)) {
-              out.addElement(obj);
+              out.add(obj);
             }
             else {
-              in.addElement(obj);
+              in.add(obj);
             }
             if (0 < out.size()) {
               this.deselect(out);
@@ -1534,8 +1537,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       NeoViewBoxChangeEvent vevt =
         new NeoViewBoxChangeEvent(this, e.getCoordBox());
 
-      for (int i=0; i<viewbox_listeners.size(); i++) {
-        viewbox_listeners.elementAt(i).viewBoxChanged(vevt);
+      for (NeoViewBoxListener nvbl : viewbox_listeners) {
+        nvbl.viewBoxChanged(vevt);
       }
     }
     if (range_listeners.size() > 0) {
@@ -1548,8 +1551,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
           nevt = new NeoRangeEvent(this, vbox.x, vbox.x + vbox.width);
       }
 
-      for (int i=0; i<range_listeners.size(); i++) {
-        range_listeners.elementAt(i).rangeChanged(nevt);
+      for (NeoRangeListener rl : range_listeners) {
+        rl.rangeChanged(nevt);
         // currently range events are generated for _any_ viewbox change
         //    event, so sometimes the range may not actually have changed,
         //    might be only "offset" that is changing
@@ -1564,30 +1567,30 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         new NeoRubberBandEvent(this, e.getID(), e.getWhen(), e.getModifiers(),
                                e.getX(), e.getY(), e.getClickCount(),
                                e.isPopupTrigger(), e.getRubberBand());
-      for (int i=0; i<rubberband_listeners.size(); i++) {
-        rubberband_listeners.elementAt(i).rubberBandChanged(nevt);
+      for (NeoRubberBandListener rbl : rubberband_listeners) {
+        rbl.rubberBandChanged(nevt);
       }
     }
   }
 
   public void addViewBoxListener(NeoViewBoxListener l) {
     if (!viewbox_listeners.contains(l)) {
-      viewbox_listeners.addElement(l);
+      viewbox_listeners.add(l);
     }
   }
 
   public void removeViewBoxListener(NeoViewBoxListener l) {
-    viewbox_listeners.removeElement(l);
+    viewbox_listeners.remove(l);
   }
 
   public void addRangeListener(NeoRangeListener l) {
     if (!range_listeners.contains(l)) {
-      range_listeners.addElement(l);
+      range_listeners.add(l);
     }
   }
 
   public void removeRangeListener(NeoRangeListener l) {
-    range_listeners.removeElement(l);
+    range_listeners.remove(l);
   }
 
 

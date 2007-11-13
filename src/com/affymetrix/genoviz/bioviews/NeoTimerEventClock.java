@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,10 +13,11 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.util.Vector;
-
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 
 /**
  *  A timer thread that generates NeoTimerEvents at specified intervals.
@@ -56,7 +57,7 @@ public class NeoTimerEventClock extends Thread {
   //   absolute, relative, or both...
 
   // standard listener list for events
-  protected Vector<NeoTimerListener> listeners = new Vector<NeoTimerListener>();
+  protected List<NeoTimerListener> listeners = new CopyOnWriteArrayList<NeoTimerListener>();
 
   public NeoTimerEventClock(int time_interval) {
     this.time_interval = time_interval;
@@ -75,6 +76,7 @@ public class NeoTimerEventClock extends Thread {
     this.arg = arg;
   }
 
+  @Override
   public void run() {
     try {
       sleep(initial_interval);
@@ -131,15 +133,9 @@ public class NeoTimerEventClock extends Thread {
    *   up a TimerEventPoster object, which in turn invokes this method
    *   when its turn comes up on the event dispatch queue
    */
-  public void postTimerEvent(Object src, int cnt) {
-    int num_listeners = listeners.size();
-    if (num_listeners <= 0) {
-      return;
-    }
+  public void postTimerEvent(Object src, int count) {
     NeoTimerEvent nte = new NeoTimerEvent(src, arg, count);
-    NeoTimerListener listener;
-    for (int i=0; i<listeners.size(); i++) {
-      listener = listeners.elementAt(0);
+    for (NeoTimerListener listener : listeners) {
       listener.heardTimerEvent(nte);
     }
   }
@@ -152,14 +148,14 @@ public class NeoTimerEventClock extends Thread {
   }
 
   public void addTimerListener(NeoTimerListener ntl) {
-    listeners.addElement(ntl);
+    listeners.add(ntl);
   }
 
   public void removeTimerListener(NeoTimerListener ntl) {
-    listeners.removeElement(ntl);
+    listeners.remove(ntl);
   }
 
-  public Vector getTimerListeners() {
+  public List<NeoTimerListener> getTimerListeners() {
     return listeners;
   }
 

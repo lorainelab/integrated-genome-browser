@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -30,7 +30,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 
   boolean STRETCH_HORIZONTAL = true;
   boolean STRETCH_VERTICAL = true;
-  boolean USE_NEW_PACK = true;
+  boolean USE_NEW_PACK = true; // xxx
   boolean use_search_nodes = false;
 
   /**
@@ -188,7 +188,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
   }
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Vector<GlyphI> sibs;
+    java.util.List<GlyphI> sibs;
     GlyphI child;
 
     sibs = parent.getChildren();
@@ -207,14 +207,14 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     // BUT, this is probably NOT THREADSAFE!!!
     // (if for example another thread was adding / removing glyphs from the parent...)
     //
-    // might be more threadsafe to make a new pack(parent, child, view, vector) method
-    //   that can take a vector argument to use as children to check against, rather than
-    //   always checking against all the children of parent?  And then make a new vector
+    // might be more threadsafe to make a new pack(parent, child, view, list) method
+    //   that can take a list argument to use as children to check against, rather than
+    //   always checking against all the children of parent?  And then make a new list
     //   and keep adding to it rather than removing all the children like current solution
     //      [but then what to do about using glyph searchnodes?]
     //
     // an easier (but probably less efficient) way to make this threadsafe is to
-    //    synchronize on the children glyph Vector (sibs), so that no other thread
+    //    synchronize on the children glyph List (sibs), so that no other thread
     //    can muck with it while children are being removed then added back in this array
     //    However, this may become even less efficient depending on what the performance
     //    hit is for sorting the glyphs into GlyphSearchNodes as they are being added
@@ -222,14 +222,14 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     //
     // trying synchronization to ensure this method is threadsafe
     if (USE_NEW_PACK) {
-      synchronized(sibs) {  // testing synchronizing on sibs vector...
-        GlyphI[] sibarray = new GlyphI[sibs.size()];
-        sibs.copyInto(sibarray);
-        sibs.removeAllElements(); // sets parent.getChildren() to empty Vector
+      synchronized(sibs) {  // testing synchronizing on sibs List...
+        GlyphI[] sibarray = sibs.toArray(new GlyphI[sibs.size()]);
+
+        sibs.clear();
         int sibs_size = sibarray.length;
         for (int i=0; i<sibs_size; i++) {
           child = sibarray[i];
-          sibs.addElement(child);  // add children back in one at a time
+          sibs.add(child);  // add children back in one at a time
           pack(parent, child, view);
           if (DEBUG_CHECKS)  { System.out.println(child); }
         }
@@ -238,7 +238,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     else {  // old way
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-        child = sibs.elementAt(i);
+        child = sibs.get(i);
 
         // MUST CALL moveAbsolute!!!
         // setCoords() does not guarantee that coord changes will recurse
@@ -264,19 +264,19 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     Rectangle2D newbox = new Rectangle2D();
     Rectangle2D tempbox = new Rectangle2D();
-    child = sibs.elementAt(0);
+    child = sibs.get(0);
     newbox.reshape(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-        child = sibs.elementAt(i);
+        child = sibs.get(i);
         GeometryUtils.union(newbox, child.getCoordBox(), newbox);
       }
     }
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-        child = sibs.elementAt(i);
+        child = sibs.get(i);
         Rectangle2D childbox = child.getCoordBox();
         tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
@@ -284,7 +284,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
-        child = sibs.elementAt(i);
+        child = sibs.get(i);
         Rectangle2D childbox = child.getCoordBox();
         tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
@@ -318,23 +318,23 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     }
     childbox = child.getCoordBox();
 
-    Vector<? extends GlyphI> sibs = parent.getChildren();
+    java.util.List<? extends GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
 
-    Vector<GlyphI> sibsinrange;
+    java.util.List<GlyphI> sibsinrange;
 
     if (parent instanceof MapTierGlyph && use_search_nodes) {
       sibsinrange = ((MapTierGlyph)parent).getOverlappingSibs(child);
     }
     else {
-      sibsinrange = new Vector<GlyphI>();
+      sibsinrange = new ArrayList<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-        GlyphI sibling = (GlyphI)sibs.elementAt(i);
+        GlyphI sibling = sibs.get(i);
         siblingbox = sibling.getCoordBox();
         if (!(siblingbox.x > (childbox.x+childbox.width) ||
               ((siblingbox.x+siblingbox.width) < childbox.x)) ) {
-          sibsinrange.addElement(sibling);
+          sibsinrange.add(sibling);
         }
       }
       if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }
@@ -349,7 +349,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = sibsinrange.elementAt(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
         if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

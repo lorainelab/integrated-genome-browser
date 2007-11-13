@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.util.Vector;
+import java.util.List;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -25,6 +25,8 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 
 
 // as long as moveRelative and moveAbsolute are used for moving the
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 // tier, coords of MapTierGlyph should continue to encompass all of its
 // children since it inherits from StretchContainerGlyph
 //
@@ -42,13 +44,14 @@ import com.affymetrix.genoviz.util.GeometryUtils;
  */
 public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
-  private Vector<TierStateChangeListener> tierStateChangeListeners = new Vector<TierStateChangeListener>();
+  private List<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArrayList<TierStateChangeListener>();
 
     /**
      *  If hidden, the MapTierGlyph height is 0 coords
      *  Effectively the MapTierGlyph and all its children are not shown at
      *  all
      */
+    // xxx
     public static final int HIDDEN = 100;
 
     /**
@@ -107,7 +110,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   protected boolean showLabel = true;
   protected boolean hitable = false;
   protected boolean hideable = true;
-  protected Vector<String> moreStrings;
+  protected List<String> moreStrings;
   protected int label_spacing = -1;
   protected int strand = STRAND_INSENSITIVE;
 
@@ -146,58 +149,56 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   /** Remove all children of the glyph */
 
   public void removeChildren () {
-    Vector kids = this.getChildren();
+    List<GlyphI> kids = this.getChildren();
 
     if (kids != null) {
-      for (int i=0; i < kids.size(); i++)
-        this.removeChild((GlyphI)kids.elementAt(i));
+      for (int i=0; i < kids.size(); i++) {
+        this.removeChild(kids.get(i));        
+      }
     }
     gsn.removeChildren();
-    // CLH: This is a hack. Instead of removing gsn,
-    // I just assign a new one. Is this a massive leak???
-    //
-    // EEE: Yes, so I added the gsn.removeChildren() to help.
     gsn = new GlyphSearchNode();
   }
 
-  public Vector<GlyphI> getOverlappingSibs(GlyphI child) {
+  public List<GlyphI> getOverlappingSibs(GlyphI child) {
     return gsn.getOverlaps(child);
   }
 
   /**
-   * @return a clone of the moreStrings vector, used with TieredLabelMap.
+   * @return a clone of the moreStrings List, used with TieredLabelMap.
    */
   @SuppressWarnings("unchecked")
-  public Vector<String> getMoreStrings() {
-    if ( this.moreStrings == null ) moreStrings = new Vector<String>();
-    return (Vector<String>) this.moreStrings.clone();
+  public List<String> getMoreStrings() {
+    if ( this.moreStrings == null ) {
+      moreStrings = new ArrayList<String>();
+    }
+    return new ArrayList<String>(moreStrings);
   }
 
   /**
-   * @param theStrings replaces the moreStrings vector.
+   * @param theStrings replaces the moreStrings List.
    * No clone is made.
    * This may not be entirely safe
    * and differs in strategy from the getMoreStrings method
    * which does make a clone.
    * @see #getMoreStrings
    */
-  public void setMoreStrings( Vector<String> theStrings ) {
+  public void setMoreStrings( List<String> theStrings ) {
     this.moreStrings = theStrings;
   }
 
+  @Override
   protected void drawChildren(ViewI view) {
     if (children != null)  {
-      GlyphI child;
       Rectangle compbox = view.getComponentSizeRect();
       GeometryUtils.intersection(compbox, pixelbox, pixelbox);
       Rectangle2D cbox = new Rectangle2D();
       view.transformToCoords(pixelbox, cbox);
       double a = cbox.x;
       double b = cbox.x + cbox.width;
-      java.util.Vector children_in_range = gsn.getOverlappingGlyphs(a, b);
+      java.util.List<GlyphI> children_in_range = gsn.getOverlappingGlyphs(a, b);
       int j_size = children_in_range.size();
-      for (int j=0; j<j_size; j++) {
-        child = (GlyphI) children_in_range.elementAt(j);
+      for (GlyphI child : children_in_range) {
         // TransientGlyphs are usually NOT drawn in standard drawTraversal
         if (drawTransients() || !(child instanceof TransientGlyph)) {
           child.drawTraversal(view);
@@ -259,10 +260,10 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
       g.drawString(label, textXPos, textYPos);
       if ( moreStrings != null ) {
         if ( label_spacing == -1 ) label_spacing = fontSize + 2;
-        for (int i = 0; i < moreStrings.size(); i++) {
+        for (String s : moreStrings) {
           textYPos += label_spacing;
           if ( textYPos >= bottom ) break;
-          g.drawString (moreStrings.elementAt(i), textXPos, textYPos);
+          g.drawString (s, textXPos, textYPos);
         }
       }
     }
@@ -278,8 +279,10 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   }
 
   public void addLineToLabel ( String s ) {
-    if ( moreStrings == null ) moreStrings = new Vector<String>();
-    moreStrings.addElement( s );
+    if ( moreStrings == null ) {
+      moreStrings = new ArrayList<String>();
+    }
+    moreStrings.add( s );
   }
 
   public PackerI getExpandedPacker() {
@@ -526,24 +529,23 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
    * for use in cleaning up references to facilitate gc'ing.
    */
   public void removeAllTierStateChangeListeners() {
-    tierStateChangeListeners.removeAllElements();
+    tierStateChangeListeners.clear();
   }
 
   /** Add a TierStateChangeListener to the audience. */
   public synchronized void addTierStateChangeListener(TierStateChangeListener tl) {
-    tierStateChangeListeners.addElement(tl);
+    tierStateChangeListeners.add(tl);
   }
 
   /** Remove a TierStateChangeListener from the audience. */
   public synchronized void removeTierStateChangeListener(TierStateChangeListener tl) {
-    tierStateChangeListeners.removeElement(tl);
+    tierStateChangeListeners.remove(tl);
   }
 
   /** Tell all listeners of a TierStateChangeEvent. */
   public synchronized void notifyTierStateChangeListeners(TierStateChangeEvent evt) {
-    int tot = tierStateChangeListeners.size();
-    for (int i=0; i < tot; i++) {
-      (tierStateChangeListeners.elementAt(i)).heardTierStateChangeEvent(evt);
+    for (TierStateChangeListener t : tierStateChangeListeners) {
+      t.heardTierStateChangeEvent(evt);
     }
   }
 

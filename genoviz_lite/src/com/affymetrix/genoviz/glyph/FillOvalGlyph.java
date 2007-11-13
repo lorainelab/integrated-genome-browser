@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  */
 public class FillOvalGlyph extends SolidGlyph  {
 
+  @Override
   public void draw(ViewI view) {
     calcPixels(view);
     if (pixelbox.width == 0) { pixelbox.width = 1; }

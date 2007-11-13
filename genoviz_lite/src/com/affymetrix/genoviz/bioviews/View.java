@@ -106,7 +106,7 @@ public class View implements ViewI, NeoPaintListener,
   protected NeoCanvas component;
 
   protected Rectangle2D coordbox;
-  protected Graphics graphics;
+  protected Graphics2D graphics;
   protected boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck;
   protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
@@ -137,7 +137,7 @@ public class View implements ViewI, NeoPaintListener,
   protected Rectangle2D prevCalcCoordBox;
   protected Rectangle2D prevCoordBox;
   protected Image bufferImage;
-  protected Graphics bufferGraphics;
+  protected Graphics2D bufferGraphics;
   protected Dimension bufferSize;
   protected boolean firstScrollOptimizedDraw = true;
   protected boolean firstDamageOptimizedDraw = true;
@@ -343,7 +343,7 @@ public class View implements ViewI, NeoPaintListener,
     scene_coordbox = scene.getCoordBox();
     scene_pixelbox = transformToPixels(scene_coordbox, scene_pixelbox);
 
-    Graphics tempGraphics = null;
+    Graphics2D tempGraphics = null;
     if (isBuffered()) {
       if (DEBUG_BUFFERED) {
         System.out.println("view is buffered");
@@ -353,7 +353,7 @@ public class View implements ViewI, NeoPaintListener,
           (component_size.height != bufferSize.height)) {
         setComponent(component);
       }
-      bufferGraphics = bufferImage.getGraphics();
+      bufferGraphics = (Graphics2D) bufferImage.getGraphics();
       tempGraphics = getGraphics();
       setGraphics(bufferGraphics);
     }
@@ -863,15 +863,15 @@ public class View implements ViewI, NeoPaintListener,
     return full_view;
   }
 
-  public void setGraphics(Graphics g)  {
+  public void setGraphics(Graphics2D g)  {
     graphics = g;
   }
 
-  public Graphics getGraphics()  {
+  public Graphics2D getGraphics()  {
     if (graphics == null && component != null)  {
       // Not sure if this is a good idea -- forcing this wreaks havoc
       //   on the updates... -- Gregg
-      setGraphics(component.getGraphics());
+      setGraphics((Graphics2D) component.getGraphics());
     }
     return graphics;
   }

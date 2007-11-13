@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -60,15 +60,13 @@ public interface ViewI  {
 
   /**
    * Set the Graphics that this view should draw on.
-   * (will move to implementation rather than interface in next release)
    */
-  public void setGraphics(Graphics g);
+  public void setGraphics(Graphics2D g);
 
   /**
-   * Get the Graphics that this view should draw on
-   * (will move to implementation rather than interface in next release)
+   * Get the Graphics that this view should draw on.
    */
-  public Graphics getGraphics();
+  public Graphics2D getGraphics();
 
   // (should really be rewritten to take advantage of
   // com.affymetrix.genoviz.util.GeometryUtils class)

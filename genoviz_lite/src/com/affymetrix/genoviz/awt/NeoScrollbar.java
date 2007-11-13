@@ -30,16 +30,12 @@ import com.affymetrix.genoviz.bioviews.NeoTimerEventClock;
  */
 public class NeoScrollbar extends NeoBufferedComponent
 implements Adjustable, NeoTimerListener {
-  static final long serialVersionUID = 1L;
 
   private static final boolean debug = false;
 
   protected boolean color_thumb_foreground = false;
   protected boolean gutter_scroll = true;
   protected boolean send_events = false; // see #setSendEvents(boolean);
-
-  public static int HORIZONTAL = 0;
-  public static int VERTICAL = 1;
 
   protected static final int NO_SELECTION = 2;
   protected static final int THUMB = 3;
@@ -116,6 +112,7 @@ implements Adjustable, NeoTimerListener {
    * Use <code>setBounds(int, int, int, int)</code> (but override reshape).
    */
   @Deprecated
+  @Override
   public void reshape(int new_x, int new_y, int new_width, int new_height) {
 
     super.reshape(new_x, new_y, new_width, new_height);
@@ -324,17 +321,10 @@ implements Adjustable, NeoTimerListener {
   /**
    *  Paints directly onto the specified Graphics.
    */
+  @Override
   public void directPaint(Graphics g)  {
-    // Don't try to paint if Dimension or Graphic is null -- this happens
-    //   in some JVM's, and will cause NullPointerExceptions if not
-    //   checked for
-
-    // Hmm... for some reason, null Graphics are slipping through
-    //   even though we are doing a null check!
-    // However, can check for Dimension width or height being 0 (which
-    //   seems to always be associated with null Graphics) and return before
-    //   trying to draw to the Graphics if either == 0
-
+    // Don't try to paint if Dimension or Graphic is null or 0 size.
+    // This happens in some JVM's.
     if (g == null) { return; }
     Dimension d = getSize();
     if (d == null) { return; }
@@ -386,10 +376,12 @@ implements Adjustable, NeoTimerListener {
     }
   }
 
+  @Override
   public void processMouseEvent(MouseEvent e) {
     heardMouseEvent(e);
   }
 
+  @Override
   public void processMouseMotionEvent(MouseEvent e) {
     heardMouseEvent(e);
   }
@@ -397,20 +389,7 @@ implements Adjustable, NeoTimerListener {
   public void heardMouseEvent(MouseEvent e) {
     int id = e.getID();
 
-    // GAH 12-7-98
-    // Think I've figured out bug where NeoScrollbar is "jumpy" on
-    //   thumb drags.  This happens sometimes when click on thumb, drag
-    //   outside of scrollbar, then drag back into scrollbar -- thumb
-    //   can "jump" over farther to the left than it should
-    //
-    // looks like their is a bug in some JVMs in reporting correct pixel
-    // values in MOUSE_ENTER and MOUSE_EXIT Events -- ends up reporting
-    // pixel position relative to parent container (pixel 0, 0 at upper left
-    // corner of container) rather than relative to NeoScrollbar itself
-    // (pixel 0, 0, at upper left corner of NeoScrollbar).  This in turn is
-    // causing prevx/prevy to be set incorrectly.  Tentative solution is
-    // to completely ignore MOUSE_ENTER/MOUSE_EXIT events
-
+    // completely ignore MOUSE_ENTER/MOUSE_EXIT events
     if (id == MouseEvent.MOUSE_ENTERED || id == MouseEvent.MOUSE_EXITED) {
       return;
     }
@@ -594,6 +573,7 @@ implements Adjustable, NeoTimerListener {
     return;
   }
 
+  @Override
   public void repaint() {
     if (debug) {
       repaint_tick++;
@@ -713,6 +693,7 @@ implements Adjustable, NeoTimerListener {
    * @deprecated Use getPreferredSize().
    */
   @Deprecated
+  @Override
   public Dimension preferredSize() {
     if ( HORIZONTAL == this.orientation ) {
       return new Dimension( 2 * arrow_width + thumb_pixel_size_min, arrow_width );

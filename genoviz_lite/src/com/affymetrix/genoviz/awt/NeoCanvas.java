@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.event.NeoPaintListener;
  * and to provide double buffering
  */
 public class NeoCanvas extends NeoBufferedComponent  {
-  static final long serialVersionUID = 1L;
   public boolean DEBUG_BOUNDS = false;
   public boolean debug = false;
   protected boolean dragging_outside = false;
@@ -44,7 +43,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
    * @param g the specified Graphics object
    * @see #update
    */
-  public void directPaint(Graphics g)  {
+  public void directPaint(Graphics2D g)  {
       if (debug)  {
           System.out.println("----------- in NeoCanvas.directPaint() -----------");
       }
@@ -121,6 +120,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
    * in Tab and Shift-Tab keyboard focus traversal.
    */
   @Deprecated
+  @Override
   public boolean isFocusTraversable() {
     return focus_traversable;
   }
@@ -129,6 +129,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
    *  Overriding processMouseEvent to give NeoCanvas the focus on
    *  mouse press over it
    */
+  @Override
   public void processMouseEvent(MouseEvent e) {
     if (e.getID() == MouseEvent.MOUSE_PRESSED && grab_focus_on_click) {
       this.requestFocus();

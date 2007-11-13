@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -39,7 +39,7 @@ public interface SceneI {
    * @see #getSelectionAppearance
    */
   public static final int SELECT_NONE = 100;
-
+  
   /**
    * distinguish selected glyph
    * from non-selected glyphs
@@ -92,8 +92,6 @@ public interface SceneI {
    */
   public int getSelectionAppearance();
 
-  // needed in interface for Glyph implementation
-  // (could remove by specifying Scene in glyph...)
   /**
    * return color for selected glyphs within this scene
    */
@@ -115,50 +113,37 @@ public interface SceneI {
   public void removeView(ViewI view);
 
   /**
-   *  Return a Vector of all views onto the scene
+   *  Return a Vector of all views onto the scene.
    */
   public Vector getViews();
 
   /**
-   *  Draw all the views of this scene
+   *  Draw all the views of this scene.
    */
   public void draw();  // draw all views on all canvases
 
   /**
-   *  Draw a particular view of this scene
+   *  Draw a particular view of this scene.
    */
   public void draw(ViewI v);  // draw one view
 
   /**
    *  Draw all the views of this scene that use Component c.
    */
-  public void draw(Component c, Graphics g); // draw one canvas
-   //  (maybe this should be implementation, not interface?)
+  public void draw(Component c, Graphics2D g);
 
   /**
-   *  Add a glyph to the scene
+   *  Add a glyph to the scene.
    */
   public void addGlyph(GlyphI glyph);
 
   /**
-   *  Insert a glyph into the top level of the glyph hierarchy at position i
+   *  Insert a glyph into the top level of the glyph hierarchy at position i.
    */
   public void addGlyph(GlyphI glyph, int i);
 
   /**
-   *  return the coordinate bounds of the entire scene
+   *  Return the coordinate bounds of the entire scene.
    */
   public Rectangle2D getCoordBox();
-
-
-  // Styles are not yet implemented
-  //    public void setStyle(StyleI style);
-  //    public StyleI getStyle();
-
-  // Scenes will need protected methods such as the following:
-  //    protected void addGroup();
-  // Scenes will need public methods such as the following:
-  //    public Object addThisData (DataType data)
-  //             { return (Object) new myGlyph(); }
-
 }

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -263,32 +263,38 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     // override in subclasses!
   }
 
+  @Override
   public void addMouseListener(MouseListener l) {
     if (!mouse_listeners.contains(l)) {
       mouse_listeners.addElement(l);
     }
   }
 
+  @Override
   public void removeMouseListener(MouseListener l) {
     mouse_listeners.removeElement(l);
   }
 
+  @Override
   public void addMouseMotionListener(MouseMotionListener l) {
     if (!mouse_motion_listeners.contains(l)) {
       mouse_motion_listeners.addElement(l);
     }
   }
 
+  @Override
   public void removeMouseMotionListener(MouseMotionListener l) {
     mouse_motion_listeners.removeElement(l);
   }
 
+  @Override
   public void addKeyListener(KeyListener l) {
     if (!key_listeners.contains(l)) {
       key_listeners.addElement(l);
     }
   }
 
+  @Override
   public void removeKeyListener(KeyListener l) {
     key_listeners.removeElement(l);
   }
@@ -316,13 +322,13 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
         KeyListener kl;
         for (int i=0; i<key_listeners.size(); i++) {
           kl = key_listeners.elementAt(i);
-          if (id == e.KEY_PRESSED) {
+          if (id == KeyEvent.KEY_PRESSED) {
             kl.keyPressed(nevt);
           }
-          else if (id == e.KEY_RELEASED) {
+          else if (id == KeyEvent.KEY_RELEASED) {
             kl.keyReleased(nevt);
           }
-          else if (id == e.KEY_TYPED) {
+          else if (id == KeyEvent.KEY_TYPED) {
             kl.keyTyped(nevt);
           }
         }
@@ -341,19 +347,23 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
    *  @deprecated use {@link #setBounds(int,int,int,int)}.
    */
   @Deprecated
+  @Override
   public void reshape(int x, int y, int width, int height) {
     pref_widg_size.setSize(width, height);
     super.reshape(x, y, width, height);
   }
 
+  @Override
   public Dimension getPreferredSize() {
     return pref_widg_size;
   }
 
+  @Override
   public void setPreferredSize(Dimension d) {
     pref_widg_size = d;
   }
 
+  @Override
   public void setCursor(Cursor cur) {
     Component comp[] = this.getComponents();
     for (int i=0; i<comp.length; i++) {

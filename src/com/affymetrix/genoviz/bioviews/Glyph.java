@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -18,7 +18,6 @@ import java.util.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.genoviz.glyph.GlyphStyleFactory;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  * The base class that implements the GlyphI interface. All other glyphs are
@@ -152,7 +151,7 @@ public abstract class Glyph implements GlyphI  {
 
   public void draw(ViewI view)  {
     if (debug) {
-      Graphics g = view.getGraphics();
+      Graphics2D g = view.getGraphics();
       g.setColor(Color.red);
       view.transformToPixels(coordbox, pixelbox);
       g.drawRect(pixelbox.x+1, pixelbox.y+1,
@@ -198,7 +197,7 @@ public abstract class Glyph implements GlyphI  {
   }
 
   protected void drawSelectedBackground(ViewI view) {
-    Graphics g = view.getGraphics();
+    Graphics2D g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
     view.transformToPixels(getPositiveCoordBox(), pixelbox);
     g.fillRect(pixelbox.x-3, pixelbox.y-3,
@@ -208,7 +207,7 @@ public abstract class Glyph implements GlyphI  {
 
   protected void drawSelectedOutline(ViewI view) {
     draw(view);
-    Graphics g = view.getGraphics();
+    Graphics2D g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
     // see WARNING above (in drawSelected())
     //      g.setColor(scene.getSelectionColor());

@@ -124,9 +124,8 @@ public class GeneralUtils  {
    */
   public static FontMetrics getFontMetrics(Font fnt) {
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
+    Graphics2D g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
     return g.getFontMetrics(fnt);
-    // return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
   }
   
   /**

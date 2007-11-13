@@ -32,6 +32,7 @@ public class NeoBufferedComponent extends Container {
   protected Dimension imageSize = null;
   protected Dimension graphicsSize = null;
 
+  @Override
   public void paint(Graphics g) {
     if (buf_debug) { System.out.println("----------------------------------------------"); }
     Dimension d = getSize();
@@ -94,6 +95,7 @@ public class NeoBufferedComponent extends Container {
     }
   }
 
+  @Override
   public void update(Graphics g) {
     paint(g);
   }
@@ -104,6 +106,7 @@ public class NeoBufferedComponent extends Container {
   }
 
   /** @return true iff double buffering is on. */
+  @Override
   public boolean isDoubleBuffered() {
     return buffered;
   }
@@ -122,6 +125,7 @@ public class NeoBufferedComponent extends Container {
   /**
    * gets the opacity of the component.
    */
+  @Override
   public boolean isOpaque() {
     return opaque;
   }

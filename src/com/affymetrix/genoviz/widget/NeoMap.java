@@ -455,6 +455,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * This overrides {@link NeoWidget#destroy()}
    * so that we can clear the rubber band and it's listeners.
    */
+  @Override
   public void destroy() {
     clearWidget();
     super.destroy();
@@ -477,6 +478,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    *  (due to weirdness in the Container source code from Sun).
    */
   @Deprecated
+  @Override
   public void reshape(int x, int y, int width, int height) {
     reshapeCount++;
     if (width < 1) width = 1;
@@ -656,6 +658,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   /**
    *  xfit and yfit override reshape_constraint[X] and reshape_constraint[Y]
    */
+  @Override
   public void stretchToFit(boolean xfit, boolean yfit) {
     stretchCount++;
     if (DEBUG_STRETCH)  {
@@ -1041,14 +1044,15 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * Removes all glyphs.
    * However, factories, dataadapters, coord bounds, etc. remain.
    */
+  @Override
   public void clearWidget() {
     super.clearWidget();
     // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = (RootGlyph)scene.getGlyph();
     Rectangle2D evebox = oldeve.getCoordBox();
     RootGlyph neweve = new RootGlyph();
-    neweve.setExpansionBehavior(neweve.X, oldeve.getExpansionBehavior(oldeve.X));
-    neweve.setExpansionBehavior(neweve.Y, oldeve.getExpansionBehavior(oldeve.Y));
+    neweve.setExpansionBehavior(RootGlyph.X, oldeve.getExpansionBehavior(RootGlyph.X));
+    neweve.setExpansionBehavior(RootGlyph.Y, oldeve.getExpansionBehavior(RootGlyph.Y));
     neweve.setCoords(evebox.x, evebox.y, evebox.width, evebox.height);
     scene.setGlyph(neweve);
 
@@ -1194,13 +1198,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
   }
 
-  public void update(Graphics g) {
+  public void update(Graphics2D g) {
     if (NM_DEBUG_PAINT)  {
       System.out.println("NeoMap.update() called");
     }
     paint(g);
   }
 
+  @Override
   public void repaint() {
     if (NM_DEBUG_PAINT)  {
       System.out.println("NeoMap.repaint() called");
@@ -1211,7 +1216,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
-  public void paint(Graphics g) {
+  public void paint(Graphics2D g) {
     if (NM_DEBUG_PAINT) {
       System.out.println("NeoMap.paint() called");
     }
@@ -1229,6 +1234,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     return canvas.getBackground();
   }
 
+  @Override
   public void setBackground(Color theColor) {
     super.setBackground(theColor);
     setBackground(MAP, theColor);
@@ -1470,6 +1476,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * and MouseMotionListeners registered to listen for mouse events
    * on widget/map.
    */
+  @Override
   public void heardMouseEvent(MouseEvent e) {
     if (! (e instanceof NeoViewMouseEvent)) { return; }
     NeoViewMouseEvent nme = (NeoViewMouseEvent)e;

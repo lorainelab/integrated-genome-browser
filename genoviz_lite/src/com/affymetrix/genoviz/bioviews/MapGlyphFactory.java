@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -384,7 +384,7 @@ public class MapGlyphFactory implements NeoConstants  {
   }
 
   /**
-   * produces a glyph.
+   * Produces a glyph.
    * The glyph is built according to the current configuration.
    *
    * <p><em>The scene must be set if there is a packer.
@@ -437,8 +437,7 @@ public class MapGlyphFactory implements NeoConstants  {
       item.setForegroundColor(foreground_color);
 
       if (packer != null) {
-        packer.pack(scene.getGlyph(), item,
-          scene.getViews().elementAt(0));
+        packer.pack(scene.getGlyph(), item, scene.getViews().get(0));
       }
 
     } catch( InstantiationException ie ) {

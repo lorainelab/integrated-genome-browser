@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Basis for maps that contain horizontal "tiers" of glyphs.
@@ -45,8 +46,8 @@ public abstract class AbstractTieredMap
   public boolean debug_events = false; // for debugging only
   public String name; // for debugging only
 
-  protected Vector<MapTierGlyph> tiers = new Vector<MapTierGlyph>();
-  private Vector<TierEventListener> tierEventListeners = new Vector<TierEventListener>();
+  protected List<MapTierGlyph> tiers = new ArrayList<MapTierGlyph>();
+  private List<TierEventListener> tierEventListeners = new CopyOnWriteArrayList<TierEventListener>();
   private boolean notifyingListeners = false;
 
   /**
@@ -75,10 +76,11 @@ public abstract class AbstractTieredMap
    * adds to method in NeoWidget, destroying references to assorted stuff to
    * facilitate gc'ing.
    */
+  @Override
   public void destroy() {
     super.destroy();
     clearWidget();
-    viewbox_listeners.removeAllElements();
+    viewbox_listeners.clear();
   }
 
   public void setNotifyOnPackTiers(boolean b) {
@@ -89,21 +91,21 @@ public abstract class AbstractTieredMap
    * Add a listener to the audience.
    */
   public synchronized void addTierEventListener(TierEventListener tel) {
-    tierEventListeners.addElement(tel);
+    tierEventListeners.add(tel);
   }
 
   /**
    * Remove a listener from the audience.
    */
   public synchronized void removeTierEventListener(TierEventListener tel) {
-    tierEventListeners.removeElement(tel);
+    tierEventListeners.remove(tel);
   }
 
   /**
    * Tell all listeners of an event.
    */
   public synchronized void notifyTierEventListeners(TierEvent evt) {
-    if (debug_events) {
+    if (debug_events) { // xxx
       if (evt.getTier() == null) {
         System.out.println(name + " notifying listeners of event: " +
                            evt.getTypeString() + ", tier = null");
@@ -116,10 +118,9 @@ public abstract class AbstractTieredMap
       }
     }
     if ( notifyingListeners ) return;
-    int tot = tierEventListeners.size();
     notifyingListeners = true;
-    for (int i=0; i < tot; i++) {
-      (tierEventListeners.elementAt(i)).heardTierEvent(evt);
+    for (TierEventListener tel : tierEventListeners) {
+      tel.heardTierEvent(evt);
     }
     notifyingListeners = false;
   }
@@ -163,6 +164,7 @@ public abstract class AbstractTieredMap
   /**
    * overriding NeoMap.repack() to pack tiers -- generates a TierEvent.
    */
+  @Override
   public void repack() {
     // _ONLY_ tiers and glyphs placed in tiers will be repacked --
     // anything added directly to map other than tiers will need to
@@ -187,7 +189,7 @@ public abstract class AbstractTieredMap
   public void packTiers(boolean full_repack, boolean stretch_map)  {
     if (full_repack) {
       for (int i=0; i<tiers.size(); i++) {
-        MapTierGlyph mtg = tiers.elementAt(i);
+        MapTierGlyph mtg = tiers.get(i);
         mtg.pack(getView());
       }
     }
@@ -196,7 +198,6 @@ public abstract class AbstractTieredMap
 
     double offset;
     double height = mbox.height;
-    MapTierGlyph mtg;
 
     if (anchored) {
       offset = anchor_location;
@@ -204,13 +205,14 @@ public abstract class AbstractTieredMap
     else {
       offset = mbox.y;
     }
-    for (int i=0; i<tiers.size(); i++) {
-      mtg = tiers.elementAt(i);
 
-      // don't make room if tier is'nt visible, or if it's hidden
+    for (MapTierGlyph mtg : tiers) {
 
-      if (!mtg.isVisible() || (mtg.getState() == MapTierGlyph.HIDDEN))
+      // don't make room if tier isn't visible, or if it's hidden
+
+      if (!mtg.isVisible() || (mtg.getState() == MapTierGlyph.HIDDEN)) {
         continue;
+      }
 
       height = mtg.getCoordBox().height;
 
@@ -226,17 +228,20 @@ public abstract class AbstractTieredMap
       if (tiers.size() <= 0) { return; }
       Rectangle2D pbox = getCoordBounds();
       Rectangle2D newbox = null;
-      mtg = null;
 
-      for (int i=0; i<tiers.size(); i++) {
-        mtg = tiers.elementAt(i);
-        if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
+    for (MapTierGlyph mtg : tiers) {
+
+        if ( mtg.getState() == MapTierGlyph.HIDDEN ) {
+          continue;
+        }
         else if ( newbox == null ) {
           newbox = new Rectangle2D();
           newbox.reshape(pbox.x, mtg.getCoordBox().y,
               pbox.width, mtg.getCoordBox().height);
         }
-        else GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+        else {
+          GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+        }
       }
 
       if ( newbox != null )
@@ -265,16 +270,16 @@ public abstract class AbstractTieredMap
    */
   public MapTierGlyph getTierAt(int i) {
     if (i>=0 && i<tiers.size()) {
-      return tiers.elementAt(i);
+      return tiers.get(i);
     }
     else return null;
   }
 
   /**
    * Get all the tiers for the TieredNeoMap.
-   * @return vector of tiers.
+   * @return List of tiers.
    */
-  public Vector getAllTiers( ) {
+  public List<MapTierGlyph> getAllTiers( ) {
     return tiers;
   }
 
@@ -282,19 +287,20 @@ public abstract class AbstractTieredMap
     return tiers.size();
   }
 
+  @Override
   public void clearWidget() {
-    for ( int i = 0; i < tiers.size(); i++ ) {
-       MapTierGlyph m = tiers.elementAt(i);
+    for (MapTierGlyph m : tiers) {
        m.removeAllTierStateChangeListeners();
        m.removeChildren();
     }
     super.clearWidget();
-    tiers = new Vector<MapTierGlyph>();
+    tiers = new ArrayList<MapTierGlyph>();
   }
 
   /**
    * making sure the tiers always stretch the full length of the map.
    */
+  @Override
   public void setBounds(int axis, int start, int end) {
     super.setBounds(axis, start, end);
     Rectangle2D mbox = getScene().getGlyph().getCoordBox();
@@ -302,8 +308,7 @@ public abstract class AbstractTieredMap
     if ((axis != X) || (tiers == null))
       return;
 
-    for (int i=0; i<tiers.size(); i++) {
-      MapTierGlyph tier = tiers.elementAt(i);
+    for (MapTierGlyph tier : tiers) {
       Rectangle2D tbox = tier.getCoordBox();
       tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
     }
@@ -330,7 +335,7 @@ public abstract class AbstractTieredMap
 
     // Finally, remove our own
 
-    tiers.removeElement (toRemove);
+    tiers.remove(toRemove);
 
     repack ();
     updateWidget();
@@ -353,9 +358,9 @@ public abstract class AbstractTieredMap
     if ( from == to ) { // null operation
       return;
     }
-    MapTierGlyph mtg = tiers.elementAt( from );
-    tiers.removeElementAt( from );
-    tiers.insertElementAt( mtg, to );
+    MapTierGlyph mtg = tiers.get( from );
+    tiers.remove( from );
+    tiers.add( to, mtg );
 
     repack();
     updateWidget();
@@ -382,17 +387,16 @@ public abstract class AbstractTieredMap
     if ( from == to ) { // null operation
       return;
     }
-    MapTierGlyph mtg = tiers.elementAt( from );
-    tiers.removeElementAt( from );
-    tiers.insertElementAt( mtg, to );
+    MapTierGlyph mtg = tiers.get( from );
+    tiers.remove( from );
+    tiers.add(to, mtg);
 
     // Then do the other map:
-    mtg = otherMap.tiers.elementAt(tierLocs[0]);
+    mtg = otherMap.tiers.get(tierLocs[0]);
     if (mtg == null)
       return; // Why isn't an exception thrown?
-    otherMap.tiers.removeElementAt(from);
-    otherMap.tiers.insertElementAt(mtg, to);
-
+    otherMap.tiers.remove(from);
+    otherMap.tiers.add(to, mtg);
   }
 
 
@@ -411,13 +415,13 @@ public abstract class AbstractTieredMap
 
     // Remove the tier's children
 
-    MapTierGlyph toRemove = tiers.elementAt(loc);
+    MapTierGlyph toRemove = tiers.get(loc);
 
     toRemove.removeChildren();
 
     // Then the tier itself!
 
-    tiers.removeElement(toRemove);
+    tiers.remove(toRemove);
 
     packTiers(true,true);
     updateWidget();
@@ -499,7 +503,7 @@ public abstract class AbstractTieredMap
 
     // And set the state of our corresponding tier appropriately.
 
-    MapTierGlyph ourTier = tiers.elementAt(loc);
+    MapTierGlyph ourTier = tiers.get(loc);
 
     // Access the properties directly, rather than via access
     // methods -- avoid ping-pongs.
@@ -513,10 +517,12 @@ public abstract class AbstractTieredMap
     return ourTier;
   }
 
+  @Override
     public void setPreferredSize ( Dimension d ) {
         preferred_size = d;
     }
 
+  @Override
     public Dimension getPreferredSize ( ) {
         return preferred_size;
     }

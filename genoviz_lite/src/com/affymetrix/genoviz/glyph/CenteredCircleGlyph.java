@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 public class CenteredCircleGlyph extends SolidGlyph  {
   // could instead inherit from FillOvalGlyph and just override calcPixels
 
+  @Override
   public void draw(ViewI view) {
     calcPixels(view);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
@@ -36,6 +37,7 @@ public class CenteredCircleGlyph extends SolidGlyph  {
     super.draw(view);
   }
 
+  @Override
   public void calcPixels(ViewI view) {
     super.calcPixels(view);
     if (pixelbox.width > pixelbox.height) {

@@ -45,12 +45,10 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Vector children = parent.getChildren();
+    final java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
-    GlyphI child;
     double height;
-    for (int i=0; i<children.size(); i++) {
-      child = (GlyphI)children.elementAt(i);
+    for (GlyphI child : children) {
       height = child.getCoordBox().height;
       maxHeight = (height > maxHeight) ? height : maxHeight;
     }
@@ -84,17 +82,15 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
   protected void moveAllChildren(GlyphI parent) {
     Rectangle2D pbox = parent.getCoordBox();
-    Vector children = parent.getChildren();
+    java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return; }
     double parent_height = parent.getCoordBox().height;
 
     Rectangle2D cbox;
-    GlyphI child;
 
     if (alignment == ALIGN_TOP) {
       double top = pbox.y + parent_spacer;
-      for (int i=0; i<children.size(); i++) {
-        child = (GlyphI)children.elementAt(i);
+      for (GlyphI child : children) {
         cbox = child.getCoordBox();
         child.moveAbsolute(cbox.x, top);
       }
@@ -102,16 +98,14 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
     else if (alignment == ALIGN_BOTTOM) {
       double bottom = pbox.y + pbox.height - parent_spacer;
-      for (int i=0; i<children.size(); i++) {
-        child = (GlyphI)children.elementAt(i);
+      for (GlyphI child : children) {
         cbox = child.getCoordBox();
         child.moveAbsolute(cbox.x, bottom - cbox.height);
       }
     }
     else  {  // alignment == ALIGN_CENTER
       double center = pbox.y + parent_height / 2;
-      for (int i=0; i<children.size(); i++) {
-        child = (GlyphI)children.elementAt(i);
+      for (GlyphI child : children) {
         cbox = child.getCoordBox();
         child.moveAbsolute(cbox.x, center - cbox.height/2);
       }

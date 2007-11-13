@@ -19,8 +19,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.Adjustable;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * a javax.swing.JSlider that also implements java.awt.Adjustable.
@@ -105,22 +105,23 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
   public final void setVisibleAmount(int  v) {setExtent(v);}
 
 
-  private Vector<AdjustmentListener> listeners = new Vector<AdjustmentListener>();
+  private List<AdjustmentListener> listeners = new CopyOnWriteArrayList<AdjustmentListener>();
 
   /**
    * registers a listener for adjustment events.
    */
-  public void addAdjustmentListener(java.awt.event.AdjustmentListener l) {
-    this.listeners.addElement( l );
+  public void addAdjustmentListener(AdjustmentListener l) {
+    this.listeners.add( l );
   }
 
   /**
    * cancels a listeners registration.
    */
-  public void removeAdjustmentListener(java.awt.event.AdjustmentListener l) {
-    this.listeners.removeElement( l );
+  public void removeAdjustmentListener(AdjustmentListener l) {
+    this.listeners.remove( l );
   }
 
+  @Override
   protected ChangeListener createChangeListener() {
     return new ChangeListener() {
       public void stateChanged( ChangeEvent e ) {
@@ -135,11 +136,9 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
    * even when min, max, or extent are actually what changed.
    */
   private void fireAdjustmentEvent() {
-    AdjustmentEvent e = new AdjustmentEvent
-      ( this, AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK, getValue() );
-    Enumeration it = this.listeners.elements();
-    while ( it.hasMoreElements() ) {
-      AdjustmentListener l = (AdjustmentListener) it.nextElement();
+    AdjustmentEvent e = new AdjustmentEvent(this, 
+      AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK, getValue() );
+    for (AdjustmentListener l : listeners) {
       l.adjustmentValueChanged( e );
     }
   }

@@ -14,10 +14,11 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.Vector;
+import java.util.List;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import java.util.ArrayList;
 
 /**
  *  A glyph to display a vertical or horizontal numbered axis.
@@ -54,7 +55,7 @@ public class AxisGlyph extends Glyph {
 
   protected double label_scale = 1;
 
-  protected Vector selected_regions;
+  protected List selected_regions;
 
   // default to true for backward compatability
   protected boolean hitable = true;
@@ -94,12 +95,14 @@ public class AxisGlyph extends Glyph {
    * @param fnt a new matching font will be created
    * and used internally.
    */
+  @Override
   public void setFont(Font fnt) {
     if (!fnt.equals(this.label_font)) {
       internalSetFont(new Font(fnt.getName(), fnt.getStyle(), fnt.getSize()));
     }
   }
 
+  @Override
   public Font getFont() {
     return new Font
       (this.label_font.getName(),
@@ -120,6 +123,7 @@ public class AxisGlyph extends Glyph {
    * @deprecated use setForegroundColor().
    */
   @Deprecated
+  @Override
   public void setColor(Color color)  {
     this.setForegroundColor( color );
   }
@@ -129,6 +133,7 @@ public class AxisGlyph extends Glyph {
    * @see #setColor
    */
   @Deprecated
+  @Override
   public Color getColor()  {
     return this.getForegroundColor();
   }
@@ -163,12 +168,12 @@ public class AxisGlyph extends Glyph {
       System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
       return;
     }
-    if ( selected_regions == null ) selected_regions = new Vector();
-    selected_regions.addElement( range );
+    if ( selected_regions == null ) selected_regions = new ArrayList();
+    selected_regions.add( range );
   }
 
   public void deselectAll () {
-    selected_regions.removeAllElements();
+    selected_regions.clear();
   }
 
   public int getLabelFormat() {
@@ -314,11 +319,13 @@ public class AxisGlyph extends Glyph {
     this(HORIZONTAL);
   }
 
+  @Override
   public void setCoords(double x, double y, double width, double height) {
     super.setCoords(x, y, width, height);
     setCenter();
   }
 
+  @Override
   public void setCoordBox(Rectangle2D coordbox) {
     super.setCoordBox(coordbox);
     setCenter();
@@ -465,6 +472,7 @@ public class AxisGlyph extends Glyph {
   private final Rectangle2D scratchcoords = new Rectangle2D();
   private final Rectangle scratchpixels = new Rectangle();
 
+  @Override
   public void draw(ViewI view) {
     String label = null;
     int axis_loc;
@@ -579,7 +587,7 @@ public class AxisGlyph extends Glyph {
       if ( selected_regions != null ) {
         g.setColor ( getBackgroundColor() );
         for ( int i = 0; i < selected_regions.size(); i++ ) {
-          int[] select_range = (int[])selected_regions.elementAt(i);
+          int[] select_range = (int[])selected_regions.get(i);
           select_coord.x = select_range[0];
           select_coord.width = select_range[1] - select_range[0];
           view.transformToPixels ( select_coord, select_pix );
@@ -711,7 +719,7 @@ public class AxisGlyph extends Glyph {
         if ( selected_regions != null ) {
           g.setColor ( getForegroundColor() );
           for ( int j = 0; j < selected_regions.size(); j++ ) {
-            int[] select_range = (int[])selected_regions.elementAt(j);
+            int[] select_range = (int[])selected_regions.get(j);
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
@@ -766,7 +774,7 @@ public class AxisGlyph extends Glyph {
         if ( selected_regions != null ) { // setting color for selections
           g.setColor ( getForegroundColor() );
           for ( int j = 0; j < selected_regions.size(); j++ ) {
-            int[] select_range = (int[])selected_regions.elementAt(j);
+            int[] select_range = (int[])selected_regions.get(j);
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
@@ -841,7 +849,7 @@ public class AxisGlyph extends Glyph {
         if ( selected_regions != null ) {
           g.setColor ( getForegroundColor() );
           for ( int j = 0; j < selected_regions.size(); j++ ) {
-            int[] select_range = (int[])selected_regions.elementAt(j);
+            int[] select_range = (int[])selected_regions.get(j);
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
@@ -880,7 +888,7 @@ public class AxisGlyph extends Glyph {
         if ( selected_regions != null ) {
           g.setColor ( getForegroundColor() );
           for ( int j = 0; j < selected_regions.size(); j++ ) {
-            int[] select_range = (int[])selected_regions.elementAt(j);
+            int[] select_range = (int[])selected_regions.get(j);
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
@@ -1032,12 +1040,15 @@ public class AxisGlyph extends Glyph {
     this.hitable = h;
   }
 
+  @Override
   public boolean isHitable() { return hitable; }
 
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     return (isHitable() && pixel_hitbox.intersects(pixelbox));
   }
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return (isHitable() && coord_hitbox.intersects(coordbox));
   }

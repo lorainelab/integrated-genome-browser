@@ -16,9 +16,12 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * implementation of ViewI interface.
@@ -109,21 +112,21 @@ public class View implements ViewI, NeoPaintListener,
   protected Graphics2D graphics;
   protected boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck;
-  protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
-  protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
-  protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
+  protected List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
+  protected List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
+  protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
 
   /**
-   *  Vector of viewbox listeners to be notified immediately _before_
+   *  List of viewbox listeners to be notified immediately _before_
    *    view is drawn with changed bounding box
    */
-  protected Vector<NeoViewBoxListener> predraw_viewbox_listeners = new Vector<NeoViewBoxListener>();
+  protected java.util.List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
   /**
-   *  Vector of viewbox listeners to be notified immediately _after__
+   *  List of viewbox listeners to be notified immediately _after__
    *    view is drawn with changed bounding box
    */
-  protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
+  protected java.util.List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
   /** fields to help with optimizations **/
   protected boolean scrolling_optimized = false;
@@ -192,11 +195,11 @@ public class View implements ViewI, NeoPaintListener,
   }
 
   public void destroy() {
-    mouse_listeners.removeAllElements();
-    mouse_motion_listeners.removeAllElements();
-    key_listeners.removeAllElements();
-    predraw_viewbox_listeners.removeAllElements();
-    viewbox_listeners.removeAllElements();
+    mouse_listeners.clear();
+    mouse_motion_listeners.clear();
+    key_listeners.clear();
+    predraw_viewbox_listeners.clear();
+    viewbox_listeners.clear();
     if ( bufferImage != null ) bufferImage.flush();
     bufferImage = null;
     if (bufferGraphics != null) bufferGraphics.dispose();
@@ -385,8 +388,7 @@ public class View implements ViewI, NeoPaintListener,
             coordbox.width, coordbox.height);
         NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, true);
-        for (int i=0; i<predraw_viewbox_listeners.size(); i++) {
-          NeoViewBoxListener listener = predraw_viewbox_listeners.elementAt(i);
+        for (NeoViewBoxListener listener : predraw_viewbox_listeners) {
           listener.viewBoxChanged(nevt);
         }
       }
@@ -427,10 +429,7 @@ public class View implements ViewI, NeoPaintListener,
      *      if it will work in such situations
      */
     if (scene.hasTransients()) {
-      Vector transients = scene.getTransients();
-      GlyphI transglyph;   // or should it be cast to TransientGlyph???
-      for (int i=0; i<transients.size(); i++) {
-        transglyph = (GlyphI)transients.elementAt(i);
+      for (TransientGlyph transglyph : scene.getTransients()) {
         if (DEBUG_TRANSIENTS)  {
           System.out.println("Drawing transient: " + transglyph);
         }
@@ -470,8 +469,8 @@ public class View implements ViewI, NeoPaintListener,
         NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, false);
 
-        for (int i=0; i<viewbox_listeners.size(); i++) {
-          viewbox_listeners.elementAt(i).viewBoxChanged(nevt);
+        for (NeoViewBoxListener n : viewbox_listeners) {
+          n.viewBoxChanged(nevt);
         }
       }
     }
@@ -921,52 +920,52 @@ public class View implements ViewI, NeoPaintListener,
 
   public void addMouseListener(MouseListener l) {
     if (!mouse_listeners.contains(l)) {
-      mouse_listeners.addElement(l);
+      mouse_listeners.add(l);
     }
   }
 
   public void removeMouseListener(MouseListener l) {
-    mouse_listeners.removeElement(l);
+    mouse_listeners.remove(l);
   }
 
   public void addMouseMotionListener(MouseMotionListener l) {
     if (!mouse_motion_listeners.contains(l)) {
-      mouse_motion_listeners.addElement(l);
+      mouse_motion_listeners.add(l);
     }
   }
 
   public void removeMouseMotionListener(MouseMotionListener l) {
-    mouse_motion_listeners.removeElement(l);
+    mouse_motion_listeners.remove(l);
   }
 
   public void addKeyListener(KeyListener l) {
     if (!key_listeners.contains(l)) {
-      key_listeners.addElement(l);
+      key_listeners.add(l);
     }
   }
 
   public void removeKeyListener(KeyListener l) {
-    key_listeners.removeElement(l);
+    key_listeners.remove(l);
   }
 
   public void addPostDrawViewListener(NeoViewBoxListener l) {
     if (!viewbox_listeners.contains(l)) {
-      viewbox_listeners.addElement(l);
+      viewbox_listeners.add(l);
     }
   }
 
   public void removePostDrawViewListener(NeoViewBoxListener l) {
-    viewbox_listeners.removeElement(l);
+    viewbox_listeners.remove(l);
   }
 
   public void addPreDrawViewListener(NeoViewBoxListener l) {
     if (!predraw_viewbox_listeners.contains(l)) {
-      predraw_viewbox_listeners.addElement(l);
+      predraw_viewbox_listeners.add(l);
     }
   }
 
   public void removePreDrawViewListener(NeoViewBoxListener l)  {
-    predraw_viewbox_listeners.removeElement(l);
+    predraw_viewbox_listeners.remove(l);
   }
 
 
@@ -1021,10 +1020,8 @@ public class View implements ViewI, NeoPaintListener,
     if (DEBUG_EVENTS && id == KeyEvent.KEY_PRESSED) {
       System.out.println("View heard KEY_PRESSED: " + this);
     }
-    KeyListener kl;
     if (key_listeners.size() > 0) {
-      for (int i=0; i<key_listeners.size(); i++) {
-        kl = key_listeners.elementAt(i);
+      for (KeyListener kl : key_listeners) {
         if (id == KeyEvent.KEY_PRESSED) {
           kl.keyPressed(e);
         }
@@ -1056,13 +1053,12 @@ public class View implements ViewI, NeoPaintListener,
     // the views pixelbox, for example to deal with mouse drags that
     // continue beyond the window
 
-    if (transform == null) { return; };
+    if (transform == null) { return; }
     transformToCoords(pixrect, coordrect);
     NeoViewMouseEvent nevt =
       new NeoViewMouseEvent(e, this, coordrect.x, coordrect.y);
     if (mouse_listeners.size() > 0) {
-      for (int i=0; i<mouse_listeners.size(); i++) {
-        MouseListener ml = mouse_listeners.elementAt(i);
+      for (MouseListener ml : mouse_listeners) {
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -1071,8 +1067,7 @@ public class View implements ViewI, NeoPaintListener,
       }
     }
     if (mouse_motion_listeners.size() > 0) {
-      for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
+      for (MouseMotionListener mml : mouse_motion_listeners) {
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }

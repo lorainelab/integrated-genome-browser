@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.genoviz.glyph.GlyphStyleFactory;
@@ -30,7 +31,6 @@ public abstract class Glyph implements GlyphI  {
   public static final int DRAW_SELF_FIRST = 0;
   public static final int DRAW_CHILDREN_FIRST = 1;
 
-  private static final boolean DEBUG_SELECTION = false;
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
   protected static final Color default_bg_color = Color.black;
@@ -45,7 +45,7 @@ public abstract class Glyph implements GlyphI  {
   protected int min_pixels_height=1;
   protected GlyphI parent;
   protected ViewI current_view;
-  protected Vector<GlyphI> children;
+  protected Vector<GlyphI> children; // xxx
   protected GlyphStyle style;
 
   protected boolean isVisible;
@@ -55,8 +55,7 @@ public abstract class Glyph implements GlyphI  {
   protected boolean selected;
   protected int draw_order = DRAW_SELF_FIRST;
 
-  public Glyph()
-  {
+  public Glyph() {
     coordbox = new Rectangle2D();
     pixelbox = new Rectangle();
     min_pixels_width=1;
@@ -66,8 +65,7 @@ public abstract class Glyph implements GlyphI  {
     style = stylefactory.getStyle( default_fg_color, default_bg_color );
   }
 
-  public boolean withinView(ViewI view)
-  {
+  public boolean withinView(ViewI view) {
     return getPositiveCoordBox().intersects(view.getCoordBox());
   }
 
@@ -140,7 +138,7 @@ public abstract class Glyph implements GlyphI  {
       GlyphI child;
       int numChildren = children.size();
       for ( int i = 0; i < numChildren; i++ ) {
-        child = children.elementAt( i );
+        child = children.get( i );
         // TransientGlyphs are usually NOT drawn in standard drawTraversal
         if (!(child instanceof TransientGlyph) || drawTransients()) {
           child.drawTraversal(view);
@@ -233,15 +231,15 @@ public abstract class Glyph implements GlyphI  {
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D pickRect, List<GlyphI> picks,
                             ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
       }
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
-          pickVector.addElement(this);
+        if (!picks.contains(this)) {
+          picks.add(this);
         }
         if (debug)   {
           System.out.println("Hit " + this);
@@ -251,8 +249,8 @@ public abstract class Glyph implements GlyphI  {
         GlyphI child;
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          child = children.elementAt( i );
-          child.pickTraversal( pickRect, pickVector, view );
+          child = children.get( i );
+          child.pickTraversal( pickRect, picks, view );
         }
       }
     }
@@ -265,15 +263,15 @@ public abstract class Glyph implements GlyphI  {
    * to coordboxes and the call is
    * to <code>pickTraversal(<em>coordbox</em>, vec, view)</code>
    */
-  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle pickRect, List<GlyphI> picks,
                             ViewI view) {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
       }
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
-          pickVector.addElement(this);
+        if (!picks.contains(this)) {
+          picks.add(this);
         }
         if (debug)   {
           System.out.println("Hit " + this);
@@ -284,8 +282,8 @@ public abstract class Glyph implements GlyphI  {
         // We avoid object creation overhead by avoiding Enumeration.
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = children.elementAt(i);
-          child.pickTraversal(pickRect, pickVector, view);
+          child = children.get(i);
+          child.pickTraversal(pickRect, picks, view);
         }
       }
     }
@@ -370,10 +368,10 @@ public abstract class Glyph implements GlyphI  {
       children = new Vector<GlyphI>();
     }
     if (position == children.size()) {
-      children.addElement(glyph);
+      children.add(glyph);
     }
     else  {
-      children.insertElementAt(glyph, position);
+      children.add(position, glyph);
     }
     // setParent() also calls setScene()
     glyph.setParent(this);
@@ -392,7 +390,7 @@ public abstract class Glyph implements GlyphI  {
     if (children == null)  {
       children = new Vector<GlyphI>();
     }
-    children.addElement(glyph);
+    children.add(glyph);
     glyph.setParent(this);
   }
 
@@ -406,7 +404,7 @@ public abstract class Glyph implements GlyphI  {
    */
   public void removeChild(GlyphI glyph)  {
     if (children != null) {
-      children.removeElement(glyph);
+      children.remove(glyph);
       if (children.size() == 0) { children = null; }
     }
     // null out the scene if glyph is removed
@@ -416,7 +414,7 @@ public abstract class Glyph implements GlyphI  {
   public void removeAllChildren() {
     if (children != null)  {
       for (int i=0; i<children.size(); i++) {
-        children.elementAt(i).setScene(null);
+        children.get(i).setScene(null);
       }
     }
     children = null;
@@ -428,10 +426,10 @@ public abstract class Glyph implements GlyphI  {
   }
 
   public GlyphI getChild(int index) {
-    return children.elementAt(index);
+    return children.get(index);
   }
 
-  public Vector<GlyphI> getChildren()  {
+  public List<GlyphI> getChildren()  {
     return children;
   }
 
@@ -610,7 +608,7 @@ public abstract class Glyph implements GlyphI  {
     if (children != null) {
       int numchildren = children.size();
       for (int i=0; i<numchildren; i++) {
-        children.elementAt(i).moveRelative(diffx, diffy);
+        children.get(i).moveRelative(diffx, diffy);
       }
     }
   }
@@ -626,7 +624,7 @@ public abstract class Glyph implements GlyphI  {
     if (children != null) {
       int size = children.size();
       for (int i=0; i<size; i++) {
-        children.elementAt(i).setScene(s);
+        children.get(i).setScene(s);
       }
     }
   }

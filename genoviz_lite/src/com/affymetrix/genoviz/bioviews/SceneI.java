@@ -113,19 +113,14 @@ public interface SceneI {
   public void removeView(ViewI view);
 
   /**
-   *  Return a Vector of all views onto the scene.
+   *  Return a List of all views onto the scene.
    */
-  public Vector getViews();
+  public java.util.List<ViewI> getViews();
 
   /**
    *  Draw all the views of this scene.
    */
   public void draw();  // draw all views on all canvases
-
-  /**
-   *  Draw a particular view of this scene.
-   */
-  public void draw(ViewI v);  // draw one view
 
   /**
    *  Draw all the views of this scene that use Component c.

@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class LineConnectorGlyph extends Glyph {
 
-  private Vector<GlyphI> twoglyphs = new Vector<GlyphI>(2);
+  private ArrayList<GlyphI> twoglyphs = new ArrayList<GlyphI>(2);
 
   /**
    * Only two glyphs can be connected with a LineConnectorGlyph,
@@ -37,7 +37,7 @@ public class LineConnectorGlyph extends Glyph {
         System.err.println( "ConnectorGlyph: already have two glyphs.");
         return;
       }
-      twoglyphs.addElement( glyph );
+      twoglyphs.add( glyph );
     }
   }
 
@@ -51,6 +51,7 @@ public class LineConnectorGlyph extends Glyph {
     return twoglyphs.size();
   }
 
+  @Override
   public void draw ( ViewI view ) {
 
     if ( twoglyphs.size() != 2 ) {
@@ -65,15 +66,15 @@ public class LineConnectorGlyph extends Glyph {
     left = new Rectangle2D();
     right = new Rectangle2D();
 
-    x1 =  twoglyphs.elementAt( 0 ).getCoordBox().x;
-    x2 =  twoglyphs.elementAt( 1 ).getCoordBox().x;
+    x1 =  twoglyphs.get( 0 ).getCoordBox().x;
+    x2 =  twoglyphs.get( 1 ).getCoordBox().x;
 
     if ( x1 < x2 ) {
-      leftGlyph = twoglyphs.elementAt ( 0 );
-      rightGlyph = twoglyphs.elementAt ( 1 );
+      leftGlyph = twoglyphs.get ( 0 );
+      rightGlyph = twoglyphs.get ( 1 );
     } else {
-      leftGlyph = twoglyphs.elementAt ( 1 );
-      rightGlyph = twoglyphs.elementAt ( 0 );
+      leftGlyph = twoglyphs.get ( 1 );
+      rightGlyph = twoglyphs.get ( 0 );
     }
 
     left = leftGlyph.getCoordBox();

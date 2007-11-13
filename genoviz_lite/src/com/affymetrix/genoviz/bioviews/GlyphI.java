@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
@@ -114,9 +115,9 @@ public interface GlyphI extends NeoConstants  {
   /**
    * Gets the entire collection of this glyph's children.
    *
-   * @return a Vector containing the children.
+   * @return a List containing the children.
    */
-  public Vector<GlyphI> getChildren();
+  public List<GlyphI> getChildren();
 
   /**
    *  Returns number of child glyph's this glyph has.
@@ -284,16 +285,16 @@ public interface GlyphI extends NeoConstants  {
 
 
   /**
-   * Searches children for hits and add them to the pick vector.
+   * Searches children for hits and add them to the pick list.
    * @param pickvec modified by this routine to return the results
    */
-  public void pickTraversal(Rectangle pickrect, Vector<GlyphI> pickvec, ViewI view);
+  public void pickTraversal(Rectangle pickrect, List<GlyphI> pickvec, ViewI view);
 
   /**
-   * Searches children for hits and add them to the pick vector.
+   * Searches children for hits and add them to the pick list.
    * @param pickvec modified by this routine to return the results
    */
-  public void pickTraversal(Rectangle2D pickrect, Vector<GlyphI> pickvec, ViewI view);
+  public void pickTraversal(Rectangle2D pickrect, List<GlyphI> pickvec, ViewI view);
 
 
   /**

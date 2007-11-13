@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This interface represents the functionality that is common to all widgets.
@@ -460,16 +461,16 @@ public interface NeoWidgetI extends NeoConstants   {
   public double getMinZoom(int axisid);
 
   /**
-   * returns a vector of all <code>Glyph</code>s at
+   * Returns a list of all <code>Glyph</code>s at
    *  <code>x,y</code> in this widget.
    *
    * @param x the double describing the X position
    * @param y the double describing the Y position
    *
-   * @return a <code>Vector</code> of <code>Glyph</code>s
+   * @return a <code>List</code> of <code>Glyph</code>s
    * at <code>x,y</code>
    */
-  public Vector getItems(double x, double y, int location);
+  public List<GlyphI> getItems(double x, double y, int location);
 
   /**
    * adds <code>glyph</code> to the list of selected glyphs for this
@@ -483,15 +484,15 @@ public interface NeoWidgetI extends NeoConstants   {
   public void select(GlyphI glyph);
 
   /**
-   * adds all glyphs in Vector <code>glyphs</code> to the list of
+   * adds all glyphs in List <code>glyphs</code> to the list of
    * selected glyphs for this widget.  Selected glyphs will be displayed
    * differently than unselected glyphs, based on selection style
    *
-   * @param glyphs a Vector of <code>GlyphIs</code> to select
+   * @param glyphs a List of <code>GlyphIs</code> to select
    * @see #deselect
    * @see #getSelected
    */
-  public void select(Vector glyphs);
+  public void select(List<GlyphI> glyphs);
 
   /**
    * Removes <code>glyph</code> from the list of selected glyphs for this widget.
@@ -503,22 +504,22 @@ public interface NeoWidgetI extends NeoConstants   {
   public void deselect(GlyphI glyph);
 
   /**
-   * Removes all glyphs in Vector <code>glyphs</code> from the list of selected
+   * Removes all glyphs in List <code>glyphs</code> from the list of selected
    * glyphs for this widget.  Visually unselects glyph.
    *
    * @see #select
    * @see #getSelected
    */
-  public void deselect(Vector glyphs);
+  public void deselect(List<GlyphI> glyphs);
 
   /**
    * retrieves all currently selected glyphs.
    *
-   * @return a <code>Vector</code> of all selected GlyphIs
+   * @return a List of all selected GlyphIs
    * @see #deselect
    * @see #select
    */
-  public Vector getSelected();
+  public List<GlyphI> getSelected();
 
   /**
    * If this widget contains other widgets, returns the internal widget
@@ -574,13 +575,13 @@ public interface NeoWidgetI extends NeoConstants   {
   public void setVisibility(GlyphI glyph, boolean visible);
 
   /**
-   * sets the visibility of all glyph in Vector for this widget.
+   * sets the visibility of all glyph's in list for this widget.
    *
-   * @param glyphs Vector of GlyphIs to modify visibility;
+   * @param glyphs List of GlyphI's to modify visibility;
    * @param visible a boolean indicator of visibility.  if false,
    *   then the GlyphI is not displayed.
    */
-  public void setVisibility(Vector glyphs, boolean visible);
+  public void setVisibility(List<GlyphI> glyphs, boolean visible);
 
   /**
    * gets the visibility of an item in this widget.
@@ -663,7 +664,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * an arbitrary datamodel that has been associated with one or more glyphs.
    * If you know there is only one GlyphI associated with each datamodel, this
    * method is more efficient than calling getItems(datamodel), which returns
-   * a Vector.
+   * a List.
    *
    * @param datamodel an arbitrary object associated with one or
    *   more glyphs.
@@ -672,16 +673,16 @@ public interface NeoWidgetI extends NeoConstants   {
   public GlyphI getItem(Object datamodel);
 
   /**
-   * Retrieves the <code>Vector</code> of glyphs associated with the
+   * Retrieves the List of glyphs associated with the
    * <code>datamodel</code>.  Typically, <code>datamodel</code> is
    * an arbitrary datamodel that has been associated with one or more glyphs.
    *
    * @param datamodel an arbitrary object associated with one or
    *   more glyphs.
-   * @return the <code>Vector</code> of glyphs associated with <code>
+   * @return the List of glyphs associated with <code>
    *  datamodel</code>.
    */
-  public Vector getItems(Object datamodel);
+  public List<GlyphI> getItems(Object datamodel);
 
 
   /**
@@ -701,20 +702,20 @@ public interface NeoWidgetI extends NeoConstants   {
   public void moveRelative(GlyphI glyph, double diffx, double diffy);
 
   /**
-   * update the position of alls <code>glyphs</code> in Vector by
+   * update the position of all <code>glyphs</code> in List by
    * <code>diffx</code> and <code>diffy</code> in the X and Y axes respectively,
    * relative to the current position of <code>glyphs</code>, where
    * the current position of a <code>glyph</code> is the coordinate of the
    * top left corner of the <code>glyph</code>'s bounding box.
    * Offsets are specified in coordinate space (not pixels).
    *
-   * @param glyphs the Vector of GlyphIs to move
+   * @param glyphs the List of GlyphIs to move
    * @param diffx the double relative offset along the X axis
    * @param diffy the double relative offset along the Y axis
    * @see #moveAbsolute
    * @see NeoMapI#addItem
    */
-  public void moveRelative(Vector glyphs, double diffx, double diffy);
+  public void moveRelative(List<GlyphI> glyphs, double diffx, double diffy);
 
   /**
    * modifies the position of <code>glyph</code> to be the
@@ -730,16 +731,16 @@ public interface NeoWidgetI extends NeoConstants   {
   public void moveAbsolute(GlyphI glyph, double x, double y);
 
   /**
-   * Modifies the position of all <code>glyphs</code>  in Vector to be the
+   * Modifies the position of all <code>glyphs</code>  in List to be the
    * new absolute position (<code>x,y</code>) specified in
    * coordinate space (not pixels).
-   * @param glyphs the Vector of GlyphIs to move
+   * @param glyphs the List of GlyphIs to move
    * @param x the absolute double position along the X axis.
    * @param y the absolute double position along the Y axis.
    * @see #moveRelative
    * @see NeoMapI#addItem
    */
-  public void moveAbsolute(Vector glyphs, double x, double y);
+  public void moveAbsolute(List<GlyphI> glyphs, double x, double y);
 
 
   /**
@@ -965,12 +966,12 @@ public interface NeoWidgetI extends NeoConstants   {
   public void removeItem(GlyphI glyph);
 
   /**
-   * Removes all GlyphI's in Vector from this widget
+   * Removes all GlyphI's in List from this widget
    *
-   * @param glyphs the Vector of GlyphIs to remove
+   * @param glyphs the List of GlyphIs to remove
    * @see NeoMapI#addItem
    */
-  public void removeItem(Vector glyphs);
+  public void removeItem(List<GlyphI> glyphs);
 
   /**
    *  Clears all glyphs from the widget

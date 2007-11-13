@@ -16,11 +16,13 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genoviz.util.GeneralUtils;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Provides basic functionallity for all genoviz Widgets.
@@ -30,13 +32,13 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   protected Dimension pref_widg_size = new Dimension(1, 1);
 
-  protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
-  protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
-  protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
+  protected List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
+  protected List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
+  protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
 
   protected Hashtable<GlyphI,Object> glyph_hash = new Hashtable<GlyphI,Object>();
 
-  //TODO: This should maybe be Map<Object,List<GlyphI>>
+  //TODO: This should maybe be Map<Object,List<GlyphI>> // xxx
   protected Hashtable<Object,Object> model_hash = new Hashtable<Object,Object>();
 
   protected boolean models_have_multiple_glyphs = false;
@@ -45,8 +47,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
   protected int scroll_behavior[] = new int[2];
 
-  // a list of selected glyphs
-  protected Vector<GlyphI> selected = new Vector<GlyphI>();
+  protected List<GlyphI> selected = new ArrayList<GlyphI>();
 
   /**
    *  whether any models are represented by multiple glyphs
@@ -67,20 +68,20 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
     // more than one glyph may be associated with the same datamodel!
     // therefore check and see if already a glyph associated with this datamodel
-    // if so, create a Vector and add glyphs to it (or extend the pre-exisiting one)
+    // if so, create a new list and add glyphs to it (or extend the pre-exisiting one)
     Object previous = model_hash.get(datamodel);
     if (previous == null) {
       model_hash.put(datamodel, gl);
     }
     else {
       models_have_multiple_glyphs = true;
-      if (previous instanceof Vector) {
-        ((Vector<GlyphI>) previous).addElement(gl);
+      if (previous instanceof List) {
+        ((List<GlyphI>) previous).add(gl);
       }
       else {
-        Vector<GlyphI> glyphs = new Vector<GlyphI>();
-        glyphs.addElement((GlyphI) previous);
-        glyphs.addElement(gl);
+        ArrayList<GlyphI> glyphs = new ArrayList<GlyphI>();
+        glyphs.add((GlyphI) previous);
+        glyphs.add(gl);
         model_hash.put(datamodel, glyphs);
       }
     }
@@ -141,9 +142,9 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     glyph.moveAbsolute(x, y);
   }
 
-  public void moveAbsolute(Vector glyphs, double x, double y) {
-    for (int i=0; i<glyphs.size(); i++) {
-      moveAbsolute((GlyphI)glyphs.elementAt(i), x, y);
+  public void moveAbsolute(List<GlyphI> glyphs, double x, double y) {
+    for (GlyphI g : glyphs) {
+      moveAbsolute(g, x, y);
     }
   }
 
@@ -151,9 +152,9 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     glyph.moveRelative(diffx, diffy);
   }
 
-  public void moveRelative(Vector glyphs, double x, double y) {
-    for (int i=0; i<glyphs.size(); i++) {
-      moveRelative((GlyphI)glyphs.elementAt(i), x, y);
+  public void moveRelative(List<GlyphI> glyphs, double x, double y) {
+    for (GlyphI g : glyphs) {
+      moveRelative(g, x, y);
     }
   }
 
@@ -168,61 +169,61 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
 
   /** Subclasses should implement this. Default does nothing.
-   *  Implementations should add selections to the Vector 'selected',
+   *  Implementations should add selections to the List 'selected',
    *  in addition to any other tasks specific to those classes.
    */
   public void select(GlyphI g) {
     // Implement in subclasses
   }
 
-  public void select(Vector vec) {
-    if (vec == null) {
+  public void select(List<GlyphI> glyphs) {
+    if (glyphs == null) {
       return;
     }
-    for (int i=0; i<vec.size(); i++) {
-      select((GlyphI)vec.elementAt(i));
+    for (GlyphI g : glyphs) {
+      select(g);
     }
   }
 
   /**
    *  Clears all selections by actaually calling {@link #deselect(GlyphI)}
-   *  on each one as well as removing them from the vector of selections.
+   *  on each one as well as removing them from the List of selections.
    */
   public void clearSelected() {
     while (selected.size() > 0) {
       // selected.size() shrinks because deselect(glyph)
       //    calls selected.removeElement()
-      Object gl = selected.elementAt(0);
-      if (gl == null) { selected.removeElementAt(0); }
+      Object gl = selected.get(0);
+      if (gl == null) { selected.remove(0); } // xxx
       else {
         deselect((GlyphI)gl);
       }
     }
-    selected.removeAllElements();
+    selected.clear();
   }
 
   /** Subclasses should implement this. Default does nothing.
-   *  Implementations should remove selections from the Vector 'selected',
+   *  Implementations should remove selections from the List 'selected',
    *  in addition to any other tasks specific to those classes.
    */
   public void deselect(GlyphI gl) {}
 
-  public void deselect(Vector vec) {
-    // need to special case if vec argument is ref to same Vector as selected,
+  public void deselect(List<GlyphI> glyphs) {
+    // need to special case if vec argument is ref to same List as selected,
     //   since the deselect(Object) will cause shrinking of vec size as
     //   it is being looped through
-    if (vec == null) {
+    if (glyphs == null) {
       return;
     }
-    if (vec == selected) {
+    if (glyphs == selected) {
       clearSelected();
     }
-    for (int i=0; i<vec.size(); i++) {
-      deselect((GlyphI)vec.elementAt(i));
+    for (GlyphI g : glyphs) {
+      deselect(g);
     }
   }
 
-  public Vector<GlyphI> getSelected() {
+  public List<GlyphI> getSelected() {
     return selected;
   }
 
@@ -237,7 +238,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
    *  each Glyph.
    */
   public void clearWidget() {
-    selected.removeAllElements();
+    selected.clear();
     // reset glyph_hash
     glyph_hash = new Hashtable<GlyphI,Object>();
 
@@ -266,46 +267,46 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
   @Override
   public void addMouseListener(MouseListener l) {
     if (!mouse_listeners.contains(l)) {
-      mouse_listeners.addElement(l);
+      mouse_listeners.add(l);
     }
   }
 
   @Override
   public void removeMouseListener(MouseListener l) {
-    mouse_listeners.removeElement(l);
+    mouse_listeners.remove(l);
   }
 
   @Override
   public void addMouseMotionListener(MouseMotionListener l) {
     if (!mouse_motion_listeners.contains(l)) {
-      mouse_motion_listeners.addElement(l);
+      mouse_motion_listeners.add(l);
     }
   }
 
   @Override
   public void removeMouseMotionListener(MouseMotionListener l) {
-    mouse_motion_listeners.removeElement(l);
+    mouse_motion_listeners.remove(l);
   }
 
   @Override
   public void addKeyListener(KeyListener l) {
     if (!key_listeners.contains(l)) {
-      key_listeners.addElement(l);
+      key_listeners.add(l);
     }
   }
 
   @Override
   public void removeKeyListener(KeyListener l) {
-    key_listeners.removeElement(l);
+    key_listeners.remove(l);
   }
 
   public void destroy() {
-    key_listeners.removeAllElements();
-    mouse_motion_listeners.removeAllElements();
-    mouse_listeners.removeAllElements();
+    key_listeners.clear();
+    mouse_motion_listeners.clear();
+    mouse_listeners.clear();
     glyph_hash.clear();
     model_hash.clear();
-    selected.removeAllElements();
+    selected.clear();
   }
 
     // Implementing KeyListener interface and collecting key events
@@ -315,13 +316,10 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 
     public void heardKeyEvent(KeyEvent e) {
       int id = e.getID();
-      if (key_listeners.size() > 0) {
-        KeyEvent nevt =
-          new KeyEvent(this, id, e.getWhen(), e.getModifiers(),
+      if (! key_listeners.isEmpty()) {
+        KeyEvent nevt = new KeyEvent(this, id, e.getWhen(), e.getModifiers(),
               e.getKeyCode(), e.getKeyChar());
-        KeyListener kl;
-        for (int i=0; i<key_listeners.size(); i++) {
-          kl = key_listeners.elementAt(i);
+        for (KeyListener kl : key_listeners) {
           if (id == KeyEvent.KEY_PRESSED) {
             kl.keyPressed(nevt);
           }

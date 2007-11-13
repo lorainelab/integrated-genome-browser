@@ -19,6 +19,9 @@ import java.util.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.NeoTimerEventClock;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  *  A replacement for java.awt.Scrollbar.  NeoScrollBar provides better
  *  cross-platform compatibility, which is critical for proper scrolling
@@ -44,7 +47,7 @@ implements Adjustable, NeoTimerListener {
   protected static final int LOWARROW = 6;
   protected static final int HIGHARROW = 7;
 
-  protected Vector<AdjustmentListener> listeners;
+  protected List<AdjustmentListener> listeners;
   protected int thumb_coord_value, thumb_coord_size, thumb_coord_max, thumb_coord_min;
   protected int thumb_pixel_value, thumb_pixel_size, thumb_pixel_max, thumb_pixel_min;
   protected int thumb_pixel_size_min = 15;
@@ -585,14 +588,14 @@ implements Adjustable, NeoTimerListener {
 
   public void addAdjustmentListener(AdjustmentListener listener) {
     if (listeners == null) {
-      listeners = new Vector<AdjustmentListener>();
+      listeners = new CopyOnWriteArrayList<AdjustmentListener>();
     }
-    listeners.addElement(listener);
+    listeners.add(listener);
   }
 
   public void removeAdjustmentListener(AdjustmentListener listener) {
     if (listeners == null) { return; }
-    listeners.removeElement(listener);
+    listeners.remove(listener);
   }
 
   public void processAdjustmentEvent(AdjustmentEvent evt) {

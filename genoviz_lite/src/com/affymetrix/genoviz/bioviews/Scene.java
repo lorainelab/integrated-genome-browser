@@ -18,6 +18,8 @@ import java.util.*;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 
+import java.util.List;
+
 /**
  * implementation of SceneI interface.
  * See SceneI for better documentation of methods.
@@ -26,7 +28,7 @@ public class Scene implements SceneI  {
   private static final boolean debug = false;
 
   protected GlyphI eveGlyph;
-  protected Vector<ViewI> views;
+  protected List<ViewI> views;
   protected Color select_color;
   protected int select_style;
 
@@ -39,10 +41,10 @@ public class Scene implements SceneI  {
   protected Rectangle2D scratchCoordBox;
 
   /**
-   * Vector of transient glyphs that are "layered" on top of views
+   * List of transient glyphs that are "layered" on top of views
    * after all other glyphs have been drawn.
    */
-  protected Vector<TransientGlyph> transients;
+  protected List<TransientGlyph> transients;
 
   public Scene ()  {
     /*
@@ -56,7 +58,7 @@ public class Scene implements SceneI  {
     eveGlyph = new RootGlyph();
     eveGlyph.setScene(this);
     eveGlyph.setCoords(0,0,1,1);
-    views = new Vector<ViewI>();
+    views = new ArrayList<ViewI>();
     select_color = Color.red;
     select_style = SELECT_FILL;
     scratchCoordBox = new Rectangle2D();
@@ -128,68 +130,42 @@ public class Scene implements SceneI  {
    * Adds a view representing this scene.
    */
   public void addView(ViewI view)  {
-    views.addElement(view);
+    views.add(view);
   }
 
   /**
    * Removes a view that had been representing the scene.
    */
   public void removeView(ViewI view)  {
-    views.removeElement(view);
+    views.remove(view);
   }
 
   /**
-   * Returns a vector of the views that are currently representing the scene.
+   * Returns a List of the views that are currently representing the scene.
    */
-  public Vector<ViewI> getViews()  {
+  public List<ViewI> getViews()  {
     return views;
   }
-
-  /*  Styles not yet implemented
-  public void setStyle(StyleI style) {
-    this.style = style;
-  }
-  */
-
-  /*  Styles not yet implemented
-  public StyleI getStyle()  {
-    return style;
-  }
-  */
 
   /**
    * Draws all views on all canvases.
    */
   public void draw()  {
-    int i = 0;
-    while (i < views.size())  {
-      (views.elementAt(i)).draw();
-      i++;
+    for (ViewI view : views) {
+      view.draw();
     }
     clearDamage();
-  }
-
-  // NOT USED ANYMORE?  11-17-97
-  /**
-   * Draws all the glyphs in one view.
-   */
-  public void draw(ViewI v) {
-    v.draw();
   }
 
   /**
    * Draw one canvas.
    */
   public void draw(Component c, Graphics2D g)  {
-    ViewI view;
-    int i = 0;
-    while (i < views.size())  {
-      view = views.elementAt(i);
+    for (ViewI view : views) {
       if (view.getComponent() == c)  {
         view.setGraphics(g);
         view.draw();
       }
-      i++;
     }
     // This will cause problems when trying to do damage control across
     // views on multiple canvases!!!  11-17-97
@@ -204,12 +180,12 @@ public class Scene implements SceneI  {
     return eveGlyph.getCoordBox();
   }
 
-  public void pickTraversal(Rectangle2D coordrect, Vector<GlyphI> pickvect,
+  public void pickTraversal(Rectangle2D coordrect, List<GlyphI> pickvect,
       ViewI view) {
     eveGlyph.pickTraversal(coordrect, pickvect, view);
   }
 
-  public void pickTraversal(Rectangle coordrect, Vector<GlyphI> pickvect,
+  public void pickTraversal(Rectangle coordrect, List<GlyphI> pickvect,
       ViewI view) {
     eveGlyph.pickTraversal(coordrect, pickvect, view);
   }
@@ -365,7 +341,7 @@ public class Scene implements SceneI  {
     else {
       GlyphI parent = gl.getParent();
       parent.removeChild(gl);
-      //      Vector siblings = parent.getChildren();
+      //      List siblings = parent.getChildren();
       //      siblings.removeElement(gl);
     }
     if (gl instanceof TransientGlyph) {
@@ -479,14 +455,14 @@ public class Scene implements SceneI  {
 
   protected void addTransient(TransientGlyph tg) {
     if (transients == null) {
-      transients = new Vector<TransientGlyph>();
+      transients = new ArrayList<TransientGlyph>();
     }
-    transients.addElement(tg);
+    transients.add(tg);
   }
 
   protected void removeTransient(TransientGlyph tg) {
     if (transients == null) { return; }
-    transients.removeElement(tg);
+    transients.remove(tg);
   }
 
   /**
@@ -496,11 +472,11 @@ public class Scene implements SceneI  {
    */
   public void removeAllTransients() {
     if ( null != transients ) {
-      transients.removeAllElements();
+      transients.clear();
     }
   }
 
-  protected Vector getTransients() {
+  protected List<TransientGlyph> getTransients() {
     return transients;
   }
 

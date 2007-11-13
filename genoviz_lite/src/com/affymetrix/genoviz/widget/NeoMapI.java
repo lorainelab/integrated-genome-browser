@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
@@ -129,16 +130,16 @@ public interface NeoMapI extends NeoWidgetI {
   public void select(GlyphI glyph, int start, int end);
 
   /**
-   * Selects a range along each GlyphI in a Vector.
+   * Selects a range along each GlyphI in a List.
    * This will default to normal selection
    * if the glyph does not support selection of internal areas and ranges.
    * Note that there is no deselect(glyphs, start, end),
    * since only one selection per glyph is allowed,
    * either whole glyph or a contiguous range.
-   * To deselect a range selection for a Vector of glyphs,
-   * call {@link #deselect(Vector glyphs)}.
+   * To deselect a range selection for a List of glyphs,
+   * call {@link #deselect(List glyphs)}.
    *
-   * @param glyphs a Vector of GlyphIs to select a range along
+   * @param glyphs a List of GlyphIs to select a range along
    * @param start start of range to select
    * @param end end of range to select
    *
@@ -146,7 +147,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @see #getSelectedStart
    * @see #getSelectedEnd
    */
-  public void select(Vector glyphs, int start, int end);
+  public void select(List<GlyphI> glyphs, int start, int end);
 
   /**
    * Selecting an area within a glyph.
@@ -160,16 +161,16 @@ public interface NeoMapI extends NeoWidgetI {
   public void select(GlyphI glyph, double x, double y, double width, double height);
 
   /**
-   * Selecting an area for all GlyphIs in a Vector.
+   * Selecting an area for all GlyphIs in a List.
    * This will default to normal selection
    * if the glyph does not support selection of internal areas.
    * Note that there is no <code>deselect(glyphs, start, end, width, height)</code>,
    * since only one selection per glyph is allowed,
    * either whole glyph or a contiguous area.
-   * To deselect an area selection for a Vector of glyphs,
-   * call {@link #deselect(Vector glyphs)}.
+   * To deselect an area selection for a List of glyphs,
+   * call {@link #deselect(List<GlyphI> glyphs)}.
    */
-  public void select(Vector glyphs, double x, double y, double width, double height);
+  public void select(List<GlyphI> glyphs, double x, double y, double width, double height);
 
   /**
    * Get the start of the selected range of a glyph.
@@ -328,39 +329,39 @@ public interface NeoMapI extends NeoWidgetI {
   public Rectangle getPixelBounds(GlyphI gl);
 
   /**
-   * returns a vector of all <code>Glyph</code>s at
+   * returns a list of all <code>Glyph</code>s at
    *  <code>x,y</code> in this widget.
    *
    * @param x the double describing the X position
    * @param y the double describing the Y position
    *
-   * @return a <code>Vector</code> of <code>Glyph</code>s
+   * @return a List of <code>Glyph</code>s
    * at <code>x,y</code>
    */
-  public Vector getItems(double x, double y);
+  public List<GlyphI> getItems(double x, double y);
 
   /**
-   * returns a vector of all <code>Glyphs</code> within the
+   * returns a list of all <code>Glyphs</code> within the
    * <code>pixrect</code> in this widget.
    *
    * @param pixrect the <code>Rectangle</code> describing the
    *   bounding box of interest
    *
-   * @return a <code>Vector</code> of <code>Glyphs</code>
+   * @return a List of <code>Glyphs</code>
    *  in <code>pixrect</code>
    */
-  public Vector getItems(Rectangle pixrect);
+  public List<GlyphI> getItems(Rectangle pixrect);
 
   /**
-   * retrieve a Vector of all drawn glyphs that overlap
+   * retrieve a List of all drawn glyphs that overlap
    * the coordinate rectangle coordrect.
    */
-  public Vector getItemsByCoord(Rectangle2D coordrect);
+  public List<GlyphI> getItemsByCoord(Rectangle2D coordrect);
 
   /**
    * retrieve all drawn glyphs that overlap the pixel at point x, y.
    */
-  public Vector getItemsByPixel(int x, int y);
+  public List<GlyphI> getItemsByPixel(int x, int y);
 
 
   /**

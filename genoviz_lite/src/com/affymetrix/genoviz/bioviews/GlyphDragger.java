@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
@@ -23,6 +24,7 @@ import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A class to handle generic dragging of Glyphs (and glyph hierarchies)
@@ -56,7 +58,7 @@ public class GlyphDragger
 
   GlyphI dragged_glyph;
   NeoWidgetI widget;
-  Vector<NeoGlyphDragListener> drag_listeners = new Vector<NeoGlyphDragListener>();
+  List<NeoGlyphDragListener> drag_listeners = new CopyOnWriteArrayList<NeoGlyphDragListener>();
   boolean force_within_parent = false;
 
   // a transform to use when mapping mouse drags to glyph coords
@@ -226,12 +228,10 @@ public class GlyphDragger
     }
     Rectangle2D cbox = gl.getCoordBox();
     newgl.setCoords(cbox.x, cbox.y-5, cbox.width, cbox.height);
-    Vector children = gl.getChildren();
+    java.util.List<GlyphI> children = gl.getChildren();
     if (children != null) {
-      for (int i=0; i<children.size(); i++) {
-        GlyphI child = (GlyphI)children.elementAt(i);
-        GlyphI newchild = GlyphDragger.duplicateGlyph(child, col);
-        newgl.addChild(newchild);
+      for (GlyphI child  : children) {
+        newgl.addChild(GlyphDragger.duplicateGlyph(child, col));
       }
     }
     return newgl;
@@ -279,12 +279,11 @@ public class GlyphDragger
   }
 
   public void removeAllListeners() {
-    drag_listeners.removeAllElements();
+    drag_listeners.clear();
   }
 
   public void notifyListeners(NeoGlyphDragEvent evt) {
-    for (int i=0; i<drag_listeners.size(); i++) {
-      NeoGlyphDragListener listener = drag_listeners.elementAt(i);
+    for (NeoGlyphDragListener listener : drag_listeners) {
       listener.heardGlyphDrag(evt);
     }
   }

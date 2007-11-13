@@ -65,11 +65,9 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
   }
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Vector children = parent.getChildren();
-    GlyphI child;
+    java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
-    for (int i=0; i<children.size(); i++) {
-      child = (GlyphI)children.elementAt(i);
+    for (GlyphI child : parent.getChildren()) {
       pack(parent, child, view);
     }
     return null;

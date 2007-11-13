@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,10 +13,11 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.Hashtable;
 
 import com.affymetrix.genoviz.bioviews.*;
+import java.util.ArrayList;
 
 public class GlyphSearchNode implements Cloneable {
 
@@ -24,7 +25,7 @@ public class GlyphSearchNode implements Cloneable {
 
   private GlyphSearchNode l;
   private GlyphSearchNode r;
-  private Vector<GlyphI> children;
+  private List<GlyphI> children;
 
   private long start;
   private long end;
@@ -48,6 +49,7 @@ public class GlyphSearchNode implements Cloneable {
     }
   }
 
+  @Override
   public Object clone() {
     try {
       Object c = super.clone();
@@ -141,12 +143,12 @@ public class GlyphSearchNode implements Cloneable {
 
     if (m - start <= minimum_m || (a <= m && b > m) ) {
       if (null == children) {
-        children = new Vector<GlyphI>();
+        children = new ArrayList<GlyphI>();
       }
       if (debug) {
         System.out.println("Really Adding interval: [" + a + "," + b + "] to " + this);
       }
-      children.addElement(g);
+      children.add(g);
       glyphsInSearchTree.put(g, g);
     }
     else if (b <= m) {
@@ -172,7 +174,7 @@ public class GlyphSearchNode implements Cloneable {
     }
   }
 
-  public void removeGlyph ( GlyphI g ) {
+  public void removeGlyph( GlyphI g ) {
     Rectangle2D cb = g.getCoordBox();
     double a = cb.x;
     double b = cb.x + cb.width;
@@ -182,7 +184,9 @@ public class GlyphSearchNode implements Cloneable {
       b = t;
     }
     if ( ( a <= m && m < b ) || m <= minimum_m ) {
-      if ( children != null ) children.removeElement ( g );
+      if ( children != null ) {
+        children.remove( g );
+      }
       glyphsInSearchTree.remove(g);
     }
     else if (a > m) {
@@ -228,13 +232,13 @@ public class GlyphSearchNode implements Cloneable {
     }
   }
 
-  public Vector<GlyphI> getOverlaps(GlyphI g) {
-    Vector<GlyphI> o = new Vector<GlyphI>();
+  public List<GlyphI> getOverlaps(GlyphI g) {
+    List<GlyphI> o = new ArrayList<GlyphI>();
     getOverlaps(g, o);
     return o;
   }
 
-  private void getOverlaps(GlyphI i, Vector<GlyphI> o) {
+  private void getOverlaps(GlyphI i, List<GlyphI> o) {
     Rectangle2D gbox = i.getCoordBox();
     double a = gbox.x;
     double b = gbox.x + gbox.width;
@@ -248,16 +252,14 @@ public class GlyphSearchNode implements Cloneable {
       System.out.println("Checking overlaps [" + a + "," + b + "]: " + this);
     }
     if (null != children) {
-      int j_size = children.size();
-      for (int j=0; j<j_size; j++) {
-        GlyphI c = children.elementAt(j);
+      for (GlyphI c : children) {
         if (i != c) {
           Rectangle2D cbox = c.getCoordBox();
           if (debug) {
             System.out.println("cbox[x: " + cbox.x + ", x + width: " + ( cbox.x + cbox.width) + "]" );
           }
           if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
-            o.addElement(c);
+            o.add(c);
           }
         }
       }
@@ -284,13 +286,13 @@ public class GlyphSearchNode implements Cloneable {
     }
   }
 
-  public Vector getOverlappingGlyphs(double a, double b) {
-    Vector<GlyphI> o = new Vector<GlyphI>();
+  public List<GlyphI> getOverlappingGlyphs(double a, double b) {
+    List<GlyphI> o = new ArrayList<GlyphI>();
     getOverlappingGlyphs(a, b, o);
     return o;
   }
 
-  private void getOverlappingGlyphs(double a, double b, Vector<GlyphI> o) {
+  private void getOverlappingGlyphs(double a, double b, List<GlyphI> o) {
     if (a > b) {
       double t = a;
       a = b;
@@ -298,12 +300,10 @@ public class GlyphSearchNode implements Cloneable {
     }
 
     if (null != children) {
-      int j_size = children.size();
-      for (int j=0; j<j_size; j++) {
-        GlyphI c = children.elementAt(j);
+      for (GlyphI c : children) {
         Rectangle2D cbox = c.getCoordBox();
         if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
-          o.addElement(c);
+          o.add(c);
         }
       }
     }
@@ -349,6 +349,7 @@ public class GlyphSearchNode implements Cloneable {
     if (r != null) { r.removeChildren(); r=null;}
   }
 
+  @Override
   public String toString() {
     return "GlyphSearchNode[start: " + start + " end: " + end
             + " mid: " + m + " " + super.toString() + "]";

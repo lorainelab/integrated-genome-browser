@@ -15,8 +15,8 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 public class LineStretchContainerGlyph extends Glyph {
 
@@ -28,6 +28,7 @@ public class LineStretchContainerGlyph extends Glyph {
   /**
    *  overriding addChild to force children to center on line
    */
+  @Override
   public void addChild(GlyphI glyph) {
     super.addChild(glyph);
 
@@ -48,24 +49,26 @@ public class LineStretchContainerGlyph extends Glyph {
    *  overriding removeChild so that LineStretchContainer shrinks to fit
    *  remaining children
    */
+  @Override
   public void removeChild(GlyphI glyph) {
     super.removeChild(glyph);
-    Vector child_glyphs = this.getChildren();
+    List<GlyphI> child_glyphs = this.getChildren();
     if (child_glyphs == null || child_glyphs.size() <= 0) {
       // what should be done if no children left???
     }
     else {
-      GlyphI child = (GlyphI)child_glyphs.elementAt(0);
+      GlyphI child = child_glyphs.get(0);
       Rectangle2D childbox = child.getCoordBox();
       this.setCoords(childbox.x, childbox.y, childbox.width, childbox.height);
       for (int i=1; i<child_glyphs.size(); i++) {
-        child = (GlyphI)child_glyphs.elementAt(i);
+        child = child_glyphs.get(i);
         childbox = child.getCoordBox();
         coordbox.add(childbox);
       }
     }
   }
 
+  @Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
@@ -77,16 +80,19 @@ public class LineStretchContainerGlyph extends Glyph {
   }
 
 
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     calcPixels(view);
     return  isVisible?pixel_hitbox.intersects(pixelbox):false;
   }
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }
 
 
+  @Override
   public void pack(ViewI view) {
     super.pack(view);
   }

@@ -135,7 +135,7 @@ public class ComponentPagePrinter implements Printable {
 
 
   // recursively descend into children, searching for NeoBufferedComponents,
-  //    recording their double-buffering status (in neo_comps and buf_states vectors),
+  //    recording their double-buffering status (in neo_comps and buf_states Lists),
   //    then turning double buffering off
   public static void turnNeoBufferingOff(Component com, List<NeoBufferedComponent> neo_comps, List<Boolean> buf_states) {
     if (com instanceof NeoBufferedComponent) {
@@ -162,7 +162,7 @@ public class ComponentPagePrinter implements Printable {
   }
 
   // restore buffer state of NeoBufferedComponents,
-  //   based on neo_comps and buf_states Vectors
+  //   based on neo_comps and buf_states Lists
   public static void restoreNeoBuffering(List<NeoBufferedComponent> neo_comps, List<Boolean> buf_states) {
     for (int i=0; i<neo_comps.size(); i++) {
       NeoBufferedComponent nbc = neo_comps.get(i);

@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
@@ -35,6 +36,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Abstract implementation of NeoWidgetI.
@@ -123,7 +125,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected String hscroll_loc = hscroll_default_loc;
   protected String vscroll_loc = vscroll_default_loc;
 
-  protected Vector<NeoRubberBandListener> rubberband_listeners = new Vector<NeoRubberBandListener>();
+  protected List<NeoRubberBandListener> rubberband_listeners = new CopyOnWriteArrayList<NeoRubberBandListener>();
 
 
   public NeoWidget() {
@@ -146,6 +148,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * Destructor that unlocks graphic resources, cuts links.
    * Call only when the map is no longer being displayed.
    */
+  @Override
   public void destroy() {
 
     super.destroy();
@@ -208,16 +211,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
     int newbehavior = 0;
     RootGlyph rglyph = (RootGlyph)scene.getGlyph();
     if (id == X) {
-      newid = rglyph.X;
+      newid = RootGlyph.X;
     }
     else if (id == Y) {
-      newid = rglyph.Y;
+      newid = RootGlyph.Y;
     }
     if (behavior == EXPAND) {
-      newbehavior = rglyph.EXPAND;
+      newbehavior = RootGlyph.EXPAND;
     }
     else if (behavior == NO_EXPAND) {
-      newbehavior = rglyph.NO_EXPAND;
+      newbehavior = RootGlyph.NO_EXPAND;
     }
     rglyph.setExpansionBehavior(newid, newbehavior);
   }
@@ -307,33 +310,33 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * which makes sure the item is not only drawn/displayed,
    * but also visible (unobscured by other items).
    *
-   * @return a vector of the items.
+   * @return a List of the items.
    */
-  public Vector getVisibleItems() {
+  public List<GlyphI> getVisibleItems() {
     // SHOULD THIS BE getViewBounds() INSTEAD!!??!!!
     //    WHICH GLYPHS DO WE REALLY WANT TO RETURN????
     Rectangle2D coordrect = getCoordBounds();
-    Vector<GlyphI> pickvect = new Vector<GlyphI>();
+    List<GlyphI> pickvect = new ArrayList<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
 
 
   /**
-   *  retrieve a Vector of all drawn glyphs that overlap
+   *  Retrieve a List of all drawn glyphs that overlap
    *  the coordinate rectangle coordrect.
    */
-  public Vector<GlyphI> getItemsByCoord(Rectangle2D coordrect) {
-    Vector<GlyphI> pickvect = new Vector<GlyphI>();
+  public List<GlyphI> getItemsByCoord(Rectangle2D coordrect) {
+    List<GlyphI> pickvect = new ArrayList<GlyphI>();
     scene.pickTraversal(coordrect, pickvect, view);
     return pickvect;
   }
 
   /**
-   *  retrieve a Vector of all drawn glyphs that overlap
+   *  retrieve a List of all drawn glyphs that overlap
    *  the pixel point x, y.
    */
-  public Vector getItemsByPixel(int x, int y) {
+  public List<GlyphI> getItemsByPixel(int x, int y) {
     Rectangle pixrect = new Rectangle(x-this.pixelblur, y-this.pixelblur,
         2*this.pixelblur, 2*this.pixelblur);
     Rectangle2D coordrect = new Rectangle2D();
@@ -347,7 +350,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param pixrect a rectangle in pixel space
    * @return the overlapping glyphs
    */
-  public Vector getItems(Rectangle pixrect) {
+  public List<GlyphI> getItems(Rectangle pixrect) {
     // no pixelblur for region selection
     Rectangle2D coordrect = new Rectangle2D();
     coordrect = view.transformToCoords(pixrect, coordrect);
@@ -361,7 +364,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @return the overlapping glyphs
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
    */
-  public Vector<GlyphI> getItems(double x, double y) {
+  public List<GlyphI> getItems(double x, double y) {
     Rectangle2D coordrect = new Rectangle2D(x, y, 1, 1);
     if (0 < pixelblur) {
       Rectangle pixrect = new Rectangle();
@@ -373,7 +376,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return getItemsByCoord(coordrect);
   }
 
-  public Vector<GlyphI> getItems(double x, double y, int location) {
+  public List<GlyphI> getItems(double x, double y, int location) {
     return getItems(x,y);
   }
 
@@ -782,9 +785,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     scene.setVisibility(gl, isVisible);
   }
 
-  public void setVisibility(Vector glyphs, boolean isVisible) {
-    for (int i=0; i<glyphs.size(); i++) {
-      setVisibility((GlyphI)glyphs.elementAt(i), isVisible);
+  public void setVisibility(List<GlyphI> glyphs, boolean isVisible) {
+    for (GlyphI g : glyphs) {
+      setVisibility(g, isVisible);
     }
   }
 
@@ -796,20 +799,21 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * adds an object to the selection.
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#select
    */
+  @Override
   public void select(GlyphI g) {
     scene.select(g);
     if ( g.isSelected() && !selected.contains(g)) {
-      selected.addElement(g);
+      selected.add(g);
     }
   }
 
   /**
    * @see com.affymetrix.genoviz.widget.NeoMapI#select
    */
-  public void select(Vector vec, double x, double y,
+  public void select(List<GlyphI> glyphs, double x, double y,
       double width, double height) {
-    for (int i=0; i<vec.size(); i++) {
-      select((GlyphI)vec.elementAt(i), x, y, width, height);
+    for (GlyphI g : glyphs) {
+      select(g, x, y, width, height);
     }
   }
 
@@ -817,7 +821,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       double width, double height) {
     scene.select(g, x, y, width, height);
     if (g.isSelected() && ! selected.contains(g)) {
-      selected.addElement(g);
+      selected.add(g);
     }
   }
 
@@ -825,11 +829,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return gl.supportsSubSelection();
   }
 
+  @Override
   public void deselect(GlyphI g) {
     scene.deselect(g);
-    selected.removeElement(g);
+    selected.remove(g);
   }
 
+  @Override
   public void clearWidget() {
     super.clearWidget();
   }
@@ -933,17 +939,17 @@ public abstract class NeoWidget extends NeoAbstractWidget
    */
   public int getItemCount(Object datamodel) {
     /*
-     * Could just store everything (even single items) as Vectors,
+     * Could just store everything (even single items) as Lists,
      * but we want to avoid the memory overhead.
      * A better way to deal with this might be to maintain separate hashes,
-     * one for Vectors and one for GlyphI?  Hmm, maybe not...
+     * one for Lists and one for GlyphI?  Hmm, maybe not...
      */
     Object result = model_hash.get(datamodel);
     if (result instanceof GlyphI) {
       return 1;
     }
-    else if (result instanceof Vector) {
-      return ((Vector)result).size();
+    else if (result instanceof List) {
+      return ((List)result).size();
     }
     else {
       return 0;
@@ -954,21 +960,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * get the items associated with a particular data model.
    *
    * @param datamodel being visualized.
-   * @return a Vector of all the glyphs tied to the given data model.
+   * @return a List of all the glyphs tied to the given data model.
    */
-   @SuppressWarnings("unchecked")
-   public Vector getItems(Object datamodel) {
+   public List<GlyphI> getItems(Object datamodel) {
     Collections.singletonList(datamodel);
     Object result = model_hash.get(datamodel);
-    if (result instanceof Vector) {
-      return (Vector)result;
+    if (result instanceof List) {
+      return (List<GlyphI>)result;
     }
     else {
-      Vector vec = new Vector();
-      if ( null != result ) {
-        vec.addElement(result);
-      }
-      return vec;
+      return Arrays.<GlyphI>asList((GlyphI)result);
     }
   }
 
@@ -982,9 +983,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     if (result instanceof GlyphI) {
       return (GlyphI)result;
     }
-    else if (result instanceof Vector && ((Vector)result).size() > 0) {
-      Vector vec = (Vector)result;
-      return (GlyphI)vec.elementAt(vec.size()-1);
+    else if (result instanceof List && ! ((List)result).isEmpty()) {
+      List vec = (List)result;
+      return (GlyphI) vec.get(vec.size()-1);
     }
     else {
       return null;
@@ -1244,14 +1245,14 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public boolean isOnTop(GlyphI gl) {
     if (!gl.isVisible()) { return false; }
     Rectangle2D cbox = gl.getCoordBox();
-    Vector<GlyphI> pickvect = new Vector<GlyphI>();
+    List<GlyphI> pickvect = new ArrayList<GlyphI>();
     getScene().pickTraversal(cbox, pickvect, getView());
     if (pickvect.size() == 0) {
       // something very strange is going on if pickvect doesn't at
       //    least pick up the glyph itself...
       return false;
     }
-    if (gl == pickvect.elementAt(pickvect.size()-1)) {
+    if (gl == pickvect.get(pickvect.size()-1)) {
       // if gl is last element in pickvect then it was drawn last,
       //   and therefore is on top and unobscured
       return true;
@@ -1328,6 +1329,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return checkScrollValue;
   }
 
+  @Override
   public void heardMouseEvent(MouseEvent evt) {
     if (! (evt instanceof NeoViewMouseEvent)) { return; }
     NeoViewMouseEvent e = (NeoViewMouseEvent)evt;
@@ -1347,11 +1349,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     nevt.translatePoint(bnds.x, bnds.y);
 
     if (mouse_listeners.size() > 0) {
-      int last_listener = mouse_listeners.size()-1;
-      for (int i=0;
-           (i <= last_listener) && (i < mouse_listeners.size());
-           i++) {
-        MouseListener ml = mouse_listeners.elementAt(i);
+      for (MouseListener ml : mouse_listeners) {
         if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
         else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
         else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
@@ -1360,8 +1358,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       }
     }
     if (mouse_motion_listeners.size() > 0) {
-      for (int i=0; i<mouse_motion_listeners.size(); i++) {
-        MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
+      for (MouseMotionListener mml : mouse_motion_listeners) {
         if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
         else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
       }
@@ -1370,12 +1367,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public void addRubberBandListener(NeoRubberBandListener l) {
     if (!rubberband_listeners.contains(l)) {
-      rubberband_listeners.addElement(l);
+      rubberband_listeners.add(l);
     }
   }
 
   public void removeRubberBandListener(NeoRubberBandListener l) {
-    rubberband_listeners.removeElement(l);
+    rubberband_listeners.remove(l);
   }
 
 }

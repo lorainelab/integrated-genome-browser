@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
+*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -33,6 +33,7 @@ public class SolidGlyph extends Glyph {
    * @return whether or not this glyph is hitable
    * @see #setHitable
    */
+  @Override
   public boolean isHitable() {
     return hitable;
   }
@@ -42,17 +43,19 @@ public class SolidGlyph extends Glyph {
    * Most glyphs will probably be hitable,
    * and the default value is true.
    * Making a glyph not hitable keeps it from being selectable, and from being
-   * in the NeoMouseEvent.getItems() vector.
+   * in the NeoMouseEvent.getItems() list.
    */
   public void setHitable(boolean hitable) {
     this.hitable = hitable;
   }
 
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     calcPixels(view);
     return  hitable && isVisible() && pixel_hitbox.intersects(getPixelBox());
   }
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return hitable && isVisible() && coord_hitbox.intersects(getPositiveCoordBox());
   }

@@ -15,10 +15,11 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.util.List;
 
 import com.affymetrix.genoviz.event.NeoRubberBandEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RubberBand implements MouseListener, MouseMotionListener  {
 
@@ -27,7 +28,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
   // need to resolve EventSourceI vs. Component !!!
   protected Component comp;
   protected Color color;
-  protected Vector<NeoRubberBandListener> listeners;
+  protected List<NeoRubberBandListener> listeners;
   protected Rectangle pixelbox;
   protected int xorigin, yorigin;
   protected boolean forward, drawn, started;
@@ -49,7 +50,7 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
    */
   public RubberBand() {
     color = Color.black;
-    listeners = new Vector<NeoRubberBandListener>();
+    listeners = new CopyOnWriteArrayList<NeoRubberBandListener>();
     drawn = false;
     started = false;
     startEventID = MouseEvent.MOUSE_PRESSED;
@@ -190,24 +191,22 @@ public class RubberBand implements MouseListener, MouseMotionListener  {
   }
 
   protected void processEvent(NeoRubberBandEvent evt) {
-    NeoRubberBandListener listener;
-    for (int i = 0; i < listeners.size(); i++)  {
-      listener = listeners.elementAt(i);
+    for (NeoRubberBandListener listener : listeners)  {
       listener.rubberBandChanged(evt);
     }
   }
 
   public void addRubberBandListener(NeoRubberBandListener listener)  {
     if (!listeners.contains(listener)) {
-      listeners.addElement(listener);
+      listeners.add(listener);
     }
   }
 
   public void removeRubberBandListener(NeoRubberBandListener listener)  {
-    listeners.removeElement(listener);
+    listeners.remove(listener);
   }
 
-  public Vector getRubberBandListeners()  {
+  public List<NeoRubberBandListener> getRubberBandListeners()  {
     return listeners;
   }
 

@@ -172,6 +172,7 @@ public class BarParser implements AnnotationWriter  {
 	max_index = -max_index -1;
 	if (max_index <= 0) { max_index = 0; }
 	//	else if (max_index >= chunk_mins.length) { max_index = chunk_mins.length - 1; }
+	if (max_index >= chunk_mins.length) { max_index = chunk_mins.length - 1; }
       }
 
       if (DEBUG_SLICE) {

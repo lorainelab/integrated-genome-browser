@@ -29,6 +29,7 @@ public class FormatPriorities {
     "bed",
     "psl",
     "gff",
+    "bar",
   };
 
   //  static String default_format = "das2feature";

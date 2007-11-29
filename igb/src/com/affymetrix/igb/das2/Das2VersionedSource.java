@@ -307,6 +307,10 @@ public class Das2VersionedSource  {
     try {
       System.out.println("Das Types Request: " + types_request);
       Map headers = new LinkedHashMap();
+      //set in header a sessionId for types authentication?
+      String sessionId = source.getServerInfo().getSessionId();
+      if (sessionId != null) headers.put("sessionId", sessionId);
+      //get InputStream
       InputStream response = LocalUrlCacher.getInputStream(types_request, headers);
 
       //      Document doc = DasLoader.getDocument(types_request);

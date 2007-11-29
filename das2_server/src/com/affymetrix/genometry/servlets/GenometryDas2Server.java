@@ -28,6 +28,7 @@ public class GenometryDas2Server {
     String xml_base = args[3];
     System.setProperty("das2_genometry_server_dir", data_path);
     System.setProperty("das2_maintainer_email", admin_email);
+    System.setProperty("das2_xml_base", xml_base);
 
     if (SHOW_GUI) {
       final JFrame frm = new JFrame("Genometry Server");

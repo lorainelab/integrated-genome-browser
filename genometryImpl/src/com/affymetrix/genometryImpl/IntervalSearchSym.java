@@ -88,6 +88,9 @@ public class IntervalSearchSym extends SimpleSymWithProps
     int prev_min = Integer.MIN_VALUE;
     for (int i=0; i<child_count; i++) {
       SeqSymmetry child = getChild(i);
+      if ( child == null || child.getSpan(search_seq) == null ) {
+        continue;
+      }
       int min = child.getSpan(search_seq).getMin();
       if (prev_min > min) {
         sorted = false;
@@ -128,6 +131,9 @@ public class IntervalSearchSym extends SimpleSymWithProps
     SeqSymmetry curMaxSym = this.getChild(0);
     for (int i=0; i<child_count; i++) {
       SeqSymmetry child = this.getChild(i);
+      if ( child == null || child.getSpan(search_seq) == null ) {
+        continue;
+      }
       int max = child.getSpan(search_seq).getMax();
       if (max > curMaxSym.getSpan(search_seq).getMax()) {
         curMaxSym = child;

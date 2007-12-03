@@ -12,7 +12,7 @@ public class Das2Authorization {
 	private File restrictedDirectoriesFile;
 
 	/**Tab delimited file containing 
-	 * 1) userName - unique to file
+	 * 1) userName - unique to file, case insensitive!
 	 * 2) encryptedPassword - use MD5Crypt.crypt(password, salt) method, see static method DasAuthorization.encrypt (String password)
 	 * 3) versionedGenomeDirectory - i.e. 'S_pombe_Apr_2007', should be present in the 'restrictedDirectoriesFile'
 	 * 4) restrictedDirectory - directory within the versionedGenomeDirectory granting access
@@ -32,7 +32,7 @@ public class Das2Authorization {
 	/**HashMap of versionedGenome: restrictedDirectory (String), see restrictedDirectoriesFile*/
 	HashMap<String,HashSet> restrictedDirectories = null;
 
-	/**HashMap of userName: User (String : User), see userFile*/
+	/**HashMap of lowercase userName: User (String : User), see userFile*/
 	HashMap<String,User> users = null;
 
 	//constructor
@@ -114,20 +114,21 @@ public class Das2Authorization {
 		return allOK;
 	}
 
-	/**Loads userFile creating users HashMap*/
+	/**Loads userFile creating users HashMap, userNames are converted to lowercase.*/
 	private boolean loadUserHashMap(){
 		users = new HashMap();
 		try{
 			BufferedReader in = new BufferedReader(new FileReader(usersFile));
 			String line;
 			String[] tokens;
+System.out.println("\t&&&&&&&&&&&&&&&&&&&&&&ConvertingToLowerCase&&&&&&&&&&&&&&")	;		
 			while ((line = in.readLine())!=null){
 				line = line.trim();
 				if (line.length() == 0 || line.startsWith("#")) continue;				
 				tokens = line.split("\\t+");
 				if (tokens.length < 4) continue;
 				//does user exist?
-				String userName = tokens[0].trim();
+				String userName = tokens[0].trim().toLowerCase();
 				User user;
 				if (users.containsKey(userName)) user = (User) users.get(userName);
 				else {
@@ -160,11 +161,13 @@ public class Das2Authorization {
 	 */
 	public HashMap validate (String userName, String nonEncryptedPassword){
 		if (userName == null || nonEncryptedPassword == null) return null;
+		//convert case
+		String lcun = userName.toLowerCase();
 		//does user exist
-		if (users.containsKey(userName) == false) return null;
+		if (users.containsKey(lcun) == false) return null;
 		//check password
 		String crypted = MD5Crypt.crypt(nonEncryptedPassword, md5Salt);
-		User user = (User)users.get(userName);
+		User user = (User)users.get(lcun);
 		if (crypted.equals(user.encryptedPassword)) return user.authorizedDirectories;
 		return null;
 	} 

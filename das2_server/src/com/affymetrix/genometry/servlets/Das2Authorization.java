@@ -120,8 +120,7 @@ public class Das2Authorization {
 		try{
 			BufferedReader in = new BufferedReader(new FileReader(usersFile));
 			String line;
-			String[] tokens;
-System.out.println("\t&&&&&&&&&&&&&&&&&&&&&&ConvertingToLowerCase&&&&&&&&&&&&&&")	;		
+			String[] tokens;	
 			while ((line = in.readLine())!=null){
 				line = line.trim();
 				if (line.length() == 0 || line.startsWith("#")) continue;				

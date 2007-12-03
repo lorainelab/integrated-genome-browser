@@ -259,12 +259,11 @@ public class LocalUrlCacher {
 		if (headers != null) headers.clear(); 
 		// if url is a file url, and not caching files, then just directly return stream
 		if ((! CACHE_FILE_URLS) && isFile(url)) {
-			InputStream fstr = null;
 			URL furl = new URL(url);
-			HttpURLConnection huc= (HttpURLConnection) furl.openConnection();
-			//set sessionId? This might not be needed.
+			URLConnection huc= furl.openConnection();
+			//set sessionId
 			if (sessionId != null) huc.setRequestProperty("Cookie", sessionId);
-			fstr = huc.getInputStream();
+			InputStream fstr = huc.getInputStream();
 			//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
 			return fstr;
 		}

@@ -66,18 +66,4 @@ public class AsciiCharSequence implements CharSequence {
   public String toString() {
     return new String(bytes); // should be new String(bytes,charset) for jdk1.6
   }
-  
-  /**
-   * This will test converting a simple string containing a non-ascii character
-   * into an ascii string.  The bad character will be replaced by '?'.
-   */
-  public static void main(String[] args) {
-    
-    String test = "The grand cañon is big!";
-        
-    AsciiCharSequence as = new AsciiCharSequence(test);
-    System.out.println("Ascii String: " + as.toString());
-    System.out.println("AsciiCharSequence length: " + as.length());
-    System.out.println("AsciiCharSequence byte length: " + as.bytes.length);
-  }
 }

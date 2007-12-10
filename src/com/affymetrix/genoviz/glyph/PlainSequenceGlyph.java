@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.*;
 import java.io.*;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  * A glyph that only displays sequence residue letters,
@@ -56,20 +57,22 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
     return sequence;
   }
 
-  public void draw(ViewI view)
-  {
-    double pixels_per_base;
-    pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
+  @Override
+  public void draw(ViewI view) {
+    Graphics2D g = view.getGraphics();
+    FontMetrics fm = g.getFontMetrics(getResidueFont());
 
+    double pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
+
+    int font_width = AbstractResiduesGlyph.getMaxCharacterWidth(fm);
     if (((double)((int)pixels_per_base) == pixels_per_base) &&
-        ((int)pixels_per_base == font_width))
-    {
+        ((int)pixels_per_base == font_width)) {
       int pixelstart;
       double doublestart;
-      if (sequence != null)
-      {
+      if (sequence != null) {
         Rectangle2D coordclipbox = view.getCoordBox();
-        Graphics g = view.getGraphics();
+        g.setFont(getResidueFont());
+        g.setColor(getForegroundColor());
 
         int visible_ref_beg, visible_ref_end, visible_seq_beg,
             visible_seq_end, visible_seq_span,
@@ -91,10 +94,7 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
 
         doublestart = (double)seq_pixel_offset;
         pixelstart = (int)doublestart;
-        int baseline = (pixelbox.y+(pixelbox.height/2)) +
-                        fontmet.getAscent()/2;
-        g.setFont(getResidueFont());
-        g.setColor(getForegroundColor());
+        int baseline = (pixelbox.y+(pixelbox.height/2)) + fm.getAscent()/2;
 
         if ((sequence.length() != 0) && (seq_end_index <= sequence.length()))
           g.drawString(sequence.substring(seq_beg_index,seq_end_index),
@@ -107,11 +107,13 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
     super.draw(view);
   }
 
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     calcPixels(view);
     return  isVisible?pixel_hitbox.intersects(pixelbox):false;
   }
 
+  @Override
   public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }

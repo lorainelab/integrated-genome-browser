@@ -15,29 +15,14 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  *  An abstract base class for several different biological sequence glyphs.
  */
 public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGlyphI {
-  // made abstract 6-24-98 to make explicit that should not be used directly --
-  //   use a subclass instead
   protected static Font default_font = new Font("Courier", Font.BOLD, 12);
   protected static Color default_residue_color = Color.black;
 
-  //  protected Font residue_font;
-  //  protected Color residue_color;
-  
-  /**
-   * Deprecated. Try to get the FontMetrics from a Graphics object.
-   * @deprecated
-   */
-  @Deprecated
-  protected FontMetrics fontmet;
-  
-  @Deprecated
-  protected int font_width, font_ascent, font_height;
   Glyph sel_glyph;
 
   /**
@@ -67,25 +52,21 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     setForegroundColor( default_residue_color );
   }
 
+  /** Get the max width required for drawing the characters 'A', 'C', 'G' or 'T'. */
+  public static int getMaxCharacterWidth(FontMetrics fm) {
+    int width = fm.charWidth('C');
+    width = Math.max(width, fm.charWidth('A'));
+    width = Math.max(width, fm.charWidth('G'));
+    width = Math.max(width, fm.charWidth('T'));
+    return width;
+  }
+
   public void setResidueFont(Font fnt) {
-    //String fam = fnt.getFamily().toLowerCase();
-
-    fontmet = GeneralUtils.getFontMetrics( getResidueFont() );
-
     // change font
     this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
 
-    font_width = fontmet.charWidth('C');
-    font_width = Math.max(font_width, fontmet.charWidth('A'));
-    font_width = Math.max(font_width, fontmet.charWidth('C'));
-    font_width = Math.max(font_width, fontmet.charWidth('T'));
-
-    font_height = fontmet.getAscent();
-    font_ascent = fontmet.getAscent();
     if (children != null) {
-      Object child;
-      for (int i=0; i<children.size(); i++) {
-        child = children.elementAt(i);
+      for (GlyphI child : children) {
         if (child instanceof ResiduesGlyphI)
           ((ResiduesGlyphI)child).setResidueFont( fnt );
       }
@@ -93,20 +74,13 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   }
 
   public Font getResidueFont() { return style.getFont(); }
-  
-  @Deprecated
-  public int getFontWidth() { return font_width; }
-  
-  @Deprecated
-  public int getFontHeight() { return font_height; }
 
-  @Deprecated
-  public int getFontAscent() { return font_ascent; }
-
+  @Override
   public boolean supportsSubSelection() {
     return true;
   }
 
+  @Override
   public Rectangle2D getSelectedRegion() {
     if (sel_glyph == null) {
       if (selected) {
@@ -123,6 +97,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    * Calls super.setCoords and resets the reference space.
    * Also resets the coords for all the children.
    */
+  @Override
   public void setCoords(double x, double y, double width, double height) {
     super.setCoords(x, y, width, height);
     if (orient == HORIZONTAL) {
@@ -151,6 +126,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   /**
    * This turns around and calls setCoords.
    */
+  @Override
   public void setCoordBox( Rectangle2D theBox ) {
     setCoords( theBox.x, theBox.y, theBox.width, theBox.height );
   }
@@ -160,6 +136,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    * Just use x start and end (x+width).
    * Should probably go in a LinearGlyph superclass...
    */
+  @Override
   public void select(double x, double y, double width, double height) {
     if (orient == HORIZONTAL) {
       select(x, x+width);
@@ -219,6 +196,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     }
   }
 
+  @Override
   public void setSelected(boolean selected) {
     super.setSelected(selected);
     if ( ! isSelected() ) {
@@ -226,10 +204,12 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     }
   }
 
+  @Override
   protected void drawSelectedFill(ViewI view) {
     super.drawSelectedFill(view);
   }
 
+  @Override
   protected void drawSelectedOutline(ViewI view) {
     if (sel_glyph != null)  {
       draw(view);

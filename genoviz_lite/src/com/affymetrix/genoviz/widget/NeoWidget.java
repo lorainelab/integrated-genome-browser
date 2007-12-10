@@ -994,10 +994,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 
-  public void setSelectionAppearance(int select_behavior) {
+  public void setSelectionAppearance(Scene.SelectType select_behavior) {
     scene.setSelectionAppearance( select_behavior );
   }
-  public int getSelectionAppearance() {
+  public Scene.SelectType getSelectionAppearance() {
     return scene.getSelectionAppearance();
   }
   public void setSelectionColor(Color col) {

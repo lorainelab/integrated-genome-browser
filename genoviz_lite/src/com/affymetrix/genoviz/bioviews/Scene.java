@@ -30,7 +30,7 @@ public class Scene implements SceneI  {
   protected GlyphI eveGlyph;
   protected List<ViewI> views;
   protected Color select_color;
-  protected int select_style;
+  protected SelectType select_style;
 
   /**
    * damage flag to indicate if something has changed in the scene that
@@ -60,7 +60,7 @@ public class Scene implements SceneI  {
     eveGlyph.setCoords(0,0,1,1);
     views = new ArrayList<ViewI>();
     select_color = Color.red;
-    select_style = SELECT_FILL;
+    select_style = SelectType.SELECT_FILL;
     scratchCoordBox = new Rectangle2D();
   }
 
@@ -349,24 +349,15 @@ public class Scene implements SceneI  {
     }
   }
 
-  public int getSelectionStyle() {
+  public SelectType getSelectionStyle() {
     return getSelectionAppearance();
   }
 
-  /**
-   * Sets the selection appearance.
-   * @param id the appearance state.
-   * Choose from SELECT_NONE, SELECT_OUTLINE,
-   * SELECT_FILL, BACKGROUND_FILL, SELECT_REVERSE, HIGHLIGHT.
-   */
-  public void setSelectionAppearance(int id) {
-    select_style = id;
+  public void setSelectionAppearance(SelectType s) {
+    select_style = s;
   }
 
-  /**
-   * @return the selection appearance set with {@link #setSelectionAppearance(int)}.
-   */
-  public int getSelectionAppearance() {
+  public SelectType getSelectionAppearance() {
     return select_style;
   }
 

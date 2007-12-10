@@ -32,65 +32,52 @@ import com.affymetrix.genoviz.event.*;
  */
 public interface SceneI {
 
+  public enum SelectType {
   /**
-   * do not distinguish selected glyphs
+   * Do not distinguish selected glyphs
    * from non-selected glyphs.
-   * @see #setSelectionAppearance
-   * @see #getSelectionAppearance
    */
-  public static final int SELECT_NONE = 100;
+  SELECT_NONE,
   
   /**
-   * distinguish selected glyph
+   * Distinguish selected glyph
    * from non-selected glyphs
-   * by outlining them with selection color
-   * @see #setSelectionAppearance
-   * @see #getSelectionAppearance
-   * @see #setSelectionColor
+   * by outlining them with selection color.
    */
-  public static final int SELECT_OUTLINE = 101;
+  SELECT_OUTLINE,
 
   /**
-   * distinguish selected glyph
+   * Distinguish selected glyph
    * from non-selected glyphs
    * by filling them with selection color.
-   * @see #setSelectionAppearance
-   * @see #getSelectionAppearance
-   * @see #setSelectionColor
    */
-  public static final int SELECT_FILL = 102;
+  SELECT_FILL,
 
   /**
-   * distinguish selected glyph
+   * Distinguish selected glyph
    * from non-selected glyphs
    * by filling rectangle behind them with selection color.
-   * @see #setSelectionAppearance
-   * @see #getSelectionAppearance
-   * @see #setSelectionColor
    */
-  public static final int BACKGROUND_FILL = 103;
+  BACKGROUND_FILL,
 
   /**
-   * distinguish selected glyph
+   * Distinguish selected glyph
    * from non-selected glyphs
    * by reversing forground and background colors.
-   * @see #setSelectionAppearance
-   * @see #getSelectionAppearance
-   * @see #setSelectionColor
    */
-  public static final int SELECT_REVERSE = 104;
+   SELECT_REVERSE
+  };
+
 
   /**
-   *  returns the selection style to apply to glyphs within this scene
-   *  possible return values: NONE, OUTLINE, FILL, HIGHLIGHT
+   *  Selection style to apply to glyphs within this scene.
    */
-  public void setSelectionAppearance(int id);
+  public void setSelectionAppearance(SelectType id);
 
   /**
-   *  returns the selection appearance  to apply to glyphs within this scene
-   *  possible return values: NONE, OUTLINE, FILL, HIGHLIGHT
+   *  Returns the selection appearance  to apply to glyphs within this scene.
    */
-  public int getSelectionAppearance();
+  public SelectType getSelectionAppearance();
 
   /**
    * return color for selected glyphs within this scene

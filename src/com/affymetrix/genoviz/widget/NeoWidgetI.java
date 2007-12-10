@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.*;
@@ -833,21 +834,12 @@ public interface NeoWidgetI extends NeoConstants   {
   public void setRubberBandBehavior(boolean activate);
 
   /**
-   * specifies the manner in which selected items are visually displayed.
+   * Specifies the manner in which selected items are visually displayed.
    *
    * @param behavior how selected Glyphs are visually differentiated
    * from unselected Glyphs.
-   * Valid values are
-   * SceneI.SELECT_FILL,
-   * SeneI.SELECT_NONE,
-   * and
-   * SceneI.SELECT_OUTLINE.
-   *
-   * @see com.affymetrix.genoviz.bioviews.SceneI#SELECT_FILL
-   * @see com.affymetrix.genoviz.bioviews.SceneI#SELECT_NONE
-   * @see com.affymetrix.genoviz.bioviews.SceneI#SELECT_OUTLINE
    */
-  public void setSelectionAppearance(int behavior);
+  public void setSelectionAppearance(SceneI.SelectType behavior);
 
   /**
    * specifies the color in which selected items are visually displayed.
@@ -857,11 +849,9 @@ public interface NeoWidgetI extends NeoConstants   {
   public void setSelectionColor(Color color);
 
   /**
-   * returns the appearance set by setSelectionAppearance.
-   *
-   * @see #setSelectionAppearance
+   * Returns the appearance set by setSelectionAppearance.
    */
-  public int getSelectionAppearance();
+  public SceneI.SelectType getSelectionAppearance();
 
   /**
    * returns the Color set by setSelectionColor.

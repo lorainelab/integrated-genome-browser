@@ -94,10 +94,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
    */
   public void drawTraversal(ViewI view)  {
     if (coordbox.intersects(view.getCoordBox()) && isVisible) {
-      int sel_style = view.getScene().getSelectionAppearance();
 
       // 1.) draw background rectangle
-      if (selected && sel_style == SceneI.SELECT_FILL) {
+      if (selected && view.getScene().getSelectionAppearance() == SceneI.SelectType.SELECT_FILL) {
         full_rect.setSelected(true);
         full_rect.drawTraversal(view);
         full_rect.setSelected(false);

@@ -33,7 +33,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
   protected static Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
 
-  protected int placement = ABOVE;
+  protected NeoConstants.Placement placement = NeoConstants.Placement.ABOVE;
   protected String text;
   protected Font fnt;
   protected String font_name;
@@ -95,7 +95,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
   public LabelGlyph () {
     setFont( DEFAULT_FONT );
     setFontExtras();
-    placement = ABOVE;
+    placement = NeoConstants.Placement.ABOVE;
     labeled_pix = new Rectangle();
     enclosing_pix = new Rectangle();
     enclosing_coords = new Rectangle2D();
@@ -190,20 +190,20 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
     }
     labeled_pix.setBounds(pixelbox.x, pixelbox.y,
         pixelbox.width, pixelbox.height);
-    if (placement == LEFT) {
+    if (placement == NeoConstants.Placement.LEFT) {
       pixelbox.x = pixelbox.x - text_width - pixel_separation;
     }
-    else if (placement == RIGHT) {
+    else if (placement == NeoConstants.Placement.RIGHT) {
       pixelbox.x = pixelbox.x + pixelbox.width + pixel_separation;
     }
     else {
       pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
     }
-    if (placement == ABOVE) {
+    if (placement == NeoConstants.Placement.ABOVE) {
       //      pixelbox.y = pixelbox.y - pixel_separation;
       this.text_baseline = pixelbox.y - pixel_separation;
     }
-    else if (placement == BELOW) {
+    else if (placement == NeoConstants.Placement.BELOW) {
       this.text_baseline = pixelbox.y + pixelbox.height +
         text_height + pixel_separation;
     }
@@ -324,19 +324,8 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    *
    * @param placement LEFT, RIGHT, ABOVE, BELOW, or CENTER
    */
-  public void setPlacement(int placement) {
-    switch (placement) {
-    case LEFT:
-    case RIGHT:
-    case ABOVE:
-    case BELOW:
-    case CENTER:
-      this.placement = placement;
-      break;
-    default:
-      throw new IllegalArgumentException
-        ("must be LEFT, RIGHT, ABOVE, BELOW, or CENTER");
-    }
+  public void setPlacement(NeoConstants.Placement placement) {
+    this.placement = placement;
   }
 
   /**
@@ -345,7 +334,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    *
    * @return LEFT, RIGHT, ABOVE, BELOW, or CENTER
    */
-  public int getPlacement() {
+  public NeoConstants.Placement getPlacement() {
     return this.placement;
   }
 

@@ -25,7 +25,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
   protected boolean DEBUG_CHECKS = false;
   protected double coord_fuzziness = 1;
   protected double spacing = 2;
-  protected int movetype;
+  protected NeoConstants.Direction movetype;
   protected Rectangle2D before = new Rectangle2D();
 
   boolean STRETCH_HORIZONTAL = true;
@@ -45,7 +45,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    * Constructs a packer that moves glyphs away from the horizontal axis.
    */
   public ExpandedTierPacker() {
-    this(DOWN);
+    this(NeoConstants.Direction.DOWN);
   }
 
   /**
@@ -54,7 +54,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    * @param movetype indicates which direction the glyph_to_move should move.
    * @see #setMoveType
    */
-  public ExpandedTierPacker(int movetype) {
+  public ExpandedTierPacker(NeoConstants.Direction movetype) {
     setMoveType(movetype);
   }
 
@@ -66,7 +66,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    *                 {@link #MIRROR_VERTICAL}, or {@link #MIRROR_HORIZONTAL}.
    *                 The last two mean "away from the orthoganal axis".
    */
-  public void setMoveType(int movetype) {
+  public void setMoveType(NeoConstants.Direction movetype) {
     this.movetype = movetype;
   }
 
@@ -125,11 +125,11 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    * @see #setMoveType
    */
   public void moveToAvoid(
-      GlyphI glyph_to_move, GlyphI glyph_to_avoid, int movetype) {
+      GlyphI glyph_to_move, GlyphI glyph_to_avoid, NeoConstants.Direction movetype) {
     Rectangle2D movebox = glyph_to_move.getCoordBox();
     Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
     if ( ! movebox.intersects ( avoidbox ) ) return;
-    if (movetype == MIRROR_VERTICAL) {
+    if (movetype == NeoConstants.Direction.MIRROR_VERTICAL) {
       if (movebox.y < 0) {
         glyph_to_move.moveAbsolute(movebox.x,
             avoidbox.y - movebox.height - spacing);
@@ -139,7 +139,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
             avoidbox.y + avoidbox.height + spacing);
       }
     }
-    else if (movetype == MIRROR_HORIZONTAL) {
+    else if (movetype == NeoConstants.Direction.MIRROR_HORIZONTAL) {
       if (movebox.x < 0) {
         glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
             movebox.y);
@@ -149,19 +149,19 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
             movebox.y);
       }
     }
-    else if (movetype == DOWN) {
+    else if (movetype == NeoConstants.Direction.DOWN) {
       glyph_to_move.moveAbsolute(movebox.x,
           avoidbox.y + avoidbox.height + spacing);
     }
-    else if (movetype == UP) {
+    else if (movetype == NeoConstants.Direction.UP) {
       glyph_to_move.moveAbsolute(movebox.x,
           avoidbox.y - movebox.height - spacing);
     }
-    else if (movetype == RIGHT) {
+    else if (movetype == NeoConstants.Direction.RIGHT) {
       glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
           movebox.y);
     }
-    else if (movetype == LEFT) {
+    else if (movetype == NeoConstants.Direction.LEFT) {
       glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
           movebox.y);
     }
@@ -307,7 +307,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     Rectangle2D childbox, siblingbox;
     Rectangle2D pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
-    if (movetype == UP) {
+    if (movetype == NeoConstants.Direction.UP) {
       child.moveAbsolute(childbox.x,
                          pbox.y + pbox.height - childbox.height - parent_spacer);
     }

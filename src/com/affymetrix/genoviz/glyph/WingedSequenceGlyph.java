@@ -32,11 +32,10 @@ public class WingedSequenceGlyph extends SequenceGlyph
   Font variable_font;
 
   public WingedSequenceGlyph() {
-
-    this(HORIZONTAL);
+    this(NeoConstants.Orientation.Horizontal);
   }
 
-  public WingedSequenceGlyph(int orientation) {
+  public WingedSequenceGlyph(NeoConstants.Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
     scratchrect = new Rectangle2D();

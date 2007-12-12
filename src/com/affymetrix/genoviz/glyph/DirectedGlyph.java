@@ -37,21 +37,13 @@ import com.affymetrix.genoviz.util.NeoConstants;
  */
 public abstract class DirectedGlyph extends SolidGlyph {
 
-  private int orientation = NeoConstants.HORIZONTAL;
+  private NeoConstants.Orientation orientation = NeoConstants.Orientation.Horizontal;
 
-  public void setOrientation( int theOrientation ) {
-    switch ( theOrientation ) {
-    case NeoConstants.HORIZONTAL:
-    case NeoConstants.VERTICAL:
-      this.orientation = theOrientation;
-      break;
-    default:
-      throw new IllegalArgumentException
-        ( "Glyph orientation must be HORIZONTAL or VERTICAL." );
-    }
+  public void setOrientation( NeoConstants.Orientation theOrientation ) {
+    this.orientation = theOrientation;
   }
 
-  public int getOrientation() {
+  public NeoConstants.Orientation getOrientation() {
     return this.orientation;
   }
 
@@ -75,16 +67,16 @@ public abstract class DirectedGlyph extends SolidGlyph {
    * gets the direction of the glyph.
    */
   public int getDirection() {
-    if ( this.isForward() && NeoConstants.HORIZONTAL == this.getOrientation() ) {
+    if ( this.isForward() && NeoConstants.Orientation.Horizontal == this.getOrientation() ) {
       return EAST;
     }
-    if ( this.isForward() && NeoConstants.VERTICAL == this.getOrientation() ) {
+    if ( this.isForward() && NeoConstants.Orientation.Vertical == this.getOrientation() ) {
       return SOUTH;
     }
-    if ( !this.isForward() && NeoConstants.HORIZONTAL == this.getOrientation() ) {
+    if ( !this.isForward() && NeoConstants.Orientation.Horizontal == this.getOrientation() ) {
       return WEST;
     }
-    if ( !this.isForward() && NeoConstants.VERTICAL == this.getOrientation() ) {
+    if ( !this.isForward() && NeoConstants.Orientation.Vertical == this.getOrientation() ) {
       return NORTH;
     }
     throw new IllegalStateException
@@ -101,10 +93,10 @@ public abstract class DirectedGlyph extends SolidGlyph {
   public void setCoords(double x, double y, double width, double height)  {
     super.setCoords(x, y, width, height);
     switch ( this.getOrientation() ) {
-    case NeoConstants.HORIZONTAL:
+    case Horizontal:
       setForward( 0 <= width );
       break;
-    case NeoConstants.VERTICAL:
+    case Vertical:
       setForward( 0 <= height );
       break;
     }

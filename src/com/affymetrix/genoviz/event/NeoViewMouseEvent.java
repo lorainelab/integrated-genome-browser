@@ -28,7 +28,7 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
 
   public NeoViewMouseEvent(MouseEvent ome, View view,
       double xcoord, double ycoord) {
-    super(ome, (Component)ome.getSource(), UNKNOWN, xcoord, ycoord);
+    super(ome, (Component)ome.getSource(), -1, xcoord, ycoord);
     this.view = view;
   }
 

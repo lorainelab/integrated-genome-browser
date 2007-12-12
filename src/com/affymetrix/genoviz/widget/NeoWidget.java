@@ -85,10 +85,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected TransformI scrolltrans[] = new TransformI[2];
 
   protected double zoomer_scale[] = new double[2];
-  protected int zoom_behavior[] = new int[2];
+  protected ZoomConstraint zoom_behavior[] = new ZoomConstraint[2];
   protected double zoom_coord[] = new double[2];
 
-  protected int scale_constraint[] = new int[2];
+  protected NeoWidgetI.ScaleConstraint scale_constraint[] = {NeoWidgetI.ScaleConstraint.NONE, NeoWidgetI.ScaleConstraint.NONE};
   protected int reshape_constraint[] = { FITWIDGET, FITWIDGET };
 
   protected int expansion_behavior[] = { NO_EXPAND, NO_EXPAND };
@@ -115,8 +115,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected RubberBand rband;
   protected Rectangle2D bandbox;
   protected boolean rbActivated = false;
-
-  boolean use_neoscrollers = true;
 
   protected boolean hscroll_show, vscroll_show;
 
@@ -844,22 +842,22 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * Scale constraints are currently only considered during
    *    zooming with zoomer[] adjustables
    */
-  public void setScaleConstraint(int axisid, int constraint) {
+  public void setScaleConstraint(int axisid, NeoWidgetI.ScaleConstraint constraint) {
     scale_constraint[axisid] = constraint;
   }
 
-  public void setZoomBehavior(int axisid, int constraint) {
+  public void setZoomBehavior(int axisid, ZoomConstraint constraint) {
     switch (constraint) {
-    case CONSTRAIN_START:
-    case CONSTRAIN_MIDDLE:
-    case CONSTRAIN_END:
-      break;
-    default:
-      throw new IllegalArgumentException("Invalid constraint.");
+      case CONSTRAIN_START:
+      case CONSTRAIN_MIDDLE:
+      case CONSTRAIN_END:
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid constraint.");
     }
     zoom_behavior[axisid] = constraint;
   }
-  public int getZoomBehavior(int axisid) {
+  public ZoomConstraint getZoomBehavior(int axisid) {
     return zoom_behavior[axisid];
   }
 
@@ -867,8 +865,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return zoom_coord[axisid];
   }
 
-  public void setZoomBehavior(int axisid, int constraint, double coord) {
-    if (CONSTRAIN_COORD != constraint)
+  public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord) {
+    if (ZoomConstraint.CONSTRAIN_COORD != constraint)
       throw new IllegalArgumentException("Invalid constraint.");
     zoom_behavior[axisid] = constraint;
     zoom_coord[axisid] = coord;
@@ -888,8 +886,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
         return;
       }
       zoomer_scale[id] = zoomtrans[id].transform(id, zoomer_value[id]);
-      if (scale_constraint[id] == INTEGRAL_PIXELS ||
-          scale_constraint[id] == INTEGRAL_ALL) {
+      if (scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) {
         if (zoomer_scale[id] >= 1)  {
           zoomer_scale[id] = (int)(zoomer_scale[id] +.0001);
         }
@@ -1154,16 +1152,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     double prev_coord_offset = prev_pixel_offset * prev_coords_per_pixel;
     double prev_visible_coords = prev_coords_per_pixel * pixel_size[id];
-    if (zoom_behavior[id] == CONSTRAIN_MIDDLE) {
+    if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_MIDDLE) {
       fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
     }
-    else if (zoom_behavior[id] == CONSTRAIN_START)  {
+    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_START)  {
       fixed_coord = prev_coord_offset;
     }
-    else if (zoom_behavior[id] == CONSTRAIN_END) {
+    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_END) {
       fixed_coord = prev_coord_offset + prev_visible_coords;
     }
-    else if (zoom_behavior[id] == CONSTRAIN_COORD) {
+    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_COORD) {
       fixed_coord = zoom_coord[id];
     }
     else {
@@ -1177,8 +1175,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double real_pix_offset = fixed_pixel - pixels_per_coord[id] * fixed_coord;
     double coord_offset = -real_pix_offset * coords_per_pixel[id];
 
-    if ((scale_constraint[id] == INTEGRAL_PIXELS ||
-          scale_constraint[id] == INTEGRAL_ALL) && zoom_scale >= 1) {
+    if ((scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
       coord_offset = (int)coord_offset;
     }
 
@@ -1195,8 +1193,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
       }
     }
 
-    if ((scale_constraint[id] == INTEGRAL_PIXELS ||
-          scale_constraint[id] == INTEGRAL_ALL) && zoom_scale >= 1) {
+    if ((scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
       pixel_offset[id] =
         (int)(Math.ceil(coord_offset / coords_per_pixel[id]));
     }
@@ -1342,7 +1340,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     int id = e.getID();
 
     NeoMouseEvent nevt =
-      new NeoMouseEvent(e, this, UNKNOWN, e.getCoordX(), e.getCoordY());
+      new NeoMouseEvent(e, this, -1, e.getCoordX(), e.getCoordY());
     // translating from NeoCanvas pixel location to
     //     widget pixel location
     Rectangle bnds = view.getComponent().getBounds();

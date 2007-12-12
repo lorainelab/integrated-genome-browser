@@ -14,8 +14,10 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.*;
 
+import com.affymetrix.genoviz.widget.NeoWidgetI.ZoomConstraint;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -63,7 +65,7 @@ public class ZoomLine implements NeoWidgetListener {
         while ( clients.hasMoreElements() ) {
           Object o = clients.nextElement();
           NeoWidgetI w = ( NeoWidgetI ) o;
-          w.setZoomBehavior( NeoMap.X, NeoMap.CONSTRAIN_COORD, midPoint );
+          w.setZoomBehavior( NeoMap.X, ZoomConstraint.CONSTRAIN_COORD, midPoint );
           w.updateWidget();
         }
       }
@@ -77,7 +79,7 @@ public class ZoomLine implements NeoWidgetListener {
     m.addMouseListener( this.zoomPointAdjuster );
     m.addKeyListener( this.zoomPointNudger );
     Shadow hairline =
-      new Shadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
+      new Shadow( m, NeoConstants.Orientation.Horizontal, Color.blue );
     hairline.setSelectable( false );
     this.zoomPoint.addListener( hairline );
     this.maps.put( m, hairline );
@@ -119,7 +121,7 @@ public class ZoomLine implements NeoWidgetListener {
 //      this.maps.remove( m );
 //      hairline = new Shadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
 //      this.maps.put( m, hairline );
-      hairline.resetShadow( m, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.blue );
+      hairline.resetShadow( m, NeoConstants.Orientation.Horizontal, Color.blue );
       hairline.setSelectable( false );
 //      this.zoomPoint.addListener( hairline );
     }

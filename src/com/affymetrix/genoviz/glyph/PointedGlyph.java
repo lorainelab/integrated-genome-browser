@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Graphics;
 
 /**
@@ -35,7 +36,7 @@ public class PointedGlyph extends DirectedGlyph {
     int x[] = new int[6];
     int y[] = new int[6];
     int halfThickness = 1;
-    if (HORIZONTAL == this.getOrientation() && this.isForward()) {
+    if (NeoConstants.Orientation.Horizontal == this.getOrientation() && this.isForward()) {
       halfThickness = (pixelbox.height-1)/2;
       x[0] = pixelbox.x;
       x[2] = pixelbox.x+pixelbox.width;
@@ -48,7 +49,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[3] = y[0] + pixelbox.height;
       y[4] = y[3];
     }
-    else if (HORIZONTAL == this.getOrientation() && !this.isForward()) {
+    else if (NeoConstants.Orientation.Horizontal == this.getOrientation() && !this.isForward()) {
       halfThickness = (pixelbox.height-1)/2;
       x[0] = pixelbox.x;
       x[2] = x[0] + pixelbox.width;
@@ -61,7 +62,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[3] = y[1] + pixelbox.height;
       y[4] = y[3];
     }
-    else if (VERTICAL == this.getOrientation() && this.isForward()) {
+    else if (NeoConstants.Orientation.Vertical == this.getOrientation() && this.isForward()) {
       halfThickness = (pixelbox.width-1)/2;
       x[0] = pixelbox.x;
       x[1] = pixelbox.x+pixelbox.width;
@@ -74,7 +75,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[2] = Math.max(y[3]-halfThickness, y[0])-1;
       y[4] = y[2];
     }
-    else if (VERTICAL == this.getOrientation() && !this.isForward()) {
+    else if (NeoConstants.Orientation.Vertical == this.getOrientation() && !this.isForward()) {
       halfThickness = (pixelbox.width)/2;
       x[0] = pixelbox.x + pixelbox.width;
       x[1] = pixelbox.x;

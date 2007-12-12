@@ -89,6 +89,8 @@ public interface NeoWidgetI extends NeoConstants   {
    */
   public static int Y = SECONDARY_AXIS;
 
+  
+  public enum ZoomConstraint {
   /**
    * indicates that zooming should be focused
    * on the top or left side of the widget.
@@ -97,7 +99,7 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    * @see #setZoomBehavior
    */
-  public static final int CONSTRAIN_START = 1;
+   CONSTRAIN_START,
 
   /**
    * indicates that zooming should be focused
@@ -107,7 +109,7 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    * @see #setZoomBehavior
    */
-  public static final int CONSTRAIN_MIDDLE = 2;
+   CONSTRAIN_MIDDLE,
 
   /**
    * indicates that zooming should be focused
@@ -117,7 +119,7 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    * @see #setZoomBehavior
    */
-  public static final int CONSTRAIN_END = 3;
+   CONSTRAIN_END,
 
   /**
    * indicates that zooming should be focused
@@ -125,7 +127,8 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    * @see #setZoomBehavior
    */
-  public static final int CONSTRAIN_COORD = 4;
+   CONSTRAIN_COORD,
+  }
 
   /**
    * indicates that the widget should be resized
@@ -134,7 +137,14 @@ public interface NeoWidgetI extends NeoConstants   {
    */
   public static final int FITWIDGET = 5;
 
-
+  /**
+   * @see #INTEGRAL_COORDS
+   * @see #setScaleConstraint
+   * @see #zoom
+   * @see NeoWidget#setScaleConstraint
+   */
+  public enum ScaleConstraint {
+  
   /**
    * constrains high resolution zooming
    * to integral values of pixels per coordinate.
@@ -146,15 +156,11 @@ public interface NeoWidgetI extends NeoConstants   {
    * this is implemented only for zooming triggered by zoomer adjustables.
    * Calling <a href="#zoom"><code>zoom()</code></a> directly has no effect.
    *
-   * @see #INTEGRAL_COORDS
-   * @see #setScaleConstraint
-   * @see #zoom
-   * @see NeoWidget#setScaleConstraint
    */
-  public static final int INTEGRAL_PIXELS = 8;
+    INTEGRAL_PIXELS,
 
   /**
-   * constrains low resolution zooming
+   * Constrains low resolution zooming
    * to integral values of coordinates per pixel.
    * If the number of pixels per coordinate
    * (<code>zoom_scale</code>) is less than one, then <code>zoom_scale</code>
@@ -165,23 +171,17 @@ public interface NeoWidgetI extends NeoConstants   {
    * this is implemented only for zooming triggered by zoomer adjustables.
    * Calling <a href="#zoom"><code>zoom()</code></a> directly has no effect.
    *
-   * @see #INTEGRAL_PIXELS
-   * @see #setScaleConstraint
-   * @see #zoom
    */
-  public static final int INTEGRAL_COORDS = 9;
+  INTEGRAL_COORDS,
 
   /**
-   * constrain zooming to both
+   * Constrain zooming to both
    * INTEGRAL_PIXELS and INTEGRAL_COORDS.
-   *
-   * @see #INTEGRAL_PIXELS
-   * @see #INTEGRAL_COORDS
-   * @see #setScaleConstraint
-   * @see #zoom
    */
-  public static final int INTEGRAL_ALL = 10;
+  INTEGRAL_ALL,
 
+  NONE
+  }
   /**
    * indicates that a widget's bounds should be automatically expanded
    * when an item is added beyond the widget's previous bounds.
@@ -787,7 +787,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #CONSTRAIN_MIDDLE
    * @see #CONSTRAIN_END
    */
-  public void setZoomBehavior(int axisid, int constraint);
+  public void setZoomBehavior(int axisid, ZoomConstraint constraint);
 
   /**
    * constrains zooming along the given axis to the given point.
@@ -804,7 +804,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #Y
    * @see #CONSTRAIN_COORD
    */
-  public void setZoomBehavior(int axisid, int constraint, double coord);
+  public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord);
 
   /**
    * Controls the scale values allowed during zooming.
@@ -819,7 +819,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #INTEGRAL_COORDS
    * @see #INTEGRAL_ALL
    */
-  public void setScaleConstraint(int axisid, int constraint);
+  public void setScaleConstraint(int axisid, ScaleConstraint constraint);
 
 
   /**

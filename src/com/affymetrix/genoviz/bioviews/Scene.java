@@ -37,8 +37,8 @@ public class Scene implements SceneI  {
    * should force a full draw on the next Widget draw call
    */
   protected boolean damaged = false;
-  protected Rectangle2D damageCoordBox;
-  protected Rectangle2D scratchCoordBox;
+  protected java.awt.geom.Rectangle2D.Double damageCoordBox;
+  protected java.awt.geom.Rectangle2D.Double scratchCoordBox;
 
   /**
    * List of transient glyphs that are "layered" on top of views
@@ -61,7 +61,7 @@ public class Scene implements SceneI  {
     views = new ArrayList<ViewI>();
     select_color = Color.red;
     select_style = SelectType.SELECT_FILL;
-    scratchCoordBox = new Rectangle2D();
+    scratchCoordBox = new java.awt.geom.Rectangle2D.Double();
   }
 
   /**
@@ -176,11 +176,11 @@ public class Scene implements SceneI  {
     clearDamage();
   }
 
-  public Rectangle2D getCoordBox() {
+  public java.awt.geom.Rectangle2D.Double getCoordBox() {
     return eveGlyph.getCoordBox();
   }
 
-  public void pickTraversal(Rectangle2D coordrect, List<GlyphI> pickvect,
+  public void pickTraversal(java.awt.geom.Rectangle2D.Double coordrect, List<GlyphI> pickvect,
       ViewI view) {
     eveGlyph.pickTraversal(coordrect, pickvect, view);
   }
@@ -235,7 +235,7 @@ public class Scene implements SceneI  {
       System.out.println("supports sub selection, expanding damage: " +
           x + ", " + y + ", " + width + ", " + height);
     }
-    Rectangle2D prev_selbox = gl.getSelectedRegion();
+    java.awt.geom.Rectangle2D.Double prev_selbox = gl.getSelectedRegion();
     if (prev_selbox == null)  {
       if (debug) {
         System.out.println("in Scene.select(), prev_selbox is null");
@@ -244,21 +244,23 @@ public class Scene implements SceneI  {
       expandDamage(gl, x, y, width, height);
     }
     else {
-      scratchCoordBox.reshape(prev_selbox.x, prev_selbox.y,
+      scratchCoordBox.setRect(prev_selbox.x, prev_selbox.y,
           prev_selbox.width, prev_selbox.height);
       if (debug) {
         System.out.println("in Scene.select(), prev_selbox NOT null, " +
             "calling select(x,y,w,h) on " + obj);
       }
       gl.select(x, y, width, height);
-      Rectangle2D curr_selbox = gl.getSelectedRegion();
-      Rectangle2D union_selbox =
-        curr_selbox.union(scratchCoordBox);
-      Rectangle2D common_selbox =
-        curr_selbox.intersection(scratchCoordBox);
-      Rectangle2D damage_selbox =
-        new Rectangle2D(union_selbox.x, union_selbox.y,
-            union_selbox.width, union_selbox.height);
+      java.awt.geom.Rectangle2D.Double curr_selbox = 
+        gl.getSelectedRegion();
+      java.awt.geom.Rectangle2D.Double union_selbox =
+        (java.awt.geom.Rectangle2D.Double) curr_selbox.createUnion(scratchCoordBox);
+      java.awt.geom.Rectangle2D.Double common_selbox =
+        (java.awt.geom.Rectangle2D.Double) curr_selbox.createIntersection(scratchCoordBox);
+      java.awt.geom.Rectangle2D.Double damage_selbox =
+        new java.awt.geom.Rectangle2D.Double(
+          union_selbox.getX(), union_selbox.getY(),
+            union_selbox.getWidth(), union_selbox.getHeight());
 
       if (debug) {
         System.out.println("PrevBox:   " + prev_selbox);
@@ -269,8 +271,8 @@ public class Scene implements SceneI  {
 
       // +1/-1 adjustments made to draw over previous selection edge
 
-      if (union_selbox.y == common_selbox.y &&
-          union_selbox.height == common_selbox.height) {
+      if (union_selbox.getY() == common_selbox.getY() &&
+          union_selbox.getHeight() == common_selbox.getHeight()) {
 
         // both x-start and x-end are the same,
         // therefore prev and current coord boxes are identical
@@ -382,11 +384,11 @@ public class Scene implements SceneI  {
       return;
     }
     damaged = true;
-    Rectangle2D gcoords = glyph.getCoordBox();
+    java.awt.geom.Rectangle2D.Double gcoords = glyph.getCoordBox();
 
     if (damageCoordBox == null) {
-      damageCoordBox = new Rectangle2D();
-      damageCoordBox.copyRect(gcoords);
+      damageCoordBox = new java.awt.geom.Rectangle2D.Double();
+      damageCoordBox.setRect(gcoords);
     }
     else {
       damageCoordBox.add(gcoords);
@@ -419,7 +421,7 @@ public class Scene implements SceneI  {
     }
 
     if (damageCoordBox == null) {
-      damageCoordBox = new Rectangle2D(x, y, width, height);
+      damageCoordBox = new java.awt.geom.Rectangle2D.Double(x, y, width, height);
     }
     else {
       damageCoordBox.add(x, y);
@@ -436,7 +438,7 @@ public class Scene implements SceneI  {
     return damaged;
   }
 
-  public Rectangle2D getDamageCoordBox() {
+  public java.awt.geom.Rectangle2D.Double getDamageCoordBox() {
     return damageCoordBox;
   }
 

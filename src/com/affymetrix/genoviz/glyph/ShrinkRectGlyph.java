@@ -46,7 +46,7 @@ public class ShrinkRectGlyph extends Glyph
     return  pixel_hitbox.intersects(pixelbox);
   }
 
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return coord_hitbox.intersects(coordbox);
   }
 

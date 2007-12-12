@@ -33,7 +33,7 @@ public class LineStretchContainerGlyph extends Glyph {
     super.addChild(glyph);
 
     // if first child, then fit to it
-    Rectangle2D cbox = glyph.getCoordBox();
+    java.awt.geom.Rectangle2D.Double cbox = glyph.getCoordBox();
     if (getChildren() == null || getChildren().size() <= 1) {
       this.setCoords(cbox.x, cbox.y, cbox.width, cbox.height);
     }
@@ -58,7 +58,7 @@ public class LineStretchContainerGlyph extends Glyph {
     }
     else {
       GlyphI child = child_glyphs.get(0);
-      Rectangle2D childbox = child.getCoordBox();
+      java.awt.geom.Rectangle2D.Double childbox = child.getCoordBox();
       this.setCoords(childbox.x, childbox.y, childbox.width, childbox.height);
       for (int i=1; i<child_glyphs.size(); i++) {
         child = child_glyphs.get(i);
@@ -87,7 +87,7 @@ public class LineStretchContainerGlyph extends Glyph {
   }
 
   @Override
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }
 

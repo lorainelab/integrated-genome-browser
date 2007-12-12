@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -54,16 +53,16 @@ public class ModArrowGlyph extends SolidGlyph {
     -JMM 12/2/99
    */
 
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     view.transformToPixels ( coordbox, pixelbox );
-    if ( pixelbox.width > pixelbox.height ) return super.hit ( coord_hitbox, view );
+    if ( pixelbox.width > pixelbox.height ) return super.hit( coord_hitbox, view );
     view.transformToPixels ( coord_hitbox, scratchrect );
     if ( forward ) pixelbox.x += pixelbox.width - pixelbox.height;
     pixelbox.width = pixelbox.height;
     return ( pixelbox.intersects ( scratchrect ) );
   }
 
-  public boolean intersects(Rectangle2D rect, ViewI view)  {
+  public boolean intersects(java.awt.geom.Rectangle2D.Double rect, ViewI view)  {
     view.transformToPixels ( coordbox, pixelbox );
     if ( pixelbox.width > pixelbox.height ) return super.hit ( rect, view );
     view.transformToPixels ( rect, scratchrect );

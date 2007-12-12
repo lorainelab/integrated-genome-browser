@@ -26,7 +26,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
   protected double coord_fuzziness = 1;
   protected double spacing = 2;
   protected NeoConstants.Direction movetype;
-  protected Rectangle2D before = new Rectangle2D();
+  protected java.awt.geom.Rectangle2D.Double before = new java.awt.geom.Rectangle2D.Double();
 
   boolean STRETCH_HORIZONTAL = true;
   boolean STRETCH_VERTICAL = true;
@@ -126,8 +126,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    */
   public void moveToAvoid(
       GlyphI glyph_to_move, GlyphI glyph_to_avoid, NeoConstants.Direction movetype) {
-    Rectangle2D movebox = glyph_to_move.getCoordBox();
-    Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
+    java.awt.geom.Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+    java.awt.geom.Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
     if ( ! movebox.intersects ( avoidbox ) ) return;
     if (movetype == NeoConstants.Direction.MIRROR_VERTICAL) {
       if (movebox.y < 0) {
@@ -197,7 +197,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     /*
      *  child packing
      */
-    Rectangle2D pbox = parent.getCoordBox();
+    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
 
     // resetting height of parent to just spacers
     parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
@@ -262,10 +262,10 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
       parent.setCoords(pbox.x, pbox.y, pbox.width, parent_spacer);
       return null;
     }
-    Rectangle2D newbox = new Rectangle2D();
-    Rectangle2D tempbox = new Rectangle2D();
+    java.awt.geom.Rectangle2D.Double newbox = new java.awt.geom.Rectangle2D.Double();
+    java.awt.geom.Rectangle2D.Double tempbox = new java.awt.geom.Rectangle2D.Double();
     child = sibs.get(0);
-    newbox.reshape(pbox.x, child.getCoordBox().y,
+    newbox.setRect(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
@@ -277,16 +277,16 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
         child = sibs.get(i);
-        Rectangle2D childbox = child.getCoordBox();
-        tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
+        java.awt.geom.Rectangle2D.Double childbox = child.getCoordBox();
+        tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
       }
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
         child = sibs.get(i);
-        Rectangle2D childbox = child.getCoordBox();
-        tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
+        java.awt.geom.Rectangle2D.Double childbox = child.getCoordBox();
+        tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
       }
     }
@@ -304,8 +304,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
    * until it no longer reports hitting any of it's siblings.
    */
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-    Rectangle2D childbox, siblingbox;
-    Rectangle2D pbox = parent.getCoordBox();
+    java.awt.geom.Rectangle2D.Double childbox, siblingbox;
+    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
     if (movetype == NeoConstants.Direction.UP) {
       child.moveAbsolute(childbox.x,
@@ -368,7 +368,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
              */
           }
           else {
-            Rectangle2D cb = child.getCoordBox();
+            java.awt.geom.Rectangle2D.Double cb = child.getCoordBox();
             this.before.x = cb.x;
             this.before.y = cb.y;
             this.before.width = cb.width;

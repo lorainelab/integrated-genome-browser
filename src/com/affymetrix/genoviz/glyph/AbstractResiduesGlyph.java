@@ -82,7 +82,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   }
 
   @Override
-  public Rectangle2D getSelectedRegion() {
+  public java.awt.geom.Rectangle2D.Double getSelectedRegion() {
     if (sel_glyph == null) {
       if (selected) {
         return this.getCoordBox();
@@ -111,7 +111,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     if (children != null) {
       int i;
       GlyphI child;
-      Rectangle2D childbox;
+      java.awt.geom.Rectangle2D.Double childbox;
       for (i=0; i<children.size(); i++) {
         child = children.elementAt(i);
         childbox = child.getCoordBox();
@@ -119,7 +119,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
       }
     }
     if (sel_glyph != null) {
-      Rectangle2D selbox = sel_glyph.getCoordBox();
+      java.awt.geom.Rectangle2D.Double selbox = sel_glyph.getCoordBox();
       sel_glyph.setCoords(selbox.x, y, selbox.width, height);
     }
   }
@@ -128,7 +128,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    * This turns around and calls setCoords.
    */
   @Override
-  public void setCoordBox( Rectangle2D theBox ) {
+  public void setCoordBox( java.awt.geom.Rectangle2D.Double theBox ) {
     setCoords( theBox.x, theBox.y, theBox.width, theBox.height );
   }
 

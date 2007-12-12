@@ -31,7 +31,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   String sequence;
   FillRectGlyph full_rect;
   boolean residuesSet = false;
-  Rectangle2D scratchrect;
+  java.awt.geom.Rectangle2D.Double scratchrect;
 
   private boolean show_background = true;
 
@@ -47,12 +47,12 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   public SequenceGlyph(NeoConstants.Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
-    scratchrect = new Rectangle2D();
+    scratchrect = new java.awt.geom.Rectangle2D.Double();
   }
 
   public void setOrientation(NeoConstants.Orientation orientation) {
     this.orient = orientation;
-    Rectangle2D cb = this.getCoordBox();
+    java.awt.geom.Rectangle2D.Double cb = this.getCoordBox();
     this.setCoords(cb.x, cb.y, cb.width, cb.height);
   }
 
@@ -61,7 +61,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     full_rect.setCoords(x, y, width, height);
   }
 
-  public void setCoordBox(Rectangle2D coordbox) {
+  public void setCoordBox(java.awt.geom.Rectangle2D.Double coordbox) {
     super.setCoordBox(coordbox);
     full_rect.setCoordBox(coordbox);
   }
@@ -126,7 +126,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   protected void drawVertical(ViewI view) {
-    Rectangle2D coordclipbox = view.getCoordBox();
+    java.awt.geom.Rectangle2D.Double coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
     g.setFont( getResidueFont() );
     FontMetrics fntMet = g.getFontMetrics();
@@ -153,7 +153,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
         seq_end_index = sequence.length();
       }
 
-      scratchrect.reshape(coordbox.x, visible_seq_beg,
+      scratchrect.setRect(coordbox.x, visible_seq_beg,
           coordbox.width, visible_seq_span);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleY();
@@ -198,7 +198,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   protected void drawHorizontal(ViewI view) {
-    Rectangle2D coordclipbox = view.getCoordBox();
+    java.awt.geom.Rectangle2D.Double coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
     double pixels_per_base;
     int visible_ref_beg, visible_ref_end,
@@ -223,7 +223,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
         seq_end_index = sequence.length();
       }
 
-      scratchrect.reshape(visible_seq_beg,  coordbox.y,
+      scratchrect.setRect(visible_seq_beg,  coordbox.y,
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
@@ -314,7 +314,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     return  isVisible?pixel_hitbox.intersects(pixelbox):false;
   }
 
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }
 

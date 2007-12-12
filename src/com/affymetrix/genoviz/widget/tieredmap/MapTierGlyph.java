@@ -192,7 +192,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
     if (children != null)  {
       Rectangle compbox = view.getComponentSizeRect();
       GeometryUtils.intersection(compbox, pixelbox, pixelbox);
-      Rectangle2D cbox = new Rectangle2D();
+      java.awt.geom.Rectangle2D.Double cbox = new java.awt.geom.Rectangle2D.Double();
       view.transformToCoords(pixelbox, cbox);
       double a = cbox.x;
       double b = cbox.x + cbox.width;
@@ -384,7 +384,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
     return pixel_hitbox.intersects (this.getPixelBox());
   }
 
-  public boolean hit (Rectangle2D coord_hitbox, ViewI view) {
+  public boolean hit (java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view) {
 
     if (!isVisible() || !this.hitable)
       return false;

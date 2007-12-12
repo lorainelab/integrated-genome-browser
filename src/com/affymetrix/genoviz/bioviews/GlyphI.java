@@ -137,14 +137,14 @@ public interface GlyphI extends NeoConstants  {
    *
    * @return the CoordBox.
    */
-  public Rectangle2D getCoordBox();
+  public java.awt.geom.Rectangle2D.Double getCoordBox();
 
   /**
    * Sets the glyph's containing box in coordinate space.
    *
    * @param coordbox the box.
    */
-  public void setCoordBox(Rectangle2D coordbox);
+  public void setCoordBox(java.awt.geom.Rectangle2D.Double coordbox);
 
   /**
    * Sets the glyph's containing box in coordinate space.
@@ -189,7 +189,7 @@ public interface GlyphI extends NeoConstants  {
    * @param view the view in which they might overlap.
    * @return true iff rect intersects this glyph's pixelbox within view
    */
-  public boolean hit(Rectangle2D hitbox, ViewI view);
+  public boolean hit(java.awt.geom.Rectangle2D.Double hitbox, ViewI view);
 
   /**
    * Determines if a given rectangle intersects this glyph
@@ -198,7 +198,7 @@ public interface GlyphI extends NeoConstants  {
    * @param rect the rectangle in question.
    * @param view the view in which they might overlap.
    */
-  public boolean intersects(Rectangle2D rect, ViewI view);
+  public boolean intersects(java.awt.geom.Rectangle2D.Double rect, ViewI view);
 
   /**
    * Sets the selectability of the glyph.
@@ -274,7 +274,7 @@ public interface GlyphI extends NeoConstants  {
    *
    * @return the selected region.
    */
-  public Rectangle2D getSelectedRegion();
+  public java.awt.geom.Rectangle2D.Double getSelectedRegion();
 
   /**
    * Indicates whether or not the glyph is selected.
@@ -294,7 +294,7 @@ public interface GlyphI extends NeoConstants  {
    * Searches children for hits and add them to the pick list.
    * @param pickvec modified by this routine to return the results
    */
-  public void pickTraversal(Rectangle2D pickrect, List<GlyphI> pickvec, ViewI view);
+  public void pickTraversal(java.awt.geom.Rectangle2D.Double pickrect, List<GlyphI> pickvec, ViewI view);
 
 
   /**

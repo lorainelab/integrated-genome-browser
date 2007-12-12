@@ -17,7 +17,6 @@ import java.awt.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import java.util.ArrayList;
 
 /**
@@ -174,7 +173,7 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   public void draw ( ViewI view ) {
     super.draw ( view );
     Graphics g = view.getGraphics();
-    Rectangle2D select_rect = new Rectangle2D();
+    java.awt.geom.Rectangle2D.Double select_rect = new java.awt.geom.Rectangle2D.Double();
     Range range;
     select_rect.y = coordbox.y;
     select_rect.height = coordbox.height;

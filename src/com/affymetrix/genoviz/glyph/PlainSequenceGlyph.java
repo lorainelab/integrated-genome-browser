@@ -34,11 +34,11 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
 
   boolean setSequence = false;
 
-  Rectangle2D scratchrect;
+  java.awt.geom.Rectangle2D.Double scratchrect;
 
   public PlainSequenceGlyph() {
     super();
-    scratchrect = new Rectangle2D();
+    scratchrect = new java.awt.geom.Rectangle2D.Double();
   }
 
   public void setResidues(String sequence) {
@@ -70,7 +70,7 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
       int pixelstart;
       double doublestart;
       if (sequence != null) {
-        Rectangle2D coordclipbox = view.getCoordBox();
+        java.awt.geom.Rectangle2D.Double coordclipbox = view.getCoordBox();
         g.setFont(getResidueFont());
         g.setColor(getForegroundColor());
 
@@ -87,7 +87,7 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
         seq_beg_index = visible_seq_beg - seq_beg;
         seq_end_index = visible_seq_end - seq_beg;
 
-        scratchrect.reshape(visible_seq_beg,  coordbox.y,
+        scratchrect.setRect(visible_seq_beg,  coordbox.y,
                             visible_seq_span, coordbox.height);
         view.transformToPixels(scratchrect, pixelbox);
         int seq_pixel_offset = pixelbox.x;
@@ -114,7 +114,7 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
   }
 
   @Override
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }
 

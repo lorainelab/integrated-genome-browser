@@ -39,7 +39,7 @@ public class StretchContainerGlyph extends Glyph {
     super.setCoords(x, y, width, height);
   }
 
-  public void setCoordBox(Rectangle2D coordbox)   {
+  public void setCoordBox(java.awt.geom.Rectangle2D.Double coordbox)   {
     super.setCoordBox(coordbox);
   }
 

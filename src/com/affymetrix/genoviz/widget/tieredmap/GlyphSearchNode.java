@@ -132,7 +132,7 @@ public class GlyphSearchNode implements Cloneable {
     if (debug) {
       System.out.println("insert");
     }
-    Rectangle2D cb = g.getCoordBox();
+    java.awt.geom.Rectangle2D.Double cb = g.getCoordBox();
     double a = cb.x;
     double b = cb.x + cb.width;
     if (a > b) {
@@ -175,7 +175,7 @@ public class GlyphSearchNode implements Cloneable {
   }
 
   public void removeGlyph( GlyphI g ) {
-    Rectangle2D cb = g.getCoordBox();
+    java.awt.geom.Rectangle2D.Double cb = g.getCoordBox();
     double a = cb.x;
     double b = cb.x + cb.width;
     if (a > b) {
@@ -205,7 +205,7 @@ public class GlyphSearchNode implements Cloneable {
     // CURRENTLY WE DON'T HANDLE REMOVING OR MOVING GLYPHS!!!
 
     if (null == o) {
-      Rectangle2D cb = g.getCoordBox();
+      java.awt.geom.Rectangle2D.Double cb = g.getCoordBox();
       double a = cb.x;
       double b = cb.x + cb.width;
       if (a > b) {
@@ -239,7 +239,7 @@ public class GlyphSearchNode implements Cloneable {
   }
 
   private void getOverlaps(GlyphI i, List<GlyphI> o) {
-    Rectangle2D gbox = i.getCoordBox();
+    java.awt.geom.Rectangle2D.Double gbox = i.getCoordBox();
     double a = gbox.x;
     double b = gbox.x + gbox.width;
     if (a > b) {
@@ -254,7 +254,7 @@ public class GlyphSearchNode implements Cloneable {
     if (null != children) {
       for (GlyphI c : children) {
         if (i != c) {
-          Rectangle2D cbox = c.getCoordBox();
+          java.awt.geom.Rectangle2D.Double cbox = c.getCoordBox();
           if (debug) {
             System.out.println("cbox[x: " + cbox.x + ", x + width: " + ( cbox.x + cbox.width) + "]" );
           }
@@ -301,7 +301,7 @@ public class GlyphSearchNode implements Cloneable {
 
     if (null != children) {
       for (GlyphI c : children) {
-        Rectangle2D cbox = c.getCoordBox();
+        java.awt.geom.Rectangle2D.Double cbox = c.getCoordBox();
         if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
           o.add(c);
         }

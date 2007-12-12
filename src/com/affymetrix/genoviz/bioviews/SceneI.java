@@ -127,5 +127,5 @@ public interface SceneI {
   /**
    *  Return the coordinate bounds of the entire scene.
    */
-  public Rectangle2D getCoordBox();
+  public java.awt.geom.Rectangle2D.Double getCoordBox();
 }

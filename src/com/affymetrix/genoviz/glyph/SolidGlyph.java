@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.Rectangle;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 /**
  * A convenient base class for glyphs that are "solid", meaning any event within
@@ -56,7 +55,7 @@ public class SolidGlyph extends Glyph {
   }
 
   @Override
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return hitable && isVisible() && coord_hitbox.intersects(getPositiveCoordBox());
   }
 

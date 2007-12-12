@@ -194,7 +194,7 @@ public abstract class AbstractTieredMap
       }
     }
 
-    Rectangle2D mbox = getCoordBounds();
+    java.awt.geom.Rectangle2D.Double mbox = getCoordBounds();
 
     double offset;
     double height = mbox.height;
@@ -226,8 +226,8 @@ public abstract class AbstractTieredMap
 
     if (stretch_map) {
       if (tiers.size() <= 0) { return; }
-      Rectangle2D pbox = getCoordBounds();
-      Rectangle2D newbox = null;
+      java.awt.geom.Rectangle2D.Double pbox = getCoordBounds();
+      java.awt.geom.Rectangle2D.Double newbox = null;
 
     for (MapTierGlyph mtg : tiers) {
 
@@ -235,8 +235,8 @@ public abstract class AbstractTieredMap
           continue;
         }
         else if ( newbox == null ) {
-          newbox = new Rectangle2D();
-          newbox.reshape(pbox.x, mtg.getCoordBox().y,
+          newbox = new java.awt.geom.Rectangle2D.Double();
+          newbox.setRect(pbox.x, mtg.getCoordBox().y,
               pbox.width, mtg.getCoordBox().height);
         }
         else {
@@ -303,13 +303,13 @@ public abstract class AbstractTieredMap
   @Override
   public void setBounds(int axis, int start, int end) {
     super.setBounds(axis, start, end);
-    Rectangle2D mbox = getScene().getGlyph().getCoordBox();
+    java.awt.geom.Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
 
     if ((axis != X) || (tiers == null))
       return;
 
     for (MapTierGlyph tier : tiers) {
-      Rectangle2D tbox = tier.getCoordBox();
+      java.awt.geom.Rectangle2D.Double tbox = tier.getCoordBox();
       tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
     }
   }
@@ -465,8 +465,8 @@ public abstract class AbstractTieredMap
 
       // Deal with the geometries --
 
-      Rectangle2D otherCoords = otherTier.getCoordBox();
-      Rectangle2D ourCoords   = ourTier.getCoordBox();
+      java.awt.geom.Rectangle2D.Double otherCoords = otherTier.getCoordBox();
+      java.awt.geom.Rectangle2D.Double ourCoords   = ourTier.getCoordBox();
 
       ourTier.moveAbsolute(ourCoords.x, otherCoords.y);
       ourTier.setCoords (ourCoords.x, otherCoords.y,

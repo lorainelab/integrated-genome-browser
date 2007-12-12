@@ -13,6 +13,8 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import java.awt.Rectangle;
+
 /**
  * A transform used internally by some NeoWidgets to handle zooming, should
  *    not be used directly.
@@ -73,14 +75,14 @@ public class ExponentialTransform implements TransformI {
     return dst;
   }
 
-  public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
+  public java.awt.geom.Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     double x = src.x;
     double y = Math.exp(x*ratio);
     dst.x = y;
     return dst;
   }
 
-  public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
+  public java.awt.geom.Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     double y = src.x;
     double x = Math.log(y/ratio);
     dst.x = x;

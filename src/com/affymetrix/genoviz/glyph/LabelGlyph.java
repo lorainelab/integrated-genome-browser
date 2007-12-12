@@ -56,7 +56,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
   // enclosing coord box contains both the label glyph's coord box and the
   //    coord box of the glyph it is labeling
-  public Rectangle2D enclosing_coords;
+  public java.awt.geom.Rectangle2D.Double enclosing_coords;
 
   // enclosing pixel box contains both the label glyph's pixel box and the
   //    pixel box of the glyph it is labeling
@@ -64,7 +64,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
   // label_coords is the coord box for just the label's drawn aspect
   //   (not including any connector the the labeled glyph...)
-  public Rectangle2D label_coords;
+  public java.awt.geom.Rectangle2D.Double label_coords;
 
   // labeled_pix is the pixel box for the glyph that LabelGlyph is
   //   labeling
@@ -98,8 +98,8 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
     placement = NeoConstants.Placement.ABOVE;
     labeled_pix = new Rectangle();
     enclosing_pix = new Rectangle();
-    enclosing_coords = new Rectangle2D();
-    label_coords = new Rectangle2D();
+    enclosing_coords = new java.awt.geom.Rectangle2D.Double();
+    label_coords = new java.awt.geom.Rectangle2D.Double();
     pixel_separation = 3;
 
   }
@@ -228,14 +228,14 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 
   @Override
-  public boolean intersects(Rectangle2D rect, ViewI view) {
+  public boolean intersects(java.awt.geom.Rectangle2D.Double rect, ViewI view) {
     this.calcPixels(view);
     this.coordbox = view.transformToCoords(this.pixelbox, this.coordbox);
     return super.intersects(rect, view);
   }
 
   @Override
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     calcPixels(view);
     coordbox = view.transformToCoords(pixelbox, coordbox);
     return coord_hitbox.intersects(coordbox);
@@ -360,7 +360,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
     /* Here we set this.coordbox to that of the labeled glyph.
      * This is a reasonable default.
      */
-    Rectangle2D lgbox = lg.getCoordBox();
+    java.awt.geom.Rectangle2D.Double lgbox = lg.getCoordBox();
 
     /* We favor setCoords() over setCoordBox for speed.
      * Also, setting to lg's coordbox causes moving problems,
@@ -413,7 +413,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    * so that we can add both the labeling (this) and labeled glyph
    * to the pick list.
    */
-  public void pickTraversal(Rectangle2D pickRect, List<GlyphI> picks,
+  public void pickTraversal(java.awt.geom.Rectangle2D.Double pickRect, List<GlyphI> picks,
       ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {

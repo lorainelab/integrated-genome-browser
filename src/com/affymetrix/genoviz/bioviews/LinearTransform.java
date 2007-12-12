@@ -49,7 +49,7 @@ public class LinearTransform implements TransformI  {
    * by this.pixel_box.  Should be able to "fit" a glyph hierarchy into the pixel_box
    * by calling this with the top glyph's coord_box
    */
-  public LinearTransform(Rectangle2D coord_box, Rectangle pixel_box)  {
+  public LinearTransform(java.awt.geom.Rectangle2D.Double coord_box, Rectangle pixel_box)  {
     xscale = (double)pixel_box.width / coord_box.width;
     yscale = (double)pixel_box.height / coord_box.height;
     xoffset = (double)pixel_box.x - xscale * coord_box.x;
@@ -71,7 +71,7 @@ public class LinearTransform implements TransformI  {
    * @param coord_box the coordinates of the Scene
    * @param pixel_box coordinates of the pixel space to which you are mapping.
    */
-  public void fit(Rectangle2D coord_box, Rectangle pixel_box)  {
+  public void fit(java.awt.geom.Rectangle2D.Double coord_box, Rectangle pixel_box)  {
     xscale = (double)pixel_box.width / coord_box.width;
     yscale = (double)pixel_box.height / coord_box.height;
     xoffset = (double)pixel_box.x - xscale * coord_box.x;
@@ -138,7 +138,7 @@ public class LinearTransform implements TransformI  {
    * @param dst ignored
    * @return the Souce rectangle transformed.
    */
-  public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
+  public java.awt.geom.Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     dst.x = src.x * xscale + xoffset;
     dst.y = src.y * yscale + yoffset;
     dst.width = src.width * xscale;
@@ -160,7 +160,7 @@ public class LinearTransform implements TransformI  {
    * @param dst ignored
    * @return the souce rectangle transformed.
    */
-  public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
+  public java.awt.geom.Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     dst.x = (src.x - xoffset) / xscale;
     dst.y = (src.y - yoffset) / yscale;
     dst.width = src.width / xscale;

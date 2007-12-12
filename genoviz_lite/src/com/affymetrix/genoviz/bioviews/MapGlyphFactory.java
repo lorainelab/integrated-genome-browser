@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  */
 public class MapGlyphFactory implements NeoConstants  {
 
-  protected int orient;  // orientation, default to HORIZONTAL
+  protected NeoConstants.Orientation orient;  // orientation, default to HORIZONTAL
   protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
   protected String name;
   protected Scene scene;
@@ -54,16 +54,13 @@ public class MapGlyphFactory implements NeoConstants  {
    * creates a horizontally oriented factory.
    */
   public MapGlyphFactory() {
-    this(HORIZONTAL);
+    this(NeoConstants.Orientation.Horizontal);
   }
 
   /**
-   * creates a factory.
-   *
-   * @param orientation
-   * must be HORIZONTAL or VERTICAL
+   * Creates a factory.
    */
-  public MapGlyphFactory(int orientation) {
+  public MapGlyphFactory(NeoConstants.Orientation orientation) {
 
     orient = orientation;
     GlyphI tempglyph = new FillRectGlyph();
@@ -218,11 +215,11 @@ public class MapGlyphFactory implements NeoConstants  {
     this.packer = packer;
 
     if ( packer instanceof AbstractCoordPacker ) {
-      if (this.orient == VERTICAL) {
-        ((AbstractCoordPacker)packer).setMoveType(MIRROR_HORIZONTAL);
+      if (this.orient == NeoConstants.Orientation.Vertical) {
+        ((AbstractCoordPacker)packer).setMoveType(NeoConstants.Direction.MIRROR_HORIZONTAL);
       }
       else {
-        ((AbstractCoordPacker)packer).setMoveType(MIRROR_VERTICAL);
+        ((AbstractCoordPacker)packer).setMoveType(NeoConstants.Direction.MIRROR_VERTICAL);
       }
     }
 
@@ -413,7 +410,7 @@ public class MapGlyphFactory implements NeoConstants  {
       }
 
       double actual_offset, actual_width;
-      if (orient == VERTICAL) {
+      if (orient == NeoConstants.Orientation.Vertical) {
         if (mirror && beg<=end) {
           actual_width = -width;
           actual_offset = -offset;

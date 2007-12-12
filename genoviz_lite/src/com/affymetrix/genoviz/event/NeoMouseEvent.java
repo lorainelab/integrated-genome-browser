@@ -32,11 +32,10 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
 public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
   static final long serialVersionUID = 1L;
 
-  protected static int UNKNOWN = com.affymetrix.genoviz.util.NeoConstants.UNKNOWN;
+  protected int location = -1;
   protected EventObject original_event;
   protected double xcoord;
   protected double ycoord;
-  protected int location = UNKNOWN;
   protected java.util.List<GlyphI> cached_items = null;
 
   /**
@@ -130,9 +129,6 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
   public String toString() {
     String s = "NeoMouseEvent:";
     s += " at ( " + xcoord + ", " + ycoord + " )";
-    if ( UNKNOWN != this.location ) {
-      s += " in location " + this.location;
-    }
     s += " originally: " + original_event.toString();
 
     return s;

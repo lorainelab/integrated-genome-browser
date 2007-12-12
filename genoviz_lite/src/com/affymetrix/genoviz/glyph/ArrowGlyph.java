@@ -127,7 +127,7 @@ public class ArrowGlyph extends DirectedGlyph  {
     x = poly.xpoints;
     y = poly.ypoints;
     switch ( this.getOrientation() ) {
-    case NeoConstants.HORIZONTAL:
+    case Horizontal:
       x[0] = flat_x;
       y[0] = tip_center - headY/2;
       x[1] = tip_x;
@@ -135,7 +135,7 @@ public class ArrowGlyph extends DirectedGlyph  {
       x[2] = flat_x;
       y[2] = tip_center + headY/2;
       break;
-    case NeoConstants.VERTICAL:
+    case Vertical:
       y[0] = flat_x;
       x[0] = tip_center - headY/2;
       y[1] = tip_x;

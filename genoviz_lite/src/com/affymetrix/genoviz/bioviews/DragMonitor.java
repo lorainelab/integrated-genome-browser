@@ -67,16 +67,15 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
       if (timer != null) { timer.stop(); }
       already_dragging_outside = true;
 
-      int direction;
+      NeoConstants.Direction direction;
       // direction constants are from com.affymetrix.genoviz.util.NeoConstants
-      if (x < 0) { direction = WEST; }
-      else if (y < 0) { direction = NORTH; }
-      else if (x > dim.width) { direction = EAST; }
-      else if (y > dim.height) { direction = SOUTH; }
-      else { direction = NONE; }
-      Integer dirobj = new Integer(direction);
+      if (x < 0) { direction = NeoConstants.Direction.LEFT; }
+      else if (y < 0) { direction = NeoConstants.Direction.UP; }
+      else if (x > dim.width) { direction = NeoConstants.Direction.RIGHT; }
+      else if (y > dim.height) { direction = NeoConstants.Direction.DOWN; }
+      else { direction = NeoConstants.Direction.NONE; }
 
-      timer = new NeoTimerEventClock(initial_delay, timer_interval, dirobj);
+      timer = new NeoTimerEventClock(initial_delay, timer_interval, direction);
       timer.addTimerListener(this);
       timer.start();
     }
@@ -97,10 +96,7 @@ implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
    *  and therefore be running synchronously with AWT event and paint calls
    */
   public void heardTimerEvent(NeoTimerEvent evt) {
-    Object arg = evt.getArg();
-    if (!(arg instanceof Integer)) { return; }
-    int direction = ((Integer)arg).intValue();
-    NeoDragEvent new_event = new NeoDragEvent(this, direction);
+    NeoDragEvent new_event = new NeoDragEvent(this, (NeoConstants.Direction) evt.getArg());
     for (NeoDragListener listener : listeners) {
       listener.heardDragEvent(new_event);
     }

@@ -19,37 +19,18 @@ import java.util.EventObject;
 public class NeoDragEvent extends EventObject {
   static final long serialVersionUID = 1L;
 
-  protected int direction;
+  protected NeoConstants.Direction direction;
 
   /**
    * @param source - thing being dragged.
-   * @param direction -
-   * {@link NeoConstants#NORTH},
-   * {@link NeoConstants#SOUTH},
-   * {@link NeoConstants#EAST},
-   * {@link NeoConstants#WEST}, or
-   * {@link NeoConstants#NONE}.
-   * (Probably shouldn't see NONE.
-   * But DragMonitor falls back on it
-   * if it can't figure out anything else.)
+   * @param direction - can also be NONE
    */
-  public NeoDragEvent(Object source, int direction) {
+  public NeoDragEvent(Object source, NeoConstants.Direction direction) {
     super(source);
-    switch ( direction ) {
-    case NeoConstants.NORTH:
-    case NeoConstants.SOUTH:
-    case NeoConstants.EAST:
-    case NeoConstants.WEST:
-    case NeoConstants.NONE:
-      this.direction = direction;
-      break;
-    default:
-      throw new IllegalArgumentException(
-        "Direction must be NORTH, SOUTH, EAST, WEST, or NONE." );
-    }
+    this.direction = direction;
   }
 
-  public int getDirection() {
+  public NeoConstants.Direction getDirection() {
     return direction;
   }
 

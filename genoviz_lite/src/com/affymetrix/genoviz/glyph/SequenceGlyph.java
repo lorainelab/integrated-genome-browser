@@ -41,16 +41,16 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   public SequenceGlyph() {
-    this(HORIZONTAL);
+    this(NeoConstants.Orientation.Horizontal);
   }
 
-  public SequenceGlyph(int orientation) {
+  public SequenceGlyph(NeoConstants.Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
     scratchrect = new Rectangle2D();
   }
 
-  public void setOrientation(int orientation) {
+  public void setOrientation(NeoConstants.Orientation orientation) {
     this.orient = orientation;
     Rectangle2D cb = this.getCoordBox();
     this.setCoords(cb.x, cb.y, cb.width, cb.height);
@@ -117,9 +117,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
   }
 
   public void draw(ViewI view) {
-    if (orient == HORIZONTAL) {
+    if (orient == NeoConstants.Orientation.Horizontal) {
       drawHorizontal( view );
-    } else if (orient == VERTICAL) {
+    } else if (orient == NeoConstants.Orientation.Vertical) {
       drawVertical(view);
     }
     super.draw ( view );

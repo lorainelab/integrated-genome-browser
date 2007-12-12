@@ -18,6 +18,7 @@ import java.util.List;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.ArrayList;
 
 /**
@@ -42,7 +43,7 @@ public class AxisGlyph extends Glyph {
    * HORIZONTAL or VERTICAL orientation.
    * set only in constructors.
    */
-  protected int orient;
+  protected NeoConstants.Orientation orient;
 
   /*
    * Axisglyph can display itself with inverted coordinates in the HORIZONTAL direction.
@@ -80,7 +81,7 @@ public class AxisGlyph extends Glyph {
   protected final void internalSetFont(Font f) {
     label_font = f;
     FontMetrics fm = GeneralUtils.getFontMetrics(f);
-    if (VERTICAL == this.orient) {
+    if (NeoConstants.Orientation.Vertical == this.orient) {
       labelThickness = fm.stringWidth("000000");
     }
     else {
@@ -183,7 +184,7 @@ public class AxisGlyph extends Glyph {
   //private double tickOffset = .5f;
 
 
-  protected int tickPlacement = ABOVE;
+  protected NeoConstants.Placement tickPlacement = NeoConstants.Placement.ABOVE;
 
   /**
    * Places the axis ticks relative to the center line.
@@ -191,28 +192,28 @@ public class AxisGlyph extends Glyph {
    * @param thePlacement ABOVE or BELOW for HORIZONTAL axes,
    *                     RIGHT or LEFT for VERTICAL axes.
    */
-  public void setTickPlacement(int thePlacement) {
+  public void setTickPlacement(NeoConstants.Placement thePlacement) {
     switch (thePlacement) {
     case ABOVE:
-      if (VERTICAL == this.orient)
+      if (NeoConstants.Orientation.Vertical == this.orient)
         throw new IllegalArgumentException
           ("Cannot place ticks above a VERTICAL axis.");
         subtick_size = 1;
       break;
     case RIGHT:
-      if (HORIZONTAL == this.orient)
+      if (NeoConstants.Orientation.Horizontal == this.orient)
         throw new IllegalArgumentException
           ("Cannot place ticks to the right of a HORIZONTAL axis.");
       subtick_size = 1;
       break;
     case BELOW:
-      if (VERTICAL == this.orient)
+      if (NeoConstants.Orientation.Vertical == this.orient)
         throw new IllegalArgumentException
           ("Cannot place ticks below a VERTICAL axis.");
       subtick_size = -2;
       break;
     case LEFT:
-      if (HORIZONTAL == this.orient)
+      if (NeoConstants.Orientation.Horizontal == this.orient)
         throw new IllegalArgumentException
           ("Cannot place ticks to the left of a HORIZONTAL axis.");
       subtick_size = -2;
@@ -230,7 +231,7 @@ public class AxisGlyph extends Glyph {
     this.tickPlacement = thePlacement;
   }
 
-  public int getTickPlacement() {
+  public NeoConstants.Placement getTickPlacement() {
     return this.tickPlacement;
   }
 
@@ -240,7 +241,7 @@ public class AxisGlyph extends Glyph {
   // gap between center_line and edge of labels.
   protected static final int labelGap = MAJORTICKHEIGHT+2;
 
-  protected int labelPlacement = ABOVE;
+  protected NeoConstants.Placement labelPlacement = NeoConstants.Placement.ABOVE;
   protected int labelShift = 5;
   protected int labelThickness;
 
@@ -253,28 +254,28 @@ public class AxisGlyph extends Glyph {
    * @param thePlacement ABOVE or BELOW for HORIZONTAL axes,
    *                     RIGHT or LEFT for VERTICAL axes.
    */
-  public void setLabelPlacement(int thePlacement) {
+  public void setLabelPlacement(NeoConstants.Placement thePlacement) {
     switch (thePlacement) {
     case ABOVE:
-      if (VERTICAL == this.orient)
+      if (NeoConstants.Orientation.Vertical == this.orient)
         throw new IllegalArgumentException
           ("Cannot place labels above a VERTICAL axis.");
       labelShift = labelGap;
       break;
     case RIGHT:
-      if (HORIZONTAL == this.orient)
+      if (NeoConstants.Orientation.Horizontal == this.orient)
         throw new IllegalArgumentException
           ("Cannot place labels to the right of a HORIZONTAL axis.");
       labelShift = labelGap;
       break;
     case BELOW:
-      if (VERTICAL == this.orient)
+      if (NeoConstants.Orientation.Vertical == this.orient)
         throw new IllegalArgumentException
           ("Cannot place labels below a VERTICAL axis.");
       labelShift = -centerLineThickness - labelGap - labelThickness;
       break;
     case LEFT:
-      if (HORIZONTAL == this.orient)
+      if (NeoConstants.Orientation.Horizontal == this.orient)
         throw new IllegalArgumentException
           ("Cannot place labels to the left of a HORIZONTAL axis.");
       labelShift = -centerLineThickness - labelGap - labelThickness;
@@ -286,7 +287,7 @@ public class AxisGlyph extends Glyph {
     this.labelPlacement = thePlacement;
   }
 
-  public int getLabelPlacement() {
+  public NeoConstants.Placement getLabelPlacement() {
     return this.labelPlacement;
   }
 
@@ -295,18 +296,15 @@ public class AxisGlyph extends Glyph {
    *
    * @param orientation HORIZONTAL or VERTICAL
    */
-  public AxisGlyph(int orientation) {
+  public AxisGlyph(NeoConstants.Orientation orientation) {
     switch (orientation) {
-    case VERTICAL:
+    case Vertical:
       this.orient = orientation;
-      setLabelPlacement(LEFT);
+      setLabelPlacement(NeoConstants.Placement.LEFT);
       break;
-    case HORIZONTAL:
+    case Horizontal:
       this.orient = orientation;
       break;
-    default:
-      throw new IllegalArgumentException
-        ("Orientation must be HORIZONTAL or VERTICAL.");
     }
     internalSetFont(new Font("Helvetica", Font.BOLD, 12));
     setSelectable(false);
@@ -316,7 +314,7 @@ public class AxisGlyph extends Glyph {
    * Creates a horizontal axis.
    */
   public AxisGlyph() {
-    this(HORIZONTAL);
+    this(NeoConstants.Orientation.Horizontal);
   }
 
   @Override
@@ -339,7 +337,7 @@ public class AxisGlyph extends Glyph {
    * Centers the center_line within this axis' coordbox.
    */
   protected void setCenter() {
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       center_line = coordbox.x + coordbox.width/2;
     }
     else {
@@ -365,7 +363,7 @@ public class AxisGlyph extends Glyph {
 
       // Center the center_line in the original coord box.
       Rectangle2D centralLine = new Rectangle2D(coordbox.x, coordbox.y, 0f, 0f);
-      if (orient == VERTICAL) {
+      if (orient == NeoConstants.Orientation.Vertical) {
         center_line = coordbox.x + coordbox.width/2;
         centralLine.x = center_line;
         centralLine.height = coordbox.height;
@@ -381,25 +379,25 @@ public class AxisGlyph extends Glyph {
 
 
       // Adjust the pixel box to shrink wrap the axis.
-      if (VERTICAL == this.orient) {
+      if (NeoConstants.Orientation.Vertical == this.orient) {
         centralBox.x -= MAJORTICKHEIGHT;
         centralBox.width = centerLineThickness + ( 2 * MAJORTICKHEIGHT);
-        if (LEFT == this.labelPlacement) {
+        if (NeoConstants.Placement.LEFT == this.labelPlacement) {
           centralBox.x -= labelThickness;
           centralBox.width += labelThickness;
         }
-        else if (RIGHT == this.labelPlacement) {
+        else if (NeoConstants.Placement.RIGHT == this.labelPlacement) {
           centralBox.width += labelThickness;
         }
       }
       else { // (HORIZONTAL == this.orient)
         centralBox.y -= MAJORTICKHEIGHT;
         centralBox.height = centerLineThickness + ( 2 * MAJORTICKHEIGHT);
-        if (ABOVE == this.labelPlacement) {
+        if (NeoConstants.Placement.ABOVE == this.labelPlacement) {
           centralBox.y -= labelThickness;
           centralBox.height += labelThickness;
         }
-        else if (BELOW == this.labelPlacement) {
+        else if (NeoConstants.Placement.BELOW == this.labelPlacement) {
           centralBox.height += labelThickness;
         }
       }
@@ -409,14 +407,14 @@ public class AxisGlyph extends Glyph {
       // Readjust the coord box to match the new pixel box.
       theView.transformToCoords(centralBox, temp_rect);
 
-      if (HORIZONTAL == orient) {
+      if (NeoConstants.Orientation.Horizontal == orient) {
         coordbox.y = temp_rect.y;
         coordbox.height = temp_rect.height;
         // leave coordbox.x and coordbox.width alone
         // (temp_rect.width will be pretty close to coordbox.width, but round-off errors in
         // the transformations can result in problems that manifest as the right
         // edge of the axis not being drawn when the zoom level is very high)
-      } else if (VERTICAL == orient) {
+      } else if (NeoConstants.Orientation.Vertical == orient) {
         coordbox.x = temp_rect.x;
         coordbox.width = temp_rect.width;
         // leave the y and height coords alone
@@ -424,7 +422,7 @@ public class AxisGlyph extends Glyph {
     }
 
     else {
-      if (VERTICAL == this.orient) {
+      if (NeoConstants.Orientation.Vertical == this.orient) {
         double r = ( lastCoordBox.x - center_line ) / lastCoordBox.width;
         center_line = this.coordbox.x - ( r * this.coordbox.width );
       }
@@ -453,7 +451,7 @@ public class AxisGlyph extends Glyph {
 
   public void rangeChanged() {
     if (DEBUG_DRAW) System.err.println("Parental Coords: "+parent.getCoordBox());
-    if (VERTICAL == this.orient) {
+    if (NeoConstants.Orientation.Vertical == this.orient) {
       coordbox.y = parent.getCoordBox().y;
       coordbox.height = parent.getCoordBox().height;
     }
@@ -480,7 +478,7 @@ public class AxisGlyph extends Glyph {
     int axis_length;
 
     FontMetrics fm=null;
-    if (orient == VERTICAL && LEFT == this.labelPlacement) {
+    if (orient == NeoConstants.Orientation.Vertical && NeoConstants.Placement.LEFT == this.labelPlacement) {
       fm = view.getGraphics().getFontMetrics();
     }
 
@@ -504,7 +502,7 @@ public class AxisGlyph extends Glyph {
 
     Rectangle2D scenebox = scene.getCoordBox();
     double scene_start, scene_end;
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       scene_start = scenebox.y;
       scene_end = scenebox.y + scenebox.height;
       scratchcoords.x = center_line;
@@ -531,7 +529,7 @@ public class AxisGlyph extends Glyph {
     }
 
     cumulative.transform(unitrect, scratchcoords);
-    double pixels_per_unit = (orient == VERTICAL) ?
+    double pixels_per_unit = (orient == NeoConstants.Orientation.Vertical) ?
       scratchcoords.height :
       scratchcoords.width;
 
@@ -547,7 +545,7 @@ public class AxisGlyph extends Glyph {
     double units_per_pixel = 1/pixels_per_unit;
 
     int clip_start, clip_end;
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       axis_loc = scratchpixels.x;
       axis_start = pixelbox.y;
       axis_end = pixelbox.y + pixelbox.height;
@@ -578,7 +576,7 @@ public class AxisGlyph extends Glyph {
 
     int center_line_start = axis_loc - centerLineThickness/2;
 
-    if (orient == VERTICAL)  {
+    if (orient == NeoConstants.Orientation.Vertical)  {
       g.fillRect(center_line_start, axis_start, centerLineThickness,axis_length);
     }
     else {
@@ -611,7 +609,7 @@ public class AxisGlyph extends Glyph {
     double map_loc;
     double max_map;    // max tickmark to draw (in map coordinates)
 
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       if (pixelbox.y < clipbox.y) {
         map_loc = (((int)(view.transformToCoords(clipbox, scratchcoords).y /
                                  tick_increment)) * tick_increment);
@@ -678,7 +676,7 @@ public class AxisGlyph extends Glyph {
     subtick_loc = tick_loc;
     rev_subtick_loc = rev_tick_loc;
     double tick_scaled_loc, tick_scaled_increment, rev_tick_scaled_loc;
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       scratchcoords.y = (reversed ? rev_tick_loc : tick_loc);
       scratchcoords.height = tick_increment;
       cumulative.transform(scratchcoords, scratchcoords);
@@ -733,9 +731,9 @@ public class AxisGlyph extends Glyph {
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (tick_loc >= scene_start && tick_loc <= scene_end) {
-          if (orient == VERTICAL) {
+          if (orient == NeoConstants.Orientation.Vertical) {
             if (labelFormat != NO_LABELS) {
-              if (LEFT == this.labelPlacement) {
+              if (NeoConstants.Placement.LEFT == this.labelPlacement) {
                 int x = fm.stringWidth(label);
                 g.drawString(label, center_line_start-labelGap-x, canvas_loc);
               }
@@ -788,9 +786,9 @@ public class AxisGlyph extends Glyph {
         // putting in check to make sure don't extend past scene bounds when
         // view is "bigger" than scene
         if (rev_tick_loc >= scene_start && rev_tick_loc <= scene_end) {
-          if (orient == VERTICAL) {
+          if (orient == NeoConstants.Orientation.Vertical) {
             if (labelFormat != NO_LABELS)  {
-              if (LEFT == this.labelPlacement) {
+              if (NeoConstants.Placement.LEFT == this.labelPlacement) {
                 int x = fm.stringWidth(label);
                 g.drawString(label, center_line_start-labelGap-x, canvas_loc);
               }
@@ -815,7 +813,7 @@ public class AxisGlyph extends Glyph {
     //Draw the minor tick marks.
 
     double subtick_scaled_loc, subtick_scaled_increment;
-    if (orient == VERTICAL) {
+    if (orient == NeoConstants.Orientation.Vertical) {
       scratchcoords.y = subtick_loc;
       scratchcoords.height = subtick_increment;
       cumulative.transform(scratchcoords, scratchcoords);
@@ -862,7 +860,7 @@ public class AxisGlyph extends Glyph {
         if (subtick_loc >= scene_start && subtick_loc <= scene_end) {
           // this should put a tick subtick_size pixels tall tick above
           // the line, nothing below it
-          if (orient == VERTICAL) {
+          if (orient == NeoConstants.Orientation.Vertical) {
             g.drawLine(center_line_start-subtick_size, canvas_loc,
                        center_line_start, canvas_loc);
           }
@@ -901,7 +899,7 @@ public class AxisGlyph extends Glyph {
         if (rev_subtick_loc >= scene_start && rev_subtick_loc <= scene_end) {
           // this should put a tick subtick_size pixels tall tick above
           // the line, nothing below it
-          if (orient == VERTICAL) {
+          if (orient == NeoConstants.Orientation.Vertical) {
             g.drawLine(center_line_start-subtick_size, canvas_loc,
                        center_line_start, canvas_loc);
           }

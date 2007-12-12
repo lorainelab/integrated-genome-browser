@@ -60,8 +60,9 @@ public class CornerGlyph extends DirectedGlyph {
     if (pixelbox.height <MIN_PIXELS) pixelbox.height = MIN_PIXELS;
     Graphics g = view.getGraphics();
 
-    if (getOrientation()==HORIZONTAL) {
+    switch (getOrientation()) {
 
+    case Horizontal:
       if ( isForward() ) {
         x1 = pixelbox.x;
       }
@@ -89,7 +90,8 @@ public class CornerGlyph extends DirectedGlyph {
                                     one_half,    pixelbox.height/3);
       }
 
-    } else { // orientation==VERTICAL (aboveAxis now means to the right of axis)
+      break;
+    case Vertical:
 
       if ( isForward() ) {
         y1 = pixelbox.y + pixelbox.height -1;
@@ -117,6 +119,7 @@ public class CornerGlyph extends DirectedGlyph {
         else             g.fillRect(pixelbox.x + pixelbox.width/3, y1,
                                     pixelbox.width/3,              one_half);
       }
+      break;
     }
 
     super.draw(view);

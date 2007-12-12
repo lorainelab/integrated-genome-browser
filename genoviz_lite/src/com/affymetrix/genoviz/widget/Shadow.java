@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.FontMetrics;
@@ -42,7 +43,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   private NeoMap map;
   private final double topMargin = 0.0;  // margins between viewable area and the shadow
   private final double bottomMargin = 0.0;
-  private int orientation;
+  private NeoConstants.Orientation orientation;
   private boolean labeled=false;  // should we draw a label?
   private boolean labelForReverse = false;
   private long residueCount;
@@ -72,7 +73,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @param destination the map on which the shadow is cast.
    */
   public Shadow( NeoMap destination ) {
-    this( destination, destination.HORIZONTAL );
+    this( destination, NeoConstants.Orientation.Horizontal );
   }
 
   /**
@@ -81,7 +82,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @param destination the map on which the shadow is cast.
    * @param theOrientation of the map (HORIZONTAL or VERTICAL).
    */
-  public Shadow( NeoMap destination, int theOrientation ) {
+  public Shadow( NeoMap destination, NeoConstants.Orientation theOrientation ) {
     this( destination, theOrientation, Color.lightGray );
   }
 
@@ -97,11 +98,11 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#HORIZONTAL
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#VERTICAL
    */
-  public Shadow( NeoMap destination, int theOrientation, Color theColor ) {
+  public Shadow( NeoMap destination, NeoConstants.Orientation theOrientation, Color theColor ) {
     resetShadow(destination, theOrientation, theColor);
   }
 
-  public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
+  public void resetShadow(NeoMap destination, NeoConstants.Orientation theOrientation, Color theColor)  {
     this.map = destination;
 
     // Start out with the TransientGlyph the full size of the map!
@@ -113,14 +114,14 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     double ourX, ourY, ourWidth, ourHeight;
     int[] offset = map.getVisibleOffset();
     switch ( theOrientation ) {
-    case NeoMapI.HORIZONTAL:
+    case Horizontal:
       ourX = sbox.x;
       ourWidth = 1;
       ourY = sbox.y + ( sbox.height * this.topMargin );
       ourHeight = sbox.height * (1.0 - this.topMargin - this.bottomMargin );
 
       break;
-    case NeoMapI.VERTICAL:
+    case Vertical:
       ourY = sbox.y;
       ourHeight = 1;
       ourX = sbox.x + ( sbox.width * this.topMargin );
@@ -175,7 +176,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
        label.setBackgroundColor(vGlyph.getBackgroundColor());
        label.setForegroundColor ( Color.black );
        label.setShowBackground(true);
-       label.setPlacement(StringGlyph.CENTER);
+       label.setPlacement(NeoConstants.Placement.CENTER);
        label.setSelectable(false);
 
        this.setRange(current_range_st, current_range_en);
@@ -251,7 +252,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
       int[] offset = map.getVisibleOffset();
       switch ( this.orientation ) {
-      case NeoMapI.HORIZONTAL:
+      case Horizontal:
         x = st;
         width = en - x;
         y = (int) sbox.y;
@@ -262,7 +263,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           label.setCoords(x+width*0.5, offset[1] - px.height*1.0, 0,0);
         }
         break;
-      case NeoMapI.VERTICAL:
+      case Vertical:
         y = st;
         height = en - y;
         x = (int) sbox.x;
@@ -335,12 +336,12 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
         view.transformToCoords(tx, px);
 
         switch ( this.orientation ) {
-        case NeoMapI.HORIZONTAL:
+        case Horizontal:
           extraRect.setCoords(vgbox.x, offset[1] - px.height*1.5,
                                  vgbox.width, px.height);
           label.setCoords(vgbox.x+0.5*vgbox.width, offset[1] - px.height*1.0, 0,0);
           break;
-        case NeoMapI.VERTICAL:
+        case Vertical:
           extraRect.setCoords(offset[1] - px.width*1.25,
                                  vgbox.y, px.width,1);
           label.setCoords(offset[1] - px.width*0.75, vgbox.y+0.5*vgbox.height, 0,0);
@@ -350,13 +351,13 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
       double height_scale = 1.0-topMargin-bottomMargin;
       switch ( this.orientation ) {
-      case NeoMapI.HORIZONTAL:
+      case Horizontal:
         tg.setCoords( vgbox.x, sbox.y + ( sbox.height * topMargin ),
                             vgbox.width, sbox.height * height_scale );
         vGlyph.setCoords( vgbox.x, sbox.y + ( sbox.height * topMargin ),
                             vgbox.width, sbox.height * height_scale );
         break;
-      case NeoMapI.VERTICAL:
+      case Vertical:
         tg.setCoords( sbox.x + ( sbox.width * topMargin ), vgbox.y,
                             sbox.width, vgbox.height * height_scale );
         vGlyph.setCoords( sbox.x + ( sbox.width * topMargin ), vgbox.y,

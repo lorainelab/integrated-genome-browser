@@ -32,7 +32,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 
   private String str;
   private Font fnt = DEFAULT_FONT;
-  private int placement;
+  private NeoConstants.Placement placement;
   private boolean show_background = false;
 
 
@@ -46,7 +46,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
   }
 
   public StringGlyph () {
-    placement = CENTER;
+    placement = NeoConstants.Placement.CENTER;
     if (DEBUG_PIXELBOX) {
       debug_rect = new Rectangle();
     }
@@ -86,19 +86,19 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
       debug_rect.setBounds(pixelbox.x, pixelbox.y,
           pixelbox.width, pixelbox.height);
     }
-    if (placement == LEFT) {
+    if (placement == NeoConstants.Placement.LEFT) {
       pixelbox.x = pixelbox.x;
     }
-    else if (placement == RIGHT) {
+    else if (placement == NeoConstants.Placement.RIGHT) {
       pixelbox.x = pixelbox.x + pixelbox.width - text_width;
     }
     else {
       pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
     }
-    if (placement == ABOVE) {
+    if (placement == NeoConstants.Placement.ABOVE) {
       pixelbox.y = pixelbox.y;
     }
-    else if (placement == BELOW) {
+    else if (placement == NeoConstants.Placement.BELOW) {
       pixelbox.y = pixelbox.y + pixelbox.height;
     }
     else {
@@ -159,7 +159,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
  * @param placement {@link NeoConstants#CENTER},
  * {@link NeoConstants#LEFT}, or {@link NeoConstants#RIGHT}.
  */
-  public void setPlacement(int placement) {
+  public void setPlacement(NeoConstants.Placement placement) {
     this.placement = placement;
   }
 
@@ -168,7 +168,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
  * @return {@link NeoConstants#CENTER},
  * {@link NeoConstants#LEFT}, or {@link NeoConstants#RIGHT}.
  */
-  public int getPlacement() {
+  public NeoConstants.Placement getPlacement() {
     return placement;
   }
 

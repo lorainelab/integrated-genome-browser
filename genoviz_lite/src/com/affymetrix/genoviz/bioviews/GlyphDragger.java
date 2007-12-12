@@ -237,20 +237,20 @@ public class GlyphDragger
     return newgl;
   }
 
-  public void setConstraint(int axis, boolean is_constrained) {
-    if (axis == VERTICAL) {
+  public void setConstraint(NeoConstants.Orientation axis, boolean is_constrained) {
+    if (axis == NeoConstants.Orientation.Vertical) {
       constrained[VERT] = is_constrained;
     }
-    else if (axis == HORIZONTAL) {
+    else if (axis == NeoConstants.Orientation.Horizontal) {
       constrained[HORIZ] = is_constrained;
     }
   }
 
-  public boolean getConstraint(int axis) {
-    if (axis == VERTICAL) {
+  public boolean getConstraint(NeoConstants.Orientation axis) {
+    if (axis == NeoConstants.Orientation.Vertical) {
       return constrained[VERT];
     }
-    else if (axis == HORIZONTAL) {
+    else if (axis == NeoConstants.Orientation.Horizontal) {
       return constrained[HORIZ];
     }
     else return false;

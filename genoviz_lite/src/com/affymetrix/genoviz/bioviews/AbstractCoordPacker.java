@@ -32,14 +32,14 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 
   protected double spacing = 2;
 
-  protected int movetype;
+  protected NeoConstants.Direction  movetype;
   protected Rectangle2D before = new Rectangle2D();
 
   /**
    * constructs a packer that moves glyphs away from the horizontal axis.
    */
   public AbstractCoordPacker() {
-    this(MIRROR_VERTICAL);
+    this(NeoConstants.Direction.MIRROR_VERTICAL);
   }
 
   /**
@@ -48,7 +48,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
    * @param movetype indicates which direction the glyph_to_move should move.
    * @see #setMoveType
    */
-  public AbstractCoordPacker(int movetype) {
+  public AbstractCoordPacker(NeoConstants.Direction movetype) {
     setMoveType(movetype);
   }
 
@@ -60,7 +60,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
    *                 MIRROR_VERTICAL, or MIRROR_HORIZONTAL.
    *                 The last two mean "away from the orthoganal axis".
    */
-  public void setMoveType(int movetype) {
+  public void setMoveType(NeoConstants.Direction movetype) {
     this.movetype = movetype;
   }
 
@@ -130,14 +130,15 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
    * @see #setMoveType
    */
   public void moveToAvoid(GlyphI glyph_to_move,
-                          GlyphI glyph_to_avoid, int movetype)  {
+                          GlyphI glyph_to_avoid, 
+                          NeoConstants.Direction movetype)  {
     Rectangle2D movebox = glyph_to_move.getCoordBox();
     Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
 
     /*
      * Mirror vertically about the horizontal coordinate axis
      */
-    if (movetype == MIRROR_VERTICAL) {
+    if (movetype == NeoConstants.Direction.MIRROR_VERTICAL) {
       /*
        *  if moving "up", doesn't matter what the glyph_to_avoid's height is,
        *  (that's "down"), but it does matter what the glyph_to_move's
@@ -167,7 +168,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
     /*
      * Mirror horizontally about the vertical coordinate axis
      */
-    else if (movetype == MIRROR_HORIZONTAL) {
+    else if (movetype == NeoConstants.Direction.MIRROR_HORIZONTAL) {
       if (movebox.x < 0) {
         // move LEFT (decreasing x)
         glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
@@ -184,7 +185,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
      * if moving "down", doesn't matter what the glyph_to_move's height is
      * (that's "up"), but it does matter what the glyph_to_avoid's height is
      */
-    else if (movetype == DOWN) {
+    else if (movetype == NeoConstants.Direction.DOWN) {
       glyph_to_move.moveAbsolute(movebox.x,
                          avoidbox.y + avoidbox.height + spacing);
     }
@@ -195,7 +196,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
      *  (that's "down"), but it does matter what the glyph_to_move's
      *  own height is
      */
-    else if (movetype == UP) {
+    else if (movetype == NeoConstants.Direction.UP) {
       glyph_to_move.moveAbsolute(movebox.x,
                          avoidbox.y - movebox.height - spacing);
     }
@@ -205,7 +206,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
      * if moving "right", doesn't matter what the glyph_to_move's width is
      * (that's "left"), but it does matter what the glyph_to_avoid's width is
      */
-    else if (movetype == RIGHT) {
+    else if (movetype == NeoConstants.Direction.RIGHT) {
       glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
                          movebox.y);
     }
@@ -216,7 +217,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
      *  (that's "right"), but it does matter what the glyph_to_move's
      *  own width is
      */
-    else if (movetype == LEFT) {
+    else if (movetype == NeoConstants.Direction.LEFT) {
       glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
                          movebox.y);
     }

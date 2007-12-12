@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.widget.*;
 
 import com.affymetrix.genoviz.widget.NeoWidgetI.ZoomConstraint;
 import java.awt.*;

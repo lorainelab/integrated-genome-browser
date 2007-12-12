@@ -114,7 +114,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   DragMonitor canvas_drag_monitor;
   boolean drag_scrolling_enabled = false;
 
-  protected int selectionMethod = NO_SELECTION;
+  protected NeoWidgetI.SelectionType selectionMethod = NeoWidgetI.SelectionType.NO_SELECTION;
   protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
   protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
@@ -1051,7 +1051,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
-  public void setSelectionEvent(int theMethod) {
+  public void setSelectionEvent(NeoWidgetI.SelectionType theMethod) {
     switch (theMethod) {
     case NO_SELECTION:
     case ON_MOUSE_DOWN:
@@ -1063,7 +1063,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
          + "NO_SELECTION, ON_MOUSE_DOWN, or ON_MOUSE_UP");
     }
   }
-  public int getSelectionEvent() {
+  public NeoWidgetI.SelectionType getSelectionEvent() {
     return this.selectionMethod;
   }
 
@@ -1460,15 +1460,15 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     Object source = nme.getSource();
     int id = nme.getID();
     // else if (NO_SELECTION != selectionMethod && evt.target == this.scene) {
-    if (NO_SELECTION != selectionMethod && source == this.view) {
+    if (NeoWidgetI.SelectionType.NO_SELECTION != selectionMethod && source == this.view) {
       boolean shiftDown = nme.isShiftDown();
       boolean controlDown = nme.isControlDown();
       boolean metaDown = nme.isMetaDown();
       //      boolean altDown = nme.isAltDown();
       if ((id == NeoMouseEvent.MOUSE_PRESSED &&
-          ON_MOUSE_DOWN == selectionMethod) ||
+          NeoWidgetI.SelectionType.ON_MOUSE_DOWN == selectionMethod) ||
         (id == NeoMouseEvent.MOUSE_RELEASED &&
-         ON_MOUSE_UP == selectionMethod)) {
+         NeoWidgetI.SelectionType.ON_MOUSE_UP == selectionMethod)) {
         List<GlyphI> prev_items = this.getSelected();
         int prev_items_size = prev_items.size();
         if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {

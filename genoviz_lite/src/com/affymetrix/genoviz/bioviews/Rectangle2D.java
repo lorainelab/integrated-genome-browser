@@ -57,20 +57,6 @@ public class Rectangle2D  {
    * @param height the height of the rectangle
    */
   public Rectangle2D(double x, double y, double width, double height) {
-    /*
-    if ( Double.isNaN( x ) ) {
-      throw new IllegalArgumentException( "X must be a number." );
-    }
-    if ( Double.isNaN( y ) ) {
-      throw new IllegalArgumentException( "Y must be a number." );
-    }
-    if ( Double.isNaN( width ) ) {
-      throw new IllegalArgumentException( "Width must be a number." );
-    }
-    if ( Double.isNaN( height ) ) {
-      throw new IllegalArgumentException( "Height must be a number." );
-    }
-    */
     this.x = x;
     this.y = y;
     this.width = width;
@@ -81,20 +67,6 @@ public class Rectangle2D  {
    * Reshapes the rectangle.
    */
   public void reshape(double x, double y, double width, double height) {
-    /*
-    if ( Double.isNaN( x ) ) {
-      throw new IllegalArgumentException( "X must be a number." );
-    }
-    if ( Double.isNaN( y ) ) {
-      throw new IllegalArgumentException( "Y must be a number." );
-    }
-    if ( Double.isNaN( width ) ) {
-      throw new IllegalArgumentException( "Width must be a number." );
-    }
-    if ( Double.isNaN( height ) ) {
-      throw new IllegalArgumentException( "Height must be a number." );
-    }
-    */
     this.x = x;
     this.y = y;
     this.width = width;

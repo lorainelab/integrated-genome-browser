@@ -10,7 +10,6 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -41,93 +40,56 @@ import java.util.List;
  * corresponding to each interface.
  * </font></p>
  */
-public interface NeoWidgetI extends NeoConstants   {
+public interface NeoWidgetI extends NeoConstants {
 
+  /**
+   * Type of selection done by the NeoWidget.
+   * @see #setSelectionEvent
+   */
+  public enum SelectionType {
   /**
    * No selection is done by the NeoWidget.
    * A listener or superclass will still get all events and can react to them.
-   * @see #setSelectionEvent
    */
-  public static final int NO_SELECTION = 0;
 
-  /**
+    NO_SELECTION,
+    /**
    * Selected on Event.MOUSE_DOWN.
    * A listener or superclass will still get all events and can react to them.
-   * @see #setSelectionEvent
    */
-  public static final int ON_MOUSE_DOWN = 1;
-  /**
+    ON_MOUSE_DOWN,
+    /**
    * Selected on Event.MOUSE_UP.
    * A listener or superclass will still get all events and can react to them.
-   * @see #setSelectionEvent
    */
-  public static final int ON_MOUSE_UP = 2;
+    ON_MOUSE_UP;
+  }
+  /**
+   * Index of the PRIMARY_AXIS.
+   */
+  public static int X = 0;
 
   /**
-   * the index of the major (primary) axis,
-   * usually the horizontal X axis.
+   * Index of the SECONDARY_AXIS.
    */
-  public static int PRIMARY_AXIS = 0;
+  public static int Y = 1;
 
   /**
-   * the index of the minor (secondary) axis,
-   * usually the vertical Y axis.
-   */
-  public static int SECONDARY_AXIS = 1;
-
-  /**
-   * synonym for PRIMARY_AXIS.
+   * Indicates where zooming should be focused
+   * in the widget.
    *
-   * @see #PRIMARY_AXIS
+   * @see #setZoomBehavior
    */
-  public static int X = PRIMARY_AXIS;
-
-  /**
-   * synonym for SECONDARY_AXIS
-   *
-   * @see #SECONDARY_AXIS
-   */
-  public static int Y = SECONDARY_AXIS;
-
-  
   public enum ZoomConstraint {
-  /**
-   * indicates that zooming should be focused
-   * on the top or left side of the widget.
-   * i.e. the uppermost edge or the leftmost edge
-   * of the viewable area remains fixed.
-   *
-   * @see #setZoomBehavior
-   */
-   CONSTRAIN_START,
 
-  /**
-   * indicates that zooming should be focused
-   * on the center of the widget.
-   * i.e. the midpoint
-   * of the viewable area remains fixed.
-   *
-   * @see #setZoomBehavior
-   */
-   CONSTRAIN_MIDDLE,
-
-  /**
-   * indicates that zooming should be focused
-   * on the bottom or right side of the widget.
-   * i.e. the bottom edge or the rightmost edge
-   * of the viewable area remains fixed.
-   *
-   * @see #setZoomBehavior
-   */
-   CONSTRAIN_END,
-
-  /**
-   * indicates that zooming should be focused
-   * at a specified fixed coordinate.
-   *
-   * @see #setZoomBehavior
-   */
-   CONSTRAIN_COORD,
+    CONSTRAIN_START,
+    CONSTRAIN_MIDDLE,
+    CONSTRAIN_END,
+    /**
+     * Indicates that zooming should be focused
+     * at a specified fixed coordinate.
+     */
+    CONSTRAIN_COORD
   }
 
   /**
@@ -144,8 +106,8 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see NeoWidget#setScaleConstraint
    */
   public enum ScaleConstraint {
-  
-  /**
+
+    /**
    * constrains high resolution zooming
    * to integral values of pixels per coordinate.
    * If the number of pixels per coordinate
@@ -158,8 +120,7 @@ public interface NeoWidgetI extends NeoConstants   {
    *
    */
     INTEGRAL_PIXELS,
-
-  /**
+    /**
    * Constrains low resolution zooming
    * to integral values of coordinates per pixel.
    * If the number of pixels per coordinate
@@ -172,15 +133,13 @@ public interface NeoWidgetI extends NeoConstants   {
    * Calling <a href="#zoom"><code>zoom()</code></a> directly has no effect.
    *
    */
-  INTEGRAL_COORDS,
-
-  /**
+    INTEGRAL_COORDS,
+    /**
    * Constrain zooming to both
    * INTEGRAL_PIXELS and INTEGRAL_COORDS.
    */
-  INTEGRAL_ALL,
-
-  NONE
+    INTEGRAL_ALL,
+    NONE
   }
   /**
    * indicates that a widget's bounds should be automatically expanded
@@ -200,8 +159,6 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #setExpansionBehavior
    */
   public static final int NO_EXPAND = 201;
-
-
   /**
    * indicates that a component should be placed to the left
    * within the widget.
@@ -324,7 +281,6 @@ public interface NeoWidgetI extends NeoConstants   {
    * To be called when the object is no longer needed. Eliminate some references, as is necessary
    * for garbage collection to occur.
    */
-
   public void destroy();
 
   /**
@@ -356,7 +312,6 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #setScrollIncrementBehavior
    */
   public static final int NO_AUTO_SCROLL_INCREMENT = 1;
-
   public static final int AUTO_SCROLL_HALF_PAGE = 2;
 
   /**
@@ -1018,12 +973,11 @@ public interface NeoWidgetI extends NeoConstants   {
    *        all NeoWidgets support NO_SELECTION, ON_MOUSE_DOWN, or ON_MOUSE_UP
    *        some widgets support additional options
    */
-  public void setSelectionEvent(int theEvent);
+  public void setSelectionEvent(NeoWidgetI.SelectionType theEvent);
 
 
   /**
    * Gets the selection method for automatic selection in the NeoWidget.
    */
-  public int getSelectionEvent();
-
+  public NeoWidgetI.SelectionType getSelectionEvent();
 }

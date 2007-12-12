@@ -62,8 +62,8 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   }
 
   protected void moveOneChild(GlyphI parent, GlyphI child) {
-    Rectangle2D pbox = parent.getCoordBox();
-    Rectangle2D cbox = child.getCoordBox();
+    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
+    java.awt.geom.Rectangle2D.Double cbox = child.getCoordBox();
 
     if (alignment == ALIGN_TOP) {
       double top = pbox.y + parent_spacer;
@@ -81,12 +81,12 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   }
 
   protected void moveAllChildren(GlyphI parent) {
-    Rectangle2D pbox = parent.getCoordBox();
+    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
     java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return; }
     double parent_height = parent.getCoordBox().height;
 
-    Rectangle2D cbox;
+    java.awt.geom.Rectangle2D.Double cbox;
 
     if (alignment == ALIGN_TOP) {
       double top = pbox.y + parent_spacer;

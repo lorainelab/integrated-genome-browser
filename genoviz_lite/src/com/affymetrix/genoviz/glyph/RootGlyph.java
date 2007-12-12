@@ -47,7 +47,7 @@ public class RootGlyph extends StretchContainerGlyph {
       super.propagateStretch(child);
       return;
     }
-    Rectangle2D childbox = child.getCoordBox();
+    java.awt.geom.Rectangle2D.Double childbox = child.getCoordBox();
     if (expansion_behavior[X] == EXPAND) {
       double xbeg = Math.min(childbox.x, coordbox.x);
       double xend = Math.max(childbox.x + childbox.width,

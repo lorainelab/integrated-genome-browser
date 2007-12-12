@@ -38,14 +38,14 @@ public class WingedSequenceGlyph extends SequenceGlyph
   public WingedSequenceGlyph(NeoConstants.Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
-    scratchrect = new Rectangle2D();
+    scratchrect = new java.awt.geom.Rectangle2D.Double();
     //setVariableFont ( new Font ( "SansSerif", Font.PLAIN, 14 ) );
   }
 
 
   protected void drawHorizontal(ViewI view) {
     Rectangle pixelclipbox = view.getPixelBox();
-    Rectangle2D coordclipbox = view.getCoordBox();
+    java.awt.geom.Rectangle2D.Double coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
     double pixels_per_base, bases_per_pixel;
     int visible_ref_beg, visible_ref_end;
@@ -70,7 +70,7 @@ public class WingedSequenceGlyph extends SequenceGlyph
         seq_end_index = sequence.length();
       }
 
-      scratchrect.reshape(visible_seq_beg,  coordbox.y,
+      scratchrect.setRect(visible_seq_beg,  coordbox.y,
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();

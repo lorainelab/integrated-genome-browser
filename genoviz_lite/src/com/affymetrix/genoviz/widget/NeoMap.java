@@ -28,7 +28,6 @@ import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.DragMonitor;
@@ -558,7 +557,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public int[] getMapRange() {
     int[] range = new int[2];
-    Rectangle2D cb = getCoordBounds();
+    java.awt.geom.Rectangle2D.Double cb = getCoordBounds();
     if (orient == NeoConstants.Orientation.Vertical) {
       range[0] = (int) cb.y;
       range[1] = (int) (cb.y + cb.height);
@@ -572,7 +571,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public int[] getVisibleRange() {
     int[] range = new int[2];
-    Rectangle2D cb = getViewBounds();
+    java.awt.geom.Rectangle2D.Double cb = getViewBounds();
     if (orient == NeoConstants.Orientation.Vertical) {
       range[0] = (int) cb.y;
       range[1] = (int) (cb.y + cb.height);
@@ -600,7 +599,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public int[] getMapOffset() {
     int[] range = new int[2];
-    Rectangle2D cb = getCoordBounds();
+    java.awt.geom.Rectangle2D.Double cb = getCoordBounds();
     if (orient == NeoConstants.Orientation.Vertical) {
       range[0] = (int) cb.x;
       range[1] = (int) (cb.x + cb.width);
@@ -614,7 +613,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public int[] getVisibleOffset() {
     int[] range = new int[2];
-    Rectangle2D cb = getViewBounds();
+    java.awt.geom.Rectangle2D.Double cb = getViewBounds();
     if (orient == NeoConstants.Orientation.Vertical) {
       range[0] = (int) cb.x;
       range[1] = (int) (cb.x + cb.width);
@@ -698,8 +697,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
        * edge will result in waste of real estate and display ends up
        * out of sync with h/vscroller
        */
-      Rectangle2D viewbox, scenebox;
-      scenebox = scene.getCoordBox();
+      java.awt.geom.Rectangle2D.Double viewbox;
+      java.awt.geom.Rectangle2D.Double scenebox = scene.getCoordBox();
       double scene_start, scene_end, view_start, view_end, visible_start;
       Rectangle scenepix;
       int pixel_value;
@@ -1026,7 +1025,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     super.clearWidget();
     // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = (RootGlyph)scene.getGlyph();
-    Rectangle2D evebox = oldeve.getCoordBox();
+    java.awt.geom.Rectangle2D.Double evebox = oldeve.getCoordBox();
     RootGlyph neweve = new RootGlyph();
     neweve.setExpansionBehavior(RootGlyph.X, oldeve.getExpansionBehavior(RootGlyph.X));
     neweve.setExpansionBehavior(RootGlyph.Y, oldeve.getExpansionBehavior(RootGlyph.Y));
@@ -1516,7 +1515,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       }
     }
     if (range_listeners.size() > 0) {
-      Rectangle2D vbox = e.getCoordBox();
+      java.awt.geom.Rectangle2D.Double vbox = e.getCoordBox();
       NeoRangeEvent nevt = null;
       if (orient == NeoConstants.Orientation.Vertical) {
           nevt = new NeoRangeEvent(this, vbox.y, vbox.y + vbox.height);

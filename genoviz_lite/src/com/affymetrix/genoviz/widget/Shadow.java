@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -48,7 +47,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   private boolean labelForReverse = false;
   private long residueCount;
   private static final java.text.DecimalFormat dform = new java.text.DecimalFormat("#,###.##");
-  private final Rectangle2D px = new Rectangle2D();  // used for coordinate conversions
+  private final java.awt.geom.Rectangle2D.Double px = new java.awt.geom.Rectangle2D.Double();  // used for coordinate conversions
   private final Rectangle tx = new Rectangle(); // used for label text width and height
   private int current_range_st = 0;
   private int current_range_en = 0;
@@ -106,7 +105,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.map = destination;
 
     // Start out with the TransientGlyph the full size of the map!
-    Rectangle2D sbox = this.map.getScene().getCoordBox();
+    java.awt.geom.Rectangle2D.Double sbox = this.map.getScene().getCoordBox();
     this.tg.setCoords( sbox.x, sbox.y, sbox.width, sbox.height );
     this.map.getScene().addGlyph( this.tg );
 
@@ -225,7 +224,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
     if ( null != this.vGlyph ) {
       int x, y, width, height;
-      Rectangle2D sbox = this.map.getCoordBounds( this.vGlyph );
+      java.awt.geom.Rectangle2D.Double sbox = this.map.getCoordBounds( this.vGlyph );
 
       if (labeled) {
         // We must set the label text before calculating its width and height
@@ -320,8 +319,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     Object source = e.getSource();
     View view = map.getView();
     if ( source == this.map || source == view) {
-      Rectangle2D sbox = this.map.getScene().getCoordBox();
-      Rectangle2D vgbox = vGlyph.getCoordBox();
+      java.awt.geom.Rectangle2D.Double sbox = this.map.getScene().getCoordBox();
+      java.awt.geom.Rectangle2D.Double vgbox = vGlyph.getCoordBox();
 
       if (labeled) {
         int[] offset = map.getVisibleOffset();

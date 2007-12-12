@@ -59,11 +59,11 @@ public class FloatingLabelGlyph extends Glyph
     double xpixel_center;
     boolean in_view = false;
 
-    Rectangle2D view_box = view.getCoordBox();
-    Rectangle2D parent_box = parent.getCoordBox();
+    java.awt.geom.Rectangle2D.Double view_box = view.getCoordBox();
+    java.awt.geom.Rectangle2D.Double parent_box = parent.getCoordBox();
     start = ((parent_box.x < view_box.x) ? view_box.x : parent_box.x);
     end = (((parent_box.x+parent_box.width) > (view_box.x+view_box.width)) ? (view_box.x+view_box.width) : (parent_box.x+parent_box.width));
-    Rectangle2D avail_box = new Rectangle2D (start, parent_box.y,
+    java.awt.geom.Rectangle2D.Double avail_box = new java.awt.geom.Rectangle2D.Double (start, parent_box.y,
                                              (end - start),
                                              parent_box.height);
     view.transformToPixels(avail_box, pixelbox);
@@ -116,7 +116,7 @@ public class FloatingLabelGlyph extends Glyph
     return  pixel_hitbox.intersects(pixelbox);
   }
 
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return coord_hitbox.intersects(coordbox);
   }
 

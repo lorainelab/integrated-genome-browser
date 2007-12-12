@@ -19,7 +19,6 @@ import java.util.List;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
@@ -356,7 +355,7 @@ public interface NeoMapI extends NeoWidgetI {
    * retrieve a List of all drawn glyphs that overlap
    * the coordinate rectangle coordrect.
    */
-  public List<GlyphI> getItemsByCoord(Rectangle2D coordrect);
+  public List<GlyphI> getItemsByCoord(java.awt.geom.Rectangle2D.Double coordrect);
 
   /**
    * retrieve all drawn glyphs that overlap the pixel at point x, y.
@@ -512,14 +511,14 @@ public interface NeoMapI extends NeoWidgetI {
   /**
    * Returns a Rectangle2D with the maps bounds (x, y, width, height).
    */
-  public Rectangle2D getCoordBounds();
+  public java.awt.geom.Rectangle2D.Double getCoordBounds();
 
   /**
    * Returns a Rectangle2D with the
    * coordinate bounds (x, y, width, height)
    * currently displayed in the map's view.
    */
-  public Rectangle2D getViewBounds();
+  public java.awt.geom.Rectangle2D.Double getViewBounds();
 
   /**
    * Adds a viewbox listener to listen for changes

@@ -29,7 +29,7 @@ public class NeoViewBoxChangeEvent extends EventObject  {
 
   public final static int ADJUSTMENT = 30000;
 
-  protected Rectangle2D currentCoordBox;
+  protected java.awt.geom.Rectangle2D.Double currentCoordBox;
   protected int id;
   boolean predraw;
 
@@ -39,11 +39,11 @@ public class NeoViewBoxChangeEvent extends EventObject  {
    * @param currentCoordBox the bounding box of the new visible coordinate
    *    area of the widget
    */
-  public NeoViewBoxChangeEvent(Object source, Rectangle2D currentCoordBox) {
+  public NeoViewBoxChangeEvent(Object source, java.awt.geom.Rectangle2D.Double currentCoordBox) {
     this(source, currentCoordBox, false);
   }
 
-  public NeoViewBoxChangeEvent(Object source, Rectangle2D currentCoordBox,
+  public NeoViewBoxChangeEvent(Object source, java.awt.geom.Rectangle2D.Double currentCoordBox,
       boolean predraw) {
     super(source);
     id = ADJUSTMENT;
@@ -54,7 +54,7 @@ public class NeoViewBoxChangeEvent extends EventObject  {
   /**
    * @return the bounding box of the new visible coordinate area.
    */
-  public Rectangle2D getCoordBox() {
+  public java.awt.geom.Rectangle2D.Double getCoordBox() {
     return currentCoordBox;
   }
 

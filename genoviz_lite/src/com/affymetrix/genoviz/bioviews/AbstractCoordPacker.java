@@ -33,7 +33,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
   protected double spacing = 2;
 
   protected NeoConstants.Direction  movetype;
-  protected Rectangle2D before = new Rectangle2D();
+  protected java.awt.geom.Rectangle2D.Double before = new java.awt.geom.Rectangle2D.Double();
 
   /**
    * constructs a packer that moves glyphs away from the horizontal axis.
@@ -132,8 +132,8 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
   public void moveToAvoid(GlyphI glyph_to_move,
                           GlyphI glyph_to_avoid, 
                           NeoConstants.Direction movetype)  {
-    Rectangle2D movebox = glyph_to_move.getCoordBox();
-    Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
+    java.awt.geom.Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+    java.awt.geom.Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
 
     /*
      * Mirror vertically about the horizontal coordinate axis

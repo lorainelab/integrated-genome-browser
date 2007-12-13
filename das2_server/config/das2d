@@ -6,16 +6,18 @@
 #
 # Author: Steve Chervitz <steve_chervitz@affymetrix.com>
 #
-# chkconfig: - 86 14
+# chkconfig: 2345 86 14
 # description: This DAS/2 server provides genomic annotations \
 #              (e.g., genes) for visualization via DAS/2 clients like IGB. \
 #              Relies on the das2launch script.
+# processname: das2launch
+# config: /home/netaffx/code/das2/das2launch
 # pidfile: /var/run/das2d.pid
 #
 # CUSTOMIZATION NOTICE:
 #    This script must be customized prior to installation. 
 #    Edit the variables as needed in the section marked as customizable.
-#    You may also need to adjust the chkconfig start/stop levels prior to 
+#    You may also want to adjust the chkconfig parameters above prior to 
 #    installing this with chkconfig.
 #
 # INSTALLATION

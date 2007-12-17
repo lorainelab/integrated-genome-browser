@@ -14,9 +14,9 @@
 package com.affymetrix.genoviz.event;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import java.awt.geom.Point2D;
 import java.util.EventObject;
 import java.util.List;
-import com.affymetrix.genoviz.bioviews.Point2D;
 
 /**
  * An interface implemented by some events to incorporate widget info
@@ -41,7 +41,7 @@ public interface NeoCoordEventI {
    * get the coordinates of the event as a Point2D, in
    * widget coordinate units (_not_ pixels).
    */
-  public Point2D getPoint2D();
+  public Point2D.Double getPoint2D();
 
   /**
    * get the original event that this NeoCoordEventI is based

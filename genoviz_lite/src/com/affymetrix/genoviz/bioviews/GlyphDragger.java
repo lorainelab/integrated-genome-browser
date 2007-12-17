@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import java.awt.geom.Point2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -53,8 +54,8 @@ public class GlyphDragger
 
   double prevx, prevy;
   double currentx, currenty;
-  Point2D prev_point = new Point2D(0, 0);
-  Point2D cur_point = new Point2D(0, 0);
+  Point2D.Double prev_point = new Point2D.Double(0, 0);
+  Point2D.Double cur_point = new Point2D.Double(0, 0);
 
   GlyphI dragged_glyph;
   NeoWidgetI widget;

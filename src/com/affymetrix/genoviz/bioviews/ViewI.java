@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
+import java.awt.geom.Point2D;
 
 /**
  * A ViewI is an abstract window onto a particular {@link SceneI}.
@@ -173,7 +174,7 @@ public interface ViewI  {
    *    (screen) space.
    *  Returns altered destination Point
    */
-  public Point transformToPixels(Point2D src, Point dst);
+  public Point transformToPixels(Point2D.Double src, Point dst);
 
   /**
    *    Transforms src Point in pixel (screen) space to dst Point2D in
@@ -181,7 +182,7 @@ public interface ViewI  {
    *
    *    Returns alterred destination Point2D
    */
-  public Point2D transformToCoords(Point src, Point2D dst);
+  public Point2D transformToCoords(Point src, Point2D.Double dst);
 
   // needed to add this for efficiency -- some glyphs access component
   // width/height/bounds to get around Graphics drawing bugs  -- GAH 12/14/97

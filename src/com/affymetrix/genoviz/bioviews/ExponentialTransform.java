@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 
 /**
  * A transform used internally by some NeoWidgets to handle zooming, should
@@ -59,7 +59,7 @@ public class ExponentialTransform implements TransformI {
     return out;
   }
 
-  public Point2D transform(Point2D src, Point2D dst) {
+  public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
     // y = f(x), but in this case y is really dst.x
     //   (Exponential is a one-dimensional transform, ignores src.y & dst.y
     double x = src.x;
@@ -68,7 +68,7 @@ public class ExponentialTransform implements TransformI {
     return dst;
   }
 
-  public Point2D inverseTransform(Point2D src, Point2D dst) {
+  public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
     double y = src.x;
     double x = Math.log(y/ratio);
     dst.x = x;

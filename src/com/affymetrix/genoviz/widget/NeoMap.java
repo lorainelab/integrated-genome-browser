@@ -1174,7 +1174,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
   }
 
-  public void update(Graphics2D g) {
+  @Override
+  public void update(Graphics g) {
     if (NM_DEBUG_PAINT)  {
       System.out.println("NeoMap.update() called");
     }
@@ -1192,7 +1193,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
-  public void paint(Graphics2D g) {
+  @Override
+  public void paint(Graphics g) {
     if (NM_DEBUG_PAINT) {
       System.out.println("NeoMap.paint() called");
     }

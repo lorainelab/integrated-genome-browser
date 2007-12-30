@@ -45,7 +45,8 @@ public class NeoCanvas extends NeoBufferedComponent  {
    * @param g the specified Graphics object
    * @see #update
    */
-  public void directPaint(Graphics2D g)  {
+  @Override
+  public void directPaint(Graphics g)  {
       if (debug)  {
           System.out.println("----------- in NeoCanvas.directPaint() -----------");
       }
@@ -59,7 +60,7 @@ public class NeoCanvas extends NeoBufferedComponent  {
         paintrect = new Rectangle(cliprect.x, cliprect.y,
                                   cliprect.width, cliprect.height);
       }
-      NeoPaintEvent e = new NeoPaintEvent(this, paintrect, g);
+      NeoPaintEvent e = new NeoPaintEvent(this, paintrect, (Graphics2D) g);
       postPaintEvent(e);
     }
     if (debug)  {

@@ -373,7 +373,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 					}
 				}
 			}
-			System.out.println("\tLoading "+p);
+			System.out.println("\tFound and loading "+p);
 			
 			//load file
 			HashMap<String,String> prop = loadFileIntoHashMap (p);

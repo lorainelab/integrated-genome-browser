@@ -114,7 +114,7 @@ public class BarParser implements AnnotationWriter  {
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
 	 *  be used only inside a CompositeGraphSym.
 	 */
-	public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {
+	public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
 		Timer tim = new Timer();
 		tim.start();
 		boolean USE_RANDOM_ACCESS = false;
@@ -267,6 +267,17 @@ public class BarParser implements AnnotationWriter  {
 				System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1/1000f));
 			}
 			if (DEBUG_SLICE)  { System.out.println("made graph for slice: " + graf); }
+			
+			//fetch tagValues and write properties
+			Map<String,String> seq_tagvals = seq_header.tagvals;
+			if (seq_tagvals !=null && seq_tagvals.size() !=0) copyProps(graf, seq_tagvals);
+			
+			//attempt to find and set strand information			
+			if (seq_tagvals.containsKey("strand")) {						
+				String strand = (String) seq_tagvals.get("strand");
+				if (strand.equals("+")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+				if (strand.equals("-")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+			}
 
 			// now output bar file slice??
 
@@ -437,8 +448,7 @@ public class BarParser implements AnnotationWriter  {
 	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
 			AnnotatedSeqGroup default_seq_group, String stream_name,
 			boolean ensure_unique_id)
-			throws IOException {
-
+			throws IOException {		
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
 		List<GraphSym> graphs = null;
@@ -870,9 +880,9 @@ public class BarParser implements AnnotationWriter  {
 			dos.writeInt(version.length());
 			dos.writeBytes(version);
 
-			// should write out all properties from seq and/or graphs as tag/vals?  For now just saying no tag/vals
-			dos.writeInt(0);
-
+			//write out all properties from seq and/or graphs as tag/vals
+			writeTagValuePairs(dos,graf.getProperties());
+			
 			int[] xcoords = graf.getGraphXCoords();
 			//float[] ycoords = (float[]) graf.getGraphYCoords();
 			int total_points = xcoords.length;
@@ -892,6 +902,25 @@ public class BarParser implements AnnotationWriter  {
 
 		System.out.println("wrote .bar file to stream");
 		return success;
+	}
+	
+	public static void writeTagValuePairs(DataOutputStream dos,Map<String,Object> tagValuePairs) throws IOException{
+		//any tag value pairs?
+		if (tagValuePairs == null || tagValuePairs.size() == 0) dos.writeInt(0);
+		else {
+			//write number of pairs
+			dos.writeInt(tagValuePairs.size());
+			//write tag values preceded by their respective lengths
+			Iterator<String> it = tagValuePairs.keySet().iterator();
+			while (it.hasNext()){
+				String tag = it.next();
+				dos.writeInt(tag.length());
+				dos.writeBytes(tag);
+				String value = tagValuePairs.get(tag).toString();
+				dos.writeInt(value.length());
+				dos.writeBytes(value);
+			}
+		}
 	}
 
 	public String getMimeType() { return "binary/bar"; }

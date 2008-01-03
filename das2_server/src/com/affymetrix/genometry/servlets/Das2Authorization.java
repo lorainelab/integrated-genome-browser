@@ -125,7 +125,10 @@ public class Das2Authorization {
 				line = line.trim();
 				if (line.length() == 0 || line.startsWith("#")) continue;				
 				tokens = line.split("\\t+");
-				if (tokens.length < 4) continue;
+				if (tokens.length != 4) {
+					log.add("\t\tWARNING: Number of columns !=4, is it tab delimited? Skipping -> "+line);
+					continue;
+				}
 				//does user exist?
 				String userName = tokens[0].trim().toLowerCase();
 				User user;

@@ -657,7 +657,18 @@ DataRequestListener {
 				"SeqMapView seq and QuickLoaderView current_seq not the same!");
 			} 
 			else {
-				SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
+				//attempt to load partial
+				boolean loaded = SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
+				if (loaded == false){
+					//attempt to load all from quickload
+					if (! (current_seq instanceof SmartAnnotBioSeq)) {
+						ErrorHandler.errorPanel("Error", "Problem loading sequence from DAS2 and Quickload directories.", gviewer);  
+					}
+					else {
+						loaded = SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq)current_seq);
+						if (loaded == false ) ErrorHandler.errorPanel("Error", "Could not fetch sequence from DAS2 or Quickload directories. See console.", gviewer);
+					}
+				}
 			}
 		}
 		else if (src == all_residuesB) {

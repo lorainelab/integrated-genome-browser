@@ -517,7 +517,10 @@ public class QuickLoadView2 extends JComponent
   }
 
   // equivalent to getURLLastUsed()
+  // modified to first look if one was specified in the igb_prefs.xml
   public static String getQuickLoadUrl() {
+	String u = getUrlFromPrefsFile();
+	if (u != null) return u;
     return getUrlLastUsed();
   }
 

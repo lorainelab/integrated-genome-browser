@@ -139,6 +139,64 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		genomeid2coord.put("Drosophila_Apr_2004",
 				new Das2Coords("http://www.flybase.org/genome/D_melanogaster/R3.1/",
 						"BDGP", "7227", "4", "Chromosome", null));
+		//Zebrafish
+		genomeid2coord.put("D_rerio_Jul_2007",
+				new Das2Coords(
+						//uri,rather odd, none of these actually point to anything
+						"http://zfin.org/genome/D_rerio/Zv7/",
+						//authority
+						"ZFISH_7", 
+						//taxid
+						"7955",
+						//version
+						"Zv7", 
+						//source
+						"Chromosome", 
+						null));
+		
+		//C_elegans
+		genomeid2coord.put("C_elegans_Jan_2007",
+				new Das2Coords(
+						//uri
+						"http://www.wormbase.org/genome/C_elegans/WS180/",
+						//authority
+						"WS", 
+						//taxid
+						"6239",
+						//version
+						"180", 
+						//source
+						"Chromosome", 
+						null));
+		
+		//S_pombe
+		genomeid2coord.put("S_pombe_Apr_2007",
+				new Das2Coords(
+						//uri
+						"http://www.sanger.ac.uk/Projects/S_pombe/Apr_2007",
+						//authority
+						"Sanger", 
+						//taxid
+						"4896",
+						//version
+						"Apr_2007", 
+						//source
+						"Chromosome", 
+						null));	
+		//S_glossinidius
+		genomeid2coord.put("S_glossinidius_Jan_2006",
+				new Das2Coords(
+						//uri
+						"ftp://ftp.ncbi.nih.gov/genomes/Bacteria/Sodalis_glossinidius_morsitans/Jan_2006",
+						//authority
+						"NCBI", 
+						//taxid
+						"343509",
+						//version
+						"Jan_2006", 
+						//source
+						"Chromosome", 
+						null));	
 
 		WINDOWS_OS_TEST = System.getProperty("os.name").startsWith("Windows");
 

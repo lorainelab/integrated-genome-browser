@@ -40,9 +40,9 @@ import javax.swing.*;
    public static String SLASH_STANDIN = "%";
 
 
-  /** The name of a boolean preference. */
+  /** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
-  public static final boolean default_ask_before_exiting = false;
+  public static final boolean default_ask_before_exiting = true;
 
   private static Vector FILENAMES;
   static {

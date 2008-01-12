@@ -80,7 +80,7 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 		Object src = evt.getSource();
 		if (src == okayB) {
 			dial.dispose();
-			TreePath path = tree.getSelectionPath();
+			TreePath path = tree.getSelectionPath();			
 			if (path != null) {
 				Object selection = path.getLastPathComponent();
 				System.out.println("selection: " + selection);
@@ -90,6 +90,9 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 					// call to Das2VersionedSource.getSegments() triggers population of genome group with sequences if not already populated
 					Iterator segments = version.getSegments().values().iterator();
 					AnnotatedSeqGroup new_genome = version.getGenome();
+					//set name of Das2 server in AnnotatedSeqGroup				
+					new_genome.setSource(path.getPath()[1].toString()); 
+					
 					if (new_genome != prev_genome) {
 						System.out.println("CHOOSING GENOME: " + version);
 						gmodel.setSelectedSeqGroup(new_genome);
@@ -234,6 +237,5 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 		// Expansion or collapse must be done bottom-up
 		tree.expandPath(parent);
 	}
-
 }
 

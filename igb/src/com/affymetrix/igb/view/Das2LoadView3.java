@@ -79,8 +79,8 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 public class Das2LoadView3 extends JComponent
 implements
 ActionListener,
-// TableModelListener,
-// TreeSelectionListener,
+//TableModelListener,
+//TreeSelectionListener,
 SeqSelectionListener,
 GroupSelectionListener,
 DataRequestListener {
@@ -483,6 +483,8 @@ DataRequestListener {
 	 */
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup newgroup = evt.getSelectedGroup();
+		final String nameSelectedDasServer = newgroup.getSource();
+
 		if (DEBUG_EVENTS) {
 			if (newgroup == null)  {System.out.println("%%%%%%% Das2LoadView3 received GroupSelectionEvent:, group " + newgroup);}
 			else {System.out.println( "%%%%%%% Das2LoadView3 received GroupSelectionEvent, group: " + newgroup.getID());}
@@ -504,6 +506,8 @@ DataRequestListener {
 			//      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
 			Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
 			int current_sleep_time = 0;
+
+			//for each server calling a SwingWorker to see if it contains any matching versioned genomes
 			while (servers.hasNext()) {
 				current_sleep_time += 5000;
 				final Das2ServerInfo server = (Das2ServerInfo)((Map.Entry)servers.next()).getValue();
@@ -523,15 +527,16 @@ DataRequestListener {
 						try {
 							versions = ((Collection)this.get()).iterator();
 						}
-						catch (Exception ex) { ex.printStackTrace(); }
+						catch (Exception ex) { ex.printStackTrace(); }						
 						if (versions != null) {
 							while (versions.hasNext()) {
 								final Das2VersionedSource version = (Das2VersionedSource)versions.next();
 								Executor vexec = ThreadUtils.getPrimaryExecutor(version);
 								final Das2VersionTreeNode version_node = addVersionToTree(version);
-								boolean type_load = Das2TypeState.checkLoadStatus(version);
-								if (type_load ||
-										server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME))  {									
+								final boolean userSelectedServer = server.getName().equals(nameSelectedDasServer);
+								if (userSelectedServer ||
+										server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME) || 
+										Das2TypeState.checkLoadStatus(version))  {									
 									// at least one annotation type for this genome (version) has pref set to {load = true}
 									//   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded
 									//         in the tree regardless of type load status...)
@@ -540,6 +545,11 @@ DataRequestListener {
 									//   which trigger version_node.populate() to add type nodes to tree structure
 									//   adding type nodes to tree structure in turn triggers adding to table any
 									//     types with preferences {load = true}
+
+									//There's a problem here, if only one one server has the versionedGenome and it's not the default 
+									//then nothing gets loaded on first access, to fix I set das2 server name in AnnotatedSeqGroup and
+									//expand if it is here - Nix
+									//
 									SwingWorker types_worker = new SwingWorker() {
 										public Object construct() {
 											if (ADD_DELAYS)  { try { Thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
@@ -556,11 +566,11 @@ DataRequestListener {
 											//    This is likely to usually be the case when initializing types via this SwingWorker, since
 											//    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
 											int tcount = version_node.getChildCount(); // triggers tree and table population with types info
-											// If Das2VersionedSource is from IGB's default DAS/2 server for this genome, then
+											// If Das2VersionedSource is the one selected by the user in the genome chooser then
 											//     want to automatically expand tree to show it's available types
 											//			  if (version.getSource().getServerInfo() ==
 											//  Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
-											if (server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
+											if (userSelectedServer) {
 												TreeNode[] path_array = version_node.getPath();
 												TreePath path = new TreePath(path_array);
 												tree.expandPath(path);
@@ -767,7 +777,7 @@ DataRequestListener {
 				// intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
 				Map internodes = new HashMap();
 				Iterator iter = types.values().iterator();
-				
+
 				while (iter.hasNext()) {
 					Das2Type type = (Das2Type)iter.next();
 					Das2TypeState tstate = Das2TypeState.getState(type);
@@ -903,11 +913,11 @@ class Das2TypeState {
 
 			Preferences types_node = UnibrowPrefsUtil.getSubnode(version_node, TYPES_NODE_NAME);
 
-			String[] types = types_node.childrenNames();
+			String[] types = types_node.childrenNames();		
 			for (int i=0; i<types.length; i++) {
 				String type_node_name = types[i];
 				Preferences tnode = UnibrowPrefsUtil.getSubnode(types_node, type_node_name);
-				// System.out.println("type pref name: " + type_node_name + ", id: " + tnode.get("id", "NA"));
+				//  System.out.println("type pref name: " + type_node_name + ", id: " + tnode.get("id", "NA"));
 				//	if (tnode.getBoolean(LOADKEY, false)) { return true; }
 				if (tnode.getBoolean(LOADKEY, false)) { found_load = true; }
 			}

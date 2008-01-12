@@ -15,7 +15,7 @@ import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ViewPersistenceUtils;
 
-public class Das2GenomeLoader extends JComponent implements ActionListener {
+public class Das2GenomeLoader extends JComponent implements ActionListener { 
 
 	JButton okayB;
 	JButton cancelB;

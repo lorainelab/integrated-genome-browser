@@ -1272,7 +1272,7 @@ public class IGB extends Application
   private void exit() {
     boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
         UnibrowPrefsUtil.default_ask_before_exiting);
-    String message = "Really exit?";
+    String message = "Save state and exit?";
     if ( (! ask_before_exit) || confirmPanel(message)) {
       if (bmark_action != null) {
         bmark_action.autoSaveBookmarks();

@@ -29,6 +29,7 @@ public class AnnotatedSeqGroup {
   String version; // not currently used?
   //Date version_date;  // not currently used
   String description;
+  String source; //as in Das2 server name
 
   boolean use_synonyms = true;
 
@@ -554,5 +555,13 @@ public class AnnotatedSeqGroup {
       return super.containsValue(value);
     }
   }
+
+public String getSource() {
+	return source;
+}
+
+public void setSource(String source) {
+	this.source = source;
+}
 
 }

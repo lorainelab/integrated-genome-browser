@@ -239,7 +239,7 @@ public class LocalUrlCacher {
 	throws IOException {
 		return getInputStream(url, cache_option, write_to_cache, null);
 	}
-
+	
 
 	/**
 	 *  headers arg is a Map which when getInputStream() returns will be populated with any headers returned from the url
@@ -257,8 +257,9 @@ public class LocalUrlCacher {
 		if (headers != null && headers.containsKey("sessionId")) sessionId = (String) headers.get("sessionId");
 		//clear headers
 		if (headers != null) headers.clear(); 
+		
 		// if url is a file url, and not caching files, then just directly return stream
-		if ((! CACHE_FILE_URLS) && isFile(url)) {
+		if ((! CACHE_FILE_URLS) && isFile(url)) {			
 			URL furl = new URL(url);
 			URLConnection huc= furl.openConnection();
 			//set sessionId
@@ -267,7 +268,9 @@ public class LocalUrlCacher {
 			//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
 			return fstr;
 		}
+		
 		File fil = new File(cache_content_root);
+		
 		if (! fil.exists()) {
 			Application.getSingleton().logInfo("Creating new cache directory: " + fil.getAbsolutePath());
 			fil.mkdirs();
@@ -296,7 +299,7 @@ public class LocalUrlCacher {
 		HttpURLConnection hcon = null;
 		int http_status = -1;
 
-		if (offline) {
+		if (offline) {			
 			// ignore whatever option was specified when we are offline, only the
 			// cache is available.
 			cache_option = ONLY_CACHE;
@@ -306,10 +309,11 @@ public class LocalUrlCacher {
 		if (cache_option != ONLY_CACHE) {
 			try {
 				URL theurl = new URL(url);
-				conn = theurl.openConnection();
+				conn = theurl.openConnection();				
 				//set sessionId?
 				if (sessionId != null) conn.setRequestProperty("Cookie", sessionId);
-				if (cached) { conn.setIfModifiedSince(local_timestamp); }
+				//don't set if you are ignoring the cache, otherwise the server won't return the content if there's been no modification!
+				if (cached && cache_option != IGNORE_CACHE) { conn.setIfModifiedSince(local_timestamp); }
 				// adding a conn.connect() call here to force throwing of error here if can't open connection
 				//    because some method calls on URLConnection like those below don't always throw errors
 				//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
@@ -318,7 +322,6 @@ public class LocalUrlCacher {
 				if (DEBUG_CONNECTION) {
 					reportHeaders(conn);
 				}
-
 				remote_timestamp = conn.getLastModified();
 				has_timestamp = (remote_timestamp > 0);
 				content_type = conn.getContentType();
@@ -334,25 +337,25 @@ public class LocalUrlCacher {
 			catch (IOException ioe) {
 				url_reachable = false;
 			}
-			if (! url_reachable) {
+			if (! url_reachable) {				
 				Application.getSingleton().logWarning("URL not reachable: " + url);
 				if (headers != null)  { headers.put("LocalUrlCacher", URL_NOT_REACHABLE); }
 				if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
 			}
 		}
 
-		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
-		if (cached && (cache_option != IGNORE_CACHE)) {
+		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache		
+		if (cached && (cache_option != IGNORE_CACHE)) {			
 			if (url_reachable) {
-				//  response contents not modified since local cached copy last modified, so use local
+				//  has a timestamp and response contents not modified since local cached copy last modified, so use local
 				if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
 					if (DEBUG_CONNECTION)  {
 						Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
 					}
 					result_stream = new BufferedInputStream(new FileInputStream(cache_file));
 				}
-				//        long local_timestamp = cache_file.lastModified();
-				else if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
+				//long local_timestamp = cache_file.lastModified();
+				else if (has_timestamp && remote_timestamp <= local_timestamp) {
 					if (DEBUG_CONNECTION) {
 						Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
 					}
@@ -388,7 +391,7 @@ public class LocalUrlCacher {
 		}
 
 		// Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
-		if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {
+		if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {			
 			// populating header Properties (for persisting) and header input Map
 			Map headermap = conn.getHeaderFields();
 			Properties headerprops = new Properties();
@@ -405,11 +408,10 @@ public class LocalUrlCacher {
 					if (headers != null) { headers.put(key, val); }
 				}
 			}
-
 			InputStream connstr = conn.getInputStream();
 			BufferedInputStream bis = new BufferedInputStream(connstr);
 			byte[] content = null;
-			if (content_length >= 0) {       // if content_length header was set, can load based on length
+			if (content_length >= 0) {       // if content_length header was set, can load based on length				
 				content = new byte[content_length];
 				//      int bytes_read = bis.read(content, 0, content_length);
 				int total_bytes_read = 0;

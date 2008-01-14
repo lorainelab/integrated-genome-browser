@@ -307,13 +307,19 @@ public class Das2VersionedSource  {
     try {
       System.out.println("Das Types Request: " + types_request);
       Map headers = new LinkedHashMap();
+      InputStream response;
       //set in header a sessionId for types authentication?
+      //Also, if there is a sessionId then should ignore cache so user can get hidden types
       String sessionId = source.getServerInfo().getSessionId();
-      if (sessionId != null) headers.put("sessionId", sessionId);
-      //get InputStream
-      InputStream response = LocalUrlCacher.getInputStream(types_request, headers);
+      if (sessionId != null){
+    	  headers.put("sessionId", sessionId);
+    	  //if sessionID then connected so ignore cache
+    	  response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
+      }
+      //get input stream
+      else response = LocalUrlCacher.getInputStream(types_request, headers);
 
-      //      Document doc = DasLoader.getDocument(types_request);
+      //Document doc = DasLoader.getDocument(types_request);
       Document doc = DasLoader.getDocument(response);
       Element top_element = doc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");

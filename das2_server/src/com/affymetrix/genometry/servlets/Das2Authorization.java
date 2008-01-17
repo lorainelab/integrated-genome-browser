@@ -263,15 +263,8 @@ public class Das2Authorization {
 	}
 
 	//for testing
-	/*public static void main (String[] args){
-		DasAuthorization da = new DasAuthorization(new File ("/Users/nix/HCI/DAS/Das2Data/"));
-		System.out.println("RestrictedDirectories "+da.getRestrictedDirectories());
-		System.out.println("Users "+da.users);
-		HashMap rDirs = da.validate("GravesLab", "rat");
-		System.out.println("Validated user? "+rDirs);
-		if (da.isAuthorizing()){
-			boolean showIt = da.showResource(rDirs, "S_pombe_Apr_2007","Cairns/TotalS");
-			System.out.println("ShowIt? "+showIt);
-		}
-	}*/
+	public static void main (String[] args){
+		if (args.length !=1) System.out.println("\nEnter a password to encrypt.\n");
+		else System.out.println(encrypt(args[0]));
+	}
 }

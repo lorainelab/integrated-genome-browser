@@ -203,6 +203,8 @@ public class BarParser implements AnnotationWriter  {
 			int points_to_skip = min_index * points_per_index;
 			int bytes_to_skip = points_to_skip * bytes_per_point;
 			int points_to_read = (max_index - min_index) * points_per_index;
+			//watch out for cases where max_index - min_index == 0, such as when bar file is very small, say for chrM
+			if (points_to_read == 0) points_to_read = seq_header.data_point_count;
 			int bytes_to_read = points_to_read * bytes_per_point;
 			if (DEBUG_SLICE)  {
 				System.out.println("bytes to skip: " + bytes_to_skip);
@@ -478,7 +480,7 @@ public class BarParser implements AnnotationWriter  {
 			}
 			for (int k=0; k<total_seqs; k++) {
 				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
-				int total_points = seq_header.data_point_count;
+				int total_points = seq_header.data_point_count;				
 				Map<String,String> seq_tagvals = seq_header.tagvals;
 				//      MutableAnnotatedBioSeq seq = seq_header.aseq;
 				SmartAnnotBioSeq seq = (SmartAnnotBioSeq)seq_header.aseq;
@@ -493,7 +495,7 @@ public class BarParser implements AnnotationWriter  {
 						int xcoords[] = new int[total_points];
 						float ycoords[] = new float[total_points];
 						float prev_max_xcoord = -1;
-						boolean sort_reported = false;
+						boolean sort_reported = false;						
 						for (int i= 0; i<total_points; i++) {
 							//            xcoords[i] = (double)dis.readInt();
 							//            ycoords[i] = (double)dis.readFloat();

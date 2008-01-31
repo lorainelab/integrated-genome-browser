@@ -309,7 +309,7 @@ public class LocalUrlCacher {
 		if (cache_option != ONLY_CACHE) {
 			try {
 				URL theurl = new URL(url);
-				conn = theurl.openConnection();				
+				conn = theurl.openConnection();	
 				//set sessionId?
 				if (sessionId != null) conn.setRequestProperty("Cookie", sessionId);
 				//don't set if you are ignoring the cache, otherwise the server won't return the content if there's been no modification!
@@ -343,7 +343,6 @@ public class LocalUrlCacher {
 				if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
 			}
 		}
-
 		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache		
 		if (cached && (cache_option != IGNORE_CACHE)) {			
 			if (url_reachable) {
@@ -391,7 +390,7 @@ public class LocalUrlCacher {
 		}
 
 		// Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
-		if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {			
+		if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {				
 			// populating header Properties (for persisting) and header input Map
 			Map headermap = conn.getHeaderFields();
 			Properties headerprops = new Properties();
@@ -421,26 +420,30 @@ public class LocalUrlCacher {
 				}
 				if (total_bytes_read != content_length) {
 					Application.getSingleton().logWarning("Bytes read not same as content length");
+					System.out.println("Bytes read not same as content length");
 				}
 			}
 			else {
 				if (DEBUG_CONNECTION) {
+					System.out.println("No content length header, so doing piecewise loading");
 					Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
 				}
 
 				// if no content_length header, then need to load a chunk at a time
 				//   till find end, then piece back together into content byte array
-				ArrayList chunks = new ArrayList(100);
+				//   Note, must set initial capacity to 1000 to avoid stream loading interruption.
+				ArrayList<byte[]> chunks = new ArrayList(1000);
 				IntList byte_counts = new IntList(100);
 				int chunk_count = 0;
 				int chunk_size = 256 * 256;  // reading in 64KB chunks
 				int total_byte_count = 0;
-				int bytes_read = 0;
+				int bytes_read = 0;				
 				while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
 					byte[] chunk = new byte[chunk_size];
 					bytes_read = bis.read(chunk, 0, chunk_size);
 					if (DEBUG_CONNECTION) {
 						Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
+						System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
 					}
 					if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
 						total_byte_count += bytes_read;
@@ -451,19 +454,21 @@ public class LocalUrlCacher {
 				}
 				if (DEBUG_CONNECTION) {
 					Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+					System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
 				}
 
 				content_length = total_byte_count;
 				content = new byte[content_length];
 				total_byte_count = 0;
 				for (int i=0; i<chunks.size(); i++) {
-					byte[] chunk = (byte[])chunks.get(i);
+					byte[] chunk = chunks.get(i);
 					int byte_count = byte_counts.get(i);
 					if (byte_count > 0) {
 						System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
 						total_byte_count += byte_count;
 					}
 				}
+				chunks = null;
 			}
 			bis.close();
 			connstr.close();
@@ -471,6 +476,7 @@ public class LocalUrlCacher {
 				if (content != null && content.length > 0) {
 					if (DEBUG_CONNECTION)  {
 						Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
+						System.out.println("writing content to cache: " + cache_file.getPath());			
 					}
 					// write data from URL into a File
 					BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
@@ -481,6 +487,7 @@ public class LocalUrlCacher {
 				// cache headers also -- in [cache_dir]/headers ?
 				if (DEBUG_CONNECTION)  {
 					Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
+					System.out.println("writing headers to cache: " + header_cache_file.getPath());			
 				}
 				BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
 				headerprops.store(hbos, null);
@@ -492,6 +499,7 @@ public class LocalUrlCacher {
 		if (headers != null && DEBUG_CONNECTION) { reportHeaders(url, headers); }
 		if (result_stream == null) {
 			Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url);
+			System.out.println("LocalUrlCacher couldn't get content for: " + url);	
 		}
 		// if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
 		return result_stream;

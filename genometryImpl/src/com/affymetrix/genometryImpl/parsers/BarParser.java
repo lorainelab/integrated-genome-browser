@@ -150,6 +150,7 @@ public class BarParser implements AnnotationWriter  {
 		}
 		int min_index = 0;
 		int max_index = 0;
+		boolean readToEnd = false;
 		if (chunk_mins != null) {
 			min_index = Arrays.binarySearch(chunk_mins, min_base);
 			max_index = Arrays.binarySearch(chunk_mins, max_base);
@@ -164,28 +165,13 @@ public class BarParser implements AnnotationWriter  {
 					System.out.println("  prev index, base_pos = " + chunk_mins[min_index - 1]); }
 				if (min_index < (chunk_mins.length-1))  {
 					System.out.println("  next index, base_pos = " + chunk_mins[min_index + 1]);	}
+				System.out.println("max_index = " +max_index);
 			}
-
-			if (max_index < 0) {
-				// want max_index to be index of min base coord >= max_base
-				//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-				max_index = -max_index -1;
-				if (max_index <= 0) { max_index = 0; }
-				//	else if (max_index >= chunk_mins.length) { max_index = chunk_mins.length - 1; }
-				if (max_index >= chunk_mins.length) { max_index = chunk_mins.length - 1; }
-			}
-
-			if (DEBUG_SLICE) {
-				System.out.println("max_index = " + max_index + ", base_pos = " + chunk_mins[max_index]);
-				if (max_index > 0) {
-					System.out.println("  prev index, base_pos = " + chunk_mins[max_index - 1]); }
-				if (max_index < (chunk_mins.length-1))  {
-					System.out.println("  next index, base_pos = " + chunk_mins[max_index + 1]); }
-			}
+			
+			//did the binary search return a negative number indicating that the requested max_base 
+			//   is beyond the last chunk? If so then read to end.
+			if (max_index < 0) readToEnd = true;
 		}
-		//    int points_to_skip = min_index * points_per_index;
-		//    int start_point
-		//    int point_count =
 
 		DataInput dis = null;
 		try {
@@ -202,12 +188,16 @@ public class BarParser implements AnnotationWriter  {
 			int points_per_index = points_per_chunk;
 			int points_to_skip = min_index * points_per_index;
 			int bytes_to_skip = points_to_skip * bytes_per_point;
-			int points_to_read = (max_index - min_index) * points_per_index;
+			int points_to_read = 0;
+			if (readToEnd) points_to_read = seq_header.data_point_count- points_to_skip;
+			else points_to_read = (max_index - min_index) * points_per_index;
 			//watch out for cases where max_index - min_index == 0, such as when bar file is very small, say for chrM
 			if (points_to_read == 0) points_to_read = seq_header.data_point_count;
 			int bytes_to_read = points_to_read * bytes_per_point;
 			if (DEBUG_SLICE)  {
+				System.out.println("points to skip: "+points_to_skip);
 				System.out.println("bytes to skip: " + bytes_to_skip);
+				System.out.println("points to read: "+points_to_read);
 				System.out.println("bytes to read: " + bytes_to_read);
 			}
 			while (bytes_to_skip > 0)  {
@@ -480,7 +470,7 @@ public class BarParser implements AnnotationWriter  {
 			}
 			for (int k=0; k<total_seqs; k++) {
 				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
-				int total_points = seq_header.data_point_count;				
+				int total_points = seq_header.data_point_count;
 				Map<String,String> seq_tagvals = seq_header.tagvals;
 				//      MutableAnnotatedBioSeq seq = seq_header.aseq;
 				SmartAnnotBioSeq seq = (SmartAnnotBioSeq)seq_header.aseq;
@@ -495,7 +485,7 @@ public class BarParser implements AnnotationWriter  {
 						int xcoords[] = new int[total_points];
 						float ycoords[] = new float[total_points];
 						float prev_max_xcoord = -1;
-						boolean sort_reported = false;						
+						boolean sort_reported = false;
 						for (int i= 0; i<total_points; i++) {
 							//            xcoords[i] = (double)dis.readInt();
 							//            ycoords[i] = (double)dis.readFloat();

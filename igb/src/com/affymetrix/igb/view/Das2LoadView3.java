@@ -125,7 +125,6 @@ DataRequestListener {
 	public Das2LoadView3()  {
 		gviewer = Application.getSingleton().getMapView();
 		gviewer.addDataRequestListener(this);
-
 		tree = new JTree();
 		TreeCellRenderer tcr = tree.getCellRenderer();
 		// if possible, hide leaf icons (since have checkboxes too)
@@ -369,11 +368,10 @@ DataRequestListener {
 	 */
 	public static void processFeatureRequests(java.util.List requests, final boolean update_display, boolean thread_requests) {
 		if ((requests == null) || (requests.size() == 0)) { return; }
-
 		final java.util.List result_syms = new ArrayList();
 
 		Map requests_by_version = new LinkedHashMap();
-		// split into entries by DAS/2 versioned source
+		// split into entries by DAS/2 versioned source		
 		Iterator rsyms = requests.iterator();
 		while (rsyms.hasNext()) {
 			Das2FeatureRequestSym request = (Das2FeatureRequestSym)rsyms.next();
@@ -409,7 +407,7 @@ DataRequestListener {
 						if (DEBUG)  { System.out.println("$$$$$ in Das2LoadView3.processFeatureRequests(), getting style for: " + type.getName()); }
 						IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 						style.setHumanName(type.getName());
-
+						Application.getSingleton().setStatus("Loading "+type.getShortName(), false);
 						if (USE_DAS2_OPTIMIZER) {
 							result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
 						}
@@ -428,6 +426,7 @@ DataRequestListener {
 						MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
+					Application.getSingleton().setStatus("", false);
 				}
 			};
 
@@ -446,6 +445,8 @@ DataRequestListener {
 				catch (Exception ex) { ex.printStackTrace(); }
 			}
 		}
+		//for some reason this doesn't always get called
+		Application.getSingleton().setStatus("", false);
 	}
 
 	/**

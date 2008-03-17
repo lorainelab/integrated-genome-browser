@@ -17,14 +17,12 @@ import java.io.*;
 import java.util.*;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.Parser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.EntityResolver;
 
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.Memer;

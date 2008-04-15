@@ -232,10 +232,24 @@ function verify_port {
 
     if [ -x "$LSOF" ]; then
         _portdat=`$LSOF -i :$_port 2>&1`
+
         # If the port is not already in use, lsof reports nothing.
+        # But the port may be listed as having no active listeners on it,
+        # in which case we can go ahead and use it.
+        # There could be many httpd processes that are in the 
+        # "CLOSE_WAIT" state on the port, which can be ignored.
+        #
+        # Sample lsof output when the DAS/2 server is running:
+        #   COMMAND  PID   USER   FD   TYPE  DEVICE SIZE NODE NAME
+        #   java    2892   root   19u  IPv6   11232       TCP *:panagolin-ident (LISTEN)
+        #   httpd   7717 apache   17u  IPv4 1568165       TCP localhost.localdomain:43031->localhost.localdomain:panagolin-ident (CLOSE_WAIT)
+        #   (lots of httpd lines like the latter)
+
         if [ -n "$_portdat" ]; then
-            echo -e "Warning: Port $_port is in use: \n$_portdat" 1>&2
-            PORT_STATUS=2        
+            if LANG=C grep -Eq "\(LISTEN\)" $_portdat; then
+                echo -e "Warning: Port $_port is in use: \n$_portdat" 1>&2
+                PORT_STATUS=2
+            fi
         fi
     else
         # There are other ways to check for port availablity

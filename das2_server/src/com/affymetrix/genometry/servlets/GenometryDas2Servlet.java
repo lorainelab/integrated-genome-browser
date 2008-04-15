@@ -73,11 +73,26 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	static Pattern interval_splitter = Pattern.compile(":");
 
 	static String SERVER_SYNTAX_EXPLANATION =
+          "See http://netaffxdas.affymetrix.com/das2 for proper query syntax.";
+
+	static String LIMITED_FEATURE_QUERIES_EXPLANATION =
+          "See http://netaffxdas.affymetrix.com/das2 for supported feature queries.";
+
+  /* The long versions of these error messages appears to cause problems for Apache.
+     Specifically, they cause Apache to display an uninformative 502 Bad Gateway error
+     page because it deems the http header 'syntactically invalid'.
+     I suspect that the presence of multiple lines and/or blank lines is specically to blame. 
+     To be safe, we're now using very succinct, single-line messages containing a pointer to 
+     a web page which contains additional information to help guide the user about
+     acceptable queries.  - SteveC 15 Apr 2008
+  */
+	static String SERVER_SYNTAX_EXPLANATION_LONG =
 		"The Genometry DAS/2 server always uses a standard URI syntax for DAS/2 query URIs,\n\n" +
 		" and enforces this by specifying URIs in the SOURCES doc according to this standard:\n" +
 		"    das_server_root/genome_name/capability_name[?query_parameters]";
 
-	static String LIMITED_FEATURE_QUERIES_EXPLANATION =
+
+	static String LIMITED_FEATURE_QUERIES_EXPLANATION_LONG =
 		"The Genometry DAS/2 server currently does not support the full range of \n" +
 		"DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" +
 		"To allow the Genometry DAS/2 server to still comply with the specification, \n" +
@@ -896,7 +911,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		else if (path_info == null || path_info.trim().length() == 0) {   	
 			log.add("Unknown or missing DAS command");
 			response.sendError(response.SC_BAD_REQUEST,
-					"Query was not recognized.\n\n" + SERVER_SYNTAX_EXPLANATION);
+					"Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 		}
 		else if (path_info.endsWith(login_query)){
 			handleLoginRequest(request, response);
@@ -908,7 +923,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 				log.add("Unknown genome version");
 				//        response.setStatus(response.SC_BAD_REQUEST);
 				response.sendError(response.SC_BAD_REQUEST,
-						"Query was not recognized, possibly the genome name is incorrect or missing from path?\n" +
+						"Query was not recognized, possibly the genome name is incorrect or missing from path? " +
 						SERVER_SYNTAX_EXPLANATION);
 			}
 			else {
@@ -935,7 +950,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 				else {
 					log.add("DAS request not recognized, setting HTTP status header to 400, BAD_REQUEST");
 					response.sendError(response.SC_BAD_REQUEST,
-							"Query was not recognized.\n\n" + SERVER_SYNTAX_EXPLANATION);
+							"Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 				}
 			}
 		}
@@ -1400,7 +1415,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		if (query == null || query.length() == 0) {
 			// no query string, so requesting _all_ features for a versioned source
 			//    genometry server does not support this
-			//    so leave result = null and and null test below will trigger sending
+			//    so leave result = null and null test below will trigger sending
 			//    HTTP error message with status 413 "Request Entity Too Large"
 		}
 		else {  // request contains query string

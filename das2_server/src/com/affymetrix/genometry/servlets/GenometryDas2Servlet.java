@@ -1656,7 +1656,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 			}
 			else {
 				if (result == null) {
-					response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, LIMITED_FEATURE_QUERIES_EXPLANATION);
+					response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, "Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
 				}
 				else {
 					outputAnnotations(result, outseq, query_type, request, response, output_format);

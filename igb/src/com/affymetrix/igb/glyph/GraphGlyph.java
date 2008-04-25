@@ -24,6 +24,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
@@ -73,8 +74,8 @@ public class GraphGlyph extends Glyph {
    *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
    *     be modified (except for resetting the points by calling setPointCoords() again)
    */
-  float point_max_ycoord = Float.NEGATIVE_INFINITY;
-  float point_min_ycoord = Float.POSITIVE_INFINITY;
+  float point_max_ycoord = Float.POSITIVE_INFINITY;
+  float point_min_ycoord = Float.NEGATIVE_INFINITY;
 
   // assumes sorted points, each x corresponding to y
   int xcoords[];
@@ -103,9 +104,37 @@ public class GraphGlyph extends Glyph {
     }
 
     setCoords(coordbox.x, state.getTierStyle().getY(), coordbox.width, state.getTierStyle().getHeight());
+    
+    Map map = graf.getProperties();
+    boolean toInitialize = isUninitialized();
+    if(toInitialize && map != null){
+    	Object value = map.get(ViewPropertyNames.INITIAL_COLOR);
+    	if(value != null){
+    		setForegroundColor(Color.decode(value.toString()));
+    	}
+    	else{
+    		setColor(state.getTierStyle().getColor());
+    	}
+    	value = map.get(ViewPropertyNames.INITIAL_BACKGROUND);
+    	if(value != null){
+    		setBackgroundColor(Color.decode(value.toString()));
+    	}
+    	else{
+    		setBackgroundColor(state.getTierStyle().getBackground());
+    	}
+    	value = map.get(ViewPropertyNames.INITIAL_GRAPH_STYLE);
+    	if(value != null){
+    		setGraphStyle(GraphType.fromString(value.toString()));
+    	}
+    	else{
+    		setGraphStyle(state.getGraphStyle());
+    	}
+    }
+    else{   
+       setGraphStyle(state.getGraphStyle());
+    }
     setColor(state.getTierStyle().getColor());
-    setGraphStyle(state.getGraphStyle());
-
+    
     this.xcoords = graf.getGraphXCoords();
     if (graf instanceof GraphIntervalSym) {
       this.wcoords = ((GraphIntervalSym) graf).getGraphWidthCoords();
@@ -115,17 +144,33 @@ public class GraphGlyph extends Glyph {
     if (wcoords != null) {
       if (wcoords.length != xcoords.length || wcoords.length != graf.getPointCount()) { return; }
     }
-
+    
     this.graf = graf;
-    point_min_ycoord = Float.POSITIVE_INFINITY;
-    point_max_ycoord = Float.NEGATIVE_INFINITY;
-    float f;
-    for (int i=0; i<graf.getPointCount(); i++) {
-      f = graf.getGraphYCoord(i);
-      if (f < point_min_ycoord) { point_min_ycoord = f; }
-      if (f > point_max_ycoord) { point_max_ycoord = f; }
+        
+    boolean rangeInit = false;
+    if(toInitialize && map != null){
+      Object value = map.get(ViewPropertyNames.INITIAL_MAX_Y);
+      if(value != null){
+  		  point_max_ycoord = Float.parseFloat(value.toString());
+  		  rangeInit = true;
+      }
+      value = map.get(ViewPropertyNames.INITIAL_MIN_Y);
+  	  if(value != null){
+  		  point_min_ycoord = Float.parseFloat(value.toString());
+  		  rangeInit = true;
+  	  }
     }
-    if (point_max_ycoord == point_min_ycoord) {
+    if(!rangeInit){
+        float[] range = getVisibleYRange();
+        if(point_max_ycoord == Float.POSITIVE_INFINITY){
+        	point_max_ycoord = range[1];
+        }
+        if(point_min_ycoord == Float.NEGATIVE_INFINITY){
+        	point_min_ycoord = range[0];
+        }
+    }
+    
+    if (point_max_ycoord <= point_min_ycoord) {
       point_min_ycoord = point_max_ycoord - 1;
     }
     //    System.out.println("min: " + min_ycoord + ", max: " + getVisibleMaxY());
@@ -133,11 +178,32 @@ public class GraphGlyph extends Glyph {
     checkVisibleBoundsY();
   }
 
+  public float[] getVisibleYRange(){
+	  float[] result = new float[2];
+	  float min_ycoord = Float.POSITIVE_INFINITY;
+      float max_ycoord = Float.NEGATIVE_INFINITY;
+      float f;
+      for (int i=0; i<graf.getPointCount(); i++) {
+        f = graf.getGraphYCoord(i);
+        if (f < min_ycoord) { min_ycoord = f; }
+        if (f > max_ycoord) { max_ycoord = f; }
+      }
+      result[0] = min_ycoord;
+      result[1] = max_ycoord;
+	  return result;
+  }
+  
+  
+  public boolean isUninitialized(){
+	  return 
+	    getVisibleMinY() == Float.POSITIVE_INFINITY ||
+		getVisibleMinY() == Float.NEGATIVE_INFINITY ||
+		getVisibleMaxY() == Float.POSITIVE_INFINITY ||
+		getVisibleMaxY() == Float.NEGATIVE_INFINITY;
+  }
+    
   protected void checkVisibleBoundsY() {
-    if (getVisibleMinY() == Float.POSITIVE_INFINITY ||
-	getVisibleMinY() == Float.NEGATIVE_INFINITY ||
-	getVisibleMaxY() == Float.POSITIVE_INFINITY ||
-	getVisibleMaxY() == Float.NEGATIVE_INFINITY) {
+    if (isUninitialized()) {
       setVisibleMaxY(point_max_ycoord);
       setVisibleMinY(point_min_ycoord);
     }

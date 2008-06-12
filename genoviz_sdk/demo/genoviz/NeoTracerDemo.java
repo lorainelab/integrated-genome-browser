@@ -77,12 +77,22 @@ public class NeoTracerDemo extends Applet
       if ( searchString.length() < 1 ) return;
       String traceString;
       BaseCalls bc = ( ( Trace ) trace ).getActiveBaseCalls();
+      // Ann's note:getBaseString is
+      // removed from v. 6
+      // See: http://genoviz.svn.sourceforge.net/viewvc/genoviz/trunk/genoviz_sdk/src/com/affymetrix/genoviz/datamodel/TraceI.java?r1=6&r2=2846
+      // The method was also noted as being deprecated and 
+      // the comments advised using getActiveBaseCalls().getBaseString()
+      // instead. 
+      // 
+      /**
+         
       if ( null == bc ) {
         traceString = trace.getBaseString();
       }
       else {
-        traceString = bc.getBaseString().toUpperCase();
-      }
+      */
+      traceString = bc.getBaseString().toUpperCase();
+        //}
       String searchOption = searchChoice.getSelectedItem();
       int basenum = -1;
       if (searchOption == "First") {

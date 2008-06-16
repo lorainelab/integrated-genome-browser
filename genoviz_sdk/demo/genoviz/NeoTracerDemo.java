@@ -518,14 +518,17 @@ public class NeoTracerDemo extends Applet
     System.err.println("clipping from base " + theFirstBase + " to " + theLastBase);
     int theFirstPeak = 0;
     if ( 0 < theFirstBase ) {
-      int a = (trace.getBaseCall(theFirstBase-1)).getTracePoint();
-      int b = (trace.getBaseCall(theFirstBase)).getTracePoint();
+      // Ann's note: It seems weird to me that we have to cast the interface trace to
+      // it's imlementation. Why is this? Anyhow, to get this file to compile, I need
+      // to cast trace to Trace, which implements TraceI
+      int a = (((Trace)trace).getBaseCall(theFirstBase-1)).getTracePoint();
+      int b = (((Trace)trace).getBaseCall(theFirstBase)).getTracePoint();
       theFirstPeak = ( a + b ) / 2;
     }
     int theLastPeak = trace.getTraceLength() - 1;
     if ( theLastBase < trace.getBaseCount() - 1 ) {
-      int a = (trace.getBaseCall(theLastBase)).getTracePoint();
-      int b = (trace.getBaseCall(theLastBase+1)).getTracePoint();
+      int a = ((Trace)trace).getBaseCall(theLastBase).getTracePoint();
+    int b = ((Trace) trace).getBaseCall(theLastBase+1).getTracePoint();
       theLastPeak = ( a + b ) / 2;
     }
     widget.setRange(theFirstPeak, theLastPeak);

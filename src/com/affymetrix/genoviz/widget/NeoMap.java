@@ -23,13 +23,14 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
-import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.DragMonitor;
 
+import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.bioviews.SceneII;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.event.*;
 
@@ -1241,7 +1242,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    */
   public void addItem(GlyphI gl) {
     if (gl != null) {
-      Scene glyph_scene = gl.getScene();
+      SceneII glyph_scene = gl.getScene();
       if (glyph_scene == null) {
         scene.addGlyph(gl);
       }

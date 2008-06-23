@@ -44,7 +44,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   static protected int min_pixels_width=1;
   static protected int min_pixels_height=1;
 
-  protected Scene scene;
+  protected SceneII scene;
 
   protected GlyphI parent;
   protected List<GlyphI> children;
@@ -64,6 +64,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * {@inheritDoc}
    */
+  @Override
   public boolean withinView(ViewI view) {
     return this.intersects(view.getCoordBox());
   }
@@ -71,6 +72,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * {@inheritDoc}
    */
+  @Override
   public void select(double x, double y, double width, double height) {
     setSelected(true);
   }
@@ -79,6 +81,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * Always returns false.
    * @return false
    */
+  @Override
   public boolean supportsSubSelection() {
     return false;
   }
@@ -86,6 +89,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * {@inheritDoc}
    */
+  @Override
   public Rectangle2D.Double getSelectedRegion() {//TODO: delete?
     if (selected) { return this; }
     else { return null; }
@@ -105,6 +109,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     return drawOrder;
   }
 
+  @Override
   public void drawTraversal(ViewI view)  {
     if (DEBUG_DT) {
       System.err.println("called Glyph.drawTraversal() on " + this);
@@ -160,6 +165,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * in {@link #drawChildren(ViewI)}
    * @param view
    */
+  @Override
   public void draw(ViewI view)  {
     if (debug) {
       Graphics g = view.getGraphics();
@@ -245,9 +251,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     this.setForegroundColor( fg );
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
@@ -278,6 +283,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   
   //TODO: implement or delete
   /** NOT YET IMPLEMENTED. */
+  @Override
   public void pickTraversal(Rectangle pickrect, List<GlyphI> pickList, ViewI view) {
     //TODO: need to covert pickRect to coords...
     /*
@@ -313,18 +319,21 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     return false;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
     return isVisible && rect.intersects(this);
   }
 
-  public boolean isHitable() { return false; }
 
   /**
-   * {@inheritDoc}
-   */
+   * Always returns false, unless overridden.
+   * @return false
+   */@Override
+  public boolean isHitable() { return false; }
+
+  /** {@inheritDoc} */
+  @Override
   public void addChild(GlyphI glyph, int position) {
     GlyphI prev_parent = glyph.getParent();
     if (prev_parent != null) {
@@ -343,9 +352,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     glyph.setParent(this);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public void addChild(GlyphI glyph)  {
     GlyphI prev_parent = glyph.getParent();
     if (prev_parent != null) {
@@ -358,9 +366,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     glyph.setParent(this);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public void removeChild(GlyphI glyph)  {
     if (children != null)      {
       children.remove(glyph);
@@ -369,9 +376,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     glyph.setScene(null);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public void removeAllChildren() {
     if (children != null)  {
       for (int i=0; i<children.size(); i++) {
@@ -381,39 +387,34 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     children = null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public int getChildCount() {
     if (children == null) { return 0; }
     else { return children.size(); }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public GlyphI getChild(int index) {
     return children.get(index);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public List<GlyphI> getChildren()  {
     return children;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public void setParent(GlyphI glyph)  {
     parent = glyph;
     setScene(glyph.getScene());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public GlyphI getParent()  {
     return parent;
   }
@@ -427,6 +428,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    *  @deprecated
    */
   @Deprecated
+  @Override
   public Rectangle getPixelBox(ViewI view)  {
     Rectangle pixelbox = view.getScratchPixBox();
     pixelbox = view.transformToPixels (this, pixelbox);
@@ -438,6 +440,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * If d.width or d.height is negative,
    * this uses their absolute value instead. 
    */
+  @Override
   public void setMinimumPixelBounds(Dimension d)   {
     // to save a miniscule amount of memory, this is saved as
     // two integers rather than one Dimension object.
@@ -468,9 +471,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     this.setRect(x, y, width, height);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
+  @Override
   public Rectangle2D.Double getCoordBox()   {
     return this;
   }
@@ -481,6 +483,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * Note that this does not make the assurances of setCoords().
    * @see #setCoords
    */
+  @Override
   public void setCoordBox(Rectangle2D.Double coordbox)   {
     this.x = coordbox.x;
     this.y = coordbox.y;
@@ -501,54 +504,76 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   }
 
   /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  @Override
   public void setBackgroundColor(Color color)  {
     //    this.style = stylefactory.getStyle( style.getForegroundColor(), color, style.getFont() );
     this.color = color;
   }
 
   /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  @Override
   public Color getBackgroundColor()  {
     //    return this.style.getBackgroundColor();
     return color;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setColor(Color color)  {
         this.setBackgroundColor( color );
   }
 
+  /** {@inheritDoc} */
+  @Override
   public Color getColor()  {
     return this.getBackgroundColor();
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setInfo(Object info)  {
     this.info = info;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public Object getInfo()  {
     return info;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setVisibility(boolean isVisible)  {
     this.isVisible = isVisible;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public boolean isVisible()  {
     return isVisible;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setPacker(PackerI packer)  {
     this.packer = packer;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public PackerI getPacker()  {
     return packer;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void pack(ViewI view) {
     if (packer == null) { return; }
     packer.pack(this, view);
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void moveRelative(double diffx, double diffy) {
     this.x += diffx;
     this.y += diffy;
@@ -560,13 +585,17 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     }
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void moveAbsolute(double absx, double absy) {
     double diffx = absx - this.getX();
     double diffy = absy - this.getY();
     this.moveRelative(diffx, diffy);
   }
 
-  public void setScene(Scene s) {
+  /** {@inheritDoc} */
+  @Override
+  public void setScene(SceneII s) {
     scene = s;
     if (children != null) {
       int size = children.size();
@@ -576,7 +605,9 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     }
   }
 
-  public Scene getScene() {
+  /** {@inheritDoc} */
+  @Override
+  public SceneII getScene() {
     return scene;
   }
 
@@ -588,6 +619,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    *
    * @param selectability
    */
+  @Override
   public void setSelectable(boolean selectability) {
     if (!selectability) {
       setSelected(false);
@@ -598,6 +630,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * Indicates whether or not the glyph can be selected.
    */
+  @Override
   public boolean isSelectable() {
     return this.selectable;
   }
@@ -609,6 +642,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * @param selected true if the glyph is to be selected,
    * false otherwise.
    */
+  @Override
   public void setSelected(boolean selected) {
     if (this.selectable) {
       this.selected = selected;
@@ -618,6 +652,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * Indicates whether or not the glyph has been selected.
    */
+  @Override
   public final boolean isSelected() {
     return selected;
   }
@@ -631,19 +666,22 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    *  Set trans to global transform for this glyph (based on
    *    getChildTransform() of parent).
    */
+  @Override
   public boolean  getGlobalTransform(ViewI view, LinearTransform trans) {
     trans.copyTransform((LinearTransform)view.getTransform());
     return getParent().getGlobalChildTransform(view, trans);
   }
 
   /** Default implementation does nothing. */
+  @Override
   public void getChildTransform(ViewI view, LinearTransform trans) {
     return;
   }
 
+  @Override
   public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
     Stack<GlyphI> glstack = new Stack<GlyphI>();
-    GlyphI rootgl = ((Scene)view.getScene()).getRootGlyph();
+    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast (and why not use the GlyphI's own Scene?
     GlyphI gl = this;
     glstack.push(gl);
     while (gl != rootgl) {

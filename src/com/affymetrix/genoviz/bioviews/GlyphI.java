@@ -422,8 +422,8 @@ public interface GlyphI {
    *
    * @param s the scene in which the glyph appears.
    */
-  //TODO: use SceneI ?
-  public void setScene(Scene s);
+  public void setScene(SceneII s);
+
   /*
    * Sets the scene for the glyph.  An internal method used by NeoWidgets.
    * Each NeoWidget can have multiple scenes (and NeoWidgets can share
@@ -440,7 +440,7 @@ public interface GlyphI {
    * @return the Scene in which the GlyphI appears.
    * @see #setScene
    */
-  public Scene getScene();
+  public SceneII getScene();
 
   /**
    *  set trans to global transform for this glyph (based on

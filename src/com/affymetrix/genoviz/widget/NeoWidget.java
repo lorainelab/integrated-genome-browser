@@ -17,7 +17,6 @@ import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
-import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.SceneII;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
@@ -1037,10 +1036,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 
-  public void setSelectionAppearance(Scene.SelectType select_behavior) {
+  @Override
+  public void setSelectionAppearance(SceneII.SelectType select_behavior) {
     scene.setSelectionAppearance( select_behavior );
   }
-  public Scene.SelectType getSelectionAppearance() {
+
+  @Override
+  public SceneII.SelectType getSelectionAppearance() {
     return scene.getSelectionAppearance();
   }
   public void setSelectionColor(Color col) {

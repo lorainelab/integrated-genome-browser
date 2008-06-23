@@ -32,7 +32,7 @@ public class NeoCanvas extends Container  {
 
   /**
    * Paints the component,
-   * notifying listeners
+   * notifying listeners afterwards
    * via a {@link NeoPaintEvent}.
    *
    * @param g the specified Graphics object

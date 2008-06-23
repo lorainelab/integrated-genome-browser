@@ -1,0 +1,292 @@
+/**
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
+*
+*   Licensed under the Common Public License, Version 1.0 (the "License").
+*   A copy of the license must be included with any distribution of
+*   this source code.
+*
+*   The license is also available at
+*   http://www.opensource.org/licenses/cpl.php
+*/
+package com.affymetrix.genoviz.glyph.efficient;
+
+import com.affymetrix.genoviz.glyph.LabelledGlyph2;
+import java.awt.*;
+
+import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.NeoConstants.Direction;
+import com.affymetrix.genoviz.util.NeoConstants.Placement;
+import java.awt.geom.Rectangle2D;
+
+/** A subclass of EffLabelledGlyph that makes all its children
+ *  center themselves vertically on the same line.
+ */
+public class EffLabelledLineGlyph extends EffLabelledGlyph
+   implements LabelledGlyph2  {
+
+  boolean move_children = true;
+
+  @Override
+  public void draw(ViewI view) {
+    //    super.draw(view);
+    Rectangle2D.Double full_view_cbox = view.getFullView().getCoordBox();
+    Graphics g = view.getGraphics();
+
+    // perform an intersection of the view and this glyph, in the X axis only.
+    scratch_cbox.x = Math.max(this.x, full_view_cbox.x);
+    scratch_cbox.width = Math.min(this.x + this.width, full_view_cbox.x + full_view_cbox.width) - scratch_cbox.x;
+    scratch_cbox.y = this.y;
+    scratch_cbox.height = this.height;
+
+    Rectangle pixelbox = view.getScratchPixBox();
+    view.transformToPixels(scratch_cbox, pixelbox);
+
+    int original_pix_width = pixelbox.width;
+    if (pixelbox.width == 0) { pixelbox.width = 1; }
+    if (pixelbox.height == 0) { pixelbox.height = 1; }
+
+    // We use fillRect instead of drawLine, because it may be faster.
+    g.setColor(getBackgroundColor());
+    if (show_label) {
+      if (getChildCount() <= 0) {
+        //        fillDraw(view);
+        if (Placement.ABOVE.equals(labelPlacment)) {
+          g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
+                     pixelbox.width, Math.max(1, pixelbox.height / 2));
+        } else {
+          g.fillRect(pixelbox.x, pixelbox.y,
+                     pixelbox.width, Math.max(1, pixelbox.height / 2));
+        }
+      }
+      else {
+        // draw the line
+        if (Placement.ABOVE.equals(labelPlacment)) { // label occupies upper half, so center line in lower half
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+((3*pixelbox.height)/4), pixelbox.width, this.arrowDirection);
+        }
+        else {  // label occupies lower half, so center line in upper half
+          drawDirectedLine(g, pixelbox.x, pixelbox.y+(pixelbox.height/4), pixelbox.width, this.arrowDirection);
+        }
+      }
+
+      if (label != null && (label.length() > 0)) {
+	int xpix_per_char = original_pix_width / label.length();
+	int ypix_per_char = (pixelbox.height/2 - pixel_separation);
+	// only draw if there is enough width for smallest font
+	if ((xpix_per_char >= min_char_xpix) && (ypix_per_char >= min_char_ypix))  {
+	  if (xpix_per_char > max_char_xpix) { xpix_per_char = max_char_xpix; }
+	  if (ypix_per_char > max_char_ypix) { ypix_per_char = max_char_ypix; }
+
+	    Font xmax_font = xpix2fonts[xpix_per_char];
+	    Font ymax_font = ypix2fonts[ypix_per_char];
+	    Font chosen_font = (xmax_font.getSize()<ymax_font.getSize()) ? xmax_font : ymax_font;
+	    //	    Graphics2D g2 = (Graphics2D)g;
+	    Graphics g2 = g;
+	    g2.setFont(chosen_font);
+	    FontMetrics fm = g2.getFontMetrics();
+
+	    int text_width = fm.stringWidth(label.toString());
+	    int text_height = fm.getAscent(); // trying to fudge a little (since ascent isn't quite what I want)
+
+	    if (((! toggle_by_width) ||
+		 (text_width <= pixelbox.width))  &&
+		((! toggle_by_height) ||
+		 (text_height <= (pixel_separation + pixelbox.height/2))) )  {
+	      int xpos = pixelbox.x + (pixelbox.width/2) - (text_width/2);
+	      if (Placement.ABOVE.equals(labelPlacment)) {
+		g2.drawString(label.toString(), xpos,
+			      //		       pixelbox.y + text_height);
+			      pixelbox.y + pixelbox.height/2 - pixel_separation - 2);
+	      }
+	      else {
+		g2.drawString(label.toString(), xpos,
+			      pixelbox.y + pixelbox.height/2 + text_height + pixel_separation - 1);
+	      }
+	    }
+	}
+      }
+    }
+    else { // show_label = false, so center line within entire pixelbox
+      if (getChildCount() <= 0) {
+        // if no children, draw a box
+        g.fillRect(pixelbox.x, pixelbox.y + (pixelbox.height / 2),
+                pixelbox.width, Math.max(1, pixelbox.height / 2));
+      } else {
+        // if there are children, draw a line.
+        drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, arrowDirection);
+      }
+    }
+  }
+
+  Direction arrowDirection = Direction.NONE;
+
+  /**
+   *  Direction to use for drawing little arrows on the line.
+   *  @param d should be one of
+   *  {@link com.affymetrix.genoviz.util.NeoConstants.Direction#RIGHT},
+   *  {@link com.affymetrix.genoviz.util.NeoConstants.Direction#LEFT}, or 
+   *  {@link com.affymetrix.genoviz.util.NeoConstants.Direction#NONE}.
+   */
+  public void setArrowDirection(Direction d) throws IllegalArgumentException {
+    arrowDirection = d;
+  }
+
+  public Direction getArrowDirection() {
+    return arrowDirection;
+  }
+
+  public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
+  public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
+  public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
+  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
+  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
+  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
+
+  //TODO: Redo this using line styles
+  
+  /**
+   *  Draws a line with little arrows to indicate the direction.
+   *  @param direction should be {@link NeoConstants#RIGHT},
+   *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
+   */
+  void drawDirectedLine(Graphics g, final int x, final int y, final int width, final Direction direction) {
+    switch (direction) {
+      case RIGHT:
+        Graphics2D g2R = (Graphics2D) g;
+        Stroke old_strokeR = g2R.getStroke();
+        g2R.setStroke(dashStroke0);
+        g2R.drawLine(x, y, x + width, y);
+        g2R.setStroke(dashStroke1);
+        g2R.drawLine(x, y+1, x + width, y+1);
+        g2R.drawLine(x, y-1, x + width, y-1);
+        g2R.setStroke(dashStroke2);
+        g2R.drawLine(x, y+2, x + width, y+2);
+        g2R.drawLine(x, y-2, x + width, y-2);
+        g2R.setStroke(old_strokeR);
+        break;
+      case LEFT:
+        Graphics2D g2L = (Graphics2D) g;
+        Stroke old_strokeL = g2L.getStroke();
+        g2L.setStroke(dashStrokeNeg0);
+        g2L.drawLine(x, y, x + width, y);
+        g2L.setStroke(dashStrokeNeg1);
+        g2L.drawLine(x, y+1, x + width, y+1);
+        g2L.drawLine(x, y-1, x + width, y-1);
+        g2L.setStroke(dashStrokeNeg2);
+        g2L.drawLine(x, y+2, x + width, y+2);
+        g2L.drawLine(x, y-2, x + width, y-2);
+        g2L.setStroke(old_strokeL);
+        break;
+      default:
+        g.fillRect(x, y, width, 1);
+    }
+  }
+
+  /**
+   *  Overriding addChild to force a call to adjustChildren().
+   */
+  @Override
+  public void addChild(GlyphI glyph) {
+    if (isMoveChildren()) {
+      double child_height = adjustChild(glyph);
+      super.addChild(glyph);
+      if (this.height < 2.0 * child_height) {
+        this.height = 2.0 * child_height;
+        adjustChildren();
+      }
+    } else {
+      super.addChild(glyph);
+    }
+  }
+
+  protected double adjustChild(GlyphI child) {
+    if (isMoveChildren()) {
+      // child.cbox.y is modified, but not child.cbox.height)
+      // center the children of the LineContainerGlyph on the line
+      final Rectangle2D.Double cbox = child.getCoordBox();
+      double ycenter;
+      // use moveAbsolute or moveRelative to make sure children also get moved
+
+      if (show_label) {
+        if (Placement.ABOVE.equals(labelPlacment)) {
+          ycenter = this.y + (0.75 * this.height);
+          child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
+        } else {
+          ycenter = this.y + (0.25 * this.height);
+          child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
+        }
+      } else {
+        ycenter = this.y + this.height * 0.5;
+      }
+      child.moveRelative(0, ycenter - (cbox.height * 0.5) - cbox.y);
+      return cbox.height;
+    } else {
+      return this.height;
+    }
+  }
+
+  protected void adjustChildren() {
+    double max_height = 0.0;
+    if (isMoveChildren()) {
+      java.util.List childlist = this.getChildren();
+      if (childlist != null) {
+        int child_count = this.getChildCount();
+        for (int i=0; i<child_count; i++) {
+          GlyphI child = (GlyphI)childlist.get(i);
+          double child_height = adjustChild(child);
+          max_height = Math.max(max_height, child_height);
+        }
+      }
+    }
+    if (this.height < 2.0 * max_height) {
+      this.height = 2.0 * max_height;
+      adjustChildren(); // have to adjust children again after a height change.
+    }
+  }
+
+  @Override
+  public void pack(ViewI view) {
+    if ( isMoveChildren()) {
+      this.adjustChildren();
+      // Maybe now need to adjust size of total glyph to take into account
+      // any expansion of the children ?
+    } else {
+      super.pack(view);
+    }
+  }
+
+  @Override
+  public void setLabelLocation(Placement loc) {
+    if (loc != getLabelLocation()) {
+      adjustChildren();
+    }
+    super.setLabelLocation(loc);
+  }
+
+  @Override
+  public void setShowLabel(boolean b) {
+    if (b != getShowLabel()) {
+      adjustChildren();
+    }
+    super.setShowLabel(b);
+  }
+
+  /**
+   * If true, {@link #addChild(GlyphI)} will automatically center the child vertically.
+   */
+  public boolean isMoveChildren() {
+    return this.move_children;
+  }
+
+  /**
+   * Set whether {@link #addChild(GlyphI)} will automatically center the child vertically.
+   */
+  public void setMoveChildren(boolean move_children) {
+    this.move_children = move_children;
+  }
+}

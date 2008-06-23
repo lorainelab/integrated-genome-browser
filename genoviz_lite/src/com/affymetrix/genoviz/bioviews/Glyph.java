@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -37,7 +35,7 @@ public abstract class Glyph implements GlyphI {
   protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
   protected java.awt.geom.Rectangle2D.Double coordbox;
-  protected Scene scene;
+  protected SceneII scene;
   private java.awt.geom.Rectangle2D.Double cb2 = null; // used as a temporary variable
 
   protected Rectangle pixelbox;
@@ -649,7 +647,7 @@ public abstract class Glyph implements GlyphI {
     this.moveRelative(diffx, diffy);
   }
 
-  public void setScene(Scene s) {
+  public void setScene(SceneII s) {
     scene = s;
     if (children != null) {
       int size = children.size();
@@ -659,9 +657,10 @@ public abstract class Glyph implements GlyphI {
     }
   }
 
-  public Scene getScene() {
+  public SceneII getScene() {
     return scene;
   }
+
   protected boolean selectable = true;
 
   /**
@@ -723,7 +722,7 @@ public abstract class Glyph implements GlyphI {
 
   public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
     Stack<GlyphI> glstack = new Stack<GlyphI>();
-    GlyphI rootgl = ((Scene) view.getScene()).getRootGlyph();
+    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast
     GlyphI gl = this;
     glstack.push(gl);
     while (gl != rootgl) {

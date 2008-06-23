@@ -1,20 +1,16 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-
 package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
 import java.util.List;
 
 /**
@@ -241,6 +237,9 @@ public interface GlyphI {
    *
    * @param selected true iff the glyph is to be selected.
    */
+    
+//TODO: selecting a glyph should always trigger modifying the damage rectangle.
+// thus maybe this method should not be public?  Must call SceneII.select(GlyphI) instead?
   public void setSelected(boolean selected);
 
   /**

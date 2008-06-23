@@ -12,7 +12,6 @@
 package com.affymetrix.genoviz.bioviews;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -52,14 +51,12 @@ public interface ViewI  {
   public void draw();
 
   /**
-   * returns the SceneI that the view is of.
-   * (no set method --
-   *  current implementation sets the scene in the View constructor)
+   * Returns the SceneI that the view is of.
    */
   public SceneI getScene();
 
   /**
-   * Sets the component that the view draws to.
+   * Sets the {@link NeoCanvas} component that the view draws to.
    */
   public void setComponent(NeoCanvas c);
 
@@ -68,15 +65,20 @@ public interface ViewI  {
    */
   public NeoCanvas getComponent();
 
+  public Rectangle getComponentSizeRect();
+
 
   /// Scene gives View a coord box (e.g. range of base pairs).
   /// Scene gives View a transform between pixel & coord space.
   /// Scene gives View a pixel box (e.g. the whole canvas).
   /**
-   * sets the pixel box that bounds the view on the component the view draws to.
-   * This is typically a rectangle the dimensions of the component
+   * Sets the pixel box that bounds the view on the component the view 
+   * draws to.
+   * This is typically a rectangle with the dimensions of the component
    * (0, 0, component.size().width, component.size().height)
    */
+  //TODO: Maybe force the pixel box to match the dimensions of the component.
+  // It should be easy to nest components to achieve the same thing that this allows.
   public void setPixelBox(Rectangle rect);
 
   /**
@@ -90,45 +92,81 @@ public interface ViewI  {
    *  Sets the coordinate box that bounds the view, in other words the
    *  portion of the scene that is visible within this view.
    */
+  //TODO: document whether this is the WHOLE coord box, or just the
+  // coords that are visible in the current zoom.
   public void setCoordBox(Rectangle2D.Double coordbox);
 
   /**
-   *  returns the coordinate box that bounds the view, in other words the
+   *  Returns the coordinate box that bounds the view, in other words the
    *  portion of the scene that is visible within this view.
    */
   public Rectangle2D.Double getCoordBox();
 
-  public void setFullView(ViewI full_view);
+  
+  /**
+   * If this View is a sub-view of a portion of a larger view,
+   * use this to set a reference to the full view.
+   * This is used, for example, when a single NeoMap is being drawn as
+   * multiple sub-views on several different monitors or graphics cards.
+   * If this is not a sub-view, then the full view equals this view itself.
+   * @param full
+   */
+  public void setFullView(ViewI full);
+
+  /**
+   * If this View is a sub-view of a portion of a larger view,
+   * use this to set a reference to the full view.
+   * This is used, for example, when a single NeoMap is being drawn as
+   * multiple sub-views on several different monitors or graphics cards.
+   * If this is not a sub-view, then the full view equals this view itself.
+   * @return The full view, which in most cases is this same object itself.
+   */
   public ViewI getFullView();
 
   /**
-   *  sets the TransformI that is used to transform widget coordinates to
-   *  pixels and vice versa.
+   *  Sets the {@link TransformI} that is used to transform widget coordinates 
+   *  to pixels and vice versa (via an inverse transform).
    */
   public void setTransform(TransformI t);
 
   /**
-   *  returns the TransformI that is used to transform widget coordinates to
-   *  pixels and vice versa.
+   *  Returns the {@link TransformI} that is used to transform widget coordinates to
+   *  pixels and vice versa (via an inverse transform).
    */
   public TransformI getTransform();
 
   /**
-   *    The view is responsible for mapping coordinates to pixels and
-   *    vice versa, via transformToPixels() and transformToCoords().
-   *
-   *    transformToPixels() transforms src rectangle in coordinate space
+   *    Transforms src rectangle in coordinate space
    *    to dst rectangle in pixel (screen) space.
+   * 
+   *   <p>The view is responsible for mapping coordinates to pixels and
+   *    vice versa, via transformToPixels() and transformToCoords().
+   * 
+   *  <p>The view is the only object that knows about the mapping from
+   *  coordinate spaces to pixel space, hence
+   *  transformToPixels() and transformToCoords().
+   *
+   *  @param src the coordinates in coordinate space (double values)
+   *  @param dst the coordinates in pixel space (32-bit integer values)
+   * 
    *    @return altered destination Rectangle
    */
   public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst);
 
   /**
-   *    The view is responsible for mapping coordinates to pixels and
-   *    vice versa, via transformToPixels() and transformToCoords().
-   *
-   *    <p> transformToCoords transforms src rectangle in pixel (screen) space
+   *    Transforms src rectangle in pixel (screen) space
    *    to dst rectangle in coord space.
+   * 
+   *   <p>The view is responsible for mapping coordinates to pixels and
+   *    vice versa, via transformToPixels() and transformToCoords().
+   * 
+   *  <p>The view is the only object that knows about the mapping from
+   *  coordinate spaces to pixel space, hence
+   *  transformToPixels() and transformToCoords().
+   * 
+   *  @param src the coordinates in pixel space (32-bit integer values)
+   *  @param dst the coordinates in coordinate space (double values)
+   *
    *    @return altered destination Rectangle2D
    */
   public Rectangle2D.Double transformToCoords(Rectangle src, Rectangle2D.Double dst);
@@ -148,32 +186,4 @@ public interface ViewI  {
    *    Returns alterred destination Point2D
    */
   public Point2D transformToCoords(Point src, Point2D.Double dst);
-
-  // needed to add this for efficiency -- some glyphs access component
-  // width/height/bounds to get around Graphics drawing bugs  -- GAH 12/14/97
-  /**
-   *  primarily for use internal to implementation, getComponentSize()
-   *  returns same results as getComponent.bounds(), but in a more
-   *  efficient manner.
-   *  (will move to implementation rather than interface in next release)
-   */
-  //TODO: delete
-  public Dimension getComponentSize();
-
-  // needed to add this for efficiency -- some glyphs access component
-  // width/height/bounds to get around Graphics drawing bugs  -- GAH 4-22-98
-  /**
-   * gets the component dimensions.
-   * The rectable returned is equivalent to
-   * (0, 0, component.size().width, component.size().height),
-   * but it is done in a more efficient manner.
-   * It is primarily for use implementing glyphs.
-   * It works around a java.awt 1.0 bug
-   * that affects drawing large glyphs on smaller components.
-   *
-   * @return (0, 0, width, height)
-   */
-  //TODO: delete
-  public Rectangle getComponentSizeRect();
-
 }

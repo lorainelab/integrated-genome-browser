@@ -18,21 +18,18 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * implementation of ViewI interface.
+ * Implementation of ViewI interface.
  * See ViewI for better documentation of methods.
  */
 public class View implements ViewI, NeoPaintListener,
   MouseListener, MouseMotionListener, KeyListener  {
 
-  boolean rememberToFlush = true;
-  boolean rememberToDispose = true;
-
   Rectangle scratch_pixelbox = new Rectangle();
 
-  public boolean DEBUG_FIT = false;
   // if DEBUG_SPILLOVER then no clipRect call when drawing view,
   //    so can see any spillover outside of view, especially in combination
   //    with DEBUG_SHOW_ONLY_NEW_DRAW
@@ -71,7 +68,7 @@ public class View implements ViewI, NeoPaintListener,
   // broadcasting of NeoCanvasEvents
   private static final boolean DB_NCE = false;
 
-  private boolean DEBUG_OPTSCROLL = false;
+  private static final boolean DEBUG_OPTSCROLL = false;
 
   private static final boolean optscroll_checkNotFirst = true;
   private static final boolean optscroll_checkLinTrans = true;
@@ -89,14 +86,12 @@ public class View implements ViewI, NeoPaintListener,
   // If this is not a subviwe, then full_view = this view
   protected ViewI full_view = null;
 
-  // View currently requires specific Scene implementation to
-  //    handle optimization method calls
-  protected Scene scene;
+  protected SceneII scene;
   protected TransformI transform;
 
   protected NeoCanvas component;
 
-  protected java.awt.geom.Rectangle2D.Double coordbox;
+  protected Rectangle2D.Double coordbox;
   protected Graphics2D graphics;
   protected boolean isTimed = false;
   protected com.affymetrix.genoviz.util.Timer timecheck;
@@ -105,25 +100,25 @@ public class View implements ViewI, NeoPaintListener,
   protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
 
   /**
-   *  List of viewbox listeners to be notified immediately _before_
+   *  List of {@link NeoViewBoxListener}s to be notified immediately <em>before</em>
    *    view is drawn with changed bounding box
    */
   protected java.util.List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
   /**
-   *  List of viewbox listeners to be notified immediately _after__
+   *  List of {@link NeoViewBoxListener}s to be notified immediately <em>after</em>
    *    view is drawn with changed bounding box
    */
   protected java.util.List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
-  /** fields to help with optimizations **/
+  /** Fields to help with optimizations **/
   protected boolean scrolling_optimized = false;
   protected boolean damage_optimized = false;
 
   protected TransformI lastTransform;  // copy of transform from last draw
   // I think prevCalcCoordBox can be replaced with prevCoordBox -- GAH 8/4/97
-  protected java.awt.geom.Rectangle2D.Double prevCalcCoordBox;
-  protected java.awt.geom.Rectangle2D.Double prevCoordBox;
+  protected Rectangle2D.Double prevCalcCoordBox;
+  protected Rectangle2D.Double prevCoordBox;
 
   protected boolean firstScrollOptimizedDraw = true;
   protected boolean firstDamageOptimizedDraw = true;
@@ -136,15 +131,13 @@ public class View implements ViewI, NeoPaintListener,
   protected int drawCount = 0;
 
   /*
-      Views have a few boxes that aren't visible to the outside world
+      Temporary variables that aren't visible to the outside world.
       These are to store temporary stuff, for instance to have a
       destination Rectangle2D when doing transformations that actually
-      map to pixel space (not sure if scratch_pixels is really needed...)
+      map to pixel space.
    */
-  protected java.awt.geom.Rectangle2D.Double scratch_coords;
-  protected Rectangle scratch_pixels;
+  protected Rectangle2D.Double scratch_coords;
   protected Point2D.Double scratch_coord;
-  protected Point scratch_pixel;
 
   protected Rectangle scene_pixelbox;
   protected java.awt.geom.Rectangle2D.Double scene_coordbox;
@@ -156,25 +149,18 @@ public class View implements ViewI, NeoPaintListener,
     timecheck = new com.affymetrix.genoviz.util.Timer();
     pixelbox = new Rectangle();
 
-    setCoordBox(new java.awt.geom.Rectangle2D.Double());
+    setCoordBox(new Rectangle2D.Double());
 
-    prevCoordBox = new java.awt.geom.Rectangle2D.Double();
-    prevCalcCoordBox = new java.awt.geom.Rectangle2D.Double();
-    scratch_pixels = new Rectangle();
-    scratch_coords = new java.awt.geom.Rectangle2D.Double();
-    scratch_pixel = new Point(0,0);
+    prevCoordBox = new Rectangle2D.Double();
+    prevCalcCoordBox = new Rectangle2D.Double();
+    scratch_coords = new Rectangle2D.Double();
     scratch_coord = new Point2D.Double(0,0);
     scene_pixelbox = new Rectangle();
   }
 
-  public View(SceneI scene)  {
+  public View(SceneII scene)  {
     this();
-    if (! (scene instanceof Scene)) {
-      throw new IllegalArgumentException("View implementation of ViewI " +
-          "requires specific Scene implementation for " +
-          "View(SceneI scene) constructor");
-    }
-    this.scene = (Scene)scene;
+    this.scene = scene;
   }
 
   public void destroy() {
@@ -203,24 +189,27 @@ public class View implements ViewI, NeoPaintListener,
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void setTransform (TransformI transform)  {
     this.transform = transform;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public TransformI getTransform ()  {
     return this.transform;
   }
 
-    /**
-      Maps src rectangle in coordinate space to dst rectangle in pixel
-      (screen) space.
-      Alters AND returns destination Rectangle, to follow 2D API
-      transform convention.
-      The view is the only object that knows about the mapping from
-      coordinate spaces to pixel space, hence
-      transformToPixels() and transformToCoords().
-      */
-  public Rectangle transformToPixels(java.awt.geom.Rectangle2D.Double src, Rectangle dst)  {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst)  {
     transform.transform(src, scratch_coords);
 
     dst.x = (int)scratch_coords.x;
@@ -228,20 +217,13 @@ public class View implements ViewI, NeoPaintListener,
     dst.width = (int)(scratch_coords.x+scratch_coords.width)-dst.x;
     dst.height = (int)(scratch_coords.y+scratch_coords.height)-dst.y;
 
-    //    dst.width = (int)(scratch_coords.x+scratch_coords.width - dst.x);
-    //    dst.height = (int)(scratch_coords.y+scratch_coords.height - dst.y);
-
-    //    dst.width = (int)(scratch_coords.width);
-    //    dst.height = (int)(scratch_coords.height);
-    /*
-    dst.x = (int)(scratch_coords.x + 0.499f);
-    dst.y = (int)(scratch_coords.y + 0.499f);
-    dst.width = (int)(scratch_coords.width + 0.499f);
-    dst.height = (int)(scratch_coords.height + 0.499f);
-    */
     return dst;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public Point transformToPixels(Point2D.Double src, Point dst)  {
     transform.transform(src, scratch_coord);
     dst.x = (int)scratch_coord.x;
@@ -249,27 +231,24 @@ public class View implements ViewI, NeoPaintListener,
     return dst;
   }
 
-  public boolean clipToPixelBox(Rectangle src, Rectangle dst) {
-    int sx2, sy2, vx2, vy2;
-    sx2 = dst.x + dst.width;
-    sy2 = dst.y + dst.height;
-    vx2 = pixelbox.x + pixelbox.width;
-    vy2 = pixelbox.y + pixelbox.height;
-    dst.x = src.x<pixelbox.x ? pixelbox.x : src.x;
-    dst.y = src.y<pixelbox.y ? pixelbox.y : src.y;
-    dst.width = sx2>vx2 ? vx2-dst.x : sx2-dst.x;
-    dst.height = sy2>vy2 ? vy2-dst.y : sy2-dst.y;
-    //    return dst;
-    return true;
-  }
+//  public boolean clipToPixelBox(Rectangle src, Rectangle dst) {
+//    int sx2, sy2, vx2, vy2;
+//    sx2 = dst.x + dst.width;
+//    sy2 = dst.y + dst.height;
+//    vx2 = pixelbox.x + pixelbox.width;
+//    vy2 = pixelbox.y + pixelbox.height;
+//    dst.x = src.x<pixelbox.x ? pixelbox.x : src.x;
+//    dst.y = src.y<pixelbox.y ? pixelbox.y : src.y;
+//    dst.width = sx2>vx2 ? vx2-dst.x : sx2-dst.x;
+//    dst.height = sy2>vy2 ? vy2-dst.y : sy2-dst.y;
+//    return true;
+//  }
 
-    /**
-      Maps src rectangle in pixel (screen) space to dst rectangle in
-      coord space
-      alters AND returns destination Rectangle2D, to follow 2D API
-      transform convention
-      */
-  public java.awt.geom.Rectangle2D.Double transformToCoords(Rectangle src, java.awt.geom.Rectangle2D.Double dst)  {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Rectangle2D.Double transformToCoords(Rectangle src, Rectangle2D.Double dst)  {
     scratch_coords.x = (double)src.x;
     scratch_coords.y = (double)src.y;
     scratch_coords.width = (double)src.width;
@@ -280,15 +259,20 @@ public class View implements ViewI, NeoPaintListener,
     return result;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public Point2D transformToCoords(Point src, Point2D.Double dst)  {
     scratch_coord.x = (double)src.x;
     scratch_coord.y = (double)src.y;
     return transform.inverseTransform(scratch_coord, dst);
   }
 
-    /**
-     *  draw this view
-     */
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void draw()  {
 
     // public synchronized void draw()  {
@@ -299,8 +283,7 @@ public class View implements ViewI, NeoPaintListener,
       timecheck.start();
     }
     component_size = component.getSize();
-    component_size_rect =
-      new Rectangle(0, 0, component_size.width, component_size.height);
+    component_size_rect = new Rectangle(component_size);
 
     component_bounds = component.getBounds();
 
@@ -319,15 +302,16 @@ public class View implements ViewI, NeoPaintListener,
           getCoordBox() + ", " + getPixelBox());
     }
 
-    boolean print_viewbox = false;
+
     calcCoordBox();
-    if (print_viewbox) {System.out.println("PreDraw, viewbox = " + coordbox);}
+
     if (!(coordbox.equals(prevCoordBox))) {
       // need to change this to a more general ViewBoxChange event...
       if (predraw_viewbox_listeners.size() > 0) {
-        java.awt.geom.Rectangle2D.Double newbox = new java.awt.geom.Rectangle2D.Double(coordbox.x, coordbox.y,
-            coordbox.width, coordbox.height);
-        NeoViewBoxChangeEvent nevt =
+        final Rectangle2D.Double newbox = new Rectangle2D.Double(
+          coordbox.x, coordbox.y,
+          coordbox.width, coordbox.height);
+        final NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, true);
         for (NeoViewBoxListener listener : predraw_viewbox_listeners) {
           listener.viewBoxChanged(nevt);
@@ -381,8 +365,8 @@ public class View implements ViewI, NeoPaintListener,
 
     calcCoordBox();
     //    transformToCoords(pixelbox, coordbox);
-    if (print_viewbox) {System.out.println("PostDraw, viewbox = " + coordbox);}
 
+    
     /*
      *  If view's coordbox has changed (meaning the view has "moved" to
      *  display a different region of the scene), then post a
@@ -391,12 +375,12 @@ public class View implements ViewI, NeoPaintListener,
     if (!(coordbox.equals(prevCoordBox))) {
       // need to change this to a more general ViewBoxChange event...
       if (viewbox_listeners.size() > 0) {
-        java.awt.geom.Rectangle2D.Double newbox = new java.awt.geom.Rectangle2D.Double(coordbox.x, coordbox.y,
+        final Rectangle2D.Double newbox = new Rectangle2D.Double(coordbox.x, coordbox.y,
             coordbox.width, coordbox.height);
-        NeoViewBoxChangeEvent nevt =
+        final NeoViewBoxChangeEvent nevt =
           new NeoViewBoxChangeEvent(this, newbox, false);
 
-        for (NeoViewBoxListener n : viewbox_listeners) {
+        for (final NeoViewBoxListener n : viewbox_listeners) {
           n.viewBoxChanged(nevt);
         }
       }
@@ -404,7 +388,6 @@ public class View implements ViewI, NeoPaintListener,
 
     prevCoordBox.setRect(coordbox.x, coordbox.y,
         coordbox.width, coordbox.height);
-
   }
 
   public boolean optimizedBufferDraw() {
@@ -435,16 +418,10 @@ public class View implements ViewI, NeoPaintListener,
   public void normalDraw() {
     transformToCoords(pixelbox, getCoordBox());
 
-    // need to sort out whether background fill is needed or not  GAH 8/11/97
-    // needed if NeoCanvas background fill is removed, and it currently is --
-    //   GAH 11/30/97
-
     // clipping rect to eliminate any spillover outside of viewbox
     if (!DEBUG_SPILLOVER) {
-
       graphics.clipRect(pixelbox.x, pixelbox.y,
           pixelbox.width, pixelbox.height);
-
     }
 
     graphics.setColor(component.getBackground());
@@ -765,62 +742,86 @@ public class View implements ViewI, NeoPaintListener,
     return true;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setPixelBox(Rectangle pixelbox)  {
     this.pixelbox = pixelbox;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public Rectangle getPixelBox()  {
     return pixelbox;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setCoordBox(java.awt.geom.Rectangle2D.Double coordbox)  {
     this.coordbox = coordbox;
   }
 
-  public java.awt.geom.Rectangle2D.Double getCoordBox()  {
+  /** {@inheritDoc} */
+  @Override
+  public Rectangle2D.Double getCoordBox()  {
     return this.coordbox;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setFullView(ViewI full_view) {
     this.full_view = full_view;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public ViewI getFullView() {
     return full_view;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setGraphics(Graphics2D g)  {
     graphics = g;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public Graphics2D getGraphics()  {
     if (graphics == null && component != null)  {
       // Not sure if this is a good idea -- forcing this wreaks havoc
       //   on the updates... -- Gregg
+      //TODO: revisit
       setGraphics((Graphics2D) component.getGraphics());
     }
     return graphics;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public void setComponent(NeoCanvas c)  {
     component_size = c.getSize();
     component = c;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public NeoCanvas getComponent()  {
     return component;
   }
 
+  /** {@inheritDoc} */
+  @Override
   public SceneI getScene() {
     return scene;
   }
 
-  public java.awt.geom.Rectangle2D.Double calcCoordBox() {
+  public Rectangle2D.Double calcCoordBox() {
     return transformToCoords(pixelbox, coordbox);
   }
 
   //  Standard methods to implement the event source for event listeners
-
+  //TODO: should the mouse listeners be added to the component (NeoCanvas) instead of the view?
+  
   public void addMouseListener(MouseListener l) {
     if (!mouse_listeners.contains(l)) {
       mouse_listeners.add(l);

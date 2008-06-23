@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.bioviews.SceneII;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
 
@@ -65,7 +66,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   protected NeoCanvas canvas;
 
-  protected Scene scene;
+  protected SceneII scene;
 
   protected View view;
   protected LinearTransform trans;
@@ -222,7 +223,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return reshape_constraint[id];
   }
 
-  public Scene getScene() { return scene; }
+  public SceneII getScene() { return scene; }
 
   public NeoCanvas getNeoCanvas() { return canvas; }
 

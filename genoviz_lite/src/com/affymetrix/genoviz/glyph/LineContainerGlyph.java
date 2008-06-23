@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -31,6 +29,7 @@ import java.awt.Rectangle;
  */
 public class LineContainerGlyph extends Glyph  {
 
+  @Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
@@ -51,6 +50,7 @@ public class LineContainerGlyph extends Glyph  {
   /**
    *  overriding addChild to force children to center on line
    */
+  @Override
   public void addChild(GlyphI glyph) {
     // child.cbox.y is modified, but not child.cbox.height)
     // center the children of the LineContainerGlyph on the line
@@ -65,6 +65,7 @@ public class LineContainerGlyph extends Glyph  {
   //    only for hits though, not for intersection
   //    THIS BEHAVIOR COMMENTED OUT FOR NOW
   //
+  @Override
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     calcPixels(view);
     return  isVisible?pixel_hitbox.intersects(pixelbox):false;
@@ -75,6 +76,7 @@ public class LineContainerGlyph extends Glyph  {
   //    only for hits though, not for intersection
   //    THIS BEHAVIOR COMMENTED OUT FOR NOW
   //
+  @Override
   public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(coordbox):false;
   }

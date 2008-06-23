@@ -28,7 +28,7 @@ public class MapGlyphFactory {
   protected NeoConstants.Orientation orient;  // orientation, default to HORIZONTAL
   protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
   protected String name;
-  protected Scene scene;
+  protected SceneII scene;
   protected Color color, default_color, foreground_color, default_foreground;
   protected double offset, default_offset, width, default_width;
   protected boolean mirror, default_mirror;
@@ -77,7 +77,7 @@ public class MapGlyphFactory {
     offset = default_offset = 0;
   }
 
-  public void setScene(Scene scene) {
+  public void setScene(SceneII scene) {
     this.scene = scene;
   }
 

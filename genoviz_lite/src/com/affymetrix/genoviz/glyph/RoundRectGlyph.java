@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -47,6 +45,7 @@ public class RoundRectGlyph extends SolidGlyph  {
     changeWidth = width;
   }
 
+  @Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
@@ -57,12 +56,12 @@ public class RoundRectGlyph extends SolidGlyph  {
     // temp fix for AWT drawing bug when rect gets too big -- GAH 2/6/98
     Rectangle compbox = view.getComponentSizeRect();
     pixelbox = GeometryUtils.intersection(compbox, pixelbox, pixelbox);
-    if ( pixelbox.width < changeWidth )
-      g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width,
-                 pixelbox.height);
-    else
-      g.fillRoundRect(pixelbox.x, pixelbox.y, pixelbox.width,
-                      pixelbox.height,arcWidth,arcHeight);
+    if ( pixelbox.width < changeWidth ) {
+      g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+    }
+    else {
+      g.fillRoundRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height, arcWidth, arcHeight);
+    }
     super.draw(view);
   }
 

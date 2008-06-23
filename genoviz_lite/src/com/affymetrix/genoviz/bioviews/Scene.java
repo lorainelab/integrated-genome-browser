@@ -21,10 +21,10 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import java.util.List;
 
 /**
- * implementation of SceneI interface.
+ * Implementation of SceneI interface.
  * See SceneI for better documentation of methods.
  */
-public class Scene implements SceneI  {
+public class Scene implements SceneII  {
   private RootGlyph rootGlyph;
   private final List<ViewI> views;
   private Color selectColor;
@@ -98,6 +98,7 @@ public class Scene implements SceneI  {
   /**
    * Adds another glyph to the scene.
    */
+  @Override
   public void addGlyph(GlyphI glyph) {
     if (glyph != null) {
       getRootGlyph().addChild(glyph);
@@ -119,6 +120,7 @@ public class Scene implements SceneI  {
    * @param glyph to add.
    * @param i where to add it.
    */
+  @Override
   public void addGlyph(GlyphI glyph, int i) {
     if (glyph != null) {
       getRootGlyph().addChild(glyph,i);
@@ -181,7 +183,7 @@ public class Scene implements SceneI  {
   public Rectangle2D.Double getCoordBox() {
     return rootGlyph.getCoordBox();
   }
-
+ 
   public void pickTraversal(Rectangle2D.Double coordrect, 
     List<GlyphI> pickvect, ViewI view) {
     rootGlyph.pickTraversal(coordrect, pickvect, view);
@@ -338,7 +340,6 @@ public class Scene implements SceneI  {
 
   /**
    * Expands damaged area to include glyph's coordbox.
-   * Should this be protected???
    */
   public void expandDamage(GlyphI glyph) {
     if (glyph == null) {
@@ -403,18 +404,18 @@ public class Scene implements SceneI  {
     return damageCoordBox;
   }
 
-  protected boolean hasTransients() {
+  public boolean hasTransients() {
     return (transients != null && transients.size() > 0);
   }
 
-  protected void addTransient(TransientGlyph tg) {
+  public void addTransient(TransientGlyph tg) {
     if (transients == null) {
       transients = new ArrayList<TransientGlyph>();
     }
     transients.add(tg);
   }
 
-  protected void removeTransient(TransientGlyph tg) {
+  public void removeTransient(TransientGlyph tg) {
     if (transients != null) { 
       transients.remove(tg);
     }
@@ -433,9 +434,9 @@ public class Scene implements SceneI  {
 
   /**
    * Returns a non-null, but possibly empty, unmodifiable list of TransientGlyphs.
-   * @return
+   * @return a non-null, but possibly empty, unmodifiable list
    */
-  protected List<TransientGlyph> getTransients() {
+  public List<TransientGlyph> getTransients() {
     return (transients == null) ? 
       Collections.<TransientGlyph>emptyList() : Collections.unmodifiableList(transients);
   }

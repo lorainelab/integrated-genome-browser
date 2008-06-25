@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -15,7 +13,6 @@ package com.affymetrix.genoviz.tiers;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -23,7 +20,11 @@ import com.affymetrix.genoviz.glyph.*;
 import java.awt.geom.Rectangle2D;
 
 /**
- *  TransformTierGlyph.
+ *  A TierGlyph that can keep a constant height in pixels even
+ *  when the Y-zoom is modified.
+ *  <em>Assumption:</em> This Glyph will appear in a single view.
+ */
+/*
  *  only use transform for operations on children.
  *    coordinates of the tier itself are maintained in coordinate system
  *    of the incoming view...
@@ -76,6 +77,17 @@ public class TransformTierGlyph extends TierGlyph {
     return tier_transform;
   }
 
+
+  /** Do nothing. Otherwise the calculations of fixed-tier size 
+   *  do not work.
+   */
+  @Override
+  protected void addRoomForLabel() {
+    return;
+  }
+  
+  
+  
   @Override
   public void drawChildren(ViewI view) {
 
@@ -113,8 +125,8 @@ public class TransformTierGlyph extends TierGlyph {
     modified_view_transform = new LinearTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
     modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
-    modified_view_transform.setScaleY((double)trans2D.getScaleY());
-    modified_view_transform.setOffsetY((double)trans2D.getTranslateY());
+    modified_view_transform.setScaleY(trans2D.getScaleY());
+    modified_view_transform.setOffsetY(trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
     // need to set view coordbox based on nested transformation
@@ -264,14 +276,15 @@ public class TransformTierGlyph extends TierGlyph {
     //    LinearTransform vt = (LinearTransform)view.getTransform();
     // mostly copied from drawChildren() ...
     // keep same X scale and offset, but concatenate internal Y transform
+    System.err.println("Getting child transform");
     AffineTransform trans2D = new AffineTransform();
     trans2D.translate(0.0, trans.getOffsetY());
     trans2D.scale(1.0, trans.getScaleY());
     trans2D.translate(1.0, tier_transform.getOffsetY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
-    trans.setScaleY((double)trans2D.getScaleY());
-    trans.setOffsetY((double)trans2D.getTranslateY());
+    trans.setScaleY(trans2D.getScaleY());
+    trans.setOffsetY(trans2D.getTranslateY());
   }
 
 

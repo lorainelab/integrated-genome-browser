@@ -307,17 +307,9 @@ public class TierGlyph extends SolidGlyph {
     return true;
   }
 
-  // overriding pack to ensure that tier is always the full width of the scene
-  @Override
-  public void pack(ViewI view) {
-    if (isTimed) { timecheck.start(); }
-    int cycles = 1;
-    for (int i=0; i<cycles; i++) {
-      initForSearching();
-      super.pack(view);
+  protected void addRoomForLabel() {
       Rectangle2D.Double mbox = scene.getCoordBox();
       Rectangle2D.Double cbox = this.getCoordBox();
-
       if (shouldDrawLabel()) {
         // Add extra space to make room for the label.
 //        FontMetrics fm = view.getGraphics().getFontMetrics();
@@ -332,6 +324,18 @@ public class TierGlyph extends SolidGlyph {
       } else {
         this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
       }
+  }
+  
+  // overriding pack to ensure that tier is always the full width of the scene
+  @Override
+  public void pack(ViewI view) {
+    if (isTimed) { timecheck.start(); }
+    int cycles = 1;
+    for (int i=0; i<cycles; i++) {
+      initForSearching();
+      super.pack(view);
+
+      addRoomForLabel();
       //    if (isTimed && label.startsWith("whatever (+)")) {
     }
     if (isTimed) {

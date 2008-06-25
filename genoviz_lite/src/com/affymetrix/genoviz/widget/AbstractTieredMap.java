@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.widget;
 
+import com.affymetrix.genoviz.bioviews.TransformI;
 import java.util.*;
 import java.awt.Dimension;
 
@@ -119,7 +120,8 @@ public abstract class AbstractTieredMap extends NeoMap
 
   /* TierStateChangeListener implementation */
 
-  public void heardTierStateChangeEvent (TierStateChangeEvent evt) {
+  @Override
+  public void heardTierStateChangeEvent(TierStateChangeEvent evt) {
     if ( notifyingListeners ) {
       return;
 
@@ -302,11 +304,11 @@ public abstract class AbstractTieredMap extends NeoMap
    * making sure the tiers always stretch the full length of the map.
    */
   @Override
-  public void setBounds(int axis, int start, int end) {
+  public void setBounds(TransformI.Dimension axis, int start, int end) {
     super.setBounds(axis, start, end);
     java.awt.geom.Rectangle2D.Double mbox = getScene().getRootGlyph().getCoordBox();
 
-    if ((axis != X) || (tiers == null)) {
+    if ((axis != TransformI.Dimension.X) || (tiers == null)) {
       return;
     }
 

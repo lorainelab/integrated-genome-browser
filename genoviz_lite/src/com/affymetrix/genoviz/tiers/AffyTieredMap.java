@@ -20,8 +20,6 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants.Orientation;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import java.util.*;
 import javax.swing.*;
@@ -273,7 +271,7 @@ public class AffyTieredMap extends NeoMap {
       if ( newbox != null ) {
 	//	setMapOffset((int) newbox.y, (int) (newbox.y + newbox.height));
 	//        setMapOffset(Math.floor(newbox.y), (int) (newbox.y + newbox.height));
-	setFloatBounds(TransformI.Dimension.Y.ordinal(), newbox.y, newbox.y + newbox.height);
+	setFloatBounds(TransformI.Dimension.Y, newbox.y, newbox.y + newbox.height);
 	//	System.out.println("new bounds: " + this.getCoordBounds());
       }
     }
@@ -293,10 +291,10 @@ public class AffyTieredMap extends NeoMap {
    * Makes sure the tiers always stretch the full length of the map.
    */
   @Override
-  public void setBounds(int axis, int start, int end) {
+  public void setBounds(TransformI.Dimension axis, int start, int end) {
     super.setBounds(axis, start, end);
     Rectangle2D.Double mbox = getScene().getRootGlyph().getCoordBox();
-    if ((axis != X) || (tiers == null)) {
+    if ((axis != TransformI.Dimension.X) || (tiers == null)) {
       return;
     }
     for (int i=0; i<tiers.size(); i++) {
@@ -564,7 +562,7 @@ public class AffyTieredMap extends NeoMap {
     if (zoom_scale != zoomer_scale[ordinal]) { 
       adjustZoomer(Dimension.values()[ordinal]); 
     }
-    adjustScroller(ordinal);
+    adjustScroller(dim);
 
     view.calcCoordBox();
     //    System.out.println("zooming to: " + zoom_scale + ", coord offset = " + coord_offset);

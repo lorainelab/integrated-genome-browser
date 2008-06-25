@@ -165,17 +165,17 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void setFloatBounds(int axis, double start, double end) {
+  public void setFloatBounds(TransformI.Dimension axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
-    if (axis == Y && labelmap != null) {
+    if (axis == TransformI.Dimension.Y && labelmap != null) {
       labelmap.setFloatBounds(axis, start, end);
     }
   }
 
   @Override
-  public void setBounds(int axis, int start, int end) {
+  public void setBounds(TransformI.Dimension axis, int start, int end) {
     super.setBounds(axis, start, end);
-    if (axis == Y && labelmap != null) {
+    if (axis == TransformI.Dimension.Y && labelmap != null) {
       labelmap.setBounds(axis, start, end);
     }
   }
@@ -189,9 +189,9 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void scroll(int axisid, double value) {
+  public void scroll(TransformI.Dimension axisid, double value) {
     super.scroll(axisid, value);
-    if (axisid == Y && labelmap != null) {
+    if (axisid == TransformI.Dimension.Y && labelmap != null) {
       labelmap.scroll(axisid, value);
     }
   }

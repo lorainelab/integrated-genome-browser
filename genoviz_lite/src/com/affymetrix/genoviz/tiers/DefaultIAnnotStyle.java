@@ -9,10 +9,14 @@ import java.awt.Color;
 import java.util.Map;
 
 /**
- *
+ * An imcomplete, default implementation of IAnnotStyle.
+ * Most methods are currently unimplemented and will throw exceptions.
+ * 
  * @author Ed Erwin
  */
-class DefaultIAnnotStyle implements IAnnotStyle {
+//TODO: implement as a bean
+public class DefaultIAnnotStyle implements IAnnotStyle {
+  private String humanName = "<<no name>>";
 
   public DefaultIAnnotStyle() {
   }
@@ -38,11 +42,11 @@ class DefaultIAnnotStyle implements IAnnotStyle {
   }
 
   public String getHumanName() {
-    return "no name";
+    return humanName;
   }
 
   public void setHumanName(String s) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.humanName = s;
   }
 
   Color bg = Color.BLACK;

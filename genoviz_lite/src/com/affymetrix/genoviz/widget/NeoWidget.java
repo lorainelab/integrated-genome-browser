@@ -235,16 +235,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *  1 to the width.
    *
    */
-  public void setFloatBounds(int id, double start, double end) {
+  public void setFloatBounds(TransformI.Dimension dim, double start, double end) {
     double size = end - start;
     java.awt.geom.Rectangle2D.Double sbox = scene.getCoordBox();
-    if (id == X) {
+    if (dim == TransformI.Dimension.X) {
       scene.setCoords(start, sbox.y, size, sbox.height);
     }
     else {
       scene.setCoords(sbox.x, start, sbox.width, size);
     }
-    adjustScroller(id);
+    adjustScroller(dim);
   }
 
  /**
@@ -252,16 +252,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
   *  For example setting X bounds to 0, 74, actually sets coord box to
   *  cbox.x = 0, cbox.width = 75
   */
-  public void setBounds(int id, int start, int end) {
+  public void setBounds(TransformI.Dimension dim, int start, int end) {
     final double size = end-start+1;
     final Rectangle2D.Double sbox = scene.getCoordBox();
-    if (id == X) {
+    if (dim == TransformI.Dimension.X) {
       scene.setCoords(start, sbox.y, size, sbox.height);
     }
     else {
       scene.setCoords(sbox.x, start, sbox.width, size);
     }
-    adjustScroller(id);
+    adjustScroller(dim);
   }
 
 
@@ -491,7 +491,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   // maybe should return coord it _actually_ scrolled to
-  public void scroll(int id, double coord_value) {
+  public void scroll(TransformI.Dimension dim, double coord_value) {
     // double new_coord_value = 0;
     // double prev_pixel_value;
     // a boolean to enforce scroller adjustment if bumping up against
@@ -504,7 +504,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       java.awt.geom.Rectangle2D.Double scene_coords = getCoordBounds();
       java.awt.geom.Rectangle2D.Double view_coords = view.getCoordBox();
       double min_coord, max_coord;
-      if (id == X) {
+      if (dim == TransformI.Dimension.X) {
         min_coord = scene_coords.x;
         max_coord = scene_coords.x + scene_coords.width - view_coords.width;
       }
@@ -518,7 +518,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
         // the view -- therefore center it?
 
         double scene_center;
-        if (id == X) {
+        if (dim == TransformI.Dimension.X) {
           scene_center = scene_coords.x + (scene_coords.width/2);
           coord_value = scene_center - (view_coords.width/2);
           force_scroller_adjust = true;
@@ -540,28 +540,29 @@ public abstract class NeoWidget extends NeoAbstractWidget
       }
     }
 
+    final int ordinal = dim.ordinal();
     double pixel_value;
-    if (id == X) {
-      pixels_per_coord[id] = trans.getScaleX();
-      pixel_value = coord_value * pixels_per_coord[id];
+    if (dim == TransformI.Dimension.X) {
+      pixels_per_coord[ordinal] = trans.getScaleX();
+      pixel_value = coord_value * pixels_per_coord[ordinal];
       trans.setOffsetX(-pixel_value);
     }
     else {
-      pixels_per_coord[id] = trans.getScaleY();
-      pixel_value = coord_value * pixels_per_coord[id];
+      pixels_per_coord[ordinal] = trans.getScaleY();
+      pixel_value = coord_value * pixels_per_coord[ordinal];
       trans.setOffsetY(-pixel_value);
       if (DEBUG_SCROLL) {
         System.out.println("Coord Value = " + coord_value +
-            ", Pixels/Coord = " + pixels_per_coord[id] +
+            ", Pixels/Coord = " + pixels_per_coord[ordinal] +
             ", " +
-            ((coord_value * pixels_per_coord[id])/ pixels_per_coord[id]) +
-            ", " + (pixel_value / pixels_per_coord[id]));
+            ((coord_value * pixels_per_coord[ordinal])/ pixels_per_coord[ordinal]) +
+            ", " + (pixel_value / pixels_per_coord[ordinal]));
       }
 
     }
 
-    if (force_scroller_adjust || coord_value != scroller_value[id]) {
-      adjustScroller(id);
+    if (force_scroller_adjust || coord_value != scroller_value[ordinal]) {
+      adjustScroller(dim);
     }
 
     view.calcCoordBox();
@@ -574,33 +575,34 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
 
-  public void adjustScroller(int id) {
-    if (scroller[id] == null) { return; }
+  public void adjustScroller(TransformI.Dimension dim) {
+    final int ordinal = dim.ordinal();
+    if (scroller[ordinal] == null) { return; }
     // GAH 1-15-2004
     // trying same trick as in adjustZoomer(), supressing event kickback changing
     //   original scroll value
     // not sure how necessary this suppression is with adjustScroller(), could just
     //   be a problem with adjustZoomer(), but trying for now -- need to watch
     //   for any side effects...
-    scroller[id].removeAdjustmentListener(this);
+    scroller[ordinal].removeAdjustmentListener(this);
 
     double coord_beg, coord_end, coord_size;
     java.awt.geom.Rectangle2D.Double scenebox = scene.getCoordBox();
-    if (id == X)  {
-      pixel_offset[id] = -1 * trans.getOffsetX();
+    if (ordinal == X)  {
+      pixel_offset[ordinal] = -1 * trans.getOffsetX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
     }
     else {
       coord_beg = scenebox.y;
       coord_size = scenebox.height;
-      pixel_offset[id] = -1 * trans.getOffsetY();
+      pixel_offset[ordinal] = -1 * trans.getOffsetY();
 
     }
     coord_end = coord_beg + coord_size;
 
-    double coord_offset = pixel_offset[id] * coords_per_pixel[id];
-    double visible_coords = coords_per_pixel[id] * pixel_size[id];
+    double coord_offset = pixel_offset[ordinal] * coords_per_pixel[ordinal];
+    double visible_coords = coords_per_pixel[ordinal] * pixel_size[ordinal];
 
     /* if there is more visible than the maximum coordinate size, max out
      *   the scrollbar so that it can't send any adjustment events
@@ -619,46 +621,46 @@ public abstract class NeoWidget extends NeoAbstractWidget
             " < visible_coord=" + visible_coords);
       }
 
-      scroller[id].getModel().setRangeProperties(
+      scroller[ordinal].getModel().setRangeProperties(
         (int) coord_beg, 1, (int) coord_beg, (int) coord_beg+1, 
         false);
     }
     else {
       if (DEBUG_SCROLLER_VALUES) {
-        if (id == Y) {
+        if (ordinal == Y) {
           System.out.println("Setting Y scroll for " + GeneralUtils.toObjectString(this) + ", value: " + (int) coord_offset + ", visible: " + (int) visible_coords + ", min: " + (int) coord_beg + ", max: " + (int) coord_end);
         }
       }
 
       // value, extent, min, max
-      scroller[id].getModel().setRangeProperties(
+      scroller[ordinal].getModel().setRangeProperties(
         (int) coord_offset, (int) visible_coords, 
         (int) coord_beg, (int) coord_end, 
         false);
     }
 
-    if (scroll_behavior[id] == AUTO_SCROLL_INCREMENT) {
-      if (coords_per_pixel[id] > 1) {
-        scroller[id].setUnitIncrement((int)coords_per_pixel[id]);
-        scroller[id].setBlockIncrement((int)(5*coords_per_pixel[id]));
+    if (scroll_behavior[ordinal] == AUTO_SCROLL_INCREMENT) {
+      if (coords_per_pixel[ordinal] > 1) {
+        scroller[ordinal].setUnitIncrement((int)coords_per_pixel[ordinal]);
+        scroller[ordinal].setBlockIncrement((int)(5*coords_per_pixel[ordinal]));
       }
       else {
-        scroller[id].setUnitIncrement(1);
-        scroller[id].setBlockIncrement(5);
+        scroller[ordinal].setUnitIncrement(1);
+        scroller[ordinal].setBlockIncrement(5);
       }
     }
-    else if (scroll_behavior[id] == AUTO_SCROLL_HALF_PAGE)  {
-      if (coords_per_pixel[id] > 1) {
-        scroller[id].setUnitIncrement((int)(5*coords_per_pixel[id]));
-        if (id == X) { scroller[id].setBlockIncrement((int)(getViewBounds().width/2)); }
-        else if (id == Y)  { scroller[id].setBlockIncrement((int)(getViewBounds().height/2)); }
+    else if (scroll_behavior[ordinal] == AUTO_SCROLL_HALF_PAGE)  {
+      if (coords_per_pixel[ordinal] > 1) {
+        scroller[ordinal].setUnitIncrement((int)(5*coords_per_pixel[ordinal]));
+        if (ordinal == X) { scroller[ordinal].setBlockIncrement((int)(getViewBounds().width/2)); }
+        else if (ordinal == Y)  { scroller[ordinal].setBlockIncrement((int)(getViewBounds().height/2)); }
       }
       else {
-        scroller[id].setUnitIncrement(1);
-        scroller[id].setBlockIncrement(5);
+        scroller[ordinal].setUnitIncrement(1);
+        scroller[ordinal].setBlockIncrement(5);
       }
     }
-    scroller[id].addAdjustmentListener(this);
+    scroller[ordinal].addAdjustmentListener(this);
   }
 
   public void adjustZoomer(TransformI.Dimension dim) {
@@ -946,15 +948,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
             source.getValue());
       }
       if (scroller_value[id] != prev_scroller_value[id]) {
-        scroll(id, scroller_value[id]);
+        scroll(dim, scroller_value[id]);
         updateWidget();
         prev_scroller_value[id] = scroller_value[id];
       }
     }
   }
 
-  public void setScrollTransform(int id, TransformI trans) {
-    scrolltrans[id] = trans;
+  public void setScrollTransform(TransformI.Dimension dim, TransformI trans) {
+    scrolltrans[dim.ordinal()] = trans;
   }
 
 
@@ -1259,7 +1261,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     if (zoom_scale != zoomer_scale[ordinal]) {
       adjustZoomer(TransformI.Dimension.values()[ordinal]);
     }
-    adjustScroller(ordinal);
+    adjustScroller(dim);
 
     view.calcCoordBox();
     if (DEBUG_ZOOM) {

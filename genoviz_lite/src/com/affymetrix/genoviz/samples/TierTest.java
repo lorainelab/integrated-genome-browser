@@ -23,17 +23,22 @@ import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.util.List;
 
 public class TierTest {
-  AffyTieredMap map;
+  static AffyTieredMap map;
   JSlider xzoomer;
   JSlider yzoomer;
 
   public static void main(String[] args) {
-    TierTest test = new TierTest();
-    test.doTest();
+    final TierTest test = new TierTest();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        test.doTest();
+      }
+    });
   }
 
   public void doTest() {
-    JFrame frame;
+    final JFrame frame;
     frame = new JFrame("tier test");
     frame.setSize(600, 400);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,7 +46,7 @@ public class TierTest {
     Container cpane = frame.getContentPane();
     cpane.setLayout(new BorderLayout());
     map = new AffyTieredMap(true, true);
-    //    map.setBackground(Color.red);
+    map.setBackground(Color.MAGENTA);
 
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
@@ -54,13 +59,16 @@ public class TierTest {
     cpane.add("West", yzoomer);
 
     map.setMapRange(0, 1000);
-    map.setMapOffset(-100, 100);
+    map.setMapOffset(-100, 100); // mostly irrelvant
     map.addMouseListener(mouseListener);
     
     TierGlyph tier;
     ExpandPacker epacker;
 
-    tier = new TierGlyph();
+    IAnnotStyle style = new DefaultIAnnotStyle();
+    style.setHumanName("My name is BOB!");
+    
+    tier = new TierGlyph(style);
     tier.setFillColor(Color.RED);
     tier.setCoords(0, 0, 1000, 0);
     tier.setExpandedPacker(new ExpandedTierPacker());
@@ -113,9 +121,18 @@ public class TierTest {
     map.addTier(tier);
 
     map.repack();
+    
 
     cpane.add("Center", map);
-    frame.setVisible(true);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+
+      @Override
+      public void run() {
+        frame.setVisible(true);
+        map.updateWidget(true);
+      }
+    });
   }
 
   public void addGlyphs2(TierGlyph tier) {

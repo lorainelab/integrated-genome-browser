@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
+import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -156,12 +157,12 @@ public abstract class NeoAbstractWidget extends Container
   }
 
 
-  public void setScrollIncrementBehavior(int id, int behavior) {
-    scroll_behavior[id] = behavior;
+  public void setScrollIncrementBehavior(TransformI.Dimension dim, int behavior) {
+    scroll_behavior[dim.ordinal()] = behavior;
   }
 
-  public int getScrollIncrementBehavior(int id) {
-    return scroll_behavior[id];
+  public int getScrollIncrementBehavior(TransformI.Dimension dim) {
+    return scroll_behavior[dim.ordinal()];
   }
 
 

@@ -13,6 +13,7 @@ package com.affymetrix.genoviz.widget;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 
+import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
 import java.awt.*;
 import java.awt.event.*;
@@ -41,8 +42,8 @@ import javax.swing.JSlider;
  */
 public interface NeoWidgetI {
 
-  static final int X = 0;
-  static final int Y = 1;
+  static final int X = TransformI.Dimension.X.ordinal();
+  static final int Y = TransformI.Dimension.Y.ordinal();
 
   /**
    * Type of selection done by the NeoWidget.
@@ -134,8 +135,9 @@ public interface NeoWidgetI {
     INTEGRAL_ALL,
     NONE
   }
+
   /**
-   * indicates that a widget's bounds should be automatically expanded
+   * Indicates that a widget's bounds should be automatically expanded
    * when an item is added beyond the widget's previous bounds.
    *
    * @see #NO_EXPAND
@@ -152,35 +154,6 @@ public interface NeoWidgetI {
    * @see #setExpansionBehavior
    */
   public static final int NO_EXPAND = 201;
-  /**
-   * indicates that a component should be placed to the left
-   * within the widget.
-   */
-  public static int PLACEMENT_LEFT = 0;
-
-  /**
-   * indicates that a component should be placed to the right
-   * within the widget.
-   */
-  public static int PLACEMENT_RIGHT = 1;
-
-  /**
-   * indicates that a component should be placed at the top
-   * within the widget.
-   */
-  public static int PLACEMENT_TOP = 2;
-
-  /**
-   * indicates that a component should be placed at the bottom
-   * within the widget.
-   */
-  public static int PLACEMENT_BOTTOM = 3;
-
-  /**
-   * indicates that a component can be placed anywhere
-   * within the widget.
-   */
-  public static int PLACEMENT_NONE = 4;
 
   // *******************************************************
 
@@ -218,32 +191,6 @@ public interface NeoWidgetI {
   public Color getForeground();
 
   /**
-   * Places the a comonent in the widget.
-   * Different widgets may want to restrict the placement possiblities.
-   *
-   * @param component the component to be placed.
-   * @param placement where to place it.
-   * Should be one of the PLACEMENT_* constants in this interface.
-   * @see #PLACEMENT_LEFT
-   * @see #PLACEMENT_RIGHT
-   * @see #PLACEMENT_TOP
-   * @see #PLACEMENT_BOTTOM
-   * @see #PLACEMENT_NONE
-   * @see #getPlacement
-   */
-  public void configureLayout(int component, int placement);
-
-  /**
-   * determine where a component was placed.
-   *
-   * @param component the component to look for.
-   * @return indication of the placement.
-   * Should be one of the PLACEMENT_* constants in this interface.
-   * @see #configureLayout
-   */
-  public int getPlacement(int component);
-
-  /**
    * Adjusts this widget such that the <code>View</code>, scrollbars, etc., fit
    * within the current bounds of the widget.
    *
@@ -263,7 +210,7 @@ public interface NeoWidgetI {
    *           Should be ({@link NeoWidget#X} or {@link NeoWidget#Y}).
    * @param slider a slider to be associated with the axis.
    */
-  public void setZoomer(int id, JSlider slider);
+  public void setZoomer(TransformI.Dimension dim, JSlider slider);
 
 
   /**
@@ -281,7 +228,7 @@ public interface NeoWidgetI {
    * @param adj an scrollbar
    *            to be associated with the axis.
    */
-  public void setScroller(int id, JScrollBar adj);
+  public void setScroller(TransformI.Dimension dim, JScrollBar adj);
 
   /**
    * indicates that the coordinate scrolling increment should be
@@ -310,7 +257,7 @@ public interface NeoWidgetI {
    *
    * @see #getScrollIncrementBehavior
    */
-  public void setScrollIncrementBehavior(int id, int behavior);
+  public void setScrollIncrementBehavior(TransformI.Dimension dim, int behavior);
 
   /**
    * Use this to decide whether or not the scrolling increment
@@ -324,7 +271,7 @@ public interface NeoWidgetI {
    *
    * @see #setScrollIncrementBehavior
    */
-  public int getScrollIncrementBehavior(int id);
+  public int getScrollIncrementBehavior(TransformI.Dimension dim);
 
   /**
    * scrolls this widget along the specified axis.
@@ -340,13 +287,12 @@ public interface NeoWidgetI {
    * zoom this widget to a scale of <code>zoom_scale</code> along the
    * <code>id</code>-th axis.
    *
-   * @param id  indicates which axis to zoom.
-   *   valid values are NeoWidgetI.X or NeoWidgetI.Y.
+   * @param dim  indicates which axis dimension to zoom.
    *
    * @param zoom_scale the double indicating the number of pixels
    *   per coordinate
    */
-  public void zoom(int id, double zoom_scale);
+  public void zoom(TransformI.Dimension dim, double zoom_scale);
 
   /**
    * sets the maximum allowable <code>zoom_scale</code> for this widget.
@@ -365,7 +311,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMaxZoom
    */
-  public void setMaxZoom(int axisid, double max);
+  public void setMaxZoom(TransformI.Dimension dim, double max);
 
   /*
    * sets the minimum allowable <code>zoom_scale</code> for this widget.
@@ -384,7 +330,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMinZoom
    */
-  public void setMinZoom(int axisid, double min);
+  public void setMinZoom(TransformI.Dimension dim, double min);
 
   /**
    * returns the currently set maximum <code>zoom_scale</code>.
@@ -392,7 +338,7 @@ public interface NeoWidgetI {
    * @return the maximum number of pixels per coordinate.
    * @see #setMaxZoom
    */
-  public double getMaxZoom(int axisid);
+  public double getMaxZoom(TransformI.Dimension dim);
 
   /**
    * returns the currently set minimum <code>zoom_scale</code>.
@@ -400,7 +346,7 @@ public interface NeoWidgetI {
    * @return the minimum number of pixels per coordinate.
    * @see #setMinZoom
    */
-  public double getMinZoom(int axisid);
+  public double getMinZoom(TransformI.Dimension dim);
 
   /**
    * Returns a list of all <code>Glyph</code>s at

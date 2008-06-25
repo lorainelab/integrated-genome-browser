@@ -318,11 +318,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
      *  and reset in widgets that don't want it [like NeoSeq] )
      */
     if (hscroll_show && scroller[X] instanceof Component)  {
-      setScrollIncrementBehavior(X, AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(TransformI.Dimension.X, AUTO_SCROLL_INCREMENT);
     }
 
     if (vscroll_show && scroller[Y] instanceof Component)  {
-      setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(TransformI.Dimension.Y, AUTO_SCROLL_INCREMENT);
     }
 
     factory_hash = new Hashtable<String,MapGlyphFactory>();
@@ -816,12 +816,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
+  @Override
   public void setRangeZoomer(JSlider slider) {
-    setZoomer(X, slider);
+    setZoomer(TransformI.Dimension.X, slider);
   }
 
+  @Override
   public void setOffsetZoomer(JSlider slider) {
-    setZoomer(Y, slider);
+    setZoomer(TransformI.Dimension.Y, slider);
   }
 
   public void scrollOffset(double value) {
@@ -833,14 +835,17 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
+  @Override
   public void zoomRange(double zoom_scale) {
-    zoom(X, zoom_scale);
+    zoom(TransformI.Dimension.X, zoom_scale);
   }
 
+  @Override
   public void zoomOffset(double zoom_scale) {
-    zoom(Y, zoom_scale);
+    zoom(TransformI.Dimension.Y, zoom_scale);
   }
 
+  @Override
   public MapGlyphFactory addFactory(String config_string) {
     Hashtable<String,Object> config_hash = null;
     config_hash = GeneralUtils.parseOptions(config_string);
@@ -956,23 +961,23 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * scroller[] entries are expected to be NeoScrollbars
    */
   public void setRangeScroller(JScrollBar nscroll) {
-    setScroller(X, nscroll);
+    setScroller(TransformI.Dimension.X, nscroll);
   }
 
   public void setOffsetScroller(JScrollBar nscroll) {
-    setScroller(Y, nscroll);
+    setScroller(TransformI.Dimension.Y, nscroll);
   }
 
-  public JScrollBar getScroller(int id) {
-    return scroller[id];
+  public JScrollBar getScroller(TransformI.Dimension dim) {
+    return scroller[dim.ordinal()];
   }
 
   /**
    * @param id should be {@link #X} or {@link #Y}.
    * @return the slider responsible for zooming in the <var>id</var> direction.
    */
-  public JSlider getZoomer(int id) {
-    return zoomer[id];
+  public JSlider getZoomer(TransformI.Dimension dim) {
+    return zoomer[dim.ordinal()];
   }
 
   public void removeItem(GlyphI gl) {
@@ -1305,7 +1310,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     font_for_max_zoom = fnt;
     seqmetrics = view.getGraphics().getFontMetrics(font_for_max_zoom);
     int font_width = seqmetrics.charWidth('C');
-    setMaxZoom(X, font_width);
+    setMaxZoom(TransformI.Dimension.X, font_width);
   }
 
 //  /**

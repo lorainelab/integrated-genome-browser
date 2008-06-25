@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -16,7 +14,6 @@ package com.affymetrix.genoviz.widget;
 import com.affymetrix.genoviz.event.TierEvent;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 
-import java.util.*;
 
 /**
  * A map that is separated into horizontal divisions, or tiers.
@@ -74,8 +71,9 @@ public class TieredNeoMap extends AbstractTieredMap {
    * @param ontop determines whether tier goes above or below existing tiers
    */
   public void addTier(MapTierGlyph mtg, boolean ontop) {
-    if (mtg == null)
+    if (mtg == null) {
       return;
+    }
     int evtid;
     this.addItem(mtg);
     // Use packTiers() rather than repack(), 'cause repack would
@@ -100,10 +98,14 @@ public class TieredNeoMap extends AbstractTieredMap {
    * TierEventListener implementation.
    * This is used primarily for communication with a TieredLabelMap.
    */
+  @Override
   public void heardTierEvent(TierEvent evt) {
     // We only care if this came from a TieredLabelMap
-    if (!(evt.getSource() instanceof TieredLabelMap))
+    if (!(evt.getSource() instanceof TieredLabelMap)) {
       return;
+
+      // Distill info from the event
+    }
 
     // Distill info from the event
 

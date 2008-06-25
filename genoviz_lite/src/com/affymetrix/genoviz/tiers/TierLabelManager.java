@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -255,19 +253,19 @@ public class TierLabelManager {
   /**
    *  Sorts all tiers and then calls packTiers() and updateWidget().
    */
-  @SuppressWarnings("unchecked")
   public void sortTiers() {
-    java.util.List label_glyphs = tiermap.getTierLabels();
-    orderTierLabels(label_glyphs);
-    orderTiersByLabels(label_glyphs);
+    java.util.List<TierLabelGlyph> labelGlyphs = tiermap.getTierLabels();
+    orderTierLabels(labelGlyphs);
+    orderTiersByLabels(labelGlyphs);
 
     // then repack of course (tiermap repack also redoes labelmap glyph coords...)
-    tiermap.packTiers(false, true, false);
+    tiermap.packTiers(false, true);
     tiermap.updateWidget();
   }
   
   /** Comparator class needed to sort tiers based on label placement. */
   public class MinYSorter implements Comparator {
+    @Override
     public int compare(Object obj1, Object obj2) {
       Rectangle2D.Double box1 = ((GlyphI)obj1).getCoordBox();
       Rectangle2D.Double box2 = ((GlyphI)obj2).getCoordBox();
@@ -317,7 +315,7 @@ public class TierLabelManager {
       // mucking directly with tiermap's tier List, which is not
       //     the cleanest way to do this, but is efficient...
       int tierCount = label_glyphs.size();
-      List<TierGlyph> tiervec = tiermap.getAllTiers();
+      List<TierGlyph> tiervec = tiermap.tiers;
       tiervec.clear();
       for (int i=0; i<tierCount; i++) {
         TierLabelGlyph label = label_glyphs.get(i);
@@ -372,11 +370,8 @@ public class TierLabelManager {
   }
 
   
-  MouseListener mouse_listener = new MouseListener() {
+  MouseListener mouse_listener = new MouseAdapter() {
     TierLabelGlyph dragging_label = null;
-
-    public void mouseEntered(MouseEvent evt) { }
-    public void mouseExited(MouseEvent evt) { }
 
     /** Tests whether the mouse event is due to the 3rd button.
      *  (For the sake of Macintosh, considers Meta key and Control key as
@@ -388,8 +383,7 @@ public class TierLabelManager {
            ((mods & InputEvent.BUTTON3_MASK) != 0)  );
     }
 
-    public void mouseClicked(MouseEvent evt) {}
-
+    @Override
     public void mousePressed(MouseEvent evt) {
       if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
         NeoMouseEvent nevt = (NeoMouseEvent)evt;
@@ -436,6 +430,7 @@ public class TierLabelManager {
 
     // if a tier has been dragged, then try to sort out rearrangement of tiers
     //    in tiermap based on new positions of labels in labelmap
+    @Override
     public void mouseReleased(MouseEvent evt) {
       if (evt.getSource() == labelmap && dragging_label != null) {
         finishDragging(dragging_label);

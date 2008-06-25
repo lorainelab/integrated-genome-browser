@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.glyph.RootGlyph;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 import java.util.*;
 import java.util.List;
@@ -128,8 +129,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
   public NeoWidget() {
-    this.setScrollIncrementBehavior(X,NO_AUTO_SCROLL_INCREMENT);
-    this.setScrollIncrementBehavior(Y,NO_AUTO_SCROLL_INCREMENT);
+    this.setScrollIncrementBehavior(TransformI.Dimension.X,NO_AUTO_SCROLL_INCREMENT);
+    this.setScrollIncrementBehavior(TransformI.Dimension.Y,NO_AUTO_SCROLL_INCREMENT);
 
     // start with default identity linear transform
     trans = new LinearTransform();
@@ -229,29 +230,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public View getView() { return view; }
 
   /**
-   * Ignores requests to configure the layout.
-   * This method should be overridden
-   * by subclasses supporting layout configuration.
-   *
-   * @see com.affymetrix.genoviz.widget.NeoWidgetI#configureLayout
-   */
-  public void configureLayout(int component, int placement) {
-    return;
-  }
-
-  /**
-   * placement is not supported.
-   * This method should be overridden
-   * by subclasses supporting placement options.
-   *
-   * @return PLACEMENT_NONE
-   * @see com.affymetrix.genoviz.widget.NeoWidgetI#getPlacement
-   */
-  public int getPlacement(int component) {
-    return PLACEMENT_NONE;
-  }
-
-  /**
    *  Sets the bounds.
    *  Unlike {@link #setBounds(int, int, int)}, this does NOT add
    *  1 to the width.
@@ -275,8 +253,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
   *  cbox.x = 0, cbox.width = 75
   */
   public void setBounds(int id, int start, int end) {
-    double size = end-start+1;
-    java.awt.geom.Rectangle2D.Double sbox = scene.getCoordBox();
+    final double size = end-start+1;
+    final Rectangle2D.Double sbox = scene.getCoordBox();
     if (id == X) {
       scene.setCoords(start, sbox.y, size, sbox.height);
     }
@@ -467,7 +445,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
 
-  public void setScroller(int id, JScrollBar adj) {
+  public void setScroller(TransformI.Dimension dim, JScrollBar adj) {
+    final int id = dim.ordinal();
     if (adj == null) {
       throw new IllegalArgumentException("NeoWidget.setScroller() requires " +
           "an Adjustable argument, was passed a null instead");
@@ -482,7 +461,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     scroller[id].addAdjustmentListener(this);
   }
 
-  public void setZoomer(int id, JSlider slider) {
+  @Override
+  public void setZoomer(TransformI.Dimension dim, JSlider slider) {
+    final int id = dim.ordinal();
     if (slider == null) {
       throw new IllegalArgumentException("NeoWidget.setZoomer() requires " +
           "an Adjustable argument, was passed a null instead");
@@ -709,32 +690,35 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   public double getZoom(TransformI.Dimension dim) {
-    return getZoom(dim.ordinal());
-  }
-  
-  public double getZoom(int axisid) {
-    return pixels_per_coord[axisid];
+    return pixels_per_coord[dim.ordinal()];
   }
 
-  public double getMinZoom(int axisid) {
-    return min_pixels_per_coord[axisid];
+  @Override
+  public double getMinZoom(TransformI.Dimension dim) {
+    return min_pixels_per_coord[dim.ordinal()];
   }
 
-  public double getMaxZoom(int axisid) {
-    return max_pixels_per_coord[axisid];
+  @Override
+  public double getMaxZoom(TransformI.Dimension dim) {
+    return max_pixels_per_coord[dim.ordinal()];
   }
 
-  public void setMinZoom(int id, double min) {
+  @Override
+  public void setMinZoom(TransformI.Dimension dim, double min) {
+    final int ordinal = dim.ordinal();
     double prev_scale;
     boolean scale_at_min = false;
-    if (id == X) { prev_scale = trans.getScaleX(); }
-    else         { prev_scale = trans.getScaleY(); }
-    if (prev_scale == min_pixels_per_coord[id]) {
+    if (dim == TransformI.Dimension.X) {
+      prev_scale = trans.getScaleX();
+    } else {
+      prev_scale = trans.getScaleY();
+    }
+    if (prev_scale == min_pixels_per_coord[ordinal]) {
       scale_at_min = true;
     }
 
-    set_min_pix_per_coord[id] = true;
-    min_pixels_per_coord[id] = min;
+    set_min_pix_per_coord[ordinal] = true;
+    min_pixels_per_coord[ordinal] = min;
     // calling stretchToFit only for side effects...
     //   (like setting Adjustable appearance)
     stretchToFit(false, false);
@@ -742,35 +726,40 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // testing scale adjustment if outside allowable range
     //   might want to push this down into stretchToFit() -- GAH 12/14/97
     double pix_per_coord;
-    if (id == X) { pix_per_coord = trans.getScaleX(); }
-    else         { pix_per_coord = trans.getScaleY(); }
+    if (dim == TransformI.Dimension.X) {
+      pix_per_coord = trans.getScaleX();
+    } else {
+      pix_per_coord = trans.getScaleY();
+    }
     if (pix_per_coord < min || scale_at_min) {
-      zoom(id, min);
+      zoom(dim, min);
     }
 
   }
 
-  public void setMaxZoom(int id, double max) {
+  @Override
+  public void setMaxZoom(TransformI.Dimension dim, double max) {
 
+    int ordinal = dim.ordinal();
     // assuming that if scale is already at max zoom, want to
     //   change scale to keep it at max zoom
     double prev_scale;
-    if (id == X) { prev_scale = trans.getScaleX(); }
+    if (ordinal == X) { prev_scale = trans.getScaleX(); }
     else         { prev_scale = trans.getScaleY(); }
-    boolean scale_at_max = (prev_scale == max_pixels_per_coord[id]);
+    boolean scale_at_max = (prev_scale == max_pixels_per_coord[ordinal]);
 
-    set_max_pix_per_coord[id] = true;
-    max_pixels_per_coord[id] = max;
+    set_max_pix_per_coord[ordinal] = true;
+    max_pixels_per_coord[ordinal] = max;
     // calling stretchToFit() only for side effects...
     stretchToFit(false, false);
 
     // testing scale adjustment if outside allowable range
     //   might want to push this down into stretchToFit() -- GAH 12/14/97
     double pix_per_coord;
-    if (id == X) { pix_per_coord = trans.getScaleX(); }
+    if (ordinal == X) { pix_per_coord = trans.getScaleX(); }
     else         { pix_per_coord = trans.getScaleY(); }
     if (pix_per_coord > max || scale_at_max) {
-      zoom(id, max);
+      zoom(dim, max);
     }
   }
 
@@ -861,6 +850,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return zoom_coord[axisid];
   }
 
+  @Override
   public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord) {
     if (ZoomConstraint.CONSTRAIN_COORD != constraint) {
       throw new IllegalArgumentException("Invalid constraint.");
@@ -872,6 +862,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   ChangeListener changeListener = new ChangeListener() {
 
+    @Override
     public void stateChanged(ChangeEvent e) {
       System.out.println("ChangeEvent: " + e);
       Object source = e.getSource();
@@ -898,7 +889,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           System.out.println("pixels_per_base = " + zoomer_scale[id] +
             ",  coords_per_pixel[id] = " + 1 / zoomer_scale[X]);
         }
-        zoom(id, zoomer_scale[id]);
+        zoom(dim, zoomer_scale[id]);
         updateWidget();
         prev_zoomer_value[id] = zoomer_value[id];
       }
@@ -1053,22 +1044,30 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   /**
-   * this stub should be overridden by subclasses
+   * Default implementation does nothing.
+   * This stub should be overridden by subclasses
    * that allow sub selection.
    */
+  @Override
   public void setSubSelectionAllowed(boolean allowed) {
   }
+
   /**
-   * this stub should be overridden by subclasses
+   * Default implementation returns false.
+   * This stub should be overridden by subclasses
    * that allow sub selection.
+   * @return false
    */
+  @Override
   public boolean isSubSelectionAllowed() {
     return false;
   }
 
 
 
-  public void zoom(int id, double zoom_scale) {
+  public void zoom(TransformI.Dimension dim, double zoom_scale) {
+    final int ordinal = dim.ordinal();
+    
     /*
        filtering out bogus zoom calls
        should probably check for these internally in stretchToFit etc.,
@@ -1079,13 +1078,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
         zoom_scale == Float.POSITIVE_INFINITY ||
         zoom_scale == Float.NaN) {
       if (DEBUG_ZOOM)  {
-        System.out.println("Weird zoom call, ignoring: id = " + id +
+        System.out.println("Weird zoom call, ignoring: id = " + dim +
             ", scale = " + zoom_scale);
       }
       return;
     }
     if (DEBUG_ZOOM)  {
-      System.out.println("Zooming " + id + " to " + zoom_scale);
+      System.out.println("Zooming " + dim + " to " + zoom_scale);
     }
 
     /*
@@ -1113,16 +1112,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
       For now I'm putting in the silent death return -- GAH 6-4-98
      */
     if (checkZoomValue) {
-      if (zoom_scale > max_pixels_per_coord[id]) {
+      if (zoom_scale > max_pixels_per_coord[ordinal]) {
         double ratio_diff;
-        if (0 == max_pixels_per_coord[id]) {
+        if (0 == max_pixels_per_coord[ordinal]) {
           ratio_diff = 0;
         }
         else {
-          ratio_diff = Math.abs(1-zoom_scale/max_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/max_pixels_per_coord[ordinal]);
         }
         if (ratio_diff < 0.0001) {
-          zoom_scale = max_pixels_per_coord[id];
+          zoom_scale = max_pixels_per_coord[ordinal];
         }
         else {
           /*  changed to silent return to handle calls outside bounds
@@ -1131,9 +1130,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
               stretchToFit, and resize)
            */
           if (DEBUG_ZOOM)  {
-            System.err.println("attempted to zoom " + id + " to " +
+            System.err.println("attempted to zoom " + dim + " to " +
                 zoom_scale + " pixels per coord, but max allowed is " +
-                max_pixels_per_coord[id]);
+                max_pixels_per_coord[ordinal]);
           }
           return;
           /*
@@ -1143,16 +1142,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
            */
         }
       }
-      else if (zoom_scale < min_pixels_per_coord[id]) {
+      else if (zoom_scale < min_pixels_per_coord[ordinal]) {
         double ratio_diff;
-        if (0 == min_pixels_per_coord[id]) {
+        if (0 == min_pixels_per_coord[ordinal]) {
           ratio_diff = 0;
         }
         else {
-          ratio_diff = Math.abs(1-zoom_scale/min_pixels_per_coord[id]);
+          ratio_diff = Math.abs(1-zoom_scale/min_pixels_per_coord[ordinal]);
         }
         if (ratio_diff < 0.0001) {
-          zoom_scale = min_pixels_per_coord[id];
+          zoom_scale = min_pixels_per_coord[ordinal];
         }
         else {
           /*
@@ -1162,20 +1161,20 @@ public abstract class NeoWidget extends NeoAbstractWidget
              stretchToFit, and resize)
            */
           if (DEBUG_ZOOM)  {
-            System.err.println("attempted to zoom " + id + " to " +
+            System.err.println("attempted to zoom " + dim + " to " +
                 zoom_scale + " pixels per coord, but min allowed is " +
-                min_pixels_per_coord[id]);
+                min_pixels_per_coord[ordinal]);
           }
           return;
         }
       }
     }
 
-    java.awt.geom.Rectangle2D.Double prev_view_coords = view.calcCoordBox(); //TODO: remove if unused
-    double prev_pixels_per_coord = pixels_per_coord[id];
-    pixels_per_coord[id] = zoom_scale;
-    coords_per_pixel[id] = 1/zoom_scale;
-    if (pixels_per_coord[id] == prev_pixels_per_coord) {
+    Rectangle2D.Double prev_view_coords = view.calcCoordBox(); //TODO: remove if unused
+    double prev_pixels_per_coord = pixels_per_coord[ordinal];
+    pixels_per_coord[ordinal] = zoom_scale;
+    coords_per_pixel[ordinal] = 1/zoom_scale;
+    if (pixels_per_coord[ordinal] == prev_pixels_per_coord) {
       return;
     }
 
@@ -1185,7 +1184,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_beg, coord_end, coord_size;
     double fixed_coord, fixed_pixel;
 
-    if (id == X) {
+    if (ordinal == X) {
       prev_pixel_offset = -1 * trans.getOffsetX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
@@ -1198,18 +1197,18 @@ public abstract class NeoWidget extends NeoAbstractWidget
     coord_end = coord_beg + coord_size;
 
     double prev_coord_offset = prev_pixel_offset * prev_coords_per_pixel;
-    double prev_visible_coords = prev_coords_per_pixel * pixel_size[id];
-    if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_MIDDLE) {
+    double prev_visible_coords = prev_coords_per_pixel * pixel_size[ordinal];
+    if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_MIDDLE) {
       fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
     }
-    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_START)  {
+    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_START)  {
       fixed_coord = prev_coord_offset;
     }
-    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_END) {
+    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_END) {
       fixed_coord = prev_coord_offset + prev_visible_coords;
     }
-    else if (zoom_behavior[id] == ZoomConstraint.CONSTRAIN_COORD) {
-      fixed_coord = zoom_coord[id];
+    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_COORD) {
+      fixed_coord = zoom_coord[ordinal];
     }
     else {
       throw new IllegalArgumentException("zoom behavior must be on of "
@@ -1217,13 +1216,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
         + "CONSTRAIN_COORD.");
     }
 
-    double visible_coords = coords_per_pixel[id] * pixel_size[id];
+    double visible_coords = coords_per_pixel[ordinal] * pixel_size[ordinal];
     fixed_pixel = prev_pixels_per_coord * fixed_coord - prev_pixel_offset;
-    double real_pix_offset = fixed_pixel - pixels_per_coord[id] * fixed_coord;
-    double coord_offset = -real_pix_offset * coords_per_pixel[id];
+    double real_pix_offset = fixed_pixel - pixels_per_coord[ordinal] * fixed_coord;
+    double coord_offset = -real_pix_offset * coords_per_pixel[ordinal];
 
-    if ((scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
+    if ((scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
       coord_offset = (int)coord_offset;
     }
 
@@ -1240,31 +1239,31 @@ public abstract class NeoWidget extends NeoAbstractWidget
       }
     }
 
-    if ((scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
-      pixel_offset[id] =
-        (int)(Math.ceil(coord_offset / coords_per_pixel[id]));
+    if ((scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
+      pixel_offset[ordinal] =
+        (int)(Math.ceil(coord_offset / coords_per_pixel[ordinal]));
     }
     else {
-      pixel_offset[id] = coord_offset / coords_per_pixel[id];
+      pixel_offset[ordinal] = coord_offset / coords_per_pixel[ordinal];
     }
 
-    if (id == X) {
-      trans.setOffsetX(-pixel_offset[id]);
-      trans.setScaleX(pixels_per_coord[id]);
+    if (ordinal == X) {
+      trans.setOffsetX(-pixel_offset[ordinal]);
+      trans.setScaleX(pixels_per_coord[ordinal]);
     }
     else {
-      trans.setOffsetY(-pixel_offset[id]);
-      trans.setScaleY(pixels_per_coord[id]);
+      trans.setOffsetY(-pixel_offset[ordinal]);
+      trans.setScaleY(pixels_per_coord[ordinal]);
     }
-    if (zoom_scale != zoomer_scale[id]) {
-      adjustZoomer(TransformI.Dimension.values()[id]);
+    if (zoom_scale != zoomer_scale[ordinal]) {
+      adjustZoomer(TransformI.Dimension.values()[ordinal]);
     }
-    adjustScroller(id);
+    adjustScroller(ordinal);
 
     view.calcCoordBox();
     if (DEBUG_ZOOM) {
-      if (id == Y) {
+      if (ordinal == Y) {
         System.out.println("zooming to: " + zoom_scale + ", coord offset = " +
             coord_offset);
       }

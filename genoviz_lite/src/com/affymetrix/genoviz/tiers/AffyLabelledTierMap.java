@@ -102,8 +102,8 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) {
-    super.packTiers(full_repack, stretch_map, extra_for_now);
+  public void packTiers(boolean full_repack, boolean stretch_map) {
+    super.packTiers(full_repack, stretch_map);
     //Rectangle2D bbox = this.getCoordBounds();
     //    labelmap.setMapOffset((int)bbox.y, (int)(bbox.y + bbox.height));
     // this should actually get dealt with in AffyTieredMap, since packTiers() calls 
@@ -181,10 +181,10 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void zoom(int axisid, double zoom_scale) {
-    super.zoom(axisid, zoom_scale);
-    if (axisid == Y && labelmap != null) {
-      labelmap.zoom(axisid, zoom_scale);
+  public void zoom(TransformI.Dimension dim, double zoom_scale) {
+    super.zoom(dim, zoom_scale);
+    if (dim == TransformI.Dimension.Y && labelmap != null) {
+      labelmap.zoom(dim, zoom_scale);
     }
   }
 

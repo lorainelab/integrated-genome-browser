@@ -291,11 +291,18 @@ public interface NeoMapI extends NeoWidgetI {
   public void repack();
 
   /**
-   * Convenience function for zooming horizontaly.
+   * Convenience function for zooming the Range.
+   *
+   * @see #zoom 
+   */
+  public void zoomRange(double zoom_scale);
+
+  /**
+   * Convenience function for zooming the Offset.
    *
    * @see #zoom
    */
-  public void zoomRange(double zoom_scale);
+  public void zoomOffset(double zoom_scale);
 
   public void setMapColor(Color col);
 

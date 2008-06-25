@@ -281,7 +281,7 @@ public interface NeoWidgetI {
    * @param value  the double distance in coordinate space
    *               to scroll.
    */
-  public void scroll(int id, double value);
+  public void scroll(TransformI.Dimension dim, double value);
 
   /**
    * zoom this widget to a scale of <code>zoom_scale</code> along the

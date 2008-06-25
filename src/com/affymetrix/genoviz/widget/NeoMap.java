@@ -538,11 +538,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     if (orient == NeoConstants.Orientation.Vertical) {
       //      this.setBounds(Y,start,end);
-      this.setFloatBounds(Y,(double)start,(double)end);
+      this.setFloatBounds(TransformI.Dimension.Y,(double)start,(double)end);
     }
     else {
       //      this.setBounds(X,start,end);
-      this.setFloatBounds(X,(double)start,(double)end);
+      this.setFloatBounds(TransformI.Dimension.X,(double)start,(double)end);
     }
 
     if (axes != null) {
@@ -588,10 +588,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public void setMapOffset(int start, int end) {
     // scene.setCoords() is now handled in setBounds()
     if (orient == NeoConstants.Orientation.Vertical) {
-      this.setBounds(X, start, end);
+      this.setBounds(TransformI.Dimension.X, start, end);
     }
     else  {
-      this.setBounds(Y,start,end);
+      this.setBounds(TransformI.Dimension.Y,start,end);
     }
   }
 
@@ -769,7 +769,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
       adjustZoomer(TransformI.Dimension.X);
     }
-    adjustScroller(X);
+    adjustScroller(TransformI.Dimension.X);
     if (zoomer[Y] != null) {
       // setting maxy of exponential tranform to (max - visible amount) to
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
@@ -783,7 +783,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
          zoomer[Y].getMaximum()-zoomer[Y].getExtent());
       adjustZoomer(TransformI.Dimension.Y);
     }
-    adjustScroller(Y);
+    adjustScroller(TransformI.Dimension.Y);
 
     if (DEBUG_STRETCH)  {
       System.out.println("leaving NeoMap.stretchToFit(): " + stretchCount);
@@ -827,11 +827,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   public void scrollOffset(double value) {
-    scroll(Y, value);
+    scroll(TransformI.Dimension.Y, value);
   }
 
   public void scrollRange(double value) {
-    scroll(X, value);
+    scroll(TransformI.Dimension.X, value);
   }
 
 
@@ -1368,25 +1368,25 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       if (direction == NeoConstants.Direction.UP) {
         scroll_to_coord =
           trans.inverseTransform(TransformI.Dimension.Y, -pixels_per_scroll);
-        scroll(Y, scroll_to_coord);
+        scroll(TransformI.Dimension.Y, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.DOWN) {
         scroll_to_coord =
           trans.inverseTransform(TransformI.Dimension.Y, pixels_per_scroll);
-        scroll(Y, scroll_to_coord);
+        scroll(TransformI.Dimension.Y, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.RIGHT) {
         scroll_to_coord =
           trans.inverseTransform(TransformI.Dimension.X, pixels_per_scroll);
-        scroll(X, scroll_to_coord);
+        scroll(TransformI.Dimension.X, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.LEFT) {
         scroll_to_coord =
           trans.inverseTransform(TransformI.Dimension.X, -pixels_per_scroll);
-        scroll(X, scroll_to_coord);
+        scroll(TransformI.Dimension.X, scroll_to_coord);
         updateWidget();
       }
     }

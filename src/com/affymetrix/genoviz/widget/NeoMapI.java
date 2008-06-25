@@ -318,7 +318,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @param trans the Transform to be applied to the values of the
    *              scrollbar.
    */
-  public void setScrollTransform(int id, TransformI trans);
+  public void setScrollTransform(TransformI.Dimension dim, TransformI trans);
 
   /**
    * sets the bounds for the given axis on the map.
@@ -326,7 +326,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @param start
    * @param end
    */
-  public void setBounds(int id, int start, int end);
+  public void setBounds(TransformI.Dimension dim, int start, int end);
 
   /**
    * returns the bounding rectangle in pixels of the displayed item, tag.

@@ -93,8 +93,6 @@ public class IGB extends Application
   public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
   public static boolean default_sequence_accessible = true;
 
-
-
   final static String TABBED_PANES_TITLE = "Tabbed Panes";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();

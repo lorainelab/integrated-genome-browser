@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -19,6 +17,7 @@ import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 /**
@@ -36,8 +35,6 @@ public class AxisGlyph extends Glyph {
    * When the orientation is VERTICAL
    * then "thickness" is width and "length" is height.
    */
-
-  public boolean DEBUG_DRAW = false;
 
   /**
    * HORIZONTAL or VERTICAL orientation.
@@ -99,16 +96,13 @@ public class AxisGlyph extends Glyph {
   @Override
   public void setFont(Font fnt) {
     if (!fnt.equals(this.label_font)) {
-      internalSetFont(new Font(fnt.getName(), fnt.getStyle(), fnt.getSize()));
+      internalSetFont(fnt);
     }
   }
 
   @Override
   public Font getFont() {
-    return new Font
-      (this.label_font.getName(),
-       this.label_font.getStyle(),
-       this.label_font.getSize());
+    return label_font;
   }
 
   /**
@@ -139,6 +133,7 @@ public class AxisGlyph extends Glyph {
     return this.getForegroundColor();
   }
 
+  //TODO: make an enum
   public static final int FULL = 0;
   public static final int ABBREV = FULL+1;
   public static final int COMMA = ABBREV+1;
@@ -169,7 +164,9 @@ public class AxisGlyph extends Glyph {
       System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
       return;
     }
-    if ( selected_regions == null ) selected_regions = new ArrayList();
+    if ( selected_regions == null ) {
+      selected_regions = new ArrayList();
+    }
     selected_regions.add( range );
   }
 
@@ -195,27 +192,27 @@ public class AxisGlyph extends Glyph {
   public void setTickPlacement(NeoConstants.Placement thePlacement) {
     switch (thePlacement) {
     case ABOVE:
-      if (NeoConstants.Orientation.Vertical == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place ticks above a VERTICAL axis.");
-        subtick_size = 1;
+      if (NeoConstants.Orientation.Vertical == this.orient) {
+        throw new IllegalArgumentException("Cannot place ticks above a VERTICAL axis.");
+      }
+      subtick_size = 1;
       break;
     case RIGHT:
-      if (NeoConstants.Orientation.Horizontal == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place ticks to the right of a HORIZONTAL axis.");
+      if (NeoConstants.Orientation.Horizontal == this.orient) {
+        throw new IllegalArgumentException("Cannot place ticks to the right of a HORIZONTAL axis.");
+      }
       subtick_size = 1;
       break;
     case BELOW:
-      if (NeoConstants.Orientation.Vertical == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place ticks below a VERTICAL axis.");
+      if (NeoConstants.Orientation.Vertical == this.orient) {
+        throw new IllegalArgumentException("Cannot place ticks below a VERTICAL axis.");
+      }
       subtick_size = -2;
       break;
     case LEFT:
-      if (NeoConstants.Orientation.Horizontal == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place ticks to the left of a HORIZONTAL axis.");
+      if (NeoConstants.Orientation.Horizontal == this.orient) {
+        throw new IllegalArgumentException("Cannot place ticks to the left of a HORIZONTAL axis.");
+      }
       subtick_size = -2;
       break;
     case CENTER:
@@ -257,27 +254,27 @@ public class AxisGlyph extends Glyph {
   public void setLabelPlacement(NeoConstants.Placement thePlacement) {
     switch (thePlacement) {
     case ABOVE:
-      if (NeoConstants.Orientation.Vertical == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place labels above a VERTICAL axis.");
+      if (NeoConstants.Orientation.Vertical == this.orient) {
+        throw new IllegalArgumentException("Cannot place labels above a VERTICAL axis.");
+      }
       labelShift = labelGap;
       break;
     case RIGHT:
-      if (NeoConstants.Orientation.Horizontal == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place labels to the right of a HORIZONTAL axis.");
+      if (NeoConstants.Orientation.Horizontal == this.orient) {
+        throw new IllegalArgumentException("Cannot place labels to the right of a HORIZONTAL axis.");
+      }
       labelShift = labelGap;
       break;
     case BELOW:
-      if (NeoConstants.Orientation.Vertical == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place labels below a VERTICAL axis.");
+      if (NeoConstants.Orientation.Vertical == this.orient) {
+        throw new IllegalArgumentException("Cannot place labels below a VERTICAL axis.");
+      }
       labelShift = -centerLineThickness - labelGap - labelThickness;
       break;
     case LEFT:
-      if (NeoConstants.Orientation.Horizontal == this.orient)
-        throw new IllegalArgumentException
-          ("Cannot place labels to the left of a HORIZONTAL axis.");
+      if (NeoConstants.Orientation.Horizontal == this.orient) {
+        throw new IllegalArgumentException("Cannot place labels to the left of a HORIZONTAL axis.");
+      }
       labelShift = -centerLineThickness - labelGap - labelThickness;
       break;
     default:
@@ -450,7 +447,9 @@ public class AxisGlyph extends Glyph {
    */
 
   public void rangeChanged() {
-    if (DEBUG_DRAW) System.err.println("Parental Coords: "+parent.getCoordBox());
+    if (DEBUG_DRAW) {
+      System.err.println("Parental Coords: " + parent.getCoordBox());
+    }
     if (NeoConstants.Orientation.Vertical == this.orient) {
       coordbox.y = parent.getCoordBox().y;
       coordbox.height = parent.getCoordBox().height;
@@ -500,7 +499,7 @@ public class AxisGlyph extends Glyph {
     if (DEBUG_DRAW) { System.err.println("Pixels: " + pixelbox); }
     if (DEBUG_DRAW) { System.err.println("Transform: " + view.getTransform());}
 
-    java.awt.geom.Rectangle2D.Double scenebox = scene.getCoordBox();
+    Rectangle2D.Double scenebox =  view.getScene().getCoordBox();
     double scene_start, scene_end;
     if (orient == NeoConstants.Orientation.Vertical) {
       scene_start = scenebox.y;
@@ -602,7 +601,11 @@ public class AxisGlyph extends Glyph {
     }
     // space between tickmarks (in map coordinates)
     double tick_increment = tickIncrement(units_per_pixel, pixels_per_unit);
-    if (DEBUG_DRAW) System.err.println("tick increment = " + tick_increment);
+    if (DEBUG_DRAW) {
+      System.err.println("tick increment = " + tick_increment);
+
+      // Calculate map_loc and max_map.
+    }
 
     // Calculate map_loc and max_map.
 
@@ -645,7 +648,9 @@ public class AxisGlyph extends Glyph {
       }
     }
 
-    if (DEBUG_DRAW) System.err.println("map_loc " + map_loc + ", max " + max_map);
+    if (DEBUG_DRAW) {
+      System.err.println("map_loc " + map_loc + ", max " + max_map);
+    }
 
 
     double subtick_increment = tick_increment/10;
@@ -721,8 +726,9 @@ public class AxisGlyph extends Glyph {
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
-            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-              g.setColor ( getBackgroundColor() );
+            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) ) {
+              g.setColor(getBackgroundColor());
+            }
           }
         }
         if (labelFormat != NO_LABELS)  {
@@ -763,8 +769,12 @@ public class AxisGlyph extends Glyph {
 
         // Don't draw things which are out of the clipbox
         // This fixes an enormous performance drain.  EEE-Sept 2000
-        if (canvas_loc < clipbox.x) break;
-        if (canvas_loc > clipbox.x+clipbox.width) continue;
+        if (canvas_loc < clipbox.x) {
+          break;
+        }
+        if (canvas_loc > clipbox.x+clipbox.width) {
+          continue;
+        }
 
         // rev_tick_value = the value which will be drawn above the tick mark.
         double rev_tick_value = (rev_tick_const - rev_tick_loc);
@@ -776,8 +786,9 @@ public class AxisGlyph extends Glyph {
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
-            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-              g.setColor ( getBackgroundColor() );
+            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) ) {
+              g.setColor(getBackgroundColor());
+            }
           }
         }
         if (labelFormat != NO_LABELS)  {
@@ -851,8 +862,9 @@ public class AxisGlyph extends Glyph {
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
-            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-              g.setColor ( getBackgroundColor() );
+            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) ) {
+              g.setColor(getBackgroundColor());
+            }
           }
         }
         // putting in check to make sure don't extend past scene bounds when
@@ -880,8 +892,12 @@ public class AxisGlyph extends Glyph {
 
         // Don't draw things which are out of the clipbox
         // This fixes an enormous performance drain. EEE-Sept 2000
-        if (canvas_loc < clipbox.x)  break;
-        if (canvas_loc > clipbox.x+clipbox.width) continue;
+        if (canvas_loc < clipbox.x) {
+          break;
+        }
+        if (canvas_loc > clipbox.x+clipbox.width) {
+          continue;
+        }
 
         if ( selected_regions != null ) {
           g.setColor ( getForegroundColor() );
@@ -890,8 +906,9 @@ public class AxisGlyph extends Glyph {
             select_coord.x = select_range[0];
             select_coord.width = select_range[1] - select_range[0];
             view.transformToPixels ( select_coord, select_pix );
-            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-              g.setColor ( getBackgroundColor() );
+            if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) ) {
+              g.setColor(getBackgroundColor());
+            }
           }
         }
         // putting in check to make sure don't extend past scene bounds when
@@ -993,7 +1010,9 @@ public class AxisGlyph extends Glyph {
       while (remainder >= 10)  {
         remainder /= 10;
         increment *= 10;
-        if (DEBUG_DRAW) System.err.println(" " + remainder + ", " + increment);
+        if (DEBUG_DRAW) {
+          System.err.println(" " + remainder + ", " + increment);
+        }
       }
       if (remainder >= 2)  {
         remainder /= 2;
@@ -1015,7 +1034,9 @@ public class AxisGlyph extends Glyph {
       while (remainder >= 10)  {
         remainder /= 10;
         increment *= 10;
-        if (DEBUG_DRAW) System.err.println(" " + remainder + ", " + increment);
+        if (DEBUG_DRAW) {
+          System.err.println(" " + remainder + ", " + increment);
+        }
       }
       if (remainder >= 2.5)  {
         remainder /= 2.5;

@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -41,10 +39,6 @@ public class ModArrowGlyph extends SolidGlyph {
       this.forward = forward;
     }
 
-    public void select(boolean selected) {
-      setSelected(selected);
-    }
-
   /*
     I'm overriding these next two methods so that I can have the glyph have a minimum size,
     so it really draws outside of its coordbox, and yet still functions with correct selection rules.
@@ -53,24 +47,36 @@ public class ModArrowGlyph extends SolidGlyph {
     -JMM 12/2/99
    */
 
+    //TODO: revisit.  See Joe's comment.
+  @Override
   public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
     view.transformToPixels ( coordbox, pixelbox );
-    if ( pixelbox.width > pixelbox.height ) return super.hit( coord_hitbox, view );
+    if ( pixelbox.width > pixelbox.height ) {
+      return super.hit(coord_hitbox, view);
+    }
     view.transformToPixels ( coord_hitbox, scratchrect );
-    if ( forward ) pixelbox.x += pixelbox.width - pixelbox.height;
+    if ( forward ) {
+      pixelbox.x += pixelbox.width - pixelbox.height;
+    }
     pixelbox.width = pixelbox.height;
     return ( pixelbox.intersects ( scratchrect ) );
   }
 
+  @Override
   public boolean intersects(java.awt.geom.Rectangle2D.Double rect, ViewI view)  {
     view.transformToPixels ( coordbox, pixelbox );
-    if ( pixelbox.width > pixelbox.height ) return super.hit ( rect, view );
+    if ( pixelbox.width > pixelbox.height ) {
+      return super.hit(rect, view);
+    }
     view.transformToPixels ( rect, scratchrect );
-    if ( forward ) pixelbox.x += pixelbox.width - pixelbox.height;
+    if ( forward ) {
+      pixelbox.x += pixelbox.width - pixelbox.height;
+    }
     pixelbox.width = pixelbox.height;
     return ( pixelbox.intersects ( scratchrect ) );
   }
 
+  @Override
   protected void drawSelectedOutline ( ViewI view ) {
     draw(view);
     view.transformToPixels ( coordbox, pixelbox );
@@ -80,14 +86,15 @@ public class ModArrowGlyph extends SolidGlyph {
     }
     Graphics g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
-    if ( forward )
-      g.drawRect (pixelbox.x + pixelbox.width - pixelbox.height - 2,
-          pixelbox.y - 2, pixelbox.height + 3, pixelbox.height + 3);
-    else
-      g.drawRect (pixelbox.x - 2,
-          pixelbox.y - 2, pixelbox.height + 3, pixelbox.height + 3);
+    if ( forward ) {
+      g.drawRect(pixelbox.x + pixelbox.width - pixelbox.height - 2, pixelbox.y - 2, pixelbox.height + 3, pixelbox.height + 3);
+    }
+    else {
+      g.drawRect(pixelbox.x - 2, pixelbox.y - 2, pixelbox.height + 3, pixelbox.height + 3);
+    }
   }
 
+  @Override
     public void draw ( ViewI view ) {
         Graphics g = view.getGraphics();
         g.setPaintMode();

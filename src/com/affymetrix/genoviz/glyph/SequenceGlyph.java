@@ -12,7 +12,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -357,15 +356,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph {
   public void setBackgroundColor(Color c) {
     super.setBackgroundColor(c);
     full_rect.setBackgroundColor(c);
-  }
-
-  /**
-   * Need to override setScene()
-   * to make sure arrowglyph gets its scene set properly.
-   */
-  public void setScene(SceneII s) {
-    super.setScene(s);
-    full_rect.setScene(s);
   }
 
   /** Set whether or not the background will be filled-in

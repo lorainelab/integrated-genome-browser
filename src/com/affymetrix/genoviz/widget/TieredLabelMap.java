@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,10 +11,10 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.TransformI;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
+import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.TierEvent;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 
@@ -44,6 +42,7 @@ public class TieredLabelMap extends AbstractTieredMap {
 
   /* TierEventListener implementation */
 
+  @Override
   public void heardTierEvent(TierEvent evt) {
 
     // We only care if this came from a TieredNeoMap
@@ -57,7 +56,7 @@ public class TieredLabelMap extends AbstractTieredMap {
     MapTierGlyph mtg = evt.getTier();
     int type         = evt.getType();
 
-    if ( getReshapeBehavior(TransformI.Dimension.Y.ordinal()) != tnm.getReshapeBehavior(TransformI.Dimension.Y.ordinal()) ) {
+    if ( getReshapeBehavior(WidgetAxis.Secondary.ordinal()) != tnm.getReshapeBehavior(WidgetAxis.Secondary.ordinal()) ) {
       throw new RuntimeException("TieredLabelMap and LabelMap do not have the same reshape behavior.");
     }
 

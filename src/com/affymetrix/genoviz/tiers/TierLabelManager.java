@@ -219,6 +219,13 @@ public class TierLabelManager {
     repackTheTiers(full_repack, fit_y);
   }
   
+  /**
+   * 
+   * @param tier_labels
+   * @param collapsed
+   * @param full_repack  Recommended to set this to true
+   * @param fit_y
+   */
   void setTiersCollapsed(java.util.List tier_labels, boolean collapsed, boolean full_repack, boolean fit_y) {
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
@@ -236,13 +243,15 @@ public class TierLabelManager {
 ////            graph.getGraphState().getTierStyle().setHeight(tier_height);
 //          }
 //        }
-        
-        for (int j=0; j<tlg.getReferenceTier().getScene().getViews().size(); j++) {
-          tlg.getReferenceTier().pack(tlg.getReferenceTier().getScene().getViews().get(j));
-        }
+
+//        for (int j=0; j<tlg.getReferenceTier().getScene().getViews().size(); j++) {
+//          tlg.getReferenceTier().pack(tlg.getReferenceTier().getScene().getViews().get(j));
+//        }
       }
     }
 
+    //TODO: although full_repack may not be necessary, it
+    // is necessary to re-pack the tiers we just collapsed
     repackTheTiers(full_repack, fit_y);
   }
 

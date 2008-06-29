@@ -82,7 +82,7 @@ public class TransformTierGlyph extends TierGlyph {
    *  do not work.
    */
   @Override
-  protected void addRoomForLabel() {
+  protected void addRoomForLabel(ViewI view) {
     return;
   }
   

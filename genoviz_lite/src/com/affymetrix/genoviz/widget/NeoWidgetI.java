@@ -13,8 +13,8 @@ package com.affymetrix.genoviz.widget;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 
-import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
 import java.awt.*;
 import java.awt.event.*;
@@ -43,8 +43,8 @@ import javax.swing.JSlider;
  */
 public interface NeoWidgetI {
 
-  static final int X = TransformI.Dimension.X.ordinal();
-  static final int Y = TransformI.Dimension.Y.ordinal();
+  static final int X = WidgetAxis.Primary.ordinal();
+  static final int Y = WidgetAxis.Secondary.ordinal();
 
   /**
    * Type of selection done by the NeoWidget.
@@ -196,9 +196,9 @@ public interface NeoWidgetI {
    * within the current bounds of the widget.
    *
    * @param xstretch the boolean determines whether stretchToFit
-   *   is applied along the X axis.
+   *   is applied along the Primary axis.
    * @param ystretch the boolean determines whether stretchToFit
-   *   is applied along the Y axis.
+   *   is applied along the Secondary axis.
    */
   public void stretchToFit(boolean xstretch, boolean ystretch);
 
@@ -210,10 +210,10 @@ public interface NeoWidgetI {
    * to control zooming along the specified axis.
    *
    * @param dim identifies the axis of zooming.
-   *           Should be ({@link NeoWidget#X} or {@link NeoWidget#Y}).
+   *           Should be ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}).
    * @param slider a slider to be associated with the axis.
    */
-  public void setZoomer(TransformI.Dimension dim, JSlider slider);
+  public void setZoomer(WidgetAxis dim, JSlider slider);
 
 
   /**
@@ -227,11 +227,11 @@ public interface NeoWidgetI {
    * to control scrolling along the specified axis.
    *
    * @param dim identifies the axis of scrolling.
-   *           Should be {@link #X} or {@link #Y}.
+   *           Should be {@link #Primary} or {@link #Secondary}.
    * @param adj an scrollbar
    *            to be associated with the axis.
    */
-  public void setScroller(TransformI.Dimension dim, JScrollBar adj);
+  public void setScroller(WidgetAxis dim, JScrollBar adj);
 
   /**
    * indicates that the coordinate scrolling increment should be
@@ -255,18 +255,18 @@ public interface NeoWidgetI {
   /**
    * Modifies the way that scrolling is performed for an axis.
    *
-   * @param dim       identifies which axis (X or Y) is being queried.
+   * @param dim       identifies which axis (Primary or Secondary) is being queried.
    * @param behavior AUTO_SCROLL_INCREMENT or NO_AUTO_SCROLL_INCREMENT
    *
    * @see #getScrollIncrementBehavior
    */
-  public void setScrollIncrementBehavior(TransformI.Dimension dim, int behavior);
+  public void setScrollIncrementBehavior(WidgetAxis dim, int behavior);
 
   /**
    * Use this to decide whether or not the scrolling increment
    * is being automatically readjusted.
    *
-   * @param dim identifies which axis (X or Y) is being queried.
+   * @param dim identifies which axis (Primary or Secondary) is being queried.
    *
    * @return a constant indicating the scroll behavior.  Valid values
    *  are NeoWidgetI.AUTO_SCROLL_INCREMENT and
@@ -274,17 +274,17 @@ public interface NeoWidgetI {
    *
    * @see #setScrollIncrementBehavior
    */
-  public int getScrollIncrementBehavior(TransformI.Dimension dim);
+  public int getScrollIncrementBehavior(WidgetAxis dim);
 
   /**
    * scrolls this widget along the specified axis.
    *
    * @param dim    indentifies which axis to scroll.
-   *     valid values are {@link NeoWidget#X} or {@link NeoWidget#Y}.
+   *     valid values are {@link NeoWidget#Primary} or {@link NeoWidget#Secondary}.
    * @param value  the double distance in coordinate space
    *               to scroll.
    */
-  public void scroll(TransformI.Dimension dim, double value);
+  public void scroll(WidgetAxis dim, double value);
 
   /**
    * zoom this widget to a scale of <code>zoom_scale</code> along the
@@ -295,7 +295,7 @@ public interface NeoWidgetI {
    * @param zoom_scale the double indicating the number of pixels
    *   per coordinate
    */
-  public void zoom(TransformI.Dimension dim, double zoom_scale);
+  public void zoom(WidgetAxis dim, double zoom_scale);
 
   /**
    * sets the maximum allowable <code>zoom_scale</code> for this widget.
@@ -312,7 +312,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMaxZoom
    */
-  public void setMaxZoom(TransformI.Dimension dim, double max);
+  public void setMaxZoom(WidgetAxis dim, double max);
 
   /*
    * sets the minimum allowable <code>zoom_scale</code> for this widget.
@@ -322,7 +322,7 @@ public interface NeoWidgetI {
    * <code>min</code> to 1.
    *
    * @param id  indicates which axis to apply this constraint.
-   *   valid values are NeoWidgetI.X or NeoWidgetI.Y.
+   *   valid values are NeoWidgetI.Primary or NeoWidgetI.Secondary.
    *
    * @param min  the double describing the minimum pixels per coordinate;
    *   should generally be the minimum size (in pixels)
@@ -331,7 +331,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMinZoom
    */
-  public void setMinZoom(TransformI.Dimension dim, double min);
+  public void setMinZoom(WidgetAxis dim, double min);
 
   /**
    * returns the currently set maximum <code>zoom_scale</code>.
@@ -339,7 +339,7 @@ public interface NeoWidgetI {
    * @return the maximum number of pixels per coordinate.
    * @see #setMaxZoom
    */
-  public double getMaxZoom(TransformI.Dimension dim);
+  public double getMaxZoom(WidgetAxis dim);
 
   /**
    * returns the currently set minimum <code>zoom_scale</code>.
@@ -347,14 +347,14 @@ public interface NeoWidgetI {
    * @return the minimum number of pixels per coordinate.
    * @see #setMinZoom
    */
-  public double getMinZoom(TransformI.Dimension dim);
+  public double getMinZoom(WidgetAxis dim);
 
   /**
    * Returns a list of all <code>Glyph</code>s at
    *  <code>x,y</code> in this widget.
    *
-   * @param x the double describing the X position
-   * @param y the double describing the Y position
+   * @param x the double describing the Primary position
+   * @param y the double describing the Secondary position
    *
    * @return a <code>List</code> of <code>Glyph</code>s
    * at <code>x,y</code>
@@ -576,15 +576,15 @@ public interface NeoWidgetI {
 
   /**
    * update the position of <code>glyph</code> by <code>diffx</code>
-   * and <code>diffy</code> in the X and Y axes respectively,
+   * and <code>diffy</code> in the Primary and Secondary axes respectively,
    * relative to the current position of <code>glyph</code>, where
    * the current position of <code>glyph</code> is the coordinate of the
    * top left coordinate of <code>glyph</code>'s bounding box.
    * Offsets are specified in coordinate space (not pixels).
    *
    * @param glyph the GlyphI to move
-   * @param diffx the double relative offset along the X axis
-   * @param diffy the double relative offset along the Y axis
+   * @param diffx the double relative offset along the Primary axis
+   * @param diffy the double relative offset along the Secondary axis
    * @see #moveAbsolute
    * @see NeoMapI#addItem
    */
@@ -592,15 +592,15 @@ public interface NeoWidgetI {
 
   /**
    * update the position of all <code>glyphs</code> in List by
-   * <code>diffx</code> and <code>diffy</code> in the X and Y axes respectively,
+   * <code>diffx</code> and <code>diffy</code> in the Primary and Secondary axes respectively,
    * relative to the current position of <code>glyphs</code>, where
    * the current position of a <code>glyph</code> is the coordinate of the
    * top left corner of the <code>glyph</code>'s bounding box.
    * Offsets are specified in coordinate space (not pixels).
    *
    * @param glyphs the List of GlyphIs to move
-   * @param diffx the double relative offset along the X axis
-   * @param diffy the double relative offset along the Y axis
+   * @param diffx the double relative offset along the Primary axis
+   * @param diffy the double relative offset along the Secondary axis
    * @see #moveAbsolute
    * @see NeoMapI#addItem
    */
@@ -612,8 +612,8 @@ public interface NeoWidgetI {
    * coordinate space (not pixels).
    *
    * @param glyph the GlyphI to move
-   * @param x the absolute double position along the X axis.
-   * @param y the absolute double position along the Y axis.
+   * @param x the absolute double position along the Primary axis.
+   * @param y the absolute double position along the Secondary axis.
    * @see #moveRelative
    * @see NeoMapI#addItem
    */
@@ -624,8 +624,8 @@ public interface NeoWidgetI {
    * new absolute position (<code>x,y</code>) specified in
    * coordinate space (not pixels).
    * @param glyphs the List of GlyphIs to move
-   * @param x the absolute double position along the X axis.
-   * @param y the absolute double position along the Y axis.
+   * @param x the absolute double position along the Primary axis.
+   * @param y the absolute double position along the Secondary axis.
    * @see #moveRelative
    * @see NeoMapI#addItem
    */
@@ -639,7 +639,7 @@ public interface NeoWidgetI {
    * NO_EXPAND, in which case the widget refuses to expand to encompass the
    * new item
    *
-   * @param axisid the axis ({@link #X} or {@link #Y}) to apply
+   * @param axisid the axis ({@link #Primary} or {@link #Secondary}) to apply
    *   the constraint.
    * @param behavior the type of constraint to apply.  Valid
    *  values are EXPAND and NO_EXPAND
@@ -652,7 +652,7 @@ public interface NeoWidgetI {
   /**
    * Gets the behvior set by setExpansionBehavior.
    *
-   * @param axisid the axis (NeoWidgetI.X or NeoWidgetI.Y) whose expansion
+   * @param axisid the axis (NeoWidgetI.Primary or NeoWidgetI.Secondary) whose expansion
    *                   behvior is to be retrieved
    *
    * @see #setExpansionBehavior
@@ -664,11 +664,11 @@ public interface NeoWidgetI {
    * You can focus horizontal zooming at the left edge, center or right edge.
    * You can focus vertical zooming at the top, center, or bottom.
    *
-   * @param axisid the axis ({@link NeoWidget#X} or {@link NeoWidget#Y}) to constrain.
+   * @param axisid the axis ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}) to constrain.
    * @param constraint the type desired.
    *
-   * @see NeoWidget#X
-   * @see NeoWidget#Y
+   * @see NeoWidget#Primary
+   * @see NeoWidget#Secondary
    */
   public void setZoomBehavior(int axisid, ZoomConstraint constraint);
 
@@ -678,7 +678,7 @@ public interface NeoWidgetI {
    * (or focus) zooming to a particular coordinate
    * rather than {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_START}, {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_MIDDLE}, or {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_END}.
    *
-   * @param axisid the axis ({@link NeoWidget#X} or {@link NeoWidget#Y}) to constrain.
+   * @param axisid the axis ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}) to constrain.
    * @param constraint the type desired.
    *        The only valid value is {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_COORD}.
    * @param coord the coordinate at which to focus zooming.
@@ -692,7 +692,7 @@ public interface NeoWidgetI {
    * Scale constraints are currently only considered during
    *    zooming with zoomer[] adjustables
    *
-   * @param axisid     {@link #X} or {@link #Y}
+   * @param axisid     {@link #Primary} or {@link #Secondary}
    * @param constraint {@link ScaleConstraint#INTEGRAL_PIXELS}, {@link ScaleConstraint#INTEGRAL_COORDS}, or {@link ScaleConstraint#INTEGRAL_ALL}.
    *
    */

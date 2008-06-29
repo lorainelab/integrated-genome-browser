@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.RubberBand;
+import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import javax.swing.JSlider;
@@ -318,7 +319,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @param trans the Transform to be applied to the values of the
    *              scrollbar.
    */
-  public void setScrollTransform(TransformI.Dimension dim, TransformI trans);
+  public void setScrollTransform(WidgetAxis dim, TransformI trans);
 
   /**
    * sets the bounds for the given axis on the map.
@@ -326,7 +327,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @param start
    * @param end
    */
-  public void setBounds(TransformI.Dimension dim, int start, int end);
+  public void setBounds(WidgetAxis dim, int start, int end);
 
   /**
    * returns the bounding rectangle in pixels of the displayed item, tag.

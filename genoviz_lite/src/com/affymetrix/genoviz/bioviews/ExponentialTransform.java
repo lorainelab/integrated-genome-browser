@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -14,6 +12,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A transform used internally by some NeoWidgets to handle zooming, should
@@ -25,6 +24,7 @@ import java.awt.geom.Point2D;
  *    Right now it only does about half the work involved in
  *    the "gradual deceleration" of the zoom scrollbar
  */
+//TODO: fix comments
 public class ExponentialTransform implements TransformI {
   protected double xmax, xmin, ymax, ymin, lxmax, lxmin, ratio;
 
@@ -40,7 +40,8 @@ public class ExponentialTransform implements TransformI {
   }
 
   /** @param dim ignored */
-  public double transform(Dimension dim, double in) {
+  @Override
+  public double transform(WidgetAxis dim, double in) {
     double out = Math.exp(in*ratio + lxmin);
     /*
      *  Fix for zooming -- for cases where y _should_ be 7, but ends up
@@ -56,11 +57,13 @@ public class ExponentialTransform implements TransformI {
   }
 
   /** @param dim ignored */
-  public double inverseTransform(Dimension dim, double in) {
+  @Override
+  public double inverseTransform(WidgetAxis dim, double in) {
     double out = (Math.log(in)-lxmin) / ratio;
     return out;
   }
 
+  @Override
   public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
     // y = f(x), but in this case y is really dst.x
     //   (Exponential is a one-dimensional transform, ignores src.y & dst.y
@@ -70,6 +73,7 @@ public class ExponentialTransform implements TransformI {
     return dst;
   }
 
+  @Override
   public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
     double y = src.x;
     double x = Math.log(y/ratio);
@@ -77,21 +81,25 @@ public class ExponentialTransform implements TransformI {
     return dst;
   }
 
-  public java.awt.geom.Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
+  @Override
+  public Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     double x = src.x;
     double y = Math.exp(x*ratio);
     dst.x = y;
     return dst;
   }
 
-  public java.awt.geom.Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
+  @Override
+  public Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
     double y = src.x;
     double x = Math.log(y/ratio);
     dst.x = x;
     return dst;
   }
 
+  @Override
   public void append(TransformI T) {  }
+  @Override
   public void prepend(TransformI T) { }
 
   /**
@@ -105,6 +113,7 @@ public class ExponentialTransform implements TransformI {
   }
 
   // not checking for transform value equality right now
+  @Override
   public boolean equals(TransformI Tx) {
     return super.equals(Tx);
   }

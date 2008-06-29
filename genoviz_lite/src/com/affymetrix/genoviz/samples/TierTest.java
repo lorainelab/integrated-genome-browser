@@ -53,12 +53,12 @@ public class TierTest {
     
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
-    map.setZoomer(TransformI.Dimension.X, xzoomer);
+    map.setZoomer(WidgetAxis.Primary, xzoomer);
     cpane.add("North", xzoomer);
 
     //    yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
     yzoomer = new JSlider(Adjustable.VERTICAL);
-    map.setZoomer(TransformI.Dimension.Y, yzoomer);
+    map.setZoomer(WidgetAxis.Secondary, yzoomer);
     cpane.add("West", yzoomer);
 
     map.setMapRange(0, 1000);

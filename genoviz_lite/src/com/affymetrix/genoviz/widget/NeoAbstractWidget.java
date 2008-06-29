@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
-import com.affymetrix.genoviz.bioviews.TransformI;
+import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -157,11 +157,11 @@ public abstract class NeoAbstractWidget extends Container
   }
 
 
-  public void setScrollIncrementBehavior(TransformI.Dimension dim, int behavior) {
+  public void setScrollIncrementBehavior(WidgetAxis dim, int behavior) {
     scroll_behavior[dim.ordinal()] = behavior;
   }
 
-  public int getScrollIncrementBehavior(TransformI.Dimension dim) {
+  public int getScrollIncrementBehavior(WidgetAxis dim) {
     return scroll_behavior[dim.ordinal()];
   }
 
@@ -248,14 +248,21 @@ public abstract class NeoAbstractWidget extends Container
 
 
   // implementing MouseListener interface and collecting mouse events
+  @Override
   public void mouseClicked(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseEntered(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseExited(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mousePressed(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseReleased(MouseEvent e) { heardMouseEvent(e); }
 
   // implementing MouseMotionListener interface and collecting mouse events
+  @Override
   public void mouseDragged(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseMoved(MouseEvent e) { heardMouseEvent(e); }
 
   public void heardMouseEvent(MouseEvent evt) {
@@ -308,8 +315,11 @@ public abstract class NeoAbstractWidget extends Container
   }
 
     // Implementing KeyListener interface and collecting key events
+  @Override
     public void keyPressed(KeyEvent e) { heardKeyEvent(e); }
+  @Override
     public void keyReleased(KeyEvent e) { heardKeyEvent(e); }
+  @Override
     public void keyTyped(KeyEvent e) { heardKeyEvent(e); }
 
     public void heardKeyEvent(KeyEvent e) {

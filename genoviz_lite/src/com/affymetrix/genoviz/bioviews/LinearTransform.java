@@ -23,7 +23,7 @@ public class LinearTransform implements TransformI  {
 
   /** 
    * Constructs a new LinearTransform
-   * with X and Y scales set at 1
+   * with Primary and Secondary scales set at 1
    * and offsets of 0.
    */
   public LinearTransform() {
@@ -84,11 +84,12 @@ public class LinearTransform implements TransformI  {
    * @param orientation 
    * @param in   the coordinate
    */
-  public double transform(TransformI.Dimension orientation, double in) {
+  @Override
+  public double transform(WidgetAxis orientation, double in) {
     double out = 0;
-    if (orientation == TransformI.Dimension.X) {
+    if (orientation == WidgetAxis.Primary) {
       out = in * xscale + xoffset;
-    } else if (orientation == TransformI.Dimension.Y) {
+    } else if (orientation == WidgetAxis.Secondary) {
       out = in * yscale + yoffset;
     }
     return out;
@@ -98,14 +99,14 @@ public class LinearTransform implements TransformI  {
    * Transforms the coordinate inversely on the axis indicated.
    * If transform is being used in between a scene and a view,
    * this would convert from  view/pixel coordinates to Scene coordinates.
-   * @param orientation X or Y
+   * @param orientation Primary or Secondary
    * @param in the coordinate
    */
-  public double inverseTransform(TransformI.Dimension orientation, double in) {
+  public double inverseTransform(WidgetAxis orientation, double in) {
     double out = 0;
-    if (orientation == TransformI.Dimension.X) {
+    if (orientation == WidgetAxis.Primary) {
       out = (in - xoffset) / xscale;
-    } else if (orientation == TransformI.Dimension.Y) {
+    } else if (orientation == WidgetAxis.Secondary) {
       out = (in - yoffset) / yscale;
     }
     return out;
@@ -113,8 +114,8 @@ public class LinearTransform implements TransformI  {
 
   /** 
    * Sets the scale of the transform directly.
-   * @param x X scale
-   * @param y Y scale
+   * @param x Primary scale
+   * @param y Secondary scale
    */
   public void setScale(double x, double y) {
     xscale = x;
@@ -123,8 +124,8 @@ public class LinearTransform implements TransformI  {
 
   /**
    * Sets the offsets directly.
-   * @param x X offset
-   * @param y Y offset
+   * @param x Primary offset
+   * @param y Secondary offset
    */
   public void setTranslation(double x, double y) {
     xoffset = x;

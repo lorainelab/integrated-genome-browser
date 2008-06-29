@@ -165,33 +165,33 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void setFloatBounds(TransformI.Dimension axis, double start, double end) {
+  public void setFloatBounds(WidgetAxis axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
-    if (axis == TransformI.Dimension.Y && labelmap != null) {
+    if (axis == WidgetAxis.Secondary && labelmap != null) {
       labelmap.setFloatBounds(axis, start, end);
     }
   }
 
   @Override
-  public void setBounds(TransformI.Dimension axis, int start, int end) {
+  public void setBounds(WidgetAxis axis, int start, int end) {
     super.setBounds(axis, start, end);
-    if (axis == TransformI.Dimension.Y && labelmap != null) {
+    if (axis == WidgetAxis.Secondary && labelmap != null) {
       labelmap.setBounds(axis, start, end);
     }
   }
 
   @Override
-  public void zoom(TransformI.Dimension dim, double zoom_scale) {
+  public void zoom(WidgetAxis dim, double zoom_scale) {
     super.zoom(dim, zoom_scale);
-    if (dim == TransformI.Dimension.Y && labelmap != null) {
+    if (dim == WidgetAxis.Secondary && labelmap != null) {
       labelmap.zoom(dim, zoom_scale);
     }
   }
 
   @Override
-  public void scroll(TransformI.Dimension axisid, double value) {
+  public void scroll(WidgetAxis axisid, double value) {
     super.scroll(axisid, value);
-    if (axisid == TransformI.Dimension.Y && labelmap != null) {
+    if (axisid == WidgetAxis.Secondary && labelmap != null) {
       labelmap.scroll(axisid, value);
     }
   }

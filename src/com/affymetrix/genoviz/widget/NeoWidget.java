@@ -873,7 +873,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     @Override
     public void stateChanged(ChangeEvent e) {
-      System.out.println("ChangeEvent: " + e);
       Object source = e.getSource();
       if (source == zoomer[X] || source == zoomer[Y]) {
         WidgetAxis dim;
@@ -883,7 +882,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
           dim = WidgetAxis.Secondary;
         }
         int id = dim.ordinal();
-        zoomer_value[id] = ((JSlider) source).getValue();
+        zoomer_value[id] = zoomer[id].getValue();
         if (zoomer_value[id] == prev_zoomer_value[id]) {
           return;
         }
@@ -906,62 +905,32 @@ public abstract class NeoWidget extends NeoAbstractWidget
   };
 
   public void adjustmentValueChanged(AdjustmentEvent evt) {
-        System.out.println("adjustmentValueChanged to: " + evt.getValue());
      Adjustable source = evt.getAdjustable();
-    //    System.out.println(source);
-//    if (source == zoomer[Primary] || source == zoomer[Secondary]) {
-//      WidgetAxis dim;
-//      if (source == zoomer[Primary]) {
-//        dim = WidgetAxis.Primary; 
-//      }
-//      else { 
-//        dim = WidgetAxis.Secondary; 
-//      }
-//      int id = dim.ordinal();
-//      zoomer_value[id] = source.getValue();
-//      if (zoomer_value[id] == prev_zoomer_value[id])  {
-//        return;
-//      }
-//      zoomer_scale[id] = zoomtrans[id].transform(dim, zoomer_value[id]);
-//      if (scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-//          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) {
-//        if (zoomer_scale[id] >= 1)  {
-//          zoomer_scale[id] = (int)(zoomer_scale[id] +.0001);
-//        }
-//      }
-//      if (DEBUG_ZOOM)  {
-//        System.out.println("pixels_per_base = " + zoomer_scale[id] +
-//            ",  coords_per_pixel[id] = " + 1/zoomer_scale[Primary]);
-//      }
-//      zoom(id, zoomer_scale[id]);
-//      updateWidget();
-//      prev_zoomer_value[id] = zoomer_value[id];
-//    }
-    //else 
-      if (source == scroller[X] || source == scroller[Y]) {
-      WidgetAxis dim;
-      if (source == scroller[X]) {
-        dim = WidgetAxis.Primary; 
-      }
-      else { 
-        dim = WidgetAxis.Secondary; 
-      }
-      int id = dim.ordinal();
 
-      scroller_value[id] = (int) scrolltrans[id].transform(dim, source.getValue());
+    WidgetAxis dim;
+    if (source == scroller[WidgetAxis.Primary.ordinal()]) {
+      dim = WidgetAxis.Primary;
+    } else if (source == scroller[WidgetAxis.Secondary.ordinal()]) {
+      dim = WidgetAxis.Secondary;
+    } else {
+      return;
+    }
+    int id = dim.ordinal();
 
-      if (DEBUG_SCROLL)  {
-        System.out.println("Scrolling to: " + scroller_value[id] + ", " +
-            source.getValue());
-      }
-      if (scroller_value[id] != prev_scroller_value[id]) {
-        scroll(dim, scroller_value[id]);
-        updateWidget();
-        prev_scroller_value[id] = scroller_value[id];
-      }
+    scroller_value[id] = (int) scrolltrans[id].transform(dim, source.getValue());
+
+    if (DEBUG_SCROLL) {
+      System.out.println("Scrolling to: " + scroller_value[id] + ", " +
+        source.getValue());
+    }
+    if (scroller_value[id] != prev_scroller_value[id]) {
+      scroll(dim, scroller_value[id]);
+      updateWidget();
+      prev_scroller_value[id] = scroller_value[id];
     }
   }
 
+  //TODO: TransformI is a 2-dim transform, but we only specify to use one dimension of it. Weird!
   public void setScrollTransform(WidgetAxis dim, TransformI trans) {
     scrolltrans[dim.ordinal()] = trans;
   }

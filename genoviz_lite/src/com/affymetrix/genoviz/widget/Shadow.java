@@ -12,6 +12,7 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
@@ -21,7 +22,6 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.util.NeoConstants.Orientation; // For javadocs
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.FontMetrics;
@@ -148,8 +148,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
     this.extraRect.setHitable(false);
     this.extraRect.setSelectable(false);
     setLabeled(false);
-    if (map.getView() != null) {
-      map.getView().addPreDrawViewListener(this);
+    if (map.getView() instanceof View) {
+      ((View) map.getView()).addPreDrawViewListener(this);
     }
     else {
       this.map.addViewBoxListener(this);
@@ -242,7 +242,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
           label.setString(dform.format(st));
         }
 
-        View view = map.getView();
+        ViewI view = map.getView();
         Graphics g = view.getGraphics();
         Font font = label.getFont();
         if (font != null) {
@@ -304,6 +304,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    *
    * @param evt the range change
    */
+  @Override
   public void rangeChanged( NeoRangeEvent evt ) {
     int st = (int) evt.getVisibleStart();
     int en = (int) evt.getVisibleEnd();
@@ -324,9 +325,10 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   /**
    * makes sure the shadow maintains it's size relative to the map.
    */
+  @Override
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {
     Object source = e.getSource();
-    View view = map.getView();
+    ViewI view = map.getView();
     if ( source == this.map || source == view) {
       java.awt.geom.Rectangle2D.Double sbox = this.map.getScene().getCoordBox();
       java.awt.geom.Rectangle2D.Double vgbox = vGlyph.getCoordBox();
@@ -413,8 +415,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   public void destroy() {
     if ( map != null ) {
       map.removeViewBoxListener(this);
-      if ( map.getView() != null ) {
-        map.getView().removePreDrawViewListener(this);
+      if ( map.getView() instanceof View ) {
+        ((View) map.getView()).removePreDrawViewListener(this);
       }
       map = null;
     }

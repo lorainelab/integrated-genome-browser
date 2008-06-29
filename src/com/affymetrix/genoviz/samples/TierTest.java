@@ -18,6 +18,7 @@ import javax.swing.*;
 
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.SceneI.SelectType;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.util.List;
@@ -48,6 +49,8 @@ public class TierTest {
     map = new AffyTieredMap(true, true);
     map.setBackground(Color.MAGENTA);
 
+    map.setSelectionAppearance(SelectType.SELECT_OUTLINE);
+    
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
     map.setZoomer(TransformI.Dimension.X, xzoomer);

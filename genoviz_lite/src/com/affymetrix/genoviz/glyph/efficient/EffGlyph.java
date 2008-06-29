@@ -13,8 +13,8 @@ package com.affymetrix.genoviz.glyph.efficient;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Stack;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.Glyph.DrawOrder;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -30,10 +30,6 @@ import java.util.ArrayList;
  */
 public class EffGlyph extends Rectangle2D.Double implements GlyphI {
 
-  public static enum DrawOrder {
-    DrawSelfFirst, DrawChildrenFirst
-  }
-  
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
 
@@ -43,8 +39,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
 
   static protected int min_pixels_width=1;
   static protected int min_pixels_height=1;
-
-  protected SceneII scene;
 
   protected GlyphI parent;
   protected List<GlyphI> children;
@@ -315,6 +309,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    *  This base class always returns false.  Sub-classes must implement.
    */
+  @Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
     return false;
   }
@@ -373,17 +368,17 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
       children.remove(glyph);
       if (children.size() == 0) { children = null; }
     }
-    glyph.setScene(null);
+    //glyph.setScene(null);
   }
 
   /** {@inheritDoc} */
   @Override
   public void removeAllChildren() {
-    if (children != null)  {
-      for (int i=0; i<children.size(); i++) {
-        children.get(i).setScene(null);
-      }
-    }
+//    if (children != null)  {
+//      for (int i=0; i<children.size(); i++) {
+//        children.get(i).setScene(null);
+//      }
+//    }
     children = null;
   }
 
@@ -410,7 +405,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   @Override
   public void setParent(GlyphI glyph)  {
     parent = glyph;
-    setScene(glyph.getScene());
+    //setScene(glyph.getScene());
   }
 
   /** {@inheritDoc} */
@@ -459,6 +454,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * This will convert rectangles of a negative width and/or height
    * to an equivalent rectangle with positive width and height.
    */
+  @Override
   public void setCoords(double x, double y, double width, double height)  {
     if (width < 0) {
       x = x + width;
@@ -492,12 +488,14 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   }
 
   /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  @Override
   public void setForegroundColor(Color color)  {
     //    this.style = stylefactory.getStyle( color, style.getBackgroundColor(), style.getFont() );
     this.color = color;
   }
 
   /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  @Override
   public Color getForegroundColor()  {
     return color;
     //    return this.style.getForegroundColor();
@@ -593,24 +591,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     this.moveRelative(diffx, diffy);
   }
 
-  /** {@inheritDoc} */
-  @Override
-  public void setScene(SceneII s) {
-    scene = s;
-    if (children != null) {
-      int size = children.size();
-      for (int i=0; i<size; i++) {
-        children.get(i).setScene(s);
-      }
-    }
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  public SceneII getScene() {
-    return scene;
-  }
-
 
   protected boolean selectable = true;
 
@@ -662,41 +642,11 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     return false;
   }
 
-  /**
-   *  Set trans to global transform for this glyph (based on
-   *    getChildTransform() of parent).
-   */
-  @Override
-  public boolean  getGlobalTransform(ViewI view, LinearTransform trans) {
-    trans.copyTransform((LinearTransform)view.getTransform());
-    return getParent().getGlobalChildTransform(view, trans);
-  }
-
   /** Default implementation does nothing. */
   @Override
   public void getChildTransform(ViewI view, LinearTransform trans) {
     return;
   }
-
-  @Override
-  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
-    Stack<GlyphI> glstack = new Stack<GlyphI>();
-    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast (and why not use the GlyphI's own Scene?
-    GlyphI gl = this;
-    glstack.push(gl);
-    while (gl != rootgl) {
-      gl = gl.getParent();
-      // if get a null parent before getting root glyph, then fail and return
-      if (parent == null) { return false; }
-      glstack.push(gl);
-    }
-    trans.copyTransform((LinearTransform)view.getTransform());
-    while (! glstack.empty()) {
-      glstack.pop().getChildTransform(view, trans);
-    }
-    return true;
-  }
-
 
   /**
    * Only returns true if this is the same objects as the given object.

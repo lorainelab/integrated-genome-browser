@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.glyph.efficient;
 
+import com.affymetrix.genoviz.bioviews.Glyph.DrawOrder;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.awt.geom.Area;
@@ -33,7 +34,7 @@ public class EffRoundRectMaskGlyph extends EffGlyph  {
   public EffRoundRectMaskGlyph(Color fillColor) {
     super();
     this.fillColor = fillColor;
-    this.setDrawOrder(EffGlyph.DrawOrder.DrawChildrenFirst);
+    this.setDrawOrder(DrawOrder.DrawChildrenFirst);
   }
   
   RoundRectangle2D getShapeInPixels(ViewI view) {

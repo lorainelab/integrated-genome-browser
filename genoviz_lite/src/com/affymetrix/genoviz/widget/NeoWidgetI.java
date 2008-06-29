@@ -14,6 +14,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
 
 import com.affymetrix.genoviz.bioviews.TransformI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
 import java.awt.*;
 import java.awt.event.*;
@@ -201,6 +202,8 @@ public interface NeoWidgetI {
    */
   public void stretchToFit(boolean xstretch, boolean ystretch);
 
+  public ViewI getView();
+  
 
   /**
    * Associates a slider
@@ -418,14 +421,14 @@ public interface NeoWidgetI {
    */
   public NeoWidgetI getWidget(int location);
 
-  /**
-   * If this widget contains other widgets, returns the internal widget
-   *    that contains the given GlyphI.
-   *
-   * @param gl the glyph to search for
-   * @return the component widget.
-   */
-  public NeoWidgetI getWidget(GlyphI gl);
+//  /**
+//   * If this widget contains other widgets, returns the internal widget
+//   *    that contains the given GlyphI.
+//   *
+//   * @param gl the glyph to search for
+//   * @return the component widget.
+//   */
+//  public NeoWidgetI getWidget(GlyphI gl);
 
   /**
    * Updates the visual appearance of the widget.

@@ -54,7 +54,7 @@ public class Scene implements SceneII  {
      * rootGlyph.getCoordBox() -- GAH 12/6/97
      */
     rootGlyph = new RootGlyph();
-    rootGlyph.setScene(this);
+    //rootGlyph.setScene(this);
     rootGlyph.setCoords(0,0,1,1);
 
     views = new ArrayList<ViewI>();
@@ -84,7 +84,7 @@ public class Scene implements SceneII  {
    */
   public void setRootGlyph(RootGlyph glyph) {
     rootGlyph = glyph;
-    rootGlyph.setScene(this);
+    //rootGlyph.setScene(this);
     maxDamage();
   }
 

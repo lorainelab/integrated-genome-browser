@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -15,7 +13,6 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -23,7 +20,6 @@ import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
-import com.affymetrix.genoviz.widget.NeoWidget;
 import java.awt.geom.Point2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -76,8 +72,9 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
   public LinearTransform getTransform(NeoMouseEvent nevt) {
     if (nevt != null) {
       Object src = nevt.getSource();
-      if (src instanceof NeoWidget) {
-        trans = (LinearTransform)((NeoWidget)src).getView().getTransform();
+      if (src instanceof NeoWidgetI) {
+        final NeoWidgetI widgetSrc = (NeoWidgetI) src;
+        trans = (LinearTransform) widgetSrc.getView().getTransform();
         return trans;
       }
     }
@@ -131,8 +128,10 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     }
   }
 
+  @Override
   public void mouseMoved(MouseEvent evt) { }
 
+  @Override
   public void mouseDragged(MouseEvent evt) {
     if (!(evt instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
@@ -172,11 +171,16 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
   }
 
 
+  @Override
   public void mousePressed(MouseEvent evt) { }
+  @Override
   public void mouseClicked(MouseEvent evt) { }
+  @Override
   public void mouseEntered(MouseEvent evt) { }
+  @Override
   public void mouseExited(MouseEvent evt) { }
 
+  @Override
   public void mouseReleased(MouseEvent evt) {
     mouseDragged(evt);
     widget.removeMouseListener(this);
@@ -253,7 +257,9 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     else if (axis == NeoConstants.Orientation.Horizontal) {
       return constrained[HORIZ];
     }
-    else return false;
+    else {
+      return false;
+    }
   }
 
   public void setUseCopy(boolean b) {

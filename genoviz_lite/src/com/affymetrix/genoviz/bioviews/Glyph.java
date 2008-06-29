@@ -16,33 +16,41 @@ import java.util.List;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.genoviz.glyph.GlyphStyleFactory;
+import java.awt.geom.Rectangle2D;
 
 /**
- * The base class that implements the GlyphI interface. All other glyphs are
- * subclasses of Glyph.  See GlyphI for better documentation of methods.
+ * The original base classes that implements the GlyphI interface. 
+ * Most older glyphs are subclasses of Glyph.  
+ * A more memory-efficient base class can be found in 
+ * {@link com.affymetrix.genoviz.glypn.efficient.EffGlyph}.
+ * See {@link GlyphI} for better documentation of methods.
  * Though it has no drawn appearance of its own, Glyph can also act as an
  * invisible container for other child glyphs.
  */
+
+//TODO: Does GlyphI need to know about which Scene it is in?
+// or should it ask the View?
+
 public abstract class Glyph implements GlyphI {
 
+  public static enum DrawOrder {
+    DrawSelfFirst, DrawChildrenFirst
+  }
+  
   public boolean DEBUG_DRAW = false;
-  public static final int DRAW_SELF_FIRST = 0;
-  public static final int DRAW_CHILDREN_FIRST = 1;
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
   protected static final Color default_bg_color = Color.black;
   protected static final Color default_fg_color = Color.black;
   protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
-  protected java.awt.geom.Rectangle2D.Double coordbox;
-  protected SceneII scene;
-  private java.awt.geom.Rectangle2D.Double cb2 = null; // used as a temporary variable
+  protected Rectangle2D.Double coordbox;
+  private Rectangle2D.Double cb2 = null; // used as a temporary variable
 
   protected Rectangle pixelbox;
-  protected int min_pixels_width = 1;
+  protected int min_pixels_width = 1; //TODO: make part of the style
   protected int min_pixels_height = 1;
   protected GlyphI parent;
-  protected ViewI current_view;
   protected List<GlyphI> children;
 
   protected GlyphStyle style;
@@ -51,10 +59,10 @@ public abstract class Glyph implements GlyphI {
   protected PackerI packer;
   protected int styleIndex;
   protected boolean selected;
-  protected int draw_order = DRAW_SELF_FIRST;
+  protected DrawOrder drawOrder = DrawOrder.DrawSelfFirst;
 
   public Glyph() {
-    coordbox = new java.awt.geom.Rectangle2D.Double();
+    coordbox = new Rectangle2D.Double();
     pixelbox = new Rectangle();
     min_pixels_width = 1;
     min_pixels_height = 1;
@@ -63,6 +71,7 @@ public abstract class Glyph implements GlyphI {
     style = stylefactory.getStyle(default_fg_color, default_bg_color);
   }
 
+  @Override
   public boolean withinView(ViewI view) {
     return getPositiveCoordBox().intersects(view.getCoordBox());
   }
@@ -77,6 +86,7 @@ public abstract class Glyph implements GlyphI {
    * @param width ignored
    * @param height ignored
    */
+  @Override
   public void select(double x, double y, double width, double height) {
     setSelected(true);
   }
@@ -85,15 +95,17 @@ public abstract class Glyph implements GlyphI {
    *  Default is that glyph does not support subselection.
    *  Override this to indicate support for subselection.
    */
+  @Override
   public boolean supportsSubSelection() {
     return false;
   }
 
   /**
-   *  Default for getSelectedRegion() is to return bounding box for the
-   *     entire glyph
+   *  Default implementation returns bounding box for the
+   *  entire glyph
    */
-  public java.awt.geom.Rectangle2D.Double getSelectedRegion() {
+  @Override
+  public Rectangle2D.Double getSelectedRegion() {
     if (selected) {
       return getPositiveCoordBox();
     } else {
@@ -101,22 +113,20 @@ public abstract class Glyph implements GlyphI {
     }
   }
 
-  public void setDrawOrder(int order) {
-    if ((draw_order == DRAW_SELF_FIRST) ||
-            (draw_order == DRAW_CHILDREN_FIRST)) {
-      draw_order = order;
-    }
+  public void setDrawOrder(DrawOrder order) {
+    drawOrder = order;
   }
 
-  public int getDrawOrder() {
-    return draw_order;
+  public DrawOrder getDrawOrder() {
+    return drawOrder;
   }
 
+  @Override
   public void drawTraversal(ViewI view) {
     if (DEBUG_DT) {
       System.err.println("called Glyph.drawTraversal() on " + this);
     }
-    if (draw_order == DRAW_SELF_FIRST) {
+    if (drawOrder == DrawOrder.DrawSelfFirst) {
       if (withinView(view) && isVisible) {
         if (selected) {
           drawSelected(view);
@@ -127,7 +137,7 @@ public abstract class Glyph implements GlyphI {
           drawChildren(view);
         }
       }
-    } else if (draw_order == DRAW_CHILDREN_FIRST) {
+    } else if (drawOrder == DrawOrder.DrawChildrenFirst) {
       if (withinView(view) && isVisible) {
         if (children != null) {
           drawChildren(view);
@@ -158,6 +168,13 @@ public abstract class Glyph implements GlyphI {
     }
   }
 
+  /**
+   * Default implementation does nothing.
+   * The glyph would be invisible, but it could still have children
+   * that are drawn.
+   * @param view
+   */
+  @Override
   public void draw(ViewI view) {
     if (debug) {
       Graphics2D g = view.getGraphics();
@@ -169,26 +186,14 @@ public abstract class Glyph implements GlyphI {
   }
 
   /**
-   * Drawing selected glyphs is currently very inefficient
-   * especially for <code>HIGHLIGHT</code>,
-   * because they are generally being drawn <em>twice</em>
-   * once as unselected, then painted over with selected color...
-   * <p>Needs to be fixed!
-   * But it's a performance enhancement not added feature or bug fix,
-   * so low priority for now  -- GAH 10-6-97
+   * Draws the glyph in the appropriate manner
+   * to indicate that it has been selected.
+   * That style is specified by 
+   * {@link com.affymetrix.genoviz.bioviews.SceneI#getSelectionAppearance()},
    */
   public void drawSelected(ViewI view) {
 
-    // WARNING -- calling scene directly here is a good way of
-    //   testing whether scene has been set in all selected glyphs --
-    //   otherwise get NullPointerExceptions (happens for example when forget
-    //   to set scene on "non-child" glyphs associated with others, such as
-    //   arrow glyph in AlignmentGlyph, or full_rect in AlignedDNAGlyph
-    //    int selection_style = scene.getSelectionAppearance();
-
-    SceneI.SelectType selection_style = view.getScene().getSelectionAppearance();
-
-    switch (selection_style) {
+    switch (view.getScene().getSelectionAppearance()) {
       case SELECT_OUTLINE:
         drawSelectedOutline(view);
         break;
@@ -220,23 +225,21 @@ public abstract class Glyph implements GlyphI {
     draw(view);
     Graphics2D g = view.getGraphics();
     g.setColor(view.getScene().getSelectionColor());
-    // see WARNING above (in drawSelected())
-    //      g.setColor(scene.getSelectionColor());
     view.transformToPixels(getPositiveCoordBox(), pixelbox);
     g.drawRect(pixelbox.x - 2, pixelbox.y - 2,
             pixelbox.width + 3, pixelbox.height + 3);
   }
 
   protected void drawSelectedFill(ViewI view) {
-    Color tempcolor = this.getBackgroundColor();
-    this.setBackgroundColor(view.getScene().getSelectionColor());
-    this.draw(view);
-    this.setBackgroundColor(tempcolor);
+    final Color tempcolor = getBackgroundColor();
+    setBackgroundColor(view.getScene().getSelectionColor());
+    draw(view);
+    setBackgroundColor(tempcolor);
   }
 
   protected void drawSelectedReverse(ViewI view) {
-    Color bg = this.getBackgroundColor();
-    Color fg = this.getForegroundColor();
+    final Color bg = getBackgroundColor();
+    final Color fg = getForegroundColor();
     this.setBackgroundColor(fg);
     this.setForegroundColor(bg);
     this.draw(view);
@@ -244,18 +247,13 @@ public abstract class Glyph implements GlyphI {
     this.setForegroundColor(fg);
   }
 
-  public void pickTraversal(java.awt.geom.Rectangle2D.Double pickRect, List<GlyphI> picks,
+  @Override
+  public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> picks,
           ViewI view) {
     if (isVisible && intersects(pickRect, view)) {
-      if (debug) {
-        System.out.println("intersects");
-      }
       if (hit(pickRect, view)) {
         if (!picks.contains(this)) {
           picks.add(this);
-        }
-        if (debug) {
-          System.out.println("Hit " + this);
         }
       }
       if (children != null) {
@@ -276,23 +274,17 @@ public abstract class Glyph implements GlyphI {
    * to coordboxes and the call is
    * to <code>pickTraversal(<em>coordbox</em>, vec, view)</code>
    */
+  @Override
   public void pickTraversal(Rectangle pickRect, List<GlyphI> picks,
           ViewI view) {
     if (isVisible && intersects(pickRect, view)) {
-      if (debug) {
-        System.out.println("intersects");
-      }
       if (hit(pickRect, view)) {
         if (!picks.contains(this)) {
           picks.add(this);
         }
-        if (debug) {
-          System.out.println("Hit " + this);
-        }
       }
       if (children != null) {
         GlyphI child;
-        // We avoid object creation overhead by avoiding Enumeration.
         int childnum = children.size();
         for (int i = 0; i < childnum; i++) {
           child = children.get(i);
@@ -337,6 +329,7 @@ public abstract class Glyph implements GlyphI {
    * @param view ignored
    * @return false
    */
+  @Override
   public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view) {
     return false;
   }
@@ -344,15 +337,28 @@ public abstract class Glyph implements GlyphI {
   /** Default implementation of method from GlyphI, always returns false
    *  unless overridden in sub-class.
    */
+  @Override
   public boolean isHitable() {
     return false;
   }
 
+  /**
+   * Returns whether or not this glyph is visible and intersects the rectangle.
+   * @param rect  rectangle in pixels
+   * @return true if this glyph is both visible and intersects the rectangle
+   */
   public boolean intersects(Rectangle rect) {
     return isVisible && rect.intersects(pixelbox);
   }
 
-  public boolean intersects(java.awt.geom.Rectangle2D.Double rect, ViewI view) {
+  /**
+   * Returns whether or not this glyph is visible and intersects the rectangle.
+   * @param rect  rectangle in coordinate space
+   * @return true if this glyph is both visible and intersects the rectangle
+   */
+  //TODO: Why is the view argument there?
+  @Override
+  public boolean intersects(Rectangle2D.Double rect, ViewI view) {
     return isVisible && rect.intersects(getPositiveCoordBox());
   }
 
@@ -360,6 +366,12 @@ public abstract class Glyph implements GlyphI {
     return isVisible && rect.intersects(pixelbox);
   }
 
+  /**
+   * Returns whether or not this glyph is visible and the point is inside it (in pixel space).
+   * @param x pixel value
+   * @param y pixel value
+   * @return true if this glyph is both visible and the pixelbox contains (x,y)
+   */
   public boolean inside(int x, int y) {
     return isVisible && this.pixelbox.contains(x, y);
   }
@@ -369,9 +381,14 @@ public abstract class Glyph implements GlyphI {
    *  Because the pickTraversal() method calls itself
    *  recursively on its children, a glyph cannot be a
    *  child of itself.
+   *  Note that this will also call {@link GlyphI#setParent(com.affymetrix.genoviz.bioviews.GlyphI)} 
+   *  on the child.
+   * @param glyph child
+   * @param position location in child list
    *  @throws IllegalArgumentException if you try to add a glyph as a child
    *    of itself.
    */
+  @Override
   public void addChild(GlyphI glyph, int position) {
     if (this == glyph) {
       throw new IllegalArgumentException("Illegal to add a Glyph as a child of itself!");
@@ -388,7 +405,6 @@ public abstract class Glyph implements GlyphI {
     } else {
       children.add(position, glyph);
     }
-    // setParent() also calls setScene()
     glyph.setParent(this);
   }
 
@@ -397,6 +413,7 @@ public abstract class Glyph implements GlyphI {
    *  adding the same child multiple times, although
    *  that would probably be a bad thing to do.
    */
+  @Override
   public void addChild(GlyphI glyph) {
     GlyphI prev_parent = glyph.getParent();
     if (prev_parent != null) {
@@ -417,6 +434,7 @@ public abstract class Glyph implements GlyphI {
    *  Probably {@link #addChild(GlyphI)} should be re-written
    *  to disallow that in the first place.
    */
+  @Override
   public void removeChild(GlyphI glyph) {
     if (children != null) {
       children.remove(glyph);
@@ -425,18 +443,20 @@ public abstract class Glyph implements GlyphI {
       }
     }
     // null out the scene if glyph is removed
-    glyph.setScene(null);
+    //glyph.setScene(null);
   }
 
+  @Override
   public void removeAllChildren() {
-    if (children != null) {
-      for (int i = 0; i < children.size(); i++) {
-        children.get(i).setScene(null);
-      }
-    }
+//    if (children != null) {
+//      for (int i = 0; i < children.size(); i++) {
+//        children.get(i).setScene(null);
+//      }
+//    }
     children = null;
   }
 
+  @Override
   public int getChildCount() {
     if (children == null) {
       return 0;
@@ -445,23 +465,27 @@ public abstract class Glyph implements GlyphI {
     }
   }
 
+  @Override
   public GlyphI getChild(int index) {
     return children.get(index);
   }
 
+  @Override
   public List<GlyphI> getChildren() {
     return children;
   }
 
+  @Override
   public void setParent(GlyphI glyph) {
     parent = glyph;
-    if (glyph != null) {
-      setScene(glyph.getScene());
-    } else {
-      setScene(null);
-    }
+//    if (glyph != null) {
+//      setScene(glyph.getScene());
+//    } else {
+//      setScene(null);
+//    }
   }
 
+  @Override
   public GlyphI getParent() {
     return parent;
   }
@@ -474,6 +498,7 @@ public abstract class Glyph implements GlyphI {
     return pixelbox;
   }
 
+  @Override
   public Rectangle getPixelBox(ViewI view) {
     pixelbox = view.transformToPixels(coordbox, pixelbox);
     return pixelbox;
@@ -481,32 +506,38 @@ public abstract class Glyph implements GlyphI {
 
   /** Sets the minimum size in pixels. If d.width or d.height is negative,
       this uses their absolute value instead. */
+  @Override
   public void setMinimumPixelBounds(Dimension d) {
     // to save a miniscule amount of memory per Glyph, this is saved as
     // two integers rather than one Dimension object.
+    //TODO: save in the style object instead
     min_pixels_width = Math.abs(d.width);
     min_pixels_height = Math.abs(d.height);
   }
 
   /**
    * Sets the coordinates of the Glyph.
-   * Follow AWT args convention: x, y, width, height.
    * This will convert rectangles of a negative width and/or height
    * to an equivalent rectangle with positive width and height.
+   * @throws IllegalArgumentException if width or height is negative
    */
+  @Override
   public void setCoords(double x, double y, double width, double height) {
-    if (width < 0) {
-      x = x + width;
-      width = -width;
+    if (width < 0 || Double.isNaN(width) || Double.isInfinite(width)) {
+      throw new IllegalArgumentException("Width cannot be negative: " + width);
+//      x = x + width;
+//      width = -width;
     }
-    if (height < 0) {
-      y = y + height;
-      height = -height;
+    if (height < 0 || Double.isNaN(height) || Double.isInfinite(height)) {
+      throw new IllegalArgumentException("Height cannot be negative: " + height);
+//      y = y + height;
+//      height = -height;
     }
     coordbox.setRect(x, y, width, height);
   }
 
-  public java.awt.geom.Rectangle2D.Double getCoordBox() {
+  @Override
+  public Rectangle2D.Double getCoordBox() {
     return coordbox;
   }
 
@@ -514,79 +545,64 @@ public abstract class Glyph implements GlyphI {
    *  but converts rectangles with negative width or height
    *  to an equivalent one with positive width and height.
    */
-  // TODO: remove this method.  Coordbox should always be positive anyway,
-   // but setCoordbox() allows any coorbox to be used.
-
-  protected final java.awt.geom.Rectangle2D.Double getPositiveCoordBox() {
+  protected final Rectangle2D.Double getPositiveCoordBox() {
     if (coordbox.width >= 0 && coordbox.height >= 0) {
       return coordbox;
     }
-
-    if (cb2 == null) {
-      cb2 = new java.awt.geom.Rectangle2D.Double();
+    else {
+//      if (coordbox.width < 0 || Double.isNaN(coordbox.width)) {
+//        coordbox.width = 10;
+//      }
+//      if (coordbox.height < 0 || Double.isNaN(coordbox.height)) {
+//        coordbox.height = 10;
+//      }
+//      return coordbox;
+      throw new RuntimeException("Glyph has non-positive width or height" + coordbox);
     }
-
-    if (coordbox.width < 0) {
-      System.err.println("*********** WARNING: Found a negative width coord box. **********");
-      cb2.x = coordbox.x + coordbox.width;
-      cb2.width = -coordbox.width;
-    } else {
-      if (Double.isNaN(coordbox.width)) {
-        System.err.println("******** WARNING: Coordbox width is not a number! How did this happen? *****");
-        coordbox.width = 0; // for now. To what should it be set?
-      }
-      cb2.x = coordbox.x;
-      cb2.width = coordbox.width;
-    }
-
-    if (coordbox.height < 0) {
-      System.err.println("*********** WARNING: Found a negative height coord box. **********");
-      cb2.y = coordbox.y + coordbox.height;
-      cb2.height = -coordbox.height;
-    } else {
-      if (Double.isNaN(coordbox.height)) {
-        System.err.println("******** WARNING: Coordbox height is not a number! How did this happen? *****");
-        coordbox.height = 0; // for now. To what should it be set?
-      }
-      cb2.y = coordbox.y;
-      cb2.height = coordbox.height;
-    }
-
-    return cb2;
   }
 
 
   /**
-   * Replaces the coord box.
-   * Note that this does not make the assurances of setCoords().
+   * Replaces the coord box with the given object.
+   * Any later changes to that coordbox object will be 
+   * reflected in this glyph.
+   * (You will be responsible for making sure those coordinates
+   * are never set to negative width or heicht.)
    * @see #setCoords
    */
-  public void setCoordBox(java.awt.geom.Rectangle2D.Double coordbox) {
+  @Override
+  public void setCoordBox(Rectangle2D.Double coordbox) {
     this.coordbox = coordbox;
   }
 
+  @Override
   public void setForegroundColor(Color color) {
     this.style = stylefactory.getStyle(color, style.getBackgroundColor(), style.getFont());
   }
 
+  @Override
   public Color getForegroundColor() {
     return this.style.getForegroundColor();
   }
 
+  @Override
   public void setBackgroundColor(Color color) {
     this.style = stylefactory.getStyle(style.getForegroundColor(), color, style.getFont());
   }
 
+  @Override
   public Color getBackgroundColor() {
     return this.style.getBackgroundColor();
   }
 
   /** Semi-deprecated. Use {@link #setBackgroundColor(Color)}. */
+  @Override
   public void setColor(Color color) {
     this.setBackgroundColor(color);
   }
 
   /** Semi-deprecated. Use {@link #getBackgroundColor}. */
+  @Override
   public Color getColor() {
     return this.getBackgroundColor();
   }
@@ -599,30 +615,37 @@ public abstract class Glyph implements GlyphI {
     return this.style.getFont();
   }
 
+  @Override
   public void setInfo(Object info) {
     this.info = info;
   }
 
+  @Override
   public Object getInfo() {
     return info;
   }
 
+  @Override
   public void setVisibility(boolean isVisible) {
     this.isVisible = isVisible;
   }
 
+  @Override
   public boolean isVisible() {
     return isVisible;
   }
 
+  @Override
   public void setPacker(PackerI packer) {
     this.packer = packer;
   }
 
+  @Override
   public PackerI getPacker() {
     return packer;
   }
 
+  @Override
   public void pack(ViewI view) {
     if (packer == null) {
       return;
@@ -630,6 +653,7 @@ public abstract class Glyph implements GlyphI {
     packer.pack(this, view);
   }
 
+  @Override
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
@@ -641,25 +665,26 @@ public abstract class Glyph implements GlyphI {
     }
   }
 
+  @Override
   public void moveAbsolute(double x, double y) {
     double diffx = x - coordbox.x;
     double diffy = y - coordbox.y;
     this.moveRelative(diffx, diffy);
   }
 
-  public void setScene(SceneII s) {
-    scene = s;
-    if (children != null) {
-      int size = children.size();
-      for (int i = 0; i < size; i++) {
-        children.get(i).setScene(s);
-      }
-    }
-  }
-
-  public SceneII getScene() {
-    return scene;
-  }
+//  public void setScene(SceneII s) {
+//    scene = s;
+//    if (children != null) {
+//      int size = children.size();
+//      for (int i = 0; i < size; i++) {
+//        children.get(i).setScene(s);
+//      }
+//    }
+//  }
+//
+//  public SceneII getScene() {
+//    return scene;
+//  }
 
   protected boolean selectable = true;
 
@@ -668,6 +693,7 @@ public abstract class Glyph implements GlyphI {
    *
    * @param selectability
    */
+  @Override
   public void setSelectable(boolean selectability) {
     if (!selectability) {
       setSelected(false);
@@ -678,6 +704,7 @@ public abstract class Glyph implements GlyphI {
   /**
    * Indicates whether or not the glyph can be selected.
    */
+  @Override
   public boolean isSelectable() {
     return this.selectable;
   }
@@ -689,6 +716,7 @@ public abstract class Glyph implements GlyphI {
    * @param selected true if the glyph is to be selected,
    * false otherwise.
    */
+  @Override
   public void setSelected(boolean selected) {
     if (this.selectable) {
       this.selected = selected;
@@ -698,46 +726,52 @@ public abstract class Glyph implements GlyphI {
   /**
    * Indicates whether or not the glyph has been selected.
    */
+  @Override
   public final boolean isSelected() {
     return selected;
   }
 
+  /**
+   * Returns false.  Subclases can override.
+   * @return false
+   */
   public boolean drawTransients() {
     return false;
   }
 
-  /**
-   *  Set trans to global transform for this glyph.
-   *  (Based on getChildTransform() of parent.)
-   */
-  public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
-    trans.copyTransform((LinearTransform) view.getTransform());
-    return getParent().getGlobalChildTransform(view, trans);
-  }
+//  /**
+//   *  Set trans to global transform for this glyph.
+//   *  (Based on getChildTransform() of parent.)
+//   */
+//  public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
+//    trans.copyTransform((LinearTransform) view.getTransform());
+//    return getParent().getGlobalChildTransform(view, trans);
+//  }
 
   /** Default implementation does nothing. */
+  @Override
   public void getChildTransform(ViewI view, LinearTransform trans) {
     return;
   }
 
-  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
-    Stack<GlyphI> glstack = new Stack<GlyphI>();
-    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast
-    GlyphI gl = this;
-    glstack.push(gl);
-    while (gl != rootgl) {
-      gl = gl.getParent();
-      // if get a null parent before getting root glyph, then fail and return
-      if (parent == null) {
-        return false;
-      }
-      glstack.push(gl);
-    }
-    trans.copyTransform((LinearTransform) view.getTransform());
-    while (!(glstack.empty())) {
-      gl = glstack.pop();
-      gl.getChildTransform(view, trans);
-    }
-    return true;
-  }
+//  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
+//    Stack<GlyphI> glstack = new Stack<GlyphI>();
+//    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast
+//    GlyphI gl = this;
+//    glstack.push(gl);
+//    while (gl != rootgl) {
+//      gl = gl.getParent();
+//      // if get a null parent before getting root glyph, then fail and return
+//      if (parent == null) {
+//        return false;
+//      }
+//      glstack.push(gl);
+//    }
+//    trans.copyTransform((LinearTransform) view.getTransform());
+//    while (!(glstack.empty())) {
+//      gl = glstack.pop();
+//      gl.getChildTransform(view, trans);
+//    }
+//    return true;
+//  }
 }

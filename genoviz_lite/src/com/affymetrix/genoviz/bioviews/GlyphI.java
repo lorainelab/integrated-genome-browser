@@ -55,7 +55,8 @@ public interface GlyphI {
   public void drawTraversal(ViewI view);
 
   /**
-   * Draws the glyph.
+   * Draws the glyph itself, but not its children.
+   * This will be called from inside {@link #drawTraversal(ViewI)}.
    *
    * @param view a View upon which the glyph draws itself.
    */
@@ -67,8 +68,9 @@ public interface GlyphI {
   /**
    * Sets the glyph's parent.
    *
-   * @param parent contains the glyph as a child.
+   * @param parent contains this glyph as a child.
    */
+  //TODO: change to protected? Allow to be called only from addChild?
   public void setParent(GlyphI parent);
 
   /**
@@ -157,7 +159,7 @@ public interface GlyphI {
    * stores the result in the glyph,
    * and returns the result.
    *
-   * @param view the view containing a transform.
+   * @param view the {@link ViewI} containing a transform.
    * @return the pixelbox.
    */
   public Rectangle getPixelBox(ViewI view);
@@ -171,6 +173,7 @@ public interface GlyphI {
    *
    * @param d the smallest height and width it needs.
    */
+  //TODO: include in a GlyphProperties or GlyphStyle object?
   public void setMinimumPixelBounds(Dimension d);
 
   /**
@@ -341,16 +344,15 @@ public interface GlyphI {
    * The packer of a glyph determines
    * how this glyph and all its children will be laid out
    * when the GlyphI.pack() method is used.
-   */
-  public void setPacker(PackerI p);
-  /*
+   * <p>
    * Theoretically the packer of a glyph determines how this
    * glyph and all its children will be laid out in calls to GlyphI.pack().
-   *
+   *<p>
    * In practice this is often superceded by
    * factories handling packing.  Root glyphs, Container glyphs, and Tier Glyphs
    * do often have their packers set.
    */
+  public void setPacker(PackerI p);
 
   /**
    * Finds out how a glyph is to be layed out.
@@ -416,38 +418,36 @@ public interface GlyphI {
   public void moveRelative(double diffx, double diffy);
 
 
-  /**
-   * Lets the glyph know what scene it is in.
-   * A glyph can be on only one scene.
-   *
-   * @param s the scene in which the glyph appears.
-   */
-  public void setScene(SceneII s);
+//  /**
+//   * Lets the glyph know what scene it is in.
+//   * A glyph can be on only one scene.
+//   *
+//   * An internal method used by NeoWidgets.
+//   * Each NeoWidget can have multiple scenes (and NeoWidgets can share
+//   * scenes if widget cloning is used).  
+//   * A glyph can appear on only one scene.  
+//   * Scenes know what glyphs are on them, so you might wonder why
+//   * the glyph needs to know about the scene.  Main reason is 
+//   * for optimized damage propogation for efficient drawing.
+//   * 
+//   * @param s the scene in which the glyph appears.
+//   */
+//  public void setScene(SceneII s);
+//
+//  /**
+//   * Finds out which scene contains the glyph.
+//   *
+//   * @return the Scene in which the GlyphI appears.
+//   * @see #setScene
+//   */
+//  public SceneII getScene();
 
-  /*
-   * Sets the scene for the glyph.  An internal method used by NeoWidgets.
-   * Each NeoWidget can have multiple scenes (and NeoWidgets can share
-   * scenes if widget cloning is used).  A glyph can appear on only one
-   * scene.  Scenes know what glyphs are on them, so you might wonder why
-   * the glyph needs to know about the scene.  Main reason the glyph
-   * needs to know about the scene is during optimized damage propogation
-   * for efficient drawing.
-   */
-
-  /**
-   * Finds out which scene contains the glyph.
-   *
-   * @return the Scene in which the GlyphI appears.
-   * @see #setScene
-   */
-  public SceneII getScene();
-
-  /**
-   *  set trans to global transform for this glyph (based on
-   *    getChildTransform() of parent)
-   */
-  //TODO: delete
-  public boolean getGlobalTransform(ViewI view, LinearTransform trans);
+//  /**
+//   *  Set trans to global transform for this glyph (based on
+//   *    getChildTransform() of parent)
+//   */
+//  //TODO: delete
+//  public boolean getGlobalTransform(ViewI view, LinearTransform trans);
 
   /**
    *  Given the input transform, modify to "relative" transform that should
@@ -458,15 +458,15 @@ public interface GlyphI {
    */
   public void getChildTransform(ViewI view, LinearTransform trans);
 
-  /**
-   *  Given a view, manipulate trans so that it is the global
-   *     transform needed to map this glyph's children's coords
-   *     to pixel coords.
-   *  Usually this will be the same as the view's transform,
-   *     but some glyph's implement nested transforms or other manipulations
-   *     that may modify transform that needs to be applied to glyph.
-   */
-  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans);
+//  /**
+//   *  Given a view, manipulate trans so that it is the global
+//   *     transform needed to map this glyph's children's coords
+//   *     to pixel coords.
+//   *  Usually this will be the same as the view's transform,
+//   *     but some glyph's implement nested transforms or other manipulations
+//   *     that may modify transform that needs to be applied to glyph.
+//   */
+//  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans);
 
   public boolean withinView(ViewI view);
 }

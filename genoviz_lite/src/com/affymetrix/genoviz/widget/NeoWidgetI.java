@@ -92,7 +92,7 @@ public interface NeoWidgetI {
    * to fit within a container
    * whenever that container is resized.
    */
-  public static final int FITWIDGET = 5;
+  public static final int FITWIDGET = 5; //TODO: make an enum, or use a boolean
 
   /**
    * @see #INTEGRAL_COORDS

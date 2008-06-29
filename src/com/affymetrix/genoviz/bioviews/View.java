@@ -887,27 +887,39 @@ public class View implements ViewI, NeoPaintListener,
    * @return a Rectangle the same size as the bounds of the component
    *         with an origin of (0, 0).
    */
+  @Override
   public Rectangle getComponentSizeRect() {
     return component_size_rect;
   }
 
   /** implementing MouseListener interface and collecting mouse events */
+  @Override
   public void mouseClicked(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseEntered(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseExited(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mousePressed(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseReleased(MouseEvent e) { heardMouseEvent(e); }
 
   /** implementing MouseMotionListener interface and collecting mouse events */
+  @Override
   public void mouseDragged(MouseEvent e) { heardMouseEvent(e); }
+  @Override
   public void mouseMoved(MouseEvent e) { heardMouseEvent(e); }
 
   /** implementing KeyListener interface and collecting key events */
+  @Override
   public void keyPressed(KeyEvent e) { heardKeyEvent(e); }
+  @Override
   public void keyReleased(KeyEvent e) { heardKeyEvent(e); }
+  @Override
   public void keyTyped(KeyEvent e) { heardKeyEvent(e); }
 
   /** implementing NeoPaintListener interface and triggering draw */
+  @Override
   public void componentPainted(NeoPaintEvent evt) {
     setGraphics(evt.getGraphics());
     draw();
@@ -978,6 +990,7 @@ public class View implements ViewI, NeoPaintListener,
     }
   }
 
+  @Override
   public Rectangle getScratchPixBox() {
     return scratch_pixelbox;
   }

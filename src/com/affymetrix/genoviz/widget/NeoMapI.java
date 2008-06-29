@@ -313,7 +313,7 @@ public interface NeoMapI extends NeoWidgetI {
    * Sets the transform of the scrollbar specified by id
    * to the specified transform.
    *
-   * @param id    the orientation ({@link NeoWidget#X} or {@link NeoWidget#Y}) of the scrollbar to
+   * @param dim    the orientation ({@link NeoWidget#X} or {@link NeoWidget#Y}) of the scrollbar to
    *              receive the specified transform.
    * @param trans the Transform to be applied to the values of the
    *              scrollbar.
@@ -322,7 +322,7 @@ public interface NeoMapI extends NeoWidgetI {
 
   /**
    * sets the bounds for the given axis on the map.
-   * @param id  the axis to bind, X or Y
+   * @param dim  the axis to bind, X or Y
    * @param start
    * @param end
    */

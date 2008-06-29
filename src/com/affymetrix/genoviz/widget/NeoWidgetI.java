@@ -209,7 +209,7 @@ public interface NeoWidgetI {
    * Associates a slider
    * to control zooming along the specified axis.
    *
-   * @param id identifies the axis of zooming.
+   * @param dim identifies the axis of zooming.
    *           Should be ({@link NeoWidget#X} or {@link NeoWidget#Y}).
    * @param slider a slider to be associated with the axis.
    */
@@ -226,7 +226,7 @@ public interface NeoWidgetI {
    * associates an adjustable component
    * to control scrolling along the specified axis.
    *
-   * @param id identifies the axis of scrolling.
+   * @param dim identifies the axis of scrolling.
    *           Should be {@link #X} or {@link #Y}.
    * @param adj an scrollbar
    *            to be associated with the axis.
@@ -255,7 +255,7 @@ public interface NeoWidgetI {
   /**
    * Modifies the way that scrolling is performed for an axis.
    *
-   * @param id       identifies which axis (X or Y) is being queried.
+   * @param dim       identifies which axis (X or Y) is being queried.
    * @param behavior AUTO_SCROLL_INCREMENT or NO_AUTO_SCROLL_INCREMENT
    *
    * @see #getScrollIncrementBehavior
@@ -266,7 +266,7 @@ public interface NeoWidgetI {
    * Use this to decide whether or not the scrolling increment
    * is being automatically readjusted.
    *
-   * @param id identifies which axis (X or Y) is being queried.
+   * @param dim identifies which axis (X or Y) is being queried.
    *
    * @return a constant indicating the scroll behavior.  Valid values
    *  are NeoWidgetI.AUTO_SCROLL_INCREMENT and
@@ -279,7 +279,7 @@ public interface NeoWidgetI {
   /**
    * scrolls this widget along the specified axis.
    *
-   * @param id    indentifies which axis to scroll.
+   * @param dim    indentifies which axis to scroll.
    *     valid values are {@link NeoWidget#X} or {@link NeoWidget#Y}.
    * @param value  the double distance in coordinate space
    *               to scroll.
@@ -304,9 +304,7 @@ public interface NeoWidgetI {
    * a sequence, then set <code>max</code> to the width of a character
    * of the desired font.
    *
-   * @param axisid indicates which axis to apply this constraint.
-   *   valid values are ({@link NeoWidget#X} or {@link NeoWidget#Y}).
-   *
+   * @param dim indicates which axis to apply this constraint.
    * @param max  the double describing the maximum pixels per coordinate;
    *   should generally be the maximum size (in pixels)
    *   of a visual item.

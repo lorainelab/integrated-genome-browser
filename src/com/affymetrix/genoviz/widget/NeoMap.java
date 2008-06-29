@@ -973,13 +973,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   /**
-   * @param id should be {@link #X} or {@link #Y}.
+   * @param dim should be {@link #X} or {@link #Y}.
    * @return the slider responsible for zooming in the <var>id</var> direction.
    */
   public JSlider getZoomer(TransformI.Dimension dim) {
     return zoomer[dim.ordinal()];
   }
 
+  @Override
   public void removeItem(GlyphI gl) {
     scene.removeGlyph(gl);
     glyph_hash.remove(gl);

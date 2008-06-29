@@ -307,8 +307,8 @@ public class TierGlyph extends SolidGlyph {
     return true;
   }
 
-  protected void addRoomForLabel() {
-      Rectangle2D.Double mbox = scene.getCoordBox();
+  protected void addRoomForLabel(ViewI view) {
+      Rectangle2D.Double mbox = view.getScene().getCoordBox();
       Rectangle2D.Double cbox = this.getCoordBox();
       if (shouldDrawLabel()) {
         // Add extra space to make room for the label.
@@ -335,7 +335,7 @@ public class TierGlyph extends SolidGlyph {
       initForSearching();
       super.pack(view);
 
-      addRoomForLabel();
+      addRoomForLabel(view);
       //    if (isTimed && label.startsWith("whatever (+)")) {
     }
     if (isTimed) {

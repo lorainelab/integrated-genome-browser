@@ -20,29 +20,43 @@ import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.bioviews.SceneI.SelectType;
 import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.LineStretchContainerGlyph;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
+import com.affymetrix.genoviz.util.NeoConstants.Placement;
+import com.affymetrix.genoviz.widget.NeoMap;
 import java.util.List;
 
 public class TierTest {
+  final JFrame frame;
   static AffyTieredMap map;
   JSlider xzoomer;
   JSlider yzoomer;
+  
+  TierTest() {
+    super();
+    frame = new JFrame(this.getClass().getSimpleName());
+    frame.setSize(600, 400);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
 
   public static void main(String[] args) {
     final TierTest test = new TierTest();
+    
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
         test.doTest();
+        test.frame.setVisible(true);
+//        test.frame.setSize(600, 401);
+        map.stretchToFit(true, true);
+        map.updateWidget(true);
       }
     });
   }
 
   public void doTest() {
-    final JFrame frame;
-    frame = new JFrame("tier test");
-    frame.setSize(600, 400);
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     Container cpane = frame.getContentPane();
     cpane.setLayout(new BorderLayout());
@@ -50,6 +64,9 @@ public class TierTest {
     map.setBackground(Color.MAGENTA);
 
     map.setSelectionAppearance(SelectType.SELECT_OUTLINE);
+    
+    map.setReshapeBehavior(NeoMap.X, NeoMap.FITWIDGET - 3);
+    map.setReshapeBehavior(NeoMap.Y, 0);
     
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
@@ -61,7 +78,8 @@ public class TierTest {
     map.setZoomer(WidgetAxis.Secondary, yzoomer);
     cpane.add("West", yzoomer);
 
-    map.setMapRange(0, 1000);
+    int mapWidth = 10000;
+    map.setMapRange(0, mapWidth);
     map.setMapOffset(-100, 100); // mostly irrelvant
     map.addMouseListener(mouseListener);
     
@@ -72,8 +90,8 @@ public class TierTest {
     style.setHumanName("My name is BOB!");
     
     tier = new TierGlyph(style);
-    tier.setFillColor(Color.RED);
-    tier.setCoords(0, 0, 1000, 0);
+    tier.setFillColor(Color.LIGHT_GRAY);
+    tier.setCoords(0, 0, mapWidth, 0);
     tier.setExpandedPacker(new ExpandedTierPacker());
     tier.setState(TierGlyph.EXPANDED);
     ((ExpandedTierPacker)tier.getExpandedPacker()).setMoveType(Direction.UP);
@@ -89,7 +107,7 @@ public class TierTest {
     transform_tier.setFixedPixelHeight(true);
     transform_tier.setFixedPixHeight(80);
     transform_tier.setFillColor(Color.cyan);
-    transform_tier.setCoords(0, 0, 1000, 0);
+    transform_tier.setCoords(0, 0, mapWidth, 0);
     epacker = new ExpandPacker();
     transform_tier.setExpandedPacker(epacker);
     epacker.setMoveType(Direction.UP);
@@ -97,45 +115,35 @@ public class TierTest {
     addGlyphs(transform_tier);
     map.addTier(transform_tier);
 
-    transform_tier = new TransformTierGlyph();
-    //    trans = new LinearTransform();
-    //    trans.setScaleY(0.5f);
-    //    transform_tier.setTransform(trans);
-    transform_tier.setFixedPixelHeight(true);
-    transform_tier.setFixedPixHeight(40);
-    transform_tier.setFillColor(Color.darkGray);
-    transform_tier.setCoords(0, 0, 1000, 0);
-    epacker = new ExpandPacker();
-    transform_tier.setExpandedPacker(epacker);
-    epacker.setMoveType(Direction.DOWN);
-    // currently need to call setState() _after_ mucking with packer to 
-    //   get tier to set packer to epacker
-    transform_tier.setState(TierGlyph.EXPANDED);
-    //    addGlyphs2(transform_tier);
-    addGlyphs(transform_tier);
-    map.addTier(transform_tier);
+
+    TransformTierGlyph axis_tier = new TransformTierGlyph();
+
+    AxisGlyph axis = map.addAxis(30); //TODO: number 30 is ignored?
+    axis.setForegroundColor(Color.GREEN.darker());
+    axis.setLabelPlacement(Placement.BELOW);
+    
+    axis_tier.setFixedPixelHeight(true);
+    axis_tier.setFixedPixHeight(40);
+    axis_tier.setFillColor(Color.WHITE);
+    axis_tier.setCoords(0, 0, mapWidth, 0);
+
+    axis_tier.setSpacer(100); //Spacer ignored because no packer.
+    axis_tier.addChild(axis);
+    map.addTier(axis_tier);
 
     tier = new TierGlyph();
     tier.setFillColor(Color.gray);
-    tier.setCoords(0, 0, 1000, 0);
+    tier.setCoords(0, 0, mapWidth, 0);
     tier.setState(TierGlyph.EXPANDED);
     ((ExpandPacker)tier.getExpandedPacker()).setMoveType(Direction.DOWN);
-    addGlyphs(tier);
+//    addGlyphs(tier);
+    fillWithComposites(tier, Color.MAGENTA.darker().darker(), 30);
     map.addTier(tier);
 
     map.repack();
     
 
-    cpane.add("Center", map);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-
-      @Override
-      public void run() {
-        frame.setVisible(true);
-        map.updateWidget(true);
-      }
-    });
+    cpane.add("Center", map);    
   }
 
   public void addGlyphs2(TierGlyph tier) {
@@ -176,6 +184,35 @@ public class TierTest {
 
   }
 
+  public void fillWithComposites(TierGlyph tier, Color col, int total) {
+    GlyphI container;
+    GlyphI child1, child2;
+    int height = 5;
+    int start, width;
+    for (int i=0; i<total; i++) {
+      start = (int)(Math.random() * tier.getCoordBox().width*3.0/4.0);
+      width = (int)(Math.random() * tier.getCoordBox().width/4.0);
+      //	    container = new LineContainerGlyph();
+      container = new LineStretchContainerGlyph();
+      container.setColor(col);
+      //	    container.setCoords(start, 0, width, height);
+
+      tier.addChild(container);
+      child1 = new FillRectGlyph();
+      child1.setCoords(start, 10, width/4, height);
+      child1.setColor(col);
+      container.addChild(child1);
+      //	    mtg.addChild(child1);
+
+      child2 = new FillRectGlyph();
+      child2.setCoords(start+3*width/4, 10, width/4, height);
+      child2.setColor(col);
+      container.addChild(child2);
+      //	    mtg.addChild(child2);
+
+    }
+  }
+  
   private final MouseListener mouseListener = new MouseAdapter() {
     @Override
     public void mousePressed(MouseEvent evt) {

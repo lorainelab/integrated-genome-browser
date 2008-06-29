@@ -562,6 +562,12 @@ public class TierGlyph extends SolidGlyph {
     setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
+  /**
+   * Sets the parent spacer on both the expand packer 
+   * and the collapse packer.
+   * @param spacer
+   * @see PaddedPackerI#setParentSpacer(double)
+   */
   public void setSpacer(double spacer) {
     this.spacer = spacer;
     if (collapse_packer instanceof PaddedPackerI) {

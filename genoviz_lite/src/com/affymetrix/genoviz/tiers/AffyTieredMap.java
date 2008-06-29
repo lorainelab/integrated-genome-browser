@@ -271,7 +271,15 @@ public class AffyTieredMap extends NeoMap {
       if ( newbox != null ) {
 	//	setMapOffset((int) newbox.y, (int) (newbox.y + newbox.height));
 	//        setMapOffset(Math.floor(newbox.y), (int) (newbox.y + newbox.height));
-	setFloatBounds(TransformI.Dimension.Y, newbox.y, newbox.y + newbox.height);
+        final double start = newbox.y;
+        final double end = newbox.y + newbox.height;
+        if (Double.isInfinite(end) || Double.isNaN(end) || Double.isInfinite(start) || Double.isNaN(start)) {
+          //TODO: fix
+          System.out.println("One or both of these values is bad! " + start + ", " + end);
+          setFloatBounds(TransformI.Dimension.Y, 0, 100);
+        } else {
+          setFloatBounds(TransformI.Dimension.Y, newbox.y, newbox.y + newbox.height);          
+        }
 	//	System.out.println("new bounds: " + this.getCoordBounds());
       }
     }

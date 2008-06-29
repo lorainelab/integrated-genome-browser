@@ -1247,14 +1247,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    */
   public void addItem(GlyphI gl) {
     if (gl != null) {
-      SceneII glyph_scene = gl.getScene();
-      if (glyph_scene == null) {
+      //SceneII glyph_scene = gl.getScene();
+//      if (glyph_scene == null) {
         scene.addGlyph(gl);
-      }
-      else {
-        throw new IllegalArgumentException("must remove item from previous " +
-                                           "map before adding it to new map");
-      }
+//      }
+//      else {
+//        throw new IllegalArgumentException("must remove item from previous " +
+//                                           "map before adding it to new map");
+//      }
     }
   }
 

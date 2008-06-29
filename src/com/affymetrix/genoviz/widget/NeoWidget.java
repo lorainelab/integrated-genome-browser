@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneII;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoViewMouseEvent;
@@ -227,7 +228,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public NeoCanvas getNeoCanvas() { return canvas; }
 
-  public View getView() { return view; }
+  public ViewI getView() { return view; }
 
   /**
    *  Sets the bounds.
@@ -237,7 +238,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
    */
   public void setFloatBounds(TransformI.Dimension dim, double start, double end) {
     double size = end - start;
-    java.awt.geom.Rectangle2D.Double sbox = scene.getCoordBox();
+    if (size < 0) {
+      System.out.println("size: " + size);
+      return;
+    }
+    Rectangle2D.Double sbox = scene.getCoordBox();
     if (dim == TransformI.Dimension.X) {
       scene.setCoords(start, sbox.y, size, sbox.height);
     }
@@ -346,10 +351,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public NeoWidgetI getWidget(int location) { return this; }
 
-    public NeoWidgetI getWidget(GlyphI gl) {
-      if (gl.getScene() == this.scene) { return this; }
-      return null;
-    }
+//    public NeoWidgetI getWidget(GlyphI gl) {
+//      if (gl.getScene() == this.scene) { return this; }
+//      return null;
+//    }
 
   /**
    * Updates the visual appearance of the widget.  It is important to call

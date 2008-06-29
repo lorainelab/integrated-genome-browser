@@ -33,7 +33,7 @@ import java.util.List;
 public interface SceneI {
 
   /** 
-   * Specifies how to distinguish selected {@link GlyphI's 
+   * Specifies how to distinguish selected {@link GlyphI}'s 
    * from others. 
    */
   public enum SelectType {

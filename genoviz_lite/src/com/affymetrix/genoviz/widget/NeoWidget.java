@@ -228,6 +228,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public NeoCanvas getNeoCanvas() { return canvas; }
 
+  @Override
   public ViewI getView() { return view; }
 
   /**

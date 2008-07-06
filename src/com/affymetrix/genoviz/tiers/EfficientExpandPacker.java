@@ -14,8 +14,8 @@ package com.affymetrix.genoviz.tiers;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.*;
+import com.affymetrix.genoviz.glyph.LabelGlyph;
+import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -232,7 +232,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    java.util.List sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     List<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
@@ -262,7 +262,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.get(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

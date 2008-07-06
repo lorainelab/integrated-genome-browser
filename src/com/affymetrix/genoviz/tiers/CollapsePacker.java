@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,9 +11,10 @@
 
 package com.affymetrix.genoviz.tiers;
 
-import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -30,6 +29,7 @@ public class CollapsePacker implements PaddedPackerI {
   protected double parent_spacer = 10;
   protected double spacing = 0;
 
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
     Rectangle2D.Double pbox = parent.getCoordBox();
     List<GlyphI> children = parent.getChildren();
@@ -64,7 +64,7 @@ public class CollapsePacker implements PaddedPackerI {
   }
 
   protected void moveAllChildren(GlyphI parent, ViewI view) {
-    java.util.List children = parent.getChildren();
+    List children = parent.getChildren();
     if (children == null) { return; }
 
     for (int i=0; i<children.size(); i++) {
@@ -77,24 +77,29 @@ public class CollapsePacker implements PaddedPackerI {
     alignment = val;
   }
 
+  @Override
   public void setParentSpacer(double spacer) {
     this.parent_spacer = spacer;
   }
     
+  @Override
   public double getParentSpacer() {
     return parent_spacer;
   }
 
   /** Spacing has no effect in a CollapsePacker. */
+  @Override
   public void setSpacing(double sp) {
     this.spacing = sp;
   }
 
   /** Spacing has no effect in a CollapsePacker. */
+  @Override
   public double getSpacing() {
     return spacing;
   }
 
+  @Override
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
     Rectangle2D.Double pbox = parent.getCoordBox();
     Rectangle2D.Double cbox = child.getCoordBox();

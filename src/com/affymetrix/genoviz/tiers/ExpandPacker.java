@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 2001-2004 Affymetrix, Inc.
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,14 +11,16 @@
 
 package com.affymetrix.genoviz.tiers;
 
-import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.LabelGlyph;
+import com.affymetrix.genoviz.util.GeometryUtils;
+import com.affymetrix.genoviz.util.NeoConstants.Direction;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import com.affymetrix.genoviz.util.NeoConstants.*;
-import com.affymetrix.genoviz.util.NeoConstants.Direction.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ExpandPacker implements PaddedPackerI {
@@ -94,8 +94,7 @@ public class ExpandPacker implements PaddedPackerI {
    */
   public void setCoordFuzziness(double fuzz) {
     if (fuzz > spacing) {
-      throw new IllegalArgumentException
-	      ("Can't set packer fuzziness greater than spacing");
+      throw new IllegalArgumentException("Can't set packer fuzziness greater than spacing");
     } else {
       coord_fuzziness = fuzz;
     }
@@ -111,23 +110,24 @@ public class ExpandPacker implements PaddedPackerI {
    * this is the distance away from glyphA's coordbox
    * that glyphB's coord box will be moved.
    */
+  @Override
   public void setSpacing(double sp) {
     if (sp < coord_fuzziness) {
-      throw new IllegalArgumentException
-        ("Can't set packer spacing less than fuzziness");
+      throw new IllegalArgumentException("Can't set packer spacing less than fuzziness");
     } else {
       spacing = sp;
     }
   }
 
+  @Override
   public double getSpacing() {
     return spacing;
   }
 
   /**
-   * moves one glyph to avoid another.
+   * Moves one glyph to avoid another.
    * This is called from subclasses
-   * in their <code>pack(parent, glyph, view)</code> methods.
+   * in their {@link #pack(com.affymetrix.genoviz.bioviews.GlyphI, com.affymetrix.genoviz.bioviews.GlyphI, com.affymetrix.genoviz.bioviews.ViewI)} method.
    *
    * @param glyph_to_move
    * @param glyph_to_avoid
@@ -138,52 +138,48 @@ public class ExpandPacker implements PaddedPackerI {
 			  GlyphI glyph_to_avoid, Direction movetype)  {
     Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
     Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
-    if ( ! movebox.intersects ( avoidbox ) ) return;
+    if (!movebox.intersects(avoidbox)) {
+      return;
+    }
     if (movetype == Direction.MIRROR_VERTICAL) {
-      if (movebox.y < 0) { 
-        glyph_to_move.moveAbsolute(movebox.x, 
-			  avoidbox.y - movebox.height - spacing);
+      if (movebox.y < 0) {
+        glyph_to_move.moveAbsolute(movebox.x,
+          avoidbox.y - movebox.height - spacing);
       } else {
-        glyph_to_move.moveAbsolute(movebox.x, 
-			  avoidbox.y + avoidbox.height + spacing);
+        glyph_to_move.moveAbsolute(movebox.x,
+          avoidbox.y + avoidbox.height + spacing);
       }
-    }
-    else if (movetype == Direction.MIRROR_HORIZONTAL) {
-      if (movebox.x < 0) { 
+    } else if (movetype == Direction.MIRROR_HORIZONTAL) {
+      if (movebox.x < 0) {
         glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-                                   movebox.y);
-      }
-      else {
+          movebox.y);
+      } else {
         glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-                                   movebox.y);
+          movebox.y);
       }
-    }
-    else if (movetype == Direction.DOWN) {
-      glyph_to_move.moveAbsolute(movebox.x, 
-			 avoidbox.y + avoidbox.height + spacing);
-    }
-    else if (movetype == Direction.UP) {
-      glyph_to_move.moveAbsolute(movebox.x, 
-			 avoidbox.y - movebox.height - spacing);
-    }
-    else if (movetype == Direction.RIGHT) {  
+    } else if (movetype == Direction.DOWN) {
+      glyph_to_move.moveAbsolute(movebox.x,
+        avoidbox.y + avoidbox.height + spacing);
+    } else if (movetype == Direction.UP) {
+      glyph_to_move.moveAbsolute(movebox.x,
+        avoidbox.y - movebox.height - spacing);
+    } else if (movetype == Direction.RIGHT) {
       glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-			 movebox.y);
-    }
-    else if (movetype == Direction.LEFT) {
-      glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing, 
-			 movebox.y);
-    }
-    else {
-      throw new IllegalArgumentException
-        ("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
+        movebox.y);
+    } else if (movetype == Direction.LEFT) {
+      glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
+        movebox.y);
+    } else {
+      throw new IllegalArgumentException("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
     }
   }
 
+  @Override
   public void setParentSpacer(double spacer) {
     this.parent_spacer = spacer;
   }
 
+  @Override
   public double getParentSpacer() {
     return parent_spacer;
   }
@@ -196,9 +192,9 @@ public class ExpandPacker implements PaddedPackerI {
     return STRETCH_HORIZONTAL;
   }
 
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
-    //    System.out.println("begin ExpandPacker.pack(glyph, view)");
-    java.util.List<GlyphI> sibs = parent.getChildren();
+    List<GlyphI> sibs = parent.getChildren();
     GlyphI child;
     Rectangle2D.Double cbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
@@ -208,7 +204,6 @@ public class ExpandPacker implements PaddedPackerI {
     parent.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
 
     if (sibs == null || sibs.size() <= 0) { 
-      //      System.out.println("end ExpandPacker.pack(glyph, view)");
       return null; 
     }
 
@@ -320,6 +315,7 @@ public class ExpandPacker implements PaddedPackerI {
   }
 
   
+  @Override
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
     return pack(parent, child, view, true);
   }

@@ -12,7 +12,6 @@
 package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.awt.Rectangle;
@@ -31,7 +30,6 @@ public class ExpandedTierPacker implements PaddedPackerI {
 
   boolean STRETCH_HORIZONTAL = true;
   boolean STRETCH_VERTICAL = true;
-  boolean USE_NEW_PACK = true; // xxx
   boolean use_search_nodes = false;
 
   /**
@@ -185,7 +183,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
   }
 
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
     List<GlyphI> sibs;
     GlyphI child;
 
@@ -200,51 +198,17 @@ public class ExpandedTierPacker implements PaddedPackerI {
     // resetting height of parent to just spacers
     parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
 
-    // trying to fix an old packing bug...
-    // this may also speed things up a bit...
-    // BUT, this is probably NOT THREADSAFE!!!
-    // (if for example another thread was adding / removing glyphs from the parent...)
-    //
-    // might be more threadsafe to make a new pack(parent, child, view, list) method
-    //   that can take a list argument to use as children to check against, rather than
-    //   always checking against all the children of parent?  And then make a new list
-    //   and keep adding to it rather than removing all the children like current solution
-    //      [but then what to do about using glyph searchnodes?]
-    //
-    // an easier (but probably less efficient) way to make this threadsafe is to
-    //    synchronize on the children glyph List (sibs), so that no other thread
-    //    can muck with it while children are being removed then added back in this array
-    //    However, this may become even less efficient depending on what the performance
-    //    hit is for sorting the glyphs into GlyphSearchNodes as they are being added
-    //    back...
-    //
-    // trying synchronization to ensure this method is threadsafe
-    if (USE_NEW_PACK) {
-      synchronized(sibs) {  // testing synchronizing on sibs List...
-        GlyphI[] sibarray = sibs.toArray(new GlyphI[sibs.size()]);
+    //TODO: check tread safety.
+    synchronized (sibs) {  // testing synchronizing on sibs List...
+      //TODO: avoid making this copy
+      GlyphI[] sibarray = sibs.toArray(new GlyphI[sibs.size()]);
 
-        sibs.clear();
-        int sibs_size = sibarray.length;
-        for (int i=0; i<sibs_size; i++) {
-          child = sibarray[i];
-          sibs.add(child);  // add children back in one at a time
-          pack(parent, child, view);
-          if (DEBUG_CHECKS)  { System.out.println(child); }
-        }
-      }
-    }
-    else {  // old way
-      int sibs_size = sibs.size();
-      for (int i=0; i<sibs_size; i++) {
-        child = sibs.get(i);
-
-        // MUST CALL moveAbsolute!!!
-        // setCoords() does not guarantee that coord changes will recurse
-        // down through descendants of child!
-
-        // GAH 10-4-99 deal with expansion of parent within child pack...
-        pack(parent, child, view);
-        if (DEBUG_CHECKS)  { System.out.println(child); }
+      sibs.clear();
+      int sibs_size = sibarray.length;
+      for (int i = 0; i < sibs_size; i++) {
+        child = sibarray[i];
+        sibs.add(child);  // add children back in one at a time
+        pack(parent, child);
       }
     }
 
@@ -302,7 +266,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
    * until it no longer reports hitting any of it's siblings.
    */
   @Override
-  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
+  public Rectangle pack(GlyphI parent, GlyphI child) {
     Rectangle2D.Double childbox, siblingbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
@@ -341,10 +305,9 @@ public class ExpandedTierPacker implements PaddedPackerI {
       }
     }
 
-    this.before.x = childbox.x;
-    this.before.y = childbox.y;
-    this.before.width = childbox.width;
-    this.before.height = childbox.height;
+    
+    //TODO: can we re-use code from SiblingCoordAvoid class?
+    before.setRect(childbox);
     boolean childMoved = true;
     while (childMoved) {
       childMoved = false;
@@ -353,30 +316,10 @@ public class ExpandedTierPacker implements PaddedPackerI {
         GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
-        if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }
-        if (child.hit(siblingbox, view) ) {
-          if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
-          if ( child instanceof com.affymetrix.genoviz.glyph.LabelGlyph ) {
-            /* LabelGlyphs cannot be so easily moved as other glyphs.
-             * They will immediately snap back to the glyph they are labeling.
-             * This can cause an infinite loop here.
-             * What's worse is that the "snapping back" may happen outside the loop.
-             * Hence the checking with "before" done below may not always work
-             * for LabelGlyphs.
-             * Someday, we might try changing the LabelGlyph's orientation
-             * to its labeled glyph.
-             * i.e. move it to the other side or inside it's labeled glyph.
-             */
-          }
-          else {
-            Rectangle2D.Double cb = child.getCoordBox();
-            this.before.x = cb.x;
-            this.before.y = cb.y;
-            this.before.width = cb.width;
-            this.before.height = cb.height;
-            moveToAvoid(child, sibling, movetype);
-            childMoved |= ! before.equals(child.getCoordBox());
-          }
+        if (childbox.intersects(siblingbox) ) {
+          before.setRect(child.getCoordBox());
+          moveToAvoid(child, sibling, movetype);
+          childMoved |= ! before.equals(child.getCoordBox());
         }
       }
     }

@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
+*   Copyright (c) 2001-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,13 +11,17 @@
 
 package com.affymetrix.genoviz.tiers;
 
-import java.awt.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 /**
  *  TierGlyph is intended for use with AffyTieredMap.
@@ -40,11 +42,11 @@ public class TierGlyph extends SolidGlyph {
 
   protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 
-  /** glyphs to be drawn in the "middleground" --
+  /* glyphs to be drawn in the "middleground" --
    *    in front of the solid background, but behind the child glyphs
    *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
    */
-  java.util.List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+  List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
   //TODO: make enum
   public static final int HIDDEN = 100;
@@ -184,17 +186,6 @@ public class TierGlyph extends SolidGlyph {
       max_child_sofar = null;
     }
 
-    if (DEBUG_SEARCH && (label.toString().startsWith("test"))) {
-      System.out.println("***** called TierGlyph.initForSearch() on tier: " + getLabel());
-      for (int i=0; i<child_count; i++) {
-	GlyphI curchild = getChild(i);
-	GlyphI maxchild = max_child_sofar.get(i);
-	double max = maxchild.getCoordBox().x + maxchild.getCoordBox().width;
-	System.out.println("child " + i + ", min = " + getChild(i).getCoordBox().x +
-			   ", max including child: " + max);
-      }
-    }
-
     ready_for_searching = true;
   }
 
@@ -226,7 +217,7 @@ public class TierGlyph extends SolidGlyph {
    *      and that max_child_sofar list is also populated
    *      (via TierGlyph.initForSearching() call)
    */
-  public java.util.List getPriorOverlaps(int query_index) {
+  public List<GlyphI> getPriorOverlaps(int query_index) {
     if ((! ready_for_searching)  || (! sorted)) {
       throw new RuntimeException("must call TierGlyph.initForSearching() before " +
 				 "calling TierGlyph.getPriorOverlaps");

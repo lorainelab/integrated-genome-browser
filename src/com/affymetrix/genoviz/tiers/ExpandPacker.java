@@ -13,7 +13,6 @@ package com.affymetrix.genoviz.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
@@ -193,7 +192,7 @@ public class ExpandPacker implements PaddedPackerI {
   }
 
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
     List<GlyphI> sibs = parent.getChildren();
     GlyphI child;
     Rectangle2D.Double cbox;
@@ -225,12 +224,12 @@ public class ExpandPacker implements PaddedPackerI {
 	  // keep track of max x coord of previous sibs -- 
 	  //   if prev_xmax < current glyph's min x, then there won't be any overlap, 
 	  //   so can tell pack() to skip check against previous sibs
-	  boolean prev_overlap = (prev_xmax >  cbox.x);
+	  //boolean prev_overlap = (prev_xmax >  cbox.x);
 	  //	  if (i < 100) { System.out.println("overlap: " + prev_overlap + 
 	  //					    ", parent = " + parent); }
 	  sibs.add(child);  // add children back in one at a time
 	  if (! (child instanceof LabelGlyph)) {
-	    pack(parent, child, view, true);
+	    pack(parent, child, true);
 	  }
 	  ymin = Math.min(cbox.y, ymin);
 	  ymax = Math.max(cbox.y + cbox.height, ymax);
@@ -316,17 +315,17 @@ public class ExpandPacker implements PaddedPackerI {
 
   
   @Override
-  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-    return pack(parent, child, view, true);
+  public Rectangle pack(GlyphI parent, GlyphI child) {
+    return pack(parent, child, true);
   }
 
   /**
-   * packs a child.
+   * Packs a child.
    * This adjusts the child's offset
    * until it no longer reports hitting any of it's siblings.
    */
   public Rectangle pack(GlyphI parent, GlyphI child, 
-			ViewI view, boolean avoid_sibs) {
+			boolean avoid_sibs) {
     //    System.out.println("packing child: " + child);
     Rectangle2D.Double childbox, siblingbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
@@ -343,9 +342,9 @@ public class ExpandPacker implements PaddedPackerI {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    java.util.List<GlyphI> sibs = parent.getChildren();
+    List<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
-    java.util.List<GlyphI> sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
       sibsinrange = new ArrayList<GlyphI>();
@@ -360,15 +359,14 @@ public class ExpandPacker implements PaddedPackerI {
       }
       if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }
     
-      this.before.x = childbox.x;
-      this.before.y = childbox.y;
-      this.before.width = childbox.width;
-      this.before.height = childbox.height;
+      before.setRect(childbox);
     }
     else {
       childMoved = false;
     }
     while (childMoved) {
+      
+      //TODO: compare to SiblingCoordAvoid class
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
@@ -376,7 +374,7 @@ public class ExpandPacker implements PaddedPackerI {
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }
-        if (child.hit(siblingbox, view) ) {
+        if (child.getCoordBox().intersects(siblingbox) ) {
 	  if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
             this.before.setRect(child.getCoordBox());
             moveToAvoid(child, sibling, movetype);

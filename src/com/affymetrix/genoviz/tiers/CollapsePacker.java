@@ -13,7 +13,6 @@ package com.affymetrix.genoviz.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -30,7 +29,7 @@ public class CollapsePacker implements PaddedPackerI {
   protected double spacing = 0;
 
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
     Rectangle2D.Double pbox = parent.getCoordBox();
     List<GlyphI> children = parent.getChildren();
     double maxHeight = 0;
@@ -47,7 +46,7 @@ public class CollapsePacker implements PaddedPackerI {
 
 
     parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
-    moveAllChildren(parent, view);
+    moveAllChildren(parent);
 
     Rectangle2D.Double newbox = new Rectangle2D.Double();
     newbox.setRect(parent.getCoordBox());
@@ -63,13 +62,13 @@ public class CollapsePacker implements PaddedPackerI {
     return null;
   }
 
-  protected void moveAllChildren(GlyphI parent, ViewI view) {
+  protected void moveAllChildren(GlyphI parent) {
     List children = parent.getChildren();
     if (children == null) { return; }
 
     for (int i=0; i<children.size(); i++) {
       GlyphI child = (GlyphI) children.get(i);
-      pack(parent, child, view);
+      pack(parent, child);
     }
   }
 
@@ -100,7 +99,7 @@ public class CollapsePacker implements PaddedPackerI {
   }
 
   @Override
-  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
+  public Rectangle pack(GlyphI parent, GlyphI child) {
     Rectangle2D.Double pbox = parent.getCoordBox();
     Rectangle2D.Double cbox = child.getCoordBox();
     

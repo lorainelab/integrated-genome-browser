@@ -343,7 +343,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     else  {
       children.add(position, glyph);
     }
-    // setParent() also calls setScene()
     glyph.setParent(this);
   }
 
@@ -368,17 +367,11 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
       children.remove(glyph);
       if (children.size() == 0) { children = null; }
     }
-    //glyph.setScene(null);
   }
 
   /** {@inheritDoc} */
   @Override
   public void removeAllChildren() {
-//    if (children != null)  {
-//      for (int i=0; i<children.size(); i++) {
-//        children.get(i).setScene(null);
-//      }
-//    }
     children = null;
   }
 
@@ -405,7 +398,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   @Override
   public void setParent(GlyphI glyph)  {
     parent = glyph;
-    //setScene(glyph.getScene());
   }
 
   /** {@inheritDoc} */
@@ -464,7 +456,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
       y = y + height;
       height = -height;
     }
-    this.setRect(x, y, width, height);
+    setRect(x, y, width, height);
   }
 
   /** {@inheritDoc} */
@@ -481,10 +473,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    */
   @Override
   public void setCoordBox(Rectangle2D.Double coordbox)   {
-    this.x = coordbox.x;
-    this.y = coordbox.y;
-    this.width = coordbox.width;
-    this.height = coordbox.height;
+    setRect(coordbox);
   }
 
   /** For {@link EffGlyph} there is no difference between foreground and background color. */
@@ -567,7 +556,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   @Override
   public void pack(ViewI view) {
     if (packer == null) { return; }
-    packer.pack(this, view);
+    packer.pack(this);
   }
 
   /** {@inheritDoc} */
@@ -586,9 +575,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /** {@inheritDoc} */
   @Override
   public void moveAbsolute(double absx, double absy) {
-    double diffx = absx - this.getX();
-    double diffy = absy - this.getY();
-    this.moveRelative(diffx, diffy);
+    moveRelative(absx - getX(), absy - getY());
   }
 
 

@@ -24,13 +24,9 @@ import java.awt.geom.Rectangle2D;
  * A more memory-efficient base class can be found in 
  * {@link com.affymetrix.genoviz.glypn.efficient.EffGlyph}.
  * See {@link GlyphI} for better documentation of methods.
- * Though it has no drawn appearance of its own, Glyph can also act as an
- * invisible container for other child glyphs.
+ * Though it has no drawn appearance of its own, this base Glyph 
+ * can be used as an invisible container for other child glyphs.
  */
-
-//TODO: Does GlyphI need to know about which Scene it is in?
-// or should it ask the View?
-
 public abstract class Glyph implements GlyphI {
 
   public static enum DrawOrder {
@@ -45,7 +41,6 @@ public abstract class Glyph implements GlyphI {
   protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
   protected Rectangle2D.Double coordbox;
-  private Rectangle2D.Double cb2 = null; // used as a temporary variable
 
   protected Rectangle pixelbox;
   protected int min_pixels_width = 1; //TODO: make part of the style
@@ -442,17 +437,10 @@ public abstract class Glyph implements GlyphI {
         children = null;
       }
     }
-    // null out the scene if glyph is removed
-    //glyph.setScene(null);
   }
 
   @Override
   public void removeAllChildren() {
-//    if (children != null) {
-//      for (int i = 0; i < children.size(); i++) {
-//        children.get(i).setScene(null);
-//      }
-//    }
     children = null;
   }
 
@@ -478,11 +466,6 @@ public abstract class Glyph implements GlyphI {
   @Override
   public void setParent(GlyphI glyph) {
     parent = glyph;
-//    if (glyph != null) {
-//      setScene(glyph.getScene());
-//    } else {
-//      setScene(null);
-//    }
   }
 
   @Override
@@ -646,11 +629,11 @@ public abstract class Glyph implements GlyphI {
   }
 
   @Override
-  public void pack(ViewI view) {
+  public void pack(ViewI view) {//TODO: remove ViewI parameter
     if (packer == null) {
       return;
     }
-    packer.pack(this, view);
+    packer.pack(this);
   }
 
   @Override
@@ -667,24 +650,8 @@ public abstract class Glyph implements GlyphI {
 
   @Override
   public void moveAbsolute(double x, double y) {
-    double diffx = x - coordbox.x;
-    double diffy = y - coordbox.y;
-    this.moveRelative(diffx, diffy);
+    this.moveRelative(x - coordbox.x, y - coordbox.y);
   }
-
-//  public void setScene(SceneII s) {
-//    scene = s;
-//    if (children != null) {
-//      int size = children.size();
-//      for (int i = 0; i < size; i++) {
-//        children.get(i).setScene(s);
-//      }
-//    }
-//  }
-//
-//  public SceneII getScene() {
-//    return scene;
-//  }
 
   protected boolean selectable = true;
 

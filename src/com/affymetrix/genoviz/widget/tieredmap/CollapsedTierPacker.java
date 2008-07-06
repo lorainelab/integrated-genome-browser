@@ -13,8 +13,9 @@ package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 
 public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
@@ -30,7 +31,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
 
   @Override
-  public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
+  public Rectangle pack(GlyphI parent, GlyphI child) {
     double height = child.getCoordBox().height;
     if (height > maxHeight) {
       maxHeight = height;
@@ -47,7 +48,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
 
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
     final java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
     double height;
@@ -65,31 +66,30 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   }
 
   protected void moveOneChild(GlyphI parent, GlyphI child) {
-    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
-    java.awt.geom.Rectangle2D.Double cbox = child.getCoordBox();
+    Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D.Double cbox = child.getCoordBox();
 
     if (alignment == ALIGN_TOP) {
-      double top = pbox.y + parent_spacer;
-      child.moveAbsolute(cbox.x, top);
+      child.moveAbsolute(cbox.x, pbox.y + parent_spacer);
     }
     else if (alignment == ALIGN_BOTTOM) {
-      double bottom = pbox.y + pbox.height - parent_spacer;
+      final double bottom = pbox.y + pbox.height - parent_spacer;
       child.moveAbsolute(cbox.x, bottom - cbox.height);
     }
     else  {  // alignment == ALIGN_CENTER
-      double parent_height = maxHeight + (2 * parent_spacer);
-      double center = pbox.y + parent_height / 2;
+      final double parent_height = maxHeight + (2 * parent_spacer);
+      final double center = pbox.y + parent_height / 2;
       child.moveAbsolute(cbox.x, center - cbox.height/2);
     }
   }
 
   protected void moveAllChildren(GlyphI parent) {
-    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
-    java.util.List<GlyphI> children = parent.getChildren();
+    Rectangle2D.Double pbox = parent.getCoordBox();
+    List<GlyphI> children = parent.getChildren();
     if (children == null) { return; }
     double parent_height = parent.getCoordBox().height;
 
-    java.awt.geom.Rectangle2D.Double cbox;
+    Rectangle2D.Double cbox;
 
     if (alignment == ALIGN_TOP) {
       double top = pbox.y + parent_spacer;
@@ -128,6 +128,4 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   public void setAlignment(int val) {
     alignment = val;
   }
-
-
 }

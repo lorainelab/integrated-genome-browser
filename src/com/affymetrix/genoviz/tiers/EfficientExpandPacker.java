@@ -24,7 +24,7 @@ public class EfficientExpandPacker extends ExpandPacker {
   boolean DEBUG_PACK = false;
 
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
 
     //    System.out.println("begin ExpandPacker.pack(glyph, view)");
     if (! (parent instanceof TierGlyph)) {
@@ -50,7 +50,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       cbox = child.getCoordBox();
       boolean prev_overlap = (prev_xmax > cbox.x);
       if (! (child instanceof LabelGlyph)) {
-	pack(tier, child, index, view, prev_overlap);
+	pack(tier, child, index, prev_overlap);
       }
       ymin = Math.min(cbox.y, ymin);
       ymax = Math.max(cbox.y + cbox.height, ymax);
@@ -118,7 +118,7 @@ public class EfficientExpandPacker extends ExpandPacker {
     return null;
   }
 
-  /**
+  /*
    *  like pack(parent, child, view, avoid_sibs), except 
    *     uses search ability of TierGlyph to speed up collection of sibs that overlap, 
    *     and also requires index of child in parent to optimize
@@ -127,10 +127,9 @@ public class EfficientExpandPacker extends ExpandPacker {
    * until it no longer reports hitting any of it's siblings.
    */
   public Rectangle pack(GlyphI parent, GlyphI child, int child_index, 
-			ViewI view, boolean avoid_sibs) {
+    boolean avoid_sibs) {
     TierGlyph tier = (TierGlyph)parent;
-    boolean test_tier = tier.getLabel().toString().startsWith("test");
-    //    System.out.println("packing child: " + child);
+
     Rectangle2D.Double childbox, siblingbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
@@ -146,17 +145,14 @@ public class EfficientExpandPacker extends ExpandPacker {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    if (DEBUG_PACK && test_tier)  { System.out.println("packing glyph: " + childbox); }
-    java.util.List sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
       sibsinrange = tier.getPriorOverlaps(child_index);
-      if (sibsinrange == null) { childMoved = false; }
-      if (DEBUG_PACK && test_tier)  { System.out.println("sibs in range: " + sibsinrange.size()); }
-      this.before.x = childbox.x;
-      this.before.y = childbox.y;
-      this.before.width = childbox.width;
-      this.before.height = childbox.height;
+      if (sibsinrange == null) {
+        childMoved = false; 
+      }
+      before.setRect(childbox);
     }
     else {
       childMoved = false;
@@ -165,17 +161,11 @@ public class EfficientExpandPacker extends ExpandPacker {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.get(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
-	if (DEBUG_PACK && test_tier)  { System.out.println("checking against: " + sibling); }
-        if (child.hit(siblingbox, view) ) {
-	  if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
-	  Rectangle2D.Double cb = child.getCoordBox();
-	  this.before.x = cb.x;
-	  this.before.y = cb.y;
-	  this.before.width = cb.width;
-	  this.before.height = cb.height;
+        if (child.getCoordBox().intersects(siblingbox) ) {
+          before.setRect(child.getCoordBox());
 	  moveToAvoid(child, sibling, movetype);
 	  childMoved |= ! before.equals(child.getCoordBox()); 
         }
@@ -206,17 +196,13 @@ public class EfficientExpandPacker extends ExpandPacker {
     return null;
   }
 
-
   /**
-   * packs a child.
+   * Packs a child.
    * This adjusts the child's offset
    * until it no longer reports hitting any of it's siblings.
    */
-    @Override
-  public Rectangle pack(GlyphI parent, GlyphI child, 
-			ViewI view, boolean avoid_sibs) {
-    TierGlyph tier = (TierGlyph)parent;
-    //    System.out.println("packing child: " + child);
+  @Override
+  public Rectangle pack(GlyphI parent, GlyphI child, boolean avoid_sibs) {
     Rectangle2D.Double childbox, siblingbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
@@ -250,10 +236,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       //      sibsinrange = tier.getIntersectedChildren(query_glyph);
       if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }
     
-      this.before.x = childbox.x;
-      this.before.y = childbox.y;
-      this.before.width = childbox.width;
-      this.before.height = childbox.height;
+      before.setRect(childbox);
     }
     else {
       childMoved = false;
@@ -266,13 +249,10 @@ public class EfficientExpandPacker extends ExpandPacker {
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }
-        if (child.hit(siblingbox, view) ) {
+        final Rectangle2D childBox = child.getCoordBox();
+        if (childBox.intersects(siblingbox) ) {
 	  if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
-	  Rectangle2D.Double cb = child.getCoordBox();
-	  this.before.x = cb.x;
-	  this.before.y = cb.y;
-	  this.before.width = cb.width;
-	  this.before.height = cb.height;
+          before.setRect(childBox);
 	  moveToAvoid(child, sibling, movetype);
 	  childMoved |= ! before.equals(child.getCoordBox()); 
         }

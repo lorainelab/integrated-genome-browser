@@ -11,7 +11,6 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -32,8 +31,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
    * until it no longer reports hitting any of it's siblings.
    */
   @Override
-  public Rectangle pack(GlyphI parent,
-      GlyphI child, ViewI view) {
+  public Rectangle pack(GlyphI parent, GlyphI child) {
     Rectangle2D.Double childbox, siblingbox;
     childbox = child.getCoordBox();
     List<GlyphI> children = parent.getChildren();
@@ -49,38 +47,20 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
        }
     }
 
-    this.before.x = childbox.x;
-    this.before.y = childbox.y;
-    this.before.width = childbox.width;
-    this.before.height = childbox.height;
+    before.setRect(childbox);
     boolean childMoved = true;
     while (childMoved) {
       childMoved = false;
       for (GlyphI sibling : sibsinrange) {
-        if (sibling == child) { continue; }
+        if (sibling == child) {
+          continue;
+        }
         siblingbox = sibling.getCoordBox();
-        if (child.hit(siblingbox, view) ) {
-          if ( child instanceof LabelGlyph ) {
-            /* LabelGlyphs cannot be so easily moved as other glyphs.
-             * They will immediately snap back to the glyph they are labeling.
-             * This can cause an infinite loop here.
-             * What's worse is that the "snapping back" may happen outside the loop.
-             * Hence the checking with "before" done below may not always work
-             * for LabelGlyphs.
-             * Someday, we might try changing the LabelGlyph's orientation
-             * to its labeled glyph.
-             * i.e. move it to the other side or inside it's labeled glyph.
-             */
-          }
-          else {
-            Rectangle2D.Double cb = child.getCoordBox();
-            this.before.x = cb.x;
-            this.before.y = cb.y;
-            this.before.width = cb.width;
-            this.before.height = cb.height;
-            moveToAvoid(child, sibling, movetype);
-            childMoved |= ! before.equals(child.getCoordBox());
-          }
+        if (child.getCoordBox().intersects(siblingbox)) {
+          Rectangle2D.Double cb = child.getCoordBox();
+          before.setRect(cb);
+          moveToAvoid(child, sibling, movetype);
+          childMoved |= !before.equals(child.getCoordBox());
         }
       }
     }

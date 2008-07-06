@@ -13,7 +13,6 @@ package com.affymetrix.genoviz.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
-import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 
@@ -155,7 +154,7 @@ public class FasterExpandPacker extends EfficientExpandPacker
 
   // PackerI interface (via inheritance from PaddedPackerI
   @Override
-  public Rectangle pack(GlyphI parent, ViewI view) {
+  public Rectangle pack(GlyphI parent) {
     boolean REPORT_SLOT_CHECKS = false;
     List<GlyphI> sibs = parent.getChildren();
     Rectangle2D.Double cbox;

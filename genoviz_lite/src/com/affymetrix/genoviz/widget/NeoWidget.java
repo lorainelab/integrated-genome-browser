@@ -193,11 +193,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 
+  @Override
   public void setExpansionBehavior(int id, int behavior) {
     expansion_behavior[id] = behavior;
     int newid = 0;
     int newbehavior = 0;
-    RootGlyph rglyph = (RootGlyph)scene.getRootGlyph();
+    RootGlyph rglyph = scene.getRootGlyph();
     if (id == X) {
       newid = RootGlyph.X;
     }

@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,9 +11,10 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.util.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 /**
  * Abstract base class for many coordinate-based packers.
@@ -36,16 +35,16 @@ public abstract class AbstractCoordPacker implements PackerI {
   protected java.awt.geom.Rectangle2D.Double before = new java.awt.geom.Rectangle2D.Double();
 
   /**
-   * constructs a packer that moves glyphs away from the horizontal axis.
+   * Constructs a packer that moves glyphs away from the horizontal axis.
    */
   public AbstractCoordPacker() {
     this(NeoConstants.Direction.MIRROR_VERTICAL);
   }
 
   /**
-   * constructs a packer with a given direction to move glyphs.
+   * Constructs a packer with a given direction to move glyphs.
    *
-   * @param movetype indicates which direction the glyph_to_move should move.
+   * @param movetype indicates which direction to move glyphs.
    * @see #setMoveType
    */
   public AbstractCoordPacker(NeoConstants.Direction movetype) {
@@ -53,7 +52,7 @@ public abstract class AbstractCoordPacker implements PackerI {
   }
 
   /**
-   * sets the direction this packer should move glyphs.
+   * Sets the direction this packer should move glyphs.
    *
    * @param movetype indicates which direction the glyph_to_move should move.
    *                 It must be one of UP, DOWN, LEFT, RIGHT,
@@ -64,8 +63,9 @@ public abstract class AbstractCoordPacker implements PackerI {
     this.movetype = movetype;
   }
 
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
-    java.util.List<GlyphI> children = parent.getChildren();
+    List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
     for (GlyphI child : parent.getChildren()) {
       pack(parent, child, view);
@@ -85,10 +85,8 @@ public abstract class AbstractCoordPacker implements PackerI {
    */
   public void setCoordFuzziness(double fuzz) {
     if (fuzz > spacing) {
-      throw new IllegalArgumentException
-          ("Can't set packer fuzziness greater than spacing");
-    }
-    else {
+      throw new IllegalArgumentException("Can't set packer fuzziness greater than spacing");
+    } else {
       coord_fuzziness = fuzz;
     }
   }
@@ -106,10 +104,8 @@ public abstract class AbstractCoordPacker implements PackerI {
    */
   public void setSpacing(double sp) {
     if (sp < coord_fuzziness) {
-      throw new IllegalArgumentException
-          ("Can't set packer spacing less than fuzziness");
-    }
-    else {
+      throw new IllegalArgumentException("Can't set packer spacing less than fuzziness");
+    } else {
       spacing = sp;
     }
   }
@@ -120,9 +116,10 @@ public abstract class AbstractCoordPacker implements PackerI {
 
 
   /**
-   * moves one glyph to avoid another.
+   * Moves one glyph to avoid another.
    * This is called from subclasses
-   * in their <code>pack(parent, glyph, view)</code> methods.
+   * in their {@link #pack(com.affymetrix.genoviz.bioviews.GlyphI, com.affymetrix.genoviz.bioviews.GlyphI, com.affymetrix.genoviz.bioviews.ViewI)} 
+   * methods.
    *
    * @param glyph_to_move
    * @param glyph_to_avoid
@@ -132,8 +129,8 @@ public abstract class AbstractCoordPacker implements PackerI {
   public void moveToAvoid(GlyphI glyph_to_move,
                           GlyphI glyph_to_avoid, 
                           NeoConstants.Direction movetype)  {
-    java.awt.geom.Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
-    java.awt.geom.Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
+    Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+    Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
 
     /*
      * Mirror vertically about the horizontal coordinate axis
@@ -152,7 +149,7 @@ public abstract class AbstractCoordPacker implements PackerI {
         // that have children, since moveAbsolute (and moveRelative)
         // will descend through the glyph hierarchy -- GAH 10-2-97
         glyph_to_move.moveAbsolute(movebox.x,
-                           avoidbox.y - movebox.height - spacing);
+          avoidbox.y - movebox.height - spacing);
       }
 
       /*
@@ -161,7 +158,7 @@ public abstract class AbstractCoordPacker implements PackerI {
        */
       else {
         glyph_to_move.moveAbsolute(movebox.x,
-                           avoidbox.y + avoidbox.height + spacing);
+          avoidbox.y + avoidbox.height + spacing);
       }
     }
 
@@ -172,11 +169,11 @@ public abstract class AbstractCoordPacker implements PackerI {
       if (movebox.x < 0) {
         // move LEFT (decreasing x)
         glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-                           movebox.y);
+          movebox.y);
       }
       else {
         glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-                           movebox.y);
+          movebox.y);
       }
     }
 
@@ -187,7 +184,7 @@ public abstract class AbstractCoordPacker implements PackerI {
      */
     else if (movetype == NeoConstants.Direction.DOWN) {
       glyph_to_move.moveAbsolute(movebox.x,
-                         avoidbox.y + avoidbox.height + spacing);
+        avoidbox.y + avoidbox.height + spacing);
     }
 
     /*
@@ -198,7 +195,7 @@ public abstract class AbstractCoordPacker implements PackerI {
      */
     else if (movetype == NeoConstants.Direction.UP) {
       glyph_to_move.moveAbsolute(movebox.x,
-                         avoidbox.y - movebox.height - spacing);
+        avoidbox.y - movebox.height - spacing);
     }
 
     /*
@@ -208,7 +205,7 @@ public abstract class AbstractCoordPacker implements PackerI {
      */
     else if (movetype == NeoConstants.Direction.RIGHT) {
       glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-                         movebox.y);
+        movebox.y);
     }
 
     /*
@@ -219,12 +216,11 @@ public abstract class AbstractCoordPacker implements PackerI {
      */
     else if (movetype == NeoConstants.Direction.LEFT) {
       glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-                         movebox.y);
+        movebox.y);
     }
     else {
       throw new IllegalArgumentException
           ("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
     }
   }
-
 }

@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -14,9 +12,9 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 
 public class LineStretchContainerGlyph extends Glyph {
 
@@ -26,14 +24,14 @@ public class LineStretchContainerGlyph extends Glyph {
 
 
   /**
-   *  overriding addChild to force children to center on line
+   *  Overrides addChild to force children to center on line.
    */
   @Override
   public void addChild(GlyphI glyph) {
     super.addChild(glyph);
 
     // if first child, then fit to it
-    java.awt.geom.Rectangle2D.Double cbox = glyph.getCoordBox();
+    Rectangle2D.Double cbox = glyph.getCoordBox();
     if (getChildren() == null || getChildren().size() <= 1) {
       this.setCoords(cbox.x, cbox.y, cbox.width, cbox.height);
     }
@@ -71,8 +69,8 @@ public class LineStretchContainerGlyph extends Glyph {
   @Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
-    if (pixelbox.width == 0) { pixelbox.width = 1; }
-    if (pixelbox.height == 0) { pixelbox.height = 1; }
+    if (pixelbox.width < min_pixels_width) { pixelbox.width = min_pixels_width; }
+    if (pixelbox.height < min_pixels_height) { pixelbox.height = min_pixels_height; }
     Graphics g = view.getGraphics();
     g.setColor(getBackgroundColor());
     g.fillRect(pixelbox.x, pixelbox.y+pixelbox.height/2, pixelbox.width, 1);
@@ -87,15 +85,7 @@ public class LineStretchContainerGlyph extends Glyph {
   }
 
   @Override
-  public boolean hit(java.awt.geom.Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible?coord_hitbox.intersects(coordbox):false;
+  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+    return isVisible ? coord_hitbox.intersects(coordbox) : false;
   }
-
-
-  @Override
-  public void pack(ViewI view) {
-    super.pack(view);
-  }
-
-
 }

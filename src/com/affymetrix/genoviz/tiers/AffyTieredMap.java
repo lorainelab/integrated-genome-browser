@@ -181,8 +181,7 @@ public class AffyTieredMap extends NeoMap {
 
     if (fullRepack) {
       for (int i=0; i<tiers.size(); i++) {
-        TierGlyph mtg = tiers.get(i);
-        mtg.pack(getView());
+        tiers.get(i).pack();
       }
     }
 

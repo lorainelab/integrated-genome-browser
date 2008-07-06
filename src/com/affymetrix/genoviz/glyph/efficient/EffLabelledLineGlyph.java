@@ -250,13 +250,13 @@ public class EffLabelledLineGlyph extends EffLabelledGlyph
   }
 
   @Override
-  public void pack(ViewI view) {
+  public void pack() {
     if ( isMoveChildren()) {
       this.adjustChildren();
       // Maybe now need to adjust size of total glyph to take into account
       // any expansion of the children ?
     } else {
-      super.pack(view);
+      super.pack();
     }
   }
 

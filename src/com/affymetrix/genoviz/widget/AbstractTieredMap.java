@@ -187,7 +187,7 @@ public abstract class AbstractTieredMap extends NeoMap
     if (full_repack) {
       for (int i=0; i<tiers.size(); i++) {
         MapTierGlyph mtg = tiers.get(i);
-        mtg.pack(getView());
+        mtg.pack();
       }
     }
 

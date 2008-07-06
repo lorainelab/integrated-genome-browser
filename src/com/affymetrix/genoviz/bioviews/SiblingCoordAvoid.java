@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,9 +11,12 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.util.*;
+import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This packer makes sure siblings do not overlap.
@@ -26,18 +27,19 @@ import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 public class SiblingCoordAvoid extends AbstractCoordPacker {
 
   /**
-   * packs a child.
+   * Packs a child.
    * This adjusts the child's offset
    * until it no longer reports hitting any of it's siblings.
    */
+  @Override
   public Rectangle pack(GlyphI parent,
       GlyphI child, ViewI view) {
-    java.awt.geom.Rectangle2D.Double childbox, siblingbox;
+    Rectangle2D.Double childbox, siblingbox;
     childbox = child.getCoordBox();
-    java.util.List<GlyphI> children = parent.getChildren();
+    List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
 
-    java.util.List<GlyphI> sibsinrange = new LinkedList<GlyphI>();
+    List<GlyphI> sibsinrange = new LinkedList<GlyphI>();
     
     for (GlyphI sibling : children) {
        siblingbox = sibling.getCoordBox();
@@ -58,7 +60,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
         if (child.hit(siblingbox, view) ) {
-          if ( child instanceof com.affymetrix.genoviz.glyph.LabelGlyph ) {
+          if ( child instanceof LabelGlyph ) {
             /* LabelGlyphs cannot be so easily moved as other glyphs.
              * They will immediately snap back to the glyph they are labeling.
              * This can cause an infinite loop here.
@@ -71,7 +73,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
              */
           }
           else {
-            java.awt.geom.Rectangle2D.Double cb = child.getCoordBox();
+            Rectangle2D.Double cb = child.getCoordBox();
             this.before.x = cb.x;
             this.before.y = cb.y;
             this.before.width = cb.width;

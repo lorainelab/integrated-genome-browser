@@ -200,21 +200,27 @@ public class EffLabelledGlyph extends EffSolidGlyph implements LabelledGlyph2  {
     return isVisible?coord_hitbox.intersects(this):false;
   }
 
+  @Override
   public Placement getLabelLocation() { 
       return labelPlacment; 
   }
 
+  @Override
   public void setLabelLocation(Placement loc) {
     labelPlacment = loc;
   }
 
+  @Override
   public boolean getShowLabel() { 
       return show_label; 
   }
+  @Override
   public void setShowLabel(boolean b) {
     show_label = b;
   }
 
+  @Override
   public CharSequence getLabel() { return label; }
+  @Override
   public void setLabel(CharSequence label) { this.label = label; }
 }

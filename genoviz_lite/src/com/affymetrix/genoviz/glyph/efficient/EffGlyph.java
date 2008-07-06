@@ -554,7 +554,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
 
   /** {@inheritDoc} */
   @Override
-  public void pack(ViewI view) {
+  public void pack() {
     if (packer == null) { return; }
     packer.pack(this);
   }

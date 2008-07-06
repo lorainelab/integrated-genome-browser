@@ -367,14 +367,13 @@ public interface GlyphI {
    * <p>
    * It should do nothing when the packer is null.
    * e.g. if setPacker() was never called.
-   *
-   * @param view the view in which to pack the glyph.
    */
-  public void pack(ViewI view);
+  public void pack();
 
 
   public void setForegroundColor(Color color);
   public Color getForegroundColor();
+
   public void setBackgroundColor(Color color);
   public Color getBackgroundColor();
 

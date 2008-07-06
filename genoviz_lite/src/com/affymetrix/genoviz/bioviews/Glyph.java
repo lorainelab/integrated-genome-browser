@@ -629,7 +629,7 @@ public abstract class Glyph implements GlyphI {
   }
 
   @Override
-  public void pack(ViewI view) {//TODO: remove ViewI parameter
+  public void pack() {
     if (packer == null) {
       return;
     }

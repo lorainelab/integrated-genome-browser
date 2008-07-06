@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,12 +11,14 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExpandedTierPacker implements PaddedPackerI {
 
@@ -27,7 +27,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
   protected double coord_fuzziness = 1;
   protected double spacing = 2;
   protected NeoConstants.Direction movetype;
-  protected java.awt.geom.Rectangle2D.Double before = new java.awt.geom.Rectangle2D.Double();
+  protected Rectangle2D.Double before = new Rectangle2D.Double();
 
   boolean STRETCH_HORIZONTAL = true;
   boolean STRETCH_VERTICAL = true;
@@ -101,6 +101,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
    * this is the distance away from glyphA's coordbox
    * that glyphB's coord box will be moved.
    */
+  @Override
   public void setSpacing(double sp) {
     if (sp < coord_fuzziness) {
       throw new IllegalArgumentException
@@ -111,6 +112,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
     }
   }
 
+  @Override
   public double getSpacing() {
     return spacing;
   }
@@ -125,57 +127,51 @@ public class ExpandedTierPacker implements PaddedPackerI {
    * @param movetype indicates which direction the glyph_to_move should move.
    * @see #setMoveType
    */
-  public void moveToAvoid(
-      GlyphI glyph_to_move, GlyphI glyph_to_avoid, NeoConstants.Direction movetype) {
-    java.awt.geom.Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
-    java.awt.geom.Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
-    if ( ! movebox.intersects ( avoidbox ) ) return;
+  public void moveToAvoid(GlyphI glyph_to_move, GlyphI glyph_to_avoid, NeoConstants.Direction movetype) {
+    Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+    Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
+    if (!movebox.intersects(avoidbox)) {
+      return;
+    }
     if (movetype == NeoConstants.Direction.MIRROR_VERTICAL) {
       if (movebox.y < 0) {
         glyph_to_move.moveAbsolute(movebox.x,
-            avoidbox.y - movebox.height - spacing);
-      }
-      else {
+          avoidbox.y - movebox.height - spacing);
+      } else {
         glyph_to_move.moveAbsolute(movebox.x,
-            avoidbox.y + avoidbox.height + spacing);
+          avoidbox.y + avoidbox.height + spacing);
       }
-    }
-    else if (movetype == NeoConstants.Direction.MIRROR_HORIZONTAL) {
+    } else if (movetype == NeoConstants.Direction.MIRROR_HORIZONTAL) {
       if (movebox.x < 0) {
         glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-            movebox.y);
-      }
-      else {
+          movebox.y);
+      } else {
         glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-            movebox.y);
+          movebox.y);
       }
-    }
-    else if (movetype == NeoConstants.Direction.DOWN) {
+    } else if (movetype == NeoConstants.Direction.DOWN) {
       glyph_to_move.moveAbsolute(movebox.x,
-          avoidbox.y + avoidbox.height + spacing);
-    }
-    else if (movetype == NeoConstants.Direction.UP) {
+        avoidbox.y + avoidbox.height + spacing);
+    } else if (movetype == NeoConstants.Direction.UP) {
       glyph_to_move.moveAbsolute(movebox.x,
-          avoidbox.y - movebox.height - spacing);
-    }
-    else if (movetype == NeoConstants.Direction.RIGHT) {
+        avoidbox.y - movebox.height - spacing);
+    } else if (movetype == NeoConstants.Direction.RIGHT) {
       glyph_to_move.moveAbsolute(avoidbox.x + avoidbox.width + spacing,
-          movebox.y);
-    }
-    else if (movetype == NeoConstants.Direction.LEFT) {
+        movebox.y);
+    } else if (movetype == NeoConstants.Direction.LEFT) {
       glyph_to_move.moveAbsolute(avoidbox.x - movebox.width - spacing,
-          movebox.y);
-    }
-    else {
-      throw new IllegalArgumentException
-        ("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
+        movebox.y);
+    } else {
+      throw new IllegalArgumentException("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
     }
   }
 
+  @Override
   public void setParentSpacer(double spacer) {
     this.parent_spacer = spacer;
   }
 
+  @Override
   public double getParentSpacer() {
     return parent_spacer;
   }
@@ -188,8 +184,9 @@ public class ExpandedTierPacker implements PaddedPackerI {
     return STRETCH_HORIZONTAL;
   }
 
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
-    java.util.List<GlyphI> sibs;
+    List<GlyphI> sibs;
     GlyphI child;
 
     sibs = parent.getChildren();
@@ -198,7 +195,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
     /*
      *  child packing
      */
-    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D.Double pbox = parent.getCoordBox();
 
     // resetting height of parent to just spacers
     parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
@@ -263,8 +260,8 @@ public class ExpandedTierPacker implements PaddedPackerI {
       parent.setCoords(pbox.x, pbox.y, pbox.width, parent_spacer);
       return null;
     }
-    java.awt.geom.Rectangle2D.Double newbox = new java.awt.geom.Rectangle2D.Double();
-    java.awt.geom.Rectangle2D.Double tempbox = new java.awt.geom.Rectangle2D.Double();
+    Rectangle2D.Double newbox = new Rectangle2D.Double();
+    Rectangle2D.Double tempbox = new Rectangle2D.Double();
     child = sibs.get(0);
     newbox.setRect(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
@@ -278,7 +275,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
         child = sibs.get(i);
-        java.awt.geom.Rectangle2D.Double childbox = child.getCoordBox();
+        Rectangle2D.Double childbox = child.getCoordBox();
         tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
         GeometryUtils.union(newbox, tempbox, newbox);
       }
@@ -304,41 +301,44 @@ public class ExpandedTierPacker implements PaddedPackerI {
    * This adjusts the child's offset
    * until it no longer reports hitting any of it's siblings.
    */
+  @Override
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-    java.awt.geom.Rectangle2D.Double childbox, siblingbox;
-    java.awt.geom.Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D.Double childbox, siblingbox;
+    Rectangle2D.Double pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
     if (movetype == NeoConstants.Direction.UP) {
       child.moveAbsolute(childbox.x,
-                         pbox.y + pbox.height - childbox.height - parent_spacer);
-    }
-    else {
+        pbox.y + pbox.height - childbox.height - parent_spacer);
+    } else {
       // assuming if movetype != UP then it is DOWN
       //    (ignoring LEFT, RIGHT, MIRROR_VERTICAL, etc. for now)
-      child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
+      child.moveAbsolute(childbox.x, pbox.y + parent_spacer);
     }
     childbox = child.getCoordBox();
 
-    java.util.List<? extends GlyphI> sibs = parent.getChildren();
-    if (sibs == null) { return null; }
+    List<? extends GlyphI> sibs = parent.getChildren();
+    if (sibs == null) {
+      return null;
+    }
 
-    java.util.List<GlyphI> sibsinrange;
+    List<GlyphI> sibsinrange;
 
     if (parent instanceof MapTierGlyph && use_search_nodes) {
-      sibsinrange = ((MapTierGlyph)parent).getOverlappingSibs(child);
-    }
-    else {
+      sibsinrange = ((MapTierGlyph) parent).getOverlappingSibs(child);
+    } else {
       sibsinrange = new ArrayList<GlyphI>();
       int sibs_size = sibs.size();
-      for (int i=0; i<sibs_size; i++) {
+      for (int i = 0; i < sibs_size; i++) {
         GlyphI sibling = sibs.get(i);
         siblingbox = sibling.getCoordBox();
-        if (!(siblingbox.x > (childbox.x+childbox.width) ||
-              ((siblingbox.x+siblingbox.width) < childbox.x)) ) {
+        if (!(siblingbox.x > (childbox.x + childbox.width) ||
+          ((siblingbox.x + siblingbox.width) < childbox.x))) {
           sibsinrange.add(sibling);
         }
       }
-      if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }
+      if (DEBUG_CHECKS) {
+        System.out.println("sibs in range: " + sibsinrange.size());
+      }
     }
 
     this.before.x = childbox.x;
@@ -369,7 +369,7 @@ public class ExpandedTierPacker implements PaddedPackerI {
              */
           }
           else {
-            java.awt.geom.Rectangle2D.Double cb = child.getCoordBox();
+            Rectangle2D.Double cb = child.getCoordBox();
             this.before.x = cb.x;
             this.before.y = cb.y;
             this.before.width = cb.width;
@@ -402,5 +402,4 @@ public class ExpandedTierPacker implements PaddedPackerI {
 
     return null;
   }
-
 }

@@ -1,11 +1,9 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -13,11 +11,14 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.Rectangle;
+
 
 public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
+  //TODO: Use an enum
   public static int ALIGN_TOP = 1000;
   public static int ALIGN_BOTTOM = 1001;
   public static int ALIGN_CENTER = 1002;
@@ -28,6 +29,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   protected double parent_spacer = 2;
 
 
+  @Override
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
     double height = child.getCoordBox().height;
     if (height > maxHeight) {
@@ -44,6 +46,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
   }
 
 
+  @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
     final java.util.List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
@@ -112,10 +115,12 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
     }
   }
 
+  @Override
   public void setParentSpacer(double spacer) {
     this.parent_spacer = spacer;
   }
 
+  @Override
   public double getParentSpacer() {
     return parent_spacer;
   }

@@ -11,6 +11,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * An object implementing this interface
@@ -31,9 +32,9 @@ public interface TransformI extends Cloneable  {
    * in the given dimension.
    *
    * @param dim the dimension
-   * @param in the coordinate to be transformed
+   * @param in the coordinate value to be transformed
    *
-   * @return the coordinate transformed
+   * @return the transformed coordinate value
    */
   public double transform(WidgetAxis dim, double in);
 
@@ -41,9 +42,9 @@ public interface TransformI extends Cloneable  {
    * Inverts a single coordinate transformation.
    *
    * @param dim the dimension
-   * @param in the coordinate to be transformed
+   * @param in the coordinate value to be transformed
    *
-   * @return the coordinate transformed
+   * @return the transformed coordinate value
    */
   public double inverseTransform(WidgetAxis dim, double in);
 
@@ -52,9 +53,9 @@ public interface TransformI extends Cloneable  {
    * Transforms a Point2D.
    *
    * @param src the point to transform
-   * @param dst the point transformed
+   * @param dst the transformed point
    *
-   * @return the point transformed
+   * @return the transformed point
    */
   public Point2D.Double transform(Point2D.Double src, Point2D.Double dst);
 
@@ -62,9 +63,9 @@ public interface TransformI extends Cloneable  {
    * Inverts the transformation of a Point2D.
    *
    * @param src the point to transform
-   * @param dst the point transformed
+   * @param dst the transformed point
    *
-   * @return the point transformed
+   * @return the transformed point
    */
   public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst);
 
@@ -72,43 +73,27 @@ public interface TransformI extends Cloneable  {
    * Transforms a rectangle.
    *
    * @param src the rectangle to transform
-   * @param dst the rectangle transformed
+   * @param dst the transformed rectangle
    *
-   * @return the rectangle transformed
+   * @return the transformed rectangle
    */
-  public java.awt.geom.Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
+  public Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
 
   /**
    * Inverts the transformation of a rectangle.
    *
    * @param src the rectangle to transform
-   * @param dst the rectangle transformed
+   * @param dst the transformed rectangle
    *
-   * @return the rectangle transformed
+   * @return the transformed rectangle
    */
-  public java.awt.geom.Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
-
-  /**
-   * Appends one transformation to another
-   * to build a cumulative transformation.
-   */
-  public void append(TransformI Tx);
-
-  /**
-   * prepends one transformation to another
-   * to build a cumulative transformation.
-   */
-  public void prepend(TransformI Tx);
+  public Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
 
   /**
    * Creates a clone of the TransormI.
    *
    * @return the new clone.
    */
-  public Object clone() throws CloneNotSupportedException;
+  public TransformI clone() throws CloneNotSupportedException;
 
-  /**
-   * Establishes equality of a transform.
-   */
-  public boolean equals(TransformI Tx);
 }

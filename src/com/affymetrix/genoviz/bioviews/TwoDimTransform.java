@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
  * a "NonInvertableException"
  * of some sort.
  */
-public interface TransformI extends Cloneable  {
+public interface TwoDimTransform extends Cloneable  {
 
   /**
    * Transforms a single coordinate
@@ -94,6 +94,6 @@ public interface TransformI extends Cloneable  {
    *
    * @return the new clone.
    */
-  public TransformI clone() throws CloneNotSupportedException;
+  public TwoDimTransform clone() throws CloneNotSupportedException;
 
 }

@@ -62,7 +62,7 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
     Graphics2D g = view.getGraphics();
     FontMetrics fm = g.getFontMetrics(getResidueFont());
 
-    double pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
+    double pixels_per_base = ((LinearTwoDimTransform)view.getTransform()).getScaleX();
 
     int font_width = AbstractResiduesGlyph.getMaxCharacterWidth(fm);
     if (((double)((int)pixels_per_base) == pixels_per_base) &&

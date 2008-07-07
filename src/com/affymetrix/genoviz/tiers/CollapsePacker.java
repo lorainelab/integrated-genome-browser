@@ -12,7 +12,7 @@
 package com.affymetrix.genoviz.tiers;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -54,7 +54,7 @@ public class CollapsePacker implements PaddedPackerI {
     //   (since packing is done base on tier's children)
     if (parent instanceof TransformTierGlyph)  {
       TransformTierGlyph transtier = (TransformTierGlyph)parent;
-      LinearTransform tier_transform = transtier.getTransform();
+      LinearTwoDimTransform tier_transform = transtier.getTransform();
       tier_transform.transform(newbox, newbox);
     }
     parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);

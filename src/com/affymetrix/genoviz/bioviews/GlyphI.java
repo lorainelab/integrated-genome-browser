@@ -446,7 +446,7 @@ public interface GlyphI {
 //   *    getChildTransform() of parent)
 //   */
 //  //TODO: delete
-//  public boolean getGlobalTransform(ViewI view, LinearTransform trans);
+//  public boolean getGlobalTransform(ViewI view, LinearTwoDimTransform trans);
 
   /**
    *  Given the input transform, modify to "relative" transform that should
@@ -455,7 +455,7 @@ public interface GlyphI {
    *     implement nested transforms or other manipulations that
    *     may modify transform that needs to be applied to glyph.
    */
-  public void getChildTransform(ViewI view, LinearTransform trans);
+  public void getChildTransform(ViewI view, LinearTwoDimTransform trans);
 
 //  /**
 //   *  Given a view, manipulate trans so that it is the global
@@ -465,7 +465,7 @@ public interface GlyphI {
 //   *     but some glyph's implement nested transforms or other manipulations
 //   *     that may modify transform that needs to be applied to glyph.
 //   */
-//  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans);
+//  public boolean getGlobalChildTransform(ViewI view, LinearTwoDimTransform trans);
 
   public boolean withinView(ViewI view);
 }

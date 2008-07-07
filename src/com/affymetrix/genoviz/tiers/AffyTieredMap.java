@@ -82,7 +82,7 @@ public class AffyTieredMap extends NeoMap {
   }
 
   public AffyTieredMap(boolean hscroll, boolean vscroll, Orientation orient) {
-    super(hscroll, vscroll, orient, new LinearTransform());
+    super(hscroll, vscroll, orient, new LinearTwoDimTransform());
     show_plus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_plus));
     show_minus_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_minus));
     show_mixed_action.putValue(Action.SELECTED_KEY, Boolean.valueOf(show_mixed));
@@ -405,7 +405,7 @@ public class AffyTieredMap extends NeoMap {
    *     to take into account fixed pixel tiers.
    */
   @Override
-  public LinearTransform calcFittedTransform() {
+  public LinearTwoDimTransform calcFittedTransform() {
     /*
        // hmm -- really would be best to calculate min and max zoom based on
        // coord sizes of non-fixed-pixel tiers compared against pixel size of canvas MINUS
@@ -434,7 +434,7 @@ public class AffyTieredMap extends NeoMap {
        //                      adjustment for fixed pixel tiers somehow factored in???
        //    (not worrying about max zoom yet...)
     */
-    LinearTransform new_trans = super.calcFittedTransform();
+    LinearTwoDimTransform new_trans = super.calcFittedTransform();
     if (fixed_coord_height == 0)  { return new_trans; }
     //    if (fixed_pixel_height == 0)  { return new_trans; }
     //    double prevmin = getMinZoom(this.Secondary);

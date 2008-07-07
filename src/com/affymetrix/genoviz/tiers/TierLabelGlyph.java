@@ -369,7 +369,7 @@ public class TierLabelGlyph extends SolidGlyph {
   Point curr_point = new Point(0,0);
   Point prev_point = new Point(0,0);
   Point scratch_point = new Point(0,0);
-  LinearTransform scratch_trans = new LinearTransform();
+  LinearTwoDimTransform scratch_trans = new LinearTwoDimTransform();
 
   Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
   Rectangle label_pix_box = new Rectangle();

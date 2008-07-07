@@ -72,7 +72,7 @@ public class WingedSequenceGlyph extends SequenceGlyph {
       scratchrect.setRect(visible_seq_beg,  coordbox.y,
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
-      pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
+      pixels_per_base = ((LinearTwoDimTransform)view.getTransform()).getScaleX();
       bases_per_pixel = 1/pixels_per_base;
       int seq_pixel_offset = pixelbox.x;
       int seq_pixel_width =  pixelbox.width;
@@ -92,7 +92,7 @@ public class WingedSequenceGlyph extends SequenceGlyph {
       g.setColor( getForegroundColor() );
 
       int fullwidth;
-      fullwidth = (int) ( ( (LinearTransform)view.getTransform() ).getScaleX() * coordbox.width );
+      fullwidth = (int) ( ( (LinearTwoDimTransform)view.getTransform() ).getScaleX() * coordbox.width );
       if ( pixels_per_base < 1 ) {  return;
       }
 

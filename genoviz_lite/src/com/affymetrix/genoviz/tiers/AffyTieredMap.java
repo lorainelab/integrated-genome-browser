@@ -14,10 +14,9 @@ package com.affymetrix.genoviz.tiers;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-
 import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.widget.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 
@@ -391,7 +390,7 @@ public class AffyTieredMap extends NeoMap {
     if (zoomtrans[ordinal] == null) {
       return;
     }
-    zoomer_scale[ordinal] = zoomtrans[ordinal].transform(dim, zoomer_value[ordinal]);
+    zoomer_scale[ordinal] = zoomtrans[ordinal].transform(zoomer_value[ordinal]);
     if (scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_PIXELS ||
         scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_ALL) {
       if (zoomer_scale[ordinal] >= 1)  {

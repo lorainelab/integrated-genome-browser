@@ -14,9 +14,9 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
+import com.affymetrix.genoviz.bioviews.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;
@@ -314,12 +314,12 @@ public interface NeoMapI extends NeoWidgetI {
    * Sets the transform of the scrollbar specified by id
    * to the specified transform.
    *
-   * @param dim    the orientation ({@link NeoWidget#X} or {@link NeoWidget#Y}) of the scrollbar to
-   *              receive the specified transform.
-   * @param trans the Transform to be applied to the values of the
+   * @param dim  the axis of the scrollbar to
+   *             receive the specified transform.
+   * @param trans the transform to be applied to the values of the
    *              scrollbar.
    */
-  public void setScrollTransform(WidgetAxis dim, TransformI trans);
+  public void setScrollTransform(WidgetAxis dim, OneDimTransform trans);
 
   /**
    * sets the bounds for the given axis on the map.

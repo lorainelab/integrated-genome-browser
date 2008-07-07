@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
-import com.affymetrix.genoviz.bioviews.ExponentialTransform;
+import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
@@ -760,11 +760,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
       // the maximum for the value is really the scrollbar maximum minus
       // the visible amount (the thumb)
-      zoomtrans[X] = new ExponentialTransform
-        (min_pixels_per_coord[X],
-         max_pixels_per_coord[X],
-         zoomer[X].getMinimum(),
-         zoomer[X].getMaximum()-zoomer[X].getExtent());
+      zoomtrans[X] = new ExponentialOneDimTransform(
+        min_pixels_per_coord[X],
+        max_pixels_per_coord[X],
+        zoomer[X].getMinimum(),
+        zoomer[X].getMaximum()-zoomer[X].getExtent());
 
       adjustZoomer(WidgetAxis.Primary);
     }
@@ -774,12 +774,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
       // the maximum for the value is really the scrollbar maximum minus
       // the visible amount (the thumb)
-      zoomtrans[Y] = new ExponentialTransform
-        (min_pixels_per_coord[Y],
-         max_pixels_per_coord[Y],
-         zoomer[Y].getMinimum(),
-         // zoomer[Secondary].getMaximum() );
-         zoomer[Y].getMaximum()-zoomer[Y].getExtent());
+      zoomtrans[Y] = new ExponentialOneDimTransform(
+        min_pixels_per_coord[Y],
+        max_pixels_per_coord[Y],
+        zoomer[Y].getMinimum(),
+        zoomer[Y].getMaximum()-zoomer[Y].getExtent());
       adjustZoomer(WidgetAxis.Secondary);
     }
     adjustScroller(WidgetAxis.Secondary);

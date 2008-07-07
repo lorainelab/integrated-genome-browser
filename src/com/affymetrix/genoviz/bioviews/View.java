@@ -87,7 +87,7 @@ public class View implements ViewI, NeoPaintListener,
   protected ViewI full_view = null;
 
   protected SceneII scene;
-  protected TwoDimTransform transform;
+  protected LinearTwoDimTransform transform;
 
   protected NeoCanvas component;
 
@@ -115,7 +115,7 @@ public class View implements ViewI, NeoPaintListener,
   protected boolean scrolling_optimized = false;
   protected boolean damage_optimized = false;
 
-  protected TwoDimTransform lastTransform;  // copy of transform from last draw
+  protected LinearTwoDimTransform lastTransform;  // copy of transform from last draw
   // I think prevCalcCoordBox can be replaced with prevCoordBox -- GAH 8/4/97
   protected Rectangle2D.Double prevCalcCoordBox;
   protected Rectangle2D.Double prevCoordBox;
@@ -193,7 +193,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public void setTransform (TwoDimTransform transform)  {
+  public void setTransform(LinearTwoDimTransform transform)  {
     this.transform = transform;
   }
 
@@ -201,7 +201,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public TwoDimTransform getTransform ()  {
+  public LinearTwoDimTransform getTransform()  {
     return this.transform;
   }
 
@@ -298,7 +298,7 @@ public class View implements ViewI, NeoPaintListener,
     if (DEBUG_VIEWBOX) {
       transformToCoords(pixelbox, getCoordBox());
       System.out.println("Scale: " +
-          ((LinearTwoDimTransform)transform).getScaleX() + ", " +
+          transform.getScaleX() + ", " +
           getCoordBox() + ", " + getPixelBox());
     }
 
@@ -541,8 +541,8 @@ public class View implements ViewI, NeoPaintListener,
 
     //    b. only one translation has changed (not both X and Y)
     LinearTwoDimTransform currTransform, prevTransform;
-    currTransform = (LinearTwoDimTransform)transform;
-    prevTransform = (LinearTwoDimTransform)lastTransform;
+    currTransform = transform;
+    prevTransform = lastTransform;
     boolean xunchanged, yunchanged;
     xunchanged =  (currTransform.getOffsetX() == prevTransform.getOffsetX());
     yunchanged =  (currTransform.getOffsetY() == prevTransform.getOffsetY());

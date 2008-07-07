@@ -127,7 +127,7 @@ public interface ViewI  {
    *  Sets the {@link TwoDimTransform} that is used to transform widget coordinates 
    *  to pixels and vice versa (via an inverse transform).
    */
-  public void setTransform(TwoDimTransform t);
+  public void setTransform(LinearTwoDimTransform t);
 
   /**
    *  Returns the {@link TwoDimTransform} that is used to transform widget coordinates to

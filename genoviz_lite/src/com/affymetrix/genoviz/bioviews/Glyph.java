@@ -710,18 +710,18 @@ public abstract class Glyph implements GlyphI {
 //   *  Set trans to global transform for this glyph.
 //   *  (Based on getChildTransform() of parent.)
 //   */
-//  public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
-//    trans.copyTransform((LinearTransform) view.getTransform());
+//  public boolean getGlobalTransform(ViewI view, LinearTwoDimTransform trans) {
+//    trans.copyTransform((LinearTwoDimTransform) view.getTransform());
 //    return getParent().getGlobalChildTransform(view, trans);
 //  }
 
   /** Default implementation does nothing. */
   @Override
-  public void getChildTransform(ViewI view, LinearTransform trans) {
+  public void getChildTransform(ViewI view, LinearTwoDimTransform trans) {
     return;
   }
 
-//  public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {
+//  public boolean getGlobalChildTransform(ViewI view, LinearTwoDimTransform trans) {
 //    Stack<GlyphI> glstack = new Stack<GlyphI>();
 //    GlyphI rootgl = ((SceneII) view.getScene()).getRootGlyph(); //TODO: unchecked cast
 //    GlyphI gl = this;
@@ -734,7 +734,7 @@ public abstract class Glyph implements GlyphI {
 //      }
 //      glstack.push(gl);
 //    }
-//    trans.copyTransform((LinearTransform) view.getTransform());
+//    trans.copyTransform((LinearTwoDimTransform) view.getTransform());
 //    while (!(glstack.empty())) {
 //      gl = glstack.pop();
 //      gl.getChildTransform(view, trans);

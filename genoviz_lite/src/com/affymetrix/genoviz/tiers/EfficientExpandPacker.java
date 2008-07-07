@@ -108,7 +108,7 @@ public class EfficientExpandPacker extends ExpandPacker {
     //   (since packing is done base on tier's children)
     if (tier instanceof TransformTierGlyph)  {
       TransformTierGlyph transtier = (TransformTierGlyph)tier;
-      LinearTransform tier_transform = transtier.getTransform();
+      LinearTwoDimTransform tier_transform = transtier.getTransform();
       tier_transform.transform(newbox, newbox);
     }
 

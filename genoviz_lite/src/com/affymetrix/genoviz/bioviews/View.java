@@ -87,7 +87,7 @@ public class View implements ViewI, NeoPaintListener,
   protected ViewI full_view = null;
 
   protected SceneII scene;
-  protected TransformI transform;
+  protected TwoDimTransform transform;
 
   protected NeoCanvas component;
 
@@ -115,7 +115,7 @@ public class View implements ViewI, NeoPaintListener,
   protected boolean scrolling_optimized = false;
   protected boolean damage_optimized = false;
 
-  protected TransformI lastTransform;  // copy of transform from last draw
+  protected TwoDimTransform lastTransform;  // copy of transform from last draw
   // I think prevCalcCoordBox can be replaced with prevCoordBox -- GAH 8/4/97
   protected Rectangle2D.Double prevCalcCoordBox;
   protected Rectangle2D.Double prevCoordBox;
@@ -145,7 +145,7 @@ public class View implements ViewI, NeoPaintListener,
   public View()  {
     full_view = this;
     // transforms initialized to Identity transform
-    transform = new LinearTransform();
+    transform = new LinearTwoDimTransform();
     timecheck = new com.affymetrix.genoviz.util.Timer();
     pixelbox = new Rectangle();
 
@@ -193,7 +193,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public void setTransform (TransformI transform)  {
+  public void setTransform (TwoDimTransform transform)  {
     this.transform = transform;
   }
 
@@ -201,7 +201,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public TransformI getTransform ()  {
+  public TwoDimTransform getTransform ()  {
     return this.transform;
   }
 
@@ -277,7 +277,7 @@ public class View implements ViewI, NeoPaintListener,
 
     // public synchronized void draw()  {
     boolean drawn = false;
-    //    System.out.println("scale = " + ((LinearTransform)transform).getScaleX());
+    //    System.out.println("scale = " + ((LinearTwoDimTransform)transform).getScaleX());
     drawCount++;
     if (isTimed) {
       timecheck.start();
@@ -298,7 +298,7 @@ public class View implements ViewI, NeoPaintListener,
     if (DEBUG_VIEWBOX) {
       transformToCoords(pixelbox, getCoordBox());
       System.out.println("Scale: " +
-          ((LinearTransform)transform).getScaleX() + ", " +
+          ((LinearTwoDimTransform)transform).getScaleX() + ", " +
           getCoordBox() + ", " + getPixelBox());
     }
 
@@ -352,7 +352,7 @@ public class View implements ViewI, NeoPaintListener,
       lastTransform = transform.clone();
     }
     catch (CloneNotSupportedException e) {
-      // This can never happen as long as TransformI extends Cloneable.
+      // This can never happen as long as TwoDimTransform extends Cloneable.
     }
     if (isTimed) {
       timecheck.print();
@@ -531,8 +531,8 @@ public class View implements ViewI, NeoPaintListener,
 
     //    a. both transforms are linear
     if (optscroll_checkLinTrans &&
-        (!(transform instanceof LinearTransform &&
-           lastTransform instanceof LinearTransform)) ) {
+        (!(transform instanceof LinearTwoDimTransform &&
+           lastTransform instanceof LinearTwoDimTransform)) ) {
       if (DEBUG_SCROLL_CHECKS)  {
         System.out.println("Not LinearTransforms, doing normal draw instead");
       }
@@ -540,9 +540,9 @@ public class View implements ViewI, NeoPaintListener,
     }
 
     //    b. only one translation has changed (not both X and Y)
-    LinearTransform currTransform, prevTransform;
-    currTransform = (LinearTransform)transform;
-    prevTransform = (LinearTransform)lastTransform;
+    LinearTwoDimTransform currTransform, prevTransform;
+    currTransform = (LinearTwoDimTransform)transform;
+    prevTransform = (LinearTwoDimTransform)lastTransform;
     boolean xunchanged, yunchanged;
     xunchanged =  (currTransform.getOffsetX() == prevTransform.getOffsetX());
     yunchanged =  (currTransform.getOffsetY() == prevTransform.getOffsetY());

@@ -473,7 +473,7 @@ public class AxisGlyph extends Glyph {
   public void draw(ViewI view) {
     String label = null;
     int axis_loc;
-    TransformI cumulative;
+    TwoDimTransform cumulative;
     int axis_length;
 
     FontMetrics fm=null;

@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 
 import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -212,7 +212,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show) {
     this(hscroll_show, vscroll_show, NeoConstants.Orientation.Horizontal,
-         new LinearTransform());
+         new LinearTwoDimTransform());
   }
 
   /**
@@ -225,7 +225,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show, String hscroll_location, String vscroll_location) {
     this(hscroll_show, vscroll_show, NeoConstants.Orientation.Horizontal,
-         new LinearTransform(), hscroll_location, vscroll_location);
+         new LinearTwoDimTransform(), hscroll_location, vscroll_location);
   }
 
   /**
@@ -235,7 +235,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * or {@link com.affymetrix.genoviz.util.NeoConstants.Orientation#Vertical}. 
    */
   public NeoMap(NeoConstants.Orientation orient) {
-    this(true, true, orient, new LinearTransform());
+    this(true, true, orient, new LinearTwoDimTransform());
   }
 
   /**
@@ -245,10 +245,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param hscroll_show determines whether or not to show a horizontal scrollbar.
    * @param vscroll_show determines whether or not to show a vertical scrollbar.
    * @param orient must be {@link Orientation#Horizontal} or {@link Orientation#Vertical}.
-   * @param tr LinearTransform for zooming.
+   * @param tr LinearTwoDimTransform for zooming.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show,
-    NeoConstants.Orientation orient, LinearTransform tr) {
+    NeoConstants.Orientation orient, LinearTwoDimTransform tr) {
     // use default hscroll_loc and vscroll_loc
     this(hscroll_show, vscroll_show, orient, tr, hscroll_default_loc, vscroll_default_loc);
   }
@@ -259,12 +259,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param hscroll_show determines whether or not to show a horizontal scrollbar
    * @param vscroll_show determines whether or not to show a vertical scrollbar
    * @param orient must be {@link Orientation#Horizontal} or {@link Orientation#Vertical}.
-   * @param tr LinearTransform for zooming
+   * @param tr LinearTwoDimTransform for zooming
    * @param hscroll_location can be "North", otherwise "South" is assumed.
    * @param vscroll_location can be "West", otherwise "East" is assumed.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show,
-      NeoConstants.Orientation orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
+      NeoConstants.Orientation orient, LinearTwoDimTransform tr, String hscroll_location, String vscroll_location) {
     super();
     this.hscroll_show = hscroll_show;
     this.vscroll_show = vscroll_show;
@@ -639,7 +639,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
                          ", " + canvas);
     }
     scene.maxDamage();  // max out scene damage to ensure full redraw
-    trans = (LinearTransform)view.getTransform();
+    trans = (LinearTwoDimTransform)view.getTransform();
     double xscale, xoffset, yscale, yoffset;
     xscale = trans.getScaleX();
     xoffset = trans.getOffsetX();
@@ -789,8 +789,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   }
 
-  public LinearTransform calcFittedTransform() {
-    LinearTransform new_trans = new LinearTransform();
+  public LinearTwoDimTransform calcFittedTransform() {
+    LinearTwoDimTransform new_trans = new LinearTwoDimTransform();
     new_trans.fit(scene.getCoordBox(), view.getPixelBox());
     return new_trans;
   }

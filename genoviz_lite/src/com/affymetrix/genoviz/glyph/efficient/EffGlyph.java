@@ -631,7 +631,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
 
   /** Default implementation does nothing. */
   @Override
-  public void getChildTransform(ViewI view, LinearTransform trans) {
+  public void getChildTransform(ViewI view, LinearTwoDimTransform trans) {
     return;
   }
 

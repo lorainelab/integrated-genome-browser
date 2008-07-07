@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 
 import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
 import com.affymetrix.genoviz.bioviews.OneDimLinearTransform;
 import com.affymetrix.genoviz.bioviews.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
@@ -72,7 +72,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected SceneII scene;
 
   protected View view;
-  protected LinearTransform trans;
+  protected LinearTwoDimTransform trans;
 
   private int pixel_beg[] = new int[2];
   private int pixel_end[] = new int[2];
@@ -107,7 +107,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   //    the scene's coord box as local variables
 
   // caching transform values
-  //    LinearTransform is:
+  //    LinearTwoDimTransform is:
   //      pixel_loc = (pixels_per_coord * coord_loc) + pixel_offset
   protected double pixels_per_coord[] = new double[2];
   protected double pixel_offset[] = new double[2];
@@ -136,7 +136,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     this.setScrollIncrementBehavior(WidgetAxis.Secondary,NO_AUTO_SCROLL_INCREMENT);
 
     // start with default identity linear transform
-    trans = new LinearTransform();
+    trans = new LinearTwoDimTransform();
 
     // adding name for common default color -- should probably be in a static
     //  class initialization method

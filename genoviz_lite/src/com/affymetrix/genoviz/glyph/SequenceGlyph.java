@@ -153,7 +153,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph {
       scratchrect.setRect(coordbox.x, visible_seq_beg,
           coordbox.width, visible_seq_span);
       view.transformToPixels(scratchrect, pixelbox);
-      pixels_per_base = ((LinearTransform)view.getTransform()).getScaleY();
+      pixels_per_base = ((LinearTwoDimTransform)view.getTransform()).getScaleY();
 
       // ***** background already drawn in drawTraversal(), so just return if
       // ***** scale is < 1 pixel per base
@@ -223,7 +223,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph {
       scratchrect.setRect(visible_seq_beg,  coordbox.y,
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
-      pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
+      pixels_per_base = ((LinearTwoDimTransform)view.getTransform()).getScaleX();
 
       int seq_pixel_offset = pixelbox.x;
 

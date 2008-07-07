@@ -67,7 +67,7 @@ public class LabelledTierTest {
     
     TierGlyph tier;
     TransformTierGlyph transform_tier;
-    LinearTransform trans;
+    LinearTwoDimTransform trans;
     ExpandPacker epacker;
 
     tier = new TierGlyph();

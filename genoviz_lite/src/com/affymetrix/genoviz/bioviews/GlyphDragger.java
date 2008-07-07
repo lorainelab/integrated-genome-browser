@@ -60,7 +60,7 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
   // a transform to use when mapping mouse drags to glyph coords
   //    if no trans is passed in via startDrag, will use standard
   //    View transform
-  LinearTransform trans;
+  LinearTwoDimTransform trans;
 
   //  public GlyphDragger(NeoWidgetI widg, GlyphI gl, NeoMouseEvent nevt) {
   public GlyphDragger(NeoWidgetI widg) {
@@ -69,12 +69,12 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     constrained[VERT] = false;
   }
 
-  public LinearTransform getTransform(NeoMouseEvent nevt) {
+  public LinearTwoDimTransform getTransform(NeoMouseEvent nevt) {
     if (nevt != null) {
       Object src = nevt.getSource();
       if (src instanceof NeoWidgetI) {
         final NeoWidgetI widgetSrc = (NeoWidgetI) src;
-        trans = (LinearTransform) widgetSrc.getView().getTransform();
+        trans = (LinearTwoDimTransform) widgetSrc.getView().getTransform();
         return trans;
       }
     }
@@ -85,18 +85,18 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     startDrag(gl, nevt, null);
   }
 
-  public void startDrag(GlyphI gl, NeoMouseEvent nevt, LinearTransform t) {
+  public void startDrag(GlyphI gl, NeoMouseEvent nevt, LinearTwoDimTransform t) {
     startDrag(gl, nevt, t, false);
   }
 
   /**
    *  Start a drag.
-   *  Allowing option of specifying a LinearTransform, rather than
+   *  Allowing option of specifying a LinearTwoDimTransform, rather than
    *    getting it from the NeoMouseEvent's view, so that can use with
    *    glyph's that have modified transforms (not identical to
    *    view's global transform)
    */
-  public void startDrag(GlyphI gl, NeoMouseEvent nevt, LinearTransform t, boolean restrict_to_parent) {
+  public void startDrag(GlyphI gl, NeoMouseEvent nevt, LinearTwoDimTransform t, boolean restrict_to_parent) {
     force_within_parent = restrict_to_parent;
     trans = t;
     if (trans == null) {

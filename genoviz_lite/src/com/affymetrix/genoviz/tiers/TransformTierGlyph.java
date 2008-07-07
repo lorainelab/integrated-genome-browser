@@ -48,12 +48,12 @@ public class TransformTierGlyph extends TierGlyph {
   boolean fixed_pixel_height = false;
   int fixedPixHeight = 1;
 
-  LinearTransform tier_transform = new LinearTransform();
+  LinearTwoDimTransform tier_transform = new LinearTwoDimTransform();
 
-  LinearTransform modified_view_transform = new LinearTransform();
+  LinearTwoDimTransform modified_view_transform = new LinearTwoDimTransform();
   Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
 
-  LinearTransform incoming_view_transform;
+  LinearTwoDimTransform incoming_view_transform;
   Rectangle2D.Double incoming_view_coordbox;
 
   // for caching in pickTraversal() methods
@@ -69,11 +69,11 @@ public class TransformTierGlyph extends TierGlyph {
     super(style);
   }
 
-  public void setTransform(LinearTransform trans) {
+  public void setTransform(LinearTwoDimTransform trans) {
     tier_transform = trans;
   }
 
-  public LinearTransform getTransform() {
+  public LinearTwoDimTransform getTransform() {
     return tier_transform;
   }
 
@@ -92,7 +92,7 @@ public class TransformTierGlyph extends TierGlyph {
   public void drawChildren(ViewI view) {
 
     // MODIFY VIEW
-    incoming_view_transform = (LinearTransform)view.getTransform();
+    incoming_view_transform = (LinearTwoDimTransform)view.getTransform();
     incoming_view_coordbox = view.getCoordBox();
 
     // figure out draw transform by combining tier transform with view transform
@@ -101,16 +101,16 @@ public class TransformTierGlyph extends TierGlyph {
 
     // should just copy values instead of creating new object every time,
     //    but for now just creating new object for convenience
-    //    modified_view_transform = new LinearTransform(incoming_view_transform);
+    //    modified_view_transform = new LinearTwoDimTransform(incoming_view_transform);
 
-    //    modified_view_transform = new LinearTransform(incoming_view_transform);
+    //    modified_view_transform = new LinearTwoDimTransform(incoming_view_transform);
     //    modified_view_transform.append(tier_transform);
     //    modified_view_transform.prepend(tier_transform);
     //    view.setTransform(modified_view_transform);
     //    view.setTransform(tier_transform);
 
     // should switch soon to doing this completely through
-    //    LinearTransform calls, and eliminate new AffineTransform creation...
+    //    LinearTwoDimTransform calls, and eliminate new AffineTransform creation...
     AffineTransform trans2D = new AffineTransform();
     trans2D.translate(0.0, incoming_view_transform.getOffsetY());
     trans2D.scale(1.0, incoming_view_transform.getScaleY());
@@ -122,7 +122,7 @@ public class TransformTierGlyph extends TierGlyph {
     trans2D.translate(1.0, tier_transform.getOffsetY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
-    modified_view_transform = new LinearTransform();
+    modified_view_transform = new LinearTwoDimTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
     modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
     modified_view_transform.setScaleY(trans2D.getScaleY());
@@ -146,7 +146,7 @@ public class TransformTierGlyph extends TierGlyph {
   public void fitToPixelHeight(ViewI view) {
     // use view transform to determine how much "more" scaling must be
     //       done within tier to keep its
-    LinearTransform view_transform = (LinearTransform)view.getTransform();
+    LinearTwoDimTransform view_transform = (LinearTwoDimTransform)view.getTransform();
     double yscale = 0.0d;
     if ( 0.0d != coordbox.height ) {
       yscale = (double)fixedPixHeight / coordbox.height;
@@ -272,8 +272,8 @@ public class TransformTierGlyph extends TierGlyph {
    *  This may very well not work at all!
    */
   //xxx TODO
-  public void getChildTransform(LinearTransform trans) {
-    //    LinearTransform vt = (LinearTransform)view.getTransform();
+  public void getChildTransform(LinearTwoDimTransform trans) {
+    //    LinearTwoDimTransform vt = (LinearTwoDimTransform)view.getTransform();
     // mostly copied from drawChildren() ...
     // keep same X scale and offset, but concatenate internal Y transform
     System.err.println("Getting child transform");

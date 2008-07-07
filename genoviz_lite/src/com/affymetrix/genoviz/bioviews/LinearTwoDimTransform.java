@@ -16,27 +16,27 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Implements TransformI as a linear transform on each axis.
+ * Implements TwoDimTransform as a linear transform on each axis.
  */
-public class LinearTransform implements TransformI  {
+public class LinearTwoDimTransform implements TwoDimTransform  {
   protected double xscale, yscale, xoffset, yoffset;
 
 
   /** 
-   * Constructs a new LinearTransform
+   * Constructs a new LinearTwoDimTransform
    * with Primary and Secondary scales set at 1
    * and offsets of 0.
    */
-  public LinearTransform() {
+  public LinearTwoDimTransform() {
     xscale = yscale = 1.0f;
     xoffset = yoffset = 0.0f;
   }
 
   /**
    * Creates a new transform with the same scales and offsets
-   * as the LinearTransform passed in.
+   * as the LinearTwoDimTransform passed in.
    */
-  public LinearTransform(LinearTransform LT) {
+  public LinearTwoDimTransform(LinearTwoDimTransform LT) {
     super();
     copyTransform(LT);
   }
@@ -47,7 +47,7 @@ public class LinearTransform implements TransformI  {
    * by this.pixel_box.  Should be able to "fit" a glyph hierarchy into the pixel_box
    * by calling this with the top glyph's coord_box
    */
-  public LinearTransform(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
+  public LinearTwoDimTransform(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
     super();
     fit(coord_box, pixel_box);
   }
@@ -56,7 +56,7 @@ public class LinearTransform implements TransformI  {
    * Set the paremeters of this transform to match the given one.
    * @param LT
    */
-  public void copyTransform(LinearTransform LT) {
+  public void copyTransform(LinearTwoDimTransform LT) {
     xscale = LT.getScaleX();
     yscale = LT.getScaleY();
     xoffset = LT.getOffsetX();
@@ -209,7 +209,7 @@ public class LinearTransform implements TransformI  {
    * Appends one transformation to another
    * to build a cumulative transformation.
    */
-  public void append(LinearTransform LT) {
+  public void append(LinearTwoDimTransform LT) {
     xoffset = LT.xscale * xoffset + LT.xoffset;
     yoffset = LT.yscale * yoffset + LT.yoffset;
     xscale = xscale * LT.xscale;
@@ -220,7 +220,7 @@ public class LinearTransform implements TransformI  {
    * Prepends one transformation to another
    * to build a cumulative transformation.
    */
-  public void prepend(LinearTransform LT) {
+  public void prepend(LinearTwoDimTransform LT) {
     xoffset = xscale * LT.xoffset + xoffset;
     yoffset = yscale * LT.yoffset + yoffset;
     xscale = xscale * LT.xscale;
@@ -265,8 +265,8 @@ public class LinearTransform implements TransformI  {
    * it is also trivially a deep copy.
    */
   @Override
-  public LinearTransform clone() throws CloneNotSupportedException {
-    return (LinearTransform) super.clone();
+  public LinearTwoDimTransform clone() throws CloneNotSupportedException {
+    return (LinearTwoDimTransform) super.clone();
   }
 
   @Override
@@ -277,8 +277,8 @@ public class LinearTransform implements TransformI  {
 
   @Override
   public boolean equals(Object Tx) {
-    if (Tx instanceof LinearTransform) {
-      LinearTransform lint = (LinearTransform)Tx;
+    if (Tx instanceof LinearTwoDimTransform) {
+      LinearTwoDimTransform lint = (LinearTwoDimTransform)Tx;
       return (xscale == lint.getScaleX() &&
               yscale == lint.getScaleY() &&
               xoffset == lint.getOffsetX() &&

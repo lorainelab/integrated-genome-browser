@@ -73,8 +73,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected View view;
   protected LinearTransform trans;
 
-  protected int pixel_beg[] = new int[2];
-  protected int pixel_end[] = new int[2];
+  private int pixel_beg[] = new int[2];
+  private int pixel_end[] = new int[2];
   protected int pixel_size[] = new int[2];
 
   // pixelblur is the amount of pixel space leeway given when finding overlaps
@@ -432,15 +432,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return gl.getPixelBox(view);
   }
 
-  public java.awt.geom.Rectangle2D.Double getCoordBounds() {
+  public Rectangle2D.Double getCoordBounds() {
     return scene.getCoordBox();
   }
 
-  public java.awt.geom.Rectangle2D.Double getViewBounds() {
+  public Rectangle2D.Double getViewBounds() {
     return view.getCoordBox();
   }
 
-  public java.awt.geom.Rectangle2D.Double getCoordBounds(GlyphI gl) {
+  public Rectangle2D.Double getCoordBounds(GlyphI gl) {
     return gl.getCoordBox();
   }
 
@@ -482,20 +482,20 @@ public abstract class NeoWidget extends NeoAbstractWidget
       zoomer[id].removeChangeListener(changeListener);
     }
     zoomer[id] = slider;
-    zoomer[id].setMinimum(0);
-    zoomer[id].setExtent(10);
-    zoomer[id].setMaximum(200 + zoomer[id].getExtent());
-    zoomer[id].setValue(0);
+    slider.setMinimum(0);
+    slider.setExtent(10);
+    slider.setMaximum(200 + slider.getExtent()); //TODO: what is this for?
+    slider.setValue(0);
 
     // GAH 6-29-99
-    // setting maxy of exponential tranform to (max - visible amount) to
-    // compensate for the fact that in JDK1.1 and Swing Scrollbars,
-    // the maximum for the value is really the scrollbar maximum minus
+    // setting max of exponential tranform to (max - visible amount) to
+    // compensate for the fact that the maximum for the value 
+    // is really the scrollbar maximum minus
     // the visible amount (the thumb)
     zoomtrans[id] = new ExponentialTransform(min_pixels_per_coord[id],
-        max_pixels_per_coord[id], zoomer[id].getMinimum(),
-        zoomer[id].getMaximum()-zoomer[id].getExtent());
-    zoomer[id].addChangeListener(changeListener);
+        max_pixels_per_coord[id], slider.getMinimum(),
+        slider.getMaximum() - slider.getExtent());
+    slider.addChangeListener(changeListener);
   }
 
   // maybe should return coord it _actually_ scrolled to
@@ -509,8 +509,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     if (checkScrollValue) {
       // trying to constrain scrolling to stay inside coordinate bounds
-      java.awt.geom.Rectangle2D.Double scene_coords = getCoordBounds();
-      java.awt.geom.Rectangle2D.Double view_coords = view.getCoordBox();
+      Rectangle2D.Double scene_coords = getCoordBounds();
+      Rectangle2D.Double view_coords = view.getCoordBox();
       double min_coord, max_coord;
       if (dim == WidgetAxis.Primary) {
         min_coord = scene_coords.x;
@@ -968,14 +968,14 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   /**
-   * get the items associated with a particular data model.
+   * Get the items associated with a particular data model.
    *
    * @param datamodel being visualized.
    * @return a List of all the glyphs tied to the given data model.
    */
+  @Override
   @SuppressWarnings("unchecked")
    public List<GlyphI> getItems(Object datamodel) {
-    Collections.singletonList(datamodel);
     Object result = model_hash.get(datamodel);
     if (result instanceof List) {
       return (List<GlyphI>)result;
@@ -987,9 +987,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
   /**
+   * Returns the GlyphI which is associated with the given object.
    *  If there is more than one glyph associated with the datamodel,
    *  then return glyph that was most recently associated
    */
+  @Override
   public GlyphI getItem(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof GlyphI) {
@@ -1003,8 +1005,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
       return null;
     }
   }
-
-
 
   @Override
   public void setSelectionAppearance(SceneII.SelectType select_behavior) {
@@ -1042,8 +1042,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return false;
   }
 
-
-
+  @Override
   public void zoom(WidgetAxis dim, double zoom_scale) {
     final int ordinal = dim.ordinal();
     
@@ -1157,7 +1156,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       return;
     }
 
-    java.awt.geom.Rectangle2D.Double scenebox = scene.getCoordBox();
+    Rectangle2D.Double scenebox = scene.getCoordBox();
     double prev_coords_per_pixel = 1/prev_pixels_per_coord;
     double prev_pixel_offset;
     double coord_beg, coord_end, coord_size;
@@ -1200,8 +1199,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double real_pix_offset = fixed_pixel - pixels_per_coord[ordinal] * fixed_coord;
     double coord_offset = -real_pix_offset * coords_per_pixel[ordinal];
 
-    if ((scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-          scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
+    if ((scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
       coord_offset = (int)coord_offset;
     }
 
@@ -1218,8 +1217,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
       }
     }
 
-    if ((scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-          scale_constraint[ordinal] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
+    if ((scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[ordinal] == ScaleConstraint.INTEGRAL_ALL) && zoom_scale >= 1) {
       pixel_offset[ordinal] =
         (int)(Math.ceil(coord_offset / coords_per_pixel[ordinal]));
     }

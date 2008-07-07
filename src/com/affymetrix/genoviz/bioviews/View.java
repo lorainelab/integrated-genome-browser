@@ -349,7 +349,7 @@ public class View implements ViewI, NeoPaintListener,
     }
 
     try {
-      lastTransform = (TransformI)transform.clone();
+      lastTransform = transform.clone();
     }
     catch (CloneNotSupportedException e) {
       // This can never happen as long as TransformI extends Cloneable.

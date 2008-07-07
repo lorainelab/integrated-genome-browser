@@ -18,6 +18,8 @@ import java.awt.geom.Rectangle2D;
  * A transform used internally by some NeoWidgets to handle zooming, should
  *    not be used directly.
  *
+ * This is a one-dimesional transform.  It ignores the second dimension.
+ * 
  * ExponentialTransform is the start of replacing application handling
  *    of things such as zooming a map with scrollbars that can take
  *    both transforms and listeners and do the right thing
@@ -59,63 +61,43 @@ public class ExponentialTransform implements TransformI {
   /** @param dim ignored */
   @Override
   public double inverseTransform(WidgetAxis dim, double in) {
-    double out = (Math.log(in)-lxmin) / ratio;
-    return out;
+    return (Math.log(in)-lxmin) / ratio;
   }
 
   @Override
   public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
     // y = f(x), but in this case y is really dst.x
     //   (Exponential is a one-dimensional transform, ignores src.y & dst.y
-    double x = src.x;
-    double y = Math.exp(x*ratio);
-    dst.x = y;
+    dst.x = Math.exp(src.x * ratio);
     return dst;
   }
 
   @Override
+  //TODO: Fix inverse.  This doesn't match inverseTransform(WidgetAxis, double)
   public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
-    double y = src.x;
-    double x = Math.log(y/ratio);
-    dst.x = x;
+    dst.x = Math.log(src.x/ratio);
     return dst;
   }
 
   @Override
   public Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
-    double x = src.x;
-    double y = Math.exp(x*ratio);
-    dst.x = y;
+    dst.x = Math.exp(src.x * ratio);
     return dst;
   }
 
   @Override
   public Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst) {
-    double y = src.x;
-    double x = Math.log(y/ratio);
-    dst.x = x;
+    dst.x = Math.log(src.x/ratio);
     return dst;
   }
 
-  @Override
-  public void append(TransformI T) {  }
-  @Override
-  public void prepend(TransformI T) { }
-
   /**
-   * creates a shallow copy.
+   * Creates a shallow copy.
    * Since the only instance variables are doubles,
    * it is also trivially a deep copy.
    */
   @Override
-  public Object clone() throws CloneNotSupportedException {
-    return super.clone();
+  public ExponentialTransform clone() throws CloneNotSupportedException {
+    return (ExponentialTransform) super.clone();
   }
-
-  // not checking for transform value equality right now
-  @Override
-  public boolean equals(TransformI Tx) {
-    return super.equals(Tx);
-  }
-
 }

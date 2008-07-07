@@ -13,12 +13,13 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
-import com.affymetrix.genoviz.bioviews.ExponentialTransform;
+import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.OneDimLinearTransform;
+import com.affymetrix.genoviz.bioviews.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneII;
-import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -85,8 +86,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected int scroller_value[] = new int[2];
   protected int prev_zoomer_value[] = new int[2];
   protected int prev_scroller_value[] = new int[2];
-  protected TransformI zoomtrans[] = new TransformI[2];
-  protected TransformI scrolltrans[] = new TransformI[2];
+  protected OneDimTransform zoomtrans[] = new OneDimTransform[2];
+  protected OneDimTransform scrolltrans[] = new OneDimTransform[2];
 
   protected double zoomer_scale[] = new double[2];
   protected ZoomConstraint zoom_behavior[] = new ZoomConstraint[2];
@@ -465,7 +466,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       scroller[id].removeAdjustmentListener(this);
     }
     scroller[id] = adj;
-    scrolltrans[id] = new LinearTransform();
+    scrolltrans[id] = new OneDimLinearTransform();
     scroller[id].addAdjustmentListener(this);
   }
 
@@ -492,9 +493,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // compensate for the fact that the maximum for the value 
     // is really the scrollbar maximum minus
     // the visible amount (the thumb)
-    zoomtrans[id] = new ExponentialTransform(min_pixels_per_coord[id],
-        max_pixels_per_coord[id], slider.getMinimum(),
-        slider.getMaximum() - slider.getExtent());
+    zoomtrans[id] = new ExponentialOneDimTransform(
+      min_pixels_per_coord[id],
+      max_pixels_per_coord[id], 
+      slider.getMinimum(),
+      slider.getMaximum() - slider.getExtent());
     slider.addChangeListener(changeListener);
   }
 
@@ -688,7 +691,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // otherwise need to do a zoomtrans[id].inverseTransform() to
     //  set correct zoomer_scroll_value[id]
     zoomer_scale[id] = pixels_per_coord[id];
-    zoomer_value[id] = (int)zoomtrans[id].inverseTransform(dim, zoomer_scale[id]);
+    zoomer_value[id] = (int)zoomtrans[id].inverseTransform(zoomer_scale[id]);
     // catching bug where zoomer_value gets negative values for weird
     //   zoomtrans (like when zoom_max and zoom_min are equal)
     // zoomer_value is NOT scale --
@@ -774,10 +777,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
 
+  @Override
   public void setVisibility(GlyphI gl, boolean isVisible) {
     scene.setVisibility(gl, isVisible);
   }
 
+  @Override
   public void setVisibility(List<GlyphI> glyphs, boolean isVisible) {
     for (GlyphI g : glyphs) {
       setVisibility(g, isVisible);
@@ -818,6 +823,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
   }
 
+  @Override
   public boolean supportsSubSelection(GlyphI gl) {
     return gl.supportsSubSelection();
   }
@@ -837,10 +843,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * Scale constraints are currently only considered during
    *    zooming with zoomer[] adjustables
    */
+  @Override
   public void setScaleConstraint(int axisid, NeoWidgetI.ScaleConstraint constraint) {
     scale_constraint[axisid] = constraint;
   }
 
+  @Override
   public void setZoomBehavior(int axisid, ZoomConstraint constraint) {
     switch (constraint) {
       case CONSTRAIN_START:
@@ -887,7 +895,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
         if (zoomer_value[id] == prev_zoomer_value[id]) {
           return;
         }
-        zoomer_scale[id] = zoomtrans[id].transform(dim, zoomer_value[id]);
+        zoomer_scale[id] = zoomtrans[id].transform(zoomer_value[id]);
         if (scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
           scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) {
           if (zoomer_scale[id] >= 1) {
@@ -905,6 +913,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
   };
 
+  @Override
   public void adjustmentValueChanged(AdjustmentEvent evt) {
      Adjustable source = evt.getAdjustable();
 
@@ -918,7 +927,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     int id = dim.ordinal();
 
-    scroller_value[id] = (int) scrolltrans[id].transform(dim, source.getValue());
+    scroller_value[id] = (int) scrolltrans[id].transform(source.getValue());
 
     if (DEBUG_SCROLL) {
       System.out.println("Scrolling to: " + scroller_value[id] + ", " +
@@ -932,7 +941,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   //TODO: TransformI is a 2-dim transform, but we only specify to use one dimension of it. Weird!
-  public void setScrollTransform(WidgetAxis dim, TransformI trans) {
+  public void setScrollTransform(WidgetAxis dim, OneDimTransform trans) {
     scrolltrans[dim.ordinal()] = trans;
   }
 

@@ -639,7 +639,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
                          ", " + canvas);
     }
     scene.maxDamage();  // max out scene damage to ensure full redraw
-    trans = (LinearTwoDimTransform)view.getTransform();
+    trans = view.getTransform();
     double xscale, xoffset, yscale, yoffset;
     xscale = trans.getScaleX();
     xoffset = trans.getOffsetX();

@@ -29,6 +29,7 @@ in this directory, execute:
 -->
 
 <project name="Das2Server" default="usage" basedir=".">
+	<import file="deploy.xml"/>
 
   <!-- =================================================================== -->
   <!-- Initialization target                                               -->
@@ -66,8 +67,8 @@ in this directory, execute:
     <filter token="date" value="${TODAY}"/>
 
 
-  <property name="lib.dir" value="${root.dir}/../ext" />
-  <property name="lib2.dir" value="${root.dir}/../ext2" />
+		<property name="lib.dir" value="${root.dir}/../ext" />
+		<property name="lib2.dir" value="${root.dir}/../ext2" />
 
     <property name="genoviz.jar" value="../genoviz_sdk/genoviz.jar"/>
     <property name="genometry.jar" value="../genometry/genometry.jar"/>
@@ -88,6 +89,7 @@ in this directory, execute:
     <echo message=" available targets are:"/>
     <echo message=""/>
     <echo message="   all        --> builds class and jar files in ./build"/>
+    <echo message="   deploy     --> deploys the servlet to an existing server"/>
     <echo message="   clean      --> restores distribution to original state"/>
     <echo message="   usage      --> (default) displays build menu"/>
     <echo message=""/>

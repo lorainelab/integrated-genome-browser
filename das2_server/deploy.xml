@@ -1,0 +1,34 @@
+<project name="Das2Server" default="usage" basedir=".">
+	<target name="check_deploy.dir" unless="deploy.dir">
+		<echo message="Usage(windows): ant -Ddeploy.dir=C:\path\to\deploy\dir target_name"/>
+		<echo message="Usage(linux): ant -Ddeploy.dir=/path/to/deploy/dir target_name"/>
+		<fail message="Please define 'deploy.dir' property" />
+	</target>
+
+	<target name="deploy_init" depends="check_deploy.dir">
+		<mkdir dir="${deploy.dir}/"/>
+		<mkdir dir="${deploy.dir}/WEB-INF/lib"/>
+	</target>
+
+	<target name="deploy_lib" depends="deploy_init, das2_server-jar">
+		<copy todir="${deploy.dir}/WEB-INF/lib" verbose="true">
+			<fileset dir=".">
+				<include name="das2_server.jar"/>
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="xercesImpl.jar"/>
+				<include name="xml-apis.jar"/>
+			</fileset>
+		</copy>
+		<copy file="${genoviz.jar}" todir="${deploy.dir}/WEB-INF/lib" verbose="true" />
+		<copy file="${genometry.jar}" todir="${deploy.dir}/WEB-INF/lib" verbose="true" />
+		<copy file="${genometryImpl.jar}" todir="${deploy.dir}/WEB-INF/lib" verbose="true" />
+		<copy file="${igb.jar}" todir="${deploy.dir}/WEB-INF/lib" verbose="true" />
+	</target>
+
+	<target name="deploy" depends="deploy_lib">
+		<copy file="web.xml" todir="${deploy.dir}/WEB-INF" verbose="true"/>
+	</target>
+</project>
+
+<!-- End of file -->

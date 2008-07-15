@@ -414,16 +414,28 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		date_init_string = date_formatter.format(new Date(date_initialized));
 	}
 	
-	/**Attempts to load the genometry_server_dir, maintainer_email, and the xml_base 
-	 * first from the System.properties and
-	 * second from a genometryDas2ServletParameters.txt file.
-	 * Lastly it will set several fields for the servlet.
-	 * @return true if fields loaded or false if not.*/
+	/**
+	 * Attempts to load the genometry_server_dir, maintainer_email, and the
+	 * xml_base from the servlet context, System.properties or from a
+	 * genometryDas2ServletParameters.txt.  Lastly it will set several fields
+	 * for the servlet.
+	 *
+	 * @return true if fields loaded or false if not.
+	 */
 	public boolean loadAndSetFields(){
+		// attempt to get properties from servlet context
+		ServletContext context = getServletContext();
+		genometry_server_dir = context.getInitParameter("genometry_server_dir");
+		maintainer_email     = context.getInitParameter("maintainer_email");
+		xml_base             = context.getInitParameter("xml_base");
+
+
 		//attempt to get from System.properties
-		genometry_server_dir = System.getProperty("das2_genometry_server_dir");
-		maintainer_email = System.getProperty("das2_maintainer_email");
-		xml_base = System.getProperty("das2_xml_base");
+		if (genometry_server_dir == null || maintainer_email == null || xml_base == null){
+			genometry_server_dir = System.getProperty("das2_genometry_server_dir");
+			maintainer_email = System.getProperty("das2_maintainer_email");
+			xml_base = System.getProperty("das2_xml_base");
+		} 
 
 		//attempt to load from file?
 		if (genometry_server_dir == null || maintainer_email == null || xml_base == null){
@@ -465,7 +477,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 				return false;
 			}
 		}
-		else System.out.println("\tLoaded genometryDas2Servlet parameters from System.properties");
+
 		//print values
 		System.out.println("\t\tgenometry_server_dir\t"+genometry_server_dir);
 		System.out.println("\t\txml_base\t"+xml_base);

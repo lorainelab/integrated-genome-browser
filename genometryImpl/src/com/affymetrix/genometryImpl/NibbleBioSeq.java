@@ -1,3 +1,4 @@
+
 /**
 *   Copyright (c) 2001-2004 Affymetrix, Inc.
 *
@@ -117,7 +118,9 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
    */
   public char charAt(int pos) {
     if (residues_provider == null) {
-      return super.getResidues(pos, pos+1, '-').charAt(0);
+      String str = super.getResidues(pos, pos+1, '-');
+      if (str == null) { return '-'; }
+      else { return str.charAt(0); }
     }
     else {
       return residues_provider.charAt(pos);

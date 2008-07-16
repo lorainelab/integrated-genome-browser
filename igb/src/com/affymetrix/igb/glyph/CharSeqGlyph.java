@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 
+import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.util.CharIterator;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 
@@ -49,7 +50,7 @@ public class CharSeqGlyph extends AbstractResiduesGlyph
   boolean residuesSet = false;
   Rectangle2D scratchrect;
   int residue_length = 0;
-  static Font default_font = new Font("Monospaced", Font.BOLD, 12);
+  static Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
   // default to true for backward compatability
   protected boolean hitable = true;
@@ -65,6 +66,7 @@ public class CharSeqGlyph extends AbstractResiduesGlyph
     super(HORIZONTAL);
     full_rect = new FillRectGlyph();
     scratchrect = new Rectangle2D();
+    setResidueFont( mono_default_font);
   }
 
   public void setCoords(double x, double y, double width, double height) {
@@ -201,17 +203,39 @@ public class CharSeqGlyph extends AbstractResiduesGlyph
       int seqEndIndex,
       int pixelStart ) {
     int baseline = (this.pixelbox.y+(this.pixelbox.height/2)) + this.fontmet.getAscent()/2 - 1;
-    g.setFont( default_font);
+    g.setFont( getResidueFont());
     g.setColor( getForegroundColor() );
+    fontmet = Toolkit.getDefaultToolkit().getFontMetrics(getResidueFont());
+    /* Temporary font diagnostics
+    System.out.println("pixels_per_base: " + pixelsPerBase + ", font width: " + font_width);
+    System.out.println("    acgt font widths: " + 
+                       fontmet.charWidth('a') + ", " +
+                       fontmet.charWidth('c') + ", " +
+                       fontmet.charWidth('g') + ", " + 
+                       fontmet.charWidth('t'));
+    System.out.println("    ACGT font widths: " + 
+                       fontmet.charWidth('A') + ", " +
+                       fontmet.charWidth('C') + ", " +
+                       fontmet.charWidth('G') + ", " + 
+                       fontmet.charWidth('T'));
+    */
+
     if ( this.font_width < pixelsPerBase ) { // Ample room to draw residue letters.
+      if (residue_provider instanceof BioSeq) {
+        // workaround for a bug that showed up when fixing font issues -- sometimes charAt() throws IndexOutOfBounds exceptions
+        int max_index = ((BioSeq)residue_provider).getLength()-1;
+        if ((seqBegIndex < 0) || ((seqEndIndex-1) > max_index)) {
+          // don't draw, because calling residue_provider.charAt() will throw IndexOutOfBounds exceptions
+        }
+      }
       for ( int i = seqBegIndex; i < seqEndIndex; i++ ) {
         double f = i - seqBegIndex;
-	String str =  String.valueOf(residue_provider.charAt(i));
-	if (str != null) {
-	  g.drawString(str, 
-		       ( pixelStart + (int) ( f * pixelsPerBase ) ),
-		       baseline );
-	}
+        String str =  String.valueOf(residue_provider.charAt(i));
+        if (str != null) {
+          g.drawString(str, 
+                       ( pixelStart + (int) ( f * pixelsPerBase ) ),
+                       baseline );
+        }
       }
     }
     else if (
@@ -227,6 +251,7 @@ public class CharSeqGlyph extends AbstractResiduesGlyph
       }
     }
     /*
+
     else { // Not enough room for letters in this font if sequence is dense.
       int h = Math.max( 1, Math.min( this.pixelbox.height, this.fontmet.getAscent() ) );
       int y = Math.min( baseline, ( this.pixelbox.y + this.pixelbox.height ) ) - h;

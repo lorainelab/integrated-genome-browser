@@ -53,7 +53,6 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    */
   public AbstractResiduesGlyph(int orientation) {
     orient = orientation;
-    //    setResidueFont(default_font);
     //setResidueColor(default_residue_color);
     setResidueFont( default_font );
     setForegroundColor( default_residue_color );
@@ -61,9 +60,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 
   public void setResidueFont(Font fnt) {
     String fam = fnt.getFamily().toLowerCase();
-
-    fontmet = Toolkit.getDefaultToolkit().getFontMetrics( getResidueFont() );
-
+    fontmet = Toolkit.getDefaultToolkit().getFontMetrics(fnt);
     // change font
     this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
 
@@ -71,6 +68,20 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     font_width = Math.max(font_width, fontmet.charWidth('A'));
     font_width = Math.max(font_width, fontmet.charWidth('C'));
     font_width = Math.max(font_width, fontmet.charWidth('T'));
+    /*  Temporary font diagnostics
+    System.out.println("SETTING FONT: " + fnt);
+    System.out.println("    acgt font widths: " + 
+                       fontmet.charWidth('a') + ", " +
+                       fontmet.charWidth('c') + ", " +
+                       fontmet.charWidth('g') + ", " + 
+                       fontmet.charWidth('t'));
+    System.out.println("    ACGT font widths: " + 
+                       fontmet.charWidth('A') + ", " +
+                       fontmet.charWidth('C') + ", " +
+                       fontmet.charWidth('G') + ", " + 
+                       fontmet.charWidth('T'));
+    System.out.println("FONT WIDTH: " + font_width);
+    */
 
     font_height = fontmet.getAscent();
     font_ascent = fontmet.getAscent();

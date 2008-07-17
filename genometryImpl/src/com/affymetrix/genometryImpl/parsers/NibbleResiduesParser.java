@@ -194,5 +194,7 @@ public class NibbleResiduesParser {
     }
   }
 
+    public static String getMimeType()  { return "binary/bnib"; }
+
 }
 

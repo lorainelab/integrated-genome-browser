@@ -39,6 +39,7 @@ Make sure that the 'ext' directory exists and includes
     <property name="igb.dir" value="${root.dir}/igb"/>
     <property name="igb.src.dir" value="${igb.dir}/src"/>
     <property name="das2_server.dir" value="${root.dir}/das2_server"/>
+		<property name="das2_server.src.dir" value="${das2_server.dir}/src"/>
 
     <!-- Define the source build directories -->
     <!--   (The source and class directories are the same)  -->
@@ -46,6 +47,7 @@ Make sure that the 'ext' directory exists and includes
 
     <!-- Define the directory with external jar files -->
     <property name="lib.dir" value="${root.dir}/ext" />
+    <property name="lib2.dir" value="${root.dir}/ext2" />
 
     <!-- Define the output jar file -->
     <property name="igb.jar" value="${root.dir}/igb.jar"/>
@@ -95,6 +97,18 @@ Make sure that the 'ext' directory exists and includes
       </fileset>
     </path>
 
+		<!-- Javadoc requires the jars in ${lib2.dir} -->
+    <path id="javadoc.class.path">
+      <pathelement path="genoviz_sdk/genoviz.jar" />
+      <pathelement path="genometry/genometry.jar" />
+      <pathelement path="genometryImpl/genometryImpl.jar" />
+      <fileset dir="${lib.dir}">
+        <include name="**/*.jar"/>
+      </fileset>
+      <fileset dir="${lib2.dir}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
 
   </target>
 
@@ -264,23 +278,23 @@ Make sure that the 'ext' directory exists and includes
 
   <target name="docs" depends="init-igb" description="Builds javadocs">
     <mkdir dir="${api-docs.dir}"/>
-    <javadoc 
-           destdir="${api-docs.dir}"
-           author="true"
-           version="true"
-           use="true"
-           windowtitle="${Name} API"
-           maxmemory="64m"
-           access="private"
-           verbose="false"
-           splitindex="false"
-           source="1.4"
-           >
-      <classpath refid="project.class.path"/>
-      <packageset dir="${igb.src.dir}"/>
-      <packageset dir="${genoviz.src.dir}"/>
-      <packageset dir="${genometry.src.dir}"/>
-      <packageset dir="${genometryImpl.src.dir}"/>
+		<javadoc
+			destdir="${api-docs.dir}"
+			author="true"
+			version="true"
+			use="true"
+			windowtitle="${Name} API"
+			maxmemory="128m"
+			access="private"
+			verbose="false"
+			splitindex="false"
+			source="1.5">
+			<classpath refid="javadoc.class.path"/>
+			<packageset dir="${igb.src.dir}"/>
+			<packageset dir="${genoviz.src.dir}"/>
+			<packageset dir="${genometry.src.dir}"/>
+			<packageset dir="${genometryImpl.src.dir}"/>
+			<packageset dir="${das2_server.src.dir}"/>
       <doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
     </javadoc>
@@ -300,9 +314,12 @@ Make sure that the 'ext' directory exists and includes
    $ ant -v -diagnostics | grep java.version 
   -->
   <target name="javac-version">
+		<echo message="${java.version} from ${java.vendor}"/>
+		<!--
     <exec executable="javac">
       <arg value="-version"/>
    </exec>
+	 -->
   </target>
 
 </project>

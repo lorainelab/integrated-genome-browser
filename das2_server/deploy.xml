@@ -1,4 +1,4 @@
-<project name="Das2Server" default="usage" basedir=".">
+<project>
 	<target name="check_deploy.dir" unless="deploy.dir">
 		<echo message="Usage(windows): ant -Ddeploy.dir=C:\path\to\deploy\dir target_name"/>
 		<echo message="Usage(linux): ant -Ddeploy.dir=/path/to/deploy/dir target_name"/>

@@ -122,6 +122,7 @@ in this directory, execute:
     <fail unless="all.jars.present" message="*** Cannot find one or more needed jars"/>
 
   <path id="project.class.path">
+		<pathelement location="${genoviz.classes}"/>
     <pathelement location="${genoviz.jar}"/>
     <pathelement location="${genometry.jar}"/>
     <pathelement location="${genometryImpl.jar}"/>
@@ -185,7 +186,7 @@ in this directory, execute:
     </delete>
   </target>
 
-  <target name="docs" depends="init" description="builds javadocs">
+  <target name="docs" depends="prepare" description="builds javadocs">
     <mkdir dir="${doc.dir}"/>
     <javadoc 
            destdir="${doc.dir}"
@@ -198,9 +199,7 @@ in this directory, execute:
            verbose="false"
            splitindex="false"
            >
-      <classpath>
-        <pathelement location="${genoviz.classes}"/>
-      </classpath>
+      <classpath refid="project.class.path"/>
       <packageset dir="${das2_server.src.dir}"/>
       <doctitle><![CDATA[<h1>${Name} API</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; ${year} Affymetrix, Inc., USA. All Rights Reserved.</i>]]></bottom>

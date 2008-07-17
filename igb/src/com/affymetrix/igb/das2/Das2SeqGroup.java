@@ -87,6 +87,7 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
       throw new NullPointerException();
     }
     SmartAnnotBioSeq aseq;
+    // calling super.getSeq() to avoid ensureSeqsLoaded() calls??
     aseq = (SmartAnnotBioSeq)super.getSeq(seqid);
     if (aseq != null) {
       if (aseq.getLength() < length) {

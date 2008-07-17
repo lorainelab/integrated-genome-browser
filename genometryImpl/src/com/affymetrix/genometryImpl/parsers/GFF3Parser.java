@@ -26,7 +26,7 @@ import java.util.regex.*;
  *  GFF version 3 parser.
  * <pre>
  *  GFF format is 9 tab-delimited fields:
- *   <seqname> <source> <feature> <start> <end> <score> <strand> <frame> <phase> <attributes>
+ *   {@literal <seqname> <source> <feature> <start> <end> <score> <strand> <frame> <phase> <attributes>}
  *
  *  The attribute field contains URL-encoded tag-value pairs separated by semicolons:
  *  "tag1=val1;tag2=val2;tag3=this%20is%20a%20test".

@@ -295,14 +295,14 @@ public class GraphSymUtils {
   }
 
   /**
-   * Calls {@link AnnotatedSeqGroup.getUniqueGraphID(String,AnnotatedSeqGroup)}.
+   * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,AnnotatedSeqGroup)}.
    */
   public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
     return AnnotatedSeqGroup.getUniqueGraphID(id, seq_group);
   }
   
   /**
-   * Calls {@link AnnotatedSeqGroup.getUniqueGraphID(String,BioSeq)}.
+   * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
    */
   public static String getUniqueGraphID(String id, BioSeq seq) {
     return AnnotatedSeqGroup.getUniqueGraphID(id, seq);

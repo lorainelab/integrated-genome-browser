@@ -86,7 +86,7 @@ public class PropertySheet extends JPanel {
   }
   
   /** Converts a row index of the view into a row index of the model.
-   *  If {@link setSortable(boolean)} was false, then the two indices are
+   *  If {@link #setSortable(boolean)} was false, then the two indices are
    *  equivalent.
    */
   public int getModelIndex(int i) {

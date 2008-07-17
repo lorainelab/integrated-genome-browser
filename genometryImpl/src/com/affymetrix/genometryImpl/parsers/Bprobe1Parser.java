@@ -36,7 +36,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *    d) all probes within a probeset are on same strand
  *
  *  This "microformat" averages out to about 5.3 bytes/probe
- *    (> 10x compression relative to the already stripped down gff).
+ *    (&gt; 10x compression relative to the already stripped down gff).
  *  At four million probes that's about 21 MB for all of them.
  *
  *  -------------------------
@@ -61,7 +61,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *     for each seq
  *         for each probeset
  *             id (int)
- *             number of probes & strand (byte, 0 to 127 probes, sign indicates strand)
+ *             number of probes &amp; strand (byte, 0 to 127 probes, sign indicates strand)
  *             for each probe
  *                 min genome position (int, zero interbase)
  *</pre>

@@ -323,7 +323,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
    *     it's making a new Rectangle object with each call.  A more efficient (but more
    *     risky) approach would be to just return the view's pixelbox after transformation,
    *     with the caveat that it will only be valid until the view's pixelbox is modified.
-   *  @deprecate
+   *  @deprecated
    */
   @Deprecated
   public Rectangle getPixelBox(ViewI view)  {

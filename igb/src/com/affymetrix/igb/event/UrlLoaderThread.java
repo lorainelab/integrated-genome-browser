@@ -392,7 +392,7 @@ public class UrlLoaderThread extends Thread {
    *  Opens a binary data stream from the given url and adds the resulting
    *  binary/bps data to the given BioSeq.
    *  @param type  a parameter passed on to
-   *  {@link BpsParser#parse(DataInputStream, String, Map)}.
+   *  {@link BpsParser#parse(DataInputStream, String, AnnotatedSeqGroup, AnnotatedSeqGroup, boolean, boolean)}.
    */
   static void parseBinaryBps(URLConnection feat_request_con, String type)
   throws IOException {

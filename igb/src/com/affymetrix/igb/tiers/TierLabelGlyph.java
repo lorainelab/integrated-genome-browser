@@ -138,7 +138,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   /** Whether to use the same color as the reference TierGlyph,
    *  and thus ignore any setting of the colors on this Glyph.
    *  Default is TRUE.
-   *  @see getReferenceTier()
+   *  @see #getReferenceTier()
    */
   public void setUseRefTierColors(boolean b) {
     this.useRefTierColors = b;
@@ -147,7 +147,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
   /** Whether to use the same color as the reference TierGlyph,
    *  and thus ignore any setting of the colors on this Glyph.
    *  Default is TRUE.
-   *  @see getReferenceTier()
+   *  @see #getReferenceTier()
    */
   public boolean getUseRefTierColors() {
     return this.useRefTierColors;

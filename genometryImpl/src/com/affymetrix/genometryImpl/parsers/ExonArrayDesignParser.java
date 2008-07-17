@@ -48,7 +48,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *    d) all probes within a transcript_cluster are on same strand??
  *
  *  For probeset and below, this "microformat" averages out to about 5.3 bytes/probe for
- *    (> 10x compression relative to the already stripped down gff).
+ *    (&gt; 10x compression relative to the already stripped down gff).
  *    PSR, exon_cluster, transcript_cluster add to memory requirements, still need to look at this)
  *
  *  -------------------------
@@ -73,7 +73,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *         for each transcript cluster
  *             id (int)
  *             start
- *             end  (strand derived: (start <= end ? forward : reverse) )
+ *             end  (strand derived: (start &lt;= end ? forward : reverse) )
  *             number of exon clusters (int)
  *             for each exon cluster
  *                 id (int)
@@ -87,7 +87,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *                     number of probesets (int)
  *                     for each probeset
  *                         id (int)
- *                         //  number of probes & strand (byte, 0 to 127 probes, sign indicates strand)
+ *                         //  number of probes &amp; strand (byte, 0 to 127 probes, sign indicates strand)
  *                         number of probes (byte) // don't need strand info here??
  *                         for each probe
  *                             min genome position (int, zero interbase)
@@ -315,7 +315,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
   /**
    *  Implememts AnnotationWriter interface
    *  Assumes rigid structure for annotations:
-   *  Standard top-level setup: TypeContainerSym with type = <annot_type> annotating each seq in group
+   *  Standard top-level setup: TypeContainerSym with type = {@literal <annot_type> } annotating each seq in group
    *  Within type container sym:
    *    Level 0: Transcript-cluster annots (SingletonSymWithIntId objects)
    *    Level 1: Exon-cluster (and intron-cluster?) annots (SingletonSymWithIntId objects)
@@ -359,7 +359,7 @@ public class ExonArrayDesignParser implements AnnotationWriter {
   /**
    *  For writing out all annotations of a particular type for a whole genome in .ead format
    *  Assumes rigid structure for annotations:
-   *  Standard top-level setup: TypeContainerSym with type = <annot_type> annotating each seq in group
+   *  Standard top-level setup: TypeContainerSym with type = {@literal <annot_type> } annotating each seq in group
    *  Within type container sym:
    *    Level 0: Transcript-cluster annots (SingletonSymWithIntId objects)
    *    Level 1: Exon-cluster (and intron-cluster?) annots (SingletonSymWithIntId objects)

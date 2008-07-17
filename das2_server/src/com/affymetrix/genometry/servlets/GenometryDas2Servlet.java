@@ -1378,7 +1378,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     /**
      *  Gets the list of types of annotations for a given genome version.
      *  Assuming top-level annotations hold type info in property "method" or "meth".
-     *  @returns a Map where keys are feature type String's and values
+     *  @return a Map where keys are feature type String's and values
      *    are non-null List's of preferred format String's
      *
      *  may want to cache this info (per versioned source) at some point...

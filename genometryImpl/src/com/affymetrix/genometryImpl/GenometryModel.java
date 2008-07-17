@@ -313,7 +313,6 @@ public class GenometryModel {
    *  them will not automatically change the selected sequence.
    *  This non-public version does NOT send a SymSelectionEvent.
    *  @param syms A List of SeqSymmetry objects to select.
-   *  @param src The object responsible for selecting the sequences.
    *  @return The List of sequences with selections on them after this operation.
    */
   List<MutableAnnotatedBioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {

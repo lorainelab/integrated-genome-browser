@@ -1465,7 +1465,7 @@ public class SeqMapView extends JPanel
   }
 
   /**
-   * @deprecate Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
+   * @deprecated Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
    */
   public static String determineMethod(SeqSymmetry sym) {
     return SmartAnnotBioSeq.determineMethod(sym);
@@ -2779,7 +2779,7 @@ public class SeqMapView extends JPanel
   }
 
   /** Find the top-most parent glyphs of the given glyphs.
-   *  @childGlyphs a list of GlyphI objects, typically the selected glyphs
+   *  @param childGlyphs a list of GlyphI objects, typically the selected glyphs
    *  @return a list where each child is replaced by its top-most parent, if it
    *  has a parent, or else the child itself is included in the list
    */

@@ -685,7 +685,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
   }
   
   /** If the key is {@link IPlugin#TEXT_KEY_IGB}, this will
-   *  make a call to {@link #setApplication(IGB)}.  Any other key
+   *  make a call to {@link #setApplication(Application)}.  Any other key
    *  will be ignored.
    */
   public void putPluginProperty(Object key, Object value) {

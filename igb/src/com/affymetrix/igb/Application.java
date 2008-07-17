@@ -110,14 +110,8 @@ public abstract class Application {
     ErrorHandler.errorPanel(frame, title, message, null);
   }
 
-  /** Opens a JOptionPane.ERROR_MESSAGE panel with the given frame
-   *  as its parent.
-   *  This is designed to probably be safe from the EventDispatchThread or from
-   *  any other thread.
-   *  @param frame the parent frame, null is ok.
-   *  @param e an exception (or error), if any.  null is ok. If not null,
-   *  the exception text will be appended to the message and
-   *  a stack trace might be printed on standard error.
+  /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
+   *  panel as its parent, and the title "ERROR".
    */
   public static void errorPanel(String message) {
     Application app = getSingleton();
@@ -127,6 +121,9 @@ public abstract class Application {
 
   /** Opens a JOptionPane.ERROR_MESSAGE panel with the IGB
    *  panel as its parent, and the title "ERROR".
+   *  @param e an exception (or error), if any.  null is ok. If not null,
+   *  the exception text will be appended to the message and
+   *  a stack trace might be printed on standard error.
    */
   public static void errorPanel(String message, Throwable e) {
     Application app = getSingleton();

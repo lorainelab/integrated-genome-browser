@@ -236,7 +236,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     });
   }
 
-  /** Causes a call to {@link #showSymHash(AnnotatedSeqGroup)}.
+  /** Causes a call to {@link #setStatus(String)}.
    * }
    *  Normally, this occurs as a result of a call to
    *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.

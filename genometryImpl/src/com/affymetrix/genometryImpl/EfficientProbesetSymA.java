@@ -37,7 +37,7 @@ public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps
 
   /**
    * Constructor.
-   * @param  SharedProbesetInfo to provide seq, probe_length, id_prefix (and props?)
+   * @param  info to provide seq, probe_length, id_prefix (and props?)
    * @param cmins an array of the minima of the probe positions, this should
    *   be sorted in ascending order (but will be automatically sorted by this
    *   routine if this is not the case.  This means that the ordering

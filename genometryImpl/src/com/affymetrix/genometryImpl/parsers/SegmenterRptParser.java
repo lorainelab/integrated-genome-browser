@@ -39,7 +39,7 @@ public class SegmenterRptParser {
   
   /** The name of a property key used to store a Map<String,String> containing
    *  the file's header.  Outside classes rarely need to use this; call
-   *  {@link #getHeaderValue(String)} instead.
+   *  {@link #getHeaderValue(String, SymWithProps)} instead.
    */
   public static final String HEADER_PROP_KEY_NAME = "SegmenterFileHeader";
 

@@ -48,7 +48,7 @@ public class Das2RequestLog {
     }
   }
 
-  /** Returns the value that was stored by {@link #setSuccess()}. */
+  /** Returns the value that was stored by {@link #setSuccess(boolean)}. */
   public boolean getSuccess() {
     return this.success;
   }

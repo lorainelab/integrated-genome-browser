@@ -295,7 +295,7 @@ public class TierLabelManager {
    *  Called after a tier label has been dragged, this can be used to
    *  re-sort the given List of Tier Label Glyphs.  The List is
    *  sorted in-place.  Typically, do not use this directly, but
-   *  call {@link #resortTiers()} instead, which will call this and then
+   *  call {@link #sortTiers()} instead, which will call this and then
    *  call {@link #orderTiersByLabels(java.util.List)}.
    */
   public void orderTierLabels(java.util.List label_glyphs) {

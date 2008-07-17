@@ -211,7 +211,7 @@ public class WebLink {
   /** Returns the URL (or URL pattern) associated with this WebLink.
    *  If the URL pattern contains any "$$" characters, those should be
    *  replaced with URL-Encoded annotation IDs to get the final URL.
-   *  Better to use {@link #getUrlForSym(SeqSymmetry)}.
+   *  Better to use {@link #getURLForSym(SeqSymmetry)}.
    */
   public String getUrl() {
     return this.url;

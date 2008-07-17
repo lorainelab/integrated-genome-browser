@@ -316,7 +316,6 @@ public class WebLinksManagerView extends JPanel {
 
   /**
    *  Tries to import weblinks.
-   *  Makes use of {@link BookmarksParser#parse(BookmarkList, File)}.
    */
   void importWebLinks() {
     JFileChooser chooser = getJFileChooser();

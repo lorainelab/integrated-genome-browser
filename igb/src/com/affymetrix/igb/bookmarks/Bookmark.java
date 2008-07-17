@@ -239,7 +239,8 @@ public class Bookmark implements Serializable {
   }
   
   /** Returns true if the Path of the Url matches 
-   *  {@link UnibrowControlServer#SERVLET_NAME} and
+   *  {@link SimpleBookmarkServer#SERVLET_NAME} or
+	 *  {@link SimpleBookmarkServer#SERVLET_NAME_OLD} and
    *  the Host is "localhost". 
    */
   public boolean isUnibrowControl() {

@@ -121,7 +121,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
 
   /**
    *  Direction to use for drawing little arrows on the line.
-   *  @param direction should be {@link NeoConstants#RIGHT},
+   *  @param d should be {@link NeoConstants#RIGHT},
    *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
    */
   public void setArrowDirection(int d) throws IllegalArgumentException {

@@ -57,7 +57,7 @@ public class UnibrowControlServlet {
 
   /** Convenience method for retreiving a String parameter from a parameter map
    *  of an HttpServletRequest.
-   *  @param map Should be a Map, such as from {@link HttpServletRequest#getParameterMap()},
+   *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
    *  where the only keys are String and String[] objects.
    *  @param key Should be a key where you only want a single String object as result.
    *  If the value in the map is a String[], only the first item in the array will
@@ -81,7 +81,7 @@ public class UnibrowControlServlet {
   /** Loads a bookmark.
    *  @param parameters Must be a Map where the only values are String and String[]
    *  objects.  For example, this could be the Map returned by
-   *  {@link HttpServletRequest#getParameterMap()}.
+   *  {@link javax.servlet.ServletRequest#getParameterMap()}.
    */
   public static void goToBookmark(Application uni, Map parameters) throws NumberFormatException {
     String seqid = getStringParameter(parameters, Bookmark.SEQID);

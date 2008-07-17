@@ -65,7 +65,11 @@ public class Das2Region {
     segment_span = new SimpleSeqSpan(0, length, aseq);
   }
 
-
+  // public boolean getResidues(SeqSpan span)  {
+  /** return a BioSeq (or maybe a CharSeqIterator that can be used for composition of aseq?) */
+  public BioSeq getResidues(SeqSpan span)  {
+    return null;
+  }
   public URI getURI() { return region_uri; }
   public String getID() { return region_uri.toString(); }
   public String getName() { return name; }

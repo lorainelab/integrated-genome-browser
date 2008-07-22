@@ -306,7 +306,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     Memer mem;
     Map output_registry = new HashMap();
     //  DateFormat date_formatter = DateFormat.getDateTimeInstance();
-    SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     long date_initialized = 0;
     String date_init_string = null;
     Map genome2graphfiles = new LinkedHashMap();

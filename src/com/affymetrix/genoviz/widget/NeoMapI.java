@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
 import javax.swing.JSlider;
 
 /**
@@ -191,6 +192,11 @@ public interface NeoMapI extends NeoWidgetI {
    */
   public AxisGlyph addAxis(int offset);
 
+  /**
+   * Adds an axis number line along the primary axis at <code>offset</code>
+   * along the secondary axis.
+   */
+  public HorizontalAxisGlyph addHorizontalAxis(int offset);
 
   /**
    * Adds an adjustable to control zooming along the primary axis.

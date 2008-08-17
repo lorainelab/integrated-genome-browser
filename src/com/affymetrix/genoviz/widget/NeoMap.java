@@ -34,6 +34,7 @@ import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.NeoConstants.Orientation;
@@ -92,6 +93,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   // this is maintained in order to stretch them
   // when the range coords of the map change.
   private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
+  private List<HorizontalAxisGlyph> horizontalAxes = new ArrayList<HorizontalAxisGlyph>();
 
   // fields for map glyph factories
   // a hashtable to map name strings to MapGlyphFactories
@@ -198,6 +200,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     this.glyph_hash = root.glyph_hash;
     this.model_hash = root.model_hash;
     this.axes = root.axes;
+    this.horizontalAxes = root.horizontalAxes;
     this.selected = root.getSelected();
 
     // Set the background color of the new map to that of the root map
@@ -549,6 +552,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         axes.get(i).rangeChanged(); // notify the axis of the range change.
       }
     }
+    if (horizontalAxes != null) {
+      for (int i=0; i<horizontalAxes.size(); i++) {
+        horizontalAxes.get(i).rangeChanged(); // notify the axis of the range change.
+      }
+    }
 
   }
 
@@ -814,6 +822,16 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
+  public HorizontalAxisGlyph addHorizontalAxis(int offset) {
+    HorizontalAxisGlyph axis = new HorizontalAxisGlyph();
+    axis.setCoords(scene.getCoordBox().x, offset-10,
+                   scene.getCoordBox().width, 20);
+    axis.setForegroundColor(Color.black);
+    scene.getRootGlyph().addChild(axis);
+    horizontalAxes.add(axis);
+    return axis;
+  }
+
   @Override
   public void setRangeZoomer(JSlider slider) {
     setZoomer(WidgetAxis.Primary, slider);
@@ -1041,6 +1059,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
     // reset axes
     axes.clear();
+    horizontalAxes.clear();
 
     // remove all the transient glyphs.
     scene.removeAllTransients();

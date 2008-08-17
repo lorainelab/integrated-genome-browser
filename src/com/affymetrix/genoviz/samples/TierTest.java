@@ -20,8 +20,8 @@ import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.bioviews.SceneI.SelectType;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
 import com.affymetrix.genoviz.glyph.LineStretchContainerGlyph;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import com.affymetrix.genoviz.util.NeoConstants.Placement;
@@ -118,7 +118,7 @@ public class TierTest {
 
     TransformTierGlyph axis_tier = new TransformTierGlyph();
 
-    AxisGlyph axis = map.addAxis(30); //TODO: number 30 is ignored?
+    HorizontalAxisGlyph axis = map.addHorizontalAxis(30); //TODO: number 30 is ignored?
     axis.setForegroundColor(Color.GREEN.darker());
     axis.setLabelPlacement(Placement.BELOW);
     

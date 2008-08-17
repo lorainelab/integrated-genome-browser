@@ -15,13 +15,13 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JSlider;
 
 /**
@@ -53,17 +53,6 @@ import javax.swing.JSlider;
  *
  * // add an axis on the center of this map
  * map.addAxis(0);
- *
- * // map configuration options. (implementation specific parameters)
- * map.configure("-name1 val1 -name2 val2 ...etc..");
- *
- * // instantiate new factory.  (implementation specific parameters)
- * Object fac = map.addFactory("-name1 val1 -name2 -val2");
- *
- * // add items using a factory
- * item1 = map.addItem(fac,-20,-10);
- * item2 = map.addItem(fac,150,400);
- * ...etc..
  *
  * // associate a private datum to an item
  * setDataModel(item1,myPrivData);
@@ -228,73 +217,6 @@ public interface NeoMapI extends NeoWidgetI {
    */
   public void setRubberBand( RubberBand theBand );
 
-  /**
-   * adds a glyph object to this map to visually represent features.
-   * The glyph's starting position is <code>start</code>
-   * and ending position is <code>end</code>.
-   * The actual class and type of glyph added is dependent
-   * on the current map configuration.
-   * A <code>GlyphI</code> is returned;
-   * additional child glyphs may be added to it
-   * using <code>addItem(parent, child)</code>.
-   *
-   * @param start the integer starting coordinate of the glyph
-   * @param end  the integer ending coordinate of the glyph
-   * @return the GlyphI added
-   */
-  public GlyphI addItem(int start, int end);
-
-  /**
-   * adds a glyph object to this map to visually represent features.
-   * The glyph's starting position is <code>start</code>
-   * and ending position is <code>end</code>.
-   * The actual class and type of glyph added is dependent
-   * on the current map configuration, and the options String.
-   * A <code>GlyphI</code> is returned;
-   * additional child glyphs may be added to it
-   * using <code>addItem(parent, child)</code>.
-   *
-   * @param start the integer starting coordinate of the glyph
-   * @param end  the interger ending coordinate of the glyph
-   * @param options a <code>String</code> of options to specify
-   *                    parameters of the glyph that is being created
-   * @return the <code>GlyphI</code> added.
-   */
-  public GlyphI addItem(int start, int end, String options);
-
-
-  /**
-   * adds a glyph from <code>start</code> to <code>end</code>
-   * along the map's primary axis,
-   * using the specified glyph factory.
-   *
-   * @param factory the <code>MapGlyphFactory</code> to use for
-   *   creating the glyph.
-   * @param start the integer starting position
-   * @param end  the integer ending position
-   * @return the <code>GlyphI</code> added.
-   * @see #addFactory
-   */
-  public GlyphI addItem(MapGlyphFactory factory, int start, int end);
-
-  /**
-   * adds a glyph from <code>start</code> to <code>end</code>
-   * along the map's primary axis,
-   * using the specified glyph factory,
-   * combined with the options specified in the options String.
-   *
-   * @param factory the factory <code>Object</code> to use for
-   *   creating the glyph.
-   * @param start the integer starting position
-   * @param end  the integer ending position
-   * @param options a <code>String</code> of options augmenting
-   *   the specified factory configuration.
-   * @return the <code>GlyphI</code> added.
-   * @see #addFactory
-   */
-  public GlyphI addItem(MapGlyphFactory factory, int start, int end,
-                        String options);
-
   public void repack();
 
   /**
@@ -375,45 +297,6 @@ public interface NeoMapI extends NeoWidgetI {
    */
   public List<GlyphI> getItemsByPixel(int x, int y);
 
-
-  /**
-   * creates a glyph factory for this map.
-   * A glyph factory is used to create glyphs in a defined way
-   * without modifying this map's default configurations.
-   * Once a factory is added to a widget,
-   * glyphs can be created and displayed on the map
-   * using a glyph factory by calling {@link #addItem}
-   * or other methods
-   *
-   * <pre> MapGlyphFactory fac = mapwidget.addFactory("-color blue ...etc...");
-   * mapwidget.addItem(fac,100,200);</pre>
-   *
-   * @param config an options <code>String</code>
-   *  used to describe this factory.
-   * @return the MapGlyphFactory created
-   */
-  public MapGlyphFactory addFactory(String config);
-
-  /**
-   * creates a glyph factory for this map.
-   * A glyph factory is used to create glyphs in a defined way
-   * without modifying this map's default configurations.
-   * Once a factory is added to a widget,
-   * glyphs can be created and displayed on the map
-   * using a glyph factory by calling {@link #addItem}
-   * or other methods.
-   *
-   * <pre>
-   * MapGlyphFactory fac = mapwidget.addFactory("-color blue ...etc...");
-   * mapwidget.addItem(fac,100,200);</pre>
-   *
-   * @param config an options <code>Hashtable</code> used to describe this
-   *   factory.
-   * @return the MapGlyphFactory created
-   */
-  public MapGlyphFactory addFactory(Hashtable<String,Object> config);
-
-
   /**
    * Constrains the map's resize behavior according to the specified
    * constraint type.
@@ -449,31 +332,6 @@ public interface NeoMapI extends NeoWidgetI {
   public GlyphI addItem(GlyphI parent, GlyphI child);
 
   /**
-   * set option name/value pairs for this map.
-   * Configuration options are implementation-specific
-   * and are the primary means
-   * of conveying implementation-specific data to a NeoMapI.
-   *
-   * @param options  the <code>String</code> specifying options
-   *  of the form "<code>-option1 value1 -option2 value 2</code> ..."
-   */
-  public void configure(String options);
-
-  /**
-   * set option name/value pairs for this map.
-   * Configuration options are implementation-specific
-   * and are the primary means
-   * of conveying implementation-specific data to a NeoMapI.
-   *
-   * @param options a <code>Hashtable</code> specifying options of the form<BR>
-   *  { "option1" ==&gt; "value1", <BR>
-   *    "option2" ==&gt; "value2", <BR>
-   *    ...<BR>
-   *  }
-   */
-  public void configure(Hashtable<String,Object> options);
-
-  /**
    * Add a previously created GlyphI to a map.
    * This allows for example the removal of a glyph from one map
    * and adding the same glyph to another map.
@@ -506,14 +364,14 @@ public interface NeoMapI extends NeoWidgetI {
   /**
    * Returns a Rectangle2D with the maps bounds (x, y, width, height).
    */
-  public java.awt.geom.Rectangle2D.Double getCoordBounds();
+  public Rectangle2D.Double getCoordBounds();
 
   /**
    * Returns a Rectangle2D with the
    * coordinate bounds (x, y, width, height)
    * currently displayed in the map's view.
    */
-  public java.awt.geom.Rectangle2D.Double getViewBounds();
+  public Rectangle2D.Double getViewBounds();
 
   /**
    * Adds a viewbox listener to listen for changes

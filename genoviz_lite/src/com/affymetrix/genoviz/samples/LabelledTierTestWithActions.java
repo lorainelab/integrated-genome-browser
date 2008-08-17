@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.util.Random;
 
 public class LabelledTierTestWithActions extends Applet 
   implements ActionListener, ItemListener  {
@@ -120,9 +121,10 @@ public class LabelledTierTestWithActions extends Applet
     GlyphI child1, child2;
     int height = 5;
     int start, width;
+    Random rand = new Random(System.currentTimeMillis());
     for (int i=0; i<total; i++) {
-      start = (int)(Math.random() * 20000);
-      width = (int)(500 + Math.random()*1000);
+      start = rand.nextInt(20000);
+      width = 500 + rand.nextInt(1000);
       //	    container = new LineContainerGlyph();
       container = new LineStretchContainerGlyph();
       container.setColor(col);
@@ -154,9 +156,10 @@ public class LabelledTierTestWithActions extends Applet
     int height = 5;
     int start;
     int width;
+    Random rand = new Random(System.currentTimeMillis());
     for (int i=0; i<total; i++) {
-      start = (int)(Math.random() * 20000);
-      width = (int)(100 + Math.random()*1000);
+      start = rand.nextInt(20000);
+      width = 500 + rand.nextInt(1000);
       gl = new FillRectGlyph();
       gl.setCoords(start, 0, width, height);
       gl.setColor(col);
@@ -169,10 +172,11 @@ public class LabelledTierTestWithActions extends Applet
     int height;
     int start;
     int width;
+    Random rand = new Random(System.currentTimeMillis());
     for (int i=0; i<total; i++) {
-      start = (int)(Math.random() * 20000);
-      width = (int)(100 + Math.random()*1000);
-      height = (int)(3 + Math.random()*15);
+      start = rand.nextInt(20000);
+      width = 500 + rand.nextInt(1000);
+      height = (3 + rand.nextInt(15));
       gl = new OutlineRectGlyph();
       gl.setCoords(start, 0, width, height);
       gl.setColor(col);
@@ -180,6 +184,7 @@ public class LabelledTierTestWithActions extends Applet
     }
   }
 
+  @Override
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if (src == expandMI) {
@@ -204,6 +209,7 @@ public class LabelledTierTestWithActions extends Applet
     }
   }
 
+  @Override
   public void itemStateChanged(ItemEvent evt) {
     Object src = evt.getSource();
     if (src == tier1_select)  {

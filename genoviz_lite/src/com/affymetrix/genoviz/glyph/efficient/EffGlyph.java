@@ -37,8 +37,8 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   // for very large glyphs (bigger than about 32000 pixels).
   static final boolean FIX_AWT_BIG_RECT_BUG = true;
 
-  static protected int min_pixels_width=1;
-  static protected int min_pixels_height=1;
+  static protected int min_pixels_width=1; //TODO: make non-static, make part of the glyph style
+  static protected int min_pixels_height=1; //TODO: make non-static, make part of the glyph style
 
   protected GlyphI parent;
   protected List<GlyphI> children;

@@ -123,8 +123,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   protected boolean hscroll_show, vscroll_show;
 
-  protected static String hscroll_default_loc = "South";
-  protected static String vscroll_default_loc = "East";
+  protected final static String hscroll_default_loc = "South";
+  protected final static String vscroll_default_loc = "East";
   protected String hscroll_loc = hscroll_default_loc;
   protected String vscroll_loc = vscroll_default_loc;
 
@@ -1061,9 +1061,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
        before calling zoom() method, rather than here in the zoom() method
        itself -- GAH 6-1-98
     */
-    if (zoom_scale == Float.NEGATIVE_INFINITY ||
-        zoom_scale == Float.POSITIVE_INFINITY ||
-        zoom_scale == Float.NaN) {
+    if (Double.isInfinite(zoom_scale) ||
+        Double.isNaN(zoom_scale)) {
       if (DEBUG_ZOOM)  {
         System.out.println("Weird zoom call, ignoring: id = " + dim +
             ", scale = " + zoom_scale);

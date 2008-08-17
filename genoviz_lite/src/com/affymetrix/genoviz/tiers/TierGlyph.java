@@ -430,7 +430,6 @@ public class TierGlyph extends SolidGlyph {
 
   static final boolean LARGE_HANDLE = false;
   Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
-  Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 
   protected Rectangle calcHandlePix(ViewI view) {
     // could cache pixelbox of handle, but then will have problems if try to

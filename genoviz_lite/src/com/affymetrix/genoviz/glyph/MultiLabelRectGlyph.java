@@ -52,11 +52,14 @@ public class MultiLabelRectGlyph extends FillRectGlyph implements MultiLabelledG
    * @throws NullPointerException if any String in the array is null.
    * This is preferable to throwing an exception on the graphics painting thread later.
    */
+  @Override
   public void setLabelStrings(String[] strs) {
     this.label_strings = strs;
     this.label_sizes = new int[strs.length];
     for (int i = 0; i<strs.length; i++) {
-      if (strs[i] == null) throw new NullPointerException();
+      if (strs[i] == null) {
+        throw new NullPointerException();
+      }
     }
   }
 

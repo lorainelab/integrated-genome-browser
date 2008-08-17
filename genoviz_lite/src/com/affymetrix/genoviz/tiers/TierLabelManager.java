@@ -31,11 +31,11 @@ public class TierLabelManager {
   int xoffset_pop = 10;
   int yoffset_pop = 0;
 
-  /**
-   *  Determines whether selecting a tier label of a tier that contains only
-   *  GraphGlyphs should cause the graphs in that tier to become selected.
-   */
-  boolean do_graph_selections = false;
+//  /**
+//   *  Determines whether selecting a tier label of a tier that contains only
+//   *  GraphGlyphs should cause the graphs in that tier to become selected.
+//   */
+//  boolean do_graph_selections = false;
   
   public TierLabelManager(AffyLabelledTierMap map) {
     tiermap = map;
@@ -89,13 +89,13 @@ public class TierLabelManager {
     tiermap.updateWidget(); // make sure selections becomes visible
   }
   
-  /**
-   *  Determines whether selecting a tier label of a tier that contains only
-   *  GraphGlyphs should cause the graphs in that tier to become selected.
-   */
-  public void setDoGraphSelections(boolean b) {
-    do_graph_selections = b;
-  }
+//  /**
+//   *  Determines whether selecting a tier label of a tier that contains only
+//   *  GraphGlyphs should cause the graphs in that tier to become selected.
+//   */
+//  public void setDoGraphSelections(boolean b) {
+//    do_graph_selections = b;
+//  }
   
 //  void doGraphSelections(AffyTieredMap labelmap) {
 //    if (! do_graph_selections) {
@@ -273,7 +273,7 @@ public class TierLabelManager {
   }
   
   /** Comparator class needed to sort tiers based on label placement. */
-  public class MinYSorter implements Comparator {
+  public static class MinYSorter implements Comparator {
     @Override
     public int compare(Object obj1, Object obj2) {
       Rectangle2D.Double box1 = ((GlyphI)obj1).getCoordBox();

@@ -35,7 +35,6 @@ public class ExpandPacker implements PaddedPackerI {
 
   boolean STRETCH_HORIZONTAL = true;
   boolean STRETCH_VERTICAL = true;
-  boolean USE_NEW_PACK = true;
   boolean use_search_nodes = false;
 
   /*

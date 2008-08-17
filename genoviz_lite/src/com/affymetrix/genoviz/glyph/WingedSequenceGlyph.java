@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *    
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,8 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
-import java.io.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -42,6 +40,7 @@ public class WingedSequenceGlyph extends SequenceGlyph {
   }
 
 
+  @Override
   protected void drawHorizontal(ViewI view) {
     Rectangle pixelclipbox = view.getPixelBox();
     java.awt.geom.Rectangle2D.Double coordclipbox = view.getCoordBox();
@@ -75,11 +74,12 @@ public class WingedSequenceGlyph extends SequenceGlyph {
       pixels_per_base = ((LinearTwoDimTransform)view.getTransform()).getScaleX();
       bases_per_pixel = 1/pixels_per_base;
       int seq_pixel_offset = pixelbox.x;
-      int seq_pixel_width =  pixelbox.width;
       // ***** background already drawn in drawTraversal(), so just return if
       // ***** scale is < 1 pixel per base
-      if (!residuesSet) return;
-      int i, pixelstart, pixelwidth;
+      if (!residuesSet) {
+        return;
+      }
+      int i, pixelstart;
       double doublestart;
       doublestart = (double)seq_pixel_offset;
       pixelstart = (int)doublestart;
@@ -113,22 +113,20 @@ public class WingedSequenceGlyph extends SequenceGlyph {
                 pixelstart, baseline);
           }
 
-          else if ( fntMet.stringWidth ( sequence ) < fullwidth )
-            g.drawString(sequence.substring(seq_beg_index,seq_end_index),
-                pixelstart, baseline);
+          else if ( fntMet.stringWidth ( sequence ) < fullwidth ) {
+            g.drawString(sequence.substring(seq_beg_index, seq_end_index), pixelstart, baseline);
+          }
 
           else if ( (pixelbox.width / fntWidth) > 3 ) {
             //draw two segments of bases w/ ellipsis
             int bases_per_side = ( ( pixelbox.width / fntWidth ) - 3 ) / 2 ;
             StringBuffer s = new StringBuffer();
-            s.append ( sequence.substring ( seq_beg_index, seq_beg_index + bases_per_side) );
-            s.append ( "\u00b7" );
-            s.append ( "\u00b7" );
-            s.append ( "\u00b7" );
-            s.append ( sequence.substring ( seq_end_index - bases_per_side, seq_end_index ) );
+            s.append(sequence.substring ( seq_beg_index, seq_beg_index + bases_per_side) );
+            s.append('\u00b7').append('\u00b7').append('\u00b7');
+            s.append(sequence.substring ( seq_end_index - bases_per_side, seq_end_index ) );
             int centering_space = (pixelbox.width - ( s.length() * fntWidth) ) / 2;
-            g.drawString ( s.toString(), pixelstart + centering_space, baseline );
-            g.drawRect ( pixelbox.x, pixelbox.y, pixelbox.width,  pixelbox.height );
+            g.drawString(s.toString(), pixelstart + centering_space, baseline );
+            g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width,  pixelbox.height );
           }
         }
       }

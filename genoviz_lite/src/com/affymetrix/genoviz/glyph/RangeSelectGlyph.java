@@ -33,7 +33,6 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   Color second_color = Color.gray,
     text_color = Color.black;
   CharSequence text = "";
-  java.awt.Font font;
   public static final int min_width_needed_for_text = 32;
 
   /**
@@ -244,9 +243,6 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   }
 
   public CharSequence getLabel() { return text; }
-
-  @Override
-  public void setFont(Font f) { font = f; }
 
   public void setLabel(CharSequence str) { text = str; }
 

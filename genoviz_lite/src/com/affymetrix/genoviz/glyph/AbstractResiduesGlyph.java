@@ -21,8 +21,8 @@ import com.affymetrix.genoviz.util.NeoConstants;
  *  An abstract base class for several different biological sequence glyphs.
  */
 public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGlyphI {
-  protected static Font default_font = new Font("Courier", Font.BOLD, 12);
-  protected static Color default_residue_color = Color.black;
+  protected static final Font default_font = new Font("Courier", Font.BOLD, 12);
+  protected static final Color default_residue_color = Color.black;
 
   Glyph sel_glyph;
 
@@ -62,18 +62,21 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     return width;
   }
 
+  @Override
   public void setResidueFont(Font fnt) {
     // change font
     this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
 
     if (children != null) {
       for (GlyphI child : children) {
-        if (child instanceof ResiduesGlyphI)
-          ((ResiduesGlyphI)child).setResidueFont( fnt );
+        if (child instanceof ResiduesGlyphI) {
+          ((ResiduesGlyphI) child).setResidueFont(fnt);
+        }
       }
     }
   }
 
+  @Override
   public Font getResidueFont() { return style.getFont(); }
 
   @Override

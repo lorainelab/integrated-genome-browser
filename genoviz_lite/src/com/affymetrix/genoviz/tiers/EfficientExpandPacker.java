@@ -21,8 +21,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class EfficientExpandPacker extends ExpandPacker {
-  boolean DEBUG_PACK = false;
-
   @Override
   public Rectangle pack(GlyphI parent) {
 

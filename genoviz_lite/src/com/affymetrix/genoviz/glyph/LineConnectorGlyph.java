@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
@@ -61,9 +62,6 @@ public class LineConnectorGlyph extends Glyph {
 
     double x1, x2;
     GlyphI leftGlyph, rightGlyph;
-    java.awt.geom.Rectangle2D.Double left, right;
-    left = new java.awt.geom.Rectangle2D.Double();
-    right = new java.awt.geom.Rectangle2D.Double();
 
     x1 =  twoglyphs.get( 0 ).getCoordBox().x;
     x2 =  twoglyphs.get( 1 ).getCoordBox().x;
@@ -76,6 +74,7 @@ public class LineConnectorGlyph extends Glyph {
       rightGlyph = twoglyphs.get ( 0 );
     }
 
+    Rectangle2D.Double left, right;
     left = leftGlyph.getCoordBox();
     right = rightGlyph.getCoordBox();
     coordbox.x = left.x + left.width / 2;

@@ -43,13 +43,6 @@ public class View implements ViewI, NeoPaintListener,
   //  draw
   private static final boolean DEBUG_DAMAGE = false;
 
-  // if DEBUG_BACKGROUND, background of redrawn area will cycle through
-  //    colors with each new draw
-  private static final boolean DEBUG_BACKGROUND = false;
-  private int debug_cycle = 0;
-  private Color[] debug_color =
-  { Color.red, Color.yellow, Color.white, Color.green };
-
   // if DEBUG_SCROLL_CHECKS, then if optimizedScrollDraw() fails and have
   // to resort to a normalDraw(), will print out which scrolling optimzation
   // condition was not met
@@ -425,11 +418,6 @@ public class View implements ViewI, NeoPaintListener,
     }
 
     graphics.setColor(component.getBackground());
-
-    if (DEBUG_BACKGROUND) {
-      graphics.setColor(debug_color[debug_cycle % 4]);
-      debug_cycle++;
-    }
 
     graphics.fillRect(pixelbox.x,pixelbox.y,pixelbox.width, pixelbox.height);
     graphics.setColor(component.getForeground());

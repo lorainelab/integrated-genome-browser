@@ -15,16 +15,11 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.NeoConstants.Placement;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * A glyph used to display a label for a TierGlyph.
  */
 public class TierLabelGlyph extends SolidGlyph {
-
-  private static final boolean DEBUG_PIXELBOX = false;
-  private Rectangle debug_rect;
 
   private Font fnt;
   private Placement placement;
@@ -56,9 +51,6 @@ public class TierLabelGlyph extends SolidGlyph {
   
   private TierLabelGlyph () {
     placement = Placement.CENTER;
-    if (DEBUG_PIXELBOX) {
-      debug_rect = new Rectangle();
-    }
   }
 
   /** Overridden such that the info must be of type TierGlyph.  It is used
@@ -193,10 +185,6 @@ public class TierLabelGlyph extends SolidGlyph {
     g.setPaintMode();
     
     view.transformToPixels(coordbox, pixelbox);
-    if (DEBUG_PIXELBOX) {
-      debug_rect.setBounds(pixelbox.x, pixelbox.y,
-			 pixelbox.width, pixelbox.height);
-    }
 
     if( getShowBackground() ) { // show background
       //      Color bgc = getBackgroundColor();
@@ -231,16 +219,7 @@ public class TierLabelGlyph extends SolidGlyph {
       g.setColor( fgcolor );
       drawLabel(g);
     }
-    
-    if (DEBUG_PIXELBOX) {
-      // testing pixbox...
-      g.setColor(Color.red);
-      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-      g.setColor(Color.yellow);
-      g.drawRect(debug_rect.x, debug_rect.y,
-		 debug_rect.width, debug_rect.height);
-    }
-    
+        
     //drawGraphTicks(view);
     super.draw(view);
   }
@@ -361,16 +340,4 @@ public class TierLabelGlyph extends SolidGlyph {
   public Color getColor() {
     return getForegroundColor();
   }
-
-  static double axis_bins = 10;
-  int xpix_offset = 0;
-  Point zero_point = new Point(0,0);
-  Point2D.Double coord = new Point2D.Double(0,0);
-  Point curr_point = new Point(0,0);
-  Point prev_point = new Point(0,0);
-  Point scratch_point = new Point(0,0);
-  LinearTwoDimTransform scratch_trans = new LinearTwoDimTransform();
-
-  Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
-  Rectangle label_pix_box = new Rectangle();
 }

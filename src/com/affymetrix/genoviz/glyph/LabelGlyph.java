@@ -28,7 +28,7 @@ public class LabelGlyph extends Glyph {
   private static final boolean DEBUG_PIXELBOX = false;
   private static final boolean DEBUG_HIT = true;
 
-  protected static Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
+  protected static final Font DEFAULT_FONT = new Font("Courier", Font.PLAIN, 12);
 
   protected NeoConstants.Placement placement = NeoConstants.Placement.ABOVE;
   protected String text;

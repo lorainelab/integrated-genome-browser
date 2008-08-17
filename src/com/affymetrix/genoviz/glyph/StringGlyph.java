@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 
@@ -25,10 +24,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
  */
 public class StringGlyph extends SolidGlyph {
 
-  private static final boolean DEBUG_PIXELBOX = false;
   final static Font DEFAULT_FONT = new Font("SansSerif", Font.PLAIN, 12);
-
-  private Rectangle debug_rect;
 
   private String str;
   private Font fnt = DEFAULT_FONT;
@@ -36,6 +32,7 @@ public class StringGlyph extends SolidGlyph {
   private boolean show_background = false;
 
 
+  @Override
   public String toString() {
     return ("StringGlyph: string: \""+str+"\"  +coordbox: "+coordbox);
   }
@@ -47,9 +44,6 @@ public class StringGlyph extends SolidGlyph {
 
   public StringGlyph () {
     placement = NeoConstants.Placement.CENTER;
-    if (DEBUG_PIXELBOX) {
-      debug_rect = new Rectangle();
-    }
   }
 
   public void setString (String str) {
@@ -82,12 +76,8 @@ public class StringGlyph extends SolidGlyph {
 
     //Rectangle2D view_box = view.getCoordBox();
     view.transformToPixels(coordbox, pixelbox);
-    if (DEBUG_PIXELBOX) {
-      debug_rect.setBounds(pixelbox.x, pixelbox.y,
-          pixelbox.width, pixelbox.height);
-    }
     if (placement == NeoConstants.Placement.LEFT) {
-      pixelbox.x = pixelbox.x;
+      //pixelbox.x = pixelbox.x;
     }
     else if (placement == NeoConstants.Placement.RIGHT) {
       pixelbox.x = pixelbox.x + pixelbox.width - text_width;
@@ -96,7 +86,7 @@ public class StringGlyph extends SolidGlyph {
       pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
     }
     if (placement == NeoConstants.Placement.ABOVE) {
-      pixelbox.y = pixelbox.y;
+      //pixelbox.y = pixelbox.y;
     }
     else if (placement == NeoConstants.Placement.BELOW) {
       pixelbox.y = pixelbox.y + pixelbox.height;
@@ -128,14 +118,6 @@ public class StringGlyph extends SolidGlyph {
       g.drawString (str, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
     }
 
-    if (DEBUG_PIXELBOX) {
-      // testing pixbox...
-      g.setColor(Color.red);
-      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-      g.setColor(Color.yellow);
-      g.drawRect(debug_rect.x, debug_rect.y,
-          debug_rect.width, debug_rect.height);
-    }
     super.draw(view);
   }
 

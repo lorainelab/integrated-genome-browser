@@ -18,14 +18,15 @@ package com.affymetrix.genoviz.tiers;
  *  does not implement the Collection interfaces.
  *  really just for getting a stretchable array of doubles.
  */
-public class DoubleList {
+//TODO: Move this somewhere else
+public class DoubleList implements Cloneable {
   /**
-   *  the array of primitives (in the case of DoubleList, doubles)
+   *  The array of primitives (in the case of DoubleList, doubles)
    */
   private double primData[];
 
   /**
-   * the size of the 'List' (the number of primitive values it contains)
+   * The size of the 'List' (the number of primitive values it contains)
    */
   private int size;
 

@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
-import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -73,8 +72,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   protected NeoConstants.Orientation orient;
 
-  protected MapGlyphFactory default_factory;
-
   int stretchCount, reshapeCount;
   protected boolean fit_check = true;
 
@@ -84,21 +81,16 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   private static final boolean NM_DEBUG_PAINT = false;
 
-  protected static Color default_map_background = new Color(180, 250, 250);
-  protected static Color default_panel_background = Color.lightGray;
+  protected static final Color default_map_background = new Color(180, 250, 250);
+  protected static final Color default_panel_background = Color.lightGray;
   // not sure if foreground is used at all at the moment...
-  protected static Color default_panel_foreground = Color.darkGray;
+  protected static final Color default_panel_foreground = Color.darkGray;
 
   // a List of axes added to the map
   // this is maintained in order to stretch them
   // when the range coords of the map change.
   private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
   private List<HorizontalAxisGlyph> horizontalAxes = new ArrayList<HorizontalAxisGlyph>();
-
-  // fields for map glyph factories
-  // a hashtable to map name strings to MapGlyphFactories
-  // TODO: Use MapGlyphFactoryI ?
-  Hashtable<String,MapGlyphFactory> factory_hash;
 
   // fields to keep track of whether ranges have been explicitly set or not
   boolean axis_range_set = false;
@@ -281,9 +273,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     canvas = new NeoCanvas();
     enableDragScrolling(drag_scrolling_enabled);
 
-    default_factory = new MapGlyphFactory(orient);
-    default_factory.setScene(scene);
-
     setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
     setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
 
@@ -319,15 +308,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
      * (should really default to AUTO_SCROLL_INCREMENT anyway
      *  and reset in widgets that don't want it [like NeoSeq] )
      */
-    if (hscroll_show && scroller[X] instanceof Component)  {
+    if (hscroll_show)  {
       setScrollIncrementBehavior(WidgetAxis.Primary, AUTO_SCROLL_INCREMENT);
     }
 
-    if (vscroll_show && scroller[Y] instanceof Component)  {
+    if (vscroll_show)  {
       setScrollIncrementBehavior(WidgetAxis.Secondary, AUTO_SCROLL_INCREMENT);
     }
 
-    factory_hash = new Hashtable<String,MapGlyphFactory>();
     glyph_hash = new Hashtable<GlyphI,Object>();
     model_hash = new Hashtable<Object,Object>();
 
@@ -861,113 +849,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     zoom(WidgetAxis.Secondary, zoom_scale);
   }
 
-  @Override
-  public MapGlyphFactory addFactory(String config_string) {
-    Hashtable<String,Object> config_hash = null;
-    config_hash = GeneralUtils.parseOptions(config_string);
-    return addFactory(config_hash);
-  }
-
-  public MapGlyphFactory addFactory(Hashtable<String,Object> config_hash) {
-
-    MapGlyphFactory fac = new MapGlyphFactory(orient);
-    fac.setScene(scene);
-    fac.configure(config_hash);
-
-    // allowing specification of factory name via -name option
-    //  this use of factory is DEPRECATED though
-    String name = (String)config_hash.get("-name");
-    if (name != null) {
-      factory_hash.put(name, fac);
-    }
-    return fac;
-  }
-
-  /**
-   * Add a factory made glyph to the map.
-   * Note that this assumes adding based on sequence!
-   * So that it will <em>include</em> the end.
-   * Thus if start = 0 and end = 1,
-   * we are really creating an annotation
-   * that starts at 0 and is 2 map units long.
-   */
-  public GlyphI addItem(MapGlyphFactory factory, int start, int end) {
-    String nullstring = null;
-    return addItem(factory, start, end, nullstring);
-  }
-
-  public GlyphI addItem(MapGlyphFactory fac, int start, int end,
-                          String option_string) {
-    if (fac == null) {
-      throw new NullPointerException("factory cannot be null.");
-    }
-    GlyphI gl;
-    if (start <= end) {
-      if (option_string == null) {
-        gl = fac.makeGlyph((double)start, (double)(end+1));
-      }
-      else {
-        gl = fac.makeGlyph((double)start, (double)(end+1), option_string);
-      }
-    }
-    else {
-      if (option_string == null) {
-        gl = fac.makeGlyph((double)(start+1), (double)end);
-      }
-      else {
-        gl = fac.makeGlyph((double)(start+1), (double)end, option_string);
-      }
-    }
-    scene.addGlyph(gl);
-    return gl;
-  }
-
-  public GlyphI addItem(int start, int end) {
-
-    GlyphI g = null;
-    if (start <= end) {
-      g = default_factory.makeItem(start, end+1);
-    }
-    else {
-      g = default_factory.makeItem(start+1, end);
-    }
-    return g;
-  }
-
-  public GlyphI addItem(int start, int end, String options){
-    if (start <= end) {
-      return default_factory.makeItem(start, end+1, options);
-    }
-    else {
-      return default_factory.makeItem(start+1, end, options);
-    }
-  }
-
-  //
-  // Packing is not performed here!!!
-  // It is, for now, a separate operation.
-  //
   /**
    * Simply calls parent.addChild(child), so we don't really need this method.
    * @return null
    */
+  @Override
   public GlyphI addItem(GlyphI parent, GlyphI child) {
     parent.addChild(child);
     return null;
-  }
-
-  public Object addToItem(Object obj, int start, int end) {
-    if (!(obj instanceof GlyphI)) {
-      return null;
-    }
-    GlyphI parent = (GlyphI)obj;
-    MapGlyphFactory factory = default_factory;
-    PackerI packer = factory.getPacker();
-    factory.setPacker(null);
-    GlyphI child = factory.makeGlyph(start, end);
-    parent.addChild(child);
-    factory.setPacker(packer);
-    return child;
   }
 
   /**
@@ -1289,31 +1178,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public void setPacker(PackerI packer) {
     this.getScene().getRootGlyph().setPacker(packer);
     //    ((MapScene)this.getScene()).setPacker(packer);
-    default_factory.setPacker(packer);
-  }
-
-
-  /**
-   * Configure map by setting given options.
-   * @param options   An option String of the form "-option1 value1
-   *    -option2 value2..."
-   */
-  public void configure( String options ) {
-    default_factory.configure(options);
-  }
-
-  /**
-   * Configure map by setting given options.
-   * @param options   An option Hashtable of the form<BR>
-   * {"option1" ==&gt; "value1",<BR>
-   *  "option2" ==&gt; "value2", ...}<BR>
-   */
-  public void configure(Hashtable<String,Object> options) {
-    default_factory.configure(options);
-  }
-
-  public MapGlyphFactory getFactory() {
-    return default_factory;
   }
 
   /**
@@ -1326,41 +1190,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     setMaxZoom(WidgetAxis.Primary, font_width);
   }
 
-//  /**
-//   * Gets the offscreen Image buffer associated with the map.
-//   * <em>Just</em> the map is returned, does not include scrollbars...
-//   * This can then be used to generate GIFs of the map.
-//   */
-//  public Image getMapImage() {
-//    Image mi;
-//    if (view.isBuffered()) {
-//      mi = view.getBufferedImage();
-//      return mi;
-//    }
-//    else if (canvas.isDoubleBuffered()) {
-//      mi = canvas.getBufferedImage();
-//      if (mi == null) {
-//        // trying to deal with initialization problem --
-//        // some JVMs call paint() directly when bringing up
-//        // canvas for first time, and since double buffer image is dealt with
-//        // in update(), it stays null till a call to update() is made.
-//        // Therefore if getting a null image, trying to force an
-//        // update->paint to create and draw onto the image buffer
-//        // This works, at least in Cafe 1.8 on Win95 -- GAH 8-26-98
-//        // System.err.println("trying to jump start image");
-//        // Note that this is somewhat inefficient, forcing a double draw.
-//        // However, this conditional should only trigger when an Image is
-//        // requested after a NeoMap first appears, or after reshapes, but
-//        // before any updateWidgets() occur
-//        canvas.update(canvas.getGraphics());
-//        mi = canvas.getBufferedImage();
-//      }
-//      return mi;
-//    }
-//    else { // no image
-//      return null;
-//    }
-//  }
 
   /**
    * Listens for NeoDragEvents generated by a {@link DragMonitor}.
@@ -1369,6 +1198,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * This is used to implement drag scrolling.
    * @see #enableDragScrolling(boolean)
    */
+  @Override
   public void heardDragEvent(NeoDragEvent evt) {
     if (!drag_scrolling_enabled) { return; }
     Object src = evt.getSource();

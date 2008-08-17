@@ -82,7 +82,10 @@ public class SeparableTwoDimTransform implements TwoDimTransform {
 
   @Override
   public SeparableTwoDimTransform clone() throws CloneNotSupportedException {
-    return new SeparableTwoDimTransform(xTransform.clone(), yTransform.clone());
+    SeparableTwoDimTransform copy = (SeparableTwoDimTransform) super.clone();
+    copy.xTransform = xTransform.clone();
+    copy.yTransform = yTransform.clone();
+    return copy;
   }
 
 }

@@ -47,8 +47,6 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
   //   transient container
   boolean drag_a_copy = true;
 
-  double prevx, prevy;
-  double currentx, currenty;
   Point2D.Double prev_point = new Point2D.Double(0, 0);
   Point2D.Double cur_point = new Point2D.Double(0, 0);
 
@@ -106,8 +104,8 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     // if have no event to start with, then set start coords based on
     //   glyph coords
     if (nevt == null) {
-      prevx = gl.getCoordBox().x;
-      prevy = gl.getCoordBox().y;
+      prev_point.x = gl.getCoordBox().x;
+      prev_point.y = gl.getCoordBox().y;
     }
     // otherwise base start coords on event coords
     else {

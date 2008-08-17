@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.util;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.util.*;
 
 
@@ -79,21 +78,6 @@ public class GeneralUtils  {
   }
 
   /**
-   * Combines hash1 and hash2 so that any keys that are in both hash1
-   * and hash2 are taken from hash1.
-   */
-  public static Hashtable<String,Object> CombineOptions( Hashtable<String,Object> hash1, Hashtable<String,Object> hash2 )  {
-    // for efficiency, deal first with special case where hashes are identical
-    if (hash1 == hash2) {
-      return hash1;
-    }
-
-    Hashtable<String,Object> return_hash = new Hashtable<String,Object>(hash2);
-    return_hash.putAll(hash1);
-    return return_hash;
-  }
-
-  /**
    * creates a color map of the 13 colors defined by AWT.
    *
    * @return the AWT colors indexed by name.
@@ -122,6 +106,7 @@ public class GeneralUtils  {
    * Use Graphics.getFontMetrics() instead whenever possible, but this
    * will work just as well as Toolkit.getFontMetrics(Font).
    */
+  @Deprecated
   public static FontMetrics getFontMetrics(Font fnt) {
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     Graphics2D g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);

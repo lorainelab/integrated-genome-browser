@@ -24,16 +24,13 @@ import java.util.List;
  */
 public abstract class AbstractCoordPacker implements PackerI {
 
-  protected boolean DEBUG = false;
-  protected boolean DEBUG_CHECKS = false;
-
   // Please note that several children currently ignore the coord fuzziness setting.
   protected double coord_fuzziness = 1;
 
   protected double spacing = 2;
 
   protected NeoConstants.Direction  movetype;
-  protected java.awt.geom.Rectangle2D.Double before = new java.awt.geom.Rectangle2D.Double();
+  protected Rectangle2D.Double before = new Rectangle2D.Double();
 
   /**
    * Constructs a packer that moves glyphs away from the horizontal axis.
@@ -68,7 +65,7 @@ public abstract class AbstractCoordPacker implements PackerI {
   public Rectangle pack(GlyphI parent) {
     List<GlyphI> children = parent.getChildren();
     if (children == null) { return null; }
-    for (GlyphI child : parent.getChildren()) {
+    for (GlyphI child : children) {
       pack(parent, child);
     }
     return null;
@@ -220,8 +217,7 @@ public abstract class AbstractCoordPacker implements PackerI {
         movebox.y);
     }
     else {
-      throw new IllegalArgumentException
-          ("movetype must be one of UP, DOWN, LEFT, RIGHT, MIRROR_HORIZONTAL, or MIRROR_VERTICAL");
+      throw new IllegalArgumentException("movetype " + movetype + " not supported");
     }
   }
 }

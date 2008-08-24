@@ -37,6 +37,7 @@ import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
@@ -69,8 +70,6 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   static final long serialVersionUID = 1L;
-
-  protected NeoConstants.Orientation orient;
 
   int stretchCount, reshapeCount;
   protected boolean fit_check = true;
@@ -108,7 +107,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   DragMonitor canvas_drag_monitor;
   boolean drag_scrolling_enabled = false;
 
-  protected NeoWidgetI.SelectionType selectionMethod = NeoWidgetI.SelectionType.NO_SELECTION;
+  protected SelectionType selectionMethod = SelectionType.NO_SELECTION;
   protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
   protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
@@ -276,14 +275,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
     setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
 
-    zoomer[X] = null;
-    zoomer[Y] = null;
-    scale_constraint[X] = NeoWidgetI.ScaleConstraint.NONE;
-    scale_constraint[Y] = NeoWidgetI.ScaleConstraint.NONE;
-    zoom_behavior[X] = ZoomConstraint.CONSTRAIN_MIDDLE;
-    zoom_behavior[Y] = ZoomConstraint.CONSTRAIN_MIDDLE;
-    zoom_coord[X] = 0;
-    zoom_coord[Y] = 0;
+    zoomer[Xint] = null;
+    zoomer[Yint] = null;
+    scale_constraint[Xint] = ScaleConstraint.NONE;
+    scale_constraint[Yint] = ScaleConstraint.NONE;
+    zoom_behavior[Xint] = ZoomConstraint.CONSTRAIN_MIDDLE;
+    zoom_behavior[Yint] = ZoomConstraint.CONSTRAIN_MIDDLE;
+    zoom_coord[Xint] = 0;
+    zoom_coord[Yint] = 0;
 
     setMapRange(0,100);
     setMapOffset(0,100);
@@ -296,10 +295,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     setPixelBounds();
 
     seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
-    max_pixels_per_coord[X] = seqmetrics.charWidth('C');
+    max_pixels_per_coord[Xint] = seqmetrics.charWidth('C');
 
-    max_pixels_per_coord[Y] = 10;
-    min_pixels_per_coord[X] = min_pixels_per_coord[Y] = 0.01f;
+    max_pixels_per_coord[Yint] = 10;
+    min_pixels_per_coord[Xint] = min_pixels_per_coord[Yint] = 0.01f;
 
     initComponentLayout();
 
@@ -309,11 +308,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
      *  and reset in widgets that don't want it [like NeoSeq] )
      */
     if (hscroll_show)  {
-      setScrollIncrementBehavior(WidgetAxis.Primary, AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(WidgetAxis.Primary, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
     }
 
     if (vscroll_show)  {
-      setScrollIncrementBehavior(WidgetAxis.Secondary, AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(WidgetAxis.Secondary, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
     }
 
     glyph_hash = new Hashtable<GlyphI,Object>();
@@ -357,7 +356,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       GridBagLayout gbl = new GridBagLayout();
       GridBagConstraints gbc = new GridBagConstraints();
       this.setLayout(gbl);
-      if (hscroll_show && scroller[X] instanceof Component)  {
+      if (hscroll_show && scroller[Xint] instanceof Component)  {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         if (hscroll_loc.equalsIgnoreCase("North")) {
           gbc.anchor = GridBagConstraints.NORTH;
@@ -371,10 +370,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         gbc.weighty = 0;
         gbc.gridwidth = 1;
         gbc.gridheight = GridBagConstraints.REMAINDER;
-        gbl.setConstraints((Component)scroller[X], gbc);
-        add((Component)scroller[X]);
+        gbl.setConstraints((Component)scroller[Xint], gbc);
+        add((Component)scroller[Xint]);
       }
-      if (vscroll_show && scroller[Y] instanceof Component)  {
+      if (vscroll_show && scroller[Yint] instanceof Component)  {
         gbc.fill = GridBagConstraints.VERTICAL;
         if (vscroll_loc.equalsIgnoreCase("West")) {
           gbc.anchor = GridBagConstraints.WEST;
@@ -388,8 +387,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         gbc.weighty = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = 1;
-        gbl.setConstraints((Component)scroller[Y], gbc);
-        add((Component)scroller[Y]);
+        gbl.setConstraints((Component)scroller[Yint], gbc);
+        add((Component)scroller[Yint]);
       }
       gbc.fill = GridBagConstraints.BOTH;
       gbc.anchor = GridBagConstraints.CENTER;
@@ -520,13 +519,14 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
 
   /**
-   * setMapRange and setMapOffset are the only places that the map coord box
-   *  and coord_* should change.
+   * Set the minimum and maximum range (primary axis) coordinates.
+   * Note that {@link #setMapRange(int,int)} and {@link #setMapOffset(int, int)} 
+   * are the only places that the map coord box should change.
    */
   public void setMapRange(int start, int end) {
     // scene.setCoords() is now handled in setBounds()
 
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       //      this.setBounds(Secondary,start,end);
       this.setFloatBounds(WidgetAxis.Secondary,(double)start,(double)end);
     }
@@ -551,7 +551,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public int[] getMapRange() {
     int[] range = new int[2];
     java.awt.geom.Rectangle2D.Double cb = getCoordBounds();
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       range[0] = (int) cb.y;
       range[1] = (int) (cb.y + cb.height);
     }
@@ -564,8 +564,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public int[] getVisibleRange() {
     int[] range = new int[2];
-    java.awt.geom.Rectangle2D.Double cb = getViewBounds();
-    if (orient == NeoConstants.Orientation.Vertical) {
+    Rectangle2D.Double cb = getViewBounds();
+    if (! isHorizontal()) {
       range[0] = (int) cb.y;
       range[1] = (int) (cb.y + cb.height);
     }
@@ -576,13 +576,39 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     return range;
   }
 
+
   /**
-   * setMapRange and setMapOffset are the only places that the map coord box
-   *  and coord_* should change.
+   * Sets the visible range to exactly match the given range.
+   * This can cause the zoom level to change.
+   * @param start
+   * @param end
+   */
+  public void setVisibleRangeTo(int start, int end) {
+  }
+  
+  /**
+   * Scroll the map such that the specified range is
+   * included somewhere in the visible range.  This does not
+   * change the zoom level and does not set the visible range
+   * to exactly match the given coordinates.
+   * @param start
+   * @param end
+   */
+  public void scrollRangeToVisible(int start, int end) {
+    
+  }
+  
+  /**
+   * Set the minimum and maximum offset (secondary axis) coordinates.
+   * Note that {@link #setMapRange(int,int)} and {@link #setMapOffset(int, int)} 
+   * are the only places that the map coord box should change.
    */
   public void setMapOffset(int start, int end) {
     // scene.setCoords() is now handled in setBounds()
-    if (orient == NeoConstants.Orientation.Vertical) {
+    
+    //TODO!: is this right?
+    
+    if (! isHorizontal()) {
       this.setBounds(WidgetAxis.Primary, start, end);
     }
     else  {
@@ -593,7 +619,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public int[] getMapOffset() {
     int[] range = new int[2];
     java.awt.geom.Rectangle2D.Double cb = getCoordBounds();
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       range[0] = (int) cb.x;
       range[1] = (int) (cb.x + cb.width);
     }
@@ -607,7 +633,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public int[] getVisibleOffset() {
     int[] range = new int[2];
     java.awt.geom.Rectangle2D.Double cb = getViewBounds();
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       range[0] = (int) cb.x;
       range[1] = (int) (cb.x + cb.width);
     }
@@ -619,8 +645,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   public void stretchToFit() {
-    stretchToFit((reshape_constraint[X] == FITWIDGET),
-                 (reshape_constraint[Y] == FITWIDGET));
+    stretchToFit((reshape_constraint[Xint] == FITWIDGET),
+                 (reshape_constraint[Yint] == FITWIDGET));
   }
 
   /**
@@ -659,24 +685,24 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     view.setTransform(trans);
     view.setComponent(canvas);
 
-    if (!set_min_pix_per_coord[X]) {
-      min_pixels_per_coord[X] = trans.getScaleX();
+    if (!set_min_pix_per_coord[Xint]) {
+      min_pixels_per_coord[Xint] = trans.getScaleX();
     }
-    if (!set_min_pix_per_coord[Y]) {
-      min_pixels_per_coord[Y] = trans.getScaleY();
+    if (!set_min_pix_per_coord[Yint]) {
+      min_pixels_per_coord[Yint] = trans.getScaleY();
     }
 
     // checking in case map is small, stretchToFit may build a transform with
     //   scale larger than max_pixels_per_coord
-    if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
-      min_pixels_per_coord[X] = max_pixels_per_coord[X];
-      trans.setScaleX(min_pixels_per_coord[X]);
+    if (min_pixels_per_coord[Xint] >= max_pixels_per_coord[Xint]) {
+      min_pixels_per_coord[Xint] = max_pixels_per_coord[Xint];
+      trans.setScaleX(min_pixels_per_coord[Xint]);
       trans.setOffsetX(canvas.getSize().width/2 -
       trans.getScaleX()*scene.getCoordBox().width/2);
     }
-    if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
-      min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
-      trans.setScaleY(min_pixels_per_coord[Y]);
+    if (min_pixels_per_coord[Yint] >= max_pixels_per_coord[Yint]) {
+      min_pixels_per_coord[Yint] = max_pixels_per_coord[Yint];
+      trans.setScaleY(min_pixels_per_coord[Yint]);
       trans.setOffsetY(
         canvas.getSize().height/2 -
         trans.getScaleY()*scene.getCoordBox().height/2);
@@ -745,36 +771,36 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       }
     }
 
-    pixels_per_coord[X] = trans.getScaleX();
-    coords_per_pixel[X] = 1/pixels_per_coord[X];
+    pixels_per_coord[Xint] = trans.getScaleX();
+    coords_per_pixel[Xint] = 1/pixels_per_coord[Xint];
 
-    pixels_per_coord[Y] = trans.getScaleY();
-    coords_per_pixel[Y] = 1/pixels_per_coord[Y];
+    pixels_per_coord[Yint] = trans.getScaleY();
+    coords_per_pixel[Yint] = 1/pixels_per_coord[Yint];
 
-    if (zoomer[X] != null)  {
+    if (zoomer[Xint] != null)  {
       // setting maxy of exponential tranform to (max - visible amount) to
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
       // the maximum for the value is really the scrollbar maximum minus
       // the visible amount (the thumb)
-      zoomtrans[X] = new ExponentialOneDimTransform(
-        min_pixels_per_coord[X],
-        max_pixels_per_coord[X],
-        zoomer[X].getMinimum(),
-        zoomer[X].getMaximum()-zoomer[X].getExtent());
+      zoomtrans[Xint] = new ExponentialOneDimTransform(
+        min_pixels_per_coord[Xint],
+        max_pixels_per_coord[Xint],
+        zoomer[Xint].getMinimum(),
+        zoomer[Xint].getMaximum()-zoomer[Xint].getExtent());
 
       adjustZoomer(WidgetAxis.Primary);
     }
     adjustScroller(WidgetAxis.Primary);
-    if (zoomer[Y] != null) {
+    if (zoomer[Yint] != null) {
       // setting maxy of exponential tranform to (max - visible amount) to
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
       // the maximum for the value is really the scrollbar maximum minus
       // the visible amount (the thumb)
-      zoomtrans[Y] = new ExponentialOneDimTransform(
-        min_pixels_per_coord[Y],
-        max_pixels_per_coord[Y],
-        zoomer[Y].getMinimum(),
-        zoomer[Y].getMaximum()-zoomer[Y].getExtent());
+      zoomtrans[Yint] = new ExponentialOneDimTransform(
+        min_pixels_per_coord[Yint],
+        max_pixels_per_coord[Yint],
+        zoomer[Yint].getMinimum(),
+        zoomer[Yint].getMaximum()-zoomer[Yint].getExtent());
       adjustZoomer(WidgetAxis.Secondary);
     }
     adjustScroller(WidgetAxis.Secondary);
@@ -793,7 +819,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   public AxisGlyph addAxis(int offset) {
     AxisGlyph axis = null;
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       axis = new AxisGlyph(NeoConstants.Orientation.Vertical);
       axis.setCoords(offset-10, scene.getCoordBox().y, 20,
                      scene.getCoordBox().height);
@@ -933,10 +959,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     super.clearWidget();
     // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = scene.getRootGlyph();
-    java.awt.geom.Rectangle2D.Double evebox = oldeve.getCoordBox();
+    Rectangle2D.Double evebox = oldeve.getCoordBox();
     RootGlyph neweve = new RootGlyph();
-    neweve.setExpansionBehavior(RootGlyph.X, oldeve.getExpansionBehavior(RootGlyph.X));
-    neweve.setExpansionBehavior(RootGlyph.Y, oldeve.getExpansionBehavior(RootGlyph.Y));
+    neweve.setExpansionBehavior(XY.X, oldeve.getExpansionBehavior(XY.X));
+    neweve.setExpansionBehavior(XY.Y, oldeve.getExpansionBehavior(XY.Y));
     neweve.setCoords(evebox.x, evebox.y, evebox.width, evebox.height);
     scene.setRootGlyph(neweve);
 
@@ -959,7 +985,8 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
-  public void setSelectionEvent(NeoWidgetI.SelectionType theMethod) {
+  @Override
+  public void setSelectionEvent(SelectionType theMethod) {
     switch (theMethod) {
     case NO_SELECTION:
     case ON_MOUSE_DOWN:
@@ -971,7 +998,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
          + "NO_SELECTION, ON_MOUSE_DOWN, or ON_MOUSE_UP");
     }
   }
-  public NeoWidgetI.SelectionType getSelectionEvent() {
+
+  @Override
+  public SelectionType getSelectionEvent() {
     return this.selectionMethod;
   }
 
@@ -1014,6 +1043,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     view.setScrollingOptimized(optimize_scrolling);
   }
 
+  @Override
   public void select(GlyphI gl, int start, int end) {
     if (end < start) {
       int temp = start;
@@ -1030,14 +1060,16 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
   }
 
+  @Override
   public void select(List<GlyphI> glyphs, int start, int end) {
     for (GlyphI g : glyphs) {
       select(g, start, end);
     }
   }
 
+  @Override
   public int getSelectedStart(GlyphI gl) {
-    if (orient == NeoConstants.Orientation.Vertical)  {
+    if (! isHorizontal())  {
       return (int)Math.round(gl.getSelectedRegion().y);
     }
     else {
@@ -1045,8 +1077,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     }
   }
 
+  @Override
   public int getSelectedEnd(GlyphI gl) {
-    if (orient == NeoConstants.Orientation.Vertical) {
+    if (! isHorizontal()) {
       return (int)Math.round(gl.getSelectedRegion().y +
                         gl.getSelectedRegion().height - 1);
     }
@@ -1086,55 +1119,19 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
 
+  @Override
   public void setMapColor(Color col) {
     canvas.setBackground(col);
   }
 
+  @Override
   public Color getMapColor() {
     return canvas.getBackground();
-  }
-
-  @Override
-  public void setBackground(Color theColor) {
-    super.setBackground(theColor);
-    setBackground(MAP, theColor);
-  }
-
-  /**
-   * @param id must be NeoMapI.MAP
-   * @param col the color for the map background.
-   * @see NeoMapI#MAP
-   */
-  public void setBackground(int id, Color col) {
-    if (id == MAP) {
-      setMapColor(col);
-    }
-    else {
-      throw new IllegalArgumentException("NeoMap.setBackground() can only " +
-                               " accept an id of MAP");
-    }
-  }
-
-  /**
-   * @param id must be NeoMapI.MAP
-   * @return the color of the map background.
-   * @see NeoMapI#MAP
-   */
-  public Color getBackground(int id) {
-    if (id == MAP) {
-      return getMapColor();
-    }
-    else {
-      throw new IllegalArgumentException("NeoMap.getBackground() can only " +
-                               " accept an id of MAP");
-    }
   }
 
   public PackerI getPacker() {
     return this.getScene().getRootGlyph().getPacker();
   }
-
-
 
   /**
    * Add a glyph to the map.
@@ -1279,15 +1276,15 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     Object source = nme.getSource();
     int id = nme.getID();
     // else if (NO_SELECTION != selectionMethod && evt.target == this.scene) {
-    if (NeoWidgetI.SelectionType.NO_SELECTION != selectionMethod && source == this.view) {
+    if (SelectionType.NO_SELECTION != selectionMethod && source == this.view) {
       boolean shiftDown = nme.isShiftDown();
       boolean controlDown = nme.isControlDown();
       boolean metaDown = nme.isMetaDown();
       //      boolean altDown = nme.isAltDown();
       if ((id == NeoMouseEvent.MOUSE_PRESSED &&
-          NeoWidgetI.SelectionType.ON_MOUSE_DOWN == selectionMethod) ||
+          SelectionType.ON_MOUSE_DOWN == selectionMethod) ||
         (id == NeoMouseEvent.MOUSE_RELEASED &&
-         NeoWidgetI.SelectionType.ON_MOUSE_UP == selectionMethod)) {
+         SelectionType.ON_MOUSE_UP == selectionMethod)) {
         List<GlyphI> prev_items = this.getSelected();
         int prev_items_size = prev_items.size();
         if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {
@@ -1337,7 +1334,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     if (range_listeners.size() > 0) {
       java.awt.geom.Rectangle2D.Double vbox = e.getCoordBox();
       NeoRangeEvent nevt = null;
-      if (orient == NeoConstants.Orientation.Vertical) {
+      if (! isHorizontal()) {
           nevt = new NeoRangeEvent(this, vbox.y, vbox.y + vbox.height);
       }
       else {

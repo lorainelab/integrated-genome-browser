@@ -65,8 +65,8 @@ public class TierTest {
 
     map.setSelectionAppearance(SelectType.SELECT_OUTLINE);
     
-    map.setReshapeBehavior(NeoMap.X, NeoMap.FITWIDGET - 3);
-    map.setReshapeBehavior(NeoMap.Y, 0);
+    map.setReshapeBehavior(NeoMap.Xint, NeoMap.FITWIDGET - 3);
+    map.setReshapeBehavior(NeoMap.Yint, 0);
     
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);

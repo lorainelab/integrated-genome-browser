@@ -67,10 +67,10 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     add("Center", mapsplitter);
 
     if (hscroll_show) {
-      add(hscroll_loc, scroller[X]);
+      add(hscroll_loc, scroller[Xint]);
     }
     if (vscroll_show) {
-      add(vscroll_loc, scroller[Y]);
+      add(vscroll_loc, scroller[Yint]);
     }
   }
 
@@ -197,9 +197,9 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   }
 
   @Override
-  public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord) {
-    super.setZoomBehavior(axisid, constraint, coord);
-    labelmap.setZoomBehavior(axisid, constraint, coord);
+  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint, double coord) {
+    super.setZoomBehavior(axis, constraint, coord);
+    labelmap.setZoomBehavior(axis, constraint, coord);
   }
 
   @Override

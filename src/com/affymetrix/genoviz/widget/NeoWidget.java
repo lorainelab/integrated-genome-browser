@@ -33,6 +33,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
 
+import com.affymetrix.genoviz.util.NeoConstants.Orientation;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -45,17 +46,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * Abstract implementation of NeoWidgetI.
- * NeoWidget is abstract -- currently does not implement at least:<ul>
- * <li> addItem(obj, obj);
- * <li> configure(str);
- * <li> configure(hash);
- * <li> configure(obj, str);
- * <li> configure(obj, hash);
- * <li> removeItem(obj);
- * </ul>
- * @see NeoWidgetI
- * for more documentation on methods.
+ * Abstract incomplete implementation of NeoWidgetI.
  */
 public abstract class NeoWidget extends NeoAbstractWidget
   implements NeoWidgetI, AdjustmentListener {
@@ -93,10 +84,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
   protected ZoomConstraint zoom_behavior[] = new ZoomConstraint[2];
   protected double zoom_coord[] = new double[2];
 
-  protected NeoWidgetI.ScaleConstraint scale_constraint[] = {NeoWidgetI.ScaleConstraint.NONE, NeoWidgetI.ScaleConstraint.NONE};
+  protected ScaleConstraint scale_constraint[] = {
+    ScaleConstraint.NONE, ScaleConstraint.NONE};
   protected int reshape_constraint[] = { FITWIDGET, FITWIDGET };
 
-  protected int expansion_behavior[] = { NO_EXPAND, NO_EXPAND };
+  protected ExpandBehavior expansion_behavior[] = { 
+    ExpandBehavior.NO_EXPAND, ExpandBehavior.NO_EXPAND };
 
   // constraints on transform scale
   protected boolean set_min_pix_per_coord[] = { false, false };
@@ -114,11 +107,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   protected double coords_per_pixel[] = new double[2];
 
-  protected JScrollBar scroller[] = new JScrollBar[2];
-  protected JSlider zoomer[] = new JSlider[2];
+  protected JScrollBar scroller[] = new JScrollBar[2]; // 0 = Primary, 1 = Secondary
+  protected JSlider zoomer[] = new JSlider[2]; // 0 = Primary, 1 = Secondary
 
   protected RubberBand rband;
-  protected java.awt.geom.Rectangle2D.Double bandbox;
+  protected Rectangle2D.Double bandbox;
   protected boolean rbActivated = false;
 
   protected boolean hscroll_show, vscroll_show;
@@ -132,15 +125,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
   public NeoWidget() {
-    this.setScrollIncrementBehavior(WidgetAxis.Primary,NO_AUTO_SCROLL_INCREMENT);
-    this.setScrollIncrementBehavior(WidgetAxis.Secondary,NO_AUTO_SCROLL_INCREMENT);
+    this.setScrollIncrementBehavior(WidgetAxis.Primary, ScrollIncrementBehavior.NO_AUTO_SCROLL_INCREMENT);
+    this.setScrollIncrementBehavior(WidgetAxis.Secondary, ScrollIncrementBehavior.NO_AUTO_SCROLL_INCREMENT);
 
     // start with default identity linear transform
     trans = new LinearTwoDimTransform();
 
-    // adding name for common default color -- should probably be in a static
-    //  class initialization method
-    addColor("nicePaleBlue", new Color(180, 250, 250)); //TODO: delete
+//    // adding name for common default color -- should probably be in a static
+//    //  class initialization method
+//    addColor("nicePaleBlue", new Color(180, 250, 250)); //TODO: delete
   }
 
   /**
@@ -183,48 +176,43 @@ public abstract class NeoWidget extends NeoAbstractWidget
     view.destroy();
   }
 
-  /* These are the methods that have NOT been moved from NeoMap
-   * into NeoWidget for one reason or another, yet are still
-   * spec'ed in the NeoWidgetI.
-   */
-  public void stretchToFit(boolean xstretch, boolean ystretch) {
-    //TODO: delete from NeoWidgetI, move to NeoMapI
-    System.out.println("NeoWidget.stretchToFit() not yet implemented");
-  }
-
-
-
+  protected Orientation orient;
+  
   @Override
-  public void setExpansionBehavior(int id, int behavior) {
-    expansion_behavior[id] = behavior;
-    int newid = 0;
-    int newbehavior = 0;
-    RootGlyph rglyph = scene.getRootGlyph();
-    if (id == X) {
-      newid = RootGlyph.X;
-    }
-    else if (id == Y) {
-      newid = RootGlyph.Y;
-    }
-    if (behavior == EXPAND) {
-      newbehavior = RootGlyph.EXPAND;
-    }
-    else if (behavior == NO_EXPAND) {
-      newbehavior = RootGlyph.NO_EXPAND;
-    }
-    rglyph.setExpansionBehavior(newid, newbehavior);
+  public Orientation getOrientation() {
+    return orient;
   }
-
-  public int getExpansionBehavior(int id) {
-    return expansion_behavior[id];
+  
+  @Override
+  public boolean isHorizontal() {
+    return orient == Orientation.Horizontal;
   }
+  
+//  @Override
+//  public void setExpansionBehavior(WidgetAxis axis, ExpandBehavior behavior) {
+//    expansion_behavior[axis.ordinal()] = behavior;
+//    final XY newid;
+//    RootGlyph rglyph = scene.getRootGlyph();
+//    if (axis == WidgetAxis.Primary) {
+//      newid = XY.X;
+//    }
+//    else {
+//      newid = XY.Y;
+//    }
+//    rglyph.setExpansionBehavior(newid, behavior);
+//  }
+//
+//  @Override
+//  public ExpandBehavior getExpansionBehavior(WidgetAxis axis) {
+//    return expansion_behavior[axis.ordinal()];
+//  }
 
   public void setReshapeBehavior(int id, int behavior) {
     reshape_constraint[id] = behavior;
   }
 
-  public int getReshapeBehavior(int id) {
-    return reshape_constraint[id];
+  public int getReshapeBehavior(WidgetAxis axis) {
+    return reshape_constraint[axis.ordinal()];
   }
 
   public SceneII getScene() { return scene; }
@@ -240,20 +228,27 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *  1 to the width.
    *
    */
-  public void setFloatBounds(WidgetAxis dim, double start, double end) {
-    double size = end - start;
+  public void setFloatBounds(WidgetAxis axis, double start, double end) {
+    final double size = end - start;
     if (size < 0) {
-      System.out.println("size: " + size);
       return;
     }
-    Rectangle2D.Double sbox = scene.getCoordBox();
-    if (dim == WidgetAxis.Primary) {
-      scene.setCoords(start, sbox.y, size, sbox.height);
+    final Rectangle2D.Double sbox = scene.getCoordBox();
+    if (axis == WidgetAxis.Primary) {
+      if (isHorizontal()) {
+        scene.setCoords(start, sbox.y, size, sbox.height);
+      } else {
+        scene.setCoords(sbox.x, start, sbox.width, size);      
+      }
     }
-    else {
-      scene.setCoords(sbox.x, start, sbox.width, size);
+    else { // Secondary axis
+      if (isHorizontal()) {
+        scene.setCoords(sbox.x, start, sbox.width, size);
+      } else {
+        scene.setCoords(start, sbox.y, size, sbox.height);
+      }
     }
-    adjustScroller(dim);
+    adjustScroller(axis);
   }
 
  /**
@@ -261,16 +256,25 @@ public abstract class NeoWidget extends NeoAbstractWidget
   *  For example setting Primary bounds to 0, 74, actually sets coord box to
   *  cbox.x = 0, cbox.width = 75
   */
-  public void setBounds(WidgetAxis dim, int start, int end) {
+  //TODO: stop adding one?
+  public void setBounds(WidgetAxis axis, int start, int end) {
     final double size = end-start+1;
     final Rectangle2D.Double sbox = scene.getCoordBox();
-    if (dim == WidgetAxis.Primary) {
-      scene.setCoords(start, sbox.y, size, sbox.height);
+    if (axis == WidgetAxis.Primary) {
+      if (isHorizontal()) {
+        scene.setCoords(start, sbox.y, size, sbox.height);
+      } else {
+        scene.setCoords(sbox.x, start, sbox.width, size);
+      }
     }
     else {
-      scene.setCoords(sbox.x, start, sbox.width, size);
+      if (isHorizontal()) {
+        scene.setCoords(sbox.x, start, sbox.width, size);
+      } else {
+        scene.setCoords(sbox.x, start, sbox.width, size);
+      }
     }
-    adjustScroller(dim);
+    adjustScroller(axis);
   }
 
 
@@ -416,16 +420,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
     if (canvas == null) {
       return; // in case destroy() was called.
     } // in case destroy() was called.
-    pixel_beg[X] = 0;
-    pixel_beg[Y] = 0;
-    pixel_size[X] = canvas.getSize().width;
-    pixel_size[Y] = canvas.getSize().height;
+    pixel_beg[Xint] = 0;
+    pixel_beg[Yint] = 0;
+    pixel_size[Xint] = canvas.getSize().width;
+    pixel_size[Yint] = canvas.getSize().height;
 
-    pixel_end[X] = pixel_size[X] - pixel_beg[X];
-    pixel_end[Y] = pixel_size[Y] - pixel_beg[Y];
+    pixel_end[Xint] = pixel_size[Xint] - pixel_beg[Xint];
+    pixel_end[Yint] = pixel_size[Yint] - pixel_beg[Yint];
 
-    Rectangle bbox = new Rectangle(pixel_beg[X], pixel_beg[Y],
-        pixel_size[X], pixel_size[Y]);
+    Rectangle bbox = new Rectangle(pixel_beg[Xint], pixel_beg[Yint],
+        pixel_size[Xint], pixel_size[Yint]);
     view.setPixelBox(bbox);
   }
 
@@ -599,7 +603,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     double coord_beg, coord_end, coord_size;
     java.awt.geom.Rectangle2D.Double scenebox = scene.getCoordBox();
-    if (ordinal == X)  {
+    if (ordinal == Xint)  {
       pixel_offset[ordinal] = -1 * trans.getOffsetX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
@@ -638,7 +642,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     else {
       if (DEBUG_SCROLLER_VALUES) {
-        if (ordinal == Y) {
+        if (ordinal == Yint) {
           System.out.println("Setting Y scroll for " + GeneralUtils.toObjectString(this) + ", value: " + (int) coord_offset + ", visible: " + (int) visible_coords + ", min: " + (int) coord_beg + ", max: " + (int) coord_end);
         }
       }
@@ -650,7 +654,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
         false);
     }
 
-    if (scroll_behavior[ordinal] == AUTO_SCROLL_INCREMENT) {
+    if (scroll_behavior[ordinal] == ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT) {
       if (coords_per_pixel[ordinal] > 1) {
         scroller[ordinal].setUnitIncrement((int)coords_per_pixel[ordinal]);
         scroller[ordinal].setBlockIncrement((int)(5*coords_per_pixel[ordinal]));
@@ -660,11 +664,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
         scroller[ordinal].setBlockIncrement(5);
       }
     }
-    else if (scroll_behavior[ordinal] == AUTO_SCROLL_HALF_PAGE)  {
+    else if (scroll_behavior[ordinal] == ScrollIncrementBehavior.AUTO_SCROLL_HALF_PAGE)  {
       if (coords_per_pixel[ordinal] > 1) {
         scroller[ordinal].setUnitIncrement((int)(5*coords_per_pixel[ordinal]));
-        if (ordinal == X) { scroller[ordinal].setBlockIncrement((int)(getViewBounds().width/2)); }
-        else if (ordinal == Y)  { scroller[ordinal].setBlockIncrement((int)(getViewBounds().height/2)); }
+        if (ordinal == Xint) { scroller[ordinal].setBlockIncrement((int)(getViewBounds().width/2)); }
+        else if (ordinal == Yint)  { scroller[ordinal].setBlockIncrement((int)(getViewBounds().height/2)); }
       }
       else {
         scroller[ordinal].setUnitIncrement(1);
@@ -757,7 +761,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // assuming that if scale is already at max zoom, want to
     //   change scale to keep it at max zoom
     double prev_scale;
-    if (ordinal == X) { prev_scale = trans.getScaleX(); }
+    if (ordinal == Xint) { prev_scale = trans.getScaleX(); }
     else         { prev_scale = trans.getScaleY(); }
     boolean scale_at_max = (prev_scale == max_pixels_per_coord[ordinal]);
 
@@ -769,7 +773,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // testing scale adjustment if outside allowable range
     //   might want to push this down into stretchToFit() -- GAH 12/14/97
     double pix_per_coord;
-    if (ordinal == X) { pix_per_coord = trans.getScaleX(); }
+    if (ordinal == Xint) { pix_per_coord = trans.getScaleX(); }
     else         { pix_per_coord = trans.getScaleY(); }
     if (pix_per_coord > max || scale_at_max) {
       zoom(dim, max);
@@ -777,17 +781,17 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
 
-  @Override
-  public void setVisibility(GlyphI gl, boolean isVisible) {
-    scene.setVisibility(gl, isVisible);
-  }
-
-  @Override
-  public void setVisibility(List<GlyphI> glyphs, boolean isVisible) {
-    for (GlyphI g : glyphs) {
-      setVisibility(g, isVisible);
-    }
-  }
+//  @Override
+//  public void setVisibility(GlyphI gl, boolean isVisible) {
+//    scene.setVisibility(gl, isVisible);
+//  }
+//
+//  @Override
+//  public void setVisibility(List<GlyphI> glyphs, boolean isVisible) {
+//    for (GlyphI g : glyphs) {
+//      setVisibility(g, isVisible);
+//    }
+//  }
 
   /****************************************/
   /** Methods for dealing with selecion **/
@@ -844,12 +848,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *    zooming with zoomer[] adjustables
    */
   @Override
-  public void setScaleConstraint(int axisid, NeoWidgetI.ScaleConstraint constraint) {
-    scale_constraint[axisid] = constraint;
+  public void setScaleConstraint(WidgetAxis axis, ScaleConstraint constraint) {
+    scale_constraint[axis.ordinal()] = constraint;
   }
 
   @Override
-  public void setZoomBehavior(int axisid, ZoomConstraint constraint) {
+  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint) {
     switch (constraint) {
       case CONSTRAIN_START:
       case CONSTRAIN_MIDDLE:
@@ -858,7 +862,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       default:
         throw new IllegalArgumentException("Invalid constraint.");
     }
-    zoom_behavior[axisid] = constraint;
+    zoom_behavior[axis.ordinal()] = constraint;
   }
   public ZoomConstraint getZoomBehavior(int axisid) {
     return zoom_behavior[axisid];
@@ -869,12 +873,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   @Override
-  public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord) {
+  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint, double coord) {
+    //TODO: support other constraints, or get rid of parameter
     if (ZoomConstraint.CONSTRAIN_COORD != constraint) {
       throw new IllegalArgumentException("Invalid constraint.");
     }
-    zoom_behavior[axisid] = constraint;
-    zoom_coord[axisid] = coord;
+    zoom_behavior[axis.ordinal()] = constraint;
+    zoom_coord[axis.ordinal()] = coord;
   }
 
 
@@ -883,9 +888,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
     @Override
     public void stateChanged(ChangeEvent e) {
       Object source = e.getSource();
-      if (source == zoomer[X] || source == zoomer[Y]) {
+      if (source == zoomer[Xint] || source == zoomer[Yint]) {
         WidgetAxis dim;
-        if (source == zoomer[X]) {
+        if (source == zoomer[Xint]) {
           dim = WidgetAxis.Primary;
         } else {
           dim = WidgetAxis.Secondary;
@@ -896,15 +901,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
           return;
         }
         zoomer_scale[id] = zoomtrans[id].transform(zoomer_value[id]);
-        if (scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_PIXELS ||
-          scale_constraint[id] == NeoWidgetI.ScaleConstraint.INTEGRAL_ALL) {
+        if (scale_constraint[id] == ScaleConstraint.INTEGRAL_PIXELS ||
+          scale_constraint[id] == ScaleConstraint.INTEGRAL_ALL) {
           if (zoomer_scale[id] >= 1) {
             zoomer_scale[id] = (int) (zoomer_scale[id] + .0001);
           }
         }
         if (DEBUG_ZOOM) {
           System.out.println("pixels_per_base = " + zoomer_scale[id] +
-            ",  coords_per_pixel[id] = " + 1 / zoomer_scale[X]);
+            ",  coords_per_pixel[id] = " + 1 / zoomer_scale[Xint]);
         }
         zoom(dim, zoomer_scale[id]);
         updateWidget();
@@ -1170,7 +1175,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_beg, coord_end, coord_size;
     double fixed_coord, fixed_pixel;
 
-    if (ordinal == X) {
+    if (ordinal == Xint) {
       prev_pixel_offset = -1 * trans.getOffsetX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
@@ -1234,7 +1239,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       pixel_offset[ordinal] = coord_offset / coords_per_pixel[ordinal];
     }
 
-    if (ordinal == X) {
+    if (ordinal == Xint) {
       trans.setOffsetX(-pixel_offset[ordinal]);
       trans.setScaleX(pixels_per_coord[ordinal]);
     }
@@ -1249,7 +1254,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     view.calcCoordBox();
     if (DEBUG_ZOOM) {
-      if (ordinal == Y) {
+      if (ordinal == Yint) {
         System.out.println("zooming to: " + zoom_scale + ", coord offset = " +
             coord_offset);
       }

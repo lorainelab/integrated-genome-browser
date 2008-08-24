@@ -12,7 +12,6 @@
 package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.OneDimTransform;
@@ -180,7 +179,7 @@ public interface NeoMapI extends NeoWidgetI {
    * along the secondary axis.
    */
   public AxisGlyph addAxis(int offset);
-
+  
   /**
    * Adds an axis number line along the primary axis at <code>offset</code>
    * along the secondary axis.
@@ -296,25 +295,6 @@ public interface NeoMapI extends NeoWidgetI {
    * retrieve all drawn glyphs that overlap the pixel at point x, y.
    */
   public List<GlyphI> getItemsByPixel(int x, int y);
-
-  /**
-   * Constrains the map's resize behavior according to the specified
-   * constraint type.
-   *
-   * @param axisid the axis ({@link NeoWidget#X} or {@link NeoWidget#Y})
-   *  to apply the constraint.
-   * @param constraint the type of constraint to apply.
-   *  The only valid values is+ {@link NeoWidgetI#FITWIDGET}.
-   */
-  //TODO: never used?  Even if is used, shouldn't this be in NeoWidgetI since NeoWidget implements it?
-  public void setReshapeBehavior(int axisid, int constraint);
-
-  /**
-   * Gets the constraint set by {@link #setReshapeBehavior}.
-   *
-   * @param axisid the axis ({@link NeoWidget#X} or {@link NeoWidget#Y}) constrained.
-   */
-  public int getReshapeBehavior(int axisid);
 
   /**
    * adds a glyph as a child of another glyph.

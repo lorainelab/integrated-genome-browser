@@ -106,7 +106,7 @@ public class GeneralUtils  {
    * Use Graphics.getFontMetrics() instead whenever possible, but this
    * will work just as well as Toolkit.getFontMetrics(Font).
    */
-  @Deprecated
+  //@Deprecated
   public static FontMetrics getFontMetrics(Font fnt) {
     BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     Graphics2D g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);

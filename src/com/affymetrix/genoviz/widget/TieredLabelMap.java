@@ -56,7 +56,7 @@ public class TieredLabelMap extends AbstractTieredMap {
     MapTierGlyph mtg = evt.getTier();
     int type         = evt.getType();
 
-    if ( getReshapeBehavior(WidgetAxis.Secondary.ordinal()) != tnm.getReshapeBehavior(WidgetAxis.Secondary.ordinal()) ) {
+    if ( getReshapeBehavior(WidgetAxis.Secondary) != tnm.getReshapeBehavior(WidgetAxis.Secondary) ) {
       throw new RuntimeException("TieredLabelMap and LabelMap do not have the same reshape behavior.");
     }
 

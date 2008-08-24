@@ -10,6 +10,7 @@
 */
 package com.affymetrix.genoviz.bioviews;
 
+import com.affymetrix.genoviz.pack.PackerI;
 import java.awt.*;
 import java.util.*;
 import java.util.List;

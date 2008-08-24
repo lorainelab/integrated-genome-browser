@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -13,10 +13,10 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.List;
 import java.util.Hashtable;
 
-import com.affymetrix.genoviz.bioviews.*;
 import java.util.ArrayList;
 
 public class GlyphSearchNode implements Cloneable {
@@ -190,10 +190,14 @@ public class GlyphSearchNode implements Cloneable {
       glyphsInSearchTree.remove(g);
     }
     else if (a > m) {
-      if ( r != null )  r.removeGlyph ( g );
+      if ( r != null ) {
+        r.removeGlyph(g);
+      }
     }
     else if (b < m) {
-      if ( l != null ) l.removeGlyph ( g );
+      if ( l != null ) {
+        l.removeGlyph(g);
+      }
     }
   }
 

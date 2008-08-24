@@ -9,8 +9,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.tiers;
+package com.affymetrix.genoviz.pack;
 
+import com.affymetrix.genoviz.tiers.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
 import com.affymetrix.genoviz.glyph.LabelGlyph;

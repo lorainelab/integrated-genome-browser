@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.samples;
 
+import com.affymetrix.genoviz.pack.ExpandPacker;
 import com.affymetrix.genoviz.tiers.*;
 import java.awt.*;
 import java.awt.event.*;

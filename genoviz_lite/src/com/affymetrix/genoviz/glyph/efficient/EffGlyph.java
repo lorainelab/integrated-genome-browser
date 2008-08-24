@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.glyph.efficient;
 
+import com.affymetrix.genoviz.pack.PackerI;
 import java.awt.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;

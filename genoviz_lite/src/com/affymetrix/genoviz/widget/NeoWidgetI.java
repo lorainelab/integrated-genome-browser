@@ -16,9 +16,12 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import java.awt.Color;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
@@ -28,155 +31,53 @@ import javax.swing.JSlider;
  * <p>
  * All widgets include notions of axis, establishing coordinate
  * space, indicating bounds, panning, zooming, selecting and placing
- * items at positions, glyph factories (for creating graphical
- * objects with common attributes), data adapters (for automating the
- * creation of graphical objects from data objects), dealing with
- * color, establishing window resize behavior, and managing event handlers.
- * <p><font size="-1">
+ * items at positions,establishing window resize behavior, 
+ * and managing event handlers.
+ * <p>
  * Note: this interface does <em>not</em> extend Component,
  * However, the current implementations of NeoWidgetI <em>do</em> all extend
  * Component.
- * For more information on implementation-specific characteristics,
- * see the javadocs for the implementation class
- * corresponding to each interface.
- * </font></p>
+ * </p>
  */
 public interface NeoWidgetI {
-
-  static final int X = WidgetAxis.Primary.ordinal();
-  static final int Y = WidgetAxis.Secondary.ordinal();
+  
+  static final int Xint = XY.X.ordinal();
+  static final int Yint = XY.Y.ordinal();
+  
+  /**
+   * Retrieves the orientation.  If {@link Orientation#Horizontal},
+   * then {@link WidgetAxis#Primary} corresponds to {@link XY#X}, and
+   * {@link WidgetAxis#Secondary} corresponds to {@link XY#Y}.
+   * @return
+   */
+  public Orientation getOrientation();
+  
+  /** @return true if {@link #getOrientation()} is {@link Orientation#Horizontal} */
+  public boolean isHorizontal();
 
   /**
-   * Type of selection done by the NeoWidget.
-   * @see #setSelectionEvent
-   */
-  public enum SelectionType {
-  /**
-   * No selection is done by the NeoWidget.
-   * A listener or superclass will still get all events and can react to them.
-   */
-
-    NO_SELECTION,
-    /**
-   * Selected on Event.MOUSE_DOWN.
-   * A listener or superclass will still get all events and can react to them.
-   */
-    ON_MOUSE_DOWN,
-    /**
-   * Selected on Event.MOUSE_UP.
-   * A listener or superclass will still get all events and can react to them.
-   */
-    ON_MOUSE_UP;
-  }
-
-  /**
-   * Indicates where zooming should be focused
-   * in the widget.
-   *
-   * @see #setZoomBehavior
-   */
-  public enum ZoomConstraint {
-
-    CONSTRAIN_START,
-    CONSTRAIN_MIDDLE,
-    CONSTRAIN_END,
-    /**
-     * Indicates that zooming should be focused
-     * at a specified fixed coordinate.
-     */
-    CONSTRAIN_COORD
-  }
-
-  /**
-   * indicates that the widget should be resized
+   * Indicates that the widget should be resized
    * to fit within a container
    * whenever that container is resized.
    */
   public static final int FITWIDGET = 5; //TODO: make an enum, or use a boolean
 
   /**
-   * @see #INTEGRAL_COORDS
-   * @see #setScaleConstraint
-   * @see #zoom
-   * @see NeoWidget#setScaleConstraint
-   */
-  public enum ScaleConstraint {
-
-    /**
-   * constrains high resolution zooming
-   * to integral values of pixels per coordinate.
-   * If the number of pixels per coordinate
-   * (<code>zoom_scale</code>) is greater than one,
-   * then <code>zoom_scale</code> is rounded to the nearest integer.
-   * <p>
-   * In NeoWidget,
-   * this is implemented only for zooming triggered by zoomer adjustables.
-   * Calling <a href="#zoom"><code>zoom()</code></a> directly has no effect.
-   *
-   */
-    INTEGRAL_PIXELS,
-    /**
-   * Constrains low resolution zooming
-   * to integral values of coordinates per pixel.
-   * If the number of pixels per coordinate
-   * (<code>zoom_scale</code>) is less than one, then <code>zoom_scale</code>
-   * is modified such that <code>1/zoom_scale</code> (coords per pixel)
-   * is rounded to the nearest integer.
-   * <p>
-   * In NeoWidget,
-   * this is implemented only for zooming triggered by zoomer adjustables.
-   * Calling <a href="#zoom"><code>zoom()</code></a> directly has no effect.
-   *
-   */
-    INTEGRAL_COORDS,
-    /**
-   * Constrain zooming to both
-   * INTEGRAL_PIXELS and INTEGRAL_COORDS.
-   */
-    INTEGRAL_ALL,
-    NONE
-  }
-
-  /**
-   * Indicates that a widget's bounds should be automatically expanded
-   * when an item is added beyond the widget's previous bounds.
-   *
-   * @see #NO_EXPAND
-   * @see #setExpansionBehavior
-   */
-  public static final int EXPAND = 200;
-
-  /**
-   * indicates that a widget's bounds
-   * should <em>not</em> be automatically expanded
-   * when an item is added beyond the widget's previous bounds.
-   *
-   * @see #EXPAND
-   * @see #setExpansionBehavior
-   */
-  public static final int NO_EXPAND = 201;
-
-  // *******************************************************
-
-  /**
    * Sets the background Color property.
-   * Just like a java.awt.Component.
    *
-   * @param theColor <code>Color</code> to set the background.
+   * @param theColor Color to set the background.
    */
   public void setBackground(Color theColor);
 
   /**
-   * returns the current setting of the background Color property.
-   * Just like a java.awt.Component.
+   * Returns the current setting of the background Color property.
    *
-   * @return the background <code>Color</code>
+   * @return the background Color
    */
   public Color getBackground();
 
   /**
    * Sets the foreground Color property.
-   * Just like a java.awt.Component.
    *
    * @param theColor <code>Color</code> to set the foreground.
    *
@@ -185,7 +86,6 @@ public interface NeoWidgetI {
 
   /**
    * Returns the current setting of the foreground Color property.
-   * Just like a java.awt.Component.
    *
    * @return the foreground <code>Color</code>
    */
@@ -196,21 +96,21 @@ public interface NeoWidgetI {
    * within the current bounds of the widget.
    *
    * @param xstretch the boolean determines whether stretchToFit
-   *   is applied along the Primary axis.
+   *   is applied along the x-axis. (Primary axis if horizontal)
    * @param ystretch the boolean determines whether stretchToFit
-   *   is applied along the Secondary axis.
+   *   is applied along the y-axis. (Secondary axis if horizontal).
    */
   public void stretchToFit(boolean xstretch, boolean ystretch);
 
+
+  /** Get the view for this widget. */
   public ViewI getView();
-  
 
   /**
    * Associates a slider
    * to control zooming along the specified axis.
    *
    * @param dim identifies the axis of zooming.
-   *           Should be ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}).
    * @param slider a slider to be associated with the axis.
    */
   public void setZoomer(WidgetAxis dim, JSlider slider);
@@ -223,82 +123,54 @@ public interface NeoWidgetI {
   public void destroy();
 
   /**
-   * associates an adjustable component
+   * Associates a JScrollBar
    * to control scrolling along the specified axis.
    *
    * @param dim identifies the axis of scrolling.
-   *           Should be {@link #Primary} or {@link #Secondary}.
-   * @param adj an scrollbar
-   *            to be associated with the axis.
+   * @param adj a scrollbar
    */
   public void setScroller(WidgetAxis dim, JScrollBar adj);
 
   /**
-   * indicates that the coordinate scrolling increment should be
-   * automatically adjusted upon zooming
-   * so that the pixels scrolled remains constant.
-   *
-   * @see #setScrollIncrementBehavior
-   */
-  public static final int AUTO_SCROLL_INCREMENT = 0;
-
-  /**
-   * indicates that the coordinate scrolling increment should <em>not</em> be
-   * automatically adjusted upon zooming.
-   *
-   * @see #AUTO_SCROLL_INCREMENT
-   * @see #setScrollIncrementBehavior
-   */
-  public static final int NO_AUTO_SCROLL_INCREMENT = 1;
-  public static final int AUTO_SCROLL_HALF_PAGE = 2;
-
-  /**
    * Modifies the way that scrolling is performed for an axis.
    *
-   * @param dim       identifies which axis (Primary or Secondary) is being queried.
-   * @param behavior AUTO_SCROLL_INCREMENT or NO_AUTO_SCROLL_INCREMENT
+   * @param dim       identifies which axis is being changed.
+   * @param behavior  the desired behavior
    *
    * @see #getScrollIncrementBehavior
    */
-  public void setScrollIncrementBehavior(WidgetAxis dim, int behavior);
+  public void setScrollIncrementBehavior(WidgetAxis dim, ScrollIncrementBehavior behavior);
 
   /**
    * Use this to decide whether or not the scrolling increment
    * is being automatically readjusted.
    *
-   * @param dim identifies which axis (Primary or Secondary) is being queried.
+   * @param dim identifies which axis is being queried.
    *
-   * @return a constant indicating the scroll behavior.  Valid values
-   *  are NeoWidgetI.AUTO_SCROLL_INCREMENT and
-   *  NeoWidgetI.NO_AUTO_SCROLL_INCREMENT
+   * @return a value indicating the scroll behavior.
    *
    * @see #setScrollIncrementBehavior
    */
-  public int getScrollIncrementBehavior(WidgetAxis dim);
+  public ScrollIncrementBehavior getScrollIncrementBehavior(WidgetAxis dim);
 
   /**
-   * scrolls this widget along the specified axis.
+   * Scrolls this widget along the specified axis.
    *
    * @param dim    indentifies which axis to scroll.
-   *     valid values are {@link NeoWidget#Primary} or {@link NeoWidget#Secondary}.
-   * @param value  the double distance in coordinate space
-   *               to scroll.
+   * @param value  the distance in coordinate space to scroll.
    */
   public void scroll(WidgetAxis dim, double value);
 
   /**
-   * zoom this widget to a scale of <code>zoom_scale</code> along the
-   * <code>id</code>-th axis.
-   *
+   * Zoom this widget.
    * @param dim  indicates which axis dimension to zoom.
-   *
    * @param zoom_scale the double indicating the number of pixels
    *   per coordinate
    */
   public void zoom(WidgetAxis dim, double zoom_scale);
 
   /**
-   * sets the maximum allowable <code>zoom_scale</code> for this widget.
+   * Sets the maximum allowable <code>zoom_scale</code> for this widget.
    * For example, if at
    * the highest resolution, you wish to display individual bases of
    * a sequence, then set <code>max</code> to the width of a character
@@ -315,15 +187,13 @@ public interface NeoWidgetI {
   public void setMaxZoom(WidgetAxis dim, double max);
 
   /*
-   * sets the minimum allowable <code>zoom_scale</code> for this widget.
+   * Sets the minimum allowable <code>zoom_scale</code> for this widget.
    * For example, if at lowest resolution, you wish to ensure that at
    * least one pixel is displayed per base and the coordinate system
    * is set such that each base corresponds to a unit, then set
    * <code>min</code> to 1.
    *
-   * @param id  indicates which axis to apply this constraint.
-   *   valid values are NeoWidgetI.Primary or NeoWidgetI.Secondary.
-   *
+   * @param id  indicates which axis to apply this constraint.   *
    * @param min  the double describing the minimum pixels per coordinate;
    *   should generally be the minimum size (in pixels)
    *   of a visual item.
@@ -334,7 +204,7 @@ public interface NeoWidgetI {
   public void setMinZoom(WidgetAxis dim, double min);
 
   /**
-   * returns the currently set maximum <code>zoom_scale</code>.
+   * Returns the currently set maximum <code>zoom_scale</code>.
    *
    * @return the maximum number of pixels per coordinate.
    * @see #setMaxZoom
@@ -342,7 +212,7 @@ public interface NeoWidgetI {
   public double getMaxZoom(WidgetAxis dim);
 
   /**
-   * returns the currently set minimum <code>zoom_scale</code>.
+   * Returns the currently set minimum <code>zoom_scale</code>.
    *
    * @return the minimum number of pixels per coordinate.
    * @see #setMinZoom
@@ -350,19 +220,19 @@ public interface NeoWidgetI {
   public double getMinZoom(WidgetAxis dim);
 
   /**
-   * Returns a list of all <code>Glyph</code>s at
+   * Returns a list of all <code>GlyphI</code>s at
    *  <code>x,y</code> in this widget.
    *
-   * @param x the double describing the Primary position
-   * @param y the double describing the Secondary position
+   * @param a the double describing the Primary position
+   * @param b the double describing the Secondary position
    *
    * @return a <code>List</code> of <code>Glyph</code>s
    * at <code>x,y</code>
    */
-  public List<GlyphI> getItems(double x, double y, int location);
+  public List<GlyphI> getItems(double a, double b, int location);
 
   /**
-   * adds <code>glyph</code> to the list of selected glyphs for this
+   * Adds <code>glyph</code> to the list of selected glyphs for this
    * widget.  Selected glyphs will be displayed differently than
    * unselected glyphs, based on selection style
    *
@@ -370,10 +240,11 @@ public interface NeoWidgetI {
    * @see #deselect
    * @see #getSelected
    */
+  //TODO: delete this method
   public void select(GlyphI glyph);
 
   /**
-   * adds all glyphs in List <code>glyphs</code> to the list of
+   * Adds all glyphs in List <code>glyphs</code> to the list of
    * selected glyphs for this widget.  Selected glyphs will be displayed
    * differently than unselected glyphs, based on selection style
    *
@@ -381,6 +252,7 @@ public interface NeoWidgetI {
    * @see #deselect
    * @see #getSelected
    */
+  //TODO: delete this method
   public void select(List<GlyphI> glyphs);
 
   /**
@@ -390,6 +262,7 @@ public interface NeoWidgetI {
    * @see #select
    * @see #getSelected
    */
+  //TODO: delete this method
   public void deselect(GlyphI glyph);
 
   /**
@@ -399,25 +272,24 @@ public interface NeoWidgetI {
    * @see #select
    * @see #getSelected
    */
+  //TODO: delete this method
   public void deselect(List<GlyphI> glyphs);
 
   /**
-   * retrieves all currently selected glyphs.
+   * Retrieves all currently selected glyphs.
    *
-   * @return a List of all selected GlyphIs
-   * @see #deselect
-   * @see #select
+   * @return an Iterable of all selected glyphs
    */
-  public List<GlyphI> getSelected();
+  public Iterable<GlyphI> getSelected();
 
-  /**
-   * If this widget contains other widgets, returns the internal widget
-   *    at the given location.
-   *
-   * @param location where to find the component widget.
-   * @return the component widget.
-   */
-  public NeoWidgetI getWidget(int location);
+//  /**
+//   * If this widget contains other widgets, returns the internal widget
+//   *    at the given location.
+//   *
+//   * @param location where to find the component widget.
+//   * @return the component widget.
+//   */
+//  public NeoWidgetI getWidget(int location);
 
 //  /**
 //   * If this widget contains other widgets, returns the internal widget
@@ -453,69 +325,6 @@ public interface NeoWidgetI {
    *                    should be redrawn.
    */
   public void updateWidget(boolean full_update);
-
-  /**
-   * sets the visibility of <code>item</code> for this widget.
-   *
-   * @param glyph the GlyphI to modify visibility of.
-   * @param visible a boolean indicator of visibility.  if false,
-   *   then the GlyphI is not displayed.
-   */
-  public void setVisibility(GlyphI glyph, boolean visible);
-
-  /**
-   * sets the visibility of all glyph's in list for this widget.
-   *
-   * @param glyphs List of GlyphI's to modify visibility;
-   * @param visible a boolean indicator of visibility.  if false,
-   *   then the GlyphI is not displayed.
-   */
-  public void setVisibility(List<GlyphI> glyphs, boolean visible);
-
-  /**
-   * gets the visibility of an item in this widget.
-   *
-   * @param glyph the GlyphI whose visibility is queried
-   */
-  public boolean getVisibility(GlyphI glyph);
-
-  /**
-   * creates a named color
-   * and adds it to the widget's collection
-   * of named colors.
-   *
-   * @param name a unique identifier for the color.
-   * @param col  the <code>Color</code> to be associated with
-   *   <code>name</code>.
-   */
-  public void addColor(String name, Color col);
-
-  /**
-   * retrieves a named color.
-   *
-   * @param name the <code>String</code> label for a <code>Color</code>.
-   * @return the <code>Color</code> corresponding to <code>name</code>.
-   * @see #addColor
-   */
-  public Color getColor(String name);
-
-  /**
-   * retrieves a color's name.
-   *
-   * @param theColor a <code>Color</code> to look for.
-   * @return a <code>String</code> label associated with a color.
-   * @see #addColor
-   */
-  public String getColorName(Color theColor);
-
-  /**
-   * enumerates all the color names.
-   *
-   * @return an <code>Enumeration</code> of all color name <code>String</code>s
-   *   set by <code>addColor</code>
-   * @see #addColor
-   */
-  public Enumeration getColorNames();
 
   /**
    * Associates an arbitrary datamodel object with a glyph.  Can be retrieved using
@@ -573,104 +382,15 @@ public interface NeoWidgetI {
    */
   public List<GlyphI> getItems(Object datamodel);
 
-
-  /**
-   * update the position of <code>glyph</code> by <code>diffx</code>
-   * and <code>diffy</code> in the Primary and Secondary axes respectively,
-   * relative to the current position of <code>glyph</code>, where
-   * the current position of <code>glyph</code> is the coordinate of the
-   * top left coordinate of <code>glyph</code>'s bounding box.
-   * Offsets are specified in coordinate space (not pixels).
-   *
-   * @param glyph the GlyphI to move
-   * @param diffx the double relative offset along the Primary axis
-   * @param diffy the double relative offset along the Secondary axis
-   * @see #moveAbsolute
-   * @see NeoMapI#addItem
-   */
-  public void moveRelative(GlyphI glyph, double diffx, double diffy);
-
-  /**
-   * update the position of all <code>glyphs</code> in List by
-   * <code>diffx</code> and <code>diffy</code> in the Primary and Secondary axes respectively,
-   * relative to the current position of <code>glyphs</code>, where
-   * the current position of a <code>glyph</code> is the coordinate of the
-   * top left corner of the <code>glyph</code>'s bounding box.
-   * Offsets are specified in coordinate space (not pixels).
-   *
-   * @param glyphs the List of GlyphIs to move
-   * @param diffx the double relative offset along the Primary axis
-   * @param diffy the double relative offset along the Secondary axis
-   * @see #moveAbsolute
-   * @see NeoMapI#addItem
-   */
-  public void moveRelative(List<GlyphI> glyphs, double diffx, double diffy);
-
-  /**
-   * modifies the position of <code>glyph</code> to be the
-   * new absolute position (<code>x,y</code>) specified in
-   * coordinate space (not pixels).
-   *
-   * @param glyph the GlyphI to move
-   * @param x the absolute double position along the Primary axis.
-   * @param y the absolute double position along the Secondary axis.
-   * @see #moveRelative
-   * @see NeoMapI#addItem
-   */
-  public void moveAbsolute(GlyphI glyph, double x, double y);
-
-  /**
-   * Modifies the position of all <code>glyphs</code>  in List to be the
-   * new absolute position (<code>x,y</code>) specified in
-   * coordinate space (not pixels).
-   * @param glyphs the List of GlyphIs to move
-   * @param x the absolute double position along the Primary axis.
-   * @param y the absolute double position along the Secondary axis.
-   * @see #moveRelative
-   * @see NeoMapI#addItem
-   */
-  public void moveAbsolute(List<GlyphI> glyphs, double x, double y);
-
-
-  /**
-   * Determines widget behavior along each axis if items are added beyond
-   * current bounds of the widget.  Valid values are EXPAND, in which case the
-   * widget's bounds are extended to encompass the new item's location, or
-   * NO_EXPAND, in which case the widget refuses to expand to encompass the
-   * new item
-   *
-   * @param axisid the axis ({@link #Primary} or {@link #Secondary}) to apply
-   *   the constraint.
-   * @param behavior the type of constraint to apply.  Valid
-   *  values are EXPAND and NO_EXPAND
-   *
-   * @see #EXPAND
-   * @see #NO_EXPAND
-   */
-  public void setExpansionBehavior(int axisid, int behavior);
-
-  /**
-   * Gets the behvior set by setExpansionBehavior.
-   *
-   * @param axisid the axis (NeoWidgetI.Primary or NeoWidgetI.Secondary) whose expansion
-   *                   behvior is to be retrieved
-   *
-   * @see #setExpansionBehavior
-   */
-  public int getExpansionBehavior(int axisid);
-
   /**
    * constrains zooming along the given axis to the given contraint.
    * You can focus horizontal zooming at the left edge, center or right edge.
    * You can focus vertical zooming at the top, center, or bottom.
    *
-   * @param axisid the axis ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}) to constrain.
+   * @param axisid the axis to constrain.
    * @param constraint the type desired.
-   *
-   * @see NeoWidget#Primary
-   * @see NeoWidget#Secondary
    */
-  public void setZoomBehavior(int axisid, ZoomConstraint constraint);
+  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint);
 
   /**
    * Constrains zooming along the given axis to the given point.
@@ -678,13 +398,14 @@ public interface NeoWidgetI {
    * (or focus) zooming to a particular coordinate
    * rather than {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_START}, {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_MIDDLE}, or {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_END}.
    *
-   * @param axisid the axis ({@link NeoWidget#Primary} or {@link NeoWidget#Secondary}) to constrain.
+   * @param axisid the axis to constrain.
    * @param constraint the type desired.
-   *        The only valid value is {@link NeoWidgetI.ZoomConstraint#CONSTRAIN_COORD}.
+   *        The only valid value is {@link ZoomConstraint#CONSTRAIN_COORD}.
    * @param coord the coordinate at which to focus zooming.
    *
    */
-  public void setZoomBehavior(int axisid, ZoomConstraint constraint, double coord);
+  //TODO: should the other zoom constraints be supported also, or should we get rid of this setting
+  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint, double coord);
 
   /**
    * Controls the scale values allowed during zooming.
@@ -692,20 +413,16 @@ public interface NeoWidgetI {
    * Scale constraints are currently only considered during
    *    zooming with zoomer[] adjustables
    *
-   * @param axisid     {@link #Primary} or {@link #Secondary}
-   * @param constraint {@link ScaleConstraint#INTEGRAL_PIXELS}, {@link ScaleConstraint#INTEGRAL_COORDS}, or {@link ScaleConstraint#INTEGRAL_ALL}.
-   *
+   * @param axis the axis
+   * @param constraint the constraint
    */
-  public void setScaleConstraint(int axisid, ScaleConstraint constraint);
+  public void setScaleConstraint(WidgetAxis axis, ScaleConstraint constraint);
 
 
   /**
-   * turns rubber banding on and off.
-   * Configuration for rubberbanding
-   *  currently options are only to turn rubber banding on or off,
-   *  but anticipate having a longer signature for color, event mapping, etc.
+   * Turns rubber banding on and off.
    *
-   * @param activate the boolean indicator.  if true, then rubber
+   * @param activate the boolean indicator.  If true, then rubber
    *   banding is activated.
    */
   public void setRubberBandBehavior(boolean activate);
@@ -719,7 +436,7 @@ public interface NeoWidgetI {
   public void setSelectionAppearance(SceneI.SelectType behavior);
 
   /**
-   * specifies the color in which selected items are visually displayed.
+   * Specifies the color in which selected items are visually displayed.
    *
    * @param color the color specification to use for selection.
    */
@@ -731,14 +448,14 @@ public interface NeoWidgetI {
   public SceneI.SelectType getSelectionAppearance();
 
   /**
-   * returns the Color set by setSelectionColor.
+   * Returns the Color set by setSelectionColor.
    *
    * @see #setSelectionColor
    */
   public Color getSelectionColor();
 
   /**
-   * determines whether or not subselection of glyphs is allowed.
+   * Determines whether or not subselection of glyphs is allowed.
    *
    * @param allowed <code>true</code> indicates that subselections
    *   of glyphs are allowed.
@@ -746,7 +463,7 @@ public interface NeoWidgetI {
   public void setSubSelectionAllowed(boolean allowed);
 
   /**
-   * returns the current setting for subselection.
+   * Returns the current setting for subselection.
    *
    * @return <code>true</code> if subselection is currently allowed.
    * @see #setSubSelectionAllowed
@@ -754,12 +471,12 @@ public interface NeoWidgetI {
   public boolean isSubSelectionAllowed();
 
   /**
-   * returns the bounding rectangle of the glyph in coordinates
+   * Returns the bounding rectangle of the glyph in coordinates.
    */
-  public java.awt.geom.Rectangle2D.Double getCoordBounds(GlyphI glyph);
+  public Rectangle2D.Double getCoordBounds(GlyphI glyph);
 
   /**
-   * sets the pointing precision of the mouse.
+   * Sets the pointing precision of the mouse.
    *
    * @param blur the number of pixels from the edge of glyphs.
    * When the mouse is clicked this close to the glyph
@@ -768,7 +485,7 @@ public interface NeoWidgetI {
   public void setPixelFuzziness(int blur);
 
   /**
-   * gets the pointing precision of the mouse.
+   * Gets the pointing precision of the mouse.
    *
    * @return the number of pixels around glyph bounds
    * considered to be "within" the glyph.
@@ -782,6 +499,7 @@ public interface NeoWidgetI {
    * @param l the mouse listener
    * @see #removeMouseListener
    */
+  //TODO: remove? replace with NeoMouseListener?
   public void addMouseListener(MouseListener l);
 
   /**
@@ -806,6 +524,7 @@ public interface NeoWidgetI {
    * @param l the mouse listener
    * @see #addMouseListener
    */
+  //TODO: remove? replace with NeoMouseListener?
   public void removeMouseListener(MouseListener l);
 
   /**
@@ -818,14 +537,15 @@ public interface NeoWidgetI {
 
   /**
    * Removes the specified key listener so it no longer
-   *   receives notification of key events on this widget
+   *   receives notification of key events on this widget.
    * @param l the key listener
    * @see #addKeyListener
    */
+  //TODO: remove?
   public void removeKeyListener(KeyListener l);
 
   /**
-   * removes the <code>glyph</code> from this widget
+   * Removes the glyph from this widget.
    *
    * @param glyph the GlyphI to remove
    * @see NeoMapI#addItem
@@ -833,7 +553,7 @@ public interface NeoWidgetI {
   public void removeItem(GlyphI glyph);
 
   /**
-   * Removes all GlyphI's in List from this widget
+   * Removes all GlyphI's in List from this widget.
    *
    * @param glyphs the List of GlyphIs to remove
    * @see NeoMapI#addItem
@@ -844,24 +564,6 @@ public interface NeoWidgetI {
    *  Clears all glyphs from the widget
    */
   public void clearWidget();
-
-  /**
-   * sets the background color for a component widget
-   * within this widget.
-   *
-   * @param id identifies the component widget to color.
-   * @param col is the color to assign to the background.
-   */
-  public void setBackground(int id, Color col);
-
-  /**
-   * gets the background color for a component widget
-   * within this widget.
-   *
-   * @param id identifies which component widget.
-   * @return the color assigned to the background.
-   */
-  public Color getBackground(int id);
 
   /**
    *  returns true if the glyph supports selection of a subregion
@@ -895,13 +597,13 @@ public interface NeoWidgetI {
    *        all NeoWidgets support NO_SELECTION, ON_MOUSE_DOWN, or ON_MOUSE_UP
    *        some widgets support additional options
    */
-  public void setSelectionEvent(NeoWidgetI.SelectionType theEvent);
+  public void setSelectionEvent(SelectionType theEvent);
 
 
   /**
    * Gets the selection method for automatic selection in the NeoWidget.
    */
-  public NeoWidgetI.SelectionType getSelectionEvent();
+  public SelectionType getSelectionEvent();
 
   /**
    * Adds a widget listener.
@@ -910,5 +612,4 @@ public interface NeoWidgetI {
 
   /** Removes a listener added by {@link #addWidgetListener}. */
   public void removeWidgetListener(NeoWidgetListener l);
-
 }

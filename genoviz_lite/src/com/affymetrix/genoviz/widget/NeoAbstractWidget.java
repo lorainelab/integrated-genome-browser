@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.widget.ScrollIncrementBehavior;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -43,7 +44,7 @@ public abstract class NeoAbstractWidget extends Container
 
   protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
-  protected int scroll_behavior[] = new int[2];
+  protected ScrollIncrementBehavior scroll_behavior[] = new ScrollIncrementBehavior[2];
 
   protected List<GlyphI> selected = new ArrayList<GlyphI>();
 
@@ -89,79 +90,79 @@ public abstract class NeoAbstractWidget extends Container
     return glyph.getInfo();
   }
 
-  /**
-   *  This should be static, except interface methods can't be static
-   */
-  public void addColor(String name, Color col) {
-    if (null == name) {
-      throw new IllegalArgumentException("can't addColor without a name.");
-    }
-    if (null == col) {
-      throw new IllegalArgumentException("can't add a null color.");
-    }
-    colormap.put(name, col);
-  }
-
-  public Color getColor(String name) {
-    if (null == name) {
-      throw new IllegalArgumentException("can't getColor without a name.");
-    }
-    return colormap.get(name);
-  }
-  public String getColorName(Color theColor) {
-    if (null == theColor) {
-      throw new IllegalArgumentException("can't get a name for a null color.");
-    }
-    Enumeration it = colormap.keys();
-    while (it.hasMoreElements()) {
-      String candidate = (String)it.nextElement();
-      if (theColor.equals(colormap.get(candidate))) {
-        return candidate;
-      }
-    }
-    return null;
-  }
-  public Enumeration getColorNames() {
-    return colormap.keys();
-  }
-
-
-  /**
-   * Gets the visibility of an item in the widget.
-   *
-   * @param gl the item in question.
-   */
-  public boolean getVisibility(GlyphI gl) {
-    return gl.isVisible();
-  }
+//  /**
+//   *  This should be static, except interface methods can't be static
+//   */
+//  public void addColor(String name, Color col) {
+//    if (null == name) {
+//      throw new IllegalArgumentException("can't addColor without a name.");
+//    }
+//    if (null == col) {
+//      throw new IllegalArgumentException("can't add a null color.");
+//    }
+//    colormap.put(name, col);
+//  }
+//
+//  public Color getColor(String name) {
+//    if (null == name) {
+//      throw new IllegalArgumentException("can't getColor without a name.");
+//    }
+//    return colormap.get(name);
+//  }
+//  public String getColorName(Color theColor) {
+//    if (null == theColor) {
+//      throw new IllegalArgumentException("can't get a name for a null color.");
+//    }
+//    Enumeration it = colormap.keys();
+//    while (it.hasMoreElements()) {
+//      String candidate = (String)it.nextElement();
+//      if (theColor.equals(colormap.get(candidate))) {
+//        return candidate;
+//      }
+//    }
+//    return null;
+//  }
+//  public Enumeration getColorNames() {
+//    return colormap.keys();
+//  }
 
 
-  public void moveAbsolute(GlyphI glyph, double x, double y) {
-    glyph.moveAbsolute(x, y);
-  }
+//  /**
+//   * Gets the visibility of an item in the widget.
+//   *
+//   * @param gl the item in question.
+//   */
+//  public boolean getVisibility(GlyphI gl) {
+//    return gl.isVisible();
+//  }
+//
+//
+//  public void moveAbsolute(GlyphI glyph, double x, double y) {
+//    glyph.moveAbsolute(x, y);
+//  }
+//
+//  public void moveAbsolute(List<GlyphI> glyphs, double x, double y) {
+//    for (GlyphI g : glyphs) {
+//      moveAbsolute(g, x, y);
+//    }
+//  }
+//
+//  public void moveRelative(GlyphI glyph, double diffx, double diffy) {
+//    glyph.moveRelative(diffx, diffy);
+//  }
+//
+//  public void moveRelative(List<GlyphI> glyphs, double x, double y) {
+//    for (GlyphI g : glyphs) {
+//      moveRelative(g, x, y);
+//    }
+//  }
 
-  public void moveAbsolute(List<GlyphI> glyphs, double x, double y) {
-    for (GlyphI g : glyphs) {
-      moveAbsolute(g, x, y);
-    }
-  }
 
-  public void moveRelative(GlyphI glyph, double diffx, double diffy) {
-    glyph.moveRelative(diffx, diffy);
-  }
-
-  public void moveRelative(List<GlyphI> glyphs, double x, double y) {
-    for (GlyphI g : glyphs) {
-      moveRelative(g, x, y);
-    }
-  }
-
-
-  public void setScrollIncrementBehavior(WidgetAxis dim, int behavior) {
+  public void setScrollIncrementBehavior(WidgetAxis dim, ScrollIncrementBehavior behavior) {
     scroll_behavior[dim.ordinal()] = behavior;
   }
 
-  public int getScrollIncrementBehavior(WidgetAxis dim) {
+  public ScrollIncrementBehavior getScrollIncrementBehavior(WidgetAxis dim) {
     return scroll_behavior[dim.ordinal()];
   }
 
@@ -188,6 +189,7 @@ public abstract class NeoAbstractWidget extends Container
    *  on each one as well as removing them from the List of selections.
    */
   public void clearSelected() {
+    //TODO: Important: fix this so it is more efficient.  Iteratively removing from the beginning of a list is stupid.
     while (selected.size() > 0) {
       // selected.size() shrinks because deselect(glyph)
       //    calls selected.removeElement()

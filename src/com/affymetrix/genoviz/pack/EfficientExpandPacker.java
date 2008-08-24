@@ -9,8 +9,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.tiers;
+package com.affymetrix.genoviz.pack;
 
+import com.affymetrix.genoviz.tiers.*;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;

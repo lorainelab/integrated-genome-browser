@@ -9,8 +9,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.pack;
 
+import com.affymetrix.genoviz.bioviews.*;
 import java.awt.Rectangle;
 
 /**

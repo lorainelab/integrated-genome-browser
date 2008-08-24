@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.tiers;
+package com.affymetrix.genoviz.util;
 
 /**
  *  a List-like class for doubles (since Lists don't deal with primitives).

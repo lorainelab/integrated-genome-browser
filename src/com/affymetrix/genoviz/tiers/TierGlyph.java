@@ -12,6 +12,11 @@
 package com.affymetrix.genoviz.tiers;
 
 
+import com.affymetrix.genoviz.pack.PaddedPackerI;
+import com.affymetrix.genoviz.pack.FasterExpandPacker;
+import com.affymetrix.genoviz.pack.ExpandPacker;
+import com.affymetrix.genoviz.pack.CollapsePacker;
+import com.affymetrix.genoviz.pack.PackerI;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;

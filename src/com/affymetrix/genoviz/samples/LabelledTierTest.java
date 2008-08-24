@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import com.affymetrix.genoviz.tiers.AffyLabelledTierMap;
 import com.affymetrix.genoviz.tiers.AffyTieredMap;
-import com.affymetrix.genoviz.tiers.ExpandPacker;
+import com.affymetrix.genoviz.pack.ExpandPacker;
 import com.affymetrix.genoviz.tiers.TestGlyph;
 import com.affymetrix.genoviz.tiers.TierGlyph;
 import com.affymetrix.genoviz.tiers.TransformTierGlyph;

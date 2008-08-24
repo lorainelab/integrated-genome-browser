@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.pack.PackerI;
 import java.util.List;
 import java.awt.*;
 
@@ -21,6 +22,7 @@ import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.glyph.*;
 
+import com.affymetrix.genoviz.pack.PaddedPackerI;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 
@@ -197,7 +199,6 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
       double a = cbox.x;
       double b = cbox.x + cbox.width;
       java.util.List<GlyphI> children_in_range = gsn.getOverlappingGlyphs(a, b);
-      int j_size = children_in_range.size();
       for (GlyphI child : children_in_range) {
         // TransientGlyphs are usually NOT drawn in standard drawTraversal
         if (drawTransients() || !(child instanceof TransientGlyph)) {

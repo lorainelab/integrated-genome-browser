@@ -9,8 +9,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.pack;
 
+import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.awt.Rectangle;
@@ -127,8 +128,8 @@ public abstract class AbstractCoordPacker implements PackerI {
   public void moveToAvoid(GlyphI glyph_to_move,
                           GlyphI glyph_to_avoid, 
                           NeoConstants.Direction movetype)  {
-    Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
-    Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
+    final Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+    final Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
 
     /*
      * Mirror vertically about the horizontal coordinate axis
@@ -141,11 +142,6 @@ public abstract class AbstractCoordPacker implements PackerI {
        */
       if (movebox.y < 0) {
         // move UP (decreasing y)
-
-        // movebox.y = avoidbox.y - movebox.height - spacing;
-        // switched to using moveAbsolute to handle packing glyph
-        // that have children, since moveAbsolute (and moveRelative)
-        // will descend through the glyph hierarchy -- GAH 10-2-97
         glyph_to_move.moveAbsolute(movebox.x,
           avoidbox.y - movebox.height - spacing);
       }

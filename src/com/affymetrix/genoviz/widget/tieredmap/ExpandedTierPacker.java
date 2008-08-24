@@ -12,6 +12,7 @@
 package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.pack.PaddedPackerI;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.awt.Rectangle;

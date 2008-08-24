@@ -196,11 +196,11 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     }
   }
 
-  @Override
-  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint, double coord) {
-    super.setZoomBehavior(axis, constraint, coord);
-    labelmap.setZoomBehavior(axis, constraint, coord);
-  }
+//  @Override
+//  public void setZoomBehavior(WidgetAxis axis, ZoomConstraint constraint, double coord) {
+//    super.setZoomBehavior(axis, constraint, coord);
+//    labelmap.setZoomBehavior(axis, constraint, coord);
+//  }
 
   @Override
   public void updateWidget() {

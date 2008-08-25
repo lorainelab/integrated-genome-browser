@@ -11,6 +11,8 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import com.affymetrix.genoviz.transform.TwoDimTransform;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import java.awt.Graphics2D;
 import java.awt.Point;

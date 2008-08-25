@@ -10,6 +10,8 @@
 */
 package com.affymetrix.genoviz.bioviews;
 
+import com.affymetrix.genoviz.transform.TwoDimTransform;
+import com.affymetrix.genoviz.transform.OneDimTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;

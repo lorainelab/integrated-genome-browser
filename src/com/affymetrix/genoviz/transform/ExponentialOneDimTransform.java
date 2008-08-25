@@ -9,7 +9,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.transform;
+
+import com.affymetrix.genoviz.bioviews.*;
 
 /**
  * A transform used internally by some NeoWidgets to handle zooming, should

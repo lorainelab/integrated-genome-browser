@@ -13,7 +13,7 @@ package com.affymetrix.genoviz.pack;
 
 import com.affymetrix.genoviz.tiers.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.List;

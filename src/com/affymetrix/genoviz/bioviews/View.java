@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;

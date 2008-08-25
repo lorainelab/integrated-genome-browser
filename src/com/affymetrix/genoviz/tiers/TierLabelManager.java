@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.tiers;
 
+import com.affymetrix.genoviz.drag.GlyphDragger;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;

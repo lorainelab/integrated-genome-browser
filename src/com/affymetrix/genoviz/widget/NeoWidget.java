@@ -13,11 +13,11 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
-import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
+import com.affymetrix.genoviz.transform.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
-import com.affymetrix.genoviz.bioviews.OneDimLinearTransform;
-import com.affymetrix.genoviz.bioviews.OneDimTransform;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
+import com.affymetrix.genoviz.transform.OneDimLinearTransform;
+import com.affymetrix.genoviz.transform.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.SceneII;
 import com.affymetrix.genoviz.bioviews.View;

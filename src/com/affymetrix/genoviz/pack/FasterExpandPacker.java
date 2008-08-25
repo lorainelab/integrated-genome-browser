@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.util.DoubleList;
 import com.affymetrix.genoviz.tiers.*;
 import com.affymetrix.genoviz.pack.EfficientExpandPacker;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants.Direction;
 

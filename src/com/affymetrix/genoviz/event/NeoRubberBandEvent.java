@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -26,12 +26,12 @@ import java.awt.event.MouseEvent;
 public class NeoRubberBandEvent extends MouseEvent  {
   static final long serialVersionUID = 1L;
 
-  /** The "glyph selected" event id */
+  /** The event IDs for different types of band events. */
   public static final int BAND_START = AWTEvent.RESERVED_ID_MAX;
   public static final int BAND_STRETCH = BAND_START + 1;
   public static final int BAND_END = BAND_START + 2;
 
-  protected RubberBand rband;
+  final protected RubberBand rband;
 
   public NeoRubberBandEvent(MouseEvent evt, int id, RubberBand rb) {
     this((Component)evt.getSource(), id, evt.getWhen(), evt.getModifiers(),
@@ -53,4 +53,18 @@ public class NeoRubberBandEvent extends MouseEvent  {
     return rband;
   }
 
+  /** @return true if {@link #getID()} equals {@link #BAND_START}. */
+  public boolean isRubberBandStart() {
+    return getID() == BAND_START;
+  }
+  
+  /** @return true if {@link #getID()} equals {@link #BAND_END}. */
+  public boolean isRubberBandEnd() {
+    return getID() == BAND_END;
+  }
+  
+  /** @return true if {@link #getID()} equals {@link #BAND_STRETCH}. */
+  public boolean isRubberBandStretch() {
+    return getID() == BAND_STRETCH;
+  }
 }

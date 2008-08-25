@@ -9,6 +9,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 package com.affymetrix.genoviz.bioviews;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.pack.PackerI;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

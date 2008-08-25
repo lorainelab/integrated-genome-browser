@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.drag;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,8 +25,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DragMonitor
 implements MouseListener, MouseMotionListener, NeoTimerListener {
 
-  NeoCanvas can;
-  List<NeoDragListener> listeners = new CopyOnWriteArrayList<NeoDragListener>();
+  final NeoCanvas can;
+  final List<NeoDragListener> listeners = new CopyOnWriteArrayList<NeoDragListener>();
   boolean already_dragging_outside = false;
 
   protected NeoTimerEventClock timer = null;
@@ -42,12 +42,17 @@ implements MouseListener, MouseMotionListener, NeoTimerListener {
   }
 
   /** implementing MouseListener interface */
+  @Override
   public void mouseClicked(MouseEvent e) { }
+  @Override
   public void mouseEntered(MouseEvent e) { }
+  @Override
   public void mouseExited(MouseEvent e) { }
+  @Override
   public void mousePressed(MouseEvent e) { }
 
   @SuppressWarnings(value="deprecation")
+  @Override
   public void mouseReleased(MouseEvent e) {
     if (timer != null) {
       timer.stop();
@@ -57,9 +62,11 @@ implements MouseListener, MouseMotionListener, NeoTimerListener {
   }
 
   /** implementing MouseMotionListener interface */
+  @Override
   public void mouseMoved(MouseEvent e) { }
 
   @SuppressWarnings(value="deprecation")
+  @Override
   public void mouseDragged(MouseEvent evt) {
     Dimension dim = can.getSize();
     int x = evt.getX();
@@ -93,11 +100,12 @@ implements MouseListener, MouseMotionListener, NeoTimerListener {
     }
   }
 
-  /**
+  /*
    *  If NeoTimerEventClock's lazy_event_posting is turned on, calls to
    *  heardTimerEvent() should be running on the event dispatch thread,
-   *  and therefore be running synchronously with AWT event and paint calls
+   *  and therefore be running synchronously with AWT event and paint calls.
    */
+  @Override
   public void heardTimerEvent(NeoTimerEvent evt) {
     NeoDragEvent new_event = new NeoDragEvent(this, (NeoConstants.Direction) evt.getArg());
     for (NeoDragListener listener : listeners) {

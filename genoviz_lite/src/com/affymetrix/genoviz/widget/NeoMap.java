@@ -18,15 +18,15 @@ import java.util.List;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
-import com.affymetrix.genoviz.bioviews.ExponentialOneDimTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.LinearTwoDimTransform;
+import com.affymetrix.genoviz.transform.ExponentialOneDimTransform;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.pack.SiblingCoordAvoid;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.pack.PackerI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
-import com.affymetrix.genoviz.bioviews.DragMonitor;
+import com.affymetrix.genoviz.drag.DragMonitor;
 
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;

@@ -9,8 +9,10 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.drag;
 
+import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;

@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.drag;
 
 // when a TimerEventPoster is created (in the
 //   NeoTimerEventClock.postTimeEventLater() method), eventually its run()

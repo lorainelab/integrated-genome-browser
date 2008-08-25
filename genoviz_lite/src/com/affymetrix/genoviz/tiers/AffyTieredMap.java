@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.tiers;
 
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;

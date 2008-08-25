@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.transform.TwoDimTransform;
 import java.awt.*;
 import java.util.List;
 import java.text.DecimalFormat;

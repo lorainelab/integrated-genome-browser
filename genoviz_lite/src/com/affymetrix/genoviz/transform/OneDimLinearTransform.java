@@ -8,7 +8,7 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-package com.affymetrix.genoviz.bioviews;
+package com.affymetrix.genoviz.transform;
 
 /**
  * Implements OndDimTransform as a linear transform.

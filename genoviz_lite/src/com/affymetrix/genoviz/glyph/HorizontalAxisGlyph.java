@@ -10,6 +10,7 @@
  */
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.transform.TwoDimTransform;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;

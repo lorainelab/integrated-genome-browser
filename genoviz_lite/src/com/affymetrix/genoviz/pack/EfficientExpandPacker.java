@@ -11,6 +11,7 @@
 
 package com.affymetrix.genoviz.pack;
 
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import com.affymetrix.genoviz.tiers.*;
 import java.awt.*;
 import java.util.*;

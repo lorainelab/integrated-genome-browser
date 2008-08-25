@@ -14,7 +14,7 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.OneDimTransform;
+import com.affymetrix.genoviz.transform.OneDimTransform;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.*;

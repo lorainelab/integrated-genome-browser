@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;

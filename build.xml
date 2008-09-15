@@ -289,6 +289,8 @@ Make sure that the 'ext' directory exists and includes
 			verbose="false"
 			splitindex="false"
 			source="1.5">
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+			<link href="http://java.sun.com/javaee/5/docs/api/"/>
 			<classpath refid="javadoc.class.path"/>
 			<packageset dir="${igb.src.dir}"/>
 			<packageset dir="${genoviz.src.dir}"/>

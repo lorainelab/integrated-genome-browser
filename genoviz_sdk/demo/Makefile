@@ -16,7 +16,7 @@ CLASSES := $(subst ./,$(CLASSDIR)/$(PRODUCT)/,$(SOURCES:.java=.class))
 
 .PHONY: all clean
 
-# This is stricktly speaking more correct and more pedantic.
+# This is strictly speaking more correct and more pedantic.
 #$(CLASSDIR)/$(PRODUCT)/%.class: %.java
 #	cd $(CLASSDIR) && CLASSPATH=$(CLASSPATH) $(JAVAC) $(PRODUCT)/$?
 

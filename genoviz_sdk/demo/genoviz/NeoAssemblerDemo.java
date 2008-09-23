@@ -16,7 +16,7 @@ package demo.genoviz;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Hashtable;
+//import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.net.URL;
@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.View;
+//import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.datamodel.Span;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoAssembler;
-import com.affymetrix.genoviz.widget.NeoAssemblerI;
+//import com.affymetrix.genoviz.widget.NeoAssemblerI;
 import com.affymetrix.genoviz.widget.NeoAssemblerCustomizer;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.Memer;
@@ -91,8 +91,8 @@ public class NeoAssemblerDemo extends Applet
 
   boolean optimize_scrolling = false;
   boolean optimize_damage = false;
-  boolean isTimed = true;
-  boolean isMemed = true;
+  boolean isTimed = false;
+  boolean isMemed = false;
   boolean consensus_added = false;
 
   // For debugging
@@ -115,7 +115,7 @@ public class NeoAssemblerDemo extends Applet
   Assembly assem;  // the whole assembly
   Mapping consensus;  // the mapping of consensus to reference coordinates
                       // (to allow for a consensus with gaps)
-  Vector aligns;  // a Vector of Mappings, one for each sequence in the alignment
+  //Vector aligns;  // a Vector of Mappings, one for each sequence in the alignment
 
   Image backgroundImage = null;
   boolean clicking = false;
@@ -125,6 +125,7 @@ public class NeoAssemblerDemo extends Applet
   Color nicePaleBlue = new Color(180, 250, 250);
    AlignmentGlyph consglyph;
 
+  @Override
   public void init() {
 
     String param;
@@ -162,7 +163,7 @@ public class NeoAssemblerDemo extends Applet
     map = new NeoAssembler(use_internal_zoomer);
     if (!use_internal_zoomer) {
       hzoom = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-      map.setZoomer(map.X, hzoom);
+      map.setZoomer(NeoAssembler.X, hzoom);
       zoomFrameSetup();
     }
 
@@ -171,13 +172,13 @@ public class NeoAssemblerDemo extends Applet
     map.setAutoSort(false);
 
     // Use the NeoAssembler's built-in selection methods.
-    map.setSelectionEvent(map.ON_MOUSE_DOWN);
+    map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
     //    map.setSelectionBehavior(map.SELECT_RESIDUES);
-    map.setSelectionBehavior(map.SELECT_RESIDUES);
+    map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
 
     assem = loadData();  // parses in data and populates assembly data model
     consensus = assem.getConsensus();
-    aligns = assem.getAlignments();
+    Vector aligns = assem.getAlignments();
 
     if (isMemed)  { memcheck.printMemory(); }
 
@@ -366,6 +367,13 @@ public class NeoAssemblerDemo extends Applet
     propframe.setBounds(200, 200, 500, 300);
     propframe.show();
   }
+  
+  // Disable Add Alignment menus.  Done when all of the alignments have been added.
+  public void turnOffAddAlignMenus() {
+      addAllAligns.setEnabled(false); // Only do this once.
+      addNextMenuItem.setEnabled(false); // Only do this once.
+      addAlignMenuItem.setEnabled(false); // Only do this once.
+  }
 
   public void addAlignment() {
     Vector aligns;
@@ -377,6 +385,9 @@ public class NeoAssemblerDemo extends Applet
       addAlign((Mapping)aligns.elementAt(currentSeq));
       currentSeq++;
       map.updateWidget();
+      if (currentSeq == aligns.size()) {
+          turnOffAddAlignMenus();
+      }
     }
   }
 
@@ -438,6 +449,9 @@ public class NeoAssemblerDemo extends Applet
       if (no_reverse) {
         if (!align.isForward()) {
           currentSeq++;
+          if (currentSeq == aligns.size()) {
+              turnOffAddAlignMenus();
+          }
           return;
         }
       }
@@ -451,11 +465,14 @@ public class NeoAssemblerDemo extends Applet
       }
       currentSeq++;
       map.updateWidget();
+      if (currentSeq == aligns.size()) {
+          turnOffAddAlignMenus();
+      }
     }
   }
 
   public void addTheRest() {
-    System.err.println("adding all sequences");
+    //System.err.println("adding all sequences");
     Vector aligns = assem.getAlignments();
     while (currentSeq < aligns.size()) {
       addNext();
@@ -486,7 +503,7 @@ public class NeoAssemblerDemo extends Applet
   public Assembly loadData(URL seq_URL, URL align_URL) {
     Vector seqs = null;
     Vector aligns = null;
-    Hashtable seqhash = new Hashtable();
+    //Hashtable seqhash = new Hashtable();
     seqs = SequenceParser.getSequences(seq_URL);
     aligns = AlignmentParser.getAlignments(align_URL);
     Mapping consmap = (Mapping)aligns.elementAt(0);
@@ -503,7 +520,7 @@ public class NeoAssemblerDemo extends Applet
         consensus.getSequence().getResidues());
     Span sp;
     map.setDataModel(consglyph, consensus);
-    int cycle = 0;
+    //int cycle = 0;
     for (int j=0; j<spans.size(); j++) {
       sp = (Span)spans.elementAt(j);
       map.addAlignedSpan(consglyph, sp.seq_start, sp.seq_end,
@@ -570,14 +587,14 @@ public class NeoAssemblerDemo extends Applet
         GeneralUtils.isReallyMonospaced(fnt, chars_to_check));
   }
 
-  public void addAll() {
-    addConsensus();
-    Vector aligns;
-    aligns = assem.getAlignments();
-    for (int i=0; i<aligns.size(); i++) {
-      addNext();
-    }
-  }
+  //public void addAll() {
+  //  addConsensus();
+  //  Vector aligns;
+  //  aligns = assem.getAlignments();
+  //  for (int i=0; i<aligns.size(); i++) {
+  //    addNext();
+  //  }
+  //}
 
   public void zoomFrameSetup() {
     zoomframe = new Frame();
@@ -627,10 +644,10 @@ public class NeoAssemblerDemo extends Applet
         sg = (AlignedResiduesGlyph)spans.elementAt(j);
         if (external_font_coloring) {
           sg.setForegroundPainter(fg_painter);
-          sg.setForegroundColorStrategy(sg.CALCULATED);
+          sg.setForegroundColorStrategy(AlignedResiduesGlyph.CALCULATED);
         }
         else {
-          sg.setForegroundColorStrategy(sg.FIXED_COLOR);
+          sg.setForegroundColorStrategy(AlignedResiduesGlyph.FIXED_COLOR);
         }
       }
     }
@@ -654,10 +671,10 @@ public class NeoAssemblerDemo extends Applet
         sg = (AlignedResiduesGlyph)spans.elementAt(j);
         if (external_rect_coloring) {
           sg.setBackgroundPainter(bg_painter);
-          sg.setBackgroundColorStrategy(sg.CALCULATED);
+          sg.setBackgroundColorStrategy(AlignedResiduesGlyph.CALCULATED);
         }
         else {
-          sg.setBackgroundColorStrategy(sg.ALIGNMENT_BASED);
+          sg.setBackgroundColorStrategy(AlignedResiduesGlyph.ALIGNMENT_BASED);
         }
       }
     }
@@ -668,6 +685,7 @@ public class NeoAssemblerDemo extends Applet
     map.updateWidget(true);
   }
 
+  @Override
   public String getAppletInfo() {
     return ("Demonstration of genoviz Software's Assembler Widget");
   }
@@ -693,17 +711,20 @@ public class NeoAssemblerDemo extends Applet
       mapframe.setVisible(false);
   }
 
+  @Override
   public void start() {
     if (framesShowing) {
       showFrames();
     }
   }
 
+  @Override
   public void stop() {
     hideFrames();
   }
 
 
+  @Override
   public void destroy() {
     if ( this.mapframe != null )  {
       this.mapframe.setVisible( false );
@@ -723,6 +744,7 @@ public class NeoAssemblerDemo extends Applet
     super.destroy();
   }
 
+  @Override
   public void paint(Graphics g) {
     if (null == this.backgroundImage) {
       super.paint(g);
@@ -797,7 +819,6 @@ public class NeoAssemblerDemo extends Applet
 
   /* EVENT HANDLING */
 
-
   /** ActionListener Implementation */
 
   public void actionPerformed(ActionEvent evt) {
@@ -807,7 +828,7 @@ public class NeoAssemblerDemo extends Applet
     }
     else if (theItem == addAlignMenuItem) {
       addAlignment();
-      addAlignMenuItem.setEnabled(0 < assem.getAlignments().size());
+      //addAlignMenuItem.setEnabled(0 < assem.getAlignments().size());
     }
     else if (theItem == addGapsMenuItem) {
       try {
@@ -826,7 +847,7 @@ public class NeoAssemblerDemo extends Applet
       }
     }
     else if (theItem == addNextMenuItem) {
-      System.err.println("adding next");
+      //System.err.println("adding next");
       addNext();
     }
     else if (theItem == addNegMenuItem) {
@@ -838,7 +859,6 @@ public class NeoAssemblerDemo extends Applet
     }
     else if (theItem == addAllAligns) {
       addTheRest();
-      addAllAligns.setEnabled(false); // Only do this once.
     }
     else if (theItem == internalSortItem) {
       map.setAutoSort(true);  // trigger a sort
@@ -932,9 +952,9 @@ public class NeoAssemblerDemo extends Applet
       int[] theRange = getSelectedRange ( aglyph );
       System.out.println( "from " + theRange[0] + " to " + theRange[1] );
       System.out.println( getSelectedResidues ( aglyph ) );
-      Vector aspans = aglyph.getAlignedSpans();
+      //Vector aspans = aglyph.getAlignedSpans();
 
-      AlignedResiduesGlyph aspan;
+      //AlignedResiduesGlyph aspan;
     }
   }
 

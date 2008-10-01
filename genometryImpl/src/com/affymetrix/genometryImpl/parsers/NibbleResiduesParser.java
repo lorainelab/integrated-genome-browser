@@ -107,6 +107,11 @@ public class NibbleResiduesParser {
 
   public static void writeBinaryFile(String file_name, String seqname, String seqversion,
 				     String residues) throws IOException {
+
+    // Note: We need to support case because many groups, including
+    // UCSC use case to indicate when a base is in a repeat region
+    //   AL - 10/1/08
+    //
     // binary DNA residues format
     // header:
     //   UTF8-encoded sequence name

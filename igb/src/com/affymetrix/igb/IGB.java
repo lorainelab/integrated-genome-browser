@@ -66,7 +66,14 @@ public class IGB extends Application
   implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener  {
   static IGB singleton_igb;
   public static String APP_NAME = IGBConstants.APP_NAME;
+	public static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
   public static String APP_VERSION = IGBConstants.IGB_VERSION;
+	/**
+	 * HTTP User Agent presented to servers.  Java version is appended by
+	 * the JRE at runtime.  The user agent is of the format
+	 * "APP_SHORT_NAME/APP_VERSION, os.name/os.version (os.arch)".
+	 */
+	public static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
 
   public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
@@ -202,6 +209,9 @@ public class IGB extends Application
    */
   public static void main(String[] args) {
     try {
+
+			// Configure HTTP User agent
+			System.setProperty("http.agent", HttpUserAgent);
 
     // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
     System.setProperty("swing.aatext", "true");

@@ -15,6 +15,8 @@ package com.affymetrix.igb.parsers;
 
 import java.io.*;
 
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -46,7 +48,7 @@ public class Xml2GenometrySaxParser extends DefaultHandler {
 
   public AnnotatedBioSeq parseAxml(InputSource src) {
     try {
-      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
+      XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
       reader.setContentHandler(this);
       System.out.println("trying to do load in AXML via a SAX-driven parser");
       Timer tim = new Timer();

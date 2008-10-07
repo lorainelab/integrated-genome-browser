@@ -15,6 +15,7 @@ package com.affymetrix.igb.parsers;
 
 import java.io.*;
 import java.util.*;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
@@ -22,7 +23,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.apache.xerces.parsers.DOMParser;
 
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.Memer;
@@ -108,10 +108,9 @@ public class Xml2GenometryParser {
       if (USE_TIMER) { tim.start(); }
       if (USE_MEMER)  { mem.printMemory(); }
       System.out.println("converting XML to DOM");
-      DOMParser parser = DasLoader.nonValidatingParser();
-      DasLoader.doNotDeferNodeExpansion(parser);
-      parser.parse(insource);
-      Document seqdoc = parser.getDocument();
+			DocumentBuilderFactory factory = DasLoader.nonValidatingFactory();
+			DasLoader.doNotDeferNodeExpansion(factory);
+			Document seqdoc = factory.newDocumentBuilder().parse(insource);
       System.gc();
       if (USE_MEMER)  { mem.printMemory(); }
       if (USE_TIMER)  {
@@ -121,7 +120,7 @@ public class Xml2GenometryParser {
       System.out.println("converting DOM to genometry");
       result = processDocument(seqdoc, seq);
       seqdoc = null;
-      parser = null;
+      factory = null;
       System.gc();
       if (USE_MEMER) { mem.printMemory(); }
       if (USE_TIMER)  {

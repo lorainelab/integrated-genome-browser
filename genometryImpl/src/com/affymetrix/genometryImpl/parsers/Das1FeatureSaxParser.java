@@ -16,7 +16,11 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.*;
+import org.xml.sax.SAXException;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
@@ -190,30 +194,34 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     this.seq_group = seq_group;
 
     //  For now assuming the source XML contains only a single segment
-    XMLReader reader = new org.apache.xerces.parsers.SAXParser();
     try {
-      //      reader.setFeature("http://xml.org/sax/features/string-interning", true);
-      reader.setFeature("http://xml.org/sax/features/validation", false);
-      reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);
-      reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-    }
-    catch (SAXNotRecognizedException snrex) {
-      // We couldn't care less about these exceptions
-      System.err.println("WARNING: "+snrex.toString());
-    }
-    catch (SAXNotSupportedException snsex) {
-      // We couldn't care less about these exceptions
-      System.err.println("WARNING: "+snsex.toString());
-    }
-    // We DO care about any exceptions coming during parsing
-    reader.setContentHandler(this);
-    try {
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+
+			try {
+				//      reader.setFeature("http://xml.org/sax/features/string-interning", true);
+				reader.setFeature("http://xml.org/sax/features/validation", false);
+				reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);
+				reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			}
+			catch (SAXNotRecognizedException snrex) {
+				// We couldn't care less about these exceptions
+				System.err.println("WARNING: "+snrex.toString());
+			}
+			catch (SAXNotSupportedException snsex) {
+				// We couldn't care less about these exceptions
+				System.err.println("WARNING: "+snsex.toString());
+			}
+			reader.setContentHandler(this);
       reader.parse(isrc);
     } catch (SAXException se) {
       IOException ioe = new IOException("Problem parsing DAS XML data: " + se.getMessage());
       ioe.initCause(se);
       throw ioe;
-    }
+		} catch (ParserConfigurationException e) {
+      IOException ioe = new IOException("Problem parsing DAS XML data: " + e.getMessage());
+      ioe.initCause(e);
+      throw ioe;
+		}
 
     this.seq_group = null; // for garbage-collection
     this.aseq = null;

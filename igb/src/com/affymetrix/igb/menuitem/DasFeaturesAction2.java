@@ -25,6 +25,7 @@ import java.awt.event.*;
 import java.net.*;
 import java.util.*;
 
+import javax.xml.parsers.SAXParserFactory;
 import javax.swing.*;
 import javax.swing.event.*;
 import org.xml.sax.*;
@@ -919,7 +920,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       InputSource isrc = new InputSource(response_stream);
       */
       InputSource isrc = new InputSource(uri);
-      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
       reader.setContentHandler(this);
       reader.parse(isrc);
     }

@@ -21,7 +21,7 @@ import javax.swing.KeyStroke;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
-import org.apache.xerces.parsers.DOMParser;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.prefs.WebLink;
@@ -189,10 +189,8 @@ public class XmlPrefsParser {
 
   public Map parse(InputSource insource, String file_name, Map prefs_hash) {
     try {
-      DOMParser parser = new DOMParser();
       //      System.out.println("parsing from source: " + insource);
-      parser.parse(insource);
-      Document prefsdoc = parser.getDocument();
+      Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
       prefs_hash = processDocument(prefsdoc, file_name, prefs_hash);
     }
     catch (Exception ex) {

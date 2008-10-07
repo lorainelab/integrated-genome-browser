@@ -14,12 +14,15 @@
 package com.affymetrix.igb.das;
 
 import java.io.*;
+import java.io.IOException;
 import java.net.*;
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.*;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.xml.sax.*;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,44 +40,49 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 public abstract class DasLoader {
   final static boolean DEBUG = false;
 
-  /** Creates a new DOMParser that has validation features turned off.
-   *  The parser returned is not specifically set-up for DAS, and can be
-   *  used in any case where you want a non-validating parser.
-   */
-  public static DOMParser nonValidatingParser() {
-    if (DEBUG) System.out.println("========== Getting a nonValidatingParser!");
-    DOMParser parser = new DOMParser();
+	/**
+	 * Create a new DocumentBuilder factory with validation disabled.
+   * The parser returned is not specifically set-up for DAS, and can be
+   * used in any case where you want a non-validating parser.
+	 */
+	public static DocumentBuilderFactory nonValidatingFactory() {
+		if (DEBUG)
+			System.out.println("========== Getting a nonValidatingParser!");
 
-    // validation and validation/dynamic should default to false, but just to make sure...
-    try {
-      parser.setFeature("http://xml.org/sax/features/validation", false);
-      parser.setFeature("http://apache.org/xml/features/validation/dynamic", false);
-      parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-    }
-    catch (org.xml.sax.SAXNotSupportedException e) {}
-    catch (org.xml.sax.SAXNotRecognizedException e) {}
-    return parser;
-  }
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(false);
+		try {
+			factory.setFeature("http://xml.org/sax/features/validation", false);
+			factory.setFeature("http://apache.org/xml/features/validation/dynamic", false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+
+		return factory;
+	}
 
   /**
-   *  Set parser to _not_ defer node expansion (thus forcing full expansion of DOM when
+   *  Set parser factory to _not_ defer node expansion (thus forcing full expansion of DOM when
    *    loaded). This slows down "loading" of DOM significantly (~2-3x), but also significantly
    *    speeds up later access of the document, since that does not
    *    trigger any node expansions.
    *  Saves a lot of memory because it eliminates deferred-node objects that xerces-j uses, which
    *     seem to elude the garbage collector and just keep accumulating....
+	 *
+	 * Unknown if this is still needed, as we are no longer guaranteed to be using Xerces-j.
    */
-  public static void doNotDeferNodeExpansion(DOMParser parser) {
-    try {
-      parser.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
-    }
-    catch (org.xml.sax.SAXNotSupportedException e) {}
-    catch (org.xml.sax.SAXNotRecognizedException e) {}
-  }
+	public static void doNotDeferNodeExpansion(DocumentBuilderFactory factory) {
+		try {
+			factory.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
 
   /** Opens an XML document, using {@link #nonValidatingParser()}. */
   public static Document getDocument(String url)
-  throws java.net.MalformedURLException, java.io.IOException, org.xml.sax.SAXException {
+  throws ParserConfigurationException, MalformedURLException, SAXException, IOException {
     if (DEBUG) System.out.println("=========== Getting a Document from URL: "+url);
 
     Document doc = null;
@@ -86,7 +94,7 @@ public abstract class DasLoader {
 
   /** Opens an XML document, using {@link #nonValidatingParser()}. */
   public static Document getDocument(URLConnection request_con)
-  throws java.io.IOException, org.xml.sax.SAXException {
+  throws ParserConfigurationException, SAXException, IOException {
     if (DEBUG) System.out.println("=========== Getting a Document from connection: "+request_con.getURL().toExternalForm());
 
     if (DEBUG) { LocalUrlCacher.reportHeaders(request_con); }
@@ -104,13 +112,8 @@ public abstract class DasLoader {
 
   /** Opens an XML document, using {@link #nonValidatingParser()}. */
   public static Document getDocument(InputStream str)
-  throws java.io.IOException, org.xml.sax.SAXException {
-    Document doc = null;
-    InputSource isrc = new InputSource(str);
-    DOMParser parser = nonValidatingParser();
-    parser.parse(isrc);
-    doc = parser.getDocument();
-    return doc;
+  throws ParserConfigurationException, SAXException, IOException {
+    return nonValidatingFactory().newDocumentBuilder().parse(str);
   }
 
   /**

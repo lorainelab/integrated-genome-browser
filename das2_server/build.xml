@@ -112,7 +112,6 @@ in this directory, execute:
        <available file="${lib2.dir}/javax.servlet.jar"/>
        <available file="${lib2.dir}/org.mortbay.jetty.jar"/>
        <available file="${lib.dir}/xercesImpl.jar"/>
-       <available file="${lib.dir}/xml-apis.jar"/>
        <available file="${genoviz.jar}"/>
        <available file="${genometry.jar}"/>
        <available file="${genometryImpl.jar}"/>

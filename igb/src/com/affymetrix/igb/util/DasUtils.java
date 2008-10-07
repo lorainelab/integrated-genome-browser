@@ -22,7 +22,8 @@ import java.util.regex.*;
 
 import org.xml.sax.*;
 import org.w3c.dom.*;
-import org.apache.xerces.parsers.DOMParser;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 // TODO: Merge this class with com.affymetrix.igb.das.DasLoader
 
@@ -38,7 +39,7 @@ public class DasUtils {
    *  @return a matching source on the server, or null.
    */
   public static String findDasSource(String das_server, String source_synonym)
-  throws IOException, SAXException {
+  throws IOException, SAXException, ParserConfigurationException {
     String result = null;
     //      System.out.println("in DasUtils.findDasSource()");
     String request_str = das_server + "/dsn";
@@ -58,7 +59,7 @@ public class DasUtils {
    *  @return a matching sequence id on the server, or null.
    */
   public static String findDasSeqID(String das_server, String das_source, String seqid_synonym)
-  throws IOException, SAXException {
+  throws IOException, SAXException, ParserConfigurationException {
     String result = null;
     //      System.out.println("in DasUtils.findDasSeqID()");
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
@@ -80,7 +81,7 @@ public class DasUtils {
    */
   public static String getDasResidues(String das_server, String das_source, String das_seqid,
 				      int min, int max)
-  throws IOException, SAXException {
+  throws IOException, SAXException, ParserConfigurationException {
     String residues = null;
     String request = das_server + "/" +
     das_source + "/dna?segment=" +
@@ -94,14 +95,12 @@ public class DasUtils {
   }
 
   public static String parseDasResidues(InputStream das_dna_result)
-  throws IOException, SAXException {
+  throws IOException, SAXException, ParserConfigurationException {
     String residues = null;
 
     InputSource isrc = new InputSource(das_dna_result);
-    DOMParser parser = DasLoader.nonValidatingParser();
-    parser.parse(isrc);
 
-    Document doc = parser.getDocument();
+    Document doc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(isrc);
     Element top_element = doc.getDocumentElement();
     String name = top_element.getTagName();
     //    System.out.println("top element: " + name);
@@ -139,7 +138,7 @@ public class DasUtils {
   /**
    *  A thin wrapper around {@link DasLoader#getDocument(InputStream)}.
    */
-  public static Document getDocument(InputStream istr) throws IOException, SAXException {
+  public static Document getDocument(InputStream istr) throws IOException, SAXException, ParserConfigurationException {
     Document doc = DasLoader.getDocument(istr);
     return doc;
   }

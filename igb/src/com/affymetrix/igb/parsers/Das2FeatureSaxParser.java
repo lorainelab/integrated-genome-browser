@@ -18,6 +18,8 @@ import java.net.*;
 import java.util.*;
 import java.util.regex.*;
 
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
@@ -227,7 +229,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     seqgroup = group;
 
     try {
-      XMLReader reader = new org.apache.xerces.parsers.SAXParser();
+			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
       //      reader.setFeature("http://xml.org/sax/features/string-interning", true);
       reader.setFeature("http://xml.org/sax/features/validation", false);
       reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);

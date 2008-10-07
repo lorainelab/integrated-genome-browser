@@ -21,7 +21,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
-import org.apache.xerces.parsers.DOMParser;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  *  Loads an XML document using the igb_stylesheet_1.dtd.
@@ -123,11 +123,8 @@ public class XmlStylesheetParser {
 
   public Stylesheet parse(InputSource insource) throws IOException {
     try {
-      //DOMParser parser = new DOMParser();
-      DOMParser parser = DasLoader.nonValidatingParser();
+			Document prefsdoc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(insource);
 
-      parser.parse(insource);
-      Document prefsdoc = parser.getDocument();
       processDocument(prefsdoc);
     }
     catch (IOException ioe) {

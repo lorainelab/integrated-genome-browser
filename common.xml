@@ -1,0 +1,80 @@
+<project>
+  <target name="init">
+    <tstamp/>
+    <property name="year" value="2005"/>
+
+		<!-- global compiler defaults -->
+    <property name="build.compiler" value="modern" />
+		<property name="ant.build.javac.target" value="5" />
+		<property name="ant.build.javac.source" value="5" />
+
+		<!-- compiler defaults passed to javac -->
+    <property name="debug" value="off" />
+    <property name="deprecation" value="off"/>
+		<property name="compiler.args" value="-Xlint:none" />
+
+		<!-- javadoc defaults -->
+		<property name="javadoc.j2se.url" value="http://java.sun.com/j2se/1.5.0/docs/api/" />
+		<property name="javadoc.j2ee.url" value="http://java.sun.com/javaee/5/docs/api/" />
+		<property name="javadoc.src.version" value="5" />
+
+		<!-- directory paths -->
+		<property name="src.dir" value="${basedir}/src"/>
+		<property name="build.dir" value="${basedir}/build"/>
+		<property name="docs.dir" value="${basedir}/docs" />
+		<property name="dist.dir" value="${basedir}/dist" />
+		<property name="rsrc.dir" value="${basedir}/resources" />
+
+		<!-- property list file -->
+		<property file="${basedir}/ant.properties" />
+
+    <filter token="Copyright" value="Copyright (C) 1997-${year} by Affymetrix, Inc, USA."/> 
+    <filter token="year" value="${year}"/>
+    <filter token="date" value="${TODAY}"/>
+  </target>
+
+  <target name="compile" depends="init">
+		<mkdir dir="${build.dir}" />
+    <javac destdir="${build.dir}" debug="${debug}" deprecation="${deprecation}">
+			<src path="${src.dir}" />
+			<classpath refid="classpath" />
+			<compilerarg compiler="modern" value="${compiler.args}" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+		<mkdir dir="${dist.dir}" />
+		<jar jarfile="${dist.dir}/${jarfile}" update="false">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${rsrc.dir}" />
+    </jar>
+  </target>
+
+  <target name="all" depends="jar"/>
+
+	<target name="docs" depends="init" description="Builds javadocs">
+		<mkdir dir="${docs.dir}"/>
+		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" access="private" verbose="false" splitindex="false" source="${javadoc.source.version}" includeAntRuntime="false">
+			<link href="${javadoc.j2se.url}"/>
+			<link href="${javadoc.j2ee.url}"/>
+			<classpath refid="classpath"/>
+			<packageset dir="${src.dir}"/>
+			<doctitle><![CDATA[<h1>${name} API</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
+		</javadoc>
+	</target>
+
+	<target name="clean" depends="init">
+    <delete file="${component}.jar"/>
+		<delete dir="${docs.dir}"/>
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+
+		<delete>
+			<fileset dir="${basedir}">
+				<include name="demo/**/*.class"/>
+				<include name="tutorial/**/*.class"/>
+			</fileset>
+		</delete>
+  </target>
+</project>

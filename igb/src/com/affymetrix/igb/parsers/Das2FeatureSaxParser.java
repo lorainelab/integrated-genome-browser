@@ -228,12 +228,17 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     seqgroup = group;
 
+		XMLReader reader = null;
     try {
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
       //      reader.setFeature("http://xml.org/sax/features/string-interning", true);
       reader.setFeature("http://xml.org/sax/features/validation", false);
       reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);
       reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
       reader.setContentHandler(this);
       reader.setErrorHandler(this);
       reader.parse(isrc);

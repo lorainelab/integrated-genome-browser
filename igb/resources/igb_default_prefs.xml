@@ -1,0 +1,91 @@
+<prefs>
+
+<!-- It not necessary to set the QuickLoadUrl in this file.
+     If one is specified, it will be used in addition to the default one(s).
+<tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/>
+-->
+<!--
+   It is no longer possible to specify a DasDnaServer through this file.
+   Set it in the preferences graphical interface.
+<tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
+-->
+
+
+<boolean tag="USE_QUICK_LOADER" val="false" />
+<boolean tag="USE_GRAPH_ADJUSTER" val="true" />
+<boolean tag="USE_SLICE_VIEW" val="true" />
+<boolean tag="USE_PATTERN_SEARCHER" val="true" />
+<boolean tag="USE_ANNOT_BROWSER" val="false" />
+<boolean tag="USE_BOOKMARK_MANAGER" val="true" />
+<boolean tag="USE_PIVOT_VIEW" val="false" />
+<boolean tag="USE_RESTRICTION_MAPPER" val="false" />
+
+
+
+
+  <!-- <annotation_url> associates a "method" type regular expression with a URL.
+       parameters:
+         annot_type_regex:  a regular expression (case insensitive by default)
+         url:               a url.  Every instance of "$$" (if any) will be
+                            substituted with the item ID when forming links.
+  -->
+<!-- use (?i) at the start of a regex to force case-insensitive matching of the whole regex -->
+  <annotation_url annot_type_regex="(?i).*RefSeq$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="(?i).*mRNA$"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="(?i)TAIR$" 
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  />
+  <annotation_url annot_type_regex="(?i).*EnsGene$"
+    name="Ensembl Human ID search"
+    url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
+  />
+
+  <annotation_url annot_type_regex="(?i).*EnsGene$" 
+     name="Ensembl Human GeneView"
+     url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
+  />
+
+  <annotation_url annot_type_regex="(?i).* netaffx consensus"
+    name="NetAffx"
+    url="https://www.affymetrix.com/analysis/netaffx/fullrecord.affx?pk=$$"
+  />
+
+  <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Probes$"
+    name="NetAffx Probeset Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
+  />
+  <annotation_url annot_type_regex="(?i).*Ex-1_0-st.*Transcripts$"
+    name="NetAffx Transcript Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
+  />
+  <annotation_url annot_type_regex="genbank:gene\S*"
+    name="Entrez"
+    url="http://www.ncbi.nlm.nih.gov/gquery/gquery.fcgi?term=$$"
+  />    
+ <annotation_url annot_type_regex="(?i).*sanger_pombe$"
+    name="GeneDB"
+    url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
+  />
+
+<!--
+  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"
+    name="NetAffx Probeset Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
+  />
+  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Transcripts$"
+    name="NetAffx Transcript Details"
+    url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
+  />
+-->
+
+
+
+</prefs>
+

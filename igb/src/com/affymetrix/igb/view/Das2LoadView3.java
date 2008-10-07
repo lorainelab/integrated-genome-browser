@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.prefs.*;
 import java.util.regex.*;
 import javax.swing.*;
@@ -49,9 +50,6 @@ import skt.swing.tree.check.CheckTreeManager;
 import skt.swing.tree.check.CheckTreeSelectionModel;
 import skt.swing.tree.check.TreePathSelectable;
 
-//Using backport of jdk1.6 java.util.concurrent package to jdk1.4:
-//backport-util-concurrent, see http://dcl.mathcs.emory.edu/util/backport-util-concurrent for details
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 
 
 /**

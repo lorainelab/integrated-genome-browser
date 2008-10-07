@@ -407,7 +407,7 @@ public class WebLink {
   }
 
   /** Will save the current web links into the file that was specified
-   *  by {@link #getBookmarksFile()}.
+   *  by {@link #getLinksFile()}.
    *  @return true for sucessfully saving the file
    */
   public static boolean autoSave() {

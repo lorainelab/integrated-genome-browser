@@ -47,7 +47,7 @@ public abstract class DasLoader {
 	 */
 	public static DocumentBuilderFactory nonValidatingFactory() {
 		if (DEBUG)
-			System.out.println("========== Getting a nonValidatingParser!");
+			System.out.println("========== Getting a nonValidatingFactory!");
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(false);
@@ -80,7 +80,7 @@ public abstract class DasLoader {
 		}
 	}
 
-  /** Opens an XML document, using {@link #nonValidatingParser()}. */
+  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
   public static Document getDocument(String url)
   throws ParserConfigurationException, MalformedURLException, SAXException, IOException {
     if (DEBUG) System.out.println("=========== Getting a Document from URL: "+url);
@@ -92,7 +92,7 @@ public abstract class DasLoader {
     return doc;
   }
 
-  /** Opens an XML document, using {@link #nonValidatingParser()}. */
+  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
   public static Document getDocument(URLConnection request_con)
   throws ParserConfigurationException, SAXException, IOException {
     if (DEBUG) System.out.println("=========== Getting a Document from connection: "+request_con.getURL().toExternalForm());
@@ -110,7 +110,7 @@ public abstract class DasLoader {
     return doc;
   }
 
-  /** Opens an XML document, using {@link #nonValidatingParser()}. */
+  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
   public static Document getDocument(InputStream str)
   throws ParserConfigurationException, SAXException, IOException {
     return nonValidatingFactory().newDocumentBuilder().parse(str);

@@ -255,7 +255,7 @@ public class BookmarkManagerView extends JPanel implements TreeSelectionListener
     /** Sets the instance of IGB.  This is the instance
      *  in which the bookmarks will be opened when the "GoTo" button
      *  is pressed.
-     *  @param uni an instance of Unibrow; null is ok.
+     *  @param app an instance of Application; null is ok.
      */
     void setApplication(Application app) {
       this.app = app;

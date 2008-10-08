@@ -152,6 +152,51 @@ public class Das2ServerInfo  {
 		}
 		return null;
 	}
+        
+        // Determine the version of the Das2Server.  If there are problems retrieving this, just return null.
+        public static Das2VersionedSource GetDas2Version(String server_url, String source_id, String version_id,
+          String default_server_url, String default_source_url, String default_version_uri) {
+            Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
+            if (server == null) {
+                server = Das2Discovery.getDas2Server(default_server_url);
+                if (server == null) {
+                    return null;
+                }
+            }
+            Map source_list = server.getSources();
+            if (source_list == null) {
+                return null;
+            }
+            Das2Source source = (Das2Source) source_list.get(source_id);
+            if (source == null) {
+                source = (Das2Source) source_list.get(default_source_url);
+                if (source == null) {
+                    if (source_list.values() == null || source_list.values().iterator() == null || !source_list.values().iterator().hasNext()) {
+                        return null;
+                    }
+                    source = (Das2Source) source_list.values().iterator().next();
+                    if (source == null) {
+                        return null;
+                    }
+                }
+            }
+            Map version_list = source.getVersions();
+            Das2VersionedSource version = (Das2VersionedSource) version_list.get(version_id);
+            if (version == null) {
+                version = (Das2VersionedSource) version_list.get(default_version_uri);
+                if (version == null) {
+                    if (version_list.values() == null || version_list.values().iterator() == null || !version_list.values().iterator().hasNext()) {
+                        return null;
+                    }
+                    version = (Das2VersionedSource) version_list.values().iterator().next();
+                    if (version == null) {
+                        return null;
+                    }
+                }
+            }
+            return version;
+        }
+
 
 //	public String getDescription() { return description; }
 //	protected void setDescription(String desc)  { }
@@ -246,7 +291,7 @@ public class Das2ServerInfo  {
                         }
 
 			String content_type = (String)headers.get("content-type");
-			if (DEBUG_SOURCES_QUERY) { System.out.println("Das Response content type: " + content_type); }
+			if (DEBUG_SOURCES_QUERY) { System.out.println("Das2 Response content type: " + content_type); }
 
 
 			if (content_type != null) {

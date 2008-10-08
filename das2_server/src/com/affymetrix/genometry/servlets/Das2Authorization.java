@@ -223,7 +223,7 @@ public class Das2Authorization {
 	private class User{
 		//fields
 		String encryptedPassword;
-		HashMap<String,HashSet> authorizedDirectories = new HashMap();
+		HashMap<String,HashSet> authorizedDirectories = new HashMap<String,HashSet>();
 		private User (String encryptedPassword) {
 			this.encryptedPassword = encryptedPassword;
 		}

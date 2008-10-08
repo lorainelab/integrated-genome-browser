@@ -98,56 +98,85 @@ public class ViewPersistenceUtils  {
   }
 
   public static AnnotatedSeqGroup restoreGroupSelection() {
-    Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-    String group_id = genomes_node.get(SELECTED_GENOME_PREF, DEFAULT_SELECTED_GENOME);
+      Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
+      String group_id = genomes_node.get(SELECTED_GENOME_PREF, DEFAULT_SELECTED_GENOME);
 
-    Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group_id, true);
-       //  encodes id via MD5 if too long, also remove forward slashes ("/")
+      Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group_id, true);
+      //  encodes id via MD5 if too long, also remove forward slashes ("/")
 
-    String server_url = group_node.get(DAS2_SERVER_URL_PREF, DEFAULT_DAS2_SERVER_URL);
-    String source_id = group_node.get(DAS2_SOURCE_URI_PREF, DEFAULT_DAS2_SOURCE_URI);
-    String version_id = group_node.get(DAS2_VERSION_URI_PREF, DEFAULT_DAS2_VERSION_URI);
+      String server_url = group_node.get(DAS2_SERVER_URL_PREF, DEFAULT_DAS2_SERVER_URL);
+      String source_id = group_node.get(DAS2_SOURCE_URI_PREF, DEFAULT_DAS2_SOURCE_URI);
+      String version_id = group_node.get(DAS2_VERSION_URI_PREF, DEFAULT_DAS2_VERSION_URI);
 
-    //HACK: steve, don't know how to activate debug mode....
-    //    if (DEBUG) {
+      //HACK: steve, don't know how to activate debug mode....
+      //    if (DEBUG) {
       System.out.println("Restoring group:");
       System.out.println("     " + server_url);
       System.out.println("     " + source_id);
       System.out.println("     " + version_id);
-      //    }
-    Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
-    if (server == null) {
-      server = Das2Discovery.getDas2Server(DEFAULT_DAS2_SERVER_URL);
-      if (server == null) { return null; }
-    }
-    Das2Source source = (Das2Source)server.getSources().get(source_id);
-    if (source == null) {
-      source = (Das2Source)server.getSources().get(DEFAULT_DAS2_SOURCE_URI);
-      if (source == null) {
-	source = (Das2Source)server.getSources().values().iterator().next();
-	if (source == null) { return null; }
-      }
-    }
-    Das2VersionedSource version = (Das2VersionedSource)source.getVersions().get(version_id);
-    if (version == null) {
-      version = (Das2VersionedSource)source.getVersions().get(DEFAULT_DAS2_VERSION_URI);
-      if (version == null) {
-	version = (Das2VersionedSource)source.getVersions().values().iterator().next();
-	if (version == null) { return null; }
-      }
-    }
-    AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
-    // Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
-    //    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
-    version.getSegments();
 
-    if (gmodel.getSelectedSeqGroup() != group)  {
-      gmodel.setSelectedSeqGroup(group);
-    }
-    return group;
+      Das2VersionedSource version = GetDas2Version(server_url, source_id, version_id);
+      if (version == null) {
+          return null;
+      }
+      
+      AnnotatedSeqGroup group = version.getGenome();  // adds genome to singleton genometry model if not already present
+      // Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
+      //    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
+      version.getSegments();
+
+      if (gmodel.getSelectedSeqGroup() != group) {
+          gmodel.setSelectedSeqGroup(group);
+      }
+      return group;
   }
 
 
+  
+
+  // Determine the version of the Das2Server.  If there are problems retrieving this, just return null.
+  private static Das2VersionedSource GetDas2Version(String server_url, String source_id, String version_id) {
+      Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
+      if (server == null) {
+          server = Das2Discovery.getDas2Server(DEFAULT_DAS2_SERVER_URL);
+          if (server == null) {
+              return null;
+          }
+      }
+      Map source_list = server.getSources();
+      if (source_list == null) {
+          return null;
+      }
+      Das2Source source = (Das2Source) source_list.get(source_id);
+      if (source == null) {
+          source = (Das2Source) source_list.get(DEFAULT_DAS2_SOURCE_URI);
+          if (source == null) {
+              if (source_list.values() == null || source_list.values().iterator() == null || !source_list.values().iterator().hasNext())
+                  return null;
+              source = (Das2Source) source_list.values().iterator().next();
+              if (source == null) {
+                  return null;
+              }
+          }
+      }
+      Map version_list = source.getVersions();
+      Das2VersionedSource version = (Das2VersionedSource) version_list.get(version_id);
+      if (version == null) {
+          version = (Das2VersionedSource) version_list.get(DEFAULT_DAS2_VERSION_URI);
+          if (version == null) {
+              if (version_list.values() == null || version_list.values().iterator() == null || !version_list.values().iterator().hasNext())
+                  return null;
+              version = (Das2VersionedSource) version_list.values().iterator().next();
+              if (version == null) {
+                  return null;
+              }
+          }
+      }
+      return version;
+  }
+
+
+  
   /**
    *  Save information on which seq is currently being viewed
    *  Using Preferences node: [igb_root_pref]/genomes/[group_id], {SELECTED_SEQ_PREF ==> seq_id }
@@ -225,9 +254,5 @@ public class ViewPersistenceUtils  {
     }
     return span;
   }
-
-
-
-
 }
 

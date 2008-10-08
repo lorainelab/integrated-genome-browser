@@ -237,9 +237,13 @@ public class Das2ServerInfo  {
 			//does server support authentication? If so then throw up dialog box and attempt.
 			login();
 
-			if (DEBUG_SOURCES_QUERY)  { System.out.println("Das Request: " + server_uri); }
+			if (DEBUG_SOURCES_QUERY)  { System.out.println("Das2 Request: " + server_uri); }
 			Map headers = new LinkedHashMap();
 			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
+                        if (response == null) { 
+                            System.out.println("WARNING: Could not find Das2 server");
+                            return false;
+                        }
 
 			String content_type = (String)headers.get("content-type");
 			if (DEBUG_SOURCES_QUERY) { System.out.println("Das Response content type: " + content_type); }
@@ -354,6 +358,7 @@ public class Das2ServerInfo  {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+                        return false;   // not successfully initialized if there was an exception.
 		}
 		initialized = true;
 		return initialized;

@@ -13,7 +13,16 @@
 		<property name="genometryImpl" value="${basedir}/genometryImpl" />
 		<property name="igb"           value="${basedir}/igb" />
 		<property name="das2server"    value="${basedir}/das2_server" />
+		<property name="dist.dir"      value="${basedir}/dist" />
+		<property name="webstart.dir"  value="${basedir}/webstart" />
 
+		<!-- signjar configuration -->
+		<property name="jar.sign.keystore" value="${user.home}/.keystore" />
+		<property name="jar.sign.keystore.pass" value="changeit" />
+		<property name="jar.sign.alias" value="igb" />
+		<property name="jar.sign.alias.pass" value="${jar.sign.keystore.pass}" />
+
+		<!--	The classpath should be set by subproject, not globally -->
 		<path id="classpath">
 			<pathelement path="${genoviz}/build" />
 			<pathelement path="${genometry}/build" />
@@ -21,10 +30,10 @@
 			<pathelement path="${igb}/build" />
 			<pathelement path="${das2server}/build" />
 			<fileset dir="${basedir}/ext">
-				<include name="**/*.jar"/>
+				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="${basedir}/ext2">
-				<include name="**/*.jar"/>
+				<include name="*.jar"/>
 			</fileset>
 		</path>
 
@@ -45,13 +54,48 @@
 		<iterate target="jar" />
 	</target>
 
-	<target name="all" depends="exe">
+	<target name="signjar" depends="init">
+		<iterate target="signjar" />
+
+		<signjar destDir="${dist.dir}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}">
+			<fileset dir="${basedir}/ext">
+				<include name="*.jar"/>
+			</fileset>
+		</signjar>
+	</target>
+
+	<target name="webstart" depends="signjar">
+		<mkdir dir="${webstart.dir}" />
+		<jar jarfile="${webstart.dir}/igb.jar" index="true">
+			<zipfileset src="${dist.dir}/igb.jar" />
+			<indexjars>
+				<fileset dir="${dist.dir}">
+					<exclude name="das2server.jar" />
+					<exclude name="igb.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</indexjars>
+		</jar>
+
+		<signjar jar="${webstart.dir}/igb.jar" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+
+		<copy todir="${webstart.dir}">
+			<fileset dir="${dist.dir}">
+				<exclude name="das2server.jar" />
+				<exclude name="igb.jar" />
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="all" depends="exe,webstart">
 		<iterate target="all" />
 	</target>
 
 	<target name="clean" depends="init">
 		<iterate target="clean" />
 		<delete file="igb_exe.jar"/>
+		<delete dir="${webstart.dir}" />
 	</target>
 
 	<target name="docs" depends="init">
@@ -73,12 +117,12 @@
 			</manifest>
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>
-			<zipgroupfileset dir="dist">
+			<zipgroupfileset dir="${dist.dir}">
 				<exclude name="das2server.jar" />
-				<include name="**/*.jar"/>
+				<include name="*.jar"/>
 			</zipgroupfileset>
 			<zipgroupfileset dir="ext">
-				<include name="**/*.jar"/>
+				<include name="*.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>
@@ -92,7 +136,7 @@
 		<sequential>
 			<!-- this class path should be moved to common.xml -->
 			<subant target="@{target}" genericantfile="common.xml">
-				<property name="dist.dir" location="${basedir}/dist" />
+				<property name="dist.dir" location="${dist.dir}" />
 				<property name="docs.dir" location="${basedir}/documentation/api-docs" />
 				<reference refid="classpath" />
 				<!-- multiple dirsets ensure dependency ordering -->

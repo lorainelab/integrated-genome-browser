@@ -28,6 +28,13 @@
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
 
+		<!-- signjar configuration -->
+		<property name="jar.sign.keystore" value="${user.home}/.keystore" />
+		<property name="jar.sign.keystore.pass" value="changeit" />
+		<property name="jar.sign.alias" value="igb" />
+		<property name="jar.sign.alias.pass" value="${jar.sign.keystore.pass}" />
+
+		<!-- The filters appear to be unused -->
     <filter token="Copyright" value="Copyright (C) 1997-${year} by Affymetrix, Inc, USA."/> 
     <filter token="year" value="${year}"/>
     <filter token="date" value="${TODAY}"/>
@@ -50,7 +57,11 @@
     </jar>
   </target>
 
-  <target name="all" depends="jar"/>
+	<target name="signjar" depends="jar">
+		<signjar jar="${dist.dir}/${jarfile}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+	</target>
+
+	<target name="all" depends="signjar" />
 
 	<target name="docs" depends="init" description="Builds javadocs">
 		<mkdir dir="${docs.dir}"/>

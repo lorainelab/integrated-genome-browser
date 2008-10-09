@@ -468,13 +468,6 @@ public class Das2ServerInfo  {
 
 	public boolean isInitialized() { return initialized; }
 
-	/**
-	 *  For testing.
-	 */
-	public static void main(String[] args) {
-		System.out.println("This is deprecated, use the JUnit test for Das2ServerInfo instead");
-	}
-
 	/**Returns null or a JSESSIONID used in authentication*/
 	public String getSessionId() {
 		return sessionId;

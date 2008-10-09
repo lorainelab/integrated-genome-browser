@@ -26,6 +26,12 @@
 		<property name="dist.dir"     value="${basedir}/dist" />
 		<property name="webstart.dir" value="${basedir}/webstart" />
 		<property name="webapp.dir"   value="${basedir}/webapp" />
+		<property name="JUnit.dir" value="${basedir}/JUnit" />
+
+		<!-- JUnit tests -->
+		<property name="test.dir" value="${basedir}/test"/>
+		<property name="build-test.dir" value="${basedir}/build-test"/>
+		<property name="report-test.dir" value="${basedir}/report-test"/>
 
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
@@ -50,6 +56,35 @@
 			<compilerarg compiler="modern" value="${compiler.args}" />
     </javac>
   </target>
+
+  <target name="compile-tests" depends="init,compile">
+    <mkdir dir="${build-test.dir}" />
+    <javac destdir="${build-test.dir}" debug="${debug}" deprecation="${deprecation}">
+			<src path="${test.dir}" />
+			<classpath path="${test.classpath}" />
+			<compilerarg compiler="modern" value="${compiler.args}" />
+    </javac>
+  </target>
+
+<target name="report-tests" depends="compile-tests,jar">
+<!--    <mkdir dir="${report-test.dir}" /> -->
+  <junit fork="yes" printsummary="yes" haltonfailure="no">
+    <batchtest fork="yes" todir="${build-test.dir}" >
+      <fileset dir="${build-test.dir}">
+        <include name="**/*Test.class" />
+      </fileset>
+    </batchtest>
+    <formatter type="plain" usefile="true" />
+    <classpath path="${test.classpath}" />
+  </junit>
+  <junitreport todir="${build-test.dir}">
+    <fileset dir="${build-test.dir}">
+      <include name="TEST-*.xml" />
+    </fileset>
+    <report todir="${build-test.dir}" />
+  </junitreport>
+</target>
+	  
 
   <target name="jar" depends="compile">
 		<mkdir dir="${dist.dir}" />
@@ -88,7 +123,7 @@
 		<delete dir="${docs.dir}"/>
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
-
+		<delete dir="${build-test.dir}" />
 		<delete>
 			<fileset dir="${basedir}">
 				<include name="demo/**/*.class"/>

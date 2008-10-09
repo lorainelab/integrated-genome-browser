@@ -42,6 +42,14 @@
 		<iterate target="compile" />
 	</target>
 
+	<target name="compile-tests" depends="init">
+		<iterate target="compile-tests" />
+	</target>
+
+	<target name="report-tests" depends="init">
+		<iterate target="report-tests" />
+	</target>
+
 	<target name="jar" depends="init">
 		<iterate target="jar" />
 	</target>

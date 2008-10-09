@@ -4,35 +4,37 @@
     <property name="year" value="2005"/>
 
 		<!-- global compiler defaults -->
-    <property name="build.compiler" value="modern" />
+    <property name="build.compiler"         value="modern" />
 		<property name="ant.build.javac.target" value="5" />
 		<property name="ant.build.javac.source" value="5" />
 
 		<!-- compiler defaults passed to javac -->
-    <property name="debug" value="off" />
-    <property name="deprecation" value="off"/>
+    <property name="debug"         value="off" />
+    <property name="deprecation"   value="off"/>
 		<property name="compiler.args" value="-Xlint:none" />
 
 		<!-- javadoc defaults -->
-		<property name="javadoc.j2se.url" value="http://java.sun.com/j2se/1.5.0/docs/api/" />
-		<property name="javadoc.j2ee.url" value="http://java.sun.com/javaee/5/docs/api/" />
+		<property name="javadoc.j2se.url"    value="http://java.sun.com/j2se/1.5.0/docs/api/" />
+		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
 		<property name="javadoc.src.version" value="5" />
 
 		<!-- directory paths -->
-		<property name="src.dir" value="${basedir}/src"/>
-		<property name="build.dir" value="${basedir}/build"/>
-		<property name="docs.dir" value="${basedir}/docs" />
-		<property name="dist.dir" value="${basedir}/dist" />
-		<property name="rsrc.dir" value="${basedir}/resources" />
+		<property name="src.dir"      value="${basedir}/src"/>
+		<property name="rsrc.dir"     value="${basedir}/resources" />
+		<property name="build.dir"    value="${basedir}/build"/>
+		<property name="docs.dir"     value="${basedir}/docs" />
+		<property name="dist.dir"     value="${basedir}/dist" />
+		<property name="webstart.dir" value="${basedir}/webstart" />
+		<property name="webapp.dir"   value="${basedir}/webapp" />
 
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
 
 		<!-- signjar configuration -->
-		<property name="jar.sign.keystore" value="${user.home}/.keystore" />
+		<property name="jar.sign.alias"         value="igb" />
 		<property name="jar.sign.keystore.pass" value="changeit" />
-		<property name="jar.sign.alias" value="igb" />
-		<property name="jar.sign.alias.pass" value="${jar.sign.keystore.pass}" />
+		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
+		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
 
 		<!-- The filters appear to be unused -->
     <filter token="Copyright" value="Copyright (C) 1997-${year} by Affymetrix, Inc, USA."/> 
@@ -44,7 +46,7 @@
 		<mkdir dir="${build.dir}" />
     <javac destdir="${build.dir}" debug="${debug}" deprecation="${deprecation}">
 			<src path="${src.dir}" />
-			<classpath refid="classpath" />
+			<classpath path="${classpath}" />
 			<compilerarg compiler="modern" value="${compiler.args}" />
     </javac>
   </target>
@@ -57,18 +59,24 @@
     </jar>
   </target>
 
-	<target name="signjar" depends="jar">
-		<signjar jar="${dist.dir}/${jarfile}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+	<target name="webstart" depends="jar">
+		<mkdir dir="${webstart.dir}" />
+		<signjar jar="${dist.dir}/${jarfile}" signedjar="${webstart.dir}/${jarfile}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
 	</target>
 
-	<target name="all" depends="signjar" />
+	<target name="webapp" depends="jar">
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+		<copy file="${dist.dir}/${jarfile}" todir="${webapp.dir}/WEB-INF/lib" />
+	</target>
+
+	<target name="all" depends="jar" />
 
 	<target name="docs" depends="init" description="Builds javadocs">
 		<mkdir dir="${docs.dir}"/>
 		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" access="private" verbose="false" splitindex="false" source="${javadoc.source.version}" includeAntRuntime="false">
 			<link href="${javadoc.j2se.url}"/>
 			<link href="${javadoc.j2ee.url}"/>
-			<classpath refid="classpath"/>
+			<classpath path="${classpath}"/>
 			<packageset dir="${src.dir}"/>
 			<doctitle><![CDATA[<h1>${name} API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>

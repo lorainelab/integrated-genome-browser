@@ -8,34 +8,26 @@
 <!--                                                                 -->
 <project name="master" basedir=".">
 	<target name="init">
+
+		<!-- Locations of subprojets -->
 		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
 		<property name="genometry"     value="${basedir}/genometry" />
 		<property name="genometryImpl" value="${basedir}/genometryImpl" />
 		<property name="igb"           value="${basedir}/igb" />
 		<property name="das2server"    value="${basedir}/das2_server" />
-		<property name="dist.dir"      value="${basedir}/dist" />
-		<property name="webstart.dir"  value="${basedir}/webstart" />
+
+		<!-- directory paths -->
+		<property name="lib.dir"      value="${basedir}/ext" />
+		<property name="dist.dir"     value="${basedir}/dist" />
+		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
+		<property name="webstart.dir" value="${basedir}/webstart" />
+		<property name="webapp.dir"   value="${basedir}/webapp" />
 
 		<!-- signjar configuration -->
-		<property name="jar.sign.keystore" value="${user.home}/.keystore" />
+		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
 		<property name="jar.sign.keystore.pass" value="changeit" />
-		<property name="jar.sign.alias" value="igb" />
-		<property name="jar.sign.alias.pass" value="${jar.sign.keystore.pass}" />
-
-		<!--	The classpath should be set by subproject, not globally -->
-		<path id="classpath">
-			<pathelement path="${genoviz}/build" />
-			<pathelement path="${genometry}/build" />
-			<pathelement path="${genometryImpl}/build" />
-			<pathelement path="${igb}/build" />
-			<pathelement path="${das2server}/build" />
-			<fileset dir="${basedir}/ext">
-				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="${basedir}/ext2">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
+		<property name="jar.sign.alias"         value="igb" />
+		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
 
 		<dirset id="docdirs" dir="${basedir}">
 			<include name="${genoviz}/src" />
@@ -54,23 +46,22 @@
 		<iterate target="jar" />
 	</target>
 
-	<target name="signjar" depends="init">
-		<iterate target="signjar" />
+	<target name="webstart" depends="init">
+		<iterate target="webstart" />
 
-		<signjar destDir="${dist.dir}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}">
-			<fileset dir="${basedir}/ext">
-				<include name="*.jar"/>
+		<signjar destDir="${webstart.dir}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}">
+			<fileset dir="${lib.dir}">
+				<exclude name="commons-codec-1.3.jar" />
+				<exclude name="javax.servlet.jar" />
+				<exclude name="org.mortbay.jetty.jar" />
+				<include name="*.jar" />
 			</fileset>
 		</signjar>
-	</target>
 
-	<target name="webstart" depends="signjar">
-		<mkdir dir="${webstart.dir}" />
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
 			<zipfileset src="${dist.dir}/igb.jar" />
 			<indexjars>
-				<fileset dir="${dist.dir}">
-					<exclude name="das2server.jar" />
+				<fileset dir="${webstart.dir}">
 					<exclude name="igb.jar" />
 					<include name="*.jar" />
 				</fileset>
@@ -78,24 +69,32 @@
 		</jar>
 
 		<signjar jar="${webstart.dir}/igb.jar" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
-
-		<copy todir="${webstart.dir}">
-			<fileset dir="${dist.dir}">
-				<exclude name="das2server.jar" />
-				<exclude name="igb.jar" />
-				<include name="*.jar" />
-			</fileset>
-		</copy>
 	</target>
 
-	<target name="all" depends="exe,webstart">
+	<target name="webapp" depends="jar">
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${dist.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="xercesImpl.jar" />
+			</fileset>
+		</copy>
+		<copy file="${das2server}/web.xml" todir="${webapp.dir}/WEB-INF" />
+	</target>
+
+	<target name="all" depends="exe">
 		<iterate target="all" />
 	</target>
 
 	<target name="clean" depends="init">
-		<iterate target="clean" />
 		<delete file="igb_exe.jar"/>
+		<delete dir="${dist.dir}" />
 		<delete dir="${webstart.dir}" />
+		<delete dir="${webapp.dir}" />
+
+		<iterate target="clean" />
 	</target>
 
 	<target name="docs" depends="init">
@@ -103,8 +102,7 @@
 		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="1.5">
 			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
 			<link href="http://java.sun.com/javaee/5/docs/api/"/>
-			<classpath refid="classpath"/>
-			<packageset refid="docdirs"/>
+			<packageset refid="docdirs" />
 			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
@@ -134,11 +132,7 @@
 	<macrodef name="iterate">
 		<attribute name="target" default=""/>
 		<sequential>
-			<!-- this class path should be moved to common.xml -->
-			<subant target="@{target}" genericantfile="common.xml">
-				<property name="dist.dir" location="${dist.dir}" />
-				<property name="docs.dir" location="${basedir}/documentation/api-docs" />
-				<reference refid="classpath" />
+			<subant target="@{target}" genericantfile="common.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">
 					<include name="genoviz_sdk" />

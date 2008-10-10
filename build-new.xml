@@ -18,28 +18,49 @@
 
 		<!-- directory paths -->
 		<property name="lib.dir"      value="${basedir}/ext" />
+		<property name="demos.dir"    value="${genoviz}/demo" />
+		<property name="tutorial.dir" value="${genoviz}/tutorial" />
 		<property name="dist.dir"     value="${basedir}/dist" />
 		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
-		<property name="webstart.dir" value="${basedir}/webstart" />
-		<property name="webapp.dir"   value="${basedir}/webapp" />
+		<property name="webstart.dir" value="${dist.dir}/webstart" />
+		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 
-		<!-- signjar configuration -->
+		<!-- global compiler defaults -->
+		<property name="build.compiler"         value="modern" />
+		<property name="ant.build.javac.target" value="5" />
+		<property name="ant.build.javac.source" value="5" />
+
+		<!-- compiler defaults passed to javac -->
+		<property name="debug"         value="on" />
+		<property name="deprecation"   value="off"/>
+		<property name="compiler.args" value="-Xlint:none" />
+
+		<!-- signjar defaults -->
 		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
 		<property name="jar.sign.keystore.pass" value="changeit" />
 		<property name="jar.sign.alias"         value="igb" />
 		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
 
-		<dirset id="docdirs" dir="${basedir}">
-			<include name="${genoviz}/src" />
-			<include name="${genometry}/src" />
-			<include name="${genometryImpl}/src" />
-			<include name="${igb}/src" />
-			<include name="${das2server}/src" />
-		</dirset>
+		<!-- javadoc defaults -->
+		<property name="javadoc.j2se.url"    value="http://java.sun.com/j2se/1.5.0/docs/api/" />
+		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
+		<property name="javadoc.src.version" value="5" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
 	</target>
 
-	<target name="compile" depends="init">
+
+	<target name="compile" depends="init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
+	</target>
+
+	<target name="demos" depends="jar" description="Compile genoviz demos">
+    <javac debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
+			<src path="${demos.dir}" />
+			<src path="${tutorial.dir}" />
+			<classpath path="${genoviz}/build" />
+			<compilerarg compiler="modern" value="${compiler.args}" />
+    </javac>
+		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
 	<target name="compile-tests" depends="init">
@@ -50,11 +71,11 @@
 		<iterate target="report-tests" />
 	</target>
 
-	<target name="jar" depends="init">
+	<target name="jar" depends="init" description="Create jar files for all genoviz subprojects">
 		<iterate target="jar" />
 	</target>
 
-	<target name="webstart" depends="init">
+	<target name="webstart" depends="init" description="Create webstart-compatible IGB jars">
 		<iterate target="webstart" />
 
 		<signjar destDir="${webstart.dir}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}">
@@ -62,6 +83,7 @@
 				<exclude name="commons-codec-1.3.jar" />
 				<exclude name="javax.servlet.jar" />
 				<exclude name="org.mortbay.jetty.jar" />
+				<exclude name="junit-4.5.jar" />
 				<include name="*.jar" />
 			</fileset>
 		</signjar>
@@ -79,7 +101,7 @@
 		<signjar jar="${webstart.dir}/igb.jar" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
 	</target>
 
-	<target name="webapp" depends="jar">
+	<target name="webapp" depends="jar" description="Create das2servlet web application">
 		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${dist.dir}">
@@ -92,31 +114,44 @@
 		<copy file="${das2server}/web.xml" todir="${webapp.dir}/WEB-INF" />
 	</target>
 
-	<target name="all" depends="exe">
+	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>
 
 	<target name="clean" depends="init">
 		<delete file="igb_exe.jar"/>
+		<delete file="${genoviz}/genoviz.jar" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
 
+		<delete>
+			<fileset dir="${demos.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${tutorial.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+
 		<iterate target="clean" />
 	</target>
 
-	<target name="docs" depends="init">
+	<target name="docs" depends="init" description="Create java documentation for all genoviz subprojects">
 		<mkdir dir="${docs.dir}"/>
-		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="1.5">
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-			<link href="http://java.sun.com/javaee/5/docs/api/"/>
-			<packageset refid="docdirs" />
+		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
+			<sourcepath path="${javadoc.src.path}" />
+			<classpath>
+				<fileset dir="${lib.dir}" includes="*.jar" />
+			</classpath>
+			<link href="${javadoc.j2se.url}"/>
+			<link href="${javadoc.j2ee.url}"/>
 			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
 	</target>
 
-	<target name="exe" depends="jar">
+	<target name="exe" depends="jar" description="Create a single-jar IGB application">
 		<jar jarfile="igb_exe.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>

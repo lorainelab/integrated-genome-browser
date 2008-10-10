@@ -19,13 +19,13 @@
 		<property name="javadoc.src.version" value="5" />
 
 		<!-- directory paths -->
-		<property name="src.dir"      value="${basedir}/src"/>
+		<property name="src.dir"      value="${basedir}/src "/>
 		<property name="rsrc.dir"     value="${basedir}/resources" />
 		<property name="build.dir"    value="${basedir}/build"/>
 		<property name="docs.dir"     value="${basedir}/docs" />
 		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="webstart.dir" value="${basedir}/webstart" />
-		<property name="webapp.dir"   value="${basedir}/webapp" />
+		<property name="webstart.dir" value="${dist.dir}/webstart" />
+		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 		<property name="JUnit.dir" value="${basedir}/JUnit" />
 
 		<!-- JUnit tests -->
@@ -50,7 +50,7 @@
 
   <target name="compile" depends="init">
 		<mkdir dir="${build.dir}" />
-    <javac destdir="${build.dir}" debug="${debug}" deprecation="${deprecation}">
+    <javac destdir="${build.dir}" debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
 			<src path="${src.dir}" />
 			<classpath path="${classpath}" />
 			<compilerarg compiler="modern" value="${compiler.args}" />
@@ -59,9 +59,9 @@
 
   <target name="compile-tests" depends="init,compile">
     <mkdir dir="${build-test.dir}" />
-    <javac destdir="${build-test.dir}" debug="${debug}" deprecation="${deprecation}">
+    <javac destdir="${build-test.dir}" debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
 			<src path="${test.dir}" />
-			<classpath path="${test.classpath}" />
+			<classpath path="${lib.dir}/junit-4.5.jar:${test.classpath}" />
 			<compilerarg compiler="modern" value="${compiler.args}" />
     </javac>
   </target>
@@ -75,7 +75,7 @@
       </fileset>
     </batchtest>
     <formatter type="xml" />
-    <classpath path="${test.classpath}" />
+		<classpath path="${lib.dir}/junit-4.5.jar:${test.classpath}" />
   </junit>
   <junitreport todir="${build-test.dir}">
     <fileset dir="${build-test.dir}">
@@ -108,7 +108,7 @@
 
 	<target name="docs" depends="init" description="Builds javadocs">
 		<mkdir dir="${docs.dir}"/>
-		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" access="private" verbose="false" splitindex="false" source="${javadoc.source.version}" includeAntRuntime="false">
+		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" access="private" verbose="false" splitindex="false" source="${javadoc.source.version}">
 			<link href="${javadoc.j2se.url}"/>
 			<link href="${javadoc.j2ee.url}"/>
 			<classpath path="${classpath}"/>
@@ -124,11 +124,5 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${build-test.dir}" />
-		<delete>
-			<fileset dir="${basedir}">
-				<include name="demo/**/*.class"/>
-				<include name="tutorial/**/*.class"/>
-			</fileset>
-		</delete>
   </target>
 </project>

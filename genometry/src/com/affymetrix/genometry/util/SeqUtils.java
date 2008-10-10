@@ -1929,11 +1929,15 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    *  @see #USE_SHORT_FORMAT_FOR_SYMS
    */
   public static String symToString(SeqSymmetry sym) {
-    String result = "";
-    String id = sym.getID();
     if (sym == null) {
-      result = "SeqSymmetry == null";
+      return "SeqSymmetry == null";
     }
+      
+    return "sym.getID() is not implemented.";
+    /*
+      String result = "";
+    String id = sym.getID();
+    
     else if (USE_SHORT_FORMAT_FOR_SYMS) {
       String sym_class = sym.getClass().getName();
       int n = sym_class.lastIndexOf('.');
@@ -1958,6 +1962,8 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
       }
     }
     return result;
+     
+     */
   }
 
   /*

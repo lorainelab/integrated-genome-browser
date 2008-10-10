@@ -319,19 +319,4 @@ public class NibbleIterator implements SearchableCharIterator {
     return residues;
   }
 
-  public static void main(String[] args) {
-    String test_string = "ACTGAAACCCTTTGGGNNNATATGCGCgatcattattcggcgg";
-    System.out.println("in:  " + test_string);
-    System.out.println("length: " + test_string.length());
-    byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-    //    NibbleIterator nibseq = new NibbleIterator(null, null, test_string.length());
-    //    nibseq.setResidueNibbles(test_array);
-    String result_string = NibbleIterator.nibblesToString(test_array, 0, test_string.length());
-    System.out.println("out: " + result_string);
-    for (int i=0; i<test_string.length(); i++) {
-      //      System.out.println("nib " + i + ": " + nibseq.charAt(i));
-      System.out.println("nib " + i + ": " + result_string.charAt(i));
-    }
-  }
-
 }

@@ -178,7 +178,7 @@ public class NibbleResiduesParser {
         seq_version = args[3];
       }
       else {
-        System.err.println("Usage: java com.affymetrix.genometryImpl.parsers.NibbleResiduesParser [seq_name] [in_file] [out_file] [seq_version]");
+        System.err.println("Usage: java -cp <exe_filename> com.affymetrix.genometryImpl.parsers.NibbleResiduesParser [seq_name] [in_file] [out_file] [seq_version]");
         System.exit(1);
       }
       File fil = new File(infile_name);

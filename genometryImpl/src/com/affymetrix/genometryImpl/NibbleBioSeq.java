@@ -155,22 +155,6 @@ public class NibbleBioSeq extends SimpleCompAnnotBioSeq
    *  CharacterIterator implementation
    */
 
-  public static void main(String[] args) {
-    String test_string = "ACTGAAACCCTTTGGGNNNATATGCGC";
-    System.out.println("in:  " + test_string);
-    System.out.println("length: " + test_string.length());
-    byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-    NibbleBioSeq nibseq = new NibbleBioSeq(null, null, test_string.length());
-    NibbleIterator nibber = new NibbleIterator(test_array, test_string.length());
-    nibseq.setResiduesProvider(nibber);
-    String result_string = NibbleIterator.nibblesToString(test_array, 0, test_string.length());
-    System.out.println("out: " + result_string);
-    for (int i=0; i<test_string.length(); i++) {
-      System.out.println("nib " + i + ": " + nibseq.charAt(i));
-    }
-
-  }
-
 }
 
 

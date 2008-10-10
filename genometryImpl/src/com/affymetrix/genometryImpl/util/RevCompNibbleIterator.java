@@ -32,7 +32,7 @@ public class RevCompNibbleIterator
     this.nibble_array = nibs;
     //    shift = length % 2;
     shift = ((length % 2) != 0);
-    System.out.println("constructring RevCompNibbleIterator, length = " + length + 
+    System.out.println("constructing RevCompNibbleIterator, length = " + length + 
 		       ", array length = " + nibble_array.length + ", shift = " + shift);
   }
 
@@ -285,44 +285,6 @@ public class RevCompNibbleIterator
   public int getLength() {
     return length;
   }
-
-  public static void main(String[] args) {
-    String test_string = "ACTGAAACCCTTTGGGNNNATATGC";
-    byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-    NibbleIterator nibs = new NibbleIterator(test_array, test_string.length());
-    RevCompNibbleIterator rcnibs = new RevCompNibbleIterator(test_array, test_string.length());
-
-    System.out.println("length: " + test_string.length());
-    System.out.println("in:   " + test_string);
-    System.out.println("nib:  " + nibs.substring(0, test_string.length()));
-
-    /*
-    StringBuffer compbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      compbuf.append(rcnibs.compCharAt(i));
-    }
-    System.out.println("comp: " + compbuf.toString());
-
-    StringBuffer revbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      revbuf.append(rcnibs.revCharAt(i));
-    }
-    System.out.println("rev:  " + revbuf.toString());
-    */
-
-    /*
-    StringBuffer rcbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      rcbuf.append(rcnibs.charAt(i));
-    }
-    */
-    String rcstr = rcnibs.substring(0, rcnibs.getLength());
-    System.out.println("rc:   " + rcstr);
-    System.out.println("index of TTT in forward: " + nibs.indexOf("TTT", 0));
-    System.out.println("index of TTT in revcomp: " + rcnibs.indexOf("TTT", 0));
-  }
-
-
 }
 
 

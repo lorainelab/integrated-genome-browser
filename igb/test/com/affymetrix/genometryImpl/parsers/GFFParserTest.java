@@ -29,8 +29,10 @@ public class GFFParserTest extends TestCase {
   public void testParse() throws Exception {
     System.out.println("parse");
     
-    String filename = "test_files/GFF1_example.gff";
+    String filename = "igb/test/test_files/GFF1_example.gff";
+    assertTrue(new File(filename).exists());
     InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    assertNotNull(istr);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 

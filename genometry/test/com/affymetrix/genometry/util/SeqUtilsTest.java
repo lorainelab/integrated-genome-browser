@@ -87,6 +87,7 @@ public class SeqUtilsTest extends TestCase {
     symD.addChild(new SingletonSeqSymmetry(300, 150, seqA));
     
     result = SeqUtils.union(symC, symD, seqA);
+    assertNotNull(result);
     SeqUtils.printSymmetry(result);
     
     assertEquals(4, result.getChildCount());

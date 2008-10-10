@@ -32,8 +32,11 @@ public class BedParserTest extends TestCase {
 
   public void testParseFromFile() throws IOException {
     
-    String filename = "test_files/bed_01.bed";
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);   
+    String filename = "igb/test/test_files/bed_01.bed";
+    assertTrue(new File(filename).exists());
+    
+    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename); 
+    assertNotNull(istr);
     
     AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
     boolean annot_seq = true;

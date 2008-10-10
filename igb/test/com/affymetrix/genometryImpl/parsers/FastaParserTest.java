@@ -21,11 +21,15 @@ public class FastaParserTest extends TestCase {
   public void testParseAll() throws Exception {
     System.out.println("parse");
     
-    String filename_1 = "test_files/FASTA_chrQ.fasta";
+    String filename_1 = "igb/test/test_files/FASTA_chrQ.fasta";
+    assertTrue(new File(filename_1).exists());
     InputStream istr_1 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_1);
+    assertNotNull(istr_1);
 
-    String filename_2 = "test_files/FASTA_small_genome.fasta";
+    String filename_2 = "igb/test/test_files/FASTA_small_genome.fasta";
+    assertTrue(new File(filename_2).exists());
     InputStream istr_2 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_2);
+    assertNotNull(istr_2);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
@@ -58,8 +62,11 @@ public class FastaParserTest extends TestCase {
   public void testParse() throws Exception {
     System.out.println("parse");
     
-    String filename = "test_files/FASTA_chrQ.fasta";
+    String filename = "igb/test/test_files/FASTA_chrQ.fasta";
+    assertTrue(new File(filename).exists());
+    
     InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    assertNotNull(istr);
 
     FastaParser instance = new FastaParser();
     

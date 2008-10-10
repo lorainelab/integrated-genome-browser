@@ -41,9 +41,12 @@ public class GFF3ParserTest extends TestCase {
   public void testParseCanonical() throws Exception {
     System.out.println("parse");
     
-    String filename = "test_files/GFF3_canonical_example.gff3";
+    String filename = "igb/test/test_files/GFF3_canonical_example.gff3";
+    assertTrue(new File(filename).exists());
+    
     InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
-
+    assertNotNull(istr);
+    
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
     GFFParser instance = new GFFParser(); // the parser should be able to recognized
@@ -91,8 +94,11 @@ public class GFF3ParserTest extends TestCase {
   public void testParseErrors() throws IOException {
     System.out.println("parse");
     
-    String filename = "test_files/GFF3_with_errors.gff3";
+    String filename = "igb/test/test_files/GFF3_with_errors.gff3";
+    assertTrue(new File(filename).exists());
+    
     InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    assertNotNull(istr);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 

@@ -41,7 +41,8 @@ public class SeqResiduesLoader {
         // Load in the data.  Note that the below assumes bnib format.
 	boolean loaded = false;
 	if (seq_group instanceof Das2SeqGroup)  {
-            loaded = LoadResiduesFromDAS2(seq_group, aseq);
+            // -1 indicates no min/max
+            loaded = LoadResiduesFromDAS2(seq_group, aseq, -1, -1);
 	}
 	if (! loaded)  {
             loaded = LoadResiduesFromQuickLoad(seq_group, seq_name, gviewer);
@@ -50,16 +51,10 @@ public class SeqResiduesLoader {
 	return loaded;
     }
 
-    // try loading via DAS/2 server that genome was originally modelled from  
-    private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq) {
+    // try loading via DAS/2 server that genome was originally modeled from  
+    private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
         boolean loaded;
-        Das2SeqGroup das2_group = (Das2SeqGroup) seq_group;
-        Das2VersionedSource das2_vsource = das2_group.getOriginalVersionedSource();
-        Das2Region segment = das2_vsource.getSegment(aseq);
-        String segment_uri = segment.getID();
-        System.out.println("trying to load residues via DAS/2");
-        String bnib_uri = segment_uri + "?format=bnib";
-        System.out.println("   request URI: " + bnib_uri);
+        String bnib_uri = generateDas2URI(seq_group, aseq, min, max);
         InputStream istr = null;
         Map headers = new HashMap();
         try {
@@ -93,6 +88,29 @@ public class SeqResiduesLoader {
         return loaded;
     }
 
+    // Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?format=bnib")
+     private static String generateDas2URI(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq) {
+        return generateDas2URI(seq_group,aseq,-1,-1);
+    }
+     
+     // Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")     
+     private static String generateDas2URI(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
+        Das2SeqGroup das2_group = (Das2SeqGroup) seq_group;
+        Das2VersionedSource das2_vsource = das2_group.getOriginalVersionedSource();
+        Das2Region segment = das2_vsource.getSegment(aseq);
+        String segment_uri = segment.getID();
+        System.out.println("trying to load residues via DAS/2");
+        String uri; 
+        if (max > -1) {
+            // Note that if it has a range, it's not going to be in bnib format
+            uri = segment_uri + "?range=" + min + ":" + max;
+        }
+        else {
+           uri = segment_uri + "?format=bnib";
+        }
+        System.out.println("   request URI: " + uri);
+        return uri;
+    }
     
     private static boolean LoadResiduesFromQuickLoad(AnnotatedSeqGroup seq_group, String seq_name, SeqMapView gviewer) {
         boolean loaded;
@@ -123,15 +141,9 @@ public class SeqResiduesLoader {
 
     /**
      *  Load sequence residues for a span along a sequence.
-     *  Access residues via DAS reference server
-     *
-     *  DAS reference server can be specified by setting PREF_DAS_DNA_SERVER_URL preference value.
-     *  Currently defaults to UCSC DAS reference server (this will cause problems if genome is not
-     *     available at UCSC)
+   
      */
     public static boolean loadPartialResidues(SeqSpan span, AnnotatedSeqGroup seq_group)  {
-	SeqMapView gviewer = Application.getSingleton().getMapView();
-	String das_dna_server = UnibrowPrefsUtil.getLocation(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
 	AnnotatedBioSeq aseq = (AnnotatedBioSeq)span.getBioSeq();
 	String seqid = aseq.getID();
 	System.out.println("trying to load residues for span: " + SeqUtils.spanToString(span));
@@ -154,11 +166,55 @@ public class SeqResiduesLoader {
             return false;
         }
 
-        String residues = GetResidues(das_dna_server, current_genome_name, seqid, min, max, length);
+        /*  *  Access residues via DAS reference server
+         *
+         *  DAS reference server can be specified by setting PREF_DAS_DNA_SERVER_URL preference value.
+         *  Currently defaults to UCSC DAS reference server (this will cause problems if genome is not
+         *     available at UCSC)
+         */
+        String das_dna_server = UnibrowPrefsUtil.getLocation(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
+        String residues = GetDAS1Residues(das_dna_server, current_genome_name, seqid, min, max, length);
         if (residues == null) {
+            // Try the DAS/2 server
+            //String URI = generateDas2URI(seq_group, (SmartAnnotBioSeq)aseq, min, max);
+            //residues = Das2Utils.getDas2Residues();
             return false;
         }
         
+        CreateComposition(aseq, min, max, residues, length, span);
+        
+        SeqMapView gviewer = Application.getSingleton().getMapView();
+        gviewer.setAnnotatedSeq(aseq, true, true, true);
+
+	return true;
+    }
+
+    // Get the residues from the DAS server
+    private static String GetDAS1Residues(String das_dna_server, String current_genome_name, String seqid, int min, int max, int length) {
+        String residues = null;
+        try {
+            String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
+            if (das_dna_source == null) {
+                System.out.println("Couldn't find das source genome '" + current_genome_name + "'\n on DAS server:\n" + das_dna_server);
+            }
+            String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
+            if (das_seqid == null) {
+                System.out.println("Couldn't access sequence residues on DAS server\n" + " seqid: '" + seqid + "'\n" + " genome: '" + current_genome_name + "'\n" + " DAS server: " + das_dna_server);
+            }
+            residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
+            System.out.println("DAS DNA request length: " + length);
+            System.out.println("DAS DNA response length: " + residues.length());
+        } catch (Exception ex) {
+            System.out.println("Couldn't access sequence residues on DAS server\n" + " seqid: '" + seqid + "'\n" + " genome: '" + current_genome_name + "'\n" + " DAS server: " + das_dna_server);
+        }
+
+        return residues;
+    }
+
+   
+    // Does this actually accomplish anything?
+    private static void CreateComposition(AnnotatedBioSeq aseq, int min, int max, String residues, int length, SeqSpan span) {
+
         BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + min + "-" + max, residues);
 
         SeqSpan span1 = new SimpleSeqSpan(0, length, subseq);
@@ -183,34 +239,10 @@ public class SeqResiduesLoader {
             SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
             compsym.removeSpan(compspan);
             compsym.addSpan(new_compspan);
-        //        System.out.println("adding to composition: " );
-        //        SeqUtils.printSymmetry(compsym);
+            //        System.out.println("adding to composition: " );
+            //        SeqUtils.printSymmetry(compsym);
         }
-        gviewer.setAnnotatedSeq(aseq, true, true, true);
-
-	return true;
     }
 
-    // Get the residues from the DAS server
-    private static String GetResidues(String das_dna_server, String current_genome_name, String seqid, int min, int max, int length) {
-        String residues = null;
-        try {
-            String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
-            if (das_dna_source == null) {
-                System.out.println("Couldn't find das source genome '" + current_genome_name + "'\n on DAS server:\n" + das_dna_server);
-            }
-            String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
-            if (das_seqid == null) {
-                System.out.println("Couldn't access sequence residues on DAS server\n" + " seqid: '" + seqid + "'\n" + " genome: '" + current_genome_name + "'\n" + " DAS server: " + das_dna_server);
-            }
-            residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
-            System.out.println("DAS DNA request length: " + length);
-            System.out.println("DAS DNA response length: " + residues.length());
-        } catch (Exception ex) {
-            System.out.println("Couldn't access sequence residues on DAS server\n" + " seqid: '" + seqid + "'\n" + " genome: '" + current_genome_name + "'\n" + " DAS server: " + das_dna_server);
-        }
-
-        return residues;
-    }
 
 }

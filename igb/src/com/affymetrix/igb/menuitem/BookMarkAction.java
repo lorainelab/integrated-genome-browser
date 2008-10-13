@@ -101,9 +101,11 @@ public class BookMarkAction implements ActionListener, MenuListener {
     buildMenus(main_bm_menu, main_bookmark_list);
   }
 
+  /*
   public BookmarkList getBookmarks() {
     return main_bookmark_list;
   }
+   */
 
   public void setBookmarkManager(BookmarkManagerView bmv) {
     this.bmv = bmv;
@@ -189,10 +191,12 @@ public class BookMarkAction implements ActionListener, MenuListener {
    *  If the bookmark manager is used, this may return false even
    *  though some bookmarks were added there.
    */
+  
+  /*
   public boolean hasUnsavedBookmarks() {
     //TODO: integrate this better with the bookmark manager
     return unsaved_bookmarks;
-  }
+  }*/
 
 
   public void actionPerformed(ActionEvent evt) {
@@ -264,6 +268,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
   }
 
   /** Currently unused. Instead we use removeAllBookmarkMenuItems(). */
+  /*
   void removeComponentFor(BookmarkList bl) {
     Object o = bl.getUserObject();
     Component comp = (Component) component_hash.get(o);
@@ -282,6 +287,7 @@ public class BookMarkAction implements ActionListener, MenuListener {
       component_hash.remove(o);
     }
   }
+   */
 
   public JMenuItem addBookmark(Map props, String name) {
     return addBookmark(props, name, main_bookmark_list);

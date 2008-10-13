@@ -150,6 +150,7 @@ public class XmlPrefsParser {
     return filenames;
   }
 
+  /*
   public Map parse(File fl) {
     Map prefs_hash = new HashMap();
     FileInputStream fistr = null;
@@ -168,11 +169,14 @@ public class XmlPrefsParser {
     }
     return prefs_hash;
   }
+   * */
 
+  /*
   public Map parse(InputStream istr, String file_name)  {
     HashMap prefs_hash = new HashMap();
     return parse(istr, file_name, prefs_hash);
   }
+   * */
 
   public Map parse(InputStream istr, String file_name, Map prefs_hash) {
     try {

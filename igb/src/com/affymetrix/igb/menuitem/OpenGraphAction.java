@@ -43,10 +43,11 @@ public class OpenGraphAction extends AbstractAction {
   FileTracker load_dir_tracker;
   SeqMapView gviewer;
 
+  /*
   public OpenGraphAction(SeqMapView gview, FileTracker ft) {
     this.gviewer = gview;
     this.load_dir_tracker = ft;
-  }
+  }*/
 
   public void actionPerformed(ActionEvent e) {
     // allowing for multiple file selection, so may have multiple graphs

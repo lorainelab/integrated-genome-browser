@@ -514,7 +514,7 @@ public class ChpParser {
   }
 
 
-
+/*
   public static List oldParseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
@@ -626,7 +626,7 @@ public class ChpParser {
     System.out.println("done parsing quantification data CHP file");
     return results;
   }
-
+*/
 
   public static List parseLegacyChp(FusionCHPLegacyData chp) {
       ArrayList results = new ArrayList();
@@ -805,6 +805,7 @@ public class ChpParser {
     }
   }
 
+  /*
   class TwoScoreEntry extends ScoreEntry {
     float quant;
     float pval;
@@ -814,6 +815,7 @@ public class ChpParser {
       this.pval = pval;
     }
   }
+   */
 
   /** For sorting single-score probeset entries */
 class ScoreEntryComparator implements Comparator  {

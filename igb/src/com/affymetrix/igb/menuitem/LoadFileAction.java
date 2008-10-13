@@ -14,9 +14,9 @@
 package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.parsers.Xml2GenometryParser;
-import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.parsers.BrptParser;
+//import com.affymetrix.igb.parsers.Xml2GenometryParser;
+//import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
+//import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -285,6 +285,7 @@ public class LoadFileAction {
   }
 
   // This seems to be unused.
+  /*
   public static MutableAnnotatedBioSeq loadFromUrl(JFrame gviewerFrame, String url_name, 
       GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
   throws IOException {
@@ -308,6 +309,7 @@ public class LoadFileAction {
 
     return result;
   }
+   */
 
   /** Loads from an InputStream.
    *  Detects the type of file based on the filename ending of the
@@ -619,6 +621,7 @@ public class LoadFileAction {
   }
 
   /** Returns the first BioSeq on the last SeqSymmetry in the given list, or null. */
+  /*
   private static MutableAnnotatedBioSeq getLastSeq(java.util.List syms) {
     MutableAnnotatedBioSeq last_seq = null;
     if (syms != null && ! syms.isEmpty()) {
@@ -628,7 +631,7 @@ public class LoadFileAction {
     }
     return last_seq;
   }
-
+*/
   /** A JFileChooser that has a checkbox for whether you want to merge annotations.
    *  Note that an alternative way of adding a checkbox to a JFileChooser
    *  is to use JFileChooser.setAccessory().  The only advantage to this

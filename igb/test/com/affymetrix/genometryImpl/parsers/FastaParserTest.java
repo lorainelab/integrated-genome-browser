@@ -19,16 +19,14 @@ public class FastaParserTest extends TestCase {
   }
   
   public void testParseAll() throws Exception {
-    System.out.println("parse");
-    
     String filename_1 = "igb/test/test_files/FASTA_chrQ.fasta";
     assertTrue(new File(filename_1).exists());
-    InputStream istr_1 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_1);
+    InputStream istr_1 = new FileInputStream(filename_1);
     assertNotNull(istr_1);
 
     String filename_2 = "igb/test/test_files/FASTA_small_genome.fasta";
     assertTrue(new File(filename_2).exists());
-    InputStream istr_2 = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename_2);
+    InputStream istr_2 = new FileInputStream(filename_2);
     assertNotNull(istr_2);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
@@ -60,12 +58,10 @@ public class FastaParserTest extends TestCase {
   }
 
   public void testParse() throws Exception {
-    System.out.println("parse");
-    
     String filename = "igb/test/test_files/FASTA_chrQ.fasta";
     assertTrue(new File(filename).exists());
     
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
 
     FastaParser instance = new FastaParser();
@@ -78,4 +74,12 @@ public class FastaParserTest extends TestCase {
     assertEquals("AACCC", result.getResidues(9,9+5));
     assertEquals("GGGTT", result.getResidues(9+5,9));
   }
+  
+  /*
+  public void testReadFASTA() throws Exception {
+      String filename = "igb/test/test_files/FASTA_chrQ.fasta";
+      assertTrue(new File(filename).exists());
+ 
+      byte[] fasta = FastaParser.ReadFASTA(new File(filename), 0, 10);
+  }*/
 }

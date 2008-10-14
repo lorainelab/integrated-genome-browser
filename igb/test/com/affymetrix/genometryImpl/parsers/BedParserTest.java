@@ -35,7 +35,7 @@ public class BedParserTest extends TestCase {
     String filename = "igb/test/test_files/bed_01.bed";
     assertTrue(new File(filename).exists());
     
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename); 
+    InputStream istr = new FileInputStream(filename); 
     assertNotNull(istr);
     
     AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");

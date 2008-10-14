@@ -44,7 +44,7 @@ public class GFF3ParserTest extends TestCase {
     String filename = "igb/test/test_files/GFF3_canonical_example.gff3";
     assertTrue(new File(filename).exists());
     
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
     
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
@@ -97,7 +97,7 @@ public class GFF3ParserTest extends TestCase {
     String filename = "igb/test/test_files/GFF3_with_errors.gff3";
     assertTrue(new File(filename).exists());
     
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");

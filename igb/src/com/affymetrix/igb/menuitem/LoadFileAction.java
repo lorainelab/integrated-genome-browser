@@ -632,6 +632,7 @@ public class LoadFileAction {
     return last_seq;
   }
 */
+  
   /** A JFileChooser that has a checkbox for whether you want to merge annotations.
    *  Note that an alternative way of adding a checkbox to a JFileChooser
    *  is to use JFileChooser.setAccessory().  The only advantage to this

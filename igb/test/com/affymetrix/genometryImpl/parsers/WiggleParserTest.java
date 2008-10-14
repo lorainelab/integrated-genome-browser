@@ -37,7 +37,7 @@ public class WiggleParserTest extends TestCase {
     String filename = "igb/test/test_files/wiggleExample.wig";
     assertTrue(new File(filename).exists());
     
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");

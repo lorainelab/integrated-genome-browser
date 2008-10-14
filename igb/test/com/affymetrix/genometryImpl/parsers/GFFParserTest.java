@@ -31,7 +31,7 @@ public class GFFParserTest extends TestCase {
     
     String filename = "igb/test/test_files/GFF1_example.gff";
     assertTrue(new File(filename).exists());
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+    InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");

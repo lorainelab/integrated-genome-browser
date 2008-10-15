@@ -251,7 +251,7 @@ public class IGB extends Application
 
     String offline = get_arg("-offline", args);
     if (offline != null) {
-      LocalUrlCacher.setOffLine("true".equals("offline"));
+      LocalUrlCacher.setOffLine("true".equals(offline));
     }
 
     getIGBPrefs(); // force loading of prefs

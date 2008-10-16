@@ -104,6 +104,15 @@ public class NibbleResiduesParser {
     }
     return seq;
   }
+  
+  // Read BNIB sequence from specified file.  Note that range can't be specified.
+    public static byte[] ReadBNIB(File seqfile) throws FileNotFoundException, IOException {
+        DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
+        int filesize = (int) seqfile.length();
+        byte[] buf = new byte[filesize];
+        dis.readFully(buf);
+        return buf;
+    }
 
   public static void writeBinaryFile(String file_name, String seqname, String seqversion,
 				     String residues) throws IOException {

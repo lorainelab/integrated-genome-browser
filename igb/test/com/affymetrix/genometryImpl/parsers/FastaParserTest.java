@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import junit.framework.*;
 import java.io.*;
 
+
 public class FastaParserTest extends TestCase {
   
   public FastaParserTest(String testName) {
@@ -75,11 +76,94 @@ public class FastaParserTest extends TestCase {
     assertEquals("GGGTT", result.getResidues(9+5,9));
   }
   
-  /*
+  
   public void testReadFASTA() throws Exception {
-      String filename = "igb/test/test_files/FASTA_chrQ.fasta";
+      String filename = "igb/test/test_files/FASTA_obey_70.fasta";
       assertTrue(new File(filename).exists());
  
-      byte[] fasta = FastaParser.ReadFASTA(new File(filename), 0, 10);
-  }*/
+      char [] expected_fasta = null;
+      byte[] fasta = null;
+      expected_fasta = "LCLYTHIGRN".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 0, 10);
+      
+      expected_fasta = "VITNLFSAIPYIGTNLVEWI".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 53, 73);
+      
+      expected_fasta = "L".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 0, 1);
+      
+      expected_fasta = "".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 3, 3);
+      
+      expected_fasta = "LMPFLH".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 211, 217);
+
+      expected_fasta = "IENY".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 280, 284);
+
+      testFASTASegment(filename, fasta, expected_fasta, 280, 290);
+      
+      fasta = FastaParser.ReadFASTA(new File(filename), 290, 291);
+      assertNull(fasta);
+  }
+  
+
+  public void testReadBadFASTA_1() throws Exception {
+      String filename = "igb/test/test_files/FASTA_not_obey_70.fasta";
+      assertTrue(new File(filename).exists());
+ 
+      char [] expected_fasta = null;
+      byte[] fasta = null;
+      expected_fasta = "LCLYTHIGRN".toCharArray();
+      try {
+          testFASTASegment(filename, fasta, expected_fasta, 10, 0);
+      }
+      catch(java.lang.IllegalArgumentException ex) {
+          return;
+      }
+      fail("Should throw an IllegalArgumentException");     
+  }
+  
+  public void testReadBadFASTA_2() throws Exception {
+      String filename = "igb/test/test_files/FASTA_not_obey_70.fasta";
+      assertTrue(new File(filename).exists());
+ 
+      char [] expected_fasta = null;
+      byte[] fasta = null;
+      expected_fasta = "LCLYTHIGRN".toCharArray();
+      try {
+          testFASTASegment(filename, fasta, expected_fasta, 10, 100);
+      }
+      catch(java.io.UnsupportedEncodingException ex) {
+          System.out.println(ex.toString());
+            return;
+      }
+      fail("Should throw an UnsupportedEncodingException");     
+  }
+  
+
+    private void testFASTASegment(String filename, byte[] fasta, char[] expected_fasta, int start, int end) throws IOException {
+        System.out.println("Testing " + filename + "from [" + start + ":" + end + "]");
+        fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+        assertNotNull(fasta);
+        for (int i = 0; i < fasta.length; i++) {
+            System.out.print((char) fasta[i] + "");
+        }
+        System.out.println("");
+
+        assertTrue(end - start >= fasta.length);
+        
+        System.out.println("expected, actual " + expected_fasta.length + ":" + fasta.length);
+        
+        for (int i=0;i<fasta.length;i++)
+            System.out.print((char)fasta[i]);
+        System.out.println();
+        
+        
+        assertTrue(expected_fasta.length >= fasta.length);
+        
+        for (int i = 0; i < fasta.length; i++) {
+            assertEquals(expected_fasta[i], (char) fasta[i]);
+        }
+    }
 }

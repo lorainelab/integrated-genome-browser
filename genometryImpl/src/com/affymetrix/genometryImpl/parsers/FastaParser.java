@@ -49,7 +49,7 @@ public class FastaParser {
    */
   public List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
     ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
-    int line_count = 0;
+    //int line_count = 0;
     BufferedReader br = null;
     Matcher matcher = header_regex.matcher("");
     try {
@@ -330,7 +330,7 @@ public class FastaParser {
         com.affymetrix.genometryImpl.util.Timer tim = new com.affymetrix.genometryImpl.util.Timer();
     tim.start();
     Memer mem = new Memer();
-    int line_count = 0;
+    //int line_count = 0;
     MutableAnnotatedBioSeq seq = aseq;
     String seqid = "unknown";
 
@@ -418,6 +418,156 @@ public class FastaParser {
     System.out.println("StringBuffer 0-100: " + buf.substring(0, 100));
     return seq;
   }
+  
+  // Read FASTA sequence from specified file.
+  // We assume a header of less than 500 characters, terminated by a newline.
+  // We assume exactly one sequence in the FASTA file.
+  // We assume no comment lines.
+  // We assume exactly 70 nucleotides per line (until the last line), with a carriage return following each line.
+  // Sequence range is specified in interbase format. (See http://www.biodas.org/documents/das2/das2_get.html.)
+    public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
+            throws FileNotFoundException, IOException, IllegalArgumentException {
+        
+        if (end_sequence < begin_sequence)
+            throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
+        
+        byte[] buf = null;
+        DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
+        BufferedInputStream bis = new BufferedInputStream(dis);
+        
+       // try {
+            // Skip to the location past the header.
+            int header_len = skipFASTAHeader(seqfile.getName(), bis);
+            
+            //System.out.println("header len was :" + header_len);
+            
+            bis.reset();
+            bis.skip(header_len);
+
+            // begin_sequence of 0 is first nucleotide.
+
+
+            // Skip to location of begin_sequence.  Since there are 71 characters per line, that should be:
+            // floor(begin_sequence / 70) * 71 + begin_sequence % 70.
+            int full_lines_to_skip = (begin_sequence / 70);
+            int chars_to_skip = 71 * full_lines_to_skip;
+            int line_location = begin_sequence % 70;
+            /*System.out.println("begin_sequence :" + begin_sequence + " " + 
+                    full_lines_to_skip + " " +
+                    chars_to_skip + " " +
+                    line_location);
+             */
+            
+            // skip all the full lines
+            if (bis.skip(chars_to_skip) != chars_to_skip) {
+                //System.out.println("skipped lines past EOF");
+                return buf;
+            }
+        
+            // skip the additional nucleotides in the line
+            if (bis.skip(line_location) != line_location) {
+                //System.out.println("skipped nucleotides past EOF");
+                return buf;
+            }
+            
+           
+            int nucleotides_len = end_sequence - begin_sequence;
+            buf = new byte[nucleotides_len];
+            
+            for (int i=0;i<nucleotides_len;) {
+                if (line_location == 70) {
+                    // skipping the newline
+                    byte[] x = new byte[1];
+                    int nucleotides_read = bis.read(x,0,1);
+                    if (nucleotides_read < 1) {
+                        // end of file hit.  quit parsing.
+                        //System.out.println("Unexpected End of File at newline!");
+                        return returnShortenedBuffer(buf, i);
+                    }
+                    if (nucleotides_read == 1 && x[0] == '\n') {
+                        // expected
+                        line_location=0;
+                        continue;
+                    }
+                    
+                    // What is this character?
+                    throw new java.io.UnsupportedEncodingException("Unexpected char at end of line: " + (char)x[0]);
+                }
+                
+                // Read several characters if possible
+                int nucleotides_left_on_this_line = Math.min(70 - line_location, nucleotides_len - i);
+                int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
+                i+= nucleotides_read;
+                line_location = 70;
+                
+                if (nucleotides_read != nucleotides_left_on_this_line) {
+                    // end of file hit.  quit parsing.
+                    //System.out.println("Unexpected End of File!");
+                    //System.out.println("i,nucleotides_read" + i + " " + nucleotides_read);
+                    
+                    return returnShortenedBuffer(buf, i);
+                }
+            }
+          
+            return buf;
+     /*   }
+        finally {
+            dis.close();
+            return buf;
+        }
+      * */
+    }
+    
+     private static byte[] returnShortenedBuffer(byte[] buf, int i) {
+        //System.out.println("in shortened buffer: i = " + (int)buf[i]);
+        // Copy over shortened buffer
+        // was last character a newline? skip it as well.
+        if (buf[i] == '\n' || buf[i] == 0) {
+            i--;
+            //System.out.println("removing character");
+        }
+        if (i == 0) {
+            return null;
+        }
+        byte[] buf2 = new byte[i];
+        for (int j = 0; j < i; j++) {
+            buf2[j] = buf[j];
+            //System.out.print("[" + j + "," + (int)buf[j] + "]");
+        }
+        return buf2;
+    }
+
+    // Parse off the header (if it exists).
+    private static int skipFASTAHeader(String filename, BufferedInputStream bis) throws IOException, UnsupportedEncodingException {
+        // The header is less than 500 bytes, and if it exists, the header begins with a ">" and ends with a newline.
+        //System.out.println("Reading FASTA file");
+        byte[] header = new byte[500];
+
+        bis.mark(500);
+        bis.read(header, 0, 500);
+        //System.out.println("Header : " + header.toString());
+        if (header[0] == '>') {
+            // We found a header
+            // Parse until we're done with header.
+            
+            for (int i=1;i<500;i++) {
+                //System.out.print(header[i] + " ");
+                if (header[i] == '\n') {
+                    //System.out.println("");
+                    //System.out.println("Header was :" + header.toString());
+                    return i + 1; // the actual header length, since it was 0-indexed.
+                }
+            }
+            
+            // There was no newline?
+            throw new java.io.UnsupportedEncodingException("file " + filename + " header does not match expected FASTA format.");
+        } 
+        //System.out.println("Didn't start with >");
+        // no header.
+        return 0;
+    }
+    
+    public static String getMimeType()  { return "text/plain"; } 
 
   static void printMemory() {
     Runtime rt = Runtime.getRuntime();

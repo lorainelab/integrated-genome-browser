@@ -7,8 +7,9 @@
 <!-- be able to be used on a sub-project alone.                      -->
 <!--                                                                 -->
 <project name="master" basedir=".">
-	<target name="init">
+	<import file="common.xml" />
 
+	<target name="init" depends="common-init">
 		<!-- Locations of subprojets -->
 		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
 		<property name="genometry"     value="${basedir}/genometry" />
@@ -20,31 +21,7 @@
 		<property name="lib.dir"      value="${basedir}/ext" />
 		<property name="demos.dir"    value="${genoviz}/demo" />
 		<property name="tutorial.dir" value="${genoviz}/tutorial" />
-		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
-		<property name="webstart.dir" value="${dist.dir}/webstart" />
-		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 
-		<!-- global compiler defaults -->
-		<property name="build.compiler"         value="modern" />
-		<property name="ant.build.javac.target" value="5" />
-		<property name="ant.build.javac.source" value="5" />
-
-		<!-- compiler defaults passed to javac -->
-		<property name="debug"         value="on" />
-		<property name="deprecation"   value="off"/>
-		<property name="compiler.args" value="-Xlint:none" />
-
-		<!-- signjar defaults -->
-		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
-		<property name="jar.sign.keystore.pass" value="changeit" />
-		<property name="jar.sign.alias"         value="igb" />
-		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
-
-		<!-- javadoc defaults -->
-		<property name="javadoc.j2se.url"    value="http://java.sun.com/j2se/1.5.0/docs/api/" />
-		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
-		<property name="javadoc.src.version" value="5" />
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
 	</target>
 
@@ -54,12 +31,8 @@
 	</target>
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
-    <javac debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
-			<src path="${demos.dir}" />
-			<src path="${tutorial.dir}" />
-			<classpath path="${genoviz}/build" />
-			<compilerarg compiler="modern" value="${compiler.args}" />
-    </javac>
+		<my.javac srcdir="${demos.dir}"    classpath="${genoviz}/build" />
+		<my.javac srcdir="${tutorial.dir}" classpath="${genoviz}/build" />
 		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
@@ -67,8 +40,8 @@
 		<iterate target="compile-tests" />
 	</target>
 
-	<target name="report-tests" depends="init">
-		<iterate target="report-tests" />
+	<target name="test" depends="init" description="Run unit tests for all genoviz subprojects">
+		<iterate target="test" />
 	</target>
 
 	<target name="jar" depends="init" description="Create jar files for all genoviz subprojects">
@@ -78,15 +51,15 @@
 	<target name="webstart" depends="init" description="Create webstart-compatible IGB jars">
 		<iterate target="webstart" />
 
-		<signjar destDir="${webstart.dir}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}">
-			<fileset dir="${lib.dir}">
-				<exclude name="commons-codec-1.3.jar" />
-				<exclude name="javax.servlet.jar" />
-				<exclude name="org.mortbay.jetty.jar" />
-				<exclude name="junit-4.5.jar" />
-				<include name="*.jar" />
-			</fileset>
-		</signjar>
+		<delete file="${webstart.dir}/das2server.jar" />
+
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"     signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/commons-logging.jar" signedjar="${webstart.dir}/commons-logging.jar" />
+		<my.signjar jar="${lib.dir}/freehep.jar"         signedjar="${webstart.dir}/freehep.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"       signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/myswing.jar"         signedjar="${webstart.dir}/myswing.jar" />
+		<my.signjar jar="${lib.dir}/swing-layout.jar"    signedjar="${webstart.dir}/swing-layout.jar" />
+		<my.signjar jar="${lib.dir}/xercesImpl.jar"      signedjar="${webstart.dir}/xercesImpl.jar" />
 
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
 			<zipfileset src="${dist.dir}/igb.jar" />
@@ -98,7 +71,7 @@
 			</indexjars>
 		</jar>
 
-		<signjar jar="${webstart.dir}/igb.jar" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+		<my.signjar jar="${webstart.dir}/igb.jar" />
 	</target>
 
 	<target name="webapp" depends="jar" description="Create das2servlet web application">
@@ -111,7 +84,7 @@
 				<include name="xercesImpl.jar" />
 			</fileset>
 		</copy>
-		<copy file="${das2server}/web.xml" todir="${webapp.dir}/WEB-INF" />
+		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" />
 	</target>
 
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
@@ -139,16 +112,12 @@
 
 	<target name="docs" depends="init" description="Create java documentation for all genoviz subprojects">
 		<mkdir dir="${docs.dir}"/>
-		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
-			<sourcepath path="${javadoc.src.path}" />
+		<my.javadoc sourcepath="${javadoc.src.path}">
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
 			</classpath>
-			<link href="${javadoc.j2se.url}"/>
-			<link href="${javadoc.j2ee.url}"/>
 			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
-		</javadoc>
+		</my.javadoc>
 	</target>
 
 	<target name="exe" depends="jar" description="Create a single-jar IGB application">
@@ -162,20 +131,26 @@
 				<exclude name="das2server.jar" />
 				<include name="*.jar"/>
 			</zipgroupfileset>
-			<zipgroupfileset dir="ext">
-				<include name="*.jar"/>
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="affx_fusion.jar"/>
+				<!-- <include name="commons-logging.jar"/> -->
+				<include name="freehep.jar"/>
+				<include name="jlfgr-1_0.jar"/>
+				<include name="myswing.jar"/>
+				<include name="swing-layout.jar"/>
+				<include name="xercesImpl.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>
 
 	<!--                                                                 -->
 	<!-- Macro to pass targets to each sub project.  All sub projects    -->
-	<!-- are build using common.xml.                                     -->
+	<!-- are build using generic.xml.                                    -->
 	<!--                                                                 -->
 	<macrodef name="iterate">
 		<attribute name="target" default=""/>
 		<sequential>
-			<subant target="@{target}" genericantfile="common.xml" inheritall="true">
+			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">
 					<include name="genoviz_sdk" />

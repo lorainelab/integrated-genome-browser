@@ -1,0 +1,83 @@
+<project>
+	<import file="common.xml" />
+
+  <target name="init" depends="common-init">
+		<!-- directory paths -->
+		<property name="src.dir"      value="${basedir}/src "/>
+		<property name="rsrc.dir"     value="${basedir}/resources" />
+		<property name="build.dir"    value="${basedir}/build" />
+		<property name="lib.dir"      value="${basedir}/../ext" />
+
+		<!-- JUnit tests -->
+		<property name="test.dir" value="${basedir}/test"/>
+		<property name="build-test.dir" value="${basedir}/build-test"/>
+		<property name="report-test.dir" value="${basedir}/report-test"/>
+
+		<!-- property list file -->
+		<property file="${basedir}/ant.properties" />
+  </target>
+
+  <target name="compile" depends="init">
+		<mkdir dir="${build.dir}" />
+		<my.javac destdir="${build.dir}" />
+  </target>
+
+  <target name="compile-tests" depends="init,compile">
+    <mkdir dir="${build-test.dir}" />
+		<echo message="classpath: ${test.classpath}" />
+		<my.javac srcdir="${test.dir}" destdir="${build-test.dir}" classpath="${test.classpath}" />
+  </target>
+
+<target name="test" depends="compile-tests">
+<!--    <mkdir dir="${report-test.dir}" /> -->
+  <junit fork="yes" printsummary="yes" haltonfailure="no">
+    <batchtest fork="yes" todir="${build-test.dir}" >
+      <fileset dir="${build-test.dir}">
+        <include name="**/*Test.class" />
+      </fileset>
+    </batchtest>
+    <formatter type="xml" />
+		<classpath path="${test.classpath}" />
+  </junit>
+  <junitreport todir="${build-test.dir}">
+    <fileset dir="${build-test.dir}">
+      <include name="TEST-*.xml" />
+    </fileset>
+    <report todir="${build-test.dir}" />
+  </junitreport>
+</target>
+	  
+
+  <target name="jar" depends="compile">
+		<mkdir dir="${dist.dir}" />
+		<jar jarfile="${dist.dir}/${jarfile}" update="false">
+			<fileset dir="${build.dir}" />
+			<fileset dir="${rsrc.dir}" />
+    </jar>
+  </target>
+
+	<target name="webstart" depends="jar">
+		<mkdir dir="${webstart.dir}" />
+		<my.signjar jar="${dist.dir}/${jarfile}" signedjar="${webstart.dir}/${jarfile}" />
+	</target>
+
+	<target name="webapp" depends="jar">
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+		<copy file="${dist.dir}/${jarfile}" todir="${webapp.dir}/WEB-INF/lib" />
+	</target>
+
+	<target name="all" depends="jar" />
+
+	<target name="docs" depends="init" description="Builds javadocs">
+		<mkdir dir="${docs.dir}"/>
+		<my.javadoc sourcepath="${src.dir}" classpath="${classpath}" />
+	</target>
+
+	<target name="clean" depends="init">
+    <delete file="${component}.jar"/>
+		<delete dir="${docs.dir}"/>
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete dir="${build-test.dir}" />
+  </target>
+</project>

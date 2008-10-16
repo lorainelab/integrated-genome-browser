@@ -1,128 +1,61 @@
 <project>
-  <target name="init">
+	<target name="common-init">
     <tstamp/>
     <property name="year" value="2005"/>
 
+		<!-- directory paths -->
+		<property name="dist.dir"     value="${basedir}/dist" />
+		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
+		<property name="webstart.dir" value="${dist.dir}/webstart" />
+		<property name="webapp.dir"   value="${dist.dir}/webapp" />
+
+		<!-- file paths -->
+		<property name="web.xml" value="${das2server}/web.xml" />
+
 		<!-- global compiler defaults -->
-    <property name="build.compiler"         value="modern" />
+		<property name="build.compiler"         value="modern" />
 		<property name="ant.build.javac.target" value="5" />
 		<property name="ant.build.javac.source" value="5" />
 
 		<!-- compiler defaults passed to javac -->
-    <property name="debug"         value="on" />
-    <property name="deprecation"   value="off"/>
+		<property name="debug"         value="on" />
+		<property name="deprecation"   value="off"/>
 		<property name="compiler.args" value="-Xlint:none" />
+
+		<!-- signjar defaults -->
+		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
+		<property name="jar.sign.keystore.pass" value="changeit" />
+		<property name="jar.sign.alias"         value="igb" />
+		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
 
 		<!-- javadoc defaults -->
 		<property name="javadoc.j2se.url"    value="http://java.sun.com/j2se/1.5.0/docs/api/" />
 		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
 		<property name="javadoc.src.version" value="5" />
 
-		<!-- directory paths -->
-		<property name="src.dir"      value="${basedir}/src "/>
-		<property name="rsrc.dir"     value="${basedir}/resources" />
-		<property name="build.dir"    value="${basedir}/build"/>
-		<property name="docs.dir"     value="${basedir}/docs" />
-		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="webstart.dir" value="${dist.dir}/webstart" />
-		<property name="webapp.dir"   value="${dist.dir}/webapp" />
-		<property name="JUnit.dir" value="${basedir}/JUnit" />
-
-		<!-- JUnit tests -->
-		<property name="test.dir" value="${basedir}/test"/>
-		<property name="build-test.dir" value="${basedir}/build-test"/>
-		<property name="report-test.dir" value="${basedir}/report-test"/>
-
-		<!-- property list file -->
-		<property file="${basedir}/ant.properties" />
-
-		<!-- signjar configuration -->
-		<property name="jar.sign.alias"         value="igb" />
-		<property name="jar.sign.keystore.pass" value="changeit" />
-		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
-		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
 
 		<!-- The filters appear to be unused -->
     <filter token="Copyright" value="Copyright (C) 1997-${year} by Affymetrix, Inc, USA."/> 
     <filter token="year" value="${year}"/>
     <filter token="date" value="${TODAY}"/>
-  </target>
-
-  <target name="compile" depends="init">
-		<mkdir dir="${build.dir}" />
-    <javac destdir="${build.dir}" debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
-			<src path="${src.dir}" />
-			<classpath path="${classpath}" />
-			<compilerarg compiler="modern" value="${compiler.args}" />
-    </javac>
-  </target>
-
-  <target name="compile-tests" depends="init,compile">
-    <mkdir dir="${build-test.dir}" />
-    <javac destdir="${build-test.dir}" debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
-			<src path="${test.dir}" />
-			<classpath path="${lib.dir}/junit-4.5.jar:${test.classpath}" />
-			<compilerarg compiler="modern" value="${compiler.args}" />
-    </javac>
-  </target>
-
-<target name="report-tests" depends="compile-tests,jar">
-<!--    <mkdir dir="${report-test.dir}" /> -->
-  <junit fork="yes" printsummary="yes" haltonfailure="no">
-    <batchtest fork="yes" todir="${build-test.dir}" >
-      <fileset dir="${build-test.dir}">
-        <include name="**/*Test.class" />
-      </fileset>
-    </batchtest>
-    <formatter type="xml" />
-		<classpath path="${lib.dir}/junit-4.5.jar:${test.classpath}" />
-  </junit>
-  <junitreport todir="${build-test.dir}">
-    <fileset dir="${build-test.dir}">
-      <include name="TEST-*.xml" />
-    </fileset>
-    <report todir="${build-test.dir}" />
-  </junitreport>
-</target>
-	  
-
-  <target name="jar" depends="compile">
-		<mkdir dir="${dist.dir}" />
-		<jar jarfile="${dist.dir}/${jarfile}" update="false">
-			<fileset dir="${build.dir}" />
-			<fileset dir="${rsrc.dir}" />
-    </jar>
-  </target>
-
-	<target name="webstart" depends="jar">
-		<mkdir dir="${webstart.dir}" />
-		<signjar jar="${dist.dir}/${jarfile}" signedjar="${webstart.dir}/${jarfile}" alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
 	</target>
 
-	<target name="webapp" depends="jar">
-		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
-		<copy file="${dist.dir}/${jarfile}" todir="${webapp.dir}/WEB-INF/lib" />
-	</target>
+	<presetdef name="my.javac">
+		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}" includeAntRuntime="false">
+			<compilerarg compiler="modern" value="${compiler.args}" />
+    </javac>
+	</presetdef>
 
-	<target name="all" depends="jar" />
-
-	<target name="docs" depends="init" description="Builds javadocs">
-		<mkdir dir="${docs.dir}"/>
-		<javadoc destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" access="private" verbose="false" splitindex="false" source="${javadoc.source.version}">
+	<presetdef name="my.javadoc">
+		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
 			<link href="${javadoc.j2se.url}"/>
 			<link href="${javadoc.j2ee.url}"/>
-			<classpath path="${classpath}"/>
-			<packageset dir="${src.dir}"/>
 			<doctitle><![CDATA[<h1>${name} API</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
-	</target>
+	</presetdef>
 
-	<target name="clean" depends="init">
-    <delete file="${component}.jar"/>
-		<delete dir="${docs.dir}"/>
-		<delete dir="${build.dir}" />
-		<delete dir="${dist.dir}" />
-		<delete dir="${build-test.dir}" />
-  </target>
+	<presetdef name="my.signjar">
+		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
+	</presetdef>
 </project>

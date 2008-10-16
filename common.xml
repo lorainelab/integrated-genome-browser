@@ -1,5 +1,5 @@
 <project>
-	<target name="common-init">
+	<target name="common-init" depends="init">
     <tstamp/>
     <property name="year" value="2005"/>
 

@@ -1,12 +1,19 @@
 <project>
 	<import file="common.xml" />
 
-  <target name="init" depends="common-init">
+  <target name="init">
+		<!-- Locations of subprojets -->
+		<property name="genoviz"       value="${basedir}/../genoviz_sdk" />
+		<property name="genometry"     value="${basedir}/../genometry" />
+		<property name="genometryImpl" value="${basedir}/../genometryImpl" />
+		<property name="igb"           value="${basedir}/../igb" />
+		<property name="das2server"    value="${basedir}/../das2_server" />
+
 		<!-- directory paths -->
+		<property name="lib.dir"      value="${basedir}/../ext" />
 		<property name="src.dir"      value="${basedir}/src "/>
 		<property name="rsrc.dir"     value="${basedir}/resources" />
 		<property name="build.dir"    value="${basedir}/build" />
-		<property name="lib.dir"      value="${basedir}/../ext" />
 
 		<!-- JUnit tests -->
 		<property name="test.dir" value="${basedir}/test"/>
@@ -17,12 +24,12 @@
 		<property file="${basedir}/ant.properties" />
   </target>
 
-  <target name="compile" depends="init">
+  <target name="compile" depends="common-init">
 		<mkdir dir="${build.dir}" />
 		<my.javac destdir="${build.dir}" />
   </target>
 
-  <target name="compile-tests" depends="init,compile">
+  <target name="compile-tests" depends="common-init,compile">
     <mkdir dir="${build-test.dir}" />
 		<echo message="classpath: ${test.classpath}" />
 		<my.javac srcdir="${test.dir}" destdir="${build-test.dir}" classpath="${test.classpath}" />
@@ -68,12 +75,12 @@
 
 	<target name="all" depends="jar" />
 
-	<target name="docs" depends="init" description="Builds javadocs">
+	<target name="docs" depends="common-init" description="Builds javadocs">
 		<mkdir dir="${docs.dir}"/>
 		<my.javadoc sourcepath="${src.dir}" classpath="${classpath}" />
 	</target>
 
-	<target name="clean" depends="init">
+	<target name="clean" depends="common-init">
     <delete file="${component}.jar"/>
 		<delete dir="${docs.dir}"/>
 		<delete dir="${build.dir}" />

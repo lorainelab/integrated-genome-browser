@@ -9,7 +9,7 @@
 <project name="master" basedir=".">
 	<import file="common.xml" />
 
-	<target name="init" depends="common-init">
+	<target name="init">
 		<!-- Locations of subprojets -->
 		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
 		<property name="genometry"     value="${basedir}/genometry" />
@@ -26,7 +26,7 @@
 	</target>
 
 
-	<target name="compile" depends="init" description="Compile all genoviz subprojects">
+	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
 	</target>
 
@@ -36,19 +36,19 @@
 		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
-	<target name="compile-tests" depends="init">
+	<target name="compile-tests" depends="common-init">
 		<iterate target="compile-tests" />
 	</target>
 
-	<target name="test" depends="init" description="Run unit tests for all genoviz subprojects">
+	<target name="test" depends="common-init" description="Run unit tests for all genoviz subprojects">
 		<iterate target="test" />
 	</target>
 
-	<target name="jar" depends="init" description="Create jar files for all genoviz subprojects">
+	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
 		<iterate target="jar" />
 	</target>
 
-	<target name="webstart" depends="init" description="Create webstart-compatible IGB jars">
+	<target name="webstart" depends="common-init" description="Create webstart-compatible IGB jars">
 		<iterate target="webstart" />
 
 		<delete file="${webstart.dir}/das2server.jar" />
@@ -91,7 +91,7 @@
 		<iterate target="all" />
 	</target>
 
-	<target name="clean" depends="init">
+	<target name="clean" depends="common-init">
 		<delete file="igb_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
 		<delete dir="${dist.dir}" />
@@ -110,7 +110,7 @@
 		<iterate target="clean" />
 	</target>
 
-	<target name="docs" depends="init" description="Create java documentation for all genoviz subprojects">
+	<target name="docs" depends="common-init" description="Create java documentation for all genoviz subprojects">
 		<mkdir dir="${docs.dir}"/>
 		<my.javadoc sourcepath="${javadoc.src.path}">
 			<classpath>

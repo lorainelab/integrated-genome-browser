@@ -217,7 +217,7 @@ public class GFF3Parser {
         // It is an error if the parent doesn't exist.
         for (int i=0; i<parent_ids.length; i++) {
           String parent_id = parent_ids[i];
-          if (parent_id == "-") {
+          if ("-".equals(parent_id)) {
             throw new IOException("Parent ID cannot be '-'");
           }
           GFF3Sym parent_sym = (GFF3Sym) id2sym.get(parent_id);

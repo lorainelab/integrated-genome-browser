@@ -141,20 +141,73 @@ public class FastaParserTest extends TestCase {
       fail("Should throw an UnsupportedEncodingException");     
   }
   
+  
+  // Test of a certain case I saw when running a query.
+  // This was due to Java not implementing a proper skip() method.
+  public void testChrCfailure() throws Exception {
+      String filename = "igb/test/test_files/chrC.fasta";
+      int start=8020,end=8021;
+      System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+      assertTrue(new File(filename).exists());
+ 
+      byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+      for (int i=0;i<fasta.length;i++)
+          System.out.print((char)fasta[i]);
+      System.out.println();
+  }
+  
+  public void testChrCfailure2() throws Exception {
+      String filename = "igb/test/test_files/chrC.fasta";
+      int start=200000,end=200001;
+      System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+      assertTrue(new File(filename).exists());
+ 
+      byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+      for (int i=0;i<fasta.length;i++)
+          System.out.print((char)fasta[i]);
+      System.out.println();
+
+  }
+  // Test of a certain case I saw when running a query.
+  public void testChrC_OK() throws Exception {
+      String filename = "igb/test/test_files/chrC.fasta";
+      
+      char[] expected_fasta = "ATGG".toCharArray();
+      byte[] fasta = null;
+      testFASTASegment(filename, fasta, expected_fasta, 0, 4);
+
+      expected_fasta = "CCCC".toCharArray();
+      testFASTASegment(filename, fasta, expected_fasta, 75, 79);
+      
+      expected_fasta = "TACG".toCharArray(); // line 3
+      testFASTASegment(filename, fasta, expected_fasta, 79, 83);
+      
+      expected_fasta = "CAAA".toCharArray(); // line 4
+      testFASTASegment(filename, fasta, expected_fasta, 158, 162);
+      
+      expected_fasta = "TCTTT".toCharArray(); // line 103
+      testFASTASegment(filename, fasta, expected_fasta, 7979, 7984);
+      
+      //expected_fasta = "TTTTTTTCATTTT".toCharArray(); // line 103
+      //testFASTASegment(filename, fasta, expected_fasta, 8009, 8022);
+      
+      expected_fasta = "CATTTT".toCharArray(); // line 103
+      testFASTASegment(filename, fasta, expected_fasta, 8016, 8022);
+      
+      expected_fasta = "TT".toCharArray(); // line 103
+      testFASTASegment(filename, fasta, expected_fasta, 8020, 8022);
+  }
 
     private void testFASTASegment(String filename, byte[] fasta, char[] expected_fasta, int start, int end) throws IOException {
-        System.out.println("Testing " + filename + "from [" + start + ":" + end + "]");
+        System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
         fasta = FastaParser.ReadFASTA(new File(filename), start, end);
         assertNotNull(fasta);
-        for (int i = 0; i < fasta.length; i++) {
-            System.out.print((char) fasta[i] + "");
-        }
-        System.out.println("");
 
         assertTrue(end - start >= fasta.length);
         
-        System.out.println("expected, actual " + expected_fasta.length + ":" + fasta.length);
+        //System.out.println("expected, actual " + expected_fasta.length + ":" + fasta.length);
         
+        System.out.print("actual:");
         for (int i=0;i<fasta.length;i++)
             System.out.print((char)fasta[i]);
         System.out.println();
@@ -162,8 +215,11 @@ public class FastaParserTest extends TestCase {
         
         assertTrue(expected_fasta.length >= fasta.length);
         
+        System.out.print("testing against expected:");
         for (int i = 0; i < fasta.length; i++) {
+            System.out.print((char)expected_fasta[i]);
             assertEquals(expected_fasta[i], (char) fasta[i]);
         }
+        System.out.println();
     }
 }

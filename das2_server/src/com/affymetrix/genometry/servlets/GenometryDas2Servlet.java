@@ -320,7 +320,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     private Das2Authorization dasAuthorization;
 
 
-	
+    @Override
     public void init() throws ServletException  {
 	System.out.println("Called GenometryDas2Servlet.init()");
 
@@ -330,9 +330,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    return;
 	}
 
-	Date nowdate = new Date();
-	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	String datestring = formatter.format(nowdate);
+	//Date nowdate = new Date();
+	//SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	//String datestring = formatter.format(nowdate);
 
 	try {
 	    super.init();
@@ -866,6 +866,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     public List getLog()  { return log; }
     //  public Map getGenomesModel() { return name2genome; }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	String path_info = request.getPathInfo();
@@ -875,11 +876,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	System.out.println("   query: " + query);
     }
 
+    @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 	System.out.println("GenometryDas2Servlet received PUT request: ");
     }
 
+    @Override
     public long getLastModified(HttpServletRequest request) {
 	System.out.println("getLastModified() called");
 	String path_info = request.getPathInfo();
@@ -891,6 +894,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     //  public void service(HttpServletRequest request, HttpServletResponse response)
     //    throws ServletException, IOException {
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
 
@@ -1010,6 +1014,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
     //		       "dsn/1.0; types/1.0; entry_points/1.0; bps_features/2.0; minmin_maxmax/2.0");
     //		       "dsn/1.0; types/1.0; entry_points/1.0; bps_features/2.0");
     //  }
+    
+   
 
     public void handleSequenceRequest(HttpServletRequest request, HttpServletResponse response)
 	throws IOException  {
@@ -1060,35 +1066,81 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	
 	//pw.println("Stub for handling sequence residues request, currently not implemented");
 	// PhaseI: retrieval of whole chromosome in bnib format
-	if (format.equals("bnib") && (ranges.size() == 0))  {
-	    String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".bnib";
-	    log.add("seq request mapping to file: " + file_name);
-	    File seqfile = new File(file_name);
-	    if (seqfile.exists() && format.equals("bnib"))  {
-		DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
-		int filesize = (int)seqfile.length();
-		byte[] buf = new byte[filesize];
-		dis.readFully(buf);
-		setContentType(response, NibbleResiduesParser.getMimeType());  // set bnib format mime type 
-		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-		dos.write(buf, 0, buf.length);
-		// should output stream get closed here?
-		dos.close();          
-	    }
-	    else  {
-		PrintWriter pw = response.getWriter();
-		pw.println("File not found: "+ file_name);
-		pw.println("This DAS/2 server cannot currently handle request:    ");
-		pw.println(request.getRequestURL().toString());
-	    }
-	}
-	else  {
-	    PrintWriter pw = response.getWriter();
-	    pw.println("This DAS/2 server cannot currently handle request:    ");
-	    pw.println(request.getRequestURL().toString());
-	}
+	if (format.equals("bnib")) {
+            retrieveBNIB(ranges, org_name, version_name, seqname, format, response, request);
+            return;
+        }
+        
+        
+        if (format.equals("fasta")) {
+            retrieveFASTA(ranges, span, org_name, version_name, seqname, format, response, request);
+            return;
+        }
+        
+        PrintWriter pw = response.getWriter();
+        pw.println("This DAS/2 server cannot currently handle request:    ");
+        pw.println(request.getRequestURL().toString());
     }
 
+   
+    
+    private void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+        if (ranges.size() != 0) {
+            // A ranged request for a bnib.  Not supported.
+            PrintWriter pw = response.getWriter();
+            pw.println("This DAS/2 server does not support ranged " + format + " requests:    ");
+            pw.println(request.getRequestURL().toString());
+            return;
+        }
+            
+        String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".bnib";
+        log.add("seq request mapping to file: " + file_name);
+        File seqfile = new File(file_name);
+        if (seqfile.exists()) {
+            byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
+            setContentType(response, NibbleResiduesParser.getMimeType()); // set bnib format mime type
+            DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+            dos.write(buf, 0, buf.length);
+            // should output stream get closed here?
+            dos.close();
+        } else {
+            PrintWriter pw = response.getWriter();
+            pw.println("File not found: " + file_name);
+            pw.println("This DAS/2 server cannot currently handle request:    ");
+            pw.println(request.getRequestURL().toString());
+        }
+    }
+
+    private void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+        if (ranges.size() == 0) {
+            // An unranged request for a FASTA.  Not supported.
+            PrintWriter pw = response.getWriter();
+            pw.println("This DAS/2 server does not handle unranged " + format + " requests:    ");
+            pw.println(request.getRequestURL().toString());
+            return;
+        }
+
+        String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".fa";
+        log.add("seq request mapping to file: " + file_name + " spanning " + span.getStart() + " to " + span.getEnd());
+        File seqfile = new File(file_name);
+        if (seqfile.exists()) {
+            byte[] buf = FastaParser.ReadFASTA(seqfile,span.getStart(),span.getEnd());
+            setContentType(response, FastaParser.getMimeType());
+            if (buf != null) {
+                DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+                dos.write(buf, 0, buf.length);
+                // should output stream get closed here?
+                dos.close();
+            }
+        } else {
+            PrintWriter pw = response.getWriter();
+            pw.println("File not found: " + file_name);
+            pw.println("This DAS/2 server cannot currently handle request:    ");
+            pw.println(request.getRequestURL().toString());
+        }
+    }
+
+    
     public void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response)
 	throws IOException  {
 	log.add("received data source query");
@@ -2026,6 +2078,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	catch (Exception ex) { ex.printStackTrace(); }
     }
+
 
 
     /**

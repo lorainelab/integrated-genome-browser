@@ -192,14 +192,21 @@ public class SeqResiduesLoader {
     // Get the residues from the DAS server
     private static String GetDAS1Residues(String das_dna_server, String current_genome_name, String seqid, int min, int max, int length) {
         String residues = null;
+        
+        if (seqid == null) {
+            System.out.println("Couldn't determine das sequence residues -- seqid was null");
+            return null;
+        }    
         try {
             String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
             if (das_dna_source == null) {
                 System.out.println("Couldn't find das source genome '" + current_genome_name + "'\n on DAS server:\n" + das_dna_server);
+                return null;    // if das_dna_source is null, there's no way to determine the residues
             }
             String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
             if (das_seqid == null) {
                 System.out.println("Couldn't access sequence residues on DAS server\n" + " seqid: '" + seqid + "'\n" + " genome: '" + current_genome_name + "'\n" + " DAS server: " + das_dna_server);
+                return null;    // if seqid is null, there's no way to determine the residues
             }
             residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
             System.out.println("DAS DNA request length: " + length);

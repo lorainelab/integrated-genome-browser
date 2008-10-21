@@ -1429,12 +1429,18 @@ public class IGB extends Application
 
       Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
       if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(frame, pos);
+    	  //check that it's not too small, problems with using two screens
+    	  int posW = (int)pos.getWidth();
+    	  if (posW < 650) posW = 650;
+    	  int posH = (int)pos.getHeight();
+    	  if (posH < 300) posH = 300;
+    	  pos.setSize(posW, posH);
+        UnibrowPrefsUtil.setWindowSize(frame, pos);       
       }
       frame.setVisible(true);
 
       final Runnable return_panes_to_main_window = new Runnable() {
-        public void run() {
+        public void run() {  	
           // save the current size into the preferences, so the window
           // will re-open with this size next time
           UnibrowPrefsUtil.saveWindowLocation(frame, title);

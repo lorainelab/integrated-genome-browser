@@ -141,7 +141,9 @@ public class LoadFileAction {
       FileTracker load_dir_tracker, JFrame gviewerFrame)  {
 
     MergeOptionFileChooser chooser = getFileChooser();
-    chooser.setCurrentDirectory(load_dir_tracker.getFile());
+    File currDir = load_dir_tracker.getFile();
+    if (currDir == null) currDir = new File (System.getProperty("user.home"));
+    chooser.setCurrentDirectory(currDir);
     chooser.rescanCurrentDirectory();
     if (gmodel.getSelectedSeqGroup() == null) {
       chooser.no_merge_button.setEnabled(true);

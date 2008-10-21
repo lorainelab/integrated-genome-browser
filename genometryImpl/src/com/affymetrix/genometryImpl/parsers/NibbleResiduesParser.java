@@ -52,7 +52,6 @@ public class NibbleResiduesParser {
       //      System.out.println("version: " + version);
       int num_residues = dis.readInt();
       //      System.out.println("length: " + num_residues);
-      byte[] nibble_array;
 
       BioSeq existing_seq = seq_group.getSeq(name);
       if (existing_seq != null) {
@@ -68,18 +67,7 @@ public class NibbleResiduesParser {
       }
 
       System.out.println("NibbleBioSeq: " + result_seq);
-
-      if ((num_residues % 2) == 0)  {
-	nibble_array = new byte[num_residues / 2];
-      }
-      else {
-	nibble_array = new byte[(num_residues / 2) + 1];
-      }
-      dis.readFully(nibble_array);
-      System.out.println("nibble array length: " + nibble_array.length);
-
-      NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
-      result_seq.setResiduesProvider(residues_provider);
+      SetResiduesIterator(num_residues,dis, result_seq);
 
       float read_time = tim.read()/1000f;
       System.out.println("time to read in bnib residues file: " + read_time);
@@ -90,6 +78,21 @@ public class NibbleResiduesParser {
     return result_seq;
   }
 
+   private static void SetResiduesIterator(int num_residues, DataInputStream dis, NibbleBioSeq result_seq) throws IOException {
+        byte[] nibble_array;
+        if ((num_residues % 2) == 0) {
+            nibble_array = new byte[num_residues / 2];
+        } else {
+            nibble_array = new byte[(num_residues / 2) + 1];
+        }
+        dis.readFully(nibble_array);
+        System.out.println("nibble array length: " + nibble_array.length);
+
+        NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
+        result_seq.setResiduesProvider(residues_provider);
+    }
+
+  
   public static NibbleBioSeq readBinaryFile(String file_name) throws IOException {
     FileInputStream fis = null;
     NibbleBioSeq seq = null;

@@ -546,7 +546,7 @@ public class LoadFileAction {
         parser.parse(str, annot_type, selected_group, false);
         parser = null;
       }
-      else if (lcname.endsWith(".fa") || lcname.endsWith(".fasta")) {
+      else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
         FastaParser parser = new FastaParser();
         java.util.List seqs = parser.parseAll(str, selected_group);
 

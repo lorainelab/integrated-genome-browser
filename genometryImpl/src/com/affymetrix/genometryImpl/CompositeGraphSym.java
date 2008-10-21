@@ -108,7 +108,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
       }
       // assuming GraphSym seq span is bounds of graph slice, add GraphSym as child
       // but remember coords are nulled out!
-      // NOTE: the slice coordniates do not HAVE to be set to null, they could
+      // NOTE: the slice coordinates do not HAVE to be set to null, they could
       // be set to some sub-array of the composite graph arrays backed by the same data.
       super.addChild(slice);
     }
@@ -118,7 +118,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
     }
   }
 
-
+/*
   public static void main(String[] args) {
     // testing large System.arrayCopy operations
     Timer tim= new Timer();
@@ -153,6 +153,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
     System.out.println("time for float array copy: " + timeB/1000f);
 
   }
+ * */
 
   /*  Old plan -- child GraphSym's, each with own xcoord and ycoord array
   public int[] getGraphXCoords() {

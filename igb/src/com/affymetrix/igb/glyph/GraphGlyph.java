@@ -110,7 +110,6 @@ public class GraphGlyph extends Glyph {
 		if(toInitialize && map != null){
 			Object value = map.get(ViewPropertyNames.INITIAL_COLOR);
 			if(value != null){
-				setForegroundColor(Color.decode(value.toString())); //not necessary?
 				setColor(Color.decode(value.toString()));
 			}
 			else{
@@ -124,7 +123,7 @@ public class GraphGlyph extends Glyph {
 				setBackgroundColor(state.getTierStyle().getBackground());
 			}
 			value = map.get(ViewPropertyNames.INITIAL_GRAPH_STYLE);
-			if(value != null){
+			if(value != null){				
 				setGraphStyle(GraphType.fromString(value.toString()));
 			}
 			else{
@@ -135,7 +134,8 @@ public class GraphGlyph extends Glyph {
 			setGraphStyle(state.getGraphStyle());
 			setColor(state.getTierStyle().getColor());
 		}
-		
+		//must call again to get it to properly render
+		setColor(state.getTierStyle().getColor());
 
 		this.xcoords = graf.getGraphXCoords();
 		if (graf instanceof GraphIntervalSym) {

@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 
 import com.affymetrix.igb.view.SeqMapView;
@@ -457,8 +457,8 @@ public class BookMarkAction implements ActionListener, MenuListener {
       mark_sym.addSpan(mark_span);
 
       String version = "unknown";
-      if (aseq instanceof NibbleBioSeq) {
-        version = ((NibbleBioSeq)aseq).getVersion();
+      if (aseq instanceof GeneralBioSeq) {
+        version = ((GeneralBioSeq)aseq).getVersion();
       }
       String default_name =
         version + ", " + aseq.getID() + ":" + mark_span.getMin() +

@@ -26,7 +26,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
@@ -183,10 +183,10 @@ public class OrfAnalyzer2 extends JComponent
     }
 
     String residues = null;
-    NibbleBioSeq nibseq = null;
-    boolean use_nibseq = (vseq instanceof NibbleBioSeq);
+    GeneralBioSeq nibseq = null;
+    boolean use_nibseq = (vseq instanceof GeneralBioSeq);
     if (use_nibseq)  {
-      nibseq = (NibbleBioSeq)vseq;  // vseq is a NibbleBioSeq, therefore also a CharacterIterator
+      nibseq = (GeneralBioSeq)vseq;  // vseq is a NibbleBioSeq, therefore also a CharacterIterator
     }
     else {
       residues = vseq.getResidues();

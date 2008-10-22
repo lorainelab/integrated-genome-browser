@@ -27,7 +27,8 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+//import com.affymetrix.genometryImpl.GeneralBioSeq;
+//import com.affymetrix.genometryImpl.NibbleBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
@@ -103,7 +104,7 @@ public class SeqMapView extends JPanel
 
   boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
   boolean show_edge_matches = true;
-  boolean rev_comp = false;
+  //boolean rev_comp = false;
   boolean coord_shift = false;
   boolean show_slicendice = false;
   boolean slicing_in_effect = false;
@@ -698,7 +699,7 @@ public class SeqMapView extends JPanel
       //    coord shift, slice'n'dice, etc.
       // but first, need to fix CompositeBioSeq.isComplete() implementations...
       if (viewseq instanceof CharIterator)  {
-	// currently only NibbleBioSeq implements CharacterIterator
+	// currently only GeneralBioSeq implements CharacterIterator
 	seq_glyph.setResiduesProvider((CharIterator)viewseq, viewseq.getLength());
       }
       else {
@@ -943,12 +944,12 @@ public class SeqMapView extends JPanel
     }
   }
 
-  public void reverseComplement() {
+  /*public void reverseComplement() {
     // still need to deal with residues?
     // also need to deal with graphs
     rev_comp = ! rev_comp;
     setAnnotatedSeq(aseq);
-  }
+  }*/
 
 
   public void clear() {
@@ -1109,27 +1110,27 @@ public class SeqMapView extends JPanel
       coord_shift = false;
     }
     else {
-      if (rev_comp) {
+      /*if (rev_comp) {
 	// setting up genometry for non-identity mapping of seq annotation to view coords...
 	seq2viewSym = new SimpleMutableSeqSymmetry();
 	seq2viewSym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-	if (aseq instanceof NibbleBioSeq && aseq.isComplete()) {
+	//if (aseq instanceof GeneralBioSeq && aseq.isComplete()) {
 	  // test for aseq.isComplete() --> if true, then has nibble array...
-	  viewseq = ((NibbleBioSeq)aseq).getReverseComplement();
-	}
-	else {
-	  viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
-	}
+	  //viewseq = ((GeneralBioSeq)aseq).getReverseComplement();
+	//}
+	//else {
+            viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
+	//}
 	seq2viewSym.addSpan(new SimpleSeqSpan(aseq.getLength(), 0, viewseq));
 	((SimpleCompositeBioSeq)viewseq).setComposition(seq2viewSym);
   	transform_path = new SeqSymmetry[1];
 	transform_path[0] = seq2viewSym;
       }
-      else {
+      else {*/
         viewseq = aseq;
         seq2viewSym = null;
         transform_path = null;
-      }
+      //}
     }
     if (viewseq instanceof CompositeNegSeq) {
       CompositeNegSeq compnegseq = (CompositeNegSeq) viewseq;

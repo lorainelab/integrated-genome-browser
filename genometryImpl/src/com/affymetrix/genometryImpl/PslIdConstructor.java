@@ -59,13 +59,13 @@ public class PslIdConstructor {
 	  else { sbuf.append("-"); }
 	}
 	else if (chunk.equals("#qversion")) {
-	  if (sym.getQuerySeq() instanceof NibbleBioSeq) {
-	    sbuf.append(((NibbleBioSeq)sym.getQuerySeq()).getVersion()); }
+	  if (sym.getQuerySeq() instanceof GeneralBioSeq) {
+	    sbuf.append(((GeneralBioSeq)sym.getQuerySeq()).getVersion()); }
 	  else { sbuf.append("unknown"); }
 	}
 	else if (chunk.equals("#tversion")) {
-	  if (sym.getTargetSeq() instanceof NibbleBioSeq) { 
-	    sbuf.append(((NibbleBioSeq)sym.getTargetSeq()).getVersion()); 
+	  if (sym.getTargetSeq() instanceof GeneralBioSeq) { 
+	    sbuf.append(((GeneralBioSeq)sym.getTargetSeq()).getVersion()); 
 	  }
 	  else { sbuf.append("unknown"); }
 	}

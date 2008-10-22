@@ -21,7 +21,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometryImpl.TypedSym;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -221,13 +221,13 @@ public class FindResiduesPanel extends JPanel {
     }
     GlyphI seq_glyph;
     
-    boolean use_nibseq = (vseq instanceof NibbleBioSeq);
-    NibbleBioSeq nibseq = null;
+    boolean use_nibseq = (vseq instanceof GeneralBioSeq);
+    GeneralBioSeq nibseq = null;
     String residues = null;
     int res_index = -1;
     
     if (use_nibseq) {
-      nibseq = (NibbleBioSeq) vseq;
+      nibseq = (GeneralBioSeq) vseq;
       if (nibseq.isComplete()) {
         searchstring = searchstring.toUpperCase();
         res_index = nibseq.indexOf(searchstring, 0);

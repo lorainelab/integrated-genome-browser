@@ -28,7 +28,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -770,8 +770,8 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     int start = qspan.getMin();
     int stop = qspan.getMax();
     String version = "unknown";
-    if (aseq instanceof NibbleBioSeq) {
-      version = ((NibbleBioSeq)aseq).getVersion();
+    if (aseq instanceof GeneralBioSeq) {
+      version = ((GeneralBioSeq)aseq).getVersion();
     }
     pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
     pw.println("<DASGFF>");

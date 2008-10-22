@@ -14,7 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.*;
@@ -400,8 +400,8 @@ public abstract class BookmarkController {
     BioSeq seq = span.getBioSeq();
     Map props = new LinkedHashMap();
     props.put("seqid", seq.getID());
-    if (seq instanceof NibbleBioSeq) {
-      props.put("version", ((NibbleBioSeq)seq).getVersion());
+    if (seq instanceof GeneralBioSeq) {
+      props.put("version", ((GeneralBioSeq)seq).getVersion());
     } else {
       props.put("version", "unknown");
     }

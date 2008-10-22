@@ -39,7 +39,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.NibbleBioSeq; // should replace with Versioned interface...
+import com.affymetrix.genometryImpl.GeneralBioSeq; // should replace with Versioned interface...
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ErrorHandler;
@@ -707,8 +707,8 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     String das_request = current_das_server + DAS_SOURCE_REQUEST;
     BioSeq cur_seq = gmodel.getSelectedSeq();
     String cur_seq_version = null;
-    if (cur_seq instanceof NibbleBioSeq) {
-      cur_seq_version = ((NibbleBioSeq)cur_seq).getVersion();
+    if (cur_seq instanceof GeneralBioSeq) {
+      cur_seq_version = ((GeneralBioSeq)cur_seq).getVersion();
     }
 
     Document doc = getDasDocument(das_request);

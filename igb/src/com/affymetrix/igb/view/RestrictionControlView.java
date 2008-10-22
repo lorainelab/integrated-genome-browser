@@ -22,7 +22,7 @@ import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
@@ -217,10 +217,10 @@ public class RestrictionControlView extends JComponent
     }
     int residue_offset = 0;
     String residues = null;
-    NibbleBioSeq nibseq = null;
-    boolean use_nibseq = (vseq instanceof NibbleBioSeq);
+    GeneralBioSeq nibseq = null;
+    boolean use_nibseq = (vseq instanceof GeneralBioSeq);
     if (use_nibseq) {
-      nibseq = (NibbleBioSeq)vseq;
+      nibseq = (GeneralBioSeq)vseq;
     }
     else {
       residues = vseq.getResidues();

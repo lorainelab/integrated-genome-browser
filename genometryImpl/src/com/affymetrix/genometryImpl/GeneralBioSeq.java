@@ -15,18 +15,11 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.util.RevCompNibbleIterator;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 
 /**
- *  BioSeq that maintains its residues as "nibbles" in a byte array.
  *  <pre>
- *  A nibble is 4 bits --> therefore 2 bases / byte
- *     4-bit residue encoding maps to 16 possible IUPAC codes:
- *     [ A, C, G, T, N, M, R, W, S, Y, K, V, H, D, B, X ]
- *
- *  Also implements SearchableCharacterIterator to allow for regex matching
+ *  Implements SearchableCharacterIterator to allow for regex matching
  *    without having to build a String out of the byte array (which would kind of
  *    defeat the purpose of saving memory...)
  *
@@ -35,44 +28,26 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
  *      getLength()
  *      indexOf(String, offset)
  *
- *  Nibbles are now maintained by an internal SearchableCharIterator (for now
- *     always either a NibbleIterator or a RevCompNibbleIterator), so NibbleBioSeq can
+ *  GeneralBioSeq can
  *     just make pass-through calls for most SearchableCharIterator methods...
  * </pre>
  */
-public class NibbleBioSeq extends SimpleCompAnnotBioSeq
+public class GeneralBioSeq extends SimpleCompAnnotBioSeq
   implements SearchableCharIterator, Versioned {
 
   String version;
   // length field inherited from SimpleCompositeBioseq (by way of SimpleCompAnnotBioSeq)
   SearchableCharIterator residues_provider;
 
-  public NibbleBioSeq() { }
+  public GeneralBioSeq() { }
 
-  public NibbleBioSeq(String seqid, String seqversion, int length) {
+  public GeneralBioSeq(String seqid, String seqversion, int length) {
     super(seqid, length);
     this.version = seqversion;
   }
 
   public String getVersion() { return version; }
   public void setVersion(String str) { this.version = str; }
-
-  public NibbleBioSeq getReverseComplement() {
-    NibbleBioSeq revcomp = null;
-    SearchableCharIterator iter = this.getResiduesProvider();
-    if (iter instanceof NibbleIterator) {
-      revcomp = new NibbleBioSeq(this.getID() + ":revcomp",
-				 this.getVersion(), this.getLength());
-      NibbleIterator forward_iter = (NibbleIterator)iter;
-      RevCompNibbleIterator revcomp_iter = new RevCompNibbleIterator(forward_iter);
-      revcomp.setResiduesProvider(revcomp_iter);
-    }
-    else {
-      System.out.println("ABORTED: can't currently reverse complement a " +
-			 "reverse-complemented NibbleBioSeq...");
-    }
-    return revcomp;
-  }
 
   public void setResiduesProvider(SearchableCharIterator chariter) {
     if (chariter.getLength() != this.getLength()) {

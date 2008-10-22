@@ -15,6 +15,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.QuickLoadView2;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+import com.affymetrix.genometryImpl.parsers.FastaParser;
 
 public class SeqResiduesLoader {
 
@@ -54,24 +55,36 @@ public class SeqResiduesLoader {
     // try loading via DAS/2 server that genome was originally modeled from  
     private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
         boolean loaded;
-        String bnib_uri = generateDas2URI(seq_group, aseq, min, max);
+        String uri = generateDas2URI(seq_group, aseq, min, max);
         InputStream istr = null;
         Map headers = new HashMap();
         try {
-            istr = LocalUrlCacher.getInputStream(bnib_uri, QuickLoadServerModel.getCacheResidues(), headers);
+            istr = LocalUrlCacher.getInputStream(uri, QuickLoadServerModel.getCacheResidues(), headers);
             // System.out.println(headers);
             String content_type = (String) headers.get("content-type");
             System.out.println("    response content-type: " + content_type);
-            if ((istr != null) && (content_type != null) && (content_type.equals(NibbleResiduesParser.getMimeType()))) {
+            if (istr == null || content_type == null) {
+                System.out.println("  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
+                return false;
+            }
+            if (content_type.equals(NibbleResiduesParser.getMimeType())) {
                 // check for bnib format
                 // NibbleResiduesParser handles creating a BufferedInputStream from the input stream
                 System.out.println("   response is in bnib format, parsing...");
                 NibbleResiduesParser.parse(istr, seq_group);
-                loaded = true;
-            } else {
-                System.out.println("   response is not in bnib format, aborting DAS/2 residues loading");
-                loaded = false;
+                return true;
             }
+/*
+            if (content_type.equals(FastaParser.getMimeType())) {
+                // check for fasta format
+                System.out.println("   response is in fasta format, parsing...");
+                FastaParser.parseSingle(istr, seq_group);
+                return true;
+            }
+*/
+            
+            System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+            return false;
         } catch (Exception ex) {
             loaded = false;
             ex.printStackTrace();
@@ -104,6 +117,9 @@ public class SeqResiduesLoader {
         if (max > -1) {
             // Note that if it has a range, it's not going to be in bnib format
             uri = segment_uri + "?range=" + min + ":" + max;
+            
+            // for now, in fact, it must be in fasta format
+            uri = segment_uri + "&format=fasta";
         }
         else {
            uri = segment_uri + "?format=bnib";
@@ -161,8 +177,8 @@ public class SeqResiduesLoader {
             return true;
 	}
 	
-        if (!(aseq instanceof NibbleBioSeq)) {
-            System.err.println("quickloaded seq is _not_ a NibbleBioSeq: " + aseq);
+        if (!(aseq instanceof GeneralBioSeq)) {
+            System.err.println("quickloaded seq is _not_ a GeneralBioSeq: " + aseq);
             return false;
         }
 
@@ -230,7 +246,7 @@ public class SeqResiduesLoader {
         subsym.addSpan(span1);
         subsym.addSpan(span2);
 
-        NibbleBioSeq compseq = (NibbleBioSeq) aseq;
+        GeneralBioSeq compseq = (GeneralBioSeq) aseq;
         MutableSeqSymmetry compsym = (MutableSeqSymmetry) compseq.getComposition();
         if (compsym == null) {
             //System.err.println("composite symmetry is null!");

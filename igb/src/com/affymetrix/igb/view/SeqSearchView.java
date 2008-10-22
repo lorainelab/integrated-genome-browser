@@ -14,7 +14,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.awt.*;
 import java.awt.event.*;
@@ -214,8 +214,8 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 				}
 				try {
 					tim.start();
-					boolean use_nibseq = (vseq instanceof NibbleBioSeq);
-					NibbleBioSeq nibseq = null;
+					boolean use_nibseq = (vseq instanceof GeneralBioSeq);
+					GeneralBioSeq nibseq = null;
 					String residues = null;
 					int res_index = -1;
 					try {
@@ -224,7 +224,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 							searchstring = searchstring.toUpperCase();
 							System.out.println("searching NibbleBioSeq for ocurrences of \"" +
 									searchstring + "\" in sequence");
-							nibseq = (NibbleBioSeq)vseq;
+							nibseq = (GeneralBioSeq)vseq;
 							res_index = nibseq.indexOf(searchstring, 0);
 						}
 						else {

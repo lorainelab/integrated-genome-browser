@@ -19,7 +19,7 @@ import com.affymetrix.genometry.*;
 
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 public class NibbleResiduesParser {
@@ -32,8 +32,8 @@ public class NibbleResiduesParser {
    *  BioSeq does exist that is not of the type NibbleBioSeq, an exception
    *  will be thrown.
    */
-  public static NibbleBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-    NibbleBioSeq result_seq = null;
+  public static GeneralBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+    GeneralBioSeq result_seq = null;
     DataInputStream dis = null;
     try {
       Timer tim = new Timer();
@@ -55,8 +55,8 @@ public class NibbleResiduesParser {
 
       BioSeq existing_seq = seq_group.getSeq(name);
       if (existing_seq != null) {
-        if (existing_seq instanceof NibbleBioSeq) {
-	  result_seq = (NibbleBioSeq) existing_seq;
+        if (existing_seq instanceof GeneralBioSeq) {
+	  result_seq = (GeneralBioSeq) existing_seq;
         }
         else {
           throw new IOException("Trouble parsing bnib file, existing bio seq is of wrong type.");
@@ -78,7 +78,7 @@ public class NibbleResiduesParser {
     return result_seq;
   }
 
-   private static void SetResiduesIterator(int num_residues, DataInputStream dis, NibbleBioSeq result_seq) throws IOException {
+   private static void SetResiduesIterator(int num_residues, DataInputStream dis, GeneralBioSeq result_seq) throws IOException {
         byte[] nibble_array;
         if ((num_residues % 2) == 0) {
             nibble_array = new byte[num_residues / 2];
@@ -93,9 +93,9 @@ public class NibbleResiduesParser {
     }
 
   
-  public static NibbleBioSeq readBinaryFile(String file_name) throws IOException {
+  public static GeneralBioSeq readBinaryFile(String file_name) throws IOException {
     FileInputStream fis = null;
-    NibbleBioSeq seq = null;
+    GeneralBioSeq seq = null;
     try {
       File fil = new File(file_name);
       fis = new FileInputStream(fil);

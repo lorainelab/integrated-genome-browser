@@ -17,7 +17,7 @@ import java.io.*;
 import java.net.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 
 
 public class UnibrowControlUtils {
@@ -27,10 +27,10 @@ public class UnibrowControlUtils {
     String seqid = seq.getID();
     int min = span.getMin();
     int max = span.getMax();
-    boolean seq_versioned = (seq instanceof NibbleBioSeq);
+    boolean seq_versioned = (seq instanceof GeneralBioSeq);
 
     if (seq_versioned) {
-      String version = ((NibbleBioSeq)seq).getVersion();
+      String version = ((GeneralBioSeq)seq).getVersion();
       //  String request = "http://localhost:" + other_igb_port + "/UnibrowControl?" + 
       String request = igb_loc + "/UnibrowControl?" + 
 	"seqid=" + seqid + "&version=" + version + 

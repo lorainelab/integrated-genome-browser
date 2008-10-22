@@ -20,7 +20,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.NibbleBioSeq;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
@@ -563,7 +563,7 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".bnib")) {
         //TODO: check that these conditions make sense
-        if (input_seq == null || input_seq instanceof NibbleBioSeq) {
+        if (input_seq == null || input_seq instanceof GeneralBioSeq) {
           aseq = NibbleResiduesParser.parse(str, selected_group);
           if (aseq != gmodel.getSelectedSeq()) {
             //TODO: maybe set the current seq to this seq

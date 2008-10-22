@@ -32,9 +32,9 @@ public class FastaParserTest extends TestCase {
 
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 
-    FastaParser instance = new FastaParser();
+    //FastaParser instance = new FastaParser();
     
-    java.util.List seqs = instance.parseAll(istr_1, seq_group);
+    java.util.List seqs = FastaParser.parseAll(istr_1, seq_group);
 
     assertEquals(1, seqs.size());
     assertEquals(1, seq_group.getSeqCount());
@@ -42,7 +42,7 @@ public class FastaParserTest extends TestCase {
     BioSeq seq = (BioSeq) seqs.get(0);
     assertEquals("chrQ", seq.getID());
     
-    seqs = instance.parseAll(istr_2, seq_group);
+    seqs = FastaParser.parseAll(istr_2, seq_group);
     
     assertEquals(3, seqs.size());
     assertEquals(4, seq_group.getSeqCount());
@@ -65,9 +65,7 @@ public class FastaParserTest extends TestCase {
     InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);
 
-    FastaParser instance = new FastaParser();
-    
-    MutableAnnotatedBioSeq result = instance.parse(istr);
+    MutableAnnotatedBioSeq result = FastaParser.parse(istr);
         
     assertEquals("chrQ", result.getID());
     assertEquals(33, result.getLength());
@@ -141,6 +139,19 @@ public class FastaParserTest extends TestCase {
       fail("Should throw an UnsupportedEncodingException");     
   }
   
+  public void testSkipFastaHeader() throws Exception {
+     String filename = "igb/test/test_files/chrC.fa";
+     DataInputStream dis = new DataInputStream(new FileInputStream(filename));
+     BufferedInputStream bis = new BufferedInputStream(dis);
+     byte[] fasta = FastaParser.skipFASTAHeader(filename, bis);
+     
+     System.out.print("TEST: header is ");
+     assertNotNull(fasta);
+     for (int i =0;i<fasta.length;i++)
+         System.out.print((char)fasta[i]);
+     System.out.println("");
+  }
+  
   
   // Test of a certain case I saw when running a query.
   // This was due to Java not implementing a proper skip() method.
@@ -200,25 +211,31 @@ public class FastaParserTest extends TestCase {
 
     private void testFASTASegment(String filename, byte[] fasta, char[] expected_fasta, int start, int end) throws IOException {
         System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+        
+        DataInputStream dis = new DataInputStream(new FileInputStream(filename));
+        BufferedInputStream bis = new BufferedInputStream(dis);
+        byte[] header = FastaParser.skipFASTAHeader(filename, bis);
+        //assertNotNull(header);
+        int header_len = (header == null ? 0 : header.length);
+        
         fasta = FastaParser.ReadFASTA(new File(filename), start, end);
         assertNotNull(fasta);
-
-        assertTrue(end - start >= fasta.length);
         
-        //System.out.println("expected, actual " + expected_fasta.length + ":" + fasta.length);
+        System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
+        
+        assertTrue(end - start >= fasta.length - header_len);
         
         System.out.print("actual:");
-        for (int i=0;i<fasta.length;i++)
+        for (int i=header_len;i<fasta.length;i++)
             System.out.print((char)fasta[i]);
         System.out.println();
         
-        
-        assertTrue(expected_fasta.length >= fasta.length);
+        assertTrue(expected_fasta.length >= fasta.length - header_len);
         
         System.out.print("testing against expected:");
-        for (int i = 0; i < fasta.length; i++) {
+        for (int i = 0; i < fasta.length - header_len; i++) {
             System.out.print((char)expected_fasta[i]);
-            assertEquals(expected_fasta[i], (char) fasta[i]);
+            assertEquals(expected_fasta[i], (char) fasta[i + header_len]);
         }
         System.out.println();
     }

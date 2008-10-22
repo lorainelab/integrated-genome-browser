@@ -34,6 +34,7 @@ public class FastaParser {
   //  int max_residues = 32000000;
 
   static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
+  static final int LINELENGTH=79;
 
   public FastaParser() {
   }
@@ -433,27 +434,24 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
   // We assume no comment lines.
   // We assume exactly LINELENGTH nucleotides per line (until the last line), with a carriage return following each line.
   // Sequence range is specified in interbase format. (See http://www.biodas.org/documents/das2/das2_get.html.)
-  // if rawFormat is on, only return bases... don't return any header or newlines.
     public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
             throws FileNotFoundException, IOException, IllegalArgumentException {
-        
-        //boolean rawFormat = true;
         
         if (begin_sequence < 0)
             throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
         if (end_sequence < begin_sequence)
             throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
         
-        final int LINELENGTH=79;
         byte[] buf = null;
         DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
         BufferedInputStream bis = new BufferedInputStream(dis);
         
         try {
             // Skip to the location past the header.
-            int header_len = skipFASTAHeader(seqfile.getName(), bis);
+            byte[] header = skipFASTAHeader(seqfile.getName(), bis);
+            int header_len = (header == null ? 0 : header.length);
             
-            System.out.println("header len was :" + header_len);
+            //System.out.println("header was :" + header + " with len:" + header_len);
             
             bis.reset();
             long skip_status = BlockUntilSkipped(bis, header_len);
@@ -488,9 +486,11 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
                 return buf;
             }
             
-
             int nucleotides_len = end_sequence - begin_sequence;
-            buf = new byte[nucleotides_len];     
+            buf = new byte[nucleotides_len + header_len]; 
+            
+            for (int i=0;i<header_len;i++)
+                buf[i] = header[i];
             
             for (int i=0;i<nucleotides_len;) {
                 if (line_location == LINELENGTH) {
@@ -514,7 +514,7 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
                 
                 // Read several characters if possible
                 int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
-                int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
+                int nucleotides_read = bis.read(buf, i + header_len, nucleotides_left_on_this_line);
                 i+= nucleotides_read;
                 line_location = nucleotides_read;
                 
@@ -522,7 +522,7 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
                     // end of file hit.  quit parsing.
                     System.out.println("Unexpected EOF: i,nucleotides_read" + i + " " + nucleotides_read);
                     
-                    return returnShortenedBuffer(buf, i);
+                    return returnShortenedBuffer(buf, i + header_len);
                 }
             }
           
@@ -554,7 +554,8 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
     }
 
     // Parse off the header (if it exists).
-    private static int skipFASTAHeader(String filename, BufferedInputStream bis) throws IOException, UnsupportedEncodingException {
+    public static byte[] skipFASTAHeader(String filename, BufferedInputStream bis)
+            throws IOException, UnsupportedEncodingException {
         // The header is less than 500 bytes, and if it exists, the header begins with a ">" and ends with a newline.
         //System.out.println("Reading FASTA file");
         byte[] header = new byte[500];
@@ -565,22 +566,23 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
         if (header[0] == '>') {
             // We found a header
             // Parse until we're done with header.
-            
             for (int i=1;i<500;i++) {
                 //System.out.print(header[i] + " ");
                 if (header[i] == '\n') {
                     //System.out.println("");
                     //System.out.println("Header was :" + header.toString());
-                    return i + 1; // the actual header length, since it was 0-indexed.
+                    byte[] header2 = new byte[i+1];
+                    System.arraycopy(header, 0, header2, 0, i+1);
+                    return header2;
                 }
             }
-            
+                        
             // There was no newline?
             throw new java.io.UnsupportedEncodingException("file " + filename + " header does not match expected FASTA format.");
         } 
         //System.out.println("Didn't start with >");
         // no header.
-        return 0;
+        return null;
     }
     
     // Convert oldfile to (our) standardized fasta format.
@@ -606,7 +608,8 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
         
        // try {
             // Skip to the location past the header.
-            int header_len = skipFASTAHeader(oldfile.getName(), bis);
+            byte[] header = skipFASTAHeader(oldfile.getName(), bis);
+            int header_len = (header == null ? 0 : header.length);
             bis.reset();
             bis.skip(header_len);
             FileOutputStream fos = new FileOutputStream(newfile);

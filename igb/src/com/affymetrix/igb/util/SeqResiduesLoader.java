@@ -74,15 +74,14 @@ public class SeqResiduesLoader {
                 NibbleResiduesParser.parse(istr, seq_group);
                 return true;
             }
-/*
+
             if (content_type.equals(FastaParser.getMimeType())) {
                 // check for fasta format
                 System.out.println("   response is in fasta format, parsing...");
                 FastaParser.parseSingle(istr, seq_group);
                 return true;
             }
-*/
-            
+
             System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
             return false;
         } catch (Exception ex) {
@@ -119,7 +118,7 @@ public class SeqResiduesLoader {
             uri = segment_uri + "?range=" + min + ":" + max;
             
             // for now, in fact, it must be in fasta format
-            uri = segment_uri + "&format=fasta";
+            uri = uri + "&format=fasta";
         }
         else {
            uri = segment_uri + "?format=bnib";
@@ -190,11 +189,19 @@ public class SeqResiduesLoader {
          */
         String das_dna_server = UnibrowPrefsUtil.getLocation(PREF_DAS_DNA_SERVER_URL, DEFAULT_DAS_DNA_SERVER);
         String residues = GetDAS1Residues(das_dna_server, current_genome_name, seqid, min, max, length);
+        
         if (residues == null) {
+            if (!(seq_group instanceof Das2SeqGroup))
+                return false;
+            
             // Try the DAS/2 server
-            //String URI = generateDas2URI(seq_group, (SmartAnnotBioSeq)aseq, min, max);
-            //residues = Das2Utils.getDas2Residues();
-            return false;
+            boolean loaded = LoadResiduesFromDAS2(seq_group,(SmartAnnotBioSeq) aseq, min, max);
+            if (!loaded)
+                return false;
+            
+            SeqMapView gviewer = Application.getSingleton().getMapView();
+            gviewer.setAnnotatedSeq(aseq, true, true, true);
+            return true;
         }
         
         CreateComposition(aseq, min, max, residues, length, span);

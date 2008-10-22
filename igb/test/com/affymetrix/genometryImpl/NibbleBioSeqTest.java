@@ -35,7 +35,7 @@ public class NibbleBioSeqTest extends TestCase {
     String test_string = "ACTGAAACCCTTTGGGNNNATATGCGC";
     
     byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-    NibbleBioSeq nibseq = new NibbleBioSeq(null, null, test_string.length());
+    GeneralBioSeq nibseq = new GeneralBioSeq(null, null, test_string.length());
     NibbleIterator nibber = new NibbleIterator(test_array, test_string.length());
     assertEquals(test_string,nibber.substring(0, test_string.length()));
     

@@ -32,8 +32,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 public class FastaParser {
 
   //  int max_residues = 32000000;
-  boolean use_buffer_directly = false;
-  boolean fixed_length_buffer = false;
+
   static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
 
   public FastaParser() {
@@ -47,7 +46,7 @@ public class FastaParser {
    * Returns the List of sequences that were read from the file, which will be
    * a subset of the sequences in the group.
    */
-  public List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+  public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
     ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
     //int line_count = 0;
     BufferedReader br = null;
@@ -95,13 +94,20 @@ public class FastaParser {
     System.out.println("done loading fasta file");
     return seqlist;
   }
-
+  
+  
+public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+    List <BioSeq> bioList = parseAll(istr,group);
+    if (bioList == null)
+        return null;
+    return bioList.get(0);
+}
   /**
    *  Parse an input stream, creating a single new BioSeq.
    *  @param istr an InputStream that will be read and then closed
    */
-  public MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
-    return parse(istr, null);
+  public static MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
+    return FastaParser.parse(istr, null);
   }
 
 
@@ -112,8 +118,8 @@ public class FastaParser {
    *   residues into.  If not null, then the sequence in the file must have a name
    *   that is synonymous with aseq.
    */
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
-    return parse(istr, aseq, -1);
+  public static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
+    return FastaParser.parse(istr, aseq, -1);
   }
 
   /**
@@ -127,8 +133,10 @@ public class FastaParser {
    *   residues into.  If not null, then the sequence in the file must have a name
    *   that is synonymous with aseq.
    */
-  public MutableAnnotatedBioSeq oldparse(InputStream istr, MutableAnnotatedBioSeq aseq,
+  public static MutableAnnotatedBioSeq oldparse(InputStream istr, MutableAnnotatedBioSeq aseq,
                                       int max_seq_length) {
+      boolean use_buffer_directly = false;
+      boolean fixed_length_buffer = false;
     if (max_seq_length > 0) {
       fixed_length_buffer = true;
       use_buffer_directly = true;
@@ -309,15 +317,15 @@ public class FastaParser {
   //   white space, name header, etc.), but probably no more than 10% greater than actual size, which
   //   is a lot better than aforementioned memory spike, which can temporarily double the amount of
   //   memory needed
-  public MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
+  public static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
                                       int max_seq_length) {
-    return oldparse(istr, aseq, max_seq_length);
+    return FastaParser.oldparse(istr, aseq, max_seq_length);
   }
 
   /**
    *  trying a new strategy to speed parsing.
    */
-  public MutableAnnotatedBioSeq newparse(InputStream istr, MutableAnnotatedBioSeq aseq,
+  public static MutableAnnotatedBioSeq newparse(InputStream istr, MutableAnnotatedBioSeq aseq,
                                       int max_seq_length) {
     StringBuffer buf;
     if (max_seq_length > 0) {
@@ -425,8 +433,11 @@ public class FastaParser {
   // We assume no comment lines.
   // We assume exactly LINELENGTH nucleotides per line (until the last line), with a carriage return following each line.
   // Sequence range is specified in interbase format. (See http://www.biodas.org/documents/das2/das2_get.html.)
+  // if rawFormat is on, only return bases... don't return any header or newlines.
     public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
             throws FileNotFoundException, IOException, IllegalArgumentException {
+        
+        //boolean rawFormat = true;
         
         if (begin_sequence < 0)
             throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
@@ -438,7 +449,7 @@ public class FastaParser {
         DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
         BufferedInputStream bis = new BufferedInputStream(dis);
         
-       // try {
+        try {
             // Skip to the location past the header.
             int header_len = skipFASTAHeader(seqfile.getName(), bis);
             
@@ -477,9 +488,9 @@ public class FastaParser {
                 return buf;
             }
             
-           
+
             int nucleotides_len = end_sequence - begin_sequence;
-            buf = new byte[nucleotides_len];
+            buf = new byte[nucleotides_len];     
             
             for (int i=0;i<nucleotides_len;) {
                 if (line_location == LINELENGTH) {
@@ -505,7 +516,7 @@ public class FastaParser {
                 int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
                 int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
                 i+= nucleotides_read;
-                line_location = LINELENGTH;
+                line_location = nucleotides_read;
                 
                 if (nucleotides_read != nucleotides_left_on_this_line) {
                     // end of file hit.  quit parsing.
@@ -516,12 +527,11 @@ public class FastaParser {
             }
           
             return buf;
-     /*   }
+        }
         finally {
             dis.close();
             return buf;
         }
-      * */
     }
     
      private static byte[] returnShortenedBuffer(byte[] buf, int i) {

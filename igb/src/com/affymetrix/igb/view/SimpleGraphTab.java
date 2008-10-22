@@ -497,7 +497,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
     if (DEBUG_EVENTS)  {
-      System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " recieved by " + this.getClass().getName());
+      System.out.println("SeqSelectionEvent, selected seq: " + evt.getSelectedSeq() + " received by " + this.getClass().getName());
     }
     current_seq = evt.getSelectedSeq();
     resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));

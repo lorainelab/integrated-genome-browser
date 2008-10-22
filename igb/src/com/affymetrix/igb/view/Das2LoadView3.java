@@ -595,7 +595,7 @@ DataRequestListener {
 	}
 
 	public boolean dataRequested(DataRequestEvent evt) {
-		System.out.println("Das2LoadView3 recieved DataRequestEvent: " + evt);
+		System.out.println("Das2LoadView3 received DataRequestEvent: " + evt);
 		loadFeaturesInView();
 		return false;
 	}

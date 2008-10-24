@@ -1111,32 +1111,42 @@ public class GenometryDas2Servlet extends HttpServlet  {
         }
     }
 
-    private void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
-        if (ranges.size() == 0) {
-            // An unranged request for a FASTA.  Not supported.
-            PrintWriter pw = response.getWriter();
-            pw.println("This DAS/2 server does not handle unranged " + format + " requests:    ");
-            pw.println(request.getRequestURL().toString());
-            return;
-        }
-
+    private void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) 
+            throws IOException {
         String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".fa";
-        log.add("seq request mapping to file: " + file_name + " spanning " + span.getStart() + " to " + span.getEnd());
         File seqfile = new File(file_name);
-        if (seqfile.exists()) {
-            byte[] buf = FastaParser.ReadFASTA(seqfile,span.getStart(),span.getEnd());
-            setContentType(response, FastaParser.getMimeType());
-            if (buf != null) {
-                DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-                dos.write(buf, 0, buf.length);
-                // should output stream get closed here?
-                dos.close();
-            }
-        } else {
+        if (!seqfile.exists()) {
+            log.add("seq request mapping to nonexistent file: " + file_name);
             PrintWriter pw = response.getWriter();
             pw.println("File not found: " + file_name);
             pw.println("This DAS/2 server cannot currently handle request:    ");
             pw.println(request.getRequestURL().toString());
+            return;
+        }        
+        
+        // Determine spanStart and spanEnd.  If it's an unranged query, then just make SpanEnd no larger than the filesize.
+        int spanStart = 0, spanEnd = 0;
+        if (ranges.size() == 0) {
+            if (seqfile.length() > (long)Integer.MAX_VALUE)
+                spanEnd = Integer.MAX_VALUE;
+            else 
+                spanEnd = (int)seqfile.length();
+        } else {
+            spanStart = span.getStart();
+            spanEnd = span.getEnd();
+        }
+        
+        log.add("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
+
+        byte[] buf = FastaParser.ReadFASTA(seqfile, spanStart, spanEnd);
+        byte[] header = FastaParser.GenerateNewHeader(seqname, org_name, spanStart, spanEnd);
+        setContentType(response, FastaParser.getMimeType());
+        if (buf != null) {
+            DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+            dos.write(header, 0, header.length);
+            dos.write(buf, 0, buf.length);
+            // should output stream get closed here?
+            dos.close();
         }
     }
 

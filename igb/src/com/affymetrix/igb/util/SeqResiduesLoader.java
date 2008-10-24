@@ -43,7 +43,14 @@ public class SeqResiduesLoader {
 	boolean loaded = false;
 	if (seq_group instanceof Das2SeqGroup)  {
             // -1 indicates no min/max
-            loaded = LoadResiduesFromDAS2(seq_group, aseq, -1, -1);
+            // Try to load in bnib format
+            String uri = generateDas2URI(seq_group, aseq, -1, -1, true);
+            loaded = LoadResiduesFromDAS2(seq_group, uri);
+            if (!loaded) {
+                // Try to load in fasta format
+                uri = generateDas2URI(seq_group, aseq, -1, -1, false);
+                loaded = LoadResiduesFromDAS2(seq_group, uri);
+            }
 	}
 	if (! loaded)  {
             loaded = LoadResiduesFromQuickLoad(seq_group, seq_name, gviewer);
@@ -53,9 +60,9 @@ public class SeqResiduesLoader {
     }
 
     // try loading via DAS/2 server that genome was originally modeled from  
-    private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
+    private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, String uri) {
         boolean loaded;
-        String uri = generateDas2URI(seq_group, aseq, min, max);
+        
         InputStream istr = null;
         Map headers = new HashMap();
         try {
@@ -99,30 +106,66 @@ public class SeqResiduesLoader {
 
         return loaded;
     }
+    
+    // try loading via DAS/2 server  
+    private static String GetFASTADas2Residues(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
+        String uri = generateDas2URI(seq_group, aseq, min, max, false);
+        InputStream istr = null;
+        Map headers = new HashMap();
+        try {
+            istr = LocalUrlCacher.getInputStream(uri, QuickLoadServerModel.getCacheResidues(), headers);
+            // System.out.println(headers);
+            String content_type = (String) headers.get("content-type");
+            System.out.println("    response content-type: " + content_type);
+            if (istr == null || content_type == null) {
+                System.out.println("  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
+                return null;
+            }
+           
+            if (content_type.equals(FastaParser.getMimeType())) {
+                // check for fasta format
+                System.out.println("   response is in fasta format, parsing...");
+                return FastaParser.parseResidues(istr);
+            }
 
-    // Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?format=bnib")
-     private static String generateDas2URI(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq) {
-        return generateDas2URI(seq_group,aseq,-1,-1);
+            System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+            return null;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (istr != null) {
+                    istr.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
     }
+
+
      
      // Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")     
-     private static String generateDas2URI(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max) {
+     private static String generateDas2URI(AnnotatedSeqGroup seq_group, SmartAnnotBioSeq aseq, int min, int max, boolean bnibFormat) {
         Das2SeqGroup das2_group = (Das2SeqGroup) seq_group;
         Das2VersionedSource das2_vsource = das2_group.getOriginalVersionedSource();
         Das2Region segment = das2_vsource.getSegment(aseq);
         String segment_uri = segment.getID();
         System.out.println("trying to load residues via DAS/2");
         String uri; 
-        if (max > -1) {
-            // Note that if it has a range, it's not going to be in bnib format
-            uri = segment_uri + "?range=" + min + ":" + max;
-            
-            // for now, in fact, it must be in fasta format
-            uri = uri + "&format=fasta";
+        if (max > -1 || !bnibFormat) {
+            uri = segment_uri + "?format=fasta";
         }
         else {
-           uri = segment_uri + "?format=bnib";
+            uri = segment_uri + "?format=bnib";
         }
+        if (max > -1) {
+            // ranged
+            uri = uri + "&range=" + min + ":" + max;
+        }
+
         System.out.println("   request URI: " + uri);
         return uri;
     }
@@ -194,17 +237,12 @@ public class SeqResiduesLoader {
             if (!(seq_group instanceof Das2SeqGroup))
                 return false;
             
-            // Try the DAS/2 server
-            boolean loaded = LoadResiduesFromDAS2(seq_group,(SmartAnnotBioSeq) aseq, min, max);
-            if (!loaded)
-                return false;
-            
-            SeqMapView gviewer = Application.getSingleton().getMapView();
-            gviewer.setAnnotatedSeq(aseq, true, true, true);
-            return true;
+           residues = GetFASTADas2Residues(seq_group, (SmartAnnotBioSeq)aseq, min, max);
+           if (residues == null)
+               return false;
         }
         
-        CreateComposition(aseq, min, max, residues, length, span);
+        AddResiduesToComposition(aseq, residues, span);
         
         SeqMapView gviewer = Application.getSingleton().getMapView();
         gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -242,12 +280,11 @@ public class SeqResiduesLoader {
     }
 
    
-    // Does this actually accomplish anything?
-    private static void CreateComposition(AnnotatedBioSeq aseq, int min, int max, String residues, int length, SeqSpan span) {
+    // Adds the residues to the composite sequence.  This allows merging of subsequences.
+    private static void AddResiduesToComposition(AnnotatedBioSeq aseq, String residues, SeqSpan span) {
+        BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues);
 
-        BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + min + "-" + max, residues);
-
-        SeqSpan span1 = new SimpleSeqSpan(0, length, subseq);
+        SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
         SeqSpan span2 = span;
         MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
         subsym.addSpan(span1);
@@ -264,8 +301,8 @@ public class SeqResiduesLoader {
         } else {
             compsym.addChild(subsym);
             SeqSpan compspan = compsym.getSpan(aseq);
-            int compmin = Math.min(compspan.getMin(), min);
-            int compmax = Math.max(compspan.getMax(), max);
+            int compmin = Math.min(compspan.getMin(), span.getMin());
+            int compmax = Math.max(compspan.getMax(), span.getMax());
             SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
             compsym.removeSpan(compspan);
             compsym.addSpan(new_compspan);

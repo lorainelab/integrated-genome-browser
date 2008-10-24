@@ -19,6 +19,34 @@ public class FastaParserTest extends TestCase {
     return suite;
   }
   
+  public void testGenerateNewHeader() throws Exception {
+      String chrom_name = "chrC";
+      String genome_name = "A_thaliana_TAIR8";
+      
+      byte[] result = FastaParser.GenerateNewHeader(chrom_name, genome_name, 0, 1000);
+      
+      assertNotNull(result);
+      
+      String expected_string = "chrC range:0-1,000 interbase genome:A_thaliana_TAIR8\n";
+      byte[] expected_result = new byte[expected_string.length() +1];
+      expected_result[0]='>';
+      for (int i=0;i<expected_string.length();i++)
+          expected_result[i+1] = (byte)expected_string.charAt(i);
+      
+      /*for (int i=0;i<result.length;i++)
+          System.out.print(":" + (char)result[i]);
+      System.out.println();
+      for (int i=0;i<expected_result.length;i++)
+          System.out.print(":" + (char)result[i]);
+      System.out.println();*/
+            
+      assertEquals(expected_result.length,result.length);
+      for (int i=0;i<expected_result.length;i++) {
+          assertEquals((char)expected_result[i],(char)result[i]);
+      }
+  }
+  
+  
   public void testParseAll() throws Exception {
     String filename_1 = "igb/test/test_files/FASTA_chrQ.fasta";
     assertTrue(new File(filename_1).exists());

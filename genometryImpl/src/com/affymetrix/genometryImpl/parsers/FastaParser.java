@@ -16,6 +16,7 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import java.text.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
@@ -47,54 +48,77 @@ public class FastaParser {
    * Returns the List of sequences that were read from the file, which will be
    * a subset of the sequences in the group.
    */
-  public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-    ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
-    //int line_count = 0;
-    BufferedReader br = null;
-    Matcher matcher = header_regex.matcher("");
-    try {
-      br = new BufferedReader(new InputStreamReader(istr));
-      String header = br.readLine();
-      while (br.ready()) {  // loop through lines till find a header line
-        if (header == null) { continue; }  // skip null lines
-        matcher.reset(header);
-        boolean matched = matcher.matches();
+    public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+        ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
+        //int line_count = 0;
+        BufferedReader br = null;
+        Matcher matcher = header_regex.matcher("");
+        try {
+            br = new BufferedReader(new InputStreamReader(istr));
+            String header = br.readLine();
+            while (br.ready()) {  // loop through lines till find a header line
+                if (header == null) {
+                    continue;
+                }  // skip null lines
+                matcher.reset(header);
+                boolean matched = matcher.matches();
 
-        if (matched) {
-          StringBuffer buf = new StringBuffer();
-          String seqid = matcher.group(1);
-          while (br.ready()) {
-            String line = br.readLine();
-            if (line == null) { continue; }  // skip null lines
+                if (!matched) {
+                    continue;
+                }
+                StringBuffer buf = new StringBuffer();
+                String seqid = matcher.group(1);
+                while (br.ready()) {
+                    String line = br.readLine();
+                    if (line == null) {
+                        continue;
+                    }  // skip null lines
 
-            if (line.charAt(0) == ';') { continue; } // skip comment lines
+                    if (line.charAt(0) == ';') {
+                        continue;
+                    } // skip comment lines
 
-            // break if hit header for another sequence --
-            if (line.startsWith(">")) {
-              header = line;
-              break;
+                    // break if hit header for another sequence --
+                    if (line.startsWith(">")) {
+                        header = line;
+                        break;
+                    }
+
+                    buf.append(line);
+                }
+                String residues = buf.toString();
+                residues = residues.trim();
+                MutableAnnotatedBioSeq seq = group.getSeq(seqid);
+                if (seq == null && seqid.indexOf(' ') > 0) {
+                    // It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
+                    String name = seqid.substring(0, seqid.indexOf(' '));
+                    seq = group.getSeq(name);
+                }
+                if (seq == null) {
+                    seq = group.addSeq(seqid, residues.length());
+                }
+                seq.setResidues(residues);
+
+                seqlist.add(seq);
+                System.out.println("length of sequence: " + residues.length());
             }
-
-            buf.append(line);
-          }
-          String residues = buf.toString();
-          MutableAnnotatedBioSeq seq = group.getSeq(seqid);
-          if (seq == null) {
-            seq = group.addSeq(seqid, residues.length());
-          }
-          seq.setResidues(residues);
-
-          seqlist.add(seq);
-          System.out.println("length of sequence: " + residues.length());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ioe) {
+                }
+            }
+            if (istr != null) {
+                try {
+                    istr.close();
+                } catch (IOException ioe) {
+                }
+            }
         }
-      }
-    } finally {
-      if (br != null) {try {br.close();} catch (IOException ioe) {}}
-      if (istr !=null) {try {istr.close();} catch (IOException ioe) {}}
+        System.out.println("done loading fasta file");
+        return seqlist;
     }
-    System.out.println("done loading fasta file");
-    return seqlist;
-  }
   
   
 public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
@@ -103,6 +127,63 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
         return null;
     return bioList.get(0);
 }
+
+// Basically the same as parseAll, except that it returns the residues and doesn't change the AnnotatedSeqGroup
+public static String parseResidues(InputStream istr) throws IOException {
+    BufferedReader br = null;
+    Matcher matcher = header_regex.matcher("");
+    String result = null;
+    try {
+        br = new BufferedReader(new InputStreamReader(istr));
+        String header = br.readLine();
+        while (br.ready()) {  // loop through lines till find a header line
+            if (header == null) {
+                continue;
+            }  // skip null lines
+            matcher.reset(header);
+            boolean matched = matcher.matches();
+
+            if (!matched) {
+                continue;
+            }
+            StringBuffer buf = new StringBuffer();
+            while (br.ready()) {
+                String line = br.readLine();
+                if (line == null) {
+                    continue;
+                }  // skip null lines
+
+                if (line.charAt(0) == ';') {
+                    continue;
+                } // skip comment lines
+
+                // break if hit header for another sequence --
+                if (line.startsWith(">")) {
+                    header = line;
+                    break;
+                }
+
+                buf.append(line);
+                result = buf.toString();
+            }
+        }
+    } finally {
+        if (br != null) {
+            try {
+                br.close();
+            } catch (IOException ioe) {
+            }
+        }
+        if (istr != null) {
+            try {
+                istr.close();
+            } catch (IOException ioe) {
+            }
+        }
+        return result;
+    }
+}
+
   /**
    *  Parse an input stream, creating a single new BioSeq.
    *  @param istr an InputStream that will be read and then closed
@@ -442,6 +523,10 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
         if (end_sequence < begin_sequence)
             throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
         
+        // Sanity check on huge range... can't be larger than the overall file size.
+        if (seqfile.length() <= (long)Integer.MAX_VALUE)
+            end_sequence = Math.min(end_sequence, (int)seqfile.length());
+        
         byte[] buf = null;
         DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));
         BufferedInputStream bis = new BufferedInputStream(dis);
@@ -487,10 +572,11 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
             }
             
             int nucleotides_len = end_sequence - begin_sequence;
-            buf = new byte[nucleotides_len + header_len]; 
+            //buf = new byte[nucleotides_len + header_len];
+            buf = new byte[nucleotides_len];
             
-            for (int i=0;i<header_len;i++)
-                buf[i] = header[i];
+            //for (int i=0;i<header_len;i++)
+            //    buf[i] = header[i];
             
             for (int i=0;i<nucleotides_len;) {
                 if (line_location == LINELENGTH) {
@@ -514,7 +600,8 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
                 
                 // Read several characters if possible
                 int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
-                int nucleotides_read = bis.read(buf, i + header_len, nucleotides_left_on_this_line);
+                //int nucleotides_read = bis.read(buf, i + header_len, nucleotides_left_on_this_line);
+                int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
                 i+= nucleotides_read;
                 line_location = nucleotides_read;
                 
@@ -522,7 +609,8 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
                     // end of file hit.  quit parsing.
                     System.out.println("Unexpected EOF: i,nucleotides_read" + i + " " + nucleotides_read);
                     
-                    return returnShortenedBuffer(buf, i + header_len);
+                    //return returnShortenedBuffer(buf, i + header_len);
+                    return returnShortenedBuffer(buf, i);
                 }
             }
           
@@ -532,6 +620,31 @@ public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) thro
             dis.close();
             return buf;
         }
+    }
+    
+    
+    // Generate header of form:
+    // >[seqname] range:[start]-[end] interbase genome:[genome]
+    // e.g.,
+    // >ChrC range:0-1000 interbase genome:A_thaliana_TAIR8
+    public static byte[] GenerateNewHeader(String chrom_name, String genome_name, int start, int end) {        
+        String header = 
+                ">" +
+                chrom_name + 
+                " range:" + 
+                NumberFormat.getIntegerInstance().format(start) +
+                "-" +
+                NumberFormat.getIntegerInstance().format(end) +
+                " interbase genome:" +
+                genome_name +
+                "\n";
+        
+        byte[] result = new byte[header.length()];
+
+        for (int i=0;i<header.length();i++)
+            result[i] = (byte)header.charAt(i);
+        
+        return result;
     }
     
      private static byte[] returnShortenedBuffer(byte[] buf, int i) {

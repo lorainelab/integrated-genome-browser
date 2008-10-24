@@ -549,8 +549,7 @@ public class LoadFileAction {
         parser = null;
       }
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-        FastaParser parser = new FastaParser();
-        java.util.List seqs = parser.parseAll(str, selected_group);
+        java.util.List seqs = FastaParser.parseAll(str, selected_group);
 
         if (input_seq != null && seqs.contains(input_seq)) {
           aseq = input_seq;
@@ -559,7 +558,6 @@ public class LoadFileAction {
         } else {
           aseq = null;
         }
-        parser = null;
       }
       else if (lcname.endsWith(".bnib")) {
         //TODO: check that these conditions make sense
